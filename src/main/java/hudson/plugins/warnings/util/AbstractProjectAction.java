@@ -6,7 +6,6 @@ import hudson.model.Action;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -25,8 +24,6 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  * @author Ulli Hafner
  */
 public abstract class AbstractProjectAction<T extends ResultAction<?>> implements Action  {
-    /** Logger. */
-    private static final Logger LOGGER = Logger.getLogger(AbstractProjectAction.class.getName());
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -8775531952208541253L;
     /** One year (in seconds). */
