@@ -1,0 +1,87 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jvnet.hudson.plugins</groupId>
+    <artifactId>plugin</artifactId>
+    <version>1.213</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>warnings</artifactId>
+  <packaging>hpi</packaging>
+  <name>Hudson Warnings Plug-in</name>
+  <version>1.0-SNAPSHOT</version>
+  <url>http://hudson.gotdns.com/wiki/display/HUDSON/Warnings+Plugin</url>
+  <description>This plug-in reads the compiler warnings from the console log file and generates a trend report.</description>
+
+  <licenses>
+  	<license><name>MIT license</name><comments>All source code is under the MIT license.</comments></license>
+  	<license><name>LGPL</name><comments>All icons are made by Carlitus (Carles Carbonell Bernado) and are under the LGPL.</comments></license>
+  </licenses>
+
+  <dependencies>
+    <dependency>
+      <groupId>de.java2html</groupId>
+      <artifactId>java2html</artifactId>
+      <version>5.0</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.3</version>
+    </dependency>
+    <dependency>
+      <groupId>findbugs</groupId>
+      <artifactId>annotations</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.3.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <version>2.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymockclassextension</artifactId>
+      <version>2.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jvnet.localizer</groupId>
+      <artifactId>localizer</artifactId>
+      <version>1.5</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+     <plugins>
+    	<plugin>
+    	    <groupId>org.kohsuke.stapler</groupId>
+    	    <artifactId>maven-stapler-plugin</artifactId>
+    	    <extensions>true</extensions>
+    	</plugin>
+     </plugins>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>java.net2</id>
+      <url>http://download.java.net/maven/2/</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+</project>

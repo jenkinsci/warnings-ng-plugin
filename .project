@@ -1,0 +1,25 @@
+<projectDescription>
+  <name>warnings</name>
+  <comment>This plug-in reads the compiler warnings from the console log file and generates a trend report.</comment>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>edu.umd.cs.findbugs.plugin.eclipse.findbugsBuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>net.sourceforge.pmd.runtime.pmdBuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+    <nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
+    <nature>edu.umd.cs.findbugs.plugin.eclipse.findbugsNature</nature>
+    <nature>net.sourceforge.pmd.runtime.pmdNature</nature>
+  </natures>
+</projectDescription>

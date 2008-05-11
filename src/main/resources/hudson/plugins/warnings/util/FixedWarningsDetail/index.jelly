@@ -1,0 +1,31 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+	<l:layout>
+		<st:include it="${it.owner}" page="sidepanel.jelly" />
+		<l:main-panel>
+			<h1>${it.header}</h1>
+
+	        <st:include page="/summaryTable.jelly" />
+
+			<h2>${%Fixed Warnings}</h2>
+			<table class="pane sortable" id="fixed">
+				<tr>
+					<td class="pane-header">${%Class}</td>
+					<td class="pane-header">${%Warning Type}</td>
+				</tr>
+				<tbody>
+					<j:forEach var="warning"
+						items="${it.annotations}">
+						<tr>
+							<td class="pane">
+								${warning.shortFileName}
+							</td>
+							<td class="pane">${warning.type}</td>
+						</tr>
+					</j:forEach>
+				</tbody>
+			</table>
+		</l:main-panel>
+	</l:layout>
+</j:jelly>

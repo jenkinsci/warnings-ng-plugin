@@ -1,0 +1,85 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+	<l:layout>
+		<st:include it="${it.owner}" page="sidepanel.jelly" />
+		<l:main-panel>
+
+			<h1>${%Compiler Warnings}</h1>
+
+			<h2>${%Warnings Trend}</h2>
+
+			<table class="pane" id="summary">
+				<tr>
+					<td class="pane-header">${%All Warnings}</td>
+					<td class="pane-header">${%New Warnings}</td>
+					<td class="pane-header">${%Fixed Warnings}</td>
+				</tr>
+				<tbody>
+					<tr>
+						<td class="pane">
+							${it.numberOfAnnotations}
+						</td>
+						<td class="pane">
+							<j:if test="${it.numberOfNewWarnings == 0}">
+								0
+							</j:if>
+							<j:if test="${it.numberOfNewWarnings != 0}">
+								<a href="new">${it.numberOfNewWarnings}</a>
+							</j:if>
+						</td>
+						<td class="pane">
+							<j:if test="${it.numberOfFixedWarnings == 0}">
+								0
+							</j:if>
+							<j:if test="${it.numberOfFixedWarnings != 0}">
+								<a href="fixed">${it.numberOfFixedWarnings}</a>
+							</j:if>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+	        <st:include page="/summaryTable.jelly" />
+
+	        <j:if test="${it.hasAnnotations()}">
+
+				<j:if test="${!it.isSingleModuleProject()}">
+					<h2>${%Module Statistics}</h2>
+
+					<table class="pane sortable" id="tasks">
+						<tr>
+							<td class="pane-header">${%Module}</td>
+							<td class="pane-header" style="width:2em">${%Total}</td>
+							<td class="pane-header">${%Distribution}</td>
+						</tr>
+						<tbody>
+							<j:forEach var="module" items="${it.modules}">
+								<tr>
+									<td class="pane"><a href="${module.name}/">${module.name}</a></td>
+									<td class="pane">${module.numberOfAnnotations}</td>
+									<td class="pane">
+								        <div tooltip="${it.getToolTip(module.name)}">
+											<img src="moduleStatistics?module=${module.name}"/>
+										</div>
+									</td>
+								</tr>
+							</j:forEach>
+						</tbody>
+					</table>
+				</j:if>
+
+			<j:if test="${it.isSingleModuleProject()}">
+				<j:if test="${!it.isSinglePackageProject()}">
+					<st:include page="/packagesTable.jelly" />
+				</j:if>
+
+				<j:if test="${it.isSinglePackageProject()}">
+					<st:include page="/annotationsTable.jelly" />
+				</j:if>
+			</j:if>
+
+			</j:if>
+		</l:main-panel>
+	</l:layout>
+</j:jelly>

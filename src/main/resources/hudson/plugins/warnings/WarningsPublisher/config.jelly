@@ -1,0 +1,40 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:advanced>
+	<f:entry title="${%Unstable threshold}" description="${%description.threshold}">
+		<f:textbox name="warnings_threshold" value="${instance.threshold}"
+			checkUrl="'${rootURL}/publisher/WarningsPublisher/checkThreshold?job=${it.fullName}&amp;value='+escape(this.value)" />
+	</f:entry>
+	<f:entry title="${%Health reporting}" description="${%description.healthy}">
+		<table>
+			<thead>
+				<tr>
+					<td width="40%"></td>
+					<td width="30%">
+						<img src="${rootURL}/images/16x16/health-80plus.gif" alt="100%"
+							title="${%Report health as 100% when the number of warnings is less than this value}." />
+					</td>
+					<td width="30%">
+						<img src="${rootURL}/images/16x16/health-00to19.gif" alt="0%"
+							title="${%Report health as 0% when the number of warnings is greater than this value}." />
+					</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th>${%Number of warnings}</th>
+					<td>
+						<f:textbox name="warnings_healthy" value="${instance.healthy}" />
+					</td>
+					<td>
+						<f:textbox name="warnings_unHealthy" value="${instance.unHealthy}" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</f:entry>
+	<f:entry title="${%Trend report height}" description="${%description.height}">
+		<f:textbox name="warnings_height" value="${instance.height}" />
+	</f:entry>
+  </f:advanced>
+</j:jelly>
