@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 /**
  * A line range in a source file is defined by its first and last line.
+ *
+ * @author Ulli Hafner
  */
 public class LineRange implements Serializable {
     /** Unique identifier of this class. */

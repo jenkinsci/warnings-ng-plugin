@@ -3,10 +3,11 @@ package hudson.plugins.warnings.util;
 import hudson.maven.MavenReporter;
 import hudson.maven.MavenReporterDescriptor;
 
-// TODO: Auto-generated Javadoc
 /**
  * A maven reporter descriptor that uses a publisher descriptor as delegate to
  * obtain the relevant configuration data.
+ *
+ * @author Ulli Hafner
  */
 public abstract class ReporterDescriptor extends MavenReporterDescriptor {
 

@@ -9,6 +9,8 @@ import java.util.Collection;
 
 /**
  * Result object to visualize the priorities statistics of an annotation container.
+ *
+ * @author Ulli Hafner
  */
 public class PrioritiesDetail extends AbstractAnnotationsDetail {
     /** Unique identifier of this class. */

@@ -18,6 +18,8 @@ import org.kohsuke.stapler.StaplerResponse;
 /**
  * Base class for annotation detail objects. Instances of this class could be used for
  * Hudson Stapler objects that contain a subset of annotations.
+ *
+ * @author Ulli Hafner
  */
 public abstract class AbstractAnnotationsDetail extends AnnotationContainer implements ModelObject {
     /** Unique identifier of this class. */

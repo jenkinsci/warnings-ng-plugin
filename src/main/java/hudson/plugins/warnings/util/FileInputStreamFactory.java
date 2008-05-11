@@ -5,6 +5,8 @@ import java.io.InputStream;
 
 /**
  * Factory to create an {@link InputStream} from an absolute filename.
+ *
+ * @author Ulli Hafner
  */
 public interface FileInputStreamFactory {
     /**

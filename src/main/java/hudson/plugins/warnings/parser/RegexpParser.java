@@ -14,6 +14,8 @@ import org.apache.commons.io.LineIterator;
 
 /**
  * Parses an input stream for compiler warnings using the provided regular expression.
+ *
+ * @author Ulli Hafner
  */
 public abstract class RegexpParser implements AnnotationParser {
     /** Pattern of compiler warnings. */

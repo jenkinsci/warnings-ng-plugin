@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * Controls the size of a trend report.
+ *
+ * @author Ulli Hafner
  */
 public class TrendReportSize {
     /** Default height of the graph. */

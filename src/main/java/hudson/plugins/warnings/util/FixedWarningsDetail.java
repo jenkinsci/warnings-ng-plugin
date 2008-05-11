@@ -1,13 +1,14 @@
 package hudson.plugins.warnings.util;
 
 import hudson.model.AbstractBuild;
-import hudson.plugins.warnings.util.Messages;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 
 import java.util.Collection;
 
 /**
  * Result object to visualize the fixed warnings in a build.
+ *
+ * @author Ulli Hafner
  */
 public class FixedWarningsDetail extends AbstractAnnotationsDetail {
     /** Unique identifier of this class. */

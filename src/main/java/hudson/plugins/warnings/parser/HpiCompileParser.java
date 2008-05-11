@@ -6,6 +6,8 @@ import java.util.regex.Matcher;
 
 /**
  * A parser for the maven-hpi-plugin compiler warnings.
+ *
+ * @author Ulli Hafner
  */
 public class HpiCompileParser extends RegexpParser {
     /** Warning type of this parser. */

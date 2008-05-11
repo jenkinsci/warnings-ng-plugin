@@ -23,12 +23,11 @@ import org.apache.commons.lang.StringUtils;
  * <li>It provides thresholds for the build health, that could be adjusted in
  * the configuration screen. These values are used by the
  * {@link HealthReportBuilder} to compute the health and the health trend graph.</li>
- * <li>It works on files based on a user configurable file name pattern. </li>
  * </ul>
+ *
+ * @author Ulli Hafner
  */
 public abstract class HealthAwarePublisher extends Publisher {
-    /** Ant file-set pattern of files to work with. */
-    private final String pattern;
     /** Annotation threshold to be reached if a build should be considered as unstable. */
     private final String threshold;
     /** Determines whether to use the provided threshold to mark a build as unstable. */
@@ -53,8 +52,6 @@ public abstract class HealthAwarePublisher extends Publisher {
     /**
      * Creates a new instance of <code>HealthAwarePublisher</code>.
      *
-     * @param pattern
-     *            Ant file-set pattern of files to scan for open tasks in
      * @param threshold
      *            Tasks threshold to be reached if a build should be considered
      *            as unstable.
@@ -69,13 +66,12 @@ public abstract class HealthAwarePublisher extends Publisher {
      * @param pluginName
      *            the name of the plug-in
      */
-    public HealthAwarePublisher(final String pattern, final String threshold,
-            final String healthy, final String unHealthy, final String height, final String pluginName) {
+    public HealthAwarePublisher(final String threshold, final String healthy, final String unHealthy,
+            final String height, final String pluginName) {
         super();
         this.threshold = threshold;
         this.healthy = healthy;
         this.unHealthy = unHealthy;
-        this.pattern = pattern;
         this.height = height;
         this.pluginName = "[" + pluginName + "] ";
 
@@ -267,15 +263,6 @@ public abstract class HealthAwarePublisher extends Publisher {
      */
     public int getUnHealthyAnnotations() {
         return unHealthyAnnotations;
-    }
-
-    /**
-     * Returns the Ant file-set pattern of files to work with.
-     *
-     * @return Ant file-set pattern of files to work with
-     */
-    public String getPattern() {
-        return pattern;
     }
 
     /**

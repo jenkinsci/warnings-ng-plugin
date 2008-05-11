@@ -13,6 +13,8 @@ import java.util.List;
 
 /**
  * Registry for the active parsers in this plug-in.
+ *
+ * @author Ulli Hafner
  */
 public class ParserRegistry {
     /** The available parsers of this plug-in. */

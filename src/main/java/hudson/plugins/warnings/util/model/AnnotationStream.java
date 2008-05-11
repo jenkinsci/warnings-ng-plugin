@@ -5,6 +5,8 @@ import hudson.util.XStream2;
 
 /**
  * An XStream for annotations.
+ *
+ * @author Ulli Hafner
  */
 public class AnnotationStream extends XStream2 {
     /**

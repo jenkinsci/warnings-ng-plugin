@@ -15,6 +15,8 @@ import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Base class for a Hudson plug/in descriptor.
+ *
+ * @author Ulli Hafner
  */
 public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
     /**

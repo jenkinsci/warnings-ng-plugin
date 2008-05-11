@@ -8,6 +8,8 @@ import java.util.Collection;
 
 /**
  * Result object to visualize the package statistics of a module.
+ *
+ * @author Ulli Hafner
  */
 public class PackageDetail extends AbstractAnnotationsDetail {
     /** Unique identifier of this class. */

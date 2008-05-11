@@ -8,6 +8,8 @@ import java.util.Collection;
 
 /**
  * Parses an input stream for compiler warnings and returns the found annotations.
+ *
+ * @author Ulli Hafner
  */
 public interface AnnotationParser {
     /**

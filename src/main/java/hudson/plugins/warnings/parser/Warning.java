@@ -10,6 +10,8 @@ import org.apache.commons.lang.StringUtils;
  * <p>
  * Note: this class has a natural ordering that is inconsistent with equals.
  * </p>
+ *
+ * @author Ulli Hafner
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class Warning extends AbstractAnnotation {

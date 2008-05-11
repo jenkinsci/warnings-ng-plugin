@@ -40,8 +40,7 @@ public class WarningPublisher extends HealthAwarePublisher {
      * @stapler-constructor
      */
     public WarningPublisher(final String threshold, final String healthy, final String unHealthy, final String height) {
-        // FIXME: pattern should not in base class
-        super("", threshold, healthy, unHealthy, height, "WARNINGS");
+        super(threshold, healthy, unHealthy, height, "WARNINGS");
     }
 
     /** {@inheritDoc} */

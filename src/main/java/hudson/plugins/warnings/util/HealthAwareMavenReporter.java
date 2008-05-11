@@ -29,6 +29,8 @@ import org.apache.maven.project.MavenProject;
  * the configuration screen. These values are used by the
  * {@link HealthReportBuilder} to compute the health and the health trend graph.</li>
  * </ul>
+ *
+ * @author Ulli Hafner
  */
 public abstract class HealthAwareMavenReporter extends MavenReporter {
     /** Unique identifier of this class. */

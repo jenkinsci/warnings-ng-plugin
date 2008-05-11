@@ -6,6 +6,8 @@ import hudson.plugins.warnings.util.model.Priority;
 
 /**
  * Creates priority detail objects.
+ *
+ * @author Ulli Hafner
  */
 public class PriorityDetailFactory {
     /**

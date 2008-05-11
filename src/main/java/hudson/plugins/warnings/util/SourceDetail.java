@@ -26,6 +26,8 @@ import de.java2html.options.JavaSourceConversionOptions;
 /**
  * Renders a source file containing an annotation for the whole file or a
  * specific line number.
+ *
+ * @author Ulli Hafner
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class SourceDetail implements ModelObject {

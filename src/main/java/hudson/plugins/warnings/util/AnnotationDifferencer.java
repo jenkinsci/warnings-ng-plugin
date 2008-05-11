@@ -8,6 +8,8 @@ import java.util.Set;
 
 /**
  * Provides several utility methods based on sets of annotations.
+ *
+ * @author Ulli Hafner
  */
 public final class AnnotationDifferencer {
     /**

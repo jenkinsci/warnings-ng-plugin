@@ -7,6 +7,8 @@ import java.util.List;
 
 /**
  * Result object to visualize the errors during execution of the plug-in.
+ *
+ * @author Ulli Hafner
  */
 public class ErrorDetail implements ModelObject  {
     /** Current build as owner of this action. */

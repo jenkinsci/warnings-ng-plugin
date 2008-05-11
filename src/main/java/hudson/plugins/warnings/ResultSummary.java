@@ -3,6 +3,8 @@ package hudson.plugins.warnings;
 /**
  * Represents the result summary of the warnings parser. This summary will be
  * shown in the summary.jelly script of the warnings result action.
+ *
+ * @author Ulli Hafner
  */
 public final class ResultSummary {
     /**

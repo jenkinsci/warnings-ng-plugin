@@ -12,6 +12,8 @@ import org.xml.sax.SAXException;
 
 /**
  * Detects maven module names by parsing the name of a source file.
+ *
+ * @author Ulli Hafner
  */
 public final class MavenModuleDetector {
     /** The factory to create input streams with. */

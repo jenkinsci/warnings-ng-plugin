@@ -6,6 +6,8 @@ import hudson.plugins.warnings.util.model.JavaProject;
 /**
  * Creates a new warnings result based on the values of a previous build and the
  * current project.
+ *
+ * @author Ulli Hafner
  */
 public class WarningsResultBuilder {
     /**

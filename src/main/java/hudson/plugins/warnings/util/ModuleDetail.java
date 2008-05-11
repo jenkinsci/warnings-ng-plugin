@@ -2,7 +2,6 @@ package hudson.plugins.warnings.util;
 
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
-import hudson.plugins.warnings.util.Messages;
 import hudson.plugins.warnings.util.model.JavaPackage;
 import hudson.plugins.warnings.util.model.MavenModule;
 import hudson.plugins.warnings.util.model.WorkspaceFile;
@@ -15,6 +14,8 @@ import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Result object to visualize the package statistics of a module.
+ *
+ * @author Ulli Hafner
  */
 public class ModuleDetail extends AbstractAnnotationsDetail {
     /** Unique identifier of this class. */

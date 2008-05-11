@@ -6,6 +6,8 @@ import java.util.regex.Matcher;
 
 /**
  * A parser for the javac compiler warnings.
+ *
+ * @author Ulli Hafner
  */
 public class JavacParser extends RegexpParser {
     /** Warning type of this parser. */
