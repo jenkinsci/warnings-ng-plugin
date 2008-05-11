@@ -1,5 +1,5 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
-    <j:if test="${from.hasValidResults(it.lastSuccessfulBuild)}">
+    <j:if test="${from.hasValidResults()}">
 	    <div align="right">
 	      <j:set var="mode" value="${h.getCookie(request, from.cookieName).value}" />
 	      <j:if test="${mode != null}">

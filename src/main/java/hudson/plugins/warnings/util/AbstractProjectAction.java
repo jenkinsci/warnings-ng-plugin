@@ -6,6 +6,7 @@ import hudson.model.Action;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +25,8 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  * @author Ulli Hafner
  */
 public abstract class AbstractProjectAction<T extends ResultAction<?>> implements Action  {
+    /** Logger. */
+    private static final Logger LOGGER = Logger.getLogger(AbstractProjectAction.class.getName());
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -8775531952208541253L;
     /** One year (in seconds). */
@@ -90,12 +93,11 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * Returns whether we have enough valid results in order to draw a
      * meaningful graph.
      *
-     * @param build
-     *            the build to look backward from
      * @return <code>true</code> if the results are valid in order to draw a
      *         graph
      */
-    public final boolean hasValidResults(final AbstractBuild<?, ?> build) {
+    public final boolean hasValidResults() {
+        AbstractBuild<?, ?> build = getLastFinishedBuild();
         if (build != null) {
             ResultAction<?> resultAction = build.getAction(resultActionType);
             if (resultAction != null) {
@@ -226,9 +228,9 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return the last finished build or <code>null</code> if there is no
      *         such build
      */
-    private AbstractBuild<?, ?> getLastFinishedBuild() {
+    public AbstractBuild<?, ?> getLastFinishedBuild() {
         AbstractBuild<?, ?> lastBuild = project.getLastBuild();
-        while (lastBuild != null && lastBuild.isBuilding()) {
+        while (lastBuild != null && (lastBuild.isBuilding() || lastBuild.getAction(resultActionType) == null)) {
             lastBuild = lastBuild.getPreviousBuild();
         }
         return lastBuild;
