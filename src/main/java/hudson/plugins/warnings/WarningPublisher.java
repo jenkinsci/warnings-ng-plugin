@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import org.kohsuke.stapler.DataBoundConstructor;
+
 /**
  * Publishes the results of the warnings analysis (freestyle project type).
  *
@@ -37,8 +39,8 @@ public class WarningPublisher extends HealthAwarePublisher {
      *            than this value
      * @param height
      *            the height of the trend graph
-     * @stapler-constructor
      */
+    @DataBoundConstructor
     public WarningPublisher(final String threshold, final String healthy, final String unHealthy, final String height) {
         super(threshold, healthy, unHealthy, height, "WARNINGS");
     }

@@ -3,8 +3,6 @@ package hudson.plugins.warnings;
 import hudson.model.AbstractProject;
 import hudson.plugins.warnings.util.PluginDescriptor;
 
-import org.kohsuke.stapler.StaplerRequest;
-
 /**
  * Descriptor for the class {@link WarningPublisher}. Used as a singleton. The
  * class is marked as public so that it can be accessed from views.
@@ -40,12 +38,6 @@ public final class WarningDescriptor extends PluginDescriptor {
     @Override
     public String getIconUrl() {
         return ACTION_ICON;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public WarningPublisher newInstance(final StaplerRequest request) throws FormException {
-        return request.bindParameters(WarningPublisher.class, PLUGIN_NAME + "_");
     }
 
     /** {@inheritDoc} */

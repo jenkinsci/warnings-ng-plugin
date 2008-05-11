@@ -2,7 +2,7 @@
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   <f:advanced>
 	<f:entry title="${%Unstable threshold}" description="${%description.threshold}">
-		<f:textbox name="warnings_threshold" value="${instance.threshold}"
+		<f:textbox name="warnings.threshold" value="${instance.threshold}"
 			checkUrl="'${rootURL}/publisher/WarningsPublisher/checkThreshold?job=${it.fullName}&amp;value='+escape(this.value)" />
 	</f:entry>
 	<f:entry title="${%Health reporting}" description="${%description.healthy}">
@@ -24,17 +24,17 @@
 				<tr>
 					<th>${%Number of warnings}</th>
 					<td>
-						<f:textbox name="warnings_healthy" value="${instance.healthy}" />
+						<f:textbox name="warnings.healthy" value="${instance.healthy}" />
 					</td>
 					<td>
-						<f:textbox name="warnings_unHealthy" value="${instance.unHealthy}" />
+						<f:textbox name="warnings.unHealthy" value="${instance.unHealthy}" />
 					</td>
 				</tr>
 			</tbody>
 		</table>
 	</f:entry>
 	<f:entry title="${%Trend report height}" description="${%description.height}">
-		<f:textbox name="warnings_height" value="${instance.height}" />
+		<f:textbox name="warnings.height" value="${instance.height}" />
 	</f:entry>
   </f:advanced>
 </j:jelly>
