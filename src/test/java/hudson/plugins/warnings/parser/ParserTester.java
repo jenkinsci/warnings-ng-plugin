@@ -6,7 +6,7 @@ import hudson.plugins.warnings.util.model.FileAnnotation;
 /**
  * Base class for parser tests. Provides an assertion test for warnings.
  */
-public abstract class ParserTest {
+public class ParserTester {
     /**
      * Checks the properties of the specified warning.
      *

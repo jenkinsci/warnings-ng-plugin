@@ -12,7 +12,7 @@ import org.junit.Test;
 /**
  * Tests the class {@link JavacParser}.
  */
-public class JavacParserTest extends ParserTest {
+public class JavacParserTest extends ParserTester {
     /**
      * Parses a file with two deprecation warnings.
      *

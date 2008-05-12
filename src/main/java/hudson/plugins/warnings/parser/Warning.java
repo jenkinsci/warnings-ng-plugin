@@ -37,7 +37,27 @@ public class Warning extends AbstractAnnotation {
      *            the message of the warning
      */
     public Warning(final String fileName, final int start, final String type, final String category, final String message) {
-        super(Priority.NORMAL, message, start, start);
+        this(fileName, start, type, category, message, Priority.NORMAL);
+    }
+
+    /**
+     * Creates a new instance of <code>Warning</code>.
+     *
+     * @param fileName
+     *            the name of the file
+     * @param start
+     *            the first line of the line range
+     * @param type
+     *            the identifier of the warning type
+     * @param category
+     *            the warning category
+     * @param message
+     *            the message of the warning
+     * @param priority
+     *            the priority of the warning
+     */
+    public Warning(final String fileName, final int start, final String type, final String category, final String message, final Priority priority) {
+        super(priority, message, start, start);
         this.type = type;
         this.category = category;
         setFileName(fileName);

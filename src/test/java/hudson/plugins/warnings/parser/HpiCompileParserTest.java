@@ -12,7 +12,7 @@ import org.junit.Test;
 /**
  * Tests the class {@link HpiCompileParser}.
  */
-public class HpiCompileParserTest extends ParserTest {
+public class HpiCompileParserTest extends ParserTester {
     /**
      * Parses a file with two deprecation warnings.
      *
