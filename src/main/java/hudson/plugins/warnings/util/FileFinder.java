@@ -39,6 +39,7 @@ public class FileFinder implements FileCallable<String[]> {
         this.pattern = pattern;
 
     }
+
     /**
      * Returns an array with the filenames of the specified file pattern that have been
      * found in the workspace.
@@ -50,6 +51,18 @@ public class FileFinder implements FileCallable<String[]> {
      * @return the filenames of all found files
      */
     public String[] invoke(final File workspace, final VirtualChannel channel) throws IOException {
+        return find(workspace);
+    }
+
+    /**
+     * Returns an array with the filenames of the specified file pattern that have been
+     * found in the workspace.
+     *
+     * @param workspace
+     *            root directory of the workspace
+     * @return the filenames of all found files
+     */
+    public String[] find(final File workspace)  {
         FileSet fileSet = new FileSet();
         Project antProject = new Project();
         fileSet.setProject(antProject);
