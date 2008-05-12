@@ -1,0 +1,377 @@
+started
+[workspace] $ mvn.bat clean compile -DeclipseTarget=C:/Build/Results/jobs/ADT-Base-Target/workspace/eclipse
+[INFO] Scanning for projects...
+[INFO] Reactor build order:
+[INFO]   Base Plug-ins of ADT
+[INFO]   Unnamed - com.avaloq.adt:com.avaloq.util:source-plugin:1.2.0-SNAPSHOT
+[INFO]   com.avaloq.adt.core
+[INFO]   com.avaloq.adt.ui
+[INFO]   Hudson Task Scanner Plug-in
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Base Plug-ins of ADT
+[INFO]    task-segment: [clean, compile]
+[INFO] ------------------------------------------------------------------------
+[INFO] [clean:clean]
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\target
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\target\classes
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\target\test-classes
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\target\site
+[INFO] [psteclipse:update {execution: update}]
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Unnamed - com.avaloq.adt:com.avaloq.util:source-plugin:1.2.0-SNAPSHOT
+[INFO]    task-segment: [clean, compile]
+[INFO] ------------------------------------------------------------------------
+[INFO] [clean:clean]
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.util\target
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.util\target\classes
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.util\target\test-classes
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.util\target\site
+[INFO] [cobertura:clean {execution: default}]
+[INFO] [resources:resources]
+[INFO] Using default encoding to copy filtered resources.
+[INFO] [psteclipse:update {execution: update}]
+[INFO] Defaulting prefixes to the single prefix 'com.avaloq.'.
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.junit.junit/3.8.2/org.junit.junit-3.8.2.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.junit.junit/3.8.2/org.junit.junit-3.8.2.pom
+[INFO] [compiler:compile]
+[INFO] Compiling 10 source files to C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.util\target\classes
+[INFO] ------------------------------------------------------------------------
+[INFO] Building com.avaloq.adt.core
+[INFO]    task-segment: [clean, compile]
+[INFO] ------------------------------------------------------------------------
+[INFO] [clean:clean]
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.core\target
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.core\target\classes
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.core\target\test-classes
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.core\target\site
+[INFO] [resources:resources]
+[INFO] Using default encoding to copy filtered resources.
+[INFO] [psteclipse:update {execution: update}]
+[INFO] Defaulting prefixes to the single prefix 'com.avaloq.'.
+[INFO] [compiler:compile]
+[INFO] Compiling 219 source files to C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.core\target\classes
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.core\src\com\avaloq\adt\env\core\db\SourceDBCore.java:[1756,28] [deprecation] getCharacterOutputStream() in oracle.sql.CLOB has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.core\src\com\avaloq\adt\core\model\AvaloqCore.java:[174,58] [deprecation] createPlatformResourceURI(java.lang.String) in org.eclipse.emf.common.util.URI has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.core\src\com\avaloq\adt\env\core\db\dbobjects\DBObjectService.java:[638,18] [deprecation] getAttributeValue(com.avaloq.adt.env.core.model.dbobjects.DBObject,java.lang.String) in com.avaloq.adt.env.core.db.dbobjects.IDBObjectService has been deprecated
+
+[INFO] ------------------------------------------------------------------------
+[INFO] Building com.avaloq.adt.ui
+[INFO]    task-segment: [clean, compile]
+[INFO] ------------------------------------------------------------------------
+[INFO] [clean:clean]
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\target
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\target\classes
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\target\test-classes
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\target\site
+[INFO] [resources:resources]
+[INFO] Using default encoding to copy filtered resources.
+[INFO] [psteclipse:update {execution: update}]
+[INFO] Defaulting prefixes to the single prefix 'com.avaloq.'.
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant/1.7.0/org.apache.ant-1.7.0.jar
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant/1.7.0/org.apache.ant-1.7.0.jar
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant/1.7.0/org.apache.ant.ant-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant/1.7.0/org.apache.ant.ant-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-antlr/1.7.0/org.apache.ant.ant-antlr-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-antlr/1.7.0/org.apache.ant.ant-antlr-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-apache-bcel/1.7.0/org.apache.ant.ant-apache-bcel-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-apache-bcel/1.7.0/org.apache.ant.ant-apache-bcel-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-apache-bsf/1.7.0/org.apache.ant.ant-apache-bsf-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-apache-bsf/1.7.0/org.apache.ant.ant-apache-bsf-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-apache-log4j/1.7.0/org.apache.ant.ant-apache-log4j-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-apache-log4j/1.7.0/org.apache.ant.ant-apache-log4j-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-apache-oro/1.7.0/org.apache.ant.ant-apache-oro-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-apache-oro/1.7.0/org.apache.ant.ant-apache-oro-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-apache-regexp/1.7.0/org.apache.ant.ant-apache-regexp-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-apache-regexp/1.7.0/org.apache.ant.ant-apache-regexp-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-apache-resolver/1.7.0/org.apache.ant.ant-apache-resolver-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-apache-resolver/1.7.0/org.apache.ant.ant-apache-resolver-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-commons-logging/1.7.0/org.apache.ant.ant-commons-logging-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-commons-logging/1.7.0/org.apache.ant.ant-commons-logging-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-commons-net/1.7.0/org.apache.ant.ant-commons-net-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-commons-net/1.7.0/org.apache.ant.ant-commons-net-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-jai/1.7.0/org.apache.ant.ant-jai-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-jai/1.7.0/org.apache.ant.ant-jai-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-javamail/1.7.0/org.apache.ant.ant-javamail-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-javamail/1.7.0/org.apache.ant.ant-javamail-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-jdepend/1.7.0/org.apache.ant.ant-jdepend-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-jdepend/1.7.0/org.apache.ant.ant-jdepend-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-jmf/1.7.0/org.apache.ant.ant-jmf-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-jmf/1.7.0/org.apache.ant.ant-jmf-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-jsch/1.7.0/org.apache.ant.ant-jsch-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-jsch/1.7.0/org.apache.ant.ant-jsch-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-junit/1.7.0/org.apache.ant.ant-junit-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-junit/1.7.0/org.apache.ant.ant-junit-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-launcher/1.7.0/org.apache.ant.ant-launcher-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-launcher/1.7.0/org.apache.ant.ant-launcher-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-netrexx/1.7.0/org.apache.ant.ant-netrexx-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-netrexx/1.7.0/org.apache.ant.ant-netrexx-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-nodeps/1.7.0/org.apache.ant.ant-nodeps-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-nodeps/1.7.0/org.apache.ant.ant-nodeps-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-starteam/1.7.0/org.apache.ant.ant-starteam-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-starteam/1.7.0/org.apache.ant.ant-starteam-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-stylebook/1.7.0/org.apache.ant.ant-stylebook-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-stylebook/1.7.0/org.apache.ant.ant-stylebook-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-swing/1.7.0/org.apache.ant.ant-swing-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-swing/1.7.0/org.apache.ant.ant-swing-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-trax/1.7.0/org.apache.ant.ant-trax-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-trax/1.7.0/org.apache.ant.ant-trax-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-weblogic/1.7.0/org.apache.ant.ant-weblogic-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-weblogic/1.7.0/org.apache.ant.ant-weblogic-1.7.0.pom
+[INFO] [compiler:compile]
+[INFO] Compiling 981 source files to C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\target\classes
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\sourcetypes\plsql\selectionactions\SelectionHistory.java:[15,30] [deprecation] org.eclipse.jface.util.Assert in org.eclipse.jface.util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[12,39] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[40,36] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\ExpressionContentAssist.java:[23,39] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\ExpressionContentAssist.java:[44,36] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\ExpressionContentAssist.java:[143,12] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\ExpressionContentAssist.java:[624,11] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\dialogs\DownloadFormContentAssistProcessor.java:[17,39] [deprecation] org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\dialogs\DownloadFormContentAssistProcessor.java:[33,16] [deprecation] org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\AvaloqImageDescriptorRegistry.java:[17,30] [deprecation] org.eclipse.jface.util.Assert in org.eclipse.jface.util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\views\issue\GatekeeperView.java:[29,33] [deprecation] org.eclipse.jface.viewers.TableTreeViewer in org.eclipse.jface.viewers has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\views\issue\GatekeeperView.java:[736,11] [deprecation] org.eclipse.jface.viewers.TableTreeViewer in org.eclipse.jface.viewers has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\EnvCompletionProcessor.java:[19,39] [deprecation] org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\EnvCompletionProcessor.java:[36,16] [deprecation] org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\sourcetypes\plsql\selectionactions\StructureSelectionAction.java:[20,30] [deprecation] org.eclipse.jface.util.Assert in org.eclipse.jface.util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\model\ChangeViewElementLabelDecorator.java:[20,53] [deprecation] com.avaloq.adt.ui.model.ChangeDBObjectLabelDecorator in com.avaloq.adt.ui.model has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\HistoryViewer.java:[46,30] [deprecation] org.eclipse.jface.util.Assert in org.eclipse.jface.util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\internal\editors\actions\CorrectIndentAction.java:[16,30] [deprecation] org.eclipse.jface.text.Assert in org.eclipse.jface.text has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\model\TaskViewElementLabelDecorator.java:[21,51] [deprecation] com.avaloq.adt.ui.model.TaskDBObjectLabelDecorator in com.avaloq.adt.ui.model has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\sourcetypes\plsql\selectionactions\StructureSelectHistoryAction.java:[13,30] [deprecation] org.eclipse.jface.util.Assert in org.eclipse.jface.util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\FixedTableTreeViewer.java:[12,33] [deprecation] org.eclipse.jface.viewers.TableTreeViewer in org.eclipse.jface.viewers has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\FixedTableTreeViewer.java:[13,30] [deprecation] org.eclipse.swt.custom.TableTree in org.eclipse.swt.custom has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\FixedTableTreeViewer.java:[24,42] [deprecation] org.eclipse.jface.viewers.TableTreeViewer in org.eclipse.jface.viewers has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\FixedTableTreeViewer.java:[32,42] [deprecation] org.eclipse.swt.custom.TableTree in org.eclipse.swt.custom has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\NullModificationValidator.java:[13,34] [deprecation] org.eclipse.core.resources.IFileModificationValidator in org.eclipse.core.resources has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\NullModificationValidator.java:[20,50] [deprecation] org.eclipse.core.resources.IFileModificationValidator in org.eclipse.core.resources has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\ui\spell\SpellAutoIndentStrategy.java:[13,30] [deprecation] org.eclipse.jface.text.DefaultAutoIndentStrategy in org.eclipse.jface.text has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\ui\spell\SpellAutoIndentStrategy.java:[19,45] [deprecation] org.eclipse.jface.text.DefaultAutoIndentStrategy in org.eclipse.jface.text has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\sourcetypes\scriptpkg\ProposalFactory.java:[24,34] [deprecation] com.avaloq.adt.ui.AvaloqPluginImages in com.avaloq.adt.ui has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\sourcetypes\scriptpkg\ProposalFactory.java:[23,53] [deprecation] com.avaloq.adt.ui.AvaloqPluginImages in com.avaloq.adt.ui has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\sourcetypes\scriptpkg\ProposalFactory.java:[26,34] [deprecation] com.avaloq.adt.ui.AvaloqPluginImages in com.avaloq.adt.ui has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\sourcetypes\scriptpkg\ProposalFactory.java:[25,54] [deprecation] com.avaloq.adt.ui.AvaloqPluginImages in com.avaloq.adt.ui has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\sourcetypes\scriptpkg\ProposalFactory.java:[28,34] [deprecation] com.avaloq.adt.ui.AvaloqPluginImages in com.avaloq.adt.ui has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\sourcetypes\scriptpkg\ProposalFactory.java:[27,55] [deprecation] com.avaloq.adt.ui.AvaloqPluginImages in com.avaloq.adt.ui has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\sourcetypes\scriptpkg\ProposalFactory.java:[30,34] [deprecation] com.avaloq.adt.ui.AvaloqPluginImages in com.avaloq.adt.ui has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\sourcetypes\scriptpkg\ProposalFactory.java:[29,51] [deprecation] com.avaloq.adt.ui.AvaloqPluginImages in com.avaloq.adt.ui has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\sourcetypes\scriptpkg\ProposalFactory.java:[32,34] [deprecation] com.avaloq.adt.ui.AvaloqPluginImages in com.avaloq.adt.ui has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\sourcetypes\scriptpkg\ProposalFactory.java:[31,47] [deprecation] com.avaloq.adt.ui.AvaloqPluginImages in com.avaloq.adt.ui has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\sourcetypes\plsql\selectionactions\SelectionHistory.java:[29,16] [deprecation] org.eclipse.jface.util.Assert in org.eclipse.jface.util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[162,16] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[162,20] [deprecation] runJob(org.eclipse.ui.IWorkbenchPartSite,com.avaloq.adt.core.job.AvaloqJob) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[256,16] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[256,63] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[268,16] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[268,47] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[301,16] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[301,63] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[313,16] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[313,47] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\dialogs\SelectSourceDialog.java:[333,26] [deprecation] com.avaloq.adt.ui.elements.table.AvaloqTable in com.avaloq.adt.ui.elements.table has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\dialogs\SelectSourceDialog.java:[361,61] [deprecation] getAllAttributeNames(com.avaloq.adt.env.core.model.dbobjects.DBObjectType) in com.avaloq.adt.env.core.db.dbobjects.IDBObjectService has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\dialogs\SelectSourceDialog.java:[391,16] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\dialogs\SelectSourceDialog.java:[391,20] [deprecation] runJob(org.eclipse.ui.IWorkbenchPartSite,com.avaloq.adt.core.job.AvaloqJob) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\dialogs\SelectSourceDialog.java:[399,30] [deprecation] com.avaloq.adt.ui.elements.table.AvaloqTable in com.avaloq.adt.ui.elements.table has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\dialogs\SelectSourceDialog.java:[803,8] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\dialogs\SelectSourceDialog.java:[803,12] [deprecation] runJob(org.eclipse.ui.IWorkbenchPartSite,com.avaloq.adt.core.job.AvaloqJob) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\dialogs\SelectSourceDialog.java:[867,62] [deprecation] getAttributeValue(com.avaloq.adt.env.core.model.dbobjects.DBObject,java.lang.String) in com.avaloq.adt.env.core.db.dbobjects.IDBObjectService has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\EnvTablePart.java:[557,12] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\EnvTablePart.java:[557,16] [deprecation] runJob(org.eclipse.ui.IWorkbenchPartSite,com.avaloq.adt.core.job.AvaloqJob) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\ExpressionContentAssist.java:[225,24] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\ExpressionContentAssist.java:[240,8] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\ExpressionContentAssist.java:[240,39] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\ExportMemorableAction.java:[71,24] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\ExportMemorableAction.java:[71,28] [deprecation] standardAvaloqExceptionHandle(com.avaloq.adt.core.AvaloqException) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\ui\editors\AvaloqEditor.java:[1002,16] [deprecation] gotoMarker(org.eclipse.core.resources.IMarker) in org.eclipse.ui.texteditor.AbstractDecoratedTextEditor has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\ui\editors\AvaloqEditor.java:[1005,17] [deprecation] gotoMarker(org.eclipse.core.resources.IMarker) in org.eclipse.ui.texteditor.AbstractDecoratedTextEditor has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\ui\editors\outline\SortAction.java:[30,35] [deprecation] com.avaloq.adt.ui.AvaloqPluginImages in com.avaloq.adt.ui has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\views\abbr\AbbreviationControl.java:[111,29] [deprecation] com.avaloq.adt.ui.elements.table.AvaloqTable in com.avaloq.adt.ui.elements.table has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\views\abbr\AbbreviationControl.java:[155,16] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\views\abbr\AbbreviationControl.java:[155,20] [deprecation] runJob(org.eclipse.ui.IWorkbenchPartSite,com.avaloq.adt.core.job.AvaloqJob) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\views\abbr\AbbreviationControl.java:[180,16] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\views\abbr\AbbreviationControl.java:[180,20] [deprecation] runJob(org.eclipse.ui.IWorkbenchPartSite,com.avaloq.adt.core.job.AvaloqJob) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\views\abbr\AbbreviationControl.java:[245,32] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\views\abbr\AbbreviationControl.java:[245,36] [deprecation] runJob(org.eclipse.ui.IWorkbenchPartSite,com.avaloq.adt.core.job.AvaloqJob) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\views\abbr\AbbreviationControl.java:[264,32] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\views\abbr\AbbreviationControl.java:[264,36] [deprecation] runJob(org.eclipse.ui.IWorkbenchPartSite,com.avaloq.adt.core.job.AvaloqJob) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\AvaloqSection.java:[89,75] [deprecation] TITLE in org.eclipse.ui.forms.FormColors has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\DocuPage.java:[151,30] [deprecation] setHelp(org.eclipse.swt.widgets.Composite,java.lang.String) in com.avaloq.adt.ui.AvaloqUIPlugin has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\StateSection.java:[156,24] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\StateSection.java:[156,28] [deprecation] standardAvaloqExceptionHandle(com.avaloq.adt.core.AvaloqException) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\StateSection.java:[176,12] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\StateSection.java:[176,16] [deprecation] runJob(org.eclipse.ui.IWorkbenchPartSite,com.avaloq.adt.core.job.AvaloqJob) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\DocuFormsEditor.java:[143,40] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\DocuFormsEditor.java:[143,44] [deprecation] standardAvaloqExceptionHandle(com.avaloq.adt.core.AvaloqException) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\DocuFormsEditor.java:[177,16] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\DocuFormsEditor.java:[177,20] [deprecation] runJob(org.eclipse.ui.IWorkbenchPartSite,com.avaloq.adt.core.job.AvaloqJob) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\DocuFormsEditor.java:[222,24] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\DocuFormsEditor.java:[222,28] [deprecation] standardAvaloqExceptionHandle(com.avaloq.adt.core.AvaloqException) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\DocuFormsEditor.java:[302,24] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\DocuFormsEditor.java:[302,28] [deprecation] runJob(org.eclipse.ui.IWorkbenchPartSite,com.avaloq.adt.core.job.AvaloqJob) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\DocuFormsEditor.java:[348,16] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\DocuFormsEditor.java:[348,20] [deprecation] runJob(org.eclipse.ui.IWorkbenchPartSite,com.avaloq.adt.core.job.AvaloqJob) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\DocuFormsEditor.java:[472,24] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\DocuFormsEditor.java:[472,28] [deprecation] runJob(org.eclipse.ui.IWorkbenchPartSite,com.avaloq.adt.core.job.AvaloqJob) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\DocuFormsEditor.java:[477,32] [deprecation] com.avaloq.adt.ui.elements.Util in com.avaloq.adt.ui.elements has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\docu\form\DocuFormsEditor.java:[477,36] [deprecation] standardAvaloqExceptionHandle(com.avaloq.adt.core.AvaloqException) in com.avaloq.adt.ui.elements.Util has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\ui\spell\SpellSourceViewer.java:[105,52] [deprecation] getKeyBindingService() in org.eclipse.ui.IWorkbenchPartSite has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\ui\spell\SpellSourceViewer.java:[190,20] [deprecation] getKeyBindingService() in org.eclipse.ui.IWorkbenchPartSite has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\compare\AvaloqCompareElement.java:[56,51] [deprecation] com.avaloq.adt.ui.AvaloqPluginImages in com.avaloq.adt.ui has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\compare\AvaloqCompareElement.java:[56,23] [deprecation] com.avaloq.adt.ui.AvaloqPluginImages in com.avaloq.adt.ui has been deprecated
+
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Hudson Task Scanner Plug-in
+[INFO]    task-segment: [clean, compile]
+[INFO] ------------------------------------------------------------------------
+[INFO] [clean:clean]
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\tasks\target
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\tasks\target\classes
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\tasks\target\test-classes
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\tasks\target\site
+[INFO] [enforcer:display-info {execution: default}]
+[INFO] Maven Version: 2.0.8
+[INFO] JDK Version: 1.5.0_11 normalized as: 1.5.0-11
+[INFO] OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
+[INFO] [localizer:generate {execution: default}]
+[INFO] [resources:resources]
+[INFO] Using default encoding to copy filtered resources.
+[INFO] [hpi:apt-compile]
+[INFO] Compiling 65 source files to C:\Build\Results\jobs\ADT-Base\workspace\tasks\target\classes
+Note: Generating hudson\plugins\tasks\TasksPublisher.stapler
+Note: Generating hudson\plugins\tasks\TasksReporter.stapler
+C:\Build\Results\jobs\ADT-Base\workspace\tasks\src\main\java\hudson\plugins\tasks\TasksDescriptor.java:46: warning: [deprecation] newInstance(org.kohsuke.stapler.StaplerRequest) in hudson.model.Descriptor has been deprecated
+    public TasksPublisher newInstance(final StaplerRequest request) throws FormException {
+                          ^
+C:\Build\Results\jobs\ADT-Base\workspace\tasks\src\main\java\hudson\plugins\tasks\TasksReporterDescriptor.java:34: warning: [deprecation] newInstance(org.kohsuke.stapler.StaplerRequest) in hudson.model.Descriptor has been deprecated
+    public MavenReporter newInstance(final StaplerRequest request) throws FormException {
+                         ^
+2 warnings
+[INFO]
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] ------------------------------------------------------------------------
+[INFO] Base Plug-ins of ADT .................................. SUCCESS [1.359s]
+[INFO] Unnamed - com.avaloq.adt:com.avaloq.util:source-plugin:1.2.0-SNAPSHOT  SUCCESS [6.078s]
+[INFO] com.avaloq.adt.core ................................... SUCCESS [19.032s]
+[INFO] com.avaloq.adt.ui ..................................... SUCCESS [1:01.656s]
+[INFO] Hudson Task Scanner Plug-in ........................... SUCCESS [15.094s]
+[INFO] ------------------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1 minute 44 seconds
+[INFO] Finished at: Sun May 11 16:14:37 CEST 2008
+[INFO] Final Memory: 24M/88M
+[INFO] ------------------------------------------------------------------------
+[FINDBUGS] Collecting findbugs analysis files...
+[FINDBUGS] No annotations have been found.
+[PMD] Collecting pmd analysis files...
+[PMD] No annotations have been found.
+[TASKS] Scanning workspace files for tasks...
+[TASKS] A total of 555 annotations have been found.
+[WARNINGS] Parsing warnings of log file...
+[WARNINGS] A total of 105 annotations have been found.
+finished: SUCCESS

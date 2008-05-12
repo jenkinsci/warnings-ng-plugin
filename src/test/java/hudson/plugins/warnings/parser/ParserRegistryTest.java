@@ -28,7 +28,7 @@ public class ParserRegistryTest {
             /** {@inheritDoc} */
             @Override
             protected InputStream createInputStream(final File file) throws FileNotFoundException {
-                return ParserRegistryTest.class.getResourceAsStream("all.log");
+                return ParserRegistryTest.class.getResourceAsStream("all.txt");
             }
         };
 

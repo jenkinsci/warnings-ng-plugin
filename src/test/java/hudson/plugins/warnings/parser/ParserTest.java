@@ -3,8 +3,6 @@ package hudson.plugins.warnings.parser;
 import static junit.framework.Assert.*;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 
-import java.io.BufferedInputStream;
-
 /**
  * Base class for parser tests. Provides an assertion test for warnings.
  */
@@ -26,16 +24,7 @@ public abstract class ParserTest {
         assertEquals("Wrong number of ranges detected.", 1, warning.getLineRanges().size());
         assertEquals("Wrong ranges start detected.", lineNumber, warning.getLineRanges().iterator().next().getStart());
         assertEquals("Wrong ranges end detected.", lineNumber, warning.getLineRanges().iterator().next().getEnd());
-        assertTrue("Wrong message detected.", warning.getMessage().equals(message));
-        assertTrue("Wrong filename detected.", warning.getFileName().equals(fileName));
-    }
-
-    /**
-     * Returns a buffered input stream for the specified file name.
-     * @param fileName the file to read
-     * @return buffered input stream
-     */
-    protected BufferedInputStream getStream(final String fileName) {
-        return new BufferedInputStream(ParserTest.class.getResourceAsStream(fileName));
+        assertEquals("Wrong message detected.", message, warning.getMessage());
+        assertEquals("Wrong filename detected.", fileName, warning.getFileName());
     }
 }

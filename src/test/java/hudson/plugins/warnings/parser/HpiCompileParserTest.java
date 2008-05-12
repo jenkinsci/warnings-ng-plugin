@@ -21,22 +21,22 @@ public class HpiCompileParserTest extends ParserTest {
      */
     @Test
     public void parseDeprecation() throws IOException {
-        Collection<FileAnnotation> warnings = new HpiCompileParser().parse(getStream("hpi.log"));
+        Collection<FileAnnotation> warnings = new HpiCompileParser().parse(HpiCompileParserTest.class.getResourceAsStream("hpi.txt"));
 
         assertEquals("Wrong number of warnings detected.", 2, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation,
-                42,
+                46,
                 "newInstance(org.kohsuke.stapler.StaplerRequest) in hudson.model.Descriptor has been deprecated",
-                "C:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/TasksReporterDescriptor.java",
+                "C:/Build/Results/jobs/ADT-Base/workspace/tasks/src/main/java/hudson/plugins/tasks/TasksDescriptor.java",
                 HpiCompileParser.WARNING_TYPE);
         annotation = iterator.next();
         checkWarning(annotation,
-                47,
+                34,
                 "newInstance(org.kohsuke.stapler.StaplerRequest) in hudson.model.Descriptor has been deprecated",
-                "C:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/TasksDescriptor.java",
+                "C:/Build/Results/jobs/ADT-Base/workspace/tasks/src/main/java/hudson/plugins/tasks/TasksReporterDescriptor.java",
                 HpiCompileParser.WARNING_TYPE);
     }
 }
