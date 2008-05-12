@@ -1,7 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.plugins.warnings.util.model.FileAnnotation;
-
 import java.util.regex.Matcher;
 
 /**
@@ -24,7 +22,7 @@ public class HpiCompileParser extends RegexpParser {
 
     /** {@inheritDoc} */
     @Override
-    protected FileAnnotation createWarning(final Matcher matcher) {
+    protected Warning createWarning(final Matcher matcher) {
         return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE, matcher.group(3), matcher.group(4));
     }
 }

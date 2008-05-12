@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.plugins.warnings.util.JavaPackageDetector;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 
 import java.io.IOException;
@@ -45,7 +46,10 @@ public abstract class RegexpParser implements AnnotationParser {
             String line = iterator.nextLine();
             Matcher matcher = pattern.matcher(line);
             if (matcher.matches()) {
-                warnings.add(createWarning(matcher));
+                Warning warning = createWarning(matcher);
+                String packageName = new JavaPackageDetector().detectPackageName(warning.getFileName());
+                warning.setPackageName(packageName);
+                warnings.add(warning);
             }
         }
 
@@ -58,7 +62,7 @@ public abstract class RegexpParser implements AnnotationParser {
      * @param matcher the regular expression matcher
      * @return a new annotation for the specified pattern
      */
-    protected abstract FileAnnotation createWarning(final Matcher matcher);
+    protected abstract Warning createWarning(final Matcher matcher);
 
     /**
      * Converts a string line number to an integer value. If the string is not a valid line number,

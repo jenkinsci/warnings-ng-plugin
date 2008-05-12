@@ -111,7 +111,7 @@ public class MavenModule extends AnnotationContainer {
     @Override
     public WorkspaceFile getFile(final String fileName) {
         if (packageMapping.size() != 1) {
-            throw new IllegalArgumentException("Number of modules != 1");
+            throw new IllegalArgumentException("Number of packages != 1");
         }
         return packageMapping.values().iterator().next().getFile(fileName);
     }
