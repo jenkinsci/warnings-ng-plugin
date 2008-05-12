@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
@@ -12,11 +13,19 @@
   <name>Hudson Warnings Plug-in</name>
   <version>1.0-SNAPSHOT</version>
   <url>http://hudson.gotdns.com/wiki/display/HUDSON/Warnings+Plugin</url>
-  <description>This plug-in reads the compiler warnings from the console log file and generates a trend report.</description>
+  <description>This plug-in reads the compiler warnings from the
+    console log file and generates a trend report.</description>
 
   <licenses>
-  	<license><name>MIT license</name><comments>All source code is under the MIT license.</comments></license>
-  	<license><name>LGPL</name><comments>All icons are made by Carlitus (Carles Carbonell Bernado) and are under the LGPL.</comments></license>
+    <license>
+      <name>MIT license</name>
+      <comments>All source code is under the MIT license.</comments>
+    </license>
+    <license>
+      <name>LGPL</name>
+      <comments>All icons are made by Carlitus (Carles Carbonell
+        Bernado) and are under the LGPL.</comments>
+    </license>
   </licenses>
 
   <dependencies>
@@ -61,13 +70,21 @@
   </dependencies>
 
   <build>
-     <plugins>
-    	<plugin>
-    	    <groupId>org.kohsuke.stapler</groupId>
-    	    <artifactId>maven-stapler-plugin</artifactId>
-    	    <extensions>true</extensions>
-    	</plugin>
-     </plugins>
+    <plugins>
+      <plugin>
+        <groupId>org.kohsuke.stapler</groupId>
+        <artifactId>maven-stapler-plugin</artifactId>
+        <extensions>true</extensions>
+      </plugin>
+      <plugin>
+        <groupId>org.jvnet.hudson.tools</groupId>
+        <artifactId>maven-hpi-plugin</artifactId>
+        <configuration>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
   <repositories>
@@ -83,5 +100,44 @@
       </snapshots>
     </repository>
   </repositories>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>4.3</version>
+        <configuration>
+          <rulesets>
+            <ruleset>${project.artifactId}/.ruleset</ruleset>
+          </rulesets>
+          <targetJdk>1.5</targetJdk>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>1.2</version>
+        <configuration>
+          <xmlOutput>true</xmlOutput>
+          <findbugsXmlOutput>true</findbugsXmlOutput>
+          <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+          <threshold>Low</threshold>
+          <effort>Max</effort>
+          <debug>false</debug>
+          <relaxed>false</relaxed>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+          <configLocation>${project.artifactId}/checkstyle-configuration.xml
+          </configLocation>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 
 </project>
