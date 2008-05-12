@@ -1,7 +1,5 @@
 package hudson.plugins.warnings.util;
 
-import hudson.plugins.warnings.util.Messages;
-
 import org.jfree.data.category.CategoryDataset;
 
 /**

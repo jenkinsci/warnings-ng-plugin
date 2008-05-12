@@ -1,4 +1,4 @@
-package hudson.plugins.warnings;
+package hudson.plugins.warnings; // NOPMD
 
 import hudson.XmlFile;
 import hudson.model.AbstractBuild;
@@ -49,6 +49,8 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  *
  * @author Ulli Hafner
  */
+//CHECKSTYLE:COUPLING-OFF
+@SuppressWarnings("PMD.TooManyFields")
 public class WarningsResult implements ModelObject, Serializable, AnnotationProvider {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = 2768250056765266658L;
