@@ -21,9 +21,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
  *
  * @author Ulli Hafner
  */
-public class WarningPublisher extends HealthAwarePublisher {
+public class WarningsPublisher extends HealthAwarePublisher {
     /** Descriptor of this publisher. */
-    public static final WarningDescriptor WARNINGS_DESCRIPTOR = new WarningDescriptor();
+    public static final WarningsDescriptor WARNINGS_DESCRIPTOR = new WarningsDescriptor();
 
     /**
      * Creates a new instance of <code>WarningPublisher</code>.
@@ -41,7 +41,7 @@ public class WarningPublisher extends HealthAwarePublisher {
      *            the height of the trend graph
      */
     @DataBoundConstructor
-    public WarningPublisher(final String threshold, final String healthy, final String unHealthy, final String height) {
+    public WarningsPublisher(final String threshold, final String healthy, final String unHealthy, final String height) {
         super(threshold, healthy, unHealthy, height, "WARNINGS");
     }
 

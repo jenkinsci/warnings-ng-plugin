@@ -13,6 +13,6 @@ public class WarningsPlugin extends Plugin {
     @Override
     @SuppressWarnings("PMD")
     public void start() throws Exception {
-        BuildStep.PUBLISHERS.addRecorder(WarningPublisher.WARNINGS_DESCRIPTOR);
+        BuildStep.PUBLISHERS.addRecorder(WarningsPublisher.WARNINGS_DESCRIPTOR);
     }
 }

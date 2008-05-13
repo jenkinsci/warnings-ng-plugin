@@ -4,12 +4,12 @@ import hudson.model.AbstractProject;
 import hudson.plugins.warnings.util.PluginDescriptor;
 
 /**
- * Descriptor for the class {@link WarningPublisher}. Used as a singleton. The
+ * Descriptor for the class {@link WarningsPublisher}. Used as a singleton. The
  * class is marked as public so that it can be accessed from views.
  *
  * @author Ulli Hafner
  */
-public final class WarningDescriptor extends PluginDescriptor {
+public final class WarningsDescriptor extends PluginDescriptor {
     /** Plug-in name. */
     private static final String PLUGIN_NAME = "warnings";
     /** Icon to use for the result and project action. */
@@ -18,8 +18,8 @@ public final class WarningDescriptor extends PluginDescriptor {
     /**
      * Instantiates a new find bugs descriptor.
      */
-    WarningDescriptor() {
-        super(WarningPublisher.class);
+    WarningsDescriptor() {
+        super(WarningsPublisher.class);
     }
 
     /** {@inheritDoc} */

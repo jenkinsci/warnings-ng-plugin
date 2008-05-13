@@ -23,7 +23,7 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
      *            the height of the trend graph
      */
     public WarningsProjectAction(final AbstractProject<?, ?> project, final int height) {
-        super(project, WarningsResultAction.class, WarningPublisher.WARNINGS_DESCRIPTOR, height);
+        super(project, WarningsResultAction.class, WarningsPublisher.WARNINGS_DESCRIPTOR, height);
     }
 
     /** {@inheritDoc} */
