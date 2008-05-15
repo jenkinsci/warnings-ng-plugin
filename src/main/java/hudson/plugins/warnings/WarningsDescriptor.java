@@ -2,6 +2,9 @@ package hudson.plugins.warnings;
 
 import hudson.model.AbstractProject;
 import hudson.plugins.warnings.util.PluginDescriptor;
+import net.sf.json.JSONObject;
+
+import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * Descriptor for the class {@link WarningsPublisher}. Used as a singleton. The
@@ -45,5 +48,11 @@ public final class WarningsDescriptor extends PluginDescriptor {
     @Override
     public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
         return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public WarningsPublisher newInstance(final StaplerRequest request, final JSONObject formData) throws FormException {
+        return request.bindParameters(WarningsPublisher.class, PLUGIN_NAME + ".");
     }
 }
