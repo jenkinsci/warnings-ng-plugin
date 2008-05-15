@@ -26,6 +26,7 @@ public class ParserRegistry {
     public ParserRegistry() {
         parsers.add(new HpiCompileParser());
         parsers.add(new JavacParser());
+        parsers.add(new MsBuildParser());
     }
 
     /**
