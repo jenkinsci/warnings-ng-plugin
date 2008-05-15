@@ -58,8 +58,8 @@ public class Warning extends AbstractAnnotation {
      */
     public Warning(final String fileName, final int start, final String type, final String category, final String message, final Priority priority) {
         super(priority, message, start, start);
-        this.type = type;
-        this.category = category;
+        this.type = StringUtils.strip(type);
+        this.category = StringUtils.strip(category);
         setFileName(fileName);
     }
 

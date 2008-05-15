@@ -2,6 +2,7 @@ package hudson.plugins.warnings.parser;
 
 import static junit.framework.Assert.*;
 import hudson.plugins.warnings.util.model.FileAnnotation;
+import hudson.plugins.warnings.util.model.Priority;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -31,13 +32,13 @@ public class HpiCompileParserTest extends ParserTester {
                 46,
                 "newInstance(org.kohsuke.stapler.StaplerRequest) in hudson.model.Descriptor has been deprecated",
                 "C:/Build/Results/jobs/ADT-Base/workspace/tasks/src/main/java/hudson/plugins/tasks/TasksDescriptor.java",
-                HpiCompileParser.WARNING_TYPE);
+                HpiCompileParser.WARNING_TYPE, "deprecation", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 34,
                 "newInstance(org.kohsuke.stapler.StaplerRequest) in hudson.model.Descriptor has been deprecated",
                 "C:/Build/Results/jobs/ADT-Base/workspace/tasks/src/main/java/hudson/plugins/tasks/TasksReporterDescriptor.java",
-                HpiCompileParser.WARNING_TYPE);
+                HpiCompileParser.WARNING_TYPE, "deprecation", Priority.NORMAL);
     }
 }
 
