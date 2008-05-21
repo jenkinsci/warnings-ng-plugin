@@ -375,3 +375,6 @@ C:\Build\Results\jobs\ADT-Base\workspace\tasks\src\main\java\hudson\plugins\task
 [WARNINGS] Parsing warnings of log file...
 [WARNINGS] A total of 105 annotations have been found.
 finished: SUCCESS
+
+    [javac] C:\Users\tiliven\.hudson\jobs\Hello THS Trunk - compile\workspace\HelloTHSTest\src\ths\Hallo.java:28: warning: begrussen() in ths.types.IGruss has been deprecated
+
