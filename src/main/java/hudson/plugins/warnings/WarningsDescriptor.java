@@ -53,6 +53,6 @@ public final class WarningsDescriptor extends PluginDescriptor {
     /** {@inheritDoc} */
     @Override
     public WarningsPublisher newInstance(final StaplerRequest request, final JSONObject formData) throws FormException {
-        return request.bindParameters(WarningsPublisher.class, PLUGIN_NAME + ".");
+        return request.bindJSON(WarningsPublisher.class, formData);
     }
 }
