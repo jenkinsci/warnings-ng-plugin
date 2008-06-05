@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.util.model;
 
+
 import hudson.plugins.warnings.util.Messages;
 
 import java.io.Serializable;
@@ -22,27 +23,69 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  *
  * @author Ulli Hafner
  */
-public class AnnotationContainer implements AnnotationProvider, Serializable {
+public abstract class AnnotationContainer implements AnnotationProvider, Serializable {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = 855696821788264261L;
+    /** The hierarchy of a container. */
+    public enum Hierarchy {
+        /** Project level. */
+        PROJECT,
+        /** Module level. */
+        MODULE,
+        /** Package level. */
+        PACKAGE,
+        /** File level. */
+        FILE}
 
     /** The annotations mapped by their key. */
     @SuppressWarnings("Se")
     private final Map<Long, FileAnnotation> annotations = new HashMap<Long, FileAnnotation>();
     /** The annotations mapped by priority. */
     private transient Map<Priority, Set<FileAnnotation>> annotationsByPriority;
-    /** Determines whether to build up a set of {@link WorkspaceFile}s. */
-    private boolean handleFiles;
     /** The files that contain annotations mapped by file name. */
     private transient Map<String, WorkspaceFile> filesByName;
+    /** The files that contain annotations mapped by file name. */
+    private transient Map<String, JavaPackage> packagesByName;
+    /** The files that contain annotations mapped by file name. */
+    private transient Map<String, MavenModule> modulesByName;
+
+    /** Determines whether to build up a set of {@link WorkspaceFile}s. */
+    @java.lang.SuppressWarnings("unused")
+    private boolean handleFiles; // backward compatibility
+
     /** Name of this container. */
     private String name;
+    /** Hierarchy level of this container. */
+    private Hierarchy hierarchy;
 
     /**
      * Creates a new instance of <code>AnnotationContainer</code>.
+     *
+     * @param hierarchy the hierarchy of this container
      */
-    public AnnotationContainer() {
-        this(false, StringUtils.EMPTY);
+    public AnnotationContainer(final Hierarchy hierarchy) {
+        this(StringUtils.EMPTY, hierarchy);
+    }
+
+    /**
+     * Creates a new instance of <code>AnnotationContainer</code>.
+     *
+     * @param name the name of this container
+     * @param hierarchy the hierarchy of this container
+     */
+    protected AnnotationContainer(final String name, final Hierarchy hierarchy) {
+        initialize();
+        this.name = name;
+        this.hierarchy = hierarchy;
+    }
+
+    /**
+     * Sets the hierarchy to the specified value.
+     *
+     * @param hierarchy the value to set
+     */
+    protected void setHierarchy(final Hierarchy hierarchy) {
+        this.hierarchy = hierarchy;
     }
 
     /**
@@ -64,42 +107,16 @@ public class AnnotationContainer implements AnnotationProvider, Serializable {
     }
 
     /**
-     * Creates a new instance of <code>AnnotationContainer</code>.
-     *
-     * @param handleFiles
-     *            determines whether to build up a set of {@link WorkspaceFile}s.
-     *            If set to <code>true</code> then this container will
-     *            automatically build up a workspace file mapping that could be
-     *            used by clients of this class. Set this value to
-     *            <code>false</code> if your subclass already has such a
-     *            mapping or provides a faster implementation of the associated
-     *            methods {@link #getFiles()} and {@link #getFile(String)}.
-     * @param name the name of this container
+     * Initializes the transient mappings.
      */
-    protected AnnotationContainer(final boolean handleFiles, final String name) {
-        initialize(handleFiles);
-        this.name = name;
-    }
-
-    /**
-     * Initializes the priorities maps and the filename to file mapping.
-     *
-     * @param handleFilesByContainer
-     *            determines whether to build up a set of {@link WorkspaceFile}s.
-     *            If set to <code>true</code> then this container will
-     *            automatically build up a workspace file mapping that could be
-     *            used by clients of this class. Set this value to
-     *            <code>false</code> if your subclass already has such a
-     *            mapping or provides a faster implementation of the associated
-     *            methods {@link #getFiles()} and {@link #getFile(String)}.
-     */
-    private void initialize(final boolean handleFilesByContainer) {
+    private void initialize() {
         annotationsByPriority = new EnumMap<Priority, Set<FileAnnotation>>(Priority.class);
         for (Priority priority : Priority.values()) {
             annotationsByPriority.put(priority, new HashSet<FileAnnotation>());
         }
         filesByName = new HashMap<String, WorkspaceFile>();
-        handleFiles = handleFilesByContainer;
+        packagesByName = new HashMap<String, JavaPackage>();
+        modulesByName = new HashMap<String, MavenModule>();
     }
 
     /**
@@ -108,30 +125,66 @@ public class AnnotationContainer implements AnnotationProvider, Serializable {
      * @return the created object
      */
     private Object readResolve() {
-        rebuildMappings(handleFiles);
+        rebuildMappings();
         return this;
     }
 
     /**
      * Rebuilds the priorities and files after deserialization.
-     *
-     * @param handleFilesByContainer
-     *            determines whether to build up a set of {@link WorkspaceFile}s.
-     *            If set to <code>true</code> then this container will
-     *            automatically build up a workspace file mapping that could be
-     *            used by clients of this class. Set this value to
-     *            <code>false</code> if your subclass already has such a
-     *            mapping or provides a faster implementation of the associated
-     *            methods {@link #getFiles()} and {@link #getFile(String)}.
      */
-    protected void rebuildMappings(final boolean handleFilesByContainer) {
-        initialize(handleFilesByContainer);
+    protected void rebuildMappings() {
+        initialize();
         for (FileAnnotation annotation : getAnnotations()) {
-            annotationsByPriority.get(annotation.getPriority()).add(annotation);
-            if (handleFilesByContainer) {
-                addFile(annotation);
-            }
+            updateMappings(annotation);
         }
+    }
+
+    /**
+     * Updates the annotation drill-down mappings (priority, packages, files) with the specified annotation.
+     *
+     * @param annotation the new annotation
+     */
+    private void updateMappings(final FileAnnotation annotation) {
+        annotationsByPriority.get(annotation.getPriority()).add(annotation);
+        if (hierarchy == Hierarchy.PROJECT) {
+            addModule(annotation);
+        }
+        if (hierarchy == Hierarchy.PROJECT || hierarchy == Hierarchy.MODULE) {
+            addPackage(annotation);
+        }
+        if (hierarchy == Hierarchy.PROJECT || hierarchy == Hierarchy.MODULE || hierarchy == Hierarchy.PACKAGE) {
+            addFile(annotation);
+        }
+    }
+
+    /**
+     * Adds a new module to this container that will contain the specified
+     * annotation. If the module already exists, then the annotation is only added
+     * to this module.
+     *
+     * @param annotation the new annotation
+     */
+    private void addModule(final FileAnnotation annotation) {
+        String moduleName = annotation.getModuleName();
+        if (!modulesByName.containsKey(moduleName)) {
+            modulesByName.put(moduleName, new MavenModule(moduleName));
+        }
+        modulesByName.get(moduleName).addAnnotation(annotation);
+    }
+
+    /**
+     * Adds a new package to this container that will contain the specified
+     * annotation. If the package already exists, then the annotation is only added
+     * to this package.
+     *
+     * @param annotation the new annotation
+     */
+    private void addPackage(final FileAnnotation annotation) {
+        String packageName = annotation.getPackageName();
+        if (!packagesByName.containsKey(packageName)) {
+            packagesByName.put(packageName, new JavaPackage(packageName));
+        }
+        packagesByName.get(packageName).addAnnotation(annotation);
     }
 
     /**
@@ -141,7 +194,7 @@ public class AnnotationContainer implements AnnotationProvider, Serializable {
      *
      * @param annotation the new annotation
      */
-    protected final void addFile(final FileAnnotation annotation) {
+    private void addFile(final FileAnnotation annotation) {
         String fileName = annotation.getFileName();
         if (!filesByName.containsKey(fileName)) {
             filesByName.put(fileName, new WorkspaceFile(fileName));
@@ -152,20 +205,17 @@ public class AnnotationContainer implements AnnotationProvider, Serializable {
     /**
      * Adds the specified annotation to this container.
      *
-     * @param annotation
-     *            the annotation to add
+     * @param annotation the annotation to add
      */
     public final void addAnnotation(final FileAnnotation annotation) {
         annotations.put(annotation.getKey(), annotation);
-        annotationsByPriority.get(annotation.getPriority()).add(annotation);
-        annotationAdded(annotation);
+        updateMappings(annotation);
     }
 
     /**
      * Adds the specified annotations to this container.
      *
-     * @param newAnnotations
-     *            the annotations to add
+     * @param newAnnotations the annotations to add
      */
     public final void addAnnotations(final Collection<? extends FileAnnotation> newAnnotations) {
         for (FileAnnotation annotation : newAnnotations) {
@@ -176,24 +226,10 @@ public class AnnotationContainer implements AnnotationProvider, Serializable {
     /**
      * Adds the specified annotations to this container.
      *
-     * @param newAnnotations
-     *            the annotations to add
+     * @param newAnnotations the annotations to add
      */
     public final void addAnnotations(final FileAnnotation[] newAnnotations) {
         addAnnotations(Arrays.asList(newAnnotations));
-    }
-
-    /**
-     * Called if the specified annotation has been added to this container.
-     * Subclasses may override this default empty implementation.
-     *
-     * @param annotation
-     *            the added annotation
-     */
-    protected void annotationAdded(final FileAnnotation annotation) {
-        if (handleFiles) {
-            addFile(annotation);
-        }
     }
 
     /** {@inheritDoc} */
@@ -214,8 +250,8 @@ public class AnnotationContainer implements AnnotationProvider, Serializable {
     /**
      * Converts a String priority to an actual enumeration value.
      *
-     * @param priority
-     *            priority as a String
+     * @param priority priority as a String
+     *
      * @return enumeration value.
      */
     private Priority getPriority(final String priority) {
@@ -302,32 +338,128 @@ public class AnnotationContainer implements AnnotationProvider, Serializable {
     }
 
     /**
+     * Gets the modules of this container that have annotations.
+     *
+     * @return the modules with annotations
+     */
+    public Collection<MavenModule> getModules() {
+        return Collections.unmodifiableCollection(modulesByName.values());
+    }
+
+    /**
+     * Returns whether the maven module with the given name exists.
+     *
+     * @param moduleName the module to check for
+     *
+     * @return <code>true</code> if the maven module with the given name
+     * exists, <code>false</code> otherwise
+     */
+    public boolean containsModule(final String moduleName) {
+        return modulesByName.get(moduleName) != null;
+    }
+
+    /**
+     * Gets the module with the given name.
+     *
+     * @param moduleName the name of the module
+     *
+     * @return the module with the given name
+     */
+    public MavenModule getModule(final String moduleName) {
+        if (modulesByName.containsKey(moduleName)) {
+            return modulesByName.get(moduleName);
+        }
+        throw new NoSuchElementException("Module not found: " + moduleName);
+    }
+
+    /**
+     * Gets the packages of this container that have annotations.
+     *
+     * @return the packages with annotations
+     */
+    public Collection<JavaPackage> getPackages() {
+        return Collections.unmodifiableCollection(packagesByName.values());
+    }
+
+    /**
+     * Returns whether the package with the given name exists.
+     *
+     * @param packageName the package to check for
+     *
+     * @return <code>true</code> if the package with the given name
+     * exists, <code>false</code> otherwise
+     */
+    public boolean containsPackage(final String packageName) {
+        return packagesByName.get(packageName) != null;
+    }
+
+    /**
+     * Gets the package with the given name.
+     *
+     * @param packageName the name of the package
+     *
+     * @return the file with the given name
+     */
+    public JavaPackage getPackage(final String packageName) {
+        if (packagesByName.containsKey(packageName)) {
+            return packagesByName.get(packageName);
+        }
+        throw new NoSuchElementException("Package not found: " + packageName);
+    }
+
+    /**
      * Gets the files of this container that have annotations.
      *
      * @return the files with annotations
      */
-    @java.lang.SuppressWarnings("unchecked")
     public Collection<WorkspaceFile> getFiles() {
-        if (handleFiles) {
-            return Collections.unmodifiableCollection(filesByName.values());
-        }
-        else {
-            return Collections.EMPTY_LIST;
-        }
+        return Collections.unmodifiableCollection(filesByName.values());
+    }
+
+    /**
+     * Returns whether the file with the given name exists.
+     *
+     * @param fileName the file to check for
+     *
+     * @return <code>true</code> if the file module with the given name
+     * exists, <code>false</code> otherwise
+     */
+    public boolean containsFile(final String fileName) {
+        return filesByName.get(fileName) != null;
     }
 
     /**
      * Gets the file with the given name.
      *
-     * @param fileName
-     *            the short name of the file
+     * @param fileName the short name of the file
+     *
      * @return the file with the given name
      */
     public WorkspaceFile getFile(final String fileName) {
-        if (handleFiles && filesByName.containsKey(fileName)) {
+        if (filesByName.containsKey(fileName)) {
             return filesByName.get(fileName);
         }
         throw new NoSuchElementException("File not found: " + fileName);
     }
-}
 
+    /**
+     * Gets the maximum number of annotations within the elements of the child hierarchy.
+     *
+     * @return the maximum number of annotations
+     */
+    public final int getAnnotationBound() {
+        int maximum = 0;
+        for (AnnotationContainer subContainer : getChildren()) {
+            maximum = Math.max(maximum, subContainer.getNumberOfAnnotations());
+        }
+        return maximum;
+    }
+
+    /**
+     * Returns the children containers of this container.
+     * If we are already at the leaf level, then an empty collection is returned.
+     *
+     * @return the children containers of this container.
+     */
+    protected abstract Collection<? extends AnnotationContainer> getChildren();
+}

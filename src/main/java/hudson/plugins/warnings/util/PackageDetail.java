@@ -1,6 +1,7 @@
 package hudson.plugins.warnings.util;
 
 import hudson.model.AbstractBuild;
+import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.JavaPackage;
 import hudson.plugins.warnings.util.model.WorkspaceFile;
 
@@ -28,7 +29,7 @@ public class PackageDetail extends AbstractAnnotationsDetail {
      *            header to be shown on detail page
      */
     public PackageDetail(final AbstractBuild<?, ?> owner, final JavaPackage javaPackage, final String header) {
-        super(owner, javaPackage.getAnnotations(), header);
+        super(owner, javaPackage.getAnnotations(), header, Hierarchy.PACKAGE);
         this.javaPackage = javaPackage;
     }
 
@@ -65,6 +66,12 @@ public class PackageDetail extends AbstractAnnotationsDetail {
     @Override
     public WorkspaceFile getFile(final String fileName) {
         return javaPackage.getFile(fileName);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Collection<? extends AnnotationContainer> getChildren() {
+        return getFiles();
     }
 }
 

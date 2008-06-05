@@ -2,6 +2,7 @@ package hudson.plugins.warnings.util;
 
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
+import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 
 import java.util.Collection;
@@ -26,12 +27,21 @@ public class NewWarningsDetail extends AbstractAnnotationsDetail {
      *            header to be shown on detail page
      */
     public NewWarningsDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> newWarnings, final String header) {
-        super(owner, newWarnings, header);
+        super(owner, newWarnings, header, Hierarchy.PROJECT);
     }
 
     /** {@inheritDoc} */
     public String getDisplayName() {
         return Messages.NewWarningsDetail_Name();
+    }
+
+    /**
+     * Returns the header for the detail screen.
+     *
+     * @return the header
+     */
+    public String getHeader() {
+        return getName();
     }
 
     /**
@@ -46,6 +56,12 @@ public class NewWarningsDetail extends AbstractAnnotationsDetail {
     @Override
     public ModelObject getDynamic(final String link) {
         return new SourceDetail(getOwner(), getAnnotation(link));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Collection<? extends AnnotationContainer> getChildren() {
+        return getModules();
     }
 }
 

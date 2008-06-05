@@ -1,6 +1,9 @@
 package hudson.plugins.warnings.util.model;
 
+import static junit.framework.Assert.*;
 import hudson.XmlFile;
+import hudson.plugins.warnings.util.AbstractEnglishLocaleTest;
+import hudson.plugins.warnings.util.Messages;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,11 +13,8 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
-import java.util.Locale;
 
-import junit.framework.Assert;
-
-import org.junit.Before;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 /**
@@ -22,7 +22,7 @@ import org.junit.Test;
  *
  * @see <a href="http://www.ibm.com/developerworks/library/j-serialtest.html">Testing object serialization</a>
  */
-public abstract class AbstractSerializeModelTest {
+public abstract class AbstractSerializeModelTest extends AbstractEnglishLocaleTest {
     /** Task property. */
     protected static final String MODULE2 = "Module2";
     /** Task property. */
@@ -35,6 +35,10 @@ public abstract class AbstractSerializeModelTest {
     protected static final String PATH_TO_FILE2 = "Path/To/File2";
     /** Task property. */
     protected static final String PATH_TO_FILE1 = "Path/To/File";
+    /** Short file name. */
+    private static final String FILE1 = StringUtils.substringAfterLast(PATH_TO_FILE1, "/");
+    /** Short file name. */
+    private static final String FILE2 = StringUtils.substringAfterLast(PATH_TO_FILE2, "/");
     /** Task property. */
     protected static final String LOW = "Low";
     /** Task property. */
@@ -70,20 +74,20 @@ public abstract class AbstractSerializeModelTest {
     /** Error Message. */
     private static final String WRONG_MODULE_ERROR = "Wrong module error.";
     /** Error Message. */
+    private static final String WRONG_ANNOTATION_KEY = "Wrong annotation key.";
+    /** Error Message. */
     private static final String WRONG_MODULE_NAME = "Wrong module name.";
     /** Error Message. */
-    private static final String WRONG_ANNOTATION_KEY = "Wrong annotation key.";
+    private static final String WRONG_FILE_SHORT_NAME = "Wrong file short name";
+    /** Error Message. */
+    private static final String WRONG_FILE_NAME = "Wrong file name.";
+    /** Error Message. */
+    private static final String MODULE_NOT_IN_PROJECT = "Module not in project.";
+    /** Error Message. */
+    private static final String PACKAGE_NOT_IN_MODULE = "Package not in module.";
 
     /** The fist created annotation. */
     private AbstractAnnotation firstAnnotation;
-
-    /**
-     * Initializes the locale to English.
-     */
-    @Before
-    public void initializeLocale() {
-        Locale.setDefault(Locale.ENGLISH);
-    }
 
     /**
      * Creates the original object that will be serialized.
@@ -91,7 +95,7 @@ public abstract class AbstractSerializeModelTest {
      * @return the annotation container
      */
     private JavaProject createOriginal() {
-        final JavaProject project = new JavaProject();
+        JavaProject project = new JavaProject();
 
         addAnnotation(project, LINE_NUMBER, TEST_TASK1, Priority.HIGH, PATH_TO_FILE1, PACKAGE1, MODULE1);
         addAnnotation(project, LINE_NUMBER, TEST_TASK2, Priority.LOW, PATH_TO_FILE1, PACKAGE1, MODULE1);
@@ -130,9 +134,9 @@ public abstract class AbstractSerializeModelTest {
     @SuppressWarnings("PMD")
     protected void verifyFirstAnnotation(final JavaProject project) {
         FileAnnotation annotation = project.getAnnotation(firstAnnotation.getKey());
-        Assert.assertEquals(WRONG_ANNOTATION_KEY, firstAnnotation, annotation);
+        assertEquals(WRONG_ANNOTATION_KEY, firstAnnotation, annotation);
         annotation = project.getAnnotation(String.valueOf(firstAnnotation.getKey()));
-        Assert.assertEquals(WRONG_ANNOTATION_KEY, firstAnnotation, annotation);
+        assertEquals(WRONG_ANNOTATION_KEY, firstAnnotation, annotation);
 
         verifyFirstAnnotation(firstAnnotation);
 
@@ -140,143 +144,8 @@ public abstract class AbstractSerializeModelTest {
         addAnnotation(dummyProject, LINE_NUMBER, TEST_TASK1, Priority.HIGH, PATH_TO_FILE1, PACKAGE1, MODULE1);
         FileAnnotation other = dummyProject.getAnnotations().iterator().next();
 
-        Assert.assertEquals("Wrong equals evaluation.", annotation, other);
+        assertEquals("Wrong equals evaluation.", annotation, other);
     }
-
-    /**
-     * Verifies the created project.
-     *
-     * @param project the created project
-     */
-    // CHECKSTYLE:OFF
-    @SuppressWarnings("PMD")
-    protected void verifyProject(final JavaProject project) {
-        Assert.assertTrue(project.hasAnnotations());
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 5, project.getNumberOfAnnotations());
-        Assert.assertTrue(project.hasAnnotations(Priority.HIGH));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, project.getNumberOfAnnotations(Priority.HIGH));
-        Assert.assertTrue(project.hasAnnotations(Priority.NORMAL));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 2, project.getNumberOfAnnotations(Priority.NORMAL));
-        Assert.assertTrue(project.hasAnnotations(Priority.LOW));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 2, project.getNumberOfAnnotations(Priority.LOW));
-        Assert.assertEquals("Wrong maximum number of annotations per module.", 4, project.getAnnotationBound());
-        Assert.assertEquals(WRONG_TOOLTIP_CREATED, "High:1 - Normal:2 - Low:2", project.getToolTip());
-
-        Assert.assertEquals(WRONG_NUMBER_OF_MODULES, 2, project.getModules().size());
-        Assert.assertEquals(WRONG_NUMBER_OF_PACKAGES, 3, project.getPackages().size());
-        Assert.assertEquals(WRONG_NUMBER_OF_FILES, 4, project.getFiles().size());
-
-        MavenModule module = project.getModule(MODULE1);
-        Assert.assertEquals(WRONG_MODULE_NAME, MODULE1, module.getName());
-
-        Assert.assertTrue(module.hasAnnotations());
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 4, module.getNumberOfAnnotations());
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 4, module.getAnnotations().size());
-        Assert.assertTrue(module.hasAnnotations(Priority.HIGH));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getNumberOfAnnotations(Priority.HIGH));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getNumberOfAnnotations(HIGH));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getAnnotations(Priority.HIGH).size());
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getAnnotations(HIGH).size());
-        Assert.assertTrue(module.hasAnnotations(Priority.NORMAL));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getNumberOfAnnotations(Priority.NORMAL));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getNumberOfAnnotations(NORMAL));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getAnnotations(Priority.NORMAL).size());
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getAnnotations(NORMAL).size());
-        Assert.assertTrue(module.hasAnnotations(Priority.LOW));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 2, module.getNumberOfAnnotations(Priority.LOW));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 2, module.getNumberOfAnnotations(LOW));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 2, module.getAnnotations(Priority.LOW).size());
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 2, module.getAnnotations(LOW).size());
-        Assert.assertEquals(WRONG_MAXIMUM_NUMBER, 3, module.getAnnotationBound());
-        Assert.assertEquals(WRONG_TOOLTIP_CREATED, "High:1 - Normal:1 - Low:2", module.getToolTip());
-
-        Assert.assertEquals(WRONG_NUMBER_OF_FILES, 3, module.getFiles().size());
-        Assert.assertEquals(WRONG_NUMBER_OF_PACKAGES, 2, module.getPackages().size());
-
-        JavaPackage javaPackage = module.getPackage(PACKAGE1);
-        Assert.assertEquals(WRONG_PACKAGE_NAME, PACKAGE1, javaPackage.getName());
-        Assert.assertTrue(javaPackage.hasAnnotations());
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 3, javaPackage.getNumberOfAnnotations());
-        Assert.assertTrue(javaPackage.hasAnnotations(HIGH));
-        Assert.assertTrue(javaPackage.hasAnnotations(Priority.HIGH));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, javaPackage.getNumberOfAnnotations(Priority.HIGH));
-        Assert.assertFalse(javaPackage.hasAnnotations(NORMAL));
-        Assert.assertFalse(javaPackage.hasAnnotations(Priority.NORMAL));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, javaPackage.getNumberOfAnnotations(Priority.NORMAL));
-        Assert.assertTrue(javaPackage.hasAnnotations(LOW));
-        Assert.assertTrue(javaPackage.hasAnnotations(Priority.LOW));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 2, javaPackage.getNumberOfAnnotations(Priority.LOW));
-        Assert.assertEquals(WRONG_TOOLTIP_CREATED, "High:1 - Low:2", javaPackage.getToolTip());
-
-        WorkspaceFile file = javaPackage.getFile(PATH_TO_FILE1);
-        Assert.assertEquals("Wrong file name.", PATH_TO_FILE1, file.getName());
-        Assert.assertEquals("Wrong short file name.", "File", file.getShortName());
-        Assert.assertTrue(file.hasAnnotations());
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 2, file.getNumberOfAnnotations());
-        Assert.assertTrue(file.hasAnnotations(HIGH));
-        Assert.assertTrue(file.hasAnnotations(Priority.HIGH));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, file.getNumberOfAnnotations(Priority.HIGH));
-        Assert.assertFalse(file.hasAnnotations(NORMAL));
-        Assert.assertFalse(file.hasAnnotations(Priority.NORMAL));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, file.getNumberOfAnnotations(Priority.NORMAL));
-        Assert.assertTrue(file.hasAnnotations(LOW));
-        Assert.assertTrue(file.hasAnnotations(Priority.LOW));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, file.getNumberOfAnnotations(Priority.LOW));
-        Assert.assertEquals(WRONG_TOOLTIP_CREATED, "High:1 - Low:1", file.getToolTip());
-
-        javaPackage = module.getPackage(PACKAGE2);
-        Assert.assertEquals(WRONG_PACKAGE_NAME, PACKAGE2, javaPackage.getName());
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, javaPackage.getNumberOfAnnotations());
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, javaPackage.getNumberOfAnnotations(Priority.HIGH));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, javaPackage.getNumberOfAnnotations(Priority.NORMAL));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, javaPackage.getNumberOfAnnotations(Priority.LOW));
-
-        module = project.getModule(MODULE2);
-        Assert.assertNull(WRONG_MODULE_ERROR, module.getError());
-        Assert.assertEquals(WRONG_MODULE_NAME, MODULE2, module.getName());
-
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getNumberOfAnnotations());
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, module.getNumberOfAnnotations(Priority.HIGH));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getNumberOfAnnotations(Priority.NORMAL));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, module.getNumberOfAnnotations(Priority.LOW));
-        Assert.assertEquals(WRONG_MAXIMUM_NUMBER, 1, module.getAnnotationBound());
-        Assert.assertEquals(WRONG_TOOLTIP_CREATED, "Normal:1", module.getToolTip());
-
-        Assert.assertEquals(WRONG_NUMBER_OF_PACKAGES, 1, module.getPackages().size());
-        Assert.assertEquals(WRONG_NUMBER_OF_FILES, 1, module.getFiles().size());
-
-        javaPackage = module.getPackage(PACKAGE1);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, javaPackage.getNumberOfAnnotations());
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, javaPackage.getNumberOfAnnotations(Priority.HIGH));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, javaPackage.getNumberOfAnnotations(Priority.NORMAL));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, javaPackage.getNumberOfAnnotations(Priority.LOW));
-
-        file = module.getFile(PATH_TO_FILE1);
-        Assert.assertEquals("Wrong file name.", PATH_TO_FILE1, file.getName());
-        Assert.assertEquals("Wrong short file name.", "File", file.getShortName());
-        Assert.assertTrue(file.hasAnnotations());
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, file.getNumberOfAnnotations());
-        Assert.assertFalse(file.hasAnnotations(HIGH));
-        Assert.assertFalse(file.hasAnnotations(Priority.HIGH));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, file.getNumberOfAnnotations(Priority.HIGH));
-        Assert.assertTrue(file.hasAnnotations(NORMAL));
-        Assert.assertTrue(file.hasAnnotations(Priority.NORMAL));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, file.getNumberOfAnnotations(Priority.NORMAL));
-        Assert.assertFalse(file.hasAnnotations(LOW));
-        Assert.assertFalse(file.hasAnnotations(Priority.LOW));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, file.getNumberOfAnnotations(Priority.LOW));
-        Assert.assertEquals(WRONG_TOOLTIP_CREATED, "Normal:1", file.getToolTip());
-
-        for (FileAnnotation annotation : module.getAnnotations()) {
-            Assert.assertEquals("Wrong primary line number.", LINE_NUMBER, annotation.getPrimaryLineNumber());
-            Collection<LineRange> lineRanges = annotation.getLineRanges();
-            Assert.assertEquals("Wrong number of ranges.", 1, lineRanges.size());
-            LineRange range = lineRanges.iterator().next();
-            Assert.assertEquals("Wrong start line number.", LINE_NUMBER, range.getStart());
-            Assert.assertEquals("Wrong end line number.", LINE_NUMBER, range.getEnd());
-        }
-    }
-    // CHECKSTYLE:ON
 
     /**
      * Verifies the first created annotation.
@@ -388,6 +257,157 @@ public abstract class AbstractSerializeModelTest {
         objectStream.close();
 
         return outputStream;
+    }
+    /**
+     * Verifies the created project.
+     *
+     * @param project the created project
+     */
+    @SuppressWarnings("PMD")
+    protected void verifyProject(final JavaProject project) {
+        assertTrue(project.hasAnnotations());
+
+        checkSummary(project);
+
+        assertTrue(MODULE_NOT_IN_PROJECT, project.containsModule(MODULE1));
+        assertTrue(MODULE_NOT_IN_PROJECT, project.containsModule(MODULE2));
+
+        checkFirstModule(project.getModule(MODULE1));
+        checkSecondModule(project.getModule(MODULE2));
+
+        for (FileAnnotation annotation : project.getModule(MODULE2).getAnnotations()) {
+            assertEquals("Wrong primary line number.", LINE_NUMBER, annotation.getPrimaryLineNumber());
+            Collection<LineRange> lineRanges = annotation.getLineRanges();
+            assertEquals("Wrong number of ranges.", 1, lineRanges.size());
+            LineRange range = lineRanges.iterator().next();
+            assertEquals("Wrong start line number.", LINE_NUMBER, range.getStart());
+            assertEquals("Wrong end line number.", LINE_NUMBER, range.getEnd());
+            assertEquals("Wrong package prefix.", Messages.PackageDetail_header(), project.getModule(MODULE2).getPackageCategoryName());
+            assertSame(annotation, project.getAnnotation(annotation.getKey()));
+            assertSame(annotation, project.getAnnotation(Long.toString(annotation.getKey())));
+        }
+    }
+
+    /**
+     * Checks the second module of the project.
+     *
+     * @param module
+     *      the module to check
+     */
+    private void checkSecondModule(final MavenModule module) {
+        assertNull(WRONG_MODULE_ERROR, module.getError());
+        assertEquals(WRONG_MODULE_NAME, MODULE2, module.getName());
+
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getNumberOfAnnotations());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getAnnotations().size());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, module.getNumberOfAnnotations(Priority.HIGH));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, module.getAnnotations(Priority.HIGH).size());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getNumberOfAnnotations(Priority.NORMAL));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getAnnotations(Priority.NORMAL).size());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, module.getNumberOfAnnotations(Priority.LOW));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, module.getAnnotations(Priority.LOW).size());
+        assertEquals(WRONG_MAXIMUM_NUMBER, 1, module.getAnnotationBound());
+        assertEquals(WRONG_TOOLTIP_CREATED, "Normal:1", module.getToolTip());
+
+        assertEquals(WRONG_NUMBER_OF_PACKAGES, 1, module.getPackages().size());
+        assertEquals(WRONG_NUMBER_OF_FILES, 1, module.getFiles().size());
+
+        assertTrue(PACKAGE_NOT_IN_MODULE, module.containsPackage(PACKAGE1));
+        assertFalse("Package in module.", module.containsPackage(PACKAGE2));
+        JavaPackage javaPackage = module.getPackage(PACKAGE1);
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, javaPackage.getNumberOfAnnotations());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, javaPackage.getNumberOfAnnotations(Priority.HIGH));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, javaPackage.getNumberOfAnnotations(Priority.NORMAL));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, javaPackage.getNumberOfAnnotations(Priority.LOW));
+
+        WorkspaceFile file = module.getFile(PATH_TO_FILE1);
+        assertEquals(WRONG_FILE_NAME, PATH_TO_FILE1, file.getName());
+        assertEquals(WRONG_FILE_SHORT_NAME, FILE1, file.getShortName());
+        assertTrue(WRONG_NUMBER_OF_ANNOTATIONS, file.hasAnnotations());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, file.getNumberOfAnnotations());
+        assertFalse(WRONG_NUMBER_OF_ANNOTATIONS, file.hasAnnotations(HIGH));
+        assertFalse(WRONG_NUMBER_OF_ANNOTATIONS, file.hasAnnotations(Priority.HIGH));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, file.getNumberOfAnnotations(Priority.HIGH));
+        assertTrue(WRONG_NUMBER_OF_ANNOTATIONS, file.hasAnnotations(NORMAL));
+        assertTrue(WRONG_NUMBER_OF_ANNOTATIONS, file.hasAnnotations(Priority.NORMAL));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, file.getNumberOfAnnotations(Priority.NORMAL));
+        assertFalse(WRONG_NUMBER_OF_ANNOTATIONS, file.hasAnnotations(LOW));
+        assertFalse(WRONG_NUMBER_OF_ANNOTATIONS, file.hasAnnotations(Priority.LOW));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, file.getNumberOfAnnotations(Priority.LOW));
+        assertEquals(WRONG_TOOLTIP_CREATED, "Normal:1", file.getToolTip());
+    }
+
+    /**
+     * Checks the first module of the project.
+     *
+     * @param module
+     *      the module to check
+     */
+    private void checkFirstModule(final MavenModule module) {
+        assertEquals(WRONG_MODULE_NAME, MODULE1, module.getName());
+        assertNull(WRONG_MODULE_ERROR, module.getError());
+
+        assertEquals(WRONG_NUMBER_OF_MODULES, 0, module.getModules().size());
+        assertEquals(WRONG_NUMBER_OF_PACKAGES, 2, module.getPackages().size());
+        assertEquals(WRONG_NUMBER_OF_FILES, 2, module.getFiles().size());
+
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 4, module.getNumberOfAnnotations());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getNumberOfAnnotations(Priority.HIGH));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getNumberOfAnnotations(Priority.NORMAL));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 2, module.getNumberOfAnnotations(Priority.LOW));
+
+        assertTrue(PACKAGE_NOT_IN_MODULE, module.containsPackage(PACKAGE1));
+        JavaPackage javaPackage = module.getPackage(PACKAGE1);
+        assertEquals(WRONG_PACKAGE_NAME, PACKAGE1, javaPackage.getName());
+
+        assertEquals(WRONG_NUMBER_OF_MODULES, 0, javaPackage.getModules().size());
+        assertEquals(WRONG_NUMBER_OF_PACKAGES, 0, javaPackage.getPackages().size());
+        assertEquals(WRONG_NUMBER_OF_FILES, 2, javaPackage.getFiles().size());
+
+        assertEquals(WRONG_NUMBER_OF_FILES, 2, javaPackage.getFiles().size());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 3, javaPackage.getNumberOfAnnotations());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, javaPackage.getNumberOfAnnotations(Priority.HIGH));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, javaPackage.getNumberOfAnnotations(Priority.NORMAL));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 2, javaPackage.getNumberOfAnnotations(Priority.LOW));
+
+        assertTrue("File not in package.", javaPackage.containsFile(PATH_TO_FILE1));
+        WorkspaceFile file = javaPackage.getFile(PATH_TO_FILE1);
+        assertEquals(WRONG_FILE_NAME, PATH_TO_FILE1, file.getName());
+        assertEquals(WRONG_FILE_SHORT_NAME, FILE1, file.getShortName());
+
+        assertEquals(WRONG_NUMBER_OF_MODULES, 0, file.getModules().size());
+        assertEquals(WRONG_NUMBER_OF_PACKAGES, 0, file.getPackages().size());
+        assertEquals(WRONG_NUMBER_OF_FILES, 0, file.getFiles().size());
+
+        javaPackage = module.getPackage(PACKAGE2);
+        assertEquals(WRONG_PACKAGE_NAME, PACKAGE2, javaPackage.getName());
+        assertEquals(WRONG_NUMBER_OF_FILES, 1, javaPackage.getFiles().size());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, javaPackage.getNumberOfAnnotations());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, javaPackage.getNumberOfAnnotations(Priority.HIGH));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, javaPackage.getNumberOfAnnotations(Priority.NORMAL));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, javaPackage.getNumberOfAnnotations(Priority.LOW));
+    }
+
+    /**
+     * Checks the summary information of the project.
+     *
+     * @param project
+     *      the project to check
+     */
+    private void checkSummary(final JavaProject project) {
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 5, project.getNumberOfAnnotations());
+        assertTrue(WRONG_NUMBER_OF_ANNOTATIONS, project.hasAnnotations(Priority.HIGH));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, project.getNumberOfAnnotations(Priority.HIGH));
+        assertTrue(WRONG_NUMBER_OF_ANNOTATIONS, project.hasAnnotations(Priority.NORMAL));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 2, project.getNumberOfAnnotations(Priority.NORMAL));
+        assertTrue(WRONG_NUMBER_OF_ANNOTATIONS, project.hasAnnotations(Priority.LOW));
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 2, project.getNumberOfAnnotations(Priority.LOW));
+        assertEquals("Wrong maximum number of annotations per module.", 4, project.getAnnotationBound());
+        assertEquals(WRONG_TOOLTIP_CREATED, "High:1 - Normal:2 - Low:2", project.getToolTip());
+
+        assertEquals(WRONG_NUMBER_OF_MODULES, 2, project.getModules().size());
+        assertEquals(WRONG_NUMBER_OF_PACKAGES, 2, project.getPackages().size());
+        assertEquals(WRONG_NUMBER_OF_FILES, 2, project.getFiles().size());
     }
 }
 

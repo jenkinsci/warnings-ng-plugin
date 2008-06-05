@@ -37,8 +37,8 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      * @param name
      *            the name of this object
      */
-    public AbstractAnnotationsDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final String name) {
-        super(true, name);
+    public AbstractAnnotationsDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final String name, final Hierarchy hierarchy) {
+        super(name, hierarchy);
         this.owner = owner;
 
         addAnnotations(annotations);
@@ -154,5 +154,54 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      */
     public Priority[] getPriorities() {
         return Priority.values();
+    }
+
+    /**
+     * Generates a PNG image for high/normal/low distribution of a Java package.
+     *
+     * @param request
+     *            Stapler request
+     * @param response
+     *            Stapler response
+     * @throws IOException
+     *             in case of an error
+     */
+    public final void doPackageStatistics(final StaplerRequest request, final StaplerResponse response) throws IOException {
+        ChartRenderer.renderPriorititesChart(request, response, getPackage(request.getParameter("package")), getAnnotationBound());
+    }
+
+    /**
+     * Returns whether we only have a single package. In this case the module
+     * and package statistics are suppressed and only the tasks are shown.
+     *
+     * @return <code>true</code> for single module projects
+     */
+    public boolean isSinglePackageProject() {
+        return isSingleModuleProject() && getPackages().size() == 1;
+    }
+
+    /**
+     * Generates a PNG image for high/normal/low distribution of a maven module.
+     *
+     * @param request
+     *            Stapler request
+     * @param response
+     *            Stapler response
+     * @throws IOException
+     *             in case of an error
+     */
+    public final void doModuleStatistics(final StaplerRequest request, final StaplerResponse response) throws IOException {
+        ChartRenderer.renderPriorititesChart(request, response, getModule(request.getParameter("module")), getAnnotationBound());
+    }
+
+    /**
+     * Returns whether this project contains just one maven module. In this case
+     * we show package statistics instead of module statistics.
+     *
+     * @return <code>true</code> if this project contains just one maven
+     *         module
+     */
+    public boolean isSingleModuleProject() {
+        return getModules().size() == 1;
     }
 }

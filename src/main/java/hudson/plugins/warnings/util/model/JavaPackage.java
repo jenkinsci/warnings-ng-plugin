@@ -1,5 +1,7 @@
 package hudson.plugins.warnings.util.model;
 
+import java.util.Collection;
+
 
 /**
  * A serializable Java Bean class representing a Java package.
@@ -19,7 +21,7 @@ public class JavaPackage extends AnnotationContainer {
      *            the name of this package
      */
     public JavaPackage(final String packageName) {
-        super(true, packageName);
+        super(packageName, Hierarchy.PACKAGE);
     }
 
     /**
@@ -28,11 +30,18 @@ public class JavaPackage extends AnnotationContainer {
      * @return the created object
      */
     private Object readResolve() {
-        rebuildMappings(true);
+        setHierarchy(Hierarchy.PACKAGE);
+        rebuildMappings();
         if (name != null) {
             setName(name);
         }
         return this;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Collection<? extends AnnotationContainer> getChildren() {
+        return getFiles();
     }
 }
 

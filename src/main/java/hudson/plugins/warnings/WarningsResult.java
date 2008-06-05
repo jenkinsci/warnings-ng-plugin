@@ -501,7 +501,7 @@ public class WarningsResult implements ModelObject, Serializable, AnnotationProv
      *            the module to get
      * @return the module
      */
-    private MavenModule getModule(final String name) {
+    public MavenModule getModule(final String name) {
         MavenModule module;
         if (emptyModules.containsKey(name)) {
             module = emptyModules.get(name);
@@ -510,6 +510,17 @@ public class WarningsResult implements ModelObject, Serializable, AnnotationProv
             module = getProject().getModule(name);
         }
         return module;
+    }
+
+    /**
+     * Returns the package with the given name.
+     *
+     * @param name
+     *            the package to get
+     * @return the package
+     */
+    public JavaPackage getPackage(final String name) {
+        return getProject().getModules().iterator().next().getPackage(name);
     }
 
     /**
@@ -625,23 +636,6 @@ public class WarningsResult implements ModelObject, Serializable, AnnotationProv
     public final void doPackageStatistics(final StaplerRequest request, final StaplerResponse response) throws IOException {
         MavenModule module = getModules().iterator().next();
         ChartRenderer.renderPriorititesChart(request, response, module.getPackage(request.getParameter("package")), module.getAnnotationBound());
-    }
-
-    /**
-     * Returns a tooltip showing the distribution of priorities for the selected
-     * package.
-     *
-     * @param name
-     *            the package to show the distribution for
-     * @return a tooltip showing the distribution of priorities
-     */
-    public String getToolTip(final String name) {
-        if (isSingleModuleProject()) {
-            return getModules().iterator().next().getPackage(name).getToolTip();
-        }
-        else {
-            return getModule(name).getToolTip();
-        }
     }
 
     /**

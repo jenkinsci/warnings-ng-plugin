@@ -1,6 +1,7 @@
 package hudson.plugins.warnings.util;
 
 import hudson.model.AbstractBuild;
+import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 
 import java.util.Collection;
@@ -25,12 +26,27 @@ public class FixedWarningsDetail extends AbstractAnnotationsDetail {
      *            header to be shown on detail page
      */
     public FixedWarningsDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> fixedWarnings, final String header) {
-        super(owner, fixedWarnings, header);
+        super(owner, fixedWarnings, header, Hierarchy.PROJECT);
     }
 
     /** {@inheritDoc} */
     public String getDisplayName() {
         return Messages.FixedWarningsDetail_Name();
+    }
+
+    /**
+     * Returns the header for the detail screen.
+     *
+     * @return the header
+     */
+    public String getHeader() {
+        return getName();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Collection<? extends AnnotationContainer> getChildren() {
+        return getModules();
     }
 }
 

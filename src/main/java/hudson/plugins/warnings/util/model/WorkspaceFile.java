@@ -1,14 +1,9 @@
 package hudson.plugins.warnings.util.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.apache.commons.lang.StringUtils;
-
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 /**
  * A serializable Java Bean class representing a file in the Hudson workspace.
@@ -20,9 +15,6 @@ public class WorkspaceFile extends AnnotationContainer {
     private static final long serialVersionUID = 601361940925156719L;
     /** The absolute filename of this file. */
     private String name; // NOPMD: backward compatibility
-    /** This file. */
-    @SuppressWarnings("Se")
-    private final List<WorkspaceFile> files;
 
     /**
      * Creates a new instance of <code>WorkspaceFile</code>.
@@ -31,11 +23,7 @@ public class WorkspaceFile extends AnnotationContainer {
      *            absolute path of this file
      */
     public WorkspaceFile(final String fileName) {
-        super(false, fileName.replace('\\', '/'));
-
-        List<WorkspaceFile> singleFile = new ArrayList<WorkspaceFile>();
-        singleFile.add(this);
-        files = Collections.unmodifiableList(singleFile);
+        super(fileName.replace('\\', '/'), Hierarchy.FILE);
     }
 
     /**
@@ -54,7 +42,8 @@ public class WorkspaceFile extends AnnotationContainer {
      * @return the created object
      */
     private Object readResolve() {
-        rebuildMappings(false);
+        setHierarchy(Hierarchy.FILE);
+        rebuildMappings();
         if (name != null) {
             setName(name);
         }
@@ -63,17 +52,8 @@ public class WorkspaceFile extends AnnotationContainer {
 
     /** {@inheritDoc} */
     @Override
-    public Collection<WorkspaceFile> getFiles() {
-        return files;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public WorkspaceFile getFile(final String fileName) {
-        if (getName().equals(fileName)) {
-            return this;
-        }
-        throw new NoSuchElementException("File not found: " + fileName);
+    protected Collection<? extends AnnotationContainer> getChildren() {
+        return Collections.emptyList();
     }
 }
 

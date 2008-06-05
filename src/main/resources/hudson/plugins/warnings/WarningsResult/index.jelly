@@ -59,7 +59,7 @@
 									<td class="pane"><a href="${module.name}/">${module.name}</a></td>
 									<td class="pane">${module.numberOfAnnotations}</td>
 									<td class="pane">
-								        <div tooltip="${it.getToolTip(module.name)}">
+								        <div tooltip="${it.getModule(module.name).toolTip}">
 											<img src="moduleStatistics?module=${module.name}"/>
 										</div>
 									</td>

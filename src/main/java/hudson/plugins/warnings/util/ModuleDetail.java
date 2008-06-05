@@ -2,15 +2,12 @@ package hudson.plugins.warnings.util;
 
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
+import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.JavaPackage;
 import hudson.plugins.warnings.util.model.MavenModule;
 import hudson.plugins.warnings.util.model.WorkspaceFile;
 
-import java.io.IOException;
 import java.util.Collection;
-
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Result object to visualize the package statistics of a module.
@@ -34,7 +31,7 @@ public class ModuleDetail extends AbstractAnnotationsDetail {
      *            header to be shown on detail page
      */
     public ModuleDetail(final AbstractBuild<?, ?> owner, final MavenModule module, final String header) {
-        super(owner, module.getAnnotations(), header);
+        super(owner, module.getAnnotations(), header, Hierarchy.MODULE);
         this.module = module;
     }
 
@@ -66,6 +63,7 @@ public class ModuleDetail extends AbstractAnnotationsDetail {
      *
      * @return the packages of this module
      */
+    @Override
     public Collection<JavaPackage> getPackages() {
         return module.getPackages();
     }
@@ -79,20 +77,6 @@ public class ModuleDetail extends AbstractAnnotationsDetail {
      */
     public boolean isSinglePackageModule() {
         return getPackages().size() == 1;
-    }
-
-    /**
-     * Generates a PNG image for high/normal/low distribution of a Java package.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @throws IOException
-     *             in case of an error
-     */
-    public final void doPackageStatistics(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        createDetailGraph(request, response, module.getPackage(request.getParameter("package")), module.getAnnotationBound());
     }
 
     /**
@@ -135,6 +119,12 @@ public class ModuleDetail extends AbstractAnnotationsDetail {
     @Override
     public WorkspaceFile getFile(final String fileName) {
         return module.getFile(fileName);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Collection<? extends AnnotationContainer> getChildren() {
+        return getPackages();
     }
 }
 
