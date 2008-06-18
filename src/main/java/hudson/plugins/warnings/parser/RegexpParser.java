@@ -39,7 +39,7 @@ public abstract class RegexpParser implements AnnotationParser {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public Collection<FileAnnotation> parse(final InputStream file) throws IOException {
-        LineIterator iterator = IOUtils.lineIterator(file, "UTF8");
+        LineIterator iterator = IOUtils.lineIterator(file, null);
 
         ArrayList<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
         while (iterator.hasNext()) {
