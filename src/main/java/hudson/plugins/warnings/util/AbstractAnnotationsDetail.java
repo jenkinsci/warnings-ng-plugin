@@ -4,13 +4,16 @@ import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
 import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.AnnotationProvider;
+import hudson.plugins.warnings.util.model.DefaultAnnotationContainer;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
 import hudson.util.ChartUtil;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.JFreeChart;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -42,6 +45,15 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
         this.owner = owner;
 
         addAnnotations(annotations);
+    }
+
+    /**
+     * Returns the header for the detail screen.
+     *
+     * @return the header
+     */
+    public String getHeader() {
+        return getName() + " - " + getDisplayName();
     }
 
     /**
@@ -120,31 +132,56 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
     public final Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
         PriorityDetailFactory factory = new PriorityDetailFactory();
         if (factory.isPriority(link)) {
-            return factory.create(link, owner, this, getName());
+            return factory.create(link, owner, this, getDisplayName());
         }
-        ModelObject detail = getDynamic(link);
-        if (detail == null) {
-            return new SourceDetail(getOwner(), getAnnotation(link));
+        else if (link.startsWith("module.")) {
+            return new ModuleDetail(getOwner(), getModule(StringUtils.substringAfter(link, "module.")), getDisplayName());
         }
-        else {
-            return detail;
+        else if (link.startsWith("package.")) {
+            return new PackageDetail(getOwner(), getPackage(StringUtils.substringAfter(link, "package.")), getDisplayName());
         }
+        else if (link.startsWith("source.")) {
+            return new SourceDetail(getOwner(), getAnnotation(StringUtils.substringAfter(link, "source.")));
+        }
+        else if (link.startsWith("category.")) {
+            String category = StringUtils.substringAfter(link, "category.");
+            return new AttributeDetail(getOwner(), getCategory(category), getDisplayName(), Messages.CategoryDetail_header() + " " + category);
+        }
+        else if (link.startsWith("type.")) {
+            String type = StringUtils.substringAfter(link, "type.");
+            return new AttributeDetail(getOwner(), getType(type), getDisplayName(), Messages.TypeDetail_header() + " " + type);
+        }
+        return null;
     }
 
     /**
-     * Returns the dynamic result of this module detail view. Depending on the
-     * link value the sub-class could return a special detail object. If there
-     * is no such one, then <code>null</code> must be returned. In this
-     * case, the link will be interpreted as source detail of the specified
-     * annotation.
+     * Generates a PNG image for high/normal/low distribution of the specified object.
      *
-     * @param link
-     *            the link to identify the sub page to show, or null if the
-     *            source detail should be shown
-     * @return the dynamic result of this module detail view
+     * @param request
+     *            Stapler request
+     * @param response
+     *            Stapler response
+     * @throws IOException
+     *             in case of an error
      */
-    protected ModelObject getDynamic(final String link) {
-        return null;
+    public final void doStatistics(final StaplerRequest request, final StaplerResponse response) throws IOException {
+        String parameter = request.getParameter("object");
+        if (parameter.startsWith("category.")) {
+            Set<FileAnnotation> annotations = getCategory(StringUtils.substringAfter(parameter, "category."));
+            ChartRenderer.renderPriorititesChart(request, response, new DefaultAnnotationContainer(annotations), getAnnotationBound());
+        }
+        else if (parameter.startsWith("type.")) {
+            Set<FileAnnotation> annotations = getType(StringUtils.substringAfter(parameter, "type."));
+            ChartRenderer.renderPriorititesChart(request, response, new DefaultAnnotationContainer(annotations), getAnnotationBound());
+        }
+        else if (parameter.startsWith("package.")) {
+            AnnotationContainer annotations = getPackage(StringUtils.substringAfter(parameter, "package."));
+            ChartRenderer.renderPriorititesChart(request, response, annotations, getAnnotationBound());
+        }
+        else if (parameter.startsWith("module.")) {
+            AnnotationContainer annotations = getModule(StringUtils.substringAfter(parameter, "module."));
+            ChartRenderer.renderPriorititesChart(request, response, annotations, getAnnotationBound());
+        }
     }
 
     /**
@@ -154,54 +191,5 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      */
     public Priority[] getPriorities() {
         return Priority.values();
-    }
-
-    /**
-     * Generates a PNG image for high/normal/low distribution of a Java package.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @throws IOException
-     *             in case of an error
-     */
-    public final void doPackageStatistics(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        ChartRenderer.renderPriorititesChart(request, response, getPackage(request.getParameter("package")), getAnnotationBound());
-    }
-
-    /**
-     * Returns whether we only have a single package. In this case the module
-     * and package statistics are suppressed and only the tasks are shown.
-     *
-     * @return <code>true</code> for single module projects
-     */
-    public boolean isSinglePackageProject() {
-        return isSingleModuleProject() && getPackages().size() == 1;
-    }
-
-    /**
-     * Generates a PNG image for high/normal/low distribution of a maven module.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @throws IOException
-     *             in case of an error
-     */
-    public final void doModuleStatistics(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        ChartRenderer.renderPriorititesChart(request, response, getModule(request.getParameter("module")), getAnnotationBound());
-    }
-
-    /**
-     * Returns whether this project contains just one maven module. In this case
-     * we show package statistics instead of module statistics.
-     *
-     * @return <code>true</code> if this project contains just one maven
-     *         module
-     */
-    public boolean isSingleModuleProject() {
-        return getModules().size() == 1;
     }
 }

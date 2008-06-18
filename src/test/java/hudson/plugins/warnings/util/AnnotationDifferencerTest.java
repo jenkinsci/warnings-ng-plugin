@@ -1,6 +1,7 @@
 package hudson.plugins.warnings.util;
 
 import static org.junit.Assert.*;
+import hudson.plugins.warnings.util.AnnotationDifferencer;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
 

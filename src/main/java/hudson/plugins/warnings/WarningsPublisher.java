@@ -4,6 +4,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Descriptor;
+import hudson.model.Result;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.plugins.warnings.util.HealthAwarePublisher;
 import hudson.plugins.warnings.util.HealthReportBuilder;
@@ -43,6 +44,12 @@ public class WarningsPublisher extends HealthAwarePublisher {
     @DataBoundConstructor
     public WarningsPublisher(final String threshold, final String healthy, final String unHealthy, final String height) {
         super(threshold, healthy, unHealthy, height, "WARNINGS");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean canContinue(final Result result) {
+        return result != Result.ABORTED;
     }
 
     /** {@inheritDoc} */

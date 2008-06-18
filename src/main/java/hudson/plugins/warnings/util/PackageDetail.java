@@ -3,7 +3,6 @@ package hudson.plugins.warnings.util;
 import hudson.model.AbstractBuild;
 import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.JavaPackage;
-import hudson.plugins.warnings.util.model.WorkspaceFile;
 
 import java.util.Collection;
 
@@ -38,6 +37,7 @@ public class PackageDetail extends AbstractAnnotationsDetail {
      *
      * @return the header
      */
+    @Override
     public String getHeader() {
         return getName() + " - " + javaPackage.getPackageCategoryName() + " " + javaPackage.getName();
     }
@@ -45,27 +45,6 @@ public class PackageDetail extends AbstractAnnotationsDetail {
     /** {@inheritDoc} */
     public String getDisplayName() {
         return javaPackage.getName();
-    }
-
-    /**
-     * Returns the maven module.
-     *
-     * @return the maven module
-     */
-    public JavaPackage getPackage() {
-        return javaPackage;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Collection<WorkspaceFile> getFiles() {
-        return javaPackage.getFiles();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public WorkspaceFile getFile(final String fileName) {
-        return javaPackage.getFile(fileName);
     }
 
     /** {@inheritDoc} */

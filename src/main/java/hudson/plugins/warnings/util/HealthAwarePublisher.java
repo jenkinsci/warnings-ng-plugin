@@ -103,7 +103,7 @@ public abstract class HealthAwarePublisher extends Publisher {
     /** {@inheritDoc} */
     @Override
     public final boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
-        if (build.getResult() != Result.ABORTED && build.getResult() != Result.FAILURE) {
+        if (canContinue(build.getResult())) {
             PrintStream logger = listener.getLogger();
             try {
                 JavaProject project = perform(build, logger);
@@ -116,6 +116,17 @@ public abstract class HealthAwarePublisher extends Publisher {
             }
         }
         return true;
+    }
+
+    /**
+     * Returns whether the publisher can continue processing. This default
+     * implementation returns <code>true</code> if the build is not aborted or failed.
+     *
+     * @param result build result
+     * @return <code>true</code> if the build can continue
+     */
+    protected boolean canContinue(final Result result) {
+        return result != Result.ABORTED && result != Result.FAILURE;
     }
 
     /**

@@ -11,7 +11,7 @@ import java.io.FileNotFoundException;
  */
 public abstract class AbstractPackageDetector implements PackageDetector {
     /** Identifies an unknown package. */
-    protected static final String UNKNOWN_PACKAGE = "n/a";
+    protected static final String UNKNOWN_PACKAGE = "-";
 
     /** {@inheritDoc} */
     public String detectPackageName(final String fileName) {

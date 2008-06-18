@@ -2,6 +2,7 @@ package hudson.plugins.warnings.util;
 
 import static org.junit.Assert.*;
 import hudson.model.HealthReport;
+import hudson.plugins.warnings.util.HealthReportBuilder;
 
 import java.util.List;
 

@@ -72,4 +72,18 @@ public interface FileAnnotation {
      * @return the name of the package that contains this annotation
      */
     String getPackageName();
+
+    /**
+     * Returns the category of the annotation. Might be an empty string if there is no category.
+     *
+     * @return the annotation category
+     */
+    String getCategory();
+
+    /**
+     * Returns the annotation type. Might be an empty string if there is no type.
+     *
+     * @return the annotation type
+     */
+    String getType();
 }

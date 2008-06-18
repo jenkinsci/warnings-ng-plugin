@@ -2,10 +2,11 @@ package hudson.plugins.warnings.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Detects the package name of a Java file.
@@ -13,14 +14,27 @@ import org.apache.commons.lang.StringUtils;
  * @author Ulli Hafner
  */
 public class JavaPackageDetector extends AbstractPackageDetector {
+    /** Package pattern. */
+    private final Pattern pattern;
+
+    /**
+     * Creates a new instance of {@link JavaPackageDetector}.
+     */
+    public JavaPackageDetector() {
+        super();
+
+        pattern = Pattern.compile("^\\s*package\\s*([a-z]+(\\.[a-zA-Z_][a-zA-Z0-9_]*)*)\\s*;.*");
+    }
+
     /** {@inheritDoc}*/
     public String detectPackageName(final InputStream stream) {
         try {
-            LineIterator iterator = IOUtils.lineIterator(stream, "UTF-8");
+            LineIterator iterator = IOUtils.lineIterator(stream, null);
             while (iterator.hasNext()) {
                 String line = iterator.nextLine();
-                if (line.matches("^package .*;$")) {
-                    return StringUtils.substringBetween(line, " ", ";").trim();
+                Matcher matcher = pattern.matcher(line);
+                if (matcher.matches()) {
+                    return matcher.group(1);
                 }
             }
         }

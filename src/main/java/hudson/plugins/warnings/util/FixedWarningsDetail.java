@@ -34,15 +34,6 @@ public class FixedWarningsDetail extends AbstractAnnotationsDetail {
         return Messages.FixedWarningsDetail_Name();
     }
 
-    /**
-     * Returns the header for the detail screen.
-     *
-     * @return the header
-     */
-    public String getHeader() {
-        return getName();
-    }
-
     /** {@inheritDoc} */
     @Override
     protected Collection<? extends AnnotationContainer> getChildren() {

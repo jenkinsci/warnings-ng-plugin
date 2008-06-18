@@ -1,11 +1,8 @@
 package hudson.plugins.warnings.util;
 
 import hudson.model.AbstractBuild;
-import hudson.model.ModelObject;
 import hudson.plugins.warnings.util.model.AnnotationContainer;
-import hudson.plugins.warnings.util.model.JavaPackage;
 import hudson.plugins.warnings.util.model.MavenModule;
-import hudson.plugins.warnings.util.model.WorkspaceFile;
 
 import java.util.Collection;
 
@@ -45,56 +42,9 @@ public class ModuleDetail extends AbstractAnnotationsDetail {
      *
      * @return the header
      */
+    @Override
     public String getHeader() {
         return getName() + " - " + Messages.ModuleDetail_header() + " " + module.getName();
-    }
-
-    /**
-     * Returns the maven module.
-     *
-     * @return the maven module
-     */
-    public MavenModule getModule() {
-        return module;
-    }
-
-    /**
-     * Returns the packages of this module.
-     *
-     * @return the packages of this module
-     */
-    @Override
-    public Collection<JavaPackage> getPackages() {
-        return module.getPackages();
-    }
-
-    /**
-     * Returns whether this module contains just one Java package. In this case
-     * we show the warnings statistics instead of package statistics.
-     *
-     * @return <code>true</code> if this project contains just one Java
-     *         package
-     */
-    public boolean isSinglePackageModule() {
-        return getPackages().size() == 1;
-    }
-
-    /**
-     * Returns a package detail object if there are more packages available.
-     * Otherwise a <code>null</code> value is returned.
-     *
-     * @param link
-     *            the link to identify the sub page to show
-     * @return the dynamic result of this module detail view
-     */
-    @Override
-    public ModelObject getDynamic(final String link) {
-        if (isSinglePackageModule()) {
-            return null;
-        }
-        else {
-            return new PackageDetail(getOwner(), module.getPackage(link), getName());
-        }
     }
 
     /**
@@ -107,18 +57,6 @@ public class ModuleDetail extends AbstractAnnotationsDetail {
      */
     public String getToolTip(final String packageName) {
         return module.getPackage(packageName).getToolTip();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Collection<WorkspaceFile> getFiles() {
-        return module.getFiles();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public WorkspaceFile getFile(final String fileName) {
-        return module.getFile(fileName);
     }
 
     /** {@inheritDoc} */

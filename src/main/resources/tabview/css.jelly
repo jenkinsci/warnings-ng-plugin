@@ -1,0 +1,76 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
+            <style type="text/css">
+
+        /* .yui-navset defaults to .yui-navset-top */
+        .yui-skin-sam .yui-navset .yui-nav,
+        .yui-skin-sam .yui-navset .yui-navset-top .yui-nav { /* protect nested tabviews from other orientations */
+            border:solid #b0b0b0; /* color between tab list and content */
+            border-width:0 0 1px;
+            color:#bbb;
+            Xposition:relative;
+            zoom:1;
+        }
+
+        .yui-skin-sam .yui-navset .yui-nav li,
+        .yui-skin-sam .yui-navset .yui-navset-top .yui-nav li {
+            margin:0 0.16em 0 0; /* space between tabs */
+            padding:1px 0 0; /* gecko: make room for overflow */
+            zoom:1;
+        }
+
+        .yui-skin-sam .yui-navset .yui-nav a,
+        .yui-skin-sam .yui-navset .yui-navset-top .yui-nav a {
+            background:#ffffff url(../../../../assets/skins/sam/sprite.png) repeat-x; /* tab background */
+            border:solid #b0b0b0;
+            border-width:0 1px;
+            color:#000;
+            text-decoration:none;
+        }
+
+        .yui-skin-sam .yui-navset .yui-nav a em,
+        .yui-skin-sam .yui-navset .yui-navset-top .yui-nav a em {
+            border:solid #b0b0b0;
+            border-width:1px 0 0;
+            cursor:hand;
+            padding:0.25em .75em;
+            left:0; right: 0; bottom: 0; /* protect from other orientations */
+            top:-1px; /* for 1px rounded corners */
+            position:relative;
+        }
+
+        .yui-skin-sam .yui-navset .yui-nav .selected a,
+        .yui-skin-sam .yui-navset .yui-nav .selected a:focus, /* no focus effect for selected */
+        .yui-skin-sam .yui-navset .yui-nav .selected a:hover { /* no hover effect for selected */
+            background:#f0f0f0 url(../../../../assets/skins/sam/sprite.png) repeat-x left -1400px; /* selected tab background */
+            color:#000;
+            font-weight:bold;
+        }
+
+        .yui-skin-sam .yui-navset .yui-nav a:hover,
+        .yui-skin-sam .yui-navset .yui-nav a:focus {
+            background:#b0b0b0 url(../../../../assets/skins/sam/sprite.png) repeat-x left -1300px; /* selected tab background */
+            outline:0;
+        }
+
+        .yui-skin-sam .yui-navset .yui-nav .selected a em {
+            padding:0.35em 0.75em; /* raise selected tab */
+        }
+
+        .yui-skin-sam .yui-navset .yui-nav .selected a,
+        .yui-skin-sam .yui-navset .yui-nav .selected a em {
+            border-color:#b0b0b0; /* selected tab border color */
+        }
+
+        .yui-skin-sam .yui-navset .yui-content {
+            background:#ffffff; /* content background color */
+        }
+
+        .yui-skin-sam .yui-navset .yui-content,
+        .yui-skin-sam .yui-navset .yui-navset-top .yui-content {
+            border:1px solid #b0b0b0; /* content border */
+            border-top-color:#b0b0b0; /* different border color */
+            padding:0.25em 0.5em; /* content padding */
+        }
+      </style>
+</j:jelly>
+

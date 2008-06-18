@@ -4,8 +4,6 @@ import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
 
-
-
 /**
  * A serializable Java Bean class representing a project that has been built by
  * Hudson.

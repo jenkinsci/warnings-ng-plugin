@@ -1,7 +1,6 @@
 package hudson.plugins.warnings.util;
 
 import hudson.model.AbstractBuild;
-import hudson.model.ModelObject;
 import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 
@@ -33,29 +32,6 @@ public class NewWarningsDetail extends AbstractAnnotationsDetail {
     /** {@inheritDoc} */
     public String getDisplayName() {
         return Messages.NewWarningsDetail_Name();
-    }
-
-    /**
-     * Returns the header for the detail screen.
-     *
-     * @return the header
-     */
-    public String getHeader() {
-        return getName();
-    }
-
-    /**
-     * Returns the dynamic result of this object (detail page for a source
-     * file).
-     *
-     * @param link
-     *            the source file to get the result for
-     * @return the dynamic result of this object (detail page for a source
-     *         file).
-     */
-    @Override
-    public ModelObject getDynamic(final String link) {
-        return new SourceDetail(getOwner(), getAnnotation(link));
     }
 
     /** {@inheritDoc} */

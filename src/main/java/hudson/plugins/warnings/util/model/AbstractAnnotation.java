@@ -10,7 +10,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * A base class for annotations.
+ *  A base class for annotations.
  *
  * @author Ulli Hafner
  */
@@ -37,6 +37,10 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     private String moduleName;
     /** The name of the package (or name space) that contains this annotation. */
     private String packageName;
+    /** Bug category. */
+    private final String category;
+    /** Bug type. */
+    private final String type;
 
     /**
      * Creates a new instance of <code>AbstractAnnotation</code>.
@@ -50,9 +54,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @param end
      *            the last line of the line range
      */
-    public AbstractAnnotation(final Priority priority, final String message, final int start, final int end) {
+    public AbstractAnnotation(final Priority priority, final String message, final int start, final int end,
+            final String category, final String type) {
         this.priority = priority;
         this.message = StringUtils.strip(message);
+        this.category = StringUtils.defaultString(category);
+        this.type = StringUtils.defaultString(type);
 
         key = currentKey++;
 
@@ -79,6 +86,16 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     /** {@inheritDoc} */
     public final String getFileName() {
         return fileName;
+    }
+
+    /** {@inheritDoc} */
+    public String getCategory() {
+        return category;
+    }
+
+    /** {@inheritDoc} */
+    public String getType() {
+        return type;
     }
 
     /**
@@ -142,11 +159,11 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
 
     // CHECKSTYLE:OFF
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int prime = 31;
         int result = 1;
+        result = prime * result + ((category == null) ? 0 : category.hashCode());
         result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
         result = prime * result + ((lineRanges == null) ? 0 : lineRanges.hashCode());
         result = prime * result + ((message == null) ? 0 : message.hashCode());
@@ -154,10 +171,10 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         result = prime * result + ((packageName == null) ? 0 : packageName.hashCode());
         result = prime * result + primaryLineNumber;
         result = prime * result + ((priority == null) ? 0 : priority.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -169,7 +186,15 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractAnnotation other = (AbstractAnnotation)obj;
+        AbstractAnnotation other = (AbstractAnnotation)obj;
+        if (category == null) {
+            if (other.category != null) {
+                return false;
+            }
+        }
+        else if (!category.equals(other.category)) {
+            return false;
+        }
         if (fileName == null) {
             if (other.fileName != null) {
                 return false;
@@ -219,6 +244,14 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
             }
         }
         else if (!priority.equals(other.priority)) {
+            return false;
+        }
+        if (type == null) {
+            if (other.type != null) {
+                return false;
+            }
+        }
+        else if (!type.equals(other.type)) {
             return false;
         }
         return true;

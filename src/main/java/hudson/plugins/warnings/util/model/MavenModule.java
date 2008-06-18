@@ -3,6 +3,7 @@ package hudson.plugins.warnings.util.model;
 import java.util.Collection;
 import java.util.Map;
 
+
 /**
  * A serializable Java Bean class representing a maven module.
  *

@@ -42,44 +42,8 @@
 
 	        <st:include page="/summaryTable.jelly" />
 
-	        <j:if test="${it.hasAnnotations()}">
+	        <st:include page="/tabview/main.jelly" />
 
-				<j:if test="${!it.isSingleModuleProject()}">
-					<h2>${%Module Statistics}</h2>
-
-					<table class="pane sortable" id="tasks">
-						<tr>
-							<td class="pane-header">${%Module}</td>
-							<td class="pane-header" style="width:2em">${%Total}</td>
-							<td class="pane-header">${%Distribution}</td>
-						</tr>
-						<tbody>
-							<j:forEach var="module" items="${it.modules}">
-								<tr>
-									<td class="pane"><a href="${module.name}/">${module.name}</a></td>
-									<td class="pane">${module.numberOfAnnotations}</td>
-									<td class="pane">
-								        <div tooltip="${it.getModule(module.name).toolTip}">
-											<img src="moduleStatistics?module=${module.name}"/>
-										</div>
-									</td>
-								</tr>
-							</j:forEach>
-						</tbody>
-					</table>
-				</j:if>
-
-			<j:if test="${it.isSingleModuleProject()}">
-				<j:if test="${!it.isSinglePackageProject()}">
-					<st:include page="/packagesTable.jelly" />
-				</j:if>
-
-				<j:if test="${it.isSinglePackageProject()}">
-					<st:include page="/annotationsTable.jelly" />
-				</j:if>
-			</j:if>
-
-			</j:if>
 		</l:main-panel>
 	</l:layout>
 </j:jelly>

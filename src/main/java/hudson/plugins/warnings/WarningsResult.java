@@ -5,6 +5,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
 import hudson.plugins.warnings.parser.Warning;
 import hudson.plugins.warnings.util.AnnotationDifferencer;
+import hudson.plugins.warnings.util.AttributeDetail;
 import hudson.plugins.warnings.util.ChartRenderer;
 import hudson.plugins.warnings.util.ErrorDetail;
 import hudson.plugins.warnings.util.FixedWarningsDetail;
@@ -13,10 +14,11 @@ import hudson.plugins.warnings.util.NewWarningsDetail;
 import hudson.plugins.warnings.util.PackageDetail;
 import hudson.plugins.warnings.util.PriorityDetailFactory;
 import hudson.plugins.warnings.util.SourceDetail;
+import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.AnnotationProvider;
 import hudson.plugins.warnings.util.model.AnnotationStream;
+import hudson.plugins.warnings.util.model.DefaultAnnotationContainer;
 import hudson.plugins.warnings.util.model.FileAnnotation;
-import hudson.plugins.warnings.util.model.JavaPackage;
 import hudson.plugins.warnings.util.model.JavaProject;
 import hudson.plugins.warnings.util.model.MavenModule;
 import hudson.plugins.warnings.util.model.Priority;
@@ -36,6 +38,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -468,30 +471,39 @@ public class WarningsResult implements ModelObject, Serializable, AnnotationProv
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
         PriorityDetailFactory factory = new PriorityDetailFactory();
         if (factory.isPriority(link)) {
-            return factory.create(link, owner, getProject(), Messages.Warnings_ProjectAction_Name());
+            return factory.create(link, owner, getProject(), getDisplayName());
         }
         else if ("fixed".equals(link)) {
-            return new FixedWarningsDetail(getOwner(), getFixedWarnings(), Messages.Warnings_FixedWarnings_Detail_header());
+            return new FixedWarningsDetail(getOwner(), getFixedWarnings(), getDisplayName());
         }
         else if ("new".equals(link)) {
-            return new NewWarningsDetail(getOwner(), getNewWarnings(), Messages.Warnings_NewWarnings_Detail_header());
+            return new NewWarningsDetail(getOwner(), getNewWarnings(), getDisplayName());
         }
         else if ("error".equals(link)) {
-            return new ErrorDetail(getOwner(), "Compiler Warnings", errors);
+            return new ErrorDetail(getOwner(), "Checkstyle", errors);
         }
-        else {
-            if (isSingleModuleProject()) {
-                if (isSinglePackageProject()) {
-                    return new SourceDetail(getOwner(), getProject().getAnnotation(link));
-                }
-                else {
-                    return new PackageDetail(getOwner(), getModules().iterator().next().getPackage(link), Messages.Warnings_ProjectAction_Name());
-                }
-            }
-            else {
-                return new ModuleDetail(getOwner(), getModule(link), Messages.Warnings_ProjectAction_Name());
-            }
+        else if (link.startsWith("module.")) {
+            return new ModuleDetail(getOwner(), getModule(StringUtils.substringAfter(link, "module.")), getDisplayName());
         }
+        else if (link.startsWith("package.")) {
+            return new PackageDetail(getOwner(), getProject().getPackage(StringUtils.substringAfter(link, "package.")), getDisplayName());
+        }
+        else if (link.startsWith("source.")) {
+            return new SourceDetail(getOwner(), getProject().getAnnotation(StringUtils.substringAfter(link, "source.")));
+        }
+        else if (link.startsWith("category.")) {
+            String category = StringUtils.substringAfter(link, "category.");
+            return new AttributeDetail(getOwner(), getProject().getCategory(category), getDisplayName(), hudson.plugins.warnings.util.Messages.CategoryDetail_header() +  " " + category);
+        }
+        else if (link.startsWith("type.")) {
+            String type = StringUtils.substringAfter(link, "type.");
+            return new AttributeDetail(getOwner(), getProject().getType(type), getDisplayName(), hudson.plugins.warnings.util.Messages.TypeDetail_header() + " " + type);
+        }
+        return null;
+    }
+
+    public AnnotationContainer getContainer() {
+        return getProject();
     }
 
     /**
@@ -513,26 +525,6 @@ public class WarningsResult implements ModelObject, Serializable, AnnotationProv
     }
 
     /**
-     * Returns the package with the given name.
-     *
-     * @param name
-     *            the package to get
-     * @return the package
-     */
-    public JavaPackage getPackage(final String name) {
-        return getProject().getModules().iterator().next().getPackage(name);
-    }
-
-    /**
-     * Returns the packages of this project.
-     *
-     * @return the packages of this project
-     */
-    public Collection<JavaPackage> getPackages() {
-        return getProject().getPackages();
-    }
-
-    /**
      * Returns the modules of this project.
      *
      * @return the modules of this project
@@ -546,27 +538,6 @@ public class WarningsResult implements ModelObject, Serializable, AnnotationProv
             }
         }
         return modules;
-    }
-
-    /**
-     * Returns whether this project contains just one maven module. In this case
-     * we show package statistics instead of module statistics.
-     *
-     * @return <code>true</code> if this project contains just one maven
-     *         module
-     */
-    public boolean isSingleModuleProject() {
-        return getNumberOfModules() == 1;
-    }
-
-    /**
-     * Returns whether we only have a single package. In this case the module
-     * and package statistics are suppressed and only the tasks are shown.
-     *
-     * @return <code>true</code> for single module projects
-     */
-    public boolean isSinglePackageProject() {
-        return isSingleModuleProject() && getProject().getPackages().size() == 1;
     }
 
     /**
@@ -610,7 +581,7 @@ public class WarningsResult implements ModelObject, Serializable, AnnotationProv
     }
 
     /**
-     * Generates a PNG image for high/normal/low distribution of a maven module.
+     * Generates a PNG image for high/normal/low distribution of the specified object.
      *
      * @param request
      *            Stapler request
@@ -619,23 +590,25 @@ public class WarningsResult implements ModelObject, Serializable, AnnotationProv
      * @throws IOException
      *             in case of an error
      */
-    public final void doModuleStatistics(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        ChartRenderer.renderPriorititesChart(request, response, getModule(request.getParameter("module")), getProject().getAnnotationBound());
-    }
-
-    /**
-     * Generates a PNG image for high/normal/low distribution of a Java package.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @throws IOException
-     *             in case of an error
-     */
-    public final void doPackageStatistics(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        MavenModule module = getModules().iterator().next();
-        ChartRenderer.renderPriorititesChart(request, response, module.getPackage(request.getParameter("package")), module.getAnnotationBound());
+    public final void doStatistics(final StaplerRequest request, final StaplerResponse response) throws IOException {
+        String parameter = request.getParameter("object");
+        if (parameter.startsWith("category.")) {
+            Set<FileAnnotation> annotations = getProject().getCategory(StringUtils.substringAfter(parameter, "category."));
+            ChartRenderer.renderPriorititesChart(request, response, new DefaultAnnotationContainer(annotations), getProject().getAnnotationBound());
+        }
+        else if (parameter.startsWith("type.")) {
+            Set<FileAnnotation> annotations = getProject().getType(StringUtils.substringAfter(parameter, "type."));
+            ChartRenderer.renderPriorititesChart(request, response, new DefaultAnnotationContainer(annotations), getProject().getAnnotationBound());
+        }
+        else if (parameter.startsWith("package.")) {
+            AnnotationContainer annotations = getProject().getPackage(StringUtils.substringAfter(parameter, "package."));
+            ChartRenderer.renderPriorititesChart(request, response, annotations, getProject().getAnnotationBound());
+        }
+        else if (parameter.startsWith("module.")) {
+            AnnotationContainer annotations = getModule(StringUtils.substringAfter(parameter, "module."));
+            ChartRenderer.renderPriorititesChart(request, response, annotations, getProject().getAnnotationBound());
+        }
+        // TODO: we should parameterize the annotation bound (second parameter instead of getChild)
     }
 
     /**

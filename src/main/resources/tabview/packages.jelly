@@ -1,0 +1,27 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+  xmlns:i="jelly:fmt" xmlns:local="local">
+  <table class="pane sortable" id="packages">
+    <tr>
+      <td class="pane-header">${%Package}</td>
+      <td class="pane-header" style="width:2em">${%Total}</td>
+      <td class="pane-header">${%Distribution}</td>
+    </tr>
+    <tbody>
+      <j:forEach var="package" items="${it.container.packages}">
+        <tr>
+          <td class="pane">
+            <a href="package.${package.name}/">${package.name}</a>
+          </td>
+          <td class="pane">${package.numberOfAnnotations}
+          </td>
+          <td class="pane">
+            <div tooltip="${it.container.getPackage(package.name).toolTip}">
+              <img src="statistics?object=package.${package.name}" />
+            </div>
+          </td>
+        </tr>
+      </j:forEach>
+    </tbody>
+  </table>
+</j:jelly>

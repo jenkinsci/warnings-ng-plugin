@@ -66,7 +66,7 @@ public class FilesParser implements FileCallable<JavaProject> {
         }
 
         try {
-            MavenModuleDetector detector = new MavenModuleDetector();
+            ModuleDetector detector = new ModuleDetector();
             int duplicateModuleCounter = 1;
             for (String fileName : fileNames) {
                 File file = new File(workspace, fileName);

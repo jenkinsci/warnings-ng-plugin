@@ -1,0 +1,26 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+  xmlns:i="jelly:fmt" xmlns:local="local">
+  <j:forEach var="warning" items="${annotations}">
+    <table class="pane" id="details">
+      <tr>
+        <td class="pane-header">
+          <j:choose>
+            <j:when
+              test="${it.isCurrent() &amp;&amp; warning.fileName != null}">
+              ${%File}: <a href="source.${warning.key}/#${warning.primaryLineNumber}">${warning.shortFileName}</a>,
+            </j:when>
+            <j:otherwise> ${%File}: ${warning.shortFileName}, </j:otherwise>
+          </j:choose>
+          ${%Type}: ${warning.type}, ${Priority}:
+          ${warning.priority.localizedString}, ${%Category}:
+          ${warning.category}
+        </td>
+      </tr>
+    </table>
+    <p>
+      <b>${warning.message}</b>
+    </p>
+    <p>${warning.toolTip}</p>
+  </j:forEach>
+</j:jelly>

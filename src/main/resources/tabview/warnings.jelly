@@ -1,0 +1,30 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+  xmlns:i="jelly:fmt" xmlns:local="local">
+  <table class="pane sortable" id="warnings">
+    <tr>
+      <td class="pane-header">${%File}</td>
+      <td class="pane-header">${%Priority}</td>
+      <td class="pane-header">${%Type}</td>
+      <td class="pane-header">${%Category}</td>
+    </tr>
+    <tbody>
+      <j:forEach var="warning" items="${it.container.annotations}">
+        <tr>
+          <td class="pane">
+            <div tooltip="${warning.message}"> ${warning.shortFileName} </div>
+          </td>
+          <td class="pane">
+            <div tooltip="${warning.message}"> ${warning.priority.localizedString} </div>
+          </td>
+          <td class="pane">
+            <div tooltip="${warning.message}"> ${warning.type} </div>
+          </td>
+          <td class="pane">
+            <div tooltip="${warning.message}"> ${warning.category} </div>
+          </td>
+        </tr>
+      </j:forEach>
+    </tbody>
+  </table>
+</j:jelly>

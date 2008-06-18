@@ -1,6 +1,5 @@
 package hudson.plugins.warnings.util.model;
 
-
 import hudson.plugins.warnings.util.Messages;
 
 import java.io.Serializable;
@@ -42,6 +41,10 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     private final Map<Long, FileAnnotation> annotations = new HashMap<Long, FileAnnotation>();
     /** The annotations mapped by priority. */
     private transient Map<Priority, Set<FileAnnotation>> annotationsByPriority;
+    /** The annotations mapped by category. */
+    private transient Map<String, Set<FileAnnotation>> annotationsByCategory;
+    /** The annotations mapped by type. */
+    private transient Map<String, Set<FileAnnotation>> annotationsByType;
     /** The files that contain annotations mapped by file name. */
     private transient Map<String, WorkspaceFile> filesByName;
     /** The files that contain annotations mapped by file name. */
@@ -65,6 +68,15 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      */
     public AnnotationContainer(final Hierarchy hierarchy) {
         this(StringUtils.EMPTY, hierarchy);
+    }
+
+    /**
+     * Returns this container.
+     *
+     * @return this container
+     */
+    public AnnotationContainer getContainer() {
+        return this;
     }
 
     /**
@@ -114,6 +126,8 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         for (Priority priority : Priority.values()) {
             annotationsByPriority.put(priority, new HashSet<FileAnnotation>());
         }
+        annotationsByCategory = new HashMap<String, Set<FileAnnotation>>();
+        annotationsByType = new HashMap<String, Set<FileAnnotation>>();
         filesByName = new HashMap<String, WorkspaceFile>();
         packagesByName = new HashMap<String, JavaPackage>();
         modulesByName = new HashMap<String, MavenModule>();
@@ -146,6 +160,12 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      */
     private void updateMappings(final FileAnnotation annotation) {
         annotationsByPriority.get(annotation.getPriority()).add(annotation);
+        if (StringUtils.isNotBlank(annotation.getCategory())) {
+            addCategory(annotation);
+        }
+        if (StringUtils.isNotBlank(annotation.getType())) {
+            addType(annotation);
+        }
         if (hierarchy == Hierarchy.PROJECT) {
             addModule(annotation);
         }
@@ -155,6 +175,36 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         if (hierarchy == Hierarchy.PROJECT || hierarchy == Hierarchy.MODULE || hierarchy == Hierarchy.PACKAGE) {
             addFile(annotation);
         }
+    }
+
+    /**
+     * Adds a new category to this container that will contain the specified
+     * annotation. If the category already exists, then the annotation is only added
+     * to this category.
+     *
+     * @param annotation the new annotation
+     */
+    private void addCategory(final FileAnnotation annotation) {
+        String category = annotation.getCategory();
+        if (!annotationsByCategory.containsKey(category)) {
+            annotationsByCategory.put(category, new HashSet<FileAnnotation>());
+        }
+        annotationsByCategory.get(category).add(annotation);
+    }
+
+    /**
+     * Adds a new type to this container that will contain the specified
+     * annotation. If the type already exists, then the annotation is only added
+     * to this type.
+     *
+     * @param annotation the new annotation
+     */
+    private void addType(final FileAnnotation annotation) {
+        String type = annotation.getType();
+        if (!annotationsByType.containsKey(type)) {
+            annotationsByType.put(type, new HashSet<FileAnnotation>());
+        }
+        annotationsByType.get(type).add(annotation);
     }
 
     /**
@@ -240,6 +290,33 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     /** {@inheritDoc} */
     public final Collection<FileAnnotation> getAnnotations(final Priority priority) {
         return Collections.unmodifiableCollection(annotationsByPriority.get(priority));
+    }
+
+    /**
+     * Returns the annotations with {@link Priority#HIGH}.
+     *
+     * @return the annotations with {@link Priority#HIGH}
+     */
+    public final Collection<FileAnnotation> getHighAnnotations() {
+        return getAnnotations(Priority.HIGH);
+    }
+
+    /**
+     * Returns the annotations with {@link Priority#NORMAL}.
+     *
+     * @return the annotations with {@link Priority#NORMAL}
+     */
+    public final Collection<FileAnnotation> getNormalAnnotations() {
+        return getAnnotations(Priority.NORMAL);
+    }
+
+    /**
+     * Returns the annotations with {@link Priority#LOW}.
+     *
+     * @return the annotations with {@link Priority#LOW}
+     */
+    public final Collection<FileAnnotation> getLowAnnotations() {
+        return getAnnotations(Priority.LOW);
     }
 
     /** {@inheritDoc} */
@@ -355,7 +432,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * exists, <code>false</code> otherwise
      */
     public boolean containsModule(final String moduleName) {
-        return modulesByName.get(moduleName) != null;
+        return modulesByName.containsKey(moduleName);
     }
 
     /**
@@ -390,7 +467,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * exists, <code>false</code> otherwise
      */
     public boolean containsPackage(final String packageName) {
-        return packagesByName.get(packageName) != null;
+        return packagesByName.containsKey(packageName);
     }
 
     /**
@@ -421,11 +498,11 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      *
      * @param fileName the file to check for
      *
-     * @return <code>true</code> if the file module with the given name
+     * @return <code>true</code> if the file with the given name
      * exists, <code>false</code> otherwise
      */
     public boolean containsFile(final String fileName) {
-        return filesByName.get(fileName) != null;
+        return filesByName.containsKey(fileName);
     }
 
     /**
@@ -440,6 +517,74 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
             return filesByName.get(fileName);
         }
         throw new NoSuchElementException("File not found: " + fileName);
+    }
+
+    /**
+     * Gets the categories of this container that have annotations.
+     *
+     * @return the categories with annotations
+     */
+    public Collection<String> getCategories() {
+        return Collections.unmodifiableCollection(annotationsByCategory.keySet());
+    }
+
+    /**
+     * Returns whether the category with the given name exists.
+     *
+     * @param category the file to check for
+     *
+     * @return <code>true</code> if the category with the given name
+     * exists, <code>false</code> otherwise
+     */
+    public boolean containsCategory(final String category) {
+        return annotationsByCategory.containsKey(category);
+    }
+
+    /**
+     * Gets the category with the given name.
+     *
+     * @param category the category name
+     * @return the category with the given name
+     */
+    public Set<FileAnnotation> getCategory(final String category) {
+        if (annotationsByCategory.containsKey(category)) {
+            return annotationsByCategory.get(category);
+        }
+        throw new NoSuchElementException("Category not found: " + category);
+    }
+
+    /**
+     * Gets the types of this container that have annotations.
+     *
+     * @return the types with annotations
+     */
+    public Collection<String> getTypes() {
+        return Collections.unmodifiableCollection(annotationsByType.keySet());
+    }
+
+    /**
+     * Returns whether the type with the given name exists.
+     *
+     * @param type the type to check for
+     *
+     * @return <code>true</code> if the type with the given name
+     * exists, <code>false</code> otherwise
+     */
+    public boolean containsType(final String type) {
+        return annotationsByType.containsKey(type);
+    }
+
+    /**
+     * Gets the type with the given name.
+     *
+     * @param type the type name
+     * @return the type with the given name
+     */
+    public Set<FileAnnotation> getType(final String type) {
+        if (annotationsByType.containsKey(type)) {
+            return annotationsByType.get(type);
+        }
+        throw new NoSuchElementException("Type not found: " + type);
     }
 
     /**
