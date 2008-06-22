@@ -2,12 +2,10 @@
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
   xmlns:i="jelly:fmt" xmlns:local="local">
   <j:if test="${it.hasAnnotations()}">
-    <!-- JavaScript Dependencies for Tabview: -->
-    <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-    <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/element/element-beta-min.js"></script>
-
-    <!-- Source file for TabView -->
-    <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/tabview/tabview-min.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/warnings/yui/yahoo-min.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/warnings/yui/yahoo-dom-event.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/warnings/yui/element-beta-min.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/warnings/yui/tabview-min.js"></script>
 
     <script type="text/javascript">
       var myTabs = new YAHOO.widget.TabView("statistics");
