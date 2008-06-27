@@ -4,6 +4,7 @@
   <table class="pane sortable" id="warnings">
     <tr>
       <td class="pane-header">${%File}</td>
+      <td class="pane-header">${%Line}</td>
       <td class="pane-header">${%Priority}</td>
       <td class="pane-header">${%Type}</td>
       <td class="pane-header">${%Category}</td>
@@ -13,6 +14,9 @@
         <tr>
           <td class="pane">
             <div tooltip="${warning.message}"> ${warning.shortFileName} </div>
+          </td>
+          <td class="pane">
+            <div tooltip="${warning.message}"> ${warning.primaryLineNumber} </div>
           </td>
           <td class="pane">
             <div tooltip="${warning.message}"> ${warning.priority.localizedString} </div>

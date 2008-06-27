@@ -12,7 +12,7 @@
             </j:when>
             <j:otherwise> ${%File}: ${warning.shortFileName}, </j:otherwise>
           </j:choose>
-          ${%Type}: ${warning.type}, ${Priority}:
+          ${%Line}: ${warning.primaryLineNumber}, ${%Type}: ${warning.type}, ${%Priority}:
           ${warning.priority.localizedString}, ${%Category}:
           ${warning.category}
         </td>
