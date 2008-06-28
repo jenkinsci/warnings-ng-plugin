@@ -57,15 +57,6 @@ public class Warning extends AbstractAnnotation {
         setFileName(fileName);
     }
 
-    /**
-     * Gets the associated file name of this bug (without path).
-     *
-     * @return the short file name
-     */
-    public String getShortFileName() {
-        return StringUtils.substringAfterLast(getFileName(), "/");
-    }
-
     /** {@inheritDoc} */
     public String getToolTip() {
         return StringUtils.EMPTY;

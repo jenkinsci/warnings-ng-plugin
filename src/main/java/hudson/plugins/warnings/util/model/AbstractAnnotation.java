@@ -256,4 +256,13 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         }
         return true;
     }
+
+    /**
+     * Gets the associated file name of this bug (without path).
+     *
+     * @return the short file name
+     */
+    public String getShortFileName() {
+        return StringUtils.substringAfterLast(getFileName(), "/");
+    }
 }

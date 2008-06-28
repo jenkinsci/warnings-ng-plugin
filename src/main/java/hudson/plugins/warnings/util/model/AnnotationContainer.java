@@ -607,4 +607,31 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @return the children containers of this container.
      */
     protected abstract Collection<? extends AnnotationContainer> getChildren();
+
+    /**
+     * Returns {@link Priority#HIGH}.
+     *
+     * @return {@link Priority#HIGH}
+     */
+    public Priority getHighPriority() {
+        return Priority.HIGH;
+    }
+
+    /**
+     * Returns {@link Priority#NORMAL}.
+     *
+     * @return {@link Priority#NORMAL}
+     */
+    public Priority getNormalPriority() {
+        return Priority.NORMAL;
+    }
+
+    /**
+     * Returns {@link Priority#LOW}.
+     *
+     * @return {@link Priority#LOW}
+     */
+    public Priority getLowPriority() {
+        return Priority.LOW;
+    }
 }
