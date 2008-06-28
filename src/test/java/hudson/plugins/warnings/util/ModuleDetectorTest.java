@@ -3,27 +3,32 @@ package hudson.plugins.warnings.util;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.junit.Test;
 
 /**
  *  Tests the class {@link ModuleDetector}.
  */
+@edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
 public class ModuleDetectorTest {
+    /** Prefix of the path in test. */
+    private static final String PATH_PREFIX = "/path/to/";
     /** Expected module name for all tests. */
     private static final String EXPECTED_MODULE = "com.avaloq.adt.core";
     /** JUnit Error message. */
     private static final String ERROR_MESSAGE = "Wrong module name detected.";
-    /** Detector under test. */
-    private final ModuleDetector detector = new ModuleDetector();
 
     /**
      * Checks whether we could identify a name from the file name.
      */
     @Test
     public void testTopLevelModuleName() {
+        ModuleDetector detector = new ModuleDetector();
+
         String moduleName = detector.guessModuleName("com.avaloq.adt.core/pmd.xml");
         assertEquals(ERROR_MESSAGE, EXPECTED_MODULE, moduleName);
         moduleName = detector.guessModuleName("com.avaloq.adt.core\\pmd.xml");
@@ -39,13 +44,79 @@ public class ModuleDetectorTest {
     @Test
     public void testPomNameOnTarget() throws FileNotFoundException {
         FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
-        InputStream pom = ModuleDetectorTest.class.getResourceAsStream("pom.xml");
+        InputStream pom = ModuleDetectorTest.class.getResourceAsStream(ModuleDetector.MAVEN_POM);
         expect(factory.create(isA(String.class))).andReturn(pom);
+
+        ModuleDetector detector = new ModuleDetector();
         detector.setFileInputStreamFactory(factory);
 
         replay(factory);
 
         assertEquals(ERROR_MESSAGE, "ADT Business Logic", detector.guessModuleName("prefix/target/suffix"));
+
+        verify(factory);
+    }
+
+    /**
+     * Checks whether we could identify maven modules using the module mapping.
+     *
+     * @throws FileNotFoundException
+     *             should never happen
+     */
+    @Test
+    public void testPomModules() throws FileNotFoundException {
+        FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
+        InputStream pom = ModuleDetectorTest.class.getResourceAsStream(ModuleDetector.MAVEN_POM);
+        expect(factory.create(isA(String.class))).andReturn(pom);
+
+        ModuleDetector detector = new ModuleDetector() {
+            /** {@inheritDoc} */
+            @Override
+            protected String[] find(final File path, final String pattern) {
+                return new String[] {PATH_PREFIX + MAVEN_POM};
+            }
+
+        };
+        detector.setFileInputStreamFactory(factory);
+
+        replay(factory);
+
+        Map<String, String> mapping = detector.getModules(null);
+        assertEquals("Wrong number of elements in mapping", 1, mapping.size());
+        assertTrue("Wrong key in mapping", mapping.containsKey(PATH_PREFIX));
+        assertTrue("Wrong value in mapping", mapping.containsValue("ADT Business Logic"));
+
+        verify(factory);
+    }
+
+    /**
+     * Checks whether we could identify ant projects using the module mapping.
+     *
+     * @throws FileNotFoundException
+     *             should never happen
+     */
+    @Test
+    public void testAntModules() throws FileNotFoundException {
+        FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
+        InputStream pom = ModuleDetectorTest.class.getResourceAsStream(ModuleDetector.ANT_PROJECT);
+        expect(factory.create(isA(String.class))).andReturn(pom);
+
+        ModuleDetector detector = new ModuleDetector() {
+            /** {@inheritDoc} */
+            @Override
+            protected String[] find(final File path, final String pattern) {
+                return new String[] {PATH_PREFIX + ModuleDetector.ANT_PROJECT};
+            }
+
+        };
+        detector.setFileInputStreamFactory(factory);
+
+        replay(factory);
+
+        Map<String, String> mapping = detector.getModules(null);
+        assertEquals("Wrong number of elements in mapping", 1, mapping.size());
+        assertTrue("Wrong key in mapping", mapping.containsKey(PATH_PREFIX));
+        assertTrue("Wrong value in mapping", mapping.containsValue("checkstyle"));
 
         verify(factory);
     }
@@ -59,8 +130,10 @@ public class ModuleDetectorTest {
     @Test
     public void testProjectName() throws FileNotFoundException {
         FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
-        InputStream buildXml = ModuleDetectorTest.class.getResourceAsStream("build.xml");
+        InputStream buildXml = ModuleDetectorTest.class.getResourceAsStream(ModuleDetector.ANT_PROJECT);
         expect(factory.create(isA(String.class))).andReturn(buildXml);
+
+        ModuleDetector detector = new ModuleDetector();
         detector.setFileInputStreamFactory(factory);
 
         replay(factory);
@@ -79,8 +152,10 @@ public class ModuleDetectorTest {
     @Test
     public void testProjectNameNoPath() throws FileNotFoundException {
         FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
-        InputStream buildXml = ModuleDetectorTest.class.getResourceAsStream("build.xml");
+        InputStream buildXml = ModuleDetectorTest.class.getResourceAsStream(ModuleDetector.ANT_PROJECT);
         expect(factory.create(isA(String.class))).andReturn(buildXml);
+
+        ModuleDetector detector = new ModuleDetector();
         detector.setFileInputStreamFactory(factory);
 
         replay(factory);
@@ -100,6 +175,8 @@ public class ModuleDetectorTest {
     public void testNoPomNameOnException() throws FileNotFoundException {
         FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
         expect(factory.create(isA(String.class))).andThrow(new FileNotFoundException()).anyTimes();
+
+        ModuleDetector detector = new ModuleDetector();
         detector.setFileInputStreamFactory(factory);
 
         replay(factory);
@@ -114,6 +191,8 @@ public class ModuleDetectorTest {
      */
     @Test
     public void testNoGuess() {
+        ModuleDetector detector = new ModuleDetector();
+
         String moduleName = detector.guessModuleName("base/com.hello.world/com.avaloq.adt.core/pmd.xml");
         assertEquals(ERROR_MESSAGE, "com.avaloq.adt.core", moduleName);
 
