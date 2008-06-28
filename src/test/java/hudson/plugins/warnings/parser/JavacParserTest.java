@@ -32,13 +32,13 @@ public class JavacParserTest extends ParserTester {
                 12,
                 "org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated",
                 "C:/Build/Results/jobs/ADT-Base/workspace/com.avaloq.adt.ui/src/main/java/com/avaloq/adt/ui/elements/AvaloqDialog.java",
-                JavacParser.WARNING_TYPE, "deprecation", Priority.NORMAL);
+                JavacParser.WARNING_TYPE, RegexpParser.DEPRECATION, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 40,
                 "org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated",
                 "C:/Build/Results/jobs/ADT-Base/workspace/com.avaloq.adt.ui/src/main/java/com/avaloq/adt/ui/elements/AvaloqDialog.java",
-                JavacParser.WARNING_TYPE, "deprecation", Priority.NORMAL);
+                JavacParser.WARNING_TYPE, RegexpParser.DEPRECATION, Priority.NORMAL);
     }
 }
 

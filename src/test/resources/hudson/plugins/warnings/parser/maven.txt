@@ -1,0 +1,45 @@
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Hudson remoting layer
+[INFO]    task-segment: [clean, install]
+[INFO] ------------------------------------------------------------------------
+[INFO] [clean:clean]
+[INFO] Deleting directory /home/hudson/hudson/data/jobs/Hudson main/workspace/remoting/target
+[INFO] [enforcer:display-info {execution: default}]
+[INFO] Maven Version: 2.0.9
+[INFO] JDK Version: 1.6.0_02 normalized as: 1.6.0-2
+[INFO] OS Info: Arch: i386 Family: unix Name: linux Version: 2.6.18-6-686
+[INFO] [remote-resources:process {execution: default}]
+[INFO] inceptionYear not specified, defaulting to 2008
+[INFO] [resources:resources]
+[INFO] Using default encoding to copy filtered resources.
+[INFO] [compiler:compile]
+[INFO] Compiling 36 source files to /home/hudson/hudson/data/jobs/Hudson main/workspace/remoting/target/classes
+[INFO] [resources:testResources]
+[INFO] Using default encoding to copy filtered resources.
+[INFO] [compiler:testCompile]
+[INFO] Compiling 11 source files to /home/hudson/hudson/data/jobs/Hudson main/workspace/remoting/target/test-classes
+[WARNING] /home/hudson/hudson/data/jobs/Hudson main/workspace/remoting/src/test/java/hudson/remoting/BinarySafeStreamTest.java:[3,54] com.sun.org.apache.xerces.internal.impl.dv.util.Base64 is Sun proprietary API and may be removed in a future release
+
+[WARNING] /home/hudson/hudson/data/jobs/Hudson main/workspace/remoting/src/test/java/hudson/remoting/BinarySafeStreamTest.java:[36,24] com.sun.org.apache.xerces.internal.impl.dv.util.Base64 is Sun proprietary API and may be removed in a future release
+
+[WARNING] /home/hudson/hudson/data/jobs/Hudson main/workspace/remoting/src/test/java/hudson/remoting/BinarySafeStreamTest.java:[47,24] com.sun.org.apache.xerces.internal.impl.dv.util.Base64 is Sun proprietary API and may be removed in a future release
+
+[WARNING] /home/hudson/hudson/data/jobs/Hudson main/workspace/remoting/src/test/java/hudson/remoting/BinarySafeStreamTest.java:[69,24] com.sun.org.apache.xerces.internal.impl.dv.util.Base64 is Sun proprietary API and may be removed in a future release
+
+[WARNING] /home/hudson/hudson/data/jobs/Hudson main/workspace/remoting/src/test/java/hudson/remoting/BinarySafeStreamTest.java:[105,25] com.sun.org.apache.xerces.internal.impl.dv.util.Base64 is Sun proprietary API and may be removed in a future release
+
+[INFO] [surefire:test]
+[INFO] Tests are skipped.
+[INFO] [jar:jar]
+[INFO] Building jar: /home/hudson/hudson/data/jobs/Hudson main/workspace/remoting/target/remoting-1.223-SNAPSHOT.jar
+[INFO] [jar:sign {execution: default}]
+[debug] jarsigner executable=[/usr/lib/jvm/java-6-sun-1.6.0.02/jre/../bin/jarsigner]
+[debug] Executing: /bin/sh -c 'cd /home/hudson/hudson/data/jobs/Hudson\ main/workspace/remoting
+&& /usr/lib/jvm/java-6-sun-1.6.0.02/jre/../bin/jarsigner -verify "/home/hudson/hudson/data/jobs/Hudson
+main/workspace/remoting/target/remoting-1.223-SNAPSHOT.jar"'
+[info] jar is unsigned. (signatures missing or not parsable)
+[INFO] [install:install]
+[INFO] Installing /home/hudson/hudson/data/jobs/Hudson main/workspace/remoting/target/remoting-1.223-SNAPSHOT.jar
+to /home/hudson/.m2/repository/org/jvnet/hudson/main/remoting/1.223-SNAPSHOT/remoting-1.223-SNAPSHOT.jar
+[HUDSON] Archiving /home/hudson/hudson/data/jobs/Hudson main/workspace/remoting/pom.xml
+to /home/hudson/hudson/bin/../data/jobs/Hudson main/modules/org.jvnet.hudson.main$remoting/builds/2008-06-10_23-03-15/archive/org.jvnet.hudson.main/remoting/1.223-SNAPSHOT/pom.xml

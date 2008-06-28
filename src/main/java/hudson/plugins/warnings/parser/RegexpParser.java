@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Parses an input stream for compiler warnings using the provided regular expression.
@@ -19,6 +20,10 @@ import org.apache.commons.io.LineIterator;
  * @author Ulli Hafner
  */
 public abstract class RegexpParser implements AnnotationParser {
+    /** Warning classification. */
+    protected static final String DEPRECATION = "Deprecation";
+    /** Warning classification. */
+    protected static final String PROPRIETARY_API = "Proprietary API";
     /** Pattern of compiler warnings. */
     private final Pattern pattern;
 
@@ -78,5 +83,21 @@ public abstract class RegexpParser implements AnnotationParser {
         catch (NumberFormatException exception) {
             return 0;
         }
+    }
+
+    /**
+     * Classifies the warning message: tries to guess a category from the warning message.
+     *
+     * @param message the message to check
+     * @return warning category, empty string if unknown
+     */
+    protected String classifyWarning(final String message) {
+        if (StringUtils.contains(message, "proprietary")) {
+            return PROPRIETARY_API;
+        }
+        if (StringUtils.contains(message, "deprecated")) {
+            return DEPRECATION;
+        }
+        return StringUtils.EMPTY;
     }
 }

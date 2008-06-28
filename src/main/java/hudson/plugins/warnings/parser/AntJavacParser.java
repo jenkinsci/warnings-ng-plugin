@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
  */
 public class AntJavacParser extends RegexpParser {
     /** Warning type of this parser. */
-    static final String WARNING_TYPE = "SUN Java Compiler";
+    static final String WARNING_TYPE = "Ant Java Compiler";
     /** Pattern of javac compiler warnings. */
     private static final String ANT_JAVAC_WARNING_PATTERN = "\\s*\\[javac\\]\\s*(.*):(\\d*):.*:(.*)";
 
@@ -28,7 +28,9 @@ public class AntJavacParser extends RegexpParser {
      */
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE, "Deprecation", matcher.group(3));
+        String message = matcher.group(3);
+        return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE,
+                classifyWarning(message), message);
     }
 }
 

@@ -28,6 +28,7 @@ public class ParserRegistry {
         parsers.add(new JavacParser());
         parsers.add(new AntJavacParser());
         parsers.add(new MsBuildParser());
+        parsers.add(new MavenParser());
     }
 
     /**
