@@ -15,22 +15,17 @@ public class ErrorDetail implements ModelObject  {
     private final AbstractBuild<?, ?> owner;
     /** All errors of the project. */
     private final List<String> errors;
-    /** The name of the associated plug-in. */
-    private final String name;
 
     /**
      * Creates a new instance of <code>ErrorDetail</code>.
      *
      * @param owner
      *            current build as owner of this action.
-     * @param name
-     *            the name of the plug-in
      * @param errors
      *            all modules of the project
      */
-    public ErrorDetail(final AbstractBuild<?, ?> owner, final String name, final List<String> errors) {
+    public ErrorDetail(final AbstractBuild<?, ?> owner, final List<String> errors) {
         this.owner = owner;
-        this.name = name;
         this.errors = errors;
     }
 
@@ -45,7 +40,7 @@ public class ErrorDetail implements ModelObject  {
 
     /** {@inheritDoc} */
     public String getDisplayName() {
-        return "Errors";
+        return Messages.Errors();
     }
 
     /**
@@ -55,15 +50,6 @@ public class ErrorDetail implements ModelObject  {
      */
     public List<String> getErrors() {
         return errors;
-    }
-
-    /**
-     * Returns the name of the associated plug-in.
-     *
-     * @return the name of the associated plug-in
-     */
-    public String getName() {
-        return name;
     }
 }
 

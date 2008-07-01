@@ -4,7 +4,7 @@
 	<l:layout norefresh="true">
 		<st:include it="${it.owner}" page="sidepanel.jelly" />
 		<l:main-panel>
-			<h1 class="result-regression">${it.name} ${%Errors}</h1>
+			<h1 class="result-regression">${it.displayName}</h1>
 
 			<ol>
 				<j:forEach var="error" items="${it.errors}">

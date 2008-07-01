@@ -4,16 +4,13 @@ import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
 import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.AnnotationProvider;
-import hudson.plugins.warnings.util.model.DefaultAnnotationContainer;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
 import hudson.util.ChartUtil;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.JFreeChart;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -129,29 +126,8 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      *            Stapler response
      * @return the dynamic result of this module detail view
      */
-    public final Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
-        PriorityDetailFactory factory = new PriorityDetailFactory();
-        if (factory.isPriority(link)) {
-            return factory.create(link, owner, this, getDisplayName());
-        }
-        else if (link.startsWith("module.")) {
-            return new ModuleDetail(getOwner(), getModule(StringUtils.substringAfter(link, "module.")), getDisplayName());
-        }
-        else if (link.startsWith("package.")) {
-            return new PackageDetail(getOwner(), getPackage(StringUtils.substringAfter(link, "package.")), getDisplayName());
-        }
-        else if (link.startsWith("source.")) {
-            return new SourceDetail(getOwner(), getAnnotation(StringUtils.substringAfter(link, "source.")));
-        }
-        else if (link.startsWith("category.")) {
-            String category = StringUtils.substringAfter(link, "category.");
-            return new AttributeDetail(getOwner(), getCategory(category), getDisplayName(), Messages.CategoryDetail_header() + " " + category);
-        }
-        else if (link.startsWith("type.")) {
-            String type = StringUtils.substringAfter(link, "type.");
-            return new AttributeDetail(getOwner(), getType(type), getDisplayName(), Messages.TypeDetail_header() + " " + type);
-        }
-        return null;
+    public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
+        return new DetailBuilder().createDetails(link, owner, getContainer(), getDisplayName());
     }
 
     /**
@@ -164,24 +140,8 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      * @throws IOException
      *             in case of an error
      */
-    public final void doStatistics(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        String parameter = request.getParameter("object");
-        if (parameter.startsWith("category.")) {
-            Set<FileAnnotation> annotations = getCategory(StringUtils.substringAfter(parameter, "category."));
-            ChartRenderer.renderPriorititesChart(request, response, new DefaultAnnotationContainer(annotations), getAnnotationBound());
-        }
-        else if (parameter.startsWith("type.")) {
-            Set<FileAnnotation> annotations = getType(StringUtils.substringAfter(parameter, "type."));
-            ChartRenderer.renderPriorititesChart(request, response, new DefaultAnnotationContainer(annotations), getAnnotationBound());
-        }
-        else if (parameter.startsWith("package.")) {
-            AnnotationContainer annotations = getPackage(StringUtils.substringAfter(parameter, "package."));
-            ChartRenderer.renderPriorititesChart(request, response, annotations, getAnnotationBound());
-        }
-        else if (parameter.startsWith("module.")) {
-            AnnotationContainer annotations = getModule(StringUtils.substringAfter(parameter, "module."));
-            ChartRenderer.renderPriorititesChart(request, response, annotations, getAnnotationBound());
-        }
+    public void doStatistics(final StaplerRequest request, final StaplerResponse response) throws IOException {
+        new ChartRenderer().doStatistics(request, response, getContainer());
     }
 
     /**

@@ -1,0 +1,28 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+  xmlns:i="jelly:fmt" xmlns:local="local">
+  <table class="pane sortable" id="files">
+    <tr>
+      <td class="pane-header">${%File}</td>
+      <td class="pane-header" style="width:2em">${%Total}</td>
+      <td class="pane-header">${%Distribution}</td>
+    </tr>
+    <tbody>
+      <j:forEach var="file" items="${it.container.files}">
+        <tr>
+          <td class="pane">
+            <a href="file.${file.name.hashCode()}/">${file.shortName}</a>
+          </td>
+          <td class="pane">${file.numberOfAnnotations}
+          </td>
+          <td class="pane">
+            <div tooltip="${it.container.getFile(file.name).toolTip}">
+              <img src="statistics?object=file.${file.name.hashCode()}" />
+            </div>
+          </td>
+        </tr>
+      </j:forEach>
+    </tbody>
+  </table>
+</j:jelly>
+

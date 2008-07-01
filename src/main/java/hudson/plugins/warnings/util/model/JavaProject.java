@@ -1,8 +1,8 @@
 package hudson.plugins.warnings.util.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.List;
 
 /**
  * A serializable Java Bean class representing a project that has been built by
@@ -15,10 +15,10 @@ public class JavaProject extends AnnotationContainer {
     private static final long serialVersionUID = 8556968267678442661L;
     /** Path of the workspace. */
     private String workspacePath;
-    /** Determines whether a module with an error is part of this project. */
-    private boolean hasModuleError;
     /** The error message that denotes that why project creation has been failed. */
     private String error;
+    /** The error messages of the modules. */
+    private final List<String> moduleErrors = new ArrayList<String>();
 
     /**
      * Creates a new instance of {@link JavaProject}.
@@ -45,8 +45,7 @@ public class JavaProject extends AnnotationContainer {
     public void addModule(final MavenModule module) {
         addAnnotations(module.getAnnotations());
         if (module.hasError()) {
-            hasModuleError = true;
-            addError(module.getError());
+            moduleErrors.add(module.getError());
         }
     }
 
@@ -85,7 +84,7 @@ public class JavaProject extends AnnotationContainer {
      * @return <code>true</code> if at least one module has an error.
      */
     public boolean hasError() {
-        return hasModuleError || error != null;
+        return moduleErrors.size() > 0 || error != null;
     }
 
     /**
@@ -100,29 +99,18 @@ public class JavaProject extends AnnotationContainer {
     }
 
     /**
-     * Appends the error message to the project error messages.
+     * Returns the error messages recorded during creation of the project.
      *
-     * @param additionalError
-     *            the new error message to add
+     * @return the error messages recorded during creation of the project
      */
-    public void addError(final String additionalError) {
-        if (StringUtils.isEmpty(error)) {
-            error = additionalError;
+    public List<String> getErrors() {
+        ArrayList<String> allErrors = new ArrayList<String>();
+        if (error != null) {
+            allErrors.add(error);
         }
-        else {
-            error = error + "\n" + additionalError;
-        }
-    }
+        allErrors.addAll(moduleErrors);
 
-    /**
-     * Returns the error message that denotes that why project creation has been
-     * failed.
-     *
-     * @return the error message that denotes that why project creation has been
-     *         failed.
-     */
-    public String getError() {
-        return error;
+        return allErrors;
     }
 
     /** {@inheritDoc} */

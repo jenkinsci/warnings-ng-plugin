@@ -46,6 +46,8 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     /** The annotations mapped by type. */
     private transient Map<String, Set<FileAnnotation>> annotationsByType;
     /** The files that contain annotations mapped by file name. */
+    private transient Map<Integer, WorkspaceFile> filesByHashCode;
+    /** The files that contain annotations mapped by file name. */
     private transient Map<String, WorkspaceFile> filesByName;
     /** The files that contain annotations mapped by file name. */
     private transient Map<String, JavaPackage> packagesByName;
@@ -129,6 +131,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         annotationsByCategory = new HashMap<String, Set<FileAnnotation>>();
         annotationsByType = new HashMap<String, Set<FileAnnotation>>();
         filesByName = new HashMap<String, WorkspaceFile>();
+        filesByHashCode = new HashMap<Integer, WorkspaceFile>();
         packagesByName = new HashMap<String, JavaPackage>();
         modulesByName = new HashMap<String, MavenModule>();
     }
@@ -240,14 +243,16 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     /**
      * Adds a new file to this container that will contain the specified
      * annotation. If the file already exists, then the annotation is only added
-     * to this file.
+     * to this class.
      *
      * @param annotation the new annotation
      */
     private void addFile(final FileAnnotation annotation) {
         String fileName = annotation.getFileName();
         if (!filesByName.containsKey(fileName)) {
-            filesByName.put(fileName, new WorkspaceFile(fileName));
+            WorkspaceFile file = new WorkspaceFile(fileName);
+            filesByName.put(fileName, file);
+            filesByHashCode.put(file.getName().hashCode(), file);
         }
         filesByName.get(fileName).addAnnotation(annotation);
     }
@@ -517,6 +522,20 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
             return filesByName.get(fileName);
         }
         throw new NoSuchElementException("File not found: " + fileName);
+    }
+
+    /**
+     * Gets the file with the given hash code.
+     *
+     * @param hashCode the hash code of the file
+     *
+     * @return the file with the given name
+     */
+    public WorkspaceFile getFile(final int hashCode) {
+        if (filesByHashCode.containsKey(hashCode)) {
+            return filesByHashCode.get(hashCode);
+        }
+        throw new NoSuchElementException("File not found: " + hashCode);
     }
 
     /**

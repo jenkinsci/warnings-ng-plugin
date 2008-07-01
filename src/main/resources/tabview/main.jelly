@@ -2,10 +2,10 @@
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
   xmlns:i="jelly:fmt" xmlns:local="local">
   <j:if test="${it.hasAnnotations()}">
-    <script type="text/javascript" src="${rootURL}/plugin/warnings/yui/yahoo-min.js"></script>
-    <script type="text/javascript" src="${rootURL}/plugin/warnings/yui/yahoo-dom-event.js"></script>
-    <script type="text/javascript" src="${rootURL}/plugin/warnings/yui/element-beta-min.js"></script>
-    <script type="text/javascript" src="${rootURL}/plugin/warnings/yui/tabview-min.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/checkstyle/yui/yahoo-min.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/checkstyle/yui/yahoo-dom-event.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/checkstyle/yui/element-beta-min.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/checkstyle/yui/tabview-min.js"></script>
 
     <script type="text/javascript">
       var myTabs = new YAHOO.widget.TabView("statistics");
@@ -20,7 +20,7 @@
         <j:if test="${it.container.modules.size() > 1}">
           <li class="${class}">
             <a href="#tab_modules">
-              <em>Modules</em>
+              <em>${%Modules}</em>
             </a>
           </li>
           <j:set var="class" value="" />
@@ -28,7 +28,15 @@
         <j:if test="${it.container.packages.size() > 1}">
           <li class="${class}">
             <a href="#tab_packages">
-              <em>Packages</em>
+              <em>${%Packages}</em>
+            </a>
+          </li>
+          <j:set var="class" value="" />
+        </j:if>
+        <j:if test="${it.container.files.size() > 1}">
+          <li class="${class}">
+            <a href="#tab_files">
+              <em>${%Files}</em>
             </a>
           </li>
           <j:set var="class" value="" />
@@ -36,7 +44,7 @@
         <j:if test="${it.container.categories.size() > 1}">
           <li class="${class}">
             <a href="#tab_categories">
-              <em>Categories</em>
+              <em>${%Categories}</em>
             </a>
           </li>
           <j:set var="class" value="" />
@@ -44,7 +52,7 @@
         <j:if test="${it.container.types.size() > 1}">
           <li class="${class}">
             <a href="#tab_types">
-              <em>Types</em>
+              <em>${%Types}</em>
             </a>
           </li>
           <j:set var="class" value="" />
@@ -52,49 +60,49 @@
         <j:if test="${it.container.numberOfAnnotations > 1}">
           <li class="${class}">
             <a href="#tab_warnings">
-              <em>Warnings</em>
+              <em>${%Warnings}</em>
             </a>
           </li>
           <j:set var="class" value="" />
         </j:if>
         <li class="${class}">
           <a href="#tab_details">
-            <em>Details</em>
+            <em>${%Details}</em>
           </a>
         </li>
         <j:set var="class" value="" />
         <j:if test="${it.newWarnings.size() > 0}">
           <li>
             <a href="#tab_new">
-              <em>New</em>
+              <em>${%New}</em>
             </a>
           </li>
         </j:if>
         <j:if test="${it.fixedWarnings.size() > 0}">
           <li>
             <a href="#tab_fixed">
-              <em>Fixed</em>
+              <em>${%Fixed}</em>
             </a>
           </li>
         </j:if>
         <j:if test="${it.container.highAnnotations.size() > 0 and it.container.highAnnotations.size() != it.container.numberOfAnnotations}">
-          <li>m
+          <li>
             <a href="#tab_high">
-              <em>High</em>
+              <em>${%High}</em>
             </a>
           </li>
         </j:if>
         <j:if test="${it.container.normalAnnotations.size() > 0 and it.container.normalAnnotations.size() != it.container.numberOfAnnotations}">
           <li>
             <a href="#tab_normal">
-              <em>Normal</em>
+              <em>${%Normal}</em>
             </a>
           </li>
         </j:if>
         <j:if test="${it.container.lowAnnotations.size() > 0 and it.container.lowAnnotations.size() != it.container.numberOfAnnotations}">
           <li>
             <a href="#tab_low">
-              <em>Low</em>
+              <em>${%Low}</em>
             </a>
           </li>
         </j:if>
@@ -108,6 +116,11 @@
         <j:if test="${it.container.packages.size() > 1}">
           <div id="tab_packages">
             <st:include page="/tabview/packages.jelly" />
+          </div>
+        </j:if>
+        <j:if test="${it.container.files.size() > 1}">
+          <div id="tab_files">
+            <st:include page="/tabview/files.jelly" />
           </div>
         </j:if>
         <j:if test="${it.container.categories.size() > 1}">
