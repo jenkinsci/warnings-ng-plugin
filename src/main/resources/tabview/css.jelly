@@ -5,7 +5,7 @@
         .yui-skin-sam .yui-navset .yui-nav,
         .yui-skin-sam .yui-navset .yui-navset-top .yui-nav { /* protect nested tabviews from other orientations */
             border:solid #b0b0b0; /* color between tab list and content */
-            border-width:0 0 1px;
+            border-width:0 0 0px;
             color:#bbb;
             Xposition:relative;
             zoom:1;
@@ -50,6 +50,7 @@
         .yui-skin-sam .yui-navset .yui-nav a:focus {
             background:#b0b0b0 url(../../../../assets/skins/sam/sprite.png) repeat-x left -1300px; /* selected tab background */
             outline:0;
+		border-bottom: 1px solid #b0b0b0;
         }
 
         .yui-skin-sam .yui-navset .yui-nav .selected a em {
