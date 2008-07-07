@@ -4,6 +4,7 @@ import hudson.model.AbstractBuild;
 import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.WorkspaceFile;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -51,6 +52,26 @@ public class FileDetail extends AbstractAnnotationsDetail {
     @Override
     protected Collection<? extends AnnotationContainer> getChildren() {
         return getFiles();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Collection<WorkspaceFile> getFiles() {
+        ArrayList<WorkspaceFile> files = new ArrayList<WorkspaceFile>();
+        files.add(file);
+        return files;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public WorkspaceFile getFile(final int hashCode) {
+        return file;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public WorkspaceFile getFile(final String name) {
+        return file;
     }
 }
 
