@@ -5,13 +5,13 @@
     <table class="pane" id="details">
       <tr>
         <td class="pane-header">
+          ${%File}:
           <j:choose>
-            <j:when
-              test="${it.isCurrent() &amp;&amp; warning.fileName != null}">
-              ${%File}: <a href="source.${warning.key}/#${warning.primaryLineNumber}">${warning.shortFileName}</a>,
+            <j:when test="${it.isCurrent() and warning.fileName != null}">
+              <a href="source.${warning.key}/#${warning.primaryLineNumber}">${warning.shortFileName}</a>
             </j:when>
-            <j:otherwise> ${%File}: ${warning.shortFileName}, </j:otherwise>
-          </j:choose>
+            <j:otherwise>${warning.shortFileName}</j:otherwise>
+          </j:choose>,
           ${%Line}: ${warning.primaryLineNumber}, ${%Type}: ${warning.type}, ${%Priority}:
           ${warning.priority.localizedString}, ${%Category}:
           ${warning.category}

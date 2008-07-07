@@ -13,7 +13,14 @@
       <j:forEach var="warning" items="${it.container.annotations}">
         <tr>
           <td class="pane">
-            <div tooltip="${warning.message}"> ${warning.shortFileName} </div>
+            <div tooltip="${warning.message}">
+              <j:choose>
+                <j:when test="${it.isCurrent() and warning.fileName != null}">
+                  <a href="source.${warning.key}/#${warning.primaryLineNumber}">${warning.shortFileName}</a>
+                </j:when>
+                <j:otherwise>${warning.shortFileName}</j:otherwise>
+              </j:choose>
+            </div>
           </td>
           <td class="pane">
             <div tooltip="${warning.message}"> ${warning.primaryLineNumber} </div>
