@@ -3,7 +3,7 @@
   xmlns:i="jelly:fmt" xmlns:local="local">
   <table class="pane sortable" id="modules">
     <tr>
-      <td class="pane-header">${%Category}</td>
+      <td class="pane-header">${%Type}</td>
       <td class="pane-header" style="width:2em">${%Total}</td>
       <td class="pane-header">${%Distribution}</td>
     </tr>
