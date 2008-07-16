@@ -6,6 +6,7 @@ import hudson.remoting.VirtualChannel;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 
@@ -63,12 +64,17 @@ public class FileFinder implements FileCallable<String[]> {
      * @return the filenames of all found files
      */
     public String[] find(final File workspace)  {
-        FileSet fileSet = new FileSet();
-        Project antProject = new Project();
-        fileSet.setProject(antProject);
-        fileSet.setDir(workspace);
-        fileSet.setIncludes(pattern);
+        try {
+            FileSet fileSet = new FileSet();
+            Project antProject = new Project();
+            fileSet.setProject(antProject);
+            fileSet.setDir(workspace);
+            fileSet.setIncludes(pattern);
 
-        return fileSet.getDirectoryScanner(antProject).getIncludedFiles();
+            return fileSet.getDirectoryScanner(antProject).getIncludedFiles();
+        }
+        catch (BuildException exception) {
+            return new String[0];
+        }
     }
 }

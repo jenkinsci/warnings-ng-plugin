@@ -1,6 +1,7 @@
 <projectDescription>
   <name>warnings</name>
-  <comment>This plug-in reads the compiler warnings from the console log file and generates a trend report.</comment>
+  <comment>This plug-in reads the compiler warnings from the
+    console log file and generates a trend report.</comment>
   <projects/>
   <buildSpec>
     <buildCommand>
