@@ -29,9 +29,9 @@ public class ModuleDetectorTest {
     public void testTopLevelModuleName() {
         ModuleDetector detector = new ModuleDetector();
 
-        String moduleName = detector.guessModuleName("com.avaloq.adt.core/pmd.xml");
+        String moduleName = detector.guessModuleName("com.avaloq.adt.core/pmd.xml", false, false);
         assertEquals(ERROR_MESSAGE, EXPECTED_MODULE, moduleName);
-        moduleName = detector.guessModuleName("com.avaloq.adt.core\\pmd.xml");
+        moduleName = detector.guessModuleName("com.avaloq.adt.core\\pmd.xml", false, false);
         assertEquals(ERROR_MESSAGE, EXPECTED_MODULE, moduleName);
     }
 
@@ -52,7 +52,7 @@ public class ModuleDetectorTest {
 
         replay(factory);
 
-        assertEquals(ERROR_MESSAGE, "ADT Business Logic", detector.guessModuleName("prefix/target/suffix"));
+        assertEquals(ERROR_MESSAGE, "ADT Business Logic", detector.guessModuleName("prefix/target/suffix", true, false));
 
         verify(factory);
     }
@@ -138,7 +138,7 @@ public class ModuleDetectorTest {
 
         replay(factory);
 
-        assertEquals(ERROR_MESSAGE, "checkstyle", detector.guessModuleName("prefix/checkstyle.xml"));
+        assertEquals(ERROR_MESSAGE, "checkstyle", detector.guessModuleName("prefix/checkstyle.xml", false, true));
 
         verify(factory);
     }
@@ -160,7 +160,7 @@ public class ModuleDetectorTest {
 
         replay(factory);
 
-        assertEquals(ERROR_MESSAGE, "checkstyle", detector.guessModuleName("checkstyle.xml"));
+        assertEquals(ERROR_MESSAGE, "checkstyle", detector.guessModuleName("checkstyle.xml", false, true));
 
         verify(factory);
     }
@@ -181,7 +181,7 @@ public class ModuleDetectorTest {
 
         replay(factory);
 
-        assertEquals(ERROR_MESSAGE, "prefix", detector.guessModuleName("prefix/suffix"));
+        assertEquals(ERROR_MESSAGE, "prefix", detector.guessModuleName("prefix/suffix", true, false));
 
         verify(factory);
     }
@@ -193,10 +193,10 @@ public class ModuleDetectorTest {
     public void testNoGuess() {
         ModuleDetector detector = new ModuleDetector();
 
-        String moduleName = detector.guessModuleName("base/com.hello.world/com.avaloq.adt.core/pmd.xml");
+        String moduleName = detector.guessModuleName("base/com.hello.world/com.avaloq.adt.core/pmd.xml", false, false);
         assertEquals(ERROR_MESSAGE, "com.avaloq.adt.core", moduleName);
 
-        moduleName = detector.guessModuleName("com.avaloq.adt.core/pmd.xml");
+        moduleName = detector.guessModuleName("com.avaloq.adt.core/pmd.xml", false, false);
         assertEquals(ERROR_MESSAGE, "com.avaloq.adt.core", moduleName);
     }
 }

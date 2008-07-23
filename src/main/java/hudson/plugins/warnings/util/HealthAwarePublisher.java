@@ -3,9 +3,13 @@ package hudson.plugins.warnings.util;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
+import hudson.model.Project;
 import hudson.model.Result;
 import hudson.plugins.warnings.util.model.JavaProject;
+import hudson.tasks.Ant;
 import hudson.tasks.BuildStep;
+import hudson.tasks.Builder;
+import hudson.tasks.Maven;
 import hudson.tasks.Publisher;
 
 import java.io.IOException;
@@ -292,5 +296,45 @@ public abstract class HealthAwarePublisher extends Publisher {
      */
     public int getTrendHeight() {
         return new TrendReportSize(height).getHeight();
+    }
+
+    /**
+     * Returns whether the current build uses maven.
+     *
+     * @param build
+     *            the current build
+     * @return <code>true</code> if the current build uses maven,
+     *         <code>false</code> otherwise
+     */
+    protected boolean isMavenBuild(final AbstractBuild<?, ?> build) {
+        if (build.getProject() instanceof Project) {
+            Project<?, ?> project = (Project<?, ?>)build.getProject();
+            for (Builder builder : project.getBuilders()) {
+                if (builder instanceof Maven) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether the current build uses ant.
+     *
+     * @param build
+     *            the current build
+     * @return <code>true</code> if the current build uses ant,
+     *         <code>false</code> otherwise
+     */
+    protected boolean isAntBuild(final AbstractBuild<?, ?> build) {
+        if (build.getProject() instanceof Project) {
+            Project<?, ?> project = (Project<?, ?>)build.getProject();
+            for (Builder builder : project.getBuilders()) {
+                if (builder instanceof Ant) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

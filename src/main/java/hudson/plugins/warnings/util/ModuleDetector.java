@@ -106,26 +106,34 @@ public class ModuleDetector {
     }
 
     /**
-     * Guesses a maven module name based on the source folder.
+     * Guesses a module name based on the source folder or the content in the pom.xml or build.xml files.
      *
      * @param fileName
      *            the absolute path of the file (UNIX style) to guess the module
      *            for
+     * @param isMavenBuild
+     *            determines whether this build uses maven
+     * @param isAntBuild
+     *            determines whether this build uses maven
      * @return the guessed module name or an empty string if the name could not be
      *         resolved
      */
-    public String guessModuleName(final String fileName) {
+    public String guessModuleName(final String fileName, final boolean isMavenBuild, final boolean isAntBuild) {
         String unixName = fileName.replace("\\", "/");
 
-        String projectName = parsePom(unixName);
-        if (StringUtils.isNotBlank(projectName)) {
-            return projectName;
+        if (isMavenBuild) {
+            String projectName = parsePom(unixName);
+            if (StringUtils.isNotBlank(projectName)) {
+                return projectName;
+            }
         }
-
         String path = StringUtils.substringBeforeLast(unixName, "/");
-        projectName = parseBuildXml(path);
-        if (StringUtils.isNotBlank(projectName)) {
-            return projectName;
+
+        if (isAntBuild) {
+            String projectName = parseBuildXml(path);
+            if (StringUtils.isNotBlank(projectName)) {
+                return projectName;
+            }
         }
 
         if (path.contains("/")) {

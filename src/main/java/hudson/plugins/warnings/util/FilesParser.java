@@ -27,6 +27,10 @@ public class FilesParser implements FileCallable<JavaProject> {
     private final String filePattern;
     /** Parser to be used to process the workspace files. */
     private final AnnotationParser parser;
+    /** Determines whether this build uses maven. */
+    private final boolean isMavenBuild;
+    /** Determines whether this build uses ant. */
+    private final boolean isAntBuild;
 
     /**
      * Creates a new instance of <code>CheckstyleCollector</code>.
@@ -35,12 +39,19 @@ public class FilesParser implements FileCallable<JavaProject> {
      *            the logger
      * @param filePattern
      *            ant file-set pattern to scan for files to parse
-     * @param parser the parser to apply on the found files
+     * @param parser
+     *            the parser to apply on the found files
+     * @param isMavenBuild
+     *            determines whether this build uses maven
+     * @param isAntBuild
+     *            determines whether this build uses maven
      */
-    public FilesParser(final PrintStream logger, final String filePattern, final AnnotationParser parser) {
+    public FilesParser(final PrintStream logger, final String filePattern, final AnnotationParser parser, final boolean isMavenBuild, final boolean isAntBuild) {
         this.logger = logger;
         this.filePattern = filePattern;
         this.parser = parser;
+        this.isMavenBuild = isMavenBuild;
+        this.isAntBuild = isAntBuild;
     }
 
     /**
@@ -70,7 +81,7 @@ public class FilesParser implements FileCallable<JavaProject> {
             for (String fileName : fileNames) {
                 File file = new File(workspace, fileName);
 
-                String moduleName = detector.guessModuleName(file.getAbsolutePath());
+                String moduleName = detector.guessModuleName(file.getAbsolutePath(), isMavenBuild, isAntBuild);
                 if (project.containsModule(moduleName)) {
                     moduleName += "-" + duplicateModuleCounter++;
                 }
