@@ -3,7 +3,6 @@ package hudson.plugins.warnings.util;
 import hudson.model.AbstractBuild;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
-import hudson.plugins.warnings.util.model.AnnotationProvider;
 import hudson.plugins.warnings.util.model.Priority;
 import hudson.util.ChartUtil;
 import hudson.util.DataSetBuilder;
@@ -34,7 +33,7 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  *            type of the result of this action
  * @author Ulli Hafner
  */
-public abstract class AbstractResultAction<T extends AnnotationProvider> implements StaplerProxy, HealthReportingAction, ToolTipProvider, ResultAction<T> {
+public abstract class AbstractResultAction<T extends BuildResult> implements StaplerProxy, HealthReportingAction, ToolTipProvider, ResultAction<T> {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -7201451538713818948L;
     /** Width of the graph. */

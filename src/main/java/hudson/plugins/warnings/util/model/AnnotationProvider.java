@@ -61,6 +61,31 @@ public interface AnnotationProvider {
     boolean hasAnnotations(final String priority);
 
     /**
+     * Returns whether this objects has no annotations.
+     *
+     * @return <code>true</code> if this objects has no annotations.
+     */
+    boolean hasNoAnnotations();
+
+    /**
+     * Returns whether this objects has no annotations with the specified priority.
+     *
+     * @param priority
+     *            the priority
+     * @return <code>true</code> if this objects has no annotations.
+     */
+    boolean hasNoAnnotations(final Priority priority);
+
+    /**
+     * Returns whether this objects has no annotations with the specified priority.
+     *
+     * @param priority
+     *            the priority as a string object
+     * @return <code>true</code> if this objects has no annotations.
+     */
+    boolean hasNoAnnotations(final String priority);
+
+    /**
      * Returns the annotations for this object.
      *
      * @return annotations for this object

@@ -22,12 +22,11 @@ public class WarningsResultBuilder {
      */
     public WarningsResult build(final AbstractBuild<?, ?> build, final JavaProject project) {
         Object previous = build.getPreviousBuild();
-        while (previous instanceof AbstractBuild<?, ?> && previous != null) {
+        while (previous instanceof AbstractBuild<?, ?>) {
             AbstractBuild<?, ?> previousBuild = (AbstractBuild<?, ?>)previous;
             WarningsResultAction previousAction = previousBuild.getAction(WarningsResultAction.class);
             if (previousAction != null) {
-                return new WarningsResult(build, project, previousAction.getResult().getProject(),
-                        previousAction.getResult().getZeroWarningsHighScore());
+                return new WarningsResult(build, project, previousAction.getResult());
             }
             previous = previousBuild.getPreviousBuild();
         }

@@ -357,17 +357,32 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
 
     /** {@inheritDoc} */
     public final boolean hasAnnotations() {
-        return !annotations.isEmpty();
+        return !hasNoAnnotations();
     }
 
     /** {@inheritDoc} */
     public final boolean hasAnnotations(final Priority priority) {
-        return !annotationsByPriority.get(priority).isEmpty();
+        return !hasNoAnnotations(priority);
     }
 
     /** {@inheritDoc} */
     public final boolean hasAnnotations(final String priority) {
-        return hasAnnotations(getPriority(priority));
+        return !hasNoAnnotations(priority);
+    }
+
+    /** {@inheritDoc} */
+    public final boolean hasNoAnnotations() {
+        return annotations.isEmpty();
+    }
+
+    /** {@inheritDoc} */
+    public final boolean hasNoAnnotations(final Priority priority) {
+        return annotationsByPriority.get(priority).isEmpty();
+    }
+
+    /** {@inheritDoc} */
+    public final boolean hasNoAnnotations(final String priority) {
+        return hasNoAnnotations(getPriority(priority));
     }
 
     /** {@inheritDoc} */
