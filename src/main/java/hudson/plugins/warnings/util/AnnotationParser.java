@@ -2,6 +2,7 @@ package hudson.plugins.warnings.util;
 
 import hudson.plugins.warnings.util.model.MavenModule;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -24,6 +25,19 @@ public interface AnnotationParser extends Serializable {
      *             if the file could not be parsed (wrap your exception in this exception)
      */
     MavenModule parse(final InputStream file, final String moduleName) throws InvocationTargetException;
+
+    /**
+     * Returns the annotations found in the specified file.
+     *
+     * @param file
+     *            the file to parse
+     * @param moduleName
+     *            name of the maven module
+     * @return the parsed result (stored in the module instance)
+     * @throws InvocationTargetException
+     *             if the file could not be parsed (wrap your exception in this exception)
+     */
+    MavenModule parse(final File file, final String moduleName) throws InvocationTargetException;
 
     /**
      * Returns the name of this parser.

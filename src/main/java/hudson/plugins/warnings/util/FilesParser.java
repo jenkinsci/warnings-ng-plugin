@@ -1,6 +1,5 @@
 package hudson.plugins.warnings.util;
 
-import hudson.FilePath;
 import hudson.FilePath.FileCallable;
 import hudson.plugins.warnings.util.model.JavaProject;
 import hudson.plugins.warnings.util.model.MavenModule;
@@ -14,8 +13,8 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 /**
- * Parses the files that match the specified pattern and creates a
- * corresponding Java project with a collection of annotations.
+ * Parses files that match the specified pattern and creates a
+ * corresponding project with a collection of annotations.
  *
  * @author Ulli Hafner
  */
@@ -24,7 +23,7 @@ public class FilesParser implements FileCallable<JavaProject> {
     private static final long serialVersionUID = -6415863872891783891L;
     /** Logger. */
     private final transient PrintStream logger;
-    /** Ant file-set pattern to scan for Checkstyle files. */
+    /** Ant file-set pattern to scan for. */
     private final String filePattern;
     /** Parser to be used to process the workspace files. */
     private final AnnotationParser parser;
@@ -32,14 +31,14 @@ public class FilesParser implements FileCallable<JavaProject> {
     /**
      * Creates a new instance of <code>CheckstyleCollector</code>.
      *
-     * @param listener
-     *            the Logger
+     * @param logger
+     *            the logger
      * @param filePattern
-     *            ant file-set pattern to scan for PMD files
-     * @param parser the parser to use
+     *            ant file-set pattern to scan for files to parse
+     * @param parser the parser to apply on the found files
      */
-    public FilesParser(final PrintStream listener, final String filePattern, final AnnotationParser parser) {
-        logger = listener;
+    public FilesParser(final PrintStream logger, final String filePattern, final AnnotationParser parser) {
+        this.logger = logger;
         this.filePattern = filePattern;
         this.parser = parser;
     }
@@ -83,7 +82,7 @@ public class FilesParser implements FileCallable<JavaProject> {
                     module.setError(message);
                     continue;
                 }
-                if (new FilePath(file).length() <= 0) {
+                if (file.length() <= 0) {
                     String message = Messages.FilesParser_Error_EmptyFile(file);
                     log(message);
                     module.setError(message);
@@ -118,13 +117,9 @@ public class FilesParser implements FileCallable<JavaProject> {
         Throwable exception = null;
         MavenModule module = emptyModule;
         try {
-            FilePath filePath = new FilePath(file);
-            module = parser.parse(filePath.read(), emptyModule.getName());
+            module = parser.parse(file, emptyModule.getName());
             log("Successfully parsed file " + file + " of module "
                     + module.getName() + " with " + module.getNumberOfAnnotations() + " warnings.");
-        }
-        catch (IOException e) {
-            exception = e;
         }
         catch (InvocationTargetException e) {
             if (e.getCause() == null) {
