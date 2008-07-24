@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,10 +38,10 @@ public abstract class AnnotationsBuildResult extends BuildResult {
     private transient WeakReference<JavaProject> project;
     /** All new warnings in the current build. */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
-    private transient WeakReference<Set<FileAnnotation>> newWarnings;
+    private transient WeakReference<Collection<FileAnnotation>> newWarnings;
     /** All fixed warnings in the current build. */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
-    private transient WeakReference<Set<FileAnnotation>> fixedWarnings;
+    private transient WeakReference<Collection<FileAnnotation>> fixedWarnings;
 
     /** The number of warnings in this build. */
     private int numberOfWarnings;
@@ -138,11 +137,11 @@ public abstract class AnnotationsBuildResult extends BuildResult {
 
         Set<FileAnnotation> warnings = AnnotationDifferencer.getNewWarnings(allWarnings, previousProject.getAnnotations());
         numberOfNewWarnings = warnings.size();
-        newWarnings = new WeakReference<Set<FileAnnotation>>(warnings);
+        newWarnings = new WeakReference<Collection<FileAnnotation>>(warnings);
 
         warnings = AnnotationDifferencer.getFixedWarnings(allWarnings, previousProject.getAnnotations());
         numberOfFixedWarnings = warnings.size();
-        fixedWarnings = new WeakReference<Set<FileAnnotation>>(warnings);
+        fixedWarnings = new WeakReference<Collection<FileAnnotation>>(warnings);
 
         high = currentProject.getNumberOfAnnotations(Priority.HIGH);
         normal = currentProject.getNumberOfAnnotations(Priority.NORMAL);
@@ -302,52 +301,22 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      */
     public JavaProject getProject() {
         if (project == null) {
-            loadResult();
+            return loadResult();
         }
         JavaProject result = project.get();
         if (result == null) {
-            loadResult();
+            return loadResult();
         }
-        return project.get();
+        return result;
     }
 
     /**
-     * Returns the new warnings of this build.
+     * Loads the results and wraps them in a weak reference that might get
+     * removed by the garbage collector.
      *
-     * @return the new warnings of this build.
+     * @return the loaded result
      */
-    public Set<FileAnnotation> getNewWarnings() {
-        if (newWarnings == null) {
-            loadPreviousResult();
-        }
-        Set<FileAnnotation> result = newWarnings.get();
-        if (result == null) {
-            loadPreviousResult();
-        }
-        return newWarnings.get();
-    }
-
-    /**
-     * Returns the fixed warnings of this build.
-     *
-     * @return the fixed warnings of this build.
-     */
-    public Set<FileAnnotation> getFixedWarnings() {
-        if (fixedWarnings == null) {
-            loadPreviousResult();
-        }
-        Set<FileAnnotation> result = fixedWarnings.get();
-        if (result == null) {
-            loadPreviousResult();
-        }
-        return fixedWarnings.get();
-    }
-
-    /**
-     * Loads the results and wraps them in a weak reference that might
-     * get removed by the garbage collector.
-     */
-    private void loadResult() {
+    private JavaProject loadResult() {
         JavaProject result;
         try {
             JavaProject newProject = new JavaProject();
@@ -362,32 +331,77 @@ public abstract class AnnotationsBuildResult extends BuildResult {
             result = new JavaProject();
         }
         project = new WeakReference<JavaProject>(result);
+
+        return result;
     }
 
     /**
-     * Loads the results of the current and previous build and wraps
-     * them in a weak reference that might get removed by the garbage collector.
+     * Returns the new warnings of this build.
+     *
+     * @return the new warnings of this build.
      */
-    @java.lang.SuppressWarnings("unchecked")
-    private void loadPreviousResult() {
-        loadResult();
+    public Collection<FileAnnotation> getNewWarnings() {
+        if (newWarnings == null) {
+            return loadNewWarnings();
+        }
+        Collection<FileAnnotation> result = newWarnings.get();
+        if (result == null) {
+            return loadNewWarnings();
+        }
+        return result;
+    }
 
+    /**
+     * Loads the results of the current and previous build, computes the new
+     * warnings and wraps them in a weak reference that might get removed by the
+     * garbage collector.
+     *
+     * @return the new warnings
+     */
+    private Collection<FileAnnotation> loadNewWarnings() {
+        Collection<FileAnnotation> difference = getProject().getAnnotations();
         if (hasPreviousResult()) {
-            newWarnings = new WeakReference<Set<FileAnnotation>>(
-                    AnnotationDifferencer.getNewWarnings(getProject().getAnnotations(),
-                            getPreviousResult().getAnnotations()));
+            difference = AnnotationDifferencer.getNewWarnings(difference, getPreviousResult().getAnnotations());
+        }
+        newWarnings = new WeakReference<Collection<FileAnnotation>>(difference);
+
+        return difference;
+    }
+
+    /**
+     * Returns the fixed warnings of this build.
+     *
+     * @return the fixed warnings of this build.
+     */
+    public Collection<FileAnnotation> getFixedWarnings() {
+        if (fixedWarnings == null) {
+            return loadFixedWarnings();
+        }
+        Collection<FileAnnotation> result = fixedWarnings.get();
+        if (result == null) {
+            return loadFixedWarnings();
+        }
+        return result;
+    }
+
+    /**
+     * Loads the results of the current and previous build, computes the fixed
+     * warnings and wraps them in a weak reference that might get removed by the
+     * garbage collector.
+     *
+     * @return the fixed warnings
+     */
+    private Collection<FileAnnotation> loadFixedWarnings() {
+        Collection<FileAnnotation> difference;
+        if (hasPreviousResult()) {
+            difference = AnnotationDifferencer.getFixedWarnings(getProject().getAnnotations(), getPreviousResult().getAnnotations());
         }
         else {
-            newWarnings = new WeakReference<Set<FileAnnotation>>(new HashSet<FileAnnotation>(getProject().getAnnotations()));
+            difference = Collections.emptyList();
         }
-        if (hasPreviousResult()) {
-            fixedWarnings = new WeakReference<Set<FileAnnotation>>(
-                    AnnotationDifferencer.getFixedWarnings(getProject().getAnnotations(),
-                            getPreviousResult().getAnnotations()));
-        }
-        else {
-            fixedWarnings = new WeakReference<Set<FileAnnotation>>(Collections.EMPTY_SET);
-        }
+        fixedWarnings = new WeakReference<Collection<FileAnnotation>>(difference);
+
+        return difference;
     }
 
     /**
