@@ -3,6 +3,7 @@ package hudson.plugins.warnings; // NOPMD
 import hudson.model.AbstractBuild;
 import hudson.plugins.warnings.parser.Warning;
 import hudson.plugins.warnings.util.AnnotationsBuildResult;
+import hudson.plugins.warnings.util.ParserResult;
 import hudson.plugins.warnings.util.model.JavaProject;
 
 /**
@@ -22,11 +23,11 @@ public class WarningsResult extends AnnotationsBuildResult {
      *
      * @param build
      *            the current build as owner of this action
-     * @param project
-     *            the parsed warnings result
+     * @param result
+     *            the parsed result with all annotations
      */
-    public WarningsResult(final AbstractBuild<?, ?> build, final JavaProject project) {
-        super(build, project);
+    public WarningsResult(final AbstractBuild<?, ?> build, final ParserResult result) {
+        super(build, result);
     }
 
     /**
@@ -34,13 +35,13 @@ public class WarningsResult extends AnnotationsBuildResult {
      *
      * @param build
      *            the current build as owner of this action
-     * @param project
-     *            the parsed warnings result
+     * @param result
+     *            the parsed result with all annotations
      * @param previous
      *            the result of the previous build
      */
-    public WarningsResult(final AbstractBuild<?, ?> build, final JavaProject project, final WarningsResult previous) {
-        super(build, project, previous);
+    public WarningsResult(final AbstractBuild<?, ?> build, final ParserResult result, final WarningsResult previous) {
+        super(build, result, previous);
     }
 
     /**

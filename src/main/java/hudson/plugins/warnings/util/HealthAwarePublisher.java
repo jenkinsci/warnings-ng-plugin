@@ -5,7 +5,6 @@ import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Project;
 import hudson.model.Result;
-import hudson.plugins.warnings.util.model.JavaProject;
 import hudson.tasks.Ant;
 import hudson.tasks.BuildStep;
 import hudson.tasks.Builder;
@@ -110,7 +109,7 @@ public abstract class HealthAwarePublisher extends Publisher {
         if (canContinue(build.getResult())) {
             PrintStream logger = listener.getLogger();
             try {
-                JavaProject project = perform(build, logger);
+                ParserResult project = perform(build, logger);
                 evaluateBuildResult(build, logger, project);
             }
             catch (AbortException exception) {
@@ -156,7 +155,7 @@ public abstract class HealthAwarePublisher extends Publisher {
      *             a better error message, if it can do so, so that users have
      *             better understanding on why it failed.
      */
-    protected abstract JavaProject perform(AbstractBuild<?, ?> build, PrintStream logger) throws InterruptedException, IOException;
+    protected abstract ParserResult perform(AbstractBuild<?, ?> build, PrintStream logger) throws InterruptedException, IOException;
 
     /**
      * Evaluates the build result. The build is marked as unstable if the
@@ -169,7 +168,7 @@ public abstract class HealthAwarePublisher extends Publisher {
      * @param project
      *            the project with the annotations
      */
-    private void evaluateBuildResult(final AbstractBuild<?, ?> build, final PrintStream logger, final JavaProject project) {
+    private void evaluateBuildResult(final AbstractBuild<?, ?> build, final PrintStream logger, final ParserResult project) {
         int annotationCount = project.getNumberOfAnnotations();
         if (annotationCount > 0) {
             log(logger, "A total of " + annotationCount + " annotations have been found.");

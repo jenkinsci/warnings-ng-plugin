@@ -8,7 +8,7 @@ import hudson.model.Result;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.plugins.warnings.util.HealthAwarePublisher;
 import hudson.plugins.warnings.util.HealthReportBuilder;
-import hudson.plugins.warnings.util.model.JavaProject;
+import hudson.plugins.warnings.util.ParserResult;
 import hudson.tasks.Publisher;
 
 import java.io.File;
@@ -60,11 +60,11 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
     /** {@inheritDoc} */
     @Override
-    public JavaProject perform(final AbstractBuild<?, ?> build, final PrintStream logger) throws InterruptedException, IOException {
+    public ParserResult perform(final AbstractBuild<?, ?> build, final PrintStream logger) throws InterruptedException, IOException {
         log(logger, "Parsing warnings in log file...");
         File logFile = build.getLogFile();
 
-        JavaProject project = new JavaProject();
+        ParserResult project = new ParserResult();
         project.addAnnotations(new ParserRegistry().parse(logFile));
 
         WarningsResult result = new WarningsResultBuilder().build(build, project);

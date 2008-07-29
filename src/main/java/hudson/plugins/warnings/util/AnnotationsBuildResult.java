@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,9 +69,12 @@ public abstract class AnnotationsBuildResult extends BuildResult {
     private List<String> errors;
 
     /** The modules with no warnings. */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
-    private Map<String, MavenModule> emptyModules;
-    /** The total number of modules with or without warnings. */
+    @SuppressWarnings("unused")
+    private HashMap<String, MavenModule> emptyModules; // backward compatibility;
+    /** All parsed modules. */
+    @SuppressWarnings("unused")
+    private Set<String> modules;
+    /** The total number of parsed modules (regardless if there are annotations). */
     private int numberOfModules;
 
     /**
@@ -80,13 +82,13 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      *
      * @param build
      *            the current build as owner of this action
-     * @param project
+     * @param result
      *            the parsed result with all annotations
      */
-    public AnnotationsBuildResult(final AbstractBuild<?, ?> build, final JavaProject project) {
+    public AnnotationsBuildResult(final AbstractBuild<?, ?> build, final ParserResult result) {
         super(build);
 
-        initialize(project, new JavaProject());
+        initialize(result, new JavaProject());
     }
 
     /**
@@ -94,19 +96,19 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      *
      * @param build
      *            the current build as owner of this action
-     * @param project
+     * @param result
      *            the parsed result with all annotations
      * @param previous
      *            the result of the previous build
      */
-    public AnnotationsBuildResult(final AbstractBuild<?, ?> build, final JavaProject project, final AnnotationsBuildResult previous) {
+    public AnnotationsBuildResult(final AbstractBuild<?, ?> build, final ParserResult result, final AnnotationsBuildResult previous) {
         super(build);
 
         AnnotationContainer previousProject = previous.getProject();
 
-        initialize(project, previousProject);
+        initialize(result, previousProject);
 
-        if (project.hasNoAnnotations()) {
+        if (result.hasNoAnnotations()) {
             if (previousProject.hasNoAnnotations()) {
                 zeroWarningsSinceBuild = previous.getZeroWarningsSinceBuild();
                 zeroWarningsSinceDate = previous.getZeroWarningsSinceDate();
@@ -122,18 +124,17 @@ public abstract class AnnotationsBuildResult extends BuildResult {
     /**
      * Initializes this result.
      *
-     * @param currentProject
+     * @param result
      *            the parsed result with all annotations
      * @param previousProject
      *            the project of the previous build
      */
-    private void initialize(final JavaProject currentProject, final AnnotationContainer previousProject) {
-        numberOfWarnings = currentProject.getNumberOfAnnotations();
+    private void initialize(final ParserResult result, final AnnotationContainer previousProject) {
+        numberOfWarnings = result.getNumberOfAnnotations();
 
-        project = new WeakReference<JavaProject>(currentProject);
-        delta = currentProject.getNumberOfAnnotations() - previousProject .getNumberOfAnnotations();
+        delta = result.getNumberOfAnnotations() - previousProject .getNumberOfAnnotations();
 
-        Collection<FileAnnotation> allWarnings = currentProject.getAnnotations();
+        Collection<FileAnnotation> allWarnings = result.getAnnotations();
 
         Set<FileAnnotation> warnings = AnnotationDifferencer.getNewWarnings(allWarnings, previousProject.getAnnotations());
         numberOfNewWarnings = warnings.size();
@@ -143,21 +144,20 @@ public abstract class AnnotationsBuildResult extends BuildResult {
         numberOfFixedWarnings = warnings.size();
         fixedWarnings = new WeakReference<Collection<FileAnnotation>>(warnings);
 
-        high = currentProject.getNumberOfAnnotations(Priority.HIGH);
-        normal = currentProject.getNumberOfAnnotations(Priority.NORMAL);
-        low = currentProject.getNumberOfAnnotations(Priority.LOW);
+        high = result.getNumberOfAnnotations(Priority.HIGH);
+        normal = result.getNumberOfAnnotations(Priority.NORMAL);
+        low = result.getNumberOfAnnotations(Priority.LOW);
 
-        emptyModules = new HashMap<String, MavenModule>();
-        for (MavenModule module : currentProject.getModules()) {
-            if (module.getNumberOfAnnotations() == 0) {
-                emptyModules.put(module.getName(), module);
-            }
-        }
-        numberOfModules = currentProject.getModules().size();
+        numberOfModules = result.getNumberOfModules();
+        modules = result.getModules();
+        errors = new ArrayList<String>(result.getErrorMessages());
 
-        errors = composeErrorMessage(currentProject);
+        serializeAnnotations(result.getAnnotations());
 
-        serializeAnnotations(currentProject.getAnnotations());
+        JavaProject container = new JavaProject();
+        container.addAnnotations(result.getAnnotations());
+
+        project = new WeakReference<JavaProject>(container);
     }
 
     /**
@@ -177,19 +177,12 @@ public abstract class AnnotationsBuildResult extends BuildResult {
     }
 
     /**
-     * Composes the error message for the specified project. The message
-     * consists of the project error and the errors of the individual modules.
+     * Returns the modules of this build result.
      *
-     * @param javaProject
-     *            the project
-     * @return the list of error messages
+     * @return the modules
      */
-    private List<String> composeErrorMessage(final JavaProject javaProject) {
-        List<String> messages = new ArrayList<String>();
-        if (javaProject.hasError()) {
-            messages.addAll(javaProject.getErrors());
-        }
-        return messages;
+    public Collection<String> getModules() {
+        return modules;
     }
 
     /**
@@ -299,7 +292,7 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      *
      * @return the associated project of this result.
      */
-    public JavaProject getProject() {
+    public synchronized JavaProject getProject() {
         if (project == null) {
             return loadResult();
         }

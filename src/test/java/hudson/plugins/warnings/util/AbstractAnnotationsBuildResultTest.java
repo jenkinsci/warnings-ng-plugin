@@ -4,7 +4,6 @@ import static junit.framework.Assert.*;
 import static org.mockito.Mockito.*;
 import hudson.model.AbstractBuild;
 import hudson.plugins.warnings.util.model.FileAnnotation;
-import hudson.plugins.warnings.util.model.JavaProject;
 import hudson.plugins.warnings.util.model.Priority;
 
 import java.util.GregorianCalendar;
@@ -36,13 +35,13 @@ public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBu
     @Test
     public void checkThatZeroWarningsIsUpdated() {
         AbstractBuild<?, ?> build = createBuild(BUILD_ID);
-        JavaProject projectWithoutAnnotations = new JavaProject();
+        ParserResult projectWithoutAnnotations = new ParserResult();
 
         T result = createBuildResult(build, projectWithoutAnnotations);
         assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, result.getNumberOfAnnotations());
         assertEquals(WRONG_ZERO_WARNINGS_SINCE_BUILD_COUNTER, 0, result.getZeroWarningsSinceBuild());
 
-        JavaProject projectWithAnnotations = createProjectWithWarning();
+        ParserResult projectWithAnnotations = createProjectWithWarning();
 
         T resultWithAnnotations = createBuildResult(build, projectWithAnnotations);
 
@@ -60,8 +59,8 @@ public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBu
      *
      * @return the created project
      */
-    private JavaProject createProjectWithWarning() {
-        JavaProject project = new JavaProject();
+    private ParserResult createProjectWithWarning() {
+        ParserResult project = new ParserResult();
 
         FileAnnotation annotation = mock(FileAnnotation.class);
         stub(annotation.getPriority()).toReturn(Priority.HIGH);
@@ -97,7 +96,7 @@ public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBu
      *            the project of the current build
      * @return the build result under test
      */
-    protected abstract T createBuildResult(AbstractBuild<?, ?> build, JavaProject project);
+    protected abstract T createBuildResult(AbstractBuild<?, ?> build, ParserResult project);
 
     /**
      * Creates the build result under test.
@@ -110,6 +109,6 @@ public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBu
      *            the result of the previous build
      * @return the build result under test
      */
-    protected abstract T createBuildResult(AbstractBuild<?, ?> build, JavaProject project, T previous);
+    protected abstract T createBuildResult(AbstractBuild<?, ?> build, ParserResult project, T previous);
 }
 

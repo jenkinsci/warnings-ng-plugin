@@ -5,7 +5,6 @@ import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -38,7 +37,7 @@ public class DetailBuilder {
     public Object createTrendDetails(final String link, final AbstractBuild<?, ?> owner,
             final AnnotationContainer container,
             final Collection<FileAnnotation> fixedAnnotations, final Collection<FileAnnotation> newAnnotations,
-            final List<String> errors, final String displayName) {
+            final Collection<String> errors, final String displayName) {
         if ("fixed".equals(link)) {
             return new FixedWarningsDetail(owner, fixedAnnotations, displayName);
         }

@@ -3,7 +3,7 @@ package hudson.plugins.warnings.util;
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Result object to visualize the errors during execution of the plug-in.
@@ -14,7 +14,7 @@ public class ErrorDetail implements ModelObject  {
     /** Current build as owner of this action. */
     private final AbstractBuild<?, ?> owner;
     /** All errors of the project. */
-    private final List<String> errors;
+    private final Collection<String> errors;
 
     /**
      * Creates a new instance of <code>ErrorDetail</code>.
@@ -24,7 +24,7 @@ public class ErrorDetail implements ModelObject  {
      * @param errors
      *            all modules of the project
      */
-    public ErrorDetail(final AbstractBuild<?, ?> owner, final List<String> errors) {
+    public ErrorDetail(final AbstractBuild<?, ?> owner, final Collection<String> errors) {
         this.owner = owner;
         this.errors = errors;
     }
@@ -48,7 +48,7 @@ public class ErrorDetail implements ModelObject  {
      *
      * @return the errors in the project
      */
-    public List<String> getErrors() {
+    public Collection<String> getErrors() {
         return errors;
     }
 }

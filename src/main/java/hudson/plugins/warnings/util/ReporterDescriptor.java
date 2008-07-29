@@ -34,7 +34,7 @@ public abstract class ReporterDescriptor extends MavenReporterDescriptor {
     /** {@inheritDoc} */
     @Override
     public final String getHelpFile() {
-        return publisherDescriptor.getHelpFile();
+        return publisherDescriptor.getPluginRoot() + "help-m2.html";
     }
 
     /**

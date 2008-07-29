@@ -32,7 +32,16 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
     /** {@inheritDoc} */
     @Override
     public final String getHelpFile() {
-        return "/plugin/" + getPluginName() + "/help.html";
+        return getPluginRoot() + "help.html";
+    }
+
+    /**
+     * Returns the root folder of this plug-in.
+     *
+     * @return the name of the root folder of this plug-in
+     */
+    public String getPluginRoot() {
+        return "/plugin/" + getPluginName() + "/";
     }
 
     /**

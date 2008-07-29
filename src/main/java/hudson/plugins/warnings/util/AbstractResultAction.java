@@ -1,5 +1,7 @@
 package hudson.plugins.warnings.util;
 
+import hudson.maven.MavenBuild;
+import hudson.maven.MavenModule;
 import hudson.model.AbstractBuild;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
@@ -11,6 +13,7 @@ import hudson.util.ChartUtil.NumberOnlyBuildLabel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.JFreeChart;
@@ -246,5 +249,41 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     /** {@inheritDoc} */
     public boolean hasPreviousResultAction() {
         return getPreviousBuild() != null;
+    }
+
+    /**
+     * Aggregates the results of the specified maven module builds.
+     *
+     * @param moduleBuilds
+     *            the module builds to aggregate
+     * @return the aggregated result
+     */
+    protected ParserResult createAggregatedResult(final Map<MavenModule, List<MavenBuild>> moduleBuilds) {
+        ParserResult project = new ParserResult();
+        for (List<MavenBuild> builds : moduleBuilds.values()) {
+            if (!builds.isEmpty()) {
+                addModule(project, builds);
+            }
+        }
+        return project;
+    }
+
+    /**
+     * Adds a new module to the specified project. The new module is obtained
+     * from the specified list of builds.
+     *
+     * @param aggregatedResult
+     *            the result to add the module to
+     * @param builds
+     *            the builds for a module
+     */
+    @java.lang.SuppressWarnings("unchecked")
+    private void addModule(final ParserResult aggregatedResult, final List<MavenBuild> builds) {
+        MavenBuild mavenBuild = builds.get(0);
+        AbstractResultAction<? extends AnnotationsBuildResult> action = mavenBuild.getAction(getClass());
+        if (action != null) {
+            aggregatedResult.addAnnotations(action.getResult().getAnnotations());
+            aggregatedResult.addModules(action.getResult().getModules());
+        }
     }
 }

@@ -9,7 +9,6 @@ import hudson.maven.MavenBuildProxy.BuildCallable;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
-import hudson.plugins.warnings.util.model.JavaProject;
 import hudson.tasks.BuildStep;
 
 import java.io.IOException;
@@ -122,17 +121,17 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
         }
 
         try {
-            final JavaProject project = perform(build, pom, mojo, logger);
+            final ParserResult result = perform(build, pom, mojo, logger);
 
             build.execute(new BuildCallable<Void, IOException>() {
                 public Void call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
-                    persistResult(project, mavenBuild);
+                    persistResult(result, mavenBuild);
 
                     return null;
                 }
             });
 
-            evaluateBuildResult(build, logger, project);
+            evaluateBuildResult(build, logger, result);
         }
         catch (AbortException exception) {
             logger.println(exception.getMessage());
@@ -178,7 +177,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
      *             a better error message, if it can do so, so that users have
      *             better understanding on why it failed.
      */
-    protected abstract JavaProject perform(MavenBuildProxy build, MavenProject pom, MojoInfo mojo, PrintStream logger) throws InterruptedException, IOException;
+    protected abstract ParserResult perform(MavenBuildProxy build, MavenProject pom, MojoInfo mojo, PrintStream logger) throws InterruptedException, IOException;
 
     /**
      * Persists the result in the build (on the master).
@@ -186,7 +185,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
      * @param project the created project
      * @param build the build (on the master)
      */
-    protected abstract void persistResult(JavaProject project, MavenBuild build);
+    protected abstract void persistResult(ParserResult project, MavenBuild build);
 
     /**
      * Logs the specified message.
@@ -206,11 +205,11 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
      *            the build to create the action for
      * @param logger
      *            the logger
-     * @param project
+     * @param result
      *            the project with the annotations
      */
-    private void evaluateBuildResult(final MavenBuildProxy build, final PrintStream logger, final JavaProject project) {
-        int annotationCount = project.getNumberOfAnnotations();
+    private void evaluateBuildResult(final MavenBuildProxy build, final PrintStream logger, final ParserResult result) {
+        int annotationCount = result.getAnnotations().size();
         if (annotationCount > 0) {
             log(logger, "A total of " + annotationCount + " annotations have been found.");
             if (isThresholdEnabled() && annotationCount >= getMinimumAnnotations()) {
