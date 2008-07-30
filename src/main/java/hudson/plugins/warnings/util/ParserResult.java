@@ -199,7 +199,7 @@ public class ParserResult implements Serializable {
      *            the name of the parsed modules
      */
     public void addModules(final Collection<String> additionalModules) {
-        additionalModules.addAll(additionalModules);
+        modules.addAll(additionalModules);
     }
 }
 
