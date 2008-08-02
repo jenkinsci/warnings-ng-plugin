@@ -259,13 +259,22 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * @return the aggregated result
      */
     protected ParserResult createAggregatedResult(final Map<MavenModule, List<MavenBuild>> moduleBuilds) {
-        ParserResult project = new ParserResult();
+        ParserResult project = createResult();
         for (List<MavenBuild> builds : moduleBuilds.values()) {
             if (!builds.isEmpty()) {
                 addModule(project, builds);
             }
         }
         return project;
+    }
+
+    /**
+     * Factory method to create the result of this action.
+     *
+     * @return the result of this action
+     */
+    protected ParserResult createResult() {
+        return new ParserResult();
     }
 
     /**
@@ -278,12 +287,11 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      *            the builds for a module
      */
     @java.lang.SuppressWarnings("unchecked")
-    private void addModule(final ParserResult aggregatedResult, final List<MavenBuild> builds) {
-        MavenBuild mavenBuild = builds.get(0);
-        AbstractResultAction<? extends AnnotationsBuildResult> action = mavenBuild.getAction(getClass());
+    protected void addModule(final ParserResult aggregatedResult, final List<MavenBuild> builds) {
+        AbstractResultAction<T> action = builds.get(0).getAction(getClass());
         if (action != null) {
             aggregatedResult.addAnnotations(action.getResult().getAnnotations());
-            aggregatedResult.addModules(action.getResult().getModules());
+            // FIXME: modules should be part of BuildResult
         }
     }
 }
