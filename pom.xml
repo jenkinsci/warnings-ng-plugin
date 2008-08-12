@@ -10,7 +10,7 @@
   <artifactId>warnings</artifactId>
   <packaging>hpi</packaging>
   <name>Hudson Warnings Plug-in</name>
-  <version>1.8</version>
+  <version>1.9-SNAPSHOT</version>
   <url>http://hudson.gotdns.com/wiki/display/HUDSON/Warnings+Plugin</url>
   <description>This plug-in reads the compiler warnings from the
     console log file and generates a trend report.</description>
@@ -148,10 +148,4 @@
       </plugin>
     </plugins>
   </reporting>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/warnings-1.8</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/warnings-1.8</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/warnings/tags/warnings-1.8</url>
-  </scm>
 </project>
