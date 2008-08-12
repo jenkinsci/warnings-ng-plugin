@@ -40,5 +40,19 @@ public class HpiCompileParserTest extends ParserTester {
                 "C:/Build/Results/jobs/ADT-Base/workspace/tasks/src/main/java/hudson/plugins/tasks/TasksReporterDescriptor.java",
                 HpiCompileParser.WARNING_TYPE, "deprecation", Priority.NORMAL);
     }
+
+    /**
+     * Parses a warning log with 2 ANT warnings that should produce no HPI warning.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=2133">Issue 2133</a>
+     */
+    @Test
+    public void issue2133() throws IOException {
+        Collection<FileAnnotation> warnings = new HpiCompileParser().parse(HpiCompileParserTest.class.getResourceAsStream("issue2133.txt"));
+
+        assertEquals("Wrong number of warnings detected.", 0, warnings.size());
+    }
 }
 

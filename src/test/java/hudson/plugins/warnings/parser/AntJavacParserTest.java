@@ -34,5 +34,31 @@ public class AntJavacParserTest extends ParserTester {
                 "C:/Users/tiliven/.hudson/jobs/Hello THS Trunk - compile/workspace/HelloTHSTest/src/ths/Hallo.java",
                 AntJavacParser.WARNING_TYPE, "Deprecation", Priority.NORMAL);
     }
+
+    /**
+     * Parses a warning log with 2 ANT warnings.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=2133">Issue 2133</a>
+     */
+    @Test
+    public void issue2133() throws IOException {
+        Collection<FileAnnotation> warnings = new AntJavacParser().parse(AntJavacParserTest.class.getResourceAsStream("issue2133.txt"));
+
+        assertEquals("Wrong number of warnings detected.", 2, warnings.size());
+
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        checkWarning(iterator.next(),
+                86,
+                "non-varargs call of varargs method with inexact argument type for last parameter;",
+                "/home/hudson/hudson/data/jobs/Mockito/workspace/trunk/test/org/mockitousage/misuse/DescriptiveMessagesOnMisuseTest.java",
+                AntJavacParser.WARNING_TYPE, "", Priority.NORMAL);
+        checkWarning(iterator.next(),
+                51,
+                "<T>stubVoid(T) in org.mockito.Mockito has been deprecated",
+                "/home/hudson/hudson/data/jobs/Mockito/workspace/trunk/test/org/mockitousage/stubbing/StubbingWithThrowablesTest.java",
+                AntJavacParser.WARNING_TYPE, RegexpParser.DEPRECATION, Priority.NORMAL);
+    }
 }
 
