@@ -2,178 +2,142 @@
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
   xmlns:i="jelly:fmt" xmlns:local="local">
   <j:if test="${it.hasAnnotations()}">
-    <script type="text/javascript" src="${rootURL}/plugin/checkstyle/yui/yahoo-min.js"></script>
-    <script type="text/javascript" src="${rootURL}/plugin/checkstyle/yui/yahoo-dom-event.js"></script>
-    <script type="text/javascript" src="${rootURL}/plugin/checkstyle/yui/element-beta-min.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/checkstyle/yui/utilities.js"></script>
     <script type="text/javascript" src="${rootURL}/plugin/checkstyle/yui/tabview-min.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/checkstyle/yui/dispatcher-min.js"></script>
 
     <script type="text/javascript">
       var myTabs = new YAHOO.widget.TabView("statistics");
+    </script>
+
+    <j:if test="${it.container.modules.size() > 1}">
+      <script>
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'Modules',
+            dataSrc: 'tab.modules',
+            cacheData: true,
+            active: false
+        }), myTabs);
+      </script>
+    </j:if>
+    <j:if test="${it.container.packages.size() > 1}">
+      <script>
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'Packages',
+            dataSrc: 'tab.packages',
+            cacheData: true,
+            active: false
+        }), myTabs);
+      </script>
+    </j:if>
+    <j:if test="${it.container.files.size() > 1}">
+      <script>
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'Files',
+            dataSrc: 'tab.files',
+            cacheData: true,
+            active: false
+        }), myTabs);
+      </script>
+    </j:if>
+    <j:if test="${it.container.categories.size() > 1}">
+      <script>
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'Categories',
+            dataSrc: 'tab.categories',
+            cacheData: true,
+            active: false
+        }), myTabs);
+      </script>
+    </j:if>
+    <j:if test="${it.container.types.size() > 1}">
+      <script>
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'Types',
+            dataSrc: 'tab.types',
+            cacheData: true,
+            active: false
+        }), myTabs);
+      </script>
+    </j:if>
+    <j:if test="${it.container.numberOfAnnotations > 1}">
+      <script>
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'Warnings',
+            dataSrc: 'tab.warnings',
+            cacheData: true,
+            active: false
+        }), myTabs);
+      </script>
+    </j:if>
+    <script>
+      YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+          label: 'Details',
+          dataSrc: 'tab.all',
+          cacheData: true,
+          active: false
+      }), myTabs);
+
+    </script>
+    <j:if test="${it.newWarnings.size() > 0}">
+      <script>
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'New',
+            dataSrc: 'tab.new',
+            cacheData: true,
+            active: false
+        }), myTabs);
+      </script>
+    </j:if>
+    <j:if test="${it.fixedWarnings.size() > 0}">
+      <script>
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'Fixed',
+            dataSrc: 'tab.fixed',
+            cacheData: true,
+            active: false
+        }), myTabs);
+      </script>
+    </j:if>
+    <j:if test="${it.container.highAnnotations.size() > 0 and it.container.highAnnotations.size() != it.container.numberOfAnnotations}">
+      <script>
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'High',
+            dataSrc: 'tab.high',
+            cacheData: true,
+            active: false
+        }), myTabs);
+      </script>
+    </j:if>
+    <j:if test="${it.container.normalAnnotations.size() > 0 and it.container.normalAnnotations.size() != it.container.numberOfAnnotations}">
+      <script>
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'Normal',
+            dataSrc: 'tab.normal',
+            cacheData: true,
+            active: false
+        }), myTabs);
+      </script>
+    </j:if>
+    <j:if test="${it.container.lowAnnotations.size() > 0 and it.container.lowAnnotations.size() != it.container.numberOfAnnotations}">
+      <script>
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: 'Low',
+            dataSrc: 'tab.low',
+            cacheData: true,
+            active: false
+        }), myTabs);
+      </script>
+    </j:if>
+
+    <script>
+      myTabs.set('activeIndex', 0);
     </script>
 
     <st:include page="/tabview/css.jelly" />
 
     <h2>${%Details}</h2>
     <div id="statistics" class="yui-navset">
-      <ul class="yui-nav">
-        <j:set var="class" value="selected" />
-        <j:if test="${it.container.modules.size() > 1}">
-          <li class="${class}">
-            <a href="#tab_modules">
-              <em>${%Modules}</em>
-            </a>
-          </li>
-          <j:set var="class" value="" />
-        </j:if>
-        <j:if test="${it.container.packages.size() > 1}">
-          <li class="${class}">
-            <a href="#tab_packages">
-              <em>${%Packages}</em>
-            </a>
-          </li>
-          <j:set var="class" value="" />
-        </j:if>
-        <j:if test="${it.container.files.size() > 1}">
-          <li class="${class}">
-            <a href="#tab_files">
-              <em>${%Files}</em>
-            </a>
-          </li>
-          <j:set var="class" value="" />
-        </j:if>
-        <j:if test="${it.container.categories.size() > 1}">
-          <li class="${class}">
-            <a href="#tab_categories">
-              <em>${%Categories}</em>
-            </a>
-          </li>
-          <j:set var="class" value="" />
-        </j:if>
-        <j:if test="${it.container.types.size() > 1}">
-          <li class="${class}">
-            <a href="#tab_types">
-              <em>${%Types}</em>
-            </a>
-          </li>
-          <j:set var="class" value="" />
-        </j:if>
-        <j:if test="${it.container.numberOfAnnotations > 1}">
-          <li class="${class}">
-            <a href="#tab_warnings">
-              <em>${%Warnings}</em>
-            </a>
-          </li>
-          <j:set var="class" value="" />
-        </j:if>
-        <li class="${class}">
-          <a href="#tab_details">
-            <em>${%Details}</em>
-          </a>
-        </li>
-        <j:set var="class" value="" />
-        <j:if test="${it.newWarnings.size() > 0}">
-          <li>
-            <a href="#tab_new">
-              <em>${%New}</em>
-            </a>
-          </li>
-        </j:if>
-        <j:if test="${it.fixedWarnings.size() > 0}">
-          <li>
-            <a href="#tab_fixed">
-              <em>${%Fixed}</em>
-            </a>
-          </li>
-        </j:if>
-        <j:if test="${it.container.highAnnotations.size() > 0 and it.container.highAnnotations.size() != it.container.numberOfAnnotations}">
-          <li>
-            <a href="#tab_high">
-              <em>${%High}</em>
-            </a>
-          </li>
-        </j:if>
-        <j:if test="${it.container.normalAnnotations.size() > 0 and it.container.normalAnnotations.size() != it.container.numberOfAnnotations}">
-          <li>
-            <a href="#tab_normal">
-              <em>${%Normal}</em>
-            </a>
-          </li>
-        </j:if>
-        <j:if test="${it.container.lowAnnotations.size() > 0 and it.container.lowAnnotations.size() != it.container.numberOfAnnotations}">
-          <li>
-            <a href="#tab_low">
-              <em>${%Low}</em>
-            </a>
-          </li>
-        </j:if>
-      </ul>
-      <div class="yui-content">
-        <j:if test="${it.container.modules.size() > 1}">
-          <div id="tab_modules">
-            <st:include page="/tabview/modules.jelly" />
-          </div>
-        </j:if>
-        <j:if test="${it.container.packages.size() > 1}">
-          <div id="tab_packages">
-            <st:include page="/tabview/packages.jelly" />
-          </div>
-        </j:if>
-        <j:if test="${it.container.files.size() > 1}">
-          <div id="tab_files">
-            <st:include page="/tabview/files.jelly" />
-          </div>
-        </j:if>
-        <j:if test="${it.container.categories.size() > 1}">
-          <div id="tab_categories">
-            <st:include page="/tabview/categories.jelly" />
-          </div>
-        </j:if>
-        <j:if test="${it.container.types.size() > 1}">
-          <div id="tab_types">
-            <st:include page="/tabview/types.jelly" />
-          </div>
-        </j:if>
-        <j:if test="${it.container.numberOfAnnotations > 1}">
-          <div id="tab_warnings">
-            <j:set var="annotations" value="${it.container.annotations}" />
-            <st:include page="/tabview/warnings.jelly" />
-          </div>
-        </j:if>
-        <div id="tab_details">
-            <j:set var="annotations" value="${it.container.annotations}" />
-          <st:include page="/tabview/details.jelly" />
-        </div>
-        <j:if test="${it.newWarnings.size() > 0}">
-          <div id="tab_new">
-            <j:set var="annotations" value="${it.newWarnings}" />
-            <st:include page="/tabview/details.jelly" />
-          </div>
-        </j:if>
-        <j:if test="${it.fixedWarnings.size() > 0}">
-          <div id="tab_fixed">
-            <j:set var="annotations" value="${it.fixedWarnings}" />
-            <st:include page="/tabview/fixed.jelly" />
-          </div>
-        </j:if>
-        <j:if test="${it.container.highAnnotations.size() > 0 and it.container.highAnnotations.size() != it.container.numberOfAnnotations}">
-          <div id="tab_high">
-            <j:set var="annotations" value="${it.container.highAnnotations}" />
-            <st:include page="/tabview/details.jelly" />
-          </div>
-        </j:if>
-        <j:if test="${it.container.normalAnnotations.size() > 0 and it.container.normalAnnotations.size() != it.container.numberOfAnnotations}">
-          <div id="tab_normal">
-            <j:set var="annotations" value="${it.container.normalAnnotations}" />
-            <st:include page="/tabview/details.jelly" />
-          </div>
-        </j:if>
-        <j:if test="${it.container.lowAnnotations.size() > 0 and it.container.lowAnnotations.size() != it.container.numberOfAnnotations}">
-          <div id="tab_low">
-            <j:set var="annotations" value="${it.container.lowAnnotations}" />
-            <st:include page="/tabview/details.jelly" />
-          </div>
-        </j:if>
-      </div>
     </div>
   </j:if>
 </j:jelly>

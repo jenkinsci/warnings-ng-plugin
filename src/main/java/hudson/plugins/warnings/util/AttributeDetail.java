@@ -14,10 +14,11 @@ import java.util.Collection;
 public class AttributeDetail extends AbstractAnnotationsDetail {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -1854984151887397361L;
+    /** Name of the attribute. */
     private final String attributeName;
 
     /**
-     * Creates a new instance of <code>ModuleDetail</code>.
+     * Creates a new instance of {@link AttributeDetail}.
      *
      * @param owner
      *            current build as owner of this action.
@@ -25,6 +26,8 @@ public class AttributeDetail extends AbstractAnnotationsDetail {
      *            the module to show the details for
      * @param header
      *            header to be shown on detail page
+     * @param name
+     *            name of the attribute shown in the bread crumb
      */
     public AttributeDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final String header, final String name) {
         super(owner, annotations, header, Hierarchy.PROJECT);

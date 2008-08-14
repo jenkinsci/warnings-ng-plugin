@@ -47,6 +47,12 @@ public class DetailBuilder {
         else if ("error".equals(link)) {
             return new ErrorDetail(owner, errors);
         }
+        else if (link.startsWith("tab.new")) {
+            return new TabDetail(owner, newAnnotations, "/tabview/new.jelly");
+        }
+        else if (link.startsWith("tab.fixed")) {
+            return new TabDetail(owner, fixedAnnotations, "/tabview/fixed.jelly");
+        }
         else {
             return createDetails(link, owner, container, displayName);
         }
@@ -78,6 +84,9 @@ public class DetailBuilder {
         }
         else if (link.startsWith("file.")) {
             return new FileDetail(owner, container.getFile(Integer.valueOf(StringUtils.substringAfter(link, "file."))), displayName);
+        }
+        else if (link.startsWith("tab.")) {
+            return new TabDetail(owner, container.getAnnotations(), "/tabview/" + StringUtils.substringAfter(link, "tab.") + ".jelly");
         }
         else if (link.startsWith("source.")) {
             return new SourceDetail(owner, container.getAnnotation(StringUtils.substringAfter(link, "source.")));

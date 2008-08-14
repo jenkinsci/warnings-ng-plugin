@@ -3,7 +3,7 @@
     <local-check-config name="Avaloq" location="checkstyle-configuration.xml" type="project" description="">
         <additional-data name="protect-config-file" value="false"/>
     </local-check-config>
-    <fileset name="Alle" enabled="true" check-config-name="Avaloq" local="true">
+    <fileset name="all" enabled="true" check-config-name="Avaloq" local="true">
         <file-match-pattern match-pattern="." include-pattern="true"/>
     </fileset>
 </fileset-config>
