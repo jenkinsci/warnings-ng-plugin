@@ -72,6 +72,22 @@
             border-top-color:#b0b0b0; /* different border color */
             padding:0.25em 0.5em; /* content padding */
         }
+
+        #statistics .yui-content {
+            padding:1em;
+        }
+
+        #statistics .loading {
+            background:#ffffff; /* content background color */
+            background-image:url(${rootURL}/plugin/warnings/icons/spinner.gif);
+            background-position:center center;
+            background-repeat:no-repeat;
+        }
+
+        #statistics .loading * {
+            display:none;
+            background:#ffffff; /* content background color */
+        }
       </style>
 </j:jelly>
 
