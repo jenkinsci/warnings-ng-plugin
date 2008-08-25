@@ -15,7 +15,7 @@ public class MavenParser extends RegexpParser {
     private static final String MAVEN_WARNING_PATTERN = "\\[WARNING\\]\\s*(.*):\\[(\\d*)[^\\[]*\\]\\s*([^\\[]*)$";
 
     /**
-     * Creates a new instance of <code>JavacParser</code>.
+     * Creates a new instance of <code>MavenParser</code>.
      */
     public MavenParser() {
         super(MAVEN_WARNING_PATTERN);

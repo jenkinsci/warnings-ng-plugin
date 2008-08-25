@@ -23,7 +23,7 @@ public class ParserRegistryTest {
      */
     @Test
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
-    public void testname() throws IOException {
+    public void testAllParsersOnOneFile() throws IOException {
         ParserRegistry parserRegistry = new ParserRegistry() {
             /** {@inheritDoc} */
             @Override
@@ -34,7 +34,7 @@ public class ParserRegistryTest {
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(new File(""));
 
-        Assert.assertEquals("Wrong number of annotations parsed", 113, annotations.size());
+        Assert.assertEquals("Wrong number of annotations parsed", 115, annotations.size());
     }
 }
 

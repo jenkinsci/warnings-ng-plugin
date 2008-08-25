@@ -16,7 +16,7 @@ public class MsBuildParser extends RegexpParser {
     private static final String MS_BUILD_WARNING_PATTERN = "(.*)\\((\\d*).*\\)\\s*:\\s*(warning|error)\\s*(.*):\\s*(.*)";
 
     /**
-     * Creates a new instance of <code>HpiCompileParser</code>.
+     * Creates a new instance of <code>MsBuildParser</code>.
      */
     public MsBuildParser() {
         super(MS_BUILD_WARNING_PATTERN);

@@ -404,3 +404,10 @@ compile.test:
     [javac] /home/hudson/hudson/data/jobs/Mockito/workspace/trunk/test/org/mockitousage/stubbing/StubbingWithThrowablesTest.java:51: warning: [deprecation] <T>stubVoid(T) in org.mockito.Mockito has been deprecated
     [javac]         stubVoid(mock).toThrow(expected).on().clear();
     [javac]         ^
+
+
+testhist.l:451: warning: `void yyunput(int, char*)' defined but not used
+
+/u1/drjohn/bfdist/packages/RegrTest/V00-03-01/RgtAddressLineScan.cc:73: warning: implicit typename is deprecated, please see the documentation for details
+
+

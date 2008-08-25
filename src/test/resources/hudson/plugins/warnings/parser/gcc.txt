@@ -1,0 +1,5 @@
+
+testhist.l:451: warning: `void yyunput(int, char*)' defined but not used
+
+/u1/drjohn/bfdist/packages/RegrTest/V00-03-01/RgtAddressLineScan.cc:73: error: implicit typename is deprecated, please see the documentation for details
+
