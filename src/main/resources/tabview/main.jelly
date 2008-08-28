@@ -2,9 +2,9 @@
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
   xmlns:i="jelly:fmt" xmlns:local="local">
   <j:if test="${it.hasAnnotations()}">
-    <script type="text/javascript" src="${rootURL}/plugin/checkstyle/yui/utilities.js"></script>
-    <script type="text/javascript" src="${rootURL}/plugin/checkstyle/yui/tabview-min.js"></script>
-    <script type="text/javascript" src="${rootURL}/plugin/checkstyle/yui/dispatcher-min.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/warnings/yui/utilities.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/warnings/yui/tabview-min.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/warnings/yui/dispatcher-min.js"></script>
 
     <script type="text/javascript">
       var myTabs = new YAHOO.widget.TabView("statistics");
