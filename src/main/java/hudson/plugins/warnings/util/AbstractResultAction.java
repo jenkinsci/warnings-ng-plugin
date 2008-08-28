@@ -3,11 +3,15 @@ package hudson.plugins.warnings.util;
 import hudson.maven.MavenBuild;
 import hudson.maven.MavenModule;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.Descriptor;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
 import hudson.plugins.warnings.util.model.Priority;
+import hudson.tasks.Publisher;
 import hudson.util.ChartUtil;
 import hudson.util.DataSetBuilder;
+import hudson.util.DescribableList;
 import hudson.util.ChartUtil.NumberOnlyBuildLabel;
 
 import java.io.IOException;
@@ -104,7 +108,26 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
 
     /** {@inheritDoc} */
     public final HealthReport getBuildHealth() {
-        return healthReportBuilder.computeHealth(getResult().getNumberOfAnnotations());
+        int numberOfAnnotations = getResult().getNumberOfAnnotations();
+
+        Object object = owner.getProject();
+        if (object instanceof AbstractProject<?, ?>) {
+            AbstractProject<?, ?> project = (AbstractProject<?, ?>)object;
+            DescribableList<Publisher, Descriptor<Publisher>> publishers = project.getPublishersList();
+            Publisher publisher = publishers.get(getDescriptor());
+            if (publisher instanceof HealthAwarePublisher) {
+                HealthAwarePublisher healthAwarePublisher = (HealthAwarePublisher)publisher;
+                numberOfAnnotations = 0;
+                for (Priority priority : healthAwarePublisher.getPriorities()) {
+                    numberOfAnnotations += getResult().getNumberOfAnnotations(priority);
+                }
+            }
+        }
+
+        return healthReportBuilder.computeHealth(numberOfAnnotations, getResult().getNumberOfAnnotations(),
+                getResult().getNumberOfAnnotations(Priority.HIGH),
+                getResult().getNumberOfAnnotations(Priority.NORMAL),
+                getResult().getNumberOfAnnotations(Priority.LOW));
     }
 
     /**

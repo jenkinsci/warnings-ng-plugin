@@ -40,10 +40,13 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *            than this value
      * @param height
      *            the height of the trend graph
+     * @param thresholdLimit
+     *            determines which warning priorities should be considered when
+     *            evaluating the build stability and health
      */
     @DataBoundConstructor
-    public WarningsPublisher(final String threshold, final String healthy, final String unHealthy, final String height) {
-        super(threshold, healthy, unHealthy, height, "WARNINGS");
+    public WarningsPublisher(final String threshold, final String healthy, final String unHealthy, final String height, final String thresholdLimit) {
+        super(threshold, healthy, unHealthy, height, thresholdLimit, "WARNINGS");
     }
 
     /** {@inheritDoc} */
@@ -70,7 +73,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
         WarningsResult result = new WarningsResultBuilder().build(build, project);
         HealthReportBuilder healthReportBuilder = createHealthReporter(
                 Messages.Warnings_ResultAction_HealthReportSingleItem(),
-                Messages.Warnings_ResultAction_HealthReportMultipleItem("%d"));
+                Messages.Warnings_ResultAction_HealthReportMultipleItem());
         build.getActions().add(new WarningsResultAction(build, healthReportBuilder, result));
 
         return project;

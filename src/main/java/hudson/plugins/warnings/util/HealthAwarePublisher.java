@@ -5,6 +5,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Project;
 import hudson.model.Result;
+import hudson.plugins.warnings.util.model.Priority;
 import hudson.tasks.Ant;
 import hudson.tasks.BuildStep;
 import hudson.tasks.Builder;
@@ -13,6 +14,8 @@ import hudson.tasks.Publisher;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -31,6 +34,8 @@ import org.apache.commons.lang.StringUtils;
  * @author Ulli Hafner
  */
 public abstract class HealthAwarePublisher extends Publisher {
+    /** Default threshold priority limit. */
+    private static final String DEFAULT_PRIORITY_THRESHOLD_LIMIT = "low";
     /** Annotation threshold to be reached if a build should be considered as unstable. */
     private final String threshold;
     /** Determines whether to use the provided threshold to mark a build as unstable. */
@@ -51,6 +56,8 @@ public abstract class HealthAwarePublisher extends Publisher {
     private final String height;
     /** The name of the plug-in. */
     private final String pluginName;
+    /** Determines which warning priorities should be considered when evaluating the build stability and health. */
+    private String thresholdLimit;
 
     /**
      * Creates a new instance of <code>HealthAwarePublisher</code>.
@@ -66,16 +73,20 @@ public abstract class HealthAwarePublisher extends Publisher {
      *            than this value
      * @param height
      *            the height of the trend graph
+     * @param thresholdLimit
+     *            determines which warning priorities should be considered when
+     *            evaluating the build stability and health
      * @param pluginName
      *            the name of the plug-in
      */
     public HealthAwarePublisher(final String threshold, final String healthy, final String unHealthy,
-            final String height, final String pluginName) {
+            final String height, final String thresholdLimit, final String pluginName) {
         super();
         this.threshold = threshold;
         this.healthy = healthy;
         this.unHealthy = unHealthy;
         this.height = height;
+        this.thresholdLimit = thresholdLimit;
         this.pluginName = "[" + pluginName + "] ";
 
         if (!StringUtils.isEmpty(threshold)) {
@@ -101,6 +112,21 @@ public abstract class HealthAwarePublisher extends Publisher {
                 // nothing to do, we use the default value
             }
         }
+        if (StringUtils.isBlank(thresholdLimit)) {
+            this.thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
+        }
+    }
+
+    /**
+     * Initializes new fields that are not serialized yet.
+     *
+     * @return the object
+     */
+    private Object readResolve() {
+        if (thresholdLimit == null) {
+            thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
+        }
+        return this;
     }
 
     /** {@inheritDoc} */
@@ -169,15 +195,16 @@ public abstract class HealthAwarePublisher extends Publisher {
      *            the project with the annotations
      */
     private void evaluateBuildResult(final AbstractBuild<?, ?> build, final PrintStream logger, final ParserResult project) {
-        int annotationCount = project.getNumberOfAnnotations();
+        int annotationCount = 0;
+        for (Priority priority : getPriorities()) {
+            int numberOfAnnotations = project.getNumberOfAnnotations(priority);
+            log(logger, "A total of " + numberOfAnnotations + " annotations have been found for priority " + priority);
+            annotationCount += numberOfAnnotations;
+        }
         if (annotationCount > 0) {
-            log(logger, "A total of " + annotationCount + " annotations have been found.");
             if (isThresholdEnabled() && annotationCount >= getMinimumAnnotations()) {
                 build.setResult(Result.UNSTABLE);
             }
-        }
-        else {
-            log(logger, "No annotations have been found.");
         }
     }
 
@@ -335,5 +362,33 @@ public abstract class HealthAwarePublisher extends Publisher {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the priorities that should should be considered when evaluating
+     * the build stability and health.
+     *
+     * @return the priorities
+     */
+    protected Collection<Priority> getPriorities() {
+        ArrayList<Priority> priorities = new ArrayList<Priority>();
+        priorities.add(Priority.HIGH);
+        if ("normal".equals(thresholdLimit)) {
+            priorities.add(Priority.NORMAL);
+        }
+        if ("low".equals(thresholdLimit)) {
+            priorities.add(Priority.NORMAL);
+            priorities.add(Priority.LOW);
+        }
+        return priorities;
+    }
+
+    /**
+     * Returns the thresholdLimit.
+     *
+     * @return the thresholdLimit
+     */
+    public String getThresholdLimit() {
+        return thresholdLimit;
     }
 }

@@ -2,6 +2,7 @@ package hudson.plugins.warnings.util;
 
 import hudson.Util;
 import hudson.model.HealthReport;
+import hudson.plugins.warnings.util.model.Priority;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -87,10 +88,19 @@ public class HealthReportBuilder implements Serializable {
      * greater than {@link #unHealthy}.
      *
      * @param counter
-     *            the number of items in a build
+     *            the number of items in a build that should be considered for
+     *            health computation
+     * @param total
+     *            all items in a build
+     * @param high
+     *            items with priority high
+     * @param normal
+     *            items with priority normal
+     * @param low
+     *            items with priority low
      * @return the healthiness of a build
      */
-    public HealthReport computeHealth(final int counter) {
+    public HealthReport computeHealth(final int counter, final int total, final int high, final int normal, final int low) {
         if (isHealthEnabled) {
             int percentage;
             if (counter < healthy) {
@@ -104,11 +114,14 @@ public class HealthReportBuilder implements Serializable {
             }
             String description;
             if (isLocalizedRelease()) {
-                if (counter == 1) {
+                if (total == 1) {
                     description = reportSingleCount;
                 }
                 else {
-                    description = String.format(reportMultipleCount, counter);
+                    description = String.format(reportMultipleCount, total,
+                            high, Priority.HIGH.getLocalizedString(),
+                            normal, Priority.NORMAL.getLocalizedString(),
+                            low, Priority.LOW.getLocalizedString());
                 }
             }
             else {
