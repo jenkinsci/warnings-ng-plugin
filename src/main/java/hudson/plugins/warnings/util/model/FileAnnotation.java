@@ -60,6 +60,13 @@ public interface FileAnnotation {
     String getFileName();
 
     /**
+     * Gets the associated file name of this bug (without path).
+     *
+     * @return the short file name
+     */
+    String getShortFileName();
+
+    /**
      * Returns the name of the maven or ant module that contains this annotation.
      *
      * @return the name of the module that contains this annotation

@@ -24,7 +24,7 @@ public class MsBuildParserTest extends ParserTester {
     public void parseDeprecation() throws IOException {
         Collection<FileAnnotation> warnings = new MsBuildParser().parse(MsBuildParserTest.class.getResourceAsStream("msbuild.txt"));
 
-        assertEquals("Wrong number of warnings detected.", 3, warnings.size());
+        assertEquals("Wrong number of warnings detected.", 4, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -45,6 +45,12 @@ public class MsBuildParserTest extends ParserTester {
                 "System.ComponentModel.Design.ComponentDesigner.OnSetComponentDefaults() : This method has been deprecated. Use InitializeNewComponent instead. http://go.microsoft.com/fwlink/?linkid=14202",
                 "Controls/MozItem.cs",
                 MsBuildParser.WARNING_TYPE, "CS0618", Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                3001,
+                "Kod som inte kan n†s uppt„cktes",
+                "MediaPortal.cs",
+                MsBuildParser.WARNING_TYPE, "CS0162", Priority.NORMAL);
     }
 }
 

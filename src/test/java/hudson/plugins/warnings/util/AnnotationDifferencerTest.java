@@ -1,7 +1,6 @@
 package hudson.plugins.warnings.util;
 
 import static org.junit.Assert.*;
-import hudson.plugins.warnings.util.AnnotationDifferencer;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
 
@@ -23,6 +22,8 @@ public abstract class AnnotationDifferencerTest {
     /**
      * Creates a new annotation.
      *
+     * @param fileName
+     *            filename of the annotation
      * @param priority
      *            the priority
      * @param message
@@ -37,24 +38,50 @@ public abstract class AnnotationDifferencerTest {
      *            the last line of the line range
      * @return the created annotation
      */
-    public abstract FileAnnotation createAnnotation(final Priority priority, final String message, final String category,
+    public abstract FileAnnotation createAnnotation(String fileName, final Priority priority, final String message, final String category,
             final String type, final int start, final int end);
 
     /**
      * Checks whether equals works for warnings.
      */
     @Test
+    public void testAnnotationFilename() {
+        FileAnnotation annotation  = createAnnotation("C:\\Path\\File.c", Priority.HIGH, STRING, STRING, STRING, 2, 3);
+
+        assertEquals("Annotations are not equal.", "C:/Path/File.c", annotation.getFileName());
+        assertEquals("Annotations are not equal.", "File.c", annotation.getShortFileName());
+
+        annotation  = createAnnotation("/Path/File.c", Priority.HIGH, STRING, STRING, STRING, 2, 3);
+
+        assertEquals("Annotations are not equal.", "/Path/File.c", annotation.getFileName());
+        assertEquals("Annotations are not equal.", "File.c", annotation.getShortFileName());
+
+        annotation  = createAnnotation("/File.c", Priority.HIGH, STRING, STRING, STRING, 2, 3);
+
+        assertEquals("Annotations are not equal.", "/File.c", annotation.getFileName());
+        assertEquals("Annotations are not equal.", "File.c", annotation.getShortFileName());
+
+        annotation  = createAnnotation("File.c", Priority.HIGH, STRING, STRING, STRING, 2, 3);
+
+        assertEquals("Annotations are not equal.", "File.c", annotation.getFileName());
+        assertEquals("Annotations are not equal.", "File.c", annotation.getShortFileName());
+    }
+
+    /**
+     * Checks whether equals works for warnings.
+     */
+    @Test
     public void testWarningEquals() {
-        FileAnnotation first  = createAnnotation(Priority.HIGH, STRING, STRING, STRING, 2, 3);
-        FileAnnotation second = createAnnotation(Priority.HIGH, STRING, STRING, STRING, 2, 3);
+        FileAnnotation first  = createAnnotation(STRING, Priority.HIGH, STRING, STRING, STRING, 2, 3);
+        FileAnnotation second = createAnnotation(STRING, Priority.HIGH, STRING, STRING, STRING, 2, 3);
 
         assertEquals("Annotations are not equal.", first, second);
 
-        FileAnnotation third = createAnnotation(Priority.HIGH, "other", STRING, STRING, 2, 3);
+        FileAnnotation third = createAnnotation(STRING, Priority.HIGH, "other", STRING, STRING, 2, 3);
 
         assertFalse("Annotations are equal.", first.equals(third));
 
-        third = createAnnotation(Priority.HIGH, STRING, STRING, STRING, 3, 2);
+        third = createAnnotation(STRING, Priority.HIGH, STRING, STRING, STRING, 3, 2);
 
         assertFalse("Annotations are equal.", first.equals(third));
     }
@@ -67,28 +94,28 @@ public abstract class AnnotationDifferencerTest {
         Set<FileAnnotation> actual = new HashSet<FileAnnotation>();
         Set<FileAnnotation> previous = new HashSet<FileAnnotation>();
 
-        FileAnnotation annotation = createAnnotation(Priority.HIGH, STRING, STRING, STRING, 2, 3);
+        FileAnnotation annotation = createAnnotation(STRING, Priority.HIGH, STRING, STRING, STRING, 2, 3);
         actual.add(annotation);
 
-        annotation = createAnnotation(Priority.HIGH, STRING, STRING, STRING, 2, 3);
+        annotation = createAnnotation(STRING, Priority.HIGH, STRING, STRING, STRING, 2, 3);
         previous.add(annotation);
 
 
         assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getFixedWarnings(actual, previous).size());
 
-        annotation = createAnnotation(Priority.HIGH, "type2", STRING, STRING, 2, 3);
+        annotation = createAnnotation(STRING, Priority.HIGH, "type2", STRING, STRING, 2, 3);
         previous.add(annotation);
 
         assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getNewWarnings(actual, previous).size());
         assertEquals(WARNINGS_COUNT_ERROR, 1, AnnotationDifferencer.getFixedWarnings(actual, previous).size());
 
-        annotation = createAnnotation(Priority.HIGH, "type2", STRING, STRING, 2, 3);
+        annotation = createAnnotation(STRING, Priority.HIGH, "type2", STRING, STRING, 2, 3);
         actual.add(annotation);
 
         assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getNewWarnings(actual, previous).size());
         assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getFixedWarnings(actual, previous).size());
 
-        annotation = createAnnotation(Priority.HIGH, "type3", STRING, STRING, 2, 3);
+        annotation = createAnnotation(STRING, Priority.HIGH, "type3", STRING, STRING, 2, 3);
         actual.add(annotation);
 
         assertEquals(WARNINGS_COUNT_ERROR, 1, AnnotationDifferencer.getNewWarnings(actual, previous).size());
