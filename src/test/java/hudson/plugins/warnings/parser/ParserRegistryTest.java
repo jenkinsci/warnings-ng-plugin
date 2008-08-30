@@ -34,7 +34,7 @@ public class ParserRegistryTest {
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(new File(""));
 
-        Assert.assertEquals("Wrong number of annotations parsed", 115, annotations.size());
+        Assert.assertEquals("Wrong number of annotations parsed", 122, annotations.size());
     }
 }
 

@@ -411,3 +411,30 @@ testhist.l:451: warning: `void yyunput(int, char*)' defined but not used
 /u1/drjohn/bfdist/packages/RegrTest/V00-03-01/RgtAddressLineScan.cc:73: warning: implicit typename is deprecated, please see the documentation for details
 
 
+
+
+OWNER,OBJECT_NAME,OBJECT_TYPE,STATUS,LINE,POSITION,TEXT,MESSAGE_NUMBER
+E,ENV_UTIL#,PACKAGE BODY,INVALID,45,1,PLS-00103: Encountered the symbol "END" when expecting one of the following:
+
+   ;
+The symbol ";" was substituted for "END" to continue.,103
+
+E,ENV_ABBR#B,TRIGGER,INVALID,5,1,PLS-00103: Encountered the symbol "END" when expecting one of the following:
+
+   ;
+The symbol ";" was substituted for "END" to continue.,103
+
+0 rows affected
+
+
+"usi_plugin.cpp", line 212: Warning, badargtypel2w: String literal converted to char* in formal argument 1 in call to userlog(char*, ...).
+"usi_plugin.cpp", line 224: Warning, badargtypel2w: String literal converted to char* in formal argument msg in call to except(char*).
+
+"ServerList.cpp", line 8: Warning, badargtypel2w: String literal converted to char* in formal argument 1 in call to userlog(char*, ...).
+"ServerList.cpp", line 44: Warning, badargtypel2w: String literal converted to char* in formal argument 1 in call to userlog(char*, ...).
+"ServerList.cpp", line 50: Warning, badargtypel2w: String literal converted to char* in formal argument 1 in call to userlog(char*, ...).
+
+
+
+
+

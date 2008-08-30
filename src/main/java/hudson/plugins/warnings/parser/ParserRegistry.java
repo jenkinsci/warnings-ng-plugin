@@ -31,6 +31,7 @@ public class ParserRegistry {
         parsers.add(new MavenParser());
         parsers.add(new GccParser());
         parsers.add(new InvalidsParser());
+        parsers.add(new SunCParser());
     }
 
     /**
