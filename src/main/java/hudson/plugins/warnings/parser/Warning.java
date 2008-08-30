@@ -61,5 +61,14 @@ public class Warning extends AbstractAnnotation {
     public String getToolTip() {
         return StringUtils.EMPTY;
     }
+
+    /**
+     * Returns whether a package name has been defined.
+     *
+     * @return <code>true</code>, if a package name has been defined
+     */
+    public boolean hasPackageName() {
+        return StringUtils.isNotBlank(getPackageName());
+    }
 }
 

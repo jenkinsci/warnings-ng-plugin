@@ -1,26 +1,41 @@
 <div>
   <p>
-    Hudson understands the format of compiler warnings. When this option is configured, Hudson can provide useful 
+    Hudson understands the format of compiler warnings. When this option is configured, Hudson can provide useful
     information about the compiler warnings, such as historical result trend, web UI for viewing analysis reports, and so on.
-    To use this feature, configure your compiler to write all warnings to the log file. 
+    To use this feature, configure your compiler to write all warnings to the log file.
   </p>
+  <h4>Maven Configuration</h4>
   <p>
     If you are using maven to compile your sources, place the following snippet into your pom.xml to enable the compiler warnings.
   </p>
   <pre>
 	<code>
-  &lt;plugins&gt;
- 	[...]
-    &lt;plugin&gt;
-      &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-      &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
-      &lt;configuration&gt;
-        &lt;showDeprecation&gt;true&lt;/showDeprecation&gt;
-        &lt;showWarnings&gt;true&lt;/showWarnings&gt;
-      &lt;/configuration&gt;
-    &lt;/plugin&gt;
- 	[...]
-  &lt;/plugins&gt;
+&lt;plugins&gt;
+  [...]
+  &lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+    &lt;configuration&gt;
+      &lt;showDeprecation&gt;true&lt;/showDeprecation&gt;
+      &lt;showWarnings&gt;true&lt;/showWarnings&gt;
+    &lt;/configuration&gt;
+  &lt;/plugin&gt;
+[...]
+&lt;/plugins&gt;
   </code>
+  </pre>
+  <h4>Oracle Invalids Configuration</h4>
+  In order to visualize the invalids of your Oracle database you need to copy the
+  output of the following SQL statement to the console log.
+  <pre>
+	  <code>
+SELECT   dao.owner, dao.object_name, dao.object_type, dao.status, dae.line, dae.position, dae.text
+    FROM dba_objects dao, dba_errors dae
+   WHERE dao.status = 'INVALID'
+     AND dao.owner = dae.owner(+)
+     AND dao.object_name = dae.name(+)
+     AND dao.object_type = dae.type(+)
+ORDER BY object_type, object_name;
+	  </code>
   </pre>
 </div>

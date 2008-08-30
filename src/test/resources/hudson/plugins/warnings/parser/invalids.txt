@@ -1,0 +1,12 @@
+OWNER,OBJECT_NAME,OBJECT_TYPE,STATUS,LINE,POSITION,TEXT,MESSAGE_NUMBER
+E,ENV_UTIL#,PACKAGE BODY,INVALID,45,1,PLS-00103: Encountered the symbol "END" when expecting one of the following:
+
+   ;
+The symbol ";" was substituted for "END" to continue.,103
+
+E,ENV_ABBR#B,TRIGGER,INVALID,5,1,PLS-00103: Encountered the symbol "END" when expecting one of the following:
+
+   ;
+The symbol ";" was substituted for "END" to continue.,103
+
+0 rows affected

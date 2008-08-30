@@ -30,6 +30,7 @@ public class ParserRegistry {
         parsers.add(new MsBuildParser());
         parsers.add(new MavenParser());
         parsers.add(new GccParser());
+        parsers.add(new InvalidsParser());
     }
 
     /**

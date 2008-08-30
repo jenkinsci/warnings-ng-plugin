@@ -52,8 +52,10 @@ public abstract class RegexpParser implements AnnotationParser {
             Matcher matcher = pattern.matcher(line);
             if (matcher.matches()) {
                 Warning warning = createWarning(matcher);
-                String packageName = new JavaPackageDetector().detectPackageName(warning.getFileName());
-                warning.setPackageName(packageName);
+                if (!warning.hasPackageName()) {
+                    String packageName = new JavaPackageDetector().detectPackageName(warning.getFileName());
+                    warning.setPackageName(packageName);
+                }
                 warnings.add(warning);
             }
         }
