@@ -1,2 +1,7 @@
 Src\Parser\CSharp\cs.ATG (2242,17):  warning CS0168: The variable 'type' is declared but never used
 C:\Src\Parser\CSharp\file.cs (10): error XXX: An error occurred
+
+
+Controls\MozItem.cs(1338,4): warning CS0618: System.ComponentModel.Design.ComponentDesigner.OnSetComponentDefaults() : This method has been deprecated. Use InitializeNewComponent instead. http://go.microsoft.com/fwlink/?linkid=14202
+
+

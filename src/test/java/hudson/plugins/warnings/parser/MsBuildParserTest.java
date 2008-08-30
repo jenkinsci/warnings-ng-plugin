@@ -24,7 +24,7 @@ public class MsBuildParserTest extends ParserTester {
     public void parseDeprecation() throws IOException {
         Collection<FileAnnotation> warnings = new MsBuildParser().parse(MsBuildParserTest.class.getResourceAsStream("msbuild.txt"));
 
-        assertEquals("Wrong number of warnings detected.", 2, warnings.size());
+        assertEquals("Wrong number of warnings detected.", 3, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -39,6 +39,12 @@ public class MsBuildParserTest extends ParserTester {
                 "An error occurred",
                 "C:/Src/Parser/CSharp/file.cs",
                 MsBuildParser.WARNING_TYPE, "XXX", Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                1338,
+                "System.ComponentModel.Design.ComponentDesigner.OnSetComponentDefaults() : This method has been deprecated. Use InitializeNewComponent instead. http://go.microsoft.com/fwlink/?linkid=14202",
+                "Controls/MozItem.cs",
+                MsBuildParser.WARNING_TYPE, "CS0618", Priority.NORMAL);
     }
 }
 
