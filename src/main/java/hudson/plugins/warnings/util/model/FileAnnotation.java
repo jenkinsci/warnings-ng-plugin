@@ -60,6 +60,20 @@ public interface FileAnnotation {
     String getFileName();
 
     /**
+     * Sets the file name to the specified value.
+     *
+     * @param fileName the value to set
+     */
+    void setFileName(final String fileName);
+
+    /**
+     * Checks if the file exists.
+     *
+     * @return <code>true</code>, if successful
+     */
+    boolean canDisplayFile();
+
+    /**
      * Gets the associated file name of this bug (without path).
      *
      * @return the short file name

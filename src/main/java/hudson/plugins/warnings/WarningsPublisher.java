@@ -67,7 +67,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
         log(logger, "Parsing warnings in log file...");
         File logFile = build.getLogFile();
 
-        ParserResult project = new ParserResult();
+        ParserResult project = new ParserResult(build.getProject().getWorkspace());
         project.addAnnotations(new ParserRegistry().parse(logFile));
 
         WarningsResult result = new WarningsResultBuilder().build(build, project);

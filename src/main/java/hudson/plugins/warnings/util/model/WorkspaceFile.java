@@ -32,7 +32,12 @@ public class WorkspaceFile extends AnnotationContainer {
      * @return a readable name of this workspace file.
      */
     public String getShortName() {
-        return StringUtils.substringAfterLast(getName(), "/");
+        if (getName().contains("/")) {
+            return StringUtils.substringAfterLast(getName(), "/");
+        }
+        else {
+            return getName();
+        }
     }
 
     /**

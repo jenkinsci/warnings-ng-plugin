@@ -1,8 +1,10 @@
 package hudson.plugins.warnings.util;
 
+import hudson.FilePath;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,16 +33,63 @@ public class ParserResult implements Serializable {
     /** The set of modules. */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
     private final Set<String> modules = new HashSet<String>();
+    /** The workspace (might be null). */
+    private final FilePath workspace;
 
     /**
      * Creates a new instance of {@link ParserResult}.
      */
     public ParserResult() {
+        this(null);
+    }
+
+    /**
+     * Creates a new instance of {@link ParserResult}.
+     * @param workspace
+     */
+    public ParserResult(final FilePath workspace) {
+        this.workspace = workspace;
+
         Priority[] priorities = Priority.values();
 
         for (int priority = 0; priority < priorities.length; priority++) {
             annotationCountByPriority.put(priorities[priority], 0);
         }
+    }
+
+    /**
+     * Finds a file with relative filename and replaces the name with the absolute path.
+     *
+     * @param annotation the annotation
+     */
+    // TODO: maybe we should cache the file names
+    public void findRelativeFile(final FileAnnotation annotation) {
+        try {
+            if (workspace != null && hasRelativeFileName(annotation)) {
+                String[] results;
+                results = workspace.act(new FileFinder("**/" + annotation.getFileName()));
+                if (results.length == 1) {
+                    annotation.setFileName(workspace.getRemote() + "/" + results[0]);
+                }
+            }
+        }
+        catch (IOException exception) {
+            // ignore
+        }
+        catch (InterruptedException exception) {
+            // ignore
+        }
+    }
+
+    /**
+     * Returns whether the annotation references a relative filename.
+     *
+     * @param annotation the annotation
+     * @return <code>true</code> if the filename is relative
+     */
+    private boolean hasRelativeFileName(final FileAnnotation annotation) {
+        String fileName = annotation.getFileName();
+        return !fileName.startsWith("/") && !fileName.contains(":");
     }
 
     /**
@@ -50,6 +99,7 @@ public class ParserResult implements Serializable {
      */
     public void addAnnotation(final FileAnnotation annotation) {
         annotations.add(annotation);
+        findRelativeFile(annotation);
         Integer count = annotationCountByPriority.get(annotation.getPriority());
         annotationCountByPriority.put(annotation.getPriority(), count + 1);
     }

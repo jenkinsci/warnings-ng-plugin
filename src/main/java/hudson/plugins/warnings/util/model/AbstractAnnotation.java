@@ -1,6 +1,7 @@
 package hudson.plugins.warnings.util.model;
 
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -273,5 +274,14 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         else {
             return getFileName();
         }
+    }
+
+    /**
+     * Checks if the file exists.
+     *
+     * @return <code>true</code>, if successful
+     */
+    public final boolean canDisplayFile() {
+        return new File(getFileName()).exists();
     }
 }
