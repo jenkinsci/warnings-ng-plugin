@@ -27,8 +27,10 @@ public class ParserResult implements Serializable {
     /** Unique ID of this class. */
     private static final long serialVersionUID = -8414545334379193330L;
     /** The parsed annotations. */
+    @SuppressWarnings("Se")
     private final List<FileAnnotation> annotations = new ArrayList<FileAnnotation>();
     /** The collection of error messages. */
+    @SuppressWarnings("Se")
     private final List<String> errorMessages = new ArrayList<String>();
     /** Number of annotations by priority. */
     @SuppressWarnings("Se")

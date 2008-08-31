@@ -165,6 +165,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     // CHECKSTYLE:OFF
 
     @Override
+    @SuppressWarnings("PMD")
     public int hashCode() {
         int prime = 31;
         int result = 1;
@@ -181,6 +182,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     }
 
     @Override
+    @SuppressWarnings("PMD")
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;

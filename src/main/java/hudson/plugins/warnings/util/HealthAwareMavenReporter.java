@@ -156,7 +156,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("serial")
+    @SuppressWarnings({"serial", "PMD.AvoidFinalLocalVariable"})
     @Override
     public final boolean postExecute(final MavenBuildProxy build, final MavenProject pom, final MojoInfo mojo,
             final BuildListener listener, final Throwable error) throws InterruptedException, IOException {

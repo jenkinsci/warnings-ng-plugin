@@ -121,7 +121,7 @@ public class FilesParser implements FileCallable<ParserResult> {
                 continue;
             }
 
-            parseFile(workspace, file, moduleName, result);
+            parseFile(file, moduleName, result);
 
             result.addModule(moduleName);
         }
@@ -130,19 +130,17 @@ public class FilesParser implements FileCallable<ParserResult> {
     /**
      * Parses the specified file and stores all found annotations. If the file
      * could not be parsed then an error message is appended to the result.
-     *
-     * @param workspace
-     *            the root of the workspace
      * @param file
      *            the file to parse
      * @param moduleName
      *            the associated module
      * @param result
      *            the result of the parser
+     *
      * @throws InterruptedException
      *             if the user cancels the parsing
      */
-    private void parseFile(final File workspace, final File file, final String moduleName, final ParserResult result) throws InterruptedException {
+    private void parseFile(final File file, final String moduleName, final ParserResult result) throws InterruptedException {
         try {
             Collection<FileAnnotation> annotations = parser.parse(file, moduleName);
             result.addAnnotations(annotations);

@@ -75,7 +75,7 @@ public final class ChartBuilderDemo {
         plot.getRenderer().setSeriesPaint(1, ColorPalette.YELLOW);
         plot.getRenderer().setSeriesPaint(2, ColorPalette.RED);
 
-        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
         // crop extra space around the graph
@@ -125,7 +125,7 @@ public final class ChartBuilderDemo {
         plot.getRenderer().setSeriesPaint(1, ColorPalette.YELLOW);
         plot.getRenderer().setSeriesPaint(2, ColorPalette.RED);
 
-        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         rangeAxis.setVisible(false);
         rangeAxis.setLowerMargin(0);

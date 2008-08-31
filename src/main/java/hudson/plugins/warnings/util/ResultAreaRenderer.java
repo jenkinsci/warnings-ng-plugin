@@ -36,7 +36,7 @@ public class ResultAreaRenderer extends AbstractAreaRenderer {
     public String generateToolTip(final CategoryDataset dataset, final int row, final int column) {
         int number = 0;
         for (int index = 0; index < dataset.getRowCount(); index++) {
-            final Number value = dataset.getValue(index, column);
+            Number value = dataset.getValue(index, column);
             if (value != null) {
                 number += value.intValue();
             }

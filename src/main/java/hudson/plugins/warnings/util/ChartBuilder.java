@@ -93,7 +93,7 @@ public final class ChartBuilder {
         domainAxis.setUpperMargin(0.0);
         domainAxis.setCategoryMargin(0.0);
 
-        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
         // crop extra space around the graph
@@ -153,7 +153,7 @@ public final class ChartBuilder {
         plot.getRenderer().setSeriesOutlineStroke(1, new BasicStroke(0));
         plot.getRenderer().setSeriesOutlineStroke(2, new BasicStroke(0));
 
-        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         rangeAxis.setVisible(false);
         rangeAxis.setLowerMargin(0);

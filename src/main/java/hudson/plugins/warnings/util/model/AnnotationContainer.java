@@ -57,7 +57,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
 
     /** Determines whether to build up a set of {@link WorkspaceFile}s. */
     @java.lang.SuppressWarnings("unused")
-    private boolean handleFiles; // backward compatibility
+    private boolean handleFiles; // backward compatibility NOPMD
 
     /** Name of this container. */
     private String name;

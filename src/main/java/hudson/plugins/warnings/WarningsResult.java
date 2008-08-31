@@ -14,6 +14,8 @@ import hudson.plugins.warnings.util.model.JavaProject;
  */
 public class WarningsResult extends AnnotationsBuildResult {
     /** Unique identifier of this class. */
+    private static final long serialVersionUID = -137460587767210579L;
+
     static {
         XSTREAM.alias("warning", Warning.class);
     }

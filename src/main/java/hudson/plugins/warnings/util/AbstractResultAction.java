@@ -156,7 +156,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
             response.sendRedirect2(request.getContextPath() + "/images/headless.png");
             return;
         }
-        ChartUtil.generateGraph(request, response, createChart(request, response), WIDTH, height);
+        ChartUtil.generateGraph(request, response, createChart(request), WIDTH, height);
     }
 
     /**
@@ -172,7 +172,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      *             in case of an error
      */
     public final void doGraphMap(final StaplerRequest request, final StaplerResponse response, final int height) throws IOException {
-        ChartUtil.generateClickableMap(request, response, createChart(request, response), WIDTH, height);
+        ChartUtil.generateClickableMap(request, response, createChart(request), WIDTH, height);
     }
 
     /**
@@ -180,11 +180,9 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      *
      * @param request
      *            Stapler request
-     * @param response
-     *            Stapler response
      * @return the chart for this action.
      */
-    private JFreeChart createChart(final StaplerRequest request, final StaplerResponse response) {
+    private JFreeChart createChart(final StaplerRequest request) {
         String parameter = request.getParameter("useHealthBuilder");
         boolean useHealthBuilder = Boolean.valueOf(StringUtils.defaultIfEmpty(parameter, "true"));
 

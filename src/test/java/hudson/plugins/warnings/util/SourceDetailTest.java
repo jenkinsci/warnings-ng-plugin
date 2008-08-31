@@ -1,7 +1,6 @@
 package hudson.plugins.warnings.util;
 
 import static org.easymock.EasyMock.*;
-import hudson.plugins.warnings.util.SourceDetail;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.LineRange;
 

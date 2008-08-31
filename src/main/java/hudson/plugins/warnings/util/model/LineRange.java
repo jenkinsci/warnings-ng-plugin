@@ -90,7 +90,7 @@ public class LineRange implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final LineRange other = (LineRange)obj;
+        LineRange other = (LineRange)obj;
         if (end != other.end) {
             return false;
         }
