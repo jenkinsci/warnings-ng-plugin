@@ -14,6 +14,10 @@ import org.junit.Test;
  */
 @SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public abstract class AnnotationDifferencerTest {
+    /** Error message. */
+    private static final String ANNOTATIONS_ARE_NOT_EQUAL = "Annotations are not equal.";
+    /** Filename of annotation. */
+    private static final String FILE_NAME = "File.c";
     /** String for comparison. */
     private static final String STRING = "type1";
     /** Indicates a wrong calculation of warnings. */
@@ -48,23 +52,23 @@ public abstract class AnnotationDifferencerTest {
     public void testAnnotationFilename() {
         FileAnnotation annotation  = createAnnotation("C:\\Path\\File.c", Priority.HIGH, STRING, STRING, STRING, 2, 3);
 
-        assertEquals("Annotations are not equal.", "C:/Path/File.c", annotation.getFileName());
-        assertEquals("Annotations are not equal.", "File.c", annotation.getShortFileName());
+        assertEquals(ANNOTATIONS_ARE_NOT_EQUAL, "C:/Path/File.c", annotation.getFileName());
+        assertEquals(ANNOTATIONS_ARE_NOT_EQUAL, FILE_NAME, annotation.getShortFileName());
 
         annotation  = createAnnotation("/Path/File.c", Priority.HIGH, STRING, STRING, STRING, 2, 3);
 
-        assertEquals("Annotations are not equal.", "/Path/File.c", annotation.getFileName());
-        assertEquals("Annotations are not equal.", "File.c", annotation.getShortFileName());
+        assertEquals(ANNOTATIONS_ARE_NOT_EQUAL, "/Path/File.c", annotation.getFileName());
+        assertEquals(ANNOTATIONS_ARE_NOT_EQUAL, FILE_NAME, annotation.getShortFileName());
 
         annotation  = createAnnotation("/File.c", Priority.HIGH, STRING, STRING, STRING, 2, 3);
 
-        assertEquals("Annotations are not equal.", "/File.c", annotation.getFileName());
-        assertEquals("Annotations are not equal.", "File.c", annotation.getShortFileName());
+        assertEquals(ANNOTATIONS_ARE_NOT_EQUAL, "/File.c", annotation.getFileName());
+        assertEquals(ANNOTATIONS_ARE_NOT_EQUAL, FILE_NAME, annotation.getShortFileName());
 
-        annotation  = createAnnotation("File.c", Priority.HIGH, STRING, STRING, STRING, 2, 3);
+        annotation  = createAnnotation(FILE_NAME, Priority.HIGH, STRING, STRING, STRING, 2, 3);
 
-        assertEquals("Annotations are not equal.", "File.c", annotation.getFileName());
-        assertEquals("Annotations are not equal.", "File.c", annotation.getShortFileName());
+        assertEquals(ANNOTATIONS_ARE_NOT_EQUAL, FILE_NAME, annotation.getFileName());
+        assertEquals(ANNOTATIONS_ARE_NOT_EQUAL, FILE_NAME, annotation.getShortFileName());
     }
 
     /**
@@ -75,7 +79,7 @@ public abstract class AnnotationDifferencerTest {
         FileAnnotation first  = createAnnotation(STRING, Priority.HIGH, STRING, STRING, STRING, 2, 3);
         FileAnnotation second = createAnnotation(STRING, Priority.HIGH, STRING, STRING, STRING, 2, 3);
 
-        assertEquals("Annotations are not equal.", first, second);
+        assertEquals(ANNOTATIONS_ARE_NOT_EQUAL, first, second);
 
         FileAnnotation third = createAnnotation(STRING, Priority.HIGH, "other", STRING, STRING, 2, 3);
 

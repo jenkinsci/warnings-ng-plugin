@@ -142,6 +142,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      *
      * @return the created object
      */
+    @SuppressWarnings("Se")
     private Object readResolve() {
         rebuildMappings();
         return this;

@@ -1,7 +1,9 @@
 package hudson.plugins.warnings.util;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 import hudson.model.HealthReport;
+import hudson.plugins.warnings.util.model.AnnotationProvider;
 
 import java.util.List;
 
@@ -196,7 +198,9 @@ public class HealthReportBuilderTest extends AbstractEnglishLocaleTest {
      */
     private HealthReport createHealthReport(final boolean isEnabled, final int min, final int max, final int actual) {
         HealthReportBuilder builder = new HealthReportBuilder(false, 0, isEnabled, min, max, ONE_ITEM, MULTIPLE_ITEMS);
-        return builder.computeHealth(actual, actual, actual, actual, actual);
+        AnnotationProvider result = mock(AnnotationProvider.class);
+        stub(result.getNumberOfAnnotations()).toReturn(actual);
+        return builder.computeHealth(actual, result);
     }
 }
 

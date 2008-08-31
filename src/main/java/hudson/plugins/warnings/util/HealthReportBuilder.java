@@ -1,8 +1,13 @@
 package hudson.plugins.warnings.util;
 
 import hudson.Util;
+import hudson.model.AbstractProject;
+import hudson.model.Descriptor;
 import hudson.model.HealthReport;
+import hudson.plugins.warnings.util.model.AnnotationProvider;
 import hudson.plugins.warnings.util.model.Priority;
+import hudson.tasks.Publisher;
+import hudson.util.DescribableList;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -82,6 +87,37 @@ public class HealthReportBuilder implements Serializable {
     }
 
     /**
+     * Computes the healthiness of a build based on the specified results.
+     * Reports a health of 100% when the specified counter is less than
+     * {@link #healthy}. Reports a health of 0% when the specified counter is
+     * greater than {@link #unHealthy}. The computation takes only annotations
+     * of the specified severity into account.
+     *
+     * @param result
+     *            annotations of the current build
+     * @param project
+     *            the current project
+     * @param pluginDescriptor
+     *            the descriptor of the current plug-in
+     * @return the healthiness of a build
+     */
+    public HealthReport computeHealth(final AnnotationProvider result, final AbstractProject<?, ?> project, final PluginDescriptor pluginDescriptor) {
+        int numberOfAnnotations = result.getNumberOfAnnotations();
+
+        DescribableList<Publisher, Descriptor<Publisher>> publishers = project.getPublishersList();
+        Publisher publisher = publishers.get(pluginDescriptor);
+        if (publisher instanceof HealthAwarePublisher) {
+            HealthAwarePublisher healthAwarePublisher = (HealthAwarePublisher)publisher;
+            numberOfAnnotations = 0;
+            for (Priority priority : healthAwarePublisher.getPriorities()) {
+                numberOfAnnotations += result.getNumberOfAnnotations(priority);
+            }
+        }
+
+        return computeHealth(numberOfAnnotations, result);
+    }
+
+    /**
      * Computes the healthiness of a build based on the specified counter.
      * Reports a health of 100% when the specified counter is less than
      * {@link #healthy}. Reports a health of 0% when the specified counter is
@@ -90,17 +126,11 @@ public class HealthReportBuilder implements Serializable {
      * @param counter
      *            the number of items in a build that should be considered for
      *            health computation
-     * @param total
-     *            all items in a build
-     * @param high
-     *            items with priority high
-     * @param normal
-     *            items with priority normal
-     * @param low
-     *            items with priority low
+     * @param result
+     *            annotations of the current build
      * @return the healthiness of a build
      */
-    public HealthReport computeHealth(final int counter, final int total, final int high, final int normal, final int low) {
+    public HealthReport computeHealth(final int counter, final AnnotationProvider result) {
         if (isHealthEnabled) {
             int percentage;
             if (counter < healthy) {
@@ -114,22 +144,36 @@ public class HealthReportBuilder implements Serializable {
             }
             String description;
             if (isLocalizedRelease()) {
-                if (total == 1) {
-                    description = reportSingleCount;
-                }
-                else {
-                    description = String.format(reportMultipleCount, total,
-                            high, Priority.HIGH.getLocalizedString(),
-                            normal, Priority.NORMAL.getLocalizedString(),
-                            low, Priority.LOW.getLocalizedString());
-                }
+                description = createDescription(result);
             }
             else {
-                description = reportName + ": " + Util.combine(counter, itemName) + " found.";
+                description = reportName + ": " + Util.combine(result.getNumberOfAnnotations(), itemName) + " found.";
             }
             return new HealthReport(percentage, description);
         }
         return null;
+    }
+
+    /**
+     * Creates a localized description of the build health.
+     *
+     * @param result
+     *            the result of the build
+     * @return a localized description of the build health
+     */
+    private String createDescription(final AnnotationProvider result) {
+        String description;
+        if (result.getNumberOfAnnotations() == 1) {
+            description = reportSingleCount;
+        }
+        else {
+            description = String.format(reportMultipleCount,
+                    result.getNumberOfAnnotations(),
+                    result.getNumberOfAnnotations(Priority.HIGH), Priority.HIGH.getLocalizedString(),
+                    result.getNumberOfAnnotations(Priority.NORMAL), Priority.NORMAL.getLocalizedString(),
+                    result.getNumberOfAnnotations(Priority.LOW), Priority.LOW.getLocalizedString());
+        }
+        return description;
     }
 
     /**

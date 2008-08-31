@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 /**
  * Stores the collection of parsed annotations and associated error messages.
  *
@@ -29,9 +31,10 @@ public class ParserResult implements Serializable {
     /** The collection of error messages. */
     private final List<String> errorMessages = new ArrayList<String>();
     /** Number of annotations by priority. */
+    @SuppressWarnings("Se")
     private final Map<Priority, Integer> annotationCountByPriority = new HashMap<Priority, Integer>();
     /** The set of modules. */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
+    @SuppressWarnings("Se")
     private final Set<String> modules = new HashSet<String>();
     /** The workspace (might be null). */
     private final FilePath workspace;

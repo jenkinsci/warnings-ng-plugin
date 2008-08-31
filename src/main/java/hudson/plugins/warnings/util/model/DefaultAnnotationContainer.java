@@ -1,12 +1,9 @@
 package hudson.plugins.warnings.util.model;
 
-import hudson.plugins.warnings.util.model.AnnotationContainer.Hierarchy;
-
 import java.util.Set;
 
 /**
- * A simple annotation container that stores a set of annotations. The caching
- * hierarchy is {@link Hierarchy#PROJECT}.
+ * A simple annotation container that stores a set of annotations.
  *
  * @author Ulli Hafner
  */
@@ -36,6 +33,17 @@ public class DefaultAnnotationContainer extends AnnotationContainer {
         super(name, Hierarchy.PROJECT);
 
         addAnnotations(annotations);
+    }
+
+    /**
+     * Rebuilds the priorities mapping.
+     *
+     * @return the created object
+     */
+    private Object readResolve() {
+        setHierarchy(Hierarchy.PROJECT);
+        rebuildMappings();
+        return this;
     }
 }
 

@@ -15,6 +15,7 @@ public class MavenModule extends AnnotationContainer {
     private String name; // NOPMD: backward compatibility
     /** All Java packages in this maven module (mapped by their name). */
     @SuppressWarnings("unused")
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
     private Map<String, JavaPackage> packageMapping; // NOPMD: backward compatibility
     /** The error message that denotes that the creation of the module has been failed. */
     private String error;

@@ -92,21 +92,26 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
         this.thresholdLimit = thresholdLimit;
         this.pluginName = "[" + pluginName + "] ";
 
-        if (!StringUtils.isEmpty(threshold)) {
-            try {
-                minimumAnnotations = Integer.valueOf(threshold);
-                if (minimumAnnotations >= 0) {
-                    thresholdEnabled = true;
-                }
-            }
-            catch (NumberFormatException exception) {
-                // nothing to do, we use the default value
-            }
+        validateThreshold(threshold);
+        validateHealthiness(healthy, unHealthy);
+        if (StringUtils.isBlank(thresholdLimit)) {
+            this.thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
         }
-        if (!StringUtils.isEmpty(healthy) && !StringUtils.isEmpty(unHealthy)) {
+    }
+
+    /**
+     * Validates the healthiness parameters and sets the according fields.
+     *
+     * @param healthyParameter
+     *            the healthy value to validate
+     * @param unHealthyParameter
+     *            the unhealthy value to validate
+     */
+    private void validateHealthiness(final String healthyParameter, final String unHealthyParameter) {
+        if (!StringUtils.isEmpty(healthyParameter) && !StringUtils.isEmpty(unHealthyParameter)) {
             try {
-                healthyAnnotations = Integer.valueOf(healthy);
-                unHealthyAnnotations = Integer.valueOf(unHealthy);
+                healthyAnnotations = Integer.valueOf(healthyParameter);
+                unHealthyAnnotations = Integer.valueOf(unHealthyParameter);
                 if (healthyAnnotations >= 0 && unHealthyAnnotations > healthyAnnotations) {
                     healthyReportEnabled = true;
                 }
@@ -115,8 +120,25 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
                 // nothing to do, we use the default value
             }
         }
-        if (StringUtils.isBlank(thresholdLimit)) {
-            this.thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
+    }
+
+    /**
+     * Validates the threshold parameter and sets the according fields.
+     *
+     * @param thresholdParameter
+     *            the threshold to validate
+     */
+    private void validateThreshold(final String thresholdParameter) {
+        if (!StringUtils.isEmpty(thresholdParameter)) {
+            try {
+                minimumAnnotations = Integer.valueOf(thresholdParameter);
+                if (minimumAnnotations >= 0) {
+                    thresholdEnabled = true;
+                }
+            }
+            catch (NumberFormatException exception) {
+                // nothing to do, we use the default value
+            }
         }
     }
 
@@ -125,6 +147,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
      *
      * @return the object
      */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
     private Object readResolve() {
         if (thresholdLimit == null) {
             thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
@@ -241,10 +264,8 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
             log(logger, "A total of " + numberOfAnnotations + " annotations have been found for priority " + priority);
             annotationCount += numberOfAnnotations;
         }
-        if (annotationCount > 0) {
-            if (isThresholdEnabled() && annotationCount >= getMinimumAnnotations()) {
-                build.setResult(Result.UNSTABLE);
-            }
+        if (annotationCount > 0 && isThresholdEnabled() && annotationCount >= getMinimumAnnotations()) {
+            build.setResult(Result.UNSTABLE);
         }
     }
 

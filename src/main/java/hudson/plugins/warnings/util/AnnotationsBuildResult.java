@@ -12,8 +12,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +27,7 @@ import org.kohsuke.stapler.StaplerResponse;
  *
  * @author Ulli Hafner
  */
+@SuppressWarnings("PMD.TooManyFields")
 public abstract class AnnotationsBuildResult extends BuildResult {
     /** Unique ID of this class. */
     private static final long serialVersionUID = -5183039263351537465L;
@@ -70,9 +71,9 @@ public abstract class AnnotationsBuildResult extends BuildResult {
 
     /** The modules with no warnings. */
     @SuppressWarnings("unused")
-    private HashMap<String, MavenModule> emptyModules; // backward compatibility;
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
+    private Map<String, MavenModule> emptyModules; // backward compatibility;
     /** All parsed modules. */
-    @SuppressWarnings("unused")
     private Set<String> modules;
     /** The total number of parsed modules (regardless if there are annotations). */
     private int numberOfModules;
