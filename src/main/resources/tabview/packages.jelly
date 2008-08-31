@@ -16,7 +16,7 @@
           <td class="pane">${package.numberOfAnnotations}
           </td>
           <td class="pane">
-            <div tooltip="${it.container.getPackage(package.name).toolTip}">
+            <div tooltip="${package.toolTip}">
               <img src="statistics?object=package.${package.name}" />
             </div>
           </td>

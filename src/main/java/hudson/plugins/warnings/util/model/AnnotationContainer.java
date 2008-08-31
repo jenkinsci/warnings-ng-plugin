@@ -561,8 +561,8 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      */
     public Collection<AnnotationContainer> getCategories() {
         ArrayList<AnnotationContainer> categories = new ArrayList<AnnotationContainer>();
-        for (String type : annotationsByCategory.keySet()) {
-            categories.add(new DefaultAnnotationContainer(type, annotationsByCategory.get(type)));
+        for (String category : annotationsByCategory.keySet()) {
+            categories.add(getCategory(category));
         }
         return categories;
     }
@@ -585,9 +585,9 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @param category the category name
      * @return the category with the given name
      */
-    public Set<FileAnnotation> getCategory(final String category) {
+    public DefaultAnnotationContainer getCategory(final String category) {
         if (annotationsByCategory.containsKey(category)) {
-            return annotationsByCategory.get(category);
+            return new DefaultAnnotationContainer(category, annotationsByCategory.get(category));
         }
         throw new NoSuchElementException("Category not found: " + category);
     }
@@ -600,7 +600,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     public Collection<AnnotationContainer> getTypes() {
         ArrayList<AnnotationContainer> types = new ArrayList<AnnotationContainer>();
         for (String type : annotationsByType.keySet()) {
-            types.add(new DefaultAnnotationContainer(type, annotationsByType.get(type)));
+            types.add(getType(type));
         }
         return types;
     }
@@ -623,9 +623,9 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @param type the type name
      * @return the type with the given name
      */
-    public Set<FileAnnotation> getType(final String type) {
+    public DefaultAnnotationContainer getType(final String type) {
         if (annotationsByType.containsKey(type)) {
-            return annotationsByType.get(type);
+            return new DefaultAnnotationContainer(type, annotationsByType.get(type));
         }
         throw new NoSuchElementException("Type not found: " + type);
     }

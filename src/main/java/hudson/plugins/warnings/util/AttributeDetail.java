@@ -37,17 +37,5 @@ public class AttributeDetail extends AbstractAnnotationsDetail {
     public String getDisplayName() {
         return attributeName;
     }
-
-    /**
-     * Returns a tooltip showing the distribution of priorities for the selected
-     * category.
-     *
-     * @param category
-     *            the category to show the distribution for
-     * @return a tooltip showing the distribution of priorities
-     */
-    public String getToolTip(final String category) {
-        return "TODO";
-    }
 }
 

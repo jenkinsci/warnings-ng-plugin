@@ -93,11 +93,11 @@ public class DetailBuilder {
         }
         else if (link.startsWith("category.")) {
             String category = StringUtils.substringAfter(link, "category.");
-            return new AttributeDetail(owner, container.getCategory(category), displayName, Messages.CategoryDetail_header() + " " + category);
+            return new AttributeDetail(owner, container.getCategory(category).getAnnotations(), displayName, Messages.CategoryDetail_header() + " " + category);
         }
         else if (link.startsWith("type.")) {
             String type = StringUtils.substringAfter(link, "type.");
-            return new AttributeDetail(owner, container.getType(type), displayName, Messages.TypeDetail_header() + " " + type);
+            return new AttributeDetail(owner, container.getType(type).getAnnotations(), displayName, Messages.TypeDetail_header() + " " + type);
         }
         return null;
     }

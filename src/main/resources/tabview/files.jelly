@@ -16,7 +16,7 @@
           <td class="pane">${file.numberOfAnnotations}
           </td>
           <td class="pane">
-            <div tooltip="${it.container.getFile(file.name).toolTip}">
+            <div tooltip="${file.toolTip}">
               <img src="statistics?object=file.${file.name.hashCode()}" />
             </div>
           </td>

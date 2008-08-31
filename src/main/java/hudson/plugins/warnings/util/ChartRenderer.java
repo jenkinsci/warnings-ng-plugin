@@ -3,13 +3,11 @@ package hudson.plugins.warnings.util;
 import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.AnnotationProvider;
 import hudson.plugins.warnings.util.model.DefaultAnnotationContainer;
-import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
 import hudson.util.ChartUtil;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.JFreeChart;
@@ -23,26 +21,26 @@ import org.kohsuke.stapler.StaplerResponse;
  */
 public final class ChartRenderer {
     /**
-     * Generates a PNG image for high/normal/low distribution of the specified object.
-     * The type of the object is determined by the 'object' parameter of the {@link StaplerRequest}.
+     * Generates a PNG image for high/normal/low distribution of the specified
+     * object. The type of the object is determined by the 'object' parameter of
+     * the {@link StaplerRequest}.
+     *
      * @param request
      *            Stapler request
      * @param response
      *            Stapler response
+     * @param container
+     *            the selected container to create the chart for
      * @throws IOException
      *             in case of an error
      */
     public void doStatistics(final StaplerRequest request, final StaplerResponse response, final AnnotationContainer container) throws IOException {
         String parameter = request.getParameter("object");
         if (parameter.startsWith("category.")) {
-            String category = StringUtils.substringAfter(parameter, "category.");
-            Set<FileAnnotation> annotations = container.getCategory(category);
-            renderPriorititesChart(request, response, new DefaultAnnotationContainer(category, annotations), getUpperBound(container.getCategories()));
+            renderPriorititesChart(request, response, container.getCategory(StringUtils.substringAfter(parameter, "category.")), getUpperBound(container.getCategories()));
         }
         else if (parameter.startsWith("type.")) {
-            String type = StringUtils.substringAfter(parameter, "type.");
-            Set<FileAnnotation> annotations = container.getType(type);
-            renderPriorititesChart(request, response, new DefaultAnnotationContainer(type, annotations), getUpperBound(container.getTypes()));
+            renderPriorititesChart(request, response, container.getType(StringUtils.substringAfter(parameter, "type.")), getUpperBound(container.getTypes()));
         }
         else if (parameter.startsWith("file.")) {
             AnnotationContainer annotations = container.getFile(Integer.valueOf(StringUtils.substringAfter(parameter, "file.")));

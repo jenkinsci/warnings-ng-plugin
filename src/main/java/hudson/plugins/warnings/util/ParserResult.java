@@ -45,7 +45,9 @@ public class ParserResult implements Serializable {
 
     /**
      * Creates a new instance of {@link ParserResult}.
+     *
      * @param workspace
+     *            the workspace to find the files in
      */
     public ParserResult(final FilePath workspace) {
         this.workspace = workspace;

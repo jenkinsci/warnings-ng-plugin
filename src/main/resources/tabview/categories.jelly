@@ -16,7 +16,7 @@
           <td class="pane">${category.numberOfAnnotations}
           </td>
           <td class="pane">
-            <div tooltip="${it.container.getCategory(category.name).toolTip}">
+            <div tooltip="${category.toolTip}">
               <img src="statistics?object=category.${category.name}" />
             </div>
           </td>
