@@ -2,7 +2,6 @@ package hudson.plugins.warnings.util.model;
 
 import hudson.plugins.warnings.util.model.AnnotationContainer.Hierarchy;
 
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -17,27 +16,26 @@ public class DefaultAnnotationContainer extends AnnotationContainer {
 
     /**
      * Creates a new instance of {@link DefaultAnnotationContainer}.
+     *
+     * @param name
+     *            the name of this container
      */
-    public DefaultAnnotationContainer() {
-        super(Hierarchy.PROJECT);
+    public DefaultAnnotationContainer(final String name) {
+        super(name, Hierarchy.PROJECT);
     }
 
     /**
      * Creates a new instance of {@link DefaultAnnotationContainer}.
      *
+     * @param name
+     *            the name of this container
      * @param annotations
-     *      the annotations to be stored
+     *            the annotations to be stored
      */
-    public DefaultAnnotationContainer(final Set<FileAnnotation> annotations) {
-        super(Hierarchy.PROJECT);
+    public DefaultAnnotationContainer(final String name, final Set<FileAnnotation> annotations) {
+        super(name, Hierarchy.PROJECT);
 
         addAnnotations(annotations);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Collection<? extends AnnotationContainer> getChildren() {
-        return getModules();
     }
 }
 

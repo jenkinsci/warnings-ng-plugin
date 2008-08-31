@@ -1,8 +1,5 @@
 package hudson.plugins.warnings.util.model;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -53,12 +50,6 @@ public class WorkspaceFile extends AnnotationContainer {
             setName(name);
         }
         return this;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Collection<? extends AnnotationContainer> getChildren() {
-        return Collections.emptyList();
     }
 }
 

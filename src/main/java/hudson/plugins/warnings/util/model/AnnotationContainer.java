@@ -3,6 +3,7 @@ package hudson.plugins.warnings.util.model;
 import hudson.plugins.warnings.util.Messages;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -558,8 +559,12 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      *
      * @return the categories with annotations
      */
-    public Collection<String> getCategories() {
-        return Collections.unmodifiableCollection(annotationsByCategory.keySet());
+    public Collection<AnnotationContainer> getCategories() {
+        ArrayList<AnnotationContainer> categories = new ArrayList<AnnotationContainer>();
+        for (String type : annotationsByCategory.keySet()) {
+            categories.add(new DefaultAnnotationContainer(type, annotationsByCategory.get(type)));
+        }
+        return categories;
     }
 
     /**
@@ -592,8 +597,12 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      *
      * @return the types with annotations
      */
-    public Collection<String> getTypes() {
-        return Collections.unmodifiableCollection(annotationsByType.keySet());
+    public Collection<AnnotationContainer> getTypes() {
+        ArrayList<AnnotationContainer> types = new ArrayList<AnnotationContainer>();
+        for (String type : annotationsByType.keySet()) {
+            types.add(new DefaultAnnotationContainer(type, annotationsByType.get(type)));
+        }
+        return types;
     }
 
     /**
@@ -620,27 +629,6 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         }
         throw new NoSuchElementException("Type not found: " + type);
     }
-
-    /**
-     * Gets the maximum number of annotations within the elements of the child hierarchy.
-     *
-     * @return the maximum number of annotations
-     */
-    public final int getAnnotationBound() {
-        int maximum = 0;
-        for (AnnotationContainer subContainer : getChildren()) {
-            maximum = Math.max(maximum, subContainer.getNumberOfAnnotations());
-        }
-        return maximum;
-    }
-
-    /**
-     * Returns the children containers of this container.
-     * If we are already at the leaf level, then an empty collection is returned.
-     *
-     * @return the children containers of this container.
-     */
-    protected abstract Collection<? extends AnnotationContainer> getChildren();
 
     /**
      * Returns {@link Priority#HIGH}.

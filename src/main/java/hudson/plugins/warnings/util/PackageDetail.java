@@ -1,10 +1,7 @@
 package hudson.plugins.warnings.util;
 
 import hudson.model.AbstractBuild;
-import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.JavaPackage;
-
-import java.util.Collection;
 
 /**
  * Result object to visualize the package statistics of a module.
@@ -45,12 +42,6 @@ public class PackageDetail extends AbstractAnnotationsDetail {
     /** {@inheritDoc} */
     public String getDisplayName() {
         return javaPackage.getName();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Collection<? extends AnnotationContainer> getChildren() {
-        return getFiles();
     }
 }
 

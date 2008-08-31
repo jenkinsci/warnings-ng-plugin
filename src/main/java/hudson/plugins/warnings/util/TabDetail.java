@@ -1,7 +1,6 @@
 package hudson.plugins.warnings.util;
 
 import hudson.model.AbstractBuild;
-import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 
 import java.util.Collection;
@@ -35,12 +34,6 @@ public class TabDetail extends AbstractAnnotationsDetail {
     /** {@inheritDoc} */
     public String getDisplayName() {
         return "NOT USED";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Collection<? extends AnnotationContainer> getChildren() {
-        return getModules();
     }
 
     /**

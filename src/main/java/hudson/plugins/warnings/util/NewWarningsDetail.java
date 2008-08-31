@@ -1,7 +1,6 @@
 package hudson.plugins.warnings.util;
 
 import hudson.model.AbstractBuild;
-import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 
 import java.util.Collection;
@@ -32,12 +31,6 @@ public class NewWarningsDetail extends AbstractAnnotationsDetail {
     /** {@inheritDoc} */
     public String getDisplayName() {
         return Messages.NewWarningsDetail_Name();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Collection<? extends AnnotationContainer> getChildren() {
-        return getModules();
     }
 }
 

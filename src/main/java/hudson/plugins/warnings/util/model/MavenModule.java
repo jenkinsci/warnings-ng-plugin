@@ -1,6 +1,5 @@
 package hudson.plugins.warnings.util.model;
 
-import java.util.Collection;
 import java.util.Map;
 
 
@@ -80,12 +79,6 @@ public class MavenModule extends AnnotationContainer {
      */
     public String getError() {
         return error;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Collection<? extends AnnotationContainer> getChildren() {
-        return getPackages();
     }
 }
 

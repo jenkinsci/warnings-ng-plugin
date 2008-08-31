@@ -3,15 +3,12 @@ package hudson.plugins.warnings.util;
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
 import hudson.plugins.warnings.util.model.AnnotationContainer;
-import hudson.plugins.warnings.util.model.AnnotationProvider;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
-import hudson.util.ChartUtil;
 
 import java.io.IOException;
 import java.util.Collection;
 
-import org.jfree.chart.JFreeChart;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -28,7 +25,7 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
     private final AbstractBuild<?, ?> owner;
 
     /**
-     * Creates a new instance of <code>AbstractWarningsDetail</code>.
+     * Creates a new instance of {@link AbstractAnnotationsDetail}.
      *
      * @param owner
      *            current build as owner of this object.
@@ -36,6 +33,8 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      *            the set of warnings represented by this object
      * @param name
      *            the name of this object
+     * @param hierarchy
+     *            the hierarchy level of this detail object
      */
     public AbstractAnnotationsDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final String name, final Hierarchy hierarchy) {
         super(name, hierarchy);
@@ -69,33 +68,6 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      */
     public final boolean isCurrent() {
         return owner.getProject().getLastBuild().number == owner.number;
-    }
-
-    /**
-     * Creates a detail graph for the specified detail object.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @param detailObject
-     *            the detail object to compute the graph for
-     * @param upperBound
-     *            the upper bound of all tasks
-     * @throws IOException
-     *             in case of an error
-     */
-    protected final void createDetailGraph(final StaplerRequest request, final StaplerResponse response,
-            final AnnotationProvider detailObject, final int upperBound) throws IOException {
-        if (ChartUtil.awtProblem) {
-            response.sendRedirect2(request.getContextPath() + "/images/headless.png");
-            return;
-        }
-        JFreeChart chart = ChartBuilder.createHighNormalLowChart(
-                detailObject.getNumberOfAnnotations(Priority.HIGH),
-                detailObject.getNumberOfAnnotations(Priority.NORMAL),
-                detailObject.getNumberOfAnnotations(Priority.LOW), upperBound);
-        ChartUtil.generateGraph(request, response, chart, 400, 20);
     }
 
     /**

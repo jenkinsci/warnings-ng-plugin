@@ -8,6 +8,7 @@ import hudson.plugins.warnings.util.model.Priority;
 import hudson.util.ChartUtil;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -34,20 +35,22 @@ public final class ChartRenderer {
     public void doStatistics(final StaplerRequest request, final StaplerResponse response, final AnnotationContainer container) throws IOException {
         String parameter = request.getParameter("object");
         if (parameter.startsWith("category.")) {
-            Set<FileAnnotation> annotations = container.getCategory(StringUtils.substringAfter(parameter, "category."));
-            renderPriorititesChart(request, response, new DefaultAnnotationContainer(annotations), container.getAnnotationBound());
+            String category = StringUtils.substringAfter(parameter, "category.");
+            Set<FileAnnotation> annotations = container.getCategory(category);
+            renderPriorititesChart(request, response, new DefaultAnnotationContainer(category, annotations), getUpperBound(container.getCategories()));
         }
         else if (parameter.startsWith("type.")) {
-            Set<FileAnnotation> annotations = container.getType(StringUtils.substringAfter(parameter, "type."));
-            renderPriorititesChart(request, response, new DefaultAnnotationContainer(annotations), container.getAnnotationBound());
+            String type = StringUtils.substringAfter(parameter, "type.");
+            Set<FileAnnotation> annotations = container.getType(type);
+            renderPriorititesChart(request, response, new DefaultAnnotationContainer(type, annotations), getUpperBound(container.getTypes()));
         }
         else if (parameter.startsWith("file.")) {
             AnnotationContainer annotations = container.getFile(Integer.valueOf(StringUtils.substringAfter(parameter, "file.")));
-            renderPriorititesChart(request, response, annotations, container.getAnnotationBound());
+            renderPriorititesChart(request, response, annotations, getUpperBound(container.getFiles()));
         }
         else if (parameter.startsWith("package.")) {
             AnnotationContainer annotations = container.getPackage(StringUtils.substringAfter(parameter, "package."));
-            renderPriorititesChart(request, response, annotations, container.getAnnotationBound());
+            renderPriorititesChart(request, response, annotations, getUpperBound(container.getPackages()));
         }
         else if (parameter.startsWith("module.")) {
             String moduleName = StringUtils.substringAfter(parameter, "module.");
@@ -56,11 +59,25 @@ public final class ChartRenderer {
                 annotations = container.getModule(moduleName);
             }
             else {
-                annotations = new DefaultAnnotationContainer();
+                annotations = new DefaultAnnotationContainer(moduleName);
             }
-            renderPriorititesChart(request, response, annotations, container.getAnnotationBound());
+            renderPriorititesChart(request, response, annotations, getUpperBound(container.getModules()));
         }
-        // TODO: we should parameterize the annotation bound (second parameter instead of getChild)
+    }
+
+    /**
+     * Gets the maximum number of annotations within the specified containers.
+     *
+     * @param containers
+     *            the containers to scan for the upper bound
+     * @return the maximum number of annotations
+     */
+    private int getUpperBound(final Collection<? extends AnnotationContainer> containers) {
+        int maximum = 0;
+        for (AnnotationContainer container : containers) {
+            maximum = Math.max(maximum, container.getNumberOfAnnotations());
+        }
+        return maximum;
     }
 
     /**

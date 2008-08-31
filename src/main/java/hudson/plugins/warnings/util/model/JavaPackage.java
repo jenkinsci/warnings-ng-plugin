@@ -1,6 +1,5 @@
 package hudson.plugins.warnings.util.model;
 
-import java.util.Collection;
 
 
 /**
@@ -36,12 +35,6 @@ public class JavaPackage extends AnnotationContainer {
             setName(name);
         }
         return this;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Collection<? extends AnnotationContainer> getChildren() {
-        return getFiles();
     }
 }
 

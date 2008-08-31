@@ -37,8 +37,6 @@ public abstract class AbstractSerializeModelTest extends AbstractEnglishLocaleTe
     protected static final String PATH_TO_FILE1 = "Path/To/File";
     /** Short file name. */
     private static final String FILE1 = StringUtils.substringAfterLast(PATH_TO_FILE1, "/");
-    /** Short file name. */
-    private static final String FILE2 = StringUtils.substringAfterLast(PATH_TO_FILE2, "/");
     /** Task property. */
     protected static final String LOW = "Low";
     /** Task property. */
@@ -67,8 +65,6 @@ public abstract class AbstractSerializeModelTest extends AbstractEnglishLocaleTe
     private static final String WRONG_NUMBER_OF_PACKAGES = "Wrong number of packages.";
     /** Error Message. */
     private static final String WRONG_NUMBER_OF_MODULES = "Wrong number of modules.";
-    /** Error Message. */
-    private static final String WRONG_MAXIMUM_NUMBER = "Wrong maximum number of annotations per package.";
     /** Error Message. */
     private static final String WRONG_NUMBER_OF_ANNOTATIONS = "Wrong number of annotations.";
     /** Error Message. */
@@ -306,7 +302,6 @@ public abstract class AbstractSerializeModelTest extends AbstractEnglishLocaleTe
         assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 1, module.getAnnotations(Priority.NORMAL).size());
         assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, module.getNumberOfAnnotations(Priority.LOW));
         assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, module.getAnnotations(Priority.LOW).size());
-        assertEquals(WRONG_MAXIMUM_NUMBER, 1, module.getAnnotationBound());
         assertEquals(WRONG_TOOLTIP_CREATED, "Normal:1", module.getToolTip());
 
         assertEquals(WRONG_NUMBER_OF_PACKAGES, 1, module.getPackages().size());
@@ -402,7 +397,6 @@ public abstract class AbstractSerializeModelTest extends AbstractEnglishLocaleTe
         assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 2, project.getNumberOfAnnotations(Priority.NORMAL));
         assertTrue(WRONG_NUMBER_OF_ANNOTATIONS, project.hasAnnotations(Priority.LOW));
         assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 2, project.getNumberOfAnnotations(Priority.LOW));
-        assertEquals("Wrong maximum number of annotations per module.", 4, project.getAnnotationBound());
         assertEquals(WRONG_TOOLTIP_CREATED, "High:1 - Normal:2 - Low:2", project.getToolTip());
 
         assertEquals(WRONG_NUMBER_OF_MODULES, 2, project.getModules().size());

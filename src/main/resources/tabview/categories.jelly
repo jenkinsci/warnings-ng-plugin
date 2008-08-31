@@ -11,13 +11,13 @@
       <j:forEach var="category" items="${it.container.categories}">
         <tr>
           <td class="pane">
-            <a href="category.${category}/">${category}</a>
+            <a href="category.${category.name}/">${category.name}</a>
           </td>
-          <td class="pane">${it.container.getCategory(category).size()}
+          <td class="pane">${category.numberOfAnnotations}
           </td>
           <td class="pane">
-            <div tooltip="${it.container.getCategory(category).toolTip}">
-              <img src="statistics?object=category.${category}" />
+            <div tooltip="${it.container.getCategory(category.name).toolTip}">
+              <img src="statistics?object=category.${category.name}" />
             </div>
           </td>
         </tr>

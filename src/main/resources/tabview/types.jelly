@@ -11,13 +11,13 @@
       <j:forEach var="type" items="${it.container.types}">
         <tr>
           <td class="pane">
-            <a href="type.${type}/">${type}</a>
+            <a href="type.${type.name}/">${type.name}</a>
           </td>
-          <td class="pane">${it.container.getType(type).size()}
+          <td class="pane">${type.numberOfAnnotations}
           </td>
           <td class="pane">
-            <div tooltip="${it.container.getType(type).toolTip}">
-              <img src="statistics?object=type.${type}" />
+            <div tooltip="${it.container.getType(type.name).toolTip}">
+              <img src="statistics?object=type.${type.name}" />
             </div>
           </td>
         </tr>

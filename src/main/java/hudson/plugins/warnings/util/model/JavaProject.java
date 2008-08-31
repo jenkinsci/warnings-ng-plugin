@@ -112,11 +112,5 @@ public class JavaProject extends AnnotationContainer {
 
         return allErrors;
     }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Collection<? extends AnnotationContainer> getChildren() {
-        return getModules();
-    }
 }
 
