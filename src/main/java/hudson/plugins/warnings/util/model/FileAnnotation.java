@@ -1,5 +1,7 @@
 package hudson.plugins.warnings.util.model;
 
+import hudson.model.AbstractBuild;
+
 import java.util.Collection;
 
 /**
@@ -60,6 +62,19 @@ public interface FileAnnotation {
     String getFileName();
 
     /**
+     * Returns a file name for a temporary file that will hold the contents of
+     * the source. This temporary file is used in a master - slave scenario
+     * where the original file remains on the slave while this temporary file is
+     * transferred to the master.
+     *
+     * @param owner
+     *            the owner that provides the root directory where the files are
+     *            stored
+     * @return the temporary name
+     */
+    String getTempName(AbstractBuild<?, ?> owner);
+
+    /**
      * Sets the file name to the specified value.
      *
      * @param fileName the value to set
@@ -69,9 +84,12 @@ public interface FileAnnotation {
     /**
      * Checks if the file exists.
      *
+     * @param owner
+     *            the owner that provides the root directory where the files are
+     *            stored
      * @return <code>true</code>, if successful
      */
-    boolean canDisplayFile();
+    boolean canDisplayFile(AbstractBuild<?, ?> owner);
 
     /**
      * Gets the associated file name of this bug (without path).

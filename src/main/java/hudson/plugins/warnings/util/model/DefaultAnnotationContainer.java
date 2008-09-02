@@ -1,6 +1,6 @@
 package hudson.plugins.warnings.util.model;
 
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * A simple annotation container that stores a set of annotations.
@@ -8,6 +8,8 @@ import java.util.Set;
  * @author Ulli Hafner
  */
 public class DefaultAnnotationContainer extends AnnotationContainer {
+    /** Dummy name for temporary containers. */
+    private static final String TEMPORARY = "temporary";
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -7969178785228510814L;
 
@@ -29,8 +31,20 @@ public class DefaultAnnotationContainer extends AnnotationContainer {
      * @param annotations
      *            the annotations to be stored
      */
-    public DefaultAnnotationContainer(final String name, final Set<FileAnnotation> annotations) {
+    public DefaultAnnotationContainer(final String name, final Collection<FileAnnotation> annotations) {
         super(name, Hierarchy.PROJECT);
+
+        addAnnotations(annotations);
+    }
+
+    /**
+     * Creates a new instance of {@link DefaultAnnotationContainer}.
+     *
+     * @param annotations
+     *            the annotations to be stored
+     */
+    public DefaultAnnotationContainer(final Collection<FileAnnotation> annotations) {
+        super(TEMPORARY, Hierarchy.PROJECT);
 
         addAnnotations(annotations);
     }

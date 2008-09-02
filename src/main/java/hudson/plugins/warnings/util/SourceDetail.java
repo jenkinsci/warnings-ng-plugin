@@ -69,12 +69,12 @@ public class SourceDetail implements ModelObject {
     private void initializeContent() {
         InputStream file = null;
         try {
-            String linkName = annotation.getFileName();
-            if (linkName.startsWith("/") || linkName.contains(":") || owner == null) {
-                file = new FileInputStream(new File(linkName));
+            File tempFile = new File(annotation.getTempName(owner));
+            if (tempFile.exists()) {
+                file = new FileInputStream(tempFile);
             }
             else {
-                file = owner.getProject().getWorkspace().child(linkName).read();
+                file = new FileInputStream(new File(annotation.getFileName()));
             }
             splitSourceFile(highlightSource(file));
         }

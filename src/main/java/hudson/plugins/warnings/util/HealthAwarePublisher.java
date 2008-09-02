@@ -1,17 +1,26 @@
 package hudson.plugins.warnings.util;
 
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Project;
 import hudson.model.Result;
+import hudson.plugins.warnings.util.model.AnnotationContainer;
+import hudson.plugins.warnings.util.model.DefaultAnnotationContainer;
+import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
+import hudson.plugins.warnings.util.model.WorkspaceFile;
+import hudson.remoting.VirtualChannel;
 import hudson.tasks.Ant;
 import hudson.tasks.BuildStep;
 import hudson.tasks.Builder;
 import hudson.tasks.Maven;
 import hudson.tasks.Publisher;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -159,6 +168,9 @@ public abstract class HealthAwarePublisher extends Publisher {
             try {
                 ParserResult project = perform(build, logger);
                 evaluateBuildResult(build, logger, project);
+                if (build.getProject().getWorkspace().isRemote()) {
+                    replaceRemoteReferencesWithLocalFiles(build.getRootDir(), launcher.getChannel(), project.getAnnotations());
+                }
             }
             catch (AbortException exception) {
                 logger.println(exception.getMessage());
@@ -167,6 +179,36 @@ public abstract class HealthAwarePublisher extends Publisher {
             }
         }
         return true;
+    }
+
+    /**
+     * Replaces all references to remote files with local files. Copies each of
+     * the files to the local machine.
+     *
+     * @param rootDir
+     *            directory to store the copied files in
+     * @param channel
+     *            channel to get the files from
+     * @param annotations
+     *            annotations dermining the actual files to copy
+     * @throws IOException if the files could not be written
+     * @throws FileNotFoundException if the files could not be written
+     * @throws InterruptedException if the user cancels the processing
+     */
+    private void replaceRemoteReferencesWithLocalFiles(final File rootDir,
+            final VirtualChannel channel, final Collection<FileAnnotation> annotations) throws IOException,
+            FileNotFoundException, InterruptedException {
+        File directory = new File(rootDir, "workspace-files");
+        if (!directory.exists()) {
+            if (!directory.mkdir()) {
+                throw new IOException("Can't create directory for workspace files that contain annotations: " + directory.getAbsolutePath());
+            }
+        }
+        AnnotationContainer container = new DefaultAnnotationContainer(annotations);
+        for (WorkspaceFile file : container.getFiles()) {
+            FileOutputStream outputStream = new FileOutputStream(new File(directory, file.getTempName()));
+            new FilePath(channel, file.getName()).copyTo(outputStream);
+        }
     }
 
     /**

@@ -51,5 +51,14 @@ public class WorkspaceFile extends AnnotationContainer {
         }
         return this;
     }
+
+    /**
+     * Returns a file name for a temporary file that will hold the contents of the source.
+     *
+     * @return the temporary name
+     */
+    public String getTempName() {
+        return Integer.toHexString(getName().hashCode()) + ".tmp";
+    }
 }
 

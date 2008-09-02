@@ -7,7 +7,7 @@
         <td class="pane-header">
           ${%File}:
           <j:choose>
-            <j:when test="${it.isCurrent() and warning.canDisplayFile()}">
+            <j:when test="${it.isCurrent() and warning.canDisplayFile(it.owner)}">
               <a href="source.${warning.key}/#${warning.primaryLineNumber}">${warning.shortFileName}</a>
             </j:when>
             <j:otherwise>${warning.shortFileName}</j:otherwise>

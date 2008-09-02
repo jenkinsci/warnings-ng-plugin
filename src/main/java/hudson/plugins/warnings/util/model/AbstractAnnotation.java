@@ -1,6 +1,8 @@
 package hudson.plugins.warnings.util.model;
 
 
+import hudson.model.AbstractBuild;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -91,6 +93,14 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     /** {@inheritDoc} */
     public final String getFileName() {
         return fileName;
+    }
+
+    /** {@inheritDoc} */
+    public String getTempName(final AbstractBuild<?, ?> owner) {
+        if (fileName != null) {
+            return owner.getRootDir().getAbsolutePath() + "/workspace-files/" + Integer.toHexString(fileName.hashCode()) + ".tmp";
+        }
+        return StringUtils.EMPTY;
     }
 
     /** {@inheritDoc} */
@@ -283,7 +293,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      *
      * @return <code>true</code>, if successful
      */
-    public final boolean canDisplayFile() {
-        return new File(getFileName()).exists();
+    public final boolean canDisplayFile(final AbstractBuild<?, ?> owner) {
+        return new File(getFileName()).exists() || new File(getTempName(owner)).exists();
     }
 }

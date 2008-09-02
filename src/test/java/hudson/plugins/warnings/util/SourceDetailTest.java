@@ -1,6 +1,7 @@
 package hudson.plugins.warnings.util;
 
 import static org.easymock.EasyMock.*;
+import hudson.model.AbstractBuild;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.LineRange;
 
@@ -36,6 +37,7 @@ public class SourceDetailTest {
         FileAnnotation annotation = createMock(FileAnnotation.class);
 
         expect(annotation.getFileName()).andReturn("").anyTimes();
+        expect(annotation.getTempName((AbstractBuild<?, ?>)anyObject())).andReturn("").anyTimes();
 
         replay(annotation);
 
@@ -116,6 +118,7 @@ public class SourceDetailTest {
 
         expect(annotation.getLineRanges()).andReturn(lineRanges);
         expect(annotation.getFileName()).andReturn("").anyTimes();
+        expect(annotation.getTempName((AbstractBuild<?, ?>)anyObject())).andReturn("").anyTimes();
         expect(annotation.getMessage()).andReturn("Message ").anyTimes();
         expect(annotation.getToolTip()).andReturn("Tooltip").anyTimes();
 
