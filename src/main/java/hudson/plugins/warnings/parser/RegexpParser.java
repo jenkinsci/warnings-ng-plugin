@@ -19,7 +19,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Ulli Hafner
  */
-public abstract class RegexpParser implements AnnotationParser {
+public abstract class RegexpParser implements WarningsParser {
     /** Warning classification. */
     protected static final String DEPRECATION = "Deprecation";
     /** Warning classification. */

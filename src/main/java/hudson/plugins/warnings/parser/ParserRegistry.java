@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class ParserRegistry {
     /** The available parsers of this plug-in. */
-    private final List<AnnotationParser> parsers = new ArrayList<AnnotationParser>();
+    private final List<WarningsParser> parsers = new ArrayList<WarningsParser>();
 
     /**
      * Creates a new instance of <code>ParserRegistry</code>.
@@ -45,7 +45,7 @@ public class ParserRegistry {
      */
     public Collection<FileAnnotation> parse(final File file) throws IOException {
         List<FileAnnotation> annotations = new ArrayList<FileAnnotation>();
-        for (AnnotationParser parser : parsers) {
+        for (WarningsParser parser : parsers) {
             annotations.addAll(parser.parse(createInputStream(file)));
         }
         return annotations;

@@ -11,7 +11,7 @@ import java.util.Collection;
  *
  * @author Ulli Hafner
  */
-public interface AnnotationParser {
+public interface WarningsParser {
     /**
      * Parses an input stream for compiler warnings and returns the found annotations.
      * Note that the implementor of this method is not allowed to close the specified input stream.

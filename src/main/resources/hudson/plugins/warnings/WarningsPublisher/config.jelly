@@ -1,5 +1,10 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:entry title="${%File pattern}"
+    description="${%description.pattern}">
+    <f:textbox name="pattern" value="${instance.pattern}"
+      checkUrl="'${rootURL}/publisher/WarningsPublisher/checkPattern?job=${it.fullName}&amp;value='+escape(this.value)" />
+  </f:entry>
   <f:advanced>
 	<f:entry title="${%Unstable threshold}" description="${%description.threshold}">
 		<f:textbox name="threshold" value="${instance.threshold}"
