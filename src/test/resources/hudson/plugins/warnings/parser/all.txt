@@ -203,21 +203,13 @@ Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-web
 
 [WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[162,20] [deprecation] runJob(org.eclipse.ui.IWorkbenchPartSite,com.avaloq.adt.core.job.AvaloqJob) in com.avaloq.adt.ui.elements.Util has been deprecated
 
-[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[256,16] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
-
 [WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[256,63] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
-
-[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[268,16] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
 
 [WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[268,47] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
 
 [WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[301,16] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
 
-[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[301,63] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
-
 [WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[313,16] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
-
-[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[313,47] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
 
 [WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\dialogs\SelectSourceDialog.java:[333,26] [deprecation] com.avaloq.adt.ui.elements.table.AvaloqTable in com.avaloq.adt.ui.elements.table has been deprecated
 
@@ -240,8 +232,6 @@ Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-web
 [WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\EnvTablePart.java:[557,16] [deprecation] runJob(org.eclipse.ui.IWorkbenchPartSite,com.avaloq.adt.core.job.AvaloqJob) in com.avaloq.adt.ui.elements.Util has been deprecated
 
 [WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\ExpressionContentAssist.java:[225,24] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
-
-[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\ExpressionContentAssist.java:[240,8] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
 
 [WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\expression\ExpressionContentAssist.java:[240,39] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
 
@@ -318,8 +308,6 @@ Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-web
 [WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\internal\ui\spell\SpellSourceViewer.java:[190,20] [deprecation] getKeyBindingService() in org.eclipse.ui.IWorkbenchPartSite has been deprecated
 
 [WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\compare\AvaloqCompareElement.java:[56,51] [deprecation] com.avaloq.adt.ui.AvaloqPluginImages in com.avaloq.adt.ui has been deprecated
-
-[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\compare\AvaloqCompareElement.java:[56,23] [deprecation] com.avaloq.adt.ui.AvaloqPluginImages in com.avaloq.adt.ui has been deprecated
 
 [INFO] ------------------------------------------------------------------------
 [INFO] Building Hudson Task Scanner Plug-in

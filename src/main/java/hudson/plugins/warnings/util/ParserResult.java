@@ -28,7 +28,7 @@ public class ParserResult implements Serializable {
     private static final long serialVersionUID = -8414545334379193330L;
     /** The parsed annotations. */
     @SuppressWarnings("Se")
-    private final List<FileAnnotation> annotations = new ArrayList<FileAnnotation>();
+    private final Set<FileAnnotation> annotations = new HashSet<FileAnnotation>();
     /** The collection of error messages. */
     @SuppressWarnings("Se")
     private final List<String> errorMessages = new ArrayList<String>();
@@ -147,7 +147,7 @@ public class ParserResult implements Serializable {
      * @return the errorMessages
      */
     public Collection<String> getErrorMessages() {
-        return Collections.unmodifiableList(errorMessages);
+        return Collections.unmodifiableCollection(errorMessages);
     }
 
     /**
@@ -156,7 +156,7 @@ public class ParserResult implements Serializable {
      * @return the annotations of this result
      */
     public Collection<FileAnnotation> getAnnotations() {
-        return Collections.unmodifiableList(annotations);
+        return Collections.unmodifiableCollection(annotations);
     }
 
     /**
