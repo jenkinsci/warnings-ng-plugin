@@ -18,7 +18,7 @@ public class MavenParser extends RegexpParser {
      * Creates a new instance of <code>MavenParser</code>.
      */
     public MavenParser() {
-        super(MAVEN_WARNING_PATTERN);
+        super(MAVEN_WARNING_PATTERN, true);
     }
 
     /**

@@ -16,6 +16,7 @@ import java.util.List;
  *
  * @author Ulli Hafner
  */
+// CHECKSTYLE:COUPLING-OFF
 public class ParserRegistry {
     /** The available parsers of this plug-in. */
     private final List<WarningsParser> parsers = new ArrayList<WarningsParser>();
@@ -27,6 +28,7 @@ public class ParserRegistry {
         parsers.add(new HpiCompileParser());
         parsers.add(new JavacParser());
         parsers.add(new AntJavacParser());
+        parsers.add(new AntEclipseParser());
         parsers.add(new MsBuildParser());
         parsers.add(new MavenParser());
         parsers.add(new GccParser());

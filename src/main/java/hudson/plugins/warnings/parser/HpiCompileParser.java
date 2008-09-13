@@ -11,13 +11,13 @@ public class HpiCompileParser extends RegexpParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Maven HPI Plugin";
     /** Pattern of hpi compiler warnings. */
-    private static final String HPI_WARNING_PATTERN = "([^\\[]*\\.java):(\\d*):.*\\[(.*)\\]\\s*(.*)";
+    private static final String HPI_WARNING_PATTERN = "^([^\\[\\n]*\\.java):(\\d*):.*\\[(.*)\\]\\s*(.*)";
 
     /**
      * Creates a new instance of <code>HpiCompileParser</code>.
      */
     public HpiCompileParser() {
-        super(HPI_WARNING_PATTERN);
+        super(HPI_WARNING_PATTERN, true);
     }
 
     /** {@inheritDoc} */

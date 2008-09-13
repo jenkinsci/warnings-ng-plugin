@@ -14,12 +14,10 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 /**
- * Tests the class {@link JavacParser}.
+ * Tests the class {@link AntJavacParser}.
  */
 public class AntJavacParserTest extends ParserTester {
-    /**
-     * FIXME: Document field WRONG_NUMBER_OF_WARNINGS_DETECTED
-     */
+    /** Error message. */
     private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
 
     /**
