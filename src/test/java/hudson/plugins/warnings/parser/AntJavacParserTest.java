@@ -72,7 +72,7 @@ public class AntJavacParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=2133">Issue 2316</a>
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=2316">Issue 2316</a>
      */
     @Test
     public void issue2316() throws IOException {
