@@ -30,6 +30,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
     public static final WarningsDescriptor WARNINGS_DESCRIPTOR = new WarningsDescriptor();
     /** Ant file-set pattern of files to work with. */
     private final String pattern;
+    /** Ant file-set pattern of files to exclude from report. */
+    private final String excludePattern;
 
     /**
      * Creates a new instance of <code>WarningPublisher</code>.
@@ -50,11 +52,14 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *            evaluating the build stability and health
      * @param pattern
      *            Ant file-set pattern that defines the files to scan for
+     * @param excludePattern
+     *            Ant file-set pattern of files to exclude from report
      */
     @DataBoundConstructor
-    public WarningsPublisher(final String threshold, final String healthy, final String unHealthy, final String height, final String thresholdLimit, final String pattern) {
+    public WarningsPublisher(final String threshold, final String healthy, final String unHealthy, final String height, final String thresholdLimit, final String pattern, final String excludePattern) {
         super(threshold, healthy, unHealthy, height, thresholdLimit, "WARNINGS");
         this.pattern = pattern;
+        this.excludePattern = StringUtils.stripToNull(excludePattern);
     }
 
     /**
@@ -64,6 +69,15 @@ public class WarningsPublisher extends HealthAwarePublisher {
      */
     public String getPattern() {
         return pattern;
+    }
+
+    /**
+     * Returns the Ant file-set pattern of files to exclude from report.
+     *
+     * @return Ant file-set pattern of files to exclude from report
+     */
+    public String getExcludePattern() {
+        return excludePattern;
     }
 
     /** {@inheritDoc} */
@@ -86,11 +100,11 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
         ParserResult project;
         if (StringUtils.isNotBlank(getPattern())) {
-            FilesParser parser = new FilesParser(logger, getPattern(), new FileWarningsParser(), isMavenBuild(build), isAntBuild(build));
+            FilesParser parser = new FilesParser(logger, getPattern(), getExcludePattern(), new FileWarningsParser(), isMavenBuild(build), isAntBuild(build));
             project = build.getProject().getWorkspace().act(parser);
         }
         else {
-            project = new ParserResult(build.getProject().getWorkspace());
+            project = new ParserResult(build.getProject().getWorkspace(), excludePattern);
         }
 
         project.addAnnotations(new ParserRegistry().parse(logFile));

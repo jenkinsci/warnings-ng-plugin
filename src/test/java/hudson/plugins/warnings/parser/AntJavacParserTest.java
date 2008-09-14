@@ -87,5 +87,49 @@ public class AntJavacParserTest extends ParserTester {
         Assert.assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 18, result.getNumberOfAnnotations(Priority.NORMAL));
         Assert.assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, result.getNumberOfAnnotations(Priority.LOW));
     }
+
+    /**
+     * Parses a warning log with 20 ANT warnings. 2 of them are duplicate, all are of priority Normal,
+     * 8 of them should be excluded by the single pattern.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=2359">Issue 2359</a>
+     */
+    @Test
+    public void issue2359() throws IOException {
+        Collection<FileAnnotation> warnings = new AntJavacParser().parse(AntJavacParserTest.class.getResourceAsStream("issue2316.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 20, warnings.size());
+
+        ParserResult result = new ParserResult("/tmp/clover*/**");
+        result.addAnnotations(warnings);
+        Assert.assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 10, result.getNumberOfAnnotations());
+        Assert.assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, result.getNumberOfAnnotations(Priority.HIGH));
+        Assert.assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 10, result.getNumberOfAnnotations(Priority.NORMAL));
+        Assert.assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, result.getNumberOfAnnotations(Priority.LOW));
+    }
+
+    /**
+     * Parses a warning log with 20 ANT warnings. 2 of them are duplicate, all are of priority Normal.
+     * 15 of them should be excluded by the two patterns.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=2359">Issue 2359</a>
+     */
+    @Test
+    public void multiplePatternsIssue2359() throws IOException {
+        Collection<FileAnnotation> warnings = new AntJavacParser().parse(AntJavacParserTest.class.getResourceAsStream("issue2316.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 20, warnings.size());
+
+        ParserResult result = new ParserResult("/tmp/clover*/**, **/renderers/*");
+        result.addAnnotations(warnings);
+        Assert.assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, result.getNumberOfAnnotations());
+        Assert.assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, result.getNumberOfAnnotations(Priority.HIGH));
+        Assert.assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, result.getNumberOfAnnotations(Priority.NORMAL));
+        Assert.assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, result.getNumberOfAnnotations(Priority.LOW));
+    }
 }
 

@@ -6,6 +6,11 @@
       checkUrl="'${rootURL}/publisher/WarningsPublisher/checkPattern?job=${it.fullName}&amp;value='+escape(this.value)" />
   </f:entry>
   <f:advanced>
+        <f:entry title="${%Files to exclude from report}"
+          description="${%description.excludePattern}">
+          <f:textbox name="excludePattern" value="${instance.excludePattern}"
+            checkUrl="'${rootURL}/publisher/WarningsPublisher/checkPattern?job=${it.fullName}&amp;value='+escape(this.value)" />
+        </f:entry>
 	<f:entry title="${%Unstable threshold}" description="${%description.threshold}">
 		<f:textbox name="threshold" value="${instance.threshold}"
 			checkUrl="'${rootURL}/publisher/WarningsPublisher/checkThreshold?job=${it.fullName}&amp;value='+escape(this.value)" />
