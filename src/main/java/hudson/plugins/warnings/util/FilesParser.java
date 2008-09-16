@@ -26,8 +26,6 @@ public class FilesParser implements FileCallable<ParserResult> {
     private final transient PrintStream logger;
     /** Ant file-set pattern to scan for. */
     private final String filePattern;
-    /** Ant file-set pattern of files to exclude from report. */
-    private final String excludePattern;
     /** Parser to be used to process the workspace files. */
     private final AnnotationParser parser;
     /** Determines whether this build uses maven. */
@@ -42,8 +40,6 @@ public class FilesParser implements FileCallable<ParserResult> {
      *            the logger
      * @param filePattern
      *            ant file-set pattern to scan for files to parse
-     * @param excludePattern
-     *            ant file-set pattern of files to exclude from report
      * @param parser
      *            the parser to apply on the found files
      * @param isMavenBuild
@@ -51,10 +47,9 @@ public class FilesParser implements FileCallable<ParserResult> {
      * @param isAntBuild
      *            determines whether this build uses maven
      */
-    public FilesParser(final PrintStream logger, final String filePattern, final String excludePattern, final AnnotationParser parser, final boolean isMavenBuild, final boolean isAntBuild) {
+    public FilesParser(final PrintStream logger, final String filePattern, final AnnotationParser parser, final boolean isMavenBuild, final boolean isAntBuild) {
         this.logger = logger;
         this.filePattern = filePattern;
-        this.excludePattern = excludePattern;
         this.parser = parser;
         this.isMavenBuild = isMavenBuild;
         this.isAntBuild = isAntBuild;
@@ -73,7 +68,7 @@ public class FilesParser implements FileCallable<ParserResult> {
 
     /** {@inheritDoc} */
     public ParserResult invoke(final File workspace, final VirtualChannel channel) throws IOException {
-        ParserResult result = new ParserResult(excludePattern);
+        ParserResult result = new ParserResult();
 
         try {
             String[] fileNames = new FileFinder(filePattern).find(workspace);

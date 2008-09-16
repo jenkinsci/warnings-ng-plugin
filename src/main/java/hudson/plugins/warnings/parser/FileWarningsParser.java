@@ -16,6 +16,18 @@ import java.util.Collection;
 public class FileWarningsParser implements AnnotationParser {
     /** Unique ID of this parser. */
     private static final long serialVersionUID = -262047528431480332L;
+    /** Ant file-set pattern of files to exclude from report. */
+    private final String excludePattern;
+
+    /**
+     * Creates a new instance of {@link FileWarningsParser}.
+     *
+     * @param excludePattern
+     *            ant file-set pattern of files to exclude from report
+     */
+    public FileWarningsParser(final String excludePattern) {
+        this.excludePattern = excludePattern;
+    }
 
     /** {@inheritDoc} */
     public String getName() {
@@ -25,7 +37,7 @@ public class FileWarningsParser implements AnnotationParser {
     /** {@inheritDoc} */
     public Collection<FileAnnotation> parse(final File file, final String moduleName) throws InvocationTargetException {
         try {
-            return new ParserRegistry().parse(file);
+            return new ParserRegistry(excludePattern).parse(file);
         }
         catch (IOException exception) {
             throw new InvocationTargetException(exception, "Can't scan file for warnings: " + file.getAbsolutePath());

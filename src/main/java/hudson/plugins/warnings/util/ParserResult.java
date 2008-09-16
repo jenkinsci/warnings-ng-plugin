@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.tools.ant.DirectoryScanner;
-
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 /**
@@ -31,9 +29,6 @@ public class ParserResult implements Serializable {
     /** The parsed annotations. */
     @SuppressWarnings("Se")
     private final Set<FileAnnotation> annotations = new HashSet<FileAnnotation>();
-    /** Filter for ant file-set pattern of files to exclude from report. */
-    @SuppressWarnings("Se")
-    private final transient ExcludeFilter excludeFilter;
     /** The collection of error messages. */
     @SuppressWarnings("Se")
     private final List<String> errorMessages = new ArrayList<String>();
@@ -50,17 +45,7 @@ public class ParserResult implements Serializable {
      * Creates a new instance of {@link ParserResult}.
      */
     public ParserResult() {
-        this(null, null);
-    }
-
-    /**
-     * Creates a new instance of {@link ParserResult}.
-     *
-     * @param excludePattern
-     *            Ant file-set pattern of files to exclude from report
-     */
-    public ParserResult(final String excludePattern) {
-        this(null, excludePattern);
+        this(null);
     }
 
     /**
@@ -68,12 +53,9 @@ public class ParserResult implements Serializable {
      *
      * @param workspace
      *            the workspace to find the files in
-     * @param excludePattern
-     *            Ant file-set pattern of files to exclude from report
      */
-    public ParserResult(final FilePath workspace, final String excludePattern) {
+    public ParserResult(final FilePath workspace) {
         this.workspace = workspace;
-        excludeFilter = excludePattern == null ? null : new ExcludeFilter(excludePattern);
 
         Priority[] priorities = Priority.values();
 
@@ -126,11 +108,9 @@ public class ParserResult implements Serializable {
         if (!annotations.contains(annotation)) {
             findRelativeFile(annotation);
 
-            if (excludeFilter == null || !excludeFilter.matches(annotation.getFileName())) {
-                annotations.add(annotation);
-                Integer count = annotationCountByPriority.get(annotation.getPriority());
-                annotationCountByPriority.put(annotation.getPriority(), count + 1);
-            }
+            annotations.add(annotation);
+            Integer count = annotationCountByPriority.get(annotation.getPriority());
+            annotationCountByPriority.put(annotation.getPriority(), count + 1);
         }
     }
 
@@ -280,35 +260,6 @@ public class ParserResult implements Serializable {
      */
     public void addModules(final Collection<String> additionalModules) {
         modules.addAll(additionalModules);
-    }
-
-    /**
-     * Filters file names based on Ant file-set patterns.
-     */
-    private static final class ExcludeFilter extends DirectoryScanner {
-        /**
-         * Creates a new instance of {@link ExcludeFilter}.
-         *
-         * @param excludePattern
-         *            Ant file-set pattern of files to exclude from report
-         */
-        public ExcludeFilter(final String excludePattern) {
-            super();
-
-            setExcludes(excludePattern.split(",\\s*"));
-            setIncludes(new String[] {"**/*"});
-        }
-
-        /**
-         * Returns whether the name matches one of the exclusion patterns.
-         *
-         * @param name
-         *            the file name to test
-         * @return <code>true</code> if the name matches one of the exclusion patterns.
-         */
-        public boolean matches(final String name) {
-            return isExcluded(name);
-        }
     }
 }
 

@@ -100,14 +100,14 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
         ParserResult project;
         if (StringUtils.isNotBlank(getPattern())) {
-            FilesParser parser = new FilesParser(logger, getPattern(), getExcludePattern(), new FileWarningsParser(), isMavenBuild(build), isAntBuild(build));
+            FilesParser parser = new FilesParser(logger, getPattern(), new FileWarningsParser(getExcludePattern()), isMavenBuild(build), isAntBuild(build));
             project = build.getProject().getWorkspace().act(parser);
         }
         else {
-            project = new ParserResult(build.getProject().getWorkspace(), excludePattern);
+            project = new ParserResult(build.getProject().getWorkspace());
         }
 
-        project.addAnnotations(new ParserRegistry().parse(logFile));
+        project.addAnnotations(new ParserRegistry(getExcludePattern()).parse(logFile));
 
         WarningsResult result = new WarningsResultBuilder().build(build, project);
         HealthReportBuilder healthReportBuilder = createHealthReporter(

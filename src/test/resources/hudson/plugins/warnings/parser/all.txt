@@ -509,4 +509,79 @@ Total time: 1 second
   [javadoc] 10 warnings
 
 
+compile:
+    [javac] Compiling 795 source files to /home/hudson/workspace/jobs/PMD/workspace/pmd/build
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/AbstractRenderer.java:33: warning: [deprecation] render(net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public String render(Report report) {
+    [javac]                   ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/AbstractRenderer.java:36: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]             render(w, report);
+    [javac]             ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/AbstractRenderer.java:100: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]         render(writer, mainReport);
+    [javac]         ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/ant/PMDTask.java:270: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]                 public void render(Writer writer, Report r) {}
+    [javac]                             ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/OnTheFlyRenderer.java:27: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {
+    [javac]                 ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/PapariTextRenderer.java:84: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {
+    [javac]                 ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/SummaryHTMLRenderer.java:35: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {
+    [javac]                 ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/YAHTMLRenderer.java:22: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {
+    [javac]                 ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/regress/test/net/sourceforge/pmd/ReportTest.java:165: warning: [deprecation] render(net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]         String result = rend.render(r);
+    [javac]                             ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/regress/test/net/sourceforge/pmd/ReportTest.java:180: warning: [deprecation] render(net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]         String result = rend.render(r);
+    [javac]                             ^
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+    [javac] 10 warnings
+     [copy] Copying 1 file to /home/hudson/workspace/jobs/PMD/workspace/pmd/build/net/sourceforge/pmd/util/viewer/resources
 
+
+requires-junit:
+
+compile:
+    [javac] Compiling 795 source files to /home/hudson/workspace/jobs/PMD/workspace/pmd/build
+   [clover] Clover Version 2.3.2, built on July 15 2008 (build-732)
+   [clover] Loaded from: /usr/java/clover/clover-ant-2.3.2/lib/clover.jar
+   [clover] Clover: Open Source License registered to pmd .
+   [clover] Updating existing database at '/home/hudson/workspace/jobs/PMD/workspace/pmd/reports/clover/db/coverage.db'.
+   [clover] Processing files at 1.5 source level.
+   [clover] Clover all over. Instrumented 613 files (66 packages).
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/renderers/AbstractRenderer.java:33: warning: [deprecation] render(net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public String render(Report report) {__CLR2_3_21upp1uppfkpr11ne.R.E[86463]++;
+    [javac]                   ^
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/renderers/AbstractRenderer.java:36: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]             __CLR2_3_21upp1uppfkpr11ne.R.E[86466]++;render(w, report);
+    [javac]                                                     ^
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/renderers/AbstractRenderer.java:100: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]         __CLR2_3_21upp1uppfkpr11ne.R.E[86479]++;render(writer, mainReport);
+    [javac]                                                 ^
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/renderers/OnTheFlyRenderer.java:27: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {__CLR2_3_21uoc1uocfkpr10xs.R.E[86412]++;
+    [javac]                 ^
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/renderers/PapariTextRenderer.java:84: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {__CLR2_3_21x61x6fkpr0za4.R.E[2500]++;
+    [javac]                 ^
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/ant/PMDTask.java:270: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]                 public void render(Writer writer, Report r) {__CLR2_3_2264j264jfkpr0zbo.R.E[101380]++;}
+    [javac]                             ^
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/renderers/SummaryHTMLRenderer.java:35: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {__CLR2_3_21uow1uowfkpr11f7.R.E[86437]++;
+    [javac]                 ^
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/renderers/YAHTMLRenderer.java:22: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {__CLR2_3_2116116fkpr0z6e.R.E[1341]++;
+    [javac]                 ^
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+    [javac] 10 warnings
+     [copy] Copying 1 file to /home/hudson/workspace/jobs/PMD/workspace/pmd/build/net/sourceforge/pmd/util/viewer/resources
