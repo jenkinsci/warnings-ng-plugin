@@ -168,9 +168,10 @@ public abstract class HealthAwarePublisher extends Publisher {
             try {
                 ParserResult project = perform(build, logger);
                 evaluateBuildResult(build, logger, project);
-                if (build.getProject().getWorkspace().isRemote()) {
-                    replaceRemoteReferencesWithLocalFiles(build.getRootDir(), launcher.getChannel(), project.getAnnotations());
-                }
+// TODO: check how to copy files from a slave to the master
+//                if (build.getProject().getWorkspace().isRemote()) {
+//                    replaceRemoteReferencesWithLocalFiles(build.getRootDir(), launcher.getChannel(), project.getAnnotations());
+//                }
             }
             catch (AbortException exception) {
                 logger.println(exception.getMessage());
@@ -190,7 +191,7 @@ public abstract class HealthAwarePublisher extends Publisher {
      * @param channel
      *            channel to get the files from
      * @param annotations
-     *            annotations dermining the actual files to copy
+     *            annotations determining the actual files to copy
      * @throws IOException if the files could not be written
      * @throws FileNotFoundException if the files could not be written
      * @throws InterruptedException if the user cancels the processing
