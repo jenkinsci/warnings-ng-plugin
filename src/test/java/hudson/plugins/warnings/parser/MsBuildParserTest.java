@@ -56,7 +56,7 @@ public class MsBuildParserTest extends ParserTester {
 
     /**
      * MSBuildParser should also detect keywords 'Warning' and 'Error', as they are
-     * produced by the .NET-2.0 compiler of VS2005
+     * produced by the .NET-2.0 compiler of VS2005.
      *
      * @throws IOException
      *
