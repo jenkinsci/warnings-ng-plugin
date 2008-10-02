@@ -87,5 +87,18 @@ public class AntJavacParserTest extends ParserTester {
         Assert.assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 18, result.getNumberOfAnnotations(Priority.NORMAL));
         Assert.assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, result.getNumberOfAnnotations(Priority.LOW));
     }
+
+    /**
+     * Parses a warning log with 3 ANT warnings. They all use different tasks.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     */
+    @Test
+    public void parseDifferentTaskNames() throws IOException {
+        Collection<FileAnnotation> warnings = new AntJavacParser().parse(AntJavacParserTest.class.getResourceAsStream("taskname.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
+    }
 }
 

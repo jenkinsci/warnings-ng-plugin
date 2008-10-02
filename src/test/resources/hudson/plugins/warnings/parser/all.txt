@@ -585,3 +585,23 @@ compile:
     [javac] Note: Recompile with -Xlint:unchecked for details.
     [javac] 10 warnings
      [copy] Copying 1 file to /home/hudson/workspace/jobs/PMD/workspace/pmd/build/net/sourceforge/pmd/util/viewer/resources
+
+
+
+    [compass-compile] C:\.hudson\jobs\Static analysis (trunk)\workspace\trunk\compass-core\src\com\northgateis\compass\common\CompassEhCacheProvider.java:60: warning: [deprecation] org.hibernate.cache.Cache in org.hibernate.cache has been deprecated
+    [compass-compile]     public final Cache buildCache(String name, Properties properties) throws CacheException {
+    [compass-compile]                  ^
+
+instead of the default:
+
+    [javac] C:\.hudson\jobs\Static analysis (trunk)\workspace\trunk\compass-core\src\com\northgateis\compass\common\CompassEhCacheProvider.java:61: warning: [deprecation] org.hibernate.cache.Cache in org.hibernate.cache has been deprecated
+    [javac]     public final Cache buildCache(String name, Properties properties) throws CacheException {
+    [javac]                  ^
+
+Maybe if you insist that "javac" must appear somewhere in the taskname, e.g.
+
+    [compass-javac] C:\.hudson\jobs\Static analysis (trunk)\workspace\trunk\compass-core\src\com\northgateis\compass\common\CompassEhCacheProvider.java:62: warning: [deprecation] org.hibernate.cache.Cache in org.hibernate.cache has been deprecated
+    [compass-javac]     public final Cache buildCache(String name, Properties properties) throws CacheException {
+    [compass-javac]                  ^
+
+... then your regex should be able to do its thing without the need for any new config. I've tentatively updated the help file to mention this, too. Please delete or update the paragraph beginning "Also note" as you see fit.

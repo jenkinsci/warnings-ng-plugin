@@ -4,12 +4,26 @@
     information about the compiler warnings, such as historical result trend, web UI for viewing analysis reports, and so on.
     To use this feature, configure your compiler to write all warnings to the log file.
   </p>
+  <h4>Ant Configuration</h4>
+  <p>
+    To get the Ant javac task to include compiler warnings in the build output you must
+    (a) avoid specifying <code>nowarn="on"</code> (<code>"off"</code> is the default) and
+    (b) include the <code>-Xlint</code> compiler argument (or some variant thereof). Example:
+  </p>
+  <pre>
+    <code>
+&lt;javac deprecation="true" destdir="classes"&gt;
+  &lt;compilerarg value="-Xlint"/&gt;
+&lt;/javac&gt;
+    </code>
+  </pre>
   <h4>Maven Configuration</h4>
   <p>
     If you are using maven to compile your sources, place the following snippet into your pom.xml to enable the compiler warnings.
   </p>
   <pre>
-	<code>
+    <code>
+
 &lt;plugins&gt;
   [...]
   &lt;plugin&gt;
@@ -21,14 +35,15 @@
     &lt;/configuration&gt;
   &lt;/plugin&gt;
 [...]
+
 &lt;/plugins&gt;
-  </code>
+    </code>
   </pre>
   <h4>Oracle Invalids Configuration</h4>
   In order to visualize the invalids of your Oracle database you need to copy the
   output of the following SQL statement to the console log.
   <pre>
-	  <code>
+    <code>
 SELECT   dao.owner, dao.object_name, dao.object_type, dao.status, dae.line, dae.position, dae.text
     FROM dba_objects dao, dba_errors dae
    WHERE dao.status = 'INVALID'
@@ -36,6 +51,7 @@ SELECT   dao.owner, dao.object_name, dao.object_type, dao.status, dae.line, dae.
      AND dao.object_name = dae.name(+)
      AND dao.object_type = dae.type(+)
 ORDER BY object_type, object_name;
-	  </code>
+    </code>
   </pre>
+
 </div>

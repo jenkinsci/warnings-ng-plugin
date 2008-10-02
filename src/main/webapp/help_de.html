@@ -6,6 +6,18 @@
     Zudem zeigt Hudson die jeweiligen Warnungen direkt in der betroffen Datei an. Damit das Plug-in korrekt funktioniert,
     muss im Build der Compiler so konfiguriert werden, dass er Warnungen im Log File erzeugt.
   </p>
+  <h4>Ant Konfiguration</h4>
+  <p>
+    Wird Ant zum Bauen verwendet, dann darf die Option <code>nowarn="on"</code> nicht gesetzt werden (<code>"off"</code> ist die Standardeinstellung).
+    Zusätzlich muss der <code>-Xlint</code> Compiler Parameter gesetzt sein. Beispiel:
+  </p>
+  <pre>
+    <code>
+&lt;javac deprecation="true" destdir="classes"&gt;
+  &lt;compilerarg value="-Xlint"/&gt;
+&lt;/javac&gt;
+    </code>
+  </pre>
   <h4>Maven Konfiguration</h4>
   <p>
     Wird maven zum Bauen verwendet, dann werden die Warnungen mit folgender Option aktiviert:

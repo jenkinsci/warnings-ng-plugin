@@ -13,7 +13,7 @@ public class AntJavacParser extends RegexpParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Ant Java Compiler";
     /** Pattern of javac compiler warnings. */
-    private static final String ANT_JAVAC_WARNING_PATTERN = "\\s*\\[javac\\]\\s*(.*):(\\d*):.*:\\s*(?:\\[(.*)\\])?\\s*(.*)";
+    private static final String ANT_JAVAC_WARNING_PATTERN = "\\s*\\[.*\\]\\s*(.*):(\\d*):\\s*warning\\s*:\\s*(?:\\[(.*)\\])?\\s*(.*)";
 
     /**
      * Creates a new instance of <code>AntJavacParser</code>.
