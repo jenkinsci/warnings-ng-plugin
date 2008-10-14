@@ -4,6 +4,7 @@ import hudson.FilePath;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ public class ParserResult implements Serializable {
     private final Set<String> modules = new HashSet<String>();
     /** The workspace (might be null). */
     private final FilePath workspace;
+    /** A mapping of relative file names to absolute file names. */
+    private final Map<String, String> fileNameCache = new HashMap<String, String>();
 
     /**
      * Creates a new instance of {@link ParserResult}.
@@ -69,14 +72,15 @@ public class ParserResult implements Serializable {
      *
      * @param annotation the annotation
      */
-    // TODO: maybe we should cache the file names
-    public void findRelativeFile(final FileAnnotation annotation) {
+    private void findRelativeFile(final FileAnnotation annotation) {
         try {
             if (workspace != null && hasRelativeFileName(annotation)) {
-                String[] results;
-                results = workspace.act(new FileFinder("**/" + annotation.getFileName()));
-                if (results.length == 1) {
-                    annotation.setFileName(workspace.getRemote() + "/" + results[0]);
+                if (fileNameCache.isEmpty()) {
+                    populateFileNameCache();
+                }
+
+                if (fileNameCache.containsKey(annotation.getFileName())) {
+                    annotation.setFileName(workspace.getRemote() + "/" + fileNameCache.get(annotation.getFileName()));
                 }
             }
         }
@@ -85,6 +89,27 @@ public class ParserResult implements Serializable {
         }
         catch (InterruptedException exception) {
             // ignore
+        }
+    }
+
+    /**
+     * Builds a cache of file names in the remote file system.
+     *
+     * @throws IOException
+     *             if the file could not be read
+     * @throws InterruptedException
+     *             if the user cancels the search
+     */
+    private void populateFileNameCache() throws IOException, InterruptedException {
+        String[] allFiles = workspace.act(new FileFinder("**/*"));
+        for (String file : allFiles) {
+            String fileName = new File(file).getName();
+            if (fileNameCache.containsKey(fileName)) {
+                fileNameCache.remove(fileName);
+            }
+            else {
+                fileNameCache.put(fileName, file);
+            }
         }
     }
 
