@@ -65,6 +65,8 @@ public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBu
         FileAnnotation annotation = mock(FileAnnotation.class);
         stub(annotation.getPriority()).toReturn(Priority.HIGH);
         stub(annotation.getFileName()).toReturn(FILENAME);
+        stub(annotation.getModuleName()).toReturn("Module");
+        stub(annotation.getPackageName()).toReturn("Package");
         project.addAnnotation(annotation);
 
         return project;

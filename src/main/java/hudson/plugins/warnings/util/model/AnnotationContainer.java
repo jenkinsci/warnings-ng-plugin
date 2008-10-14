@@ -54,6 +54,10 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     private transient Map<String, MavenModule> modulesByName;
     /** The files that contain annotations mapped by hash code of file name. */
     private transient Map<Integer, WorkspaceFile> filesByHashCode;
+    /** The packages that contain annotations mapped by hash code of package name. */
+    private transient Map<Integer, JavaPackage> packagesByHashCode;
+    /** The modules that contain annotations mapped by hash code of module name. */
+    private transient Map<Integer, MavenModule> modulesByHashCode;
 
     /** Determines whether to build up a set of {@link WorkspaceFile}s. */
     @java.lang.SuppressWarnings("unused")
@@ -135,6 +139,8 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         packagesByName = new HashMap<String, JavaPackage>();
         modulesByName = new HashMap<String, MavenModule>();
         filesByHashCode = new HashMap<Integer, WorkspaceFile>();
+        packagesByHashCode = new HashMap<Integer, JavaPackage>();
+        modulesByHashCode = new HashMap<Integer, MavenModule>();
     }
 
     /**
@@ -224,6 +230,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         if (!modulesByName.containsKey(moduleName)) {
             MavenModule module = new MavenModule(moduleName);
             modulesByName.put(moduleName, module);
+            modulesByHashCode.put(moduleName.hashCode(), module);
         }
         modulesByName.get(moduleName).addAnnotation(annotation);
     }
@@ -240,6 +247,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         if (!packagesByName.containsKey(packageName)) {
             JavaPackage javaPackage = new JavaPackage(packageName);
             packagesByName.put(packageName, javaPackage);
+            packagesByHashCode.put(packageName.hashCode(), javaPackage);
         }
         packagesByName.get(packageName).addAnnotation(annotation);
     }
@@ -478,6 +486,20 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     }
 
     /**
+     * Gets the module with the given hash code.
+     *
+     * @param hashCode the hash code of the module
+     *
+     * @return the module with the given name
+     */
+    public MavenModule getModule(final int hashCode) {
+        if (modulesByHashCode.containsKey(hashCode)) {
+            return modulesByHashCode.get(hashCode);
+        }
+        throw new NoSuchElementException("Module not found: " + hashCode);
+    }
+
+    /**
      * Gets the packages of this container that have annotations.
      *
      * @return the packages with annotations
@@ -512,6 +534,20 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
             return packagesByName.get(packageName);
         }
         throw new NoSuchElementException("Package not found: " + packageName);
+    }
+
+    /**
+     * Gets the package with the given hash code.
+     *
+     * @param hashCode the hash code of the package
+     *
+     * @return the package with the given name
+     */
+    public JavaPackage getPackage(final int hashCode) {
+        if (packagesByHashCode.containsKey(hashCode)) {
+            return packagesByHashCode.get(hashCode);
+        }
+        throw new NoSuchElementException("Package not found: " + hashCode);
     }
 
     /**

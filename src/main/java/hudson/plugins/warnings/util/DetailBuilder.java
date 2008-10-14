@@ -77,10 +77,10 @@ public class DetailBuilder {
             return factory.create(link, owner, container, displayName);
         }
         else if (link.startsWith("module.")) {
-            return new ModuleDetail(owner, container.getModule(StringUtils.substringAfter(link, "module.")), displayName);
+            return new ModuleDetail(owner, container.getModule(Integer.valueOf(StringUtils.substringAfter(link, "module."))), displayName);
         }
         else if (link.startsWith("package.")) {
-            return new PackageDetail(owner, container.getPackage(StringUtils.substringAfter(link, "package.")), displayName);
+            return new PackageDetail(owner, container.getPackage(Integer.valueOf(StringUtils.substringAfter(link, "package."))), displayName);
         }
         else if (link.startsWith("file.")) {
             return new FileDetail(owner, container.getFile(Integer.valueOf(StringUtils.substringAfter(link, "file."))), displayName);

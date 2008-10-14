@@ -11,7 +11,7 @@
       <j:forEach var="package" items="${it.container.packages}">
         <tr>
           <td class="pane">
-            <a href="package.${package.name}/">${package.name}</a>
+            <a href="package.${package.name.hashCode()}/">${package.name}</a>
           </td>
           <td class="pane">${package.numberOfAnnotations}
           </td>

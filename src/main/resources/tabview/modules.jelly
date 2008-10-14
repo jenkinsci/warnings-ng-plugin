@@ -11,7 +11,7 @@
       <j:forEach var="module" items="${it.container.modules}">
         <tr>
           <td class="pane">
-            <a href="module.${module.name}/">${module.name}</a>
+            <a href="module.${module.name.hashCode()}/">${module.name}</a>
           </td>
           <td class="pane">${module.numberOfAnnotations}
           </td>
