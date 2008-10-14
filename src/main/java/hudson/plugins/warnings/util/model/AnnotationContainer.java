@@ -1,4 +1,4 @@
-package hudson.plugins.warnings.util.model;
+package hudson.plugins.warnings.util.model; // NOPMD
 
 import hudson.plugins.warnings.util.Messages;
 
@@ -23,7 +23,7 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  *
  * @author Ulli Hafner
  */
-public abstract class AnnotationContainer implements AnnotationProvider, Serializable {
+public abstract class AnnotationContainer implements AnnotationProvider, Serializable, Comparable<AnnotationContainer> {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = 855696821788264261L;
     /** The hierarchy of a container. */
@@ -47,13 +47,13 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     /** The annotations mapped by type. */
     private transient Map<String, Set<FileAnnotation>> annotationsByType;
     /** The files that contain annotations mapped by file name. */
-    private transient Map<Integer, WorkspaceFile> filesByHashCode;
-    /** The files that contain annotations mapped by file name. */
     private transient Map<String, WorkspaceFile> filesByName;
-    /** The files that contain annotations mapped by file name. */
+    /** The packages that contain annotations mapped by package name. */
     private transient Map<String, JavaPackage> packagesByName;
-    /** The files that contain annotations mapped by file name. */
+    /** The modules that contain annotations mapped by module name. */
     private transient Map<String, MavenModule> modulesByName;
+    /** The files that contain annotations mapped by hash code of file name. */
+    private transient Map<Integer, WorkspaceFile> filesByHashCode;
 
     /** Determines whether to build up a set of {@link WorkspaceFile}s. */
     @java.lang.SuppressWarnings("unused")
@@ -132,9 +132,9 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         annotationsByCategory = new HashMap<String, Set<FileAnnotation>>();
         annotationsByType = new HashMap<String, Set<FileAnnotation>>();
         filesByName = new HashMap<String, WorkspaceFile>();
-        filesByHashCode = new HashMap<Integer, WorkspaceFile>();
         packagesByName = new HashMap<String, JavaPackage>();
         modulesByName = new HashMap<String, MavenModule>();
+        filesByHashCode = new HashMap<Integer, WorkspaceFile>();
     }
 
     /**
@@ -222,7 +222,8 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     private void addModule(final FileAnnotation annotation) {
         String moduleName = annotation.getModuleName();
         if (!modulesByName.containsKey(moduleName)) {
-            modulesByName.put(moduleName, new MavenModule(moduleName));
+            MavenModule module = new MavenModule(moduleName);
+            modulesByName.put(moduleName, module);
         }
         modulesByName.get(moduleName).addAnnotation(annotation);
     }
@@ -237,7 +238,8 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     private void addPackage(final FileAnnotation annotation) {
         String packageName = annotation.getPackageName();
         if (!packagesByName.containsKey(packageName)) {
-            packagesByName.put(packageName, new JavaPackage(packageName));
+            JavaPackage javaPackage = new JavaPackage(packageName);
+            packagesByName.put(packageName, javaPackage);
         }
         packagesByName.get(packageName).addAnnotation(annotation);
     }
@@ -291,7 +293,9 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
 
     /** {@inheritDoc} */
     public final Collection<FileAnnotation> getAnnotations() {
-        return Collections.unmodifiableCollection(annotations.values());
+        ArrayList<FileAnnotation> all = new ArrayList<FileAnnotation>(annotations.values());
+        Collections.sort(all);
+        return Collections.unmodifiableCollection(all);
     }
 
     /** {@inheritDoc} */
@@ -442,7 +446,9 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @return the modules with annotations
      */
     public Collection<MavenModule> getModules() {
-        return Collections.unmodifiableCollection(modulesByName.values());
+        ArrayList<MavenModule> modules = new ArrayList<MavenModule>(modulesByName.values());
+        Collections.sort(modules);
+        return Collections.unmodifiableCollection(modules);
     }
 
     /**
@@ -477,7 +483,9 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @return the packages with annotations
      */
     public Collection<JavaPackage> getPackages() {
-        return Collections.unmodifiableCollection(packagesByName.values());
+        ArrayList<JavaPackage> packages = new ArrayList<JavaPackage>(packagesByName.values());
+        Collections.sort(packages);
+        return Collections.unmodifiableCollection(packages);
     }
 
     /**
@@ -512,7 +520,9 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @return the files with annotations
      */
     public Collection<WorkspaceFile> getFiles() {
-        return Collections.unmodifiableCollection(filesByName.values());
+        ArrayList<WorkspaceFile> files = new ArrayList<WorkspaceFile>(filesByName.values());
+        Collections.sort(files);
+        return Collections.unmodifiableCollection(files);
     }
 
     /**
@@ -565,6 +575,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         for (String category : annotationsByCategory.keySet()) {
             categories.add(getCategory(category));
         }
+        Collections.sort(categories);
         return categories;
     }
 
@@ -603,6 +614,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         for (String type : annotationsByType.keySet()) {
             types.add(getType(type));
         }
+        Collections.sort(types);
         return types;
     }
 
@@ -656,5 +668,43 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      */
     public Priority getLowPriority() {
         return Priority.LOW;
+    }
+
+    /** {@inheritDoc} */
+    public int compareTo(final AnnotationContainer other) {
+        return getName().compareTo(other.getName());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        AnnotationContainer other = (AnnotationContainer)obj;
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        }
+        else if (!name.equals(other.name)) {
+            return false;
+        }
+        return true;
     }
 }

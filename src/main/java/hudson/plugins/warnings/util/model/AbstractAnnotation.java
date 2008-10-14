@@ -1,6 +1,5 @@
 package hudson.plugins.warnings.util.model;
 
-
 import hudson.model.AbstractBuild;
 
 import java.io.File;
@@ -295,5 +294,10 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      */
     public final boolean canDisplayFile(final AbstractBuild<?, ?> owner) {
         return new File(getFileName()).exists() || new File(getTempName(owner)).exists();
+    }
+
+    /** {@inheritDoc} */
+    public int compareTo(final FileAnnotation other) {
+        return getFileName().compareTo(other.getFileName());
     }
 }

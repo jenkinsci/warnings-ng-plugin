@@ -10,7 +10,7 @@ import java.util.Collection;
  *
  * @author Ulli Hafner
  */
-public interface FileAnnotation {
+public interface FileAnnotation extends Comparable<FileAnnotation> {
     /**
      * Returns the message of this annotation.
      *

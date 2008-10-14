@@ -60,5 +60,14 @@ public class WorkspaceFile extends AnnotationContainer {
     public String getTempName() {
         return Integer.toHexString(getName().hashCode()) + ".tmp";
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public int compareTo(final AnnotationContainer other) {
+        if (other instanceof WorkspaceFile) {
+            return getShortName().compareTo(((WorkspaceFile)other).getShortName());
+        }
+        return super.compareTo(other);
+    }
 }
 
