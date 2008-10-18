@@ -24,7 +24,7 @@ public class InvalidsParserTest extends ParserTester {
     public void testParser() throws IOException {
         Collection<FileAnnotation> warnings = new InvalidsParser().parse(InvalidsParserTest.class.getResourceAsStream("invalids.txt"));
 
-        assertEquals("Wrong number of warnings detected.", 2, warnings.size());
+        assertEquals("Wrong number of warnings detected.", 3, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -39,6 +39,12 @@ public class InvalidsParserTest extends ParserTester {
                 5,
                 "Encountered the symbol \"END\" when expecting one of the following:",
                 "ENV_ABBR#B.TRIGGER", type, "PLS-00103", Priority.NORMAL);
+        assertEquals("wrong schema detected", "E", annotation.getPackageName());
+        annotation = iterator.next();
+        checkWarning(annotation,
+                0,
+                "referenced name javax/management/MBeanConstructorInfo could not be found",
+                "/b77ce675_LoggerDynamicMBean.JAVA CLASS", type, "ORA-29521", Priority.NORMAL);
         assertEquals("wrong schema detected", "E", annotation.getPackageName());
     }
 }

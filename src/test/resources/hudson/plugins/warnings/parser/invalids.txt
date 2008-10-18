@@ -10,3 +10,6 @@ E,ENV_ABBR#B,TRIGGER,INVALID,5,1,PLS-00103: Encountered the symbol "END" when ex
 The symbol ";" was substituted for "END" to continue.,103
 
 0 rows affected
+
+
+E,/b77ce675_LoggerDynamicMBean,JAVA CLASS,INVALID,0,0,ORA-29521: referenced name javax/management/MBeanConstructorInfo could not be found

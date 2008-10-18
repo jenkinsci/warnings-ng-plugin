@@ -13,7 +13,7 @@ public class InvalidsParser extends RegexpParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Oracle ";
     /** Pattern of javac compiler warnings. */
-    private static final String INVALIDS_PATTERN = "\\s*(\\w+),([A-Z_#]*),([A-Z_ ]*),(.*),(\\d+),\\d+,([^:]*):\\s*(.*)";
+    private static final String INVALIDS_PATTERN = "\\s*(\\w+),([a-zA-Z#_0-9/]*),([A-Z_ ]*),(.*),(\\d+),\\d+,([^:]*):\\s*(.*)";
 
     /**
      * Creates a new instance of <code>InvalidsParser</code>.
