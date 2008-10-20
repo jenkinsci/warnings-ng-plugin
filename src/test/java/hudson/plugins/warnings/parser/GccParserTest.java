@@ -24,7 +24,7 @@ public class GccParserTest extends ParserTester {
     public void testWarningsParser() throws IOException {
         Collection<FileAnnotation> warnings = new GccParser().parse(GccParserTest.class.getResourceAsStream("gcc.txt"));
 
-        assertEquals("Wrong number of warnings detected.", 2, warnings.size());
+        assertEquals("Wrong number of warnings detected.", 3, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -38,6 +38,12 @@ public class GccParserTest extends ParserTester {
                 73,
                 "implicit typename is deprecated, please see the documentation for details",
                 "/u1/drjohn/bfdist/packages/RegrTest/V00-03-01/RgtAddressLineScan.cc",
+                GccParser.WARNING_TYPE, "GCC error", Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                4,
+                "foo.h: No such file or directory",
+                "foo.cc",
                 GccParser.WARNING_TYPE, "GCC error", Priority.HIGH);
     }
 }

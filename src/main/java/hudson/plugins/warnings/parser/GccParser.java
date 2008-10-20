@@ -13,10 +13,9 @@ public class GccParser extends RegexpParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "gcc";
     /** Pattern of gcc compiler warnings. */
-    private static final String GCC_WARNING_PATTERN = "(.*\\.[chpsola0-9]+):(\\d*):\\s*(warning|error)\\s*:(.*)";
-
+    private static final String GCC_WARNING_PATTERN = "(.*\\.[chpsola0-9]+):(\\d*):(?:\\d*:)*\\s*(warning|error)\\s*:(.*)";
     /**
-     * Creates a new instance of <code>HpiCompileParser</code>.
+     * Creates a new instance of <code>GccParser</code>.
      */
     public GccParser() {
         super(GCC_WARNING_PATTERN);

@@ -605,3 +605,5 @@ Maybe if you insist that "javac" must appear somewhere in the taskname, e.g.
     [compass-javac]                  ^
 
 ... then your regex should be able to do its thing without the need for any new config. I've tentatively updated the help file to mention this, too. Please delete or update the paragraph beginning "Also note" as you see fit.
+
+  foo.cc:4:39: error: foo.h: No such file or directory
