@@ -24,7 +24,7 @@ public class GccParserTest extends ParserTester {
     public void testWarningsParser() throws IOException {
         Collection<FileAnnotation> warnings = new GccParser().parse(GccParserTest.class.getResourceAsStream("gcc.txt"));
 
-        assertEquals("Wrong number of warnings detected.", 3, warnings.size());
+        assertEquals("Wrong number of warnings detected.", 4, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -44,6 +44,12 @@ public class GccParserTest extends ParserTester {
                 4,
                 "foo.h: No such file or directory",
                 "foo.cc",
+                GccParser.WARNING_TYPE, "GCC error", Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                0,
+                "'missing_symbol'",
+                "foo.so",
                 GccParser.WARNING_TYPE, "GCC error", Priority.HIGH);
     }
 }
