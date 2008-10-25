@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -168,10 +170,9 @@ public abstract class HealthAwarePublisher extends Publisher {
             try {
                 ParserResult project = perform(build, logger);
                 evaluateBuildResult(build, logger, project);
-// TODO: check how to copy files from a slave to the master
-//                if (build.getProject().getWorkspace().isRemote()) {
-//                    replaceRemoteReferencesWithLocalFiles(build.getRootDir(), launcher.getChannel(), project.getAnnotations());
-//                }
+                if (build.getProject().getWorkspace().isRemote()) {
+                    replaceRemoteReferencesWithLocalFiles(build.getRootDir(), launcher.getChannel(), project.getAnnotations());
+                }
             }
             catch (AbortException exception) {
                 logger.println(exception.getMessage());
@@ -207,8 +208,16 @@ public abstract class HealthAwarePublisher extends Publisher {
         }
         AnnotationContainer container = new DefaultAnnotationContainer(annotations);
         for (WorkspaceFile file : container.getFiles()) {
-            FileOutputStream outputStream = new FileOutputStream(new File(directory, file.getTempName()));
-            new FilePath(channel, file.getName()).copyTo(outputStream);
+            File masterFile = new File(directory, file.getTempName());
+            try {
+                FileOutputStream outputStream = new FileOutputStream(masterFile);
+                new FilePath(channel, file.getName()).copyTo(outputStream);
+            }
+            catch (IOException exception) {
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE,
+                        "Can't copy file from remote slave to master: slave=" + file.getName() + ", master=" + masterFile.getAbsolutePath(),
+                        exception);
+            }
         }
     }
 
