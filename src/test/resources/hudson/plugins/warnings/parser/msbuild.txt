@@ -6,4 +6,6 @@ Controls\MozItem.cs(1338,4): warning CS0618: System.ComponentModel.Design.Compon
 
 MediaPortal.cs(3001,5): warning CS0162: Kod som inte kan n†s uppt„cktes
 
+x/a/b/include/abc.h(18) : fatal error C1083: Cannot open include file: xyz.h:...
+
 

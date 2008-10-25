@@ -16,16 +16,16 @@ import org.junit.Test;
  */
 public class MsBuildParserTest extends ParserTester {
     /**
-     * Parses a file with two warnings.
+     * Parses a file with warnings of the MS Build tools.
      *
      * @throws IOException
      *      if the file could not be read
      */
     @Test
-    public void parseDeprecation() throws IOException {
+    public void parseWarnings() throws IOException {
         Collection<FileAnnotation> warnings = new MsBuildParser().parse(MsBuildParserTest.class.getResourceAsStream("msbuild.txt"));
 
-        assertEquals("Wrong number of warnings detected.", 4, warnings.size());
+        assertEquals("Wrong number of warnings detected.", 5, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -52,6 +52,12 @@ public class MsBuildParserTest extends ParserTester {
                 "Kod som inte kan n†s uppt„cktes",
                 "MediaPortal.cs",
                 MsBuildParser.WARNING_TYPE, "CS0162", Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                18,
+                "Cannot open include file: xyz.h:...",
+                "x/a/b/include/abc.h",
+                MsBuildParser.WARNING_TYPE, "C1083", Priority.HIGH);
     }
 
     /**

@@ -13,7 +13,7 @@ public class MsBuildParser extends RegexpParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "MSBuild";
     /** Pattern of MSBuild compiler warnings. */
-    private static final String MS_BUILD_WARNING_PATTERN = "(.*)\\((\\d*).*\\)\\s*:\\s*([Ww]arning|[Ee]rror)\\s*([^:]*):\\s*(.*)";
+    private static final String MS_BUILD_WARNING_PATTERN = "(.*)\\((\\d*).*\\)\\s*:\\s*([Ww]arning|(?:fatal\\s*)?[Ee]rror)\\s*([^:]*):\\s*(.*)";
 
     /**
      * Creates a new instance of <code>MsBuildParser</code>.
