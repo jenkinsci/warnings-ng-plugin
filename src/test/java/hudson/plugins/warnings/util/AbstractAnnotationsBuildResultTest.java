@@ -6,6 +6,7 @@ import hudson.model.AbstractBuild;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
 
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.apache.commons.lang.SystemUtils;
@@ -17,10 +18,15 @@ import org.junit.Test;
  * @param <T>
  *            type of the result to test
  */
-// TODO: add more tests for the remaining part of the warnings indicator
-public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBuildResult> {
-    /** Current build number. */
-    private static final int BUILD_ID = 42;
+public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBuildResult> extends AbstractEnglishLocaleTest {
+    /** Error message. */
+    private static final String WRONG_NEW_HIGHSCORE_INDICATOR = "Wrong new highscore indicator.";
+    /** Two days in msec. */
+    private static final int TWO_DAYS_IN_MS = 2 * 24 * 60 * 60 * 1000;
+    /** Error message. */
+    private static final String WRONG_ZERO_WARNINGS_HIGH_SCORE = "Wrong zero warnings high score.";
+    /** Error message. */
+    private static final String WRONG_ZERO_WARNINGS_SINCE_DATE_COUNTER = "Wrong zero warnings since date counter.";
     /** Error message. */
     private static final String WRONG_ZERO_WARNINGS_SINCE_BUILD_COUNTER = "Wrong zero warnings since build counter.";
     /** Error message. */
@@ -34,25 +40,119 @@ public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBu
      */
     @Test
     public void checkThatZeroWarningsIsUpdated() {
-        AbstractBuild<?, ?> build = createBuild(BUILD_ID);
         ParserResult projectWithoutAnnotations = new ParserResult();
+        GregorianCalendar calendar = new GregorianCalendar(2008, 8, 8, 12, 30);
 
-        T result = createBuildResult(build, projectWithoutAnnotations);
-        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, result.getNumberOfAnnotations());
-        assertEquals(WRONG_ZERO_WARNINGS_SINCE_BUILD_COUNTER, 0, result.getZeroWarningsSinceBuild());
+        T result; // the result is replaced by each new result
 
-        ParserResult projectWithAnnotations = createProjectWithWarning();
+        // No change of defaults at the beginning
+        result = createBuildResult(createBuild(0, calendar), projectWithoutAnnotations);
+        verifyResult(0, 0, 0, 0, false, 0, result);
 
-        T resultWithAnnotations = createBuildResult(build, projectWithAnnotations);
+        // Compare with a result that has warnings
+        long timeOfFirstZeroWarningsBuild = calendar.getTime().getTime();
+        result = createResult(1, calendar, createResultWithWarnings());
+        verifyResult(0, 1, timeOfFirstZeroWarningsBuild, 0, false, 0, result);
 
-        result = createBuildResult(build, projectWithoutAnnotations, resultWithAnnotations);
-        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, result.getNumberOfAnnotations());
-        assertEquals(WRONG_ZERO_WARNINGS_SINCE_BUILD_COUNTER, BUILD_ID, result.getZeroWarningsSinceBuild());
+        // Again a result without warnings, two days after the first build
+        calendar.add(Calendar.DAY_OF_YEAR, 2);
+        result = createResult(2, calendar, result);
+        verifyResult(0, 1, timeOfFirstZeroWarningsBuild, TWO_DAYS_IN_MS, true, 0, result);
 
-        result = createBuildResult(createBuild(0), projectWithoutAnnotations, result);
-        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, 0, result.getNumberOfAnnotations());
-        assertEquals(WRONG_ZERO_WARNINGS_SINCE_BUILD_COUNTER, BUILD_ID, result.getZeroWarningsSinceBuild());
+        // Now the results contains warnings again, resetting everything besides the highscore
+        result = createBuildResult(createBuild(3, calendar), createProjectWithWarning(), result);
+        verifyResult(1, 0, 0, TWO_DAYS_IN_MS, false, TWO_DAYS_IN_MS, result);
+
+        // Now a result without warnings, one day after the previous build, e.g., no highscore
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        timeOfFirstZeroWarningsBuild = calendar.getTime().getTime();
+        result = createResult(3, calendar, result);
+        verifyResult(0, 3, timeOfFirstZeroWarningsBuild, TWO_DAYS_IN_MS, false, TWO_DAYS_IN_MS - TWO_DAYS_IN_MS / 2, result);
+
+        // Again a result without warnings, one day after the previous build, e.g., still no highscore
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        result = createResult(4, calendar, result);
+        verifyResult(0, 3, timeOfFirstZeroWarningsBuild, TWO_DAYS_IN_MS, false, 0, result);
+
+        // Finally, a result without warnings, three more days after the previous build, e.g., a highscore of 4 days
+        calendar.add(Calendar.DAY_OF_YEAR, 3);
+        result = createResult(4, calendar, result);
+        verifyResult(0, 3, timeOfFirstZeroWarningsBuild, 2 * TWO_DAYS_IN_MS, true, 0, result);
+
+        result.getDataFile().delete();
     }
+
+    /**
+     * Creates the new result.
+     *
+     * @param buildNumner
+     *            build ID
+     * @param calendar
+     *            current calendar
+     * @param previousResult
+     *            previous result
+     * @return the new result
+     */
+    private T createResult(final int buildNumner, final GregorianCalendar calendar, final T previousResult) {
+        return createBuildResult(createBuild(buildNumner, calendar), new ParserResult(), previousResult);
+    }
+
+
+    /**
+     * Returns a result with some warnings.
+     *
+     * @return a result with some warnings
+     */
+    private T createResultWithWarnings() {
+        ParserResult projectWithWarning = createProjectWithWarning();
+        T resultWithAnnotations = createBuildResult(createBuild(42, new GregorianCalendar(2008, 1, 1, 12, 00)), projectWithWarning);
+        return resultWithAnnotations;
+    }
+
+    /**
+     * Verifies the build result.
+     *
+     * @param expectedAnnotationCount
+     *            expected number of annotations
+     * @param expectedZeroWarningsBuildNumber
+     *            expected build number of last zero warnings build
+     * @param expectedZeroWarningsBuildDate
+     *            expected build date of last zero warnings build
+     * @param expectedHighScore
+     *            expected highscore time
+     * @param expectedIsNewHighScore
+     *            expected value of is highscore flag
+     * @param gap
+     *            gap of msec to reach highscore
+     * @param result
+     *            the actual result to verify
+     */
+    private void verifyResult(final int expectedAnnotationCount, final int expectedZeroWarningsBuildNumber,
+            final long expectedZeroWarningsBuildDate, final long expectedHighScore, final boolean expectedIsNewHighScore, final int gap, final T result) {
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, expectedAnnotationCount, result.getNumberOfAnnotations());
+        assertEquals(WRONG_ZERO_WARNINGS_SINCE_BUILD_COUNTER, expectedZeroWarningsBuildNumber, result.getZeroWarningsSinceBuild());
+        assertEquals(WRONG_ZERO_WARNINGS_SINCE_DATE_COUNTER, expectedZeroWarningsBuildDate, result.getZeroWarningsSinceDate());
+        assertEquals(WRONG_ZERO_WARNINGS_HIGH_SCORE, expectedHighScore, result.getZeroWarningsHighScore());
+        assertEquals(WRONG_NEW_HIGHSCORE_INDICATOR, expectedIsNewHighScore, result.isNewZeroWarningsHighScore());
+
+        verifyHighScoreMessage(expectedZeroWarningsBuildNumber, expectedIsNewHighScore, expectedHighScore, gap, result);
+    }
+
+    /**
+     * Verifies the highscore message.
+     *
+     * @param expectedZeroWarningsBuildNumber
+     *            expected build number of last zero warnings build
+     * @param expectedIsNewHighScore
+     *            expected value of is highscore flag
+     * @param expectedHighScore
+     *            expected highscore time
+     * @param gap
+     *            gap of msec to reach highscore
+     * @param result
+     *            the actual result to verify
+     */
+    protected abstract void verifyHighScoreMessage(int expectedZeroWarningsBuildNumber, boolean expectedIsNewHighScore, long expectedHighScore, int gap, T result);
 
     /**
      * Creates a project that contains a single annotation.
@@ -77,12 +177,14 @@ public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBu
      *
      * @param buildNumber
      *            the current build number
+     * @param calendar
+     *            calendar representing the time of the build
      * @return a mock for the build
      */
-    private AbstractBuild<?, ?> createBuild(final int buildNumber) {
+    private AbstractBuild<?, ?> createBuild(final int buildNumber, final Calendar calendar) {
         AbstractBuild<?, ?> build = mock(AbstractBuild.class);
 
-        stub(build.getTimestamp()).toReturn(new GregorianCalendar());
+        stub(build.getTimestamp()).toReturn(calendar);
         stub(build.getRootDir()).toReturn(SystemUtils.getJavaIoTmpDir());
         stub(build.getNumber()).toReturn(buildNumber);
 

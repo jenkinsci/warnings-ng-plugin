@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -77,6 +78,10 @@ public abstract class AnnotationsBuildResult extends BuildResult {
     private Set<String> modules;
     /** The total number of parsed modules (regardless if there are annotations). */
     private int numberOfModules;
+    /** Determines if the old zero highscore has been broken. */
+    private boolean isZeroWarningsHighscore;
+    /** Determines the number of msec still to go before a new highscore is reached. */
+    private long highScoreGap;
 
     /**
      * Creates a new instance of {@link AnnotationsBuildResult}.
@@ -119,7 +124,24 @@ public abstract class AnnotationsBuildResult extends BuildResult {
                 zeroWarningsSinceDate = build.getTimestamp().getTimeInMillis();
             }
             zeroWarningsHighScore = Math.max(previous.getZeroWarningsHighScore(), build.getTimestamp().getTimeInMillis() - zeroWarningsSinceDate);
+            isZeroWarningsHighscore = zeroWarningsHighScore != previous.getZeroWarningsHighScore();
+            if (!isZeroWarningsHighscore) {
+                highScoreGap = previous.getZeroWarningsHighScore() - (build.getTimestamp().getTimeInMillis() - zeroWarningsSinceDate);
+            }
         }
+        else {
+            zeroWarningsHighScore = previous.getZeroWarningsHighScore();
+        }
+    }
+
+    /**
+     * Returns the number of days for the specified number of milliseconds.
+     *
+     * @param ms milliseconds
+     * @return the number of days
+     */
+    public static long getDays(final long ms) {
+        return Math.max(1, ms / DateUtils.MILLIS_PER_DAY);
     }
 
     /**
@@ -178,6 +200,13 @@ public abstract class AnnotationsBuildResult extends BuildResult {
     }
 
     /**
+     * Returns the detail messages for the summary.jelly file.
+     *
+     * @return the summary message
+     */
+    public abstract String getDetails();
+
+    /**
      * Returns the modules of this build result.
      *
      * @return the modules
@@ -229,6 +258,24 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      */
     public long getZeroWarningsHighScore() {
         return zeroWarningsHighScore;
+    }
+
+    /**
+     * Returns if the current result reached the old zero warnings highscore.
+     *
+     * @return <code>true</code>, if the current result reached the old zero warnings highscore.
+     */
+    public boolean isNewZeroWarningsHighScore() {
+        return isZeroWarningsHighscore;
+    }
+
+    /**
+     * Returns the number of msec still to go before a new highscore is reached.
+     *
+     * @return the number of msec still to go before a new highscore is reached.
+     */
+    public long getHighScoreGap() {
+        return highScoreGap;
     }
 
     /**
