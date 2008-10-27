@@ -9,13 +9,21 @@ import hudson.maven.MavenBuildProxy.BuildCallable;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
+import hudson.plugins.warnings.util.model.AnnotationContainer;
+import hudson.plugins.warnings.util.model.DefaultAnnotationContainer;
+import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
+import hudson.plugins.warnings.util.model.WorkspaceFile;
+import hudson.remoting.Channel;
 import hudson.tasks.BuildStep;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.project.MavenProject;
@@ -181,6 +189,8 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
             });
 
             evaluateBuildResult(build, logger, result);
+            copyFilesToMaster(build.getProjectRootDir(), build.getRootDir(), result.getAnnotations());
+            evaluateBuildResult(build, logger, result);
         }
         catch (AbortException exception) {
             logger.println(exception.getMessage());
@@ -189,6 +199,41 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
         }
 
         return true;
+    }
+
+    /**
+     * Copies all files with annotations from the slave to the master.
+     *
+     * @param slaveRoot
+     *            directory to copy the files from
+     * @param masterRoot
+     *            directory to store the copied files in
+     * @param annotations
+     *            annotations determining the actual files to copy
+     * @throws IOException
+     *             if the files could not be written
+     * @throws FileNotFoundException
+     *             if the files could not be written
+     * @throws InterruptedException
+     *             if the user cancels the processing
+     */
+    private void copyFilesToMaster(final FilePath slaveRoot, final FilePath masterRoot, final Collection<FileAnnotation> annotations) throws IOException,
+            FileNotFoundException, InterruptedException {
+        FilePath directory = new FilePath(masterRoot, "workspace-files");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        AnnotationContainer container = new DefaultAnnotationContainer(annotations);
+        for (WorkspaceFile file : container.getFiles()) {
+            FilePath masterFile = new FilePath(directory, file.getTempName());
+            try {
+                new FilePath((Channel)null, file.getName()).copyTo(masterFile);
+            }
+            catch (IOException exception) {
+                String message = "Can't copy file from slave to master: slave=" + file.getName() + ", master=" + masterFile.getName();
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, message);
+            }
+        }
     }
 
     /**
