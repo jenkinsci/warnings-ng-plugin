@@ -289,14 +289,14 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * @param builds
      *            the builds for a module
      */
-    // FIXME: modules should be part of BuildResult
-    // FIXME: this method is always invoked with all available builds
+    // FIXME: this method is always invoked with all available builds, check this for hierarchies
     @java.lang.SuppressWarnings("unchecked")
     protected void addModule(final ParserResult aggregatedResult, final List<MavenBuild> builds) {
         MavenBuild mavenBuild = builds.get(0);
         AbstractResultAction<T> action = mavenBuild.getAction(getClass());
         if (action != null) {
             aggregatedResult.addAnnotations(action.getResult().getAnnotations());
+            aggregatedResult.addModules(action.getResult().getModules());
             FilePath filePath = new FilePath(new File(mavenBuild.getRootDir(), AbstractAnnotation.WORKSPACE_FILES));
             try {
                 filePath.copyRecursiveTo("*.tmp", new FilePath(new File(getOwner().getRootDir(), AbstractAnnotation.WORKSPACE_FILES)));

@@ -74,10 +74,6 @@ public abstract class AnnotationsBuildResult extends BuildResult {
     @SuppressWarnings("unused")
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
     private Map<String, MavenModule> emptyModules; // backward compatibility;
-    /** All parsed modules. */
-    private Set<String> modules;
-    /** The total number of parsed modules (regardless if there are annotations). */
-    private int numberOfModules;
     /** Determines if the old zero highscore has been broken. */
     private boolean isZeroWarningsHighscore;
     /** Determines the number of msec still to go before a new highscore is reached. */
@@ -92,7 +88,7 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      *            the parsed result with all annotations
      */
     public AnnotationsBuildResult(final AbstractBuild<?, ?> build, final ParserResult result) {
-        super(build);
+        super(build, result.getModules());
 
         initialize(result, new JavaProject());
 
@@ -114,7 +110,7 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      *            the result of the previous build
      */
     public AnnotationsBuildResult(final AbstractBuild<?, ?> build, final ParserResult result, final AnnotationsBuildResult previous) {
-        super(build);
+        super(build, result.getModules());
 
         AnnotationContainer previousProject = previous.getProject();
 
@@ -183,8 +179,6 @@ public abstract class AnnotationsBuildResult extends BuildResult {
         normal = result.getNumberOfAnnotations(Priority.NORMAL);
         low = result.getNumberOfAnnotations(Priority.LOW);
 
-        numberOfModules = result.getNumberOfModules();
-        modules = result.getModules();
         errors = new ArrayList<String>(result.getErrorMessages());
 
         serializeAnnotations(result.getAnnotations());
@@ -219,30 +213,12 @@ public abstract class AnnotationsBuildResult extends BuildResult {
     public abstract String getDetails();
 
     /**
-     * Returns the modules of this build result.
-     *
-     * @return the modules
-     */
-    public Collection<String> getModules() {
-        return modules;
-    }
-
-    /**
      * Returns whether a module with an error is part of this project.
      *
      * @return <code>true</code> if at least one module has an error.
      */
     public boolean hasError() {
         return !errors.isEmpty();
-    }
-
-    /**
-     * Returns the number of modules in this project.
-     *
-     * @return the number of modules
-     */
-    public int getNumberOfModules() {
-        return numberOfModules;
     }
 
     /**

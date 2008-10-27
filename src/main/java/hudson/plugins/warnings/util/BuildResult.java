@@ -12,6 +12,8 @@ import hudson.plugins.warnings.util.model.Priority;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -29,15 +31,53 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
     /** Current build as owner of this action. */
     private final AbstractBuild<?, ?> owner;
+    /** All parsed modules. */
+    private Set<String> modules;
+    /** The total number of parsed modules (regardless if there are annotations). */
+    private final int numberOfModules;
 
     /**
      * Creates a new instance of {@link BuildResult}.
      *
      * @param build
      *            owner of this result
+     * @param modules
+     *            the modules represented by this result
      */
-    public BuildResult(final AbstractBuild<?, ?> build) {
+    public BuildResult(final AbstractBuild<?, ?> build, final Set<String> modules) {
         owner = build;
+        numberOfModules = modules.size();
+        this.modules = new HashSet<String>(modules);
+    }
+
+    /**
+     * Initializes the modules set if not yet serialized.
+     *
+     * @return the created object
+     */
+    private Object readResolve() {
+        if (modules == null) {
+            modules = new HashSet<String>();
+        }
+        return this;
+    }
+
+    /**
+     * Returns the modules of this build result.
+     *
+     * @return the modules
+     */
+    public Collection<String> getModules() {
+        return modules;
+    }
+
+    /**
+     * Returns the number of modules in this project.
+     *
+     * @return the number of modules
+     */
+    public int getNumberOfModules() {
+        return numberOfModules;
     }
 
     /**
