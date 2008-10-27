@@ -95,6 +95,12 @@ public abstract class AnnotationsBuildResult extends BuildResult {
         super(build);
 
         initialize(result, new JavaProject());
+
+        if (result.hasNoAnnotations()) {
+            zeroWarningsSinceBuild = build.getNumber();
+            zeroWarningsSinceDate = build.getTimestamp().getTimeInMillis();
+            isZeroWarningsHighscore = true;
+        }
     }
 
     /**
@@ -124,7 +130,13 @@ public abstract class AnnotationsBuildResult extends BuildResult {
                 zeroWarningsSinceDate = build.getTimestamp().getTimeInMillis();
             }
             zeroWarningsHighScore = Math.max(previous.getZeroWarningsHighScore(), build.getTimestamp().getTimeInMillis() - zeroWarningsSinceDate);
-            isZeroWarningsHighscore = zeroWarningsHighScore != previous.getZeroWarningsHighScore();
+            if (previous.getZeroWarningsHighScore() == 0) {
+                isZeroWarningsHighscore = true;
+            }
+            else {
+                isZeroWarningsHighscore = zeroWarningsHighScore != previous.getZeroWarningsHighScore();
+
+            }
             if (!isZeroWarningsHighscore) {
                 highScoreGap = previous.getZeroWarningsHighScore() - (build.getTimestamp().getTimeInMillis() - zeroWarningsSinceDate);
             }

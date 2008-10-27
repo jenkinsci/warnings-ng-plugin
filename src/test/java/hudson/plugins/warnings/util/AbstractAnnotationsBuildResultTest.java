@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 /**
@@ -22,7 +23,7 @@ public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBu
     /** Error message. */
     private static final String WRONG_NEW_HIGHSCORE_INDICATOR = "Wrong new highscore indicator.";
     /** Two days in msec. */
-    private static final int TWO_DAYS_IN_MS = 2 * 24 * 60 * 60 * 1000;
+    private static final long TWO_DAYS_IN_MS = 2 * DateUtils.MILLIS_PER_DAY;
     /** Error message. */
     private static final String WRONG_ZERO_WARNINGS_HIGH_SCORE = "Wrong zero warnings high score.";
     /** Error message. */
@@ -40,19 +41,18 @@ public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBu
      */
     @Test
     public void checkThatZeroWarningsIsUpdated() {
-        ParserResult projectWithoutAnnotations = new ParserResult();
         GregorianCalendar calendar = new GregorianCalendar(2008, 8, 8, 12, 30);
+        long timeOfFirstZeroWarningsBuild = calendar.getTime().getTime();
 
         T result; // the result is replaced by each new result
 
         // No change of defaults at the beginning
-        result = createBuildResult(createBuild(0, calendar), projectWithoutAnnotations);
-        verifyResult(0, 0, 0, 0, false, 0, result);
+        result = createBuildResult(createBuild(0, calendar), new ParserResult());
+        verifyResult(0, 0, timeOfFirstZeroWarningsBuild, 0, true, 0, result);
 
         // Compare with a result that has warnings
-        long timeOfFirstZeroWarningsBuild = calendar.getTime().getTime();
         result = createResult(1, calendar, createResultWithWarnings());
-        verifyResult(0, 1, timeOfFirstZeroWarningsBuild, 0, false, 0, result);
+        verifyResult(0, 1, timeOfFirstZeroWarningsBuild, 0, true, 0, result);
 
         // Again a result without warnings, two days after the first build
         calendar.add(Calendar.DAY_OF_YEAR, 2);
@@ -78,6 +78,49 @@ public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBu
         calendar.add(Calendar.DAY_OF_YEAR, 3);
         result = createResult(4, calendar, result);
         verifyResult(0, 3, timeOfFirstZeroWarningsBuild, 2 * TWO_DAYS_IN_MS, true, 0, result);
+
+        result.getDataFile().delete();
+    }
+
+    /**
+     * Verifies that the zero warnings since build counter is correctly
+     * initialized in the beginning.
+     */
+    @Test
+    public void checkZeroWarningsCounterInitialization() {
+        GregorianCalendar calendar = new GregorianCalendar(2008, 8, 8, 12, 30);
+        long timeOfFirstZeroWarningsBuild = calendar.getTime().getTime();
+
+        T result = createBuildResult(createBuild(0, calendar), new ParserResult());
+        verifyResult(0, 0, timeOfFirstZeroWarningsBuild, 0, true, 0, result);
+
+        calendar.add(Calendar.DAY_OF_YEAR, 2);
+        result = createBuildResult(createBuild(0, calendar), new ParserResult(), result);
+        verifyResult(0, 0, timeOfFirstZeroWarningsBuild, TWO_DAYS_IN_MS, true, 0, result);
+
+        result.getDataFile().delete();
+    }
+
+    /**
+     * Verifies that the zero warnings since build counter is correctly
+     * initialized in the beginning.
+     */
+    @Test
+    public void checkZeroWarningsCounterInitializationStartUnstable() {
+        GregorianCalendar calendar = new GregorianCalendar(2008, 8, 8, 12, 30);
+
+        T result = createBuildResult(createBuild(0, calendar), createProjectWithWarning());
+        verifyResult(1, 0, 0, 0, false, 0, result);
+
+        calendar.add(Calendar.DAY_OF_YEAR, 2);
+        long timeOfFirstZeroWarningsBuild = calendar.getTime().getTime();
+
+        result = createBuildResult(createBuild(1, calendar), new ParserResult(), result);
+        verifyResult(0, 1, timeOfFirstZeroWarningsBuild, 0, true, 0, result);
+
+        calendar.add(Calendar.DAY_OF_YEAR, 2);
+        result = createBuildResult(createBuild(0, calendar), new ParserResult(), result);
+        verifyResult(0, 1, timeOfFirstZeroWarningsBuild, TWO_DAYS_IN_MS, true, 0, result);
 
         result.getDataFile().delete();
     }
@@ -128,7 +171,7 @@ public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBu
      *            the actual result to verify
      */
     private void verifyResult(final int expectedAnnotationCount, final int expectedZeroWarningsBuildNumber,
-            final long expectedZeroWarningsBuildDate, final long expectedHighScore, final boolean expectedIsNewHighScore, final int gap, final T result) {
+            final long expectedZeroWarningsBuildDate, final long expectedHighScore, final boolean expectedIsNewHighScore, final long gap, final T result) {
         assertEquals(WRONG_NUMBER_OF_ANNOTATIONS, expectedAnnotationCount, result.getNumberOfAnnotations());
         assertEquals(WRONG_ZERO_WARNINGS_SINCE_BUILD_COUNTER, expectedZeroWarningsBuildNumber, result.getZeroWarningsSinceBuild());
         assertEquals(WRONG_ZERO_WARNINGS_SINCE_DATE_COUNTER, expectedZeroWarningsBuildDate, result.getZeroWarningsSinceDate());
@@ -152,7 +195,7 @@ public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBu
      * @param result
      *            the actual result to verify
      */
-    protected abstract void verifyHighScoreMessage(int expectedZeroWarningsBuildNumber, boolean expectedIsNewHighScore, long expectedHighScore, int gap, T result);
+    protected abstract void verifyHighScoreMessage(int expectedZeroWarningsBuildNumber, boolean expectedIsNewHighScore, long expectedHighScore, long gap, T result);
 
     /**
      * Creates a project that contains a single annotation.
