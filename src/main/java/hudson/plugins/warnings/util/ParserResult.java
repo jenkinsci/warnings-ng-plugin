@@ -42,6 +42,7 @@ public class ParserResult implements Serializable {
     /** The workspace (might be null). */
     private final FilePath workspace;
     /** A mapping of relative file names to absolute file names. */
+    @SuppressWarnings("Se")
     private final Map<String, String> fileNameCache = new HashMap<String, String>();
 
     /**

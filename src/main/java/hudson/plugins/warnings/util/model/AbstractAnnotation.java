@@ -18,6 +18,8 @@ import org.apache.commons.lang.StringUtils;
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public abstract class AbstractAnnotation implements FileAnnotation, Serializable {
+    /** Temporary directory holding the workspace files. */
+    public static final String WORKSPACE_FILES = "workspace-files";
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -1092014926477547148L;
     /** Current key of this annotation. */
@@ -97,7 +99,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     /** {@inheritDoc} */
     public String getTempName(final AbstractBuild<?, ?> owner) {
         if (fileName != null) {
-            return owner.getRootDir().getAbsolutePath() + "/workspace-files/" + Integer.toHexString(fileName.hashCode()) + ".tmp";
+            return owner.getRootDir().getAbsolutePath() + "/" + WORKSPACE_FILES + "/" + Integer.toHexString(fileName.hashCode()) + ".tmp";
         }
         return StringUtils.EMPTY;
     }

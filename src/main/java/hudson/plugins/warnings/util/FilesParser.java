@@ -23,6 +23,7 @@ public class FilesParser implements FileCallable<ParserResult> {
     /** Generated ID. */
     private static final long serialVersionUID = -6415863872891783891L;
     /** Logger. */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
     private final transient PrintStream logger;
     /** Ant file-set pattern to scan for. */
     private final String filePattern;

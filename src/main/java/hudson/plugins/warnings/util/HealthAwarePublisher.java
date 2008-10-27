@@ -6,6 +6,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Project;
 import hudson.model.Result;
+import hudson.plugins.warnings.util.model.AbstractAnnotation;
 import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.DefaultAnnotationContainer;
 import hudson.plugins.warnings.util.model.FileAnnotation;
@@ -43,6 +44,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Ulli Hafner
  */
+// CHECKSTYLE:COUPLING-OFF
 public abstract class HealthAwarePublisher extends Publisher {
     /** Default threshold priority limit. */
     private static final String DEFAULT_PRIORITY_THRESHOLD_LIMIT = "low";
@@ -202,7 +204,7 @@ public abstract class HealthAwarePublisher extends Publisher {
     private void copyFilesFromSlaveToMaster(final File rootDir,
             final VirtualChannel channel, final Collection<FileAnnotation> annotations) throws IOException,
             FileNotFoundException, InterruptedException {
-        File directory = new File(rootDir, "workspace-files");
+        File directory = new File(rootDir, AbstractAnnotation.WORKSPACE_FILES);
         if (!directory.exists()) {
             if (!directory.mkdir()) {
                 throw new IOException("Can't create directory for workspace files that contain annotations: " + directory.getAbsolutePath());
@@ -211,15 +213,18 @@ public abstract class HealthAwarePublisher extends Publisher {
         AnnotationContainer container = new DefaultAnnotationContainer(annotations);
         for (WorkspaceFile file : container.getFiles()) {
             File masterFile = new File(directory, file.getTempName());
-            FileOutputStream outputStream = new FileOutputStream(masterFile);
-            try {
-                new FilePath(channel, file.getName()).copyTo(outputStream);
-            }
-            catch (IOException exception) {
-                String message = "Can't copy file from slave to master: slave=" + file.getName() + ", master=" + masterFile.getAbsolutePath();
-                IOUtils.write(message, outputStream);
-                exception.printStackTrace(new PrintStream(outputStream));
-                outputStream.close();
+            if (!masterFile.exists()) {
+                FileOutputStream outputStream = new FileOutputStream(masterFile);
+                try {
+                    new FilePath(channel, file.getName()).copyTo(outputStream);
+                }
+                catch (IOException exception) {
+                    String message = "Can't copy file from slave to master: slave="
+                            + file.getName() + ", master=" + masterFile.getAbsolutePath();
+                    IOUtils.write(message, outputStream);
+                    exception.printStackTrace(new PrintStream(outputStream));
+                    outputStream.close();
+                }
             }
         }
     }
