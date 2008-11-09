@@ -143,6 +143,15 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     }
 
     /**
+     * Returns whether a package name has been defined.
+     *
+     * @return <code>true</code>, if a package name has been defined
+     */
+    public boolean hasPackageName() {
+        return StringUtils.isNotBlank(packageName);
+    }
+
+    /**
      * Sets the package name to the specified value.
      *
      * @param packageName the value to set
