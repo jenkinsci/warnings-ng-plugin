@@ -126,7 +126,12 @@ public class ParserRegistry {
          * @return <code>true</code> if the name matches one of the exclusion patterns.
          */
         public boolean matches(final String name) {
-            return isExcluded(name);
+            if (File.separatorChar == '\\') {
+                return isExcluded(StringUtils.replaceChars(name, '/', '\\'));
+            }
+            else {
+                return isExcluded(name);
+            }
         }
     }
 }
