@@ -131,9 +131,9 @@ public class ParserRegistry {
                 return isExcluded(StringUtils.replaceChars(name, '/', '\\'));
             }
             else {
-            return isExcluded(name);
+                return isExcluded(name);
+            }
         }
     }
-}
 }
 
