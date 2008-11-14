@@ -19,7 +19,7 @@ import org.junit.Test;
  */
 public class ParserRegistryTest {
     /** Total number of expected warnings. */
-    private static final int TOTAL_WARNINGS = 161;
+    private static final int TOTAL_WARNINGS = 163;
     /** Error message. */
     private static final String WRONG_NUMBER_OF_ANNOTATIONS_PARSED = "Wrong number of annotations parsed";
 

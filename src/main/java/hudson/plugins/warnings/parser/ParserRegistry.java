@@ -46,6 +46,7 @@ public class ParserRegistry {
         parsers.add(new InvalidsParser());
         parsers.add(new SunCParser());
         parsers.add(new GnatParser());
+        parsers.add(new ErlcParser());
 
         if (!StringUtils.isEmpty(excludePattern)) {
             excludeFilter = new ExcludeFilter(excludePattern);

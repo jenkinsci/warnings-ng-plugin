@@ -625,3 +625,9 @@ Maybe if you insist that "javac" must appear somewhere in the taskname, e.g.
 /home/bergerbd/.hudson/jobs/Test/workspace/projects/tools/scangen/src/scangen.adb:23:35: error: binary operator expected
 
 /home/bergerbd/.hudson/jobs/Test/workspace/projects/tools/scangen/src/scangen.adb:23:36: error: identifier cannot start with underline
+
+
+
+
+./test.erl:125: Warning: variable 'Name' is unused
+./test2.erl:175: record 'Extension' undefined
