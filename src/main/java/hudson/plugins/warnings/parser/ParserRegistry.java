@@ -45,6 +45,7 @@ public class ParserRegistry {
         parsers.add(new GccParser());
         parsers.add(new InvalidsParser());
         parsers.add(new SunCParser());
+        parsers.add(new GnatParser());
 
         if (!StringUtils.isEmpty(excludePattern)) {
             excludeFilter = new ExcludeFilter(excludePattern);
@@ -130,9 +131,9 @@ public class ParserRegistry {
                 return isExcluded(StringUtils.replaceChars(name, '/', '\\'));
             }
             else {
-                return isExcluded(name);
-            }
+            return isExcluded(name);
         }
     }
+}
 }
 
