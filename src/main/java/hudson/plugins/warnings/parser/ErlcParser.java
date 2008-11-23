@@ -13,13 +13,13 @@ public class ErlcParser extends RegexpParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "erlc";
     /** Pattern of erlc compiler warnings. */
-    private static final String ERLC_WARNING_PATTERN = "(.*\\.(?:erl|yrl|mib|bin|rel|asn1|idl)):(\\d*):\\s*([wW]arning:)?\\s*(.*)";
+    private static final String ERLC_WARNING_PATTERN = "^(.+\\.(?:erl|yrl|mib|bin|rel|asn1|idl)):(\\d*): ([wW]arning: )?(.+)$";
 
     /**
      * Creates a new instance of <code>ErlcCompileParser</code>.
      */
     public ErlcParser() {
-        super(ERLC_WARNING_PATTERN);
+        super(ERLC_WARNING_PATTERN, true);
     }
 
     /** {@inheritDoc} */
@@ -31,9 +31,10 @@ public class ErlcParser extends RegexpParser {
         final String category;
         final String message = matcher.group(4);
         final String group3 = matcher.group(3);
-        if ("warning:".equalsIgnoreCase(group3)) {
+
+        if ("warning: ".equalsIgnoreCase(group3)) {
             priority = Priority.NORMAL;
-            category = "ERLC " + group3.substring(0, group3.length() - 1);
+            category = "ERLC " + group3.substring(0, group3.length() - 2);
         }
         else {
             priority = Priority.HIGH;
