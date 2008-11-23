@@ -1,5 +1,7 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.plugins.warnings.util.model.Priority;
+
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,7 +33,15 @@ public class InvalidsParser extends RegexpParser {
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String type = WARNING_TYPE + StringUtils.capitalize(StringUtils.lowerCase(matcher.group(4)));
-        Warning warning = new Warning(matcher.group(2) + "." + matcher.group(3), getLineNumber(matcher.group(5)), type, matcher.group(6), matcher.group(7));
+        String category = matcher.group(6);
+        Priority priority;
+        if (StringUtils.contains(category, "PLW-07")) {
+            priority = Priority.LOW;
+        }
+        else {
+            priority = Priority.NORMAL;
+        }
+        Warning warning = new Warning(matcher.group(2) + "." + matcher.group(3), getLineNumber(matcher.group(5)), type, category, matcher.group(7), priority);
         warning.setPackageName(matcher.group(1));
 
         return warning;

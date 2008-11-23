@@ -32,13 +32,13 @@ public class InvalidsParserTest extends ParserTester {
         checkWarning(annotation,
                 45,
                 "Encountered the symbol \"END\" when expecting one of the following:",
-                "ENV_UTIL#.PACKAGE BODY", type, "PLS-00103", Priority.NORMAL);
+                "ENV_UTIL#.PACKAGE BODY", type, "PLW-05004", Priority.NORMAL);
         assertEquals("wrong schema detected", "E", annotation.getPackageName());
         annotation = iterator.next();
         checkWarning(annotation,
                 5,
                 "Encountered the symbol \"END\" when expecting one of the following:",
-                "ENV_ABBR#B.TRIGGER", type, "PLS-00103", Priority.NORMAL);
+                "ENV_ABBR#B.TRIGGER", type, "PLW-07202", Priority.LOW);
         assertEquals("wrong schema detected", "E", annotation.getPackageName());
         annotation = iterator.next();
         checkWarning(annotation,
