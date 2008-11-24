@@ -15,6 +15,13 @@ import org.junit.Test;
  */
 public class JavacParserTest extends ParserTester {
     /**
+     * Creates a new instance of {@link JavacParserTest}.
+     */
+    public JavacParserTest() {
+        super(JavacParser.class);
+    }
+
+    /**
      * Parses a file with two deprecation warnings.
      *
      * @throws IOException
@@ -22,7 +29,7 @@ public class JavacParserTest extends ParserTester {
      */
     @Test
     public void parseDeprecation() throws IOException {
-        Collection<FileAnnotation> warnings = new JavacParser().parse(JavacParserTest.class.getResourceAsStream("javac.txt"));
+        Collection<FileAnnotation> warnings = new JavacParser().parse(openFile());
 
         assertEquals("Wrong number of warnings detected.", 2, warnings.size());
 
@@ -39,6 +46,12 @@ public class JavacParserTest extends ParserTester {
                 "org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated",
                 "C:/Build/Results/jobs/ADT-Base/workspace/com.avaloq.adt.ui/src/main/java/com/avaloq/adt/ui/elements/AvaloqDialog.java",
                 JavacParser.WARNING_TYPE, RegexpParser.DEPRECATION, Priority.NORMAL);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getWarningsFile() {
+        return "javac.txt";
     }
 }
 

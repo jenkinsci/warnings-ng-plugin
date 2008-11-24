@@ -42,5 +42,11 @@ public class ErlcParser extends RegexpParser {
         }
         return new Warning(filename, linenumber, WARNING_TYPE, category, message, priority);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return WARNING_TYPE;
+    }
 }
 

@@ -21,6 +21,13 @@ public class AntJavacParserTest extends ParserTester {
     private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
 
     /**
+     * Creates a new instance of {@link AntJavacParserTest}.
+     */
+    public AntJavacParserTest() {
+        super(AntJavacParser.class);
+    }
+
+    /**
      * Parses a file with two deprecation warnings.
      *
      * @throws IOException
@@ -28,7 +35,7 @@ public class AntJavacParserTest extends ParserTester {
      */
     @Test
     public void parseDeprecation() throws IOException {
-        Collection<FileAnnotation> warnings = new AntJavacParser().parse(AntJavacParserTest.class.getResourceAsStream("ant-javac.txt"));
+        Collection<FileAnnotation> warnings = new AntJavacParser().parse(openFile());
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
 
@@ -99,6 +106,12 @@ public class AntJavacParserTest extends ParserTester {
         Collection<FileAnnotation> warnings = new AntJavacParser().parse(AntJavacParserTest.class.getResourceAsStream("taskname.txt"));
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getWarningsFile() {
+        return "ant-javac.txt";
     }
 }
 

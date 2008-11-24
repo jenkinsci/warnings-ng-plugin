@@ -20,6 +20,13 @@ public class SunCParserTest extends ParserTester {
     private static final String TYPE = "badargtypel2w";
 
     /**
+     * Creates a new instance of {@link SunCParserTest}.
+     */
+    public SunCParserTest() {
+        super(SunCParser.class);
+    }
+
+    /**
      * Parses a file with 5 warnings.
      *
      * @throws IOException
@@ -27,7 +34,7 @@ public class SunCParserTest extends ParserTester {
      */
     @Test
     public void parseSunCpp() throws IOException {
-        Collection<FileAnnotation> warnings = new SunCParser().parse(SunCParserTest.class.getResourceAsStream("sunc.txt"));
+        Collection<FileAnnotation> warnings = new SunCParser().parse(openFile());
 
         assertEquals("Wrong number of warnings detected.", 5, warnings.size());
 
@@ -62,6 +69,12 @@ public class SunCParserTest extends ParserTester {
                 MESSAGE,
                 "ServerList.cpp",
                 SunCParser.WARNING_TYPE, TYPE, Priority.NORMAL);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getWarningsFile() {
+        return "sunc.txt";
     }
 }
 

@@ -10,10 +10,18 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
+
 /**
- * Tests the class {@link HpiCompileParser}.
+ * Tests the class {@link AntJavacParser} for output log of a HPI compile.
  */
 public class HpiCompileParserTest extends ParserTester {
+    /**
+     * Creates a new instance of {@link HpiCompileParserTest}.
+     */
+    public HpiCompileParserTest() {
+        super(AntJavacParser.class);
+    }
+
     /**
      * Parses a file with two deprecation warnings.
      *
@@ -22,7 +30,7 @@ public class HpiCompileParserTest extends ParserTester {
      */
     @Test
     public void parseDeprecation() throws IOException {
-        Collection<FileAnnotation> warnings = new HpiCompileParser().parse(HpiCompileParserTest.class.getResourceAsStream("hpi.txt"));
+        Collection<FileAnnotation> warnings = new AntJavacParser().parse(openFile());
 
         assertEquals("Wrong number of warnings detected.", 2, warnings.size());
 
@@ -32,27 +40,19 @@ public class HpiCompileParserTest extends ParserTester {
                 46,
                 "newInstance(org.kohsuke.stapler.StaplerRequest) in hudson.model.Descriptor has been deprecated",
                 "C:/Build/Results/jobs/ADT-Base/workspace/tasks/src/main/java/hudson/plugins/tasks/TasksDescriptor.java",
-                HpiCompileParser.WARNING_TYPE, "deprecation", Priority.NORMAL);
+                AntJavacParser.WARNING_TYPE, "Deprecation", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 34,
                 "newInstance(org.kohsuke.stapler.StaplerRequest) in hudson.model.Descriptor has been deprecated",
                 "C:/Build/Results/jobs/ADT-Base/workspace/tasks/src/main/java/hudson/plugins/tasks/TasksReporterDescriptor.java",
-                HpiCompileParser.WARNING_TYPE, "deprecation", Priority.NORMAL);
+                AntJavacParser.WARNING_TYPE, "Deprecation", Priority.NORMAL);
     }
 
-    /**
-     * Parses a warning log with 2 ANT warnings that should produce no HPI warning.
-     *
-     * @throws IOException
-     *      if the file could not be read
-     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=2133">Issue 2133</a>
-     */
-    @Test
-    public void issue2133() throws IOException {
-        Collection<FileAnnotation> warnings = new HpiCompileParser().parse(HpiCompileParserTest.class.getResourceAsStream("issue2133.txt"));
-
-        assertEquals("Wrong number of warnings detected.", 0, warnings.size());
+    /** {@inheritDoc} */
+    @Override
+    protected String getWarningsFile() {
+        return "hpi.txt";
     }
 }
 

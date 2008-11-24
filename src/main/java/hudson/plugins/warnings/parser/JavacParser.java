@@ -11,7 +11,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class JavacParser extends RegexpParser {
     /** Warning type of this parser. */
-    static final String WARNING_TYPE = "SUN Java Compiler";
+    static final String WARNING_TYPE = "Java Compiler";
     /** Pattern of javac compiler warnings. */
     private static final String JAVAC_WARNING_PATTERN = "\\[WARNING\\]\\s*(.*):\\[(\\d*).*\\[(.*)\\]\\s*(.*)";
 
@@ -32,6 +32,12 @@ public class JavacParser extends RegexpParser {
     protected Warning createWarning(final Matcher matcher) {
         return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE,
                 StringUtils.capitalize(matcher.group(3)), matcher.group(4));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return WARNING_TYPE;
     }
 }
 

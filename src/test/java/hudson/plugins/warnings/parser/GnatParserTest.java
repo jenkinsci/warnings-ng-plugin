@@ -15,6 +15,13 @@ import org.junit.Test;
  */
 public class GnatParserTest extends ParserTester {
     /**
+     * Creates a new instance of {@link GnatParserTest}.
+     */
+    public GnatParserTest() {
+        super(GnatParser.class);
+    }
+
+    /**
      * Parses a file with 9 Gnat warnings.
      *
      * @throws IOException
@@ -22,7 +29,7 @@ public class GnatParserTest extends ParserTester {
      */
     @Test
     public void testWarningsParser() throws IOException {
-        Collection<FileAnnotation> warnings = new GnatParser().parse(GnatParserTest.class.getResourceAsStream("gnat.txt"));
+        Collection<FileAnnotation> warnings = new GnatParser().parse(openFile());
 
         assertEquals("Wrong number of warnings detected.", 9, warnings.size());
 
@@ -118,6 +125,12 @@ public class GnatParserTest extends ParserTester {
                 "identifier cannot start with underline",
                 "/home/bergerbd/.hudson/jobs/Test/workspace/projects/tools/scangen/src/scangen.adb",
                 GnatParser.WARNING_TYPE, "GNAT error", Priority.HIGH);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getWarningsFile() {
+        return "gnat.txt";
     }
 }
 

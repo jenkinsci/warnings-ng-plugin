@@ -15,6 +15,13 @@ import org.junit.Test;
  */
 public class GccParserTest extends ParserTester {
     /**
+     * Creates a new instance of {@link GccParserTest}.
+     */
+    public GccParserTest() {
+        super(GccParser.class);
+    }
+
+    /**
      * Parses a file with two GCC warnings.
      *
      * @throws IOException
@@ -22,7 +29,7 @@ public class GccParserTest extends ParserTester {
      */
     @Test
     public void testWarningsParser() throws IOException {
-        Collection<FileAnnotation> warnings = new GccParser().parse(GccParserTest.class.getResourceAsStream("gcc.txt"));
+        Collection<FileAnnotation> warnings = new GccParser().parse(openFile());
 
         assertEquals("Wrong number of warnings detected.", 4, warnings.size());
 
@@ -51,6 +58,12 @@ public class GccParserTest extends ParserTester {
                 "'missing_symbol'",
                 "foo.so",
                 GccParser.WARNING_TYPE, "GCC error", Priority.HIGH);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getWarningsFile() {
+        return "gcc.txt";
     }
 }
 

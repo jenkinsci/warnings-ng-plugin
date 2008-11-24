@@ -15,6 +15,13 @@ import org.junit.Test;
  */
 public class ErlcParserTest extends ParserTester {
     /**
+     * Creates a new instance of {@link ErlcParserTest}.
+     */
+    public ErlcParserTest() {
+        super(ErlcParser.class);
+    }
+
+    /**
      * Parses a file with two Erlc warnings.
      *
      * @throws IOException
@@ -22,7 +29,7 @@ public class ErlcParserTest extends ParserTester {
      */
     @Test
     public void testWarningsParser() throws IOException {
-        Collection<FileAnnotation> warnings = new ErlcParser().parse(ErlcParserTest.class.getResourceAsStream("erlc.txt"));
+        Collection<FileAnnotation> warnings = new ErlcParser().parse(openFile());
 
         assertEquals("Wrong number of warnings detected.", 2, warnings.size());
 
@@ -39,6 +46,12 @@ public class ErlcParserTest extends ParserTester {
                 "record 'Extension' undefined",
                 "./test2.erl",
                 ErlcParser.WARNING_TYPE, "ERLC Error", Priority.HIGH);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getWarningsFile() {
+        return "erlc.txt";
     }
 }
 

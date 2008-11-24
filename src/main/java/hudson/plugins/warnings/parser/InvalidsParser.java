@@ -38,6 +38,9 @@ public class InvalidsParser extends RegexpParser {
         if (StringUtils.contains(category, "PLW-07")) {
             priority = Priority.LOW;
         }
+        else if (StringUtils.contains(category, "ORA")) {
+            priority = Priority.HIGH;
+        }
         else {
             priority = Priority.NORMAL;
         }
@@ -45,6 +48,12 @@ public class InvalidsParser extends RegexpParser {
         warning.setPackageName(matcher.group(1));
 
         return warning;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return WARNING_TYPE;
     }
 }
 

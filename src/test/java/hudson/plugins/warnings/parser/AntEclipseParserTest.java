@@ -18,6 +18,13 @@ public class AntEclipseParserTest extends ParserTester {
     private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
 
     /**
+     * Creates a new instance of {@link AntEclipseParserTest}.
+     */
+    public AntEclipseParserTest() {
+        super(AntEclipseParser.class);
+    }
+
+    /**
      * Parses a file with two deprecation warnings.
      *
      * @throws IOException
@@ -25,7 +32,7 @@ public class AntEclipseParserTest extends ParserTester {
      */
     @Test
     public void parseDeprecation() throws IOException {
-        Collection<FileAnnotation> warnings = new AntEclipseParser().parse(AntEclipseParserTest.class.getResourceAsStream("eclipse.txt"));
+        Collection<FileAnnotation> warnings = new AntEclipseParser().parse(openFile());
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 8, warnings.size());
 
@@ -36,6 +43,12 @@ public class AntEclipseParserTest extends ParserTester {
                 "The serializable class AttributeException does not declare a static final serialVersionUID field of type long",
                 "C:/Desenvolvimento/Java/jfg/src/jfg/AttributeException.java",
                 AntEclipseParser.WARNING_TYPE, "", Priority.NORMAL);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getWarningsFile() {
+        return "eclipse.txt";
     }
 }
 

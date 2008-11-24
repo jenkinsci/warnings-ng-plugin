@@ -9,11 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
-
 
 /**
  * Registry for the active parsers in this plug-in.
@@ -29,13 +29,19 @@ public class ParserRegistry {
 
     /**
      * Creates a new instance of <code>ParserRegistry</code>.
+     */
+    public ParserRegistry() {
+        this(null);
+    }
+
+    /**
+     * Creates a new instance of <code>ParserRegistry</code>.
      *
      * @param excludePattern
      *            Ant file-set pattern of files to exclude from report,
      *            <code>null</code> or an empty string do not filter the output
      */
     public ParserRegistry(final String excludePattern) {
-        parsers.add(new HpiCompileParser());
         parsers.add(new JavacParser());
         parsers.add(new AntJavacParser());
         parsers.add(new JavaDocParser());
@@ -51,6 +57,17 @@ public class ParserRegistry {
         if (!StringUtils.isEmpty(excludePattern)) {
             excludeFilter = new ExcludeFilter(excludePattern);
         }
+    }
+
+
+    /**
+     * Returns all registers parsers. Note that removal of elements is not
+     * supported.
+     *
+     * @return the registered parsers
+     */
+    protected Iterable<WarningsParser> getParsers() {
+        return Collections.unmodifiableList(parsers);
     }
 
     /**

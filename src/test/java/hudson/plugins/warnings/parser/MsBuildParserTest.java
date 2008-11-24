@@ -12,9 +12,16 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 /**
- * Tests the class {@link HpiCompileParser}.
+ * Tests the class {@link MsBuildParser}.
  */
 public class MsBuildParserTest extends ParserTester {
+    /**
+     * Creates a new instance of {@link MsBuildParserTest}.
+     */
+    public MsBuildParserTest() {
+        super(MsBuildParser.class);
+    }
+
     /**
      * Parses a file with warnings of the MS Build tools.
      *
@@ -23,7 +30,7 @@ public class MsBuildParserTest extends ParserTester {
      */
     @Test
     public void parseWarnings() throws IOException {
-        Collection<FileAnnotation> warnings = new MsBuildParser().parse(MsBuildParserTest.class.getResourceAsStream("msbuild.txt"));
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile());
 
         assertEquals("Wrong number of warnings detected.", 5, warnings.size());
 
@@ -93,6 +100,12 @@ public class MsBuildParserTest extends ParserTester {
                 "C:/Src/Parser/CSharp/file.cs",
                 MsBuildParser.WARNING_TYPE, "XXX", Priority.HIGH);
 
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getWarningsFile() {
+        return "msbuild.txt";
     }
 }
 

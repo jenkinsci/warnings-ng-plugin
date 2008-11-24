@@ -13,7 +13,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class AntEclipseParser extends RegexpParser {
     /** Warning type of this parser. */
-    static final String WARNING_TYPE = "Ant Eclipse Compiler";
+    static final String WARNING_TYPE = "Eclipse Compiler";
     /** Pattern of javac compiler warnings. */
     private static final String ANT_ECLIPSE_WARNING_PATTERN = "(WARNING|ERROR)\\s*in\\s*(.*)\\(at line\\s*(\\d+)\\).*\\r?\\n.*\\r?\\n.*\\r?\\n.*\\]\\s*(.*)";
 
@@ -41,6 +41,12 @@ public class AntEclipseParser extends RegexpParser {
             priority = Priority.HIGH;
         }
         return new Warning(matcher.group(2), getLineNumber(matcher.group(3)), WARNING_TYPE, StringUtils.EMPTY, matcher.group(4), priority);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return WARNING_TYPE;
     }
 }
 

@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
  */
 public class MavenParser extends RegexpParser {
     /** Warning type of this parser. */
-    static final String WARNING_TYPE = "Maven Java Compiler";
+    static final String WARNING_TYPE = "Java Compiler";
     /** Pattern of javac compiler warnings. */
     private static final String MAVEN_WARNING_PATTERN = "\\[WARNING\\]\\s*(.*):\\[(\\d*)[^\\[]*\\]\\s*([^\\[]*)$";
 
@@ -32,6 +32,12 @@ public class MavenParser extends RegexpParser {
         String message = matcher.group(3);
 
         return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE, classifyWarning(message), message);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return WARNING_TYPE;
     }
 }
 

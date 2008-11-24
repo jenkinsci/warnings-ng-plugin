@@ -11,9 +11,16 @@ import java.util.Iterator;
 import org.junit.Test;
 
 /**
- * Tests the class {@link JavacParser}.
+ * Tests the class {@link InvalidsParser}.
  */
 public class InvalidsParserTest extends ParserTester {
+    /**
+     * Creates a new instance of {@link InvalidsParserTest}.
+     */
+    public InvalidsParserTest() {
+        super(InvalidsParser.class);
+    }
+
     /**
      * Parses a file with two deprecation warnings.
      *
@@ -22,7 +29,7 @@ public class InvalidsParserTest extends ParserTester {
      */
     @Test
     public void testParser() throws IOException {
-        Collection<FileAnnotation> warnings = new InvalidsParser().parse(InvalidsParserTest.class.getResourceAsStream("invalids.txt"));
+        Collection<FileAnnotation> warnings = new InvalidsParser().parse(openFile());
 
         assertEquals("Wrong number of warnings detected.", 3, warnings.size());
 
@@ -44,8 +51,14 @@ public class InvalidsParserTest extends ParserTester {
         checkWarning(annotation,
                 0,
                 "referenced name javax/management/MBeanConstructorInfo could not be found",
-                "/b77ce675_LoggerDynamicMBean.JAVA CLASS", type, "ORA-29521", Priority.NORMAL);
+                "/b77ce675_LoggerDynamicMBean.JAVA CLASS", type, "ORA-29521", Priority.HIGH);
         assertEquals("wrong schema detected", "E", annotation.getPackageName());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getWarningsFile() {
+        return "invalids.txt";
     }
 }
 

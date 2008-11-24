@@ -11,9 +11,16 @@ import java.util.Iterator;
 import org.junit.Test;
 
 /**
- * Tests the class {@link JavacParser}.
+ * Tests the class {@link MavenParser}.
  */
 public class MavenParserTest extends ParserTester {
+    /**
+     * Creates a new instance of {@link MavenParserTest}.
+     */
+    public MavenParserTest() {
+        super(MavenParser.class);
+    }
+
     /**
      * Parses a file with two deprecation warnings.
      *
@@ -22,7 +29,7 @@ public class MavenParserTest extends ParserTester {
      */
     @Test
     public void parseMaven() throws IOException {
-        Collection<FileAnnotation> warnings = new MavenParser().parse(MavenParserTest.class.getResourceAsStream("maven.txt"));
+        Collection<FileAnnotation> warnings = new MavenParser().parse(openFile());
 
         assertEquals("Wrong number of warnings detected.", 5, warnings.size());
 
@@ -46,6 +53,12 @@ public class MavenParserTest extends ParserTester {
                 "com.sun.org.apache.xerces.internal.impl.dv.util.Base64 is Sun proprietary API and may be removed in a future release",
                 "/home/hudson/hudson/data/jobs/Hudson main/workspace/remoting/src/test/java/hudson/remoting/BinarySafeStreamTest.java",
                 MavenParser.WARNING_TYPE, RegexpParser.PROPRIETARY_API, Priority.NORMAL);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getWarningsFile() {
+        return "maven.txt";
     }
 }
 

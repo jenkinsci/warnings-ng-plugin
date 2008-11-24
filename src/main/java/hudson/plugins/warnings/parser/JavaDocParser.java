@@ -11,7 +11,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class JavaDocParser extends RegexpParser {
     /** Warning type of this parser. */
-    static final String WARNING_TYPE = "Ant JavaDoc";
+    static final String WARNING_TYPE = "JavaDoc";
     /** Pattern of javac compiler warnings. */
     private static final String ANT_JAVAC_WARNING_PATTERN = "\\[javadoc\\]\\s*(.*):(\\d+):.*-\\s*(.*)";
 
@@ -31,6 +31,12 @@ public class JavaDocParser extends RegexpParser {
     @Override
     protected Warning createWarning(final Matcher matcher) {
         return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE, StringUtils.EMPTY, matcher.group(3));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return WARNING_TYPE;
     }
 }
 

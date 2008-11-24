@@ -30,7 +30,7 @@ public class ParserRegistryTest {
      */
     @Test
     public void testAllParsersOnOneFile() throws IOException {
-        ParserRegistry parserRegistry = createRegistryUnderTest(StringUtils.EMPTY);
+        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", StringUtils.EMPTY);
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(new File(""));
         Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, TOTAL_WARNINGS, annotations.size());
@@ -54,7 +54,7 @@ public class ParserRegistryTest {
      */
     @Test
     public void issue2359() throws IOException {
-        ParserRegistry parserRegistry = createRegistryUnderTest("/tmp/clover*/**");
+        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", "/tmp/clover*/**");
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(new File(""));
         Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, TOTAL_WARNINGS - 8, annotations.size());
@@ -70,28 +70,31 @@ public class ParserRegistryTest {
      */
     @Test
     public void multiplePatternsIssue2359() throws IOException {
-        ParserRegistry parserRegistry = createRegistryUnderTest("/tmp/clover*/**, **/renderers/*");
+        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", "/tmp/clover*/**, **/renderers/*");
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(new File(""));
         Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, TOTAL_WARNINGS - 18 + 3, annotations.size());
     }
 
+
     /**
      * Creates the registry under test.
      *
+     * @param fileName
+     *            file name with the warnings
      * @param excludePattern
      *            Ant file-set pattern of files to exclude from report,
      *            <code>null</code> or an empty string do not filter the output
      * @return the registry
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
-    private ParserRegistry createRegistryUnderTest(final String excludePattern) {
+    private ParserRegistry createRegistryUnderTest(final String fileName, final String excludePattern) {
         String empty = excludePattern;
         ParserRegistry parserRegistry = new ParserRegistry(empty) {
             /** {@inheritDoc} */
             @Override
             protected InputStream createInputStream(final File file) throws FileNotFoundException {
-                return ParserRegistryTest.class.getResourceAsStream("all.txt");
+                return ParserRegistryTest.class.getResourceAsStream(fileName);
             }
         };
         return parserRegistry;

@@ -19,6 +19,13 @@ public class JavaDocParserTest extends ParserTester {
     private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
 
     /**
+     * Creates a new instance of {@link JavaDocParserTest}.
+     */
+    public JavaDocParserTest() {
+        super(JavaDocParser.class);
+    }
+
+    /**
      * Parses a file with two deprecation warnings.
      *
      * @throws IOException
@@ -26,7 +33,7 @@ public class JavaDocParserTest extends ParserTester {
      */
     @Test
     public void parseJavaDocWarnings() throws IOException {
-        Collection<FileAnnotation> warnings = new JavaDocParser().parse(JavaDocParserTest.class.getResourceAsStream("javadoc.txt"));
+        Collection<FileAnnotation> warnings = new JavaDocParser().parse(openFile());
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 6, warnings.size());
 
@@ -37,6 +44,12 @@ public class JavaDocParserTest extends ParserTester {
                 "Tag @link: can't find removeSpecChangeListener(ChangeListener, String) in chenomx.ccma.common.graph.module.GraphListenerRegistry",
                 "/home/builder/hudson/workspace/Homer/oddjob/src/chenomx/ccma/common/graph/module/GraphListenerRegistry.java",
                 JavaDocParser.WARNING_TYPE, StringUtils.EMPTY, Priority.NORMAL);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getWarningsFile() {
+        return "javadoc.txt";
     }
 }
 

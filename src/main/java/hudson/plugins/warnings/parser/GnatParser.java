@@ -44,4 +44,10 @@ public class GnatParser extends RegexpParser {
         return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE,
                 category, matcher.group(5), priority);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return WARNING_TYPE;
+    }
 }
