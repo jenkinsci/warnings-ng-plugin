@@ -47,7 +47,6 @@ public class ParserRegistry {
         parsers.add(new JavaDocParser());
         parsers.add(new AntEclipseParser());
         parsers.add(new MsBuildParser());
-        parsers.add(new MavenParser());
         parsers.add(new GccParser());
         parsers.add(new InvalidsParser());
         parsers.add(new SunCParser());
@@ -58,7 +57,6 @@ public class ParserRegistry {
             excludeFilter = new ExcludeFilter(excludePattern);
         }
     }
-
 
     /**
      * Returns all registers parsers. Note that removal of elements is not

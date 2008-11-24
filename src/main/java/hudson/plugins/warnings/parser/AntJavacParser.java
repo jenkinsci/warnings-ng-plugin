@@ -2,8 +2,6 @@ package hudson.plugins.warnings.parser;
 
 import java.util.regex.Matcher;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  * A parser for the ant javac compiler warnings.
  *
@@ -30,11 +28,8 @@ public class AntJavacParser extends RegexpParser {
      */
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        String category = StringUtils.capitalize(matcher.group(3));
         String message = matcher.group(4);
-        if (StringUtils.isEmpty(category)) {
-            category = classifyWarning(message);
-        }
+        String category = classifyIfEmpty(matcher.group(3), message);
         return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE, category, message);
     }
 

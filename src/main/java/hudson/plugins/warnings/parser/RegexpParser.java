@@ -122,4 +122,23 @@ public abstract class RegexpParser implements WarningsParser {
         }
         return StringUtils.EMPTY;
     }
+
+    /**
+     * Returns a category for the current warning. If the provided category is
+     * not empty, then a capitalized string is returned. Otherwise the category
+     * is obtained from the specified message text.
+     * @param group
+     *            the warning category (might be empty)
+     * @param message
+     *            the warning message
+     *
+     * @return the actual category
+     */
+    protected String classifyIfEmpty(final String group, final String message) {
+        String category = StringUtils.capitalize(group);
+        if (StringUtils.isEmpty(category)) {
+            category = classifyWarning(message);
+        }
+        return category;
+    }
 }
