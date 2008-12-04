@@ -2,7 +2,7 @@ package hudson.plugins.warnings;
 
 import hudson.model.AbstractBuild;
 import hudson.plugins.warnings.util.AbstractResultAction;
-import hudson.plugins.warnings.util.HealthReportBuilder;
+import hudson.plugins.warnings.util.HealthDescriptor;
 import hudson.plugins.warnings.util.PluginDescriptor;
 
 import java.util.NoSuchElementException;
@@ -27,13 +27,13 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
      *
      * @param owner
      *            the associated build of this action
-     * @param healthReportBuilder
-     *            health builder to use
+     * @param healthDescriptor
+     *            health descriptor to use
      * @param result
      *            the result in this build
      */
-    public WarningsResultAction(final AbstractBuild<?, ?> owner, final HealthReportBuilder healthReportBuilder, final WarningsResult result) {
-        super(owner, healthReportBuilder, result);
+    public WarningsResultAction(final AbstractBuild<?, ?> owner, final HealthDescriptor healthDescriptor, final WarningsResult result) {
+        super(owner, result, new WarningsHealthDescriptor(healthDescriptor));
     }
 
     /**
@@ -41,11 +41,11 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
      *
      * @param owner
      *            the associated build of this action
-     * @param healthReportBuilder
-     *            health builder to use
+     * @param healthDescriptor
+     *            health descriptor to use
      */
-    public WarningsResultAction(final AbstractBuild<?, ?> owner, final HealthReportBuilder healthReportBuilder) {
-        super(owner, healthReportBuilder);
+    public WarningsResultAction(final AbstractBuild<?, ?> owner, final HealthDescriptor healthDescriptor) {
+        super(owner, new WarningsHealthDescriptor(healthDescriptor));
     }
 
     /** {@inheritDoc} */

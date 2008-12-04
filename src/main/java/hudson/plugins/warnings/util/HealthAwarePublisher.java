@@ -24,7 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.io.IOUtils;
@@ -45,7 +44,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Ulli Hafner
  */
 // CHECKSTYLE:COUPLING-OFF
-public abstract class HealthAwarePublisher extends Publisher {
+public abstract class HealthAwarePublisher extends Publisher implements HealthDescriptor {
     /** Default threshold priority limit. */
     private static final String DEFAULT_PRIORITY_THRESHOLD_LIMIT = "low";
     /** Annotation threshold to be reached if a build should be considered as unstable. */
@@ -278,7 +277,7 @@ public abstract class HealthAwarePublisher extends Publisher {
      */
     private void evaluateBuildResult(final AbstractBuild<?, ?> build, final PrintStream logger, final ParserResult project) {
         int annotationCount = 0;
-        for (Priority priority : getPriorities()) {
+        for (Priority priority : Priority.collectPrioritiesFrom(getMinimumPriority())) {
             int numberOfAnnotations = project.getNumberOfAnnotations(priority);
             log(logger, "A total of " + numberOfAnnotations + " annotations have been found for priority " + priority);
             annotationCount += numberOfAnnotations;
@@ -298,27 +297,7 @@ public abstract class HealthAwarePublisher extends Publisher {
         logger.println(StringUtils.defaultString(pluginName) + message);
     }
 
-    /**
-     * Creates a new instance of <code>HealthReportBuilder</code>.
-     *
-     * @param reportSingleCount
-     *            message to be shown if there is exactly one item found
-     * @param reportMultipleCount
-     *            message to be shown if there are zero or more than one items
-     *            found
-     * @return the new health report builder
-     */
-    protected HealthReportBuilder createHealthReporter(final String reportSingleCount, final String reportMultipleCount) {
-        return new HealthReportBuilder(thresholdEnabled, minimumAnnotations, healthyReportEnabled, healthyAnnotations, unHealthyAnnotations,
-                reportSingleCount, reportMultipleCount);
-    }
-
-
-    /**
-     * Determines whether a threshold has been defined.
-     *
-     * @return <code>true</code> if a threshold has been defined
-     */
+    /** {@inheritDoc} */
     public boolean isThresholdEnabled() {
         return thresholdEnabled;
     }
@@ -332,20 +311,12 @@ public abstract class HealthAwarePublisher extends Publisher {
         return threshold;
     }
 
-    /**
-     * Returns the threshold to be reached if a build should be considered as unstable.
-     *
-     * @return the threshold to be reached if a build should be considered as unstable
-     */
+    /** {@inheritDoc} */
     public int getMinimumAnnotations() {
         return minimumAnnotations;
     }
 
-    /**
-     * Returns the isHealthyReportEnabled.
-     *
-     * @return the isHealthyReportEnabled
-     */
+    /** {@inheritDoc} */
     public boolean isHealthyReportEnabled() {
         return healthyReportEnabled;
     }
@@ -359,11 +330,7 @@ public abstract class HealthAwarePublisher extends Publisher {
         return healthy;
     }
 
-    /**
-     * Returns the healthy threshold for annotations, i.e. when health is reported as 100%.
-     *
-     * @return the 100% healthiness
-     */
+    /** {@inheritDoc} */
     public int getHealthyAnnotations() {
         return healthyAnnotations;
     }
@@ -377,11 +344,7 @@ public abstract class HealthAwarePublisher extends Publisher {
         return unHealthy;
     }
 
-    /**
-     * Returns the unhealthy threshold of annotations, i.e. when health is reported as 0%.
-     *
-     * @return the 0% unhealthiness
-     */
+    /** {@inheritDoc} */
     public int getUnHealthyAnnotations() {
         return unHealthyAnnotations;
     }
@@ -444,29 +407,15 @@ public abstract class HealthAwarePublisher extends Publisher {
         return false;
     }
 
-    /**
-     * Returns the priorities that should should be considered when evaluating
-     * the build stability and health.
-     *
-     * @return the priorities
-     */
-    protected Collection<Priority> getPriorities() {
-        ArrayList<Priority> priorities = new ArrayList<Priority>();
-        priorities.add(Priority.HIGH);
-        if ("normal".equals(thresholdLimit)) {
-            priorities.add(Priority.NORMAL);
-        }
-        if ("low".equals(thresholdLimit)) {
-            priorities.add(Priority.NORMAL);
-            priorities.add(Priority.LOW);
-        }
-        return priorities;
+    /** {@inheritDoc} */
+    public Priority getMinimumPriority() {
+        return Priority.valueOf(StringUtils.upperCase(getThresholdLimit()));
     }
 
     /**
-     * Returns the thresholdLimit.
+     * Returns the threshold limit.
      *
-     * @return the thresholdLimit
+     * @return the threshold limit
      */
     public String getThresholdLimit() {
         return thresholdLimit;

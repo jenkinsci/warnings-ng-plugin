@@ -49,8 +49,10 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     /** The associated build of this action. */
     @SuppressWarnings("Se")
     private final AbstractBuild<?, ?> owner;
-    /** Builds a health report. */
-    private HealthReportBuilder healthReportBuilder;
+    /** Backward compatibility. */
+    private HealthReportBuilder healthReportBuilder; // FIXME
+    /** Parameters for the health report. */
+    private final AbstractHealthDescriptor healthDescriptor;
     /** The actual result of this action. */
     private T result;
 
@@ -59,14 +61,15 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      *
      * @param owner
      *            the associated build of this action
-     * @param healthReportBuilder
-     *            health builder to use
      * @param result
      *            the result of the action
+     * @param healthDescriptor
+     *            health descriptor
      */
-    public AbstractResultAction(final AbstractBuild<?, ?> owner, final HealthReportBuilder healthReportBuilder, final T result) {
-        this(owner, healthReportBuilder);
+    public AbstractResultAction(final AbstractBuild<?, ?> owner, final T result, final AbstractHealthDescriptor healthDescriptor) {
+        this.owner = owner;
         this.result = result;
+        this.healthDescriptor = healthDescriptor;
     }
 
     /**
@@ -74,13 +77,26 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      *
      * @param owner
      *            the associated build of this action
-     * @param healthReportBuilder
-     *            health builder to use
+     * @param healthDescriptor
+     *            health descriptor
      */
-    public AbstractResultAction(final AbstractBuild<?, ?> owner, final HealthReportBuilder healthReportBuilder) {
-        super();
+    public AbstractResultAction(final AbstractBuild<?, ?> owner, final AbstractHealthDescriptor healthDescriptor) {
         this.owner = owner;
-        this.healthReportBuilder = healthReportBuilder;
+        this.healthDescriptor = healthDescriptor;
+    }
+
+    /**
+     * Returns the healthDescriptor.
+     *
+     * @return the healthDescriptor
+     */
+    public AbstractHealthDescriptor getHealthDescriptor() {
+        if (healthDescriptor != null) {
+            return healthDescriptor;
+        }
+        else {
+            return NullHealthDescriptor.NULL_HEALTH_DESCRIPTOR; // for old serialized actions
+        }
     }
 
     /**
@@ -101,15 +117,12 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * @return the associated health report builder
      */
     public final HealthReportBuilder getHealthReportBuilder() {
-        if (healthReportBuilder == null) { // support for old serialization information
-            healthReportBuilder = new HealthReportBuilder();
-        }
-        return healthReportBuilder;
+        return new HealthReportBuilder(getHealthDescriptor());
     }
 
     /** {@inheritDoc} */
     public final HealthReport getBuildHealth() {
-        return healthReportBuilder.computeHealth(getResult(), owner.getProject(), getDescriptor());
+        return getHealthReportBuilder().computeHealth(getResult());
     }
 
     /**

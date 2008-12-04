@@ -1,13 +1,8 @@
 package hudson.plugins.warnings.util;
 
-import hudson.Util;
-import hudson.model.AbstractProject;
-import hudson.model.Descriptor;
 import hudson.model.HealthReport;
 import hudson.plugins.warnings.util.model.AnnotationProvider;
 import hudson.plugins.warnings.util.model.Priority;
-import hudson.tasks.Publisher;
-import hudson.util.DescribableList;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,63 +22,17 @@ import org.jfree.data.category.CategoryDataset;
 public class HealthReportBuilder implements Serializable {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = 5191317904662711835L;
-    /** Report health as 100% when the number of warnings is less than this value. */
-    private int healthy;
-    /** Report health as 0% when the number of warnings is greater than this value. */
-    private int unHealthy;
-    /** Determines whether to use the provided healthy thresholds. */
-    private boolean isHealthEnabled;
-    /** Name of the report. */
-    private String reportName;
-    /** Name of a item. */
-    private String itemName;
-    /** Determines whether to use the provided unstable threshold. */
-    private boolean isThresholdEnabled;
-    /** Bug threshold to be reached if a build should be considered as unstable. */
-    private int threshold;
-    /** Message to be shown for a single item count. */
-    private final String reportSingleCount;
-    /** Message to be shown for a multiple item count. */
-    private final String reportMultipleCount;
+    /** Health descriptor. */
+    private final AbstractHealthDescriptor healthDescriptor;
 
     /**
-     * Creates a new instance of <code>HealthReportBuilder</code>.
+     * Creates a new instance of {@link HealthReportBuilder}.
      *
-     * @param isFailureThresholdEnabled
-     *            determines whether to use the provided unstable threshold
-     * @param threshold
-     *            bug threshold to be reached if a build should be considered as
-     *            unstable.
-     * @param isHealthyReportEnabled
-     *            determines whether to use the provided healthy thresholds.
-     * @param healthy
-     *            report health as 100% when the number of warnings is less than
-     *            this value
-     * @param unHealthy
-     *            report health as 0% when the number of warnings is greater
-     *            than this value
-     * @param reportSingleCount
-     *            message to be shown if there is exactly one item found
-     * @param reportMultipleCount
-     *            message to be shown if there are zero or more than one items
-     *            found
+     * @param healthDescriptor
+     *            health descriptor
      */
-    public HealthReportBuilder(final boolean isFailureThresholdEnabled, final int threshold, final boolean isHealthyReportEnabled, final int healthy, final int unHealthy,
-            final String reportSingleCount, final String reportMultipleCount) {
-        this.reportSingleCount = reportSingleCount;
-        this.reportMultipleCount = reportMultipleCount;
-        this.threshold = threshold;
-        this.healthy = healthy;
-        this.unHealthy = unHealthy;
-        isThresholdEnabled = isFailureThresholdEnabled;
-        isHealthEnabled = isHealthyReportEnabled;
-    }
-
-    /**
-     * Creates a new dummy instance of <code>HealthReportBuilder</code>.
-     */
-    public HealthReportBuilder() {
-        this(false, 0, false, 0, 0, "1 item", "%d items");
+    public HealthReportBuilder(final AbstractHealthDescriptor healthDescriptor) {
+        this.healthDescriptor = healthDescriptor;
     }
 
     /**
@@ -95,23 +44,12 @@ public class HealthReportBuilder implements Serializable {
      *
      * @param result
      *            annotations of the current build
-     * @param project
-     *            the current project
-     * @param pluginDescriptor
-     *            the descriptor of the current plug-in
      * @return the healthiness of a build
      */
-    public HealthReport computeHealth(final AnnotationProvider result, final AbstractProject<?, ?> project, final PluginDescriptor pluginDescriptor) {
-        int numberOfAnnotations = result.getNumberOfAnnotations();
-
-        DescribableList<Publisher, Descriptor<Publisher>> publishers = project.getPublishersList();
-        Publisher publisher = publishers.get(pluginDescriptor);
-        if (publisher instanceof HealthAwarePublisher) {
-            HealthAwarePublisher healthAwarePublisher = (HealthAwarePublisher)publisher;
-            numberOfAnnotations = 0;
-            for (Priority priority : healthAwarePublisher.getPriorities()) {
-                numberOfAnnotations += result.getNumberOfAnnotations(priority);
-            }
+    public HealthReport computeHealth(final AnnotationProvider result) {
+        int numberOfAnnotations = 0;
+        for (Priority priority : Priority.collectPrioritiesFrom(healthDescriptor.getMinimumPriority())) {
+            numberOfAnnotations += result.getNumberOfAnnotations(priority);
         }
 
         return computeHealth(numberOfAnnotations, result);
@@ -130,61 +68,22 @@ public class HealthReportBuilder implements Serializable {
      *            annotations of the current build
      * @return the healthiness of a build
      */
-    public HealthReport computeHealth(final int counter, final AnnotationProvider result) {
-        if (isHealthEnabled) {
+    protected HealthReport computeHealth(final int counter, final AnnotationProvider result) {
+        if (healthDescriptor.isHealthyReportEnabled()) {
             int percentage;
-            if (counter < healthy) {
+            if (counter < healthDescriptor.getHealthyAnnotations()) {
                 percentage = 100;
             }
-            else if (counter > unHealthy) {
+            else if (counter > healthDescriptor.getUnHealthyAnnotations()) {
                 percentage = 0;
             }
             else {
-                percentage = 100 - ((counter - healthy) * 100 / (unHealthy - healthy));
+                percentage = 100 - ((counter - healthDescriptor.getHealthyAnnotations()) * 100
+                        / (healthDescriptor.getUnHealthyAnnotations() - healthDescriptor.getHealthyAnnotations()));
             }
-            String description;
-            if (isLocalizedRelease()) {
-                description = createDescription(result);
-            }
-            else {
-                description = reportName + ": " + Util.combine(result.getNumberOfAnnotations(), itemName) + " found.";
-            }
-            return new HealthReport(percentage, description);
+            return new HealthReport(percentage, healthDescriptor.createDescription(result));
         }
         return null;
-    }
-
-    /**
-     * Creates a localized description of the build health.
-     *
-     * @param result
-     *            the result of the build
-     * @return a localized description of the build health
-     */
-    private String createDescription(final AnnotationProvider result) {
-        String description;
-        if (result.getNumberOfAnnotations() == 1) {
-            description = reportSingleCount;
-        }
-        else {
-            description = String.format(reportMultipleCount,
-                    result.getNumberOfAnnotations(),
-                    result.getNumberOfAnnotations(Priority.HIGH), Priority.HIGH.getLocalizedString(),
-                    result.getNumberOfAnnotations(Priority.NORMAL), Priority.NORMAL.getLocalizedString(),
-                    result.getNumberOfAnnotations(Priority.LOW), Priority.LOW.getLocalizedString());
-        }
-        return description;
-    }
-
-    /**
-     * Returns whether the result is recorded in a localized release (i.e.,
-     * release 2.2 and newer).
-     *
-     * @return <code>true</code> if the result is recorded in a localized
-     *         release (i.e., release 2.2 and newer)
-     */
-    private boolean isLocalizedRelease() {
-        return itemName == null;
     }
 
     /**
@@ -194,133 +93,7 @@ public class HealthReportBuilder implements Serializable {
      * @return <code>true</code> if health or failed thresholds are provided
      */
     public boolean isEnabled() {
-        return isHealthEnabled || isThresholdEnabled;
-    }
-
-    /**
-     * Returns the healthy.
-     *
-     * @return the healthy
-     */
-    public final int getHealthy() {
-        return healthy;
-    }
-
-    /**
-     * Sets the healthy to the specified value.
-     *
-     * @param healthy the value to set
-     */
-    public final void setHealthy(final int healthy) {
-        this.healthy = healthy;
-    }
-
-    /**
-     * Returns the unHealthy.
-     *
-     * @return the unHealthy
-     */
-    public final int getUnHealthy() {
-        return unHealthy;
-    }
-
-    /**
-     * Sets the unHealthy to the specified value.
-     *
-     * @param unHealthy the value to set
-     */
-    public final void setUnHealthy(final int unHealthy) {
-        this.unHealthy = unHealthy;
-    }
-
-    /**
-     * Returns the isHealthyReportEnabled.
-     *
-     * @return the isHealthyReportEnabled
-     */
-    public final boolean isHealthyReportEnabled() {
-        return isHealthEnabled;
-    }
-
-    /**
-     * Sets the isHealthyReportEnabled to the specified value.
-     *
-     * @param isHealthyReportEnabled the value to set
-     */
-    public final void setHealthyReportEnabled(final boolean isHealthyReportEnabled) {
-        isHealthEnabled = isHealthyReportEnabled;
-    }
-
-    /**
-     * Returns the isThresholdEnabled.
-     *
-     * @return the isThresholdEnabled
-     */
-    public boolean isFailureThresholdEnabled() {
-        return isThresholdEnabled;
-    }
-
-    /**
-     * Sets the isThresholdEnabled to the specified value.
-     *
-     * @param isFailureThresholdEnabled the value to set
-     */
-    public void setFailureThresholdEnabled(final boolean isFailureThresholdEnabled) {
-        isThresholdEnabled = isFailureThresholdEnabled;
-    }
-
-    /**
-     * Returns the reportName.
-     *
-     * @return the reportName
-     */
-    public final String getReportName() {
-        return reportName;
-    }
-
-    /**
-     * Sets the reportName to the specified value.
-     *
-     * @param reportName the value to set
-     */
-    public final void setReportName(final String reportName) {
-        this.reportName = reportName;
-    }
-
-    /**
-     * Returns the itemName.
-     *
-     * @return the itemName
-     */
-    public final String getItemName() {
-        return itemName;
-    }
-
-    /**
-     * Sets the itemName to the specified value.
-     *
-     * @param itemName the value to set
-     */
-    public final void setItemName(final String itemName) {
-        this.itemName = itemName;
-    }
-
-    /**
-     * Returns the threshold.
-     *
-     * @return the threshold
-     */
-    public int getThreshold() {
-        return threshold;
-    }
-
-    /**
-     * Sets the threshold to the specified value.
-     *
-     * @param threshold the value to set
-     */
-    public void setThreshold(final int threshold) {
-        this.threshold = threshold;
+        return healthDescriptor.isHealthyReportEnabled() || healthDescriptor.isThresholdEnabled();
     }
 
     /**
@@ -335,11 +108,11 @@ public class HealthReportBuilder implements Serializable {
         List<Integer> series = new ArrayList<Integer>(3);
         int remainder = totalCount;
 
-        if (isHealthEnabled) {
-            series.add(Math.min(remainder, healthy));
+        if (healthDescriptor.isHealthyReportEnabled()) {
+            series.add(Math.min(remainder, healthDescriptor.getHealthyAnnotations()));
 
-            int range = unHealthy - healthy;
-            remainder -= healthy;
+            int range = healthDescriptor.getUnHealthyAnnotations() - healthDescriptor.getHealthyAnnotations();
+            remainder -= healthDescriptor.getHealthyAnnotations();
             if (remainder > 0) {
                 series.add(Math.min(remainder, range));
             }
@@ -355,10 +128,10 @@ public class HealthReportBuilder implements Serializable {
                 series.add(0);
             }
         }
-        else if (isThresholdEnabled) {
-            series.add(Math.min(remainder, threshold));
+        else if (healthDescriptor.isThresholdEnabled()) {
+            series.add(Math.min(remainder, healthDescriptor.getMinimumAnnotations()));
 
-            remainder -= threshold;
+            remainder -= healthDescriptor.getMinimumAnnotations();
             if (remainder > 0) {
                 series.add(remainder);
             }
@@ -394,8 +167,47 @@ public class HealthReportBuilder implements Serializable {
             renderer = new PrioritiesAreaRenderer(url, toolTipProvider);
         }
 
-        return ChartBuilder.createChart(dataset, renderer, getThreshold(),
-                isHealthyReportEnabled() || !isFailureThresholdEnabled() || !useHealthBuilder);
+        return ChartBuilder.createChart(dataset, renderer, healthDescriptor.getMinimumAnnotations(),
+                healthDescriptor.isHealthyReportEnabled()
+                || !healthDescriptor.isThresholdEnabled()
+                || !useHealthBuilder);
     }
+
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private int healthy;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private int unHealthy;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private boolean isHealthEnabled;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private boolean isThresholdEnabled;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private int threshold;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private String reportName;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private String itemName;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private String reportSingleCount;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private String reportMultipleCount;
 }
 

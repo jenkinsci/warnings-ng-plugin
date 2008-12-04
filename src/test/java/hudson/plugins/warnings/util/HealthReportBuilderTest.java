@@ -14,10 +14,6 @@ import org.junit.Test;
  */
 @edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
 public class HealthReportBuilderTest extends AbstractEnglishLocaleTest {
-    /** Multiple items text. */
-    private static final String MULTIPLE_ITEMS = "%d items";
-    /** Single item text. */
-    private static final String ONE_ITEM = "One item";
     /** Number of elements in a series with failure threshold. */
     private static final int THRESHOLD_SERIES_SIZE = 2;
     /** Number of elements in a series with healthy threshold. */
@@ -25,7 +21,7 @@ public class HealthReportBuilderTest extends AbstractEnglishLocaleTest {
     /** Error message. */
     private static final String WRONG_SERIES_VALUE = "Wrong series value.";
     /** Error message. */
-    private static final String WRONG_NUMBER = "Number of created point is wrong.";
+    private static final String WRONG_NUMBER = "Number of created points is wrong.";
     /** Error message. */
     private static final String ERROR_MESSAGE = "Wrong healthiness calculation.";
 
@@ -36,16 +32,6 @@ public class HealthReportBuilderTest extends AbstractEnglishLocaleTest {
     public void testMiddle() {
         HealthReport health = createHealthReport(true, 50, 150, 100);
         assertEquals(ERROR_MESSAGE, 50, health.getScore());
-    }
-
-    /**
-     * Tests whether we correctly display the result.
-     */
-    @Test
-    public void testDisplay() {
-        assertEquals(ERROR_MESSAGE, "0 items", createHealthReport(true, 50, 150, 0).getDescription());
-        assertEquals(ERROR_MESSAGE, "One item", createHealthReport(true, 50, 150, 1).getDescription());
-        assertEquals(ERROR_MESSAGE, "2 items", createHealthReport(true, 50, 150, 2).getDescription());
     }
 
     /**
@@ -103,11 +89,31 @@ public class HealthReportBuilderTest extends AbstractEnglishLocaleTest {
     }
 
     /**
+     * Creates a health report using a {@link HealthReportBuilder} with the specified parameters.
+     *
+     * @param isEnabled
+     *            defines whether health reporting is enabled
+     * @param min
+     *            minimum number of bugs
+     * @param max
+     *            maximum number of bugs
+     * @param actual
+     *            actual number of bugs
+     * @return the actual healthiness
+     */
+    private HealthReport createHealthReport(final boolean isEnabled, final int min, final int max, final int actual) {
+        HealthReportBuilder builder = createHealthBuilder(false, 0, isEnabled, min, max);
+        AnnotationProvider result = mock(AnnotationProvider.class);
+        stub(result.getNumberOfAnnotations()).toReturn(actual);
+        return builder.computeHealth(actual, result);
+    }
+
+    /**
      * Tests whether we correctly compute the series if health reporting is enabled.
      */
     @Test
     public void testHealthySeriesCalculator() {
-        HealthReportBuilder builder = new HealthReportBuilder(true, 0, true, 10, 30, ONE_ITEM, MULTIPLE_ITEMS);
+        HealthReportBuilder builder = createHealthBuilder(true, 0, true, 10, 30);
 
         List<Integer> series = builder.createSeries(5);
         assertEquals(WRONG_NUMBER, HEALTHY_SERIES_SIZE, series.size());
@@ -145,7 +151,7 @@ public class HealthReportBuilderTest extends AbstractEnglishLocaleTest {
      */
     @Test
     public void testThresholdSeriesCalculator() {
-        HealthReportBuilder builder = new HealthReportBuilder(true, 10, false, 20, 50, ONE_ITEM, MULTIPLE_ITEMS);
+        HealthReportBuilder builder = createHealthBuilder(true, 10, false, 20, 50);
 
         List<Integer> series = builder.createSeries(5);
         assertEquals(WRONG_NUMBER, THRESHOLD_SERIES_SIZE, series.size());
@@ -168,7 +174,7 @@ public class HealthReportBuilderTest extends AbstractEnglishLocaleTest {
      */
     @Test
     public void testIssue796() {
-        HealthReportBuilder builder = new HealthReportBuilder(false, 0, true, 1, 10, ONE_ITEM, MULTIPLE_ITEMS);
+        HealthReportBuilder builder = createHealthBuilder(false, 0, true, 1, 10);
 
         List<Integer> series = builder.createSeries(1);
         assertEquals(WRONG_NUMBER, HEALTHY_SERIES_SIZE, series.size());
@@ -184,23 +190,34 @@ public class HealthReportBuilderTest extends AbstractEnglishLocaleTest {
     }
 
     /**
-     * Creates the test fixture.
+     * Creates the {@link HealthReportBuilder} under test with the specified
+     * parameters.
      *
-     * @param isEnabled
-     *            defines whether health reporting is enabled
-     * @param min
-     *            minimum number of bugs
-     * @param max
-     *            maximum number of bugs
-     * @param actual
-     *            actual number of bugs
-     * @return the actual healthiness
+     * @param isHealthEnabled
+     *            determines whether to use the provided unstable threshold
+     * @param threshold
+     *            bug threshold to be reached if a build should be considered as
+     *            unstable.
+     * @param isThresholdEnabled
+     *            determines whether to use the provided healthy thresholds.
+     * @param healthy
+     *            report health as 100% when the number of warnings is less than
+     *            this value
+     * @param unHealthy
+     *            report health as 0% when the number of warnings is greater
+     *            than this value
+     * @return the {@link HealthReportBuilder} under test
      */
-    private HealthReport createHealthReport(final boolean isEnabled, final int min, final int max, final int actual) {
-        HealthReportBuilder builder = new HealthReportBuilder(false, 0, isEnabled, min, max, ONE_ITEM, MULTIPLE_ITEMS);
-        AnnotationProvider result = mock(AnnotationProvider.class);
-        stub(result.getNumberOfAnnotations()).toReturn(actual);
-        return builder.computeHealth(actual, result);
+    private HealthReportBuilder createHealthBuilder(final boolean isThresholdEnabled, final int threshold,
+            final boolean isHealthEnabled, final int healthy, final int unHealthy) {
+        AbstractHealthDescriptor healthDescriptor = mock(AbstractHealthDescriptor.class);
+        stub(healthDescriptor.isThresholdEnabled()).toReturn(isThresholdEnabled);
+        stub(healthDescriptor.getMinimumAnnotations()).toReturn(threshold);
+        stub(healthDescriptor.isHealthyReportEnabled()).toReturn(isHealthEnabled);
+        stub(healthDescriptor.getHealthyAnnotations()).toReturn(healthy);
+        stub(healthDescriptor.getUnHealthyAnnotations()).toReturn(unHealthy);
+
+        return new HealthReportBuilder(healthDescriptor);
     }
 }
 

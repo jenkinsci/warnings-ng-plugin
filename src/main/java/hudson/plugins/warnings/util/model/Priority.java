@@ -2,6 +2,9 @@ package hudson.plugins.warnings.util.model;
 
 import hudson.plugins.warnings.util.Messages;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.thoughtworks.xstream.XStream;
@@ -77,5 +80,26 @@ public enum Priority {
             return Messages.LowPriority();
         }
         return Messages.NormalPriority();
+    }
+
+    /**
+     * Gets the priorities starting from the specified priority to
+     * {@link Priority#HIGH}.
+     *
+     * @param minimumPriority
+     *            the minimum priority
+     * @return the priorities starting from the specified priority
+     */
+    public static Collection<Priority> collectPrioritiesFrom(final Priority minimumPriority) {
+        ArrayList<Priority> priorities = new ArrayList<Priority>();
+        priorities.add(Priority.HIGH);
+        if (minimumPriority == Priority.NORMAL) {
+            priorities.add(Priority.NORMAL);
+        }
+        if (minimumPriority == Priority.LOW) {
+            priorities.add(Priority.NORMAL);
+            priorities.add(Priority.LOW);
+        }
+        return priorities;
     }
 }

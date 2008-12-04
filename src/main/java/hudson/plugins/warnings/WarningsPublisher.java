@@ -9,7 +9,6 @@ import hudson.plugins.warnings.parser.FileWarningsParser;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.plugins.warnings.util.FilesParser;
 import hudson.plugins.warnings.util.HealthAwarePublisher;
-import hudson.plugins.warnings.util.HealthReportBuilder;
 import hudson.plugins.warnings.util.ParserResult;
 import hudson.tasks.Publisher;
 
@@ -110,10 +109,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
         project.addAnnotations(new ParserRegistry(getExcludePattern()).parse(logFile));
 
         WarningsResult result = new WarningsResultBuilder().build(build, project);
-        HealthReportBuilder healthReportBuilder = createHealthReporter(
-                Messages.Warnings_ResultAction_HealthReportSingleItem(),
-                Messages.Warnings_ResultAction_HealthReportMultipleItem());
-        build.getActions().add(new WarningsResultAction(build, healthReportBuilder, result));
+        build.getActions().add(new WarningsResultAction(build, this, result));
 
         return project;
     }

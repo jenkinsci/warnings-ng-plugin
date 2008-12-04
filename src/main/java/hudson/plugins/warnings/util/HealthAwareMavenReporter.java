@@ -21,7 +21,6 @@ import hudson.tasks.BuildStep;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
@@ -42,7 +41,7 @@ import org.apache.maven.project.MavenProject;
  * @author Ulli Hafner
  */
 // CHECKSTYLE:COUPLING-OFF
-public abstract class HealthAwareMavenReporter extends MavenReporter {
+public abstract class HealthAwareMavenReporter extends MavenReporter implements HealthDescriptor {
     /** Default threshold priority limit. */
     private static final String DEFAULT_PRIORITY_THRESHOLD_LIMIT = "low";
     /** Unique identifier of this class. */
@@ -312,7 +311,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
      */
     private void evaluateBuildResult(final MavenBuildProxy build, final PrintStream logger, final ParserResult result) {
         int annotationCount = 0;
-        for (Priority priority : getPriorities()) {
+        for (Priority priority : Priority.collectPrioritiesFrom(getMinimumPriority())) {
             int numberOfAnnotations = result.getNumberOfAnnotations(priority);
             log(logger, "A total of " + numberOfAnnotations + " annotations have been found for priority " + priority);
             annotationCount += numberOfAnnotations;
@@ -359,27 +358,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
         return new FilePath(new FilePath(pom.getBasedir()), "target");
     }
 
-    /**
-     * Creates a new instance of <code>HealthReportBuilder</code>.
-     *
-     * @param reportSingleCount
-     *            message to be shown if there is exactly one item found
-     * @param reportMultipleCount
-     *            message to be shown if there are zero or more than one items
-     *            found
-     * @return the new health report builder
-     */
-    protected HealthReportBuilder createHealthBuilder(final String reportSingleCount, final String reportMultipleCount) {
-        return new HealthReportBuilder(isThresholdEnabled(), getMinimumAnnotations(),
-                isHealthyReportEnabled(), getHealthyAnnotations(), getUnHealthyAnnotations(),
-                reportSingleCount, reportMultipleCount);
-    }
-
-    /**
-     * Determines whether a threshold has been defined.
-     *
-     * @return <code>true</code> if a threshold has been defined
-     */
+    /** {@inheritDoc} */
     public boolean isThresholdEnabled() {
         return thresholdEnabled;
     }
@@ -393,20 +372,12 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
         return threshold;
     }
 
-    /**
-     * Returns the threshold to be reached if a build should be considered as unstable.
-     *
-     * @return the threshold to be reached if a build should be considered as unstable
-     */
+    /** {@inheritDoc} */
     public int getMinimumAnnotations() {
         return minimumAnnotations;
     }
 
-    /**
-     * Returns the isHealthyReportEnabled.
-     *
-     * @return the isHealthyReportEnabled
-     */
+    /** {@inheritDoc} */
     public boolean isHealthyReportEnabled() {
         return healthyReportEnabled;
     }
@@ -420,11 +391,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
         return healthy;
     }
 
-    /**
-     * Returns the healthy threshold for annotations, i.e. when health is reported as 100%.
-     *
-     * @return the 100% healthiness
-     */
+    /** {@inheritDoc} */
     public int getHealthyAnnotations() {
         return healthyAnnotations;
     }
@@ -438,11 +405,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
         return unHealthy;
     }
 
-    /**
-     * Returns the unhealthy threshold of annotations, i.e. when health is reported as 0%.
-     *
-     * @return the 0% unhealthiness
-     */
+    /** {@inheritDoc} */
     public int getUnHealthyAnnotations() {
         return unHealthyAnnotations;
     }
@@ -465,23 +428,9 @@ public abstract class HealthAwareMavenReporter extends MavenReporter {
         return new TrendReportSize(height).getHeight();
     }
 
-    /**
-     * Returns the priorities that should should be considered when evaluating
-     * the build stability and health.
-     *
-     * @return the priorities
-     */
-    protected Collection<Priority> getPriorities() {
-        ArrayList<Priority> priorities = new ArrayList<Priority>();
-        priorities.add(Priority.HIGH);
-        if ("normal".equals(thresholdLimit)) {
-            priorities.add(Priority.NORMAL);
-        }
-        if ("low".equals(thresholdLimit)) {
-            priorities.add(Priority.NORMAL);
-            priorities.add(Priority.LOW);
-        }
-        return priorities;
+    /** {@inheritDoc} */
+    public Priority getMinimumPriority() {
+        return Priority.valueOf(StringUtils.upperCase(getThresholdLimit()));
     }
 
     /**
