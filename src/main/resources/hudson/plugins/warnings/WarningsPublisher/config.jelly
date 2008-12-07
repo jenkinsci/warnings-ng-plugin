@@ -53,7 +53,12 @@
       <st:nbsp/>
       <label for="thresholdLimit.normal">${%Priorities high and normal}</label>
       <st:nbsp />
-      <f:radio name="warnings.thresholdLimit" value="low" title="" checked="${instance.thresholdLimit == 'low'}" id="thresholdLimit.low"/>
+      <j:if test="${instance != null}">
+        <f:radio name="warnings.thresholdLimit" value="low" title="" checked="${instance.thresholdLimit == 'low'}" id="thresholdLimit.low"/>
+      </j:if>
+      <j:if test="${instance == null}">
+        <f:radio name="warnings.thresholdLimit" value="low" title="" checked="${true}" id="thresholdLimit.low"/>
+      </j:if>
       <st:nbsp/>
       <label for="thresholdLimit.low">${%All priorities}</label>
       <st:nbsp />
