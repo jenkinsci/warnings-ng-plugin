@@ -83,6 +83,20 @@
             background-position:center center;
             background-repeat:no-repeat;
         }
+
+        .priority-high {
+            background: #EF2929;
+        }
+
+        .priority-normal {
+            background: #FCE94F;
+        }
+
+        .priority-low {
+            background: #729FCF;
+        }
+
+
       </style>
 </j:jelly>
 

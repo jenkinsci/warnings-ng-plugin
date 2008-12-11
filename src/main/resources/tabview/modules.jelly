@@ -5,20 +5,19 @@
     <tr>
       <td class="pane-header">${%Module}</td>
       <td class="pane-header" style="width:2em">${%Total}</td>
-      <td class="pane-header">${%Distribution}</td>
+      <td class="pane-header" style="width:60%">${%Distribution}</td>
     </tr>
     <tbody>
-      <j:forEach var="module" items="${it.container.modules}">
+      <j:set var="max" value="${it.container.getUpperBound(it.container.modules)}" />
+      <j:forEach var="container" items="${it.container.modules}">
         <tr>
           <td class="pane">
-            <a href="module.${module.name.hashCode()}/">${module.name}</a>
+            <a href="container.${container.name.hashCode()}/">${container.name}</a>
           </td>
-          <td class="pane">${module.numberOfAnnotations}
+          <td class="pane">${container.numberOfAnnotations}
           </td>
           <td class="pane">
-            <div tooltip="${module.toolTip}">
-              <img src="statistics?object=module.${module.name}" />
-            </div>
+            <st:include page="/tabview/priority-graph.jelly" />
           </td>
         </tr>
       </j:forEach>

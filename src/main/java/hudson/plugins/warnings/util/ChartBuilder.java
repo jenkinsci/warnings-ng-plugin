@@ -103,66 +103,6 @@ public final class ChartBuilder {
     }
 
     /**
-     * Creates a standard bar graph from the specified priority values.
-     *
-     * @param high
-     *            number of high priority items
-     * @param normal
-     *            number of normal priority items
-     * @param low
-     *            number of low priority items
-     * @param max
-     *            upper bound of the graph
-     * @return a standard graph from the specified data set.
-     */
-    public static JFreeChart createHighNormalLowChart(final int high, final int normal, final int low, final int max) {
-        CategoryDataset dataset = DatasetUtilities.createCategoryDataset("row", "column",
-                new double[][] {{high}, {normal}, {low}});
-
-        JFreeChart chart = ChartFactory.createStackedBarChart(
-                null,                        // chart title
-                null,                        // unused
-                null,                        // range axis label
-                dataset,                     // data
-                PlotOrientation.HORIZONTAL,  // orientation
-                false,                       // include legend
-                false,                       // tooltips
-                false                        // urls
-        );
-
-        chart.setBackgroundPaint(Color.white);
-        chart.setBorderVisible(false);
-
-        CategoryPlot plot = chart.getCategoryPlot();
-        plot.setBackgroundPaint(Color.WHITE);
-        plot.setOutlinePaint(null);
-        plot.setForegroundAlpha(0.8f);
-        plot.setRangeGridlinesVisible(false);
-
-        CategoryAxis domainAxis = new CategoryAxis();
-        plot.setDomainAxis(domainAxis);
-        domainAxis.setVisible(false);
-        domainAxis.setLowerMargin(0);
-        domainAxis.setUpperMargin(0);
-        domainAxis.setCategoryMargin(0);
-
-        plot.getRenderer().setSeriesPaint(0, ColorPalette.RED);
-        plot.getRenderer().setSeriesPaint(1, ColorPalette.YELLOW);
-        plot.getRenderer().setSeriesPaint(2, ColorPalette.BLUE);
-        plot.getRenderer().setSeriesOutlineStroke(0, new BasicStroke(0));
-        plot.getRenderer().setSeriesOutlineStroke(1, new BasicStroke(0));
-        plot.getRenderer().setSeriesOutlineStroke(2, new BasicStroke(0));
-
-        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        rangeAxis.setVisible(false);
-        rangeAxis.setLowerMargin(0);
-        rangeAxis.setUpperMargin(0);
-        rangeAxis.setUpperBound(max);
-        return chart;
-    }
-
-    /**
      * Annotates the specified graph with a failure threshold line.
      *
      * @param chart the chart to annotate

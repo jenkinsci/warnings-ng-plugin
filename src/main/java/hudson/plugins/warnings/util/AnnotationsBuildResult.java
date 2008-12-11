@@ -464,20 +464,6 @@ public abstract class AnnotationsBuildResult extends BuildResult {
     }
 
     /**
-     * Generates a PNG image for high/normal/low distribution of the specified object.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @throws IOException
-     *             in case of an error
-     */
-    public final void doStatistics(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        new ChartRenderer().doStatistics(request, response, getContainer());
-    }
-
-    /**
      * Returns all possible priorities.
      *
      * @return all priorities

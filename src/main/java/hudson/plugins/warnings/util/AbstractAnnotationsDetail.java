@@ -6,7 +6,6 @@ import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import org.kohsuke.stapler.StaplerRequest;
@@ -100,20 +99,6 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
         return new DetailBuilder().createDetails(link, owner, getContainer(), getDisplayName());
-    }
-
-    /**
-     * Generates a PNG image for high/normal/low distribution of the specified object.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @throws IOException
-     *             in case of an error
-     */
-    public void doStatistics(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        new ChartRenderer().doStatistics(request, response, getContainer());
     }
 
     /**

@@ -87,6 +87,21 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     }
 
     /**
+     * Gets the maximum number of annotations within the specified containers.
+     *
+     * @param containers
+     *            the containers to scan for the upper bound
+     * @return the maximum number of annotations
+     */
+    public int getUpperBound(final Collection<? extends AnnotationContainer> containers) {
+        int maximum = 0;
+        for (AnnotationContainer container : containers) {
+            maximum = Math.max(maximum, container.getNumberOfAnnotations());
+        }
+        return maximum;
+    }
+
+    /**
      * Creates a new instance of <code>AnnotationContainer</code>.
      *
      * @param name the name of this container
@@ -357,6 +372,33 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     /** {@inheritDoc} */
     public int getNumberOfAnnotations() {
         return annotations.size();
+    }
+
+    /**
+     * Gets the number of annotations with priority low.
+     *
+     * @return the number of annotations with priority low
+     */
+    public int getNumberOfLowAnnotations() {
+        return getLowAnnotations().size();
+    }
+
+    /**
+     * Gets the number of annotations with priority normal.
+     *
+     * @return the number of annotations with priority normal
+     */
+    public int getNumberOfNormalAnnotations() {
+        return getNormalAnnotations().size();
+    }
+
+    /**
+     * Gets the number of annotations with priority high.
+     *
+     * @return the number of annotations with priority high
+     */
+    public int getNumberOfHighAnnotations() {
+        return getHighAnnotations().size();
     }
 
     /** {@inheritDoc} */
