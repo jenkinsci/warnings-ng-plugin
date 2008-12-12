@@ -86,14 +86,17 @@
 
         .priority-high {
             background: #EF2929;
+            background-image:url(${rootURL}/plugin/warnings/icons/clearpixel.gif);
         }
 
         .priority-normal {
             background: #FCE94F;
+            background-image:url(${rootURL}/plugin/warnings/icons/clearpixel.gif);
         }
 
         .priority-low {
             background: #729FCF;
+            background-image:url(${rootURL}/plugin/warnings/icons/clearpixel.gif);
         }
 
 

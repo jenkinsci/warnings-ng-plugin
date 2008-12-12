@@ -10,21 +10,17 @@
     <tr style="height:10;padding:0">
       <j:if test="${high > 0}">
         <td  class="priority-high" style="width:${high / max * 100}%">
-          <img src="/plugin/checkstyle/icons/clearpixel.gif"/>
         </td>
       </j:if>
       <j:if test="${normal > 0}">
         <td class="priority-normal" style="width:${normal / max * 100}%">
-          <img src="/plugin/checkstyle/icons/clearpixel.gif"/>
         </td>
       </j:if>
       <j:if test="${low > 0}">
         <td class="priority-low" style="width:${low / max * 100}%">
-          <img src="/plugin/checkstyle/icons/clearpixel.gif"/>
         </td>
       </j:if>
       <td style="background:white;width:${ (max - high - normal - low) / max * 100}%">
-        <img src="/plugin/checkstyle/icons/clearpixel.gif"/>
       </td>
     </tr>
   </table>
