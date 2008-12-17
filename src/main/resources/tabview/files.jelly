@@ -12,7 +12,7 @@
       <j:forEach var="container" items="${it.container.files}">
         <tr>
           <td class="pane">
-            <a href="container.${container.name.hashCode()}/">${container.shortName}</a>
+            <a href="file.${container.name.hashCode()}/">${container.shortName}</a>
           </td>
           <td class="pane">${container.numberOfAnnotations}
           </td>

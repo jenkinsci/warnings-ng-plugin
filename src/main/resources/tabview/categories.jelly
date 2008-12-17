@@ -12,7 +12,7 @@
       <j:forEach var="container" items="${it.container.categories}">
         <tr>
           <td class="pane">
-            <a href="container.${container.name}/">${container.name}</a>
+            <a href="category.${container.name}/">${container.name}</a>
           </td>
           <td class="pane">${container.numberOfAnnotations}
           </td>
