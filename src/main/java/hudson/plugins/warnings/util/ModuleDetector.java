@@ -5,7 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.digester.Digester;
@@ -26,6 +29,42 @@ public class ModuleDetector {
     private static final String TARGET = "/target";
     /** The factory to create input streams with. */
     private FileInputStreamFactory factory = new DefaultFileInputStreamFactory();
+    /** Maps file names to module names. */
+    private final Map<String, String> fileNameToModuleName;
+    /** Sorted list of file name prefixes. */
+    private final List<String> prefixes;
+
+    /**
+     * Creates a new instance of {@link ModuleDetector}.
+     */
+    public ModuleDetector() {
+        fileNameToModuleName = new HashMap<String, String>();
+        prefixes = new ArrayList<String>();
+    }
+
+    /**
+     * Creates a new instance of {@link ModuleDetector}.
+     *
+     * @param workspace
+     *            the workspace to scan for maven pom.xml or ant build.xml files
+     */
+    public ModuleDetector(final File workspace) {
+        this(workspace, new DefaultFileInputStreamFactory());
+    }
+
+    /**
+     * Creates a new instance of {@link ModuleDetector}.
+     *
+     * @param workspace
+     *            the workspace to scan for maven pom.xml or ant build.xml files
+     * @param fileInputStreamFactory the value to set
+     */
+    public ModuleDetector(final File workspace, final FileInputStreamFactory fileInputStreamFactory) {
+        setFileInputStreamFactory(fileInputStreamFactory);
+        fileNameToModuleName = createFilesToModuleMapping(workspace);
+        prefixes = new ArrayList<String>(fileNameToModuleName.keySet());
+        Collections.sort(prefixes);
+    }
 
     /**
      * Sets the factory to the specified value.
@@ -39,32 +78,54 @@ public class ModuleDetector {
     /**
      * Returns a mapping of path prefixes to module names.
      *
-     * @param workspace the workspace to start scanning for files
+     * @param workspace
+     *            the workspace to start scanning for files
      * @return the mapping of path prefixes to module names
      */
-    public Map<String, String> getModules(final File workspace) {
+    private Map<String, String> createFilesToModuleMapping(final File workspace) {
         String[] projects = findMavenModules(workspace);
-        Map<String, String> fileNameToModuleName = new HashMap<String, String>();
+        Map<String, String> mapping = new HashMap<String, String>();
         if (projects.length > 0) {
             for (int i = 0; i < projects.length; i++) {
                 String fileName = projects[i];
                 String moduleName = parsePom(fileName);
                 if (StringUtils.isNotBlank(moduleName)) {
-                    fileNameToModuleName.put(StringUtils.substringBeforeLast(fileName, MAVEN_POM), moduleName);
+                    mapping.put(StringUtils.substringBeforeLast(fileName, MAVEN_POM), moduleName);
                 }
             }
         }
-        if (fileNameToModuleName.isEmpty()) {
+        if (mapping.isEmpty()) {
             projects = findAntProjects(workspace);
             for (int i = 0; i < projects.length; i++) {
                 String fileName = projects[i];
                 String moduleName = parseBuildXml(fileName);
                 if (StringUtils.isNotBlank(moduleName)) {
-                    fileNameToModuleName.put(StringUtils.substringBeforeLast(fileName, ANT_PROJECT), moduleName);
+                    mapping.put(StringUtils.substringBeforeLast(fileName, ANT_PROJECT), moduleName);
                 }
             }
         }
-        return fileNameToModuleName;
+
+        return mapping;
+    }
+
+    /**
+     * Uses the path prefixes of pom.xml or build.xml files to guess a module
+     * name for the specified file.
+     *
+     * @param originalFileName
+     *            file name to guess a module for
+     * @return a module name or an empty string
+     */
+    public String guessModuleName(final String originalFileName) {
+        String fullPath = originalFileName.replace('\\', '/');
+
+        String guessedModule = StringUtils.EMPTY;
+        for (String path : prefixes) {
+            if (fullPath.startsWith(path)) {
+                guessedModule = fileNameToModuleName.get(path);
+            }
+        }
+        return guessedModule;
     }
 
     /**

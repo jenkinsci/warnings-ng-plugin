@@ -23,35 +23,33 @@ import org.apache.tools.ant.DirectoryScanner;
 // CHECKSTYLE:COUPLING-OFF
 public class ParserRegistry {
     /** The available parsers of this plug-in. */
-    private final List<WarningsParser> parsers = new ArrayList<WarningsParser>();
+    private final List<WarningsParser> allParsers;
     /** Filter for ant file-set pattern of files to exclude from report. */
     private ExcludeFilter excludeFilter;
 
     /**
      * Creates a new instance of <code>ParserRegistry</code>.
      */
-    public ParserRegistry() {
-        this(null);
+    public ParserRegistry(final List<WarningsParser> parsers) {
+        this(parsers, StringUtils.EMPTY);
     }
+
 
     /**
      * Creates a new instance of <code>ParserRegistry</code>.
      *
+     * @param parsers
+     *            the parsers to use when scanning a file
      * @param excludePattern
      *            Ant file-set pattern of files to exclude from report,
      *            <code>null</code> or an empty string do not filter the output
      */
-    public ParserRegistry(final String excludePattern) {
-        parsers.add(new JavacParser());
-        parsers.add(new AntJavacParser());
-        parsers.add(new JavaDocParser());
-        parsers.add(new AntEclipseParser());
-        parsers.add(new MsBuildParser());
-        parsers.add(new GccParser());
-        parsers.add(new InvalidsParser());
-        parsers.add(new SunCParser());
-        parsers.add(new GnatParser());
-        parsers.add(new ErlcParser());
+    public ParserRegistry(final List<WarningsParser> parsers, final String excludePattern) {
+        allParsers = new ArrayList<WarningsParser>(parsers);
+
+        if (allParsers.isEmpty()) {
+            allParsers.addAll(getAllParsers());
+        }
 
         if (!StringUtils.isEmpty(excludePattern)) {
             excludeFilter = new ExcludeFilter(excludePattern);
@@ -65,7 +63,7 @@ public class ParserRegistry {
      * @return the registered parsers
      */
     protected Iterable<WarningsParser> getParsers() {
-        return Collections.unmodifiableList(parsers);
+        return Collections.unmodifiableList(allParsers);
     }
 
     /**
@@ -79,7 +77,7 @@ public class ParserRegistry {
      */
     public Collection<FileAnnotation> parse(final File file) throws IOException {
         List<FileAnnotation> allAnnotations = new ArrayList<FileAnnotation>();
-        for (WarningsParser parser : parsers) {
+        for (WarningsParser parser : allParsers) {
             allAnnotations.addAll(parser.parse(createInputStream(file)));
         }
         if (excludeFilter == null) {
@@ -150,6 +148,27 @@ public class ParserRegistry {
                 return isExcluded(name);
             }
         }
+    }
+
+    /**
+     * Returns all available parsers.
+     *
+     * @return all available parsers
+     */
+    public static List<WarningsParser> getAllParsers() {
+        ArrayList<WarningsParser> parsers = new ArrayList<WarningsParser>();
+        parsers.add(new JavacParser());
+        parsers.add(new AntJavacParser());
+        parsers.add(new JavaDocParser());
+        parsers.add(new AntEclipseParser());
+        parsers.add(new MsBuildParser());
+        parsers.add(new GccParser());
+        parsers.add(new InvalidsParser());
+        parsers.add(new SunCParser());
+        parsers.add(new GnatParser());
+        parsers.add(new ErlcParser());
+
+        return parsers;
     }
 }
 

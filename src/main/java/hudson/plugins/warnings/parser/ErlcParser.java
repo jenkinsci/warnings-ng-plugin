@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
  *
  * @author Stefan Brausch
  */
-public class ErlcParser extends RegexpParser {
+public class ErlcParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "erlc";
     /** Pattern of erlc compiler warnings. */
@@ -19,7 +19,7 @@ public class ErlcParser extends RegexpParser {
      * Creates a new instance of <code>ErlcCompileParser</code>.
      */
     public ErlcParser() {
-        super(ERLC_WARNING_PATTERN, true);
+        super(ERLC_WARNING_PATTERN, "Erlang Compiler");
     }
 
     /** {@inheritDoc} */
@@ -41,12 +41,6 @@ public class ErlcParser extends RegexpParser {
             category = "ERLC Error";
         }
         return new Warning(filename, linenumber, WARNING_TYPE, category, message, priority);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return WARNING_TYPE;
     }
 }
 

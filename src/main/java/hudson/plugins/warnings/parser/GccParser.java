@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
  *
  * @author Greg Roth
  */
-public class GccParser extends RegexpParser {
+public class GccParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "gcc";
     /** Pattern of gcc compiler warnings. */
@@ -18,7 +18,7 @@ public class GccParser extends RegexpParser {
      * Creates a new instance of <code>GccParser</code>.
      */
     public GccParser() {
-        super(GCC_WARNING_PATTERN, true);
+        super(GCC_WARNING_PATTERN, "GNU compiler (gcc)");
     }
 
     /** {@inheritDoc} */
@@ -40,12 +40,6 @@ public class GccParser extends RegexpParser {
         String category = "GCC " + matcher.group(3);
         return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE,
                 category, matcher.group(4), priority);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return WARNING_TYPE;
     }
 }
 

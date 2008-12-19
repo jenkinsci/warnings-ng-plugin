@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
  *
  * @author Ulli Hafner
  */
-public class JavacParser extends RegexpParser {
+public class JavacParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Java Compiler";
     /** Pattern of javac compiler warnings. */
@@ -17,7 +17,7 @@ public class JavacParser extends RegexpParser {
      * Creates a new instance of <code>JavacParser</code>.
      */
     public JavacParser() {
-        super(JAVAC_WARNING_PATTERN);
+        super(JAVAC_WARNING_PATTERN, WARNING_TYPE);
     }
 
     /**
@@ -31,12 +31,6 @@ public class JavacParser extends RegexpParser {
         String message = matcher.group(4);
         String category = classifyIfEmpty(matcher.group(3), message);
         return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE, category, message);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return WARNING_TYPE;
     }
 }
 

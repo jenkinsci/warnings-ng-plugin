@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
  *
  * @author Ulli Hafner
  */
-public class SunCParser extends RegexpParser {
+public class SunCParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "SUN C++ Compiler";
     /** Pattern of gcc compiler warnings. */
@@ -19,7 +19,7 @@ public class SunCParser extends RegexpParser {
      * Creates a new instance of <code>HpiCompileParser</code>.
      */
     public SunCParser() {
-        super(SUN_CPP_WARNING_PATTERN);
+        super(SUN_CPP_WARNING_PATTERN, WARNING_TYPE);
     }
 
     /** {@inheritDoc} */
@@ -34,12 +34,6 @@ public class SunCParser extends RegexpParser {
         }
         return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE,
                 matcher.group(4), matcher.group(5), priority);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return WARNING_TYPE;
     }
 }
 

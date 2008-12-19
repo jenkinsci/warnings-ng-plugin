@@ -11,7 +11,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Ulli Hafner
  */
-public class InvalidsParser extends RegexpParser {
+public class InvalidsParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Oracle ";
     /** Pattern of javac compiler warnings. */
@@ -21,7 +21,7 @@ public class InvalidsParser extends RegexpParser {
      * Creates a new instance of <code>InvalidsParser</code>.
      */
     public InvalidsParser() {
-        super(INVALIDS_PATTERN);
+        super(INVALIDS_PATTERN, "Oracle Invalids");
     }
 
     /**
@@ -48,12 +48,6 @@ public class InvalidsParser extends RegexpParser {
         warning.setPackageName(matcher.group(1));
 
         return warning;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return WARNING_TYPE;
     }
 }
 

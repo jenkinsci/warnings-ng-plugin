@@ -5,6 +5,28 @@
     <f:textbox name="pattern" value="${instance.pattern}"
       checkUrl="'${rootURL}/publisher/WarningsPublisher/checkPattern?job=${it.fullName}&amp;value='+escape(this.value)" />
   </f:entry>
+  <f:entry title="${%Parsers}"
+         description="${%List of parsers to scan for warnings}">
+    <j:invokeStatic var="allParsers" className="hudson.plugins.warnings.parser.ParserRegistry" method="getAllParsers"/>
+    <f:repeatable var="inst" items="${instance.parsers}" name="parsers">
+      <table width="100%">
+        <f:entry title="${%Parser}">
+          <select class="setting-input" name="parser_name">
+            <j:forEach var="parser" items="${allParsers}">
+              <f:option selected="${false}">${parser.name}</f:option>
+            </j:forEach>
+          </select>
+        </f:entry>
+
+        <f:entry title="">
+          <div align="right">
+            <f:repeatableDeleteButton />
+          </div>
+        </f:entry>
+      </table>
+    </f:repeatable>
+  </f:entry>
+
   <f:advanced>
         <f:entry title="${%Files to exclude from report}"
           description="${%description.excludePattern}">

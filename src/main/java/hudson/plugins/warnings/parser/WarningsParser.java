@@ -22,5 +22,12 @@ public interface WarningsParser {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     Collection<FileAnnotation> parse(final InputStream inputStream) throws IOException;
+
+    /**
+     * Gets the human readable name of this parser.
+     *
+     * @return the name
+     */
+    String getName();
 }
 

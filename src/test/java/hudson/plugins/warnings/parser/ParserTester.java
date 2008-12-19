@@ -6,6 +6,7 @@ import hudson.plugins.warnings.util.model.Priority;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.junit.Test;
@@ -63,7 +64,7 @@ public abstract class ParserTester {
      */
     @Test
     public void verifyOtherParsers() throws IOException {
-        for (WarningsParser parser : new ParserRegistry().getParsers()) {
+        for (WarningsParser parser : new ParserRegistry(new ArrayList<WarningsParser>()).getParsers()) {
             if (!parser.getClass().equals(validParser)) {
                 Collection<FileAnnotation> warnings = parser.parse(openFile());
                 assertEquals("Warning found with parser " + parser + " in file: " + getWarningsFile(),

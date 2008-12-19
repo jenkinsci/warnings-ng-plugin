@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
  *
  * @author Ulli Hafner
  */
-public class MsBuildParser extends RegexpParser {
+public class MsBuildParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "MSBuild";
     /** Pattern of MSBuild compiler warnings. */
@@ -19,7 +19,7 @@ public class MsBuildParser extends RegexpParser {
      * Creates a new instance of <code>MsBuildParser</code>.
      */
     public MsBuildParser() {
-        super(MS_BUILD_WARNING_PATTERN, true);
+        super(MS_BUILD_WARNING_PATTERN, WARNING_TYPE);
     }
 
     /** {@inheritDoc} */
@@ -33,12 +33,6 @@ public class MsBuildParser extends RegexpParser {
             priority = Priority.HIGH;
         }
         return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE, matcher.group(4), matcher.group(5), priority);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return WARNING_TYPE;
     }
 }
 

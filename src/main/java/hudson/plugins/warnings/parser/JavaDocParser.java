@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Ulli Hafner
  */
-public class JavaDocParser extends RegexpParser {
+public class JavaDocParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "JavaDoc";
     /** Pattern of javac compiler warnings. */
@@ -19,7 +19,7 @@ public class JavaDocParser extends RegexpParser {
      * Creates a new instance of <code>AntJavacParser</code>.
      */
     public JavaDocParser() {
-        super(ANT_JAVAC_WARNING_PATTERN);
+        super(ANT_JAVAC_WARNING_PATTERN, WARNING_TYPE);
     }
 
     /**
@@ -31,12 +31,6 @@ public class JavaDocParser extends RegexpParser {
     @Override
     protected Warning createWarning(final Matcher matcher) {
         return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE, StringUtils.EMPTY, matcher.group(3));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return WARNING_TYPE;
     }
 }
 

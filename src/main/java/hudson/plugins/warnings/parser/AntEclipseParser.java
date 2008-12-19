@@ -11,9 +11,9 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Ulli Hafner
  */
-public class AntEclipseParser extends RegexpParser {
+public class AntEclipseParser extends RegexpDocumentParser {
     /** Warning type of this parser. */
-    static final String WARNING_TYPE = "Eclipse Compiler";
+    static final String WARNING_TYPE = "Eclipse Java Compiler";
     /** Pattern of javac compiler warnings. */
     private static final String ANT_ECLIPSE_WARNING_PATTERN = "(WARNING|ERROR)\\s*in\\s*(.*)\\(at line\\s*(\\d+)\\).*\\r?\\n.*\\r?\\n.*\\r?\\n.*\\]\\s*(.*)";
 
@@ -21,7 +21,7 @@ public class AntEclipseParser extends RegexpParser {
      * Creates a new instance of <code>AntJavacParser</code>.
      */
     public AntEclipseParser() {
-        super(ANT_ECLIPSE_WARNING_PATTERN, true);
+        super(ANT_ECLIPSE_WARNING_PATTERN, true, WARNING_TYPE);
     }
 
     /**
@@ -41,12 +41,6 @@ public class AntEclipseParser extends RegexpParser {
             priority = Priority.HIGH;
         }
         return new Warning(matcher.group(2), getLineNumber(matcher.group(3)), WARNING_TYPE, StringUtils.EMPTY, matcher.group(4), priority);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return WARNING_TYPE;
     }
 }
 

@@ -106,6 +106,13 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
     String getModuleName();
 
     /**
+     * Sets the name of the maven or ant module that contains this annotation.
+     *
+     * @param moduleName the name of the module that contains this annotation
+     */
+    void setModuleName(String moduleName);
+
+    /**
      * Returns the name of package (or namespace) that contains this annotation.
      *
      * @return the name of the package that contains this annotation

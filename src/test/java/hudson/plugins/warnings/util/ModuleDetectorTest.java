@@ -6,7 +6,6 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.Map;
 
 import org.junit.Test;
 
@@ -68,23 +67,17 @@ public class ModuleDetectorTest {
         FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
         InputStream pom = ModuleDetectorTest.class.getResourceAsStream(ModuleDetector.MAVEN_POM);
         expect(factory.create(isA(String.class))).andReturn(pom);
+        replay(factory);
 
-        ModuleDetector detector = new ModuleDetector() {
+        ModuleDetector detector = new ModuleDetector(new File("/"), factory) {
             /** {@inheritDoc} */
             @Override
             protected String[] find(final File path, final String pattern) {
                 return new String[] {PATH_PREFIX + MAVEN_POM};
             }
-
         };
-        detector.setFileInputStreamFactory(factory);
 
-        replay(factory);
-
-        Map<String, String> mapping = detector.getModules(null);
-        assertEquals("Wrong number of elements in mapping", 1, mapping.size());
-        assertTrue("Wrong key in mapping", mapping.containsKey(PATH_PREFIX));
-        assertTrue("Wrong value in mapping", mapping.containsValue("ADT Business Logic"));
+        assertEquals("Wrong module guessed", "ADT Business Logic", detector.guessModuleName(PATH_PREFIX));
 
         verify(factory);
     }
@@ -100,23 +93,17 @@ public class ModuleDetectorTest {
         FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
         InputStream pom = ModuleDetectorTest.class.getResourceAsStream(ModuleDetector.ANT_PROJECT);
         expect(factory.create(isA(String.class))).andReturn(pom);
+        replay(factory);
 
-        ModuleDetector detector = new ModuleDetector() {
+        ModuleDetector detector = new ModuleDetector(new File("/"), factory) {
             /** {@inheritDoc} */
             @Override
             protected String[] find(final File path, final String pattern) {
                 return new String[] {PATH_PREFIX + ModuleDetector.ANT_PROJECT};
             }
-
         };
-        detector.setFileInputStreamFactory(factory);
 
-        replay(factory);
-
-        Map<String, String> mapping = detector.getModules(null);
-        assertEquals("Wrong number of elements in mapping", 1, mapping.size());
-        assertTrue("Wrong key in mapping", mapping.containsKey(PATH_PREFIX));
-        assertTrue("Wrong value in mapping", mapping.containsValue("checkstyle"));
+        assertEquals("Wrong number of elements in mapping", "checkstyle", detector.guessModuleName(PATH_PREFIX));
 
         verify(factory);
     }

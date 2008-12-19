@@ -3,14 +3,10 @@ package hudson.plugins.warnings.parser;
 import hudson.plugins.warnings.util.JavaPackageDetector;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -25,15 +21,19 @@ public abstract class RegexpParser implements WarningsParser {
     protected static final String PROPRIETARY_API = "Proprietary API";
     /** Pattern of compiler warnings. */
     private final Pattern pattern;
+    /** Name of this parser. */
+    private final String name;
 
     /**
      * Creates a new instance of <code>RegexpParser</code>. Uses a single line matcher.
      *
      * @param warningPattern
      *            pattern of compiler warnings.
+     * @param name
+     *            name of the parser
      */
-    public RegexpParser(final String warningPattern) {
-        this(warningPattern, false);
+    public RegexpParser(final String warningPattern, final String name) {
+        this(warningPattern, false, name);
     }
 
     /**
@@ -47,8 +47,11 @@ public abstract class RegexpParser implements WarningsParser {
      *            respectively, a line terminator or the end of the input
      *            sequence. By default these expressions only match at the
      *            beginning and the end of the entire input sequence.
+     * @param name
+     *            name of the parser
      */
-    public RegexpParser(final String warningPattern, final boolean useMultiLine) {
+    public RegexpParser(final String warningPattern, final boolean useMultiLine, final String name) {
+        this.name = name;
         if (useMultiLine) {
             pattern = Pattern.compile(warningPattern, Pattern.MULTILINE);
         }
@@ -58,18 +61,12 @@ public abstract class RegexpParser implements WarningsParser {
     }
 
     /**
-     * Parses the specified input stream for compiler warnings using the provided regular expression.
+     * Parses the specified string content and creates annotations for each found warning.
      *
-     * @param file the file to parse
-     * @return the collection of annotations
-     *
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @param content the content to scan
+     * @param warnings the found annotations
      */
-    public Collection<FileAnnotation> parse(final InputStream file) throws IOException {
-        String content = IOUtils.toString(file);
-        file.close();
-
-        ArrayList<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
+    protected void findAnnotations(final String content, final List<FileAnnotation> warnings) {
         Matcher matcher = pattern.matcher(content);
 
         while (matcher.find()) {
@@ -80,7 +77,18 @@ public abstract class RegexpParser implements WarningsParser {
             }
             warnings.add(warning);
         }
-        return warnings;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return getName();
+    }
+
+    /** {@inheritDoc} */
+    public String getName() {
+        return name;
     }
 
     /**

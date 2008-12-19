@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
  *
  * @author Bernhard Berger
  */
-public class GnatParser extends RegexpParser {
+public class GnatParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "gnat";
     /** Pattern of Gnat compiler warnings. */
@@ -19,7 +19,7 @@ public class GnatParser extends RegexpParser {
      * Creates a new instance of <code>GnatParser</code>.
      */
     public GnatParser() {
-        super(GNAT_WARNING_PATTERN, true);
+        super(GNAT_WARNING_PATTERN, "Ada Compiler (gnat)");
     }
 
 
@@ -43,11 +43,5 @@ public class GnatParser extends RegexpParser {
         }
         return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE,
                 category, matcher.group(5), priority);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return WARNING_TYPE;
     }
 }

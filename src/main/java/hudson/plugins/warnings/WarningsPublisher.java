@@ -7,14 +7,18 @@ import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.plugins.warnings.parser.FileWarningsParser;
 import hudson.plugins.warnings.parser.ParserRegistry;
+import hudson.plugins.warnings.parser.WarningsParser;
 import hudson.plugins.warnings.util.FilesParser;
 import hudson.plugins.warnings.util.HealthAwarePublisher;
+import hudson.plugins.warnings.util.ModuleMapper;
 import hudson.plugins.warnings.util.ParserResult;
 import hudson.tasks.Publisher;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -31,6 +35,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
     private final String pattern;
     /** Ant file-set pattern of files to exclude from report. */
     private final String excludePattern;
+    /** Actual list of parser to use for scanning the logs. */
+    private final List<WarningsParser> parsers = new ArrayList<WarningsParser>();
 
     /**
      * Creates a new instance of <code>WarningPublisher</code>.
@@ -106,8 +112,9 @@ public class WarningsPublisher extends HealthAwarePublisher {
             project = new ParserResult(build.getProject().getWorkspace());
         }
 
-        project.addAnnotations(new ParserRegistry(getExcludePattern()).parse(logFile));
+        project.addAnnotations(new ParserRegistry(parsers, getExcludePattern()).parse(logFile));
 
+        project = build.getProject().getWorkspace().act(new ModuleMapper(project));
         WarningsResult result = new WarningsResultBuilder().build(build, project);
         build.getActions().add(new WarningsResultAction(build, this, result));
 

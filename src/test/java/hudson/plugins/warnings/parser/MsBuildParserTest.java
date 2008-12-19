@@ -56,7 +56,7 @@ public class MsBuildParserTest extends ParserTester {
         annotation = iterator.next();
         checkWarning(annotation,
                 3001,
-                "Kod som inte kan n†s uppt„cktes",
+                "Hier kommt der Warnings Text",
                 "MediaPortal.cs",
                 MsBuildParser.WARNING_TYPE, "CS0162", Priority.NORMAL);
         annotation = iterator.next();
