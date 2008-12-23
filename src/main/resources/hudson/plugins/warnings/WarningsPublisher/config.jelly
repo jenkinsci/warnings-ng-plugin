@@ -5,15 +5,14 @@
     <f:textbox name="pattern" value="${instance.pattern}"
       checkUrl="'${rootURL}/publisher/WarningsPublisher/checkPattern?job=${it.fullName}&amp;value='+escape(this.value)" />
   </f:entry>
-  <f:entry title="${%Parsers}"
-         description="${%List of parsers to scan for warnings}">
-    <j:invokeStatic var="allParsers" className="hudson.plugins.warnings.parser.ParserRegistry" method="getAllParsers"/>
-    <f:repeatable var="inst" items="${instance.parsers}" name="parsers">
-      <table width="100%">
-        <f:entry title="${%Parser}">
-          <select class="setting-input" name="parser_name">
-            <j:forEach var="parser" items="${allParsers}">
-              <f:option selected="${false}">${parser.name}</f:option>
+  <f:entry title="${%Parsers}" description="${%description.parsers}">
+    <j:invokeStatic var="allParsers" className="hudson.plugins.warnings.parser.ParserRegistry" method="getAvailableParsers"/>
+    <f:repeatable var="publisherParser" items="${instance.parserNames}" name="parsers">
+      <table cellspacing="0" width="100%">
+        <f:entry title="">
+          <select class="setting-input" name="parserName">
+            <j:forEach var="availableParser" items="${allParsers}">
+              <f:option selected="${publisherParser == availableParser}">${availableParser.toString()}</f:option>
             </j:forEach>
           </select>
         </f:entry>

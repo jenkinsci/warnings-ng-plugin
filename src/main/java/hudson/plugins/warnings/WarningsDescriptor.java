@@ -2,6 +2,11 @@ package hudson.plugins.warnings;
 
 import hudson.model.AbstractProject;
 import hudson.plugins.warnings.util.PluginDescriptor;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.StaplerRequest;
@@ -53,6 +58,38 @@ public final class WarningsDescriptor extends PluginDescriptor {
     /** {@inheritDoc} */
     @Override
     public WarningsPublisher newInstance(final StaplerRequest request, final JSONObject formData) throws FormException {
-        return request.bindJSON(WarningsPublisher.class, formData);
+        Set<String> parsers = extractParsers(formData);
+
+        WarningsPublisher publisher = request.bindJSON(WarningsPublisher.class, formData);
+        publisher.setParserNames(parsers);
+
+        return publisher;
+    }
+
+    /**
+     * Extract the list of parsers to use from the JSON form data.
+     *
+     * @param formData
+     *            the JSON form data
+     * @return the list of parsers to use
+     */
+    private Set<String> extractParsers(final JSONObject formData) {
+        Set<String> parsers = new HashSet<String>();
+        Object values = formData.get("parsers");
+        if (values instanceof JSONArray) {
+            JSONArray array = (JSONArray)values;
+            for (int i = 0; i < array.size(); i++) {
+                JSONObject element = array.getJSONObject(i);
+                parsers.add(element.getString("parserName"));
+            }
+            formData.remove("parsers");
+        }
+        else if (values instanceof JSONObject) {
+            JSONObject object = (JSONObject)values;
+            parsers.add(object.getString("parserName"));
+            formData.remove("parsers");
+        }
+
+        return parsers;
     }
 }

@@ -10,7 +10,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
@@ -22,18 +24,28 @@ import org.apache.tools.ant.DirectoryScanner;
  */
 // CHECKSTYLE:COUPLING-OFF
 public class ParserRegistry {
-    /** The available parsers of this plug-in. */
-    private final List<WarningsParser> allParsers;
+    /** The available parsers of this registry. */
+    private static final List<WarningsParser> ALL_PARSERS;
+    /** The unique set of parser names of this registry, sorted by name. */
+    private static final List<String> ALL_PARSER_NAMES;
+    static {
+        ALL_PARSERS = getAllParsers();
+        ALL_PARSER_NAMES = getAllParserNames();
+    }
+
+    /** The actual parsers to use when scanning a file. */
+    private final List<WarningsParser> parsers;
     /** Filter for ant file-set pattern of files to exclude from report. */
     private ExcludeFilter excludeFilter;
 
     /**
      * Creates a new instance of <code>ParserRegistry</code>.
+     *
+     * @param parsers the parsers to use when scanning a file
      */
     public ParserRegistry(final List<WarningsParser> parsers) {
         this(parsers, StringUtils.EMPTY);
     }
-
 
     /**
      * Creates a new instance of <code>ParserRegistry</code>.
@@ -45,10 +57,9 @@ public class ParserRegistry {
      *            <code>null</code> or an empty string do not filter the output
      */
     public ParserRegistry(final List<WarningsParser> parsers, final String excludePattern) {
-        allParsers = new ArrayList<WarningsParser>(parsers);
-
-        if (allParsers.isEmpty()) {
-            allParsers.addAll(getAllParsers());
+        this.parsers = new ArrayList<WarningsParser>(parsers);
+        if (this.parsers.isEmpty()) {
+            this.parsers.addAll(ALL_PARSERS);
         }
 
         if (!StringUtils.isEmpty(excludePattern)) {
@@ -63,7 +74,7 @@ public class ParserRegistry {
      * @return the registered parsers
      */
     protected Iterable<WarningsParser> getParsers() {
-        return Collections.unmodifiableList(allParsers);
+        return Collections.unmodifiableList(parsers);
     }
 
     /**
@@ -77,7 +88,7 @@ public class ParserRegistry {
      */
     public Collection<FileAnnotation> parse(final File file) throws IOException {
         List<FileAnnotation> allAnnotations = new ArrayList<FileAnnotation>();
-        for (WarningsParser parser : allParsers) {
+        for (WarningsParser parser : parsers) {
             allAnnotations.addAll(parser.parse(createInputStream(file)));
         }
         if (excludeFilter == null) {
@@ -155,7 +166,7 @@ public class ParserRegistry {
      *
      * @return all available parsers
      */
-    public static List<WarningsParser> getAllParsers() {
+    private static List<WarningsParser> getAllParsers() {
         ArrayList<WarningsParser> parsers = new ArrayList<WarningsParser>();
         parsers.add(new JavacParser());
         parsers.add(new AntJavacParser());
@@ -168,7 +179,52 @@ public class ParserRegistry {
         parsers.add(new GnatParser());
         parsers.add(new ErlcParser());
 
-        return parsers;
+        return Collections.unmodifiableList(parsers);
+    }
+
+    /**
+     * Returns all available parser names.
+     *
+     * @return all available parser names
+     */
+    private static List<String> getAllParserNames() {
+        Set<String> parsers = new HashSet<String>();
+        for (WarningsParser parser : ALL_PARSERS) {
+            parsers.add(parser.getName());
+        }
+
+        ArrayList<String> sortedParsers = new ArrayList<String>(parsers);
+        Collections.sort(sortedParsers);
+        return Collections.unmodifiableList(sortedParsers);
+    }
+
+    /**
+     * Returns all available parser names.
+     *
+     * @return all available parser names
+     */
+    public static List<String> getAvailableParsers() {
+        return ALL_PARSER_NAMES;
+    }
+
+    /**
+     * Returns a list of parsers that match the specified names. Note that the
+     * mapping of names to parsers is one to many.
+     *
+     * @param parserNames
+     *            the parser names
+     * @return a list of parsers, might be modified by the receiver
+     */
+    public static List<WarningsParser> getParsers(final Set<String> parserNames) {
+        List<WarningsParser> actualParsers = new ArrayList<WarningsParser>();
+        for (String name : parserNames) {
+            for (WarningsParser warningsParser : ALL_PARSERS) {
+                if (warningsParser.getName().equals(name)) {
+                    actualParsers.add(warningsParser);
+                }
+            }
+        }
+        return actualParsers;
     }
 }
 
