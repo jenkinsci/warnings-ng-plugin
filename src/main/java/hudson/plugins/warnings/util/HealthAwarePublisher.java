@@ -157,7 +157,7 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      *
      * @return the object
      */
-    private Object readResolve() {
+    protected Object readResolve() {
         if (thresholdLimit == null) {
             thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
         }

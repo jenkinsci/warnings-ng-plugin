@@ -88,11 +88,13 @@ public class WarningsPublisher extends HealthAwarePublisher {
     }
 
     /**
-     * Restores the transient parsers from the parser names.
+     * Creates a new parser set for old versions of this class.
      *
      * @return this
      */
-    private Object readResolve() {
+    @Override
+    protected Object readResolve() {
+        super.readResolve();
         if (parserNames == null) {
             parserNames = new HashSet<String>();
         }
