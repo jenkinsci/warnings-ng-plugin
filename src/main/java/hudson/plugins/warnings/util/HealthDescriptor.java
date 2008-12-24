@@ -14,6 +14,7 @@ import java.io.Serializable;
  * <li>A flag to determine whether a build should change its healthiness
  * according to the number of warnings. The healthiness is interpolated between
  * the specified minimum and maximum values.</li>
+ * </ul>
  *
  * @author Ulli Hafner
  */

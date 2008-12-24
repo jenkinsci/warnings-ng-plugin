@@ -50,7 +50,9 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     @SuppressWarnings("Se")
     private final AbstractBuild<?, ?> owner;
     /** Backward compatibility. */
-    private HealthReportBuilder healthReportBuilder; // FIXME
+    @Deprecated
+    @java.lang.SuppressWarnings("unused")
+    private HealthReportBuilder healthReportBuilder;
     /** Parameters for the health report. */
     private final AbstractHealthDescriptor healthDescriptor;
     /** The actual result of this action. */

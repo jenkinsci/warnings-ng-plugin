@@ -31,6 +31,9 @@ public class NullHealthDescriptor extends AbstractHealthDescriptor {
      * A null {@link Localizable}.
      */
     private static final class NullLocalizable extends Localizable {
+        /** Unique ID of this class. */
+        private static final long serialVersionUID = 8750008311040069939L;
+
         /**
          * Creates a new instance of {@link NullLocalizable}.
          */

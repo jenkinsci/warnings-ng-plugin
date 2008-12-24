@@ -45,6 +45,8 @@ import org.apache.commons.lang.StringUtils;
  */
 // CHECKSTYLE:COUPLING-OFF
 public abstract class HealthAwarePublisher extends Publisher implements HealthDescriptor {
+    /** Unique ID of this class. */
+    private static final long serialVersionUID = -7945220365563528457L;
     /** Default threshold priority limit. */
     private static final String DEFAULT_PRIORITY_THRESHOLD_LIMIT = "low";
     /** Annotation threshold to be reached if a build should be considered as unstable. */
