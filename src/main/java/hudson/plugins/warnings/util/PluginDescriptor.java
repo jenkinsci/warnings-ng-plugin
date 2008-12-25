@@ -68,6 +68,18 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
     public abstract String getIconUrl();
 
     /**
+     * Performs on-the-fly validation on the defaukt encoding.
+     *
+     * @param request
+     *            Stapler request
+     * @param response
+     *            Stapler response
+     */
+    public final void doCheckDefaultEncoding(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
+        new EncodingValidator(request, response).process();
+    }
+
+    /**
      * Performs on-the-fly validation on the file mask.
      *
      * @param request

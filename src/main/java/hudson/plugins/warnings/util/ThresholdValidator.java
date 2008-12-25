@@ -16,7 +16,7 @@ import org.kohsuke.stapler.StaplerResponse;
  *
  * @author Ulli Hafner
  */
-public class ThresholdValidator extends FormFieldValidator {
+public class ThresholdValidator extends FormFieldValidator implements Validator {
     /** Error message. */
     private static final String MESSAGE = "Threshold must be an integer value greater or equal 0.";
 
@@ -33,7 +33,7 @@ public class ThresholdValidator extends FormFieldValidator {
 
     /** {@inheritDoc} */
     @Override
-    protected void check() throws IOException, ServletException {
+    public void check() throws IOException, ServletException {
         String value = request.getParameter("value");
         if (!StringUtils.isEmpty(value)) {
             try {
