@@ -6,9 +6,13 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -19,6 +23,8 @@ import org.kohsuke.stapler.StaplerResponse;
  * @author Ulli Hafner
  */
 public class EncodingValidator extends FormFieldValidator implements Validator {
+    /** All available character sets. */
+    private static final Set<String> ALL_CHARSETS = Collections.unmodifiableSet(new HashSet<String>(Charset.availableCharsets().keySet()));
     /** Error message. */
     private static final String MESSAGE = "Encoding must be a supported encoding of the Java platform (see java.nio.charset.Charset).";
 
@@ -33,12 +39,21 @@ public class EncodingValidator extends FormFieldValidator implements Validator {
         super(request, response, false);
     }
 
+    /**
+     * Returns all available character set names.
+     *
+     * @return all available character set names
+     */
+    public static Set<String> getAvailableCharsets() {
+        return ALL_CHARSETS;
+    }
+
     /** {@inheritDoc} */
     @Override
     public void check() throws IOException, ServletException {
         String encoding = request.getParameter("value");
         try {
-            if (Charset.forName(encoding) != null) {
+            if (StringUtils.isEmpty(encoding) || Charset.forName(encoding) != null) {
                 ok();
             }
         }

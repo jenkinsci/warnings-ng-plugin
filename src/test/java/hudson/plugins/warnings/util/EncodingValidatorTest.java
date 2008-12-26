@@ -19,6 +19,7 @@ public class EncodingValidatorTest extends AbstractValidatorTest {
      */
     @Test
     public void testValidEncodings() throws Exception {
+        assertThatInputIsValid("");
         assertThatInputIsValid("UTF8");
         assertThatInputIsValid("UTF-8");
         assertThatInputIsValid("CP1252");
