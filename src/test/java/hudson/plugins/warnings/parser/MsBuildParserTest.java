@@ -5,6 +5,7 @@ import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -82,7 +83,7 @@ public class MsBuildParserTest extends ParserTester {
         testData.append("\r\n");
         testData.append("C:\\Src\\Parser\\CSharp\\file.cs (10): Error XXX: An error occurred");
 
-        Collection<FileAnnotation> warnings = new MsBuildParser().parse(IOUtils.toInputStream(testData.toString()));
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(new InputStreamReader(IOUtils.toInputStream(testData.toString())));
 
         assertEquals("Wrong number of warnings detected.", 2, warnings.size());
 

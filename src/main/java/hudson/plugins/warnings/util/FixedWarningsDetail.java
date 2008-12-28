@@ -21,11 +21,13 @@ public class FixedWarningsDetail extends AbstractAnnotationsDetail {
      *            the current results object as owner of this action
      * @param fixedWarnings
      *            all fixed warnings in this build
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      * @param header
      *            header to be shown on detail page
      */
-    public FixedWarningsDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> fixedWarnings, final String header) {
-        super(owner, fixedWarnings, header, Hierarchy.PROJECT);
+    public FixedWarningsDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> fixedWarnings, final String defaultEncoding, final String header) {
+        super(owner, fixedWarnings, defaultEncoding, header, Hierarchy.PROJECT);
     }
 
     /** {@inheritDoc} */

@@ -48,6 +48,30 @@ public class EncodingValidator extends FormFieldValidator implements Validator {
         return ALL_CHARSETS;
     }
 
+    /**
+     * Returns the default charset for the specified encoding string. If the
+     * default encoding is empty or <code>null</code>, or if the charset is not
+     * valid then the default encoding of the platform is returned.
+     *
+     * @param defaultEncoding
+     *            identifier of the character set
+     * @return the default charset for the specified encoding string
+     */
+    public static Charset defaultCharset(final String defaultEncoding) {
+        try {
+            if (StringUtils.isNotBlank(defaultEncoding)) {
+                return Charset.forName(defaultEncoding);
+            }
+        }
+        catch (UnsupportedCharsetException exception) {
+            // ignore and return default
+        }
+        catch (IllegalCharsetNameException exception) {
+            // ignore and return default
+        }
+        return Charset.defaultCharset();
+    }
+
     /** {@inheritDoc} */
     @Override
     public void check() throws IOException, ServletException {

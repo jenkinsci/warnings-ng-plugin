@@ -41,6 +41,7 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  *            type of the result of this action
  * @author Ulli Hafner
  */
+//CHECKSTYLE:COUPLING-OFF
 public abstract class AbstractResultAction<T extends BuildResult> implements StaplerProxy, HealthReportingAction, ToolTipProvider, ResultAction<T> {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -7201451538713818948L;
@@ -52,6 +53,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     /** Backward compatibility. */
     @Deprecated
     @java.lang.SuppressWarnings("unused")
+    @SuppressWarnings("UuF")
     private HealthReportBuilder healthReportBuilder;
     /** Parameters for the health report. */
     private final AbstractHealthDescriptor healthDescriptor;

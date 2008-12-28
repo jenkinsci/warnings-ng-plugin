@@ -27,6 +27,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  *
  * @author Ulli Hafner
  */
+// CHECKSTYLE:COUPLING-OFF
 public class WarningsPublisher extends HealthAwarePublisher {
     /** Unique ID of this class. */
     private static final long serialVersionUID = -5936973521277401764L;
@@ -37,6 +38,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
     /** Ant file-set pattern of files to exclude from report. */
     private final String excludePattern;
     /** Name of parsers to use for scanning the logs. */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
     private Set<String> parserNames = new HashSet<String>();
 
     /**
@@ -60,13 +62,19 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *            Ant file-set pattern that defines the files to scan for
      * @param excludePattern
      *            Ant file-set pattern of files to exclude from report
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      */
+    // CHECKSTYLE:OFF
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     @DataBoundConstructor
-    public WarningsPublisher(final String threshold, final String healthy, final String unHealthy, final String height, final String thresholdLimit, final String pattern, final String excludePattern) {
-        super(threshold, healthy, unHealthy, height, thresholdLimit, "WARNINGS");
+    public WarningsPublisher(final String threshold, final String healthy, final String unHealthy, final String height, final String thresholdLimit,
+            final String pattern, final String excludePattern, final String defaultEncoding) {
+        super(threshold, healthy, unHealthy, height, thresholdLimit, defaultEncoding, "WARNINGS");
         this.pattern = pattern;
         this.excludePattern = StringUtils.stripToNull(excludePattern);
     }
+    // CHECKSTYLE:ON
 
     /**
      * Returns the names of the configured parsers of this publisher.
@@ -139,17 +147,17 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
         ParserResult project;
         if (StringUtils.isNotBlank(getPattern())) {
-            FilesParser parser = new FilesParser(logger, getPattern(), new FileWarningsParser(parserNames, getExcludePattern()), isMavenBuild(build), isAntBuild(build));
+            FilesParser parser = new FilesParser(logger, getPattern(), new FileWarningsParser(parserNames, getDefaultEncoding(), getExcludePattern()), isMavenBuild(build), isAntBuild(build));
             project = build.getProject().getWorkspace().act(parser);
         }
         else {
             project = new ParserResult(build.getProject().getWorkspace());
         }
 
-        project.addAnnotations(new ParserRegistry(ParserRegistry.getParsers(parserNames), getExcludePattern()).parse(logFile));
+        project.addAnnotations(new ParserRegistry(ParserRegistry.getParsers(parserNames), getDefaultEncoding(), getExcludePattern()).parse(logFile));
 
         project = build.getProject().getWorkspace().act(new ModuleMapper(project));
-        WarningsResult result = new WarningsResultBuilder().build(build, project);
+        WarningsResult result = new WarningsResultBuilder().build(build, project, getDefaultEncoding());
         build.getActions().add(new WarningsResultAction(build, this, result));
 
         return project;

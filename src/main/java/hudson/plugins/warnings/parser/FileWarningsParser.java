@@ -20,7 +20,10 @@ public class FileWarningsParser implements AnnotationParser {
     /** Ant file-set pattern of files to exclude from report. */
     private final String excludePattern;
     /** The parsers to scan the files with. */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
     private final Set<String> parserNames;
+    /** The default encoding to be used when reading and parsing files. */
+    private final String defaultEncoding;
 
     /**
      * Creates a new instance of {@link FileWarningsParser}.
@@ -29,10 +32,13 @@ public class FileWarningsParser implements AnnotationParser {
      *            the parsers to scan the files with
      * @param excludePattern
      *            ant file-set pattern of files to exclude from report
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      */
-    public FileWarningsParser(final Set<String> parserNames, final String excludePattern) {
+    public FileWarningsParser(final Set<String> parserNames, final String excludePattern, final String defaultEncoding) {
         this.parserNames = parserNames;
         this.excludePattern = excludePattern;
+        this.defaultEncoding = defaultEncoding;
     }
 
     /** {@inheritDoc} */
@@ -43,7 +49,7 @@ public class FileWarningsParser implements AnnotationParser {
     /** {@inheritDoc} */
     public Collection<FileAnnotation> parse(final File file, final String moduleName) throws InvocationTargetException {
         try {
-            return new ParserRegistry(ParserRegistry.getParsers(parserNames), excludePattern).parse(file);
+            return new ParserRegistry(ParserRegistry.getParsers(parserNames), defaultEncoding, excludePattern).parse(file);
         }
         catch (IOException exception) {
             throw new InvocationTargetException(exception, "Can't scan file for warnings: " + file.getAbsolutePath());

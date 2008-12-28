@@ -21,6 +21,7 @@ import hudson.tasks.BuildStep;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
@@ -68,6 +69,8 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     private final String pluginName;
     /** Determines which warning priorities should be considered when evaluating the build stability and health. */
     private String thresholdLimit;
+    /** The default encoding to be used when reading and parsing files. */
+    private String defaultEncoding;
 
     /**
      * Creates a new instance of <code>HealthReportingMavenReporter</code>.
@@ -177,7 +180,13 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         }
 
         try {
+            defaultEncoding = pom.getProperties().getProperty("project.build.sourceEncoding");
+
             final ParserResult result = perform(build, pom, mojo, logger);
+
+            if (defaultEncoding == null) {
+                result.addErrorMessage(Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
+            }
 
             build.execute(new BuildCallable<Void, IOException>() {
                 public Void call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
@@ -296,6 +305,15 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      */
     protected void log(final PrintStream logger, final String message) {
         logger.println(StringUtils.defaultString(pluginName) + message);
+    }
+
+    /**
+     * Returns the default encoding derived from the maven pom file.
+     *
+     * @return the default encoding
+     */
+    protected String getDefaultEncoding() {
+        return defaultEncoding;
     }
 
     /**

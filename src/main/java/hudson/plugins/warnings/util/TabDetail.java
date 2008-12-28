@@ -25,9 +25,11 @@ public class TabDetail extends AbstractAnnotationsDetail {
      *            the module to show the details for
      * @param url
      *            URL to render the content of this tab
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      */
-    public TabDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final String url) {
-        super(owner, annotations, "No Header", Hierarchy.PROJECT);
+    public TabDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final String url, final String defaultEncoding) {
+        super(owner, annotations, defaultEncoding, "No Header", Hierarchy.PROJECT);
         this.url = url;
     }
 

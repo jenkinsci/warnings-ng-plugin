@@ -21,11 +21,13 @@ public class PackageDetail extends AbstractAnnotationsDetail {
      *            current build as owner of this action.
      * @param javaPackage
      *            the package to show the details for
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      * @param header
      *            header to be shown on detail page
      */
-    public PackageDetail(final AbstractBuild<?, ?> owner, final JavaPackage javaPackage, final String header) {
-        super(owner, javaPackage.getAnnotations(), header, Hierarchy.PACKAGE);
+    public PackageDetail(final AbstractBuild<?, ?> owner, final JavaPackage javaPackage, final String defaultEncoding, final String header) {
+        super(owner, javaPackage.getAnnotations(), defaultEncoding, header, Hierarchy.PACKAGE);
         this.javaPackage = javaPackage;
     }
 

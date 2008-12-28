@@ -84,11 +84,13 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      *
      * @param build
      *            the current build as owner of this action
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      * @param result
      *            the parsed result with all annotations
      */
-    public AnnotationsBuildResult(final AbstractBuild<?, ?> build, final ParserResult result) {
-        super(build, result.getModules());
+    public AnnotationsBuildResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result) {
+        super(build, result.getModules(), defaultEncoding);
 
         initialize(result, new JavaProject());
 
@@ -104,13 +106,15 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      *
      * @param build
      *            the current build as owner of this action
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      * @param result
      *            the parsed result with all annotations
      * @param previous
      *            the result of the previous build
      */
-    public AnnotationsBuildResult(final AbstractBuild<?, ?> build, final ParserResult result, final AnnotationsBuildResult previous) {
-        super(build, result.getModules());
+    public AnnotationsBuildResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result, final AnnotationsBuildResult previous) {
+        super(build, result.getModules(), defaultEncoding);
 
         AnnotationContainer previousProject = previous.getProject();
 
@@ -460,7 +464,8 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      * @return the dynamic result of the analysis (detail page).
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
-        return new DetailBuilder().createTrendDetails(link, getOwner(), getContainer(), getFixedWarnings(), getNewWarnings(), errors, getDisplayName());
+        return new DetailBuilder().createTrendDetails(link, getOwner(), getContainer(), getFixedWarnings(),
+                getNewWarnings(), errors, getDefaultEncoding(), getDisplayName());
     }
 
     /**

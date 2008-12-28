@@ -21,11 +21,13 @@ public class NewWarningsDetail extends AbstractAnnotationsDetail {
      *            the current build as owner of this action
      * @param newWarnings
      *            all new warnings in this build
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      * @param header
      *            header to be shown on detail page
      */
-    public NewWarningsDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> newWarnings, final String header) {
-        super(owner, newWarnings, header, Hierarchy.PROJECT);
+    public NewWarningsDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> newWarnings, final String defaultEncoding, final String header) {
+        super(owner, newWarnings, defaultEncoding, header, Hierarchy.PROJECT);
     }
 
     /** {@inheritDoc} */

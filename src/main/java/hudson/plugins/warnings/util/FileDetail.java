@@ -24,11 +24,13 @@ public class FileDetail extends AbstractAnnotationsDetail {
      *            current build as owner of this action.
      * @param file
      *            the file to show the details for
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      * @param header
      *            header to be shown on detail page
      */
-    public FileDetail(final AbstractBuild<?, ?> owner, final WorkspaceFile file, final String header) {
-        super(owner, file.getAnnotations(), header, Hierarchy.FILE);
+    public FileDetail(final AbstractBuild<?, ?> owner, final WorkspaceFile file, final String defaultEncoding, final String header) {
+        super(owner, file.getAnnotations(), defaultEncoding, header, Hierarchy.FILE);
         this.file = file;
     }
 

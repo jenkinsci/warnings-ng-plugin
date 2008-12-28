@@ -71,6 +71,9 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
     private final String pluginName;
     /** Determines which warning priorities should be considered when evaluating the build stability and health. */
     private String thresholdLimit;
+    /** The default encoding to be used when reading and parsing files. */
+    private final String defaultEncoding;
+
 
     /**
      * Creates a new instance of <code>HealthAwarePublisher</code>.
@@ -91,15 +94,18 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      *            evaluating the build stability and health
      * @param pluginName
      *            the name of the plug-in
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      */
     public HealthAwarePublisher(final String threshold, final String healthy, final String unHealthy,
-            final String height, final String thresholdLimit, final String pluginName) {
+            final String height, final String thresholdLimit, final String defaultEncoding, final String pluginName) {
         super();
         this.threshold = threshold;
         this.healthy = healthy;
         this.unHealthy = unHealthy;
         this.height = height;
         this.thresholdLimit = thresholdLimit;
+        this.defaultEncoding = defaultEncoding;
         this.pluginName = "[" + pluginName + "] ";
 
         validateThreshold(threshold);
@@ -367,6 +373,15 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      */
     public int getTrendHeight() {
         return new TrendReportSize(height).getHeight();
+    }
+
+    /**
+     * Returns the defined default encoding.
+     *
+     * @return the default encoding
+     */
+    public String getDefaultEncoding() {
+        return defaultEncoding;
     }
 
     /**

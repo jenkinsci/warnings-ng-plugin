@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.NoSuchElementException;
@@ -45,6 +46,8 @@ public class SourceDetail implements ModelObject {
     private final FileAnnotation annotation;
     /** The rendered source file. */
     private String sourceCode = StringUtils.EMPTY;
+    /** The default encoding to be used when reading and parsing files. */
+    private final String defaultEncoding;
 
     /**
      * Creates a new instance of this source code object.
@@ -53,10 +56,13 @@ public class SourceDetail implements ModelObject {
      *            the current build as owner of this object
      * @param annotation
      *            the warning to display in the source file
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      */
-    public SourceDetail(final AbstractBuild<?, ?> owner, final FileAnnotation annotation) {
+    public SourceDetail(final AbstractBuild<?, ?> owner, final FileAnnotation annotation, final String defaultEncoding) {
         this.owner = owner;
         this.annotation = annotation;
+        this.defaultEncoding = defaultEncoding;
         fileName = StringUtils.substringAfterLast(annotation.getFileName(), "/");
 
         initializeContent();
@@ -100,7 +106,8 @@ public class SourceDetail implements ModelObject {
      * @throws IOException
      */
     public final String highlightSource(final InputStream file) throws IOException {
-        JavaSource source = new JavaSourceParser().parse(file);
+        JavaSource source = new JavaSourceParser().parse(
+                new InputStreamReader(file, EncodingValidator.defaultCharset(defaultEncoding)));
 
         JavaSource2HTMLConverter converter = new JavaSource2HTMLConverter();
         StringWriter writer = new StringWriter();

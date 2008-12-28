@@ -5,7 +5,8 @@ import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -64,7 +65,7 @@ public abstract class ParserTester {
      */
     @Test
     public void verifyOtherParsers() throws IOException {
-        for (WarningsParser parser : new ParserRegistry(new ArrayList<WarningsParser>()).getParsers()) {
+        for (WarningsParser parser : new ParserRegistry(new ArrayList<WarningsParser>(), "").getParsers()) {
             if (!parser.getClass().equals(validParser)) {
                 Collection<FileAnnotation> warnings = parser.parse(openFile());
                 assertEquals("Warning found with parser " + parser + " in file: " + getWarningsFile(),
@@ -78,8 +79,8 @@ public abstract class ParserTester {
      *
      * @return an input stream
      */
-    protected InputStream openFile() {
-        return ParserTester.class.getResourceAsStream(getWarningsFile());
+    protected Reader openFile() {
+        return new InputStreamReader(ParserTester.class.getResourceAsStream(getWarningsFile()));
     }
 
     /**

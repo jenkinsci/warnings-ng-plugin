@@ -25,11 +25,13 @@ public class AttributeDetail extends AbstractAnnotationsDetail {
      *            the module to show the details for
      * @param header
      *            header to be shown on detail page
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      * @param name
      *            name of the attribute shown in the bread crumb
      */
-    public AttributeDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final String header, final String name) {
-        super(owner, annotations, header, Hierarchy.PROJECT);
+    public AttributeDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final String defaultEncoding, final String header, final String name) {
+        super(owner, annotations, defaultEncoding, header, Hierarchy.PROJECT);
         attributeName = name;
     }
 

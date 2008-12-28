@@ -41,7 +41,7 @@ public class SourceDetailTest {
 
         replay(annotation);
 
-        SourceDetail source = new SourceDetail(null, annotation);
+        SourceDetail source = new SourceDetail(null, annotation, null);
 
         InputStream stream = SourceDetailTest.class.getResourceAsStream("AbortException.txt");
         String highlighted = source.highlightSource(stream);
@@ -124,7 +124,7 @@ public class SourceDetailTest {
 
         replay(annotation);
 
-        SourceDetail source = new SourceDetail(null, annotation);
+        SourceDetail source = new SourceDetail(null, annotation, null);
 
         String highlighted = source.highlightSource(stream);
         source.splitSourceFile(highlighted);

@@ -21,11 +21,13 @@ public class ModuleDetail extends AbstractAnnotationsDetail {
      *            current build as owner of this action.
      * @param module
      *            the module to show the details for
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      * @param header
      *            header to be shown on detail page
      */
-    public ModuleDetail(final AbstractBuild<?, ?> owner, final MavenModule module, final String header) {
-        super(owner, module.getAnnotations(), header, Hierarchy.MODULE);
+    public ModuleDetail(final AbstractBuild<?, ?> owner, final MavenModule module, final String defaultEncoding, final String header) {
+        super(owner, module.getAnnotations(), defaultEncoding, header, Hierarchy.MODULE);
         this.module = module;
     }
 

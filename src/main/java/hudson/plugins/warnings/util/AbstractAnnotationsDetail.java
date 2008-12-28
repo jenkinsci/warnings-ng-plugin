@@ -22,6 +22,8 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
     private static final long serialVersionUID = 1750266351592937774L;
     /** Current build as owner of this object. */
     private final AbstractBuild<?, ?> owner;
+    /** The default encoding to be used when reading and parsing files. */
+    private final String defaultEncoding;
 
     /**
      * Creates a new instance of {@link AbstractAnnotationsDetail}.
@@ -30,16 +32,28 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      *            current build as owner of this object.
      * @param annotations
      *            the set of warnings represented by this object
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      * @param name
      *            the name of this object
      * @param hierarchy
      *            the hierarchy level of this detail object
      */
-    public AbstractAnnotationsDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final String name, final Hierarchy hierarchy) {
+    public AbstractAnnotationsDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final String defaultEncoding, final String name, final Hierarchy hierarchy) {
         super(name, hierarchy);
         this.owner = owner;
+        this.defaultEncoding = defaultEncoding;
 
         addAnnotations(annotations);
+    }
+
+    /**
+     * Returns the defined default encoding.
+     *
+     * @return the default encoding
+     */
+    public String getDefaultEncoding() {
+        return defaultEncoding;
     }
 
     /**
@@ -98,7 +112,7 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      * @return the dynamic result of this module detail view
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
-        return new DetailBuilder().createDetails(link, owner, getContainer(), getDisplayName());
+        return new DetailBuilder().createDetails(link, owner, getContainer(), defaultEncoding, getDisplayName());
     }
 
     /**

@@ -6,7 +6,8 @@ import hudson.plugins.warnings.util.model.FileAnnotation;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -137,11 +138,11 @@ public class ParserRegistryTest {
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
     private ParserRegistry createRegistryUnderTest(final String fileName, final String excludePattern, final List<WarningsParser> parsers) {
-        ParserRegistry parserRegistry = new ParserRegistry(parsers, excludePattern) {
+        ParserRegistry parserRegistry = new ParserRegistry(parsers, "", excludePattern) {
             /** {@inheritDoc} */
             @Override
-            protected InputStream createInputStream(final File file) throws FileNotFoundException {
-                return ParserRegistryTest.class.getResourceAsStream(fileName);
+            protected Reader createReader(final File file) throws FileNotFoundException {
+                return new InputStreamReader(ParserRegistryTest.class.getResourceAsStream(fileName));
             }
         };
         return parserRegistry;

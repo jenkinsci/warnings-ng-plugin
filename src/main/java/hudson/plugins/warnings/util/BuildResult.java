@@ -35,6 +35,8 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     private Set<String> modules;
     /** The total number of parsed modules (regardless if there are annotations). */
     private final int numberOfModules;
+    /** The default encoding to be used when reading and parsing files. */
+    private final String defaultEncoding;
 
     /**
      * Creates a new instance of {@link BuildResult}.
@@ -43,11 +45,14 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *            owner of this result
      * @param modules
      *            the modules represented by this result
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      */
-    public BuildResult(final AbstractBuild<?, ?> build, final Set<String> modules) {
+    public BuildResult(final AbstractBuild<?, ?> build, final Set<String> modules, final String defaultEncoding) {
         owner = build;
         numberOfModules = modules.size();
         this.modules = new HashSet<String>(modules);
+        this.defaultEncoding = defaultEncoding;
     }
 
     /**
@@ -55,7 +60,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the created object
      */
-    private Object readResolve() {
+    protected Object readResolve() {
         if (modules == null) {
             modules = new HashSet<String>();
         }
@@ -78,6 +83,15 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      */
     public int getNumberOfModules() {
         return numberOfModules;
+    }
+
+    /**
+     * Returns the defined default encoding.
+     *
+     * @return the default encoding
+     */
+    public String getDefaultEncoding() {
+        return defaultEncoding;
     }
 
     /**

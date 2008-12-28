@@ -26,11 +26,13 @@ public class PrioritiesDetail extends AbstractAnnotationsDetail {
      *            the package to show the details for
      * @param priority
      *            the priority of all annotations
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      * @param header
      *            header to be shown on detail page
      */
-    public PrioritiesDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final Priority priority, final String header) {
-        super(owner, annotations, header, Hierarchy.PROJECT);
+    public PrioritiesDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final Priority priority, final String defaultEncoding, final String header) {
+        super(owner, annotations, defaultEncoding, header, Hierarchy.PROJECT);
         this.priority = priority;
     }
 

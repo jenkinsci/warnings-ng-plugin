@@ -3,7 +3,7 @@ package hudson.plugins.warnings.parser;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -42,7 +42,7 @@ public abstract class RegexpDocumentParser extends RegexpParser {
      *
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public Collection<FileAnnotation> parse(final InputStream file) throws IOException {
+    public Collection<FileAnnotation> parse(final Reader file) throws IOException {
         String content = IOUtils.toString(file);
         file.close();
 

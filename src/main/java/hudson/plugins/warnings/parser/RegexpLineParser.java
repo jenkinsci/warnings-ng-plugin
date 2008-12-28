@@ -3,7 +3,7 @@ package hudson.plugins.warnings.parser;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -39,10 +39,10 @@ public abstract class RegexpLineParser extends RegexpParser {
      *
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public Collection<FileAnnotation> parse(final InputStream file) throws IOException {
+    public Collection<FileAnnotation> parse(final Reader file) throws IOException {
         ArrayList<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
 
-        LineIterator iterator = IOUtils.lineIterator(file, "UTF8");
+        LineIterator iterator = IOUtils.lineIterator(file);
         while (iterator.hasNext()) {
             findAnnotations(iterator.nextLine(), warnings);
         }

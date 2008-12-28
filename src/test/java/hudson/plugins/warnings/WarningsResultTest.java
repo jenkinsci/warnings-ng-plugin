@@ -13,13 +13,13 @@ public class WarningsResultTest extends AbstractAnnotationsBuildResultTest<Warni
     /** {@inheritDoc} */
     @Override
     protected WarningsResult createBuildResult(final AbstractBuild<?, ?> build, final ParserResult project) {
-        return new WarningsResult(build, project);
+        return new WarningsResult(build, null, project);
     }
 
     /** {@inheritDoc} */
     @Override
     protected WarningsResult createBuildResult(final AbstractBuild<?, ?> build, final ParserResult project, final WarningsResult previous) {
-        return new WarningsResult(build, project, previous);
+        return new WarningsResult(build, null, project, previous);
     }
 
     /** {@inheritDoc} */

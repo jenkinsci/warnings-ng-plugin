@@ -3,7 +3,7 @@ package hudson.plugins.warnings.parser;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Collection;
 
 /**
@@ -13,15 +13,17 @@ import java.util.Collection;
  */
 public interface WarningsParser {
     /**
-     * Parses an input stream for compiler warnings and returns the found annotations.
-     * Note that the implementor of this method is not allowed to close the specified input stream.
+     * Parses an input stream for compiler warnings and returns the found
+     * annotations. Note that the implementor of this method is not allowed to
+     * close the specified input stream.
      *
-     * @param inputStream the stream to parse
+     * @param reader
+     *            the reader to get the text from
      * @return the collection of annotations
-     *
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
-    Collection<FileAnnotation> parse(final InputStream inputStream) throws IOException;
+    Collection<FileAnnotation> parse(final Reader reader) throws IOException;
 
     /**
      * Gets the human readable name of this parser.

@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.plugins.warnings.util.EncodingValidator;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 
 import java.io.File;
@@ -7,6 +8,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,14 +41,20 @@ public class ParserRegistry {
     private final List<WarningsParser> parsers;
     /** Filter for ant file-set pattern of files to exclude from report. */
     private ExcludeFilter excludeFilter;
+    /** The default charset to be used when reading and parsing files. */
+    private final Charset defaultCharset;
+
 
     /**
      * Creates a new instance of <code>ParserRegistry</code>.
      *
-     * @param parsers the parsers to use when scanning a file
+     * @param parsers
+     *            the parsers to use when scanning a file
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      */
-    public ParserRegistry(final List<WarningsParser> parsers) {
-        this(parsers, StringUtils.EMPTY);
+    public ParserRegistry(final List<WarningsParser> parsers, final String defaultEncoding) {
+        this(parsers, defaultEncoding, StringUtils.EMPTY);
     }
 
     /**
@@ -55,8 +65,11 @@ public class ParserRegistry {
      * @param excludePattern
      *            Ant file-set pattern of files to exclude from report,
      *            <code>null</code> or an empty string do not filter the output
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      */
-    public ParserRegistry(final List<WarningsParser> parsers, final String excludePattern) {
+    public ParserRegistry(final List<WarningsParser> parsers, final String defaultEncoding, final String excludePattern) {
+        defaultCharset = EncodingValidator.defaultCharset(defaultEncoding);
         this.parsers = new ArrayList<WarningsParser>(parsers);
         if (this.parsers.isEmpty()) {
             this.parsers.addAll(ALL_PARSERS);
@@ -89,8 +102,37 @@ public class ParserRegistry {
     public Collection<FileAnnotation> parse(final File file) throws IOException {
         List<FileAnnotation> allAnnotations = new ArrayList<FileAnnotation>();
         for (WarningsParser parser : parsers) {
-            allAnnotations.addAll(parser.parse(createInputStream(file)));
+            allAnnotations.addAll(parser.parse(createReader(file)));
         }
+        return applyExcludeFilter(allAnnotations);
+    }
+
+    /**
+     * Iterates over the available parsers and parses the specified file with each parser.
+     * Returns all found warnings.
+     *
+     * @param file the input stream
+     * @return all found warnings
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public Collection<FileAnnotation> parse(final InputStream file) throws IOException {
+        List<FileAnnotation> allAnnotations = new ArrayList<FileAnnotation>();
+        for (WarningsParser parser : parsers) {
+            allAnnotations.addAll(parser.parse(createReader(file)));
+        }
+        return applyExcludeFilter(allAnnotations);
+    }
+
+
+    /**
+     * Applies the exclude filter to the found annotations.
+     *
+     * @param allAnnotations
+     *            all annotations
+     * @return the filtered annotations if there is a filter defined
+     */
+    private Collection<FileAnnotation> applyExcludeFilter(final List<FileAnnotation> allAnnotations) {
         if (excludeFilter == null) {
             return allAnnotations;
         }
@@ -117,14 +159,26 @@ public class ParserRegistry {
     }
 
     /**
-     * Creates the input stream to parse from the specified file.
+     * Creates a reader from the specified file. Uses the defined character set to
+     * read the content of the input stream.
      *
-     * @param file the file to parse
-     * @return the input stream
-     * @throws FileNotFoundException
+     * @param file the file
+     * @return the reader
+     * @throws FileNotFoundException if the file does not exist
      */
-    protected InputStream createInputStream(final File file) throws FileNotFoundException {
-        return new FileInputStream(file);
+    protected Reader createReader(final File file) throws FileNotFoundException {
+        return createReader(new FileInputStream(file));
+    }
+
+    /**
+     * Creates a reader from the specified input stream. Uses the defined character set to
+     * read the content of the input stream.
+     *
+     * @param inputStream the input stream
+     * @return the reader
+     */
+    protected Reader createReader(final InputStream inputStream) {
+        return new InputStreamReader(inputStream, defaultCharset);
     }
 
     /**

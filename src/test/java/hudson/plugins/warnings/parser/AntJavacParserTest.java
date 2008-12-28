@@ -6,6 +6,7 @@ import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -57,7 +58,8 @@ public class AntJavacParserTest extends ParserTester {
      */
     @Test
     public void issue2133() throws IOException {
-        Collection<FileAnnotation> warnings = new AntJavacParser().parse(AntJavacParserTest.class.getResourceAsStream("issue2133.txt"));
+        Collection<FileAnnotation> warnings = new AntJavacParser().parse(
+                new InputStreamReader(AntJavacParserTest.class.getResourceAsStream("issue2133.txt")));
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
 
@@ -83,7 +85,8 @@ public class AntJavacParserTest extends ParserTester {
      */
     @Test
     public void issue2316() throws IOException {
-        Collection<FileAnnotation> warnings = new AntJavacParser().parse(AntJavacParserTest.class.getResourceAsStream("issue2316.txt"));
+        Collection<FileAnnotation> warnings = new AntJavacParser().parse(
+                new InputStreamReader(AntJavacParserTest.class.getResourceAsStream("issue2316.txt")));
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 20, warnings.size());
 
@@ -103,7 +106,8 @@ public class AntJavacParserTest extends ParserTester {
      */
     @Test
     public void parseDifferentTaskNames() throws IOException {
-        Collection<FileAnnotation> warnings = new AntJavacParser().parse(AntJavacParserTest.class.getResourceAsStream("taskname.txt"));
+        Collection<FileAnnotation> warnings = new AntJavacParser().parse(
+                new InputStreamReader(AntJavacParserTest.class.getResourceAsStream("taskname.txt")));
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
     }
