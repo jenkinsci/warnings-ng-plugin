@@ -11,8 +11,10 @@ import hudson.plugins.warnings.util.model.Priority;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.thoughtworks.xstream.XStream;
@@ -37,6 +39,9 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     private final int numberOfModules;
     /** The default encoding to be used when reading and parsing files. */
     private final String defaultEncoding;
+    /** Error messages. */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
+    private List<String> errors;
 
     /**
      * Creates a new instance of {@link BuildResult}.
@@ -45,24 +50,48 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *            owner of this result
      * @param modules
      *            the modules represented by this result
+     * @param errorMessages
+     *            the error messages during the build
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
      */
-    public BuildResult(final AbstractBuild<?, ?> build, final Set<String> modules, final String defaultEncoding) {
+    public BuildResult(final AbstractBuild<?, ?> build, final Set<String> modules, final Collection<String> errorMessages, final String defaultEncoding) {
         owner = build;
         numberOfModules = modules.size();
         this.modules = new HashSet<String>(modules);
         this.defaultEncoding = defaultEncoding;
+        errors = new ArrayList<String>(errorMessages);
     }
 
     /**
-     * Initializes the modules set if not yet serialized.
+     * Returns whether a module with an error is part of this project.
+     *
+     * @return <code>true</code> if at least one module has an error.
+     */
+    public boolean hasError() {
+        return !errors.isEmpty();
+    }
+
+    /**
+     * Returns the error messages associated with this build.
+     *
+     * @return the error messages
+     */
+    public List<String> getErrors() {
+        return errors;
+    }
+
+    /**
+     * Initializes members that were not present in previous versions of this plug-in.
      *
      * @return the created object
      */
     protected Object readResolve() {
         if (modules == null) {
             modules = new HashSet<String>();
+        }
+        if (errors == null) {
+            errors = new ArrayList<String>();
         }
         return this;
     }

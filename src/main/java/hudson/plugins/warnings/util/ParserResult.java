@@ -161,13 +161,34 @@ public class ParserResult implements Serializable {
     }
 
     /**
-     * Sets an error message for the specified module name.
+     * Addds an error message for the specified module name.
+     *
+     * @param module
+     *            the current module
+     * @param message
+     *            the error message
+     */
+    public void addErrorMessage(final String module, final String message) {
+        errorMessages.add(Messages.Result_Error_ModuleErrorMessage(module, message));
+    }
+
+    /**
+     * Adds an error message.
      *
      * @param message
      *            the error message
      */
     public void addErrorMessage(final String message) {
         errorMessages.add(message);
+    }
+
+    /**
+     * Adds the error messages to this result.
+     *
+     * @param errors the error messages to add
+     */
+    public void addErrors(final List<String> errors) {
+        errorMessages.addAll(errors);
     }
 
     /**

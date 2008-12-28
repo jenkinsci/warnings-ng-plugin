@@ -47,14 +47,10 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     private static final long serialVersionUID = -7201451538713818948L;
     /** Width of the graph. */
     private static final int WIDTH = 500;
+
     /** The associated build of this action. */
     @SuppressWarnings("Se")
     private final AbstractBuild<?, ?> owner;
-    /** Backward compatibility. */
-    @Deprecated
-    @java.lang.SuppressWarnings("unused")
-    @SuppressWarnings("UuF")
-    private HealthReportBuilder healthReportBuilder;
     /** Parameters for the health report. */
     private final AbstractHealthDescriptor healthDescriptor;
     /** The actual result of this action. */
@@ -314,6 +310,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         if (action != null) {
             aggregatedResult.addAnnotations(action.getResult().getAnnotations());
             aggregatedResult.addModules(action.getResult().getModules());
+            aggregatedResult.addErrors(action.getResult().getErrors());
             FilePath filePath = new FilePath(new File(mavenBuild.getRootDir(), AbstractAnnotation.WORKSPACE_FILES));
             try {
                 filePath.copyRecursiveTo("*.tmp", new FilePath(new File(getOwner().getRootDir(), AbstractAnnotation.WORKSPACE_FILES)));
@@ -326,4 +323,10 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
             }
         }
     }
+
+    /** Backward compatibility. */
+    @Deprecated
+    @java.lang.SuppressWarnings("unused")
+    @SuppressWarnings("UuF")
+    private HealthReportBuilder healthReportBuilder;
 }

@@ -113,13 +113,13 @@ public class FilesParser implements FileCallable<ParserResult> {
             if (!file.canRead()) {
                 String message = Messages.FilesParser_Error_NoPermission(moduleName, file);
                 log(message);
-                result.addErrorMessage(message);
+                result.addErrorMessage(moduleName, message);
                 continue;
             }
             if (file.length() <= 0) {
                 String message = Messages.FilesParser_Error_EmptyFile(moduleName, file);
                 log(message);
-                result.addErrorMessage(message);
+                result.addErrorMessage(moduleName, message);
                 continue;
             }
 
@@ -152,7 +152,7 @@ public class FilesParser implements FileCallable<ParserResult> {
         catch (InvocationTargetException exception) {
             String errorMessage = Messages.FilesParser_Error_Exception(file) + "\n\n"
                     + ExceptionUtils.getStackTrace((Throwable)ObjectUtils.defaultIfNull(exception.getCause(), exception));
-            result.addErrorMessage(errorMessage);
+            result.addErrorMessage(moduleName, errorMessage);
 
             log(errorMessage);
         }

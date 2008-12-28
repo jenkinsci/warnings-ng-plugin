@@ -185,7 +185,8 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
             final ParserResult result = perform(build, pom, mojo, logger);
 
             if (defaultEncoding == null) {
-                result.addErrorMessage(Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
+                log(logger, Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
+                result.addErrorMessage(pom.getName(), Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
             }
 
             build.execute(new BuildCallable<Void, IOException>() {

@@ -9,10 +9,8 @@ import hudson.plugins.warnings.util.model.Priority;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -66,10 +64,6 @@ public abstract class AnnotationsBuildResult extends BuildResult {
     /** Determines since which time we have zero warnings. */
     private long zeroWarningsHighScore;
 
-    /** Error messages. */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
-    private List<String> errors;
-
     /** The modules with no warnings. */
     @SuppressWarnings("unused")
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
@@ -90,7 +84,7 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      *            the parsed result with all annotations
      */
     public AnnotationsBuildResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result) {
-        super(build, result.getModules(), defaultEncoding);
+        super(build, result.getModules(), result.getErrorMessages(), defaultEncoding);
 
         initialize(result, new JavaProject());
 
@@ -114,7 +108,7 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      *            the result of the previous build
      */
     public AnnotationsBuildResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result, final AnnotationsBuildResult previous) {
-        super(build, result.getModules(), defaultEncoding);
+        super(build, result.getModules(), result.getErrorMessages(), defaultEncoding);
 
         AnnotationContainer previousProject = previous.getProject();
 
@@ -183,8 +177,6 @@ public abstract class AnnotationsBuildResult extends BuildResult {
         normal = result.getNumberOfAnnotations(Priority.NORMAL);
         low = result.getNumberOfAnnotations(Priority.LOW);
 
-        errors = new ArrayList<String>(result.getErrorMessages());
-
         serializeAnnotations(result.getAnnotations());
 
         JavaProject container = new JavaProject();
@@ -215,15 +207,6 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      * @return the summary message
      */
     public abstract String getDetails();
-
-    /**
-     * Returns whether a module with an error is part of this project.
-     *
-     * @return <code>true</code> if at least one module has an error.
-     */
-    public boolean hasError() {
-        return !errors.isEmpty();
-    }
 
     /**
      * Returns the build since we have zero warnings.
@@ -465,7 +448,7 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
         return new DetailBuilder().createTrendDetails(link, getOwner(), getContainer(), getFixedWarnings(),
-                getNewWarnings(), errors, getDefaultEncoding(), getDisplayName());
+                getNewWarnings(), getErrors(), getDefaultEncoding(), getDisplayName());
     }
 
     /**
