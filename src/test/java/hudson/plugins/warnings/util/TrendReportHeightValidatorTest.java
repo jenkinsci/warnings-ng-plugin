@@ -9,23 +9,20 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 /**
- * Tests the class {@link EncodingValidator}.
+ * Tests the class {@link TrendReportHeightValidator}.
  *
  * @author Ulli Hafner
  */
-public class EncodingValidatorTest extends AbstractValidatorTest {
+public class TrendReportHeightValidatorTest extends AbstractValidatorTest {
     /**
      * Test some valid encodings.
      */
     @Test
     public void testValidEncodings() throws Exception {
-        assertThatInputIsValid("");
-        assertThatInputIsValid("UTF8");
-        assertThatInputIsValid("UTF-8");
-        assertThatInputIsValid("CP1252");
-        assertThatInputIsValid("ISO-8859-1");
-        assertThatInputIsValid("ISO-8859-5");
-        assertThatInputIsValid("ISO-8859-9");
+        assertThatInputIsValid("50");
+        assertThatInputIsValid("51");
+        assertThatInputIsValid("52");
+        assertThatInputIsValid("5000");
     }
 
     /**
@@ -34,14 +31,14 @@ public class EncodingValidatorTest extends AbstractValidatorTest {
     @Test
     public void testInvalidEncodings() throws Exception {
         assertThatInputIsInvalid("NIX");
-        assertThatInputIsInvalid("UTF-9");
-        assertThatInputIsInvalid("ISO-8859-42");
+        assertThatInputIsInvalid("-1");
+        assertThatInputIsInvalid("49");
     }
 
     /** {@inheritDoc} */
     @Override
     protected SingleFieldValidator createValidator(final StaplerRequest request, final StaplerResponse response) {
-        return new EncodingValidator(request, response) {
+        return new TrendReportHeightValidator(request, response) {
             /** {@inheritDoc} */
             @Override
             public void error(final String message) throws IOException, ServletException {
@@ -50,3 +47,4 @@ public class EncodingValidatorTest extends AbstractValidatorTest {
         };
     }
 }
+

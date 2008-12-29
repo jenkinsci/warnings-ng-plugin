@@ -68,7 +68,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
     public abstract String getIconUrl();
 
     /**
-     * Performs on-the-fly validation on the defaukt encoding.
+     * Performs on-the-fly validation on the default encoding.
      *
      * @param request
      *            Stapler request
@@ -101,6 +101,18 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      */
     public final void doCheckThreshold(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
         new ThresholdValidator(request, response).process();
+    }
+
+    /**
+     * Performs on-the-fly validation on the trend graph height.
+     *
+     * @param request
+     *            Stapler request
+     * @param response
+     *            Stapler response
+     */
+    public final void doCheckHeight(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
+        new TrendReportHeightValidator(request, response).process();
     }
 
     /** {@inheritDoc} */

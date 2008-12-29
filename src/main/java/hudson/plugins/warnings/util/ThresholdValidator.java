@@ -1,7 +1,5 @@
 package hudson.plugins.warnings.util;
 
-import hudson.util.FormFieldValidator;
-
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -12,40 +10,41 @@ import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Validates a threshold parameter. A threshold must be an integer value greater
- * or equal 0.
+ * or equal 0 or the empty string.
  *
  * @author Ulli Hafner
  */
-public class ThresholdValidator extends FormFieldValidator implements Validator {
-    /** Error message. */
-    private static final String MESSAGE = "Threshold must be an integer value greater or equal 0.";
-
+public class ThresholdValidator extends SingleFieldValidator {
     /**
-     * Creates a new instance of <code>NumberValidator</code>.
+     * Creates a new instance of {@link ThresholdValidator}.
+     *
      * @param request
      *            Stapler request
      * @param response
      *            Stapler response
      */
     public ThresholdValidator(final StaplerRequest request, final StaplerResponse response) {
-        super(request, response, false);
+        super(request, response);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void check() throws IOException, ServletException {
-        String value = request.getParameter("value");
+    public void check(final String value) throws IOException, ServletException {
         if (!StringUtils.isEmpty(value)) {
             try {
                 int integer = Integer.valueOf(value);
                 if (integer < 0) {
-                    error(MESSAGE);
+                    error(Messages.FieldValidator_Error_Threshold());
+                    return;
                 }
             }
             catch (NumberFormatException exception) {
-                error(MESSAGE);
+                error(Messages.FieldValidator_Error_Threshold());
+                return;
             }
         }
+
+        ok();
     }
 }
 

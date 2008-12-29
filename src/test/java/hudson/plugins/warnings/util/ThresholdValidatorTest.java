@@ -37,7 +37,7 @@ public class ThresholdValidatorTest extends AbstractValidatorTest {
 
     /** {@inheritDoc} */
     @Override
-    protected Validator createValidator(final StaplerRequest request, final StaplerResponse response) {
+    protected SingleFieldValidator createValidator(final StaplerRequest request, final StaplerResponse response) {
         return new ThresholdValidator(request, response) {
             /** {@inheritDoc} */
             @Override

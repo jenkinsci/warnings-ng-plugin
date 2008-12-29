@@ -45,7 +45,7 @@ public abstract class AbstractValidatorTest {
      *            response mock
      * @return the validator under test
      */
-    protected abstract Validator createValidator(final StaplerRequest request, final StaplerResponse response);
+    protected abstract SingleFieldValidator createValidator(final StaplerRequest request, final StaplerResponse response);
 
     /**
      * Runs the validator with the specified input string and verifies that the
@@ -90,7 +90,7 @@ public abstract class AbstractValidatorTest {
         when(request.getParameter("value")).thenReturn(inputValue);
         when(response.getWriter()).thenReturn(new PrintWriter(System.out));
 
-        Validator validator = createValidator(request, response);
+        SingleFieldValidator validator = createValidator(request, response);
         isError = false;
         validator.check();
 

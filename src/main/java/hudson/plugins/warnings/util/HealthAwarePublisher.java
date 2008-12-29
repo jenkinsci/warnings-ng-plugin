@@ -372,7 +372,7 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      * @return the height of the trend graph
      */
     public int getTrendHeight() {
-        return new TrendReportSize(height).getHeight();
+        return TrendReportHeightValidator.defaultHeight(height);
     }
 
     /**

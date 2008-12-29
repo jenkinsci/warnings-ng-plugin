@@ -1,7 +1,5 @@
 package hudson.plugins.warnings.util;
 
-import hudson.util.FormFieldValidator;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
@@ -22,21 +20,19 @@ import org.kohsuke.stapler.StaplerResponse;
  *
  * @author Ulli Hafner
  */
-public class EncodingValidator extends FormFieldValidator implements Validator {
+public class EncodingValidator extends SingleFieldValidator {
     /** All available character sets. */
     private static final Set<String> ALL_CHARSETS = Collections.unmodifiableSet(new HashSet<String>(Charset.availableCharsets().keySet()));
-    /** Error message. */
-    private static final String MESSAGE = "Encoding must be a supported encoding of the Java platform (see java.nio.charset.Charset).";
-
     /**
-     * Creates a new instance of <code>NumberValidator</code>.
+     * Creates a new instance of {@link EncodingValidator}.
+     *
      * @param request
      *            Stapler request
      * @param response
      *            Stapler response
      */
     public EncodingValidator(final StaplerRequest request, final StaplerResponse response) {
-        super(request, response, false);
+        super(request, response);
     }
 
     /**
@@ -74,18 +70,17 @@ public class EncodingValidator extends FormFieldValidator implements Validator {
 
     /** {@inheritDoc} */
     @Override
-    public void check() throws IOException, ServletException {
-        String encoding = request.getParameter("value");
+    public void check(final String encoding) throws IOException, ServletException {
         try {
             if (StringUtils.isEmpty(encoding) || Charset.forName(encoding) != null) {
                 ok();
             }
         }
         catch (IllegalCharsetNameException exception) {
-            error(MESSAGE);
+            error(Messages.FieldValidator_Error_DefaultEncoding());
         }
         catch (UnsupportedCharsetException exception) {
-            error(MESSAGE);
+            error(Messages.FieldValidator_Error_DefaultEncoding());
         }
     }
 }
