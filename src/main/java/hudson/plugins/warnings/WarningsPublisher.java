@@ -4,7 +4,6 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Descriptor;
-import hudson.model.Result;
 import hudson.plugins.warnings.parser.FileWarningsParser;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.plugins.warnings.util.FilesParser;
@@ -125,12 +124,6 @@ public class WarningsPublisher extends HealthAwarePublisher {
      */
     public String getExcludePattern() {
         return excludePattern;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected boolean canContinue(final Result result) {
-        return result != Result.ABORTED;
     }
 
     /** {@inheritDoc} */
