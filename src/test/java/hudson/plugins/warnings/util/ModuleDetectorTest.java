@@ -63,6 +63,7 @@ public class ModuleDetectorTest {
      *             should never happen
      */
     @Test
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("DMI")
     public void testPomModules() throws FileNotFoundException {
         FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
         InputStream pom = ModuleDetectorTest.class.getResourceAsStream(ModuleDetector.MAVEN_POM);
@@ -89,6 +90,7 @@ public class ModuleDetectorTest {
      *             should never happen
      */
     @Test
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("DMI")
     public void testAntModules() throws FileNotFoundException {
         FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
         InputStream pom = ModuleDetectorTest.class.getResourceAsStream(ModuleDetector.ANT_PROJECT);
