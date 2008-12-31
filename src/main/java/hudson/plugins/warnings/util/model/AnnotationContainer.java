@@ -58,6 +58,10 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     private transient Map<Integer, JavaPackage> packagesByHashCode;
     /** The modules that contain annotations mapped by hash code of module name. */
     private transient Map<Integer, MavenModule> modulesByHashCode;
+    /** The modules that contain annotations mapped by hash code of category name. */
+    private transient Map<Integer, Set<FileAnnotation>> categoriesByHashCode;
+    /** The modules that contain annotations mapped by hash code of type name. */
+    private transient Map<Integer, Set<FileAnnotation>> typesByHashCode;
 
     /** Determines whether to build up a set of {@link WorkspaceFile}s. */
     @java.lang.SuppressWarnings("unused")
@@ -156,6 +160,8 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         filesByHashCode = new HashMap<Integer, WorkspaceFile>();
         packagesByHashCode = new HashMap<Integer, JavaPackage>();
         modulesByHashCode = new HashMap<Integer, MavenModule>();
+        categoriesByHashCode = new HashMap<Integer, Set<FileAnnotation>>();
+        typesByHashCode = new HashMap<Integer, Set<FileAnnotation>>();
     }
 
     /**
@@ -213,7 +219,9 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     private void addCategory(final FileAnnotation annotation) {
         String category = annotation.getCategory();
         if (!annotationsByCategory.containsKey(category)) {
-            annotationsByCategory.put(category, new HashSet<FileAnnotation>());
+            HashSet<FileAnnotation> container = new HashSet<FileAnnotation>();
+            annotationsByCategory.put(category, container);
+            categoriesByHashCode.put(category.hashCode(), container);
         }
         annotationsByCategory.get(category).add(annotation);
     }
@@ -228,7 +236,9 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     private void addType(final FileAnnotation annotation) {
         String type = annotation.getType();
         if (!annotationsByType.containsKey(type)) {
-            annotationsByType.put(type, new HashSet<FileAnnotation>());
+            HashSet<FileAnnotation> container = new HashSet<FileAnnotation>();
+            annotationsByType.put(type, container);
+            typesByHashCode.put(type.hashCode(), container);
         }
         annotationsByType.get(type).add(annotation);
     }
@@ -683,6 +693,21 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     }
 
     /**
+     * Gets the category with the given hash code.
+     *
+     * @param hashCode the category hash code
+     * @return the category with the given hash code
+     */
+    public DefaultAnnotationContainer getCategory(final int hashCode) {
+        if (categoriesByHashCode.containsKey(hashCode)) {
+            Set<FileAnnotation> container = categoriesByHashCode.get(hashCode);
+            FileAnnotation fileAnnotation = container.iterator().next();
+            return new DefaultAnnotationContainer(fileAnnotation.getCategory(), container);
+        }
+        throw new NoSuchElementException("Category not found: " + hashCode);
+    }
+
+    /**
      * Gets the types of this container that have annotations.
      *
      * @return the types with annotations
@@ -719,6 +744,21 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
             return new DefaultAnnotationContainer(type, annotationsByType.get(type));
         }
         throw new NoSuchElementException("Type not found: " + type);
+    }
+
+    /**
+     * Gets the type with the given hash code.
+     *
+     * @param hashCode the type hash code
+     * @return the type with the given hash code
+     */
+    public DefaultAnnotationContainer getType(final int hashCode) {
+        if (typesByHashCode.containsKey(hashCode)) {
+            Set<FileAnnotation> container = typesByHashCode.get(hashCode);
+            FileAnnotation fileAnnotation = container.iterator().next();
+            return new DefaultAnnotationContainer(fileAnnotation.getType(), container);
+        }
+        throw new NoSuchElementException("Type not found: " + hashCode);
     }
 
     /**

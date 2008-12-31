@@ -2,6 +2,7 @@ package hudson.plugins.warnings.util;
 
 import hudson.model.AbstractBuild;
 import hudson.plugins.warnings.util.model.AnnotationContainer;
+import hudson.plugins.warnings.util.model.DefaultAnnotationContainer;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 
 import java.util.Collection;
@@ -84,13 +85,13 @@ public class DetailBuilder {
             return factory.create(link, owner, container, defaultEncoding, displayName);
         }
         else if (link.startsWith("module.")) {
-            return new ModuleDetail(owner, container.getModule(Integer.valueOf(StringUtils.substringAfter(link, "module."))), defaultEncoding, displayName);
+            return new ModuleDetail(owner, container.getModule(createHashCode(link, "module.")), defaultEncoding, displayName);
         }
         else if (link.startsWith("package.")) {
-            return new PackageDetail(owner, container.getPackage(Integer.valueOf(StringUtils.substringAfter(link, "package."))), defaultEncoding, displayName);
+            return new PackageDetail(owner, container.getPackage(createHashCode(link, "package.")), defaultEncoding, displayName);
         }
         else if (link.startsWith("file.")) {
-            return new FileDetail(owner, container.getFile(Integer.valueOf(StringUtils.substringAfter(link, "file."))), defaultEncoding, displayName);
+            return new FileDetail(owner, container.getFile(createHashCode(link, "file.")), defaultEncoding, displayName);
         }
         else if (link.startsWith("tab.")) {
             return new TabDetail(owner, container.getAnnotations(), "/tabview/" + StringUtils.substringAfter(link, "tab.") + ".jelly", defaultEncoding);
@@ -99,14 +100,28 @@ public class DetailBuilder {
             return new SourceDetail(owner, container.getAnnotation(StringUtils.substringAfter(link, "source.")), defaultEncoding);
         }
         else if (link.startsWith("category.")) {
-            String category = StringUtils.substringAfter(link, "category.");
-            return new AttributeDetail(owner, container.getCategory(category).getAnnotations(), defaultEncoding, displayName, Messages.CategoryDetail_header() + " " + category);
+            DefaultAnnotationContainer category = container.getCategory(createHashCode(link, "category."));
+            return new AttributeDetail(owner, category.getAnnotations(), defaultEncoding, displayName, Messages.CategoryDetail_header() + " " + category.getName());
         }
         else if (link.startsWith("type.")) {
-            String type = StringUtils.substringAfter(link, "type.");
-            return new AttributeDetail(owner, container.getType(type).getAnnotations(), defaultEncoding, displayName, Messages.TypeDetail_header() + " " + type);
+            DefaultAnnotationContainer type = container.getType(createHashCode(link, "type."));
+            return new AttributeDetail(owner, type.getAnnotations(), defaultEncoding, displayName, Messages.TypeDetail_header() + " " + type.getName());
         }
         return null;
+    }
+
+
+    /**
+     * Extracts the hash code from the given link stripping of the given prefix.
+     *
+     * @param link
+     *            the whole link
+     * @param prefix
+     *            the prefix to remove
+     * @return the hash code
+     */
+    private int createHashCode(final String link, final String prefix) {
+        return Integer.parseInt(StringUtils.substringAfter(link, prefix));
     }
 }
 

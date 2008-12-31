@@ -13,7 +13,7 @@
       <j:forEach var="container" items="${it.container.types}">
         <tr>
           <td class="pane">
-            <a href="type.${container.name}/">${container.name}</a>
+            <a href="type.${container.name.hashCode()}/">${container.name}</a>
           </td>
           <td class="pane">${container.numberOfAnnotations}
           </td>
