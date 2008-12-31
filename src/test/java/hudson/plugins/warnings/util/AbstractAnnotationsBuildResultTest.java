@@ -206,10 +206,10 @@ public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBu
         ParserResult project = new ParserResult();
 
         FileAnnotation annotation = mock(FileAnnotation.class);
-        stub(annotation.getPriority()).toReturn(Priority.HIGH);
-        stub(annotation.getFileName()).toReturn(FILENAME);
-        stub(annotation.getModuleName()).toReturn("Module");
-        stub(annotation.getPackageName()).toReturn("Package");
+        when(annotation.getPriority()).thenReturn(Priority.HIGH);
+        when(annotation.getFileName()).thenReturn(FILENAME);
+        when(annotation.getModuleName()).thenReturn("Module");
+        when(annotation.getPackageName()).thenReturn("Package");
         project.addAnnotation(annotation);
 
         return project;
@@ -227,9 +227,9 @@ public abstract class AbstractAnnotationsBuildResultTest<T extends AnnotationsBu
     private AbstractBuild<?, ?> createBuild(final int buildNumber, final Calendar calendar) {
         AbstractBuild<?, ?> build = mock(AbstractBuild.class);
 
-        stub(build.getTimestamp()).toReturn(calendar);
-        stub(build.getRootDir()).toReturn(SystemUtils.getJavaIoTmpDir());
-        stub(build.getNumber()).toReturn(buildNumber);
+        when(build.getTimestamp()).thenReturn(calendar);
+        when(build.getRootDir()).thenReturn(SystemUtils.getJavaIoTmpDir());
+        when(build.getNumber()).thenReturn(buildNumber);
 
         return build;
     }

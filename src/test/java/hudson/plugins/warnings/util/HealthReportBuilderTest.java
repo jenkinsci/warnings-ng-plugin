@@ -104,7 +104,7 @@ public class HealthReportBuilderTest extends AbstractEnglishLocaleTest {
     private HealthReport createHealthReport(final boolean isEnabled, final int min, final int max, final int actual) {
         HealthReportBuilder builder = createHealthBuilder(false, 0, isEnabled, min, max);
         AnnotationProvider result = mock(AnnotationProvider.class);
-        stub(result.getNumberOfAnnotations()).toReturn(actual);
+        when(result.getNumberOfAnnotations()).thenReturn(actual);
         return builder.computeHealth(actual, result);
     }
 
@@ -211,11 +211,11 @@ public class HealthReportBuilderTest extends AbstractEnglishLocaleTest {
     private HealthReportBuilder createHealthBuilder(final boolean isThresholdEnabled, final int threshold,
             final boolean isHealthEnabled, final int healthy, final int unHealthy) {
         AbstractHealthDescriptor healthDescriptor = mock(AbstractHealthDescriptor.class);
-        stub(healthDescriptor.isThresholdEnabled()).toReturn(isThresholdEnabled);
-        stub(healthDescriptor.getMinimumAnnotations()).toReturn(threshold);
-        stub(healthDescriptor.isHealthyReportEnabled()).toReturn(isHealthEnabled);
-        stub(healthDescriptor.getHealthyAnnotations()).toReturn(healthy);
-        stub(healthDescriptor.getUnHealthyAnnotations()).toReturn(unHealthy);
+        when(healthDescriptor.isThresholdEnabled()).thenReturn(isThresholdEnabled);
+        when(healthDescriptor.getMinimumAnnotations()).thenReturn(threshold);
+        when(healthDescriptor.isHealthyReportEnabled()).thenReturn(isHealthEnabled);
+        when(healthDescriptor.getHealthyAnnotations()).thenReturn(healthy);
+        when(healthDescriptor.getUnHealthyAnnotations()).thenReturn(unHealthy);
 
         return new HealthReportBuilder(healthDescriptor);
     }

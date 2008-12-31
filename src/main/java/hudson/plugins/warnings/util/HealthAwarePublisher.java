@@ -392,6 +392,7 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      * @return <code>true</code> if the current build uses maven,
      *         <code>false</code> otherwise
      */
+    @SuppressWarnings("unchecked")
     protected boolean isMavenBuild(final AbstractBuild<?, ?> build) {
         if (build.getProject() instanceof Project) {
             Project<?, ?> project = (Project<?, ?>)build.getProject();
@@ -412,6 +413,7 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      * @return <code>true</code> if the current build uses ant,
      *         <code>false</code> otherwise
      */
+    @SuppressWarnings("unchecked")
     protected boolean isAntBuild(final AbstractBuild<?, ?> build) {
         if (build.getProject() instanceof Project) {
             Project<?, ?> project = (Project<?, ?>)build.getProject();
