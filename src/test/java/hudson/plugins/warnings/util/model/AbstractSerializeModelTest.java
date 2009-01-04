@@ -105,7 +105,7 @@ public abstract class AbstractSerializeModelTest extends AbstractEnglishLocaleTe
         verifyFirstAnnotation(project);
 
 //        try {
-//            OutputStream fout = new FileOutputStream("project.ser");
+//            OutputStream fout = new FileOutputStream("/project.ser");
 //            ObjectOutputStream out = new ObjectOutputStream(fout);
 //
 //            out.writeObject(project);
@@ -170,13 +170,10 @@ public abstract class AbstractSerializeModelTest extends AbstractEnglishLocaleTe
      *            the module name
      */
     private void addAnnotation(final JavaProject project, final int line, final String message, final Priority priority, final String fileName, final String packageName, final String moduleName) {
-        AbstractAnnotation task = createAnnotation(line, message, priority);
+        AbstractAnnotation task = createAnnotation(line, message, priority, fileName, packageName, moduleName);
         if (firstAnnotation == null) {
             firstAnnotation = task;
         }
-        task.setFileName(fileName);
-        task.setPackageName(packageName);
-        task.setModuleName(moduleName);
         project.addAnnotation(task);
     }
 
@@ -189,9 +186,15 @@ public abstract class AbstractSerializeModelTest extends AbstractEnglishLocaleTe
      *            the message
      * @param priority
      *            the priority
+     * @param fileName
+     *            the file name
+     * @param packageName
+     *            the package name
+     * @param moduleName
+     *            the module name
      * @return the annotation
      */
-    protected abstract AbstractAnnotation createAnnotation(final int line, final String message, final Priority priority);
+    protected abstract AbstractAnnotation createAnnotation(final int line, final String message, final Priority priority, final String fileName, final String packageName, final String moduleName);
 
     /**
      * Test whether a serialized task is the same object after deserialization.

@@ -28,7 +28,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     /** The message of this annotation. */
     private final String message;
     /** The priority of this annotation. */
-    private final Priority priority;
+    private Priority priority;
     /** Unique key of this annotation. */
     private final long key;
     /** The ordered list of line ranges that show the origin of the annotation in the associated file. */
@@ -49,6 +49,32 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     /**
      * Creates a new instance of <code>AbstractAnnotation</code>.
      *
+     * @param message
+     *            the message of the warning
+     * @param start
+     *            the first line of the line range
+     * @param end
+     *            the last line of the line range
+     * @param category
+     *            the category of the annotation
+     * @param type
+     *            the type of the annotation
+     */
+    public AbstractAnnotation(final String message, final int start, final int end, final String category, final String type) {
+        this.message = StringUtils.strip(message);
+        this.category = StringUtils.defaultString(category);
+        this.type = StringUtils.defaultString(type);
+
+        key = currentKey++;
+
+        lineRanges = new ArrayList<LineRange>();
+        lineRanges.add(new LineRange(start, end));
+        primaryLineNumber = start;
+    }
+
+    /**
+     * Creates a new instance of <code>AbstractAnnotation</code>.
+     *
      * @param priority
      *            the priority
      * @param message
@@ -64,16 +90,17 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      */
     public AbstractAnnotation(final Priority priority, final String message, final int start, final int end,
             final String category, final String type) {
+        this(message, start, end, category, type);
         this.priority = priority;
-        this.message = StringUtils.strip(message);
-        this.category = StringUtils.defaultString(category);
-        this.type = StringUtils.defaultString(type);
+    }
 
-        key = currentKey++;
-
-        lineRanges = new ArrayList<LineRange>();
-        lineRanges.add(new LineRange(start, end));
-        primaryLineNumber = start;
+    /**
+     * Sets the priority to the specified value.
+     *
+     * @param priority the value to set
+     */
+    public void setPriority(final Priority priority) {
+        this.priority = priority;
     }
 
     /** {@inheritDoc} */
