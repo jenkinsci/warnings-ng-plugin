@@ -5,7 +5,7 @@
   <j:set var="annotations" value="${it.container.annotations}" />
   <table class="pane sortable" id="fixed">
     <tr>
-      <td class="pane-header">${%Class}</td>
+      <td class="pane-header">${%File}</td>
       <td class="pane-header">${%Warning Type}</td>
     </tr>
     <tbody>
