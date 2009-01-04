@@ -9,23 +9,9 @@
 	        <st:include page="/summaryTable.jelly" />
 
 			<h2>${%Fixed Warnings}</h2>
-			<table class="pane sortable" id="fixed">
-				<tr>
-					<td class="pane-header">${%Class}</td>
-					<td class="pane-header">${%Warning Type}</td>
-				</tr>
-				<tbody>
-					<j:forEach var="warning"
-						items="${it.annotations}">
-						<tr>
-							<td class="pane">
-								${warning.shortFileName}
-							</td>
-							<td class="pane">${warning.type}</td>
-						</tr>
-					</j:forEach>
-				</tbody>
-			</table>
+            <j:set var="annotations" value="${it.annotations}" />
+            <st:include page="/tabview/fixed.jelly" />
+
 		</l:main-panel>
 	</l:layout>
 </j:jelly>
