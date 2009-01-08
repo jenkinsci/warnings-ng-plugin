@@ -112,7 +112,7 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      * @return the dynamic result of this module detail view
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
-        return new DetailBuilder().createDetails(link, owner, getContainer(), defaultEncoding, getDisplayName());
+        return DetailBuilder.create().createDetails(link, owner, getContainer(), defaultEncoding, getDisplayName());
     }
 
     /**

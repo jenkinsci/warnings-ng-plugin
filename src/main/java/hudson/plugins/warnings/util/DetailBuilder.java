@@ -15,9 +15,42 @@ import org.apache.commons.lang.StringUtils;
  * @author Ulli Hafner
  */
 public class DetailBuilder {
+    /** Default detail builder class. */
+    private static final Class<DetailBuilder> DEFAULT_DETAIL_BUILDER = DetailBuilder.class;
+    /** Detail builder class. */
+    private static Class<? extends DetailBuilder> detailBuilder = DEFAULT_DETAIL_BUILDER;
+
     /**
-     * Returns a detail object for the selected element of the specified annotation container.
-     * The details will include the new and fixed warnings trends as well as the errors report.
+     * Creates a new detail builder.
+     *
+     * @return the detail builder
+     */
+    public static DetailBuilder create() {
+        try {
+            return detailBuilder.newInstance();
+        }
+        catch (InstantiationException exception) {
+            // ignore
+        }
+        catch (IllegalAccessException exception) {
+            // ignore
+        }
+        return new DetailBuilder();
+    }
+
+    /**
+     * Sets the detail builder class to the specified value.
+     *
+     * @param detailBuilder the value to set
+     */
+    public static void setDetailBuilder(final Class<? extends DetailBuilder> detailBuilder) {
+        DetailBuilder.detailBuilder = detailBuilder;
+    }
+
+    /**
+     * Returns a detail object for the selected element of the specified
+     * annotation container. The details will include the new and fixed warnings
+     * trends as well as the errors report.
      *
      * @param link
      *            the link to identify the sub page to show
@@ -66,16 +99,12 @@ public class DetailBuilder {
     /**
      * Returns a detail object for the selected element of the specified annotation container.
      *
-     * @param link
-     *            the link to identify the sub page to show
-     * @param owner
-     *            the build as owner of the detail page
-     * @param container
-     *            the annotation container to get the details for
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param displayName
-     *            the name of the selected object
+     * @param link the link to identify the sub page to show
+     * @param owner the build as owner of the detail page
+     * @param container the annotation container to get the details for
+     * @param defaultEncoding the default encoding to be used when reading and parsing files
+     * @param displayName the name of the selected object
+     *
      * @return the dynamic result of this module detail view
      */
     public Object createDetails(final String link, final AbstractBuild<?, ?> owner, final AnnotationContainer container,
@@ -114,14 +143,20 @@ public class DetailBuilder {
     /**
      * Extracts the hash code from the given link stripping of the given prefix.
      *
-     * @param link
-     *            the whole link
-     * @param prefix
-     *            the prefix to remove
+     * @param link the whole link
+     * @param prefix the prefix to remove
+     *
      * @return the hash code
      */
     private int createHashCode(final String link, final String prefix) {
         return Integer.parseInt(StringUtils.substringAfter(link, prefix));
+    }
+
+    /**
+     * Creates a new instance of {@link DetailBuilder}.
+     */
+    protected DetailBuilder() {
+        // make constructor protected
     }
 }
 

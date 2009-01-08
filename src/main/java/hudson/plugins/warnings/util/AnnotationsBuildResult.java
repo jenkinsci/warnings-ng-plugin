@@ -447,7 +447,7 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      * @return the dynamic result of the analysis (detail page).
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
-        return new DetailBuilder().createTrendDetails(link, getOwner(), getContainer(), getFixedWarnings(),
+        return DetailBuilder.create().createTrendDetails(link, getOwner(), getContainer(), getFixedWarnings(),
                 getNewWarnings(), getErrors(), getDefaultEncoding(), getDisplayName());
     }
 
