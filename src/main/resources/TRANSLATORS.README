@@ -1,0 +1,12 @@
+When translating properties files please keep in mind that everything in package
+hudson.plugins.*.util
+is the same for the plug-ins
+
+- checkstyle
+- dry
+- findbugs
+- pmd
+- tasks
+- warnings
+
+So just translate the properties for one plug-in and copy to the other plug-ins.
