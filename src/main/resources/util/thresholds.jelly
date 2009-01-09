@@ -40,19 +40,19 @@
     </table>
   </f:entry>
     <f:entry title="${%Priority evaluation}" description="${%description.limit}">
-      <f:radio name="${id}thresholdLimit" value="high" checked="${instance.thresholdLimit == 'high'}" id="thresholdLimit.high"/>
+      <f:radio name="${id}.thresholdLimit" value="high" checked="${instance.thresholdLimit == 'high'}" id="thresholdLimit.high"/>
       <st:nbsp/>
       <label for="thresholdLimit.high">${%Only priority high}</label>
       <st:nbsp />
-      <f:radio name="${id}thresholdLimit" value="normal" checked="${instance.thresholdLimit == 'normal'}" id="thresholdLimit.normal"/>
+      <f:radio name="${id}.thresholdLimit" value="normal" checked="${instance.thresholdLimit == 'normal'}" id="thresholdLimit.normal"/>
       <st:nbsp/>
       <label for="thresholdLimit.normal">${%Priorities high and normal}</label>
       <st:nbsp />
       <j:if test="${instance != null}">
-        <f:radio name="${id}thresholdLimit" value="low" title="" checked="${instance.thresholdLimit == 'low'}" id="thresholdLimit.low"/>
+        <f:radio name="${id}.thresholdLimit" value="low" title="" checked="${instance.thresholdLimit == 'low'}" id="thresholdLimit.low"/>
       </j:if>
       <j:if test="${instance == null}">
-        <f:radio name="${id}thresholdLimit" value="low" title="" checked="${true}" id="thresholdLimit.low"/>
+        <f:radio name="${id}.thresholdLimit" value="low" title="" checked="${true}" id="thresholdLimit.low"/>
       </j:if>
       <st:nbsp/>
       <label for="thresholdLimit.low">${%All priorities}</label>
