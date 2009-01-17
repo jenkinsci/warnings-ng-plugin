@@ -3,7 +3,7 @@
   <f:entry title="${%File pattern}"
     description="${%description.pattern}">
     <f:textbox name="pattern" value="${instance.pattern}"
-      checkUrl="'${rootURL}/publisher/WarningsPublisher/checkPattern?job=${it.fullName}&amp;value='+escape(this.value)" />
+      checkUrl="'descriptorByName/WarningsPublisher/checkPattern?value='+escape(this.value)" />
   </f:entry>
 
   <f:entry title="${%Parsers}" description="${%description.parsers}">
