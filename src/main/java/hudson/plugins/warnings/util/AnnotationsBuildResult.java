@@ -165,11 +165,11 @@ public abstract class AnnotationsBuildResult extends BuildResult {
 
         Collection<FileAnnotation> allWarnings = result.getAnnotations();
 
-        Set<FileAnnotation> warnings = AnnotationDifferencer.getNewWarnings(allWarnings, previousProject.getAnnotations());
+        Set<FileAnnotation> warnings = AnnotationDifferencer.getNewAnnotations(allWarnings, previousProject.getAnnotations());
         numberOfNewWarnings = warnings.size();
         newWarnings = new WeakReference<Collection<FileAnnotation>>(warnings);
 
-        warnings = AnnotationDifferencer.getFixedWarnings(allWarnings, previousProject.getAnnotations());
+        warnings = AnnotationDifferencer.getFixedAnnotations(allWarnings, previousProject.getAnnotations());
         numberOfFixedWarnings = warnings.size();
         fixedWarnings = new WeakReference<Collection<FileAnnotation>>(warnings);
 
@@ -377,7 +377,7 @@ public abstract class AnnotationsBuildResult extends BuildResult {
     private Collection<FileAnnotation> loadNewWarnings() {
         Collection<FileAnnotation> difference = getProject().getAnnotations();
         if (hasPreviousResult()) {
-            difference = AnnotationDifferencer.getNewWarnings(difference, getPreviousResult().getAnnotations());
+            difference = AnnotationDifferencer.getNewAnnotations(difference, getPreviousResult().getAnnotations());
         }
         newWarnings = new WeakReference<Collection<FileAnnotation>>(difference);
 
@@ -410,7 +410,7 @@ public abstract class AnnotationsBuildResult extends BuildResult {
     private Collection<FileAnnotation> loadFixedWarnings() {
         Collection<FileAnnotation> difference;
         if (hasPreviousResult()) {
-            difference = AnnotationDifferencer.getFixedWarnings(getProject().getAnnotations(), getPreviousResult().getAnnotations());
+            difference = AnnotationDifferencer.getFixedAnnotations(getProject().getAnnotations(), getPreviousResult().getAnnotations());
         }
         else {
             difference = Collections.emptyList();

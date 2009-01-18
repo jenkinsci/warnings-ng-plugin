@@ -132,4 +132,11 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
      * @return the annotation type
      */
     String getType();
+
+    /**
+     * Returns a hash code of the surrounding context of this annotation.
+     *
+     * @return a hash code of the surrounding context of this annotation.
+     */
+    long getContextHashCode();
 }

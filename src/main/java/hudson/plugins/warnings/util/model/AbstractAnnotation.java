@@ -45,6 +45,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     private final String category;
     /** Bug type. */
     private final String type;
+    /**
+     * Context hash code of this annotation. This hash code is used to decide if
+     * two annotations are equal even if the equals method returns <code>false</code>.
+     */
+    private long contextHashCode;
+
 
     /**
      * Creates a new instance of <code>AbstractAnnotation</code>.
@@ -70,6 +76,8 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         lineRanges = new ArrayList<LineRange>();
         lineRanges.add(new LineRange(start, end));
         primaryLineNumber = start;
+
+        contextHashCode = currentKey;
     }
 
     /**
@@ -207,6 +215,20 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         if (!lineRanges.contains(lineRange)) {
             lineRanges.add(lineRange);
         }
+    }
+
+    /** {@inheritDoc} */
+    public long getContextHashCode() {
+        return contextHashCode;
+    }
+
+    /**
+     * Sets the context hash code to the specified value.
+     *
+     * @param contextHashCode the value to set
+     */
+    public void setContextHashCode(final long contextHashCode) {
+        this.contextHashCode = contextHashCode;
     }
 
     // CHECKSTYLE:OFF

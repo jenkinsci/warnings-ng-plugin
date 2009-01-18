@@ -1,6 +1,7 @@
 package hudson.plugins.warnings.util;
 
 import static org.junit.Assert.*;
+import hudson.plugins.warnings.util.model.AbstractAnnotation;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
 
@@ -104,26 +105,49 @@ public abstract class AnnotationDifferencerTest {
         annotation = createAnnotation(STRING, Priority.HIGH, STRING, STRING, STRING, 2, 3);
         previous.add(annotation);
 
-
-        assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getFixedWarnings(actual, previous).size());
+        assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getFixedAnnotations(actual, previous).size());
 
         annotation = createAnnotation(STRING, Priority.HIGH, "type2", STRING, STRING, 2, 3);
         previous.add(annotation);
 
-        assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getNewWarnings(actual, previous).size());
-        assertEquals(WARNINGS_COUNT_ERROR, 1, AnnotationDifferencer.getFixedWarnings(actual, previous).size());
+        assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getNewAnnotations(actual, previous).size());
+        assertEquals(WARNINGS_COUNT_ERROR, 1, AnnotationDifferencer.getFixedAnnotations(actual, previous).size());
 
         annotation = createAnnotation(STRING, Priority.HIGH, "type2", STRING, STRING, 2, 3);
         actual.add(annotation);
 
-        assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getNewWarnings(actual, previous).size());
-        assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getFixedWarnings(actual, previous).size());
+        assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getNewAnnotations(actual, previous).size());
+        assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getFixedAnnotations(actual, previous).size());
 
         annotation = createAnnotation(STRING, Priority.HIGH, "type3", STRING, STRING, 2, 3);
         actual.add(annotation);
 
-        assertEquals(WARNINGS_COUNT_ERROR, 1, AnnotationDifferencer.getNewWarnings(actual, previous).size());
-        assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getFixedWarnings(actual, previous).size());
+        assertEquals(WARNINGS_COUNT_ERROR, 1, AnnotationDifferencer.getNewAnnotations(actual, previous).size());
+        assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getFixedAnnotations(actual, previous).size());
+    }
+
+    /**
+     * Checks whether the hash codes are evaluated if similar warnings are part of new and fixed.
+     */
+    @Test
+    public void testHashCodes() {
+        Set<FileAnnotation> actual = new HashSet<FileAnnotation>();
+        Set<FileAnnotation> previous = new HashSet<FileAnnotation>();
+
+        FileAnnotation current = createAnnotation(STRING, Priority.HIGH, STRING, STRING, STRING, 3, 4);
+        actual.add(current);
+
+        FileAnnotation old = createAnnotation(STRING, Priority.HIGH, STRING, STRING, STRING, 2, 3);
+        previous.add(old);
+
+        assertEquals(WARNINGS_COUNT_ERROR, 1, AnnotationDifferencer.getFixedAnnotations(actual, previous).size());
+        assertEquals(WARNINGS_COUNT_ERROR, 1, AnnotationDifferencer.getFixedAnnotations(actual, previous).size());
+
+        ((AbstractAnnotation)current).setContextHashCode(0);
+        ((AbstractAnnotation)old).setContextHashCode(0);
+
+        assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getFixedAnnotations(actual, previous).size());
+        assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getFixedAnnotations(actual, previous).size());
     }
 }
 
