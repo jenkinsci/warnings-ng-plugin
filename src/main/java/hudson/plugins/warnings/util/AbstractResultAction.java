@@ -170,7 +170,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      *             in case of an error
      */
     public final void doGraph(final StaplerRequest request, final StaplerResponse response, final int height) throws IOException {
-        if (ChartUtil.awtProblem) {
+        if (ChartUtil.awtProblemCause != null) {
             response.sendRedirect2(request.getContextPath() + "/images/headless.png");
             return;
         }
