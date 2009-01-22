@@ -1,5 +1,6 @@
-package hudson.plugins.warnings.parser;
+package hudson.plugins.warnings;
 
+import hudson.plugins.warnings.parser.Warning;
 import hudson.plugins.warnings.util.AnnotationDifferencer;
 import hudson.plugins.warnings.util.AnnotationDifferencerTest;
 import hudson.plugins.warnings.util.model.FileAnnotation;

@@ -139,4 +139,11 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
      * @return a hash code of the surrounding context of this annotation.
      */
     long getContextHashCode();
+
+    /**
+     * Sets the context hash code to the specified value.
+     *
+     * @param contextHashCode the value to set
+     */
+    void setContextHashCode(long contextHashCode);
 }

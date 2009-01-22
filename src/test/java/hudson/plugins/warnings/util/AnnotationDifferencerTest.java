@@ -141,13 +141,13 @@ public abstract class AnnotationDifferencerTest {
         previous.add(old);
 
         assertEquals(WARNINGS_COUNT_ERROR, 1, AnnotationDifferencer.getFixedAnnotations(actual, previous).size());
-        assertEquals(WARNINGS_COUNT_ERROR, 1, AnnotationDifferencer.getFixedAnnotations(actual, previous).size());
+        assertEquals(WARNINGS_COUNT_ERROR, 1, AnnotationDifferencer.getNewAnnotations(actual, previous).size());
 
         ((AbstractAnnotation)current).setContextHashCode(0);
         ((AbstractAnnotation)old).setContextHashCode(0);
 
         assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getFixedAnnotations(actual, previous).size());
-        assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getFixedAnnotations(actual, previous).size());
+        assertEquals(WARNINGS_COUNT_ERROR, 0, AnnotationDifferencer.getNewAnnotations(actual, previous).size());
     }
 }
 

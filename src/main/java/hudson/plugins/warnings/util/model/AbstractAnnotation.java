@@ -222,11 +222,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         return contextHashCode;
     }
 
-    /**
-     * Sets the context hash code to the specified value.
-     *
-     * @param contextHashCode the value to set
-     */
+    /** {@inheritDoc} */
     public void setContextHashCode(final long contextHashCode) {
         this.contextHashCode = contextHashCode;
     }

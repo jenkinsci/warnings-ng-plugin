@@ -10,9 +10,6 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.LineIterator;
-
 /**
  * A base class for parsers that work on files an produce annotations.
  *
@@ -26,7 +23,7 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
     private final String defaultEncoding;
 
     /**
-     * Creates a new instance of {@link CheckStyleParser}.
+     * Creates a new instance of {@link AbstractAnnotationParser}.
      *
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
@@ -79,20 +76,6 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
      * @throws IOException if the contents of the file could not be read
      */
     protected int createContextHashCode(final String fileName, final int line) throws IOException {
-        LineIterator lineIterator = IOUtils.lineIterator(new FileInputStream(new File(fileName)), defaultEncoding);
-
-        StringBuilder context = new StringBuilder(1000);
-        for (int i = 0; lineIterator.hasNext(); i++) {
-            String currentLine = lineIterator.nextLine();
-            if (i >= line - 3) {
-                context.append(currentLine);
-            }
-            if (i > line + 3) {
-                break;
-            }
-        }
-        lineIterator.close();
-
-        return context.toString().hashCode();
+        return new ContextHashCode().create(fileName, line, defaultEncoding);
     }
 }

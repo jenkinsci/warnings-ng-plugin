@@ -24,7 +24,7 @@ public final class AnnotationDifferencer {
      * @return the new annotations
      */
     public static Set<FileAnnotation> getNewAnnotations(final Collection<FileAnnotation> actual, final Collection<FileAnnotation> previous) {
-        return removeDuplicates(difference(actual, previous), difference(previous, actual));
+        return removeDuplicates(difference(actual, previous), previous);
     }
 
 
@@ -51,12 +51,12 @@ public final class AnnotationDifferencer {
      *
      * @param targetSet
      *            the target set
-     * @param otherSet
+     * @param previous
      *            the other set that is checked for duplicates
      * @return the unique annotations
      */
-    private static Set<FileAnnotation> removeDuplicates(final Set<FileAnnotation> targetSet, final Set<FileAnnotation> otherSet) {
-        Set<Long> otherHashCodes = extractHashCodes(otherSet);
+    private static Set<FileAnnotation> removeDuplicates(final Set<FileAnnotation> targetSet, final Collection<FileAnnotation> previous) {
+        Set<Long> otherHashCodes = extractHashCodes(previous);
         ArrayList<FileAnnotation> duplicates = new ArrayList<FileAnnotation>();
         for (FileAnnotation annotation : targetSet) {
             if (otherHashCodes.contains(annotation.getContextHashCode())) {
@@ -71,13 +71,13 @@ public final class AnnotationDifferencer {
     /**
      * Extracts the hash codes of the specified collection of annotations.
      *
-     * @param annotations
+     * @param previous
      *            the annotations to get the hash codes from
      * @return the hash codes of the specified collection of annotations
      */
-    private static HashSet<Long> extractHashCodes(final Set<FileAnnotation> annotations) {
+    private static HashSet<Long> extractHashCodes(final Collection<FileAnnotation> previous) {
         HashSet<Long> hashCodes = new HashSet<Long>();
-        for (FileAnnotation annotation : annotations) {
+        for (FileAnnotation annotation : previous) {
             hashCodes.add(annotation.getContextHashCode());
         }
         return hashCodes;
@@ -94,7 +94,7 @@ public final class AnnotationDifferencer {
      * @return the fixed annotations
      */
     public static Set<FileAnnotation> getFixedAnnotations(final Collection<FileAnnotation> actual, final Collection<FileAnnotation> previous) {
-        return removeDuplicates(difference(previous, actual), difference(actual, previous));
+        return removeDuplicates(difference(previous, actual), actual);
     }
 
     /**
