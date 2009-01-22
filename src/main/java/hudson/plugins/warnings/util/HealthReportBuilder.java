@@ -81,13 +81,7 @@ public class HealthReportBuilder implements Serializable {
                 percentage = 100 - ((counter - healthDescriptor.getHealthyAnnotations()) * 100
                         / (healthDescriptor.getUnHealthyAnnotations() - healthDescriptor.getHealthyAnnotations()));
             }
-            try {
-                return new HealthReport(percentage, healthDescriptor.createDescription(result));
-            }
-            catch (NoSuchMethodError exception) {
-                // if plug-in is running in Hudson < 1.260
-                return new HealthReport(percentage, healthDescriptor.createDescription(result).toString());
-            }
+            return new HealthReport(percentage, healthDescriptor.createDescription(result));
         }
         return null;
     }
