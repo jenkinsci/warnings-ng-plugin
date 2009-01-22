@@ -232,6 +232,7 @@ public class ParserRegistry {
         parsers.add(new SunCParser());
         parsers.add(new GnatParser());
         parsers.add(new ErlcParser());
+        parsers.add(new IntelCParser());
 
         return Collections.unmodifiableList(parsers);
     }

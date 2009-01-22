@@ -631,3 +631,14 @@ Maybe if you insist that "javac" must appear somewhere in the taskname, e.g.
 
 ./test.erl:125: Warning: variable 'Name' is unused
 ./test2.erl:175: record 'Extension' undefined
+
+
+
+D:\Hudson\workspace\foo\busdates.cpp(1460): (col. 20) remark: LOOP WAS VECTORIZED.
+
+D:\Hudson\workspace\foo\hols.cpp(2630): (col. 15) remark: FUSED LOOP WAS VECTORIZED.
+
+D:\Hudson\workspace\zoo\oppdend2d_slv_strip_utils.cpp(721): remark #1: last line of file ends without a newline
+
+D:\Hudson\workspace\boo\serviceif.cpp(17): remark #1418: external function definition with no prior declaration
+
