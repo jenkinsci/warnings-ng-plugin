@@ -12,7 +12,7 @@ import java.io.IOException;
 
 /**
  * Scans the workspace for maven pom.xml files and ant build.xml files and maps
- * all annotations to corresponding modules. Additionlly, the content of each
+ * all annotations to corresponding modules. Additionally, the content of each
  * file with warnings is read and a hash code of the warning is created to
  * enable a more flexible new and fixed warnings detection.
  *
@@ -44,9 +44,14 @@ public class AnnotationsClassifier implements FileCallable<ParserResult> {
         ModuleDetector detector = new ModuleDetector(workspace);
         ContextHashCode contextHashCode = new ContextHashCode();
         for (FileAnnotation annotation : result.getAnnotations()) {
-            annotation.setModuleName(detector.guessModuleName(annotation.getFileName()));
-            annotation.setContextHashCode(contextHashCode.create(
-                    annotation.getFileName(), annotation.getPrimaryLineNumber(), defaultEncoding));
+            try {
+                annotation.setModuleName(detector.guessModuleName(annotation.getFileName()));
+                annotation.setContextHashCode(contextHashCode.create(
+                        annotation.getFileName(), annotation.getPrimaryLineNumber(), defaultEncoding));
+            }
+            catch (IOException exception) {
+                // ignore and continue
+            }
         }
         return result;
     }
