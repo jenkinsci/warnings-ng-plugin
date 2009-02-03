@@ -48,7 +48,7 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
     /** Unique ID of this class. */
     private static final long serialVersionUID = -7945220365563528457L;
     /** Default threshold priority limit. */
-    private static final String DEFAULT_PRIORITY_THRESHOLD_LIMIT = "low";
+    private static final Priority DEFAULT_PRIORITY_THRESHOLD_LIMIT = Priority.LOW;
     /** Annotation threshold to be reached if a build should be considered as unstable. */
     private final String threshold;
     /** Determines whether to use the provided threshold to mark a build as unstable. */
@@ -70,7 +70,7 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
     /** The name of the plug-in. */
     private final String pluginName;
     /** Determines which warning priorities should be considered when evaluating the build stability and health. */
-    private String thresholdLimit;
+    private Priority minimumPriority;
     /** The default encoding to be used when reading and parsing files. */
     private final String defaultEncoding;
 
@@ -89,7 +89,7 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      *            than this value
      * @param height
      *            the height of the trend graph
-     * @param thresholdLimit
+     * @param minimumPriority
      *            determines which warning priorities should be considered when
      *            evaluating the build stability and health
      * @param pluginName
@@ -98,21 +98,18 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      *            the default encoding to be used when reading and parsing files
      */
     public HealthAwarePublisher(final String threshold, final String healthy, final String unHealthy,
-            final String height, final String thresholdLimit, final String defaultEncoding, final String pluginName) {
+            final String height, final Priority minimumPriority, final String defaultEncoding, final String pluginName) {
         super();
         this.threshold = threshold;
         this.healthy = healthy;
         this.unHealthy = unHealthy;
         this.height = height;
-        this.thresholdLimit = thresholdLimit;
+        this.minimumPriority = minimumPriority;
         this.defaultEncoding = defaultEncoding;
         this.pluginName = "[" + pluginName + "] ";
 
         validateThreshold(threshold);
         validateHealthiness(healthy, unHealthy);
-        if (StringUtils.isBlank(thresholdLimit)) {
-            this.thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
-        }
     }
 
     /**
@@ -164,8 +161,13 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      * @return the object
      */
     protected Object readResolve() {
-        if (thresholdLimit == null) {
-            thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
+        if (minimumPriority == null) {
+            if (thresholdLimit == null) {
+                minimumPriority = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
+            }
+            else {
+                minimumPriority = Priority.fromString(thresholdLimit);
+            }
         }
         return this;
     }
@@ -428,15 +430,10 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
 
     /** {@inheritDoc} */
     public Priority getMinimumPriority() {
-        return Priority.valueOf(StringUtils.upperCase(getThresholdLimit()));
+        return minimumPriority;
     }
 
-    /**
-     * Returns the threshold limit.
-     *
-     * @return the threshold limit
-     */
-    public String getThresholdLimit() {
-        return thresholdLimit;
-    }
+    /** Not used anymore */
+    @Deprecated
+    private transient String thresholdLimit;
 }

@@ -44,7 +44,7 @@ import org.apache.maven.project.MavenProject;
 // CHECKSTYLE:COUPLING-OFF
 public abstract class HealthAwareMavenReporter extends MavenReporter implements HealthDescriptor {
     /** Default threshold priority limit. */
-    private static final String DEFAULT_PRIORITY_THRESHOLD_LIMIT = "low";
+    private static final Priority DEFAULT_PRIORITY_THRESHOLD_LIMIT = Priority.LOW;
     /** Unique identifier of this class. */
     private static final long serialVersionUID = 3003791883748835331L;
     /** Annotation threshold to be reached if a build should be considered as unstable. */
@@ -68,7 +68,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     /** The name of the plug-in. */
     private final String pluginName;
     /** Determines which warning priorities should be considered when evaluating the build stability and health. */
-    private String thresholdLimit;
+    private Priority minimumPriority;
     /** The default encoding to be used when reading and parsing files. */
     private String defaultEncoding;
 
@@ -86,27 +86,24 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      *            than this value
      * @param height
      *            the height of the trend graph
-     * @param thresholdLimit
+     * @param minimumPriority
      *            determines which warning priorities should be considered when
      *            evaluating the build stability and health
      * @param pluginName
      *            the name of the plug-in
      */
     public HealthAwareMavenReporter(final String threshold, final String healthy, final String unHealthy,
-            final String height, final String thresholdLimit, final String pluginName) {
+            final String height, final Priority minimumPriority, final String pluginName) {
         super();
         this.threshold = threshold;
         this.healthy = healthy;
         this.unHealthy = unHealthy;
         this.height = height;
-        this.thresholdLimit = thresholdLimit;
+        this.minimumPriority = minimumPriority;
         this.pluginName = "[" + pluginName + "] ";
 
         validateThreshold(threshold);
         validateHealthiness(healthy, unHealthy);
-        if (StringUtils.isBlank(thresholdLimit)) {
-            this.thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
-        }
     }
 
     /**
@@ -159,8 +156,13 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
     private Object readResolve() {
-        if (thresholdLimit == null) {
-            thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
+        if (minimumPriority == null) {
+            if (thresholdLimit == null) {
+                minimumPriority = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
+            }
+            else {
+                minimumPriority = Priority.fromString(thresholdLimit);
+            }
         }
         return this;
     }
@@ -449,16 +451,11 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
 
     /** {@inheritDoc} */
     public Priority getMinimumPriority() {
-        return Priority.valueOf(StringUtils.upperCase(getThresholdLimit()));
+        return minimumPriority;
     }
 
-    /**
-     * Returns the thresholdLimit.
-     *
-     * @return the thresholdLimit
-     */
-    public String getThresholdLimit() {
-        return thresholdLimit;
-    }
+    /** Not used anymore */
+    @Deprecated
+    private transient String thresholdLimit;
 }
 

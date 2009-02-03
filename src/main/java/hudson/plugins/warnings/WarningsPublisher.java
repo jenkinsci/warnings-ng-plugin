@@ -9,6 +9,7 @@ import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.plugins.warnings.util.FilesParser;
 import hudson.plugins.warnings.util.HealthAwarePublisher;
 import hudson.plugins.warnings.util.ParserResult;
+import hudson.plugins.warnings.util.model.Priority;
 import hudson.tasks.Publisher;
 
 import java.io.File;
@@ -53,7 +54,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *            than this value
      * @param height
      *            the height of the trend graph
-     * @param thresholdLimit
+     * @param minimumPriority
      *            determines which warning priorities should be considered when
      *            evaluating the build stability and health
      * @param pattern
@@ -66,9 +67,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
     // CHECKSTYLE:OFF
     @SuppressWarnings("PMD.ExcessiveParameterList")
     @DataBoundConstructor
-    public WarningsPublisher(final String threshold, final String healthy, final String unHealthy, final String height, final String thresholdLimit,
+    public WarningsPublisher(final String threshold, final String healthy, final String unHealthy,
+            final String height, final Priority minimumPriority,
             final String pattern, final String excludePattern, final String defaultEncoding) {
-        super(threshold, healthy, unHealthy, height, thresholdLimit, defaultEncoding, "WARNINGS");
+        super(threshold, healthy, unHealthy, height, minimumPriority, defaultEncoding, "WARNINGS");
         this.pattern = pattern;
         this.excludePattern = StringUtils.stripToNull(excludePattern);
     }
