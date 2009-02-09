@@ -6,6 +6,7 @@ import hudson.model.Action;
 import hudson.model.Descriptor;
 import hudson.plugins.warnings.parser.FileWarningsParser;
 import hudson.plugins.warnings.parser.ParserRegistry;
+import hudson.plugins.warnings.util.AnnotationsBuildResult;
 import hudson.plugins.warnings.util.FilesParser;
 import hudson.plugins.warnings.util.HealthAwarePublisher;
 import hudson.plugins.warnings.util.ParserResult;
@@ -46,6 +47,9 @@ public class WarningsPublisher extends HealthAwarePublisher {
      * @param threshold
      *            Annotation threshold to be reached if a build should be considered as
      *            unstable.
+     * @param newThreshold
+     *            New annotations threshold to be reached if a build should be
+     *            considered as unstable.
      * @param healthy
      *            Report health as 100% when the number of annotations is less than
      *            this value
@@ -67,10 +71,11 @@ public class WarningsPublisher extends HealthAwarePublisher {
     // CHECKSTYLE:OFF
     @SuppressWarnings("PMD.ExcessiveParameterList")
     @DataBoundConstructor
-    public WarningsPublisher(final String threshold, final String healthy, final String unHealthy,
+    public WarningsPublisher(final String threshold, final String newThreshold,
+            final String healthy, final String unHealthy,
             final String height, final Priority minimumPriority,
             final String pattern, final String excludePattern, final String defaultEncoding) {
-        super(threshold, healthy, unHealthy, height, minimumPriority, defaultEncoding, "WARNINGS");
+        super(threshold, newThreshold, healthy, unHealthy, height, minimumPriority, defaultEncoding, "WARNINGS");
         this.pattern = pattern;
         this.excludePattern = StringUtils.stripToNull(excludePattern);
     }
@@ -135,7 +140,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
     /** {@inheritDoc} */
     @Override
-    public ParserResult perform(final AbstractBuild<?, ?> build, final PrintStream logger) throws InterruptedException, IOException {
+    public AnnotationsBuildResult perform(final AbstractBuild<?, ?> build, final PrintStream logger) throws InterruptedException, IOException {
         log(logger, "Parsing warnings in log file...");
         File logFile = build.getLogFile();
 
@@ -154,7 +159,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
         WarningsResult result = new WarningsResultBuilder().build(build, project, getDefaultEncoding());
         build.getActions().add(new WarningsResultAction(build, this, result));
 
-        return project;
+        return result;
     }
 
     /** {@inheritDoc} */

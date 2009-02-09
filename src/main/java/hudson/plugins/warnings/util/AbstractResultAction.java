@@ -328,5 +328,5 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     @Deprecated
     @java.lang.SuppressWarnings("unused")
     @SuppressWarnings("UuF")
-    private HealthReportBuilder healthReportBuilder;
+    private transient HealthReportBuilder healthReportBuilder;
 }

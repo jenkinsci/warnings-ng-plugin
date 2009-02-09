@@ -49,7 +49,7 @@ public class ParserResult implements Serializable {
      * Creates a new instance of {@link ParserResult}.
      */
     public ParserResult() {
-        this(null);
+        this((FilePath)null);
     }
 
     /**
@@ -66,6 +66,19 @@ public class ParserResult implements Serializable {
         for (int priority = 0; priority < priorities.length; priority++) {
             annotationCountByPriority.put(priorities[priority], 0);
         }
+    }
+
+
+    /**
+     * Creates a new instance of {@link ParserResult}.
+     *
+     * @param annotations
+     *            the annotations to add
+     */
+    public ParserResult(final Collection<FileAnnotation> annotations) {
+        this((FilePath)null);
+
+        addAnnotations(annotations);
     }
 
     /**

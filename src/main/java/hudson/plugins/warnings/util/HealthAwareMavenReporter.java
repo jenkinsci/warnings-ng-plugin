@@ -53,6 +53,8 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     private boolean thresholdEnabled;
     /** Integer threshold to be reached if a build should be considered as unstable. */
     private int minimumAnnotations;
+    /** Annotation threshold for new warnings to be reached if a build should be considered as unstable. */
+    private final String newThreshold;
     /** Report health as 100% when the number of warnings is less than this value. */
     private final String healthy;
     /** Report health as 0% when the number of warnings is greater than this value. */
@@ -76,8 +78,11 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      * Creates a new instance of <code>HealthReportingMavenReporter</code>.
      *
      * @param threshold
-     *            Bug threshold to be reached if a build should be considered as
-     *            unstable.
+     *            Annotations threshold to be reached if a build should be
+     *            considered as unstable.
+     * @param newThreshold
+     *            New annotations threshold to be reached if a build should be
+     *            considered as unstable.
      * @param healthy
      *            Report health as 100% when the number of warnings is less than
      *            this value
@@ -92,10 +97,11 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      * @param pluginName
      *            the name of the plug-in
      */
-    public HealthAwareMavenReporter(final String threshold, final String healthy, final String unHealthy,
+    public HealthAwareMavenReporter(final String threshold, final String newThreshold, final String healthy, final String unHealthy,
             final String height, final Priority minimumPriority, final String pluginName) {
         super();
         this.threshold = threshold;
+        this.newThreshold = newThreshold;
         this.healthy = healthy;
         this.unHealthy = unHealthy;
         this.height = height;
@@ -191,18 +197,22 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
                 result.addErrorMessage(pom.getName(), Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
             }
 
-            build.execute(new BuildCallable<Void, IOException>() {
-                public Void call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
-                    persistResult(result, mavenBuild);
+            ParserResult newResult = build.execute(new BuildCallable<ParserResult, IOException>() {
+                public ParserResult call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
+                    AnnotationsBuildResult buildResult = persistResult(result, mavenBuild);
 
-                    return null;
+                    return new ParserResult(buildResult.getNewWarnings());
                 }
             });
 
             if (build.getRootDir().isRemote()) {
                 copyFilesToMaster(logger, build.getProjectRootDir(), build.getRootDir(), result.getAnnotations());
             }
-            evaluateBuildResult(build, logger, result);
+            Result buildResult = new BuildResultEvaluator().evaluateBuildResult(getMinimumPriority(),
+                    result, getThreshold(), newResult, getNewThreshold());
+            if (buildResult != Result.SUCCESS) {
+                build.setResult(buildResult);
+            }
         }
         catch (AbortException exception) {
             logger.println(exception.getMessage());
@@ -246,8 +256,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
                     new FilePath((Channel)null, file.getName()).copyTo(masterFile);
                 }
                 catch (IOException exception) {
-                    String message = "Can't copy file from slave to master: slave="
-                            + file.getName() + ", master=" + masterFile.getName();
+                    String message = "Can't copy source file: source=" + file.getName() + ", destination=" + masterFile.getName();
                     log(logger, message);
                     exception.printStackTrace(logger);
                 }
@@ -266,16 +275,19 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      */
     protected abstract boolean acceptGoal(final String goal);
 
+
     /**
      * Performs the publishing of the results of this plug-in.
      *
-     * @param build the build proxy (on the slave)
-     * @param pom the pom of the module
-     * @param mojo the executed mojo
-     * @param logger the logger to report the progress to
-     *
+     * @param build
+     *            the build proxy (on the slave)
+     * @param pom
+     *            the pom of the module
+     * @param mojo
+     *            the executed mojo
+     * @param logger
+     *            the logger to report the progress to
      * @return the java project containing the found annotations
-     *
      * @throws InterruptedException
      *             If the build is interrupted by the user (in an attempt to
      *             abort the build.) Normally the {@link BuildStep}
@@ -292,13 +304,17 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      */
     protected abstract ParserResult perform(MavenBuildProxy build, MavenProject pom, MojoInfo mojo, PrintStream logger) throws InterruptedException, IOException;
 
+
     /**
      * Persists the result in the build (on the master).
      *
-     * @param project the created project
-     * @param build the build (on the master)
+     * @param project
+     *            the created project
+     * @param build
+     *            the build (on the master)
+     * @return the created result
      */
-    protected abstract void persistResult(ParserResult project, MavenBuild build);
+    protected abstract AnnotationsBuildResult persistResult(ParserResult project, MavenBuild build);
 
     /**
      * Logs the specified message.
@@ -317,29 +333,6 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      */
     protected String getDefaultEncoding() {
         return defaultEncoding;
-    }
-
-    /**
-     * Evaluates the build result. The build is marked as unstable if the
-     * threshold has been exceeded.
-     *
-     * @param build
-     *            the build to create the action for
-     * @param logger
-     *            the logger
-     * @param result
-     *            the project with the annotations
-     */
-    private void evaluateBuildResult(final MavenBuildProxy build, final PrintStream logger, final ParserResult result) {
-        int annotationCount = 0;
-        for (Priority priority : Priority.collectPrioritiesFrom(getMinimumPriority())) {
-            int numberOfAnnotations = result.getNumberOfAnnotations(priority);
-            log(logger, "A total of " + numberOfAnnotations + " annotations have been found for priority " + priority);
-            annotationCount += numberOfAnnotations;
-        }
-        if (annotationCount > 0 && isThresholdEnabled() && annotationCount >= getMinimumAnnotations()) {
-            build.setResult(Result.UNSTABLE);
-        }
     }
 
     /**
@@ -384,13 +377,28 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         return thresholdEnabled;
     }
 
+
+
     /**
-     * Returns the annotation threshold to be reached if a build should be considered as unstable.
+     * Returns the threshold of all annotations to be reached if a build should
+     * be considered as unstable.
      *
-     * @return the annotation threshold to be reached if a build should be considered as unstable.
+     * @return the threshold of all annotations to be reached if a build should
+     *         be considered as unstable.
      */
     public String getThreshold() {
         return threshold;
+    }
+
+    /**
+     * Returns the threshold for new annotations to be reached if a build should
+     * be considered as unstable.
+     *
+     * @return the threshold for new annotations to be reached if a build should
+     *         be considered as unstable.
+     */
+    public String getNewThreshold() {
+        return newThreshold;
     }
 
     /** {@inheritDoc} */
@@ -454,7 +462,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         return minimumPriority;
     }
 
-    /** Not used anymore */
+    /** Not used anymore. */
     @Deprecated
     private transient String thresholdLimit;
 }
