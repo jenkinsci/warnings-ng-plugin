@@ -14,10 +14,10 @@
         <tr>
           <td></td>
           <td width="80">
-            <img src="${rootURL}/images/16x16/yellow.gif" alt="100%" title="${%description.threshold}" /> (${%Total})
+            <img src="${rootURL}/images/16x16/yellow.gif" alt="100%" title="${%description.threshold}" /> ${%Total}
           </td>
           <td width="80">
-            <img src="${rootURL}/images/16x16/yellow.gif" alt="100%" title="${%description.new}" /> (${%New})
+            <img src="${rootURL}/images/16x16/yellow.gif" alt="100%" title="${%description.new}" /> ${%New}
           </td>
           <td width="80">
             <img src="${rootURL}/images/16x16/health-80plus.gif" alt="100%" title="${%description.healthy}" />
@@ -44,7 +44,7 @@
           <td>
             <f:textbox name="unHealthy" value="${instance.unHealthy}" />
           </td>
-          <td style="vertical-align:middle">${%Minimum Priorities:}</td>
+          <td style="vertical-align:middle">${%Priorities:}</td>
           <td>
             <j:invokeStatic var="allThresholds"
                 className="hudson.plugins.warnings.util.model.Priority" method="getPriorityThresholds"/>
