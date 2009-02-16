@@ -36,7 +36,7 @@
             <f:textbox name="threshold" value="${instance.threshold}" />
           </td>
           <td>
-            <f:textbox name="new" value="${instance.newThreshold}" />
+            <f:textbox name="newThreshold" value="${instance.newThreshold}" />
           </td>
           <td>
             <f:textbox name="healthy" value="${instance.healthy}" />
