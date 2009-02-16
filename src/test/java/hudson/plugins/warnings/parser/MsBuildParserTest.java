@@ -33,7 +33,7 @@ public class MsBuildParserTest extends ParserTester {
     public void parseWarnings() throws IOException {
         Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile());
 
-        assertEquals("Wrong number of warnings detected.", 5, warnings.size());
+        assertEquals("Wrong number of warnings detected.", 6, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -66,6 +66,12 @@ public class MsBuildParserTest extends ParserTester {
                 "Cannot open include file: xyz.h:...",
                 "x/a/b/include/abc.h",
                 MsBuildParser.WARNING_TYPE, "C1083", Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                5,
+                "This is an info message from PcLint",
+                "foo.h",
+                MsBuildParser.WARNING_TYPE, "701", Priority.LOW);
     }
 
     /**

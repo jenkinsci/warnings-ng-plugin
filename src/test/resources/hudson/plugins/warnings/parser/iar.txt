@@ -1,0 +1,73 @@
+"20090205.173712" "ADGERO4" "vobdir/src/file.sbs" "/main/15" "checkin"
+"type created"
+
+                FIXME: example only
+                ^
+"testhist.l",451 Warning [Pe0815]: `void yyunput(int, char*)' defined but not used
+
+                FIXME: example only
+                ^
+"/u1/drjohn/bfdist/packages/RegrTest/V00-03-01/RgtAddressLineScan.cc",73 Error [Pe0815] :
+implicit typename is deprecated, please see the documentation for details
+
+                FIXME: example only
+                ^
+"foo.cc",39 Error [Pe0815]: foo.h: No such file or directory
+
+  }
+  ^
+"D:\src\CSpiBus.h",56  Warning[Pe815]: type qualifier on return type is meaningless
+
+        OS_EnterNestableInterrupt(); 
+        ^
+"D:\src\InterruptTabO7.cpp",38  Error[Pe020]: identifier "OS_EnterNestableInterrupt" is undefined
+
+############# snipp #########
+---------
+Compiling: WST__Main.cpp
+---------
+
+---------
+Compiling: CANopen\
+---------
+
+  UNSIGNED8     ret;            /* return value for common purpose */
+                ^
+"z:\src\O7_LabSample_embOS\EmbosConfig\CANopen\main.cpp",229  Warning[Pe550]:
+          variable "ret" was set but never used
+
+  UNSIGNED8     ret;            /* return value for common purpose */
+                ^
+"z:\src\O7_LabSample_embOS\EmbosConfig\CANopen\main.cpp",525  Warning[Pe550]:
+          variable "ret" was set but never used
+
+--------- 
+Compiling: CPwmOutput.cpp 
+--------- 
+
+  }
+  ^
+"z:\src\O7_LabSample_embOS\EmbosConfig\CPwmOutput.cpp",78  Warning[Pe940]:
+          missing return statement at end of non-void function
+          "CPwmOutput::setDutyCycle"
+
+---------
+Linking O7_LabSample_embOS.d34
+---------
+
+     IAR Universal Linker V4.60E/386
+     Copyright 1987-2006 IAR Systems. All rights reserved.
+Warning[w6]: Type conflict for external/entry "main_OTP()", in module WST__Main against external/entry in module main; function return types are different; different basic types
+Warning[w23]: Cannot represent pointer type [WST5ppMain (z:\src\O7_LabSample_embOS\EmbosConfig\WST5ppMain.r34)]
+Warning[w23]: Cannot represent location of Register variable 'ErrCode' [WST5ppembOSLowLevel (z:\src\O7_LabSample_embOS\EmbosConfig\WST5ppembOSLowLevel.r34)]
+Warning[w24]: 632 counts of 'Register variable' total
+Warning[w24]: 149 counts of 'Unsupported pointer type' total
+
+     162 bytes of CONST    memory
+  13 532 bytes of FARDATA  memory (+ 16 absolute )
+       0 bytes of HUGEDATA memory (+  4 absolute )
+   6 734 bytes of FARCONST memory
+  15 266 bytes of NEARDATA memory (+ 55 absolute )
+101 208 bytes of HUGECODE memory
+##################################################
+
