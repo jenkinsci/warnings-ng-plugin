@@ -1,7 +1,6 @@
 package hudson.plugins.warnings.util.model;
 
 import hudson.plugins.warnings.util.Messages;
-import hudson.plugins.warnings.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,24 +32,6 @@ public enum Priority {
      */
     public static Priority fromString(final String priority) {
         return Priority.valueOf(StringUtils.upperCase(priority));
-    }
-
-
-    /**
-     * Gets the available priority thresholds. The selected priority defines the
-     * minimum priority that should be considered when computing build health
-     * and stability. E.g., if {@link Priority#NORMAL} is returned, then
-     * annotations with priority {@link Priority#LOW} are ignored.
-     *
-     * @return a mapping of priorities to descriptions names
-     */
-    public static Collection<Pair<Priority, String>> getPriorityThresholds() {
-        ArrayList<Pair<Priority, String>> thresholds = new ArrayList<Pair<Priority, String>>();
-        thresholds.add(new Pair<Priority, String>(Priority.HIGH, Messages.Minimum_High()));
-        thresholds.add(new Pair<Priority, String>(Priority.NORMAL, Messages.Minimum_Normal()));
-        thresholds.add(new Pair<Priority, String>(Priority.LOW, Messages.Minimum_Low()));
-
-        return thresholds;
     }
 
     /**
