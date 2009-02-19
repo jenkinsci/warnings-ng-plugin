@@ -51,6 +51,10 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     private final String threshold;
     /** Determines whether to use the provided threshold to mark a build as unstable. */
     private boolean thresholdEnabled;
+    /** Annotation threshold to be reached if a build should be considered as failure. */
+    private final String failureThreshold;
+    /** Threshold for new annotations to be reached if a build should be considered as failure. */
+    private final String newFailureThreshold;
     /** Integer threshold to be reached if a build should be considered as unstable. */
     private int minimumAnnotations;
     /** Annotation threshold for new warnings to be reached if a build should be considered as unstable. */
@@ -83,6 +87,12 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      * @param newThreshold
      *            New annotations threshold to be reached if a build should be
      *            considered as unstable.
+     * @param failureThreshold
+     *            Annotation threshold to be reached if a build should be considered as
+     *            failure.
+     * @param newFailureThreshold
+     *            New annotations threshold to be reached if a build should be
+     *            considered as failure.
      * @param healthy
      *            Report health as 100% when the number of warnings is less than
      *            this value
@@ -97,11 +107,15 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      * @param pluginName
      *            the name of the plug-in
      */
-    public HealthAwareMavenReporter(final String threshold, final String newThreshold, final String healthy, final String unHealthy,
+    public HealthAwareMavenReporter(final String threshold, final String newThreshold,
+            final String failureThreshold, final String newFailureThreshold,
+            final String healthy, final String unHealthy,
             final String height, final Priority minimumPriority, final String pluginName) {
         super();
         this.threshold = threshold;
         this.newThreshold = newThreshold;
+        this.failureThreshold = failureThreshold;
+        this.newFailureThreshold = newFailureThreshold;
         this.healthy = healthy;
         this.unHealthy = unHealthy;
         this.height = height;
@@ -209,7 +223,8 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
                 copyFilesToMaster(logger, build.getProjectRootDir(), build.getRootDir(), result.getAnnotations());
             }
             Result buildResult = new BuildResultEvaluator().evaluateBuildResult(getMinimumPriority(),
-                    result, getThreshold(), newResult, getNewThreshold());
+                    result, getThreshold(), getFailureThreshold(),
+                    newResult, getNewThreshold(), getNewFailureThreshold());
             if (buildResult != Result.SUCCESS) {
                 build.setResult(buildResult);
             }
@@ -377,8 +392,6 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         return thresholdEnabled;
     }
 
-
-
     /**
      * Returns the threshold of all annotations to be reached if a build should
      * be considered as unstable.
@@ -399,6 +412,28 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      */
     public String getNewThreshold() {
         return newThreshold;
+    }
+
+    /**
+     * Returns the annotation threshold to be reached if a build should be
+     * considered as failure.
+     *
+     * @return the annotation threshold to be reached if a build should be
+     *         considered as failure.
+     */
+    public String getFailureThreshold() {
+        return failureThreshold;
+    }
+
+    /**
+     * Returns the threshold of new annotations to be reached if a build should
+     * be considered as failure.
+     *
+     * @return the threshold of new annotations to be reached if a build should
+     *         be considered as failure.
+     */
+    public String getNewFailureThreshold() {
+        return newFailureThreshold;
     }
 
     /** {@inheritDoc} */

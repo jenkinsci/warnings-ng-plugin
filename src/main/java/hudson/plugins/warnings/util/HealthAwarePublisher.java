@@ -51,12 +51,16 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
     private static final Priority DEFAULT_PRIORITY_THRESHOLD_LIMIT = Priority.LOW;
     /** Annotation threshold to be reached if a build should be considered as unstable. */
     private final String threshold;
+    /** Threshold for new annotations to be reached if a build should be considered as unstable. */
+    private final String newThreshold;
+    /** Annotation threshold to be reached if a build should be considered as failure. */
+    private final String failureThreshold;
+    /** Threshold for new annotations to be reached if a build should be considered as failure. */
+    private final String newFailureThreshold;
     /** Determines whether to use the provided threshold to mark a build as unstable. */
     private boolean thresholdEnabled;
     /** Integer threshold to be reached if a build should be considered as unstable. */
     private int minimumAnnotations;
-    /** Threshold for new annotations to be reached if a build should be considered as unstable. */
-    private final String newThreshold;
     /** Report health as 100% when the number of warnings is less than this value. */
     private final String healthy;
     /** Report health as 0% when the number of warnings is greater than this value. */
@@ -86,6 +90,12 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      * @param newThreshold
      *            New annotations threshold to be reached if a build should be
      *            considered as unstable.
+     * @param failureThreshold
+     *            Annotation threshold to be reached if a build should be considered as
+     *            failure.
+     * @param newFailureThreshold
+     *            New annotations threshold to be reached if a build should be
+     *            considered as failure.
      * @param healthy
      *            Report health as 100% when the number of open tasks is less
      *            than this value
@@ -103,11 +113,15 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      *            the default encoding to be used when reading and parsing files
      */
     // CHECKSTYLE:OFF
-    public HealthAwarePublisher(final String threshold, final String newThreshold, final String healthy, final String unHealthy,
-            final String height, final Priority minimumPriority, final String defaultEncoding, final String pluginName) {
+    public HealthAwarePublisher(final String threshold, final String newThreshold,
+            final String failureThreshold, final String newFailureThreshold, final String healthy,
+            final String unHealthy, final String height, final Priority minimumPriority,
+            final String defaultEncoding, final String pluginName) {
         super();
         this.threshold = threshold;
         this.newThreshold = newThreshold;
+        this.failureThreshold = failureThreshold;
+        this.newFailureThreshold = newFailureThreshold;
         this.healthy = healthy;
         this.unHealthy = unHealthy;
         this.height = height;
@@ -191,7 +205,8 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
                 ParserResult newResult = new ParserResult(annotationsResult.getNewWarnings());
 
                 Result buildResult = new BuildResultEvaluator().evaluateBuildResult(getMinimumPriority(),
-                        result, getThreshold(), newResult, getNewThreshold());
+                        result, getThreshold(), getFailureThreshold(),
+                        newResult, getNewThreshold(), getNewFailureThreshold());
                 if (buildResult != Result.SUCCESS) {
                     build.setResult(buildResult);
                 }
@@ -304,9 +319,11 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
     }
 
     /**
-     * Returns the annotation threshold to be reached if a build should be considered as unstable.
+     * Returns the annotation threshold to be reached if a build should be
+     * considered as unstable.
      *
-     * @return the annotation threshold to be reached if a build should be considered as unstable.
+     * @return the annotation threshold to be reached if a build should be
+     *         considered as unstable.
      */
     public String getThreshold() {
         return threshold;
@@ -321,6 +338,28 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      */
     public String getNewThreshold() {
         return newThreshold;
+    }
+
+    /**
+     * Returns the annotation threshold to be reached if a build should be
+     * considered as failure.
+     *
+     * @return the annotation threshold to be reached if a build should be
+     *         considered as failure.
+     */
+    public String getFailureThreshold() {
+        return failureThreshold;
+    }
+
+    /**
+     * Returns the threshold of new annotations to be reached if a build should
+     * be considered as failure.
+     *
+     * @return the threshold of new annotations to be reached if a build should
+     *         be considered as failure.
+     */
+    public String getNewFailureThreshold() {
+        return newFailureThreshold;
     }
 
     /** {@inheritDoc} */

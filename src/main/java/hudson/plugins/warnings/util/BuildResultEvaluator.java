@@ -14,21 +14,30 @@ public class BuildResultEvaluator {
     /**
      * Evaluates the build result. The build is marked as unstable if one of the
      * thresholds has been exceeded.
+     *
      * @param minimumPriority
      *            determines which warning priorities should be considered
      * @param result
      *            the result collecting all annotations
      * @param threshold
-     *            annotation threshold to be reached if a build should be considered as unstable
+     *            annotation threshold to be reached if a build should be
+     *            considered as unstable
+     * @param failureThreshold
+     *            annotation threshold to be reached if a build should be
+     *            considered as failure
      * @param newResult
      *            the result collecting the new annotations
      * @param newThreshold
-     *            threshold for new annotations to be reached if a build should be considered as unstable
-     *
+     *            threshold for new annotations to be reached if a build should
+     *            be considered as unstable
+     * @param newFailureThreshold
+     *            threshold for new annotations to be reached if a build should
+     *            be considered as failure
      * @return the build result
      */
-    public Result evaluateBuildResult(final Priority minimumPriority, final ParserResult result,
-            final String threshold, final ParserResult newResult, final String newThreshold) {
+    public Result evaluateBuildResult(final Priority minimumPriority,
+            final ParserResult result, final String threshold, final String failureThreshold,
+            final ParserResult newResult, final String newThreshold, final String newFailureThreshold) {
         int annotationCount = 0;
         int newAnnotationCount = 0;
         for (Priority priority : Priority.collectPrioritiesFrom(minimumPriority)) {
@@ -39,11 +48,16 @@ public class BuildResultEvaluator {
             newAnnotationCount += numberOfNewAnnotations;
         }
 
-        BuildResultEvaluator thresholdParser = new BuildResultEvaluator();
-        if (thresholdParser.isAnnotationCountExceeded(annotationCount, threshold)) {
+        if (isAnnotationCountExceeded(annotationCount, failureThreshold)) {
+            return Result.FAILURE;
+        }
+        if (isAnnotationCountExceeded(newAnnotationCount, newFailureThreshold)) {
+            return Result.FAILURE;
+        }
+        if (isAnnotationCountExceeded(annotationCount, threshold)) {
             return Result.UNSTABLE;
         }
-        if (thresholdParser.isAnnotationCountExceeded(newAnnotationCount, newThreshold)) {
+        if (isAnnotationCountExceeded(newAnnotationCount, newThreshold)) {
             return Result.UNSTABLE;
         }
         return Result.SUCCESS;
