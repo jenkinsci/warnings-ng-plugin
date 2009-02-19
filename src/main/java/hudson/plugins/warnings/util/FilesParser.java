@@ -7,7 +7,6 @@ import hudson.remoting.VirtualChannel;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
@@ -25,7 +24,7 @@ public class FilesParser implements FileCallable<ParserResult> {
     private static final long serialVersionUID = -6415863872891783891L;
     /** Logger. */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
-    private final transient PrintStream logger;
+    private final transient PluginLogger logger;
     /** Ant file-set pattern to scan for. */
     private final String filePattern;
     /** Parser to be used to process the workspace files. */
@@ -49,7 +48,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      * @param isAntBuild
      *            determines whether this build uses maven
      */
-    public FilesParser(final PrintStream logger, final String filePattern, final AnnotationParser parser, final boolean isMavenBuild, final boolean isAntBuild) {
+    public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final boolean isMavenBuild, final boolean isAntBuild) {
         this.logger = logger;
         this.filePattern = filePattern;
         this.parser = parser;
@@ -64,7 +63,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      */
     protected void log(final String message) {
         if (logger != null) {
-            logger.println("[" + parser.getName() + "] " + message);
+            logger.log(message);
         }
     }
 

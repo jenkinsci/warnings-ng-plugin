@@ -25,12 +25,5 @@ public interface AnnotationParser extends Serializable {
      *             if the file could not be parsed (wrap your exception in this exception)
      */
     Collection<FileAnnotation> parse(final File file, final String moduleName) throws InvocationTargetException;
-
-    /**
-     * Returns the name of this parser.
-     *
-     * @return the name of this parser
-     */
-    String getName();
 }
 

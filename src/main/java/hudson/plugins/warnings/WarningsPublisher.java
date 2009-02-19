@@ -10,12 +10,11 @@ import hudson.plugins.warnings.util.AnnotationsBuildResult;
 import hudson.plugins.warnings.util.FilesParser;
 import hudson.plugins.warnings.util.HealthAwarePublisher;
 import hudson.plugins.warnings.util.ParserResult;
-import hudson.plugins.warnings.util.model.Priority;
+import hudson.plugins.warnings.util.PluginLogger;
 import hudson.tasks.Publisher;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,7 +63,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *            than this value
      * @param height
      *            the height of the trend graph
-     * @param minimumPriority
+     * @param thresholdLimit
      *            determines which warning priorities should be considered when
      *            evaluating the build stability and health
      * @param pattern
@@ -80,10 +79,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
     public WarningsPublisher(final String threshold, final String newThreshold,
             final String failureThreshold, final String newFailureThreshold,
             final String healthy, final String unHealthy,
-            final String height, final Priority minimumPriority,
+            final String height, final String thresholdLimit,
             final String pattern, final String excludePattern, final String defaultEncoding) {
         super(threshold, newThreshold, failureThreshold, newFailureThreshold,
-                healthy, unHealthy, height, minimumPriority, defaultEncoding, "WARNINGS");
+                healthy, unHealthy, height, thresholdLimit, defaultEncoding, "WARNINGS");
         this.pattern = pattern;
         this.excludePattern = StringUtils.stripToNull(excludePattern);
     }
@@ -148,8 +147,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
     /** {@inheritDoc} */
     @Override
-    public AnnotationsBuildResult perform(final AbstractBuild<?, ?> build, final PrintStream logger) throws InterruptedException, IOException {
-        log(logger, "Parsing warnings in log file...");
+    public AnnotationsBuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger) throws InterruptedException, IOException {
+        logger.log("Parsing warnings in log file...");
         File logFile = build.getLogFile();
 
         ParserResult project;

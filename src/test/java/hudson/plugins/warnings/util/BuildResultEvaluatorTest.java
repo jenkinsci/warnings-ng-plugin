@@ -56,43 +56,44 @@ public class BuildResultEvaluatorTest {
         ParserResult allAnnotations = new ParserResult();
         ParserResult newAnnotations = new ParserResult();
 
+        PluginLogger logger = mock(PluginLogger.class);
         Assert.assertEquals(Result.SUCCESS,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "", "", newAnnotations, "", ""));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "", ""));
         Assert.assertEquals(Result.SUCCESS,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "0", "0", newAnnotations, "", ""));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "0", "0", newAnnotations, "", ""));
         Assert.assertEquals(Result.SUCCESS,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "", "", newAnnotations, "0", "0"));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "0", "0"));
         Assert.assertEquals(Result.SUCCESS,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "0", "0", newAnnotations, "0", "0"));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "0", "0", newAnnotations, "0", "0"));
         allAnnotations.addAnnotation(createAnnotation());
         Assert.assertEquals(Result.SUCCESS,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "", "", newAnnotations, "", ""));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "", ""));
         Assert.assertEquals(Result.UNSTABLE,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "0", "", newAnnotations, "", ""));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "0", "", newAnnotations, "", ""));
         Assert.assertEquals(Result.FAILURE,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "", "0", newAnnotations, "", ""));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "0", newAnnotations, "", ""));
         Assert.assertEquals(Result.FAILURE,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "0", "0", newAnnotations, "", ""));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "0", "0", newAnnotations, "", ""));
         newAnnotations.addAnnotation(createAnnotation());
         Assert.assertEquals(Result.SUCCESS,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "", "", newAnnotations, "", ""));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "", ""));
         Assert.assertEquals(Result.UNSTABLE,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "", "", newAnnotations, "0", ""));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "0", ""));
         Assert.assertEquals(Result.FAILURE,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "", "", newAnnotations, "", "0"));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "", "0"));
         Assert.assertEquals(Result.FAILURE,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "", "", newAnnotations, "0", "0"));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "0", "0"));
 
         Assert.assertEquals(Result.SUCCESS,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "", "", newAnnotations, "", ""));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "", ""));
         Assert.assertEquals(Result.UNSTABLE,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "0", "", newAnnotations, "0", ""));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "0", "", newAnnotations, "0", ""));
         Assert.assertEquals(Result.FAILURE,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "0", "", newAnnotations, "", "0"));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "0", "", newAnnotations, "", "0"));
         Assert.assertEquals(Result.FAILURE,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "", "0", newAnnotations, "", "0"));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "0", newAnnotations, "", "0"));
         Assert.assertEquals(Result.FAILURE,
-                parser.evaluateBuildResult(Priority.NORMAL, allAnnotations, "", "0", newAnnotations, "0", ""));
+                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "0", newAnnotations, "0", ""));
     }
 
 
