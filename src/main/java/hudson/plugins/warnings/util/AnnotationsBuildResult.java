@@ -51,11 +51,11 @@ public abstract class AnnotationsBuildResult extends BuildResult {
     /** Difference between this and the previous build. */
     private int delta;
     /** The number of low priority warnings in this build. */
-    private int low;
+    private int lowWarnings;
     /** The number of normal priority warnings in this build. */
-    private int normal;
+    private int normalWarnings;
     /** The number of high priority warnings in this build. */
-    private int high;
+    private int highWarnings;
 
     /** Determines since which build we have zero warnings. */
     private int zeroWarningsSinceBuild;
@@ -140,6 +140,65 @@ public abstract class AnnotationsBuildResult extends BuildResult {
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected Object readResolve() {
+        super.readResolve();
+
+        try {
+            if (low != null) {
+                lowWarnings = Integer.valueOf(low);
+            }
+            if (normal != null) {
+                normalWarnings = Integer.valueOf(normal);
+            }
+            if (high != null) {
+                highWarnings = Integer.valueOf(high);
+            }
+        }
+        catch (NumberFormatException exception) {
+            // ignore, and start with zero
+        }
+
+        return this;
+    }
+
+    /**
+     * Sets the number of high warnings to the specified value.
+     *
+     * @param highWarnings the value to set
+     */
+    protected void setHighWarnings(final int highWarnings) {
+        this.highWarnings = highWarnings;
+    }
+
+    /**
+     * Sets the number of normal warnings to the specified value.
+     *
+     * @param normalWarnings the value to set
+     */
+    protected void setNormalWarnings(final int normalWarnings) {
+        this.normalWarnings = normalWarnings;
+    }
+
+    /**
+     * Sets the number of low warnings to the specified value.
+     *
+     * @param lowWarnings the value to set
+     */
+    protected void setLowWarnings(final int lowWarnings) {
+        this.lowWarnings = lowWarnings;
+    }
+
+    /**
+     * Sets the number of warnings to the specified value.
+     *
+     * @param warnings the value to set
+     */
+    protected void setWarnings(final int warnings) {
+        numberOfWarnings = warnings;
+    }
+
     /**
      * Returns the number of days for the specified number of milliseconds.
      *
@@ -173,9 +232,9 @@ public abstract class AnnotationsBuildResult extends BuildResult {
         numberOfFixedWarnings = warnings.size();
         fixedWarnings = new WeakReference<Collection<FileAnnotation>>(warnings);
 
-        high = result.getNumberOfAnnotations(Priority.HIGH);
-        normal = result.getNumberOfAnnotations(Priority.NORMAL);
-        low = result.getNumberOfAnnotations(Priority.LOW);
+        highWarnings = result.getNumberOfAnnotations(Priority.HIGH);
+        normalWarnings = result.getNumberOfAnnotations(Priority.NORMAL);
+        lowWarnings = result.getNumberOfAnnotations(Priority.LOW);
 
         serializeAnnotations(result.getAnnotations());
 
@@ -273,13 +332,13 @@ public abstract class AnnotationsBuildResult extends BuildResult {
      */
     public int getNumberOfAnnotations(final Priority priority) {
         if (priority == Priority.HIGH) {
-            return high;
+            return highWarnings;
         }
         else if (priority == Priority.NORMAL) {
-            return normal;
+            return normalWarnings;
         }
         else {
-            return low;
+            return lowWarnings;
         }
     }
 
@@ -465,4 +524,13 @@ public abstract class AnnotationsBuildResult extends BuildResult {
     public AnnotationContainer getContainer() {
         return getProject();
     }
+
+    // Backward compatibility. Do not remove.
+    // CHECKSTYLE:OFF
+    @Deprecated
+    protected transient String low;
+    @Deprecated
+    protected transient String normal;
+    @Deprecated
+    protected transient String high;
 }
