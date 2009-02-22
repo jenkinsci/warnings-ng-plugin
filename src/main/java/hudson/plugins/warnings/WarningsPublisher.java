@@ -6,7 +6,7 @@ import hudson.model.Action;
 import hudson.model.Descriptor;
 import hudson.plugins.warnings.parser.FileWarningsParser;
 import hudson.plugins.warnings.parser.ParserRegistry;
-import hudson.plugins.warnings.util.AnnotationsBuildResult;
+import hudson.plugins.warnings.util.BuildResult;
 import hudson.plugins.warnings.util.FilesParser;
 import hudson.plugins.warnings.util.HealthAwarePublisher;
 import hudson.plugins.warnings.util.ParserResult;
@@ -147,7 +147,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
     /** {@inheritDoc} */
     @Override
-    public AnnotationsBuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger) throws InterruptedException, IOException {
+    public BuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger) throws InterruptedException, IOException {
         logger.log("Parsing warnings in log file...");
         File logFile = build.getLogFile();
 

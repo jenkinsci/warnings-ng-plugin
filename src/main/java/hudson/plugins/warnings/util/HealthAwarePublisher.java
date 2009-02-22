@@ -197,7 +197,7 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
         if (canContinue(build.getResult())) {
             PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
             try {
-                AnnotationsBuildResult annotationsResult = perform(build, logger);
+                BuildResult annotationsResult = perform(build, logger);
                 ParserResult result = new ParserResult(annotationsResult.getAnnotations());
                 ParserResult newResult = new ParserResult(annotationsResult.getNewWarnings());
 
@@ -299,7 +299,7 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      *             a better error message, if it can do so, so that users have
      *             better understanding on why it failed.
      */
-    protected abstract AnnotationsBuildResult perform(AbstractBuild<?, ?> build, PluginLogger logger) throws InterruptedException, IOException;
+    protected abstract BuildResult perform(AbstractBuild<?, ?> build, PluginLogger logger) throws InterruptedException, IOException;
 
     /** {@inheritDoc} */
     public boolean isThresholdEnabled() {

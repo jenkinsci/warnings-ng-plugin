@@ -2,14 +2,14 @@ package hudson.plugins.warnings;
 
 import static junit.framework.Assert.*;
 import hudson.model.AbstractBuild;
-import hudson.plugins.warnings.util.AbstractAnnotationsBuildResultTest;
-import hudson.plugins.warnings.util.AnnotationsBuildResult;
+import hudson.plugins.warnings.util.BuildResult;
+import hudson.plugins.warnings.util.BuildResultTest;
 import hudson.plugins.warnings.util.ParserResult;
 
 /**
  * Tests the class {@link WarningsResult}.
  */
-public class WarningsResultTest extends AbstractAnnotationsBuildResultTest<WarningsResult> {
+public class WarningsResultTest extends BuildResultTest<WarningsResult> {
     /** {@inheritDoc} */
     @Override
     protected WarningsResult createBuildResult(final AbstractBuild<?, ?> build, final ParserResult project) {
@@ -28,7 +28,7 @@ public class WarningsResultTest extends AbstractAnnotationsBuildResultTest<Warni
         if (result.hasNoAnnotations() && result.getDelta() == 0) {
             assertTrue(result.getDetails().contains(Messages.Warnings_ResultAction_NoWarningsSince(expectedZeroWarningsBuildNumber)));
             if (expectedIsNewHighScore) {
-                long days = AnnotationsBuildResult.getDays(expectedHighScore);
+                long days = BuildResult.getDays(expectedHighScore);
                 if (days == 1) {
                     assertTrue(result.getDetails().contains(Messages.Warnings_ResultAction_OneHighScore()));
                 }
@@ -37,7 +37,7 @@ public class WarningsResultTest extends AbstractAnnotationsBuildResultTest<Warni
                 }
             }
             else {
-                long days = AnnotationsBuildResult.getDays(gap);
+                long days = BuildResult.getDays(gap);
                 if (days == 1) {
                     assertTrue(result.getDetails().contains(Messages.Warnings_ResultAction_OneNoHighScore()));
                 }

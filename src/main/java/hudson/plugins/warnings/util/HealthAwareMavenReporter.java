@@ -210,7 +210,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
 
             ParserResult newResult = build.execute(new BuildCallable<ParserResult, IOException>() {
                 public ParserResult call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
-                    AnnotationsBuildResult buildResult = persistResult(result, mavenBuild);
+                    BuildResult buildResult = persistResult(result, mavenBuild);
 
                     return new ParserResult(buildResult.getNewWarnings());
                 }
@@ -329,7 +329,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      *            the build (on the master)
      * @return the created result
      */
-    protected abstract AnnotationsBuildResult persistResult(ParserResult project, MavenBuild build);
+    protected abstract BuildResult persistResult(ParserResult project, MavenBuild build);
 
     /**
      * Returns the default encoding derived from the maven pom file.

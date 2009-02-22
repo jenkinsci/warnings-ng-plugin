@@ -2,7 +2,7 @@ package hudson.plugins.warnings; // NOPMD
 
 import hudson.model.AbstractBuild;
 import hudson.plugins.warnings.parser.Warning;
-import hudson.plugins.warnings.util.AnnotationsBuildResult;
+import hudson.plugins.warnings.util.BuildResult;
 import hudson.plugins.warnings.util.ParserResult;
 import hudson.plugins.warnings.util.model.JavaProject;
 
@@ -12,7 +12,7 @@ import hudson.plugins.warnings.util.model.JavaProject;
  *
  * @author Ulli Hafner
  */
-public class WarningsResult extends AnnotationsBuildResult {
+public class WarningsResult extends BuildResult {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -137460587767210579L;
 
