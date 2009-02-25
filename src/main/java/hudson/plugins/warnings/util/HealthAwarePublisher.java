@@ -257,8 +257,11 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
                 }
                 catch (IOException exception) {
                     String message = "Can't copy file from slave to master: slave=" + file.getName() + ", master=" + masterFile.getAbsolutePath();
-                    IOUtils.write(message, outputStream);
                     exception.printStackTrace(new PrintStream(outputStream));
+
+                    IOUtils.write(message, outputStream);
+                }
+                finally {
                     outputStream.close();
                 }
             }
