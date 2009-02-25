@@ -46,7 +46,7 @@ public abstract class ParserTester {
         assertTrue("Annotation is of wrong type.", annotation instanceof Warning);
         Warning warning = (Warning)annotation;
         assertEquals("Wrong type of warning detected.", type, warning.getType());
-        assertEquals("Wrong priotiry detected.", priority, warning.getPriority());
+        assertEquals("Wrong priority detected.", priority, warning.getPriority());
         assertEquals("Wrong category of warning detected.", category, warning.getCategory());
         assertEquals("Wrong number of ranges detected.", 1, warning.getLineRanges().size());
         assertEquals("Wrong ranges start detected.", lineNumber, warning.getLineRanges().iterator().next().getStart());

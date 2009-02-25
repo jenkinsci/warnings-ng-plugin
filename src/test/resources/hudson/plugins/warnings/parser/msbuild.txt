@@ -9,3 +9,4 @@ MediaPortal.cs(3001,5): warning CS0162: Hier kommt der Warnings Text
 x/a/b/include/abc.h(18) : fatal error C1083: Cannot open include file: xyz.h:...
 
 foo.h(5): Info 701: This is an info message from PcLint
+

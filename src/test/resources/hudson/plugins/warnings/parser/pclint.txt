@@ -1,0 +1,42 @@
+
+--- Module:   file.cpp (C++)
+C:\SDK\include\math.h  24  Info 808: No explicit type given symbol
+    '__pure', int assumed
+C:\SDK\include\math.h  24  Error 10: Expecting ';'
+C:\SDK\include\math.h  24  Warning 42: Useless Declaration
+              _
+extern __pure double cos(double /*x*/);
+C:\SDK\include\math.h  26  Info 808: No explicit type given symbol
+    '__pure', int assumed
+C:\SDK\include\math.h  26  Error 10: Expecting ';'
+C:\SDK\include\math.h  26  Error 19: Useless Declaration
+              _
+extern __pure double sin(double /*x*/);
+C:\SDK\include\math.h  27  Info 808: No explicit type given symbol
+    '__pure', int assumed
+C:\SDK\include\math.h  27  Error 10: Expecting ';'
+C:\SDK\include\math.h  27  Error 19: Useless Declaration
+              _
+extern __pure double tanh(double /*x*/);
+C:\SDK\include\math.h  35  Info 808: No explicit type given symbol
+    '__pure', int assumed
+C:\SDK\include\math.h  35  Error 10: Expecting ';'
+C:\SDK\include\math.h  35  Error 19: Useless Declaration
+              _
+extern __pure double ceil(double /*x*/);
+C:\SDK\include\math.h  47  Info 808: No explicit type given symbol
+    '__pure', int assumed
+C:\SDK\include\math.h  47  Error 10: Expecting ';'
+C:\SDK\include\math.h  47  Error 19: Useless Declaration
+              _
+extern __pure double fabs(double /*x*/);
+C:\SDK\include\math.h  48  Info 808: No explicit type given symbol
+    '__pure', int assumed
+C:\SDK\include\math.h  48  Error 10: Expecting ';'
+C:\SDK\include\math.h  48  Error 19: Useless Declaration
+              _
+extern __pure double floor(double /*d*/);
+C:\SDK\include\math.h  49  Info 808: No explicit type given symbol
+    '__pure', int assumed
+C:\SDK\include\math.h  49  Error 10: Expecting ';'
+C:\SDK\include\math.h  49  Error 19: Useless Declaration

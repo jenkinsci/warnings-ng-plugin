@@ -234,6 +234,7 @@ public class ParserRegistry {
         parsers.add(new ErlcParser());
         parsers.add(new IntelCParser());
         parsers.add(new IarParser());
+        parsers.add(new PcLintParser());
 
         return Collections.unmodifiableList(parsers);
     }
