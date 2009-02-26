@@ -4,6 +4,8 @@ import hudson.plugins.warnings.util.model.Priority;
 
 import java.util.regex.Matcher;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * A parser for the MSBuild/PcLint compiler warnings.
  *
@@ -26,19 +28,29 @@ public class MsBuildParser extends RegexpLineParser {
     @Override
     protected Warning createWarning(final Matcher matcher) {
         Priority priority;
-        if ("note".equalsIgnoreCase(matcher.group(3))) {
+        if (isOfType(matcher, "note") || isOfType(matcher, "info")) {
             priority = Priority.LOW;
         }
-        else if ("info".equalsIgnoreCase(matcher.group(3))) {
-            priority = Priority.LOW;
-        }
-        else if ("warning".equalsIgnoreCase(matcher.group(3))) {
+        else if (isOfType(matcher, "warning")) {
             priority = Priority.NORMAL;
         }
         else {
             priority = Priority.HIGH;
         }
         return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE, matcher.group(4), matcher.group(5), priority);
+    }
+
+    /**
+     * Returns whether the warning type is of the specified type.
+     *
+     * @param matcher
+     *            the matcher
+     * @param type
+     *            the type to match with
+     * @return <code>true</code> if the warning type is of the specified type
+     */
+    private boolean isOfType(final Matcher matcher, final String type) {
+        return StringUtils.containsIgnoreCase(matcher.group(3), type);
     }
 }
 

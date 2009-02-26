@@ -234,7 +234,9 @@ public class ParserRegistry {
         parsers.add(new ErlcParser());
         parsers.add(new IntelCParser());
         parsers.add(new IarParser());
-        parsers.add(new PcLintParser());
+        MsBuildParser pclintParser = new MsBuildParser();
+        pclintParser.setName("PC-Lint");
+        parsers.add(pclintParser);
 
         return Collections.unmodifiableList(parsers);
     }

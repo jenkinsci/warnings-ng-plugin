@@ -22,7 +22,7 @@ public abstract class RegexpParser implements WarningsParser {
     /** Pattern of compiler warnings. */
     private final Pattern pattern;
     /** Name of this parser. */
-    private final String name;
+    private String name;
 
     /**
      * Creates a new instance of <code>RegexpParser</code>. Uses a single line matcher.
@@ -89,6 +89,15 @@ public abstract class RegexpParser implements WarningsParser {
     /** {@inheritDoc} */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Sets the name to the specified value.
+     *
+     * @param name the value to set
+     */
+    public void setName(final String name) {
+        this.name = name;
     }
 
     /**
