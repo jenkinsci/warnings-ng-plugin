@@ -251,20 +251,43 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
         for (WorkspaceFile file : container.getFiles()) {
             File masterFile = new File(directory, file.getTempName());
             if (!masterFile.exists()) {
-                FileOutputStream outputStream = new FileOutputStream(masterFile);
                 try {
+                    FileOutputStream outputStream = new FileOutputStream(masterFile);
+
                     new FilePath(channel, file.getName()).copyTo(outputStream);
                 }
                 catch (IOException exception) {
-                    String message = "Can't copy file from slave to master: slave=" + file.getName() + ", master=" + masterFile.getAbsolutePath();
-                    exception.printStackTrace(new PrintStream(outputStream));
-
-                    IOUtils.write(message, outputStream);
-                }
-                finally {
-                    outputStream.close();
+                    logExceptionToFile(exception, masterFile, file.getName());
                 }
             }
+        }
+    }
+
+
+    /**
+     * Logs the specified exception in the specified file.
+     *
+     * @param exception
+     *            the exception
+     * @param masterFile
+     *            the file on the master
+     * @param slaveFileName
+     *            the file name of the slave
+     */
+    private void logExceptionToFile(final IOException exception, final File masterFile, final String slaveFileName) {
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(masterFile);
+            String message = "Can't copy file from slave to master: slave=" + slaveFileName
+                    + ", master=" + masterFile.getAbsolutePath();
+            exception.printStackTrace(new PrintStream(outputStream));
+            IOUtils.write(message, outputStream);
+        }
+        catch (IOException error) {
+            // ignore
+        }
+        finally {
+            IOUtils.closeQuietly(outputStream);
         }
     }
 
