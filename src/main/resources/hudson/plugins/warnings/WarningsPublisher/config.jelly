@@ -13,7 +13,7 @@
         <f:entry title="">
           <select class="setting-input" name="parserName">
             <j:forEach var="availableParser" items="${allParsers}">
-              <f:option selected="${publisherParser == availableParser}">${availableParser.toString()}</f:option>
+              <f:option selected="${publisherParser == availableParser}" value="${availableParser.toString()}">${availableParser.toString()}</f:option>
             </j:forEach>
           </select>
         </f:entry>
