@@ -28,6 +28,9 @@
   </f:entry>
 
   <f:advanced>
+    <f:entry title="${%Run always}" description="${%description.canRunOnFailed}">
+	    <f:checkbox name="canRunOnFailed" checked="${instance.canRunOnFailed}"/>
+    </f:entry>
     <f:entry title="${%Warnings to ignore}" description="${%description.excludePattern}">
       <f:textbox name="excludePattern" value="${instance.excludePattern}"
         checkUrl="'${rootURL}/publisher/WarningsPublisher/checkPattern?job=${it.fullName}&amp;value='+escape(this.value)" />

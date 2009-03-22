@@ -4,6 +4,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Descriptor;
+import hudson.model.Result;
 import hudson.plugins.warnings.parser.FileWarningsParser;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.plugins.warnings.util.BuildResult;
@@ -39,6 +40,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
     /** Name of parsers to use for scanning the logs. */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
     private Set<String> parserNames = new HashSet<String>();
+    /** Determines whether the plug-in should run for failed builds, too. */
+    private final boolean canRunOnFailed;
 
     /**
      * Creates a new instance of <code>WarningPublisher</code>.
@@ -72,6 +75,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *            Ant file-set pattern of files to exclude from report
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
+     * @param canRunOnFailed
+     *            determines whether the plug-in can run for failed builds, too
      */
     // CHECKSTYLE:OFF
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -80,10 +85,12 @@ public class WarningsPublisher extends HealthAwarePublisher {
             final String failureThreshold, final String newFailureThreshold,
             final String healthy, final String unHealthy,
             final String height, final String thresholdLimit,
-            final String pattern, final String excludePattern, final String defaultEncoding) {
+            final String pattern, final String excludePattern, final String defaultEncoding,
+            final boolean canRunOnFailed) {
         super(threshold, newThreshold, failureThreshold, newFailureThreshold,
                 healthy, unHealthy, height, thresholdLimit, defaultEncoding, "WARNINGS");
         this.pattern = pattern;
+        this.canRunOnFailed = canRunOnFailed;
         this.excludePattern = StringUtils.stripToNull(excludePattern);
     }
     // CHECKSTYLE:ON
@@ -95,6 +102,15 @@ public class WarningsPublisher extends HealthAwarePublisher {
      */
     public Set<String> getParserNames() {
         return parserNames;
+    }
+
+    /**
+     * Returns whether this plug-in can run for failed builds, too.
+     *
+     * @return the can run on failed
+     */
+    public boolean getCanRunOnFailed() {
+        return canRunOnFailed;
     }
 
     /**
@@ -172,5 +188,16 @@ public class WarningsPublisher extends HealthAwarePublisher {
     /** {@inheritDoc} */
     public Descriptor<Publisher> getDescriptor() {
         return WARNINGS_DESCRIPTOR;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean canContinue(final Result result) {
+        if (canRunOnFailed) {
+            return true;
+        }
+        else {
+            return super.canContinue(result);
+        }
     }
 }
