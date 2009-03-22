@@ -57,20 +57,10 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
     private final String failureThreshold;
     /** Threshold for new annotations to be reached if a build should be considered as failure. */
     private final String newFailureThreshold;
-    /** Determines whether to use the provided threshold to mark a build as unstable. */
-    private boolean thresholdEnabled;
-    /** Integer threshold to be reached if a build should be considered as unstable. */
-    private int minimumAnnotations;
     /** Report health as 100% when the number of warnings is less than this value. */
     private final String healthy;
     /** Report health as 0% when the number of warnings is greater than this value. */
     private final String unHealthy;
-    /** Report health as 100% when the number of warnings is less than this value. */
-    private int healthyAnnotations;
-    /** Report health as 0% when the number of warnings is greater than this value. */
-    private int unHealthyAnnotations;
-    /** Determines whether to use the provided healthy thresholds. */
-    private boolean healthyReportEnabled;
     /** Determines the height of the trend graph. */
     private final String height;
     /** The name of the plug-in. */
@@ -127,57 +117,8 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
         this.thresholdLimit = thresholdLimit;
         this.defaultEncoding = defaultEncoding;
         this.pluginName = "[" + pluginName + "] ";
-
-        validateThreshold(threshold);
-        validateHealthiness(healthy, unHealthy);
-        if (StringUtils.isBlank(thresholdLimit)) {
-            this.thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
-        }
     }
     // CHECKSTYLE:ON
-
-    /**
-     * Validates the healthiness parameters and sets the according fields.
-     *
-     * @param healthyParameter
-     *            the healthy value to validate
-     * @param unHealthyParameter
-     *            the unhealthy value to validate
-     */
-    private void validateHealthiness(final String healthyParameter, final String unHealthyParameter) {
-        if (!StringUtils.isEmpty(healthyParameter) && !StringUtils.isEmpty(unHealthyParameter)) {
-            try {
-                healthyAnnotations = Integer.valueOf(healthyParameter);
-                unHealthyAnnotations = Integer.valueOf(unHealthyParameter);
-                if (healthyAnnotations >= 0 && unHealthyAnnotations > healthyAnnotations) {
-                    healthyReportEnabled = true;
-                }
-            }
-            catch (NumberFormatException exception) {
-                // nothing to do, we use the default value
-            }
-        }
-    }
-
-    /**
-     * Validates the threshold parameter and sets the corresponding fields.
-     *
-     * @param thresholdParameter
-     *            the threshold to validate
-     */
-    private void validateThreshold(final String thresholdParameter) {
-        if (!StringUtils.isEmpty(thresholdParameter)) {
-            try {
-                minimumAnnotations = Integer.valueOf(thresholdParameter);
-                if (minimumAnnotations >= 0) {
-                    thresholdEnabled = true;
-                }
-            }
-            catch (NumberFormatException exception) {
-                // nothing to do, we use the default value
-            }
-        }
-    }
 
     /**
      * Initializes new fields that are not serialized yet.
@@ -198,13 +139,9 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
             PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
             try {
                 BuildResult annotationsResult = perform(build, logger);
-                ParserResult result = new ParserResult(annotationsResult.getAnnotations());
-                ParserResult newResult = new ParserResult(annotationsResult.getNewWarnings());
 
-                Result buildResult = new BuildResultEvaluator().evaluateBuildResult(
-                        logger, getMinimumPriority(),
-                        result, getThreshold(), getFailureThreshold(),
-                        newResult, getNewThreshold(), getNewFailureThreshold());
+                Result buildResult = new BuildResultEvaluator().evaluateBuildResult(logger, this,
+                        annotationsResult.getAnnotations(), annotationsResult.getNewWarnings());
                 if (buildResult != Result.SUCCESS) {
                     build.setResult(buildResult);
                 }
@@ -327,11 +264,6 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      */
     protected abstract BuildResult perform(AbstractBuild<?, ?> build, PluginLogger logger) throws InterruptedException, IOException;
 
-    /** {@inheritDoc} */
-    public boolean isThresholdEnabled() {
-        return thresholdEnabled;
-    }
-
     /**
      * Returns the annotation threshold to be reached if a build should be
      * considered as unstable.
@@ -376,16 +308,6 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
         return newFailureThreshold;
     }
 
-    /** {@inheritDoc} */
-    public int getMinimumAnnotations() {
-        return minimumAnnotations;
-    }
-
-    /** {@inheritDoc} */
-    public boolean isHealthyReportEnabled() {
-        return healthyReportEnabled;
-    }
-
     /**
      * Returns the healthy threshold, i.e. when health is reported as 100%.
      *
@@ -395,11 +317,6 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
         return healthy;
     }
 
-    /** {@inheritDoc} */
-    public int getHealthyAnnotations() {
-        return healthyAnnotations;
-    }
-
     /**
      * Returns the unhealthy threshold, i.e. when health is reported as 0%.
      *
@@ -407,11 +324,6 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      */
     public String getUnHealthy() {
         return unHealthy;
-    }
-
-    /** {@inheritDoc} */
-    public int getUnHealthyAnnotations() {
-        return unHealthyAnnotations;
     }
 
     /**
@@ -496,4 +408,25 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
     public String getThresholdLimit() {
         return thresholdLimit;
     }
+
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private transient boolean thresholdEnabled;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private transient int minimumAnnotations;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private transient int healthyAnnotations;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private transient int unHealthyAnnotations;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private transient boolean healthyReportEnabled;
 }

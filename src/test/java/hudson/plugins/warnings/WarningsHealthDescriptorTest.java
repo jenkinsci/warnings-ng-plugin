@@ -2,7 +2,9 @@ package hudson.plugins.warnings;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import hudson.plugins.warnings.util.AbstractEnglishLocaleTest;
+import hudson.plugins.warnings.util.AbstractHealthDescriptor;
+import hudson.plugins.warnings.util.AbstractHealthDescriptorTest;
+import hudson.plugins.warnings.util.HealthDescriptor;
 import hudson.plugins.warnings.util.NullHealthDescriptor;
 import hudson.plugins.warnings.util.model.AnnotationProvider;
 
@@ -14,7 +16,7 @@ import org.jvnet.localizer.Localizable;
  *
  * @author Ulli Hafner
  */
-public class WarningsHealthDescriptorTest extends AbstractEnglishLocaleTest {
+public class WarningsHealthDescriptorTest extends AbstractHealthDescriptorTest {
     /**
      * Verify number of items.
      */
@@ -33,6 +35,12 @@ public class WarningsHealthDescriptorTest extends AbstractEnglishLocaleTest {
         when(provider.getNumberOfAnnotations()).thenReturn(2);
         description = healthDescriptor.createDescription(provider);
         assertEquals(Messages.Warnings_ResultAction_HealthReportMultipleItem(2), description.toString());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected AbstractHealthDescriptor createHealthDescriptor(final HealthDescriptor healthDescriptor) {
+        return new WarningsHealthDescriptor(healthDescriptor);
     }
 }
 

@@ -48,26 +48,16 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     private static final long serialVersionUID = 3003791883748835331L;
     /** Annotation threshold to be reached if a build should be considered as unstable. */
     private final String threshold;
-    /** Determines whether to use the provided threshold to mark a build as unstable. */
-    private boolean thresholdEnabled;
     /** Annotation threshold to be reached if a build should be considered as failure. */
     private final String failureThreshold;
     /** Threshold for new annotations to be reached if a build should be considered as failure. */
     private final String newFailureThreshold;
-    /** Integer threshold to be reached if a build should be considered as unstable. */
-    private int minimumAnnotations;
     /** Annotation threshold for new warnings to be reached if a build should be considered as unstable. */
     private final String newThreshold;
     /** Report health as 100% when the number of warnings is less than this value. */
     private final String healthy;
     /** Report health as 0% when the number of warnings is greater than this value. */
     private final String unHealthy;
-    /** Report health as 100% when the number of warnings is less than this value. */
-    private int healthyAnnotations;
-    /** Report health as 0% when the number of warnings is greater than this value. */
-    private int unHealthyAnnotations;
-    /** Determines whether to use the provided healthy thresholds. */
-    private boolean healthyReportEnabled;
     /** Determines the height of the trend graph. */
     private final String height;
     /** The name of the plug-in. */
@@ -121,54 +111,8 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         this.height = height;
         this.thresholdLimit = thresholdLimit;
         this.pluginName = "[" + pluginName + "] ";
-
-        validateThreshold(threshold);
-        validateHealthiness(healthy, unHealthy);
     }
     // CHECKSTYLE:ON
-
-    /**
-     * Validates the healthiness parameters and sets the according fields.
-     *
-     * @param healthyParameter
-     *            the healthy value to validate
-     * @param unHealthyParameter
-     *            the unhealthy value to validate
-     */
-    private void validateHealthiness(final String healthyParameter, final String unHealthyParameter) {
-        if (!StringUtils.isEmpty(healthyParameter) && !StringUtils.isEmpty(unHealthyParameter)) {
-            try {
-                healthyAnnotations = Integer.valueOf(healthyParameter);
-                unHealthyAnnotations = Integer.valueOf(unHealthyParameter);
-                if (healthyAnnotations >= 0 && unHealthyAnnotations > healthyAnnotations) {
-                    healthyReportEnabled = true;
-                }
-            }
-            catch (NumberFormatException exception) {
-                // nothing to do, we use the default value
-            }
-        }
-    }
-
-    /**
-     * Validates the threshold parameter and sets the according fields.
-     *
-     * @param thresholdParameter
-     *            the threshold to validate
-     */
-    private void validateThreshold(final String thresholdParameter) {
-        if (!StringUtils.isEmpty(thresholdParameter)) {
-            try {
-                minimumAnnotations = Integer.valueOf(thresholdParameter);
-                if (minimumAnnotations >= 0) {
-                    thresholdEnabled = true;
-                }
-            }
-            catch (NumberFormatException exception) {
-                // nothing to do, we use the default value
-            }
-        }
-    }
 
     /**
      * Initializes new fields that are not serialized yet.
@@ -208,23 +152,16 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
                 result.addErrorMessage(pom.getName(), Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
             }
 
-            ParserResult newResult = build.execute(new BuildCallable<ParserResult, IOException>() {
-                public ParserResult call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
-                    BuildResult buildResult = persistResult(result, mavenBuild);
+            build.execute(new BuildCallable<Void, IOException>() {
+                public Void call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
+                    persistResult(result, mavenBuild);
 
-                    return new ParserResult(buildResult.getNewWarnings());
+                    return null;
                 }
             });
 
             if (build.getRootDir().isRemote()) {
                 copyFilesToMaster(logger, build.getProjectRootDir(), build.getRootDir(), result.getAnnotations());
-            }
-            Result buildResult = new BuildResultEvaluator().evaluateBuildResult(
-                    logger, getMinimumPriority(),
-                    result, getThreshold(), getFailureThreshold(),
-                    newResult, getNewThreshold(), getNewFailureThreshold());
-            if (buildResult != Result.SUCCESS) {
-                build.setResult(buildResult);
             }
         }
         catch (AbortException exception) {
@@ -287,8 +224,6 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      * @return <code>true</code> if the plug-in accepts this goal
      */
     protected abstract boolean acceptGoal(final String goal);
-
-
 
     /**
      * Performs the publishing of the results of this plug-in.
@@ -377,11 +312,6 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         return new FilePath(new FilePath(pom.getBasedir()), "target");
     }
 
-    /** {@inheritDoc} */
-    public boolean isThresholdEnabled() {
-        return thresholdEnabled;
-    }
-
     /**
      * Returns the threshold of all annotations to be reached if a build should
      * be considered as unstable.
@@ -426,16 +356,6 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         return newFailureThreshold;
     }
 
-    /** {@inheritDoc} */
-    public int getMinimumAnnotations() {
-        return minimumAnnotations;
-    }
-
-    /** {@inheritDoc} */
-    public boolean isHealthyReportEnabled() {
-        return healthyReportEnabled;
-    }
-
     /**
      * Returns the healthy threshold, i.e. when health is reported as 100%.
      *
@@ -445,11 +365,6 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         return healthy;
     }
 
-    /** {@inheritDoc} */
-    public int getHealthyAnnotations() {
-        return healthyAnnotations;
-    }
-
     /**
      * Returns the unhealthy threshold, i.e. when health is reported as 0%.
      *
@@ -457,11 +372,6 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      */
     public String getUnHealthy() {
         return unHealthy;
-    }
-
-    /** {@inheritDoc} */
-    public int getUnHealthyAnnotations() {
-        return unHealthyAnnotations;
     }
 
     /**
@@ -495,5 +405,26 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     public String getThresholdLimit() {
         return thresholdLimit;
     }
+
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private transient boolean thresholdEnabled;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private transient int minimumAnnotations;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private transient int healthyAnnotations;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private transient int unHealthyAnnotations;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private transient boolean healthyReportEnabled;
 }
 

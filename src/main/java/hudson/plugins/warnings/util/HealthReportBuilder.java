@@ -167,47 +167,59 @@ public class HealthReportBuilder implements Serializable {
             renderer = new PrioritiesAreaRenderer(url, toolTipProvider);
         }
 
-        return ChartBuilder.createChart(dataset, renderer, healthDescriptor.getMinimumAnnotations(),
-                healthDescriptor.isHealthyReportEnabled()
+        return ChartBuilder.createChart(dataset, renderer, useThreeColors(useHealthBuilder));
+    }
+
+
+    /**
+     * Returns whether to use three or two colors for the graph.
+     *
+     * @param useHealthBuilder
+     *            determines whether to use the health builder
+     * @return <code>true</code> if the graph should use three colors,
+     *         <code>false</code> if the graph should use two colors.
+     */
+    private boolean useThreeColors(final boolean useHealthBuilder) {
+        return healthDescriptor.isHealthyReportEnabled()
                 || !healthDescriptor.isThresholdEnabled()
-                || !useHealthBuilder);
+                || !useHealthBuilder;
     }
 
     /** Backward compatibility. */
     @SuppressWarnings("unused")
     @Deprecated
-    private int healthy;
+    private transient int healthy;
     /** Backward compatibility. */
     @SuppressWarnings("unused")
     @Deprecated
-    private int unHealthy;
+    private transient int unHealthy;
     /** Backward compatibility. */
     @SuppressWarnings("unused")
     @Deprecated
-    private boolean isHealthEnabled;
+    private transient boolean isHealthEnabled;
     /** Backward compatibility. */
     @SuppressWarnings("unused")
     @Deprecated
-    private boolean isThresholdEnabled;
+    private transient boolean isThresholdEnabled;
     /** Backward compatibility. */
     @SuppressWarnings("unused")
     @Deprecated
-    private int threshold;
+    private transient int threshold;
     /** Backward compatibility. */
     @SuppressWarnings("unused")
     @Deprecated
-    private String reportName;
+    private transient String reportName;
     /** Backward compatibility. */
     @SuppressWarnings("unused")
     @Deprecated
-    private String itemName;
+    private transient String itemName;
     /** Backward compatibility. */
     @SuppressWarnings("unused")
     @Deprecated
-    private String reportSingleCount;
+    private transient String reportSingleCount;
     /** Backward compatibility. */
     @SuppressWarnings("unused")
     @Deprecated
-    private String reportMultipleCount;
+    private transient String reportMultipleCount;
 }
 

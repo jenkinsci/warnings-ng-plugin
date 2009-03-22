@@ -1,9 +1,11 @@
 package hudson.plugins.warnings.util;
 
+import static hudson.plugins.warnings.util.ThresholdValidator.*;
 import hudson.model.Result;
+import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
 
-import org.apache.commons.lang.StringUtils;
+import java.util.Collection;
 
 /**
  * Evaluates if the number of annotations exceeds a given threshold value.
@@ -17,36 +19,23 @@ public class BuildResultEvaluator {
      *
      * @param logger
      *            logs the results
-     * @param minimumPriority
-     *            determines which warning priorities should be considered
-     * @param result
-     *            the result collecting all annotations
-     * @param threshold
-     *            annotation threshold to be reached if a build should be
-     *            considered as unstable
-     * @param failureThreshold
-     *            annotation threshold to be reached if a build should be
-     *            considered as failure
-     * @param newResult
-     *            the result collecting the new annotations
-     * @param newThreshold
-     *            threshold for new annotations to be reached if a build should
-     *            be considered as unstable
-     * @param newFailureThreshold
-     *            threshold for new annotations to be reached if a build should
-     *            be considered as failure
+     * @param descriptor
+     *            health descriptor
+     * @param allAnnotations
+     *            all annotations
+     * @param newAnnotations
+     *            new annotations
      * @return the build result
      */
-    // CHECKSTYLE:OFF
-    public Result evaluateBuildResult(final PluginLogger logger, final Priority minimumPriority,
-            final ParserResult result, final String threshold, final String failureThreshold,
-            final ParserResult newResult, final String newThreshold, final String newFailureThreshold) {
-    // CHECKSTYLE:ON
+    public Result evaluateBuildResult(final PluginLogger logger, final HealthDescriptor descriptor,
+            final Collection<FileAnnotation> allAnnotations, final Collection<FileAnnotation> newAnnotations) {
+        ParserResult result = new ParserResult(allAnnotations);
+        ParserResult newResult = new ParserResult(newAnnotations);
 
         int annotationCount = 0;
         int newAnnotationCount = 0;
 
-        for (Priority priority : Priority.collectPrioritiesFrom(minimumPriority)) {
+        for (Priority priority : Priority.collectPrioritiesFrom(descriptor.getMinimumPriority())) {
             annotationCount += result.getNumberOfAnnotations(priority);
             newAnnotationCount += newResult.getNumberOfAnnotations(priority);
         }
@@ -55,27 +44,27 @@ public class BuildResultEvaluator {
                 result.getNumberOfAnnotations(Priority.HIGH),
                 result.getNumberOfAnnotations(Priority.NORMAL),
                 result.getNumberOfAnnotations(Priority.LOW)));
-        if (minimumPriority != Priority.LOW) {
+        if (descriptor.getMinimumPriority() != Priority.LOW) {
             logger.log(String.format("Considering %d annotations for build status evaluation", annotationCount));
             logger.log(String.format("Considering %d new annotations for build status evaluation", newAnnotationCount));
         }
-        if (isAnnotationCountExceeded(annotationCount, failureThreshold)) {
-            logger.log("Setting build status to FAILURE since total number of annotations exceeds the threshold " + failureThreshold);
+        if (isAnnotationCountExceeded(annotationCount, descriptor.getFailureThreshold())) {
+            logger.log("Setting build status to FAILURE since total number of annotations exceeds the threshold " + descriptor.getFailureThreshold());
             return Result.FAILURE;
         }
-        if (isAnnotationCountExceeded(newAnnotationCount, newFailureThreshold)) {
-            logger.log("Setting build status to FAILURE since total number of new annotations exceeds the threshold " + newFailureThreshold);
+        if (isAnnotationCountExceeded(newAnnotationCount, descriptor.getNewFailureThreshold())) {
+            logger.log("Setting build status to FAILURE since total number of new annotations exceeds the threshold " + descriptor.getNewFailureThreshold());
             return Result.FAILURE;
         }
-        if (isAnnotationCountExceeded(annotationCount, threshold)) {
-            logger.log("Setting build status to UNSTABLE since total number of annotations exceeds the threshold " + threshold);
+        if (isAnnotationCountExceeded(annotationCount, descriptor.getThreshold())) {
+            logger.log("Setting build status to UNSTABLE since total number of annotations exceeds the threshold " + descriptor.getThreshold());
             return Result.UNSTABLE;
         }
-        if (isAnnotationCountExceeded(newAnnotationCount, newThreshold)) {
-            logger.log("Setting build status to UNSTABLE since total number of new annotations exceeds the threshold " + newThreshold);
+        if (isAnnotationCountExceeded(newAnnotationCount, descriptor.getNewThreshold())) {
+            logger.log("Setting build status to UNSTABLE since total number of new annotations exceeds the threshold " + descriptor.getNewThreshold());
             return Result.UNSTABLE;
         }
-        logger.log("Don't changing build status, no threshold has been exceeded");
+        logger.log("Not changing build status, since no threshold has been exceeded");
         return Result.SUCCESS;
     }
 
@@ -90,50 +79,10 @@ public class BuildResultEvaluator {
      * @return <code>true</code> if the build should be set to unstable
      */
     public boolean isAnnotationCountExceeded(final int annotationCount, final String annotationThreshold) {
-        if (annotationCount > 0 && isValidThreshold(annotationThreshold)) {
-            return annotationCount > convertThreshold(annotationThreshold);
+        if (annotationCount > 0 && isValid(annotationThreshold)) {
+            return annotationCount > convert(annotationThreshold);
         }
         return false;
-    }
-
-    /**
-     * Returns whether the provided threshold string parameter is a valid
-     * threshold number, i.e. an integer value greater or equal zero.
-     *
-     * @param annotationThreshold
-     *            string representation of the threshold value
-     * @return <code>true</code> if the provided threshold string parameter is a
-     *         valid number >= 0
-     */
-    private boolean isValidThreshold(final String annotationThreshold) {
-        if (StringUtils.isNotBlank(annotationThreshold)) {
-            try {
-                return Integer.valueOf(annotationThreshold) >= 0;
-            }
-            catch (NumberFormatException exception) {
-                // not valid
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Converts the provided string threshold into an integer value.
-     *
-     * @param annotationThreshold
-     *            string representation of the threshold value
-     * @return integer threshold
-     */
-    private int convertThreshold(final String annotationThreshold) {
-        if (StringUtils.isNotBlank(annotationThreshold)) {
-            try {
-                return Integer.valueOf(annotationThreshold);
-            }
-            catch (NumberFormatException exception) {
-                // not valid
-            }
-        }
-        throw new IllegalArgumentException("Not a parsable integer value: " + annotationThreshold);
     }
 }
 

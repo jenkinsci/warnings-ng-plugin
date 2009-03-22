@@ -21,7 +21,7 @@ public class WarningsResult extends BuildResult {
     }
 
     /**
-     * Creates a new instance of <code>WarningsResult</code>.
+     * Creates a new instance of {@link WarningsResult}.
      *
      * @param build
      *            the current build as owner of this action
@@ -30,12 +30,13 @@ public class WarningsResult extends BuildResult {
      * @param result
      *            the parsed result with all annotations
      */
-    public WarningsResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result) {
+    public WarningsResult(final AbstractBuild<?, ?> build, final String defaultEncoding,
+            final ParserResult result) {
         super(build, defaultEncoding, result);
     }
 
     /**
-     * Creates a new instance of <code>WarningsResult</code>.
+     * Creates a new instance of {@link WarningsResult}.
      *
      * @param build
      *            the current build as owner of this action
@@ -46,7 +47,8 @@ public class WarningsResult extends BuildResult {
      * @param previous
      *            the result of the previous build
      */
-    public WarningsResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result, final WarningsResult previous) {
+    public WarningsResult(final AbstractBuild<?, ?> build, final String defaultEncoding,
+            final ParserResult result, final WarningsResult previous) {
         super(build, defaultEncoding, result, previous);
     }
 

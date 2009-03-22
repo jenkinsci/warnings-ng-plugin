@@ -6,6 +6,7 @@ import hudson.maven.MavenModule;
 import hudson.model.AbstractBuild;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
+import hudson.model.Result;
 import hudson.plugins.warnings.util.model.AbstractAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
 import hudson.util.ChartUtil;
@@ -321,6 +322,25 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
             catch (InterruptedException exception) {
                 // ignore, user canceled the operation
             }
+        }
+    }
+
+
+    /**
+     * Updates the build status if the number of annotations exceeds one of the
+     * thresholds.
+     *
+     * @param build
+     *            the build to change the status from
+     * @param buildResult
+     *            the build result
+     */
+    protected void updateBuildHealth(final MavenBuild build, final BuildResult buildResult) {
+        Result hudsonResult = new BuildResultEvaluator().evaluateBuildResult(
+                new PluginLogger(System.out, "[" + getDisplayName() + "] "), getHealthDescriptor(),
+                buildResult.getAnnotations(), buildResult.getNewWarnings());
+        if (hudsonResult != Result.SUCCESS) {
+            build.setResult(hudsonResult);
         }
     }
 

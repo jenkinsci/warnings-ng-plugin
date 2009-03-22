@@ -4,63 +4,66 @@ import hudson.plugins.warnings.util.model.Priority;
 
 import java.io.Serializable;
 
-
 /**
- * A health descriptor defines the parameters to create the build health. It
- * consists of the following constraints:
- * <ul>
- * <li>A flag to determine whether a build should be marked unstable if the
- * number of annotations reaches a given threshold.</li>
- * <li>A flag to determine whether a build should change its healthiness
- * according to the number of warnings. The healthiness is interpolated between
- * the specified minimum and maximum values.</li>
- * </ul>
+ * A health descriptor defines the parameters to create the build health.
  *
  * @author Ulli Hafner
  */
 public interface HealthDescriptor extends Serializable {
     /**
-     * Determines whether a threshold has been defined.
+     * Returns the threshold of all annotations to be reached if a build should
+     * be considered as unstable.
      *
-     * @return <code>true</code> if a threshold has been defined
+     * @return the threshold of all annotations to be reached if a build should
+     *         be considered as unstable.
      */
-    boolean isThresholdEnabled();
+    String getThreshold();
 
     /**
-     * Returns the threshold to be reached if a build should be considered as
-     * unstable.
+     * Returns the threshold for new annotations to be reached if a build should
+     * be considered as unstable.
      *
-     * @return the threshold to be reached if a build should be considered as
-     *         unstable
+     * @return the threshold for new annotations to be reached if a build should
+     *         be considered as unstable.
      */
-    int getMinimumAnnotations();
+    String getNewThreshold();
 
     /**
-     * Determines whether a health report should be created.
+     * Returns the annotation threshold to be reached if a build should be
+     * considered as failure.
      *
-     * @return <code>true</code> if a health report should be created
+     * @return the annotation threshold to be reached if a build should be
+     *         considered as failure.
      */
-    boolean isHealthyReportEnabled();
+    String getFailureThreshold();
 
     /**
-     * Returns the healthy threshold for annotations, i.e. when health is reported as 100%.
+     * Returns the threshold of new annotations to be reached if a build should
+     * be considered as failure.
+     *
+     * @return the threshold of new annotations to be reached if a build should
+     *         be considered as failure.
+     */
+    String getNewFailureThreshold();
+
+    /**
+     * Returns the healthy threshold, i.e. when health is reported as 100%.
      *
      * @return the 100% healthiness
      */
-    int getHealthyAnnotations();
+    String getHealthy();
 
     /**
-     * Returns the unhealthy threshold of annotations, i.e. when health is reported as 0%.
+     * Returns the unhealthy threshold, i.e. when health is reported as 0%.
      *
      * @return the 0% unhealthiness
      */
-    int getUnHealthyAnnotations();
+    String getUnHealthy();
 
     /**
      * Returns the minimum priority that should be considered when computing
-     * build health and stability. E.g., if {@link Priority#NORMAL} is
-     * returned, then annotations with priority {@link Priority#LOW} are
-     * ignored.
+     * build health and stability. E.g., if {@link Priority#NORMAL} is returned,
+     * then annotations with priority {@link Priority#LOW} are ignored.
      *
      * @return the minimum priority to consider
      */

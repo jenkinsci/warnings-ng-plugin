@@ -4,6 +4,10 @@ import static org.mockito.Mockito.*;
 import hudson.model.Result;
 import hudson.plugins.warnings.util.model.FileAnnotation;
 import hudson.plugins.warnings.util.model.Priority;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -53,49 +57,81 @@ public class BuildResultEvaluatorTest {
     @Test
     public void checkResultComputation() {
         BuildResultEvaluator parser = new BuildResultEvaluator();
-        ParserResult allAnnotations = new ParserResult();
-        ParserResult newAnnotations = new ParserResult();
+        List<FileAnnotation> allAnnotations = new ArrayList<FileAnnotation>();
+        List<FileAnnotation> newAnnotations = new ArrayList<FileAnnotation>();
 
         PluginLogger logger = mock(PluginLogger.class);
         Assert.assertEquals(Result.SUCCESS,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "", ""));
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "", ""), allAnnotations, newAnnotations));
         Assert.assertEquals(Result.SUCCESS,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "0", "0", newAnnotations, "", ""));
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "0", "", ""), allAnnotations, newAnnotations));
         Assert.assertEquals(Result.SUCCESS,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "0", "0"));
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "0", "0"), allAnnotations, newAnnotations));
         Assert.assertEquals(Result.SUCCESS,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "0", "0", newAnnotations, "0", "0"));
-        allAnnotations.addAnnotation(createAnnotation());
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "0", "0", "0"), allAnnotations, newAnnotations));
+        allAnnotations.add(createAnnotation());
         Assert.assertEquals(Result.SUCCESS,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "", ""));
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "", ""), allAnnotations, newAnnotations));
         Assert.assertEquals(Result.UNSTABLE,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "0", "", newAnnotations, "", ""));
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "", "", ""), allAnnotations, newAnnotations));
         Assert.assertEquals(Result.FAILURE,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "0", newAnnotations, "", ""));
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "0", "", ""), allAnnotations, newAnnotations));
         Assert.assertEquals(Result.FAILURE,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "0", "0", newAnnotations, "", ""));
-        newAnnotations.addAnnotation(createAnnotation());
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "0", "", ""), allAnnotations, newAnnotations));
+        newAnnotations.add(createAnnotation());
         Assert.assertEquals(Result.SUCCESS,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "", ""));
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "", ""), allAnnotations, newAnnotations));
         Assert.assertEquals(Result.UNSTABLE,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "0", ""));
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "0", ""), allAnnotations, newAnnotations));
         Assert.assertEquals(Result.FAILURE,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "", "0"));
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "", "0"), allAnnotations, newAnnotations));
         Assert.assertEquals(Result.FAILURE,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "0", "0"));
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "0", "0"), allAnnotations, newAnnotations));
 
         Assert.assertEquals(Result.SUCCESS,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "", newAnnotations, "", ""));
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "", ""), allAnnotations, newAnnotations));
         Assert.assertEquals(Result.UNSTABLE,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "0", "", newAnnotations, "0", ""));
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "", "0", ""), allAnnotations, newAnnotations));
         Assert.assertEquals(Result.FAILURE,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "0", "", newAnnotations, "", "0"));
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "", "", "0"), allAnnotations, newAnnotations));
         Assert.assertEquals(Result.FAILURE,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "0", newAnnotations, "", "0"));
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "0", "", "0"), allAnnotations, newAnnotations));
         Assert.assertEquals(Result.FAILURE,
-                parser.evaluateBuildResult(logger, Priority.NORMAL, allAnnotations, "", "0", newAnnotations, "0", ""));
+                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "0", "0", ""), allAnnotations, newAnnotations));
     }
 
+    /**
+     * Creates a mock health descriptor.
+     *
+     * @param threshold
+     *            Annotations threshold to be reached if a build should be
+     *            considered as unstable.
+     * @param newThreshold
+     *            New annotations threshold to be reached if a build should be
+     *            considered as unstable.
+     * @param failureThreshold
+     *            Annotation threshold to be reached if a build should be
+     *            considered as failure.
+     * @param newFailureThreshold
+     *            New annotations threshold to be reached if a build should be
+     *            considered as failure.
+     * @param minimumPriority
+     *            determines which warning priorities should be considered when
+     *            evaluating the build stability and health
+     * @return the health descriptor
+     */
+    private HealthDescriptor newDescriptor(final Priority minimumPriority,
+            final String threshold, final String failureThreshold,
+            final String newThreshold, final String newFailureThreshold) {
+        HealthDescriptor descriptor = mock(HealthDescriptor.class);
+        when(descriptor.getMinimumPriority()).thenReturn(minimumPriority);
+        when(descriptor.getThreshold()).thenReturn(threshold);
+        when(descriptor.getFailureThreshold()).thenReturn(failureThreshold);
+        when(descriptor.getNewThreshold()).thenReturn(newThreshold);
+        when(descriptor.getNewFailureThreshold()).thenReturn(newFailureThreshold);
+
+        return descriptor;
+    }
 
     /**
      * Returns an annotation with {@link Priority#HIGH}.
