@@ -654,15 +654,34 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return <code>true</code> if a previous build result exists.
      */
-    protected abstract boolean hasPreviousResult();
+    public boolean hasPreviousResult() {
+        ResultAction<?> action = getOwner().getAction(getResultActionType());
+
+        return action != null && action.hasPreviousResultAction();
+    }
 
     /**
      * Returns the results of the previous build.
      *
-     * @return the result of the previous build, or an empty project if no such
-     *         build exists
+     * @return the result of the previous build, or <code>null</code> if no
+     *         such build exists
      */
-    protected abstract JavaProject getPreviousResult();
+    public JavaProject getPreviousResult() {
+        ResultAction<? extends BuildResult> action = getOwner().getAction(getResultActionType());
+        if (action != null && action.hasPreviousResultAction()) {
+            return action.getPreviousResultAction().getResult().getProject();
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the actual type of the associated result action.
+     *
+     * @return the actual type of the associated result action
+     */
+    protected abstract Class<? extends ResultAction<? extends BuildResult>> getResultActionType();
 
     /**
      * Returns the dynamic result of the selection element.

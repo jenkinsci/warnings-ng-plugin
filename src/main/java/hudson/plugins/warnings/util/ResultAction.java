@@ -16,7 +16,7 @@ import org.kohsuke.stapler.StaplerResponse;
  *            type of the result
  * @author Ulli Hafner
  */
-public interface ResultAction<T> extends Action {
+public interface ResultAction<T extends BuildResult> extends Action {
     /**
      * Returns the current result of this action.
      *
