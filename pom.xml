@@ -33,6 +33,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.jvnet.hudson.main</groupId>
+      <artifactId>maven-plugin</artifactId>
+    </dependency>
+    <dependency>
       <groupId>de.java2html</groupId>
       <artifactId>java2html</artifactId>
       <version>5.0</version>
