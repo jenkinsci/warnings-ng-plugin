@@ -11,7 +11,7 @@
   <packaging>hpi</packaging>
   <name>Hudson Warnings Plug-in</name>
   <version>2.7-SNAPSHOT</version>
-  <url>http://hudson.gotdns.com/wiki/display/HUDSON/Warnings+Plugin</url>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/Warnings+Plugin</url>
   <description>This plug-in reads the compiler warnings from the
     console log file and generates a trend report.</description>
 
