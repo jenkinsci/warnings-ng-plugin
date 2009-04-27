@@ -36,7 +36,6 @@
         checkUrl="'${rootURL}/publisher/WarningsPublisher/checkPattern?job=${it.fullName}&amp;value='+escape(this.value)" />
     </f:entry>
     <u:thresholds id="warnings"/>
-    <u:trendHeight/>
     <u:defaultEncoding id="warnings"/>
   </f:advanced>
 </j:jelly>
