@@ -61,8 +61,6 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
     private final String healthy;
     /** Report health as 0% when the number of warnings is greater than this value. */
     private final String unHealthy;
-    /** Determines the height of the trend graph. */
-    private final String height;
     /** The name of the plug-in. */
     private final String pluginName;
     /** Determines which warning priorities should be considered when evaluating the build stability and health. */
@@ -91,8 +89,6 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      * @param unHealthy
      *            Report health as 0% when the number of open tasks is greater
      *            than this value
-     * @param height
-     *            the height of the trend graph
      * @param thresholdLimit
      *            determines which warning priorities should be considered when
      *            evaluating the build stability and health
@@ -104,7 +100,7 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
     // CHECKSTYLE:OFF
     public HealthAwarePublisher(final String threshold, final String newThreshold,
             final String failureThreshold, final String newFailureThreshold, final String healthy,
-            final String unHealthy, final String height, final String thresholdLimit,
+            final String unHealthy, final String thresholdLimit,
             final String defaultEncoding, final String pluginName) {
         super();
         this.threshold = threshold;
@@ -113,7 +109,6 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
         this.newFailureThreshold = newFailureThreshold;
         this.healthy = healthy;
         this.unHealthy = unHealthy;
-        this.height = height;
         this.thresholdLimit = thresholdLimit;
         this.defaultEncoding = defaultEncoding;
         this.pluginName = "[" + pluginName + "] ";
@@ -331,15 +326,6 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      *
      * @return the height of the trend graph
      */
-    public String getHeight() {
-        return height;
-    }
-
-    /**
-     * Returns the height of the trend graph.
-     *
-     * @return the height of the trend graph
-     */
     public int getTrendHeight() {
         return TrendReportHeightValidator.defaultHeight(height);
     }
@@ -429,4 +415,8 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
     @SuppressWarnings("unused")
     @Deprecated
     private transient boolean healthyReportEnabled;
+    /** Backward compatibility. */
+    @SuppressWarnings("unused")
+    @Deprecated
+    private transient String height;
 }

@@ -64,8 +64,6 @@ public class WarningsPublisher extends HealthAwarePublisher {
      * @param unHealthy
      *            Report health as 0% when the number of annotations is greater
      *            than this value
-     * @param height
-     *            the height of the trend graph
      * @param thresholdLimit
      *            determines which warning priorities should be considered when
      *            evaluating the build stability and health
@@ -83,12 +81,11 @@ public class WarningsPublisher extends HealthAwarePublisher {
     @DataBoundConstructor
     public WarningsPublisher(final String threshold, final String newThreshold,
             final String failureThreshold, final String newFailureThreshold,
-            final String healthy, final String unHealthy,
-            final String height, final String thresholdLimit,
+            final String healthy, final String unHealthy, final String thresholdLimit,
             final String pattern, final String excludePattern, final String defaultEncoding,
             final boolean canRunOnFailed) {
         super(threshold, newThreshold, failureThreshold, newFailureThreshold,
-                healthy, unHealthy, height, thresholdLimit, defaultEncoding, "WARNINGS");
+                healthy, unHealthy, thresholdLimit, defaultEncoding, "WARNINGS");
         this.pattern = pattern;
         this.canRunOnFailed = canRunOnFailed;
         this.excludePattern = StringUtils.stripToNull(excludePattern);
@@ -186,6 +183,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
     }
 
     /** {@inheritDoc} */
+    @Override
     public Descriptor<Publisher> getDescriptor() {
         return WARNINGS_DESCRIPTOR;
     }
