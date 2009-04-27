@@ -5,12 +5,6 @@ import hudson.plugins.warnings.util.model.AnnotationProvider;
 import hudson.plugins.warnings.util.model.Priority;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.renderer.category.StackedAreaRenderer;
-import org.jfree.data.category.CategoryDataset;
 
 /**
  * Creates a health report for integer values based on healthy and unhealthy
@@ -84,105 +78,6 @@ public class HealthReportBuilder implements Serializable {
             return new HealthReport(percentage, healthDescriptor.createDescription(result));
         }
         return null;
-    }
-
-    /**
-     * Returns whether this health report build is enabled, i.e. at least one of
-     * the health or failed thresholds are provided.
-     *
-     * @return <code>true</code> if health or failed thresholds are provided
-     */
-    public boolean isEnabled() {
-        return healthDescriptor.isHealthyReportEnabled() || healthDescriptor.isThresholdEnabled();
-    }
-
-    /**
-     * Creates a list of integer values used to create a three color graph
-     * showing the items per build.
-     *
-     * @param totalCount
-     *            total number of items
-     * @return the list of values
-     */
-    public List<Integer> createSeries(final int totalCount) {
-        List<Integer> series = new ArrayList<Integer>(3);
-        int remainder = totalCount;
-
-        if (healthDescriptor.isHealthyReportEnabled()) {
-            series.add(Math.min(remainder, healthDescriptor.getHealthyAnnotations()));
-
-            int range = healthDescriptor.getUnHealthyAnnotations() - healthDescriptor.getHealthyAnnotations();
-            remainder -= healthDescriptor.getHealthyAnnotations();
-            if (remainder > 0) {
-                series.add(Math.min(remainder, range));
-            }
-            else {
-                series.add(0);
-            }
-
-            remainder -= range;
-            if (remainder > 0) {
-                series.add(remainder);
-            }
-            else {
-                series.add(0);
-            }
-        }
-        else if (healthDescriptor.isThresholdEnabled()) {
-            series.add(Math.min(remainder, healthDescriptor.getMinimumAnnotations()));
-
-            remainder -= healthDescriptor.getMinimumAnnotations();
-            if (remainder > 0) {
-                series.add(remainder);
-            }
-            else {
-                series.add(0);
-            }
-        }
-
-        return series;
-    }
-
-    /**
-     * Creates a trend graph for the corresponding action using the thresholds
-     * of this health builder.
-     *
-     * @param useHealthBuilder
-     *            if the health thresholds should be used at all
-     * @param url
-     *            the URL shown in the tool tips
-     * @param dataset
-     *            the data set of the values to render
-     * @param toolTipProvider
-     *            tooltip provider for the clickable map
-     * @return the created graph
-     */
-    public JFreeChart createGraph(final boolean useHealthBuilder, final String url, final CategoryDataset dataset,
-            final ToolTipProvider toolTipProvider) {
-        StackedAreaRenderer renderer;
-        if (useHealthBuilder && isEnabled()) {
-            renderer = new ResultAreaRenderer(url, toolTipProvider);
-        }
-        else {
-            renderer = new PrioritiesAreaRenderer(url, toolTipProvider);
-        }
-
-        return ChartBuilder.createChart(dataset, renderer, useThreeColors(useHealthBuilder));
-    }
-
-
-    /**
-     * Returns whether to use three or two colors for the graph.
-     *
-     * @param useHealthBuilder
-     *            determines whether to use the health builder
-     * @return <code>true</code> if the graph should use three colors,
-     *         <code>false</code> if the graph should use two colors.
-     */
-    private boolean useThreeColors(final boolean useHealthBuilder) {
-        return healthDescriptor.isHealthyReportEnabled()
-                || !healthDescriptor.isThresholdEnabled()
-                || !useHealthBuilder;
     }
 
     /** Backward compatibility. */

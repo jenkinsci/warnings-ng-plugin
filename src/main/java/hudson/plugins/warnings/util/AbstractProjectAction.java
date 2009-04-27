@@ -5,12 +5,9 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 
 import java.io.IOException;
-import java.util.List;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
-import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -64,18 +61,11 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     }
 
     /**
-     * Returns whether we should display the toggle graph type links.
+     * Returns the title of the trend graph.
      *
-     * @return <code>true</code> if we should display the toggle graph type
-     *         links
+     * @return the title of the trend graph.
      */
-    public final boolean isHealthinessEnabled() {
-        ResultAction<?> lastAction = getLastAction();
-        if (lastAction != null) {
-            return lastAction.getHealthReportBuilder().isEnabled();
-        }
-        return false;
-    }
+    public abstract String getTrendName();
 
     /**
      * Returns the project.
@@ -84,6 +74,26 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      */
     public final AbstractProject<?, ?> getProject() {
         return project;
+    }
+
+    /**
+     * Returns the graph configuration for this project.
+     *
+     * @param link
+     *            not used
+     * @param request
+     *            Stapler request
+     * @param response
+     *            Stapler response
+     * @return the dynamic result of the analysis (detail page).
+     */
+    public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
+        if (hasValidResults()) {
+            return new GraphConfigurationDetail(getProject(), request, getUrlName(), getLastAction());
+        }
+        else {
+            return new GraphConfigurationDetail(getProject(), request, getUrlName());
+        }
     }
 
     /**
@@ -136,6 +146,21 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     }
 
     /**
+     * Returns the last finished build.
+     *
+     * @return the last finished build or <code>null</code> if there is no
+     *         such build
+     */
+    public AbstractBuild<?, ?> getLastFinishedBuild() {
+        AbstractBuild<?, ?> lastBuild = project.getLastBuild();
+        while (lastBuild != null && (lastBuild.isBuilding() || lastBuild.getAction(resultActionType) == null)) {
+            lastBuild = lastBuild.getPreviousBuild();
+        }
+        return lastBuild;
+    }
+
+
+    /**
      * Display the trend graph. Delegates to the the associated
      * {@link ResultAction}.
      *
@@ -148,22 +173,6 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *             {@link ResultAction#doGraph(StaplerRequest, StaplerResponse, int)}
      */
     public void doTrend(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        createGraph(request, response);
-    }
-
-    /**
-     * Creates a trend graph or map.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @throws IOException
-     *             in case of an error in
-     *             {@link ResultAction#doGraph(StaplerRequest, StaplerResponse, int)}
-     */
-    private void createGraph(final StaplerRequest request, final StaplerResponse response)
-            throws IOException {
         ResultAction<?> action = getLastAction();
         if (action == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -172,13 +181,6 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
             action.doGraph(request, response, height);
         }
     }
-
-    /**
-     * Returns the title of the trend graph.
-     *
-     * @return the title of the trend graph.
-     */
-    public abstract String getTrendName();
 
     /**
      * Display the trend map. Delegates to the the associated
@@ -202,6 +204,18 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     }
 
     /**
+     * Returns whether the trend graph is visible.
+     *
+     * @param request
+     *            the request to get the cookie from
+     * @return the graph configuration
+     */
+    public boolean isTrendVisible(final StaplerRequest request) {
+        String cookie = new CookieHandler(url).getValue(request.getCookies());
+        return hasValidResults() && new GraphConfiguration(cookie).isVisible();
+    }
+
+    /**
      *
      * Redirects the index page to the last result.
      *
@@ -218,59 +232,4 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
             response.sendRedirect2(String.format("../%d/%s", build.getNumber(), resultUrl));
         }
     }
-
-    /**
-     * Returns the last finished build.
-     *
-     * @return the last finished build or <code>null</code> if there is no
-     *         such build
-     */
-    public AbstractBuild<?, ?> getLastFinishedBuild() {
-        AbstractBuild<?, ?> lastBuild = project.getLastBuild();
-        while (lastBuild != null && (lastBuild.isBuilding() || lastBuild.getAction(resultActionType) == null)) {
-            lastBuild = lastBuild.getPreviousBuild();
-        }
-        return lastBuild;
-    }
-
-    /**
-     * Changes the trend graph display mode.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @throws IOException
-     *             in case of an error
-     */
-    public void doFlipTrend(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        boolean useHealthBuilder = false;
-
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(getCookieName())) {
-                    useHealthBuilder = Boolean.parseBoolean(cookie.getValue());
-                }
-            }
-        }
-
-        useHealthBuilder = !useHealthBuilder;
-
-        Cookie cookie = new Cookie(getCookieName(), String.valueOf(useHealthBuilder));
-        List<?> ancestors = request.getAncestors();
-        Ancestor ancestor = (Ancestor) ancestors.get(ancestors.size() - 2);
-        cookie.setPath(ancestor.getUrl());
-        cookie.setMaxAge(ONE_YEAR);
-        response.addCookie(cookie);
-
-        response.sendRedirect("..");
-    }
-
-    /**
-     * Returns the flip trend cookie name.
-     *
-     * @return the flip trend cookie name.
-     */
-    public abstract String getCookieName();
 }

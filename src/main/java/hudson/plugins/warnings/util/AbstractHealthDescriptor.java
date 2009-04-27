@@ -96,6 +96,17 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
     }
 
     /**
+     * Returns whether this health report build is enabled, i.e. at least one of
+     * the health or failed thresholds are provided.
+     *
+     * @return <code>true</code> if health or failed thresholds are provided,
+     *         <code>false</code> otherwise
+     */
+    public boolean isEnabled() {
+        return isHealthyReportEnabled() || isThresholdEnabled();
+    }
+
+    /**
      * Returns a localized description of the build health.
      *
      * @param result

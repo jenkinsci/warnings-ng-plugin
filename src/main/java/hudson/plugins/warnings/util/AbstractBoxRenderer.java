@@ -1,21 +1,22 @@
 package hudson.plugins.warnings.util;
 
-import hudson.util.StackedAreaRenderer2;
 import hudson.util.ChartUtil.NumberOnlyBuildLabel;
 
-import org.jfree.chart.renderer.category.StackedAreaRenderer;
+import org.jfree.chart.labels.CategoryToolTipGenerator;
+import org.jfree.chart.renderer.category.StackedBarRenderer;
+import org.jfree.chart.urls.CategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
 
 /**
- * {@link StackedAreaRenderer} that provides direct access to the individual
+ * {@link StackedBarRenderer} that provides direct access to the individual
  * results of a build via links. This renderer does not render tooltips, these
  * need to be defined in sub-classes.
  *
  * @author Ulli Hafner
  */
-public abstract class AbstractAreaRenderer extends StackedAreaRenderer2 {
+public abstract class AbstractBoxRenderer extends StackedBarRenderer implements CategoryToolTipGenerator, CategoryURLGenerator {
     /** Unique identifier of this class. */
-    private static final long serialVersionUID = 1440842055316682192L;
+    private static final long serialVersionUID = -2619266954533495982L;
     /** Base URL of the graph links. */
     private final String url;
     /** Tooltip provider for the clickable map. */
@@ -29,14 +30,15 @@ public abstract class AbstractAreaRenderer extends StackedAreaRenderer2 {
      * @param toolTipProvider
      *            tooltip provider for the clickable map
      */
-    public AbstractAreaRenderer(final String url, final ToolTipProvider toolTipProvider) {
+    public AbstractBoxRenderer(final String url, final ToolTipProvider toolTipProvider) {
         super();
+        setItemURLGenerator(this);
+        setToolTipGenerator(this);
         toolTipBuilder = new ToolTipBuilder(toolTipProvider);
         this.url = "/" + url + "/";
     }
 
     /** {@inheritDoc} */
-    @Override
     public final String generateURL(final CategoryDataset dataset, final int row, final int column) {
         return getLabel(dataset, column).build.getNumber() + url;
     }

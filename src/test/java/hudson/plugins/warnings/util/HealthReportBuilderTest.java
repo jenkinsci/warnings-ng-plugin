@@ -5,23 +5,12 @@ import static org.mockito.Mockito.*;
 import hudson.model.HealthReport;
 import hudson.plugins.warnings.util.model.AnnotationProvider;
 
-import java.util.List;
-
 import org.junit.Test;
 
 /**
  * Tests the class {@link HealthReportBuilder}.
  */
-@edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
 public class HealthReportBuilderTest extends AbstractEnglishLocaleTest {
-    /** Number of elements in a series with failure threshold. */
-    private static final int THRESHOLD_SERIES_SIZE = 2;
-    /** Number of elements in a series with healthy threshold. */
-    private static final int HEALTHY_SERIES_SIZE = 3;
-    /** Error message. */
-    private static final String WRONG_SERIES_VALUE = "Wrong series value.";
-    /** Error message. */
-    private static final String WRONG_NUMBER = "Number of created points is wrong.";
     /** Error message. */
     private static final String ERROR_MESSAGE = "Wrong healthiness calculation.";
 
@@ -106,87 +95,6 @@ public class HealthReportBuilderTest extends AbstractEnglishLocaleTest {
         AnnotationProvider result = mock(AnnotationProvider.class);
         when(result.getNumberOfAnnotations()).thenReturn(actual);
         return builder.computeHealth(actual, result);
-    }
-
-    /**
-     * Tests whether we correctly compute the series if health reporting is enabled.
-     */
-    @Test
-    public void testHealthySeriesCalculator() {
-        HealthReportBuilder builder = createHealthBuilder(true, 0, true, 10, 30);
-
-        List<Integer> series = builder.createSeries(5);
-        assertEquals(WRONG_NUMBER, HEALTHY_SERIES_SIZE, series.size());
-        assertEquals(WRONG_SERIES_VALUE, 5, (int)series.get(0));
-        assertEquals(WRONG_SERIES_VALUE, 0, (int)series.get(1));
-        assertEquals(WRONG_SERIES_VALUE, 0, (int)series.get(2));
-
-        series = builder.createSeries(10);
-        assertEquals(WRONG_NUMBER, HEALTHY_SERIES_SIZE, series.size());
-        assertEquals(WRONG_SERIES_VALUE, 10, (int)series.get(0));
-        assertEquals(WRONG_SERIES_VALUE, 0, (int)series.get(1));
-        assertEquals(WRONG_SERIES_VALUE, 0, (int)series.get(2));
-
-        series = builder.createSeries(11);
-        assertEquals(WRONG_NUMBER, HEALTHY_SERIES_SIZE, series.size());
-        assertEquals(WRONG_SERIES_VALUE, 10, (int)series.get(0));
-        assertEquals(WRONG_SERIES_VALUE, 1, (int)series.get(1));
-        assertEquals(WRONG_SERIES_VALUE, 0, (int)series.get(2));
-
-        series = builder.createSeries(30);
-        assertEquals(WRONG_NUMBER, HEALTHY_SERIES_SIZE, series.size());
-        assertEquals(WRONG_SERIES_VALUE, 10, (int)series.get(0));
-        assertEquals(WRONG_SERIES_VALUE, 20, (int)series.get(1));
-        assertEquals(WRONG_SERIES_VALUE, 0, (int)series.get(2));
-
-        series = builder.createSeries(31);
-        assertEquals(WRONG_NUMBER, HEALTHY_SERIES_SIZE, series.size());
-        assertEquals(WRONG_SERIES_VALUE, 10, (int)series.get(0));
-        assertEquals(WRONG_SERIES_VALUE, 20, (int)series.get(1));
-        assertEquals(WRONG_SERIES_VALUE, 1, (int)series.get(2));
-    }
-
-    /**
-     * Tests whether we don't get a healthy report if the reporting is disabled.
-     */
-    @Test
-    public void testThresholdSeriesCalculator() {
-        HealthReportBuilder builder = createHealthBuilder(true, 10, false, 20, 50);
-
-        List<Integer> series = builder.createSeries(5);
-        assertEquals(WRONG_NUMBER, THRESHOLD_SERIES_SIZE, series.size());
-        assertEquals(WRONG_SERIES_VALUE, 5, (int)series.get(0));
-        assertEquals(WRONG_SERIES_VALUE, 0, (int)series.get(1));
-
-        series = builder.createSeries(10);
-        assertEquals(WRONG_NUMBER, THRESHOLD_SERIES_SIZE, series.size());
-        assertEquals(WRONG_SERIES_VALUE, 10, (int)series.get(0));
-        assertEquals(WRONG_SERIES_VALUE, 0, (int)series.get(1));
-
-        series = builder.createSeries(11);
-        assertEquals(WRONG_NUMBER, THRESHOLD_SERIES_SIZE, series.size());
-        assertEquals(WRONG_SERIES_VALUE, 10, (int)series.get(0));
-        assertEquals(WRONG_SERIES_VALUE, 1, (int)series.get(1));
-    }
-
-    /**
-     * Tests Issue 796.
-     */
-    @Test
-    public void testIssue796() {
-        HealthReportBuilder builder = createHealthBuilder(false, 0, true, 1, 10);
-
-        List<Integer> series = builder.createSeries(1);
-        assertEquals(WRONG_NUMBER, HEALTHY_SERIES_SIZE, series.size());
-        assertEquals(WRONG_SERIES_VALUE, 1, (int)series.get(0));
-        assertEquals(WRONG_SERIES_VALUE, 0, (int)series.get(1));
-        assertEquals(WRONG_SERIES_VALUE, 0, (int)series.get(2));
-
-        series = builder.createSeries(7);
-        assertEquals(WRONG_NUMBER, HEALTHY_SERIES_SIZE, series.size());
-        assertEquals(WRONG_SERIES_VALUE, 1, (int)series.get(0));
-        assertEquals(WRONG_SERIES_VALUE, 6, (int)series.get(1));
-        assertEquals(WRONG_SERIES_VALUE, 0, (int)series.get(2));
     }
 
     /**

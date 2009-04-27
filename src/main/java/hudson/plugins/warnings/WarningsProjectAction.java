@@ -33,12 +33,6 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
 
     /** {@inheritDoc} */
     @Override
-    public String getCookieName() {
-        return "Warnings_displayMode";
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public String getTrendName() {
         return Messages.Warnings_Trend_Name();
     }

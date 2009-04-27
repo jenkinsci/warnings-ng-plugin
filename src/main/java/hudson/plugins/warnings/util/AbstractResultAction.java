@@ -8,22 +8,16 @@ import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
 import hudson.model.Result;
 import hudson.plugins.warnings.util.model.AbstractAnnotation;
-import hudson.plugins.warnings.util.model.Priority;
 import hudson.util.ChartUtil;
-import hudson.util.DataSetBuilder;
-import hudson.util.ChartUtil.NumberOnlyBuildLabel;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.JFreeChart;
-import org.jfree.data.category.CategoryDataset;
 import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -46,8 +40,6 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 public abstract class AbstractResultAction<T extends BuildResult> implements StaplerProxy, HealthReportingAction, ToolTipProvider, ResultAction<T> {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -7201451538713818948L;
-    /** Width of the graph. */
-    private static final int WIDTH = 500;
 
     /** The associated build of this action. */
     @SuppressWarnings("Se")
@@ -112,18 +104,14 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         return getDescriptor().getPluginResultUrlName();
     }
 
-    /**
-     * Returns the associated health report builder.
-     *
-     * @return the associated health report builder
-     */
-    public final HealthReportBuilder getHealthReportBuilder() {
-        return new HealthReportBuilder(getHealthDescriptor());
+    /** {@inheritDoc} */
+    public final HealthReport getBuildHealth() {
+        return new HealthReportBuilder(getHealthDescriptor()).computeHealth(getResult());
     }
 
     /** {@inheritDoc} */
-    public final HealthReport getBuildHealth() {
-        return getHealthReportBuilder().computeHealth(getResult());
+    public ToolTipProvider getToolTipProvider() {
+        return this;
     }
 
     /**
@@ -132,6 +120,11 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * @return the associated build of this action
      */
     public final AbstractBuild<?, ?> getOwner() {
+        return owner;
+    }
+
+    /** {@inheritDoc} */
+    public final AbstractBuild<?, ?> getBuild() {
         return owner;
     }
 
@@ -159,7 +152,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     }
 
     /**
-     * Generates a PNG image for the result trend.
+     * Generates a PNG image for the trend graph.
      *
      * @param request
      *            Stapler request
@@ -173,13 +166,18 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     public final void doGraph(final StaplerRequest request, final StaplerResponse response, final int height) throws IOException {
         if (ChartUtil.awtProblemCause != null) {
             response.sendRedirect2(request.getContextPath() + "/images/headless.png");
-            return;
         }
-        ChartUtil.generateGraph(request, response, createChart(request), WIDTH, height);
+        else {
+            GraphConfiguration configuration = createGraphConfiguration(request);
+            if (configuration.isVisible()) {
+                JFreeChart graph = configuration.createGraph(getHealthDescriptor(), this, getDescriptor().getPluginResultUrlName());
+                ChartUtil.generateGraph(request, response, graph, configuration.getWidth(), configuration.getHeight());
+            }
+        }
     }
 
     /**
-     * Generates a PNG image for the result trend.
+     * Generates the clickable map for the trend graph.
      *
      * @param request
      *            Stapler request
@@ -191,56 +189,23 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      *             in case of an error
      */
     public final void doGraphMap(final StaplerRequest request, final StaplerResponse response, final int height) throws IOException {
-        ChartUtil.generateClickableMap(request, response, createChart(request), WIDTH, height);
+        GraphConfiguration configuration = createGraphConfiguration(request);
+        if (configuration.isVisible()) {
+            JFreeChart graph = configuration.createGraph(getHealthDescriptor(), this, getDescriptor().getPluginResultUrlName());
+            ChartUtil.generateClickableMap(request, response, graph, configuration.getWidth(), configuration.getHeight());
+        }
     }
 
     /**
-     * Creates the chart for this action.
+     * Creates the graph configuration from the cookie.
      *
      * @param request
-     *            Stapler request
-     * @return the chart for this action.
+     *            the request to get the cookie from
+     * @return the graph configuration
      */
-    private JFreeChart createChart(final StaplerRequest request) {
-        String parameter = request.getParameter("useHealthBuilder");
-        boolean useHealthBuilder = Boolean.valueOf(StringUtils.defaultIfEmpty(parameter, "true"));
-
-        return getHealthReportBuilder().createGraph(useHealthBuilder,
-                getDescriptor().getPluginResultUrlName(), buildDataSet(useHealthBuilder), this);
-    }
-
-    /**
-     * Returns the data set that represents the result. For each build, the
-     * number of warnings is used as result value.
-     *
-     * @param useHealthBuilder
-     *            determines whether the health builder should be used to create
-     *            the data set
-     * @return the data set
-     */
-    protected CategoryDataset buildDataSet(final boolean useHealthBuilder) {
-        DataSetBuilder<Integer, NumberOnlyBuildLabel> builder = new DataSetBuilder<Integer, NumberOnlyBuildLabel>();
-        for (AbstractResultAction<T> action = this; action != null; action = action.getPreviousBuild()) {
-            T current = action.getResult();
-            if (current != null) {
-                List<Integer> series;
-                if (useHealthBuilder && getHealthReportBuilder().isEnabled()) {
-                    series = getHealthReportBuilder().createSeries(current.getNumberOfAnnotations());
-                }
-                else {
-                    series = new ArrayList<Integer>();
-                    series.add(current.getNumberOfAnnotations(Priority.LOW));
-                    series.add(current.getNumberOfAnnotations(Priority.NORMAL));
-                    series.add(current.getNumberOfAnnotations(Priority.HIGH));
-                }
-                int level = 0;
-                for (Integer integer : series) {
-                    builder.add(integer, level, new NumberOnlyBuildLabel(action.getOwner()));
-                    level++;
-                }
-            }
-        }
-        return builder.build();
+    public GraphConfiguration createGraphConfiguration(final StaplerRequest request) {
+        String cookie = new CookieHandler(getDescriptor().getPluginName()).getValue(request.getCookies());
+        return new GraphConfiguration(cookie);
     }
 
     /**
@@ -324,7 +289,6 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
             }
         }
     }
-
 
     /**
      * Updates the build status if the number of annotations exceeds one of the

@@ -5,6 +5,7 @@ import hudson.util.ColorPalette;
 import java.awt.Color;
 
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
@@ -12,6 +13,7 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.general.DatasetUtilities;
 import org.jfree.ui.RectangleInsets;
 
 /**
@@ -25,15 +27,12 @@ public final class ChartBuilderDemo {
     public static void createAndShowGUI() {
 //        CategoryDataset dataset = DatasetUtilities.createCategoryDataset("row", "column",
 //                new double[][] {{100}, {200}, {50}});
-////        CategoryDataset dataset = DatasetUtilities.createCategoryDataset("row", "column",
-////                new double[][] {{100, 200, 300, 200}, {200, 200, 400, 150}, {50, 100, 400, 200}});
-//        ChartBuilder chartBuilder = new ChartBuilder();
-////        JFreeChart chart = chartBuilder.createChart(dataset, new StackedAreaRenderer(), 50, true);
-//        JFreeChart chart = createSingleChart(dataset, 550);
-//        chartBuilder.annotateThreshold(chart, dataset, 0);
-//        ChartFrame frame = new ChartFrame("Hallo", chart);
-//        frame.pack();
-//        frame.setVisible(true);
+        CategoryDataset dataset = DatasetUtilities.createCategoryDataset("row", "column",
+                new double[][] {{100, 200, 300, 200}, {200, 200, 400, 150}, {50, 100, 400, 200}});
+        JFreeChart chart = ChartBuilder.createBlockChart(dataset);
+        ChartFrame frame = new ChartFrame("Hallo", chart);
+        frame.pack();
+        frame.setVisible(true);
     }
 
     /**

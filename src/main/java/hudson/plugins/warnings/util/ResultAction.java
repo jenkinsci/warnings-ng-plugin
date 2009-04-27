@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.util;
 
+import hudson.model.AbstractBuild;
 import hudson.model.Action;
 
 import java.io.IOException;
@@ -49,6 +50,13 @@ public interface ResultAction<T extends BuildResult> extends Action {
     ResultAction<T> getPreviousResultAction();
 
     /**
+     * Returns the associated build of this action.
+     *
+     * @return the associated build of this action
+     */
+    AbstractBuild<?, ?> getBuild();
+
+    /**
      * Generates a PNG image showing the trend graph for this result action.
      *
      * @param request
@@ -77,9 +85,16 @@ public interface ResultAction<T extends BuildResult> extends Action {
     void doGraphMap(StaplerRequest request, StaplerResponse response, int height) throws IOException;
 
     /**
-     * Returns the associated health report builder.
+     * Returns the associated tool tip provider.
      *
-     * @return the associated health report builder
+     * @return the tool tip provider
      */
-    HealthReportBuilder getHealthReportBuilder();
+    ToolTipProvider getToolTipProvider();
+
+    /**
+     * Gets the associated health descriptor.
+     *
+     * @return the health descriptor
+     */
+    AbstractHealthDescriptor getHealthDescriptor();
 }

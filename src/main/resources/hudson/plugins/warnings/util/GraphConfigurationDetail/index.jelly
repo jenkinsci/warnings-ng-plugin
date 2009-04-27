@@ -1,0 +1,67 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+	xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:u="/util">
+	<l:layout norefresh="true">
+		<st:include it="${it.owner}" page="sidepanel.jelly" />
+		<l:main-panel>
+		  <f:form method="post" action="save" name="Save">
+		    <h1>${%Configure the trend graph}</h1>
+	 		<p>${%description}
+	 		</p>
+		    <f:entry title="${%Width}">
+    			<f:textbox name="width" value="${it.width}"/>
+  			</f:entry>
+
+		    <f:entry title="${%Height}">
+    			<f:textbox name="height" value="${it.height}"/>
+  			</f:entry>
+
+			<f:entry title="${%Type}">
+			  <p>
+			    <f:radio name="graphType" value="NONE" checked="${it.graphType.name() == 'NONE'}" id="graphType.none"/>
+			    <st:nbsp/>
+			    <label for="graphType.none">${%No trend graph}</label>
+			    <st:nbsp />
+			  </p>
+
+			  <p>
+			    <f:radio name="graphType" value="PRIORITY" checked="${it.graphType.name() == 'PRIORITY'}" id="graphType.priority"/>
+			    <st:nbsp/>
+			    <label for="graphType.priority">${%By priority}</label>
+			    <st:nbsp />
+			  </p>
+			  <p>
+			    <img src="${it.url}/priority" lazymap="${it.url}/priorityMap"/>
+			  </p>
+
+			  <p>
+			    <f:radio name="graphType" value="NEW_VS_FIXED" checked="${it.graphType.name() == 'NEW_VS_FIXED'}" id="graphType.newVersusFixed"/>
+			    <st:nbsp/>
+			    <label for="graphType.newVersusFixed">${%Fixed vs. new}</label>
+			    <st:nbsp />
+			  </p>
+			  <p>
+			    <img src="${it.url}/newVersusFixed" lazymap="${it.url}/newVersusFixedMap"/>
+			  </p>
+
+		      <j:if test="${it.isHealthGraphAvailable()}">
+				  <p>
+				    <f:radio name="graphType" value="HEALTH" checked="${it.graphType.name() == 'HEALTH'}" id="graphType.health"/>
+				    <st:nbsp/>
+				    <label for="graphType.health">${%With health report thresholds}</label>
+				    <st:nbsp />
+				  </p>
+				  <p>
+				    <img src="${it.url}/health" lazymap="${it.url}/healthMap"/>
+				  </p>
+			  </j:if>
+
+		    </f:entry>
+
+	        <f:entry title="">
+	            <input type="submit" name="Submit'" value="${%Save}" class="submit-button" />
+            </f:entry>
+		  </f:form>
+		</l:main-panel>
+	</l:layout>
+</j:jelly>
