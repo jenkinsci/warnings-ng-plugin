@@ -37,5 +37,6 @@
     </f:entry>
     <u:thresholds id="warnings"/>
     <u:defaultEncoding id="warnings"/>
+    <u:trend id="warnings"/>
   </f:advanced>
 </j:jelly>

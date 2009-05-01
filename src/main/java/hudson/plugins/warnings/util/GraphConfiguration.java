@@ -1,5 +1,10 @@
 package hudson.plugins.warnings.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.JFreeChart;
 
@@ -41,6 +46,53 @@ public class GraphConfiguration {
         if (!initializeFrom(value)) {
             reset();
         }
+    }
+
+    /**
+     * Creates a new instance of {@link GraphConfiguration}.
+     *
+     * @param value
+     *            the initial value of this configuration (the syntax of the
+     *            string is defined in {@link #initializeFrom(String)})
+     * @param defaultsFile
+     *            a file with default values in case the specified value is not
+     *            valid
+     */
+    public GraphConfiguration(final String value, final File defaultsFile) {
+        if (!initializeFrom(value)) {
+            if (defaultsFile.exists()) {
+                String defaultValue = readFromDefaultsFile(defaultsFile);
+                if (!initializeFrom(defaultValue)) {
+                    reset();
+                }
+            }
+            else {
+                reset();
+            }
+        }
+    }
+
+    /**
+     * Reads the default values from file.
+     *
+     * @param defaultsFile
+     *            the file with the default values
+     * @return the default values from file.
+     */
+    private String readFromDefaultsFile(final File defaultsFile) {
+        String defaultValue = StringUtils.EMPTY;
+        FileInputStream input = null;
+        try {
+            input = new FileInputStream(defaultsFile);
+            defaultValue = IOUtils.toString(input);
+        }
+        catch (IOException exception) {
+            // ignore
+        }
+        finally {
+            IOUtils.closeQuietly(input);
+        }
+        return defaultValue;
     }
 
     /**

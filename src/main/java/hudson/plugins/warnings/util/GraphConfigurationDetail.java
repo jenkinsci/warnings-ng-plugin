@@ -4,12 +4,12 @@ import hudson.model.AbstractProject;
 import hudson.model.ModelObject;
 import hudson.util.ChartUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -20,15 +20,15 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 /**
- * Configures the trend graph of this plug-in for the current user and job using a cookie.
+ * Configures the trend graph of this plug-in.
  */
-public class GraphConfigurationDetail extends GraphConfiguration implements ModelObject {
+public abstract class GraphConfigurationDetail extends GraphConfiguration implements ModelObject {
     /** The owning project to configure the graphs for. */
     private final AbstractProject<?, ?> project;
     /** Logger. */
     private static final Logger LOGGER = Logger.getLogger(GraphConfigurationDetail.class.getName());
-    /** Suffix of the cookie name that is used to persist the configuration per user. */
-    private final String cookieName;
+    /** The plug-in name. */
+    private final String pluginName;
     /** The last result action to start the trend report computation from. */
     private ResultAction<?> lastAction;
     /** The health descriptor. */
@@ -46,19 +46,16 @@ public class GraphConfigurationDetail extends GraphConfiguration implements Mode
      *
      * @param project
      *            the owning project to configure the graphs for
-     * @param request
-     *            the request with the optional cookie to initialize this
-     *            instance
-     * @param cookieName
-     *            the suffix of the cookie name that is used to persist the
-     *            configuration per user
+     * @param pluginName
+     *            the name of the plug-in
+     * @param value
+     *            the initial value of this configuration
      */
-    public GraphConfigurationDetail(final AbstractProject<?, ?> project, final StaplerRequest request,
-            final String cookieName) {
-        super(createCookieHandler(cookieName).getValue(request.getCookies()));
+    public GraphConfigurationDetail(final AbstractProject<?, ?> project, final String pluginName, final String value) {
+        super(value, createDefaultsFile(project, pluginName));
 
         this.project = project;
-        this.cookieName = cookieName;
+        this.pluginName = pluginName;
         healthDescriptor = new NullHealthDescriptor();
     }
 
@@ -67,31 +64,31 @@ public class GraphConfigurationDetail extends GraphConfiguration implements Mode
      *
      * @param project
      *            the owning project to configure the graphs for
-     * @param request
-     *            the request with the optional cookie to initialize this
-     *            instance
-     * @param cookieName
-     *            the suffix of the cookie name that is used to persist the
-     *            configuration per user
-     * @param lastAction the last valid action for this project
+     * @param pluginName
+     *            the name of the plug-in
+     * @param value
+     *            the initial value of this configuration
+     * @param lastAction
+     *            the last valid action for this project
      */
-    public GraphConfigurationDetail(final AbstractProject<?, ?> project, final StaplerRequest request,
-            final String cookieName, final ResultAction<?> lastAction) {
-        this(project, request, cookieName);
+    public GraphConfigurationDetail(final AbstractProject<?, ?> project, final String pluginName, final String value, final ResultAction<?> lastAction) {
+        this(project, pluginName, value);
+
         this.lastAction = lastAction;
         healthDescriptor = lastAction.getHealthDescriptor();
     }
 
     /**
-     * Creates a new cookie handler to convert the cookie to a string value.
+     * Creates a file with for the default values.
      *
-     * @param cookieName
-     *            the suffix of the cookie name that is used to persist the
-     *            configuration per user
-     * @return the new cookie handler
+     * @param project
+     *            the project used as directory for the file
+     * @param pluginName
+     *            the name of the plug-in
+     * @return the created file
      */
-    private static CookieHandler createCookieHandler(final String cookieName) {
-        return new CookieHandler(cookieName);
+    protected static File createDefaultsFile(final AbstractProject<?, ?> project, final String pluginName) {
+        return new File(project.getRootDir(), pluginName + ".txt");
     }
 
     /**
@@ -103,22 +100,26 @@ public class GraphConfigurationDetail extends GraphConfiguration implements Mode
         return project;
     }
 
-    /** {@inheritDoc} */
-    public String getDisplayName() {
-        return Messages.GraphConfiguration_Name();
-    }
-
     /**
-     * Returns the URL of this object.
+     * Returns the root URL of this object.
      *
-     * @return the URL of this object
+     * @return the root URL of this object
      */
-    public String getUrl() {
-        return project.getAbsoluteUrl() + cookieName + "/configure";
+    public String getRootUrl() {
+        return project.getAbsoluteUrl() + pluginName;
     }
 
     /**
-     * Saves the configured values to a cookie.
+     * Returns the plug-in name.
+     *
+     * @return the plug-in name
+     */
+    public String getPluginName() {
+        return pluginName;
+    }
+
+    /**
+     * Saves the configured values. Subclasses need to implement the actual persistence.
      *
      * @param request
      *            Stapler request
@@ -144,9 +145,11 @@ public class GraphConfigurationDetail extends GraphConfiguration implements Mode
 
             if (isValid(width, height, buildCount, dayCount, graphType)) {
                 String value = serializeToString(width, height, buildCount, dayCount, graphType);
-                Cookie cookie = createCookieHandler(cookieName).create(request.getAncestors(), value);
-                response.addCookie(cookie);
+                persistValue(value, request, response);
             }
+        }
+        catch (IOException exception) {
+            LOGGER.log(Level.SEVERE, "Can't save the form data: " + request, exception);
         }
         catch (JSONException exception) {
             LOGGER.log(Level.SEVERE, "Can't parse the form data: " + request, exception);
@@ -166,6 +169,19 @@ public class GraphConfigurationDetail extends GraphConfiguration implements Mode
             }
         }
     }
+
+    /**
+     * Persists the configured values.
+     *
+     * @param value
+     *            the values configured by the user.
+     * @param request
+     *            Stapler request
+     * @param response
+     *            Stapler response
+     * @throws IOException if the values could not be persisted
+     */
+    protected abstract void persistValue(String value, StaplerRequest request, StaplerResponse response) throws IOException;
 
     /**
      * Returns the build count as a string. If no build count is defined, then an

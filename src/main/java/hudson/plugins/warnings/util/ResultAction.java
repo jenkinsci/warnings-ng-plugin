@@ -3,11 +3,7 @@ package hudson.plugins.warnings.util;
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
 
-import java.io.IOException;
 import java.util.NoSuchElementException;
-
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Defines an action that is responsible for handling results of the given type
@@ -55,34 +51,6 @@ public interface ResultAction<T extends BuildResult> extends Action {
      * @return the associated build of this action
      */
     AbstractBuild<?, ?> getBuild();
-
-    /**
-     * Generates a PNG image showing the trend graph for this result action.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @param height
-     *            the height of the trend graph
-     * @throws IOException
-     *             in case of an error
-     */
-    void doGraph(StaplerRequest request, StaplerResponse response, int height) throws IOException;
-
-    /**
-     * Generates a clickable map for the trend graph of this result action.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @param height
-     *            the height of the trend graph
-     * @throws IOException
-     *             in case of an error
-     */
-    void doGraphMap(StaplerRequest request, StaplerResponse response, int height) throws IOException;
 
     /**
      * Returns the associated tool tip provider.
