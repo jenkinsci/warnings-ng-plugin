@@ -14,11 +14,11 @@
 			<f:entry title="${%Height}">
 				<f:textbox name="height" value="${it.height}"/>
    		    </f:entry>
-			<f:entry title="${%Number of builds}" description="${%description.buildCount}">
-				<f:textbox name="height" value="${it.buildCount}"/>
+			<f:entry title="${%name.builds}" description="${%description.buildCount}">
+				<f:textbox name="buildCountString" value="${it.buildCountString}"/>
    		    </f:entry>
-			<f:entry title="${%Number of days}" description="${%description.dayCount}">
-				<f:textbox name="height" value="${it.dayCount}"/>
+			<f:entry title="${%name.days}" description="${%description.dayCount}">
+				<f:textbox name="dayCountString" value="${it.dayCountString}"/>
    		    </f:entry>
 
 			<f:entry title="${%Type}">

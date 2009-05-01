@@ -14,6 +14,7 @@ import javax.servlet.http.Cookie;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.JFreeChart;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -129,8 +130,16 @@ public class GraphConfigurationDetail extends GraphConfiguration implements Mode
             JSONObject formData = request.getSubmittedForm();
             int width = formData.getInt("width");
             int height = formData.getInt("height");
-            int buildCount = formData.getInt("buildCount");
-            int dayCount = formData.getInt("dayCount");
+            String buildCountString = formData.getString("buildCountString");
+            int buildCount = 0;
+            if (StringUtils.isNotBlank(buildCountString)) {
+                buildCount = formData.getInt("buildCountString");
+            }
+            String dayCountString = formData.getString("dayCountString");
+            int dayCount = 0;
+            if (StringUtils.isNotBlank(dayCountString)) {
+                dayCount = formData.getInt("dayCountString");
+            }
             GraphType graphType = GraphType.valueOf(formData.getString("graphType"));
 
             if (isValid(width, height, buildCount, dayCount, graphType)) {
@@ -155,6 +164,36 @@ public class GraphConfigurationDetail extends GraphConfiguration implements Mode
             catch (IOException exception) {
                 LOGGER.log(Level.SEVERE, "Can't redirect", exception);
             }
+        }
+    }
+
+    /**
+     * Returns the build count as a string. If no build count is defined, then an
+     * empty string is returned.
+     *
+     * @return the day count string
+     */
+    public String getBuildCountString() {
+        if (isBuildCountDefined()) {
+            return String.valueOf(getBuildCount());
+        }
+        else {
+            return StringUtils.EMPTY;
+        }
+    }
+
+    /**
+     * Returns the day count as a string. If no day count is defined, then an
+     * empty string is returned.
+     *
+     * @return the day count string
+     */
+    public String getDayCountString() {
+        if (isDayCountDefined()) {
+            return String.valueOf(getDayCount());
+        }
+        else {
+            return StringUtils.EMPTY;
         }
     }
 
