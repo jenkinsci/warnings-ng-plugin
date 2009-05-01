@@ -15,7 +15,7 @@ import org.jfree.data.category.CategoryDataset;
  *
  * @author Ulli Hafner
  */
-public class HealthGraph extends BuildResultsGraph {
+public class HealthGraph extends BuildResultGraph {
     /** The health descriptor. */
     private final AbstractHealthDescriptor healthDescriptor;
 
@@ -92,7 +92,7 @@ public class HealthGraph extends BuildResultsGraph {
             return new ResultAreaRenderer(url, toolTipProvider);
         }
         else {
-            return new PrioritiesAreaRenderer(url, toolTipProvider);
+            return new PriorityAreaRenderer(url, toolTipProvider);
         }
     }
 

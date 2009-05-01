@@ -15,7 +15,7 @@ import org.jfree.data.category.CategoryDataset;
  *
  * @author Ulli Hafner
  */
-public class NewVersusFixedGraph extends BuildResultsGraph {
+public class NewVersusFixedGraph extends BuildResultGraph {
     /** {@inheritDoc} */
     @Override
     protected List<Integer> computeSeries(final BuildResult current) {

@@ -7,12 +7,14 @@ import org.jfree.chart.JFreeChart;
  * Configuration properties of a trend graph.
  */
 public class GraphConfiguration {
+    /** The default counter. */
+    private static final int DEFAULT_COUNT = 0;
     /** The default graph. */
     private static final GraphType DEFAULT_GRAPH = GraphType.PRIORITY;
     /** The default width. */
-    private static final int DEFAULT_WIDTH = 500;
+    protected static final int DEFAULT_WIDTH = 500;
     /** The default height. */
-    private static final int DEFAULT_HEIGHT = 200;
+    protected static final int DEFAULT_HEIGHT = 200;
 
     /** Separator of cookie values. */
     private static final String SEPARATOR = ":";
@@ -23,6 +25,10 @@ public class GraphConfiguration {
     private int width;
     /** The type of the graph. */
     private GraphType graphType;
+    /** The number of builds to consider. */
+    private int buildCount;
+    /** The number of days to consider. */
+    private int dayCount;
 
     /**
      * Creates a new instance of {@link GraphConfiguration}.
@@ -43,6 +49,8 @@ public class GraphConfiguration {
     private void reset() {
         height = DEFAULT_HEIGHT;
         width  = DEFAULT_WIDTH;
+        buildCount = DEFAULT_COUNT;
+        dayCount = DEFAULT_COUNT;
         graphType = DEFAULT_GRAPH;
     }
 
@@ -55,7 +63,7 @@ public class GraphConfiguration {
      *            <code>width:height:isVisible</code>
      * @return true is the initialization was successful, <code>false</code>
      *         otherwise
-     * @see #serializeToString(int, int, GraphType)
+     * @see #serializeToString(int, int, int, int, GraphType)
      */
     private boolean initializeFrom(final String value) {
         if (StringUtils.isBlank(value)) {
@@ -63,14 +71,16 @@ public class GraphConfiguration {
         }
 
         String[] values = StringUtils.split(value, SEPARATOR);
-        if (values.length != 3) {
+        if (values.length != 5) {
             return false;
         }
 
         try {
             width = Integer.parseInt(values[0]);
             height = Integer.parseInt(values[1]);
-            graphType = GraphType.valueOf(values[2]);
+            buildCount = Integer.parseInt(values[2]);
+            dayCount = Integer.parseInt(values[3]);
+            graphType = GraphType.valueOf(values[4]);
         }
         catch (NumberFormatException exception) {
             return false;
@@ -79,7 +89,7 @@ public class GraphConfiguration {
             return false;
         }
 
-        return isValid(width, height, graphType);
+        return isValid(width, height, buildCount, dayCount, graphType);
     }
 
     /**
@@ -89,49 +99,87 @@ public class GraphConfiguration {
      *            width of graph
      * @param height
      *            height of graph
+     * @param buildCount
+     *            the build count
+     * @param dayCount
+     *            the day count
      * @param graphType
      *            type of graph
      * @return serialized configuration
      * @see #initializeFrom(String)
      */
     // CHECKSTYLE:OFF
-    protected String serializeToString(final int width, final int height, final GraphType graphType) {
-        return width + SEPARATOR + height + SEPARATOR + graphType;
+    protected String serializeToString(final int width, final int height, final int buildCount, final int dayCount, final GraphType graphType) {
+        return width + SEPARATOR
+                + height + SEPARATOR
+                + buildCount + SEPARATOR
+                + dayCount + SEPARATOR
+                + graphType;
     }
     // CHECKSTYLE:ON
 
+
     /**
      * Returns whether the configuration parameters are valid.
+     *
      * @param newWidth
      *            the new width
      * @param newHeight
      *            the new height
+     * @param newBuildCount
+     *            the new build count
+     * @param newDayCount
+     *            the new day count
      * @param newGraphType
      *            the new graph type
-     *
      * @return <code>true</code> if the configuration parameters are valid,
      *         <code>false</code> otherwise.
      */
-    protected boolean isValid(final int newWidth, final int newHeight, final GraphType newGraphType) {
-        return isValidWidth() && isValidHeight() && graphType != null;
+    //CHECKSTYLE:OFF
+    protected boolean isValid(final int newWidth, final int newHeight, final int newBuildCount, final int newDayCount, final GraphType newGraphType) {
+        return isValidWidth(newWidth)
+                && isValidHeight(newHeight)
+                && newGraphType != null
+                && newDayCount >= 0
+                && isValidBuildCount(newBuildCount);
     }
+    //CHECKSTYLE:ON
+
+    /**
+     * Returns if the build count is valid.
+     *
+     * @param newBuildCount
+     *            the new build count
+     * @return <code>true</code> if the build count is valid.
+     */
+    private boolean isValidBuildCount(final int newBuildCount) {
+        return newBuildCount == 0 || newBuildCount > 1;
+    }
+
 
     /**
      * Returns whether the width is valid.
      *
-     * @return <code>true</code> if the width is valid, <code>false</code> otherwise
+     * @param newWidth
+     *            the new width
+     * @return <code>true</code> if the width is valid, <code>false</code>
+     *         otherwise
      */
-    private boolean isValidWidth() {
-        return width > 25 && width  < 2000;
+    private boolean isValidWidth(final int newWidth) {
+        return newWidth > 25 && newWidth < 2000;
     }
+
 
     /**
      * Returns whether the width is valid.
      *
-     * @return <code>true</code> if the width is valid, <code>false</code> otherwise
+     * @param newHeight
+     *            the new height
+     * @return <code>true</code> if the width is valid, <code>false</code>
+     *         otherwise
      */
-    private boolean isValidHeight() {
-        return height > 25 && height  < 2000;
+    private boolean isValidHeight(final int newHeight) {
+        return newHeight > 25 && newHeight  < 2000;
     }
 
     /**
@@ -153,6 +201,44 @@ public class GraphConfiguration {
     }
 
     /**
+     * Returns the number of builds to consider.
+     *
+     * @return the number of builds to consider
+     */
+    public int getBuildCount() {
+        return buildCount;
+    }
+
+    /**
+     * Returns whether a valid build count is defined.
+     *
+     * @return <code>true</code> if there is a valid build count is defined,
+     *         <code>false</code> otherwise
+     */
+    public boolean isBuildCountDefined() {
+        return buildCount > 1;
+    }
+
+    /**
+     * Returns the number of days to consider.
+     *
+     * @return the number of days to consider
+     */
+    public int getDayCount() {
+        return dayCount;
+    }
+
+    /**
+     * Returns whether a valid day count is defined.
+     *
+     * @return <code>true</code> if there is a valid day count is defined,
+     *         <code>false</code> otherwise
+     */
+    public boolean isDayCountDefined() {
+        return dayCount > 0;
+    }
+
+    /**
      * Returns the type of the graph.
      *
      * @return the type
@@ -171,7 +257,7 @@ public class GraphConfiguration {
      * @return the graph
      */
     public JFreeChart createGraph(final AbstractHealthDescriptor healthDescriptor, final ResultAction<? extends BuildResult> resultAction) {
-        return getGraphType().createGraph(healthDescriptor, resultAction);
+        return getGraphType().createGraph(this, healthDescriptor, resultAction);
     }
 
     /**
@@ -186,7 +272,7 @@ public class GraphConfiguration {
      * @return the graph
      */
     public JFreeChart createGraph(final AbstractHealthDescriptor healthDescriptor, final ResultAction<? extends BuildResult> resultAction, final String url) {
-        return getGraphType().createGraph(healthDescriptor, resultAction, url);
+        return getGraphType().createGraph(this, healthDescriptor, resultAction, url);
     }
 
     /**
@@ -194,9 +280,15 @@ public class GraphConfiguration {
      *
      * @return <code>true</code> if this instance is initialized with its default values.
      */
+    // CHECKSTYLE:OFF
     public boolean isDefault() {
-        return width == DEFAULT_WIDTH && height == DEFAULT_HEIGHT && graphType == DEFAULT_GRAPH;
+        return width == DEFAULT_WIDTH
+                && height == DEFAULT_HEIGHT
+                && graphType == DEFAULT_GRAPH
+                && buildCount == DEFAULT_COUNT
+                && dayCount == DEFAULT_COUNT;
     }
+    // CHECKSTYLE:ON
 
     /**
      * Returns whether the trend graph is visible or not.
@@ -210,7 +302,8 @@ public class GraphConfiguration {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "type: " + graphType + ", size: " + width + "x" + height;
+        return "type: " + graphType + ", size: " + width + "x" + height
+                + ", # builds " + buildCount + ", # days " + dayCount;
     }
 }
 

@@ -16,7 +16,7 @@ import org.jfree.data.category.CategoryDataset;
  *
  * @author Ulli Hafner
  */
-public class PriorityGraph extends BuildResultsGraph {
+public class PriorityGraph extends BuildResultGraph {
     /** {@inheritDoc} */
     @Override
     protected List<Integer> computeSeries(final BuildResult current) {
@@ -42,7 +42,7 @@ public class PriorityGraph extends BuildResultsGraph {
     /** {@inheritDoc} */
     @Override
     protected CategoryItemRenderer createRenderer(final String url, final ToolTipProvider toolTipProvider) {
-        return new PrioritiesAreaRenderer(url, toolTipProvider);
+        return new PriorityAreaRenderer(url, toolTipProvider);
     }
 }
 

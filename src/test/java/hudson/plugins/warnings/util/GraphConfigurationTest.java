@@ -10,12 +10,14 @@ import org.junit.Test;
  * @author Ulli Hafner
  */
 public class GraphConfigurationTest {
-    /** Error message. */
-    private static final String INVALID_CONFIGURATION_ACCEPTED = "Invalid configuration accepted.";
     /** Valid width. */
     private static final int WIDTH = 50;
     /** Valid height. */
     private static final int HEIGHT = 100;
+    /** Valid build count. */
+    private static final int BUILDS = 200;
+    /** Valid day count. */
+    private static final int DAYS = 300;
 
     /**
      * Ensures that invalid string values are rejected.
@@ -28,8 +30,8 @@ public class GraphConfigurationTest {
         assertInvalidInitializationValue("111:111:");
         assertInvalidInitializationValue("111:111:HELP");
         assertInvalidInitializationValue("50:50:NEW_VS_FIXED:1");
-        assertInvalidInitializationValue("NEW:50:NEW_VS_FIXED");
-        assertInvalidInitializationValue("50.1:50:NEW_VS_FIXED");
+        assertInvalidInitializationValue("NEW:50:12:13:NEW_VS_FIXED");
+        assertInvalidInitializationValue("50.1:50:12:13:NEW_VS_FIXED");
     }
 
     /**
@@ -41,7 +43,7 @@ public class GraphConfigurationTest {
      */
     private void assertInvalidInitializationValue(final String initializationValue) {
         GraphConfiguration configuration = new GraphConfiguration(initializationValue);
-        assertTrue(INVALID_CONFIGURATION_ACCEPTED, configuration.isDefault());
+        assertTrue("Invalid configuration accepted.", configuration.isDefault());
     }
 
     /**
@@ -49,13 +51,23 @@ public class GraphConfigurationTest {
      */
     @Test
     public void testValidConfiguations() {
-        assertValidConfiguation("50:100:NEW_VS_FIXED", WIDTH, HEIGHT, GraphType.NEW_VS_FIXED);
-        assertValidConfiguation("50:100:PRIORITY", WIDTH, HEIGHT, GraphType.PRIORITY);
-        assertValidConfiguation("50:100:NONE", WIDTH, HEIGHT, GraphType.NONE);
+        assertValidConfiguation("50:100:200:300:NEW_VS_FIXED", WIDTH, HEIGHT, BUILDS, DAYS, GraphType.NEW_VS_FIXED);
+        assertValidConfiguation("50:100:200:300:PRIORITY", WIDTH, HEIGHT, BUILDS, DAYS, GraphType.PRIORITY);
+        assertValidConfiguation("50:100:200:300:NONE", WIDTH, HEIGHT, BUILDS, DAYS, GraphType.NONE);
 
         GraphConfiguration configuration = new GraphConfiguration(null);
-        assertValidConfiguation(configuration.serializeToString(WIDTH, HEIGHT, GraphType.NONE), WIDTH, HEIGHT, GraphType.NONE);
+        assertValidConfiguation(configuration.serializeToString(WIDTH, HEIGHT, BUILDS, DAYS, GraphType.NONE),
+                WIDTH, HEIGHT, BUILDS, DAYS, GraphType.NONE);
+
+        configuration = new GraphConfiguration("50:100:0:0:NONE");
+        assertFalse("Build count is defined but should not.", configuration.isBuildCountDefined());
+        assertFalse("Day count is defined but should not.", configuration.isDayCountDefined());
+
+        configuration = new GraphConfiguration("50:100:2:1:NONE");
+        assertTrue("Build count is not defined but should.", configuration.isBuildCountDefined());
+        assertTrue("Day count is not defined but should.", configuration.isDayCountDefined());
     }
+
 
     /**
      * Ensures that the specified string value is correctly parsed.
@@ -66,14 +78,20 @@ public class GraphConfigurationTest {
      *            the expected width
      * @param expectedHeight
      *            the expected height
+     * @param expectedBuildCount
+     *            the expected number of builds
+     * @param expectedDayCount
+     *            the expected number of days
      * @param expectedType
      *            the expected type
      */
-    private void assertValidConfiguation(final String initialization, final int expectedWidth, final int expectedHeight, final GraphType expectedType) {
+    private void assertValidConfiguation(final String initialization, final int expectedWidth, final int expectedHeight, final int expectedBuildCount, final int expectedDayCount, final GraphType expectedType) {
         GraphConfiguration configuration = new GraphConfiguration(initialization);
-        assertFalse(INVALID_CONFIGURATION_ACCEPTED, configuration.isDefault());
+        assertFalse("Valid configuration is not accepted.", configuration.isDefault());
         assertEquals("Wrong width.", expectedWidth, configuration.getWidth());
         assertEquals("Wrong height.", expectedHeight, configuration.getHeight());
+        assertEquals("Wrong build counter.", expectedBuildCount, configuration.getBuildCount());
+        assertEquals("Wrong day counter.", expectedDayCount, configuration.getDayCount());
         assertSame("Wrong type.", expectedType, configuration.getGraphType());
 
         if (expectedType != GraphType.NONE) {

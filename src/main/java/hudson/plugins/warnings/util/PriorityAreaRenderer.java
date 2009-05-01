@@ -1,5 +1,7 @@
 package hudson.plugins.warnings.util;
 
+import hudson.plugins.warnings.util.model.Priority;
+
 import org.jfree.data.category.CategoryDataset;
 
 /**
@@ -14,20 +16,19 @@ import org.jfree.data.category.CategoryDataset;
  *
  * @author Ulli Hafner
  */
-// TODO: the link should be aware of the priorities and filter the selected priority
-public class PrioritiesAreaRenderer extends AbstractAreaRenderer {
+public class PriorityAreaRenderer extends AbstractAreaRenderer {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -4683951507836348304L;
 
     /**
-     * Creates a new instance of {@link PrioritiesAreaRenderer}.
+     * Creates a new instance of {@link PriorityAreaRenderer}.
      *
      * @param url
      *            base URL of the graph links
      * @param toolTipProvider
      *            tooltip provider for the clickable map
      */
-    public PrioritiesAreaRenderer(final String url, final ToolTipProvider toolTipProvider) {
+    public PriorityAreaRenderer(final String url, final ToolTipProvider toolTipProvider) {
         super(url, toolTipProvider);
     }
 
@@ -47,5 +48,19 @@ public class PrioritiesAreaRenderer extends AbstractAreaRenderer {
             tooltip.append(Messages.Trend_PriorityLow());
         }
         return tooltip.toString();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getDetailUrl(final int row) {
+        if (row == 0) {
+            return Priority.LOW.name();
+        }
+        else if (row == 1) {
+            return Priority.NORMAL.name();
+        }
+        else {
+            return Priority.HIGH.name();
+        }
     }
 }

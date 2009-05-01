@@ -6,15 +6,20 @@
 		<l:main-panel>
 		  <f:form method="post" action="save" name="Save">
 		    <h1>${%Configure the trend graph}</h1>
-	 		<p>${%description}
-	 		</p>
-		    <f:entry title="${%Width}">
-    			<f:textbox name="width" value="${it.width}"/>
-  			</f:entry>
+	 		<p>${%description}</p>
 
-		    <f:entry title="${%Height}">
-    			<f:textbox name="height" value="${it.height}"/>
-  			</f:entry>
+			<f:entry title="${%Width}">
+    			<f:textbox name="width" value="${it.width}"/>
+  		    </f:entry>
+			<f:entry title="${%Height}">
+				<f:textbox name="height" value="${it.height}"/>
+   		    </f:entry>
+			<f:entry title="${%Number of builds}" description="${%description.buildCount}">
+				<f:textbox name="height" value="${it.buildCount}"/>
+   		    </f:entry>
+			<f:entry title="${%Number of days}" description="${%description.dayCount}">
+				<f:textbox name="height" value="${it.dayCount}"/>
+   		    </f:entry>
 
 			<f:entry title="${%Type}">
 			  <p>

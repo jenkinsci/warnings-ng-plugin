@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
 import org.jfree.chart.JFreeChart;
@@ -128,15 +129,18 @@ public class GraphConfigurationDetail extends GraphConfiguration implements Mode
             JSONObject formData = request.getSubmittedForm();
             int width = formData.getInt("width");
             int height = formData.getInt("height");
+            int buildCount = formData.getInt("buildCount");
+            int dayCount = formData.getInt("dayCount");
             GraphType graphType = GraphType.valueOf(formData.getString("graphType"));
 
-            if (isValid(width, height, graphType)) {
-                String value = serializeToString(width, height, graphType);
+            if (isValid(width, height, buildCount, dayCount, graphType)) {
+                String value = serializeToString(width, height, buildCount, dayCount, graphType);
                 Cookie cookie = createCookieHandler(cookieName).create(request.getAncestors(), value);
                 response.addCookie(cookie);
             }
-
-            response.sendRedirect("../../");
+        }
+        catch (JSONException exception) {
+            LOGGER.log(Level.SEVERE, "Can't parse the form data: " + request, exception);
         }
         catch (IllegalArgumentException exception) {
             LOGGER.log(Level.SEVERE, "Can't parse the form data: " + request, exception);
@@ -144,8 +148,13 @@ public class GraphConfigurationDetail extends GraphConfiguration implements Mode
         catch (ServletException exception) {
             LOGGER.log(Level.SEVERE, "Can't process the form data: " + request, exception);
         }
-        catch (IOException exception) {
-            LOGGER.log(Level.SEVERE, "Can't redirect", exception);
+        finally {
+            try {
+                response.sendRedirect("../../");
+            }
+            catch (IOException exception) {
+                LOGGER.log(Level.SEVERE, "Can't redirect", exception);
+            }
         }
     }
 
@@ -185,7 +194,7 @@ public class GraphConfigurationDetail extends GraphConfiguration implements Mode
      */
     private void drawNewVsFixed(final StaplerRequest request, final StaplerResponse response, final Mode mode) {
         if (lastAction != null) {
-            JFreeChart graph = new NewVersusFixedGraph().create(lastAction, lastAction.getUrlName());
+            JFreeChart graph = new NewVersusFixedGraph().create(this, lastAction, lastAction.getUrlName());
             generateGraph(request, response, graph, mode);
         }
     }
@@ -226,7 +235,7 @@ public class GraphConfigurationDetail extends GraphConfiguration implements Mode
      */
     private void drawPriority(final StaplerRequest request, final StaplerResponse response, final Mode mode) {
         if (lastAction != null) {
-            JFreeChart graph = new PriorityGraph().create(lastAction, lastAction.getUrlName());
+            JFreeChart graph = new PriorityGraph().create(this, lastAction, lastAction.getUrlName());
             generateGraph(request, response, graph, mode);
         }
     }
@@ -276,7 +285,7 @@ public class GraphConfigurationDetail extends GraphConfiguration implements Mode
      */
     public void drawHealth(final StaplerRequest request, final StaplerResponse response, final Mode mode) {
         if (lastAction != null) {
-            JFreeChart graph = new HealthGraph(healthDescriptor).create(lastAction, lastAction.getUrlName());
+            JFreeChart graph = new HealthGraph(healthDescriptor).create(this, lastAction, lastAction.getUrlName());
             generateGraph(request, response, graph, mode);
         }
     }
@@ -297,10 +306,10 @@ public class GraphConfigurationDetail extends GraphConfiguration implements Mode
     private void generateGraph(final StaplerRequest request, final StaplerResponse response, final JFreeChart graph, final Mode mode) {
         try {
             if (mode == Mode.PNG) {
-                ChartUtil.generateGraph(request, response, graph, 800, 200);
+                ChartUtil.generateGraph(request, response, graph, DEFAULT_WIDTH, DEFAULT_HEIGHT);
             }
             else {
-                ChartUtil.generateClickableMap(request, response, graph, 800, 200);
+                ChartUtil.generateClickableMap(request, response, graph, DEFAULT_WIDTH, DEFAULT_HEIGHT);
             }
         }
         catch (IOException exception) {

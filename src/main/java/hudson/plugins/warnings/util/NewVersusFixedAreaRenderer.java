@@ -6,8 +6,9 @@ import org.jfree.data.category.CategoryDataset;
  * Renderer that provides direct access to the individual results of a build via
  * links. The renderer also displays tooltips for each selected build.
  * <ul>
- * <li>The tooltip is computed per column (i.e., per build) and row (i.e., number of warnings) and shows the
- * number of new or fixed annotations for this build.</li>
+ * <li>The tooltip is computed per column (i.e., per build) and row (i.e.,
+ * number of warnings) and shows the number of new or fixed annotations for this
+ * build.</li>
  * <li>The link is also computed per column and links to the results for this
  * build.</li>
  * </ul>
@@ -42,5 +43,16 @@ public class NewVersusFixedAreaRenderer extends AbstractBoxRenderer {
             tooltip.append(Messages.Trend_New());
         }
         return tooltip.toString();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getDetailUrl(final int row) {
+        if (row == 1) {
+            return "fixed";
+        }
+        else {
+            return "new";
+        }
     }
 }
