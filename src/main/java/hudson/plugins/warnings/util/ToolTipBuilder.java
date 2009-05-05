@@ -1,11 +1,15 @@
 package hudson.plugins.warnings.util;
 
+import org.jfree.data.category.CategoryDataset;
+
 /**
  * Builds tooltips for items.
  *
  * @author Ulli Hafner
  */
-public class ToolTipBuilder {
+public abstract class ToolTipBuilder implements SerializableToolTipGenerator {
+    /** Unique ID of this class. */
+    private static final long serialVersionUID = 881869231153090533L;
     /** Delegate to get the actual tooltips. */
     private final ToolTipProvider provider;
 
@@ -19,20 +23,24 @@ public class ToolTipBuilder {
         this.provider = provider;
     }
 
-    /**
-     * Returns the tooltip for the specified number of items.
-     *
-     * @param numberOfItems
-     *            the number of items to display the tooltip for
-     * @return the tooltip for the specified items
-     */
-    public final String getTooltip(final int numberOfItems) {
-        if (numberOfItems == 1) {
-            return provider.getSingleItemTooltip();
-        }
-        else {
-            return provider.getMultipleItemsTooltip(numberOfItems);
-        }
+    /** {@inheritDoc} */
+    public String generateToolTip(final CategoryDataset dataset, final int row, final int column) {
+        StringBuilder tooltip = new StringBuilder();
+        tooltip.append(provider.getTooltip(dataset.getValue(row, column).intValue()));
+        tooltip.append(" ");
+        tooltip.append(getShortDescription(row));
+
+        return tooltip.toString();
     }
+
+    /**
+     * Returns a short description for of the selected row. This text is
+     * appended to the number of elements message.
+     *
+     * @param row
+     *            the selected row
+     * @return a short description
+     */
+    protected abstract String getShortDescription(int row);
 }
 

@@ -10,12 +10,14 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 /**
  * Builds a graph showing all warnings by health descriptor.
  *
  * @author Ulli Hafner
  */
-public class HealthGraph extends BuildResultGraph {
+public class HealthGraph extends CategoryBuildResultGraph {
     /** The health descriptor. */
     private final AbstractHealthDescriptor healthDescriptor;
 
@@ -72,7 +74,7 @@ public class HealthGraph extends BuildResultGraph {
     /** {@inheritDoc} */
     @Override
     protected JFreeChart createChart(final CategoryDataset dataSet) {
-        return ChartBuilder.createAreaChart(dataSet);
+        return createAreaChart(dataSet);
     }
 
     /**
@@ -85,16 +87,29 @@ public class HealthGraph extends BuildResultGraph {
         return healthDescriptor.isHealthyReportEnabled() || !healthDescriptor.isThresholdEnabled();
     }
 
+    // CHECKSTYLE:OFF
     /** {@inheritDoc} */
+    @java.lang.SuppressWarnings("serial")
+    @SuppressWarnings("SIC")
     @Override
-    protected CategoryItemRenderer createRenderer(final String url, final ToolTipProvider toolTipProvider) {
-        if (healthDescriptor.isEnabled()) {
-            return new ResultAreaRenderer(url, toolTipProvider);
-        }
-        else {
-            return new PriorityAreaRenderer(url, toolTipProvider);
-        }
+    protected CategoryItemRenderer createRenderer(final String pluginName, final ToolTipProvider toolTipProvider) {
+        SerializableUrlGenerator createUrlGenerator = new CategoryUrlBuilder(getRootUrl(), pluginName);
+        SerializableToolTipGenerator createToolTipGenerator = new SerializableToolTipGenerator() {
+            /** {@inheritDoc} */
+            public String generateToolTip(final CategoryDataset dataset, final int row, final int column) {
+                int number = 0;
+                for (int index = 0; index < dataset.getRowCount(); index++) {
+                    Number value = dataset.getValue(index, column);
+                    if (value != null) {
+                        number += value.intValue();
+                    }
+                }
+                return toolTipProvider.getTooltip(number);
+            }
+        };
+        return new AreaRenderer(createUrlGenerator, createToolTipGenerator);
     }
+    // CHECKSTYLE:ON
 
     /** {@inheritDoc} */
     @Override

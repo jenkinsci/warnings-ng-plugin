@@ -81,38 +81,47 @@ public class HealthReportBuilder implements Serializable {
     }
 
     /** Backward compatibility. */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient int healthy;
     /** Backward compatibility. */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient int unHealthy;
     /** Backward compatibility. */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient boolean isHealthEnabled;
     /** Backward compatibility. */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient boolean isThresholdEnabled;
     /** Backward compatibility. */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient int threshold;
     /** Backward compatibility. */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient String reportName;
     /** Backward compatibility. */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient String itemName;
     /** Backward compatibility. */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient String reportSingleCount;
     /** Backward compatibility. */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient String reportMultipleCount;

@@ -155,7 +155,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
     /** {@inheritDoc} */
     @Override
     public Action getProjectAction(final AbstractProject<?, ?> project) {
-        return new WarningsProjectAction(project, getTrendHeight());
+        return new WarningsProjectAction(project);
     }
 
     /** {@inheritDoc} */

@@ -306,19 +306,6 @@ public class GraphConfiguration {
      *            the health descriptor
      * @param resultAction
      *            the action to start the graph with
-     * @return the graph
-     */
-    public JFreeChart createGraph(final AbstractHealthDescriptor healthDescriptor, final ResultAction<? extends BuildResult> resultAction) {
-        return getGraphType().createGraph(this, healthDescriptor, resultAction);
-    }
-
-    /**
-     * Creates the graph.
-     *
-     * @param healthDescriptor
-     *            the health descriptor
-     * @param resultAction
-     *            the action to start the graph with
      * @param url
      *            base URL of the graph links
      * @return the graph

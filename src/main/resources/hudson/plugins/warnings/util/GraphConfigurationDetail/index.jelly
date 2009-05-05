@@ -6,7 +6,7 @@
 		<l:main-panel>
 		  <f:form method="post" action="save" name="Save">
 		    <h1>${%Configure the trend graph}</h1>
-	 		<p>${%description}</p>
+	 		<p>${it.description}</p>
 
 			<f:entry title="${%Width}">
     			<f:textbox name="width" value="${it.width}"/>
@@ -25,41 +25,14 @@
 			  <p>
 			    <f:radio name="graphType" value="NONE" checked="${it.graphType.name() == 'NONE'}" id="graphType.none"/>
 			    <st:nbsp/>
-			    <label for="graphType.none">${%No trend graph}</label>
+			    <label for="graphType.none">${%type.none}</label>
 			    <st:nbsp />
 			  </p>
 
-			  <p>
-			    <f:radio name="graphType" value="PRIORITY" checked="${it.graphType.name() == 'PRIORITY'}" id="graphType.priority"/>
-			    <st:nbsp/>
-			    <label for="graphType.priority">${%By priority}</label>
-			    <st:nbsp />
-			  </p>
-			  <p>
-			    <img src="${it.url}/priority" lazymap="${it.url}/priorityMap"/>
-			  </p>
-
-			  <p>
-			    <f:radio name="graphType" value="NEW_VS_FIXED" checked="${it.graphType.name() == 'NEW_VS_FIXED'}" id="graphType.newVersusFixed"/>
-			    <st:nbsp/>
-			    <label for="graphType.newVersusFixed">${%Fixed vs. new}</label>
-			    <st:nbsp />
-			  </p>
-			  <p>
-			    <img src="${it.url}/newVersusFixed" lazymap="${it.url}/newVersusFixedMap"/>
-			  </p>
-
-		      <j:if test="${it.isHealthGraphAvailable()}">
-				  <p>
-				    <f:radio name="graphType" value="HEALTH" checked="${it.graphType.name() == 'HEALTH'}" id="graphType.health"/>
-				    <st:nbsp/>
-				    <label for="graphType.health">${%With health report thresholds}</label>
-				    <st:nbsp />
-				  </p>
-				  <p>
-				    <img src="${it.url}/health" lazymap="${it.url}/healthMap"/>
-				  </p>
-			  </j:if>
+             <u:graphtype id="priority" label="${%type.priority}" />
+             <u:graphtype id="fixed" label="${%type.fixed}" />
+             <u:graphtype id="difference" label="${%type.difference}" />
+             <u:graphtype id="health" label="${%type.health}" />
 
 		    </f:entry>
 

@@ -1,124 +1,62 @@
 package hudson.plugins.warnings.util;
 
-import hudson.util.DataSetBuilder;
-import hudson.util.ChartUtil.NumberOnlyBuildLabel;
+import hudson.util.ColorPalette;
 
 import java.awt.Color;
 import java.util.Calendar;
-import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.renderer.category.CategoryItemRenderer;
-import org.jfree.data.category.CategoryDataset;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.Plot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.ui.RectangleInsets;
 
 /**
- * Template method to create a graph based on a series of build results.
+ * Base class for build results graphs.
  *
  * @author Ulli Hafner
  */
 public abstract class BuildResultGraph {
+    /** The root URL. */
+    private String rootUrl = StringUtils.EMPTY;
+
     /**
-     * Creates a PNG image trend graph with clickable map.
+     * Sets the root URL to the specified value.
+     *
+     * @param rootUrl the value to set
+     */
+    public void setRootUrl(final String rootUrl) {
+        this.rootUrl = rootUrl;
+    }
+
+    /**
+     * Returns the root URL.
+     *
+     * @return the root URL
+     */
+    public String getRootUrl() {
+        return rootUrl;
+    }
+
+    /**
+     * Creates the trend graph.
      *
      * @param configuration
      *            the configuration parameters
      * @param resultAction
      *            the result action to start the graph computation from
-     * @param url
-     *            base URL of the graph links
+     * @param pluginName
+     *            the name of the plug-in
      * @return the graph
      */
-    public JFreeChart create(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> resultAction, final String url) {
-        JFreeChart chart = createChart(configuration, resultAction);
-        createMapRenderer(resultAction, url, chart);
-        setColors(chart, getColors());
-
-        return chart;
-    }
-
-
-    /**
-     * Creates a PNG image trend graph.
-     *
-     * @param configuration
-     *            the configuration parameters
-     * @param resultAction
-     *            the result action to start the graph computation from
-     * @return the graph
-     */
-    public JFreeChart create(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> resultAction) {
-        JFreeChart chart = createChart(configuration, resultAction);
-        setColors(chart, getColors());
-
-        return chart;
-    }
-
-    /**
-     * Creates a clickable map renderer.
-     *
-     * @param resultAction
-     *            the result action to start the graph computation from
-     * @param url
-     *            base URL of the graph links
-     * @param chart
-     *            the chart to attach the renderer to
-     */
-    private void createMapRenderer(final ResultAction<? extends BuildResult> resultAction,
-            final String url, final JFreeChart chart) {
-        CategoryItemRenderer renderer = createRenderer(url, resultAction.getToolTipProvider());
-        CategoryPlot plot = chart.getCategoryPlot();
-        plot.setRenderer(renderer);
-    }
-
-
-    /**
-     * Creates the chart by iterating through all available actions.
-     *
-     * @param configuration
-     *            the configuration parameters
-     * @param resultAction
-     *            the action to start with
-     * @return the created chart
-     */
-    private JFreeChart createChart(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> resultAction) {
-        DataSetBuilder<Integer, NumberOnlyBuildLabel> builder = new DataSetBuilder<Integer, NumberOnlyBuildLabel>();
-        ResultAction<? extends BuildResult> action = resultAction;
-        int buildCount = 0;
-        Calendar buildTime = action.getBuild().getTimestamp();
-        while (true) {
-            BuildResult current = action.getResult();
-            List<Integer> series = computeSeries(current);
-            int level = 0;
-            for (Integer integer : series) {
-                builder.add(integer, level, new NumberOnlyBuildLabel(action.getBuild()));
-                level++;
-            }
-            if (action.hasPreviousResultAction()) {
-                action = action.getPreviousResultAction();
-            }
-            else {
-                break;
-            }
-
-            if (configuration.isBuildCountDefined()) {
-                buildCount++;
-                if (buildCount >= configuration.getBuildCount()) {
-                    break;
-                }
-            }
-
-            if (configuration.isDayCountDefined()) {
-                Calendar oldBuildTime = action.getBuild().getTimestamp();
-                if (computeDayDelta(buildTime, oldBuildTime) >= configuration.getDayCount()) {
-                    break;
-                }
-            }
-        }
-        return createChart(builder.build());
-    }
-
-
+    public abstract JFreeChart create(final GraphConfiguration configuration,
+            final ResultAction<? extends BuildResult> resultAction, final String pluginName);
 
     /**
      * Computes the delta between two dates in days.
@@ -129,63 +67,59 @@ public abstract class BuildResultGraph {
      *            the second date
      * @return the delta between two dates in days
      */
-    private long computeDayDelta(final Calendar first, final Calendar second) {
+    protected long computeDayDelta(final Calendar first, final Calendar second) {
         return Math.abs((first.getTimeInMillis() - second.getTimeInMillis()) / (24 * 3600 * 1000));
     }
 
     /**
-     * Sets the series colors for the specified chart.
+     * Sets properties common to all plots of this plug-in.
      *
-     * @param chart
-     *            the chart
-     * @param colors
-     *            the colors to set
+     * @param plot
+     *            the plot to set the properties for
      */
-    private void setColors(final JFreeChart chart, final Color[] colors) {
-        CategoryPlot plot = chart.getCategoryPlot();
-        CategoryItemRenderer renderer = plot.getRenderer();
-
-        int series = 0;
-        for (Color color : colors) {
-            renderer.setSeriesPaint(series, color);
-            series++;
-        }
+    protected void setPlotProperties(final Plot plot) {
+        plot.setBackgroundPaint(Color.WHITE);
+        plot.setOutlinePaint(null);
+        plot.setForegroundAlpha(0.8f);
+        plot.setInsets(new RectangleInsets(0, 0, 0, 5.0));
     }
 
     /**
-     * Returns the series to plot for the specified build result.
+     * Creates a XY graph from the specified data set.
      *
-     * @param current the current build result
-     * @return the series to plot
-     */
-    protected abstract List<Integer> computeSeries(BuildResult current);
-
-    /**
-     * Creates the chart for the specified data set.
-     *
-     * @param dataSet the data set to show in the graph
+     * @param dataset
+     *            the values to display
      * @return the created graph
      */
-    protected abstract JFreeChart createChart(CategoryDataset dataSet);
+    public JFreeChart createXYChart(final XYDataset dataset) {
+        JFreeChart chart = ChartFactory.createXYAreaChart(
+                null,                      // chart title
+                null,                      // unused
+                "count",                   // range axis label
+                dataset,                   // data
+                PlotOrientation.VERTICAL,  // orientation
+                false,                     // include legend
+                true,                      // tooltips
+                false                      // urls
+        );
+        chart.setBackgroundPaint(Color.white);
 
-    /**
-     * Creates the renderer for this graph.
-     *
-     * @param url
-     *            base URL of the graph links
-     * @param toolTipProvider
-     *            tooltip provider for the clickable map
-     * @return the renderer
-     * @see AbstractAreaRenderer
-     */
-    protected abstract CategoryItemRenderer createRenderer(String url, ToolTipProvider toolTipProvider);
+        XYPlot plot = chart.getXYPlot();
+        plot.setRenderer(new XYDifferenceRenderer(ColorPalette.BLUE, ColorPalette.RED, false));
+        plot.setRangeGridlinesVisible(true);
+        plot.setRangeGridlinePaint(Color.black);
 
-    /**
-     * Returns the colors for this graph. The first color is used for the first
-     * series value, etc.
-     *
-     * @return the colors
-     */
-    protected abstract Color[] getColors();
+        ValueAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setLabelAngle(-Math.PI / 2.0);
+        domainAxis.setLowerMargin(0.0);
+        domainAxis.setUpperMargin(0.0);
+
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+        setPlotProperties(plot);
+
+        return chart;
+    }
 }
 

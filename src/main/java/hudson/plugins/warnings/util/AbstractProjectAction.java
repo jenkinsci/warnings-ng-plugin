@@ -36,8 +36,6 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     private final String url;
     /** Plug-in results URL. */
     private final String resultUrl;
-    /** Determines the height of the trend graph. */
-    private final int height;
 
     /**
      * Creates a new instance of <code>AbstractProjectAction</code>.
@@ -48,13 +46,10 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *            the type of the result action
      * @param plugin
      *            the plug-in that owns this action
-     * @param height
-     *            the height of the trend graph
      */
-    public AbstractProjectAction(final AbstractProject<?, ?> project, final Class<T> resultActionType, final PluginDescriptor plugin, final int height) {
+    public AbstractProjectAction(final AbstractProject<?, ?> project, final Class<T> resultActionType, final PluginDescriptor plugin) {
         this.project = project;
         this.resultActionType = resultActionType;
-        this.height = height;
         iconUrl = plugin.getIconUrl();
         url = plugin.getPluginName();
         resultUrl = plugin.getPluginResultUrlName();
@@ -89,19 +84,44 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
         if ("configureDefaults".equals(link)) {
-            return new DefaultGraphConfigurationDetail(getProject(), getUrlName(), getLastAction());
+            return createDefaultConfiguration();
         }
         else if ("configure".equals(link)) {
-            if (hasValidResults()) {
-                return new UserGraphConfigurationDetail(getProject(), getUrlName(), request, getLastAction());
-            }
-            else {
-                // FIXME: what graph is shown
-                return new UserGraphConfigurationDetail(getProject(), getUrlName(), request);
-            }
+            return createUserConfiguration(request);
         }
         else {
             return null;
+        }
+    }
+
+    /**
+     * Creates a view to configure the trend graph for the current user.
+     *
+     * @param request
+     *            Stapler request
+     * @return a view to configure the trend graph for the current user
+     */
+    private Object createUserConfiguration(final StaplerRequest request) {
+        if (hasValidResults()) {
+            return new UserGraphConfigurationDetail(getProject(), getUrlName(), request, getLastAction());
+        }
+        else {
+            return new UserGraphConfigurationDetail(getProject(), getUrlName(), request);
+        }
+    }
+
+
+    /**
+     * Creates a view to configure the trend graph defaults.
+     *
+     * @return a view to configure the trend graph defaults
+     */
+    private Object createDefaultConfiguration() {
+        if (hasValidResults()) {
+            return new DefaultGraphConfigurationDetail(getProject(), getUrlName(), getLastAction());
+        }
+        else {
+            return new DefaultGraphConfigurationDetail(getProject(), getUrlName());
         }
     }
 
@@ -168,18 +188,15 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
         return lastBuild;
     }
 
-
     /**
-     * Display the trend graph. Delegates to the the associated
-     * {@link ResultAction}.
+     * Display the trend graph.
      *
      * @param request
      *            Stapler request
      * @param response
      *            Stapler response
      * @throws IOException
-     *             in case of an error in
-     *             {@link ResultAction#doGraph(StaplerRequest, StaplerResponse, int)}
+     *             in case of an error
      */
     public void doTrend(final StaplerRequest request, final StaplerResponse response) throws IOException {
         ResultAction<?> action = getLastAction();
@@ -187,7 +204,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
         else {
-            doGraph(action, request, response, height);
+            doGraph(action, request, response);
         }
     }
 
@@ -208,7 +225,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
         else {
-            doGraphMap(action, request, response, height);
+            doGraphMap(action, request, response);
         }
     }
 
@@ -232,12 +249,10 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *            Stapler request
      * @param response
      *            Stapler response
-     * @param height
-     *            the height of the trend graph
      * @throws IOException
      *             in case of an error
      */
-    private void doGraph(final ResultAction<?> action, final StaplerRequest request, final StaplerResponse response, final int height) throws IOException {
+    private void doGraph(final ResultAction<?> action, final StaplerRequest request, final StaplerResponse response) throws IOException {
         if (ChartUtil.awtProblemCause != null) {
             response.sendRedirect2(request.getContextPath() + "/images/headless.png");
         }
@@ -259,12 +274,10 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *            Stapler request
      * @param response
      *            Stapler response
-     * @param height
-     *            the height of the trend graph
      * @throws IOException
      *             in case of an error
      */
-    private void doGraphMap(final ResultAction<?> action, final StaplerRequest request, final StaplerResponse response, final int height) throws IOException {
+    private void doGraphMap(final ResultAction<?> action, final StaplerRequest request, final StaplerResponse response) throws IOException {
         GraphConfiguration configuration = createGraphConfiguration(request, action);
         if (configuration.isVisible()) {
             JFreeChart graph = configuration.createGraph(action.getHealthDescriptor(), action, url);

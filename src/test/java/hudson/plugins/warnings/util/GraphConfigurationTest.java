@@ -29,9 +29,9 @@ public class GraphConfigurationTest {
         assertInvalidInitializationValue(null);
         assertInvalidInitializationValue("111:111:");
         assertInvalidInitializationValue("111:111:HELP");
-        assertInvalidInitializationValue("50:50:NEW_VS_FIXED:1");
-        assertInvalidInitializationValue("NEW:50:12:13:NEW_VS_FIXED");
-        assertInvalidInitializationValue("50.1:50:12:13:NEW_VS_FIXED");
+        assertInvalidInitializationValue("50:50:FIXED:1");
+        assertInvalidInitializationValue("NEW:50:12:13:FIXED");
+        assertInvalidInitializationValue("50.1:50:12:13:FIXED");
     }
 
     /**
@@ -51,7 +51,7 @@ public class GraphConfigurationTest {
      */
     @Test
     public void testValidConfiguations() {
-        assertValidConfiguation("50:100:200:300:NEW_VS_FIXED", WIDTH, HEIGHT, BUILDS, DAYS, GraphType.NEW_VS_FIXED);
+        assertValidConfiguation("50:100:200:300:FIXED", WIDTH, HEIGHT, BUILDS, DAYS, GraphType.FIXED);
         assertValidConfiguation("50:100:200:300:PRIORITY", WIDTH, HEIGHT, BUILDS, DAYS, GraphType.PRIORITY);
         assertValidConfiguation("50:100:200:300:NONE", WIDTH, HEIGHT, BUILDS, DAYS, GraphType.NONE);
 

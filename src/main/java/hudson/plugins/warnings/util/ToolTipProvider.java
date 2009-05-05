@@ -7,18 +7,11 @@ package hudson.plugins.warnings.util;
  */
 public interface ToolTipProvider {
     /**
-     * Returns the tooltip for several items.
+     * Returns the tooltip for the specified number of items.
      *
      * @param numberOfItems
      *            the number of items to display the tooltip for
-     * @return the tooltip for several items
+     * @return the tooltip for the specified items
      */
-    String getMultipleItemsTooltip(int numberOfItems);
-
-    /**
-     * Returns the tooltip for exactly one item.
-     *
-     * @return the tooltip for exactly one item
-     */
-    String getSingleItemTooltip();
+    String getTooltip(final int numberOfItems);
 }

@@ -369,15 +369,6 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         return unHealthy;
     }
 
-    /**
-     * Returns the height of the trend graph.
-     *
-     * @return the height of the trend graph
-     */
-    public int getTrendHeight() {
-        return TrendReportHeightValidator.defaultHeight(height);
-    }
-
     /** {@inheritDoc} */
     public Priority getMinimumPriority() {
         return Priority.valueOf(StringUtils.upperCase(getThresholdLimit()));

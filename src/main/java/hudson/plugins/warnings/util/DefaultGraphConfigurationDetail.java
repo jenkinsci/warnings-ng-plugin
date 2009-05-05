@@ -1,7 +1,6 @@
 package hudson.plugins.warnings.util;
 
 import hudson.model.AbstractProject;
-import hudson.model.ModelObject;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -15,7 +14,7 @@ import org.kohsuke.stapler.StaplerResponse;
 /**
  * Configures the default values for the trend graph of this plug-in.
  */
-public class DefaultGraphConfigurationDetail extends GraphConfigurationDetail implements ModelObject {
+public class DefaultGraphConfigurationDetail extends GraphConfigurationDetail {
     /**
      * Creates a new instance of {@link DefaultGraphConfigurationDetail}.
      *
@@ -45,6 +44,12 @@ public class DefaultGraphConfigurationDetail extends GraphConfigurationDetail im
     /** {@inheritDoc} */
     public String getDisplayName() {
         return Messages.DefaultGraphConfiguration_Name();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getDescription() {
+        return Messages.DefaultGraphConfiguration_Description();
     }
 
     /**

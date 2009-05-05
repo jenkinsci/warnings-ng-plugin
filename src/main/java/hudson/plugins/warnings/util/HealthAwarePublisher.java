@@ -322,15 +322,6 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
     }
 
     /**
-     * Returns the height of the trend graph.
-     *
-     * @return the height of the trend graph
-     */
-    public int getTrendHeight() {
-        return TrendReportHeightValidator.defaultHeight(height);
-    }
-
-    /**
      * Returns the defined default encoding.
      *
      * @return the default encoding

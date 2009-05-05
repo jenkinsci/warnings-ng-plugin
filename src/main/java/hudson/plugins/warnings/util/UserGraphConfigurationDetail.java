@@ -1,7 +1,6 @@
 package hudson.plugins.warnings.util;
 
 import hudson.model.AbstractProject;
-import hudson.model.ModelObject;
 
 import javax.servlet.http.Cookie;
 
@@ -12,7 +11,7 @@ import org.kohsuke.stapler.StaplerResponse;
  * Configures the trend graph of this plug-in for the current user and job using
  * a cookie.
  */
-public class UserGraphConfigurationDetail extends GraphConfigurationDetail implements ModelObject {
+public class UserGraphConfigurationDetail extends GraphConfigurationDetail {
     /**
      * Creates a new instance of {@link UserGraphConfigurationDetail}.
      *
@@ -63,6 +62,12 @@ public class UserGraphConfigurationDetail extends GraphConfigurationDetail imple
     /** {@inheritDoc} */
     public String getDisplayName() {
         return Messages.UserGraphConfiguration_Name();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getDescription() {
+        return Messages.UserGraphConfiguration_Description();
     }
 
     /**

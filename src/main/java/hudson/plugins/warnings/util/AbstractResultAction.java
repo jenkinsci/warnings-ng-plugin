@@ -247,6 +247,32 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         }
     }
 
+    /** {@inheritDoc} */
+    public String getTooltip(final int numberOfItems) {
+        if (numberOfItems == 1) {
+            return getSingleItemTooltip();
+        }
+        else {
+            return getMultipleItemsTooltip(numberOfItems);
+        }
+    }
+
+    /**
+     * Returns the tooltip for several items.
+     *
+     * @param numberOfItems
+     *            the number of items to display the tooltip for
+     * @return the tooltip for several items
+     */
+    protected abstract String getMultipleItemsTooltip(int numberOfItems);
+
+    /**
+     * Returns the tooltip for exactly one item.
+     *
+     * @return the tooltip for exactly one item
+     */
+    protected abstract String getSingleItemTooltip();
+
     /** Backward compatibility. */
     @Deprecated
     @java.lang.SuppressWarnings("unused")

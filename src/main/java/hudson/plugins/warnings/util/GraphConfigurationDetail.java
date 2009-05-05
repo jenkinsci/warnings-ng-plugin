@@ -119,6 +119,13 @@ public abstract class GraphConfigurationDetail extends GraphConfiguration implem
     }
 
     /**
+     * Returns the description for this view.
+     *
+     * @return the description for this view
+     */
+    public abstract String getDescription();
+
+    /**
      * Saves the configured values. Subclasses need to implement the actual persistence.
      *
      * @param request
@@ -141,7 +148,7 @@ public abstract class GraphConfigurationDetail extends GraphConfiguration implem
             if (StringUtils.isNotBlank(dayCountString)) {
                 dayCount = formData.getInt("dayCountString");
             }
-            GraphType graphType = GraphType.valueOf(formData.getString("graphType"));
+            GraphType graphType = GraphType.valueOf(StringUtils.upperCase(formData.getString("graphType")));
 
             if (isValid(width, height, buildCount, dayCount, graphType)) {
                 String value = serializeToString(width, height, buildCount, dayCount, graphType);
@@ -168,6 +175,15 @@ public abstract class GraphConfigurationDetail extends GraphConfiguration implem
                 LOGGER.log(Level.SEVERE, "Can't redirect", exception);
             }
         }
+    }
+
+    /**
+     * Checks whether a meaningful graph is available.
+     *
+     * @return <code>true</code>, if there is such a graph
+     */
+    public boolean hasMeaningfulGraph() {
+        return lastAction != null;
     }
 
     /**
@@ -221,8 +237,8 @@ public abstract class GraphConfigurationDetail extends GraphConfiguration implem
      * @param response
      *            the response
      */
-    public void doNewVersusFixed(final StaplerRequest request, final StaplerResponse response) {
-        drawNewVsFixed(request, response, Mode.PNG);
+    public void doFixed(final StaplerRequest request, final StaplerResponse response) {
+        drawFixed(request, response, Mode.PNG);
     }
 
     /**
@@ -233,8 +249,8 @@ public abstract class GraphConfigurationDetail extends GraphConfiguration implem
      * @param response
      *            the response
      */
-    public void doNewVersusFixedMap(final StaplerRequest request, final StaplerResponse response) {
-        drawNewVsFixed(request, response, Mode.MAP);
+    public void doFixedMap(final StaplerRequest request, final StaplerResponse response) {
+        drawFixed(request, response, Mode.MAP);
     }
 
     /**
@@ -247,11 +263,46 @@ public abstract class GraphConfigurationDetail extends GraphConfiguration implem
      * @param mode
      *            drawing mode
      */
-    private void drawNewVsFixed(final StaplerRequest request, final StaplerResponse response, final Mode mode) {
-        if (lastAction != null) {
-            JFreeChart graph = new NewVersusFixedGraph().create(this, lastAction, lastAction.getUrlName());
-            generateGraph(request, response, graph, mode);
-        }
+    private void drawFixed(final StaplerRequest request, final StaplerResponse response, final Mode mode) {
+        drawGraph(request, response, mode, new NewVersusFixedGraph());
+    }
+
+    /**
+     * Draws a PNG image with a graph with warning differences.
+     *
+     * @param request
+     *            the request
+     * @param response
+     *            the response
+     */
+    public void doDifference(final StaplerRequest request, final StaplerResponse response) {
+        drawDifference(request, response, Mode.PNG);
+    }
+
+    /**
+     * Draws a MAP with the warnings difference graph.
+     *
+     * @param request
+     *            the request
+     * @param response
+     *            the response
+     */
+    public void doDifferenceMap(final StaplerRequest request, final StaplerResponse response) {
+        drawDifference(request, response, Mode.MAP);
+    }
+
+    /**
+     * Draws a warnings difference graph.
+     *
+     * @param request
+     *            the request
+     * @param response
+     *            the response
+     * @param mode
+     *            drawing mode
+     */
+    private void drawDifference(final StaplerRequest request, final StaplerResponse response, final Mode mode) {
+        drawGraph(request, response, mode, new DifferenceGraph());
     }
 
     /**
@@ -289,10 +340,7 @@ public abstract class GraphConfigurationDetail extends GraphConfiguration implem
      *            drawing mode
      */
     private void drawPriority(final StaplerRequest request, final StaplerResponse response, final Mode mode) {
-        if (lastAction != null) {
-            JFreeChart graph = new PriorityGraph().create(this, lastAction, lastAction.getUrlName());
-            generateGraph(request, response, graph, mode);
-        }
+        drawGraph(request, response, mode, new PriorityGraph());
     }
 
     /**
@@ -338,13 +386,30 @@ public abstract class GraphConfigurationDetail extends GraphConfiguration implem
      * @param mode
      *            drawing mode
      */
-    public void drawHealth(final StaplerRequest request, final StaplerResponse response, final Mode mode) {
-        if (lastAction != null) {
-            JFreeChart graph = new HealthGraph(healthDescriptor).create(this, lastAction, lastAction.getUrlName());
+    private void drawHealth(final StaplerRequest request, final StaplerResponse response, final Mode mode) {
+        drawGraph(request, response, mode, new HealthGraph(healthDescriptor));
+    }
+
+    /**
+     * Draws the graph.
+     *
+     * @param request
+     *            the request
+     * @param response
+     *            the response
+     * @param mode
+     *            drawing mode
+     * @param buildResultGraph
+     *            the graph that actually renders the results
+     */
+    private void drawGraph(final StaplerRequest request, final StaplerResponse response,
+            final Mode mode, final BuildResultGraph buildResultGraph) {
+        buildResultGraph.setRootUrl("../../");
+        if (hasMeaningfulGraph()) {
+            JFreeChart graph = buildResultGraph.create(this, lastAction, pluginName);
             generateGraph(request, response, graph, mode);
         }
     }
-
 
     /**
      * Generates the graph in PNG format and sends that to the response.
