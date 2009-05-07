@@ -15,7 +15,7 @@ public class MsBuildParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "MSBuild";
     /** Pattern of MSBuild compiler warnings. */
-    private static final String MS_BUILD_WARNING_PATTERN = "^(.*)\\((\\d*).*\\)\\s*:\\s*([Nn]ote|[Ii]nfo|[Ww]arning|(?:fatal\\s*)?[Ee]rror)\\s*([^:]*):\\s*(.*)$";
+    private static final String MS_BUILD_WARNING_PATTERN = "^(?:(.*)\\((\\d*).*\\)|.*LINK)\\s*:\\s*([Nn]ote|[Ii]nfo|[Ww]arning|(?:fatal\\s*)?[Ee]rror)\\s*([^:]*):\\s*(.*)$";
 
     /**
      * Creates a new instance of <code>MsBuildParser</code>.
@@ -37,7 +37,14 @@ public class MsBuildParser extends RegexpLineParser {
         else {
             priority = Priority.HIGH;
         }
-        return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE, matcher.group(4), matcher.group(5), priority);
+        String fileName = matcher.group(1);
+        if (StringUtils.isBlank(fileName)) {
+            fileName = StringUtils.substringBetween(matcher.group(5), "'");
+        }
+        if (StringUtils.isBlank(fileName)) {
+            fileName = "unknown.file";
+        }
+        return new Warning(fileName, getLineNumber(matcher.group(2)), getName(), matcher.group(4), matcher.group(5), priority);
     }
 
     /**

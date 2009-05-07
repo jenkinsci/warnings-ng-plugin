@@ -16,6 +16,9 @@ import org.junit.Test;
  * Tests the class {@link MsBuildParser}.
  */
 public class MsBuildParserTest extends ParserTester {
+    /** Error message. */
+    private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
+
     /**
      * Creates a new instance of {@link MsBuildParserTest}.
      */
@@ -30,10 +33,26 @@ public class MsBuildParserTest extends ParserTester {
      *      if the file could not be read
      */
     @Test
+    public void issue3582() throws IOException {
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue3582.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        FileAnnotation annotation = warnings.iterator().next();
+        assertEquals("Wrong file name.", "TestLib.lib", annotation.getFileName());
+    }
+
+
+    /**
+     * Parses a file with warnings of the MS Build tools.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     */
+    @Test
     public void parseWarnings() throws IOException {
         Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile());
 
-        assertEquals("Wrong number of warnings detected.", 6, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 6, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -91,7 +110,7 @@ public class MsBuildParserTest extends ParserTester {
 
         Collection<FileAnnotation> warnings = new MsBuildParser().parse(new InputStreamReader(IOUtils.toInputStream(testData.toString())));
 
-        assertEquals("Wrong number of warnings detected.", 2, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();

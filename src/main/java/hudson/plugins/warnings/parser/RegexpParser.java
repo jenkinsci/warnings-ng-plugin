@@ -116,12 +116,15 @@ public abstract class RegexpParser implements WarningsParser {
      * @return the line number
      */
     protected final int getLineNumber(final String lineNumber) {
-        try {
-            return Integer.parseInt(lineNumber);
+        if (StringUtils.isNotBlank(lineNumber)) {
+            try {
+                return Integer.parseInt(lineNumber);
+            }
+            catch (NumberFormatException exception) {
+                // ignore and return 0
+            }
         }
-        catch (NumberFormatException exception) {
-            return 0;
-        }
+        return 0;
     }
 
     /**

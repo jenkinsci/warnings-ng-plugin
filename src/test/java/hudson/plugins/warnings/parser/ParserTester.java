@@ -80,7 +80,18 @@ public abstract class ParserTester {
      * @return an input stream
      */
     protected Reader openFile() {
-        return new InputStreamReader(ParserTester.class.getResourceAsStream(getWarningsFile()));
+        return openFile(getWarningsFile());
+    }
+
+    /**
+     * Returns an input stream with the warnings.
+     *
+     * @param fileName
+     *            the file to read
+     * @return an input stream
+     */
+    protected Reader openFile(final String fileName) {
+        return new InputStreamReader(ParserTester.class.getResourceAsStream(fileName));
     }
 
     /**

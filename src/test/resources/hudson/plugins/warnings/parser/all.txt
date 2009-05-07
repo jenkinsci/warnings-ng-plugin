@@ -686,3 +686,17 @@ C:\SDK\include\math.h  49  Info 808: No explicit type given symbol
     '__pure', int assumed
 C:\SDK\include\math.h  49  Error 10: Expecting ';'
 C:\SDK\include\math.h  49  Error 19: Useless Declaration
+
+     ...
+     [exec] 23>main.cpp
+     [exec] 23>Compiling resources...
+     [exec] 23>Microsoft (R) Windows (R) Resource Compiler Version 6.1.6723.1
+     [exec] 23>Copyright (C) Microsoft Corporation.  All rights reserved.
+     [exec] 23>Linking...
+     [exec] 23>LINK : fatal error LNK1181: cannot open input file 'TestLib.lib'
+     [exec] 23>Build log was saved at "..."
+     [exec] 23>MyApplication - 1 error(s), 0 warning(s)
+     [exec] ========== Rebuild All: 1 succeeded, 1 failed, 0 skipped ==========
+
+
+
