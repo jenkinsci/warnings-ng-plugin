@@ -3,6 +3,7 @@ package hudson.plugins.warnings.util;
 import hudson.model.AbstractProject;
 import hudson.model.ModelObject;
 import hudson.util.ChartUtil;
+import hudson.util.FormValidation;
 
 import java.io.File;
 import java.io.IOException;
@@ -175,6 +176,25 @@ public abstract class GraphConfigurationDetail extends GraphConfiguration implem
                 LOGGER.log(Level.SEVERE, "Can't redirect", exception);
             }
         }
+    }
+
+    /**
+     * Performs on-the-fly validation on the trend graph height.
+     *
+     * @param height
+     *            the height
+     * @return the form validation
+     */
+    public static FormValidation checkHeight(final String height) {
+        try {
+            if (isValidHeight(Integer.valueOf(height))) {
+                return FormValidation.ok();
+            }
+        }
+        catch (NumberFormatException f) {
+            // ignore
+        }
+        return FormValidation.error("Height hallo gaats no.");
     }
 
     /**

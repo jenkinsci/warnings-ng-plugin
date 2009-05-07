@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -108,11 +107,6 @@ public abstract class BuildResultGraph {
         plot.setRenderer(new XYDifferenceRenderer(ColorPalette.BLUE, ColorPalette.RED, false));
         plot.setRangeGridlinesVisible(true);
         plot.setRangeGridlinePaint(Color.black);
-
-        ValueAxis domainAxis = plot.getDomainAxis();
-        domainAxis.setLabelAngle(-Math.PI / 2.0);
-        domainAxis.setLowerMargin(0.0);
-        domainAxis.setUpperMargin(0.0);
 
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());

@@ -8,11 +8,13 @@
 		    <h1>${%Configure the trend graph}</h1>
 	 		<p>${it.description}</p>
 
+            <j:set var="instance" value="${it}" />
+
 			<f:entry title="${%Width}">
-    			<f:textbox name="width" value="${it.width}"/>
+    			<f:textbox field="width"/>
   		    </f:entry>
 			<f:entry title="${%Height}">
-				<f:textbox name="height" value="${it.height}"/>
+				<f:textbox field="height"/>
    		    </f:entry>
 			<f:entry title="${%name.builds}" description="${%description.buildCount}">
 				<f:textbox name="buildCountString" value="${it.buildCountString}"/>

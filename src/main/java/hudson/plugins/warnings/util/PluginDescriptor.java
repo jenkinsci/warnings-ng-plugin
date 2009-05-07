@@ -5,11 +5,13 @@ import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -106,13 +108,12 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
     /**
      * Performs on-the-fly validation on the trend graph height.
      *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
+     * @param height
+     *            the height
+     * @return the form validation
      */
-    public final void doCheckHeight(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
-        new TrendReportHeightValidator(request, response).process();
+    public FormValidation doCheckHeight(@QueryParameter final String height) {
+        return GraphConfigurationDetail.checkHeight(height);
     }
 
     /** {@inheritDoc} */

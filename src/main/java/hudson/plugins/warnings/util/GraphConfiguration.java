@@ -188,7 +188,7 @@ public class GraphConfiguration {
      *         <code>false</code> otherwise.
      */
     //CHECKSTYLE:OFF
-    protected boolean isValid(final int newWidth, final int newHeight, final int newBuildCount, final int newDayCount, final GraphType newGraphType) {
+    protected static boolean isValid(final int newWidth, final int newHeight, final int newBuildCount, final int newDayCount, final GraphType newGraphType) {
         return isValidWidth(newWidth)
                 && isValidHeight(newHeight)
                 && newGraphType != null
@@ -204,10 +204,9 @@ public class GraphConfiguration {
      *            the new build count
      * @return <code>true</code> if the build count is valid.
      */
-    private boolean isValidBuildCount(final int newBuildCount) {
+    protected static boolean isValidBuildCount(final int newBuildCount) {
         return newBuildCount == 0 || newBuildCount > 1;
     }
-
 
     /**
      * Returns whether the width is valid.
@@ -217,7 +216,7 @@ public class GraphConfiguration {
      * @return <code>true</code> if the width is valid, <code>false</code>
      *         otherwise
      */
-    private boolean isValidWidth(final int newWidth) {
+    protected static boolean isValidWidth(final int newWidth) {
         return newWidth > 25 && newWidth < 2000;
     }
 
@@ -230,7 +229,7 @@ public class GraphConfiguration {
      * @return <code>true</code> if the width is valid, <code>false</code>
      *         otherwise
      */
-    private boolean isValidHeight(final int newHeight) {
+    protected static boolean isValidHeight(final int newHeight) {
         return newHeight > 25 && newHeight  < 2000;
     }
 

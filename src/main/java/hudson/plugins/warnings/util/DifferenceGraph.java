@@ -1,10 +1,16 @@
 package hudson.plugins.warnings.util;
 
+import java.text.FieldPosition;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.urls.XYURLGenerator;
+import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -35,7 +41,18 @@ public class DifferenceGraph extends BuildResultGraph {
         extractPoints(configuration, resultAction, fixedWarnings, newWarnings);
         XYSeriesCollection xySeriesCollection = computeDifferenceSeries(fixedWarnings, newWarnings);
 
-        return createXYChart(xySeriesCollection);
+        JFreeChart chart = createXYChart(xySeriesCollection);
+        chart.getXYPlot().getRenderer().setURLGenerator(new XyUrlBuilder(getRootUrl(), pluginName));
+        NumberAxis axis = new NumberAxis();
+        axis.setVerticalTickLabels(true);
+        axis.setNumberFormatOverride(new HudsonBuildFormat());
+        axis.setAutoRange(true);
+        axis.setAutoRangeIncludesZero(false);
+        axis.setLowerMargin(0.0);
+        axis.setUpperMargin(0.0);
+
+        chart.getXYPlot().setDomainAxis(axis);
+        return chart;
     }
 
     /**
@@ -121,6 +138,60 @@ public class DifferenceGraph extends BuildResultGraph {
 
         Collections.reverse(fixedWarnings);
         Collections.reverse(newWarnings);
+    }
+
+    /**
+     * Converts the axis values to a Hudson build number.
+     */
+    private static final class HudsonBuildFormat extends NumberFormat {
+        /** Unique ID of this class. */
+        private static final long serialVersionUID = 3487003853901042584L;
+
+        /** {@inheritDoc} */
+        @Override
+        public StringBuffer format(final double number, final StringBuffer toAppendTo, final FieldPosition pos) {
+            return format((long)number, toAppendTo, pos);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public StringBuffer format(final long number, final StringBuffer toAppendTo, final FieldPosition pos) {
+            StringBuffer stringBuffer = new StringBuffer(20);
+            stringBuffer.append("#");
+            stringBuffer.append(number);
+            return stringBuffer;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Number parse(final String source, final ParsePosition parsePosition) {
+            return null; // ignore
+        }
+    }
+
+    /**
+     * Creates URL to the selected build.
+     */
+    private static class XyUrlBuilder extends CategoryUrlBuilder implements XYURLGenerator {
+        /** Unique ID of this class. */
+        private static final long serialVersionUID = 7555399727715726510L;
+
+        /**
+         * Creates a new instance of {@link XyUrlBuilder}.
+         *
+         * @param rootUrl
+         *            root URL that is used as prefix
+         * @param pluginName
+         *            the name of the plug-in
+         */
+        public XyUrlBuilder(final String rootUrl, final String pluginName) {
+            super(rootUrl, pluginName);
+        }
+
+        /** {@inheritDoc} */
+        public String generateURL(final XYDataset dataset, final int series, final int item) {
+            return getRootUrl() + (int)dataset.getXValue(series, item) + getPluginName();
+        }
     }
 }
 

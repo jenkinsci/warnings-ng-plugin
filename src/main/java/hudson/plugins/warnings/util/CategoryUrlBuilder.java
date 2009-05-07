@@ -38,6 +38,24 @@ public class CategoryUrlBuilder implements SerializableUrlGenerator {
     }
 
     /**
+     * Returns the root URL.
+     *
+     * @return the root URL
+     */
+    public String getRootUrl() {
+        return rootUrl;
+    }
+
+    /**
+     * Returns the plug-in name.
+     *
+     * @return the plug-in name
+     */
+    public String getPluginName() {
+        return pluginName;
+    }
+
+    /**
      * Returns a relative URL based on the specified row that will be appended
      * to the base URL. This default implementation returns an empty string,
      * indicating that there is no detail URL based on the selected row.

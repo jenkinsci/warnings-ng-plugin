@@ -2,11 +2,13 @@ package hudson.plugins.warnings.util;
 
 import hudson.maven.MavenReporter;
 import hudson.maven.MavenReporterDescriptor;
+import hudson.util.FormValidation;
 
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -17,7 +19,6 @@ import org.kohsuke.stapler.StaplerResponse;
  * @author Ulli Hafner
  */
 public abstract class ReporterDescriptor extends MavenReporterDescriptor {
-
     /** Descriptor of the publisher. */
     private final PluginDescriptor publisherDescriptor;
 
@@ -68,13 +69,11 @@ public abstract class ReporterDescriptor extends MavenReporterDescriptor {
     /**
      * Performs on-the-fly validation on the trend graph height.
      *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
+     * @param height
+     *            the height
+     * @return the form validation
      */
-    public final void doCheckHeight(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
-        publisherDescriptor.doCheckHeight(request, response);
+    public final FormValidation doCheckHeight(@QueryParameter final String height) {
+        return publisherDescriptor.doCheckHeight(height);
     }
-
 }
