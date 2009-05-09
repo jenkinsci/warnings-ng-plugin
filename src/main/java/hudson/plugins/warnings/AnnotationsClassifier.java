@@ -10,6 +10,8 @@ import hudson.remoting.VirtualChannel;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Scans the workspace for maven pom.xml files and ant build.xml files and maps
  * all annotations to corresponding modules. Additionally, the content of each
@@ -45,7 +47,9 @@ public class AnnotationsClassifier implements FileCallable<ParserResult> {
         ContextHashCode contextHashCode = new ContextHashCode();
         for (FileAnnotation annotation : result.getAnnotations()) {
             try {
-                annotation.setModuleName(detector.guessModuleName(annotation.getFileName()));
+                if (StringUtils.isBlank(annotation.getModuleName())) {
+                    annotation.setModuleName(detector.guessModuleName(annotation.getFileName()));
+                }
                 annotation.setContextHashCode(contextHashCode.create(
                         annotation.getFileName(), annotation.getPrimaryLineNumber(), defaultEncoding));
             }

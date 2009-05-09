@@ -42,14 +42,13 @@ public class FileWarningsParser implements AnnotationParser {
     }
 
     /** {@inheritDoc} */
-    public String getName() {
-        return "FILE Parser";
-    }
-
-    /** {@inheritDoc} */
     public Collection<FileAnnotation> parse(final File file, final String moduleName) throws InvocationTargetException {
         try {
-            return new ParserRegistry(ParserRegistry.getParsers(parserNames), defaultEncoding, excludePattern).parse(file);
+            Collection<FileAnnotation> annotations = new ParserRegistry(ParserRegistry.getParsers(parserNames), defaultEncoding, excludePattern).parse(file);
+            for (FileAnnotation annotation : annotations) {
+                annotation.setModuleName(moduleName);
+            }
+            return annotations;
         }
         catch (IOException exception) {
             throw new InvocationTargetException(exception, "Can't scan file for warnings: " + file.getAbsolutePath());
