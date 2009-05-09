@@ -42,25 +42,28 @@ public class WarningsPublisher extends HealthAwarePublisher {
     private Set<String> parserNames = new HashSet<String>();
     /** Determines whether the plug-in should run for failed builds, too. */
     private final boolean canRunOnFailed;
+    /** Determines whether the console should be ignored. */
+    private final boolean ignoreConsole;
+
 
     /**
      * Creates a new instance of <code>WarningPublisher</code>.
      *
      * @param threshold
-     *            Annotation threshold to be reached if a build should be considered as
-     *            unstable.
+     *            Annotation threshold to be reached if a build should be
+     *            considered as unstable.
      * @param newThreshold
      *            New annotations threshold to be reached if a build should be
      *            considered as unstable.
      * @param failureThreshold
-     *            Annotation threshold to be reached if a build should be considered as
-     *            failure.
+     *            Annotation threshold to be reached if a build should be
+     *            considered as failure.
      * @param newFailureThreshold
      *            New annotations threshold to be reached if a build should be
      *            considered as failure.
      * @param healthy
-     *            Report health as 100% when the number of annotations is less than
-     *            this value
+     *            Report health as 100% when the number of annotations is less
+     *            than this value
      * @param unHealthy
      *            Report health as 0% when the number of annotations is greater
      *            than this value
@@ -75,6 +78,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *            the default encoding to be used when reading and parsing files
      * @param canRunOnFailed
      *            determines whether the plug-in can run for failed builds, too
+     * @param canScanConsole
+     *            Determines whether the console should be scanned.
      */
     // CHECKSTYLE:OFF
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -83,11 +88,12 @@ public class WarningsPublisher extends HealthAwarePublisher {
             final String failureThreshold, final String newFailureThreshold,
             final String healthy, final String unHealthy, final String thresholdLimit,
             final String pattern, final String excludePattern, final String defaultEncoding,
-            final boolean canRunOnFailed) {
+            final boolean canRunOnFailed, final boolean canScanConsole) {
         super(threshold, newThreshold, failureThreshold, newFailureThreshold,
                 healthy, unHealthy, thresholdLimit, defaultEncoding, "WARNINGS");
         this.pattern = pattern;
         this.canRunOnFailed = canRunOnFailed;
+        ignoreConsole = !canScanConsole;
         this.excludePattern = StringUtils.stripToNull(excludePattern);
     }
     // CHECKSTYLE:ON
@@ -108,6 +114,15 @@ public class WarningsPublisher extends HealthAwarePublisher {
      */
     public boolean getCanRunOnFailed() {
         return canRunOnFailed;
+    }
+
+    /**
+     * Returns whether this plug-in should scan the console or not.
+     *
+     * @return the can run on failed
+     */
+    public boolean getCanScanConsole() {
+        return !ignoreConsole;
     }
 
     /**
@@ -161,11 +176,11 @@ public class WarningsPublisher extends HealthAwarePublisher {
     /** {@inheritDoc} */
     @Override
     public BuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger) throws InterruptedException, IOException {
-        logger.log("Parsing warnings in log file...");
         File logFile = build.getLogFile();
 
         ParserResult project;
         if (StringUtils.isNotBlank(getPattern())) {
+            logger.log("Parsing warnings in files: " + getPattern());
             FilesParser parser = new FilesParser(logger, getPattern(), new FileWarningsParser(parserNames, getDefaultEncoding(), getExcludePattern()), isMavenBuild(build), isAntBuild(build));
             project = build.getProject().getWorkspace().act(parser);
         }
@@ -173,7 +188,11 @@ public class WarningsPublisher extends HealthAwarePublisher {
             project = new ParserResult(build.getProject().getWorkspace());
         }
 
-        project.addAnnotations(new ParserRegistry(ParserRegistry.getParsers(parserNames), getDefaultEncoding(), getExcludePattern()).parse(logFile));
+        if (!ignoreConsole || StringUtils.isBlank(getPattern())) {
+            logger.log("Parsing warnings in console log...");
+            project.addAnnotations(new ParserRegistry(ParserRegistry.getParsers(parserNames),
+                    getDefaultEncoding(), getExcludePattern()).parse(logFile));
+        }
         project = build.getProject().getWorkspace().act(new AnnotationsClassifier(project, getDefaultEncoding()));
 
         WarningsResult result = new WarningsResultBuilder().build(build, project, getDefaultEncoding());
