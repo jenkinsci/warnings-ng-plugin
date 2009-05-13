@@ -25,13 +25,13 @@ public class GraphConfigurationTest {
     @Test
     public void testInvalidConfiguations() {
         assertInvalidInitializationValue("");
-        assertInvalidInitializationValue("111:");
+        assertInvalidInitializationValue("111!");
         assertInvalidInitializationValue(null);
-        assertInvalidInitializationValue("111:111:");
-        assertInvalidInitializationValue("111:111:HELP");
-        assertInvalidInitializationValue("50:50:FIXED:1");
-        assertInvalidInitializationValue("NEW:50:12:13:FIXED");
-        assertInvalidInitializationValue("50.1:50:12:13:FIXED");
+        assertInvalidInitializationValue("111!111!");
+        assertInvalidInitializationValue("111!111!HELP");
+        assertInvalidInitializationValue("50!50!FIXED!1");
+        assertInvalidInitializationValue("NEW!50!12!13!FIXED");
+        assertInvalidInitializationValue("50.1!50!12!13!FIXED");
     }
 
     /**
@@ -51,19 +51,19 @@ public class GraphConfigurationTest {
      */
     @Test
     public void testValidConfiguations() {
-        assertValidConfiguation("50:100:200:300:FIXED", WIDTH, HEIGHT, BUILDS, DAYS, GraphType.FIXED);
-        assertValidConfiguation("50:100:200:300:PRIORITY", WIDTH, HEIGHT, BUILDS, DAYS, GraphType.PRIORITY);
-        assertValidConfiguation("50:100:200:300:NONE", WIDTH, HEIGHT, BUILDS, DAYS, GraphType.NONE);
+        assertValidConfiguation("50!100!200!300!FIXED", WIDTH, HEIGHT, BUILDS, DAYS, GraphType.FIXED);
+        assertValidConfiguation("50!100!200!300!PRIORITY", WIDTH, HEIGHT, BUILDS, DAYS, GraphType.PRIORITY);
+        assertValidConfiguation("50!100!200!300!NONE", WIDTH, HEIGHT, BUILDS, DAYS, GraphType.NONE);
 
         GraphConfiguration configuration = new GraphConfiguration(null);
         assertValidConfiguation(configuration.serializeToString(WIDTH, HEIGHT, BUILDS, DAYS, GraphType.NONE),
                 WIDTH, HEIGHT, BUILDS, DAYS, GraphType.NONE);
 
-        configuration = new GraphConfiguration("50:100:0:0:NONE");
+        configuration = new GraphConfiguration("50!100!0!0!NONE");
         assertFalse("Build count is defined but should not.", configuration.isBuildCountDefined());
         assertFalse("Day count is defined but should not.", configuration.isDayCountDefined());
 
-        configuration = new GraphConfiguration("50:100:2:1:NONE");
+        configuration = new GraphConfiguration("50!100!2!1!NONE");
         assertTrue("Build count is not defined but should.", configuration.isBuildCountDefined());
         assertTrue("Day count is not defined but should.", configuration.isDayCountDefined());
     }

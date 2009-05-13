@@ -22,7 +22,7 @@ public class GraphConfiguration {
     protected static final int DEFAULT_HEIGHT = 200;
 
     /** Separator of cookie values. */
-    private static final String SEPARATOR = ":";
+    private static final String SEPARATOR = "!";
 
     /** The height of the trend graph. */
     private int height;
@@ -161,6 +161,7 @@ public class GraphConfiguration {
      * @see #initializeFrom(String)
      */
     // CHECKSTYLE:OFF
+    @SuppressWarnings("hiding")
     protected String serializeToString(final int width, final int height, final int buildCount, final int dayCount, final GraphType graphType) {
         return width + SEPARATOR
                 + height + SEPARATOR
@@ -207,6 +208,7 @@ public class GraphConfiguration {
     protected static boolean isValidBuildCount(final int newBuildCount) {
         return newBuildCount == 0 || newBuildCount > 1;
     }
+
 
     /**
      * Returns whether the width is valid.
