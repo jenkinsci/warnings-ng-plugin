@@ -19,8 +19,6 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
      *
      * @param project
      *            the project that owns this action
-     * @param height
-     *            the height of the trend graph
      */
     public WarningsProjectAction(final AbstractProject<?, ?> project) {
         super(project, WarningsResultAction.class, WarningsPublisher.WARNINGS_DESCRIPTOR);

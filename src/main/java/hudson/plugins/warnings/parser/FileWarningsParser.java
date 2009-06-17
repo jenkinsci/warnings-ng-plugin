@@ -17,6 +17,8 @@ import java.util.Set;
 public class FileWarningsParser implements AnnotationParser {
     /** Unique ID of this parser. */
     private static final long serialVersionUID = -262047528431480332L;
+    /** Ant file-set pattern of files to include in report. */
+    private final String includePattern;
     /** Ant file-set pattern of files to exclude from report. */
     private final String excludePattern;
     /** The parsers to scan the files with. */
@@ -30,13 +32,16 @@ public class FileWarningsParser implements AnnotationParser {
      *
      * @param parserNames
      *            the parsers to scan the files with
+     * @param includePattern
+     *            ant file-set pattern of files to include in report
      * @param excludePattern
      *            ant file-set pattern of files to exclude from report
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
      */
-    public FileWarningsParser(final Set<String> parserNames, final String excludePattern, final String defaultEncoding) {
+    public FileWarningsParser(final Set<String> parserNames, final String includePattern, final String excludePattern, final String defaultEncoding) {
         this.parserNames = parserNames;
+        this.includePattern = includePattern;
         this.excludePattern = excludePattern;
         this.defaultEncoding = defaultEncoding;
     }
@@ -44,7 +49,7 @@ public class FileWarningsParser implements AnnotationParser {
     /** {@inheritDoc} */
     public Collection<FileAnnotation> parse(final File file, final String moduleName) throws InvocationTargetException {
         try {
-            Collection<FileAnnotation> annotations = new ParserRegistry(ParserRegistry.getParsers(parserNames), defaultEncoding, excludePattern).parse(file);
+            Collection<FileAnnotation> annotations = new ParserRegistry(ParserRegistry.getParsers(parserNames), defaultEncoding, includePattern, excludePattern).parse(file);
             for (FileAnnotation annotation : annotations) {
                 annotation.setModuleName(moduleName);
             }

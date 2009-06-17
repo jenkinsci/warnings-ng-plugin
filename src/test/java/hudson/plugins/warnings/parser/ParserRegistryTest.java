@@ -33,7 +33,7 @@ public class ParserRegistryTest {
      */
     @Test
     public void testAllParsersOnOneFile() throws IOException {
-        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", StringUtils.EMPTY, new ArrayList<WarningsParser>());
+        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", StringUtils.EMPTY, StringUtils.EMPTY, new ArrayList<WarningsParser>());
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(new File(""));
         Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, TOTAL_WARNINGS, annotations.size());
@@ -55,7 +55,7 @@ public class ParserRegistryTest {
     public void testOracleInvalidsParser() throws IOException {
         List<WarningsParser> parsers = new ArrayList<WarningsParser>();
         parsers.add(new InvalidsParser());
-        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", StringUtils.EMPTY, parsers);
+        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", StringUtils.EMPTY, StringUtils.EMPTY, parsers);
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(new File(""));
         Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 2, annotations.size());
@@ -78,7 +78,7 @@ public class ParserRegistryTest {
         List<WarningsParser> parsers = new ArrayList<WarningsParser>();
         parsers.add(new InvalidsParser());
         parsers.add(new JavaDocParser());
-        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", StringUtils.EMPTY, parsers);
+        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", StringUtils.EMPTY, StringUtils.EMPTY, parsers);
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(new File(""));
         Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 8, annotations.size());
@@ -102,7 +102,7 @@ public class ParserRegistryTest {
      */
     @Test
     public void issue2359() throws IOException {
-        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", "/tmp/clover*/**", new ArrayList<WarningsParser>());
+        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", StringUtils.EMPTY, "/tmp/clover*/**", new ArrayList<WarningsParser>());
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(new File(""));
         Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, TOTAL_WARNINGS - 8, annotations.size());
@@ -118,10 +118,59 @@ public class ParserRegistryTest {
      */
     @Test
     public void multiplePatternsIssue2359() throws IOException {
-        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", "/tmp/clover*/**, **/renderers/*", new ArrayList<WarningsParser>());
+        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", StringUtils.EMPTY, "/tmp/clover*/**, **/renderers/*", new ArrayList<WarningsParser>());
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(new File(""));
         Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, TOTAL_WARNINGS - 18 + 3, annotations.size());
+    }
+
+    /**
+     * Checks whether we correctly find all warnings in the log file. The file
+     * contains 18 additional ANT warnings, 8 of them should be included by the single
+     * pattern.
+     *
+     * @throws IOException
+     *             if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=3866">Issue 3866</a>
+     */
+    @Test
+    public void issue3866() throws IOException {
+        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", "/tmp/clover*/**", StringUtils.EMPTY, new ArrayList<WarningsParser>());
+
+        Collection<FileAnnotation> annotations = parserRegistry.parse(new File(""));
+        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 8, annotations.size());
+    }
+
+    /**
+     * The file contains 18 additional ANT warnings, 15 of them should be included by the
+     * two patterns.
+     *
+     * @throws IOException
+     *             if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=3866">Issue 3866</a>
+     */
+    @Test
+    public void multiplePatternsIssue3866() throws IOException {
+        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", "/tmp/clover*/**, **/renderers/*", StringUtils.EMPTY, new ArrayList<WarningsParser>());
+
+        Collection<FileAnnotation> annotations = parserRegistry.parse(new File(""));
+        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 15, annotations.size());
+    }
+
+    /**
+     * The file contains 18 additional ANT warnings, 8 of them should be included by
+     * one pattern, 7 of them should be excluded by one pattern.
+     *
+     * @throws IOException
+     *             if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=3866">Issue 3866</a>
+     */
+    @Test
+    public void complexFilterIssue3866() throws IOException {
+        ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", "/tmp/clover*/**", "**/renderers/*", new ArrayList<WarningsParser>());
+
+        Collection<FileAnnotation> annotations = parserRegistry.parse(new File(""));
+        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 1, annotations.size());
     }
 
     /**
@@ -129,6 +178,9 @@ public class ParserRegistryTest {
      *
      * @param fileName
      *            file name with the warnings
+     * @param includePattern
+     *            Ant file-set pattern of files to include in report,
+     *            <code>null</code> or an empty string do not filter the input
      * @param excludePattern
      *            Ant file-set pattern of files to exclude from report,
      *            <code>null</code> or an empty string do not filter the output
@@ -137,8 +189,8 @@ public class ParserRegistryTest {
      * @return the registry
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
-    private ParserRegistry createRegistryUnderTest(final String fileName, final String excludePattern, final List<WarningsParser> parsers) {
-        ParserRegistry parserRegistry = new ParserRegistry(parsers, "", excludePattern) {
+    private ParserRegistry createRegistryUnderTest(final String fileName, final String includePattern, final String excludePattern, final List<WarningsParser> parsers) {
+        ParserRegistry parserRegistry = new ParserRegistry(parsers, "", includePattern, excludePattern) {
             /** {@inheritDoc} */
             @Override
             protected Reader createReader(final File file) throws FileNotFoundException {

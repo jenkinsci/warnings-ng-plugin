@@ -39,8 +39,8 @@ public class ParserRegistry {
 
     /** The actual parsers to use when scanning a file. */
     private final List<WarningsParser> parsers;
-    /** Filter for ant file-set pattern of files to exclude from report. */
-    private ExcludeFilter excludeFilter;
+    /** Compound include/exclude filter for files that should get into report. */
+    private final FileFilter fileFilter;
     /** The default charset to be used when reading and parsing files. */
     private final Charset defaultCharset;
 
@@ -54,7 +54,7 @@ public class ParserRegistry {
      *            the default encoding to be used when reading and parsing files
      */
     public ParserRegistry(final List<WarningsParser> parsers, final String defaultEncoding) {
-        this(parsers, defaultEncoding, StringUtils.EMPTY);
+        this(parsers, defaultEncoding, StringUtils.EMPTY, StringUtils.EMPTY);
     }
 
     /**
@@ -62,21 +62,27 @@ public class ParserRegistry {
      *
      * @param parsers
      *            the parsers to use when scanning a file
+     * @param includePattern
+     *            Ant file-set pattern of files to include in report,
+     *            <code>null</code> or an empty string do not filter the output
      * @param excludePattern
      *            Ant file-set pattern of files to exclude from report,
      *            <code>null</code> or an empty string do not filter the output
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
      */
-    public ParserRegistry(final List<WarningsParser> parsers, final String defaultEncoding, final String excludePattern) {
+    public ParserRegistry(final List<WarningsParser> parsers, final String defaultEncoding, final String includePattern, final String excludePattern) {
         defaultCharset = EncodingValidator.defaultCharset(defaultEncoding);
         this.parsers = new ArrayList<WarningsParser>(parsers);
         if (this.parsers.isEmpty()) {
             this.parsers.addAll(ALL_PARSERS);
         }
 
-        if (!StringUtils.isEmpty(excludePattern)) {
-            excludeFilter = new ExcludeFilter(excludePattern);
+        if (!StringUtils.isEmpty(includePattern) || !StringUtils.isEmpty(excludePattern)) {
+            fileFilter = new FileFilter(includePattern, excludePattern);
+        } 
+        else {
+            fileFilter = null;
         }
     }
 
@@ -133,7 +139,7 @@ public class ParserRegistry {
      * @return the filtered annotations if there is a filter defined
      */
     private Collection<FileAnnotation> applyExcludeFilter(final List<FileAnnotation> allAnnotations) {
-        if (excludeFilter == null) {
+        if (fileFilter == null) {
             return allAnnotations;
         }
         else {
@@ -142,7 +148,7 @@ public class ParserRegistry {
     }
 
     /**
-     * Filters the annotations based on the {@link #excludeFilter}.
+     * Filters the annotations based on the {@link #fileFilter}.
      *
      * @param annotations
      *            the annotations to filter
@@ -151,7 +157,7 @@ public class ParserRegistry {
     private Collection<FileAnnotation> filterAnnotations(final List<FileAnnotation> annotations) {
         List<FileAnnotation> filteredAnnotations = new ArrayList<FileAnnotation>();
         for (FileAnnotation annotation : annotations) {
-            if (!excludeFilter.matches(annotation.getFileName())) {
+            if (fileFilter.matches(annotation.getFileName())) {
                 filteredAnnotations.add(annotation);
             }
         }
@@ -184,34 +190,52 @@ public class ParserRegistry {
     /**
      * Filters file names based on Ant file-set patterns.
      */
-    private static final class ExcludeFilter extends DirectoryScanner {
+    private static final class FileFilter extends DirectoryScanner {
         /**
-         * Creates a new instance of {@link ExcludeFilter}.
+         * Creates a new instance of {@link FileFilter}.
          *
+         * @param includePattern
+         *            Ant file-set pattern of files to include in report
          * @param excludePattern
          *            Ant file-set pattern of files to exclude from report
          */
-        public ExcludeFilter(final String excludePattern) {
+        public FileFilter(final String includePattern, final String excludePattern) {
             super();
 
-            setExcludes(excludePattern.split(",\\s*"));
-            setIncludes(new String[] {"**/*"});
+            if (StringUtils.isEmpty(includePattern)) {
+                setIncludes(new String[] {"**/*"});
+            } 
+            else {
+                setIncludes(includePattern.split(",\\s*"));
+            }
+            if (StringUtils.isEmpty(excludePattern)) {
+                setExcludes(new String[] {});
+            } 
+            else {
+                setExcludes(excludePattern.split(",\\s*"));
+            }
         }
 
         /**
-         * Returns whether the name matches one of the exclusion patterns.
+         * Returns whether the name
+         * matches the one of the inclusion patterns
+         * and does not match one of the exclusion patterns.
          *
          * @param name
          *            the file name to test
-         * @return <code>true</code> if the name matches one of the exclusion patterns.
+         * @return <code>true</code> if the name
+         * matches one of the inclusion patterns
+         * and does not match any of the exclusion patterns.
          */
         public boolean matches(final String name) {
+            final String canonicalName;
             if (File.separatorChar == '\\') {
-                return isExcluded(StringUtils.replaceChars(name, '/', '\\'));
-            }
+                canonicalName = StringUtils.replaceChars(name, '/', '\\');
+            } 
             else {
-                return isExcluded(name);
+                canonicalName = name;
             }
+            return isIncluded(canonicalName) && !isExcluded(canonicalName);
         }
     }
 

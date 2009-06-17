@@ -23,6 +23,7 @@ import org.kohsuke.stapler.StaplerResponse;
 /**
  * Configures the trend graph of this plug-in.
  */
+// CHECKSTYLE:COUPLING-OFF
 public abstract class GraphConfigurationDetail extends GraphConfiguration implements ModelObject {
     /** The owning project to configure the graphs for. */
     private final AbstractProject<?, ?> project;

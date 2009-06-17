@@ -35,6 +35,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
     public static final WarningsDescriptor WARNINGS_DESCRIPTOR = new WarningsDescriptor();
     /** Ant file-set pattern of files to work with. */
     private final String pattern;
+    /** Ant file-set pattern of files to include to report. */
+    private final String includePattern;
     /** Ant file-set pattern of files to exclude from report. */
     private final String excludePattern;
     /** Name of parsers to use for scanning the logs. */
@@ -72,6 +74,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *            evaluating the build stability and health
      * @param pattern
      *            Ant file-set pattern that defines the files to scan for
+     * @param includePattern
+     *            Ant file-set pattern of files to include in report
      * @param excludePattern
      *            Ant file-set pattern of files to exclude from report
      * @param defaultEncoding
@@ -87,13 +91,15 @@ public class WarningsPublisher extends HealthAwarePublisher {
     public WarningsPublisher(final String threshold, final String newThreshold,
             final String failureThreshold, final String newFailureThreshold,
             final String healthy, final String unHealthy, final String thresholdLimit,
-            final String pattern, final String excludePattern, final String defaultEncoding,
-            final boolean canRunOnFailed, final boolean canScanConsole) {
+            final String pattern, final String includePattern, final String excludePattern,
+            final String defaultEncoding, final boolean canRunOnFailed,
+            final boolean canScanConsole) {
         super(threshold, newThreshold, failureThreshold, newFailureThreshold,
                 healthy, unHealthy, thresholdLimit, defaultEncoding, "WARNINGS");
         this.pattern = pattern;
         this.canRunOnFailed = canRunOnFailed;
         ignoreConsole = !canScanConsole;
+        this.includePattern = StringUtils.stripToNull(includePattern);
         this.excludePattern = StringUtils.stripToNull(excludePattern);
     }
     // CHECKSTYLE:ON
@@ -159,6 +165,15 @@ public class WarningsPublisher extends HealthAwarePublisher {
     }
 
     /**
+     * Returns the Ant file-set pattern of files to include in report.
+     *
+     * @return Ant file-set pattern of files to include in report
+     */
+    public String getIncludePattern() {
+        return includePattern;
+    }
+
+    /**
      * Returns the Ant file-set pattern of files to exclude from report.
      *
      * @return Ant file-set pattern of files to exclude from report
@@ -181,7 +196,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
         ParserResult project;
         if (StringUtils.isNotBlank(getPattern())) {
             logger.log("Parsing warnings in files: " + getPattern());
-            FilesParser parser = new FilesParser(logger, getPattern(), new FileWarningsParser(parserNames, getDefaultEncoding(), getExcludePattern()), isMavenBuild(build), isAntBuild(build));
+            FilesParser parser = new FilesParser(logger, getPattern(), new FileWarningsParser(parserNames, getDefaultEncoding(), getIncludePattern(), getExcludePattern()), isMavenBuild(build), isAntBuild(build));
             project = build.getProject().getWorkspace().act(parser);
         }
         else {
@@ -191,7 +206,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
         if (!ignoreConsole || StringUtils.isBlank(getPattern())) {
             logger.log("Parsing warnings in console log...");
             project.addAnnotations(new ParserRegistry(ParserRegistry.getParsers(parserNames),
-                    getDefaultEncoding(), getExcludePattern()).parse(logFile));
+                    getDefaultEncoding(), getIncludePattern(), getExcludePattern()).parse(logFile));
         }
         project = build.getProject().getWorkspace().act(new AnnotationsClassifier(project, getDefaultEncoding()));
 
