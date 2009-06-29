@@ -14,6 +14,11 @@ import org.junit.Test;
  * Tests the class {@link GccParser}.
  */
 public class GccParserTest extends ParserTester {
+    /** An error. */
+    private static final String GCC_ERROR = "GCC error";
+    /** A warning. */
+    private static final String GCC_WARNING = "GCC warning";
+
     /**
      * Creates a new instance of {@link GccParserTest}.
      */
@@ -31,7 +36,7 @@ public class GccParserTest extends ParserTester {
     public void testWarningsParser() throws IOException {
         Collection<FileAnnotation> warnings = new GccParser().parse(openFile());
 
-        assertEquals("Wrong number of warnings detected.", 4, warnings.size());
+        assertEquals("Wrong number of warnings detected.", 8, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -39,25 +44,49 @@ public class GccParserTest extends ParserTester {
                 451,
                 "`void yyunput(int, char*)' defined but not used",
                 "testhist.l",
-                GccParser.WARNING_TYPE, "GCC warning", Priority.NORMAL);
+                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 73,
                 "implicit typename is deprecated, please see the documentation for details",
                 "/u1/drjohn/bfdist/packages/RegrTest/V00-03-01/RgtAddressLineScan.cc",
-                GccParser.WARNING_TYPE, "GCC error", Priority.HIGH);
+                GccParser.WARNING_TYPE, GCC_ERROR, Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 4,
                 "foo.h: No such file or directory",
                 "foo.cc",
-                GccParser.WARNING_TYPE, "GCC error", Priority.HIGH);
+                GccParser.WARNING_TYPE, GCC_ERROR, Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 0,
                 "'missing_symbol'",
                 "foo.so",
-                GccParser.WARNING_TYPE, "GCC error", Priority.HIGH);
+                GccParser.WARNING_TYPE, GCC_ERROR, Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                678,
+                "missing initializer for member sigaltstack::ss_sp",
+                "../../lib/linux-i686/include/boost/test/impl/execution_monitor.ipp",
+                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                678,
+                "missing initializer for member sigaltstack::ss_flags",
+                "../../lib/linux-i686/include/boost/test/impl/execution_monitor.ipp",
+                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                678,
+                "missing initializer for member sigaltstack::ss_size",
+                "../../lib/linux-i686/include/boost/test/impl/execution_monitor.ipp",
+                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                52,
+                "large integer implicitly truncated to unsigned type",
+                "src/test_simple_sgs_message.cxx",
+                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
     }
 
     /** {@inheritDoc} */
