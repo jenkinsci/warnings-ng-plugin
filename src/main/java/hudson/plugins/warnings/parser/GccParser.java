@@ -13,7 +13,7 @@ public class GccParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "gcc";
     /** Pattern of gcc compiler warnings. */
-    private static final String GCC_WARNING_PATTERN = "^(.*\\.[chpixsola0-9]+):(?:(\\d*):(?:\\d*:)*\\s*(warning|error)\\s*:|\\s*undefined reference to)(.*)$";
+    private static final String GCC_WARNING_PATTERN = "^(.*\\.[chpixsola0-9]+):(?:(\\d*):(?:\\d*:)*\\s*(warning|error)\\s*:|\\s*(undefined reference to.*))(.*)$";
     /**
      * Creates a new instance of <code>GccParser</code>.
      */
@@ -39,7 +39,7 @@ public class GccParser extends RegexpLineParser {
         }
         String category = "GCC " + matcher.group(3);
         return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE,
-                category, matcher.group(4), priority);
+                category, matcher.group(5), priority);
     }
 }
 
