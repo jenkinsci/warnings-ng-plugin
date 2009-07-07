@@ -2,6 +2,7 @@ package hudson.plugins.warnings.util;
 
 import hudson.XmlFile;
 import hudson.model.AbstractBuild;
+import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.plugins.warnings.util.model.AnnotationContainer;
 import hudson.plugins.warnings.util.model.AnnotationProvider;
@@ -28,6 +29,8 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.time.DateUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -43,6 +46,7 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  */
 //CHECKSTYLE:COUPLING-OFF
 @SuppressWarnings("PMD.TooManyFields")
+@ExportedBean
 public abstract class BuildResult implements ModelObject, Serializable, AnnotationProvider {
     /** Unique ID of this class. */
     private static final long serialVersionUID = 1110545450292087475L;
@@ -196,7 +200,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         defaultEncoding = encoding;
 
         numberOfWarnings = result.getNumberOfAnnotations();
-        delta = result.getNumberOfAnnotations() - previousProject .getNumberOfAnnotations();
+        delta = result.getNumberOfAnnotations() - previousProject.getNumberOfAnnotations();
 
         Collection<FileAnnotation> allWarnings = result.getAnnotations();
 
@@ -442,6 +446,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the build since we have zero warnings
      */
+    @Exported
     public int getZeroWarningsSinceBuild() {
         return zeroWarningsSinceBuild;
     }
@@ -451,6 +456,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the time since we have zero warnings
      */
+    @Exported
     public long getZeroWarningsSinceDate() {
         return zeroWarningsSinceDate;
     }
@@ -460,6 +466,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the time since we have zero warnings
      */
+    @Exported
     public long getZeroWarningsHighScore() {
         return zeroWarningsHighScore;
     }
@@ -469,6 +476,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return <code>true</code>, if the current result reached the old zero warnings highscore.
      */
+    @Exported
     public boolean isNewZeroWarningsHighScore() {
         return isZeroWarningsHighscore;
     }
@@ -487,8 +495,18 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the number of warnings
      */
-    public int getNumberOfAnnotations() {
+    @Exported
+    public int getNumberOfWarnings() {
         return numberOfWarnings;
+    }
+
+    /**
+     * Gets the number of warnings.
+     *
+     * @return the number of warnings
+     */
+    public int getNumberOfAnnotations() {
+        return getNumberOfWarnings();
     }
 
     /**
@@ -517,6 +535,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the number of fixed warnings
      */
+    @Exported
     public int getNumberOfFixedWarnings() {
         return numberOfFixedWarnings;
     }
@@ -526,6 +545,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the number of new warnings
      */
+    @Exported
     public int getNumberOfNewWarnings() {
         return numberOfNewWarnings;
     }
@@ -536,6 +556,16 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the delta
      */
     public int getDelta() {
+        return delta;
+    }
+
+    /**
+     * Returns the delta between two builds.
+     *
+     * @return the delta
+     */
+    @Exported
+    public int getWarningsDelta() {
         return delta;
     }
 
@@ -725,6 +755,15 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      */
     public AnnotationContainer getContainer() {
         return getProject();
+    }
+
+    /**
+     * Gets the remote API for this build result.
+     *
+     * @return the remote API
+     */
+    public Api getApi() {
+        return new Api(this);
     }
 
     // Backward compatibility. Do not remove.
