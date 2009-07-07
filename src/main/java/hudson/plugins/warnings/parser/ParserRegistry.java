@@ -80,7 +80,7 @@ public class ParserRegistry {
 
         if (!StringUtils.isEmpty(includePattern) || !StringUtils.isEmpty(excludePattern)) {
             fileFilter = new FileFilter(includePattern, excludePattern);
-        } 
+        }
         else {
             fileFilter = null;
         }
@@ -204,13 +204,13 @@ public class ParserRegistry {
 
             if (StringUtils.isEmpty(includePattern)) {
                 setIncludes(new String[] {"**/*"});
-            } 
+            }
             else {
                 setIncludes(includePattern.split(",\\s*"));
             }
             if (StringUtils.isEmpty(excludePattern)) {
                 setExcludes(new String[] {});
-            } 
+            }
             else {
                 setExcludes(excludePattern.split(",\\s*"));
             }
@@ -231,7 +231,7 @@ public class ParserRegistry {
             final String canonicalName;
             if (File.separatorChar == '\\') {
                 canonicalName = StringUtils.replaceChars(name, '/', '\\');
-            } 
+            }
             else {
                 canonicalName = name;
             }
@@ -261,7 +261,7 @@ public class ParserRegistry {
         MsBuildParser pclintParser = new MsBuildParser();
         pclintParser.setName("PC-Lint");
         parsers.add(pclintParser);
-
+        parsers.add(new BuckminsterParser());
         return Collections.unmodifiableList(parsers);
     }
 
