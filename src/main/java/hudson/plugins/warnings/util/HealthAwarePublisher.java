@@ -223,17 +223,19 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
         }
     }
 
+
     /**
      * Returns whether the publisher can continue processing. This default
-     * implementation returns <code>true</code> if the build is not aborted or failed.
+     * implementation returns <code>true</code> if the build is not aborted or
+     * failed.
      *
-     * @param result build result
+     * @param result
+     *            build result
      * @return <code>true</code> if the build can continue
      */
     protected boolean canContinue(final Result result) {
         return result != Result.ABORTED && result != Result.FAILURE;
     }
-
 
     /**
      * Performs the publishing of the results of this plug-in.

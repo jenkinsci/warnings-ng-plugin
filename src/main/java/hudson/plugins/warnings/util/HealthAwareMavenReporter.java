@@ -131,43 +131,70 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
             return true;
         }
 
-        PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
-        if (hasResultAction(build)) {
-            logger.log("Scipping maven reporter: there is already a result available.");
-            return true;
-        }
-
-        try {
-            defaultEncoding = pom.getProperties().getProperty("project.build.sourceEncoding");
-
-            final ParserResult result = perform(build, pom, mojo, logger);
-
-            if (defaultEncoding == null) {
-                logger.log(Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
-                result.addErrorMessage(pom.getName(), Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
+        if (canContinue(getCurrentResult(build))) {
+            PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
+            if (hasResultAction(build)) {
+                logger.log("Scipping maven reporter: there is already a result available.");
+                return true;
             }
 
-            build.execute(new BuildCallable<Void, IOException>() {
-                public Void call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
-                    persistResult(result, mavenBuild);
+            try {
+                defaultEncoding = pom.getProperties().getProperty("project.build.sourceEncoding");
 
-                    return null;
+                final ParserResult result = perform(build, pom, mojo, logger);
+
+                if (defaultEncoding == null) {
+                    logger.log(Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
+                    result.addErrorMessage(pom.getName(), Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
                 }
-            });
 
-            if (build.getRootDir().isRemote()) {
-                copyFilesToMaster(logger, build.getProjectRootDir(), build.getRootDir(), result.getAnnotations());
+                build.execute(new BuildCallable<Void, IOException>() {
+                    public Void call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
+                        persistResult(result, mavenBuild);
+
+                        return null;
+                    }
+                });
+
+                if (build.getRootDir().isRemote()) {
+                    copyFilesToMaster(logger, build.getProjectRootDir(), build.getRootDir(), result.getAnnotations());
+                }
             }
-        }
-        catch (AbortException exception) {
-            logger.log(exception);
-            build.setResult(Result.FAILURE);
-            return false;
+            catch (AbortException exception) {
+                logger.log(exception);
+                build.setResult(Result.FAILURE);
+                return false;
+            }
         }
 
         return true;
     }
 
+    /**
+     * Returns the current result of the build.
+     *
+     * @param build
+     *            the build proxy
+     * @return the current result of the build
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private Result getCurrentResult(final MavenBuildProxy build) throws IOException, InterruptedException {
+        return build.execute(new BuildResultCallable());
+    }
+
+    /**
+     * Returns whether the reporter can continue processing. This default
+     * implementation returns <code>true</code> if the build is not aborted or
+     * failed.
+     *
+     * @param result
+     *            build result
+     * @return <code>true</code> if the build can continue
+     */
+    protected boolean canContinue(final Result result) {
+        return result != Result.ABORTED && result != Result.FAILURE;
+    }
 
     /**
      * Copies all files with annotations from the slave to the master.
@@ -248,7 +275,6 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      */
     protected abstract ParserResult perform(MavenBuildProxy build, MavenProject pom, MojoInfo mojo,
             PluginLogger logger) throws InterruptedException, IOException;
-
 
     /**
      * Persists the result in the build (on the master).
@@ -381,6 +407,19 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      */
     public String getThresholdLimit() {
         return thresholdLimit;
+    }
+
+    /**
+     * Gets the build result from the master.
+     */
+    private static final class BuildResultCallable implements BuildCallable<Result, IOException> {
+        /** Unique ID. */
+        private static final long serialVersionUID = -270795641776014760L;
+
+        /** {@inheritDoc} */
+        public Result call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
+            return mavenBuild.getResult();
+        }
     }
 
     /** Backward compatibility. */
