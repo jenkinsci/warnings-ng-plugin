@@ -134,7 +134,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         if (canContinue(getCurrentResult(build))) {
             PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
             if (hasResultAction(build)) {
-                logger.log("Scipping maven reporter: there is already a result available.");
+                logger.log("Skipping maven reporter: there is already a result available.");
                 return true;
             }
 
