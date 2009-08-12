@@ -699,4 +699,10 @@ C:\SDK\include\math.h  49  Error 19: Useless Declaration
      [exec] ========== Rebuild All: 1 succeeded, 1 failed, 0 skipped ==========
 
 
+/dir1/dir2/file.c:12:15: file.h: No such file or directory
+/dir1/dir3/file.cpp:233: undefined reference to `MyInterface::getValue() const'
+
+/dir1/dir2/file.cpp:20:2: invalid preprocessing directive #incldue
+
+
 

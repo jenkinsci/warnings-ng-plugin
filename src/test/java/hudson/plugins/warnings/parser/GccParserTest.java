@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -98,9 +97,8 @@ public class GccParserTest extends ParserTester {
      * @throws IOException
      *      if the file could not be read
      * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=3897">Issue 3897</a>
-     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=3898">Issue 3898</a>
      */
-    @Ignore("Disabled until expected behavior of issue 3897 is defined.") @Test
+    @Test
     public void issue3897and3898() throws IOException {
         Collection<FileAnnotation> warnings = new GccParser().parse(openFile("issue3897.txt"));
 
@@ -110,17 +108,17 @@ public class GccParserTest extends ParserTester {
                 12,
                 "file.h: No such file or directory",
                 "/dir1/dir2/file.c",
-                AntJavacParser.WARNING_TYPE, "", Priority.NORMAL);
+                GccParser.WARNING_TYPE, "GCC error", Priority.HIGH);
         checkWarning(iterator.next(),
                 233,
                 "undefined reference to `MyInterface::getValue() const'",
                 "/dir1/dir3/file.cpp",
-                AntJavacParser.WARNING_TYPE, RegexpParser.DEPRECATION, Priority.NORMAL);
+                GccParser.WARNING_TYPE, "GCC error", Priority.HIGH);
         checkWarning(iterator.next(),
-                233,
+                20,
                 "invalid preprocessing directive #incldue",
                 "/dir1/dir2/file.cpp",
-                AntJavacParser.WARNING_TYPE, RegexpParser.DEPRECATION, Priority.NORMAL);
+                GccParser.WARNING_TYPE, "GCC error", Priority.HIGH);
     }
 
 
