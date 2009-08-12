@@ -32,14 +32,14 @@ public class FileWarningsParser implements AnnotationParser {
      *
      * @param parserNames
      *            the parsers to scan the files with
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      * @param includePattern
      *            ant file-set pattern of files to include in report
      * @param excludePattern
      *            ant file-set pattern of files to exclude from report
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
      */
-    public FileWarningsParser(final Set<String> parserNames, final String includePattern, final String excludePattern, final String defaultEncoding) {
+    public FileWarningsParser(final Set<String> parserNames, final String defaultEncoding, final String includePattern, final String excludePattern) {
         this.parserNames = parserNames;
         this.includePattern = includePattern;
         this.excludePattern = excludePattern;
