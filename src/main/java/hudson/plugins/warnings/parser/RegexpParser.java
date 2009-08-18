@@ -15,6 +15,8 @@ import org.apache.commons.lang.StringUtils;
  * @author Ulli Hafner
  */
 public abstract class RegexpParser implements WarningsParser {
+    /** Used to define a false positive warnings that should be excluded after the regular expression scan. */
+    protected static final Warning FALSE_POSITIVE = new Warning(StringUtils.EMPTY, 0, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
     /** Warning classification. */
     protected static final String DEPRECATION = "Deprecation";
     /** Warning classification. */
@@ -71,11 +73,22 @@ public abstract class RegexpParser implements WarningsParser {
 
         while (matcher.find()) {
             Warning warning = createWarning(matcher);
-            if (!warning.hasPackageName()) {
-                String packageName = new JavaPackageDetector().detectPackageName(warning.getFileName());
-                warning.setPackageName(packageName);
+            if (warning != FALSE_POSITIVE) {
+                detectPackageName(warning);
+                warnings.add(warning);
             }
-            warnings.add(warning);
+        }
+    }
+
+    /**
+     * Detects the package name for the specified warning.
+     *
+     * @param warning the warning
+     */
+    private void detectPackageName(final Warning warning) {
+        if (!warning.hasPackageName()) {
+            String packageName = new JavaPackageDetector().detectPackageName(warning.getFileName());
+            warning.setPackageName(packageName);
         }
     }
 
@@ -101,9 +114,13 @@ public abstract class RegexpParser implements WarningsParser {
     }
 
     /**
-     * Creates a new annotation for the specified pattern.
+     * Creates a new annotation for the specified pattern. This method is called
+     * for each matching line in the specified file. If a match is a false
+     * positive, then you can return the constant {@link #FALSE_POSITIVE} to
+     * ignore this warning.
      *
-     * @param matcher the regular expression matcher
+     * @param matcher
+     *            the regular expression matcher
      * @return a new annotation for the specified pattern
      */
     protected abstract Warning createWarning(final Matcher matcher);

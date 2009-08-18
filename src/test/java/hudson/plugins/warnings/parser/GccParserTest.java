@@ -121,6 +121,20 @@ public class GccParserTest extends ParserTester {
                 GccParser.WARNING_TYPE, "GCC error", Priority.HIGH);
     }
 
+    /**
+     * Parses a file with one warning and matching warning that will be excluded afterwards.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=4260">Issue 4260</a>
+     */
+    @Test
+    public void issue4260() throws IOException {
+        Collection<FileAnnotation> warnings = new GccParser().parse(openFile("issue4260.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+    }
+
 
 
     /** {@inheritDoc} */
