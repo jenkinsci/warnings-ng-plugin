@@ -156,9 +156,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
                     }
                 });
 
-                if (build.getRootDir().isRemote()) {
-                    copyFilesToMaster(logger, build.getProjectRootDir(), build.getRootDir(), result.getAnnotations());
-                }
+                copyFilesWithAnnotationsToBuildFolder(logger, build.getProjectRootDir(), build.getRootDir(), result.getAnnotations());
             }
             catch (AbortException exception) {
                 logger.log(exception);
@@ -197,13 +195,13 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     }
 
     /**
-     * Copies all files with annotations from the slave to the master.
+     * Copies all files with annotations from the workspace to the build folder.
      *
      * @param logger
      *            logger to log any problems
-     * @param slaveRoot
+     * @param workspaceRoot
      *            directory to copy the files from
-     * @param masterRoot
+     * @param buildRoot
      *            directory to store the copied files in
      * @param annotations
      *            annotations determining the actual files to copy
@@ -214,9 +212,9 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      * @throws InterruptedException
      *             if the user cancels the processing
      */
-    private void copyFilesToMaster(final PluginLogger logger, final FilePath slaveRoot, final FilePath masterRoot, final Collection<FileAnnotation> annotations) throws IOException,
+    private void copyFilesWithAnnotationsToBuildFolder(final PluginLogger logger, final FilePath workspaceRoot, final FilePath buildRoot, final Collection<FileAnnotation> annotations) throws IOException,
             FileNotFoundException, InterruptedException {
-        FilePath directory = new FilePath(masterRoot, AbstractAnnotation.WORKSPACE_FILES);
+        FilePath directory = new FilePath(buildRoot, AbstractAnnotation.WORKSPACE_FILES);
         if (!directory.exists()) {
             directory.mkdirs();
         }

@@ -141,9 +141,7 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
                     build.setResult(buildResult);
                 }
 
-                if (build.getProject().getWorkspace().isRemote()) {
-                    copyFilesFromSlaveToMaster(build.getRootDir(), launcher.getChannel(), annotationsResult.getAnnotations());
-                }
+                copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), annotationsResult.getAnnotations());
             }
             catch (AbortException exception) {
                 logger.log(exception);
@@ -155,7 +153,7 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
     }
 
     /**
-     * Copies all files with annotations from the slave to the master.
+     * Copies all files with annotations from the workspace to the build folder.
      *
      * @param rootDir
      *            directory to store the copied files in
@@ -170,7 +168,7 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      * @throws InterruptedException
      *             if the user cancels the processing
      */
-    private void copyFilesFromSlaveToMaster(final File rootDir,
+    private void copyFilesWithAnnotationsToBuildFolder(final File rootDir,
             final VirtualChannel channel, final Collection<FileAnnotation> annotations) throws IOException,
             FileNotFoundException, InterruptedException {
         File directory = new File(rootDir, AbstractAnnotation.WORKSPACE_FILES);
@@ -210,8 +208,8 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
         FileOutputStream outputStream = null;
         try {
             outputStream = new FileOutputStream(masterFile);
-            String message = "Can't copy file from slave to master: slave=" + slaveFileName
-                    + ", master=" + masterFile.getAbsolutePath();
+            String message = "Can't copy file from workspace to build folder: workspace=" + slaveFileName
+                    + ", build folder=" + masterFile.getAbsolutePath();
             exception.printStackTrace(new PrintStream(outputStream));
             IOUtils.write(message, outputStream);
         }
