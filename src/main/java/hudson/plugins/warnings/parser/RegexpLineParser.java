@@ -12,7 +12,7 @@ import org.apache.commons.io.LineIterator;
 
 /**
  * Parses an input stream line by line for compiler warnings using the provided
- * regular expression. Multi line regular expressions are not supported, each
+ * regular expression. Multiple line regular expressions are not supported, each
  * warnings has to be one a single line.
  *
  * @author Ulli Hafner

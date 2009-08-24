@@ -122,6 +122,41 @@ public class GccParserTest extends ParserTester {
     }
 
     /**
+     * Parses a warning log with 6 new objective C warnings.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=4274">Issue 4274</a>
+     */
+    @Test
+    public void issue4274() throws IOException {
+        Collection<FileAnnotation> warnings = new GccParser().parse(openFile("issue4274.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 4, warnings.size());
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        checkWarning(iterator.next(),
+                638,
+                "local declaration of \"command\" hides instance variable",
+                "folder1/file1.m",
+                GccParser.WARNING_TYPE, "GCC warning", Priority.NORMAL);
+        checkWarning(iterator.next(),
+                640,
+                "instance variable \"command\" accessed in class method",
+                "folder1/file1.m",
+                GccParser.WARNING_TYPE, "GCC warning", Priority.NORMAL);
+        checkWarning(iterator.next(),
+                47,
+                "\"oldGeb\" might be used uninitialized in this function",
+                "file1.m",
+                GccParser.WARNING_TYPE, "GCC warning", Priority.NORMAL);
+        checkWarning(iterator.next(),
+                640,
+                "local declaration of \"command\" hides instance variable",
+                "file1.m",
+                GccParser.WARNING_TYPE, "GCC warning", Priority.NORMAL);
+    }
+
+    /**
      * Parses a file with one warning and matching warning that will be excluded afterwards.
      *
      * @throws IOException
