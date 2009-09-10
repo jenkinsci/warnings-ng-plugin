@@ -106,6 +106,8 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         this.unHealthy = unHealthy;
         this.thresholdLimit = thresholdLimit;
         this.pluginName = "[" + pluginName + "] ";
+
+        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.Jdk14Logger");
     }
     // CHECKSTYLE:ON
 
