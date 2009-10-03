@@ -1,8 +1,8 @@
 package hudson.plugins.warnings.parser;
 
 import static junit.framework.Assert.*;
-import hudson.plugins.warnings.util.model.FileAnnotation;
-import hudson.plugins.warnings.util.model.Priority;
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 
 import java.io.IOException;
 import java.util.Collection;

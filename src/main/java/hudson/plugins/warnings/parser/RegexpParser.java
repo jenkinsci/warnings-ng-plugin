@@ -1,7 +1,7 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.plugins.warnings.util.JavaPackageDetector;
-import hudson.plugins.warnings.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.JavaPackageDetector;
+import hudson.plugins.analysis.util.model.FileAnnotation;
 
 import java.util.List;
 import java.util.regex.Matcher;

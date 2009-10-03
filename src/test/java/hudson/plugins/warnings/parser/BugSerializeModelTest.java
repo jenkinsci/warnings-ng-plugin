@@ -1,12 +1,12 @@
 package hudson.plugins.warnings.parser;
 
 import hudson.XmlFile;
-import hudson.plugins.warnings.util.model.AbstractAnnotation;
-import hudson.plugins.warnings.util.model.AbstractSerializeModelTest;
-import hudson.plugins.warnings.util.model.AnnotationStream;
-import hudson.plugins.warnings.util.model.FileAnnotation;
-import hudson.plugins.warnings.util.model.JavaProject;
-import hudson.plugins.warnings.util.model.Priority;
+import hudson.plugins.analysis.test.AbstractSerializeModelTest;
+import hudson.plugins.analysis.util.model.AbstractAnnotation;
+import hudson.plugins.analysis.util.model.AnnotationStream;
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.JavaProject;
+import hudson.plugins.analysis.util.model.Priority;
 
 import java.io.File;
 import java.io.IOException;

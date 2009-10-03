@@ -1,6 +1,6 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.plugins.warnings.util.model.Priority;
+import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
 

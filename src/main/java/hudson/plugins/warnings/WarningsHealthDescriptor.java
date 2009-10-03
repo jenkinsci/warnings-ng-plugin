@@ -1,8 +1,10 @@
 package hudson.plugins.warnings;
 
-import hudson.plugins.warnings.util.AbstractHealthDescriptor;
-import hudson.plugins.warnings.util.HealthDescriptor;
-import hudson.plugins.warnings.util.model.AnnotationProvider;
+
+
+import hudson.plugins.analysis.util.AbstractHealthDescriptor;
+import hudson.plugins.analysis.util.HealthDescriptor;
+import hudson.plugins.analysis.util.model.AnnotationProvider;
 
 import org.jvnet.localizer.Localizable;
 

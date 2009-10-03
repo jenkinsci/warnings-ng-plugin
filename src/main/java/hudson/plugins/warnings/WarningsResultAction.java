@@ -1,9 +1,9 @@
 package hudson.plugins.warnings;
 
 import hudson.model.AbstractBuild;
-import hudson.plugins.warnings.util.AbstractResultAction;
-import hudson.plugins.warnings.util.HealthDescriptor;
-import hudson.plugins.warnings.util.PluginDescriptor;
+import hudson.plugins.analysis.util.AbstractResultAction;
+import hudson.plugins.analysis.util.HealthDescriptor;
+import hudson.plugins.analysis.util.PluginDescriptor;
 
 import java.util.NoSuchElementException;
 
@@ -33,7 +33,7 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
      *            the result in this build
      */
     public WarningsResultAction(final AbstractBuild<?, ?> owner, final HealthDescriptor healthDescriptor, final WarningsResult result) {
-        super(owner, result, new WarningsHealthDescriptor(healthDescriptor));
+        super(owner, new WarningsHealthDescriptor(healthDescriptor), result);
     }
 
     /**
@@ -75,11 +75,13 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getMultipleItemsTooltip(final int numberOfItems) {
         return Messages.Warnings_ResultAction_MultipleWarnings(numberOfItems);
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getSingleItemTooltip() {
         return Messages.Warnings_ResultAction_OneWarning();
     }

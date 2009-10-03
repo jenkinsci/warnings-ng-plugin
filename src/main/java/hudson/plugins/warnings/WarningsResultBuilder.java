@@ -1,7 +1,8 @@
 package hudson.plugins.warnings;
 
 import hudson.model.AbstractBuild;
-import hudson.plugins.warnings.util.ParserResult;
+import hudson.plugins.analysis.util.ParserResult;
+
 
 /**
  * Creates a new warnings result based on the values of a previous build and the

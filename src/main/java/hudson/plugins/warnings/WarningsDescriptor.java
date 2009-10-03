@@ -1,7 +1,7 @@
 package hudson.plugins.warnings;
 
 import hudson.model.AbstractProject;
-import hudson.plugins.warnings.util.PluginDescriptor;
+import hudson.plugins.analysis.util.PluginDescriptor;
 
 import java.util.HashSet;
 import java.util.Set;

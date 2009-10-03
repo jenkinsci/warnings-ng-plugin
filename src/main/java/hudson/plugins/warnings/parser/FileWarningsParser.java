@@ -1,7 +1,7 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.plugins.warnings.util.AnnotationParser;
-import hudson.plugins.warnings.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.AnnotationParser;
+import hudson.plugins.analysis.util.model.FileAnnotation;
 
 import java.io.File;
 import java.io.IOException;

@@ -3,14 +3,14 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>1.318</version>
+    <version>1.323</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>warnings</artifactId>
   <packaging>hpi</packaging>
   <name>Hudson Warnings Plug-in</name>
-  <version>2.14-SNAPSHOT</version>
+  <version>3.0-SNAPSHOT</version>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Warnings+Plugin</url>
   <description>This plug-in reads the compiler warnings from the
     console log file and generates a trend report.</description>
@@ -31,7 +31,25 @@
     </license>
   </licenses>
 
+  <developers>
+    <developer>
+      <name>Ulli Hafner</name>
+      <id>drulli</id>
+    </developer>
+  </developers>
+
   <dependencies>
+    <dependency>
+      <groupId>org.jvnet.hudson.plugins</groupId>
+      <artifactId>analysis-core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jvnet.hudson.plugins</groupId>
+      <artifactId>analysis-test</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.jvnet.hudson.main</groupId>
       <artifactId>maven-plugin</artifactId>
@@ -49,7 +67,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.3.1</version>
+      <version>4.6</version>
       <scope>test</scope>
     </dependency>
     <dependency>

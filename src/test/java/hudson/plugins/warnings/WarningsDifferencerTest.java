@@ -1,10 +1,10 @@
 package hudson.plugins.warnings;
 
+import hudson.plugins.analysis.test.AnnotationDifferencerTest;
+import hudson.plugins.analysis.util.AnnotationDifferencer;
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.warnings.parser.Warning;
-import hudson.plugins.warnings.util.AnnotationDifferencer;
-import hudson.plugins.warnings.util.AnnotationDifferencerTest;
-import hudson.plugins.warnings.util.model.FileAnnotation;
-import hudson.plugins.warnings.util.model.Priority;
 
 /**
  * Tests the {@link AnnotationDifferencer} for warnings.

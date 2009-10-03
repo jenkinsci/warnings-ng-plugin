@@ -1,10 +1,11 @@
 package hudson.plugins.warnings; // NOPMD
 
 import hudson.model.AbstractBuild;
+import hudson.plugins.analysis.util.BuildResult;
+import hudson.plugins.analysis.util.ParserResult;
+import hudson.plugins.analysis.util.ResultAction;
 import hudson.plugins.warnings.parser.Warning;
-import hudson.plugins.warnings.util.BuildResult;
-import hudson.plugins.warnings.util.ParserResult;
-import hudson.plugins.warnings.util.ResultAction;
+
 
 /**
  * Represents the results of the warning analysis. One instance of this class is persisted for

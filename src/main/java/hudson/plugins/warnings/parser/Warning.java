@@ -1,7 +1,7 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.plugins.warnings.util.model.AbstractAnnotation;
-import hudson.plugins.warnings.util.model.Priority;
+import hudson.plugins.analysis.util.model.AbstractAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 
 import org.apache.commons.lang.StringUtils;
 
