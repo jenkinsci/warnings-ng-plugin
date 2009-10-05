@@ -50,8 +50,6 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 public abstract class BuildResult implements ModelObject, Serializable, AnnotationProvider {
     /** Unique ID of this class. */
     private static final long serialVersionUID = 1110545450292087475L;
-    /** Serialization provider. */
-    protected static final XStream XSTREAM = new AnnotationStream();
     /** Logger. */
     private static final Logger LOGGER = Logger.getLogger(BuildResult.class.getName());
 
@@ -304,7 +302,28 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the serialization file.
      */
     public final XmlFile getDataFile() {
-        return new XmlFile(XSTREAM, new File(getOwner().getRootDir(), getSerializationFileName()));
+        return new XmlFile(getXStream(), new File(getOwner().getRootDir(), getSerializationFileName()));
+    }
+
+    /**
+     * Returns the {@link XStream} to use.
+     *
+     * @return the annotation stream to use
+     */
+    private XStream getXStream() {
+        AnnotationStream xstream = new AnnotationStream();
+        configure(xstream);
+
+        return xstream;
+    }
+
+    /**
+     * Configures the {@link XStream}. This default implementation is empty.
+     *
+     * @param xstream the stream to configure
+     */
+    protected void configure(final XStream xstream) {
+        // empty default
     }
 
     /**
