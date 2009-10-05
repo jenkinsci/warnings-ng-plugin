@@ -6,6 +6,8 @@ import hudson.plugins.analysis.util.ParserResult;
 import hudson.plugins.analysis.util.ResultAction;
 import hudson.plugins.warnings.parser.Warning;
 
+import com.thoughtworks.xstream.XStream;
+
 
 /**
  * Represents the results of the warning analysis. One instance of this class is persisted for
@@ -16,10 +18,6 @@ import hudson.plugins.warnings.parser.Warning;
 public class WarningsResult extends BuildResult {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -137460587767210579L;
-
-    static {
-        XSTREAM.alias("warning", Warning.class);
-    }
 
     /**
      * Creates a new instance of {@link WarningsResult}.
@@ -51,6 +49,12 @@ public class WarningsResult extends BuildResult {
     public WarningsResult(final AbstractBuild<?, ?> build, final String defaultEncoding,
             final ParserResult result, final WarningsResult previous) {
         super(build, defaultEncoding, result, previous);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void configure(final XStream xstream) {
+        xstream.alias("warning", Warning.class);
     }
 
     /**
