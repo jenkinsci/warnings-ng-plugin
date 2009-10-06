@@ -4,9 +4,9 @@
   <table class="pane" id="checkstyle.summary">
     <tr>
       <td class="pane-header">${%Total}</td>
-      <td class="pane-header">${%High Priority}</td>
-      <td class="pane-header">${%Normal Priority}</td>
-      <td class="pane-header">${%Low Priority}</td>
+      <j:forEach var="priority" items="${it.priorities}">
+        <td class="pane-header">${priority.longLocalizedString}</td>
+      </j:forEach>
     </tr>
     <tbody>
       <tr>

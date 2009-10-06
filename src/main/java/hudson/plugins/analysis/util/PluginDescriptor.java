@@ -1,16 +1,17 @@
 package hudson.plugins.analysis.util;
 
+import hudson.FilePath;
 import hudson.maven.AbstractMavenProject;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
-import hudson.util.FormFieldValidator;
 import hudson.util.FormValidation;
 
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -81,16 +82,8 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
         new EncodingValidator(request, response).process();
     }
 
-    /**
-     * Performs on-the-fly validation on the file mask.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     */
-    public final void doCheckPattern(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
-        new FormFieldValidator.WorkspaceFileMask(request, response).process();
+    public final FormValidation doCheckPattern(@AncestorInPath final AbstractProject project, @QueryParameter final String value) throws IOException {
+        return FilePath.validateFileMask(project.getSomeWorkspace(),value);
     }
 
     /**
