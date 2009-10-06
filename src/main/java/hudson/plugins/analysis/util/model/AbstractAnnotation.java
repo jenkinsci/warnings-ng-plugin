@@ -1,7 +1,7 @@
 package hudson.plugins.analysis.util.model;
 
 import hudson.model.AbstractBuild;
-import hudson.model.Hudson;
+import hudson.model.Item;
 
 import java.io.File;
 import java.io.Serializable;
@@ -350,7 +350,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @return <code>true</code>, if successful
      */
     public final boolean canDisplayFile(final AbstractBuild<?, ?> owner) {
-        if (owner.hasPermission(Hudson.ADMINISTER)) {
+        if (owner.hasPermission(Item.WORKSPACE)) {
             return new File(getFileName()).exists() || new File(getTempName(owner)).exists();
         }
         return false;
