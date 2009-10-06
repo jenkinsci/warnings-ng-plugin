@@ -1,9 +1,9 @@
 package hudson.plugins.warnings;
 
+import hudson.Extension;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.plugins.analysis.util.AnnotationsClassifier;
 import hudson.plugins.analysis.util.BuildResult;
@@ -13,6 +13,7 @@ import hudson.plugins.analysis.util.ParserResult;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.warnings.parser.FileWarningsParser;
 import hudson.plugins.warnings.parser.ParserRegistry;
+import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 
 import java.io.File;
@@ -32,8 +33,11 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public class WarningsPublisher extends HealthAwarePublisher {
     /** Unique ID of this class. */
     private static final long serialVersionUID = -5936973521277401764L;
+
     /** Descriptor of this publisher. */
+    @Extension
     public static final WarningsDescriptor WARNINGS_DESCRIPTOR = new WarningsDescriptor();
+
     /** Ant file-set pattern of files to work with. */
     private final String pattern;
     /** Ant file-set pattern of files to include to report. */
@@ -219,7 +223,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
     /** {@inheritDoc} */
     @Override
-    public Descriptor<Publisher> getDescriptor() {
+    public BuildStepDescriptor<Publisher> getDescriptor() {
         return WARNINGS_DESCRIPTOR;
     }
 
