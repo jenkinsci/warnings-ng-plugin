@@ -129,43 +129,33 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     @Override
     public final boolean postExecute(final MavenBuildProxy build, final MavenProject pom, final MojoInfo mojo,
             final BuildListener listener, final Throwable error) throws InterruptedException, IOException {
-        if (!acceptGoal(mojo.getGoal())) {
+        if (!acceptGoal(mojo.getGoal()) || !canContinue(getCurrentResult(build))) {
             return true;
         }
 
-        if (canContinue(getCurrentResult(build))) {
-            PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
-            if (hasResultAction(build)) {
-                logger.log("Skipping maven reporter: there is already a result available.");
-                return true;
-            }
-
-            try {
-                defaultEncoding = pom.getProperties().getProperty("project.build.sourceEncoding");
-
-                final ParserResult result = perform(build, pom, mojo, logger);
-
-                if (defaultEncoding == null) {
-                    logger.log(Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
-                    result.addErrorMessage(pom.getName(), Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
-                }
-
-                build.execute(new BuildCallable<Void, IOException>() {
-                    public Void call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
-                        persistResult(result, mavenBuild);
-
-                        return null;
-                    }
-                });
-
-                copyFilesWithAnnotationsToBuildFolder(logger, build.getProjectRootDir(), build.getRootDir(), result.getAnnotations());
-            }
-            catch (AbortException exception) {
-                logger.log(exception);
-                build.setResult(Result.FAILURE);
-                return false;
-            }
+        PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
+        if (hasResultAction(build)) {
+            logger.log("Skipping maven reporter: there is already a result available.");
+            return true;
         }
+
+        final ParserResult result = perform(build, pom, mojo, logger);
+
+        defaultEncoding = pom.getProperties().getProperty("project.build.sourceEncoding");
+        if (defaultEncoding == null) {
+            logger.log(Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
+            result.addErrorMessage(pom.getName(), Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
+        }
+
+        build.execute(new BuildCallable<Void, IOException>() {
+            public Void call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
+                persistResult(result, mavenBuild);
+
+                return null;
+            }
+        });
+
+        copyFilesWithAnnotationsToBuildFolder(logger, build.getProjectRootDir(), build.getRootDir(), result.getAnnotations());
 
         return true;
     }

@@ -133,22 +133,15 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
     public final boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
         if (canContinue(build.getResult())) {
             PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
-            try {
-                BuildResult annotationsResult = perform(build, logger);
+            BuildResult annotationsResult = perform(build, logger);
 
-                Result buildResult = new BuildResultEvaluator().evaluateBuildResult(logger, this,
-                        annotationsResult.getAnnotations(), annotationsResult.getNewWarnings());
-                if (buildResult != Result.SUCCESS) {
-                    build.setResult(buildResult);
-                }
+            Result buildResult = new BuildResultEvaluator().evaluateBuildResult(logger, this,
+                    annotationsResult.getAnnotations(), annotationsResult.getNewWarnings());
+            if (buildResult != Result.SUCCESS) {
+                build.setResult(buildResult);
+            }
 
-                copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), annotationsResult.getAnnotations());
-            }
-            catch (AbortException exception) {
-                logger.log(exception);
-                build.setResult(Result.FAILURE);
-                return false;
-            }
+            copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), annotationsResult.getAnnotations());
         }
         return true;
     }
