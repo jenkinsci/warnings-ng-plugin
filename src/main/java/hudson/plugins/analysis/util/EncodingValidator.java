@@ -1,5 +1,7 @@
 package hudson.plugins.analysis.util;
 
+import hudson.util.FormValidation;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,35 +13,19 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.servlet.ServletException;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang.StringUtils;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
-// TODO: Auto-generated Javadoc
 /**
  * Validates a file encoding. The encoding must be an encoding ID supported by
  * the underlying Java platform.
  *
  * @author Ulli Hafner
  */
-public class EncodingValidator extends SingleFieldValidator {
-
+public class EncodingValidator implements Validator {
     /** All available character sets. */
     private static final Set<String> ALL_CHARSETS = Collections.unmodifiableSet(new HashSet<String>(Charset.availableCharsets().keySet()));
-
-    /**
-     * Creates a new instance of {@link EncodingValidator}.
-     *
-     * @param request Stapler request
-     * @param response Stapler response
-     */
-    public EncodingValidator(final StaplerRequest request, final StaplerResponse response) {
-        super(request, response);
-    }
 
     /**
      * Returns all available character set names.
@@ -99,20 +85,23 @@ public class EncodingValidator extends SingleFieldValidator {
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void check(final String encoding) throws IOException, ServletException {
+    /**
+     * Validates a file encoding. The encoding must be an encoding ID supported
+     * by the underlying Java platform.
+     */
+    public FormValidation check(final String encoding) throws FormValidation {
         try {
-            if (StringUtils.isEmpty(encoding) || Charset.forName(encoding) != null) {
-                ok();
+            if (StringUtils.isBlank(encoding) || Charset.forName(encoding) != null) {
+                return FormValidation.ok();
             }
         }
         catch (IllegalCharsetNameException exception) {
-            error(Messages.FieldValidator_Error_DefaultEncoding());
+            // throw a FormValidation error
         }
         catch (UnsupportedCharsetException exception) {
-            error(Messages.FieldValidator_Error_DefaultEncoding());
+            // throw a FormValidation error
         }
+        throw FormValidation.error(Messages.FieldValidator_Error_DefaultEncoding());
     }
 }
 

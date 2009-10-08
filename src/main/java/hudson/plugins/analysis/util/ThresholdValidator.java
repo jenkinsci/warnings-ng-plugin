@@ -1,12 +1,8 @@
 package hudson.plugins.analysis.util;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
+import hudson.util.FormValidation;
 
 import org.apache.commons.lang.StringUtils;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Validates and converts threshold parameters. A threshold must be an integer
@@ -14,37 +10,22 @@ import org.kohsuke.stapler.StaplerResponse;
  *
  * @author Ulli Hafner
  */
-public class ThresholdValidator extends SingleFieldValidator {
-    /**
-     * Creates a new instance of {@link ThresholdValidator}.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     */
-    public ThresholdValidator(final StaplerRequest request, final StaplerResponse response) {
-        super(request, response);
-    }
-
+public class ThresholdValidator implements Validator {
     /** {@inheritDoc} */
-    @Override
-    public void check(final String value) throws IOException, ServletException {
+    public FormValidation check(final String value) throws FormValidation {
         if (!StringUtils.isEmpty(value)) {
             try {
                 int integer = Integer.valueOf(value);
                 if (integer < 0) {
-                    error(Messages.FieldValidator_Error_Threshold());
-                    return;
+                    throw FormValidation.error(Messages.FieldValidator_Error_Threshold());
                 }
             }
             catch (NumberFormatException exception) {
-                error(Messages.FieldValidator_Error_Threshold());
-                return;
+                throw FormValidation.error(Messages.FieldValidator_Error_Threshold());
             }
         }
 
-        ok();
+        return FormValidation.ok();
     }
 
 
@@ -68,8 +49,6 @@ public class ThresholdValidator extends SingleFieldValidator {
         }
         return false;
     }
-
-
 
     /**
      * Converts the provided string threshold into an integer value.

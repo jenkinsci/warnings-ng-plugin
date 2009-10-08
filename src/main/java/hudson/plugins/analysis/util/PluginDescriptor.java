@@ -9,12 +9,8 @@ import hudson.util.FormValidation;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Base class for a Hudson plug/in descriptor.
@@ -71,31 +67,48 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
     public abstract String getIconUrl();
 
     /**
-     * Performs on-the-fly validation on the default encoding.
+     * Performs on-the-fly validation on the character encoding.
      *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
+     * @param defaultEncoding
+     *            the character encoding
+     * @return the validation result
      */
-    public final void doCheckDefaultEncoding(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
-        new EncodingValidator(request, response).process();
+    public final FormValidation doCheckDefaultEncoding(@QueryParameter final String defaultEncoding) {
+        try {
+            return new EncodingValidator().check(defaultEncoding);
+        }
+        catch (FormValidation exception) {
+            return exception;
+        }
     }
 
-    public final FormValidation doCheckPattern(@AncestorInPath final AbstractProject project, @QueryParameter final String value) throws IOException {
-        return FilePath.validateFileMask(project.getSomeWorkspace(),value);
+    /**
+     * Performs on-the-fly validation on the file name pattern.
+     *
+     * @param project
+     *            the project
+     * @param pattern
+     *            the file pattern
+     * @return the validation result
+     */
+    public final FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String pattern) throws IOException {
+        return FilePath.validateFileMask(project.getSomeWorkspace(), pattern);
     }
 
     /**
      * Performs on-the-fly validation on the annotations threshold.
      *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
+     * @param threshold
+     *            the character encoding
+     * @return the validation result
      */
-    public final void doCheckThreshold(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
-        new ThresholdValidator(request, response).process();
+    public final FormValidation doCheckThreshold(@QueryParameter final String threshold) {
+        try {
+            return new ThresholdValidator().check(threshold);
+        }
+        catch (FormValidation exception) {
+            return exception;
+        }
     }
 
     /**

@@ -1,12 +1,6 @@
 package hudson.plugins.analysis.util;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.junit.Test;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Tests the class {@link TrendReportHeightValidator}.
@@ -37,14 +31,8 @@ public class TrendReportHeightValidatorTest extends AbstractValidatorTest {
 
     /** {@inheritDoc} */
     @Override
-    protected SingleFieldValidator createValidator(final StaplerRequest request, final StaplerResponse response) {
-        return new TrendReportHeightValidator(request, response) {
-            /** {@inheritDoc} */
-            @Override
-            public void error(final String message) throws IOException, ServletException {
-                setError();
-            }
-        };
+    protected Validator createValidator() {
+        return new TrendReportHeightValidator();
     }
 }
 

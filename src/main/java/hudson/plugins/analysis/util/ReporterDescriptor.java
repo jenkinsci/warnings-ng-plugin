@@ -4,13 +4,7 @@ import hudson.maven.MavenReporter;
 import hudson.maven.MavenReporterDescriptor;
 import hudson.util.FormValidation;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * A maven reporter descriptor that uses a publisher descriptor as delegate to
@@ -57,13 +51,12 @@ public abstract class ReporterDescriptor extends MavenReporterDescriptor {
     /**
      * Performs on-the-fly validation on the annotations threshold.
      *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
+     * @param threshold
+     *            the threshold
+     * @return the form validation
      */
-    public final void doCheckThreshold(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
-        publisherDescriptor.doCheckThreshold(request, response);
+    public final FormValidation doCheckThreshold(@QueryParameter final String threshold) {
+        return publisherDescriptor.doCheckThreshold(threshold);
     }
 
     /**

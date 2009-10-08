@@ -1,12 +1,6 @@
 package hudson.plugins.analysis.util;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.junit.Test;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Tests the class {@link EncodingValidator}.
@@ -18,7 +12,7 @@ public class EncodingValidatorTest extends AbstractValidatorTest {
      * Test some valid encodings.
      */
     @Test
-    public void testValidEncodings() throws Exception {
+    public void testValidEncodings() {
         assertThatInputIsValid("");
         assertThatInputIsValid("UTF8");
         assertThatInputIsValid("UTF-8");
@@ -40,13 +34,7 @@ public class EncodingValidatorTest extends AbstractValidatorTest {
 
     /** {@inheritDoc} */
     @Override
-    protected SingleFieldValidator createValidator(final StaplerRequest request, final StaplerResponse response) {
-        return new EncodingValidator(request, response) {
-            /** {@inheritDoc} */
-            @Override
-            public void error(final String message) throws IOException, ServletException {
-                setError();
-            }
-        };
+    protected Validator createValidator() {
+        return new EncodingValidator();
     }
 }
