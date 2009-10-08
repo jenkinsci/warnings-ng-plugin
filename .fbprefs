@@ -1,5 +1,5 @@
 #FindBugs User Preferences
-#Mon Oct 27 18:25:19 CET 2008
+#Wed Oct 07 21:20:18 CEST 2009
 detectorAppendingToAnObjectOutputStream=AppendingToAnObjectOutputStream|true
 detectorBCPMethodReturnCheck=BCPMethodReturnCheck|false
 detectorBadAppletConstructor=BadAppletConstructor|false
@@ -23,6 +23,7 @@ detectorConfusionBetweenInheritedAndOuterMethod=ConfusionBetweenInheritedAndOute
 detectorCrossSiteScripting=CrossSiteScripting|true
 detectorDoInsideDoPrivileged=DoInsideDoPrivileged|true
 detectorDontCatchIllegalMonitorStateException=DontCatchIllegalMonitorStateException|true
+detectorDontIgnoreResultOfPutIfAbsent=DontIgnoreResultOfPutIfAbsent|true
 detectorDontUseEnum=DontUseEnum|true
 detectorDroppedException=DroppedException|true
 detectorDumbMethodInvocations=DumbMethodInvocations|true
@@ -30,6 +31,7 @@ detectorDumbMethods=DumbMethods|true
 detectorDuplicateBranches=DuplicateBranches|true
 detectorEmptyZipFileEntry=EmptyZipFileEntry|true
 detectorEqStringTest=EqStringTest|false
+detectorEqualsOperandShouldHaveClassCompatibleWithThis=EqualsOperandShouldHaveClassCompatibleWithThis|true
 detectorFieldItemSummary=FieldItemSummary|true
 detectorFinalizerNullsFields=FinalizerNullsFields|true
 detectorFindBadCast=FindBadCast|false
@@ -94,6 +96,7 @@ detectorIteratorIdioms=IteratorIdioms|true
 detectorLazyInit=LazyInit|true
 detectorLoadOfKnownNullValue=LoadOfKnownNullValue|true
 detectorLockedFields=LockedFields|false
+detectorLostLoggerDueToWeakReference=LostLoggerDueToWeakReference|true
 detectorMethodReturnCheck=MethodReturnCheck|true
 detectorMethods=Methods|true
 detectorMultithreadedInstanceAccess=MultithreadedInstanceAccess|true
@@ -114,6 +117,7 @@ detectorOverridingEqualsNotSymmetrical=OverridingEqualsNotSymmetrical|true
 detectorPreferZeroLengthArrays=PreferZeroLengthArrays|true
 detectorPublicSemaphores=PublicSemaphores|true
 detectorQuestionableBooleanAssignment=QuestionableBooleanAssignment|true
+detectorReadOfInstanceFieldInMethodInvokedByConstructorInSuperclass=ReadOfInstanceFieldInMethodInvokedByConstructorInSuperclass|true
 detectorReadReturnShouldBeChecked=ReadReturnShouldBeChecked|true
 detectorRedundantInterfaces=RedundantInterfaces|true
 detectorReflectiveClasses=ReflectiveClasses|true
@@ -151,6 +155,6 @@ detectorXMLFactoryBypass=XMLFactoryBypass|true
 detector_threshold=3
 effort=max
 excludefilter0=findbugs-exclusion-filter.xml
-filter_settings=Low|BAD_PRACTICE,CORRECTNESS,I18N,MALICIOUS_CODE,MT_CORRECTNESS,PERFORMANCE,SECURITY,STYLE|false
-filter_settings_neg=|
+filter_settings=Low|BAD_PRACTICE,CORRECTNESS,EXPERIMENTAL,I18N,MALICIOUS_CODE,MT_CORRECTNESS,PERFORMANCE,SECURITY,STYLE|false
+filter_settings_neg=NOISE|
 run_at_full_build=true
