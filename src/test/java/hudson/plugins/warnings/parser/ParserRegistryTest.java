@@ -1,6 +1,6 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.plugins.analysis.util.ParserResult;
+import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 import java.io.File;

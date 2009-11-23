@@ -1,9 +1,9 @@
 package hudson.plugins.warnings;
 
 import hudson.model.AbstractBuild;
-import hudson.plugins.analysis.util.AbstractResultAction;
-import hudson.plugins.analysis.util.HealthDescriptor;
-import hudson.plugins.analysis.util.PluginDescriptor;
+import hudson.plugins.analysis.core.AbstractResultAction;
+import hudson.plugins.analysis.core.HealthDescriptor;
+import hudson.plugins.analysis.core.PluginDescriptor;
 
 import java.util.NoSuchElementException;
 

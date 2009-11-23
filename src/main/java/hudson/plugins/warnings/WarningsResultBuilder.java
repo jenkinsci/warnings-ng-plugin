@@ -1,7 +1,7 @@
 package hudson.plugins.warnings;
 
 import hudson.model.AbstractBuild;
-import hudson.plugins.analysis.util.ParserResult;
+import hudson.plugins.analysis.core.ParserResult;
 
 
 /**

@@ -1,7 +1,7 @@
 package hudson.plugins.warnings;
 
+import hudson.plugins.analysis.core.AnnotationDifferencer;
 import hudson.plugins.analysis.test.AnnotationDifferencerTest;
-import hudson.plugins.analysis.util.AnnotationDifferencer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.warnings.parser.Warning;

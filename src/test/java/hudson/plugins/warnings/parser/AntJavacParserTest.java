@@ -1,7 +1,7 @@
 package hudson.plugins.warnings.parser;
 
 import static junit.framework.Assert.*;
-import hudson.plugins.analysis.util.ParserResult;
+import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 

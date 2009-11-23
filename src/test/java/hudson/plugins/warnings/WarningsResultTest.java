@@ -2,9 +2,9 @@ package hudson.plugins.warnings;
 
 import static junit.framework.Assert.*;
 import hudson.model.AbstractBuild;
+import hudson.plugins.analysis.core.BuildResult;
+import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.test.BuildResultTest;
-import hudson.plugins.analysis.util.BuildResult;
-import hudson.plugins.analysis.util.ParserResult;
 
 /**
  * Tests the class {@link WarningsResult}.

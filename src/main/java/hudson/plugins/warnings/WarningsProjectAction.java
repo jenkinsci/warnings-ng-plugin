@@ -1,7 +1,7 @@
 package hudson.plugins.warnings;
 
 import hudson.model.AbstractProject;
-import hudson.plugins.analysis.util.AbstractProjectAction;
+import hudson.plugins.analysis.core.AbstractProjectAction;
 
 /**
  * Entry point to visualize the warnings trend graph in the project screen.
