@@ -1,9 +1,9 @@
 package hudson.plugins.analysis.util;
 
-import hudson.util.StackedAreaRenderer2;
-
 import org.jfree.chart.renderer.category.StackedAreaRenderer;
 import org.jfree.data.category.CategoryDataset;
+
+import hudson.util.StackedAreaRenderer2;
 
 /**
  * {@link StackedAreaRenderer} that delegates tooltip and URL generation to

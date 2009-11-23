@@ -1,8 +1,8 @@
 package hudson.plugins.analysis.util;
 
-import hudson.util.FormValidation;
-
 import org.junit.Assert;
+
+import hudson.util.FormValidation;
 
 /**
  * Base class to test {@link Validator} classes.

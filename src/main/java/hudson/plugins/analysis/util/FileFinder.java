@@ -1,14 +1,14 @@
 package hudson.plugins.analysis.util;
 
-import hudson.FilePath.FileCallable;
-import hudson.remoting.VirtualChannel;
-
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
+
+import hudson.FilePath.FileCallable;
+import hudson.remoting.VirtualChannel;
 
 /**
  * Scans the workspace and finds all Java files.

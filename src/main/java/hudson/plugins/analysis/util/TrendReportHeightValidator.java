@@ -1,8 +1,8 @@
 package hudson.plugins.analysis.util;
 
-import hudson.util.FormValidation;
-
 import org.apache.commons.lang.StringUtils;
+
+import hudson.util.FormValidation;
 
 /**
  * Controls the size of a trend report.

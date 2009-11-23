@@ -1,8 +1,8 @@
 package hudson.plugins.analysis.util.model;
 
-import hudson.model.AbstractBuild;
-
 import java.util.Collection;
+
+import hudson.model.AbstractBuild;
 
 /**
  * Annotates a collection of line ranges in a file. An annotation consists of a

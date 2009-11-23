@@ -1,9 +1,9 @@
 package hudson.plugins.analysis.util;
 
-import hudson.util.ChartUtil.NumberOnlyBuildLabel;
-
 import org.apache.commons.lang.StringUtils;
 import org.jfree.data.category.CategoryDataset;
+
+import hudson.util.ChartUtil.NumberOnlyBuildLabel;
 
 /**
  * Builds a URL for the links in a clickable map. The URL is composed of the

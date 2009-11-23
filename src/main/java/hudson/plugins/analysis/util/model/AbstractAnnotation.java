@@ -1,8 +1,5 @@
 package hudson.plugins.analysis.util.model;
 
-import hudson.model.AbstractBuild;
-import hudson.model.Item;
-
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,6 +8,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+
+import hudson.model.AbstractBuild;
+import hudson.model.Item;
 
 /**
  *  A base class for annotations.

@@ -1,8 +1,8 @@
 package hudson.plugins.analysis.util;
 
-import hudson.util.FormValidation;
-
 import org.apache.commons.lang.StringUtils;
+
+import hudson.util.FormValidation;
 
 /**
  * Validates and converts threshold parameters. A threshold must be an integer

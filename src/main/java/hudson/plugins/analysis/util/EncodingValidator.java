@@ -1,7 +1,5 @@
 package hudson.plugins.analysis.util;
 
-import hudson.util.FormValidation;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,6 +14,8 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang.StringUtils;
+
+import hudson.util.FormValidation;
 
 /**
  * Validates a file encoding. The encoding must be an encoding ID supported by

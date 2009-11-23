@@ -1,7 +1,5 @@
 package hudson.plugins.analysis.util.model;
 
-import hudson.plugins.analysis.util.Messages;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -9,6 +7,8 @@ import org.apache.commons.lang.StringUtils;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.basic.AbstractSingleValueConverter;
+
+import hudson.plugins.analysis.util.Messages;
 
 /**
  * Defines the priority of an annotation.

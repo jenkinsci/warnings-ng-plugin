@@ -1,7 +1,5 @@
 package hudson.plugins.analysis.util.model; // NOPMD
 
-import hudson.plugins.analysis.util.Messages;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +15,8 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
+import hudson.plugins.analysis.util.Messages;
 
 /**
  * A container for annotations.
