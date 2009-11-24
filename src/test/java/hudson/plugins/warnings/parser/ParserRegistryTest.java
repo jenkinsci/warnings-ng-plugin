@@ -22,7 +22,7 @@ import org.junit.Test;
  */
 public class ParserRegistryTest {
     /** Total number of expected warnings. */
-    private static final int TOTAL_WARNINGS = 176;
+    private static final int TOTAL_WARNINGS = 178;
     /** Error message. */
     private static final String WRONG_NUMBER_OF_ANNOTATIONS_PARSED = "Wrong number of annotations parsed";
 
@@ -81,14 +81,14 @@ public class ParserRegistryTest {
         ParserRegistry parserRegistry = createRegistryUnderTest("all.txt", StringUtils.EMPTY, StringUtils.EMPTY, parsers);
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(new File(""));
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 8, annotations.size());
+        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 10, annotations.size());
 
         ParserResult result = new ParserResult();
         result.addAnnotations(annotations);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 8, result.getNumberOfAnnotations());
+        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 10, result.getNumberOfAnnotations());
 
         result.addAnnotations(annotations);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 8, result.getNumberOfAnnotations());
+        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 10, result.getNumberOfAnnotations());
     }
 
     /**

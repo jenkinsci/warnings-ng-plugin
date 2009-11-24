@@ -13,13 +13,13 @@ public class JavaDocParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "JavaDoc";
     /** Pattern of javac compiler warnings. */
-    private static final String ANT_JAVAC_WARNING_PATTERN = "\\[javadoc\\]\\s*(.*):(\\d+):.*-\\s*(.*)";
+    private static final String JAVA_DOC_WARNING_PATTERN = "\\[javadoc\\]\\s*(.*):(\\d+):.*-\\s*(.*)|\\[WARNING\\]\\s*javadoc\\s*.*\\s*-\\s*(.*\\\"(.*)\\\")|\\[WARNING\\]\\s*(.*):(\\d+):warning\\s*-\\s*(.*)";
 
     /**
      * Creates a new instance of <code>AntJavacParser</code>.
      */
     public JavaDocParser() {
-        super(ANT_JAVAC_WARNING_PATTERN, WARNING_TYPE);
+        super(JAVA_DOC_WARNING_PATTERN, WARNING_TYPE);
     }
 
     /**
@@ -30,7 +30,16 @@ public class JavaDocParser extends RegexpLineParser {
      */
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE, StringUtils.EMPTY, matcher.group(3));
+        if (StringUtils.isNotBlank(matcher.group(3))) {
+            return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE, StringUtils.EMPTY, matcher.group(3));
+        }
+        else if (StringUtils.isNotBlank(matcher.group(5))) {
+            return new Warning(matcher.group(5), 0, WARNING_TYPE, StringUtils.EMPTY, matcher.group(4));
+        }
+        else if (StringUtils.isNotBlank(matcher.group(8))) {
+            return new Warning(matcher.group(6), getLineNumber(matcher.group(7)), WARNING_TYPE, StringUtils.EMPTY, matcher.group(8));
+        }
+        return FALSE_POSITIVE;
     }
 }
 

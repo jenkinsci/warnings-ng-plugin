@@ -1,0 +1,5 @@
+[HUDSON] Archiving aggregated javadoc
+[WARNING] Javadoc Warnings
+[WARNING] javadoc: warning - Multiple sources of package comments found for package "org.hamcrest"
+[WARNING] /home/hudson-farm/.hudson/jobs/farm-toplevel/workspace/farm-toplevel/service-module/src/main/java/com/rackspace/farm/service/service/CoreAccountServiceImpl.java:94:warning - @param argument "<code>CoreAccountNumberTO</code>" is not a parameter
+name.
