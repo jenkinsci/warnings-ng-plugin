@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import hudson.model.AbstractBuild;
 
-import hudson.plugins.analysis.util.Messages;
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**

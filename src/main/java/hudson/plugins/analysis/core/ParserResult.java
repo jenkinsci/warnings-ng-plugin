@@ -16,8 +16,8 @@ import java.util.Set;
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 import hudson.FilePath;
 
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.FileFinder;
-import hudson.plugins.analysis.util.Messages;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 

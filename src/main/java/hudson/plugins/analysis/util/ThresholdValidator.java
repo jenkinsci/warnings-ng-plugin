@@ -2,6 +2,8 @@ package hudson.plugins.analysis.util;
 
 import org.apache.commons.lang.StringUtils;
 
+import hudson.plugins.analysis.Messages;
+
 import hudson.util.FormValidation;
 
 /**

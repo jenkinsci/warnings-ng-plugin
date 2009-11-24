@@ -16,7 +16,7 @@ import org.apache.commons.lang.StringUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
-import hudson.plugins.analysis.util.Messages;
+import hudson.plugins.analysis.Messages;
 
 /**
  * A container for annotations.

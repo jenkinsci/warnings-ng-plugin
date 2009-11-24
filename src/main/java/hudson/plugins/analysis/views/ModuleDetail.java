@@ -2,7 +2,7 @@ package hudson.plugins.analysis.views;
 
 import hudson.model.AbstractBuild;
 
-import hudson.plugins.analysis.util.Messages;
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.model.MavenModule;
 
 /**

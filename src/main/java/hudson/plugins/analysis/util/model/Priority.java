@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.basic.AbstractSingleValueConverter;
 
-import hudson.plugins.analysis.util.Messages;
+import hudson.plugins.analysis.Messages;
 
 /**
  * Defines the priority of an annotation.

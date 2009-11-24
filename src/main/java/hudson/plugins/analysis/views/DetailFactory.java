@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import hudson.model.AbstractBuild;
 import hudson.model.Item;
 
-import hudson.plugins.analysis.util.Messages;
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;

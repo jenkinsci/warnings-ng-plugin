@@ -10,10 +10,10 @@ import org.jfree.data.category.CategoryDataset;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.AreaRenderer;
 import hudson.plugins.analysis.util.CategoryUrlBuilder;
-import hudson.plugins.analysis.util.Messages;
 import hudson.plugins.analysis.util.ToolTipBuilder;
 import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.Priority;

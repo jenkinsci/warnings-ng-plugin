@@ -7,9 +7,9 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import hudson.model.AbstractProject;
 
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.util.CookieHandler;
-import hudson.plugins.analysis.util.Messages;
 
 /**
  * Configures the trend graph of this plug-in for the current user and job using

@@ -5,7 +5,7 @@ import java.util.Collection;
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
 
-import hudson.plugins.analysis.util.Messages;
+import hudson.plugins.analysis.Messages;
 
 /**
  * Result object to visualize the errors during execution of the plug-in.

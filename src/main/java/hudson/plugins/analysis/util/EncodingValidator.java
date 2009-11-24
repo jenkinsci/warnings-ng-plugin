@@ -15,6 +15,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang.StringUtils;
 
+import hudson.plugins.analysis.Messages;
+
 import hudson.util.FormValidation;
 
 /**

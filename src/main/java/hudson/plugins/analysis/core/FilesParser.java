@@ -11,8 +11,8 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import hudson.FilePath;
 import hudson.FilePath.FileCallable;
 
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.FileFinder;
-import hudson.plugins.analysis.util.Messages;
 import hudson.plugins.analysis.util.ModuleDetector;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
