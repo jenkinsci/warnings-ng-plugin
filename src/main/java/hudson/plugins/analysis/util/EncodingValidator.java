@@ -27,7 +27,16 @@ import hudson.util.FormValidation;
  */
 public class EncodingValidator implements Validator {
     /** All available character sets. */
-    private static final Set<String> ALL_CHARSETS = Collections.unmodifiableSet(new HashSet<String>(Charset.availableCharsets().keySet()));
+    private static Set<String> ALL_CHARSETS;
+
+    static {
+        try {
+            ALL_CHARSETS = Collections.unmodifiableSet(new HashSet<String>(Charset.availableCharsets().keySet()));
+        }
+        catch (Exception exception) {
+            ALL_CHARSETS = Collections.emptySet();
+        }
+    }
 
     /**
      * Returns all available character set names.
