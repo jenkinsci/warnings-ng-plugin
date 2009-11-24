@@ -32,7 +32,7 @@ import hudson.tasks.BuildStep;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Builder;
 import hudson.tasks.Maven;
-import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 
 /**
  * A base class for publishers with the following two characteristics:
@@ -49,7 +49,7 @@ import hudson.tasks.Publisher;
  * @author Ulli Hafner
  */
 // CHECKSTYLE:COUPLING-OFF
-public abstract class HealthAwarePublisher extends Publisher implements HealthDescriptor {
+public abstract class HealthAwarePublisher extends Recorder implements HealthDescriptor {
     /** Unique ID of this class. */
     private static final long serialVersionUID = -7945220365563528457L;
     /** Default threshold priority limit. */
