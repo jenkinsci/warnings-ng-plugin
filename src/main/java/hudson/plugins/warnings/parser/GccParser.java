@@ -19,7 +19,8 @@ public class GccParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "gcc";
     /** Pattern of gcc compiler warnings. */
-    private static final String GCC_WARNING_PATTERN = "^(.*\\.[chpimxsola0-9]+):(?:(\\d*):(?:\\d*:)*\\s*(?:(warning|error)\\s*:|\\s*(.*))|\\s*(undefined reference to.*))(.*)|.*ld:\\s*(.*-l(.*))$";
+    private static final String GCC_WARNING_PATTERN = "^(.*\\.[chpimxsola0-9]+):(?:(\\d*):(?:\\d*:)*\\s*(?:(warning|error|note)\\s*:|\\s*(.*))|\\s*(undefined reference to.*))(.*)|.*ld:\\s*(.*-l(.*))$";
+
     /**
      * Creates a new instance of <code>GccParser</code>.
      */
@@ -40,6 +41,9 @@ public class GccParser extends RegexpLineParser {
         }
         else if ("error".equalsIgnoreCase(matcher.group(3))) {
             priority = Priority.HIGH;
+        }
+        else if ("note".equalsIgnoreCase(matcher.group(3))) {
+            priority = Priority.LOW;
         }
         else if (StringUtils.isNotBlank(matcher.group(4))) {
             if (matcher.group(4).contains("instantiated from here")) {

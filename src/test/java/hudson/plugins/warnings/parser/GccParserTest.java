@@ -122,6 +122,31 @@ public class GccParserTest extends ParserTester {
     }
 
     /**
+     * Parses a warning log with 2 GCC warnings, one of them a note.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=4712">Issue 4712</a>
+     */
+    @Test
+    public void issue4712() throws IOException {
+        Collection<FileAnnotation> warnings = new GccParser().parse(openFile("issue4712.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        checkWarning(iterator.next(),
+                352,
+                "'s2.mepSector2::lubrications' may be used",
+                "main/mep.cpp",
+                GccParser.WARNING_TYPE, "GCC warning", Priority.NORMAL);
+        checkWarning(iterator.next(),
+                1477,
+                "'s2.mepSector2::lubrications' was declared here",
+                "main/mep.cpp",
+                GccParser.WARNING_TYPE, "GCC note", Priority.LOW);
+    }
+
+    /**
      * Parses a linker error.
      *
      * @throws IOException
