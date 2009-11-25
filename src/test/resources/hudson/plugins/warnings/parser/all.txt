@@ -725,3 +725,20 @@ All warning where generate by compiling ObjectiveC Code (see the *.m in the File
 [WARNING] javadoc: warning - Multiple sources of package comments found for package "org.hamcrest"
 [WARNING] /home/hudson-farm/.hudson/jobs/farm-toplevel/workspace/farm-toplevel/service-module/src/main/java/com/rackspace/farm/service/service/CoreAccountServiceImpl.java:94:warning - @param argument "<code>CoreAccountNumberTO</code>" is not a parameter
 name.
+
+
+
+
+Linking...
+SynchronisationHeure.obj : error LNK2001: unresolved external symbol "public:
+class IPosteCentral * __thiscall
+CModuleBorneEtats::GetInterfacePosteCentral(void)"
+(?GetInterfacePosteCentral@CModuleBorneEtats@@QAEPAVIPosteCentral@@XZ)
+Release\Navineo.exe : fatal error LNK1120: 1 unresolved externals
+Error executing link.exe.
+
+The LNK1120 error is not visible from Hudson (the others compilation error are
+reported).
+Feel free to ask form more details is needed.
+
+

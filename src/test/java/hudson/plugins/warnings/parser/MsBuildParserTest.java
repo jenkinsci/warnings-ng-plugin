@@ -31,6 +31,7 @@ public class MsBuildParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=3582">Issue 3582</a>
      */
     @Test
     public void issue3582() throws IOException {
@@ -41,6 +42,32 @@ public class MsBuildParserTest extends ParserTester {
         assertEquals("Wrong file name.", "TestLib.lib", annotation.getFileName());
     }
 
+    /**
+     * Parses a file with warnings of the MS Build linker.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=4932">Issue 4932</a>
+     */
+    @Test
+    public void issue4932() throws IOException {
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue4932.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        FileAnnotation annotation = iterator.next();
+        checkWarning(annotation,
+                0,
+                "unresolved external symbol \"public:",
+                "SynchronisationHeure.obj",
+                MsBuildParser.WARNING_TYPE, "LNK2001", Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                0,
+                "1 unresolved externals",
+                "Release/Navineo.exe",
+                MsBuildParser.WARNING_TYPE, "LNK1120", Priority.HIGH);
+    }
 
     /**
      * Parses a file with warnings of the MS Build tools.
