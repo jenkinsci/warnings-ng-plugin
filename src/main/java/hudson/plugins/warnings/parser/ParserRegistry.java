@@ -44,6 +44,32 @@ public class ParserRegistry {
     /** The default charset to be used when reading and parsing files. */
     private final Charset defaultCharset;
 
+    /**
+     * Returns all available parsers.
+     *
+     * @return all available parsers
+     */
+    private static List<WarningsParser> getAllParsers() {
+        ArrayList<WarningsParser> parsers = new ArrayList<WarningsParser>();
+        parsers.add(new JavacParser());
+        parsers.add(new AntJavacParser());
+        parsers.add(new JavaDocParser());
+        parsers.add(new AntEclipseParser());
+        parsers.add(new MsBuildParser());
+        parsers.add(new GccParser());
+        parsers.add(new InvalidsParser());
+        parsers.add(new SunCParser());
+        parsers.add(new GnatParser());
+        parsers.add(new ErlcParser());
+        parsers.add(new IntelCParser());
+        parsers.add(new IarParser());
+        MsBuildParser pclintParser = new MsBuildParser();
+        pclintParser.setName("PC-Lint");
+        parsers.add(pclintParser);
+        parsers.add(new BuckminsterParser());
+        parsers.add(new TiCcsParser());
+        return Collections.unmodifiableList(parsers);
+    }
 
     /**
      * Creates a new instance of <code>ParserRegistry</code>.
@@ -237,32 +263,6 @@ public class ParserRegistry {
             }
             return isIncluded(canonicalName) && !isExcluded(canonicalName);
         }
-    }
-
-    /**
-     * Returns all available parsers.
-     *
-     * @return all available parsers
-     */
-    private static List<WarningsParser> getAllParsers() {
-        ArrayList<WarningsParser> parsers = new ArrayList<WarningsParser>();
-        parsers.add(new JavacParser());
-        parsers.add(new AntJavacParser());
-        parsers.add(new JavaDocParser());
-        parsers.add(new AntEclipseParser());
-        parsers.add(new MsBuildParser());
-        parsers.add(new GccParser());
-        parsers.add(new InvalidsParser());
-        parsers.add(new SunCParser());
-        parsers.add(new GnatParser());
-        parsers.add(new ErlcParser());
-        parsers.add(new IntelCParser());
-        parsers.add(new IarParser());
-        MsBuildParser pclintParser = new MsBuildParser();
-        pclintParser.setName("PC-Lint");
-        parsers.add(pclintParser);
-        parsers.add(new BuckminsterParser());
-        return Collections.unmodifiableList(parsers);
     }
 
     /**
