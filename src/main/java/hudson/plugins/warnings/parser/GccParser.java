@@ -12,10 +12,14 @@ import org.apache.commons.lang.StringUtils;
  * @author Greg Roth
  */
 public class GccParser extends RegexpLineParser {
+    /** A GCC error. */
+    static final String GCC_ERROR = "GCC error";
+    /** A LD error. */
+    static final String LINKER_ERROR = "Linker error";
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "gcc";
     /** Pattern of gcc compiler warnings. */
-    private static final String GCC_WARNING_PATTERN = "^(.*\\.[chpimxsola0-9]+):(?:(\\d*):(?:\\d*:)*\\s*(?:(warning|error)\\s*:|\\s*(.*))|\\s*(undefined reference to.*))(.*)$";
+    private static final String GCC_WARNING_PATTERN = "^(.*\\.[chpimxsola0-9]+):(?:(\\d*):(?:\\d*:)*\\s*(?:(warning|error)\\s*:|\\s*(.*))|\\s*(undefined reference to.*))(.*)|.*ld:\\s*(.*-l(.*))$";
     /**
      * Creates a new instance of <code>GccParser</code>.
      */
@@ -26,6 +30,10 @@ public class GccParser extends RegexpLineParser {
     /** {@inheritDoc} */
     @Override
     protected Warning createWarning(final Matcher matcher) {
+        if (StringUtils.isNotBlank(matcher.group(7))) {
+            return new Warning(matcher.group(8), 0, WARNING_TYPE,
+                    LINKER_ERROR, matcher.group(7), Priority.HIGH);
+        }
         Priority priority;
         if ("warning".equalsIgnoreCase(matcher.group(3))) {
             priority = Priority.NORMAL;
@@ -38,13 +46,13 @@ public class GccParser extends RegexpLineParser {
                 return FALSE_POSITIVE;
             }
             priority = Priority.HIGH;
-            String category = "GCC error";
+            String category = GCC_ERROR;
             return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE,
                    category, matcher.group(4), priority);
         }
         else {
             priority = Priority.HIGH;
-            String category = "GCC error";
+            String category = GCC_ERROR;
             return new Warning(matcher.group(1), 0, WARNING_TYPE,
                     category, matcher.group(5), priority);
         }

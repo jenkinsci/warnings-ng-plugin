@@ -17,7 +17,7 @@ public class GccParserTest extends ParserTester {
     /** Error message. */
     private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
     /** An error. */
-    private static final String GCC_ERROR = "GCC error";
+    private static final String GCC_ERROR = GccParser.GCC_ERROR;
     /** A warning. */
     private static final String GCC_WARNING = "GCC warning";
 
@@ -108,17 +108,37 @@ public class GccParserTest extends ParserTester {
                 12,
                 "file.h: No such file or directory",
                 "/dir1/dir2/file.c",
-                GccParser.WARNING_TYPE, "GCC error", Priority.HIGH);
+                GccParser.WARNING_TYPE, GccParser.GCC_ERROR, Priority.HIGH);
         checkWarning(iterator.next(),
                 233,
                 "undefined reference to `MyInterface::getValue() const'",
                 "/dir1/dir3/file.cpp",
-                GccParser.WARNING_TYPE, "GCC error", Priority.HIGH);
+                GccParser.WARNING_TYPE, GccParser.GCC_ERROR, Priority.HIGH);
         checkWarning(iterator.next(),
                 20,
                 "invalid preprocessing directive #incldue",
                 "/dir1/dir2/file.cpp",
-                GccParser.WARNING_TYPE, "GCC error", Priority.HIGH);
+                GccParser.WARNING_TYPE, GccParser.GCC_ERROR, Priority.HIGH);
+    }
+
+    /**
+     * Parses a linker error.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=4010">Issue 4010</a>
+     */
+    @Test
+    public void issue4010() throws IOException {
+        Collection<FileAnnotation> warnings = new GccParser().parse(openFile("issue4010.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        checkWarning(iterator.next(),
+                0,
+                "cannot find -lMyLib",
+                "MyLib",
+                GccParser.WARNING_TYPE, GccParser.LINKER_ERROR, Priority.HIGH);
     }
 
     /**
