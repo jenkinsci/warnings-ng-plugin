@@ -776,3 +776,8 @@ error: errors encountered during linking; "../../bin/Debug/lrxyz.out" not
   1 fatal error detected in the compilation of "i2cDisplay12x2.c".
   No Assembly Errors, 1 Assembly Warning
 
+
+
+
+[javac] warning: [path] bad path element "C:\...\.hudson\jobs\...\log4j.jar": no such file or directory
+

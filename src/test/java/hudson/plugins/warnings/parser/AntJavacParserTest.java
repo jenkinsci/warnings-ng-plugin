@@ -75,6 +75,27 @@ public class AntJavacParserTest extends ParserTester {
     }
 
     /**
+     * Parses a warning log with 1 warnings that has no associated file.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=4098">Issue 4098</a>
+     */
+    @Test
+    public void issue4098() throws IOException {
+        Collection<FileAnnotation> warnings = new AntJavacParser().parse(openFile("issue4098.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        checkWarning(iterator.next(),
+                0,
+                "bad path element \"C:\\...\\.hudson\\jobs\\...\\log4j.jar\": no such file or directory",
+                "C:/.../.hudson/jobs/.../log4j.jar",
+                AntJavacParser.WARNING_TYPE, "Path", Priority.NORMAL);
+    }
+
+    /**
      * Parses a warning log with 20 ANT warnings. 2 of them are duplicate, all are of priority Normal.
      *
      * @throws IOException
