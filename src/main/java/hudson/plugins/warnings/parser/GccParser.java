@@ -36,6 +36,10 @@ public class GccParser extends RegexpLineParser {
                     LINKER_ERROR, matcher.group(7), Priority.HIGH);
         }
         Priority priority;
+        String fileName = matcher.group(1);
+        if (StringUtils.contains(fileName, "cleartool")) {
+            return FALSE_POSITIVE;
+        }
         if ("warning".equalsIgnoreCase(matcher.group(3))) {
             priority = Priority.NORMAL;
         }
@@ -51,17 +55,17 @@ public class GccParser extends RegexpLineParser {
             }
             priority = Priority.HIGH;
             String category = GCC_ERROR;
-            return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE,
+            return new Warning(fileName, getLineNumber(matcher.group(2)), WARNING_TYPE,
                    category, matcher.group(4), priority);
         }
         else {
             priority = Priority.HIGH;
             String category = GCC_ERROR;
-            return new Warning(matcher.group(1), 0, WARNING_TYPE,
+            return new Warning(fileName, 0, WARNING_TYPE,
                     category, matcher.group(5), priority);
         }
         String category = "GCC " + matcher.group(3);
-        return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE,
+        return new Warning(fileName, getLineNumber(matcher.group(2)), WARNING_TYPE,
                 category, matcher.group(6), priority);
     }
 }

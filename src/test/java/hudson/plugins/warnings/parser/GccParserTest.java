@@ -147,6 +147,20 @@ public class GccParserTest extends ParserTester {
     }
 
     /**
+     * Parses a warning log with a ClearCase command line that should not be parsed as a warning.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=4712">Issue 4712</a>
+     */
+    @Test
+    public void issue4700() throws IOException {
+        Collection<FileAnnotation> warnings = new GccParser().parse(openFile("issue4700.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, warnings.size());
+    }
+
+    /**
      * Parses a linker error.
      *
      * @throws IOException
