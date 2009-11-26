@@ -12,4 +12,9 @@
 		  </div>
 	   	</div>
 	</j:if>
+    <j:if test="${!from.isTrendVisible(request)}">
+      <div align="right">
+         <a href="${from.urlName}/configure">${%enable.graph(from.trendName)}</a>
+      </div>
+	</j:if>
 </j:jelly>
