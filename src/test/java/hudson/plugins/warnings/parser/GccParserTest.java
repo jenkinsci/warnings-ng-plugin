@@ -161,6 +161,26 @@ public class GccParserTest extends ParserTester {
     }
 
     /**
+     * Parses a warning log with [exec] prefix.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=4712">Issue 4707</a>
+     */
+    @Test
+    public void issue4707() throws IOException {
+        Collection<FileAnnotation> warnings = new GccParser().parse(openFile("issue4707.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 22, warnings.size());
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        checkWarning(iterator.next(),
+                1128,
+                "NULL used in arithmetic",
+                "/Users/rthomson/hudson/jobs/Bryce7-MacWarnings/workspace/bryce7/src/Bryce/Plugins/3DSExport/3DSExport.cpp",
+                GccParser.WARNING_TYPE, "GCC warning", Priority.NORMAL);
+    }
+
+    /**
      * Parses a linker error.
      *
      * @throws IOException
