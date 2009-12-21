@@ -68,6 +68,7 @@ public class ParserRegistry {
         parsers.add(pclintParser);
         parsers.add(new BuckminsterParser());
         parsers.add(new TiCcsParser());
+        parsers.add(new AcuCobolParser());
         return Collections.unmodifiableList(parsers);
     }
 
