@@ -79,24 +79,24 @@
 
         #statistics .loading {
             background:#ffffff; /* content background color */
-            background-image:url(${rootURL}/plugin/checkstyle/icons/spinner.gif);
+            background-image:url(${rootURL}/plugin/analysis-core/icons/spinner.gif);
             background-position:center center;
             background-repeat:no-repeat;
         }
 
         .priority-high {
             background: #EF2929;
-            background-image:url(${rootURL}/plugin/checkstyle/icons/clearpixel.gif);
+            background-image:url(${rootURL}/plugin/analysis-core/icons/clearpixel.gif);
         }
 
         .priority-normal {
             background: #FCE94F;
-            background-image:url(${rootURL}/plugin/checkstyle/icons/clearpixel.gif);
+            background-image:url(${rootURL}/plugin/analysis-core/icons/clearpixel.gif);
         }
 
         .priority-low {
             background: #729FCF;
-            background-image:url(${rootURL}/plugin/checkstyle/icons/clearpixel.gif);
+            background-image:url(${rootURL}/plugin/analysis-core/icons/clearpixel.gif);
         }
 
 

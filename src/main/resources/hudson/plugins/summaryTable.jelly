@@ -1,7 +1,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   <h2>${%Summary}</h2>
-  <table class="pane" id="checkstyle.summary">
+  <table class="pane" id="analysis.summary">
     <tr>
       <td class="pane-header">${%Total}</td>
       <td class="pane-header">${%High Priority}</td>
