@@ -78,7 +78,7 @@ public class DetailFactory {
             final AnnotationContainer container, final Collection<FileAnnotation> fixedAnnotations,
             final Collection<FileAnnotation> newAnnotations, final Collection<String> errors,
             final String defaultEncoding, final String displayName) {
-    // CHECKSTYLE:ON
+        // CHECKSTYLE:ON
         if ("fixed".equals(link)) {
             return new FixedWarningsDetail(owner, fixedAnnotations, defaultEncoding, displayName);
         }
@@ -89,10 +89,10 @@ public class DetailFactory {
             return new ErrorDetail(owner, errors);
         }
         else if (link.startsWith("tab.new")) {
-            return new TabDetail(owner, newAnnotations, "/tabview/new.jelly", defaultEncoding);
+            return createTabDetail(owner, newAnnotations, createGenericTabUrl(link), defaultEncoding);
         }
         else if (link.startsWith("tab.fixed")) {
-            return new TabDetail(owner, fixedAnnotations, "/tabview/fixed.jelly", defaultEncoding);
+            return createTabDetail(owner, fixedAnnotations, createGenericTabUrl(link), defaultEncoding);
         }
         else {
             return createDetails(link, owner, container, defaultEncoding, displayName);
@@ -100,14 +100,19 @@ public class DetailFactory {
     }
 
     /**
-     * Returns a detail object for the selected element of the specified annotation container.
+     * Returns a detail object for the selected element of the specified
+     * annotation container.
      *
-     * @param link the link to identify the sub page to show
-     * @param owner the build as owner of the detail page
-     * @param container the annotation container to get the details for
-     * @param defaultEncoding the default encoding to be used when reading and parsing files
-     * @param displayName the name of the selected object
-     *
+     * @param link
+     *            the link to identify the sub page to show
+     * @param owner
+     *            the build as owner of the detail page
+     * @param container
+     *            the annotation container to get the details for
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @param displayName
+     *            the name of the selected object
      * @return the dynamic result of this module detail view
      */
     public Object createDetails(final String link, final AbstractBuild<?, ?> owner, final AnnotationContainer container,
@@ -126,7 +131,7 @@ public class DetailFactory {
             return new FileDetail(owner, container.getFile(createHashCode(link, "file.")), defaultEncoding, displayName);
         }
         else if (link.startsWith("tab.")) {
-            return new TabDetail(owner, container.getAnnotations(), "/tabview/" + StringUtils.substringAfter(link, "tab.") + ".jelly", defaultEncoding);
+            return createTabDetail(owner, container.getAnnotations(), createGenericTabUrl(link), defaultEncoding);
         }
         else if (link.startsWith("source.")) {
             owner.checkPermission(Item.WORKSPACE);
@@ -144,6 +149,34 @@ public class DetailFactory {
         return null;
     }
 
+    /**
+     * Creates a generic detail tab with the specified link.
+     *
+     * @param owner
+     *            the build as owner of the detail page
+     * @param annotations
+     *            the annotations to display
+     * @param url
+     *            the URL for the details view
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @return the detail view
+     */
+    protected TabDetail createTabDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations,
+            final String url, final String defaultEncoding) {
+        return new TabDetail(owner, annotations, url, defaultEncoding);
+    }
+
+    /**
+     * Creates the actual URL from the synthetic link.
+     *
+     * @param link
+     *            the link
+     * @return the actual URL
+     */
+    private String createGenericTabUrl(final String link) {
+        return "/tabview/" + StringUtils.substringAfter(link, "tab.") + ".jelly";
+    }
 
     /**
      * Extracts the hash code from the given link stripping of the given prefix.
