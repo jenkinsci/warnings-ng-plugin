@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    This configuration file was written by the eclipse-cs plugin configuration editor
--->
-<!--
-    Checkstyle-Configuration: Avaloq
-    Description: none
+    Checkstyle-Configuration: Ulli
+    Description: Ulli's Checkstyle Rules.
 -->
 <!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 <module name="Checker">
     <property name="severity" value="warning"/>
     <module name="TreeWalker">
+        <module name="AnnotationUseStyle"/>
+        <module name="MissingDeprecated"/>
+        <module name="MissingOverride"/>
+        <module name="PackageAnnotation"/>
+        <module name="EqualsAvoidNull"/>
+        <module name="GenericWhitespace"/>
         <module name="FileContentsHolder"/>
         <module name="JavadocType"/>
         <module name="JavadocMethod">
             <property name="allowUndeclaredRTE" value="true"/>
-            <property name="allowMissingThrowsTags" value="true"/>
         </module>
         <module name="JavadocVariable"/>
         <module name="JavadocStyle">
-            <property name="severity" value="info"/>
+            <property name="severity" value="warning"/>
         </module>
         <module name="JavadocStyle">
             <property name="checkEmptyJavadoc" value="true"/>
@@ -32,10 +34,11 @@
         <module name="ParameterName"/>
         <module name="StaticVariableName"/>
         <module name="TypeName"/>
+        <module name="ClassTypeParameterName"/>
+        <module name="MethodTypeParameterName"/>
         <module name="AnonInnerLength">
             <property name="max" value="10"/>
         </module>
-        <module name="FileLength"/>
         <module name="MethodLength"/>
         <module name="ParameterNumber"/>
         <module name="EmptyForIteratorPad"/>
@@ -44,7 +47,6 @@
         </module>
         <module name="NoWhitespaceBefore"/>
         <module name="OperatorWrap"/>
-        <module name="TabCharacter"/>
         <module name="TypecastParenPad">
             <property name="tokens" value="RPAREN,TYPECAST"/>
         </module>
@@ -86,14 +88,11 @@
         <module name="IllegalThrows"/>
         <module name="InnerAssignment"/>
         <module name="JUnitTestCase"/>
-        <module name="MagicNumber">
-            <property name="severity" value="ignore"/>
-        </module>
+        <module name="MagicNumber"/>
         <module name="MissingSwitchDefault"/>
         <module name="ModifiedControlVariable"/>
         <module name="MultipleStringLiterals">
-            <property name="severity" value="ignore"/>
-            <property name="ignoreStringsRegexp" value="^&quot;[a-zA-Z]*&quot;$"/>
+            <property name="ignoreStringsRegexp" value="^&quot;[a-zA-Z().]*&quot;$"/>
         </module>
         <module name="MultipleVariableDeclarations"/>
         <module name="NestedTryDepth"/>
@@ -121,17 +120,71 @@
             <property name="max" value="10"/>
         </module>
         <module name="ClassFanOutComplexity"/>
-        <module name="CyclomaticComplexity"/>
         <module name="JavaNCSS"/>
         <module name="NPathComplexity"/>
         <module name="ArrayTypeStyle"/>
         <module name="UpperEll"/>
+        <module name="IllegalCatch"/>
+        <module name="IllegalImport">
+            <metadata name="com.atlassw.tools.eclipse.checkstyle.customMessage" value="Nur die JSR305 Annotations aus javax.lang benutzen"/>
+            <property name="illegalPkgs" value="net.jcip.annotations"/>
+        </module>
+        <module name="Regexp">
+            <metadata name="com.atlassw.tools.eclipse.checkstyle.customMessage" value="Nur die JSR305 Annotations aus javax.lang benutzen"/>
+            <property name="format" value="edu.umd.cs.findbugs.annotations.CheckForNull"/>
+            <property name="message" value="Bitte nur die JSR305 Annotations aus javax.annotation benutzen"/>
+            <property name="illegalPattern" value="true"/>
+        </module>
+        <module name="Regexp">
+            <metadata name="com.atlassw.tools.eclipse.checkstyle.customMessage" value="Nur die JSR305 Annotations aus javax.lang benutzen"/>
+            <property name="format" value="edu.umd.cs.findbugs.annotations.CheckReturnValue"/>
+            <property name="message" value="Bitte nur die JSR305 Annotations aus javax.annotation benutzen"/>
+            <property name="illegalPattern" value="true"/>
+        </module>
+        <module name="Regexp">
+            <metadata name="com.atlassw.tools.eclipse.checkstyle.customMessage" value="Nur die JSR305 Annotations aus javax.lang benutzen"/>
+            <property name="format" value="edu.umd.cs.findbugs.annotations.NonNull"/>
+            <property name="message" value="Bitte nur die JSR305 Annotations aus javax.annotation benutzen"/>
+            <property name="illegalPattern" value="true"/>
+        </module>
+        <module name="Regexp">
+            <metadata name="com.atlassw.tools.eclipse.checkstyle.customMessage" value="Nur die JSR305 Annotations aus javax.lang benutzen"/>
+            <property name="format" value="edu.umd.cs.findbugs.annotations.Nullable"/>
+            <property name="message" value="Bitte nur die JSR305 Annotations aus javax.annotation benutzen"/>
+            <property name="illegalPattern" value="true"/>
+        </module>
+        <module name="Regexp">
+            <metadata name="com.atlassw.tools.eclipse.checkstyle.customMessage" value="Nur die JSR305 Annotations aus javax.lang benutzen"/>
+            <property name="format" value="edu.umd.cs.findbugs.annotations.PossiblyNull"/>
+            <property name="message" value="Bitte nur die JSR305 Annotations aus javax.annotation benutzen"/>
+            <property name="illegalPattern" value="true"/>
+        </module>
+        <module name="Regexp">
+            <metadata name="com.atlassw.tools.eclipse.checkstyle.customMessage" value="Nur die JSR305 Annotations aus javax.lang benutzen"/>
+            <property name="format" value="edu.umd.cs.findbugs.annotations.UnknowNullness"/>
+            <property name="message" value="Bitte nur die JSR305 Annotations aus javax.annotation benutzen"/>
+            <property name="illegalPattern" value="true"/>
+        </module>
+        <module name="Regexp">
+            <metadata name="com.atlassw.tools.eclipse.checkstyle.customMessage" value="Nur die JSR305 Annotations @CheckForNull und @Nonnull benutzen"/>
+            <property name="format" value="javax.annotation.Nullable"/>
+            <property name="message" value="Bitte nur die JSR305 Annotations aus javax.annotation benutzen"/>
+            <property name="illegalPattern" value="true"/>
+        </module>
     </module>
+    <module name="FileTabCharacter"/>
+    <module name="FileLength"/>
     <module name="SuppressionCommentFilter">
         <metadata name="com.atlassw.tools.eclipse.checkstyle.comment" value="Coupling Checks"/>
         <property name="offCommentFormat" value="CHECKSTYLE\:COUPLING-OFF"/>
         <property name="onCommentFormat" value="CHECKSTYLE\:COUPLING-ON"/>
         <property name="checkFormat" value=".*(Coupling|Complexity)"/>
+    </module>
+    <module name="SuppressionCommentFilter">
+        <metadata name="com.atlassw.tools.eclipse.checkstyle.comment" value="Constants Checks"/>
+        <property name="offCommentFormat" value="CHECKSTYLE\:CONSTANTS-OFF"/>
+        <property name="onCommentFormat" value="CHECKSTYLE\:CONSTANTS-ON"/>
+        <property name="checkFormat" value="(MagicNumber|MultipleStringLiterals)"/>
     </module>
     <module name="SuppressionCommentFilter">
         <metadata name="com.atlassw.tools.eclipse.checkstyle.comment" value="All Checks"/>
