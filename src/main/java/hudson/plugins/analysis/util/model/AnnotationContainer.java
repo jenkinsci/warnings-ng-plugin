@@ -472,15 +472,16 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      */
     public String getToolTip() {
         StringBuilder message = new StringBuilder();
+        String separator = " - ";
         for (Priority priority : Priority.values()) {
             if (hasAnnotations(priority)) {
                 message.append(priority.getLocalizedString());
                 message.append(":");
                 message.append(getNumberOfAnnotations(priority));
-                message.append(" - ");
+                message.append(separator);
             }
         }
-        return StringUtils.removeEnd(message.toString(), " - ");
+        return StringUtils.removeEnd(message.toString(), separator);
     }
 
 
@@ -548,7 +549,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         if (modulesByHashCode.containsKey(hashCode)) {
             return modulesByHashCode.get(hashCode);
         }
-        throw new NoSuchElementException("Module not found: " + hashCode);
+        throw new NoSuchElementException("Module by hashcode not found: " + hashCode);
     }
 
     /**
@@ -599,7 +600,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         if (packagesByHashCode.containsKey(hashCode)) {
             return packagesByHashCode.get(hashCode);
         }
-        throw new NoSuchElementException("Package not found: " + hashCode);
+        throw new NoSuchElementException("Package by hashcode not found: " + hashCode);
     }
 
     /**
@@ -650,7 +651,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         if (filesByHashCode.containsKey(hashCode)) {
             return filesByHashCode.get(hashCode);
         }
-        throw new NoSuchElementException("File not found: " + hashCode);
+        throw new NoSuchElementException("File by hashcode not found: " + hashCode);
     }
 
     /**
@@ -704,7 +705,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
             FileAnnotation fileAnnotation = container.iterator().next();
             return new DefaultAnnotationContainer(fileAnnotation.getCategory(), container);
         }
-        throw new NoSuchElementException("Category not found: " + hashCode);
+        throw new NoSuchElementException("Category by hashCode not found: " + hashCode);
     }
 
     /**
@@ -758,7 +759,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
             FileAnnotation fileAnnotation = container.iterator().next();
             return new DefaultAnnotationContainer(fileAnnotation.getType(), container);
         }
-        throw new NoSuchElementException("Type not found: " + hashCode);
+        throw new NoSuchElementException("Type by hashcode not found: " + hashCode);
     }
 
     /**

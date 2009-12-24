@@ -11,6 +11,7 @@ import org.jfree.data.category.CategoryDataset;
  *
  * @author Ulli Hafner
  */
+@edu.umd.cs.findbugs.annotations.SuppressWarnings("Eq")
 public class BoxRenderer extends StackedBarRenderer implements CategoryToolTipGenerator, CategoryURLGenerator {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = 1827457945114238470L;

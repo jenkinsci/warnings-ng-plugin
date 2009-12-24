@@ -19,6 +19,8 @@ import hudson.model.Item;
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public abstract class AbstractAnnotation implements FileAnnotation, Serializable {
+    /** UNIX path separator. */
+    private static final String SLASH = "/";
     /** Temporary directory holding the workspace files. */
     public static final String WORKSPACE_FILES = "workspace-files";
     /** Unique identifier of this class. */
@@ -135,7 +137,9 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     /** {@inheritDoc} */
     public String getTempName(final AbstractBuild<?, ?> owner) {
         if (fileName != null) {
-            return owner.getRootDir().getAbsolutePath() + "/" + WORKSPACE_FILES + "/" + Integer.toHexString(fileName.hashCode()) + ".tmp";
+            return owner.getRootDir().getAbsolutePath()
+                    + SLASH + WORKSPACE_FILES
+                    + SLASH + Integer.toHexString(fileName.hashCode()) + ".tmp";
         }
         return StringUtils.EMPTY;
     }
@@ -336,8 +340,8 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @return the short file name
      */
     public String getShortFileName() {
-        if (getFileName().contains("/")) {
-            return StringUtils.substringAfterLast(getFileName(), "/");
+        if (getFileName().contains(SLASH)) {
+            return StringUtils.substringAfterLast(getFileName(), SLASH);
         }
         else {
             return getFileName();

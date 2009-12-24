@@ -96,8 +96,11 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @param pattern
      *            the file pattern
      * @return the validation result
+     * @throws IOException
+     *             if the encoding is not valid
      */
-    public final FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String pattern) throws IOException {
+    public final FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final String pattern) throws IOException {
         return FilePath.validateFileMask(project.getSomeWorkspace(), pattern);
     }
 
@@ -129,8 +132,8 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings({"rawtypes"})
     public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
         return !AbstractMavenProject.class.isAssignableFrom(jobType);
     }

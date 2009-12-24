@@ -336,7 +336,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      * @return <code>true</code> if the current build uses maven,
      *         <code>false</code> otherwise
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     protected boolean isMavenBuild(final AbstractBuild<?, ?> build) {
         if (build.getProject() instanceof Project) {
             Project<?, ?> project = (Project<?, ?>)build.getProject();
@@ -357,7 +357,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      * @return <code>true</code> if the current build uses ant,
      *         <code>false</code> otherwise
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     protected boolean isAntBuild(final AbstractBuild<?, ?> build) {
         if (build.getProject() instanceof Project) {
             Project<?, ?> project = (Project<?, ?>)build.getProject();
@@ -389,27 +389,27 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         return BuildStepMonitor.STEP;
     }
 
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient boolean thresholdEnabled;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient int minimumAnnotations;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient int healthyAnnotations;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient int unHealthyAnnotations;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient boolean healthyReportEnabled;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient String height;

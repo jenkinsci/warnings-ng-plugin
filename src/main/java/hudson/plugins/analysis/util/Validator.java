@@ -12,8 +12,11 @@ public interface Validator {
      * Validates the specified value. If the value is not valid then a
      * {@link FormValidation} exception must be thrown.
      *
-     * @param value the value to validate
+     * @param value
+     *            the value to validate
      * @return a positive {@link FormValidation} object
+     * @throws FormValidation
+     *             if the encoding is not valid
      */
     FormValidation check(final String value) throws FormValidation;
 }

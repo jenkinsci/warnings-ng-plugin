@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Ulli Hafner
  */
+// CHECKSTYLE:CONSTANTS-OFF
 public class CsharpNamespaceDetector extends AbstractPackageDetector {
     /** {@inheritDoc} */
     public boolean accepts(final String fileName) {

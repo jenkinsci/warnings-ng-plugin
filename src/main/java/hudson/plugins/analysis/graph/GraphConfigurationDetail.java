@@ -28,7 +28,10 @@ import hudson.util.FormValidation;
 /**
  * Configures the trend graph of this plug-in.
  */
+// CHECKSTYLE:COUPLING-OFF
 public abstract class GraphConfigurationDetail extends GraphConfiguration implements ModelObject {
+    /** The root URL to return back when leaving this page. */
+    private static final String ROOT_URL = "../../";
     /** The owning project to configure the graphs for. */
     private final AbstractProject<?, ?> project;
     /** Logger. */
@@ -165,7 +168,7 @@ public abstract class GraphConfigurationDetail extends GraphConfiguration implem
             LOGGER.log(Level.SEVERE, "Can't save the form data: " + request, exception);
         }
         catch (JSONException exception) {
-            LOGGER.log(Level.SEVERE, "Can't parse the form data: " + request, exception);
+            LOGGER.log(Level.SEVERE, "Can't parse the JSON form data: " + request, exception);
         }
         catch (IllegalArgumentException exception) {
             LOGGER.log(Level.SEVERE, "Can't parse the form data: " + request, exception);
@@ -175,7 +178,7 @@ public abstract class GraphConfigurationDetail extends GraphConfiguration implem
         }
         finally {
             try {
-                response.sendRedirect("../../");
+                response.sendRedirect(ROOT_URL);
             }
             catch (IOException exception) {
                 LOGGER.log(Level.SEVERE, "Can't redirect", exception);
@@ -429,7 +432,7 @@ public abstract class GraphConfigurationDetail extends GraphConfiguration implem
      */
     private void drawGraph(final StaplerRequest request, final StaplerResponse response,
             final Mode mode, final BuildResultGraph buildResultGraph) {
-        buildResultGraph.setRootUrl("../../");
+        buildResultGraph.setRootUrl(ROOT_URL);
         if (hasMeaningfulGraph()) {
             JFreeChart graph = buildResultGraph.create(this, lastAction, pluginName);
             generateGraph(request, response, graph, mode);

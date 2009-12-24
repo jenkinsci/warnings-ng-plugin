@@ -81,47 +81,47 @@ public class HealthReportBuilder implements Serializable {
         return null;
     }
 
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient int healthy;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient int unHealthy;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient boolean isHealthEnabled;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient boolean isThresholdEnabled;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient int threshold;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient String reportName;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient String itemName;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated
     private transient String reportSingleCount;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     @SuppressWarnings("unused")
     @Deprecated

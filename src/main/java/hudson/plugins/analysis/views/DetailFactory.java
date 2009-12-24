@@ -140,13 +140,33 @@ public class DetailFactory {
         }
         else if (link.startsWith("category.")) {
             DefaultAnnotationContainer category = container.getCategory(createHashCode(link, "category."));
-            return new AttributeDetail(owner, category.getAnnotations(), defaultEncoding, displayName, Messages.CategoryDetail_header() + " " + category.getName());
+            return createAttributeDetail(owner, category, displayName, Messages.CategoryDetail_header(), defaultEncoding);
         }
         else if (link.startsWith("type.")) {
             DefaultAnnotationContainer type = container.getType(createHashCode(link, "type."));
-            return new AttributeDetail(owner, type.getAnnotations(), defaultEncoding, displayName, Messages.TypeDetail_header() + " " + type.getName());
+            return createAttributeDetail(owner, type, displayName, Messages.TypeDetail_header(), defaultEncoding);
         }
         return null;
+    }
+
+    /**
+     * Creates a generic detail tab with the specified link.
+     *
+     * @param owner
+     *            the build as owner of the detail page
+     * @param annotations
+     *            the annotations to display
+     * @param displayName
+     *            the name of the view
+     * @param header
+     *            the bread crumb name
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @return the detail view
+     */
+    protected AttributeDetail createAttributeDetail(final AbstractBuild<?, ?> owner, final DefaultAnnotationContainer annotations,
+            final String displayName, final String header, final String defaultEncoding) {
+        return new AttributeDetail(owner, annotations.getAnnotations(), defaultEncoding, displayName, header + " " + annotations.getName());
     }
 
     /**

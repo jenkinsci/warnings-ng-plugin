@@ -42,14 +42,16 @@ public class FileFinder implements FileCallable<String[]> {
     }
 
     /**
-     * Returns an array with the filenames of the specified file pattern that have been
-     * found in the workspace.
+     * Returns an array with the filenames of the specified file pattern that
+     * have been found in the workspace.
      *
      * @param workspace
      *            root directory of the workspace
      * @param channel
      *            not used
      * @return the filenames of all found files
+     * @throws IOException
+     *             if the workspace could not be read
      */
     public String[] invoke(final File workspace, final VirtualChannel channel) throws IOException {
         return find(workspace);

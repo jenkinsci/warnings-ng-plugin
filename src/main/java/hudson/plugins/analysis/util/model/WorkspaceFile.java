@@ -8,6 +8,8 @@ import org.apache.commons.lang.StringUtils;
  * @author Ulli Hafner
  */
 public class WorkspaceFile extends AnnotationContainer {
+    /** UNIX path separator. */
+    private static final String UNIX_SLASH = "/";
     /** Unique identifier of this class. */
     private static final long serialVersionUID = 601361940925156719L;
     /** The absolute filename of this file. */
@@ -29,8 +31,8 @@ public class WorkspaceFile extends AnnotationContainer {
      * @return a readable name of this workspace file.
      */
     public String getShortName() {
-        if (getName().contains("/")) {
-            return StringUtils.substringAfterLast(getName(), "/");
+        if (getName().contains(UNIX_SLASH)) {
+            return StringUtils.substringAfterLast(getName(), UNIX_SLASH);
         }
         else {
             return getName();

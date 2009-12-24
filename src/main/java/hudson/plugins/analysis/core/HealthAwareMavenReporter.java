@@ -172,7 +172,9 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      *            the build proxy
      * @return the current result of the build
      * @throws IOException
+     *             if the results could not be read
      * @throws InterruptedException
+     *             if the user canceled the operation
      */
     private Result getCurrentResult(final MavenBuildProxy build) throws IOException, InterruptedException {
         return build.execute(new BuildResultCallable());
@@ -417,27 +419,27 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         }
     }
 
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient boolean thresholdEnabled;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient int minimumAnnotations;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient int healthyAnnotations;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient int unHealthyAnnotations;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient boolean healthyReportEnabled;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient String height;

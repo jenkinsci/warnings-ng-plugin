@@ -27,15 +27,17 @@ import hudson.util.FormValidation;
  */
 public class EncodingValidator implements Validator {
     /** All available character sets. */
-    private static Set<String> ALL_CHARSETS;
+    private static Set<String> allCharacterSets;
 
     static {
         try {
-            ALL_CHARSETS = Collections.unmodifiableSet(new HashSet<String>(Charset.availableCharsets().keySet()));
+            allCharacterSets = Collections.unmodifiableSet(new HashSet<String>(Charset.availableCharsets().keySet()));
         }
+        // CHECKSTYLE:OFF
         catch (Exception exception) {
-            ALL_CHARSETS = Collections.emptySet();
+            allCharacterSets = Collections.emptySet();
         }
+        // CHECKSTYLE:ON
     }
 
     /**
@@ -44,7 +46,7 @@ public class EncodingValidator implements Validator {
      * @return all available character set names
      */
     public static Set<String> getAvailableCharsets() {
-        return ALL_CHARSETS;
+        return allCharacterSets;
     }
 
     /**
@@ -99,6 +101,12 @@ public class EncodingValidator implements Validator {
     /**
      * Validates a file encoding. The encoding must be an encoding ID supported
      * by the underlying Java platform.
+     *
+     * @param encoding
+     *            the name of the encoding that will be checked
+     * @return a positive {@link FormValidation} object
+     * @throws FormValidation
+     *             if the encoding is not valid
      */
     public FormValidation check(final String encoding) throws FormValidation {
         try {

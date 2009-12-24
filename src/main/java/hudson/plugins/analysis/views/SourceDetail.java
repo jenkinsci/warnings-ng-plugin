@@ -106,6 +106,7 @@ public class SourceDetail implements ModelObject {
      *            the source file to highlight
      * @return the source as an HTML string
      * @throws IOException
+     *             if the source code could not be read
      */
     public final String highlightSource(final InputStream file) throws IOException {
         JavaSource source = new JavaSourceParser().parse(
@@ -128,6 +129,7 @@ public class SourceDetail implements ModelObject {
      * @param sourceFile
      *            the source code of the whole file as rendered HTML string
      */
+    // CHECKSTYLE:CONSTANTS-OFF
     public final void splitSourceFile(final String sourceFile) {
         StringBuilder output = new StringBuilder(sourceFile.length());
 
@@ -186,6 +188,7 @@ public class SourceDetail implements ModelObject {
         }
         sourceCode = output.toString();
     }
+    // CHECKSTYLE:CONSTANTS-ON
 
     /**
      * Writes the message to the output stream (with escaped HTML).

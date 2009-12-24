@@ -39,7 +39,7 @@ public enum Priority {
      */
     public static final class PriorityConverter extends AbstractSingleValueConverter {
         /** {@inheritDoc} */
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("rawtypes")
         @Override
         public boolean canConvert(final Class type) {
             return type.equals(Priority.class);

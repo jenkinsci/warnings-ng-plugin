@@ -165,7 +165,16 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
         if (isHealthyReportEnabled()) {
             return convert(healthy);
         }
-        throw new IllegalArgumentException("Healthy values are not valid: " + healthy + ", " + unHealthy);
+        throw createException();
+    }
+
+    /**
+     * Creates a new {@link IllegalArgumentException}.
+     *
+     * @return a new {@link IllegalArgumentException}
+     */
+    private IllegalArgumentException createException() {
+        return new IllegalArgumentException("Healthy values are not valid: " + healthy + ", " + unHealthy);
     }
 
     /**
@@ -179,26 +188,26 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
         if (isHealthyReportEnabled()) {
             return convert(unHealthy);
         }
-        throw new IllegalArgumentException("Healthy values are not valid: " + healthy + ", " + unHealthy);
+        throw createException();
     }
 
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient boolean isFailureThresholdEnabled;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient int minimumAnnotations;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient int healthyAnnotations;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient int unHealthyAnnotations;
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
     private transient boolean isHealthyReportEnabled;

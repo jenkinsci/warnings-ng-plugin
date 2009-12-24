@@ -276,7 +276,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      */
     protected abstract String getSingleItemTooltip();
 
-    /** Backward compatibility. */
+    /** Backward compatibility. @deprecated */
     @Deprecated
     @java.lang.SuppressWarnings("unused")
     @SuppressWarnings("UuF")

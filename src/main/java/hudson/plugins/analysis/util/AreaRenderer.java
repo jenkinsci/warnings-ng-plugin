@@ -11,6 +11,7 @@ import hudson.util.StackedAreaRenderer2;
  *
  * @author Ulli Hafner
  */
+@edu.umd.cs.findbugs.annotations.SuppressWarnings("Eq")
 public class AreaRenderer extends StackedAreaRenderer2 {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -6802385549191651555L;
