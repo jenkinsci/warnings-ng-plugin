@@ -96,9 +96,6 @@
     <module name="JUnitTestCase"/>
     <module name="MissingSwitchDefault"/>
     <module name="ModifiedControlVariable"/>
-    <module name="MultipleStringLiterals">
-      <property name="ignoreStringsRegexp" value="^&quot;[a-zA-Z().]*&quot;$"/>
-    </module>
     <module name="MultipleVariableDeclarations"/>
     <module name="NestedTryDepth"/>
     <module name="NestedIfDepth">
