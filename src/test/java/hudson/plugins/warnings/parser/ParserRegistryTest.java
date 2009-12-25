@@ -22,7 +22,7 @@ import org.junit.Test;
  */
 public class ParserRegistryTest {
     /** Total number of expected warnings. */
-    private static final int TOTAL_WARNINGS = 198;
+    private static final int TOTAL_WARNINGS = 222;
     /** Error message. */
     private static final String WRONG_NUMBER_OF_ANNOTATIONS_PARSED = "Wrong number of annotations parsed";
 
@@ -98,7 +98,7 @@ public class ParserRegistryTest {
      *
      * @throws IOException
      *             if the file could not be read
-     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=2359">Issue 2359</a>
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-2359">Issue 2359</a>
      */
     @Test
     public void issue2359() throws IOException {
@@ -114,7 +114,7 @@ public class ParserRegistryTest {
      *
      * @throws IOException
      *             if the file could not be read
-     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=2359">Issue 2359</a>
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-2359">Issue 2359</a>
      */
     @Test
     public void multiplePatternsIssue2359() throws IOException {
@@ -131,7 +131,7 @@ public class ParserRegistryTest {
      *
      * @throws IOException
      *             if the file could not be read
-     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=3866">Issue 3866</a>
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-3866">Issue 3866</a>
      */
     @Test
     public void issue3866() throws IOException {
@@ -147,7 +147,7 @@ public class ParserRegistryTest {
      *
      * @throws IOException
      *             if the file could not be read
-     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=3866">Issue 3866</a>
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-3866">Issue 3866</a>
      */
     @Test
     public void multiplePatternsIssue3866() throws IOException {
@@ -163,7 +163,7 @@ public class ParserRegistryTest {
      *
      * @throws IOException
      *             if the file could not be read
-     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=3866">Issue 3866</a>
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-3866">Issue 3866</a>
      */
     @Test
     public void complexFilterIssue3866() throws IOException {

@@ -31,7 +31,7 @@ public class MsBuildParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=3582">Issue 3582</a>
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-3582">Issue 3582</a>
      */
     @Test
     public void issue3582() throws IOException {
@@ -47,7 +47,7 @@ public class MsBuildParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=4932">Issue 4932</a>
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-4932">Issue 4932</a>
      */
     @Test
     public void issue4932() throws IOException {
@@ -67,6 +67,39 @@ public class MsBuildParserTest extends ParserTester {
                 "1 unresolved externals",
                 "Release/Navineo.exe",
                 MsBuildParser.WARNING_TYPE, "LNK1120", Priority.HIGH);
+    }
+
+    /**
+     * Parses a file with warnings of MS sharepoint.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-4731">Issue 4731</a>
+     */
+    @Test
+    public void issue4731() throws IOException {
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue4731.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 12, warnings.size());
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        FileAnnotation annotation = iterator.next();
+        checkWarning(annotation,
+                0,
+                "The Project Item \"StructureLibrary\" is included in the following Features: TypesAndLists, StructureBrowser [c:\\playpens\\Catalyst\\Platform\\src\\Ptc.Platform.Web\\Ptc.Platform.Web.csproj]",
+                "c:/playpens/Catalyst/Platform/src/Ptc.Platform.Web/Package/Package.package",
+                MsBuildParser.WARNING_TYPE, "SPT6", Priority.NORMAL);
+        annotation = iterator.next();
+        annotation = iterator.next();
+        annotation = iterator.next();
+        annotation = iterator.next();
+        annotation = iterator.next();
+        annotation = iterator.next();
+        annotation = iterator.next();
+        checkWarning(annotation,
+                29,
+                "'Ptc.Ppm.PpmInstaller.PpmInstaller.InitializeComponent()' hides inherited member 'Ptc.Platform.Forms.Wizard.WizardControl.InitializeComponent()'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword. [c:\\playpens\\Catalyst\\PPM\\tools\\Ptc.Ppm.Configurator\\src\\Ptc.Ppm.PpmInstaller\\Ptc.Ppm.PpmInstaller.csproj]",
+                "PpmInstaller.Designer.cs",
+                MsBuildParser.WARNING_TYPE, "CS0114", Priority.NORMAL);
     }
 
     /**
@@ -126,7 +159,7 @@ public class MsBuildParserTest extends ParserTester {
      *
      * @throws IOException
      *
-     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=2383">Issue 2383</a>
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-2383">Issue 2383</a>
      */
     @Test
     public void shouldDetectKeywordsInRegexCaseInsensitive() throws IOException {

@@ -53,7 +53,7 @@ public class AntJavacParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=2133">Issue 2133</a>
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-2133">Issue 2133</a>
      */
     @Test
     public void issue2133() throws IOException {
@@ -79,7 +79,7 @@ public class AntJavacParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=4098">Issue 4098</a>
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-4098">Issue 4098</a>
      */
     @Test
     public void issue4098() throws IOException {
@@ -100,7 +100,7 @@ public class AntJavacParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=2316">Issue 2316</a>
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-2316">Issue 2316</a>
      */
     @Test
     public void issue2316() throws IOException {

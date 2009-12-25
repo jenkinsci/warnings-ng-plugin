@@ -51,7 +51,7 @@ public class JavaDocParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="https://hudson.dev.java.net/issues/show_bug.cgi?id=4576">Issue 4576</a>
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-4576">Issue 4576</a>
      */
     @Test
     public void issue4576() throws IOException {
