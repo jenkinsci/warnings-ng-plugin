@@ -35,7 +35,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
     private static final long serialVersionUID = -5936973521277401764L;
 
     /** Descriptor of this publisher. */
-    @Extension
+    @Extension(ordinal = 100)
     public static final WarningsDescriptor WARNINGS_DESCRIPTOR = new WarningsDescriptor();
 
     /** Ant file-set pattern of files to work with. */
