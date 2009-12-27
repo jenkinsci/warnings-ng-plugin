@@ -1,7 +1,5 @@
 package hudson.plugins.warnings;
 
-
-
 import hudson.plugins.analysis.core.AbstractHealthDescriptor;
 import hudson.plugins.analysis.core.HealthDescriptor;
 import hudson.plugins.analysis.util.model.AnnotationProvider;
@@ -9,7 +7,7 @@ import hudson.plugins.analysis.util.model.AnnotationProvider;
 import org.jvnet.localizer.Localizable;
 
 /**
- * A health descriptor for CheckStyle build results.
+ * A health descriptor for warnings build results.
  *
  * @author Ulli Hafner
  */

@@ -8,7 +8,6 @@ import hudson.plugins.warnings.parser.Warning;
 
 import com.thoughtworks.xstream.XStream;
 
-
 /**
  * Represents the results of the warning analysis. One instance of this class is persisted for
  * each build via an XML file.

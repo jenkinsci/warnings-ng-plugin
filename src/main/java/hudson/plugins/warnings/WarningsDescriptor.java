@@ -24,7 +24,7 @@ public final class WarningsDescriptor extends PluginDescriptor {
     private static final String ACTION_ICON = "/plugin/warnings/icons/warnings-24x24.png";
 
     /**
-     * Instantiates a new find bugs descriptor.
+     * Instantiates a new {@link WarningsDescriptor}.
      */
     WarningsDescriptor() {
         super(WarningsPublisher.class);
