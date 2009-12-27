@@ -54,7 +54,6 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      */
     private long contextHashCode;
 
-
     /**
      * Creates a new instance of <code>AbstractAnnotation</code>.
      *
@@ -103,6 +102,29 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
             final String category, final String type) {
         this(message, start, end, category, type);
         this.priority = priority;
+    }
+
+    /**
+     * Copy constructor: Creates a new instance of {@link AbstractAnnotation}.
+     *
+     * @param copy
+     *            the annotation to copy the values from
+     */
+    public AbstractAnnotation(final AbstractAnnotation copy) {
+        key = currentKey++;
+
+        message = copy.getMessage();
+        priority = copy.getPriority();
+        primaryLineNumber = copy.getPrimaryLineNumber();
+        lineRanges = new ArrayList<LineRange>(copy.getLineRanges());
+
+        contextHashCode = copy.getContextHashCode();
+
+        fileName = copy.getFileName();
+        category = copy.getCategory();
+        type = copy.getType();
+        moduleName = copy.getModuleName();
+        packageName = copy.getPackageName();
     }
 
     /**
