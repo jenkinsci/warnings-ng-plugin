@@ -20,7 +20,7 @@
 
         .yui-skin-sam .yui-navset .yui-nav a,
         .yui-skin-sam .yui-navset .yui-navset-top .yui-nav a {
-            background:#ffffff url(../../../../assets/skins/sam/sprite.png) repeat-x; /* tab background */
+            background:#ffffff; /* tab background */
             border:solid #b0b0b0;
             border-width:0 1px;
             color:#000;
@@ -41,14 +41,14 @@
         .yui-skin-sam .yui-navset .yui-nav .selected a,
         .yui-skin-sam .yui-navset .yui-nav .selected a:focus, /* no focus effect for selected */
         .yui-skin-sam .yui-navset .yui-nav .selected a:hover { /* no hover effect for selected */
-            background:#f0f0f0 url(../../../../assets/skins/sam/sprite.png) repeat-x left -1400px; /* selected tab background */
+            background:#f0f0f0; /* selected tab background */
             color:#000;
             font-weight:bold;
         }
 
         .yui-skin-sam .yui-navset .yui-nav a:hover,
         .yui-skin-sam .yui-navset .yui-nav a:focus {
-            background:#b0b0b0 url(../../../../assets/skins/sam/sprite.png) repeat-x left -1300px; /* selected tab background */
+            background:#b0b0b0; /* selected tab background */
             outline:0;
 		border-bottom: 1px solid #b0b0b0;
         }
@@ -98,7 +98,6 @@
             background: #729FCF;
             background-image:url(${rootURL}/plugin/analysis-core/icons/clearpixel.gif);
         }
-
 
       </style>
 </j:jelly>
