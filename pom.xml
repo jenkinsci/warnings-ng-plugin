@@ -25,6 +25,7 @@
     </license>
   </licenses>
 
+  <url>http://wiki.hudson-ci.org/display/HUDSON/Static+Code+Analysis+Plug-ins</url>
   <developers>
     <developer>
       <name>Ulli Hafner</name>
