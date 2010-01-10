@@ -4,13 +4,13 @@
   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
   <table class="pane sortable" id="warnings">
     <tr>
+      <td class="pane-header">${%File}</td>
       <j:if test="${it.container.modules.size() > 1}">
         <td class="pane-header">${%Module}</td>
       </j:if>
       <j:if test="${it.container.packages.size() > 1}">
         <td class="pane-header">${%Package}</td>
       </j:if>
-      <td class="pane-header">${%File}</td>
       <td class="pane-header">${%Line}</td>
       <td class="pane-header">${%Priority}</td>
       <td class="pane-header">${%Type}</td>
@@ -19,16 +19,6 @@
     <tbody>
       <j:forEach var="warning" items="${it.container.annotations}">
         <tr>
-          <j:if test="${it.container.modules.size() > 1}">
-            <td class="pane">
-              <div tooltip="${warning.message}"> ${warning.moduleName} </div>
-            </td>
-          </j:if>
-          <j:if test="${it.container.packages.size() > 1}">
-            <td class="pane">
-              <div tooltip="${warning.message}"> ${warning.packageName} </div>
-            </td>
-          </j:if>
           <td class="pane">
             <div tooltip="${warning.message}">
               <j:choose>
@@ -39,6 +29,16 @@
               </j:choose>
             </div>
           </td>
+          <j:if test="${it.container.modules.size() > 1}">
+            <td class="pane">
+              <div tooltip="${warning.message}"> ${warning.moduleName} </div>
+            </td>
+          </j:if>
+          <j:if test="${it.container.packages.size() > 1}">
+            <td class="pane">
+              <div tooltip="${warning.message}"> ${warning.packageName} </div>
+            </td>
+          </j:if>
           <td class="pane">
             <div tooltip="${warning.message}">
               <j:choose>
