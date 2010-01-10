@@ -53,6 +53,8 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * two annotations are equal even if the equals method returns <code>false</code>.
      */
     private long contextHashCode;
+    /** The origin of this warning. */
+    private String origin;
 
     /**
      * Creates a new instance of <code>AbstractAnnotation</code>.
@@ -125,6 +127,20 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         type = copy.getType();
         moduleName = copy.getModuleName();
         packageName = copy.getPackageName();
+    }
+
+    /** {@inheritDoc} */
+    public String getOrigin() {
+        return StringUtils.defaultString(origin);
+    }
+
+    /**
+     * Sets the origin of this annotation to the specified value.
+     *
+     * @param origin the value to set
+     */
+    public void setOrigin(final String origin) {
+        this.origin = origin;
     }
 
     /**

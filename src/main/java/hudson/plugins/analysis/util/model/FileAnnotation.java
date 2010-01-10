@@ -120,6 +120,13 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
     String getPackageName();
 
     /**
+     * Returns the origin of the annotation. Might be an empty string.
+     *
+     * @return the origin of the annotation
+     */
+    String getOrigin();
+
+    /**
      * Returns the category of the annotation. Might be an empty string if there is no category.
      *
      * @return the annotation category
