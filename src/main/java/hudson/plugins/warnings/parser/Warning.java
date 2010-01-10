@@ -2,6 +2,7 @@ package hudson.plugins.warnings.parser;
 
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
+import hudson.plugins.warnings.Messages;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -55,6 +56,7 @@ public class Warning extends AbstractAnnotation {
     public Warning(final String fileName, final int start, final String type, final String category, final String message, final Priority priority) {
         super(priority, message, start, start, category, type);
         setFileName(fileName);
+        setOrigin(Messages.Warnings_Warning_Origin());
     }
 
     /** {@inheritDoc} */
