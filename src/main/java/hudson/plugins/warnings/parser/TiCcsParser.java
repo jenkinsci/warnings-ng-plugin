@@ -21,7 +21,7 @@ public class TiCcsParser extends RegexpLineParser {
      * Creates a new instance of <code>TiCcsParser</code>.
      */
     public TiCcsParser() {
-		super(TI_CCS_WARNING_PATTERN, "Texas Instruments Code Composer Studio (C/C++)");
+        super(TI_CCS_WARNING_PATTERN, "Texas Instruments Code Composer Studio (C/C++)");
     }
 
     /** {@inheritDoc} */
@@ -41,8 +41,8 @@ public class TiCcsParser extends RegexpLineParser {
         if (StringUtils.isBlank(fileName)) {
             fileName = "unknown.file";
         }
-		String lineNumber = matcher.group(5);
-		if (StringUtils.isBlank(lineNumber)) {
+        String lineNumber = matcher.group(5);
+        if (StringUtils.isBlank(lineNumber)) {
             lineNumber = matcher.group(10);
         }
         return new Warning(fileName, getLineNumber(lineNumber), WARNING_TYPE, matcher.group(11), matcher.group(12), priority);

@@ -154,12 +154,13 @@ public class MsBuildParserTest extends ParserTester {
     }
 
     /**
-     * MSBuildParser should also detect keywords 'Warning' and 'Error', as they are
-     * produced by the .NET-2.0 compiler of VS2005.
+     * MSBuildParser should also detect keywords 'Warning' and 'Error', as they
+     * are produced by the .NET-2.0 compiler of VS2005.
      *
      * @throws IOException
-     *
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-2383">Issue 2383</a>
+     *             if the file could not be read
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-2383">Issue
+     *      2383</a>
      */
     @Test
     public void shouldDetectKeywordsInRegexCaseInsensitive() throws IOException {

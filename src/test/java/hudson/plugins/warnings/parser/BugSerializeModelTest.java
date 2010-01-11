@@ -74,10 +74,10 @@ public class BugSerializeModelTest extends AbstractSerializeModelTest {
     /**
      * Test whether a serialized project is the same object after deserialization of the file format of release 2.2.
      *
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception indicates a failure
      */
     @Test
-    public void ensureSameSerialization() throws IOException, ClassNotFoundException {
+    public void ensureSameSerialization() throws Exception {
         InputStream inputStream = BugSerializeModelTest.class.getResourceAsStream("project.ser");
         ObjectInputStream objectStream = new ObjectInputStream(inputStream);
         Object deserialized = objectStream.readObject();

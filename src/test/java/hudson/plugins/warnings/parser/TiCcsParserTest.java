@@ -74,25 +74,25 @@ public class TiCcsParserTest extends ParserTester {
                 "expected a \";\"",
                 "i2cDisplay12x2.c",
                 TiCcsParser.WARNING_TYPE, "", Priority.HIGH);
-		annotation = iterator.next();
+        annotation = iterator.next();
         checkWarning(annotation,
                 0,
                 "unresolved symbols remain",
                 "unknown.file",
                 TiCcsParser.WARNING_TYPE, "", Priority.HIGH);
-		annotation = iterator.next();
+        annotation = iterator.next();
         checkWarning(annotation,
                 0,
                 "errors encountered during linking; \"../../bin/Debug/lrxyz.out\" not",
                 "unknown.file",
                 TiCcsParser.WARNING_TYPE, "", Priority.HIGH);
-		annotation = iterator.next();
+        annotation = iterator.next();
         checkWarning(annotation,
                 3,
                 "could not open source file \"i2cDisplay12x12.h\"",
                 "i2cDisplay12x2.c",
                 TiCcsParser.WARNING_TYPE, "", Priority.HIGH);
-		annotation = iterator.next();
+        annotation = iterator.next();
         checkWarning(annotation,
                 5,
                 "[E0002] Illegal mnemonic specified",
