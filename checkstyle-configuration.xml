@@ -184,4 +184,8 @@
   <module name="SuppressionCommentFilter">
     <metadata name="com.atlassw.tools.eclipse.checkstyle.comment" value="All Checks"/>
   </module>
+  <module name="SuppressWithNearbyCommentFilter">
+      <property name="commentFormat" value="NOCHECKSTYLE"/>
+      <property name="checkFormat" value=".*"/>
+  </module>
 </module>
