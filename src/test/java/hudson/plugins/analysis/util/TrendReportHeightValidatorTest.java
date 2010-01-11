@@ -12,7 +12,7 @@ public class TrendReportHeightValidatorTest extends AbstractValidatorTest {
      * Test some valid encodings.
      */
     @Test
-    public void testValidEncodings() throws Exception {
+    public void testValidEncodings() {
         assertThatInputIsValid("50");
         assertThatInputIsValid("51");
         assertThatInputIsValid("52");
@@ -23,7 +23,7 @@ public class TrendReportHeightValidatorTest extends AbstractValidatorTest {
      * Test some invalid encodings.
      */
     @Test
-    public void testInvalidEncodings() throws Exception {
+    public void testInvalidEncodings() {
         assertThatInputIsInvalid("NIX");
         assertThatInputIsInvalid("-1");
         assertThatInputIsInvalid("49");

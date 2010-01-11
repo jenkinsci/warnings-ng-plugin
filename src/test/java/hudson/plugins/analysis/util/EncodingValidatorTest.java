@@ -26,7 +26,7 @@ public class EncodingValidatorTest extends AbstractValidatorTest {
      * Test some invalid encodings.
      */
     @Test
-    public void testInvalidEncodings() throws Exception {
+    public void testInvalidEncodings() {
         assertThatInputIsInvalid("NIX");
         assertThatInputIsInvalid("UTF-9");
         assertThatInputIsInvalid("ISO-8859-42");

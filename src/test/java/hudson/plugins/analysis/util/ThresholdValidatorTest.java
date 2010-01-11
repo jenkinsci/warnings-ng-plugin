@@ -21,7 +21,7 @@ public class ThresholdValidatorTest extends AbstractValidatorTest {
      * Tests some valid encodings.
      */
     @Test
-    public void testValidEncodings() throws Exception {
+    public void testValidEncodings() {
         assertThatInputIsValid("0");
         assertThatInputIsValid("1");
         assertThatInputIsValid("2");
@@ -32,7 +32,7 @@ public class ThresholdValidatorTest extends AbstractValidatorTest {
      * Tests some invalid encodings.
      */
     @Test
-    public void testInvalidEncodings() throws Exception {
+    public void testInvalidEncodings() {
         assertThatInputIsInvalid("NIX");
         assertThatInputIsInvalid("-1");
         assertThatInputIsInvalid("?");
