@@ -10,7 +10,7 @@
 
   <artifactId>warnings</artifactId>
   <packaging>hpi</packaging>
-  <name>Hudson Warnings Plug-in</name>
+  <name>Warnings Plug-in</name>
   <version>3.2-SNAPSHOT</version>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Warnings+Plugin</url>
   <description>This plug-in reads the compiler warnings from the
