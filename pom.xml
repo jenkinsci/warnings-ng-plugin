@@ -10,7 +10,7 @@
 
   <artifactId>analysis-core</artifactId>
   <packaging>hpi</packaging>
-  <name>Hudson Analysis Utilities Plug-in</name>
+  <name>Static Analysis Utilities</name>
   <version>1.2-SNAPSHOT</version>
   <description>This plug-in provides utilities for the static code analysis plug-ins.</description>
 
