@@ -5,11 +5,11 @@
 	<projects>
 	</projects>
 	<buildSpec>
-  		<buildCommand>
-  			<name>org.eclipse.jdt.core.javabuilder</name>
-  			<arguments>
-  			</arguments>
-  		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 		<buildCommand>
 			<name>edu.umd.cs.findbugs.plugin.eclipse.findbugsBuilder</name>
 			<arguments>
@@ -21,12 +21,12 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.maven.ide.eclipse.maven2Builder</name>
+			<name>net.sf.eclipsecs.core.CheckstyleBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>net.sf.eclipsecs.core.CheckstyleBuilder</name>
+			<name>org.maven.ide.eclipse.maven2Builder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
