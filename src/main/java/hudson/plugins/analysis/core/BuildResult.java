@@ -384,6 +384,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /** {@inheritDoc} */
+    @Exported(name = "warnings")
     public Collection<FileAnnotation> getAnnotations() {
         return getContainer().getAnnotations();
     }
@@ -636,6 +637,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the new warnings of this build.
      */
+    @Exported
     public Collection<FileAnnotation> getNewWarnings() {
         if (newWarnings == null) {
             return loadNewWarnings();

@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Item;
@@ -17,6 +19,7 @@ import hudson.model.Item;
  *
  * @author Ulli Hafner
  */
+@ExportedBean
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public abstract class AbstractAnnotation implements FileAnnotation, Serializable {
     /** UNIX path separator. */
@@ -153,11 +156,13 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     }
 
     /** {@inheritDoc} */
+    @Exported
     public String getMessage() {
         return message;
     }
 
     /** {@inheritDoc} */
+    @Exported
     public Priority getPriority() {
         return priority;
     }
@@ -168,6 +173,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     }
 
     /** {@inheritDoc} */
+    @Exported
     public final String getFileName() {
         return fileName;
     }
@@ -244,6 +250,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     }
 
     /** {@inheritDoc} */
+    @Exported
     public final int getPrimaryLineNumber() {
         return primaryLineNumber;
     }
