@@ -1,5 +1,6 @@
 package hudson.plugins.warnings;
 
+import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.plugins.analysis.core.PluginDescriptor;
 
@@ -17,6 +18,7 @@ import org.kohsuke.stapler.StaplerRequest;
  *
  * @author Ulli Hafner
  */
+@Extension(ordinal = 100)
 public final class WarningsDescriptor extends PluginDescriptor {
     /** Plug-in name. */
     private static final String PLUGIN_NAME = "warnings";
@@ -26,7 +28,7 @@ public final class WarningsDescriptor extends PluginDescriptor {
     /**
      * Instantiates a new {@link WarningsDescriptor}.
      */
-    WarningsDescriptor() {
+    public WarningsDescriptor() {
         super(WarningsPublisher.class);
     }
 

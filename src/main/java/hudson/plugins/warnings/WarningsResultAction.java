@@ -56,7 +56,7 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
     /** {@inheritDoc} */
     @Override
     protected PluginDescriptor getDescriptor() {
-        return WarningsPublisher.WARNINGS_DESCRIPTOR;
+        return new WarningsDescriptor();
     }
 
     /**

@@ -21,7 +21,7 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
      *            the project that owns this action
      */
     public WarningsProjectAction(final AbstractProject<?, ?> project) {
-        super(project, WarningsResultAction.class, WarningsPublisher.WARNINGS_DESCRIPTOR);
+        super(project, WarningsResultAction.class, new WarningsDescriptor());
     }
 
     /** {@inheritDoc} */
