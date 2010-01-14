@@ -45,7 +45,6 @@ public class WarningsPublisher extends HealthAwarePublisher {
     /** Determines whether the console should be ignored. */
     private final boolean ignoreConsole;
 
-
     /**
      * Creates a new instance of <code>WarningPublisher</code>.
      *
@@ -195,10 +194,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
         if (StringUtils.isNotBlank(getPattern())) {
             logger.log("Parsing warnings in files: " + getPattern());
             FilesParser parser = new FilesParser(logger, getPattern(), new FileWarningsParser(parserNames, getDefaultEncoding(), getIncludePattern(), getExcludePattern()), isMavenBuild(build), isAntBuild(build));
-            project = build.getProject().getWorkspace().act(parser);
+            project = build.getWorkspace().act(parser);
         }
         else {
-            project = new ParserResult(build.getProject().getWorkspace());
+            project = new ParserResult(build.getWorkspace());
         }
 
         if (!ignoreConsole || StringUtils.isBlank(getPattern())) {
@@ -206,7 +205,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
             project.addAnnotations(new ParserRegistry(ParserRegistry.getParsers(parserNames),
                     getDefaultEncoding(), getIncludePattern(), getExcludePattern()).parse(logFile));
         }
-        project = build.getProject().getWorkspace().act(new AnnotationsClassifier(project, getDefaultEncoding()));
+        project = build.getWorkspace().act(new AnnotationsClassifier(project, getDefaultEncoding()));
 
         WarningsResult result = new WarningsResultBuilder().build(build, project, getDefaultEncoding());
         build.getActions().add(new WarningsResultAction(build, this, result));
@@ -223,5 +222,11 @@ public class WarningsPublisher extends HealthAwarePublisher {
         else {
             return super.canContinue(result);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public WarningsDescriptor getDescriptor() {
+        return (WarningsDescriptor)super.getDescriptor();
     }
 }
