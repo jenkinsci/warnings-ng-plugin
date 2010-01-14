@@ -2,7 +2,6 @@ package hudson.plugins.warnings.parser;
 
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
-import hudson.plugins.warnings.Messages;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -18,6 +17,8 @@ import org.apache.commons.lang.StringUtils;
 public class Warning extends AbstractAnnotation {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = 5171661552905752370L;
+    /** Origin of the annotation. */
+    public static final String ORIGIN = "warnings";
 
     /**
      * Creates a new instance of <code>Warning</code>.
@@ -56,7 +57,7 @@ public class Warning extends AbstractAnnotation {
     public Warning(final String fileName, final int start, final String type, final String category, final String message, final Priority priority) {
         super(priority, message, start, start, category, type);
         setFileName(fileName);
-        setOrigin(Messages.Warnings_Warning_Origin());
+        setOrigin(ORIGIN);
     }
 
     /** {@inheritDoc} */
