@@ -10,6 +10,7 @@ import org.jfree.data.category.CategoryDataset;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.AbstractHealthDescriptor;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.AreaRenderer;
@@ -36,6 +37,18 @@ public class HealthGraph extends CategoryBuildResultGraph {
      */
     public HealthGraph(final AbstractHealthDescriptor healthDescriptor) {
         this.healthDescriptor = healthDescriptor;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getId() {
+        return "HEALTH";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getLabel() {
+        return Messages.Trend_type_health();
     }
 
     /** {@inheritDoc} */

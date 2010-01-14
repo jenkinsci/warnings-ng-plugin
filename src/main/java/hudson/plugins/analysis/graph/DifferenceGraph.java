@@ -14,6 +14,7 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.util.CategoryUrlBuilder;
@@ -26,6 +27,18 @@ import hudson.plugins.analysis.util.Pair;
  * @author Ulli Hafner
  */
 public class DifferenceGraph extends BuildResultGraph {
+    /** {@inheritDoc} */
+    @Override
+    public String getId() {
+        return "DIFFERENCE";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getLabel() {
+        return Messages.Trend_type_difference();
+    }
+
     /**
      * Creates a PNG image trend graph.
      *
@@ -38,7 +51,7 @@ public class DifferenceGraph extends BuildResultGraph {
      * @return the graph
      */
     @Override
-    public JFreeChart create(final GraphConfiguration configuration,
+    public JFreeChart create(final GraphConfigurationDetail configuration,
             final ResultAction<? extends BuildResult> resultAction, final String pluginName) {
         ArrayList<Pair<Integer, Integer>> fixedWarnings = new ArrayList<Pair<Integer, Integer>>();
         ArrayList<Pair<Integer, Integer>> newWarnings = new ArrayList<Pair<Integer, Integer>>();
@@ -107,7 +120,7 @@ public class DifferenceGraph extends BuildResultGraph {
      * @param newWarnings
      *            list of pairs with the points for the new warnings
      */
-    private void extractPoints(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> resultAction,
+    private void extractPoints(final GraphConfigurationDetail configuration, final ResultAction<? extends BuildResult> resultAction,
             final ArrayList<Pair<Integer, Integer>> fixedWarnings, final ArrayList<Pair<Integer, Integer>> newWarnings) {
         ResultAction<? extends BuildResult> action = resultAction;
         int buildCount = 0;
@@ -198,5 +211,7 @@ public class DifferenceGraph extends BuildResultGraph {
             return getRootUrl() + (int)dataset.getXValue(series, item) + getPluginName();
         }
     }
+
+    /** {@inheritDoc} */
 }
 

@@ -15,7 +15,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 
 import hudson.plugins.analysis.graph.DefaultGraphConfigurationDetail;
-import hudson.plugins.analysis.graph.GraphConfiguration;
+import hudson.plugins.analysis.graph.GraphConfigurationDetail;
 import hudson.plugins.analysis.graph.UserGraphConfigurationDetail;
 
 import hudson.util.ChartUtil;
@@ -263,7 +263,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
             response.sendRedirect2(request.getContextPath() + "/images/headless.png");
         }
         else {
-            GraphConfiguration configuration = createGraphConfiguration(request, action);
+            GraphConfigurationDetail configuration = createGraphConfiguration(request, action);
             if (configuration.isVisible()) {
                 JFreeChart graph = configuration.createGraph(action.getHealthDescriptor(), action, url);
                 ChartUtil.generateGraph(request, response, graph, configuration.getWidth(), configuration.getHeight());
@@ -284,7 +284,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *             in case of an error
      */
     private void doGraphMap(final ResultAction<?> action, final StaplerRequest request, final StaplerResponse response) throws IOException {
-        GraphConfiguration configuration = createGraphConfiguration(request, action);
+        GraphConfigurationDetail configuration = createGraphConfiguration(request, action);
         if (configuration.isVisible()) {
             JFreeChart graph = configuration.createGraph(action.getHealthDescriptor(), action, url);
             ChartUtil.generateClickableMap(request, response, graph, configuration.getWidth(), configuration.getHeight());
@@ -300,7 +300,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *            the last result action
      * @return the graph configuration
      */
-    public GraphConfiguration createGraphConfiguration(final StaplerRequest request, final ResultAction<?> action) {
+    public GraphConfigurationDetail createGraphConfiguration(final StaplerRequest request, final ResultAction<?> action) {
         return new UserGraphConfigurationDetail(project, url, request, action);
     }
 

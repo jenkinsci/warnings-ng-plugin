@@ -27,6 +27,18 @@ import hudson.util.ColorPalette;
 public class NewVersusFixedGraph extends CategoryBuildResultGraph {
     /** {@inheritDoc} */
     @Override
+    public String getId() {
+        return "FIXED";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getLabel() {
+        return Messages.Trend_type_fixed();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected List<Integer> computeSeries(final BuildResult current) {
         List<Integer> series = new ArrayList<Integer>();
         series.add(current.getNumberOfNewWarnings());

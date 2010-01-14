@@ -28,6 +28,18 @@ import hudson.util.ColorPalette;
 public class PriorityGraph extends CategoryBuildResultGraph {
     /** {@inheritDoc} */
     @Override
+    public String getId() {
+        return "PRIORITY";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getLabel() {
+        return Messages.Trend_type_priority();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected List<Integer> computeSeries(final BuildResult current) {
         List<Integer> series = new ArrayList<Integer>();
         series.add(current.getNumberOfAnnotations(Priority.LOW));

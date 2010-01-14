@@ -29,6 +29,38 @@ public abstract class BuildResultGraph {
     private String rootUrl = StringUtils.EMPTY;
 
     /**
+     * Returns the ID of this graph.
+     *
+     * @return the ID of this graph
+     */
+    public abstract String getId();
+
+    /**
+     * Returns a human readable label describing this graph.
+     *
+     * @return a label for this graph
+     */
+    public abstract String getLabel();
+
+    /**
+     * Returns the URL to an image that shows an example of the graph.
+     *
+     * @return a label for this graph
+     */
+    public String getExampleImage() {
+        return "/plugin/analysis-core/icons/" + getId() + ".png";
+    }
+
+    /**
+     * Returns whether this graph is visible.
+     *
+     * @return <code>true</code> if this graph is visible
+     */
+    public boolean isVisible() {
+        return true;
+    }
+
+    /**
      * Sets the root URL to the specified value.
      *
      * @param rootUrl the value to set
@@ -57,7 +89,7 @@ public abstract class BuildResultGraph {
      *            the name of the plug-in
      * @return the graph
      */
-    public abstract JFreeChart create(final GraphConfiguration configuration,
+    public abstract JFreeChart create(final GraphConfigurationDetail configuration,
             final ResultAction<? extends BuildResult> resultAction, final String pluginName);
 
     /**
