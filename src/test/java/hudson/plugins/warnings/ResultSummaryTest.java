@@ -1,7 +1,6 @@
 package hudson.plugins.warnings;
 
-import static org.easymock.EasyMock.*;
-import static org.easymock.classextension.EasyMock.*;
+import static org.mockito.Mockito.*;
 import hudson.plugins.analysis.test.AbstractEnglishLocaleTest;
 import junit.framework.Assert;
 
@@ -45,14 +44,10 @@ public class ResultSummaryTest extends AbstractEnglishLocaleTest {
      *            the expected message
      */
     private void checkSummaryText(final int numberOfWarnings, final String expectedMessage) {
-        WarningsResult result = createMock(WarningsResult.class);
-        expect(result.getNumberOfAnnotations()).andReturn(numberOfWarnings).anyTimes();
-
-        replay(result);
+        WarningsResult result = mock(WarningsResult.class);
+        when(result.getNumberOfAnnotations()).thenReturn(numberOfWarnings);
 
         Assert.assertEquals("Wrong summary message created.", expectedMessage, ResultSummary.createSummary(result));
-
-        verify(result);
     }
 
     /**
@@ -147,15 +142,11 @@ public class ResultSummaryTest extends AbstractEnglishLocaleTest {
      *            the expected message
      */
     private void checkDeltaText(final int numberOfFixedWarnings, final int numberOfNewWarnings, final String expectedMessage) {
-        WarningsResult result = createMock(WarningsResult.class);
-        expect(result.getNumberOfFixedWarnings()).andReturn(numberOfFixedWarnings).anyTimes();
-        expect(result.getNumberOfNewWarnings()).andReturn(numberOfNewWarnings).anyTimes();
-
-        replay(result);
+        WarningsResult result = mock(WarningsResult.class);
+        when(result.getNumberOfFixedWarnings()).thenReturn(numberOfFixedWarnings);
+        when(result.getNumberOfNewWarnings()).thenReturn(numberOfNewWarnings);
 
         Assert.assertEquals("Wrong delta message created.", expectedMessage, ResultSummary.createDeltaMessage(result));
-
-        verify(result);
     }
 }
 
