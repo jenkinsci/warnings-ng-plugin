@@ -210,6 +210,7 @@ public abstract class GraphConfigurationDetail implements ModelObject {
      * @param response
      *            Stapler response
      */
+    // CHECKSTYLE:OFF
     public void doSave(final StaplerRequest request, final StaplerResponse response) {
         try {
             JSONObject formData = request.getSubmittedForm();
@@ -253,6 +254,7 @@ public abstract class GraphConfigurationDetail implements ModelObject {
             }
         }
     }
+    // CHECKSTYLE:ON
 
     /**
      * Performs on-the-fly validation on the trend graph height.
@@ -326,117 +328,38 @@ public abstract class GraphConfigurationDetail implements ModelObject {
     }
 
     /**
-     * Draws a PNG image with the new versus fixed warnings graph.
+     * This method will be called by Stapler if an example image for the
+     * specified graph should be rendered.
      *
+     * @param graphId
+     *            the ID of the graph to render
      * @param request
-     *            the request
+     *            Stapler request
      * @param response
-     *            the response
+     *            Stapler response
+     * @return <code>null</code>
      */
-    public void doFixed(final StaplerRequest request, final StaplerResponse response) {
-        drawFixed(request, response, Mode.PNG);
-    }
+    public Object getDynamic(final String graphId, final StaplerRequest request,
+            final StaplerResponse response) {
+        try {
+            BuildResultGraph graph = graphId2Graph.get(graphId);
+            if (graph != null) {
+                graph.setRootUrl(ROOT_URL);
+                if (hasMeaningfulGraph() && graph.isVisible()) {
+                    ChartUtil.generateGraph(request, response, graph.create(this, lastAction,
+                            pluginName), width, height);
+                }
+                else {
+                    // FIXME: image...
+                    response.sendRedirect2(request.getContextPath() + "/images/headless.png");
+                }
+            }
+        }
+        catch (IOException exception) {
+            LOGGER.log(Level.SEVERE, "Can't create graph: " + request, exception);
+        }
 
-    /**
-     * Draws a MAP with the new versus fixed warnings graph.
-     *
-     * @param request
-     *            the request
-     * @param response
-     *            the response
-     */
-    public void doFixedMap(final StaplerRequest request, final StaplerResponse response) {
-        drawFixed(request, response, Mode.MAP);
-    }
-
-    /**
-     * Draws new versus fixed warnings graph.
-     *
-     * @param request
-     *            the request
-     * @param response
-     *            the response
-     * @param mode
-     *            drawing mode
-     */
-    private void drawFixed(final StaplerRequest request, final StaplerResponse response, final Mode mode) {
-        drawGraph(request, response, mode, new NewVersusFixedGraph());
-    }
-
-    /**
-     * Draws a PNG image with a graph with warning differences.
-     *
-     * @param request
-     *            the request
-     * @param response
-     *            the response
-     */
-    public void doDifference(final StaplerRequest request, final StaplerResponse response) {
-        drawDifference(request, response, Mode.PNG);
-    }
-
-    /**
-     * Draws a MAP with the warnings difference graph.
-     *
-     * @param request
-     *            the request
-     * @param response
-     *            the response
-     */
-    public void doDifferenceMap(final StaplerRequest request, final StaplerResponse response) {
-        drawDifference(request, response, Mode.MAP);
-    }
-
-    /**
-     * Draws a warnings difference graph.
-     *
-     * @param request
-     *            the request
-     * @param response
-     *            the response
-     * @param mode
-     *            drawing mode
-     */
-    private void drawDifference(final StaplerRequest request, final StaplerResponse response, final Mode mode) {
-        drawGraph(request, response, mode, new DifferenceGraph());
-    }
-
-    /**
-     * Draws a PNG image with a graph with warnings by priority.
-     *
-     * @param request
-     *            the request
-     * @param response
-     *            the response
-     */
-    public void doPriority(final StaplerRequest request, final StaplerResponse response) {
-        drawPriority(request, response, Mode.PNG);
-    }
-
-    /**
-     * Draws a MAP width a graph with warnings by priority.
-     *
-     * @param request
-     *            the request
-     * @param response
-     *            the response
-     */
-    public void doPriorityMap(final StaplerRequest request, final StaplerResponse response) {
-        drawPriority(request, response, Mode.MAP);
-    }
-
-    /**
-     * Draws a graph with warnings by priority.
-     *
-     * @param request
-     *            the request
-     * @param response
-     *            the response
-     * @param mode
-     *            drawing mode
-     */
-    private void drawPriority(final StaplerRequest request, final StaplerResponse response, final Mode mode) {
-        drawGraph(request, response, mode, new PriorityGraph());
+        return null;
     }
 
     /**
@@ -446,90 +369,6 @@ public abstract class GraphConfigurationDetail implements ModelObject {
      */
     public boolean isHealthGraphAvailable() {
         return healthDescriptor.isEnabled();
-    }
-
-    /**
-     * Draws a PNG image with a graph with warnings by health thresholds.
-     *
-     * @param request
-     *            the request
-     * @param response
-     *            the response
-     */
-    public void doHealth(final StaplerRequest request, final StaplerResponse response) {
-        drawHealth(request, response, Mode.PNG);
-    }
-
-    /**
-     * Draws a MAP with a graph with warnings by health thresholds.
-     *
-     * @param request
-     *            the request
-     * @param response
-     *            the response
-     */
-    public void doHealthMap(final StaplerRequest request, final StaplerResponse response) {
-        drawHealth(request, response, Mode.MAP);
-    }
-
-    /**
-     * Draws a graph with warnings by health thresholds.
-     *
-     * @param request
-     *            the request
-     * @param response
-     *            the response
-     * @param mode
-     *            drawing mode
-     */
-    private void drawHealth(final StaplerRequest request, final StaplerResponse response, final Mode mode) {
-        drawGraph(request, response, mode, new HealthGraph(healthDescriptor));
-    }
-
-    /**
-     * Draws the graph.
-     *
-     * @param request
-     *            the request
-     * @param response
-     *            the response
-     * @param mode
-     *            drawing mode
-     * @param buildResultGraph
-     *            the graph that actually renders the results
-     */
-    private void drawGraph(final StaplerRequest request, final StaplerResponse response,
-            final Mode mode, final BuildResultGraph buildResultGraph) {
-        buildResultGraph.setRootUrl(ROOT_URL);
-        if (hasMeaningfulGraph() && buildResultGraph.isVisible()) {
-            generateGraph(request, response, buildResultGraph.create(this, lastAction, pluginName), mode);
-        }
-    }
-
-    /**
-     * Generates the graph in PNG format and sends that to the response.
-     *
-     * @param request
-     *            the request
-     * @param response
-     *            the response
-     * @param graph
-     *            the graph
-     * @param mode
-     *            drawing mode
-     */
-    private void generateGraph(final StaplerRequest request, final StaplerResponse response, final JFreeChart graph, final Mode mode) {
-        try {
-            if (mode == Mode.PNG) {
-                ChartUtil.generateGraph(request, response, graph, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-            }
-            else {
-                ChartUtil.generateClickableMap(request, response, graph, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-            }
-        }
-        catch (IOException exception) {
-            LOGGER.log(Level.SEVERE, "Can't create graph: " + request, exception);
-        }
     }
 
     /**
@@ -575,7 +414,7 @@ public abstract class GraphConfigurationDetail implements ModelObject {
      *            <code>width:height:isVisible</code>
      * @return true is the initialization was successful, <code>false</code>
      *         otherwise
-     * @see #serializeToString(int, int, int, int, GraphType)
+     * @see #serializeToString(int, int, int, int, BuildResultGraph)
      */
     private boolean initializeFrom(final String value) {
         if (StringUtils.isBlank(value)) {
