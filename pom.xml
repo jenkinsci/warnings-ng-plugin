@@ -16,4 +16,12 @@
 
   <url>http://wiki.hudson-ci.org/display/HUDSON/Static+Code+Analysis+Plug-ins</url>
 
+  <dependencies>
+    <dependency>
+      <groupId>de.java2html</groupId>
+      <artifactId>java2html</artifactId>
+      <version>5.0</version>
+    </dependency>
+  </dependencies>
+
 </project>
