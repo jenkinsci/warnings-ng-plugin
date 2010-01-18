@@ -18,15 +18,23 @@ import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ResultAction;
 
 import hudson.util.ColorPalette;
+import hudson.util.Graph;
 
 /**
  * Base class for build results graphs.
  *
  * @author Ulli Hafner
  */
-public abstract class BuildResultGraph {
+public abstract class BuildResultGraph extends Graph {
     /** The root URL. */
     private String rootUrl = StringUtils.EMPTY;
+
+    /**
+     * Creates a new instance of {@link BuildResultGraph}.
+     */
+    public BuildResultGraph(final GraphConfigurationDetail configuration) {
+        super(configuration.getTimestamp(), configuration.getWidth(), configuration.getHeight());
+    }
 
     /**
      * Returns the ID of this graph.

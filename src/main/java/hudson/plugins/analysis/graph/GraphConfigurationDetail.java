@@ -509,7 +509,6 @@ public abstract class GraphConfigurationDetail implements ModelObject {
         return newBuildCount == 0 || newBuildCount > 1;
     }
 
-
     /**
      * Returns whether the width is valid.
      *
@@ -521,7 +520,6 @@ public abstract class GraphConfigurationDetail implements ModelObject {
     protected static boolean isValidWidth(final int newWidth) {
         return newWidth > 25 && newWidth < 2000;
     }
-
 
     /**
      * Returns whether the width is valid.
@@ -551,6 +549,20 @@ public abstract class GraphConfigurationDetail implements ModelObject {
      */
     public int getWidth() {
         return width;
+    }
+
+    /**
+     * Returns the time stamp of the associated build.
+     *
+     * @return the time stamp of the associated build.
+     */
+    public long getTimestamp() {
+        if (lastAction != null) {
+            return lastAction.getBuild().getTimestamp().getTimeInMillis();
+        }
+        else {
+            return -1;
+        }
     }
 
     /**
