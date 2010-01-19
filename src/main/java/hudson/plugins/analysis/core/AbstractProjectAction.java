@@ -2,6 +2,7 @@ package hudson.plugins.analysis.core;
 
 import java.io.IOException;
 
+import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -12,7 +13,12 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 
 import hudson.plugins.analysis.graph.DefaultGraphConfigurationDetail;
+import hudson.plugins.analysis.graph.DifferenceGraph;
+import hudson.plugins.analysis.graph.EmptyGraph;
 import hudson.plugins.analysis.graph.GraphConfigurationDetail;
+import hudson.plugins.analysis.graph.HealthGraph;
+import hudson.plugins.analysis.graph.NewVersusFixedGraph;
+import hudson.plugins.analysis.graph.PriorityGraph;
 import hudson.plugins.analysis.graph.UserGraphConfigurationDetail;
 
 import hudson.util.Graph;
@@ -92,12 +98,40 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
         else if ("configure".equals(link)) {
             return createUserConfiguration(request);
         }
-        else if ("trendGraph".equals(link)) {
-            return getTrendGraph(request);
-        }
         else {
             return null;
         }
+    }
+
+    /**
+     * Returns the trend graph.
+     *
+     * @return the current trend graph
+     */
+    public Object getTrendGraph() {
+        return getTrendGraph(Stapler.getCurrentRequest());
+    }
+
+    /**
+     * Returns the configured trend graph.
+     *
+     * @param request
+     *            Stapler request
+     * @return the trend graph
+     */
+    public Graph getTrendGraph(final StaplerRequest request) {
+        return createUserConfiguration(request).getGraph();
+    }
+
+    /**
+     * Returns whether the trend graph is visible.
+     *
+     * @param request
+     *            the request to get the cookie from
+     * @return the graph configuration
+     */
+    public boolean isTrendVisible(final StaplerRequest request) {
+        return hasValidResults() && createUserConfiguration(request).isVisible();
     }
 
     /**
@@ -145,8 +179,12 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *            the configuration to register the graphs for.
      */
     private void registerAvailableGraphs(final GraphConfigurationDetail graphConfiguration) {
-        // FIXME: register the graphs and add a overwritable method for custom actions
-
+        graphConfiguration.clearGraphs();
+        graphConfiguration.addGraph(new EmptyGraph(graphConfiguration));
+        graphConfiguration.addGraph(new NewVersusFixedGraph(graphConfiguration));
+        graphConfiguration.addGraph(new PriorityGraph(graphConfiguration));
+        graphConfiguration.addGraph(new HealthGraph(graphConfiguration));
+        graphConfiguration.addGraph(new DifferenceGraph(graphConfiguration));
     }
 
     /**
@@ -210,45 +248,6 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
             lastBuild = lastBuild.getPreviousBuild();
         }
         return lastBuild;
-    }
-
-    /**
-     * Returns the configured trend graph.
-     *
-     * @param request
-     *            Stapler request
-     * @return the trend graph
-     */
-    public Graph getTrendGraph(final StaplerRequest request) {
-        ResultAction<?> action = getLastAction();
-
-        GraphConfigurationDetail configuration = createGraphConfiguration(request, action);
-
-        return configuration.getGraph();
-    }
-
-    /**
-     * Returns whether the trend graph is visible.
-     *
-     * @param request
-     *            the request to get the cookie from
-     * @return the graph configuration
-     */
-    public boolean isTrendVisible(final StaplerRequest request) {
-        return hasValidResults() && new UserGraphConfigurationDetail(project, url, request).isVisible();
-    }
-
-    /**
-     * Creates the graph configuration from the cookie.
-     *
-     * @param request
-     *            the request to get the cookie from
-     * @param action
-     *            the last result action
-     * @return the graph configuration
-     */
-    public GraphConfigurationDetail createGraphConfiguration(final StaplerRequest request, final ResultAction<?> action) {
-        return new UserGraphConfigurationDetail(project, url, request, action);
     }
 
     /**

@@ -669,7 +669,7 @@ public abstract class GraphConfigurationDetail implements ModelObject {
      * @param graph
      *            the graph to add
      */
-    protected void addGraph(final BuildResultGraph graph) {
+    public void addGraph(final BuildResultGraph graph) {
         graphId2Graph.put(graph.getId(), graph);
     }
 
@@ -689,6 +689,13 @@ public abstract class GraphConfigurationDetail implements ModelObject {
      */
     public AbstractHealthDescriptor getHealthDescriptor() {
         return healthDescriptor;
+    }
+
+    /**
+     * FIXME: Remove this method.
+     */
+    public void clearGraphs() {
+        graphId2Graph.clear();
     }
 }
 
