@@ -32,6 +32,7 @@ import hudson.plugins.analysis.core.ResultAction;
 
 import hudson.util.ChartUtil;
 import hudson.util.FormValidation;
+import hudson.util.Graph;
 
 /**
  * Configuration properties of a trend graph.
@@ -39,8 +40,6 @@ import hudson.util.FormValidation;
 public abstract class GraphConfigurationDetail implements ModelObject {
     /** The default counter. */
     private static final int DEFAULT_COUNT = 0;
-    /** The default graph. */
-    private static final BuildResultGraph DEFAULT_GRAPH = new PriorityGraph();
     /** The default width. */
     protected static final int DEFAULT_WIDTH = 500;
     /** The default height. */
@@ -60,6 +59,9 @@ public abstract class GraphConfigurationDetail implements ModelObject {
     /** The number of days to consider. */
     private int dayCount;
 
+    /** The default graph. */
+    private final BuildResultGraph defaultGraph = new PriorityGraph(this);
+
     /** Maps graph ID's to graphs. */
     private final Map<String, BuildResultGraph> graphId2Graph = Maps.newHashMap();
 
@@ -75,14 +77,6 @@ public abstract class GraphConfigurationDetail implements ModelObject {
     private ResultAction<?> lastAction;
     /** The health descriptor. */
     private AbstractHealthDescriptor healthDescriptor;
-
-    /** Drawing Mode. */
-    enum Mode {
-        /** PNG image. */
-        PNG,
-        /** Clickable map for the PNG image. */
-        MAP
-    }
 
     /**
      * Creates a new instance of {@link GraphConfigurationDetail}.
@@ -135,15 +129,16 @@ public abstract class GraphConfigurationDetail implements ModelObject {
         initializeGraphs();
     }
 
+
     /**
      * Initialize the graphs with the predefined graphs.
      */
     private void initializeGraphs() {
-        addGraph(new EmptyGraph());
-        addGraph(new NewVersusFixedGraph());
-        addGraph(new PriorityGraph());
-        addGraph(new HealthGraph(healthDescriptor));
-        addGraph(new DifferenceGraph());
+        addGraph(new EmptyGraph(this));
+        addGraph(new NewVersusFixedGraph(this));
+        addGraph(new PriorityGraph(this));
+        addGraph(new HealthGraph(this));
+        addGraph(new DifferenceGraph(this));
     }
 
     /**
@@ -285,6 +280,16 @@ public abstract class GraphConfigurationDetail implements ModelObject {
     }
 
     /**
+     * Returns the last {@link ResultAction}. If there is no such action, then
+     * <code>null</code> is returned.
+     *
+     * @return the last result action
+     */
+    public ResultAction<?> getLastAction() {
+        return lastAction;
+    }
+
+    /**
      * Persists the configured values.
      *
      * @param value
@@ -402,7 +407,7 @@ public abstract class GraphConfigurationDetail implements ModelObject {
         width  = DEFAULT_WIDTH;
         buildCount = DEFAULT_COUNT;
         dayCount = DEFAULT_COUNT;
-        graphType = DEFAULT_GRAPH;
+        graphType = defaultGraph;
     }
 
     /**
@@ -636,7 +641,7 @@ public abstract class GraphConfigurationDetail implements ModelObject {
     public boolean isDefault() {
         return width == DEFAULT_WIDTH
                 && height == DEFAULT_HEIGHT
-                && graphType == DEFAULT_GRAPH
+                && graphType == defaultGraph
                 && buildCount == DEFAULT_COUNT
                 && dayCount == DEFAULT_COUNT;
     }
@@ -666,6 +671,24 @@ public abstract class GraphConfigurationDetail implements ModelObject {
      */
     protected void addGraph(final BuildResultGraph graph) {
         graphId2Graph.put(graph.getId(), graph);
+    }
+
+    /**
+     * Returns the current trend graph.
+     *
+     * @return the trend graph
+     */
+    public Graph getGraph() {
+        return getGraphType();
+    }
+
+    /**
+     * Returns the current health descriptor.
+     *
+     * @return the health descriptor
+     */
+    public AbstractHealthDescriptor getHealthDescriptor() {
+        return healthDescriptor;
     }
 }
 

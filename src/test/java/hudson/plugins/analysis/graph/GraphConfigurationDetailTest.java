@@ -93,7 +93,7 @@ public class GraphConfigurationDetailTest {
         assertValidConfiguation("50!100!200!300!NONE", WIDTH, HEIGHT, BUILDS, DAYS, EmptyGraph.class);
 
         GraphConfigurationDetail configuration = createDetailUnderTest(null);
-        assertValidConfiguation(configuration.serializeToString(WIDTH, HEIGHT, BUILDS, DAYS, new EmptyGraph()),
+        assertValidConfiguation(configuration.serializeToString(WIDTH, HEIGHT, BUILDS, DAYS, new EmptyGraph(configuration)),
                 WIDTH, HEIGHT, BUILDS, DAYS, EmptyGraph.class);
 
         configuration = createDetailUnderTest("50!100!0!0!NONE");

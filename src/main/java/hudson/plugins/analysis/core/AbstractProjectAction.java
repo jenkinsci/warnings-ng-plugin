@@ -2,9 +2,6 @@ package hudson.plugins.analysis.core;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.jfree.chart.JFreeChart;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -18,7 +15,7 @@ import hudson.plugins.analysis.graph.DefaultGraphConfigurationDetail;
 import hudson.plugins.analysis.graph.GraphConfigurationDetail;
 import hudson.plugins.analysis.graph.UserGraphConfigurationDetail;
 
-import hudson.util.ChartUtil;
+import hudson.util.Graph;
 
 /**
  * A project action displays a link on the side panel of a project.
@@ -95,6 +92,9 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
         else if ("configure".equals(link)) {
             return createUserConfiguration(request);
         }
+        else if ("trendGraph".equals(link)) {
+            return getTrendGraph(request);
+        }
         else {
             return null;
         }
@@ -107,28 +107,46 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *            Stapler request
      * @return a view to configure the trend graph for the current user
      */
-    private Object createUserConfiguration(final StaplerRequest request) {
+    private GraphConfigurationDetail createUserConfiguration(final StaplerRequest request) {
+        GraphConfigurationDetail graphConfiguration;
         if (hasValidResults()) {
-            return new UserGraphConfigurationDetail(getProject(), getUrlName(), request, getLastAction());
+            graphConfiguration = new UserGraphConfigurationDetail(getProject(), getUrlName(), request, getLastAction());
         }
         else {
-            return new UserGraphConfigurationDetail(getProject(), getUrlName(), request);
+            graphConfiguration = new UserGraphConfigurationDetail(getProject(), getUrlName(), request);
         }
-    }
+        registerAvailableGraphs(graphConfiguration);
 
+        return graphConfiguration;
+    }
 
     /**
      * Creates a view to configure the trend graph defaults.
      *
      * @return a view to configure the trend graph defaults
      */
-    private Object createDefaultConfiguration() {
+    private GraphConfigurationDetail createDefaultConfiguration() {
+        GraphConfigurationDetail graphConfiguration;
         if (hasValidResults()) {
-            return new DefaultGraphConfigurationDetail(getProject(), getUrlName(), getLastAction());
+            graphConfiguration = new DefaultGraphConfigurationDetail(getProject(), getUrlName(), getLastAction());
         }
         else {
-            return new DefaultGraphConfigurationDetail(getProject(), getUrlName());
+            graphConfiguration = new DefaultGraphConfigurationDetail(getProject(), getUrlName());
         }
+        registerAvailableGraphs(graphConfiguration);
+
+        return graphConfiguration;
+    }
+
+    /**
+     * Registers the available trend graphs.
+     *
+     * @param graphConfiguration
+     *            the configuration to register the graphs for.
+     */
+    private void registerAvailableGraphs(final GraphConfigurationDetail graphConfiguration) {
+        // FIXME: register the graphs and add a overwritable method for custom actions
+
     }
 
     /**
@@ -151,7 +169,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
 
     /**
      * Returns the icon URL for the side-panel in the project screen. If there
-     * is yet no valid result, then <code>null</code> is returned.
+     * is no valid result yet, then <code>null</code> is returned.
      *
      * @return the icon URL for the side-panel in the project screen
      */
@@ -195,44 +213,18 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     }
 
     /**
-     * Display the trend graph.
+     * Returns the configured trend graph.
      *
      * @param request
      *            Stapler request
-     * @param response
-     *            Stapler response
-     * @throws IOException
-     *             in case of an error
+     * @return the trend graph
      */
-    public void doTrend(final StaplerRequest request, final StaplerResponse response) throws IOException {
+    public Graph getTrendGraph(final StaplerRequest request) {
         ResultAction<?> action = getLastAction();
-        if (action == null) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-        else {
-            doGraph(action, request, response);
-        }
-    }
 
-    /**
-     * Display the trend map. Delegates to the the associated
-     * {@link ResultAction}.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @throws IOException
-     *             in case of an error
-     */
-    public void doTrendMap(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        ResultAction<?> action = getLastAction();
-        if (action == null) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-        else {
-            doGraphMap(action, request, response);
-        }
+        GraphConfigurationDetail configuration = createGraphConfiguration(request, action);
+
+        return configuration.getGraph();
     }
 
     /**
@@ -244,51 +236,6 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      */
     public boolean isTrendVisible(final StaplerRequest request) {
         return hasValidResults() && new UserGraphConfigurationDetail(project, url, request).isVisible();
-    }
-
-    /**
-     * Generates a PNG image for the trend graph.
-     *
-     * @param action
-     *            the last result action
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @throws IOException
-     *             in case of an error
-     */
-    private void doGraph(final ResultAction<?> action, final StaplerRequest request, final StaplerResponse response) throws IOException {
-        if (ChartUtil.awtProblemCause != null) {
-            response.sendRedirect2(request.getContextPath() + "/images/headless.png");
-        }
-        else {
-            GraphConfigurationDetail configuration = createGraphConfiguration(request, action);
-            if (configuration.isVisible()) {
-                JFreeChart graph = configuration.createGraph(action.getHealthDescriptor(), action, url);
-                ChartUtil.generateGraph(request, response, graph, configuration.getWidth(), configuration.getHeight());
-            }
-        }
-    }
-
-    /**
-     * Generates the clickable map for the trend graph.
-     *
-     * @param action
-     *            the last result action
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @throws IOException
-     *             in case of an error
-     */
-    private void doGraphMap(final ResultAction<?> action, final StaplerRequest request, final StaplerResponse response) throws IOException {
-        GraphConfigurationDetail configuration = createGraphConfiguration(request, action);
-        if (configuration.isVisible()) {
-            JFreeChart graph = configuration.createGraph(action.getHealthDescriptor(), action, url);
-            ChartUtil.generateClickableMap(request, response, graph, configuration.getWidth(), configuration.getHeight());
-        }
     }
 
     /**

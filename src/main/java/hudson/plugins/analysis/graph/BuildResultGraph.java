@@ -28,12 +28,19 @@ import hudson.util.Graph;
 public abstract class BuildResultGraph extends Graph {
     /** The root URL. */
     private String rootUrl = StringUtils.EMPTY;
+    /** The configuration. */
+    private final GraphConfigurationDetail configuration;
 
     /**
      * Creates a new instance of {@link BuildResultGraph}.
+     *
+     * @param configuration
+     *            the graph configuration
      */
     public BuildResultGraph(final GraphConfigurationDetail configuration) {
         super(configuration.getTimestamp(), configuration.getWidth(), configuration.getHeight());
+
+        this.configuration = configuration;
     }
 
     /**
@@ -84,6 +91,12 @@ public abstract class BuildResultGraph extends Graph {
      */
     public String getRootUrl() {
         return rootUrl;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected JFreeChart createGraph() {
+        return create(configuration, configuration.getLastAction(), configuration.getPluginName());
     }
 
     /**

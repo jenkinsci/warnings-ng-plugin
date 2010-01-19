@@ -27,6 +27,16 @@ import hudson.plugins.analysis.util.Pair;
  * @author Ulli Hafner
  */
 public class DifferenceGraph extends BuildResultGraph {
+    /**
+     * Creates a new instance of {@link DifferenceGraph}.
+     *
+     * @param configuration
+     *            the graph configuration
+     */
+    public DifferenceGraph(final GraphConfigurationDetail configuration) {
+        super(configuration);
+    }
+
     /** {@inheritDoc} */
     @Override
     public String getId() {

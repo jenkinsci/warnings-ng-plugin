@@ -30,6 +30,16 @@ import hudson.util.ChartUtil.NumberOnlyBuildLabel;
  */
 public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     /**
+     * Creates a new instance of {@link CategoryBuildResultGraph}.
+     *
+     * @param configuration
+     *            the graph configuration
+     */
+    public CategoryBuildResultGraph(final GraphConfigurationDetail configuration) {
+        super(configuration);
+    }
+
+    /**
      * Creates a PNG image trend graph with clickable map.
      *
      * @param configuration

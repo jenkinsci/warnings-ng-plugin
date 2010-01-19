@@ -5,7 +5,7 @@
 		    ${from.trendName}
 		  </div>
 		  <div>
-		    <img src="${from.urlName}/trend${trendQueryParameter}" lazymap="${from.urlName}/trendMap${trendQueryParameter}"/>
+		    <img src="${from.urlName}/trendGraph/png" lazymap="${from.urlName}/trendGraph/map"/>
 		  </div>
 		  <div>
 		     <a href="${from.urlName}/configure">${%Configure...}</a>
