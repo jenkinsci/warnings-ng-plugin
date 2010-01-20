@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -17,31 +16,57 @@ import hudson.plugins.analysis.core.ResultAction;
 /**
  * Configures the default values for the trend graph of this plug-in.
  */
-public class DefaultGraphConfigurationDetail extends GraphConfigurationDetail {
+public class DefaultGraphConfigurationView extends GraphConfigurationView {
     /**
-     * Creates a new instance of {@link DefaultGraphConfigurationDetail}.
+     * Creates a new instance of {@link DefaultGraphConfigurationView}.
      *
+     * @param configuration
+     *            the graph configuration
      * @param project
      *            the owning project to configure the graphs for
-     * @param fileName
-     *            the file name that is used to persist the configuration
+     * @param pluginName
+     *            The name of the plug-in.
      */
-    public DefaultGraphConfigurationDetail(final AbstractProject<?, ?> project, final String fileName) {
-        super(project, fileName, StringUtils.EMPTY);
+    public DefaultGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
+            final String pluginName) {
+        super(configuration, project, pluginName);
+
+        initialize(configuration, project, pluginName);
     }
 
     /**
-     * Creates a new instance of {@link DefaultGraphConfigurationDetail}.
+     * Creates a new instance of {@link DefaultGraphConfigurationView}.
      *
+     * @param configuration
+     *            the graph configuration
      * @param project
      *            the owning project to configure the graphs for
-     * @param fileName
-     *            the file name that is used to persist the configuration
+     * @param pluginName
+     *            The name of the plug-in.
      * @param lastAction
      *            the last valid action for this project
      */
-    public DefaultGraphConfigurationDetail(final AbstractProject<?, ?> project, final String fileName, final ResultAction<?> lastAction) {
-        super(project, fileName, StringUtils.EMPTY, lastAction);
+    public DefaultGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
+            final String pluginName, final ResultAction<?> lastAction) {
+        super(configuration, project, pluginName, lastAction);
+
+        initialize(configuration, project, pluginName);
+    }
+
+    /**
+     * Initializes the configuration values from the default value file.
+     *
+     * @param configuration
+     *            the configuration
+     * @param project
+     *            the owning project to configure the graphs for
+     * @param pluginName
+     *            The name of the plug-in. Also used as the suffix of the cookie
+     *            name that is used to persist the configuration per user.
+     */
+    private void initialize(final GraphConfiguration configuration,
+            final AbstractProject<?, ?> project, final String pluginName) {
+        configuration.initializeFromFile(createDefaultsFile(project, pluginName));
     }
 
     /** {@inheritDoc} */

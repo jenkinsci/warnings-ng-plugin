@@ -26,16 +26,6 @@ import hudson.util.ColorPalette;
  * @author Ulli Hafner
  */
 public class PriorityGraph extends CategoryBuildResultGraph {
-    /**
-     * Creates a new instance of {@link PriorityGraph}.
-     *
-     * @param configuration
-     *            the graph configuration
-     */
-    public PriorityGraph(final GraphConfigurationDetail configuration) {
-        super(configuration);
-    }
-
     /** {@inheritDoc} */
     @Override
     public String getId() {

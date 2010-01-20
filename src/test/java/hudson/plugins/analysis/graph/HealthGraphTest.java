@@ -31,10 +31,8 @@ public class HealthGraphTest {
     @Test
     public void testHealthySeriesCalculator() {
         AbstractHealthDescriptor healthDescriptor = createHealthBuilder(true, 0, true, 10, 30);
-        GraphConfigurationDetail configuration = mock(GraphConfigurationDetail.class);
-        when(configuration.getHealthDescriptor()).thenReturn(healthDescriptor);
 
-        HealthGraph builder = new HealthGraph(configuration);
+        HealthGraph builder = new HealthGraph(healthDescriptor);
         BuildResult result = mock(BuildResult.class);
 
         List<Integer> series;
@@ -80,10 +78,8 @@ public class HealthGraphTest {
     @Test
     public void testThresholdSeriesCalculator() {
         AbstractHealthDescriptor healthDescriptor = createHealthBuilder(true, 10, false, 20, 50);
-        GraphConfigurationDetail configuration = mock(GraphConfigurationDetail.class);
-        when(configuration.getHealthDescriptor()).thenReturn(healthDescriptor);
 
-        HealthGraph builder = new HealthGraph(configuration);
+        HealthGraph builder = new HealthGraph(healthDescriptor);
         BuildResult result = mock(BuildResult.class);
 
         List<Integer> series;
@@ -112,10 +108,8 @@ public class HealthGraphTest {
     @Test
     public void testIssue796() {
         AbstractHealthDescriptor healthDescriptor = createHealthBuilder(false, 0, true, 1, 10);
-        GraphConfigurationDetail configuration = mock(GraphConfigurationDetail.class);
-        when(configuration.getHealthDescriptor()).thenReturn(healthDescriptor);
 
-        HealthGraph builder = new HealthGraph(configuration);
+        HealthGraph builder = new HealthGraph(healthDescriptor);
         BuildResult result = mock(BuildResult.class);
 
         List<Integer> series;

@@ -2,22 +2,16 @@ package hudson.plugins.analysis.graph;
 
 import static junit.framework.Assert.*;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.junit.Test;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-import org.mockito.Mockito;
 
-import hudson.model.AbstractProject;
+import com.google.common.collect.Sets;
 
 /**
- * Tests the class {@link GraphConfigurationDetail}.
+ * Tests the class {@link GraphConfiguration}.
  *
  * @author Ulli Hafner
  */
-public class GraphConfigurationDetailTest {
+public class GraphConfigurationTest {
     /** Valid width. */
     private static final int WIDTH = 50;
     /** Valid height. */
@@ -40,6 +34,7 @@ public class GraphConfigurationDetailTest {
         assertInvalidInitializationValue("50!50!FIXED!1");
         assertInvalidInitializationValue("NEW!50!12!13!FIXED");
         assertInvalidInitializationValue("50.1!50!12!13!FIXED");
+        assertInvalidInitializationValue("50!100!200!300!FALSCH");
     }
 
     /**
@@ -50,37 +45,19 @@ public class GraphConfigurationDetailTest {
      *            initialization value
      */
     private void assertInvalidInitializationValue(final String initializationValue) {
-        GraphConfigurationDetail configuration = createDetailUnderTest(initializationValue);
-        assertTrue("Invalid configuration accepted.", configuration.isDefault());
+        GraphConfiguration configuration = createDetailUnderTest();
+
+        assertFalse("Invalid configuration accepted.", configuration.initializeFrom(initializationValue));
+        assertTrue("Invalid configuration state.", configuration.isDefault());
     }
 
     /**
-     * FIXME: Document method createDetailUnderTest
-     * @param initializationValue
-     * @return
+     * Creates the configuration under test.
+     *
+     * @return the configuration under test
      */
-    private GraphConfigurationDetail createDetailUnderTest(final String initializationValue) {
-        AbstractProject project = Mockito.mock(AbstractProject.class);
-        String string = "name";
-        Mockito.when(project.getRootDir()).thenReturn(new File(string));
-        return new GraphConfigurationDetail(project, string, initializationValue) {
-            @Override
-            public String getDescription() {
-                // FIXME Auto-generated method stub
-                return "EMPTY";
-            }
-
-            @Override
-            protected void persistValue(final String value, final StaplerRequest request,
-                    final StaplerResponse response) throws IOException {
-
-            }
-
-            public String getDisplayName() {
-                return "EMPTY";
-            }
-
-        };
+    private GraphConfiguration createDetailUnderTest() {
+        return new GraphConfiguration(Sets.newHashSet(new PriorityGraph(), new NewVersusFixedGraph(), new EmptyGraph()));
     }
 
     /**
@@ -92,15 +69,13 @@ public class GraphConfigurationDetailTest {
         assertValidConfiguation("50!100!200!300!PRIORITY", WIDTH, HEIGHT, BUILDS, DAYS, PriorityGraph.class);
         assertValidConfiguation("50!100!200!300!NONE", WIDTH, HEIGHT, BUILDS, DAYS, EmptyGraph.class);
 
-        GraphConfigurationDetail configuration = createDetailUnderTest(null);
-        assertValidConfiguation(configuration.serializeToString(WIDTH, HEIGHT, BUILDS, DAYS, new EmptyGraph(configuration)),
-                WIDTH, HEIGHT, BUILDS, DAYS, EmptyGraph.class);
+        GraphConfiguration configuration = createDetailUnderTest();
 
-        configuration = createDetailUnderTest("50!100!0!0!NONE");
+        assertTrue("Valid configuration not accepted.", configuration.initializeFrom("50!100!0!0!NONE"));
         assertFalse("Build count is defined but should not.", configuration.isBuildCountDefined());
         assertFalse("Day count is defined but should not.", configuration.isDayCountDefined());
 
-        configuration = createDetailUnderTest("50!100!2!1!NONE");
+        assertTrue("Valid configuration not accepted.", configuration.initializeFrom("50!100!2!1!NONE"));
         assertTrue("Build count is not defined but should.", configuration.isBuildCountDefined());
         assertTrue("Day count is not defined but should.", configuration.isDayCountDefined());
     }
@@ -124,7 +99,8 @@ public class GraphConfigurationDetailTest {
      */
     private void assertValidConfiguation(final String initialization, final int expectedWidth, final int expectedHeight,
             final int expectedBuildCount, final int expectedDayCount, final Class<? extends BuildResultGraph> expectedType) {
-        GraphConfigurationDetail configuration = createDetailUnderTest(initialization);
+        GraphConfiguration configuration = createDetailUnderTest();
+        assertTrue("Valid configuration not accepted.", configuration.initializeFrom(initialization));
         assertFalse("Valid configuration is not accepted.", configuration.isDefault());
         assertEquals("Wrong width.", expectedWidth, configuration.getWidth());
         assertEquals("Wrong height.", expectedHeight, configuration.getHeight());
@@ -138,6 +114,11 @@ public class GraphConfigurationDetailTest {
         else {
             assertTrue("Graph is not visible.", configuration.isVisible());
         }
+
+        String serialized = configuration.serializeToString();
+        GraphConfiguration other = createDetailUnderTest();
+        assertTrue("Valid configuration not accepted.", other.initializeFrom(serialized));
+        assertEquals("Serialize did not work.", other, configuration);
     }
 }
 

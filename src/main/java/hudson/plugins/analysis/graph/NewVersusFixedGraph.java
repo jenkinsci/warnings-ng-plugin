@@ -25,16 +25,6 @@ import hudson.util.ColorPalette;
  * @author Ulli Hafner
  */
 public class NewVersusFixedGraph extends CategoryBuildResultGraph {
-    /**
-     * Creates a new instance of {@link NewVersusFixedGraph}.
-     *
-     * @param configuration
-     *            the graph configuration
-     */
-    public NewVersusFixedGraph(final GraphConfigurationDetail configuration) {
-        super(configuration);
-    }
-
     /** {@inheritDoc} */
     @Override
     public String getId() {

@@ -30,16 +30,6 @@ import hudson.util.ChartUtil.NumberOnlyBuildLabel;
  */
 public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     /**
-     * Creates a new instance of {@link CategoryBuildResultGraph}.
-     *
-     * @param configuration
-     *            the graph configuration
-     */
-    public CategoryBuildResultGraph(final GraphConfigurationDetail configuration) {
-        super(configuration);
-    }
-
-    /**
      * Creates a PNG image trend graph with clickable map.
      *
      * @param configuration
@@ -51,7 +41,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return the graph
      */
     @Override
-    public JFreeChart create(final GraphConfigurationDetail configuration,
+    public JFreeChart create(final GraphConfiguration configuration,
             final ResultAction<? extends BuildResult> resultAction, final String pluginName) {
         JFreeChart chart = createChart(configuration, resultAction);
         CategoryItemRenderer renderer = createRenderer(pluginName, resultAction.getToolTipProvider());
@@ -71,7 +61,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *            the action to start with
      * @return the created chart
      */
-    protected JFreeChart createChart(final GraphConfigurationDetail configuration, final ResultAction<? extends BuildResult> resultAction) {
+    protected JFreeChart createChart(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> resultAction) {
         DataSetBuilder<Integer, NumberOnlyBuildLabel> builder = new DataSetBuilder<Integer, NumberOnlyBuildLabel>();
         ResultAction<? extends BuildResult> action = resultAction;
         int buildCount = 0;

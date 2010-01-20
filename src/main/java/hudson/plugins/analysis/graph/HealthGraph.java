@@ -33,13 +33,11 @@ public class HealthGraph extends CategoryBuildResultGraph {
     /**
      * Creates a new instance of {@link HealthGraph}.
      *
-     * @param configuration
-     *            the graph configuration
+     * @param healthDescriptor
+     *            the health descriptor
      */
-    public HealthGraph(final GraphConfigurationDetail configuration) {
-        super(configuration);
-
-        healthDescriptor = configuration.getHealthDescriptor();
+    public HealthGraph(final AbstractHealthDescriptor healthDescriptor) {
+        this.healthDescriptor = healthDescriptor;
     }
 
     /** {@inheritDoc} */

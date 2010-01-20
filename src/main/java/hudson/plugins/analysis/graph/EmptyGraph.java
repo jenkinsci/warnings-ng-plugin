@@ -12,16 +12,6 @@ import hudson.plugins.analysis.core.ResultAction;
  * @author Ulli Hafner
  */
 public class EmptyGraph extends BuildResultGraph {
-    /**
-     * Creates a new instance of {@link EmptyGraph}.
-     *
-     * @param configuration
-     *            the graph configuration
-     */
-    public EmptyGraph(final GraphConfigurationDetail configuration) {
-        super(configuration);
-    }
-
     /** {@inheritDoc} */
     @Override
     public String getId() {
@@ -36,7 +26,7 @@ public class EmptyGraph extends BuildResultGraph {
 
     /** {@inheritDoc} */
     @Override
-    public JFreeChart create(final GraphConfigurationDetail configuration,
+    public JFreeChart create(final GraphConfiguration configuration,
             final ResultAction<? extends BuildResult> resultAction, final String pluginName) {
         return null;
     }

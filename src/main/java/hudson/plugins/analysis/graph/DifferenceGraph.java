@@ -27,16 +27,6 @@ import hudson.plugins.analysis.util.Pair;
  * @author Ulli Hafner
  */
 public class DifferenceGraph extends BuildResultGraph {
-    /**
-     * Creates a new instance of {@link DifferenceGraph}.
-     *
-     * @param configuration
-     *            the graph configuration
-     */
-    public DifferenceGraph(final GraphConfigurationDetail configuration) {
-        super(configuration);
-    }
-
     /** {@inheritDoc} */
     @Override
     public String getId() {
@@ -61,7 +51,7 @@ public class DifferenceGraph extends BuildResultGraph {
      * @return the graph
      */
     @Override
-    public JFreeChart create(final GraphConfigurationDetail configuration,
+    public JFreeChart create(final GraphConfiguration configuration,
             final ResultAction<? extends BuildResult> resultAction, final String pluginName) {
         ArrayList<Pair<Integer, Integer>> fixedWarnings = new ArrayList<Pair<Integer, Integer>>();
         ArrayList<Pair<Integer, Integer>> newWarnings = new ArrayList<Pair<Integer, Integer>>();
@@ -130,7 +120,7 @@ public class DifferenceGraph extends BuildResultGraph {
      * @param newWarnings
      *            list of pairs with the points for the new warnings
      */
-    private void extractPoints(final GraphConfigurationDetail configuration, final ResultAction<? extends BuildResult> resultAction,
+    private void extractPoints(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> resultAction,
             final ArrayList<Pair<Integer, Integer>> fixedWarnings, final ArrayList<Pair<Integer, Integer>> newWarnings) {
         ResultAction<? extends BuildResult> action = resultAction;
         int buildCount = 0;

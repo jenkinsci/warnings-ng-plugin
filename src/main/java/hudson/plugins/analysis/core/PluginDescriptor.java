@@ -10,7 +10,7 @@ import hudson.maven.AbstractMavenProject;
 
 import hudson.model.AbstractProject;
 
-import hudson.plugins.analysis.graph.GraphConfigurationDetail;
+import hudson.plugins.analysis.graph.GraphConfiguration;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.ThresholdValidator;
 
@@ -128,7 +128,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @return the form validation
      */
     public FormValidation doCheckHeight(@QueryParameter final String height) {
-        return GraphConfigurationDetail.checkHeight(height);
+        return GraphConfiguration.checkHeight(height);
     }
 
     /** {@inheritDoc} */

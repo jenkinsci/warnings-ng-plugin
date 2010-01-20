@@ -40,7 +40,7 @@
             </p>
             <p>
               <j:if test="${it.hasMeaningfulGraph()}">
-                <img src="${it.url}/${id}" />
+                <img src="${it.url}/${id}/png" />
               </j:if>
               <j:if test="${!it.hasMeaningfulGraph()}">
                 <img src="${graph.exampleImage}" />

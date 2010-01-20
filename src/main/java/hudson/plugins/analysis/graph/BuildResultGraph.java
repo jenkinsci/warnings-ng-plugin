@@ -25,23 +25,9 @@ import hudson.util.Graph;
  *
  * @author Ulli Hafner
  */
-public abstract class BuildResultGraph extends Graph {
+public abstract class BuildResultGraph {
     /** The root URL. */
     private String rootUrl = StringUtils.EMPTY;
-    /** The configuration. */
-    private final GraphConfigurationDetail configuration;
-
-    /**
-     * Creates a new instance of {@link BuildResultGraph}.
-     *
-     * @param configuration
-     *            the graph configuration
-     */
-    public BuildResultGraph(final GraphConfigurationDetail configuration) {
-        super(configuration.getTimestamp(), configuration.getWidth(), configuration.getHeight());
-
-        this.configuration = configuration;
-    }
 
     /**
      * Returns the ID of this graph.
@@ -93,12 +79,6 @@ public abstract class BuildResultGraph extends Graph {
         return rootUrl;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected JFreeChart createGraph() {
-        return create(configuration, configuration.getLastAction(), configuration.getPluginName());
-    }
-
     /**
      * Creates the trend graph.
      *
@@ -110,7 +90,7 @@ public abstract class BuildResultGraph extends Graph {
      *            the name of the plug-in
      * @return the graph
      */
-    public abstract JFreeChart create(final GraphConfigurationDetail configuration,
+    public abstract JFreeChart create(final GraphConfiguration configuration,
             final ResultAction<? extends BuildResult> resultAction, final String pluginName);
 
     /**
@@ -170,6 +150,29 @@ public abstract class BuildResultGraph extends Graph {
         setPlotProperties(plot);
 
         return chart;
+    }
+
+    /**
+     * Returns the new graph object that wraps the actual {@link JFreeChart}
+     * into a PNG image or map.
+     *
+     * @param timestamp
+     *            the last build time
+     * @param configuration
+     *            the graph configuration
+     * @param pluginName
+     *            the name of the plug-in
+     * @param lastAction
+     *            the last valid action for this project
+     * @return the graph to render
+     */
+    public Graph getGraph(final long timestamp, final GraphConfiguration configuration, final String pluginName, final ResultAction<?> lastAction) {
+        return new Graph(timestamp, configuration.getWidth(), configuration.getHeight()) {
+            @Override
+            protected JFreeChart createGraph() {
+                return create(configuration, lastAction, pluginName);
+            }
+        };
     }
 }
 
