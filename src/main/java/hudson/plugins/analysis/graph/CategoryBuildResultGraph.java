@@ -142,7 +142,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @param colors
      *            the colors to set
      */
-    protected void setColors(final JFreeChart chart, final Color[] colors) {
+    public void setColors(final JFreeChart chart, final Color[] colors) {
         CategoryPlot plot = chart.getCategoryPlot();
         CategoryItemRenderer renderer = plot.getRenderer();
 

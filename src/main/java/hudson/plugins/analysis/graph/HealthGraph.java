@@ -42,6 +42,12 @@ public class HealthGraph extends CategoryBuildResultGraph {
 
     /** {@inheritDoc} */
     @Override
+    public boolean isSelectable() {
+        return healthDescriptor.isEnabled();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public String getId() {
         return "HEALTH";
     }
@@ -88,6 +94,9 @@ public class HealthGraph extends CategoryBuildResultGraph {
             else {
                 series.add(0);
             }
+        }
+        else { // at least a graph should be shown if the health reporting has been disabled in the meantime
+            series.add(remainder);
         }
 
         return series;

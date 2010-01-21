@@ -2,6 +2,7 @@ package hudson.plugins.analysis.graph;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,7 +14,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import hudson.model.AbstractProject;
 import hudson.model.ModelObject;
@@ -102,7 +103,13 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return the list of available graphs
      */
     public List<? extends BuildResultGraph> getAvailableGraphs() {
-        return ImmutableList.copyOf(configuration.getRegisteredGraphs());
+        ArrayList<BuildResultGraph> selectable = Lists.newArrayList();
+        for (BuildResultGraph graph : configuration.getRegisteredGraphs()) {
+            if (graph.isSelectable()) {
+                selectable.add(graph);
+            }
+        }
+        return selectable;
     }
 
     /**

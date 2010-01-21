@@ -30,6 +30,15 @@ public abstract class BuildResultGraph {
     private String rootUrl = StringUtils.EMPTY;
 
     /**
+     * Returns whether this graph is selectable.
+     *
+     * @return <code>true</code> if this graph is selectable, false otherwise
+     */
+    public boolean isSelectable() {
+        return true;
+    }
+
+    /**
      * Returns the ID of this graph.
      *
      * @return the ID of this graph
