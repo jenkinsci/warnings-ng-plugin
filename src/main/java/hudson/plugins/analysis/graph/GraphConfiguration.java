@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import net.sf.json.JSONObject;
@@ -47,6 +48,8 @@ public class GraphConfiguration  {
 
     /** Maps graph ID's to graphs. */
     private final Map<String, BuildResultGraph> graphId2Graph = Maps.newHashMap();
+    /** Available graphs in the order to display. */
+    private final List<BuildResultGraph> availableGraphs;
 
     /**
      * Creates a new instance of {@link GraphConfiguration}.
@@ -55,6 +58,7 @@ public class GraphConfiguration  {
      *            the available build graphs
      */
     public GraphConfiguration(final Collection<BuildResultGraph> availableGraphs) {
+        this.availableGraphs = ImmutableList.copyOf(availableGraphs);
         for (BuildResultGraph graph : availableGraphs) {
             graphId2Graph.put(graph.getId(), graph);
         }
@@ -437,7 +441,7 @@ public class GraphConfiguration  {
      * @return the registered graphs
      */
     public Collection<BuildResultGraph> getRegisteredGraphs() {
-        return ImmutableList.copyOf(graphId2Graph.values());
+        return availableGraphs;
     }
 
     /**

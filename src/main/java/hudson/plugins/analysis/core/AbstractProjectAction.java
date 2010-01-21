@@ -1,13 +1,13 @@
 package hudson.plugins.analysis.core;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.List;
 
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
@@ -179,8 +179,12 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return the graph configuration
      */
     private GraphConfiguration createConfiguration() {
-        HashSet<BuildResultGraph> availableGraphs = Sets.newHashSet();
-        availableGraphs.add(new EmptyGraph());
+        List<BuildResultGraph> availableGraphs = Lists.newArrayList();
+
+        List<BuildResultGraph> derivedGraphs = Lists.newArrayList();
+        registerAvailableGraphs(derivedGraphs);
+        availableGraphs.addAll(derivedGraphs);
+
         availableGraphs.add(new NewVersusFixedGraph());
         availableGraphs.add(new PriorityGraph());
         if (hasValidResults()) {
@@ -190,21 +194,20 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
             availableGraphs.add(new HealthGraph(new NullHealthDescriptor()));
         }
         availableGraphs.add(new DifferenceGraph());
-
-        HashSet<BuildResultGraph> derivedGraphs = Sets.newHashSet();
-        registerAvailableGraphs(derivedGraphs);
-        availableGraphs.addAll(derivedGraphs);
+        availableGraphs.add(new EmptyGraph());
 
         return new GraphConfiguration(availableGraphs);
     }
 
     /**
      * Register available trend graphs in the specified collection of graphs.
+     * Note that the order of the list will be preserved in the configuration
+     * screen.
      *
-     * @param availableGraphs
+     * @param derivedGraphs
      *            the collection of graphs that should be added
      */
-    protected void registerAvailableGraphs(final HashSet<BuildResultGraph> availableGraphs) {
+    protected void registerAvailableGraphs(final List<BuildResultGraph> derivedGraphs) {
         // empty default implementation
     }
 

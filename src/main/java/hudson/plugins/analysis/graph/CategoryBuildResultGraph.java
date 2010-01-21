@@ -62,7 +62,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return the created chart
      */
     protected JFreeChart createChart(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> resultAction) {
-        DataSetBuilder<Integer, NumberOnlyBuildLabel> builder = new DataSetBuilder<Integer, NumberOnlyBuildLabel>();
+        DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<String, NumberOnlyBuildLabel>();
         ResultAction<? extends BuildResult> action = resultAction;
         int buildCount = 0;
         Calendar buildTime = action.getBuild().getTimestamp();
@@ -71,7 +71,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
             List<Integer> series = computeSeries(current);
             int level = 0;
             for (Integer integer : series) {
-                builder.add(integer, level, new NumberOnlyBuildLabel(action.getBuild()));
+                builder.add(integer, getRowId(level), new NumberOnlyBuildLabel(action.getBuild()));
                 level++;
             }
 
@@ -97,6 +97,18 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
             }
         }
         return createChart(builder.build());
+    }
+
+    /**
+     * Returns the row identifier for the specified level. This identifier will
+     * be used in the legend.
+     *
+     * @param level
+     *            the level
+     * @return the row identifier
+     */
+    protected String getRowId(final int level) {
+        return String.valueOf(level);
     }
 
     /**
