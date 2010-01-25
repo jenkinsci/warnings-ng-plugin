@@ -127,4 +127,10 @@ public final class Pair<H, T> {
     public int hashCode() {
         return ((head == null) ? 0 : head.hashCode()) + ((tail == null) ? 0 : tail.hashCode());
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return "<" + head + ":" + tail + ">";
+    }
 }
