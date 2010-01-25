@@ -9,6 +9,7 @@ import java.util.Collections;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.urls.XYURLGenerator;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
@@ -61,6 +62,7 @@ public class DifferenceGraph extends BuildResultGraph {
 
         JFreeChart chart = createXYChart(xySeriesCollection);
         chart.getXYPlot().getRenderer().setURLGenerator(new XyUrlBuilder(getRootUrl(), pluginName));
+
         NumberAxis axis = new NumberAxis();
         axis.setVerticalTickLabels(true);
         axis.setNumberFormatOverride(new HudsonBuildFormat());
@@ -68,6 +70,7 @@ public class DifferenceGraph extends BuildResultGraph {
         axis.setAutoRangeIncludesZero(false);
         axis.setLowerMargin(0.0);
         axis.setUpperMargin(0.0);
+        axis.setTickUnit(new NumberTickUnit(1.0));
 
         chart.getXYPlot().setDomainAxis(axis);
         return chart;
