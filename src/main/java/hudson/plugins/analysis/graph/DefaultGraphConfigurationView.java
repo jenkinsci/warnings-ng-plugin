@@ -91,8 +91,8 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
 
     /** {@inheritDoc} */
     @Override
-    protected void persistValue(final String value, final StaplerRequest request, final StaplerResponse response) throws FileNotFoundException, IOException {
-        FileOutputStream output = new FileOutputStream(createDefaultsFile(getOwner(), getPluginName()));
+    protected void persistValue(final String value, final String pluginName, final StaplerRequest request, final StaplerResponse response) throws FileNotFoundException, IOException {
+        FileOutputStream output = new FileOutputStream(createDefaultsFile(getOwner(), pluginName));
         try {
             IOUtils.write(value, output);
         }

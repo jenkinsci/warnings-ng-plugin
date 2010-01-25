@@ -23,6 +23,7 @@ import hudson.plugins.analysis.graph.GraphConfiguration;
 import hudson.plugins.analysis.graph.GraphConfigurationView;
 import hudson.plugins.analysis.graph.HealthGraph;
 import hudson.plugins.analysis.graph.NewVersusFixedGraph;
+import hudson.plugins.analysis.graph.NullGraph;
 import hudson.plugins.analysis.graph.PriorityGraph;
 import hudson.plugins.analysis.graph.UserGraphConfigurationView;
 
@@ -140,13 +141,24 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     }
 
     /**
+     * Returns whether the trend graph is deactivated.
+     *
+     * @param request
+     *            the request to get the cookie from
+     * @return the graph configuration
+     */
+    public boolean isTrendDeactivated(final StaplerRequest request) {
+        return createUserConfiguration(request).isDeactivated();
+    }
+
+    /**
      * Creates a view to configure the trend graph for the current user.
      *
      * @param request
      *            Stapler request
      * @return a view to configure the trend graph for the current user
      */
-    private GraphConfigurationView createUserConfiguration(final StaplerRequest request) {
+    protected GraphConfigurationView createUserConfiguration(final StaplerRequest request) {
         if (hasValidResults()) {
             return new UserGraphConfigurationView(createConfiguration(), getProject(),
                     getUrlName(), request.getCookies(), getLastAction());
@@ -162,7 +174,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *
      * @return a view to configure the trend graph defaults
      */
-    private GraphConfigurationView createDefaultConfiguration() {
+    protected GraphConfigurationView createDefaultConfiguration() {
         if (hasValidResults()) {
             return new DefaultGraphConfigurationView(createConfiguration(), getProject(),
                     getUrlName(), getLastAction());
@@ -179,11 +191,16 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return the graph configuration
      */
     private GraphConfiguration createConfiguration() {
-        List<BuildResultGraph> availableGraphs = Lists.newArrayList();
+        return createConfiguration(getAvailableGraphs());
+    }
 
-        List<BuildResultGraph> derivedGraphs = Lists.newArrayList();
-        registerAvailableGraphs(derivedGraphs);
-        availableGraphs.addAll(derivedGraphs);
+    /**
+     * Returns the sorted list of available graphs.
+     *
+     * @return the available graphs
+     */
+    protected List<BuildResultGraph> getAvailableGraphs() {
+        List<BuildResultGraph> availableGraphs = Lists.newArrayList();
 
         availableGraphs.add(new NewVersusFixedGraph());
         availableGraphs.add(new PriorityGraph());
@@ -195,20 +212,20 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
         }
         availableGraphs.add(new DifferenceGraph());
         availableGraphs.add(new EmptyGraph());
+        availableGraphs.add(new NullGraph());
 
-        return new GraphConfiguration(availableGraphs);
+        return availableGraphs;
     }
 
     /**
-     * Register available trend graphs in the specified collection of graphs.
-     * Note that the order of the list will be preserved in the configuration
-     * screen.
+     * Creates the graph configuration.
      *
-     * @param derivedGraphs
-     *            the collection of graphs that should be added
+     * @param availableGraphs
+     *            the available graphs
+     * @return the graph configuration.
      */
-    protected void registerAvailableGraphs(final List<BuildResultGraph> derivedGraphs) {
-        // empty default implementation
+    protected GraphConfiguration createConfiguration(final List<BuildResultGraph> availableGraphs) {
+        return new GraphConfiguration(availableGraphs);
     }
 
     /**

@@ -108,7 +108,7 @@ public class GraphConfiguration  {
         }
 
         String[] values = StringUtils.split(value, SEPARATOR);
-        if (values.length != 5) {
+        if (values.length < 5) {
             return false;
         }
 
@@ -126,7 +126,29 @@ public class GraphConfiguration  {
             return false;
         }
 
-        return isValid(width, height, buildCount, dayCount, graphType);
+        String[] localConfiguration = new String[values.length - 5];
+        System.arraycopy(values, 5, localConfiguration, 0, values.length - 5);
+        boolean isLocalValid = initializeLocal(localConfiguration);
+
+        return isLocalValid && isValid(width, height, buildCount, dayCount, graphType);
+    }
+
+    /**
+     * Parses the provided array of string values and initializes the members of
+     * the local configuration. If the values are not in the expected format,
+     * then <code>false</code> is returned and the members are reset to their
+     * default values.
+     * <p>The provided default implementation simply returns <code>true</code>.
+     * </p>
+     *
+     * @param localConfiguration
+     *            the initialization values
+     * @return <code>true</code> is the initialization was successful,
+     *         <code>false</code> otherwise
+     * @see #serializeToString()
+     */
+    protected boolean initializeLocal(final String[] localConfiguration) {
+        return true;
     }
 
     /**
@@ -167,7 +189,27 @@ public class GraphConfiguration  {
         String grapyTypeString = value.getString("graphType");
         graphType = graphId2Graph.get(grapyTypeString);
 
-        return isValid(width, height, buildCount, dayCount, graphType);
+        boolean isLocalValid = initializeLocal(value);
+
+        return isLocalValid && isValid(width, height, buildCount, dayCount, graphType);
+    }
+
+    /**
+     * Parses the provided JSON object and initializes the members of
+     * the local configuration. If the values are not in the expected format,
+     * then <code>false</code> is returned and the members are reset to their
+     * default values.
+     * <p>The provided default implementation simply returns <code>true</code>.
+     * </p>
+     *
+     * @param localConfiguration
+     *            the initialization values
+     * @return <code>true</code> is the initialization was successful,
+     *         <code>false</code> otherwise
+     * @see #serializeToString()
+     */
+    protected boolean initializeLocal(final JSONObject localConfiguration) {
+        return true;
     }
 
     /**

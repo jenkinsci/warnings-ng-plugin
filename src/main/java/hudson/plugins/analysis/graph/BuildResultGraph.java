@@ -183,5 +183,16 @@ public abstract class BuildResultGraph {
             }
         };
     }
+
+    /**
+     * Returns whether the graph is deactivated. If the graph is deactivated,
+     * then no "enable graph" link is shown.
+     *
+     * @return <code>true</code> if the graph is deactivated, <code>false</code>
+     *         otherwise
+     */
+    public boolean isDeactivated() {
+        return false;
+    }
 }
 

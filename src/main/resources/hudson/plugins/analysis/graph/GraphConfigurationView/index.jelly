@@ -26,6 +26,8 @@
           <f:textbox name="dayCountString" value="${it.dayCountString}" />
         </f:entry>
 
+        <st:include page="local-config.jelly" optional="true"/>
+
         <f:entry title="${%Type}">
           <j:forEach var="graph" items="${it.availableGraphs}">
             <j:set var="id" value="${graph.id}" />

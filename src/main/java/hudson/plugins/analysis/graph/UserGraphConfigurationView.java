@@ -87,7 +87,7 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      *            configuration per user
      * @return the new cookie handler
      */
-    private static CookieHandler createCookieHandler(final String cookieName) {
+    protected static CookieHandler createCookieHandler(final String cookieName) {
         return new CookieHandler(cookieName);
     }
 
@@ -113,8 +113,8 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
 
     /** {@inheritDoc} */
     @Override
-    protected void persistValue(final String value, final StaplerRequest request, final StaplerResponse response) {
-        Cookie cookie = createCookieHandler(getPluginName()).create(request.getAncestors(), value);
+    protected void persistValue(final String value, final String pluginName, final StaplerRequest request, final StaplerResponse response) {
+        Cookie cookie = createCookieHandler(pluginName).create(request.getAncestors(), value);
         response.addCookie(cookie);
     }
 }

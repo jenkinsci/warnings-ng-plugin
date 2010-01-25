@@ -159,7 +159,7 @@ public abstract class GraphConfigurationView implements ModelObject {
             JSONObject formData = request.getSubmittedForm();
 
             if (configuration.initializeFrom(formData)) {
-                persistValue(configuration.serializeToString(), request, response);
+                persistValue(configuration.serializeToString(), getPluginName(), request, response);
             }
         }
         catch (IOException exception) {
@@ -202,13 +202,17 @@ public abstract class GraphConfigurationView implements ModelObject {
      *
      * @param value
      *            the values configured by the user.
+     * @param pluginName
+     *            the name of the plug-in
      * @param request
      *            Stapler request
      * @param response
      *            Stapler response
-     * @throws IOException if the values could not be persisted
+     * @throws IOException
+     *             if the values could not be persisted
      */
-    protected abstract void persistValue(String value, StaplerRequest request, StaplerResponse response) throws IOException;
+    protected abstract void persistValue(String value, String pluginName,
+            StaplerRequest request, StaplerResponse response) throws IOException;
 
     /**
      * This method will be called by Stapler if an example image for the
@@ -335,6 +339,15 @@ public abstract class GraphConfigurationView implements ModelObject {
      */
     public boolean isVisible() {
         return getGraphType().isVisible();
+    }
+
+    /**
+     * Returns whether the trend graph completely is deactivated.
+     *
+     * @return <code>true</code>, if the trend graph is deactivated, <code>false</code> otherwise
+     */
+    public boolean isDeactivated() {
+        return getGraphType().isDeactivated();
     }
 
     /** {@inheritDoc} */
