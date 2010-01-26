@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import hudson.model.AbstractProject;
@@ -33,7 +34,7 @@ public class GraphConfiguration  {
     private static final BuildResultGraph DEFAULT_GRAPH = new PriorityGraph();
 
     /** Separator of cookie values. */
-    private static final String SEPARATOR = "!";
+    protected static final String SEPARATOR = "!";
 
     /** The height of the trend graph. */
     private int height;
@@ -52,6 +53,24 @@ public class GraphConfiguration  {
     private final List<BuildResultGraph> availableGraphs;
 
     /**
+     * Creates a configuration for a deactivated graph.
+     *
+     * @return a configuration for a deactivated graph
+     */
+    public static GraphConfiguration createDeactivated() {
+        return new GraphConfiguration(new NullGraph());
+    }
+
+    /**
+     * Creates a default configuration.
+     *
+     * @return a default configuration
+     */
+    public static GraphConfiguration createDefault() {
+        return new GraphConfiguration(DEFAULT_GRAPH);
+    }
+
+    /**
      * Creates a new instance of {@link GraphConfiguration}.
      *
      * @param availableGraphs
@@ -62,6 +81,20 @@ public class GraphConfiguration  {
         for (BuildResultGraph graph : availableGraphs) {
             graphId2Graph.put(graph.getId(), graph);
         }
+    }
+
+    /**
+     * Creates a new instance of {@link GraphConfiguration}.
+     *
+     * @param graph
+     *            the graph to use
+     */
+    private GraphConfiguration(final BuildResultGraph graph) {
+        reset();
+
+        availableGraphs = Lists.newArrayList();
+        graphType = graph;
+        availableGraphs.add(graphType);
     }
 
     /**

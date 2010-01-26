@@ -1,8 +1,10 @@
 package hudson.plugins.analysis.graph;
 
 import static junit.framework.Assert.*;
+import net.sf.json.JSONObject;
 
 import org.junit.Test;
+import org.mortbay.util.ajax.JSON;
 
 import com.google.common.collect.Sets;
 
@@ -80,6 +82,20 @@ public class GraphConfigurationTest {
         assertTrue("Day count is not defined but should.", configuration.isDayCountDefined());
     }
 
+    /**
+     * Ensures that a valid JSON configuration is correctly parsed.
+     */
+    @Test
+    public void testValidJSONConfiguations() {
+        Object enabled = JSON.parse("{\"\":\"\",\"buildCountString\":\"" + BUILDS
+                + "\",\"dayCountString\":\"" + DAYS
+                + "\",\"graphType\":\"FIXED\",\"height\":\"" + HEIGHT + "\",\"width\":\"" + WIDTH + "\"}");
+        JSONObject jsonObject = JSONObject.fromObject(enabled);
+
+        GraphConfiguration configuration = createDetailUnderTest();
+        assertTrue("Valid configuration not accepted.", configuration.initializeFrom(jsonObject));
+        verifyConfiguration(WIDTH, HEIGHT, BUILDS, DAYS, NewVersusFixedGraph.class, configuration);
+    }
 
     /**
      * Ensures that the specified string value is correctly parsed.
@@ -101,6 +117,23 @@ public class GraphConfigurationTest {
             final int expectedBuildCount, final int expectedDayCount, final Class<? extends BuildResultGraph> expectedType) {
         GraphConfiguration configuration = createDetailUnderTest();
         assertTrue("Valid configuration not accepted.", configuration.initializeFrom(initialization));
+
+        verifyConfiguration(expectedWidth, expectedHeight, expectedBuildCount, expectedDayCount,
+                expectedType, configuration);
+    }
+
+    /**
+     * FIXME: Document method verifyConfiguration
+     * @param expectedWidth
+     * @param expectedHeight
+     * @param expectedBuildCount
+     * @param expectedDayCount
+     * @param expectedType
+     * @param configuration
+     */
+    private void verifyConfiguration(final int expectedWidth, final int expectedHeight,
+            final int expectedBuildCount, final int expectedDayCount,
+            final Class<? extends BuildResultGraph> expectedType, final GraphConfiguration configuration) {
         assertFalse("Valid configuration is not accepted.", configuration.isDefault());
         assertEquals("Wrong width.", expectedWidth, configuration.getWidth());
         assertEquals("Wrong height.", expectedHeight, configuration.getHeight());
