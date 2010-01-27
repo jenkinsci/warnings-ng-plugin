@@ -11,7 +11,7 @@
   <artifactId>analysis-core</artifactId>
   <packaging>hpi</packaging>
   <name>Static Analysis Utilities</name>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2</version>
   <description>This plug-in provides utilities for the static code analysis plug-ins.</description>
 
   <url>http://wiki.hudson-ci.org/display/HUDSON/Static+Code+Analysis+Plug-ins</url>
@@ -23,4 +23,10 @@
       <version>5.0</version>
     </dependency>
   </dependencies>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/analysis-core-1.2</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/analysis-core-1.2</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/tags/analysis-core-1.2</url>
+  </scm>
 </project>
