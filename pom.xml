@@ -46,4 +46,10 @@
     </dependency>
   </dependencies>
 
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/trunk/hudson/plugins/${project.artifactId}</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/${project.artifactId}</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/trunk/hudson/plugins/${project.artifactId}</url>
+  </scm>
+
 </project>
