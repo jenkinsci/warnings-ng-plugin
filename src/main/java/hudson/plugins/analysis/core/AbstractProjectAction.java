@@ -253,7 +253,8 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return the icon URL for the side-panel in the project screen
      */
     public String getIconFileName() {
-        if (getLastAction() != null) {
+        ResultAction<?> lastAction = getLastAction();
+        if (lastAction != null && lastAction.getResult().hasAnnotations()) {
             return iconUrl;
         }
         return null;
