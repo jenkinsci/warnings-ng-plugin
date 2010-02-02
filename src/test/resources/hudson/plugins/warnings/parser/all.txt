@@ -837,3 +837,19 @@ Compiling: C:\Documents and Settings\xxxx\GNT\ccc.GNT...
 
 Time Elapsed 00:03:45.35
 
+
+<stdout>(980): warning #177: label "find_rule" was declared but never referenced
+  find_rule: /* we branch to this label when backing up */
+  ^
+
+<stdout>(2454): warning #177: function "yy_flex_strlen" was declared but never referenced
+  static int yy_flex_strlen (yyconst char * s )
+             ^
+
+D:\hudson\workspace\continuous-snext-main-Win32\trunk\src\engine\AllocationProfiler.cpp(120): warning #1786: function "fopen" (declared at line 237 of "C:\Program Files\Microsoft Visual Studio 9.0\VC\INCLUDE\stdio.h") was declared "deprecated ("This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.") "
+      FILE* fout = fopen("GCStats.txt", "wt");
+                   ^
+D:\hudson\workspace\continuous-snext-main-Win32\trunk\src\engine\AllocationProfiler.cpp(120): error #1786: function "fopen" (declared at line 237 of "C:\Program Files\Microsoft Visual Studio 9.0\VC\INCLUDE\stdio.h") was declared "deprecated ("This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.") "
+      FILE* fout = fopen("GCStats.txt", "wt");
+                   ^
+
