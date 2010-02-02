@@ -168,6 +168,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     }
 
     /** {@inheritDoc} */
+    @Exported
     public final long getKey() {
         return key;
     }
