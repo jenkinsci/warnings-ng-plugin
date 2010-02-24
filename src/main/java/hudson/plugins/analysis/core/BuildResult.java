@@ -349,7 +349,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the owner
      */
-    public final AbstractBuild<?, ?> getOwner() {
+    public AbstractBuild<?, ?> getOwner() {
         return owner;
     }
 
@@ -635,7 +635,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     /**
      * Returns the new warnings of this build.
      *
-     * @return the new warnings of this build.
+     * @return the new warnings of this build
      */
     @Exported
     public Collection<FileAnnotation> getNewWarnings() {
@@ -647,6 +647,19 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             return loadNewWarnings();
         }
         return result;
+    }
+
+    /**
+     * Returns the new warnings of this build in regard to the specified build.
+     *
+     * @return the new warnings
+     */
+    public Collection<FileAnnotation> getNewWarnings(final AbstractBuild<?, ?> build) {
+        Collection<FileAnnotation> difference = getProject().getAnnotations();
+        if (hasPreviousResult(build)) {
+            difference = AnnotationDifferencer.getNewAnnotations(difference, getPreviousResult(build).getAnnotations());
+        }
+        return difference;
     }
 
     /**
@@ -722,7 +735,39 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     public JavaProject getPreviousResult() {
         ResultAction<? extends BuildResult> action = getOwner().getAction(getResultActionType());
         if (action != null && action.hasPreviousResultAction()) {
-            return action.getPreviousResultAction().getResult().getProject();
+            return action.getPreviousAction().getResult().getProject();
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns whether the specified build has a result.
+     *
+     * @param build
+     *            the build
+     * @return <code>true</code> if the specified build has a result action,
+     *         <code>false</code> otherwise
+     */
+    public boolean hasPreviousResult(final AbstractBuild<?, ?> build) {
+        ResultAction<?> action = getOwner().getAction(getResultActionType());
+
+        return action != null && action.hasPreviousResultAction(build);
+    }
+
+    /**
+     * Returns the result of the specified build if it's recorded, or
+     * <code>null</code> if not.
+     *
+     * @param build
+     *            the build
+     * @return the result of the specified build, or <code>null</code>
+     */
+    public JavaProject getPreviousResult(final AbstractBuild<?, ?> build) {
+        ResultAction<? extends BuildResult> action = getOwner().getAction(getResultActionType());
+        if (action != null && action.hasPreviousResultAction(build)) {
+            return action.getPreviousAction(build).getResult().getProject();
         }
         else {
             return null;

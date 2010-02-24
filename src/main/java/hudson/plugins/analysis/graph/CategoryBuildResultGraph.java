@@ -76,7 +76,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
             }
 
             if (action.hasPreviousResultAction()) {
-                action = action.getPreviousResultAction();
+                action = action.getPreviousAction();
             }
             else {
                 break;

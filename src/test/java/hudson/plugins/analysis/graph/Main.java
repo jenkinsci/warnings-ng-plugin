@@ -74,7 +74,7 @@ public class Main extends ApplicationFrame {
         when(result.getNumberOfNewWarnings()).thenReturn(newWarnings);
 
         when(action.getBuild()).thenReturn(build);
-        when(action.getPreviousResultAction()).thenReturn(previous);
+        when(action.getPreviousAction()).thenReturn(previous);
         when(action.hasPreviousResultAction()).thenReturn(previous != null);
         when(action.getResult()).thenReturn(result);
 

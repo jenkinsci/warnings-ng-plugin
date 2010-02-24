@@ -136,7 +136,7 @@ public class DifferenceGraph extends BuildResultGraph {
             newWarnings.add(new Pair<Integer, Integer>(build, current.getNumberOfNewWarnings()));
 
             if (action.hasPreviousResultAction()) {
-                action = action.getPreviousResultAction();
+                action = action.getPreviousAction();
             }
             else {
                 break;

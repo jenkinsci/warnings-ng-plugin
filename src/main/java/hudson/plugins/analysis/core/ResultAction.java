@@ -40,12 +40,32 @@ public interface ResultAction<T extends BuildResult> extends Action {
     boolean hasPreviousResultAction();
 
     /**
+     * Returns whether the specified build has a result action.
+     *
+     * @param build
+     *            the build
+     * @return <code>true</code> if the specified build has a result action,
+     *         <code>false</code> otherwise
+     */
+    boolean hasPreviousResultAction(final AbstractBuild<?, ?> build);
+
+    /**
      * Returns the result action from the previous build.
      *
      * @return the result of the previous build.
      * @throws NoSuchElementException if there is no previous result action is found
      */
-    ResultAction<T> getPreviousResultAction();
+    ResultAction<T> getPreviousAction();
+
+    /**
+     * Gets the result of the specified build if it's recorded, or
+     * <code>null</code> if not.
+     *
+     * @param build
+     *            the build
+     * @return the result of the specified build, or <code>null</code>
+     */
+    ResultAction<T> getPreviousAction(final AbstractBuild<?, ?> build);
 
     /**
      * Returns the associated build of this action.

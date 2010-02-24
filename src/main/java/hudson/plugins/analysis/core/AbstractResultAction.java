@@ -150,13 +150,19 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         return null;
     }
 
+    // CHECKSTYLE:OFF
     /**
-     * Gets the result of a previous build if it's recorded, or <code>null</code> if not.
-     *
-     * @return the result of a previous build, or <code>null</code>
+     * @deprecated use {@link #getPreviousAction()}
      */
+    @Deprecated
+    public AbstractResultAction<T> getPreviousBuild() {
+        return getPreviousAction();
+    }
+    // CHECKSTYLE:ON
+
+    /** {@inheritDoc} */
     @java.lang.SuppressWarnings("unchecked")
-    protected AbstractResultAction<T> getPreviousBuild() {
+    public AbstractResultAction<T> getPreviousAction() {
         AbstractBuild<?, ?> build = getOwner();
         while (true) {
             build = build.getPreviousBuild();
@@ -170,9 +176,34 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         }
     }
 
+    /**
+     * Gets the result of the specified build if it's recorded, or
+     * <code>null</code> if not.
+     *
+     * @param build
+     *            the build
+     * @return the result of the specified build, or <code>null</code>
+     */
+    @java.lang.SuppressWarnings("unchecked")
+    public AbstractResultAction<T> getPreviousAction(final AbstractBuild<?, ?> build) {
+        return build.getAction(getClass());
+    }
+
+    /**
+     * Returns whether the specified build has a result action.
+     *
+     * @param build
+     *            the build
+     * @return <code>true</code> if the specified build has a result action,
+     *         <code>false</code> otherwise
+     */
+    public boolean hasPreviousResultAction(final AbstractBuild<?, ?> build) {
+        return getPreviousAction(build) != null;
+    }
+
     /** {@inheritDoc} */
     public boolean hasPreviousResultAction() {
-        return getPreviousBuild() != null;
+        return getPreviousAction() != null;
     }
 
     /**
@@ -242,9 +273,9 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      *            the build result
      */
     protected void updateBuildHealth(final MavenBuild build, final BuildResult buildResult) {
+        PluginLogger logger = new PluginLogger(System.out, "[" + getDisplayName() + "] ");
         Result hudsonResult = new BuildResultEvaluator().evaluateBuildResult(
-                new PluginLogger(System.out, "[" + getDisplayName() + "] "), getHealthDescriptor(),
-                buildResult.getAnnotations(), buildResult.getNewWarnings());
+                logger, getHealthDescriptor(), buildResult);
         if (hudsonResult != Result.SUCCESS) {
             build.setResult(hudsonResult);
         }

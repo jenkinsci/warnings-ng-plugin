@@ -133,14 +133,14 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("deprecation") // Eclipse bug #298563
     @Override
     public final boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
         if (canContinue(build.getResult())) {
             PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
             BuildResult annotationsResult = perform(build, logger);
 
-            Result buildResult = new BuildResultEvaluator().evaluateBuildResult(logger, this,
-                    annotationsResult.getAnnotations(), annotationsResult.getNewWarnings());
+            Result buildResult = new BuildResultEvaluator().evaluateBuildResult(logger, this, annotationsResult);
             if (buildResult != Result.SUCCESS) {
                 build.setResult(buildResult);
             }
