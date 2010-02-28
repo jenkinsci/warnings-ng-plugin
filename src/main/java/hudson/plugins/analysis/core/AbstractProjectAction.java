@@ -240,7 +240,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
         if (build != null) {
             ResultAction<?> resultAction = build.getAction(resultActionType);
             if (resultAction != null) {
-                return resultAction.hasPreviousResultAction();
+                return resultAction.hasPreviousAction();
             }
         }
         return false;

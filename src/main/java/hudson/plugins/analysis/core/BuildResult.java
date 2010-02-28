@@ -28,10 +28,12 @@ import hudson.XmlFile;
 import hudson.model.AbstractBuild;
 import hudson.model.Api;
 import hudson.model.ModelObject;
+import hudson.model.Result;
 
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.AnnotationProvider;
 import hudson.plugins.analysis.util.model.AnnotationStream;
+import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.JavaProject;
 import hudson.plugins.analysis.util.model.MavenModule;
@@ -67,33 +69,33 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /** Current build as owner of this action. */
-    private AbstractBuild<?, ?> owner;
+    private final AbstractBuild<?, ?> owner;
     /** All parsed modules. */
     private Set<String> modules;
     /** The total number of parsed modules (regardless if there are annotations). */
-    private int numberOfModules;
+    private final int numberOfModules;
     /** The default encoding to be used when reading and parsing files. */
-    private String defaultEncoding;
+    private final String defaultEncoding;
 
     /** The project containing the annotations. */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
     private transient WeakReference<JavaProject> project;
     /** All new warnings in the current build. */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
-    private transient WeakReference<Collection<FileAnnotation>> newWarnings;
+    private transient WeakReference<Collection<FileAnnotation>> newWarningsReference;
     /** All fixed warnings in the current build. */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
-    private transient WeakReference<Collection<FileAnnotation>> fixedWarnings;
+    private transient WeakReference<Collection<FileAnnotation>> fixedWarningsReference;
 
     /** The number of warnings in this build. */
     private int numberOfWarnings;
     /** The number of new warnings in this build. */
-    private int numberOfNewWarnings;
+    private final int numberOfNewWarnings;
     /** The number of fixed warnings in this build. */
-    private int numberOfFixedWarnings;
+    private final int numberOfFixedWarnings;
 
     /** Difference between this and the previous build. */
-    private int delta;
+    private final int delta;
 
     /** The number of low priority warnings in this build. */
     private int lowWarnings;
@@ -108,13 +110,20 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     private long zeroWarningsSinceDate;
     /** private since which time we have zero warnings. */
     private long zeroWarningsHighScore;
-    /** Determines if the old zero highscore has been broken. */
+    /** Determines if the old zero high score has been broken. */
     private boolean isZeroWarningsHighscore;
-    /** Determines the number of msec still to go before a new highscore is reached. */
+    /** Determines the number of msec still to go before a new high score is reached. */
     private long highScoreGap;
     /** Error messages. */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
     private List<String> errors;
+
+    /**
+     * The build result of the Hudson build.
+     *
+     * @since 1.4
+     */
+    private Result pluginResult;
 
     /**
      * Creates a new instance of {@link BuildResult}.
@@ -127,90 +136,26 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *            the parsed result with all annotations
      */
     public BuildResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result) {
-        initialize(build, defaultEncoding, result, new JavaProject());
-
-        if (result.hasNoAnnotations()) {
-            zeroWarningsSinceBuild = build.getNumber();
-            zeroWarningsSinceDate = build.getTimestamp().getTimeInMillis();
-            isZeroWarningsHighscore = true;
-        }
-    }
-
-    /**
-     * Creates a new instance of {@link BuildResult}.
-     *
-     * @param build
-     *            the current build as owner of this action
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param result
-     *            the parsed result with all annotations
-     * @param previous
-     *            the result of the previous build
-     */
-    public BuildResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result, final BuildResult previous) {
-        AnnotationContainer previousProject = previous.getProject();
-
-        initialize(build, defaultEncoding, result, previousProject);
-
-        if (result.hasNoAnnotations()) {
-            if (previousProject.hasNoAnnotations()) {
-                zeroWarningsSinceBuild = previous.getZeroWarningsSinceBuild();
-                zeroWarningsSinceDate = previous.getZeroWarningsSinceDate();
-            }
-            else {
-                zeroWarningsSinceBuild = build.getNumber();
-                zeroWarningsSinceDate = build.getTimestamp().getTimeInMillis();
-            }
-            zeroWarningsHighScore = Math.max(previous.getZeroWarningsHighScore(), build.getTimestamp().getTimeInMillis() - zeroWarningsSinceDate);
-            if (previous.getZeroWarningsHighScore() == 0) {
-                isZeroWarningsHighscore = true;
-            }
-            else {
-                isZeroWarningsHighscore = zeroWarningsHighScore != previous.getZeroWarningsHighScore();
-
-            }
-            if (!isZeroWarningsHighscore) {
-                highScoreGap = previous.getZeroWarningsHighScore() - (build.getTimestamp().getTimeInMillis() - zeroWarningsSinceDate);
-            }
-        }
-        else {
-            zeroWarningsHighScore = previous.getZeroWarningsHighScore();
-        }
-    }
-
-
-    /**
-     * Initializes this build result.
-     *
-     * @param build
-     *            the current build as owner of this action
-     * @param encoding
-     *            the default encoding to be used when reading and parsing files
-     * @param result
-     *            the parsed result with all annotations
-     * @param previousProject
-     *            the project of the previous build
-     */
-    private void initialize(final AbstractBuild<?, ?> build, final String encoding, final ParserResult result, final AnnotationContainer previousProject) {
         owner = build;
         modules = new HashSet<String>(result.getModules());
         numberOfModules = modules.size();
         errors = new ArrayList<String>(result.getErrorMessages());
-        defaultEncoding = encoding;
+        this.defaultEncoding = defaultEncoding;
 
         numberOfWarnings = result.getNumberOfAnnotations();
-        delta = result.getNumberOfAnnotations() - previousProject.getNumberOfAnnotations();
+        AnnotationContainer referenceResult = getReferenceResult();
+
+        delta = result.getNumberOfAnnotations() - referenceResult.getNumberOfAnnotations();
 
         Collection<FileAnnotation> allWarnings = result.getAnnotations();
 
-        Set<FileAnnotation> warnings = AnnotationDifferencer.getNewAnnotations(allWarnings, previousProject.getAnnotations());
-        numberOfNewWarnings = warnings.size();
-        newWarnings = new WeakReference<Collection<FileAnnotation>>(warnings);
+        Set<FileAnnotation> newWarnings = AnnotationDifferencer.getNewAnnotations(allWarnings, referenceResult.getAnnotations());
+        numberOfNewWarnings = newWarnings.size();
+        newWarningsReference = new WeakReference<Collection<FileAnnotation>>(newWarnings);
 
-        warnings = AnnotationDifferencer.getFixedAnnotations(allWarnings, previousProject.getAnnotations());
-        numberOfFixedWarnings = warnings.size();
-        fixedWarnings = new WeakReference<Collection<FileAnnotation>>(warnings);
+        Set<FileAnnotation> fixedWarnings = AnnotationDifferencer.getFixedAnnotations(allWarnings, referenceResult.getAnnotations());
+        numberOfFixedWarnings = fixedWarnings.size();
+        fixedWarningsReference = new WeakReference<Collection<FileAnnotation>>(fixedWarnings);
 
         highWarnings = result.getNumberOfAnnotations(Priority.HIGH);
         normalWarnings = result.getNumberOfAnnotations(Priority.NORMAL);
@@ -222,6 +167,54 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         container.addAnnotations(result.getAnnotations());
 
         project = new WeakReference<JavaProject>(container);
+
+        computeZeroWarningsHighScore(build, result);
+    }
+
+    /**
+     * Computes the zero warnings high score based on the current build and the
+     * previous build (with results of the same plug-in).
+     *
+     * @param build
+     *            the current build
+     * @param currentResult
+     *            the current result
+     */
+    private void computeZeroWarningsHighScore(final AbstractBuild<?, ?> build, final ParserResult currentResult) {
+        if (hasPreviousResult()) {
+            BuildResult previous = getPreviousResult().getResult();
+            if (currentResult.hasNoAnnotations()) {
+                if (previous.hasNoAnnotations()) {
+                    zeroWarningsSinceBuild = previous.getZeroWarningsSinceBuild();
+                    zeroWarningsSinceDate = previous.getZeroWarningsSinceDate();
+                }
+                else {
+                    zeroWarningsSinceBuild = build.getNumber();
+                    zeroWarningsSinceDate = build.getTimestamp().getTimeInMillis();
+                }
+                zeroWarningsHighScore = Math.max(previous.getZeroWarningsHighScore(), build.getTimestamp().getTimeInMillis() - zeroWarningsSinceDate);
+                if (previous.getZeroWarningsHighScore() == 0) {
+                    isZeroWarningsHighscore = true;
+                }
+                else {
+                    isZeroWarningsHighscore = zeroWarningsHighScore != previous.getZeroWarningsHighScore();
+
+                }
+                if (!isZeroWarningsHighscore) {
+                    highScoreGap = previous.getZeroWarningsHighScore() - (build.getTimestamp().getTimeInMillis() - zeroWarningsSinceDate);
+                }
+            }
+            else {
+                zeroWarningsHighScore = previous.getZeroWarningsHighScore();
+            }
+        }
+        else {
+            if (currentResult.hasNoAnnotations()) {
+                zeroWarningsSinceBuild = build.getNumber();
+                zeroWarningsSinceDate = build.getTimestamp().getTimeInMillis();
+                isZeroWarningsHighscore = true;
+            }
+        }
     }
 
     /**
@@ -248,6 +241,9 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the created object
      */
     protected Object readResolve() {
+        if (pluginResult == null) {
+            pluginResult = Result.SUCCESS;
+        }
         if (modules == null) {
             modules = new HashSet<String>();
         }
@@ -639,10 +635,10 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      */
     @Exported
     public Collection<FileAnnotation> getNewWarnings() {
-        if (newWarnings == null) {
+        if (newWarningsReference == null) {
             return loadNewWarnings();
         }
-        Collection<FileAnnotation> result = newWarnings.get();
+        Collection<FileAnnotation> result = newWarningsReference.get();
         if (result == null) {
             return loadNewWarnings();
         }
@@ -650,31 +646,20 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
-     * Returns the new warnings of this build in regard to the specified build.
-     *
-     * @return the new warnings
-     */
-    public Collection<FileAnnotation> getNewWarnings(final AbstractBuild<?, ?> build) {
-        Collection<FileAnnotation> difference = getProject().getAnnotations();
-        if (hasPreviousResult(build)) {
-            difference = AnnotationDifferencer.getNewAnnotations(difference, getPreviousResult(build).getAnnotations());
-        }
-        return difference;
-    }
-
-    /**
-     * Loads the results of the current and previous build, computes the new
+     * Loads the results of the current and reference build, computes the new
      * warnings and wraps them in a weak reference that might get removed by the
-     * garbage collector.
+     * garbage collector. The reference build is the last build that has not
+     * changed the build result by the associated plug-in action (see
+     * {@link #getResultActionType()}.
      *
      * @return the new warnings
      */
     private Collection<FileAnnotation> loadNewWarnings() {
         Collection<FileAnnotation> difference = getProject().getAnnotations();
-        if (hasPreviousResult()) {
-            difference = AnnotationDifferencer.getNewAnnotations(difference, getPreviousResult().getAnnotations());
+        if (hasReferenceResult()) {
+            difference = AnnotationDifferencer.getNewAnnotations(difference, getReferenceResult().getAnnotations());
         }
-        newWarnings = new WeakReference<Collection<FileAnnotation>>(difference);
+        newWarningsReference = new WeakReference<Collection<FileAnnotation>>(difference);
 
         return difference;
     }
@@ -685,10 +670,10 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the fixed warnings of this build.
      */
     public Collection<FileAnnotation> getFixedWarnings() {
-        if (fixedWarnings == null) {
+        if (fixedWarningsReference == null) {
             return loadFixedWarnings();
         }
-        Collection<FileAnnotation> result = fixedWarnings.get();
+        Collection<FileAnnotation> result = fixedWarningsReference.get();
         if (result == null) {
             return loadFixedWarnings();
         }
@@ -704,15 +689,53 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      */
     private Collection<FileAnnotation> loadFixedWarnings() {
         Collection<FileAnnotation> difference;
-        if (hasPreviousResult()) {
-            difference = AnnotationDifferencer.getFixedAnnotations(getProject().getAnnotations(), getPreviousResult().getAnnotations());
+        if (hasReferenceResult()) {
+            difference = AnnotationDifferencer.getFixedAnnotations(getProject().getAnnotations(), getReferenceResult().getAnnotations());
         }
         else {
             difference = Collections.emptyList();
         }
-        fixedWarnings = new WeakReference<Collection<FileAnnotation>>(difference);
+        fixedWarningsReference = new WeakReference<Collection<FileAnnotation>>(difference);
 
         return difference;
+    }
+
+    /**
+     * Returns whether a reference build result exists.
+     *
+     * @return <code>true</code> if a reference build result exists.
+     */
+    public boolean hasReferenceResult() {
+        return getReferenceAction() != null;
+    }
+
+    /**
+     * Returns the results of the reference build.
+     *
+     * @return the result of the reference build
+     */
+    public AnnotationContainer getReferenceResult() {
+        ResultAction<? extends BuildResult> action = getReferenceAction();
+        if (action != null) {
+            return action.getResult().getContainer();
+        }
+        return new DefaultAnnotationContainer();
+    }
+
+    /**
+     * Returns the action of the reference build.
+     *
+     * @return the action of the reference build, or <code>null</code> if no
+     *         such build exists
+     */
+    public ResultAction<? extends BuildResult> getReferenceAction() {
+        ResultAction<? extends BuildResult> currentAction = getOwner().getAction(getResultActionType());
+        if (currentAction.hasReferenceAction()) {
+            return currentAction.getReferenceAction();
+        }
+        else {
+            return getPreviousResult(); // fallback, use previous build
+        }
     }
 
     /**
@@ -723,55 +746,19 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     public boolean hasPreviousResult() {
         ResultAction<?> action = getOwner().getAction(getResultActionType());
 
-        return action != null && action.hasPreviousResultAction();
+        return action != null && action.hasPreviousAction();
     }
 
     /**
-     * Returns the results of the previous build.
+     * Returns the action of the previous build.
      *
-     * @return the result of the previous build, or <code>null</code> if no
+     * @return the action of the previous build, or <code>null</code> if no
      *         such build exists
      */
-    public JavaProject getPreviousResult() {
-        ResultAction<? extends BuildResult> action = getOwner().getAction(getResultActionType());
-        if (action != null && action.hasPreviousResultAction()) {
-            return action.getPreviousAction().getResult().getProject();
-        }
-        else {
-            return null;
-        }
-    }
+    public ResultAction<? extends BuildResult> getPreviousResult() {
+        ResultAction<? extends BuildResult> currentAction = getOwner().getAction(getResultActionType());
 
-    /**
-     * Returns whether the specified build has a result.
-     *
-     * @param build
-     *            the build
-     * @return <code>true</code> if the specified build has a result action,
-     *         <code>false</code> otherwise
-     */
-    public boolean hasPreviousResult(final AbstractBuild<?, ?> build) {
-        ResultAction<?> action = getOwner().getAction(getResultActionType());
-
-        return action != null && action.hasPreviousResultAction(build);
-    }
-
-    /**
-     * Returns the result of the specified build if it's recorded, or
-     * <code>null</code> if not.
-     *
-     * @param build
-     *            the build
-     * @return the result of the specified build, or <code>null</code>
-     */
-    public JavaProject getPreviousResult(final AbstractBuild<?, ?> build) {
-        ResultAction<? extends BuildResult> action = getOwner().getAction(getResultActionType());
-        if (action != null && action.hasPreviousResultAction(build)) {
-            return action.getPreviousAction(build).getResult().getProject();
-        }
-        else {
-            return null;
-        }
+        return currentAction.getPreviousAction();
     }
 
     /**
@@ -832,6 +819,27 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      */
     public Api getApi() {
         return new Api(this);
+    }
+
+    /**
+     * Returns whether this build is successful with respect to the
+     * {@link HealthDescriptor} of this result.
+     *
+     * @return <code>true</code> if the build is successful, <code>false</code>
+     *         if the build has been set to {@link Result#UNSTABLE} or
+     *         {@link Result#FAILURE} by this result.
+     */
+    public boolean isSuccessful() {
+        return pluginResult == Result.SUCCESS;
+    }
+
+    /**
+     * Sets the Hudson build result for this plug-in build result.
+     *
+     * @param result the Hudson build result
+     */
+    public void setResult(final Result result) {
+        pluginResult = result;
     }
 
     // Backward compatibility. Do not remove.

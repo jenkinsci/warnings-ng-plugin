@@ -150,16 +150,6 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         return null;
     }
 
-    // CHECKSTYLE:OFF
-    /**
-     * @deprecated use {@link #getPreviousAction()}
-     */
-    @Deprecated
-    public AbstractResultAction<T> getPreviousBuild() {
-        return getPreviousAction();
-    }
-    // CHECKSTYLE:ON
-
     /** {@inheritDoc} */
     @java.lang.SuppressWarnings("unchecked")
     public AbstractResultAction<T> getPreviousAction() {
@@ -176,34 +166,30 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         }
     }
 
-    /**
-     * Gets the result of the specified build if it's recorded, or
-     * <code>null</code> if not.
-     *
-     * @param build
-     *            the build
-     * @return the result of the specified build, or <code>null</code>
-     */
-    @java.lang.SuppressWarnings("unchecked")
-    public AbstractResultAction<T> getPreviousAction(final AbstractBuild<?, ?> build) {
-        return build.getAction(getClass());
-    }
-
-    /**
-     * Returns whether the specified build has a result action.
-     *
-     * @param build
-     *            the build
-     * @return <code>true</code> if the specified build has a result action,
-     *         <code>false</code> otherwise
-     */
-    public boolean hasPreviousResultAction(final AbstractBuild<?, ?> build) {
-        return getPreviousAction(build) != null;
+    /** {@inheritDoc} */
+    public boolean hasPreviousAction() {
+        return getPreviousAction() != null;
     }
 
     /** {@inheritDoc} */
-    public boolean hasPreviousResultAction() {
-        return getPreviousAction() != null;
+    @java.lang.SuppressWarnings("unchecked")
+    public AbstractResultAction<T> getReferenceAction() {
+        AbstractBuild<?, ?> build = getOwner();
+        while (true) {
+            build = build.getPreviousBuild();
+            if (build == null) {
+                return null;
+            }
+            AbstractResultAction<T> action = build.getAction(getClass());
+            if (action != null && action.isSuccessful()) {
+                return action;
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    public boolean hasReferenceAction() {
+        return getReferenceAction() != null;
     }
 
     /**
@@ -275,7 +261,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     protected void updateBuildHealth(final MavenBuild build, final BuildResult buildResult) {
         PluginLogger logger = new PluginLogger(System.out, "[" + getDisplayName() + "] ");
         Result hudsonResult = new BuildResultEvaluator().evaluateBuildResult(
-                logger, getHealthDescriptor(), buildResult);
+                logger, getHealthDescriptor(), buildResult.getAnnotations(), buildResult.getNewWarnings());
         if (hudsonResult != Result.SUCCESS) {
             build.setResult(hudsonResult);
         }
@@ -306,6 +292,11 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * @return the tooltip for exactly one item
      */
     protected abstract String getSingleItemTooltip();
+
+    /** {@inheritDoc} */
+    public boolean isSuccessful() {
+        return getResult().isSuccessful();
+    }
 
     /** Backward compatibility. @deprecated */
     @Deprecated

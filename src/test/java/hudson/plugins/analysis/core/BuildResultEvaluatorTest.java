@@ -8,9 +8,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-
-import hudson.model.AbstractBuild;
 import hudson.model.Result;
 
 import hudson.plugins.analysis.util.PluginLogger;
@@ -25,68 +22,6 @@ import hudson.plugins.analysis.util.model.Priority;
 public class BuildResultEvaluatorTest {
     /** Error message. */
     private static final String WRONG_BUILD_FAILURE_STATE = "Wrong build failure state.";
-
-    /**
-     * Checks whether the new threshold is correctly evaluated with regard to the
-     * warnings of the last successful build. Verifies the results for
-     * {@link Result#SUCCESS successful} builds that switch to
-     * {@link Result#UNSTABLE unstable} and for {@link Result#UNSTABLE unstable
-     * builds} that switch to {@link Result#FAILURE failure}
-     */
-    @Test
-    public void checkNewThreshold() {
-        verifyResult(Result.UNSTABLE, Result.SUCCESS, "0", "");
-        verifyResult(Result.FAILURE, Result.SUCCESS, "", "0");
-        // FIXME: decide when to use other warnings. verifyResult(Result.FAILURE, Result.UNSTABLE, "", "0");
-    }
-
-    /**
-     * Checks whether the new threshold is correctly evaluated with regard to
-     * the warnings of the last successful build.
-     *
-     * @param expectedResult
-     *            expected build result
-     * @param previousResult
-     *            previous build result
-     * @param newUnstableThreshold
-     *            threshold for unstable
-     * @param newFailureThreshold
-     *            threshold for failure
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private void verifyResult(final Result expectedResult, final Result previousResult,
-            final String newUnstableThreshold, final String newFailureThreshold) {
-        FileAnnotation warning = mock(FileAnnotation.class);
-        when(warning.getPriority()).thenReturn(Priority.HIGH);
-
-        AbstractBuild previousBuild = mock(AbstractBuild.class);
-        when(previousBuild.getResult()).thenReturn(previousResult);
-
-        AbstractBuild currentBuild = mock(AbstractBuild.class);
-        when(currentBuild.getPreviousBuild()).thenReturn(previousBuild);
-
-        BuildResult buildResult = mock(BuildResult.class);
-        when(buildResult.getOwner()).thenReturn(currentBuild);
-
-        ArrayList<FileAnnotation> oneWarning = Lists.newArrayList(warning);
-        when(buildResult.getAnnotations()).thenReturn(oneWarning);
-        when(buildResult.getNewWarnings()).thenReturn(oneWarning);
-
-        PluginLogger logger = mock(PluginLogger.class);
-        HealthDescriptor descriptor = newDescriptor(Priority.NORMAL, "", "", newUnstableThreshold, newFailureThreshold);
-
-        BuildResultEvaluator parser = new BuildResultEvaluator();
-        Result result = parser.evaluateBuildResult(logger, descriptor, buildResult);
-        assertEquals(expectedResult, result);
-
-        when(previousBuild.getResult()).thenReturn(expectedResult);
-        when(buildResult.getNewWarnings()).thenReturn(new ArrayList<FileAnnotation>());
-        when(buildResult.getNewWarnings(previousBuild)).thenReturn(oneWarning);
-
-        result = parser.evaluateBuildResult(logger, descriptor, buildResult);
-        assertEquals(expectedResult, result);
-    }
-
 
     /**
      * Checks whether valid thresholds are correctly converted.

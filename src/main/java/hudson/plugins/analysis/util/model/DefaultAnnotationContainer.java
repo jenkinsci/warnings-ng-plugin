@@ -15,6 +15,13 @@ public class DefaultAnnotationContainer extends AnnotationContainer {
 
     /**
      * Creates a new instance of {@link DefaultAnnotationContainer}.
+     */
+    public DefaultAnnotationContainer() {
+        super(TEMPORARY, Hierarchy.PROJECT);
+    }
+
+    /**
+     * Creates a new instance of {@link DefaultAnnotationContainer}.
      *
      * @param name
      *            the name of this container

@@ -1,9 +1,8 @@
 package hudson.plugins.analysis.core;
 
-import java.util.NoSuchElementException;
-
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
+import hudson.model.Result;
 
 import hudson.plugins.analysis.util.ToolTipProvider;
 
@@ -37,35 +36,32 @@ public interface ResultAction<T extends BuildResult> extends Action {
      * @return <code>true</code> a previous build already has a result action
      *         of this type attached
      */
-    boolean hasPreviousResultAction();
+    boolean hasPreviousAction();
 
     /**
-     * Returns whether the specified build has a result action.
+     * Returns the result action from a previous build or <code>null</code> if
+     * no such build is found.
      *
-     * @param build
-     *            the build
-     * @return <code>true</code> if the specified build has a result action,
-     *         <code>false</code> otherwise
-     */
-    boolean hasPreviousResultAction(final AbstractBuild<?, ?> build);
-
-    /**
-     * Returns the result action from the previous build.
-     *
-     * @return the result of the previous build.
-     * @throws NoSuchElementException if there is no previous result action is found
+     * @return the result of the previous build, or <code>null</code>.
      */
     ResultAction<T> getPreviousAction();
 
     /**
-     * Gets the result of the specified build if it's recorded, or
-     * <code>null</code> if not.
+     * Returns whether a previous build already has a successful result action
+     * of this type attached.
      *
-     * @param build
-     *            the build
-     * @return the result of the specified build, or <code>null</code>
+     * @return <code>true</code> a previous build already has a result action of
+     *         this type attached
      */
-    ResultAction<T> getPreviousAction(final AbstractBuild<?, ?> build);
+    boolean hasReferenceAction();
+
+    /**
+     * Returns the successful result action from a previous build or
+     * <code>null</code> if no such build is found.
+     *
+     * @return the result of the previous build, or <code>null</code>.
+     */
+    ResultAction<T> getReferenceAction();
 
     /**
      * Returns the associated build of this action.
@@ -87,4 +83,14 @@ public interface ResultAction<T extends BuildResult> extends Action {
      * @return the health descriptor
      */
     AbstractHealthDescriptor getHealthDescriptor();
+
+    /**
+     * Returns whether this build is successful with respect to the
+     * {@link HealthDescriptor} of this action.
+     *
+     * @return <code>true</code> if the build is successful, <code>false</code>
+     *         if the build has been set to {@link Result#UNSTABLE} or
+     *         {@link Result#FAILURE} by this action.
+     */
+    boolean isSuccessful();
 }

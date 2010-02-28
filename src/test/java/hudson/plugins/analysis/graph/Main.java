@@ -75,7 +75,7 @@ public class Main extends ApplicationFrame {
 
         when(action.getBuild()).thenReturn(build);
         when(action.getPreviousAction()).thenReturn(previous);
-        when(action.hasPreviousResultAction()).thenReturn(previous != null);
+        when(action.hasPreviousAction()).thenReturn(previous != null);
         when(action.getResult()).thenReturn(result);
 
         return action;

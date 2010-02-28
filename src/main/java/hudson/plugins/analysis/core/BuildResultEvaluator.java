@@ -4,7 +4,6 @@ import static hudson.plugins.analysis.util.ThresholdValidator.*;
 
 import java.util.Collection;
 
-import hudson.model.AbstractBuild;
 import hudson.model.Result;
 
 import hudson.plugins.analysis.util.PluginLogger;
@@ -31,7 +30,7 @@ public class BuildResultEvaluator {
      *            new annotations
      * @return the build result
      */
-    Result evaluateBuildResult(final PluginLogger logger, final HealthDescriptor descriptor,
+    public Result evaluateBuildResult(final PluginLogger logger, final HealthDescriptor descriptor,
             final Collection<FileAnnotation> allAnnotations, final Collection<FileAnnotation> newAnnotations) {
         ParserResult result = new ParserResult(allAnnotations);
         ParserResult newResult = new ParserResult(newAnnotations);
@@ -87,38 +86,6 @@ public class BuildResultEvaluator {
             return annotationCount > convert(annotationThreshold);
         }
         return false;
-    }
-
-    /**
-     * Evaluates the build result. The build is marked as unstable if one of the
-     * thresholds has been exceeded. For new warnings, that previous build is
-     * considered that has a better build result than the current build.
-     *
-     * @param logger
-     *            logs the results
-     * @param descriptor
-     *            health descriptor
-     * @param buildResult
-     *            the result of this build
-     * @return the build result
-     */
-    @SuppressWarnings("rawtypes")
-    public Result evaluateBuildResult(final PluginLogger logger, final HealthDescriptor descriptor,
-            final BuildResult buildResult) {
-        AbstractBuild<?, ?> currentBuild = buildResult.getOwner();
-        if (currentBuild.getPreviousBuild() != null) {
-            Object object = currentBuild.getPreviousBuild();
-            if (object instanceof AbstractBuild) {
-                AbstractBuild<?, ?> previousBuild = (AbstractBuild)object;
-                if (previousBuild.getResult() != Result.SUCCESS) {
-                    // FIXME: use warnings of previous unstable build
-                    return evaluateBuildResult(logger, descriptor,
-                            buildResult.getAnnotations(), buildResult.getNewWarnings(previousBuild));
-                }
-            }
-        }
-        return evaluateBuildResult(logger, descriptor,
-                buildResult.getAnnotations(), buildResult.getNewWarnings());
     }
 }
 
