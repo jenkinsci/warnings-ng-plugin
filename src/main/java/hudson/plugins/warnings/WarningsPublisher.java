@@ -207,7 +207,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
         }
         project = build.getWorkspace().act(new AnnotationsClassifier(project, getDefaultEncoding()));
 
-        WarningsResult result = new WarningsResultBuilder().build(build, project, getDefaultEncoding());
+        WarningsResult result = new WarningsResult(build, getDefaultEncoding(), project);
         build.getActions().add(new WarningsResultAction(build, this, result));
 
         return result;

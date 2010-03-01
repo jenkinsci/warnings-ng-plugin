@@ -2,6 +2,7 @@ package hudson.plugins.warnings;
 
 import static junit.framework.Assert.*;
 import hudson.model.AbstractBuild;
+import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.test.BuildResultTest;
@@ -12,14 +13,8 @@ import hudson.plugins.analysis.test.BuildResultTest;
 public class WarningsResultTest extends BuildResultTest<WarningsResult> {
     /** {@inheritDoc} */
     @Override
-    protected WarningsResult createBuildResult(final AbstractBuild<?, ?> build, final ParserResult project) {
-        return new WarningsResult(build, null, project);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected WarningsResult createBuildResult(final AbstractBuild<?, ?> build, final ParserResult project, final WarningsResult previous) {
-        return new WarningsResult(build, null, project, previous);
+    protected WarningsResult createBuildResult(final AbstractBuild<?, ?> build, final ParserResult project, final BuildHistory history) {
+        return new WarningsResult(build, null, project, history);
     }
 
     /** {@inheritDoc} */

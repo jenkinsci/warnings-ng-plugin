@@ -1,6 +1,7 @@
 package hudson.plugins.warnings; // NOPMD
 
 import hudson.model.AbstractBuild;
+import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.core.ResultAction;
@@ -42,12 +43,12 @@ public class WarningsResult extends BuildResult {
      *            the default encoding to be used when reading and parsing files
      * @param result
      *            the parsed result with all annotations
-     * @param previous
-     *            the result of the previous build
+     * @param history
+     *            the history of build results of the associated plug-in
      */
     public WarningsResult(final AbstractBuild<?, ?> build, final String defaultEncoding,
-            final ParserResult result, final WarningsResult previous) {
-        super(build, defaultEncoding, result, previous);
+            final ParserResult result, final BuildHistory history) {
+        super(build, defaultEncoding, result, history);
     }
 
     /** {@inheritDoc} */
