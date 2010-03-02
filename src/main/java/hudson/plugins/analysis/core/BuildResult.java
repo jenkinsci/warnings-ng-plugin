@@ -108,7 +108,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     private int zeroWarningsSinceBuild;
     /** Determines since which time we have zero warnings. */
     private long zeroWarningsSinceDate;
-    /** private since which time we have zero warnings. */
+    /** Determines the zero warnings high score. */
     private long zeroWarningsHighScore;
     /** Determines if the old zero high score has been broken. */
     private boolean isZeroWarningsHighscore;
@@ -125,6 +125,37 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @since 1.4
      */
     private Result pluginResult;
+    /**
+     * Determines since which build the result is successful.
+     *
+     * @since 1.4
+     */
+    private int successfulSinceBuild;
+    /**
+     * Determines since which time the result is successful.
+     *
+     * @since 1.4
+     */
+    private long successfulSinceDate;
+    /**
+     * Determines the succesful build result high score.
+     *
+     * @since 1.4
+     */
+    private long successfulHighscore;
+    /**
+     * Determines if the old successful build result high score has been broken.
+     *
+     * @since 1.4
+     */
+    private boolean isSuccessfulHighscore;
+    /**
+     * Determines the number of msec still to go before a new high score is
+     * reached.
+     *
+     * @since 1.4
+     */
+    private long successfulHighScoreGap;
 
     /**
      * Creates a new instance of {@link BuildResult}.
@@ -260,6 +291,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
                 zeroWarningsSinceBuild = build.getNumber();
                 zeroWarningsSinceDate = build.getTimestamp().getTimeInMillis();
                 isZeroWarningsHighscore = true;
+                successfulHighscore = 0;
             }
         }
     }
@@ -290,6 +322,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     protected Object readResolve() {
         if (pluginResult == null) {
             pluginResult = Result.SUCCESS;
+            resetSuccessfulState();
         }
         if (history == null) {
             history = createHistory(owner);
@@ -559,6 +592,55 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
+     * Returns the build since we are successful.
+     *
+     * @return the build since we are successful
+     */
+    @Exported
+    public int getSuccessfulSinceBuild() {
+        return successfulSinceBuild;
+    }
+
+    /**
+     * Returns the time since we are successful.
+     *
+     * @return the time since we are successful
+     */
+    @Exported
+    public long getSuccessfulSinceDate() {
+        return successfulSinceDate;
+    }
+
+    /**
+     * Returns the maximum period of successful builds.
+     *
+     * @return the maximum period of successful builds
+     */
+    @Exported
+    public long getSuccessfulHighScore() {
+        return successfulHighscore;
+    }
+
+    /**
+     * Returns if the current result reached the old successful highscore.
+     *
+     * @return <code>true</code>, if the current result reached the old successful highscore.
+     */
+    @Exported
+    public boolean isNewSuccessfulHighScore() {
+        return isSuccessfulHighscore;
+    }
+
+    /**
+     * Returns the number of msec still to go before a new highscore is reached.
+     *
+     * @return the number of msec still to go before a new highscore is reached.
+     */
+    public long getSuccessfulHighScoreGap() {
+        return successfulHighScoreGap;
+    }
+
+    /**
      * Gets the number of warnings.
      *
      * @return the number of warnings
@@ -818,6 +900,50 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      */
     public void setResult(final Result result) {
         pluginResult = result;
+        if (history.hasPreviousResult()) {
+            BuildResult previous = history.getPreviousResult();
+            if (isSuccessful()) {
+                if (previous.isSuccessful()) {
+                    successfulSinceBuild = previous.getSuccessfulSinceBuild();
+                    successfulSinceDate = previous.getSuccessfulSinceDate();
+                }
+                else {
+                    successfulSinceBuild = owner.getNumber();
+                    successfulSinceDate = owner.getTimestamp().getTimeInMillis();
+                }
+                successfulHighscore = Math.max(previous.getSuccessfulHighScore(),
+                        owner.getTimestamp().getTimeInMillis() - successfulSinceDate);
+                if (previous.getSuccessfulHighScore() == 0) {
+                    isSuccessfulHighscore = true;
+                }
+                else {
+                    isSuccessfulHighscore = successfulHighscore != previous.getSuccessfulHighScore();
+
+                }
+                if (!isSuccessfulHighscore) {
+                    successfulHighScoreGap = previous.getSuccessfulHighScore()
+                    - (owner.getTimestamp().getTimeInMillis() - successfulSinceDate);
+                }
+            }
+            else {
+                successfulHighscore = previous.getSuccessfulHighScore();
+            }
+        }
+        else {
+            if (isSuccessful()) {
+                resetSuccessfulState();
+            }
+        }
+    }
+
+    /**
+     * Resets the successful high score counters.
+     */
+    private void resetSuccessfulState() {
+        successfulSinceBuild = owner.getNumber();
+        successfulSinceDate = owner.getTimestamp().getTimeInMillis();
+        isSuccessfulHighscore = true;
+        successfulHighscore = 0;
     }
 
     // Backward compatibility. Do not remove.
