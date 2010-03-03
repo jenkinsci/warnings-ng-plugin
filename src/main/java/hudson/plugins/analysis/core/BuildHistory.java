@@ -63,9 +63,9 @@ public class BuildHistory {
      *         such build exists
      */
     private ResultAction<? extends BuildResult> getReferenceAction() {
-        ResultAction<? extends BuildResult> currentAction = baseline.getAction(type);
-        if (currentAction.hasReferenceAction()) {
-            return currentAction.getReferenceAction();
+        ResultAction<? extends BuildResult> action = baseline.getAction(type);
+        if (action != null && action.hasReferenceAction()) {
+            return action.getReferenceAction();
         }
         else {
             return getPreviousAction(); // fallback, use previous build
