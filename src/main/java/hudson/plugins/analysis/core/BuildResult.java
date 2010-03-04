@@ -221,7 +221,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         numberOfModules = modules.size();
         errors = new ArrayList<String>(result.getErrorMessages());
         numberOfWarnings = result.getNumberOfAnnotations();
-        AnnotationContainer referenceResult = history.getReferenceResult();
+        AnnotationContainer referenceResult = history.getReferenceAnnotations();
 
         delta = result.getNumberOfAnnotations() - referenceResult.getNumberOfAnnotations();
 
@@ -934,6 +934,24 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
                 resetSuccessfulState();
             }
         }
+    }
+
+    /**
+     * Returns whether there is a previous result available.
+     *
+     * @return <code>true</code> if there is a previous result available
+     */
+    public boolean hasPreviousResult() {
+        return history.hasPreviousResult();
+    }
+
+    /**
+     * Returns the previous build result.
+     *
+     * @return the previous build result
+     */
+    public BuildResult getPreviousResult() {
+        return history.getPreviousResult();
     }
 
     /**

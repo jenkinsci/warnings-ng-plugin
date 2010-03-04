@@ -30,40 +30,6 @@ public interface ResultAction<T extends BuildResult> extends Action {
     void setResult(final T result);
 
     /**
-     * Returns whether a previous build already has a result action of this type
-     * attached.
-     *
-     * @return <code>true</code> a previous build already has a result action
-     *         of this type attached
-     */
-    boolean hasPreviousAction();
-
-    /**
-     * Returns the result action from a previous build or <code>null</code> if
-     * no such build is found.
-     *
-     * @return the result of the previous build, or <code>null</code>.
-     */
-    ResultAction<T> getPreviousAction();
-
-    /**
-     * Returns whether a previous build already has a successful result action
-     * of this type attached.
-     *
-     * @return <code>true</code> a previous build already has a result action of
-     *         this type attached
-     */
-    boolean hasReferenceAction();
-
-    /**
-     * Returns the successful result action from a previous build or
-     * <code>null</code> if no such build is found.
-     *
-     * @return the result of the previous build, or <code>null</code>.
-     */
-    ResultAction<T> getReferenceAction();
-
-    /**
      * Returns the associated build of this action.
      *
      * @return the associated build of this action

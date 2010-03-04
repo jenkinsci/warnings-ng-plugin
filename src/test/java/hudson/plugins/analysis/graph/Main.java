@@ -5,8 +5,6 @@ import static org.mockito.Mockito.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import javax.annotation.CheckForNull;
-
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
@@ -36,12 +34,22 @@ public class Main extends ApplicationFrame {
         DifferenceGraph graph = new DifferenceGraph();
 
         GraphConfiguration configuration = new GraphConfiguration(new ArrayList<BuildResultGraph>());
-        ResultAction resultAction1 = createAction(1, null, 5, 10);
-        ResultAction resultAction2 = createAction(2, resultAction1, 15, 10);
-        ResultAction resultAction3 = createAction(3, resultAction2, 25, 20);
-        ResultAction resultAction4 = createAction(4, resultAction3, 5, 15);
+        BuildResult result1 = createResult(1, 5, 10);
+        when(result1.hasPreviousResult()).thenReturn(false);
+        BuildResult result2 = createResult(2, 15, 10);
+        when(result2.hasPreviousResult()).thenReturn(true);
+        when(result2.getPreviousResult()).thenReturn(result1);
+        BuildResult result3 = createResult(3, 25, 20);
+        when(result3.hasPreviousResult()).thenReturn(true);
+        when(result3.getPreviousResult()).thenReturn(result2);
+        BuildResult result4 = createResult(4, 5, 15);
+        when(result4.hasPreviousResult()).thenReturn(true);
+        when(result4.getPreviousResult()).thenReturn(result3);
 
-        JFreeChart chart = graph.create(configuration, resultAction4, "frame");
+        ResultAction action = mock(ResultAction.class);
+        when(action.getResult()).thenReturn(result4);
+
+        JFreeChart chart = graph.create(configuration, action, "frame");
 
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
@@ -49,36 +57,29 @@ public class Main extends ApplicationFrame {
     }
 
     /**
-     * Creates a mock {@link ResultAction}.
+     * Creates a mock {@link BuildResult}.
      *
-     * @param buildNumber
-     *            build number
-     * @param previous
-     *            previous build (might be null)
      * @param fixedWarnings
      *            number of fixed warnings
      * @param newWarnings
      *            number of new warnings
      * @return a {@link ResultAction} mock.
      */
-    @SuppressWarnings("rawtypes")
-    private ResultAction createAction(final int buildNumber, @CheckForNull final ResultAction previous, final int fixedWarnings, final int newWarnings) {
-        ResultAction action = mock(ResultAction.class);
-        AbstractBuild build = mock(AbstractBuild.class);
+    @SuppressWarnings("unchecked")
+    private BuildResult createResult(final int buildNumber, final int fixedWarnings, final int newWarnings) {
         BuildResult result = mock(BuildResult.class);
-
-        when(build.getTimestamp()).thenReturn(Calendar.getInstance());
-        when(build.getNumber()).thenReturn(buildNumber);
 
         when(result.getNumberOfFixedWarnings()).thenReturn(fixedWarnings);
         when(result.getNumberOfNewWarnings()).thenReturn(newWarnings);
 
-        when(action.getBuild()).thenReturn(build);
-        when(action.getPreviousAction()).thenReturn(previous);
-        when(action.hasPreviousAction()).thenReturn(previous != null);
-        when(action.getResult()).thenReturn(result);
+        AbstractBuild build = mock(AbstractBuild.class);
 
-        return action;
+        when(build.getTimestamp()).thenReturn(Calendar.getInstance());
+        when(build.getNumber()).thenReturn(buildNumber);
+
+        when(result.getOwner()).thenReturn(build);
+
+        return result;
     }
 
     /**

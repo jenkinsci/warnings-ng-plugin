@@ -238,10 +238,9 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     public final boolean hasValidResults() {
         AbstractBuild<?, ?> build = getLastFinishedBuild();
         if (build != null) {
-            ResultAction<?> resultAction = build.getAction(resultActionType);
-            if (resultAction != null) {
-                return resultAction.hasPreviousAction();
-            }
+            BuildHistory history = new BuildHistory(build, resultActionType);
+
+            return history.hasPreviousResult();
         }
         return false;
     }

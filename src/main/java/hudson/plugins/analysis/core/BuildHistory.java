@@ -2,6 +2,9 @@ package hudson.plugins.analysis.core;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.NoSuchElementException;
+
+import javax.annotation.CheckForNull;
 
 import hudson.model.AbstractBuild;
 
@@ -39,16 +42,16 @@ public class BuildHistory {
      *
      * @return <code>true</code> if a reference build result exists.
      */
-    public boolean hasReferenceResult() {
+    private boolean hasReferenceResult() {
         return getReferenceAction() != null;
     }
 
     /**
-     * Returns the results of the reference build.
+     * Returns the annotations of the reference build.
      *
-     * @return the result of the reference build
+     * @return the annotations of the reference build
      */
-    public AnnotationContainer getReferenceResult() {
+    public AnnotationContainer getReferenceAnnotations() {
         ResultAction<? extends BuildResult> action = getReferenceAction();
         if (action != null) {
             return action.getResult().getContainer();
@@ -63,13 +66,13 @@ public class BuildHistory {
      *         such build exists
      */
     private ResultAction<? extends BuildResult> getReferenceAction() {
-        ResultAction<? extends BuildResult> action = baseline.getAction(type);
-        if (action != null && action.hasReferenceAction()) {
-            return action.getReferenceAction();
+        for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
+            ResultAction<? extends BuildResult> action = build.getAction(type);
+            if (action != null && action.isSuccessful()) {
+                return action;
+            }
         }
-        else {
-            return getPreviousAction(); // fallback, use previous build
-        }
+        return getPreviousAction(); // fallback, use previous build
     }
 
     /**
@@ -78,9 +81,7 @@ public class BuildHistory {
      * @return <code>true</code> if a previous build result exists.
      */
     public boolean hasPreviousResult() {
-        ResultAction<?> action = baseline.getAction(type);
-
-        return action != null && action.hasPreviousAction();
+        return getPreviousAction() != null;
     }
 
     /**
@@ -89,20 +90,31 @@ public class BuildHistory {
      * @return the action of the previous build, or <code>null</code> if no
      *         such build exists
      */
+    @CheckForNull
     private ResultAction<? extends BuildResult> getPreviousAction() {
-        ResultAction<? extends BuildResult> action = baseline.getAction(type);
-
-        return action.getPreviousAction();
+        for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
+            ResultAction<? extends BuildResult> action = build.getAction(type);
+            if (action != null) {
+                return action;
+            }
+        }
+        return null;
     }
 
     /**
-     * Returns the action of the previous build.
+     * Returns the previous build result.
      *
-     * @return the action of the previous build, or <code>null</code> if no
-     *         such build exists
+     * @return the previous build result
+     * @see #hasPreviousResult()
+     * @throws NoSuchElementException
+     *             if there is no previous result
      */
     public BuildResult getPreviousResult() {
-        return getPreviousAction().getResult();
+        ResultAction<? extends BuildResult> action = getPreviousAction();
+        if (action != null) {
+            return action.getResult();
+        }
+        throw new NoSuchElementException("No previous result available");
     }
 
     /**
@@ -115,7 +127,7 @@ public class BuildHistory {
      */
     public Collection<FileAnnotation> getNewWarnings(final Collection<FileAnnotation> annotations) {
         if (hasReferenceResult()) {
-            return AnnotationDifferencer.getNewAnnotations(annotations, getReferenceResult().getAnnotations());
+            return AnnotationDifferencer.getNewAnnotations(annotations, getReferenceAnnotations().getAnnotations());
         }
         else {
             return annotations;
@@ -132,7 +144,7 @@ public class BuildHistory {
      */
     public Collection<FileAnnotation> getFixedWarnings(final Collection<FileAnnotation> annotations) {
         if (hasReferenceResult()) {
-            return AnnotationDifferencer.getFixedAnnotations(annotations, getReferenceResult().getAnnotations());
+            return AnnotationDifferencer.getFixedAnnotations(annotations, getReferenceAnnotations().getAnnotations());
         }
         else {
             return Collections.emptyList();

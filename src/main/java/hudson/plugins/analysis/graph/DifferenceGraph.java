@@ -116,27 +116,25 @@ public class DifferenceGraph extends BuildResultGraph {
      *
      * @param configuration
      *            the configuration parameters
-     * @param resultAction
+     * @param action
      *            the result action to start the graph computation from
      * @param fixedWarnings
      *            list of pairs with the points for the fixed warnings
      * @param newWarnings
      *            list of pairs with the points for the new warnings
      */
-    private void extractPoints(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> resultAction,
+    private void extractPoints(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> action,
             final ArrayList<Pair<Integer, Integer>> fixedWarnings, final ArrayList<Pair<Integer, Integer>> newWarnings) {
-        ResultAction<? extends BuildResult> action = resultAction;
         int buildCount = 0;
-        Calendar buildTime = action.getBuild().getTimestamp();
+        BuildResult current = action.getResult();
+        Calendar buildTime = current.getOwner().getTimestamp();
         while (true) {
-            BuildResult current = action.getResult();
-
-            int build = action.getBuild().getNumber();
+            int build = current.getOwner().getNumber();
             fixedWarnings.add(new Pair<Integer, Integer>(build, current.getNumberOfFixedWarnings()));
             newWarnings.add(new Pair<Integer, Integer>(build, current.getNumberOfNewWarnings()));
 
-            if (action.hasPreviousAction()) {
-                action = action.getPreviousAction();
+            if (current.hasPreviousResult()) {
+                current = current.getPreviousResult();
             }
             else {
                 break;
@@ -150,7 +148,7 @@ public class DifferenceGraph extends BuildResultGraph {
             }
 
             if (configuration.isDayCountDefined()) {
-                Calendar oldBuildTime = action.getBuild().getTimestamp();
+                Calendar oldBuildTime = current.getOwner().getTimestamp();
                 if (computeDayDelta(buildTime, oldBuildTime) >= configuration.getDayCount()) {
                     break;
                 }

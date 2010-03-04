@@ -57,26 +57,25 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *
      * @param configuration
      *            the configuration parameters
-     * @param resultAction
+     * @param action
      *            the action to start with
      * @return the created chart
      */
-    protected JFreeChart createChart(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> resultAction) {
+    protected JFreeChart createChart(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> action) {
         DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<String, NumberOnlyBuildLabel>();
-        ResultAction<? extends BuildResult> action = resultAction;
         int buildCount = 0;
-        Calendar buildTime = action.getBuild().getTimestamp();
+        BuildResult current = action.getResult();
+        Calendar buildTime = current.getOwner().getTimestamp();
         while (true) {
-            BuildResult current = action.getResult();
             List<Integer> series = computeSeries(current);
             int level = 0;
             for (Integer integer : series) {
-                builder.add(integer, getRowId(level), new NumberOnlyBuildLabel(action.getBuild()));
+                builder.add(integer, getRowId(level), new NumberOnlyBuildLabel(current.getOwner()));
                 level++;
             }
 
-            if (action.hasPreviousAction()) {
-                action = action.getPreviousAction();
+            if (current.hasPreviousResult()) {
+                current = current.getPreviousResult();
             }
             else {
                 break;
@@ -90,7 +89,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
             }
 
             if (configuration.isDayCountDefined()) {
-                Calendar oldBuildTime = action.getBuild().getTimestamp();
+                Calendar oldBuildTime = current.getOwner().getTimestamp();
                 if (computeDayDelta(buildTime, oldBuildTime) >= configuration.getDayCount()) {
                     break;
                 }
