@@ -1,9 +1,7 @@
 package hudson.plugins.warnings;
 
-import static junit.framework.Assert.*;
 import hudson.model.AbstractBuild;
 import hudson.plugins.analysis.core.BuildHistory;
-import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.test.BuildResultTest;
 
@@ -15,32 +13,6 @@ public class WarningsResultTest extends BuildResultTest<WarningsResult> {
     @Override
     protected WarningsResult createBuildResult(final AbstractBuild<?, ?> build, final ParserResult project, final BuildHistory history) {
         return new WarningsResult(build, null, project, history);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void verifyHighScoreMessage(final int expectedZeroWarningsBuildNumber, final boolean expectedIsNewHighScore, final long expectedHighScore, final long gap, final WarningsResult result) {
-        if (result.hasNoAnnotations() && result.getDelta() == 0) {
-            assertTrue(result.getDetails().contains(Messages.Warnings_ResultAction_NoWarningsSince(expectedZeroWarningsBuildNumber)));
-            if (expectedIsNewHighScore) {
-                long days = BuildResult.getDays(expectedHighScore);
-                if (days == 1) {
-                    assertTrue(result.getDetails().contains(Messages.Warnings_ResultAction_OneHighScore()));
-                }
-                else {
-                    assertTrue(result.getDetails().contains(Messages.Warnings_ResultAction_MultipleHighScore(days)));
-                }
-            }
-            else {
-                long days = BuildResult.getDays(gap);
-                if (days == 1) {
-                    assertTrue(result.getDetails().contains(Messages.Warnings_ResultAction_OneNoHighScore()));
-                }
-                else {
-                    assertTrue(result.getDetails().contains(Messages.Warnings_ResultAction_MultipleNoHighScore(days)));
-                }
-            }
-        }
     }
 }
 
