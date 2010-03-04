@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -29,6 +30,7 @@ import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.model.Result;
 
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.AnnotationProvider;
 import hudson.plugins.analysis.util.model.AnnotationStream;
@@ -156,6 +158,12 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @since 1.4
      */
     private long successfulHighScoreGap;
+    /**
+     * Determines if this result has touched the successful state.
+     *
+     * @since 1.4
+     */
+    private boolean isSuccessfulStateTouched;
 
     /**
      * Creates a new instance of {@link BuildResult}.
@@ -419,7 +427,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return <code>true</code> if this result belongs to the last build
      */
-    public final boolean isCurrent() {
+    public boolean isCurrent() {
         return getOwner().getProject().getLastBuild().number == getOwner().number;
     }
 
@@ -443,7 +451,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /** {@inheritDoc} */
-    public final boolean hasAnnotations() {
+    public boolean hasAnnotations() {
         return getContainer().hasAnnotations();
     }
 
@@ -534,13 +542,6 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             LOGGER.log(Level.SEVERE, "Failed to serialize the annotations of the build.", exception);
         }
     }
-
-    /**
-     * Returns the detail messages for the summary.jelly file.
-     *
-     * @return the summary message
-     */
-    public abstract String getDetails();
 
     /**
      * Returns the build since we have zero warnings.
@@ -899,6 +900,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @param result the Hudson build result
      */
     public void setResult(final Result result) {
+        isSuccessfulStateTouched = true;
         pluginResult = result;
         if (history.hasPreviousResult()) {
             BuildResult previous = history.getPreviousResult();
@@ -937,6 +939,16 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
+     * Returns whether the successful state has been touched.
+     *
+     * @return <code>true</code> if the successful state has been touched,
+     *         <code>false</code> otherwise
+     */
+    public boolean isSuccessfulTouched() {
+        return isSuccessfulStateTouched;
+    }
+
+    /**
      * Returns whether there is a previous result available.
      *
      * @return <code>true</code> if there is a previous result available
@@ -962,6 +974,83 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         successfulSinceDate = owner.getTimestamp().getTimeInMillis();
         isSuccessfulHighscore = true;
         successfulHighscore = 0;
+    }
+
+    /**
+     * Returns the detail messages for the summary.jelly file.
+     *
+     * @return the summary message
+     */
+    public String getDetails() {
+        String message = createDeltaMessage();
+        if (getNumberOfAnnotations() == 0 && getDelta() == 0) {
+            message += createNoWarningsMessage();
+            message += createHighScoreMessage();
+        }
+        else if (isSuccessfulTouched()) {
+            message += createSuccessfulHighScoreMessage();
+        }
+        return message;
+    }
+
+    /**
+     * Creates a message that shows the number of warnings since a given build.
+     *
+     * @return a message
+     */
+    protected String createNoWarningsMessage() {
+        return "<li>" + Messages.ResultAction_NoWarningsSince(getZeroWarningsSinceBuild()) + "</li>";
+    }
+
+    /**
+     * Returns the build summary HTML message.
+     *
+     * @return the build summary HTML message
+     */
+    protected String createDeltaMessage() {
+        return StringUtils.EMPTY;
+    }
+
+    /**
+     * Creates a highscore message.
+     *
+     * @return a highscore message
+     */
+    protected String createHighScoreMessage() {
+        if (isNewZeroWarningsHighScore()) {
+            long days = getDays(getZeroWarningsHighScore());
+            return "<li>" + Messages.ResultAction_MultipleHighScore(days) + "</li>";
+        }
+        else {
+            long days = getDays(getHighScoreGap());
+            if (days == 1) {
+                return "<li>" + Messages.ResultAction_OneNoHighScore() + "</li>";
+            }
+            else {
+                return "<li>" + Messages.ResultAction_MultipleNoHighScore(days) + "</li>";
+            }
+        }
+    }
+
+    /**
+     * Creates a successful high score message.
+     *
+     * @return a successful high score message
+     */
+    protected String createSuccessfulHighScoreMessage() {
+        if (isNewSuccessfulHighScore()) {
+            long days = getDays(getSuccessfulHighScore());
+            return "<li>" + Messages.ResultAction_SuccessfulMultipleHighScore(days) + "</li>";
+        }
+        else {
+            long days = getDays(getSuccessfulHighScoreGap());
+            if (days == 1) {
+                return "<li>" + Messages.ResultAction_SuccessfulOneNoHighScore() + "</li>";
+            }
+            else {
+                return "<li>" + Messages.ResultAction_SuccessfulMultipleNoHighScore(days) + "</li>";
+            }
+        }
     }
 
     // Backward compatibility. Do not remove.
