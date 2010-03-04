@@ -150,48 +150,6 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         return null;
     }
 
-    /** {@inheritDoc} */
-    @java.lang.SuppressWarnings("unchecked")
-    public AbstractResultAction<T> getPreviousAction() {
-        AbstractBuild<?, ?> build = getOwner();
-        while (true) {
-            build = build.getPreviousBuild();
-            if (build == null) {
-                return null;
-            }
-            AbstractResultAction<T> action = build.getAction(getClass());
-            if (action != null) {
-                return action;
-            }
-        }
-    }
-
-    /** {@inheritDoc} */
-    public boolean hasPreviousAction() {
-        return getPreviousAction() != null;
-    }
-
-    /** {@inheritDoc} */
-    @java.lang.SuppressWarnings("unchecked")
-    public AbstractResultAction<T> getReferenceAction() {
-        AbstractBuild<?, ?> build = getOwner();
-        while (true) {
-            build = build.getPreviousBuild();
-            if (build == null) {
-                return null;
-            }
-            AbstractResultAction<T> action = build.getAction(getClass());
-            if (action != null && action.isSuccessful()) {
-                return action;
-            }
-        }
-    }
-
-    /** {@inheritDoc} */
-    public boolean hasReferenceAction() {
-        return getReferenceAction() != null;
-    }
-
     /**
      * Aggregates the results of the specified maven module builds.
      *
