@@ -51,8 +51,8 @@ public class BuildHistoryTest {
         when(baseline.getPreviousBuild()).thenReturn(noResult);
         when(noResult.getPreviousBuild()).thenReturn(withResult);
 
-        ResultAction action = mock(ResultAction.class);
-        when(withResult.getAction(ResultAction.class)).thenReturn(action);
+        TestResultAction action = mock(TestResultAction.class);
+        when(withResult.getAction(TestResultAction.class)).thenReturn(action);
         BuildResult result = mock(BuildResult.class);
         when(action.getResult()).thenReturn(result);
         AnnotationContainer container = mock(AnnotationContainer.class);
@@ -88,14 +88,14 @@ public class BuildHistoryTest {
         when(withFailureResult.getPreviousBuild()).thenReturn(noResult2);
         when(noResult2.getPreviousBuild()).thenReturn(withSuccessResult);
 
-        ResultAction failureAction = mock(ResultAction.class);
-        when(withFailureResult.getAction(ResultAction.class)).thenReturn(failureAction);
+        TestResultAction failureAction = mock(TestResultAction.class);
+        when(withFailureResult.getAction(TestResultAction.class)).thenReturn(failureAction);
         when(failureAction.isSuccessful()).thenReturn(false);
         BuildResult failureResult = mock(BuildResult.class);
         when(failureAction.getResult()).thenReturn(failureResult);
 
-        ResultAction successAction = mock(ResultAction.class);
-        when(withSuccessResult.getAction(ResultAction.class)).thenReturn(successAction);
+        TestResultAction successAction = mock(TestResultAction.class);
+        when(withSuccessResult.getAction(TestResultAction.class)).thenReturn(successAction);
         when(successAction.isSuccessful()).thenReturn(true);
         BuildResult successResult = mock(BuildResult.class);
         AnnotationContainer container = mock(AnnotationContainer.class);
@@ -116,9 +116,15 @@ public class BuildHistoryTest {
      *            the build to start with
      * @return the build history under test
      */
-    @SuppressWarnings("unchecked")
     private BuildHistory createHistory(final AbstractBuild<?, ?> baseline) {
-        return new BuildHistory(baseline, (Class<? extends ResultAction<? extends BuildResult>>)ResultAction.class);
+        return new BuildHistory(baseline, TestResultAction.class);
+    }
+
+    /**
+     * Action used in tests.
+     */
+    abstract static class TestResultAction implements ResultAction<BuildResult> {
+        // empty
     }
 }
 
