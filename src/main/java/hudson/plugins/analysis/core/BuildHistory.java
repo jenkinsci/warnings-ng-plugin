@@ -3,6 +3,7 @@ package hudson.plugins.analysis.core;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.annotation.CheckForNull;
 
@@ -125,7 +126,7 @@ public class BuildHistory {
      *            the warnings in the current build
      * @return the difference "current build" - "reference build"
      */
-    public Collection<FileAnnotation> getNewWarnings(final Collection<FileAnnotation> annotations) {
+    public Collection<FileAnnotation> getNewWarnings(final Set<FileAnnotation> annotations) {
         if (hasReferenceResult()) {
             return AnnotationDifferencer.getNewAnnotations(annotations, getReferenceAnnotations().getAnnotations());
         }
@@ -142,7 +143,7 @@ public class BuildHistory {
      *            the warnings in the current build
      * @return the difference "reference build" - "current build"
      */
-    public Collection<FileAnnotation> getFixedWarnings(final Collection<FileAnnotation> annotations) {
+    public Collection<FileAnnotation> getFixedWarnings(final Set<FileAnnotation> annotations) {
         if (hasReferenceResult()) {
             return AnnotationDifferencer.getFixedAnnotations(annotations, getReferenceAnnotations().getAnnotations());
         }

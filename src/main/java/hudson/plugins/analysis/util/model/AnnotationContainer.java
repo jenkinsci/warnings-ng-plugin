@@ -11,8 +11,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
@@ -324,16 +328,23 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         addAnnotations(Arrays.asList(newAnnotations));
     }
 
-    /** {@inheritDoc} */
-    public final Collection<FileAnnotation> getAnnotations() {
-        ArrayList<FileAnnotation> all = new ArrayList<FileAnnotation>(annotations.values());
-        Collections.sort(all);
-        return Collections.unmodifiableCollection(all);
+    /**
+     * Returns a sorted set of the annotations.
+     *
+     * @return a sorted set  of the annotations
+     */
+    public final SortedSet<FileAnnotation> getSortedAnnotations() {
+        return ImmutableSortedSet.copyOf(annotations.values());
     }
 
     /** {@inheritDoc} */
-    public final Collection<FileAnnotation> getAnnotations(final Priority priority) {
-        return Collections.unmodifiableCollection(annotationsByPriority.get(priority));
+    public final Set<FileAnnotation> getAnnotations() {
+        return ImmutableSet.copyOf(annotations.values());
+    }
+
+    /** {@inheritDoc} */
+    public final Set<FileAnnotation> getAnnotations(final Priority priority) {
+        return ImmutableSortedSet.copyOf(annotationsByPriority.get(priority));
     }
 
     /**
@@ -341,7 +352,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      *
      * @return the annotations with {@link Priority#HIGH}
      */
-    public final Collection<FileAnnotation> getHighAnnotations() {
+    public final Set<FileAnnotation> getHighAnnotations() {
         return getAnnotations(Priority.HIGH);
     }
 
@@ -350,7 +361,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      *
      * @return the annotations with {@link Priority#NORMAL}
      */
-    public final Collection<FileAnnotation> getNormalAnnotations() {
+    public final Set<FileAnnotation> getNormalAnnotations() {
         return getAnnotations(Priority.NORMAL);
     }
 
@@ -359,12 +370,12 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      *
      * @return the annotations with {@link Priority#LOW}
      */
-    public final Collection<FileAnnotation> getLowAnnotations() {
+    public final Set<FileAnnotation> getLowAnnotations() {
         return getAnnotations(Priority.LOW);
     }
 
     /** {@inheritDoc} */
-    public final Collection<FileAnnotation> getAnnotations(final String priority) {
+    public final Set<FileAnnotation> getAnnotations(final String priority) {
         return getAnnotations(getPriority(priority));
     }
 

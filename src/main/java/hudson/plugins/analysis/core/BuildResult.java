@@ -225,7 +225,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
         delta = result.getNumberOfAnnotations() - referenceResult.getNumberOfAnnotations();
 
-        Collection<FileAnnotation> allWarnings = result.getAnnotations();
+        Set<FileAnnotation> allWarnings = result.getAnnotations();
 
         Set<FileAnnotation> newWarnings = AnnotationDifferencer.getNewAnnotations(allWarnings, referenceResult.getAnnotations());
         numberOfNewWarnings = newWarnings.size();
@@ -464,7 +464,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
     /** {@inheritDoc} */
     @Exported(name = "warnings")
-    public Collection<FileAnnotation> getAnnotations() {
+    public Set<FileAnnotation> getAnnotations() {
         return getContainer().getAnnotations();
     }
 
@@ -515,7 +515,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /** {@inheritDoc} */
-    public Collection<FileAnnotation> getAnnotations(final Priority priority) {
+    public Set<FileAnnotation> getAnnotations(final Priority priority) {
         return getContainer().getAnnotations(priority);
     }
 
@@ -854,7 +854,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /** {@inheritDoc} */
-    public Collection<FileAnnotation> getAnnotations(final String priority) {
+    public Set<FileAnnotation> getAnnotations(final String priority) {
         return getContainer().getAnnotations(priority);
     }
 

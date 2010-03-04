@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 import hudson.FilePath;
 
@@ -211,8 +214,8 @@ public class ParserResult implements Serializable {
      *
      * @return the errorMessages
      */
-    public Collection<String> getErrorMessages() {
-        return Collections.unmodifiableCollection(errorMessages);
+    public List<String> getErrorMessages() {
+        return ImmutableList.copyOf(errorMessages);
     }
 
     /**
@@ -220,8 +223,8 @@ public class ParserResult implements Serializable {
      *
      * @return the annotations of this result
      */
-    public Collection<FileAnnotation> getAnnotations() {
-        return Collections.unmodifiableCollection(annotations);
+    public Set<FileAnnotation> getAnnotations() {
+        return ImmutableSet.copyOf(annotations);
     }
 
     /**

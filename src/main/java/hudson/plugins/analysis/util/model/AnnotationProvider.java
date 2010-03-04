@@ -1,6 +1,6 @@
 package hudson.plugins.analysis.util.model;
 
-import java.util.Collection;
+import java.util.Set;
 
 /**
  * Provides an annotation counter for a model object.
@@ -90,7 +90,7 @@ public interface AnnotationProvider {
      *
      * @return annotations for this object
      */
-    Collection<FileAnnotation> getAnnotations();
+    Set<FileAnnotation> getAnnotations();
 
     /**
      * Returns the annotations of the specified priority for this object.
@@ -99,7 +99,7 @@ public interface AnnotationProvider {
      *            the priority
      * @return annotations of the specified priority for this object
      */
-    Collection<FileAnnotation> getAnnotations(final Priority priority);
+    Set<FileAnnotation> getAnnotations(final Priority priority);
 
     /**
      * Returns the annotations of the specified priority for this object.
@@ -108,7 +108,7 @@ public interface AnnotationProvider {
      *            the priority as a string object
      * @return annotations of the specified priority for this object
      */
-    Collection<FileAnnotation> getAnnotations(final String priority);
+    Set<FileAnnotation> getAnnotations(final String priority);
 
     /**
      * Returns the annotation with the specified key.

@@ -17,7 +17,7 @@
       <td class="pane-header">${%Category}</td>
     </tr>
     <tbody>
-      <j:forEach var="warning" items="${it.container.annotations}">
+      <j:forEach var="warning" items="${it.container.sortedAnnotations}">
         <tr>
           <td class="pane">
             <div tooltip="${warning.message}">
