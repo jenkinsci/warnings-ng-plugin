@@ -122,7 +122,7 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
      * @return <code>true</code> if a threshold has been defined
      */
     public boolean isThresholdEnabled() {
-        return isValid(threshold);
+        return isValid(threshold) || isValid(failureThreshold) || isValid(newThreshold) || isValid(newFailureThreshold);
     }
 
     /**
@@ -133,10 +133,19 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
      *         unstable
      */
     public int getMinimumAnnotations() {
-        if (isThresholdEnabled()) {
+        if (isValid(threshold)) {
             return convert(threshold);
         }
-        throw new IllegalArgumentException("Threshold is not valid: " + threshold);
+        if (isValid(failureThreshold)) {
+            return convert(failureThreshold);
+        }
+        if (isValid(newThreshold)) {
+            return convert(newThreshold);
+        }
+        if (isValid(newFailureThreshold)) {
+            return convert(newFailureThreshold);
+        }
+        return 0;
     }
 
     /**

@@ -140,10 +140,9 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
             BuildResult annotationsResult = perform(build, logger);
 
-            Result buildResult = new BuildResultEvaluator().evaluateBuildResult(logger, this,
-                    annotationsResult.getAnnotations(), annotationsResult.getNewWarnings());
-            annotationsResult.setResult(buildResult);
-            if (buildResult != Result.SUCCESS) {
+            if (new NullHealthDescriptor(this).isThresholdEnabled()) {
+                Result buildResult = new BuildResultEvaluator().evaluateBuildResult(logger, this,
+                        annotationsResult.getAnnotations(), annotationsResult.getNewWarnings());
                 build.setResult(buildResult);
             }
 

@@ -124,7 +124,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @since 1.4
      */
-    private Result pluginResult;
+    private Result pluginResult = Result.SUCCESS;
     /**
      * Determines since which build the result is successful.
      *

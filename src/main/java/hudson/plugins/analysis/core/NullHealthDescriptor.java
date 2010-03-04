@@ -53,5 +53,23 @@ public class NullHealthDescriptor extends AbstractHealthDescriptor {
             return toString();
         }
     }
+
+
+    /**
+     * Creates a new instance of {@link NullHealthDescriptor}.
+     */
+    public NullHealthDescriptor() {
+        super();
+    }
+
+    /**
+     * Creates a new instance of {@link NullHealthDescriptor}.
+     *
+     * @param descriptor
+     *            the wrapped descriptor
+     */
+    public NullHealthDescriptor(final HealthDescriptor descriptor) {
+        super(descriptor);
+    }
 }
 

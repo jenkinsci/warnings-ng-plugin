@@ -30,7 +30,6 @@ public class ThresholdValidator implements Validator {
         return FormValidation.ok();
     }
 
-
     /**
      * Returns whether the provided threshold string parameter is a valid
      * threshold number, i.e. an integer value greater or equal zero.
