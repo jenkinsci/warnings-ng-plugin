@@ -902,6 +902,8 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     public void setResult(final Result result) {
         isSuccessfulStateTouched = true;
         pluginResult = result;
+        owner.setResult(result);
+
         if (history.hasPreviousResult()) {
             BuildResult previous = history.getPreviousResult();
             if (isSuccessful()) {

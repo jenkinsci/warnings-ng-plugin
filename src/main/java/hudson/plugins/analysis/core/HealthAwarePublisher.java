@@ -143,7 +143,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             if (new NullHealthDescriptor(this).isThresholdEnabled()) {
                 Result buildResult = new BuildResultEvaluator().evaluateBuildResult(logger, this,
                         annotationsResult.getAnnotations(), annotationsResult.getNewWarnings());
-                build.setResult(buildResult);
+                annotationsResult.setResult(buildResult);
             }
 
             copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), annotationsResult.getAnnotations());
