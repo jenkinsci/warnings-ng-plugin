@@ -1,42 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>warnings</name>
-	<comment>This plug-in reads the compiler warnings from the
+  <name>warnings</name>
+  <comment>This plug-in reads the compiler warnings from the
     console log file and generates a trend report.</comment>
-	<projects>
-	</projects>
-	<buildSpec>
-		<buildCommand>
-			<name>org.eclipse.jdt.core.javabuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>edu.umd.cs.findbugs.plugin.eclipse.findbugsBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>net.sourceforge.pmd.runtime.pmdBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>net.sf.eclipsecs.core.CheckstyleBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.maven.ide.eclipse.maven2Builder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-	</buildSpec>
-	<natures>
-		<nature>org.maven.ide.eclipse.maven2Nature</nature>
-		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>edu.umd.cs.findbugs.plugin.eclipse.findbugsNature</nature>
-		<nature>net.sourceforge.pmd.runtime.pmdNature</nature>
-		<nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
-	</natures>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>edu.umd.cs.findbugs.plugin.eclipse.findbugsBuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>net.sourceforge.pmd.runtime.pmdBuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>net.sf.eclipsecs.core.CheckstyleBuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>org.maven.ide.eclipse.maven2Builder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.maven.ide.eclipse.maven2Nature</nature>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+    <nature>edu.umd.cs.findbugs.plugin.eclipse.findbugsNature</nature>
+    <nature>net.sourceforge.pmd.runtime.pmdNature</nature>
+    <nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
+  </natures>
 </projectDescription>
