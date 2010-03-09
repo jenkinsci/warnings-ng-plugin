@@ -129,6 +129,20 @@ public class AntJavacParserTest extends ParserTester {
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
     }
 
+    @Test
+    public void parseArrayInDeprecatedMethod() throws IOException {
+        Collection<FileAnnotation> warnings = new AntJavacParser().parse(openFile("issue5868.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        checkWarning(iterator.next(),
+                225,
+                "loadAvailable(java.lang.String,int,int,java.lang.String[]) in my.OtherClass has been deprecated",
+                "D:/path/to/my/Class.java",
+                AntJavacParser.WARNING_TYPE, "Deprecation", Priority.NORMAL);
+    }
+
     /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {

@@ -11,7 +11,7 @@ public class JavacParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Java Compiler";
     /** Pattern of javac compiler warnings. */
-    private static final String JAVAC_WARNING_PATTERN = "\\[WARNING\\]\\s*(.*):\\[(\\d*)[.,; 0-9]*\\]\\s*(?:\\[(.*)\\])?\\s*(.*)";
+    private static final String JAVAC_WARNING_PATTERN = "\\[WARNING\\]\\s*(.*):\\[(\\d*)[.,; 0-9]*\\]\\s*(?:\\[(\\w*)\\])?\\s*(.*)";
 
     /**
      * Creates a new instance of <code>JavacParser</code>.
