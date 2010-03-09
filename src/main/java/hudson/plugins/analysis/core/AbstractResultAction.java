@@ -17,9 +17,7 @@ import hudson.maven.MavenModule;
 import hudson.model.AbstractBuild;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
-import hudson.model.Result;
 
-import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
 
@@ -217,12 +215,14 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      *            the build result
      */
     protected void updateBuildHealth(final MavenBuild build, final BuildResult buildResult) {
-        PluginLogger logger = new PluginLogger(System.out, "[" + getDisplayName() + "] ");
-        Result hudsonResult = new BuildResultEvaluator().evaluateBuildResult(
-                logger, getHealthDescriptor(), buildResult.getAnnotations(), buildResult.getNewWarnings());
-        if (hudsonResult != Result.SUCCESS) {
-            build.setResult(hudsonResult);
-        }
+        return;
+        // FIXME: See http://issues.hudson-ci.org/browse/HUDSON-4912
+//        PluginLogger logger = new PluginLogger(System.out, "[" + getDisplayName() + "] ");
+//        Result hudsonResult = new BuildResultEvaluator().evaluateBuildResult(
+//                logger, getHealthDescriptor(), buildResult.getAnnotations(), buildResult.getNewWarnings());
+//        if (hudsonResult != Result.SUCCESS) {
+//            build.setResult(hudsonResult);
+//        }
     }
 
     /** {@inheritDoc} */
