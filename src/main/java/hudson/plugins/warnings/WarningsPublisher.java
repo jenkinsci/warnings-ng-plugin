@@ -81,6 +81,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *            determines whether the plug-in can run for failed builds, too
      * @param canScanConsole
      *            Determines whether the console should be scanned.
+     * @param useDeltaValues
+     *            determines whether the absolute annotations delta or the
+     *            actual annotations set difference should be used to evaluate
+     *            the build stability
      */
     // CHECKSTYLE:OFF
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -90,9 +94,9 @@ public class WarningsPublisher extends HealthAwarePublisher {
             final String healthy, final String unHealthy, final String thresholdLimit,
             final String pattern, final String includePattern, final String excludePattern,
             final String defaultEncoding, final boolean canRunOnFailed,
-            final boolean canScanConsole) {
+            final boolean canScanConsole, final boolean useDeltaValues) {
         super(threshold, newThreshold, failureThreshold, newFailureThreshold,
-                healthy, unHealthy, thresholdLimit, defaultEncoding, "WARNINGS");
+                healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues, "WARNINGS");
         this.pattern = pattern;
         this.canRunOnFailed = canRunOnFailed;
         ignoreConsole = !canScanConsole;
