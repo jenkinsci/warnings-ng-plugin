@@ -5,16 +5,18 @@
 
 package hudson.plugins.warnings.parser;
 
+import static org.junit.Assert.*;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
- * Tests the class {@link AntJavacParser}.
+ * Tests the class {@link FlexSDKParser}.
  */
 public class FlexSDKParserTest extends ParserTester {
     /** Error message. */
@@ -26,8 +28,6 @@ public class FlexSDKParserTest extends ParserTester {
     public FlexSDKParserTest() {
         super(FlexSDKParser.class);
     }
-
-
 
     /**
      * Parses a file with two deprecation warnings.
@@ -84,5 +84,4 @@ public class FlexSDKParserTest extends ParserTester {
     protected String getWarningsFile() {
         return "flexsdk.txt";
     }
-
 }
