@@ -72,6 +72,13 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
     private String thresholdLimit;
     /** The default encoding to be used when reading and parsing files. */
     private final String defaultEncoding;
+    /**
+     * Determines whether the absolute annotations delta or the actual
+     * annotations set difference should be used to evaluate the build stability.
+     *
+     * @since 1.4
+     */
+    private final boolean useDeltaValues;
 
     /**
      * Creates a new instance of <code>HealthAwarePublisher</code>.
@@ -83,8 +90,8 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      *            New annotations threshold to be reached if a build should be
      *            considered as unstable.
      * @param failureThreshold
-     *            Annotation threshold to be reached if a build should be considered as
-     *            failure.
+     *            Annotation threshold to be reached if a build should be
+     *            considered as failure.
      * @param newFailureThreshold
      *            New annotations threshold to be reached if a build should be
      *            considered as failure.
@@ -97,16 +104,20 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      * @param thresholdLimit
      *            determines which warning priorities should be considered when
      *            evaluating the build stability and health
-     * @param pluginName
-     *            the name of the plug-in
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
+     * @param useDeltaValues
+     *            determines whether the absolute annotations delta or the
+     *            actual annotations set difference should be used to evaluate
+     *            the build stability
+     * @param pluginName
+     *            the name of the plug-in
      */
     // CHECKSTYLE:OFF
     public HealthAwarePublisher(final String threshold, final String newThreshold,
             final String failureThreshold, final String newFailureThreshold, final String healthy,
             final String unHealthy, final String thresholdLimit,
-            final String defaultEncoding, final String pluginName) {
+            final String defaultEncoding, final boolean useDeltaValues, final String pluginName) {
         super();
         this.threshold = threshold;
         this.newThreshold = newThreshold;
@@ -116,6 +127,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         this.unHealthy = unHealthy;
         this.thresholdLimit = thresholdLimit;
         this.defaultEncoding = defaultEncoding;
+        this.useDeltaValues = useDeltaValues;
         this.pluginName = "[" + pluginName + "] ";
     }
     // CHECKSTYLE:ON
@@ -141,8 +153,16 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             BuildResult annotationsResult = perform(build, logger);
 
             if (new NullHealthDescriptor(this).isThresholdEnabled()) {
-                Result buildResult = new BuildResultEvaluator().evaluateBuildResult(logger, this,
-                        annotationsResult.getAnnotations(), annotationsResult.getNewWarnings());
+                BuildResultEvaluator resultEvaluator = new BuildResultEvaluator();
+                Result buildResult;
+                if (useDeltaValues) {
+                    buildResult = resultEvaluator.evaluateBuildResult(logger, this,
+                            annotationsResult.getAnnotations(), annotationsResult.getDelta());
+                }
+                else {
+                    buildResult = resultEvaluator.evaluateBuildResult(logger, this,
+                            annotationsResult.getAnnotations(), annotationsResult.getNewWarnings());
+                }
                 annotationsResult.setResult(buildResult);
             }
 
@@ -191,7 +211,6 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             }
         }
     }
-
 
     /**
      * Logs the specified exception in the specified file.
@@ -257,6 +276,15 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      *             better understanding on why it failed.
      */
     protected abstract BuildResult perform(AbstractBuild<?, ?> build, PluginLogger logger) throws InterruptedException, IOException;
+
+    /**
+     * Returns the useDeltaValues.
+     *
+     * @return the useDeltaValues
+     */
+    public boolean getUseDeltaValues() {
+        return useDeltaValues;
+    }
 
     /**
      * Returns the annotation threshold to be reached if a build should be

@@ -26,36 +26,24 @@ public class BuildResultEvaluator {
      *            health descriptor
      * @param allAnnotations
      *            all annotations
-     * @param newAnnotations
-     *            new annotations
+     * @param annotationDelta
+     *            the annotation difference between this build and the reference
+     *            build (i.e., the difference #numbersOfAnnotations(build) - #numbersOfAnnotations(referenceBuild))
      * @return the build result
      */
     public Result evaluateBuildResult(final PluginLogger logger, final HealthDescriptor descriptor,
-            final Collection<FileAnnotation> allAnnotations, final Collection<FileAnnotation> newAnnotations) {
-        ParserResult result = new ParserResult(allAnnotations);
-        ParserResult newResult = new ParserResult(newAnnotations);
+            final Collection<FileAnnotation> allAnnotations, final int annotationDelta) {
 
-        int annotationCount = 0;
-        int newAnnotationCount = 0;
-
-        for (Priority priority : Priority.collectPrioritiesFrom(descriptor.getMinimumPriority())) {
-            annotationCount += result.getNumberOfAnnotations(priority);
-            newAnnotationCount += newResult.getNumberOfAnnotations(priority);
-        }
-        logger.log(String.format("Found %d annotations (%d new, %d high, %d normal, %d low)",
-                result.getNumberOfAnnotations(), newAnnotationCount,
-                result.getNumberOfAnnotations(Priority.HIGH),
-                result.getNumberOfAnnotations(Priority.NORMAL),
-                result.getNumberOfAnnotations(Priority.LOW)));
+        int annotationCount = extractNumberOfRelevantAnnotations(logger, descriptor, "", allAnnotations);
         if (descriptor.getMinimumPriority() != Priority.LOW) {
             logger.log(String.format("Considering %d annotations for build status evaluation", annotationCount));
-            logger.log(String.format("Considering %d new annotations for build status evaluation", newAnnotationCount));
+            logger.log(String.format("Considering %d new annotations for build status evaluation", annotationDelta));
         }
         if (isAnnotationCountExceeded(annotationCount, descriptor.getFailureThreshold())) {
             logger.log("Setting build status to FAILURE since total number of annotations exceeds the threshold " + descriptor.getFailureThreshold());
             return Result.FAILURE;
         }
-        if (isAnnotationCountExceeded(newAnnotationCount, descriptor.getNewFailureThreshold())) {
+        if (isAnnotationCountExceeded(annotationDelta, descriptor.getNewFailureThreshold())) {
             logger.log("Setting build status to FAILURE since total number of new annotations exceeds the threshold " + descriptor.getNewFailureThreshold());
             return Result.FAILURE;
         }
@@ -63,12 +51,67 @@ public class BuildResultEvaluator {
             logger.log("Setting build status to UNSTABLE since total number of annotations exceeds the threshold " + descriptor.getThreshold());
             return Result.UNSTABLE;
         }
-        if (isAnnotationCountExceeded(newAnnotationCount, descriptor.getNewThreshold())) {
+        if (isAnnotationCountExceeded(annotationDelta, descriptor.getNewThreshold())) {
             logger.log("Setting build status to UNSTABLE since total number of new annotations exceeds the threshold " + descriptor.getNewThreshold());
             return Result.UNSTABLE;
         }
         logger.log("Not changing build status, since no threshold has been exceeded");
         return Result.SUCCESS;
+
+    }
+
+    /**
+     * Evaluates the build result. The build is marked as unstable if one of the
+     * thresholds has been exceeded.
+     *
+     * @param logger
+     *            logs the results
+     * @param descriptor
+     *            health descriptor
+     * @param allAnnotations
+     *            all annotations
+     * @param newAnnotations
+     *            the asymmetric set intersection of the annotations of this build and the annotations of the reference
+     *            build (i.e., the operation annotations(referenceBuild).removeAll(numbersOfAnnotations(build))
+     * @return the build result
+     */
+    public Result evaluateBuildResult(final PluginLogger logger, final HealthDescriptor descriptor,
+            final Collection<FileAnnotation> allAnnotations, final Collection<FileAnnotation> newAnnotations) {
+        int newAnnotationCount = extractNumberOfRelevantAnnotations(logger, descriptor, "new", newAnnotations);
+
+        return evaluateBuildResult(logger, descriptor, allAnnotations, newAnnotationCount);
+    }
+
+    /**
+     * Extracts the relevant annotations from the specified collection of
+     * annotations. A annotation is relevant, if its priority is greater or
+     * equal than the minimum priority of the health descriptor.
+     *
+     * @param logger
+     *            logs the results
+     * @param descriptor
+     *            health descriptor
+     * @param description
+     *            the description of the analyzed annotations
+     * @param annotations
+     *            the annotations to consider
+     * @return the number of relevant annotations
+     */
+    private int extractNumberOfRelevantAnnotations(final PluginLogger logger,
+            final HealthDescriptor descriptor, final String description, final Collection<FileAnnotation> annotations) {
+        ParserResult result = new ParserResult(annotations);
+
+        int annotationCount = 0;
+        for (Priority priority : Priority.collectPrioritiesFrom(descriptor.getMinimumPriority())) {
+            annotationCount += result.getNumberOfAnnotations(priority);
+        }
+        logger.log(String.format("Found %d %s annotations (%d high, %d normal, %d low)",
+                result.getNumberOfAnnotations(),
+                description,
+                result.getNumberOfAnnotations(Priority.HIGH),
+                result.getNumberOfAnnotations(Priority.NORMAL),
+                result.getNumberOfAnnotations(Priority.LOW)));
+        return annotationCount;
     }
 
     /**
