@@ -156,10 +156,12 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
                 BuildResultEvaluator resultEvaluator = new BuildResultEvaluator();
                 Result buildResult;
                 if (useDeltaValues) {
+                    logger.log("Using delta values to compute new warnings");
                     buildResult = resultEvaluator.evaluateBuildResult(logger, this,
                             annotationsResult.getAnnotations(), annotationsResult.getDelta());
                 }
                 else {
+                    logger.log("Using set difference to compute new warnings");
                     buildResult = resultEvaluator.evaluateBuildResult(logger, this,
                             annotationsResult.getAnnotations(), annotationsResult.getNewWarnings());
                 }

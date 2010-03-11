@@ -58,9 +58,6 @@
       </tbody>
     </table>
   </f:entry>
-  <f:entry title="${%Use absolute delta when computing the stability based on new annotations}" description="${%description.useDeltaValues}">
-    <f:checkbox name="useDeltaValues" checked="${instance.useDeltaValues}"/>
-  </f:entry>
   <f:entry title="${%Priority evaluation}" description="${%description.limit}">
     <f:radio name="${id}.thresholdLimit" value="high" checked="${instance.thresholdLimit == 'high'}" id="thresholdLimit.high"/>
     <st:nbsp/>
@@ -79,6 +76,9 @@
     <st:nbsp/>
     <label for="thresholdLimit.low">${%All priorities}</label>
     <st:nbsp />
+  </f:entry>
+  <f:entry title="${%Use delta for new warnings}" description="${%description.useDeltaValues}">
+    <f:checkbox name="useDeltaValues" checked="${instance.useDeltaValues}"/>
   </f:entry>
 
 </j:jelly>
