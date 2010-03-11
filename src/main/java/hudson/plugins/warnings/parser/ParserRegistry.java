@@ -21,6 +21,8 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * Registry for the active parsers in this plug-in.
  *
@@ -70,7 +72,9 @@ public class ParserRegistry {
         parsers.add(new TiCcsParser());
         parsers.add(new AcuCobolParser());
         parsers.add(new FlexSDKParser());
-        return Collections.unmodifiableList(parsers);
+        parsers.add(new PhpParser());
+
+        return ImmutableList.copyOf(parsers);
     }
 
     /**
