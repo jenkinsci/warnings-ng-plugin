@@ -306,7 +306,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
                 zeroWarningsSinceBuild = build.getNumber();
                 zeroWarningsSinceDate = build.getTimestamp().getTimeInMillis();
                 isZeroWarningsHighscore = true;
-                successfulHighscore = 0;
+                zeroWarningsHighScore = 0;
             }
         }
     }
@@ -914,7 +914,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         if (history.hasPreviousResult()) {
             BuildResult previous = history.getPreviousResult();
             if (isSuccessful()) {
-                if (previous.isSuccessful()) {
+                if (previous.isSuccessful() && previous.isSuccessfulTouched()) {
                     successfulSinceBuild = previous.getSuccessfulSinceBuild();
                     successfulSinceDate = previous.getSuccessfulSinceDate();
                 }
