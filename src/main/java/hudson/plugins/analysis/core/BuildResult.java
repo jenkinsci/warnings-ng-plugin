@@ -1011,18 +1011,19 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the icon for the build result
      */
     private String getResultIcon() {
-        StringBuilder message = new StringBuilder("<img src=\"/images/16x16/");
+        String message = "<img src=\"/images/16x16/%s\" alt=\"%s\" title=\"%s\"/>";
         if (pluginResult == Result.FAILURE) {
-            message.append(FAILED);
+            return String.format(message, FAILED,
+                    hudson.model.Messages.BallColor_Failed(), hudson.model.Messages.BallColor_Failed());
         }
         else if (pluginResult == Result.UNSTABLE) {
-            message.append(UNSTABLE);
+            return String.format(message, UNSTABLE,
+                    hudson.model.Messages.BallColor_Unstable(), hudson.model.Messages.BallColor_Unstable());
         }
         else {
-            message.append(SUCCESS);
+            return String.format(message, SUCCESS,
+                    hudson.model.Messages.BallColor_Success(), hudson.model.Messages.BallColor_Success());
         }
-        message.append("\"/>");
-        return message.toString();
     }
 
     /**
