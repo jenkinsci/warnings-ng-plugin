@@ -54,6 +54,13 @@ import hudson.plugins.analysis.views.DetailFactory;
 public abstract class BuildResult implements ModelObject, Serializable, AnnotationProvider {
     /** Unique ID of this class. */
     private static final long serialVersionUID = 1110545450292087475L;
+    /** Unstable icon. */
+    private static final String UNSTABLE = "yellow.gif";
+    /** Failed icon. */
+    private static final String FAILED = "red.gif";
+    /** Success icon. */
+    private static final String SUCCESS = "blue.gif";
+
     /** Logger. */
     private static final Logger LOGGER = Logger.getLogger(BuildResult.class.getName());
 
@@ -990,9 +997,32 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             message += createHighScoreMessage();
         }
         else if (isSuccessfulTouched()) {
-            message += createSuccessfulHighScoreMessage();
+            message += createListItem(Messages.ResultAction_Status() + getResultIcon());
+            if (isSuccessful()) {
+                message += createSuccessfulHighScoreMessage();
+            }
         }
         return message;
+    }
+
+    /**
+     * Returns the icon for the build result.
+     *
+     * @return the icon for the build result
+     */
+    private String getResultIcon() {
+        StringBuilder message = new StringBuilder("<img src=\"/images/16x16/");
+        if (pluginResult == Result.FAILURE) {
+            message.append(FAILED);
+        }
+        else if (pluginResult == Result.UNSTABLE) {
+            message.append(UNSTABLE);
+        }
+        else {
+            message.append(SUCCESS);
+        }
+        message.append("\"/>");
+        return message.toString();
     }
 
     /**
@@ -1001,7 +1031,18 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return a message
      */
     protected String createNoWarningsMessage() {
-        return "<li>" + Messages.ResultAction_NoWarningsSince(getZeroWarningsSinceBuild()) + "</li>";
+        return createListItem(Messages.ResultAction_NoWarningsSince(getZeroWarningsSinceBuild()));
+    }
+
+    /**
+     * Creates a HTML list item.
+     *
+     * @param text
+     *            the item text
+     * @return the HTML item
+     */
+    protected String createListItem(final String text) {
+        return "<li>" + text + "</li>";
     }
 
     /**
