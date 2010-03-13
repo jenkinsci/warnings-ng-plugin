@@ -1060,40 +1060,54 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return a highscore message
      */
     protected String createHighScoreMessage() {
+        String message;
         if (isNewZeroWarningsHighScore()) {
             long days = getDays(getZeroWarningsHighScore());
-            return "<li>" + Messages.ResultAction_MultipleHighScore(days) + "</li>";
+            if (days == 1) {
+                message = Messages.ResultAction_OneHighScore();
+            }
+            else {
+                message = Messages.ResultAction_MultipleHighScore(days);
+            }
         }
         else {
             long days = getDays(getHighScoreGap());
             if (days == 1) {
-                return "<li>" + Messages.ResultAction_OneNoHighScore() + "</li>";
+                message = Messages.ResultAction_OneNoHighScore();
             }
             else {
-                return "<li>" + Messages.ResultAction_MultipleNoHighScore(days) + "</li>";
+                message = Messages.ResultAction_MultipleNoHighScore(days);
             }
         }
+        return createListItem(message);
     }
 
     /**
-     * Creates a successful high score message.
+     * Creates a successful highscore message.
      *
-     * @return a successful high score message
+     * @return a successful highscore message
      */
     protected String createSuccessfulHighScoreMessage() {
+        String message;
         if (isNewSuccessfulHighScore()) {
             long days = getDays(getSuccessfulHighScore());
-            return "<li>" + Messages.ResultAction_SuccessfulMultipleHighScore(days) + "</li>";
+            if (days == 1) {
+                message = Messages.ResultAction_SuccessfulOneHighScore();
+            }
+            else {
+                message = Messages.ResultAction_SuccessfulMultipleHighScore(days);
+            }
         }
         else {
             long days = getDays(getSuccessfulHighScoreGap());
             if (days == 1) {
-                return "<li>" + Messages.ResultAction_SuccessfulOneNoHighScore() + "</li>";
+                message = Messages.ResultAction_SuccessfulOneNoHighScore();
             }
             else {
-                return "<li>" + Messages.ResultAction_SuccessfulMultipleNoHighScore(days) + "</li>";
+                message = Messages.ResultAction_SuccessfulMultipleNoHighScore(days);
             }
         }
+        return createListItem(message);
     }
 
     // Backward compatibility. Do not remove.
