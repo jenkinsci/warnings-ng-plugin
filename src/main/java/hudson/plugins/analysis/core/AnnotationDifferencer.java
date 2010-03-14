@@ -27,7 +27,6 @@ public final class AnnotationDifferencer {
         return removeDuplicates(difference(actual, previous), previous);
     }
 
-
     /**
      * Computes the elements of the first set without the elements in the second
      * set.
