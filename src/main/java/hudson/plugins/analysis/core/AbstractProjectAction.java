@@ -30,13 +30,15 @@ import hudson.plugins.analysis.graph.UserGraphConfigurationView;
 import hudson.util.Graph;
 
 /**
- * A project action displays a link on the side panel of a project.
+ * A project action displays a link on the side panel of a project. This action
+ * also is responsible to render the historical trend via its associated
+ * 'floatingBox.jelly' view.
  *
  * @param <T>
  *            result action type
  * @author Ulli Hafner
  */
-public abstract class AbstractProjectAction<T extends ResultAction<?>> implements Action  {
+public abstract class AbstractProjectAction<T extends ResultAction<?>> implements Action  { // NOCHECKSTYLE
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -8775531952208541253L;
 
