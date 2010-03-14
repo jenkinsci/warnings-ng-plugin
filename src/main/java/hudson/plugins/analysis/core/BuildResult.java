@@ -459,12 +459,12 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
     /** {@inheritDoc} */
     public boolean hasAnnotations() {
-        return getContainer().hasAnnotations();
+        return numberOfWarnings != 0;
     }
 
     /** {@inheritDoc} */
     public boolean hasNoAnnotations() {
-        return getContainer().hasNoAnnotations();
+        return numberOfWarnings == 0;
     }
 
     /** {@inheritDoc} */
@@ -1109,6 +1109,12 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             }
         }
         return createListItem(message);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return getDisplayName() + ": " + getNumberOfAnnotations() + " annotations";
     }
 
     // Backward compatibility. Do not remove.

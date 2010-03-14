@@ -837,4 +837,10 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         }
         return true;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return getName() + ": " + getNumberOfAnnotations() + " annotations";
+    }
 }
