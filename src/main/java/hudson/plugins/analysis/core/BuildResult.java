@@ -27,6 +27,7 @@ import hudson.XmlFile;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Api;
+import hudson.model.Hudson;
 import hudson.model.ModelObject;
 import hudson.model.Result;
 
@@ -1010,8 +1011,10 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the icon for the build result
      */
-    private String getResultIcon() {
-        String message = "<img src=\"/images/16x16/%s\" alt=\"%s\" title=\"%s\"/>";
+    public String getResultIcon() {
+        String rootUrl = Hudson.getInstance().getRootUrl();
+
+        String message = "<img src=\"" + rootUrl + "/images/16x16/%s\" alt=\"%s\" title=\"%s\"/>";
         if (pluginResult == Result.FAILURE) {
             return String.format(message, FAILED,
                     hudson.model.Messages.BallColor_Failed(), hudson.model.Messages.BallColor_Failed());
