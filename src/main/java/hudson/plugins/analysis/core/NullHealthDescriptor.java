@@ -37,7 +37,7 @@ public class NullHealthDescriptor extends AbstractHealthDescriptor {
         /**
          * Creates a new instance of {@link NullLocalizable}.
          */
-        private NullLocalizable() {
+        NullLocalizable() {
             super(null, null);
         }
 

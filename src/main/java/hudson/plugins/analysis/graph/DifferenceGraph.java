@@ -6,6 +6,7 @@ import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.List;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -86,8 +87,8 @@ public class DifferenceGraph extends BuildResultGraph {
      * @return the series to plot
      */
     private XYSeriesCollection computeDifferenceSeries(
-            final ArrayList<Pair<Integer, Integer>> fixedWarnings,
-            final ArrayList<Pair<Integer, Integer>> newWarnings) {
+            final List<Pair<Integer, Integer>> fixedWarnings,
+            final List<Pair<Integer, Integer>> newWarnings) {
         XYSeries fixedSeries = new XYSeries("fixed");
         XYSeries newSeries = new XYSeries("new");
 
@@ -124,7 +125,7 @@ public class DifferenceGraph extends BuildResultGraph {
      *            list of pairs with the points for the new warnings
      */
     private void extractPoints(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> action,
-            final ArrayList<Pair<Integer, Integer>> fixedWarnings, final ArrayList<Pair<Integer, Integer>> newWarnings) {
+            final List<Pair<Integer, Integer>> fixedWarnings, final List<Pair<Integer, Integer>> newWarnings) {
         int buildCount = 0;
         BuildResult current = action.getResult();
         Calendar buildTime = current.getOwner().getTimestamp();
@@ -176,7 +177,7 @@ public class DifferenceGraph extends BuildResultGraph {
         @Override
         public StringBuffer format(final long number, final StringBuffer toAppendTo, final FieldPosition pos) {
             StringBuffer stringBuffer = new StringBuffer(20);
-            stringBuffer.append("#");
+            stringBuffer.append('#');
             stringBuffer.append(number);
             return stringBuffer;
         }

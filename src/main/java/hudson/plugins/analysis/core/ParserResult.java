@@ -148,7 +148,7 @@ public class ParserResult implements Serializable {
      *
      * @param annotation the annotation to add
      */
-    public void addAnnotation(final FileAnnotation annotation) {
+    public final void addAnnotation(final FileAnnotation annotation) {
         if (!annotations.contains(annotation)) {
             findRelativeFile(annotation);
 

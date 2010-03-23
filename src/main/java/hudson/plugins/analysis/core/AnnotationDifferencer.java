@@ -74,7 +74,7 @@ public final class AnnotationDifferencer {
      *            the annotations to get the hash codes from
      * @return the hash codes of the specified collection of annotations
      */
-    private static HashSet<Long> extractHashCodes(final Set<FileAnnotation> previous) {
+    private static Set<Long> extractHashCodes(final Set<FileAnnotation> previous) {
         HashSet<Long> hashCodes = new HashSet<Long>();
         for (FileAnnotation annotation : previous) {
             hashCodes.add(annotation.getContextHashCode());

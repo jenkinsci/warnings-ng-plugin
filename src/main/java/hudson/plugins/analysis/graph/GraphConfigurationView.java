@@ -16,8 +16,8 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import com.google.common.collect.Lists;
 
-import hudson.model.AbstractProject;
 import hudson.model.ModelObject;
+import hudson.model.AbstractProject;
 
 import hudson.plugins.analysis.core.AbstractHealthDescriptor;
 import hudson.plugins.analysis.core.NullHealthDescriptor;
@@ -42,7 +42,7 @@ public abstract class GraphConfigurationView implements ModelObject {
     /** The last result action to start the trend report computation from. */
     private ResultAction<?> lastAction;
     /** The health descriptor. */
-    private AbstractHealthDescriptor healthDescriptor;
+    private AbstractHealthDescriptor healthDescriptor; // NOPMD
 
     /** The configuration of the graph. */
     private final GraphConfiguration configuration;
@@ -297,11 +297,11 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return the time stamp of the associated build.
      */
     public long getTimestamp() {
-        if (lastAction != null) {
-            return lastAction.getBuild().getTimestamp().getTimeInMillis();
+        if (lastAction == null) {
+            return -1;
         }
         else {
-            return -1;
+            return lastAction.getBuild().getTimestamp().getTimeInMillis();
         }
     }
 

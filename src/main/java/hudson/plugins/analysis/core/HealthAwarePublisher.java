@@ -13,10 +13,10 @@ import org.apache.commons.lang.StringUtils;
 import hudson.FilePath;
 import hudson.Launcher;
 
-import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
-import hudson.model.Project;
 import hudson.model.Result;
+import hudson.model.AbstractBuild;
+import hudson.model.Project;
 
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
@@ -27,12 +27,12 @@ import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.analysis.util.model.WorkspaceFile;
 
 import hudson.remoting.VirtualChannel;
-import hudson.tasks.Ant;
 import hudson.tasks.BuildStep;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Builder;
-import hudson.tasks.Maven;
 import hudson.tasks.Recorder;
+import hudson.tasks.Ant;
+import hudson.tasks.Maven;
 
 /**
  * A base class for publishers with the following two characteristics:
@@ -49,6 +49,7 @@ import hudson.tasks.Recorder;
  * @author Ulli Hafner
  */
 // CHECKSTYLE:COUPLING-OFF
+@SuppressWarnings("PMD.TooManyFields")
 public abstract class HealthAwarePublisher extends Recorder implements HealthDescriptor {
     /** Unique ID of this class. */
     private static final long serialVersionUID = -7945220365563528457L;
@@ -114,6 +115,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      *            the name of the plug-in
      */
     // CHECKSTYLE:OFF
+    @SuppressWarnings("PMD")
     public HealthAwarePublisher(final String threshold, final String newThreshold,
             final String failureThreshold, final String newFailureThreshold, final String healthy,
             final String unHealthy, final String thresholdLimit,
@@ -193,10 +195,8 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             final VirtualChannel channel, final Collection<FileAnnotation> annotations) throws IOException,
             FileNotFoundException, InterruptedException {
         File directory = new File(rootDir, AbstractAnnotation.WORKSPACE_FILES);
-        if (!directory.exists()) {
-            if (!directory.mkdir()) {
-                throw new IOException("Can't create directory for workspace files that contain annotations: " + directory.getAbsolutePath());
-            }
+        if (!directory.exists() && !directory.mkdir()) {
+            throw new IOException("Can't create directory for workspace files that contain annotations: " + directory.getAbsolutePath());
         }
         AnnotationContainer container = new DefaultAnnotationContainer(annotations);
         for (WorkspaceFile file : container.getFiles()) {

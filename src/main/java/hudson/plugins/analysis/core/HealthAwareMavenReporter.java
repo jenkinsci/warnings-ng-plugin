@@ -160,7 +160,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
             }
         });
 
-        copyFilesWithAnnotationsToBuildFolder(logger, build.getProjectRootDir(), build.getRootDir(), result.getAnnotations());
+        copyFilesWithAnnotationsToBuildFolder(logger, build.getRootDir(), result.getAnnotations());
 
         return true;
     }
@@ -198,8 +198,6 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      *
      * @param logger
      *            logger to log any problems
-     * @param workspaceRoot
-     *            directory to copy the files from
      * @param buildRoot
      *            directory to store the copied files in
      * @param annotations
@@ -211,7 +209,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      * @throws InterruptedException
      *             if the user cancels the processing
      */
-    private void copyFilesWithAnnotationsToBuildFolder(final PluginLogger logger, final FilePath workspaceRoot, final FilePath buildRoot, final Collection<FileAnnotation> annotations) throws IOException,
+    private void copyFilesWithAnnotationsToBuildFolder(final PluginLogger logger, final FilePath buildRoot, final Collection<FileAnnotation> annotations) throws IOException,
             FileNotFoundException, InterruptedException {
         FilePath directory = new FilePath(buildRoot, AbstractAnnotation.WORKSPACE_FILES);
         if (!directory.exists()) {

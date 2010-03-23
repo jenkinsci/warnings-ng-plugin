@@ -1,4 +1,4 @@
-package hudson.plugins.analysis.core;
+package hudson.plugins.analysis.core; // NOPMD
 
 import java.io.File;
 import java.io.IOException;
@@ -25,11 +25,11 @@ import com.thoughtworks.xstream.XStream;
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 import hudson.XmlFile;
 
+import hudson.model.ModelObject;
+import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.model.Api;
 import hudson.model.Hudson;
-import hudson.model.ModelObject;
-import hudson.model.Result;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
@@ -1124,14 +1124,14 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     // CHECKSTYLE:OFF
     @Deprecated
     @java.lang.SuppressWarnings("unused")
-    private transient Map<String, MavenModule> emptyModules;
+    private transient Map<String, MavenModule> emptyModules; // NOPMD
     @Deprecated
-    protected
-    transient String low;
+    @java.lang.SuppressWarnings("PMD")
+    protected transient String low;
     @Deprecated
-    protected
-    transient String normal;
+    @java.lang.SuppressWarnings("PMD")
+    protected transient String normal;
     @Deprecated
-    protected
-    transient String high;
+    @java.lang.SuppressWarnings("PMD")
+    protected transient String high;
 }

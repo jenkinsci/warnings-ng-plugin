@@ -14,9 +14,9 @@ import hudson.FilePath;
 import hudson.maven.MavenBuild;
 import hudson.maven.MavenModule;
 
-import hudson.model.AbstractBuild;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
+import hudson.model.AbstractBuild;
 
 import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
@@ -81,11 +81,11 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * @return the healthDescriptor
      */
     public AbstractHealthDescriptor getHealthDescriptor() {
-        if (healthDescriptor != null) {
-            return healthDescriptor;
+        if (healthDescriptor == null) {
+            return NullHealthDescriptor.NULL_HEALTH_DESCRIPTOR; // for old serialized actions
         }
         else {
-            return NullHealthDescriptor.NULL_HEALTH_DESCRIPTOR; // for old serialized actions
+            return healthDescriptor;
         }
     }
 
@@ -215,7 +215,6 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      *            the build result
      */
     protected void updateBuildHealth(final MavenBuild build, final BuildResult buildResult) {
-        return;
         // FIXME: See http://issues.hudson-ci.org/browse/HUDSON-4912
 //        PluginLogger logger = new PluginLogger(System.out, "[" + getDisplayName() + "] ");
 //        Result hudsonResult = new BuildResultEvaluator().evaluateBuildResult(
@@ -260,5 +259,5 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     @Deprecated
     @java.lang.SuppressWarnings("unused")
     @SuppressWarnings("UuF")
-    private transient HealthReportBuilder healthReportBuilder;
+    private transient HealthReportBuilder healthReportBuilder; // NOPMD
 }

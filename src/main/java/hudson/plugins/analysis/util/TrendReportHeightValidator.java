@@ -47,7 +47,7 @@ public class TrendReportHeightValidator implements Validator {
                 }
             }
             catch (NumberFormatException exception) {
-                throw FormValidation.error(Messages.FieldValidator_Error_TrendHeight(MINIMUM_HEIGHT));
+                throw FormValidation.error(Messages.FieldValidator_Error_TrendHeight(MINIMUM_HEIGHT)); // NOPMD
             }
         }
 

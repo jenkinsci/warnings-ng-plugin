@@ -21,6 +21,8 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 public class BuildResultEvaluatorTest {
     /** Error message. */
+    private static final String WRONG_BUILD_RESULT = "Wrong build result";
+    /** Error message. */
     private static final String WRONG_BUILD_FAILURE_STATE = "Wrong build failure state.";
 
     /**
@@ -63,42 +65,42 @@ public class BuildResultEvaluatorTest {
         List<FileAnnotation> newAnnotations = new ArrayList<FileAnnotation>();
 
         PluginLogger logger = mock(PluginLogger.class);
-        assertEquals(Result.SUCCESS,
+        assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "", ""), allAnnotations, newAnnotations));
-        assertEquals(Result.SUCCESS,
+        assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "0", "", ""), allAnnotations, newAnnotations));
-        assertEquals(Result.SUCCESS,
+        assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "0", "0"), allAnnotations, newAnnotations));
-        assertEquals(Result.SUCCESS,
+        assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "0", "0", "0"), allAnnotations, newAnnotations));
         allAnnotations.add(createAnnotation());
-        assertEquals(Result.SUCCESS,
+        assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "", ""), allAnnotations, newAnnotations));
-        assertEquals(Result.UNSTABLE,
+        assertEquals(WRONG_BUILD_RESULT, Result.UNSTABLE,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "", "", ""), allAnnotations, newAnnotations));
-        assertEquals(Result.FAILURE,
+        assertEquals(WRONG_BUILD_RESULT, Result.FAILURE,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "0", "", ""), allAnnotations, newAnnotations));
-        assertEquals(Result.FAILURE,
+        assertEquals(WRONG_BUILD_RESULT, Result.FAILURE,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "0", "", ""), allAnnotations, newAnnotations));
         newAnnotations.add(createAnnotation());
-        assertEquals(Result.SUCCESS,
+        assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "", ""), allAnnotations, newAnnotations));
-        assertEquals(Result.UNSTABLE,
+        assertEquals(WRONG_BUILD_RESULT, Result.UNSTABLE,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "0", ""), allAnnotations, newAnnotations));
-        assertEquals(Result.FAILURE,
+        assertEquals(WRONG_BUILD_RESULT, Result.FAILURE,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "", "0"), allAnnotations, newAnnotations));
-        assertEquals(Result.FAILURE,
+        assertEquals(WRONG_BUILD_RESULT, Result.FAILURE,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "0", "0"), allAnnotations, newAnnotations));
 
-        assertEquals(Result.SUCCESS,
+        assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "", ""), allAnnotations, newAnnotations));
-        assertEquals(Result.UNSTABLE,
+        assertEquals(WRONG_BUILD_RESULT, Result.UNSTABLE,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "", "0", ""), allAnnotations, newAnnotations));
-        assertEquals(Result.FAILURE,
+        assertEquals(WRONG_BUILD_RESULT, Result.FAILURE,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "", "", "0"), allAnnotations, newAnnotations));
-        assertEquals(Result.FAILURE,
+        assertEquals(WRONG_BUILD_RESULT, Result.FAILURE,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "0", "", "0"), allAnnotations, newAnnotations));
-        assertEquals(Result.FAILURE,
+        assertEquals(WRONG_BUILD_RESULT, Result.FAILURE,
                 parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "0", "0", ""), allAnnotations, newAnnotations));
     }
 

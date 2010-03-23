@@ -488,7 +488,7 @@ public class GraphConfiguration  {
     public boolean isDefault() {
         return width == DEFAULT_WIDTH
                 && height == DEFAULT_HEIGHT
-                && graphType == DEFAULT_GRAPH
+                && graphType == DEFAULT_GRAPH // NOPMD
                 && buildCount == DEFAULT_COUNT
                 && dayCount == DEFAULT_COUNT;
     }
@@ -558,7 +558,7 @@ public class GraphConfiguration  {
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        final int prime = 31;
+        int prime = 31;
         int result = 1;
         result = prime * result + buildCount;
         result = prime * result + dayCount;
@@ -570,6 +570,7 @@ public class GraphConfiguration  {
 
     /** {@inheritDoc} */
     @Override // NOCHECKSTYLE
+    @SuppressWarnings("PMD")
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;

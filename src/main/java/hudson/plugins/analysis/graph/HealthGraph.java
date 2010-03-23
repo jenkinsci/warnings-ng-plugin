@@ -37,6 +37,8 @@ public class HealthGraph extends CategoryBuildResultGraph {
      *            the health descriptor
      */
     public HealthGraph(final AbstractHealthDescriptor healthDescriptor) {
+        super();
+
         this.healthDescriptor = healthDescriptor;
     }
 

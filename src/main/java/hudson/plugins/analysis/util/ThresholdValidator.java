@@ -23,7 +23,7 @@ public class ThresholdValidator implements Validator {
                 }
             }
             catch (NumberFormatException exception) {
-                throw FormValidation.error(Messages.FieldValidator_Error_Threshold());
+                throw FormValidation.error(Messages.FieldValidator_Error_Threshold()); // NOPMD
             }
         }
 
@@ -62,14 +62,12 @@ public class ThresholdValidator implements Validator {
      *             greater or equal zero
      */
     public static int convert(final String threshold) {
-        if (isValid(threshold)) {
-            if (StringUtils.isNotBlank(threshold)) {
-                try {
-                    return Integer.valueOf(threshold);
-                }
-                catch (NumberFormatException exception) {
-                    // not valid
-                }
+        if (isValid(threshold) && StringUtils.isNotBlank(threshold)) {
+            try {
+                return Integer.valueOf(threshold);
+            }
+            catch (NumberFormatException exception) {
+                // not valid
             }
         }
         throw new IllegalArgumentException("Not a parsable integer value >= 0: " + threshold);

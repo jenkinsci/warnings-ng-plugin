@@ -56,7 +56,7 @@ public class ModuleDetector {
      * Creates a new instance of {@link ModuleDetector}.
      *
      * @param workspace
-     *            the workspace to scan for maven pom.xml or ant build.xml files
+     *            the workspace to scan for Maven pom.xml or ant build.xml files
      * @param fileInputStreamFactory the value to set
      */
     public ModuleDetector(final File workspace, final FileInputStreamFactory fileInputStreamFactory) {
@@ -71,7 +71,7 @@ public class ModuleDetector {
      *
      * @param fileInputStreamFactory the value to set
      */
-    public void setFileInputStreamFactory(final FileInputStreamFactory fileInputStreamFactory) {
+    public final void setFileInputStreamFactory(final FileInputStreamFactory fileInputStreamFactory) {
         factory = fileInputStreamFactory;
     }
 
@@ -151,8 +151,10 @@ public class ModuleDetector {
     /**
      * Finds files of the matching pattern.
      *
-     * @param path root path to scan in
-     * @param pattern pattern of files
+     * @param path
+     *            root path to scan in
+     * @param pattern
+     *            pattern of files
      * @return the found files
      */
     protected String[] find(final File path, final String pattern) {

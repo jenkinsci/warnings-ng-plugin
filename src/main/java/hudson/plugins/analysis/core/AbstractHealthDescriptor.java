@@ -219,6 +219,6 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
     /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
-    private transient boolean isHealthyReportEnabled;
+    private transient boolean isHealthyReportEnabled; // NOPMD
 }
 

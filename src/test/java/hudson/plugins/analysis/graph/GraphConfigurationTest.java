@@ -14,6 +14,8 @@ import com.google.common.collect.Sets;
  * @author Ulli Hafner
  */
 public class GraphConfigurationTest {
+    /** Error message. */
+    private static final String VALID_CONFIGURATION_NOT_ACCEPTED = "Valid configuration not accepted.";
     /** Valid width. */
     private static final int WIDTH = 50;
     /** Valid height. */
@@ -73,11 +75,11 @@ public class GraphConfigurationTest {
 
         GraphConfiguration configuration = createDetailUnderTest();
 
-        assertTrue("Valid configuration not accepted.", configuration.initializeFrom("50!100!0!0!NONE"));
+        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom("50!100!0!0!NONE"));
         assertFalse("Build count is defined but should not.", configuration.isBuildCountDefined());
         assertFalse("Day count is defined but should not.", configuration.isDayCountDefined());
 
-        assertTrue("Valid configuration not accepted.", configuration.initializeFrom("50!100!2!1!NONE"));
+        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom("50!100!2!1!NONE"));
         assertTrue("Build count is not defined but should.", configuration.isBuildCountDefined());
         assertTrue("Day count is not defined but should.", configuration.isDayCountDefined());
     }
@@ -93,7 +95,7 @@ public class GraphConfigurationTest {
         JSONObject jsonObject = JSONObject.fromObject(enabled);
 
         GraphConfiguration configuration = createDetailUnderTest();
-        assertTrue("Valid configuration not accepted.", configuration.initializeFrom(jsonObject));
+        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom(jsonObject));
         verifyConfiguration(WIDTH, HEIGHT, BUILDS, DAYS, NewVersusFixedGraph.class, configuration);
     }
 
@@ -116,7 +118,7 @@ public class GraphConfigurationTest {
     private void assertValidConfiguation(final String initialization, final int expectedWidth, final int expectedHeight,
             final int expectedBuildCount, final int expectedDayCount, final Class<? extends BuildResultGraph> expectedType) {
         GraphConfiguration configuration = createDetailUnderTest();
-        assertTrue("Valid configuration not accepted.", configuration.initializeFrom(initialization));
+        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom(initialization));
 
         verifyConfiguration(expectedWidth, expectedHeight, expectedBuildCount, expectedDayCount,
                 expectedType, configuration);
@@ -157,7 +159,7 @@ public class GraphConfigurationTest {
 
         String serialized = configuration.serializeToString();
         GraphConfiguration other = createDetailUnderTest();
-        assertTrue("Valid configuration not accepted.", other.initializeFrom(serialized));
+        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, other.initializeFrom(serialized));
         assertEquals("Serialize did not work.", other, configuration);
     }
 }

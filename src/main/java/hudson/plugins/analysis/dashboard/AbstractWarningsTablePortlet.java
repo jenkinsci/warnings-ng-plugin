@@ -67,7 +67,7 @@ public abstract class AbstractWarningsTablePortlet extends DashboardPortlet {
      * @return the number of compiler warnings
      */
     public String getWarnings(final Job<?, ?> job, final String priority) {
-        return getWarnings(job, getAction(), getPluginName(), Priority.valueOf(priority));
+        return getWarnings(job, getAction(), Priority.valueOf(priority));
     }
 
     /**
@@ -162,13 +162,11 @@ public abstract class AbstractWarningsTablePortlet extends DashboardPortlet {
      *            the job to get the action from
      * @param actionType
      *            the type of the action
-     * @param plugin
-     *            the plug-in that is target of the link
      * @param priority
      *            priority of the warnings
      * @return the number of warnings
      */
-    private String getWarnings(final Job<?, ?> job, final Class<? extends AbstractProjectAction<?>> actionType, final String plugin, final Priority priority) {
+    private String getWarnings(final Job<?, ?> job, final Class<? extends AbstractProjectAction<?>> actionType, final Priority priority) {
         AbstractProjectAction<?> action = job.getAction(actionType);
         if (action != null && action.hasValidResults()) {
             BuildResult result = action.getLastAction().getResult();
