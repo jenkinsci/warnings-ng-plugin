@@ -123,13 +123,20 @@ public class GraphConfigurationTest {
     }
 
     /**
-     * FIXME: Document method verifyConfiguration
+     * Verifies the configuration values.
+     *
      * @param expectedWidth
+     *            expected width
      * @param expectedHeight
+     *            expected height
      * @param expectedBuildCount
+     *            expected build count
      * @param expectedDayCount
+     *            expected day count
      * @param expectedType
+     *            expected type of graph
      * @param configuration
+     *            the actual configuration to verify
      */
     private void verifyConfiguration(final int expectedWidth, final int expectedHeight,
             final int expectedBuildCount, final int expectedDayCount,

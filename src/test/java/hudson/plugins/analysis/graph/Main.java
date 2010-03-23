@@ -59,13 +59,15 @@ public class Main extends ApplicationFrame {
     /**
      * Creates a mock {@link BuildResult}.
      *
+     * @param buildNumber
+     *            current build number
      * @param fixedWarnings
      *            number of fixed warnings
      * @param newWarnings
      *            number of new warnings
      * @return a {@link ResultAction} mock.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     private BuildResult createResult(final int buildNumber, final int fixedWarnings, final int newWarnings) {
         BuildResult result = mock(BuildResult.class);
 
