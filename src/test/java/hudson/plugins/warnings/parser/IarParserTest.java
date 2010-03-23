@@ -17,13 +17,6 @@ import org.junit.Test;
  */
 public class IarParserTest extends ParserTester {
     /**
-     * Creates a new instance of {@link IarParserTest}.
-     */
-    public IarParserTest() {
-        super(IarParser.class);
-    }
-
-    /**
      * Parses a file with two IAR warnings.
      *
      * @throws IOException

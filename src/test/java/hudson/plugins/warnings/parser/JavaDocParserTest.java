@@ -19,13 +19,6 @@ public class JavaDocParserTest extends ParserTester {
     private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
 
     /**
-     * Creates a new instance of {@link JavaDocParserTest}.
-     */
-    public JavaDocParserTest() {
-        super(JavaDocParser.class);
-    }
-
-    /**
      * Parses a file with two deprecation warnings.
      *
      * @throws IOException

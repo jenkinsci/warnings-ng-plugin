@@ -22,13 +22,6 @@ public class GccParserTest extends ParserTester {
     private static final String GCC_WARNING = "GCC warning";
 
     /**
-     * Creates a new instance of {@link GccParserTest}.
-     */
-    public GccParserTest() {
-        super(GccParser.class);
-    }
-
-    /**
      * Parses a file with two GCC warnings.
      *
      * @throws IOException

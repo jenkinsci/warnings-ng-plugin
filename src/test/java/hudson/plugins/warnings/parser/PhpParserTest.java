@@ -16,13 +16,10 @@ import org.junit.Test;
  */
 public class PhpParserTest extends ParserTester {
     /**
-     * Creates a new instance of {@link PhpParserTest}.
+     * Tests the PHP parsing.
      *
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    public PhpParserTest() {
-        super(PhpParser.class);
-    }
-
     @Test
     public void testParse() throws IOException {
         Collection<FileAnnotation> results = new PhpParser().parse(openFile());

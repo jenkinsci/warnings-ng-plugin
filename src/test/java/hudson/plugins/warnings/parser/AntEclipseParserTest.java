@@ -18,13 +18,6 @@ public class AntEclipseParserTest extends ParserTester {
     private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
 
     /**
-     * Creates a new instance of {@link AntEclipseParserTest}.
-     */
-    public AntEclipseParserTest() {
-        super(AntEclipseParser.class);
-    }
-
-    /**
      * Parses a file with two deprecation warnings.
      *
      * @throws IOException

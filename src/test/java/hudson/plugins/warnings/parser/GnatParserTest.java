@@ -15,13 +15,6 @@ import org.junit.Test;
  */
 public class GnatParserTest extends ParserTester {
     /**
-     * Creates a new instance of {@link GnatParserTest}.
-     */
-    public GnatParserTest() {
-        super(GnatParser.class);
-    }
-
-    /**
      * Parses a file with 9 Gnat warnings.
      *
      * @throws IOException

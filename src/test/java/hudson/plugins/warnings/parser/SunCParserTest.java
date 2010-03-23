@@ -20,13 +20,6 @@ public class SunCParserTest extends ParserTester {
     private static final String TYPE = "badargtypel2w";
 
     /**
-     * Creates a new instance of {@link SunCParserTest}.
-     */
-    public SunCParserTest() {
-        super(SunCParser.class);
-    }
-
-    /**
      * Parses a file with 5 warnings.
      *
      * @throws IOException

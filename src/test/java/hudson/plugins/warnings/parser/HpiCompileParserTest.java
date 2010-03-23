@@ -10,18 +10,10 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-
 /**
  * Tests the class {@link AntJavacParser} for output log of a HPI compile.
  */
 public class HpiCompileParserTest extends ParserTester {
-    /**
-     * Creates a new instance of {@link HpiCompileParserTest}.
-     */
-    public HpiCompileParserTest() {
-        super(AntJavacParser.class);
-    }
-
     /**
      * Parses a file with two deprecation warnings.
      *

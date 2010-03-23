@@ -15,13 +15,6 @@ import org.junit.Test;
  */
 public class MavenParserTest extends ParserTester {
     /**
-     * Creates a new instance of {@link MavenParserTest}.
-     */
-    public MavenParserTest() {
-        super(JavacParser.class);
-    }
-
-    /**
      * Parses a file with two deprecation warnings.
      *
      * @throws IOException

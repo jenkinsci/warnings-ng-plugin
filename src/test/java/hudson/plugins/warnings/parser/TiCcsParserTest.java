@@ -18,14 +18,6 @@ public class TiCcsParserTest extends ParserTester {
     private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
 
     /**
-     * Creates a new instance of {@link TiCcsParserTest}.
-     */
-    public TiCcsParserTest() {
-        super(TiCcsParser.class);
-    }
-
-
-    /**
      * Parses a file with warnings of the TI CodeComposer tools.
      *
      * @throws IOException

@@ -51,7 +51,7 @@ public final class WarningsDescriptor extends PluginDescriptor {
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     @Override
     public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
         return true;

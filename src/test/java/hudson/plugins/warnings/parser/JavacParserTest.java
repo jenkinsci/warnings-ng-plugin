@@ -18,13 +18,6 @@ public class JavacParserTest extends ParserTester {
     private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
 
     /**
-     * Creates a new instance of {@link JavacParserTest}.
-     */
-    public JavacParserTest() {
-        super(JavacParser.class);
-    }
-
-    /**
      * Parses a file with two deprecation warnings.
      *
      * @throws IOException
@@ -51,6 +44,11 @@ public class JavacParserTest extends ParserTester {
                 JavacParser.WARNING_TYPE, RegexpParser.DEPRECATION, Priority.NORMAL);
     }
 
+    /**
+     * Verifies that arrays in deprecated methods are correctly handled.
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     @Test
     public void parseArrayInDeprecatedMethod() throws IOException {
         Collection<FileAnnotation> warnings = new JavacParser().parse(openFile("issue5868.txt"));

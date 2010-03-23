@@ -15,13 +15,6 @@ import org.junit.Test;
  */
 public class BuckminsterParserTest extends ParserTester {
     /**
-     * Creates a new instance of {@link BuckminsterParser}.
-     */
-    public BuckminsterParserTest() {
-        super(BuckminsterParser.class);
-    }
-
-    /**
      * Parses a file with three Buckminster warnings.
      *
      * @throws IOException

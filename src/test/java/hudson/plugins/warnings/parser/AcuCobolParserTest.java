@@ -16,13 +16,6 @@ import org.junit.Test;
  */
 public class AcuCobolParserTest extends ParserTester {
     /**
-     * Creates a new instance of {@link AcuCobolParserTest}.
-     */
-    public AcuCobolParserTest() {
-        super(AcuCobolParser.class);
-    }
-
-    /**
      * Parses a file with 4 COBOL warnings.
      *
      * @throws IOException

@@ -15,13 +15,6 @@ import org.junit.Test;
  */
 public class ErlcParserTest extends ParserTester {
     /**
-     * Creates a new instance of {@link ErlcParserTest}.
-     */
-    public ErlcParserTest() {
-        super(ErlcParser.class);
-    }
-
-    /**
      * Parses a file with two Erlc warnings.
      *
      * @throws IOException

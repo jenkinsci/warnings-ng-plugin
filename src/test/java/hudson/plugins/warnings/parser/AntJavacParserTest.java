@@ -21,13 +21,6 @@ public class AntJavacParserTest extends ParserTester {
     private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
 
     /**
-     * Creates a new instance of {@link AntJavacParserTest}.
-     */
-    public AntJavacParserTest() {
-        super(AntJavacParser.class);
-    }
-
-    /**
      * Parses a file with two deprecation warnings.
      *
      * @throws IOException
@@ -129,6 +122,11 @@ public class AntJavacParserTest extends ParserTester {
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
     }
 
+    /**
+     * Verifies that arrays in deprecated methods are correctly handled.
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     @Test
     public void parseArrayInDeprecatedMethod() throws IOException {
         Collection<FileAnnotation> warnings = new AntJavacParser().parse(openFile("issue5868.txt"));

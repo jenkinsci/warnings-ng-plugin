@@ -18,13 +18,6 @@ public class IntelCParserTest extends ParserTester {
     private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
 
     /**
-     * Creates a new instance of {@link IntelCParserTest}.
-     */
-    public IntelCParserTest() {
-        super(IntelCParser.class);
-    }
-
-    /**
      * Parses a file with two Intel warnings.
      *
      * @throws IOException

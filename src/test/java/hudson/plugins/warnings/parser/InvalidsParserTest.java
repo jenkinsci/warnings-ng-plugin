@@ -15,13 +15,6 @@ import org.junit.Test;
  */
 public class InvalidsParserTest extends ParserTester {
     /**
-     * Creates a new instance of {@link InvalidsParserTest}.
-     */
-    public InvalidsParserTest() {
-        super(InvalidsParser.class);
-    }
-
-    /**
      * Parses a file with two deprecation warnings.
      *
      * @throws IOException

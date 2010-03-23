@@ -5,7 +5,7 @@ import hudson.plugins.analysis.util.model.Priority;
 import java.util.regex.Matcher;
 
 /**
- * A parser for PHP runtime errors and warnings
+ * A parser for PHP runtime errors and warnings.
  *
  * @author Shimi Kiviti
  */
