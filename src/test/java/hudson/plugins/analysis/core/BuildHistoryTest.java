@@ -43,7 +43,7 @@ public class BuildHistoryTest {
      * @throws Exception the exception
      */
     @Test
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public void testHasPreviousResult() throws Exception {
         AbstractBuild withResult = mock(AbstractBuild.class);
         AbstractBuild noResult = mock(AbstractBuild.class);
@@ -75,7 +75,7 @@ public class BuildHistoryTest {
      * </ol>
      * @throws Exception the exception
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     @Test
     public void testHasReferenceResult() throws Exception {
         AbstractBuild withSuccessResult = mock(AbstractBuild.class);

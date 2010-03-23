@@ -1,6 +1,6 @@
 package hudson.plugins.analysis.util.model;
 
-import hudson.util.StringConverter2;
+import hudson.util.HeapSpaceStringConverter;
 import hudson.util.XStream2;
 
 /**
@@ -18,7 +18,7 @@ public class AnnotationStream extends XStream2 {
         alias("annotation", FileAnnotation.class);
         alias("hudson.plugins.tasks.util.model.LineRange", LineRange.class);
         alias("range", LineRange.class);
-        registerConverter(new StringConverter2(), 100);
+        registerConverter(new HeapSpaceStringConverter(), 100);
         registerConverter(new Priority.PriorityConverter(), 100);
         addImmutableType(Priority.class);
     }
