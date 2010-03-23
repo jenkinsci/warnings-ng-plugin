@@ -73,7 +73,7 @@ public abstract class RegexpParser implements WarningsParser {
 
         while (matcher.find()) {
             Warning warning = createWarning(matcher);
-            if (warning != FALSE_POSITIVE) {
+            if (warning != FALSE_POSITIVE) { // NOPMD
                 detectPackageName(warning);
                 warnings.add(warning);
             }

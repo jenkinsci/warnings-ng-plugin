@@ -14,6 +14,9 @@ import org.junit.Test;
  * Tests the class {@link GnatParser}.
  */
 public class GnatParserTest extends ParserTester {
+    /** Warning type. */
+    private static final String GNAT_WARNING = "GNAT warning";
+
     /**
      * Parses a file with 9 Gnat warnings.
      *
@@ -37,7 +40,7 @@ public class GnatParserTest extends ParserTester {
                 402,
                 "call to obsolescent procedure \"Very_Verbose\" declared at debug.ads:59",
                 "/home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/utilities/class_utilities.adb",
-                GnatParser.WARNING_TYPE, "GNAT warning", Priority.NORMAL);
+                GnatParser.WARNING_TYPE, GNAT_WARNING, Priority.NORMAL);
 
         // /home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/utilities/iml-interfaces-cfg.adb:63:14:
         // warning: variable "E" is not referenced
@@ -47,7 +50,7 @@ public class GnatParserTest extends ParserTester {
                 63,
                 "variable \"E\" is not referenced",
                 "/home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/utilities/iml-interfaces-cfg.adb",
-                GnatParser.WARNING_TYPE, "GNAT warning", Priority.NORMAL);
+                GnatParser.WARNING_TYPE, GNAT_WARNING, Priority.NORMAL);
 
         // /home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/pointsto/andersen_results.adb:96:80:
         // (style) this line is too long
@@ -67,7 +70,7 @@ public class GnatParserTest extends ParserTester {
                 3,
                 "redundant with clause in body",
                 "/home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/generated/ada_delta_constraints.adb",
-                GnatParser.WARNING_TYPE, "GNAT warning", Priority.NORMAL);
+                GnatParser.WARNING_TYPE, GNAT_WARNING, Priority.NORMAL);
 
         // /home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/reuse/src/array_tables.adb:97:07:
         // warning: variable "Dummy_Empty_Array_Item" is read but never assigned
@@ -77,7 +80,7 @@ public class GnatParserTest extends ParserTester {
                 97,
                 "variable \"Dummy_Empty_Array_Item\" is read but never assigned",
                 "/home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/reuse/src/array_tables.adb",
-                GnatParser.WARNING_TYPE, "GNAT warning", Priority.NORMAL);
+                GnatParser.WARNING_TYPE, GNAT_WARNING, Priority.NORMAL);
 
         // /home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/reuse/src/graph_algorithms-generic_explorers.adb:63:14:
         // warning: "C" is not modified, could be declared constant
@@ -87,7 +90,7 @@ public class GnatParserTest extends ParserTester {
                 63,
                 "\"C\" is not modified, could be declared constant",
                 "/home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/reuse/src/graph_algorithms-generic_explorers.adb",
-                GnatParser.WARNING_TYPE, "GNAT warning", Priority.NORMAL);
+                GnatParser.WARNING_TYPE, GNAT_WARNING, Priority.NORMAL);
 
         // /home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/reuse/src/process_data.adb:257:49:
         // (style) bad casing of "False" declared in Standard

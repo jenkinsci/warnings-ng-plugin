@@ -3,4 +3,5 @@
     <useProjectRuleSet>true</useProjectRuleSet>
     <ruleSetFile>pmd-configuration.xml</ruleSetFile>
     <includeDerivedFiles>false</includeDerivedFiles>
+    <violationsAsErrors>false</violationsAsErrors>
 </pmd>

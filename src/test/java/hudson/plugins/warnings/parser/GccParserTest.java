@@ -131,7 +131,7 @@ public class GccParserTest extends ParserTester {
                 352,
                 "'s2.mepSector2::lubrications' may be used",
                 "main/mep.cpp",
-                GccParser.WARNING_TYPE, "GCC warning", Priority.NORMAL);
+                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
         checkWarning(iterator.next(),
                 1477,
                 "'s2.mepSector2::lubrications' was declared here",
@@ -170,7 +170,7 @@ public class GccParserTest extends ParserTester {
                 1128,
                 "NULL used in arithmetic",
                 "/Users/rthomson/hudson/jobs/Bryce7-MacWarnings/workspace/bryce7/src/Bryce/Plugins/3DSExport/3DSExport.cpp",
-                GccParser.WARNING_TYPE, "GCC warning", Priority.NORMAL);
+                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
     }
 
     /**
@@ -210,22 +210,22 @@ public class GccParserTest extends ParserTester {
                 638,
                 "local declaration of \"command\" hides instance variable",
                 "folder1/file1.m",
-                GccParser.WARNING_TYPE, "GCC warning", Priority.NORMAL);
+                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
         checkWarning(iterator.next(),
                 640,
                 "instance variable \"command\" accessed in class method",
                 "folder1/file1.m",
-                GccParser.WARNING_TYPE, "GCC warning", Priority.NORMAL);
+                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
         checkWarning(iterator.next(),
                 47,
                 "\"oldGeb\" might be used uninitialized in this function",
                 "file1.m",
-                GccParser.WARNING_TYPE, "GCC warning", Priority.NORMAL);
+                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
         checkWarning(iterator.next(),
                 640,
                 "local declaration of \"command\" hides instance variable",
                 "file1.m",
-                GccParser.WARNING_TYPE, "GCC warning", Priority.NORMAL);
+                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
     }
 
     /**

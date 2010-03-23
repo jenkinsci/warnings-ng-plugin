@@ -110,11 +110,11 @@ public class ParserRegistry {
             this.parsers.addAll(ALL_PARSERS);
         }
 
-        if (!StringUtils.isEmpty(includePattern) || !StringUtils.isEmpty(excludePattern)) {
-            fileFilter = new FileFilter(includePattern, excludePattern);
+        if (StringUtils.isEmpty(includePattern) && StringUtils.isEmpty(excludePattern)) {
+            fileFilter = null;
         }
         else {
-            fileFilter = null;
+            fileFilter = new FileFilter(includePattern, excludePattern);
         }
     }
 
@@ -260,7 +260,7 @@ public class ParserRegistry {
          * and does not match any of the exclusion patterns.
          */
         public boolean matches(final String name) {
-            final String canonicalName;
+            String canonicalName;
             if (File.separatorChar == '\\') {
                 canonicalName = StringUtils.replaceChars(name, '/', '\\');
             }

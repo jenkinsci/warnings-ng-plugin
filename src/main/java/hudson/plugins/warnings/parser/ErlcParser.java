@@ -25,16 +25,16 @@ public class ErlcParser extends RegexpLineParser {
     /** {@inheritDoc} */
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        final String filename = matcher.group(1);
-        final int linenumber = getLineNumber(matcher.group(2));
-        final Priority priority;
-        final String category;
-        final String message = matcher.group(4);
-        final String group3 = matcher.group(3);
+        String filename = matcher.group(1);
+        int linenumber = getLineNumber(matcher.group(2));
+        Priority priority;
+        String category;
+        String message = matcher.group(4);
+        String categoryMatch = matcher.group(3);
 
-        if ("warning: ".equalsIgnoreCase(group3)) {
+        if ("warning: ".equalsIgnoreCase(categoryMatch)) {
             priority = Priority.NORMAL;
-            category = "ERLC " + group3.substring(0, group3.length() - 2);
+            category = "ERLC " + categoryMatch.substring(0, categoryMatch.length() - 2);
         }
         else {
             priority = Priority.HIGH;
