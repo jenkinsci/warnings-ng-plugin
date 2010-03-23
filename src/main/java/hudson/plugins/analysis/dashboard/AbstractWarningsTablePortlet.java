@@ -7,8 +7,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import hudson.model.Job;
 
-import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.analysis.core.BuildResult;
+import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.view.dashboard.DashboardPortlet;
 
@@ -97,7 +97,7 @@ public abstract class AbstractWarningsTablePortlet extends DashboardPortlet {
     public String getWarnings(final Collection<Job<?, ?>> jobs, final String priority) {
         int sum = 0;
         for (Job<?, ?> job : jobs) {
-            sum += Integer.parseInt(getWarnings(job, priority));
+            sum += toInt(getWarnings(job, priority));
         }
         return String.valueOf(sum);
     }
@@ -112,7 +112,12 @@ public abstract class AbstractWarningsTablePortlet extends DashboardPortlet {
      */
     private int toInt(final String value) {
         try {
-            return Integer.parseInt(StringUtils.substringBetween(value, ">", "<"));
+            if (value.contains("<")) {
+                return Integer.parseInt(StringUtils.substringBetween(value, ">", "<"));
+            }
+            else {
+                return Integer.parseInt(value);
+            }
         }
         catch (NumberFormatException exception) {
             return 0;
