@@ -59,6 +59,8 @@ public class ParserRegistry {
         parsers.add(new AntEclipseParser());
         parsers.add(new MsBuildParser());
         parsers.add(new GccParser());
+        parsers.add(new Gcc4CompilerParser());
+        parsers.add(new Gcc4LinkerParser());
         parsers.add(new InvalidsParser());
         parsers.add(new SunCParser());
         parsers.add(new GnatParser());
