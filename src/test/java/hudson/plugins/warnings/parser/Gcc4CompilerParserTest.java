@@ -99,6 +99,20 @@ public class Gcc4CompilerParserTest extends ParserTester {
                 WARNING_TYPE, WARNING_CATEGORY, Priority.HIGH);
     }
 
+    /**
+     * Parses a warning log with autoconf messages. There should be no warning.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-4712">Issue 5870</a>
+     */
+    @Test
+    public void issue5870() throws IOException {
+        Collection<FileAnnotation> warnings = new Gcc4CompilerParser().parse(openFile("issue5870.txt"));
+
+        assertEquals("There are warnings found", 0, warnings.size());
+    }
+
     /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
