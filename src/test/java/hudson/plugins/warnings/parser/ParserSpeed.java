@@ -32,7 +32,7 @@ public class ParserSpeed {
             long start = System.currentTimeMillis();
             parserRegistry.parse(new File(""));
             long end = System.currentTimeMillis();
-            System.out.println(parserName + ": " + (end-start) + "ms"); // NOCHECKSTYLE
+            System.out.println(parserName + ": " + (end-start) + "ms"); // NOCHECKSTYLE NOPMD
         }
     }
 
