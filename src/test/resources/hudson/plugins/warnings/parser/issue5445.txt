@@ -1,0 +1,9 @@
+The Warnings plugin is incorrectly picking up output from the Clearcase Plugin as a warning. An example of a line being picked up by the plugin is:
+identity UCM.Stream oid:b694f709.1b014e0d.bf63.6c:03:05:8f:bc:23@vobuuid:bdbb9ca6.e88d43c1.abe7.9a:23:03:11:84:a1 1
+
+This is interpreted by the warnings plugin as:
+—
+File: identity UCM.Stream oid:b694f709.1b014e0d.bf63.6c:03:05:8f:bc:23@vobuuid:bdbb9ca6.e88d43c1.abe7.9a, Line: 23, Type: gcc, Priority: High, Category: GCC error
+
+a1 1
+—

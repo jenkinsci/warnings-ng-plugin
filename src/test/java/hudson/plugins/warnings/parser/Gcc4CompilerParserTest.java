@@ -14,6 +14,10 @@ import org.junit.Test;
  * Tests the class {@link Gcc4CompilerParser}.
  */
 public class Gcc4CompilerParserTest extends ParserTester {
+    /** Error message. */
+    private static final String THERE_ARE_WARNINGS_FOUND = "There are warnings found";
+    /** Error message. */
+    private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
     /** The category. */
     private static final String WARNING_CATEGORY = Gcc4CompilerParser.WARNING_CATEGORY;
     /** The type. **/
@@ -29,7 +33,7 @@ public class Gcc4CompilerParserTest extends ParserTester {
     public void testWarningsParser() throws IOException {
         Collection<FileAnnotation> warnings = new Gcc4CompilerParser().parse(openFile());
 
-        assertEquals("Wrong number of warnings detected.", 13, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 13, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         checkWarning(iterator.next(),
@@ -100,20 +104,6 @@ public class Gcc4CompilerParserTest extends ParserTester {
     }
 
     /**
-     * Parses a warning log with autoconf messages. There should be no warning.
-     *
-     * @throws IOException
-     *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-5870">Issue 5870</a>
-     */
-    @Test
-    public void issue5870() throws IOException {
-        Collection<FileAnnotation> warnings = new Gcc4CompilerParser().parse(openFile("issue5870.txt"));
-
-        assertEquals("There are warnings found", 0, warnings.size());
-    }
-
-    /**
      * Parses a warning log with 10 template warnings.
      *
      * @throws IOException
@@ -124,7 +114,7 @@ public class Gcc4CompilerParserTest extends ParserTester {
     public void issue5606() throws IOException {
         Collection<FileAnnotation> warnings = new Gcc4CompilerParser().parse(openFile("issue5606.txt"));
 
-        assertEquals("There are warnings found", 10, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 10, warnings.size());
     }
 
     /**
@@ -138,7 +128,35 @@ public class Gcc4CompilerParserTest extends ParserTester {
     public void issue5605() throws IOException {
         Collection<FileAnnotation> warnings = new Gcc4CompilerParser().parse(openFile("issue5605.txt"));
 
-        assertEquals("There are warnings found", 6, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 6, warnings.size());
+    }
+
+    /**
+     * Parses a warning log with multi line warnings.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-5445">Issue 5445</a>
+     */
+    @Test
+    public void issue5445() throws IOException {
+        Collection<FileAnnotation> warnings = new Gcc4CompilerParser().parse(openFile("issue5445.txt"));
+
+        assertEquals(THERE_ARE_WARNINGS_FOUND, 0, warnings.size());
+    }
+
+    /**
+     * Parses a warning log with autoconf messages. There should be no warning.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-5870">Issue 5870</a>
+     */
+    @Test
+    public void issue5870() throws IOException {
+        Collection<FileAnnotation> warnings = new Gcc4CompilerParser().parse(openFile("issue5870.txt"));
+
+        assertEquals(THERE_ARE_WARNINGS_FOUND, 0, warnings.size());
     }
 
     /** {@inheritDoc} */
