@@ -14,10 +14,9 @@ import org.junit.Test;
  * Tests the class {@link Gcc4LinkerParser}.
  */
 public class Gcc4LinkerParserTest extends ParserTester {
-
     /** The category. */
     private static final String WARNING_CATEGORY = Gcc4LinkerParser.WARNING_CATEGORY;
-    /** The type **/
+    /** The type. **/
     private static final String WARNING_TYPE = Gcc4LinkerParser.WARNING_TYPE;
 
     /**

@@ -14,10 +14,9 @@ import org.junit.Test;
  * Tests the class {@link Gcc4CompilerParser}.
  */
 public class Gcc4CompilerParserTest extends ParserTester {
-
     /** The category. */
     private static final String WARNING_CATEGORY = Gcc4CompilerParser.WARNING_CATEGORY;
-    /** The type **/
+    /** The type. **/
     private static final String WARNING_TYPE = Gcc4CompilerParser.WARNING_TYPE;
 
     /**

@@ -30,14 +30,13 @@ public class Gcc4CompilerParser extends RegexpLineParser {
         String fileName = matcher.group(1);
         int lineNumber = getLineNumber(matcher.group(2));
         String message = matcher.group(4);
-        Priority priority = Priority.LOW;
+        Priority priority;
 
-        if (matcher.group(3).equalsIgnoreCase("warning")) {
-            priority = Priority.NORMAL;
-        } else if (matcher.group(3).equalsIgnoreCase("error")) {
+        if (matcher.group(3).equalsIgnoreCase("error")) {
             priority = Priority.HIGH;
-        } else {
-            assert(false);
+        }
+        else {
+            priority = Priority.NORMAL;
         }
 
         return new Warning(fileName, lineNumber, WARNING_TYPE, WARNING_CATEGORY, message, priority);

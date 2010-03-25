@@ -34,25 +34,30 @@ public class Gcc4LinkerParser extends RegexpLineParser {
         String message;
         Priority priority = Priority.LOW;
 
-        if(StringUtils.isNotBlank(matcher.group(7))) {
+        if (StringUtils.isNotBlank(matcher.group(7))) {
             // link error in ld
-            if(StringUtils.equalsIgnoreCase(matcher.group(6), "warning")) {
+            if (StringUtils.equalsIgnoreCase(matcher.group(6), "warning")) {
                 priority = Priority.NORMAL;
-            } else {
+            }
+            else {
                 priority = Priority.HIGH;
             }
             message = matcher.group(7);
-        } else {
+        }
+        else {
             // link error
-            if(StringUtils.isNotBlank(matcher.group(3))) {
+            if (StringUtils.isNotBlank(matcher.group(3))) {
                 // error of type "undefined reference..."
                 message = matcher.group(3);
                 priority = Priority.HIGH;
-            } else {
-                // generic linker error with reference to the binary section and offset
-                if(StringUtils.equalsIgnoreCase(matcher.group(4), "warning")) {
+            }
+            else {
+                // generic linker error with reference to the binary section and
+                // offset
+                if (StringUtils.equalsIgnoreCase(matcher.group(4), "warning")) {
                     priority = Priority.NORMAL;
-                } else {
+                }
+                else {
                     priority = Priority.HIGH;
                 }
                 message = matcher.group(5);
@@ -60,6 +65,5 @@ public class Gcc4LinkerParser extends RegexpLineParser {
         }
         return new Warning(fileName, lineNumber, WARNING_TYPE, WARNING_CATEGORY, message, priority);
     }
-
 }
 
