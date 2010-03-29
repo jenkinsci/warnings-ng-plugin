@@ -216,7 +216,6 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
 
     /**
      * Logs the specified exception in the specified file.
-     *
      * @param exception
      *            the exception
      * @param masterFile
@@ -228,10 +227,25 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         FileOutputStream outputStream = null;
         try {
             outputStream = new FileOutputStream(masterFile);
-            String message = "Can't copy file from workspace to build folder: workspace=" + slaveFileName
-                    + ", build folder=" + masterFile.getAbsolutePath();
+            IOUtils.write(String.format(
+                    "Copying the source file '%s' from the workspace to the build folder '%s' on the Hudson master failed.\n",
+                    slaveFileName, masterFile.getAbsolutePath()), outputStream);
+            if (!slaveFileName.startsWith("/") && !slaveFileName.contains(":")) {
+                IOUtils.write("Seems that the path is relative, however an absolute path is required when copying the sources.\n", outputStream);
+                String base;
+                if (slaveFileName.contains("/")) {
+                    base = StringUtils.substringAfterLast(slaveFileName, "/");
+                }
+                else {
+                    base = slaveFileName;
+                }
+                IOUtils.write(String.format("Is the file '%s' contained more than once in your workspace?\n",
+                        base), outputStream);
+            }
+            IOUtils.write(String.format("Is the file '%s' a valid filename?\n", slaveFileName), outputStream);
+            IOUtils.write(String.format("If you are building on a slave: please check if the file is accessible under '$HUDSON_HOME/[job-name]/%s'\n", slaveFileName), outputStream);
+            IOUtils.write(String.format("If you are building on the master: please check if the file is accessible under '$HUDSON_HOME/[job-name]/workspace/%s'\n", slaveFileName), outputStream);
             exception.printStackTrace(new PrintStream(outputStream));
-            IOUtils.write(message, outputStream);
         }
         catch (IOException error) {
             // ignore

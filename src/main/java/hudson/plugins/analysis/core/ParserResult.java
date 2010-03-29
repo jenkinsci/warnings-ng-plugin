@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -30,6 +32,8 @@ import hudson.plugins.analysis.util.model.Priority;
  * @author Ulli Hafner
  */
 public class ParserResult implements Serializable {
+    /** The logger. */
+    private static final Logger LOGGER = Logger.getLogger(ParserResult.class.getName());
     /** Unique ID of this class. */
     private static final long serialVersionUID = -8414545334379193330L;
     /** The parsed annotations. */
@@ -91,15 +95,15 @@ public class ParserResult implements Serializable {
      *
      * @param annotation the annotation
      */
-    private void findRelativeFile(final FileAnnotation annotation) {
+    private void expandRelativePaths(final FileAnnotation annotation) {
         try {
             if (workspace != null && hasRelativeFileName(annotation)) {
-                if (fileNameCache.isEmpty()) {
-                    populateFileNameCache();
+                FilePath remote = workspace.child(annotation.getFileName());
+                if (remote.exists()) {
+                    annotation.setFileName(remote.getRemote());
                 }
-
-                if (fileNameCache.containsKey(annotation.getFileName())) {
-                    annotation.setFileName(workspace.getRemote() + "/" + fileNameCache.get(annotation.getFileName()));
+                else {
+                    findFileByScanningAllWorkspaceFiles(annotation);
                 }
             }
         }
@@ -112,6 +116,27 @@ public class ParserResult implements Serializable {
     }
 
     /**
+     * Returns the file name from the cache of all workspace files. The cache will
+     * be built only once.
+     *
+     * @param annotation
+     *            the annotation to get the filename for
+     * @throws IOException
+     *             signals that an I/O exception has occurred.
+     * @throws InterruptedException
+     *             If the user cancels this action
+     */
+    private void findFileByScanningAllWorkspaceFiles(final FileAnnotation annotation) throws IOException, InterruptedException {
+        if (fileNameCache.isEmpty()) {
+            populateFileNameCache();
+        }
+
+        if (fileNameCache.containsKey(annotation.getFileName())) {
+            annotation.setFileName(workspace.getRemote() + "/" + fileNameCache.get(annotation.getFileName()));
+        }
+    }
+
+    /**
      * Builds a cache of file names in the remote file system.
      *
      * @throws IOException
@@ -120,10 +145,13 @@ public class ParserResult implements Serializable {
      *             if the user cancels the search
      */
     private void populateFileNameCache() throws IOException, InterruptedException {
+        LOGGER.log(Level.INFO, "Building cache of all workspace files to obtain absolute filenames for all warnings.");
+
         String[] allFiles = workspace.act(new FileFinder("**/*"));
         for (String file : allFiles) {
             String fileName = new File(file).getName();
             if (fileNameCache.containsKey(fileName)) {
+                LOGGER.log(Level.INFO, "Relative filename '" + fileName + "' found more than once: absolute filename resolving disabled for this file.");
                 fileNameCache.remove(fileName);
             }
             else {
@@ -150,7 +178,7 @@ public class ParserResult implements Serializable {
      */
     public final void addAnnotation(final FileAnnotation annotation) {
         if (!annotations.contains(annotation)) {
-            findRelativeFile(annotation);
+            expandRelativePaths(annotation);
 
             annotations.add(annotation);
             Integer count = annotationCountByPriority.get(annotation.getPriority());
