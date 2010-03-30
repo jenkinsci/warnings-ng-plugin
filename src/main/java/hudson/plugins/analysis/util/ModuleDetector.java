@@ -59,6 +59,7 @@ public class ModuleDetector {
      *            the workspace to scan for Maven pom.xml or ant build.xml files
      * @param fileInputStreamFactory the value to set
      */
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public ModuleDetector(final File workspace, final FileInputStreamFactory fileInputStreamFactory) {
         setFileInputStreamFactory(fileInputStreamFactory);
         fileNameToModuleName = createFilesToModuleMapping(workspace);

@@ -50,8 +50,8 @@ import hudson.plugins.analysis.views.DetailFactory;
  * @author Ulli Hafner
  */
 //CHECKSTYLE:COUPLING-OFF
-@SuppressWarnings("PMD.TooManyFields")
 @ExportedBean
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength"})
 public abstract class BuildResult implements ModelObject, Serializable, AnnotationProvider {
     /** Unique ID of this class. */
     private static final long serialVersionUID = 1110545450292087475L;
