@@ -3,6 +3,7 @@ package hudson.plugins.analysis.graph;
 import java.awt.Color;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -14,13 +15,18 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
 
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Maps;
+
+import hudson.model.AbstractBuild;
+
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
+import hudson.util.ChartUtil.NumberOnlyBuildLabel;
 import hudson.util.DataSetBuilder;
 import hudson.util.ShiftedCategoryAxis;
-import hudson.util.ChartUtil.NumberOnlyBuildLabel;
 
 /**
  * A build result graph using a {@link CategoryPlot}. Uses a template method to
@@ -29,6 +35,14 @@ import hudson.util.ChartUtil.NumberOnlyBuildLabel;
  * @author Ulli Hafner
  */
 public abstract class CategoryBuildResultGraph extends BuildResultGraph {
+    enum GraphDomain {
+        /** One value for each build. */
+        BUILD_NUMBER,
+
+        /** One value for each day with a build. */
+        DAY_OF_BUILD
+    }
+
     /**
      * Creates a PNG image trend graph with clickable map.
      *
@@ -62,17 +76,15 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return the created chart
      */
     protected JFreeChart createChart(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> action) {
-        DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<String, NumberOnlyBuildLabel>();
         int buildCount = 0;
         BuildResult current = action.getResult();
         Calendar buildTime = current.getOwner().getTimestamp();
+
+        Map<AbstractBuild<?, ?>, List<Integer>> valuesPerBuild = Maps.newHashMap();
+        GraphDomain domain = GraphDomain.BUILD_NUMBER;
+
         while (true) {
-            List<Integer> series = computeSeries(current);
-            int level = 0;
-            for (Integer integer : series) {
-                builder.add(integer, getRowId(level), new NumberOnlyBuildLabel(current.getOwner()));
-                level++;
-            }
+            valuesPerBuild.put(current.getOwner(), computeSeries(current));
 
             if (current.hasPreviousResult()) {
                 current = current.getPreviousResult();
@@ -95,7 +107,47 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
                 }
             }
         }
-        return createChart(builder.build());
+
+        CategoryDataset dataSet;
+        if (domain == GraphDomain.BUILD_NUMBER) {
+            dataSet = createDatasetPerBuildNumber(valuesPerBuild);
+        }
+        else {
+            dataSet = createDatasetPerDay(valuesPerBuild);
+        }
+        return createChart(dataSet);
+    }
+
+    /**
+     * Creates a data set that contains a series per build number.
+     *
+     * @param valuesPerBuild
+     *            the collected values
+     * @return a data set
+     */
+    private CategoryDataset createDatasetPerBuildNumber(final Map<AbstractBuild<?, ?>, List<Integer>> valuesPerBuild) {
+        DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<String, NumberOnlyBuildLabel>();
+        for (AbstractBuild<?, ?> build : ImmutableSortedSet.copyOf(valuesPerBuild.keySet())) {
+            List<Integer> series = valuesPerBuild.get(build);
+            int level = 0;
+            for (Integer integer : series) {
+                builder.add(integer, getRowId(level), new NumberOnlyBuildLabel(build));
+                level++;
+            }
+        }
+        return builder.build();
+    }
+
+    /**
+     * Creates a data set that contains a series per day.
+     *
+     * @param valuesPerBuild
+     *            the collected values
+     * @return a data set
+     */
+    private CategoryDataset createDatasetPerDay(
+            final Map<AbstractBuild<?, ?>, List<Integer>> valuesPerBuild) {
+        return createDatasetPerBuildNumber(valuesPerBuild);
     }
 
     /**
