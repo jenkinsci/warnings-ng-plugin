@@ -4,35 +4,43 @@ import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
+import com.google.common.collect.Lists;
+
 import hudson.model.AbstractBuild;
 
 import hudson.plugins.analysis.core.BuildResult;
+import hudson.plugins.analysis.core.NullHealthDescriptor;
 import hudson.plugins.analysis.core.ResultAction;
+import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
- * Plots a graph.
+ * Plots all available graphs.
  *
  * @author Ulli Hafner
  */
+// CHECKSTYLE:COUPLING-OFF
 public class Main extends ApplicationFrame {
+// CHECKSTYLE:COUPLING-ON
     /** Unique ID. */
     private static final long serialVersionUID = 1640077724803031029L;
 
     /**
      * Creates a new instance of {@link Main}.
+     *
+     * @param graph
+     *            the graph to show
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public Main() {
-        super("Hello Graph");
-
-        BuildResultGraph graph = new PriorityGraph();
+    public Main(final BuildResultGraph graph) {
+        super(graph.getLabel());
 
         GraphConfiguration configuration = new GraphConfiguration(new ArrayList<BuildResultGraph>());
         BuildResult result1 = createResult(1, 5, 10);
@@ -49,6 +57,8 @@ public class Main extends ApplicationFrame {
 
         ResultAction action = mock(ResultAction.class);
         when(action.getResult()).thenReturn(result4);
+        ToolTipProvider toolTipProvider = mock(ToolTipProvider.class);
+        when(action.getToolTipProvider()).thenReturn(toolTipProvider);
 
         JFreeChart chart = graph.create(configuration, action, "frame");
 
@@ -96,10 +106,21 @@ public class Main extends ApplicationFrame {
      * @param args not used
      */
     public static void main(final String[] args) {
-        Main chart = new Main();
-        chart.pack();
-        RefineryUtilities.centerFrameOnScreen(chart);
-        chart.setVisible(true);
+        List<BuildResultGraph> availableGraphs = Lists.newArrayList();
+
+        availableGraphs.add(new NewVersusFixedGraph());
+        availableGraphs.add(new PriorityGraph());
+        availableGraphs.add(new HealthGraph(new NullHealthDescriptor()));
+        availableGraphs.add(new DifferenceGraph());
+        availableGraphs.add(new EmptyGraph());
+        availableGraphs.add(new NullGraph());
+
+        for (BuildResultGraph graph : availableGraphs) {
+            Main chart = new Main(graph);
+            chart.pack();
+            RefineryUtilities.centerFrameOnScreen(chart);
+            chart.setVisible(true);
+        }
     }
 }
 
