@@ -2,6 +2,7 @@ package hudson.plugins.analysis.graph;
 
 import java.awt.Color;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import hudson.model.AbstractBuild;
@@ -35,6 +36,7 @@ import hudson.util.ShiftedCategoryAxis;
  * @author Ulli Hafner
  */
 public abstract class CategoryBuildResultGraph extends BuildResultGraph {
+    /** Label of domain axis of the graph. */
     enum GraphDomain {
         /** One value for each build. */
         BUILD_NUMBER,
@@ -75,12 +77,13 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *            the action to start with
      * @return the created chart
      */
+    @SuppressWarnings("rawtypes")
     protected JFreeChart createChart(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> action) {
         int buildCount = 0;
         BuildResult current = action.getResult();
         Calendar buildTime = current.getOwner().getTimestamp();
 
-        Map<AbstractBuild<?, ?>, List<Integer>> valuesPerBuild = Maps.newHashMap();
+        Map<AbstractBuild, List<Integer>> valuesPerBuild = Maps.newHashMap();
         GraphDomain domain = GraphDomain.BUILD_NUMBER;
 
         while (true) {
@@ -125,9 +128,12 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *            the collected values
      * @return a data set
      */
-    private CategoryDataset createDatasetPerBuildNumber(final Map<AbstractBuild<?, ?>, List<Integer>> valuesPerBuild) {
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private CategoryDataset createDatasetPerBuildNumber(final Map<AbstractBuild, List<Integer>> valuesPerBuild) {
         DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<String, NumberOnlyBuildLabel>();
-        for (AbstractBuild<?, ?> build : ImmutableSortedSet.copyOf(valuesPerBuild.keySet())) {
+        List<AbstractBuild> builds = Lists.newArrayList(valuesPerBuild.keySet());
+        Collections.sort(builds);
+        for (AbstractBuild<?, ?> build : builds) {
             List<Integer> series = valuesPerBuild.get(build);
             int level = 0;
             for (Integer integer : series) {
@@ -145,8 +151,8 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *            the collected values
      * @return a data set
      */
-    private CategoryDataset createDatasetPerDay(
-            final Map<AbstractBuild<?, ?>, List<Integer>> valuesPerBuild) {
+    @SuppressWarnings("rawtypes")
+    private CategoryDataset createDatasetPerDay(final Map<AbstractBuild, List<Integer>> valuesPerBuild) {
         return createDatasetPerBuildNumber(valuesPerBuild);
     }
 
