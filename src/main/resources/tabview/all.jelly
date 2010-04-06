@@ -2,7 +2,7 @@
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
   xmlns:i="jelly:fmt">
 
-  <j:set var="annotations" value="${it.container.annotations}" />
+  <j:set var="annotations" value="${it.container.sortedAnnotations}" />
   <st:include page="/tabview/details.jelly" />
 
 </j:jelly>

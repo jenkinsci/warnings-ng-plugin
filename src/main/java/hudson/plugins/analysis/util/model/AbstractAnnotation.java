@@ -11,8 +11,8 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import hudson.model.AbstractBuild;
 import hudson.model.Item;
+import hudson.model.AbstractBuild;
 
 /**
  *  A base class for annotations.
@@ -408,6 +408,17 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
 
     /** {@inheritDoc} */
     public int compareTo(final FileAnnotation other) {
-        return getFileName().compareTo(other.getFileName());
+        int result;
+
+        result = getFileName().compareTo(other.getFileName());
+        if (result != 0) {
+            return result;
+        }
+        result = getPrimaryLineNumber() - other.getPrimaryLineNumber();
+        if (result != 0) {
+            return result;
+        }
+
+        return hashCode() - other.hashCode(); // fallback
     }
 }
