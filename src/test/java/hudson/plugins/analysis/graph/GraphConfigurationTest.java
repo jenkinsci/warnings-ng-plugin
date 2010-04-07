@@ -85,18 +85,20 @@ public class GraphConfigurationTest {
     }
 
     /**
-     * Ensures that a valid JSON configuration is correctly parsed.
+     * Ensures that the new boolean property useBuildDate is correctly initialized.
      */
     @Test
-    public void testValidJSONConfiguations() {
-        Object enabled = JSON.parse("{\"\":\"\",\"buildCountString\":\"" + BUILDS
-                + "\",\"dayCountString\":\"" + DAYS
-                + "\",\"graphType\":\"FIXED\",\"height\":\"" + HEIGHT + "\",\"width\":\"" + WIDTH + "\"}");
-        JSONObject jsonObject = JSONObject.fromObject(enabled);
+    public void testUseBuildDate() {
+        assertValidConfiguation("50!100!200!300!FIXED!true", WIDTH, HEIGHT, BUILDS, DAYS, NewVersusFixedGraph.class, true);
+        assertValidConfiguation("50!100!200!300!PRIORITY!false", WIDTH, HEIGHT, BUILDS, DAYS, PriorityGraph.class, false);
 
         GraphConfiguration configuration = createDetailUnderTest();
-        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom(jsonObject));
-        verifyConfiguration(WIDTH, HEIGHT, BUILDS, DAYS, NewVersusFixedGraph.class, configuration);
+
+        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom("50!100!0!0!NONE!true"));
+        assertTrue("Use build date is defined but should not.", configuration.useBuildDateAsDomain());
+
+        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom("50!100!2!1!NONE!false"));
+        assertFalse("Use build date is not defined but should.", configuration.useBuildDateAsDomain());
     }
 
     /**
@@ -114,14 +116,58 @@ public class GraphConfigurationTest {
      *            the expected number of days
      * @param expectedType
      *            the expected type
+     * @param expectedUseBuildDate
+     *            the expected use build date
      */
     private void assertValidConfiguation(final String initialization, final int expectedWidth, final int expectedHeight,
+            final int expectedBuildCount, final int expectedDayCount, final Class<? extends BuildResultGraph> expectedType,
+            final boolean expectedUseBuildDate) {
+        GraphConfiguration configuation = assertValidConfiguation(initialization, expectedWidth, expectedHeight, expectedBuildCount, expectedDayCount, expectedType);
+        assertEquals("Wrong value for useBuildDate", expectedUseBuildDate, configuation.useBuildDateAsDomain());
+    }
+
+    /**
+     * Ensures that a valid JSON configuration is correctly parsed.
+     */
+    @Test
+    public void testValidJSONConfiguations() {
+        Object enabled = JSON.parse("{\"\":\"\",\"buildCountString\":\"" + BUILDS
+                + "\",\"dayCountString\":\"" + DAYS
+                + "\",\"graphType\":\"FIXED\",\"height\":\"" + HEIGHT + "\",\"width\":\"" + WIDTH + "\",\"useBuildDate\":\"" + true + "\"}");
+        JSONObject jsonObject = JSONObject.fromObject(enabled);
+
+        GraphConfiguration configuration = createDetailUnderTest();
+        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom(jsonObject));
+        verifyConfiguration(WIDTH, HEIGHT, BUILDS, DAYS, NewVersusFixedGraph.class, configuration);
+        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.useBuildDateAsDomain());
+    }
+
+    /**
+     * Ensures that the specified string value is correctly parsed.
+     *
+     * @param initialization
+     *            the initialization value
+     * @param expectedWidth
+     *            the expected width
+     * @param expectedHeight
+     *            the expected height
+     * @param expectedBuildCount
+     *            the expected number of builds
+     * @param expectedDayCount
+     *            the expected number of days
+     * @param expectedType
+     *            the expected type
+     * @return the created configuration
+     */
+    private GraphConfiguration assertValidConfiguation(final String initialization, final int expectedWidth, final int expectedHeight,
             final int expectedBuildCount, final int expectedDayCount, final Class<? extends BuildResultGraph> expectedType) {
         GraphConfiguration configuration = createDetailUnderTest();
         assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom(initialization));
 
         verifyConfiguration(expectedWidth, expectedHeight, expectedBuildCount, expectedDayCount,
                 expectedType, configuration);
+
+        return configuration;
     }
 
     /**

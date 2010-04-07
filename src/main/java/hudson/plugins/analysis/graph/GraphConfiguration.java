@@ -24,6 +24,8 @@ import hudson.util.FormValidation;
  * Configuration properties of a trend graph.
  */
 public class GraphConfiguration  {
+    /** The default value for use build date. */
+    private static final boolean DEFAULT_USE_BUILD_DATE = false;
     /** The default counter. */
     private static final int DEFAULT_COUNT = 0;
     /** The default width. */
@@ -46,6 +48,8 @@ public class GraphConfiguration  {
     private int buildCount;
     /** The number of days to consider. */
     private int dayCount;
+    /** Determines if the build date or the build number should be used as domain. */
+    private boolean useBuildDate;
 
     /** Maps graph ID's to graphs. */
     private final Map<String, BuildResultGraph> graphId2Graph = Maps.newHashMap();
@@ -151,6 +155,9 @@ public class GraphConfiguration  {
             buildCount = Integer.parseInt(values[2]);
             dayCount = Integer.parseInt(values[3]);
             graphType = graphId2Graph.get(values[4]);
+            if (values.length == 6) {
+                useBuildDate = Boolean.parseBoolean(values[5]);
+            }
         }
         catch (NumberFormatException exception) {
             return false;
@@ -221,6 +228,8 @@ public class GraphConfiguration  {
         }
         String grapyTypeString = value.getString("graphType");
         graphType = graphId2Graph.get(grapyTypeString);
+
+        useBuildDate = value.getBoolean("useBuildDate");
 
         boolean isLocalValid = initializeLocal(value);
 
@@ -336,6 +345,7 @@ public class GraphConfiguration  {
         buildCount = DEFAULT_COUNT;
         dayCount = DEFAULT_COUNT;
         graphType = DEFAULT_GRAPH;
+        useBuildDate = DEFAULT_USE_BUILD_DATE;
     }
 
     /**
@@ -349,7 +359,8 @@ public class GraphConfiguration  {
                 + height + SEPARATOR
                 + buildCount + SEPARATOR
                 + dayCount + SEPARATOR
-                + graphType.getId();
+                + graphType.getId() + SEPARATOR
+                + useBuildDate;
     }
 
     /**
@@ -433,6 +444,15 @@ public class GraphConfiguration  {
     }
 
     /**
+     * Returns whether the build date or the build number should be used as domain.
+     *
+     * @return the build date or the build number should be used as domain
+     */
+    public boolean useBuildDateAsDomain() {
+        return useBuildDate;
+    }
+
+    /**
      * Returns the number of builds to consider.
      *
      * @return the number of builds to consider
@@ -490,7 +510,8 @@ public class GraphConfiguration  {
                 && height == DEFAULT_HEIGHT
                 && graphType == DEFAULT_GRAPH // NOPMD
                 && buildCount == DEFAULT_COUNT
-                && dayCount == DEFAULT_COUNT;
+                && dayCount == DEFAULT_COUNT
+                && useBuildDate == DEFAULT_USE_BUILD_DATE;
     }
     // CHECKSTYLE:ON
 
@@ -507,7 +528,7 @@ public class GraphConfiguration  {
     @Override
     public String toString() {
         return "type: " + graphType + ", size: " + width + "x" + height
-                + ", # builds " + buildCount + ", # days " + dayCount;
+                + ", # builds " + buildCount + ", # days " + dayCount + ", useBuildDate:" + useBuildDate;
     }
 
     /**
@@ -564,6 +585,7 @@ public class GraphConfiguration  {
         result = prime * result + dayCount;
         result = prime * result + ((graphType == null) ? 0 : graphType.getId().hashCode());
         result = prime * result + height;
+        result = prime * result + (useBuildDate ? 1231 : 1237);
         result = prime * result + width;
         return result;
     }
@@ -597,6 +619,9 @@ public class GraphConfiguration  {
             return false;
         }
         if (height != other.height) {
+            return false;
+        }
+        if (useBuildDate != other.useBuildDate) {
             return false;
         }
         if (width != other.width) {

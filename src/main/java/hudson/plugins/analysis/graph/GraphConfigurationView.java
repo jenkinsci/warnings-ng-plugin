@@ -292,6 +292,15 @@ public abstract class GraphConfigurationView implements ModelObject {
     }
 
     /**
+     * Returns whether the build date or the build number should be used as domain.
+     *
+     * @return the build date or the build number should be used as domain
+     */
+    public boolean getUseBuildDateAsDomain() {
+        return configuration.useBuildDateAsDomain();
+    }
+
+    /**
      * Returns the time stamp of the associated build.
      *
      * @return the time stamp of the associated build.
