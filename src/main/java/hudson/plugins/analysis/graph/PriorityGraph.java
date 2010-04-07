@@ -14,6 +14,7 @@ import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.AreaRenderer;
 import hudson.plugins.analysis.util.CategoryUrlBuilder;
+import hudson.plugins.analysis.util.ToolTipAreaRenderer;
 import hudson.plugins.analysis.util.ToolTipBuilder;
 import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.Priority;
@@ -96,7 +97,12 @@ public class PriorityGraph extends CategoryBuildResultGraph {
                 }
             }
         };
-        return new AreaRenderer(url, toolTip);
+        if (getDomain() == GraphDomain.BUILD_NUMBER) {
+            return new AreaRenderer(url, toolTip);
+        }
+        else {
+            return new ToolTipAreaRenderer(toolTip);
+        }
     }
     // CHECKSTYLE:ON
 }

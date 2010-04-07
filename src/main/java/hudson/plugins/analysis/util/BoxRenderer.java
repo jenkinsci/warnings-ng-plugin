@@ -1,6 +1,5 @@
 package hudson.plugins.analysis.util;
 
-import org.jfree.chart.labels.CategoryToolTipGenerator;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.urls.CategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
@@ -12,13 +11,11 @@ import org.jfree.data.category.CategoryDataset;
  * @author Ulli Hafner
  */
 @edu.umd.cs.findbugs.annotations.SuppressWarnings("Eq")
-public class BoxRenderer extends StackedBarRenderer implements CategoryToolTipGenerator, CategoryURLGenerator {
+public class BoxRenderer extends ToolTipBoxRenderer implements CategoryURLGenerator {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = 1827457945114238470L;
     /** The URL generator for the clickable map. */
     private final SerializableUrlGenerator urlGenerator;
-    /** The tooltip generator for the clickable map. */
-    private final SerializableToolTipGenerator toolTipGenerator;
 
     /**
      * Creates a new instance of {@link BoxRenderer}.
@@ -29,20 +26,13 @@ public class BoxRenderer extends StackedBarRenderer implements CategoryToolTipGe
      *            the tooltip generator for the clickable map
      */
     public BoxRenderer(final SerializableUrlGenerator urlGenerator, final SerializableToolTipGenerator toolTipGenerator) {
-        super();
+        super(toolTipGenerator);
         this.urlGenerator = urlGenerator;
-        this.toolTipGenerator = toolTipGenerator;
         setItemURLGenerator(this);
-        setToolTipGenerator(this);
     }
 
     /** {@inheritDoc} */
     public final String generateURL(final CategoryDataset dataset, final int row, final int column) {
         return urlGenerator.generateURL(dataset, row, column);
-    }
-
-    /** {@inheritDoc} */
-    public String generateToolTip(final CategoryDataset dataset, final int row, final int column) {
-        return toolTipGenerator.generateToolTip(dataset, row, column);
     }
 }

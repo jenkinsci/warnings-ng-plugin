@@ -32,7 +32,7 @@ public class HealthGraphTest {
     public void testHealthySeriesCalculator() {
         AbstractHealthDescriptor healthDescriptor = createHealthBuilder(true, 0, true, 10, 30);
 
-        HealthGraph builder = new HealthGraph(healthDescriptor);
+        CategoryBuildResultGraph builder = new HealthGraph(healthDescriptor);
         BuildResult result = mock(BuildResult.class);
 
         List<Integer> series;
@@ -79,7 +79,7 @@ public class HealthGraphTest {
     public void testThresholdSeriesCalculator() {
         AbstractHealthDescriptor healthDescriptor = createHealthBuilder(true, 10, false, 20, 50);
 
-        HealthGraph builder = new HealthGraph(healthDescriptor);
+        CategoryBuildResultGraph builder = new HealthGraph(healthDescriptor);
         BuildResult result = mock(BuildResult.class);
 
         List<Integer> series;
@@ -109,7 +109,7 @@ public class HealthGraphTest {
     public void testIssue796() {
         AbstractHealthDescriptor healthDescriptor = createHealthBuilder(false, 0, true, 1, 10);
 
-        HealthGraph builder = new HealthGraph(healthDescriptor);
+        CategoryBuildResultGraph builder = new HealthGraph(healthDescriptor);
         BuildResult result = mock(BuildResult.class);
 
         List<Integer> series;

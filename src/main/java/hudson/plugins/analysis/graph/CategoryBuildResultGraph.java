@@ -3,6 +3,7 @@ package hudson.plugins.analysis.graph;
 import java.awt.Color;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,9 +16,12 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
+import org.joda.time.LocalDate;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 
 import hudson.model.AbstractBuild;
 
@@ -69,6 +73,15 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     }
 
     /**
+     * Gets the domain of this graph.
+     *
+     * @return the domain
+     */
+    protected GraphDomain getDomain() {
+        return GraphDomain.DAY_OF_BUILD;
+    }
+
+    /**
      * Creates the chart by iterating through all available actions.
      *
      * @param configuration
@@ -84,8 +97,6 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
         Calendar buildTime = current.getOwner().getTimestamp();
 
         Map<AbstractBuild, List<Integer>> valuesPerBuild = Maps.newHashMap();
-        GraphDomain domain = GraphDomain.BUILD_NUMBER;
-
         while (true) {
             valuesPerBuild.put(current.getOwner(), computeSeries(current));
 
@@ -112,7 +123,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
         }
 
         CategoryDataset dataSet;
-        if (domain == GraphDomain.BUILD_NUMBER) {
+        if (getDomain() == GraphDomain.BUILD_NUMBER) {
             dataSet = createDatasetPerBuildNumber(valuesPerBuild);
         }
         else {
@@ -151,9 +162,55 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *            the collected values
      * @return a data set
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private CategoryDataset createDatasetPerDay(final Map<AbstractBuild, List<Integer>> valuesPerBuild) {
-        return createDatasetPerBuildNumber(valuesPerBuild);
+        Multimap<LocalDate, List<Integer>> valuesPerDate = createValuesPerDay(valuesPerBuild);
+
+        List<LocalDate> buildDates = Lists.newArrayList(valuesPerDate.keySet());
+        Collections.sort(buildDates);
+
+        DataSetBuilder<String, LocalDate> builder = new DataSetBuilder<String, LocalDate>();
+        for (LocalDate date : buildDates) {
+            Iterator<List<Integer>> perDayIterator = valuesPerDate.get(date).iterator();
+            List<Integer> total = perDayIterator.next();
+            int seriesCount = 1;
+            while (perDayIterator.hasNext()) {
+                List<Integer> additional = perDayIterator.next();
+                seriesCount++;
+
+                List<Integer> sum = Lists.newArrayList();
+                for (int i = 0; i < total.size(); i++) {
+                    sum.add(total.get(i) + additional.get(i));
+                }
+
+                total = sum;
+            }
+
+            int level = 0;
+            for (Integer totalValue : total) {
+                builder.add(totalValue / seriesCount, getRowId(level), date);
+                level++;
+            }
+        }
+        return builder.build();
+    }
+
+    /**
+     * Creates a mapping of values per day.
+     *
+     * @param valuesPerBuild
+     *            the values per build
+     * @return the multi map with the values per day
+     */
+    @SuppressWarnings("rawtypes")
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("WMI")
+    private Multimap<LocalDate, List<Integer>> createValuesPerDay(
+            final Map<AbstractBuild, List<Integer>> valuesPerBuild) {
+        Multimap<LocalDate, List<Integer>> valuesPerDate = HashMultimap.create();
+        for (AbstractBuild<?, ?> build : valuesPerBuild.keySet()) {
+            valuesPerDate.put(new LocalDate(build.getTimestamp()), valuesPerBuild.get(build));
+        }
+        return valuesPerDate;
     }
 
     /**

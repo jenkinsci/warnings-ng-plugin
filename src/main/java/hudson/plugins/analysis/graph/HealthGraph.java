@@ -17,6 +17,7 @@ import hudson.plugins.analysis.util.AreaRenderer;
 import hudson.plugins.analysis.util.CategoryUrlBuilder;
 import hudson.plugins.analysis.util.SerializableToolTipGenerator;
 import hudson.plugins.analysis.util.SerializableUrlGenerator;
+import hudson.plugins.analysis.util.ToolTipAreaRenderer;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
 import hudson.util.ColorPalette;
@@ -126,8 +127,8 @@ public class HealthGraph extends CategoryBuildResultGraph {
     @SuppressWarnings("SIC")
     @Override
     protected CategoryItemRenderer createRenderer(final String pluginName, final ToolTipProvider toolTipProvider) {
-        SerializableUrlGenerator createUrlGenerator = new CategoryUrlBuilder(getRootUrl(), pluginName);
-        SerializableToolTipGenerator createToolTipGenerator = new SerializableToolTipGenerator() {
+        SerializableUrlGenerator urlGenerator = new CategoryUrlBuilder(getRootUrl(), pluginName);
+        SerializableToolTipGenerator toolTipGenerator = new SerializableToolTipGenerator() {
             /** {@inheritDoc} */
             public String generateToolTip(final CategoryDataset dataset, final int row, final int column) {
                 int number = 0;
@@ -140,7 +141,12 @@ public class HealthGraph extends CategoryBuildResultGraph {
                 return toolTipProvider.getTooltip(number);
             }
         };
-        return new AreaRenderer(createUrlGenerator, createToolTipGenerator);
+        if (getDomain() == GraphDomain.BUILD_NUMBER) {
+            return new AreaRenderer(urlGenerator, toolTipGenerator);
+        }
+        else {
+            return new ToolTipAreaRenderer(toolTipGenerator);
+        }
     }
     // CHECKSTYLE:ON
 

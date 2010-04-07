@@ -14,6 +14,7 @@ import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.BoxRenderer;
 import hudson.plugins.analysis.util.CategoryUrlBuilder;
+import hudson.plugins.analysis.util.ToolTipBoxRenderer;
 import hudson.plugins.analysis.util.ToolTipBuilder;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
@@ -88,7 +89,12 @@ public class NewVersusFixedGraph extends CategoryBuildResultGraph {
                 }
             }
         };
-        return new BoxRenderer(url, toolTip);
+        if (getDomain() == GraphDomain.BUILD_NUMBER) {
+            return new BoxRenderer(url, toolTip);
+        }
+        else {
+            return new ToolTipBoxRenderer(toolTip);
+        }
     }
     // CHECKSTYLE:ON
 }

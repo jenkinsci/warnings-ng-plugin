@@ -3,7 +3,7 @@ package hudson.plugins.analysis.graph;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.jfree.chart.ChartPanel;
@@ -16,7 +16,6 @@ import com.google.common.collect.Lists;
 import hudson.model.AbstractBuild;
 
 import hudson.plugins.analysis.core.BuildResult;
-import hudson.plugins.analysis.core.NullHealthDescriptor;
 import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.Priority;
@@ -84,14 +83,14 @@ public class Main extends ApplicationFrame {
 
         when(result.getNumberOfWarnings()).thenReturn(newWarnings);
         when(result.getNumberOfAnnotations(Priority.HIGH)).thenReturn(newWarnings);
-        when(result.getNumberOfAnnotations(Priority.HIGH)).thenReturn(fixedWarnings);
-        when(result.getNumberOfAnnotations(Priority.HIGH)).thenReturn(Math.abs(newWarnings - fixedWarnings));
+        when(result.getNumberOfAnnotations(Priority.NORMAL)).thenReturn(fixedWarnings);
+        when(result.getNumberOfAnnotations(Priority.LOW)).thenReturn(Math.abs(newWarnings - fixedWarnings));
         when(result.getNumberOfFixedWarnings()).thenReturn(fixedWarnings);
         when(result.getNumberOfNewWarnings()).thenReturn(newWarnings);
 
         AbstractBuild build = mock(AbstractBuild.class);
 
-        when(build.getTimestamp()).thenReturn(Calendar.getInstance());
+        when(build.getTimestamp()).thenReturn(new GregorianCalendar(2010, 02, buildNumber));
         when(build.getNumber()).thenReturn(buildNumber);
         when(build.getDisplayName()).thenReturn("#" + buildNumber);
 
@@ -110,10 +109,7 @@ public class Main extends ApplicationFrame {
 
         availableGraphs.add(new NewVersusFixedGraph());
         availableGraphs.add(new PriorityGraph());
-        availableGraphs.add(new HealthGraph(new NullHealthDescriptor()));
         availableGraphs.add(new DifferenceGraph());
-        availableGraphs.add(new EmptyGraph());
-        availableGraphs.add(new NullGraph());
 
         for (BuildResultGraph graph : availableGraphs) {
             Main chart = new Main(graph);
