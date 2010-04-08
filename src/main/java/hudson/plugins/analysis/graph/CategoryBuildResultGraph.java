@@ -151,7 +151,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
         List<LocalDate> buildDates = Lists.newArrayList(valuesPerDate.keySet());
         Collections.sort(buildDates);
 
-        DataSetBuilder<String, LocalDate> builder = new DataSetBuilder<String, LocalDate>();
+        DataSetBuilder<String, String> builder = new DataSetBuilder<String, String>();
         for (LocalDate date : buildDates) {
             Iterator<List<Integer>> perDayIterator = valuesPerDate.get(date).iterator();
             List<Integer> total = perDayIterator.next();
@@ -170,7 +170,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
 
             int level = 0;
             for (Integer totalValue : total) {
-                builder.add(totalValue / seriesCount, getRowId(level), date);
+                builder.add(totalValue / seriesCount, getRowId(level), date.toString("MM/DD"));
                 level++;
             }
         }

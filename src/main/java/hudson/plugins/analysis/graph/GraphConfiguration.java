@@ -145,7 +145,7 @@ public class GraphConfiguration  {
         }
 
         String[] values = StringUtils.split(value, SEPARATOR);
-        if (values.length < 5) {
+        if (values.length < 6) {
             return false;
         }
 
@@ -155,8 +155,14 @@ public class GraphConfiguration  {
             buildCount = Integer.parseInt(values[2]);
             dayCount = Integer.parseInt(values[3]);
             graphType = graphId2Graph.get(values[4]);
-            if (values.length == 6) {
-                useBuildDate = Boolean.parseBoolean(values[5]);
+            if ("0".equals(values[5])) {
+                useBuildDate = false;
+            }
+            else if ("1".equals(values[5])) {
+                useBuildDate = true;
+            }
+            else {
+                return false;
             }
         }
         catch (NumberFormatException exception) {
@@ -166,8 +172,8 @@ public class GraphConfiguration  {
             return false;
         }
 
-        String[] localConfiguration = new String[values.length - 5];
-        System.arraycopy(values, 5, localConfiguration, 0, values.length - 5);
+        String[] localConfiguration = new String[values.length - 6];
+        System.arraycopy(values, 6, localConfiguration, 0, values.length - 6);
         boolean isLocalValid = initializeLocal(localConfiguration);
 
         return isLocalValid && isValid(width, height, buildCount, dayCount, graphType);
@@ -360,7 +366,22 @@ public class GraphConfiguration  {
                 + buildCount + SEPARATOR
                 + dayCount + SEPARATOR
                 + graphType.getId() + SEPARATOR
-                + useBuildDate;
+                + serializeBoolean(useBuildDate);
+    }
+
+    /**
+     * Serializes a boolean.
+     *
+     * @param value the value
+     * @return serialized value
+     */
+    protected String serializeBoolean(final boolean value) {
+        if (value) {
+            return "1";
+        }
+        else {
+            return "0";
+        }
     }
 
     /**

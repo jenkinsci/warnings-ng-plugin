@@ -69,17 +69,17 @@ public class GraphConfigurationTest {
      */
     @Test
     public void testValidConfiguations() {
-        assertValidConfiguation("50!100!200!300!FIXED", WIDTH, HEIGHT, BUILDS, DAYS, NewVersusFixedGraph.class);
-        assertValidConfiguation("50!100!200!300!PRIORITY", WIDTH, HEIGHT, BUILDS, DAYS, PriorityGraph.class);
-        assertValidConfiguation("50!100!200!300!NONE", WIDTH, HEIGHT, BUILDS, DAYS, EmptyGraph.class);
+        assertValidConfiguation("50!100!200!300!FIXED!1", WIDTH, HEIGHT, BUILDS, DAYS, NewVersusFixedGraph.class, true);
+        assertValidConfiguation("50!100!200!300!PRIORITY!0", WIDTH, HEIGHT, BUILDS, DAYS, PriorityGraph.class, false);
+        assertValidConfiguation("50!100!200!300!NONE!1", WIDTH, HEIGHT, BUILDS, DAYS, EmptyGraph.class, true);
 
         GraphConfiguration configuration = createDetailUnderTest();
 
-        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom("50!100!0!0!NONE"));
+        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom("50!100!0!0!NONE!1"));
         assertFalse("Build count is defined but should not.", configuration.isBuildCountDefined());
         assertFalse("Day count is defined but should not.", configuration.isDayCountDefined());
 
-        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom("50!100!2!1!NONE"));
+        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom("50!100!2!1!NONE!0"));
         assertTrue("Build count is not defined but should.", configuration.isBuildCountDefined());
         assertTrue("Day count is not defined but should.", configuration.isDayCountDefined());
     }
@@ -89,15 +89,15 @@ public class GraphConfigurationTest {
      */
     @Test
     public void testUseBuildDate() {
-        assertValidConfiguation("50!100!200!300!FIXED!true", WIDTH, HEIGHT, BUILDS, DAYS, NewVersusFixedGraph.class, true);
-        assertValidConfiguation("50!100!200!300!PRIORITY!false", WIDTH, HEIGHT, BUILDS, DAYS, PriorityGraph.class, false);
+        assertValidConfiguation("50!100!200!300!FIXED!1", WIDTH, HEIGHT, BUILDS, DAYS, NewVersusFixedGraph.class, true);
+        assertValidConfiguation("50!100!200!300!PRIORITY!0", WIDTH, HEIGHT, BUILDS, DAYS, PriorityGraph.class, false);
 
         GraphConfiguration configuration = createDetailUnderTest();
 
-        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom("50!100!0!0!NONE!true"));
+        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom("50!100!0!0!NONE!1"));
         assertTrue("Use build date is defined but should not.", configuration.useBuildDateAsDomain());
 
-        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom("50!100!2!1!NONE!false"));
+        assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom("50!100!2!1!NONE!0"));
         assertFalse("Use build date is not defined but should.", configuration.useBuildDateAsDomain());
     }
 
