@@ -133,7 +133,7 @@ public class GraphConfigurationTest {
     public void testValidJSONConfiguations() {
         Object enabled = JSON.parse("{\"\":\"\",\"buildCountString\":\"" + BUILDS
                 + "\",\"dayCountString\":\"" + DAYS
-                + "\",\"graphType\":\"FIXED\",\"height\":\"" + HEIGHT + "\",\"width\":\"" + WIDTH + "\",\"useBuildDate\":\"" + true + "\"}");
+                + "\",\"graphType\":\"FIXED\",\"height\":\"" + HEIGHT + "\",\"width\":\"" + WIDTH + "\",\"useBuildDateAsDomain\":\"" + true + "\"}");
         JSONObject jsonObject = JSONObject.fromObject(enabled);
 
         GraphConfiguration configuration = createDetailUnderTest();
