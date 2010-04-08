@@ -40,15 +40,6 @@ import hudson.util.ShiftedCategoryAxis;
  * @author Ulli Hafner
  */
 public abstract class CategoryBuildResultGraph extends BuildResultGraph {
-    /** Label of domain axis of the graph. */
-    enum GraphDomain {
-        /** One value for each build. */
-        BUILD_NUMBER,
-
-        /** One value for each day with a build. */
-        DAY_OF_BUILD
-    }
-
     /**
      * Creates a PNG image trend graph with clickable map.
      *
@@ -64,21 +55,12 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     public JFreeChart create(final GraphConfiguration configuration,
             final ResultAction<? extends BuildResult> resultAction, final String pluginName) {
         JFreeChart chart = createChart(configuration, resultAction);
-        CategoryItemRenderer renderer = createRenderer(pluginName, resultAction.getToolTipProvider());
+        CategoryItemRenderer renderer = createRenderer(configuration, pluginName, resultAction.getToolTipProvider());
         CategoryPlot plot = chart.getCategoryPlot();
         plot.setRenderer(renderer);
         setColors(chart, getColors());
 
         return chart;
-    }
-
-    /**
-     * Gets the domain of this graph.
-     *
-     * @return the domain
-     */
-    protected GraphDomain getDomain() {
-        return GraphDomain.DAY_OF_BUILD;
     }
 
     /**
@@ -123,11 +105,11 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
         }
 
         CategoryDataset dataSet;
-        if (getDomain() == GraphDomain.BUILD_NUMBER) {
-            dataSet = createDatasetPerBuildNumber(valuesPerBuild);
+        if (configuration.useBuildDateAsDomain()) {
+            dataSet = createDatasetPerDay(valuesPerBuild);
         }
         else {
-            dataSet = createDatasetPerDay(valuesPerBuild);
+            dataSet = createDatasetPerBuildNumber(valuesPerBuild);
         }
         return createChart(dataSet);
     }
@@ -244,13 +226,15 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     /**
      * Creates the renderer for this graph.
      *
+     * @param configuration
+     *            the graph configuration
      * @param pluginName
      *            the name of the plug-in
      * @param toolTipProvider
      *            the tooltip provider
      * @return the renderer
      */
-    protected abstract CategoryItemRenderer createRenderer(final String pluginName, final ToolTipProvider toolTipProvider);
+    protected abstract CategoryItemRenderer createRenderer(GraphConfiguration configuration, final String pluginName, final ToolTipProvider toolTipProvider);
 
     /**
      * Returns the colors for this graph. The first color is used for the first

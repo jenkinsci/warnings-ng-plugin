@@ -66,7 +66,7 @@ public class PriorityGraph extends CategoryBuildResultGraph {
     @java.lang.SuppressWarnings("serial")
     @SuppressWarnings("SIC")
     @Override
-    protected CategoryItemRenderer createRenderer(final String pluginName, final ToolTipProvider toolTipProvider) {
+    protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName, final ToolTipProvider toolTipProvider) {
         CategoryUrlBuilder url = new CategoryUrlBuilder(getRootUrl(), pluginName) {
             /** {@inheritDoc} */
             @Override
@@ -97,11 +97,11 @@ public class PriorityGraph extends CategoryBuildResultGraph {
                 }
             }
         };
-        if (getDomain() == GraphDomain.BUILD_NUMBER) {
-            return new AreaRenderer(url, toolTip);
+        if (configuration.useBuildDateAsDomain()) {
+            return new ToolTipAreaRenderer(toolTip);
         }
         else {
-            return new ToolTipAreaRenderer(toolTip);
+            return new AreaRenderer(url, toolTip);
         }
     }
     // CHECKSTYLE:ON

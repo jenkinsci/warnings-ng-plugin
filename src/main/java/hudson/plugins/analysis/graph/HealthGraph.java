@@ -126,7 +126,7 @@ public class HealthGraph extends CategoryBuildResultGraph {
     @java.lang.SuppressWarnings("serial")
     @SuppressWarnings("SIC")
     @Override
-    protected CategoryItemRenderer createRenderer(final String pluginName, final ToolTipProvider toolTipProvider) {
+    protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName, final ToolTipProvider toolTipProvider) {
         SerializableUrlGenerator urlGenerator = new CategoryUrlBuilder(getRootUrl(), pluginName);
         SerializableToolTipGenerator toolTipGenerator = new SerializableToolTipGenerator() {
             /** {@inheritDoc} */
@@ -141,11 +141,11 @@ public class HealthGraph extends CategoryBuildResultGraph {
                 return toolTipProvider.getTooltip(number);
             }
         };
-        if (getDomain() == GraphDomain.BUILD_NUMBER) {
-            return new AreaRenderer(urlGenerator, toolTipGenerator);
+        if (configuration.useBuildDateAsDomain()) {
+            return new ToolTipAreaRenderer(toolTipGenerator);
         }
         else {
-            return new ToolTipAreaRenderer(toolTipGenerator);
+            return new AreaRenderer(urlGenerator, toolTipGenerator);
         }
     }
     // CHECKSTYLE:ON

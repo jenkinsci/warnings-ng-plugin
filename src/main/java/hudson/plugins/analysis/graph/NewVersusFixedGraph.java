@@ -64,7 +64,7 @@ public class NewVersusFixedGraph extends CategoryBuildResultGraph {
     @java.lang.SuppressWarnings("serial")
     @SuppressWarnings("SIC")
     @Override
-    protected CategoryItemRenderer createRenderer(final String pluginName, final ToolTipProvider toolTipProvider) {
+    protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName, final ToolTipProvider toolTipProvider) {
         CategoryUrlBuilder url = new CategoryUrlBuilder(getRootUrl(), pluginName) {
             /** {@inheritDoc} */
             @Override
@@ -89,11 +89,11 @@ public class NewVersusFixedGraph extends CategoryBuildResultGraph {
                 }
             }
         };
-        if (getDomain() == GraphDomain.BUILD_NUMBER) {
-            return new BoxRenderer(url, toolTip);
+        if (configuration.useBuildDateAsDomain()) {
+            return new ToolTipBoxRenderer(toolTip);
         }
         else {
-            return new ToolTipBoxRenderer(toolTip);
+            return new BoxRenderer(url, toolTip);
         }
     }
     // CHECKSTYLE:ON
