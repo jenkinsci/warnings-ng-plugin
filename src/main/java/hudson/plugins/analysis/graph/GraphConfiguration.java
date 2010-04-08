@@ -229,7 +229,7 @@ public class GraphConfiguration  {
         String grapyTypeString = value.getString("graphType");
         graphType = graphId2Graph.get(grapyTypeString);
 
-        useBuildDate = value.getBoolean("useBuildDate");
+        useBuildDate = value.getBoolean("useBuildDateAsDomain");
 
         boolean isLocalValid = initializeLocal(value);
 
