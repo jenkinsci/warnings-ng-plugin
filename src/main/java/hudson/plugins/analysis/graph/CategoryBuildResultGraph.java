@@ -170,7 +170,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
 
             int level = 0;
             for (Integer totalValue : total) {
-                builder.add(totalValue / seriesCount, getRowId(level), date.toString("MM/DD"));
+                builder.add(totalValue / seriesCount, getRowId(level), date.toString("MM-dd"));
                 level++;
             }
         }
