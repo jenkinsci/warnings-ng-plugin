@@ -1,6 +1,7 @@
 package hudson.plugins.analysis.graph;
 
 import org.jfree.chart.JFreeChart;
+import org.jfree.data.xy.XYSeriesCollection;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildResult;
@@ -28,7 +29,7 @@ public class EmptyGraph extends BuildResultGraph {
     @Override
     public JFreeChart create(final GraphConfiguration configuration,
             final ResultAction<? extends BuildResult> resultAction, final String pluginName) {
-        return null;
+        return createXYChart(new XYSeriesCollection());
     }
 
     /** {@inheritDoc} */

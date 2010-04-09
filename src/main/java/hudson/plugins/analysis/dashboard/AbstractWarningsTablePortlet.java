@@ -13,7 +13,7 @@ import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.view.dashboard.DashboardPortlet;
 
 /**
- * A dashboard that shows a table with the number of warnings in a job.
+ * A dashboard that shows a table with the number of warnings in the selected jobs.
  *
  * @author Ulli Hafner
  */
