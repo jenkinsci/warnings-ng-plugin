@@ -2,6 +2,7 @@ package hudson.plugins.analysis.graph;
 
 import java.awt.Color;
 import java.util.Calendar;
+import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
@@ -89,7 +90,7 @@ public abstract class BuildResultGraph {
     }
 
     /**
-     * Creates the trend graph.
+     * Creates a PNG image trend graph with clickable map.
      *
      * @param configuration
      *            the configuration parameters
@@ -101,6 +102,20 @@ public abstract class BuildResultGraph {
      */
     public abstract JFreeChart create(final GraphConfiguration configuration,
             final ResultAction<? extends BuildResult> resultAction, final String pluginName);
+
+    /**
+     * Creates a PNG image trend graph with clickable map.
+     *
+     * @param configuration
+     *            the configuration parameters
+     * @param resultActions
+     *            the result actions to start the graph computation from
+     * @param pluginName
+     *            the name of the plug-in
+     * @return the graph
+     */
+    public abstract JFreeChart createAggregation(final GraphConfiguration configuration,
+            final Collection<ResultAction<? extends BuildResult>> resultActions, final String pluginName);
 
     /**
      * Computes the delta between two dates in days.
@@ -180,6 +195,29 @@ public abstract class BuildResultGraph {
             @Override
             protected JFreeChart createGraph() {
                 return create(configuration, lastAction, pluginName);
+            }
+        };
+    }
+
+    /**
+     * Returns the new graph object that wraps the actual {@link JFreeChart}
+     * into a PNG image or map.
+     *
+     * @param timestamp
+     *            the last build time
+     * @param configuration
+     *            the graph configuration
+     * @param pluginName
+     *            the name of the plug-in
+     * @param actions
+     *            the actions to get the summary graph for
+     * @return the graph to render
+     */
+    public Graph getGraph(final long timestamp, final GraphConfiguration configuration, final String pluginName, final Collection<ResultAction<?>> actions) {
+        return new Graph(timestamp, configuration.getWidth(), configuration.getHeight()) {
+            @Override
+            protected JFreeChart createGraph() {
+                return createAggregation(configuration, actions, pluginName);
             }
         };
     }

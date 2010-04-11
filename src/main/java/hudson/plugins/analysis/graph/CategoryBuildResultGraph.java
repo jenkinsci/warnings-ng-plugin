@@ -2,6 +2,7 @@ package hudson.plugins.analysis.graph;
 
 import java.awt.Color;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -55,12 +56,59 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     public JFreeChart create(final GraphConfiguration configuration,
             final ResultAction<? extends BuildResult> resultAction, final String pluginName) {
         JFreeChart chart = createChart(configuration, resultAction);
-        CategoryItemRenderer renderer = createRenderer(configuration, pluginName, resultAction.getToolTipProvider());
+
+        attachRenderers(configuration, pluginName, chart, resultAction.getToolTipProvider());
+
+        return chart;
+    }
+
+    /**
+     * Creates a PNG image trend graph with clickable map.
+     *
+     * @param configuration
+     *            the configuration parameters
+     * @param resultActions
+     *            the result actions to start the graph computation from
+     * @param pluginName
+     *            the name of the plug-in
+     * @return the graph
+     */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("WMI")
+    public JFreeChart createAggregation(final GraphConfiguration configuration,
+            final Collection<ResultAction<? extends BuildResult>> resultActions, final String pluginName) {
+        Multimap<LocalDate, List<Integer>> total = HashMultimap.create();
+        for (ResultAction<? extends BuildResult> resultAction : resultActions) {
+            Map<LocalDate, List<Integer>> averageByDate = averageByDate(
+                    createSeriesPerBuild(configuration, resultAction.getResult()));
+            for (LocalDate buildDate : averageByDate.keySet()) {
+                total.put(buildDate, averageByDate.get(buildDate));
+            }
+        }
+        Map<LocalDate, List<Integer>> seriesPerDay = createSeriesPerDay(total);
+        JFreeChart chart = createChart(createDatasetPerDay(seriesPerDay));
+
+        attachRenderers(configuration, pluginName, chart, resultActions.iterator().next().getToolTipProvider());
+
+        return chart;
+    }
+
+    /**
+     * Attach the renderers to the created graph.
+     *
+     * @param configuration
+     *            the configuration parameters
+     * @param pluginName
+     *            the name of the plug-in
+     * @param chart
+     *            the graph to attach the renderer to
+     * @param toolTipProvider the tooltip provider for the graph
+     */
+    private void attachRenderers(final GraphConfiguration configuration, final String pluginName, final JFreeChart chart,
+            final ToolTipProvider toolTipProvider) {
+        CategoryItemRenderer renderer = createRenderer(configuration, pluginName, toolTipProvider);
         CategoryPlot plot = chart.getCategoryPlot();
         plot.setRenderer(renderer);
         setColors(chart, getColors());
-
-        return chart;
     }
 
     /**
@@ -72,12 +120,34 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *            the action to start with
      * @return the created chart
      */
-    @SuppressWarnings("rawtypes")
     protected JFreeChart createChart(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> action) {
-        int buildCount = 0;
-        BuildResult current = action.getResult();
+        CategoryDataset dataSet;
+        if (configuration.useBuildDateAsDomain()) {
+            Map<LocalDate, List<Integer>> averagePerDay = averageByDate(createSeriesPerBuild(configuration, action.getResult()));
+            dataSet = createDatasetPerDay(averagePerDay);
+        }
+        else {
+            dataSet = createDatasetPerBuildNumber(createSeriesPerBuild(configuration, action.getResult()));
+        }
+        return createChart(dataSet);
+    }
+
+    /**
+     * Creates a series of values per build.
+     *
+     * @param configuration
+     *            the configuration
+     * @param lastBuildResult
+     *            the build result to start with
+     * @return a series of values per build
+     */
+    @SuppressWarnings("rawtypes")
+    private Map<AbstractBuild, List<Integer>> createSeriesPerBuild(
+            final GraphConfiguration configuration, final BuildResult lastBuildResult) {
+        BuildResult current = lastBuildResult;
         Calendar buildTime = current.getOwner().getTimestamp();
 
+        int buildCount = 0;
         Map<AbstractBuild, List<Integer>> valuesPerBuild = Maps.newHashMap();
         while (true) {
             valuesPerBuild.put(current.getOwner(), computeSeries(current));
@@ -103,15 +173,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
                 }
             }
         }
-
-        CategoryDataset dataSet;
-        if (configuration.useBuildDateAsDomain()) {
-            dataSet = createDatasetPerDay(valuesPerBuild);
-        }
-        else {
-            dataSet = createDatasetPerBuildNumber(valuesPerBuild);
-        }
-        return createChart(dataSet);
+        return valuesPerBuild;
     }
 
     /**
@@ -138,22 +200,55 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     }
 
     /**
-     * Creates a data set that contains a series per day.
+     * Creates a data set that contains one series of values per day.
      *
-     * @param valuesPerBuild
-     *            the collected values
+     * @param averagePerDay
+     *            the collected values averaged by day
      * @return a data set
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private CategoryDataset createDatasetPerDay(final Map<AbstractBuild, List<Integer>> valuesPerBuild) {
-        Multimap<LocalDate, List<Integer>> valuesPerDate = createValuesPerDay(valuesPerBuild);
-
-        List<LocalDate> buildDates = Lists.newArrayList(valuesPerDate.keySet());
+    @SuppressWarnings("unchecked")
+    private CategoryDataset createDatasetPerDay(final Map<LocalDate, List<Integer>> averagePerDay) {
+        List<LocalDate> buildDates = Lists.newArrayList(averagePerDay.keySet());
         Collections.sort(buildDates);
 
         DataSetBuilder<String, String> builder = new DataSetBuilder<String, String>();
         for (LocalDate date : buildDates) {
-            Iterator<List<Integer>> perDayIterator = valuesPerDate.get(date).iterator();
+            int level = 0;
+            for (Integer average : averagePerDay.get(date)) {
+                builder.add(average, getRowId(level), date.toString("MM-dd"));
+                level++;
+            }
+        }
+        return builder.build();
+    }
+
+    /**
+     * Aggregates the series per build to a series per date.
+     *
+     * @param valuesPerBuild
+     *            the series per build
+     * @return the series per date
+     */
+    @SuppressWarnings("rawtypes")
+    private Map<LocalDate, List<Integer>> averageByDate(
+            final Map<AbstractBuild, List<Integer>> valuesPerBuild) {
+        return createSeriesPerDay(createMultiSeriesPerDay(valuesPerBuild));
+    }
+
+    /**
+     * Aggregates multiple series per day to one single series per day by
+     * computing the average value.
+     *
+     * @param multiSeriesPerDate
+     *            the values given as multiple series per day
+     * @return the values as one series per day (average)
+     */
+    private Map<LocalDate, List<Integer>> createSeriesPerDay(
+            final Multimap<LocalDate, List<Integer>> multiSeriesPerDate) {
+        Map<LocalDate, List<Integer>> seriesPerDate = Maps.newHashMap();
+
+        for (LocalDate date : multiSeriesPerDate.keySet()) {
+            Iterator<List<Integer>> perDayIterator = multiSeriesPerDate.get(date).iterator();
             List<Integer> total = perDayIterator.next();
             int seriesCount = 1;
             while (perDayIterator.hasNext()) {
@@ -167,14 +262,13 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
 
                 total = sum;
             }
-
-            int level = 0;
+            List<Integer> series = Lists.newArrayList();
             for (Integer totalValue : total) {
-                builder.add(totalValue / seriesCount, getRowId(level), date.toString("MM-dd"));
-                level++;
+                series.add(totalValue / seriesCount);
             }
+            seriesPerDate.put(date, series);
         }
-        return builder.build();
+        return seriesPerDate;
     }
 
     /**
@@ -186,7 +280,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      */
     @SuppressWarnings("rawtypes")
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("WMI")
-    private Multimap<LocalDate, List<Integer>> createValuesPerDay(
+    private Multimap<LocalDate, List<Integer>> createMultiSeriesPerDay(
             final Map<AbstractBuild, List<Integer>> valuesPerBuild) {
         Multimap<LocalDate, List<Integer>> valuesPerDate = HashMultimap.create();
         for (AbstractBuild<?, ?> build : valuesPerBuild.keySet()) {

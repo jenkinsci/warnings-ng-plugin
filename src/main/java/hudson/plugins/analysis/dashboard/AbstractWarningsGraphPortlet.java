@@ -1,9 +1,14 @@
 package hudson.plugins.analysis.dashboard;
 
+import java.util.List;
+
 import org.kohsuke.stapler.DataBoundConstructor;
+
+import com.google.common.collect.Lists;
 
 import hudson.model.Job;
 
+import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.analysis.graph.GraphConfiguration;
 import hudson.plugins.analysis.graph.NullGraph;
@@ -43,14 +48,24 @@ public abstract class AbstractWarningsGraphPortlet extends DashboardPortlet {
      */
     protected abstract String getPluginName();
 
+    /**
+     * Returns the trend graph for specified jobs.
+     *
+     * @return the trend graph
+     */
     public Graph getWarningsGraph() {
-        Job<?, ?> job = getDashboard().getJobs().get(0);
-        AbstractProjectAction<?> action = job.getAction(getAction());
-        GraphConfiguration configuration = GraphConfiguration.createDefault();
-        if (action != null && action.hasValidResults()) {
-            return new PriorityGraph().getGraph(-1, configuration, getPluginName(), action.getLastAction());
+        List<ResultAction<?>> results = Lists.newArrayList();
+        for (Job<?, ?> job : getDashboard().getJobs()) {
+            AbstractProjectAction<?> action = job.getAction(getAction());
+            if (action.hasValidResults()) {
+                results.add(action.getLastAction());
+            }
         }
-        return new NullGraph().getGraph(-1, configuration, getPluginName(), null);
+        GraphConfiguration configuration = GraphConfiguration.createDefault();
+        if (!results.isEmpty()) {
+            return new PriorityGraph().getGraph(-1, configuration, getPluginName(), results);
+        }
+        return new NullGraph().getGraph(-1, configuration, getPluginName(), results);
     }
 }
 

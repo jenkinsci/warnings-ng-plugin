@@ -5,6 +5,7 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -75,6 +76,13 @@ public class DifferenceGraph extends BuildResultGraph {
 
         chart.getXYPlot().setDomainAxis(axis);
         return chart;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public JFreeChart createAggregation(final GraphConfiguration configuration,
+            final Collection<ResultAction<? extends BuildResult>> resultActions, final String pluginName) {
+        return create(configuration, resultActions.iterator().next(), pluginName);
     }
 
     /**

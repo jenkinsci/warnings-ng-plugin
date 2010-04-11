@@ -1,5 +1,7 @@
 package hudson.plugins.analysis.graph;
 
+import java.util.Collection;
+
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -29,6 +31,13 @@ public class EmptyGraph extends BuildResultGraph {
     @Override
     public JFreeChart create(final GraphConfiguration configuration,
             final ResultAction<? extends BuildResult> resultAction, final String pluginName) {
+        return createXYChart(new XYSeriesCollection());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public JFreeChart createAggregation(final GraphConfiguration configuration,
+            final Collection<ResultAction<? extends BuildResult>> resultActions, final String pluginName) {
         return createXYChart(new XYSeriesCollection());
     }
 
