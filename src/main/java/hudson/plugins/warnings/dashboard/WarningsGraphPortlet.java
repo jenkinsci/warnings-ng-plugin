@@ -12,15 +12,15 @@ import org.kohsuke.stapler.DataBoundConstructor;
  *
  * @author Ulli Hafner
  */
-public class WarningsTablePortlet extends WarningsPortlet {
+public class WarningsGraphPortlet extends WarningsPortlet {
     /**
-     * Creates a new instance of {@link WarningsTablePortlet}.
+     * Creates a new instance of {@link WarningsGraphPortlet}.
      *
      * @param name
      *            the name of the portlet
      */
     @DataBoundConstructor
-    public WarningsTablePortlet(final String name) {
+    public WarningsGraphPortlet(final String name) {
         super(name);
     }
 
@@ -29,23 +29,23 @@ public class WarningsTablePortlet extends WarningsPortlet {
      *
      * @author Ulli Hafner
      */
-    public static class WarningsPerJobDescriptor extends Descriptor<DashboardPortlet> {
+    public static class WarningsGraphDescriptor extends Descriptor<DashboardPortlet> {
         /**
          * Creates a new descriptor if the dashboard-view plug-in is installed.
          *
          * @return the descriptor or <code>null</code> if the dashboard view is not installed
          */
         @Extension
-        public static WarningsPerJobDescriptor newInstance() {
+        public static WarningsGraphDescriptor newInstance() {
             if (isDashboardViewInstalled()) {
-                return new WarningsPerJobDescriptor();
+                return new WarningsGraphDescriptor();
             }
             return null;
         }
 
         @Override
         public String getDisplayName() {
-            return Messages.Portlet_WarningsTable();
+            return Messages.Portlet_WarningsGraph();
         }
     }
 }
