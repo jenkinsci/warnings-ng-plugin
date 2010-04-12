@@ -3,21 +3,19 @@ package hudson.plugins.analysis.dashboard;
 import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
-import org.kohsuke.stapler.DataBoundConstructor;
 
 import hudson.model.Job;
 
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.analysis.util.model.Priority;
-import hudson.plugins.view.dashboard.DashboardPortlet;
 
 /**
- * A dashboard that shows a table with the number of warnings in the selected jobs.
+ * A portlet that shows a table with the number of warnings in the selected jobs.
  *
  * @author Ulli Hafner
  */
-public abstract class AbstractWarningsTablePortlet extends DashboardPortlet {
+public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
     /** Message to be shown if no result action is found. */
     private static final String NO_RESULTS_FOUND = "-";
 
@@ -27,24 +25,9 @@ public abstract class AbstractWarningsTablePortlet extends DashboardPortlet {
      * @param name
      *            the name of the portlet
      */
-    @DataBoundConstructor
     public AbstractWarningsTablePortlet(final String name) {
         super(name);
     }
-
-    /**
-     * Returns the type of action that persists the warnings results.
-     *
-     * @return the action type
-     */
-    protected abstract Class<? extends AbstractProjectAction<?>> getAction();
-
-    /**
-     * Returns the name of the plug-in that is used to create the link to the results.
-     *
-     * @return the name of the plug-in
-     */
-    protected abstract String getPluginName();
 
     /**
      * Returns the total number of warnings for the specified job.

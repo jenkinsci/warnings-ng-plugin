@@ -35,11 +35,7 @@ import hudson.plugins.analysis.util.model.AbstractAnnotation;
  */
 //CHECKSTYLE:COUPLING-OFF
 public abstract class AbstractResultAction<T extends BuildResult> implements StaplerProxy, HealthReportingAction, ToolTipProvider, ResultAction<T> {
-    /** Unique identifier of this class. */
-    private static final long serialVersionUID = -7201451538713818948L;
-
     /** The associated build of this action. */
-    @SuppressWarnings("Se")
     private final AbstractBuild<?, ?> owner;
     /** Parameters for the health report. */
     private final AbstractHealthDescriptor healthDescriptor;

@@ -9,23 +9,21 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import com.google.common.collect.Lists;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
-
+import hudson.model.Action;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.Action;
 
 import hudson.plugins.analysis.graph.BuildResultGraph;
 import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
 import hudson.plugins.analysis.graph.DifferenceGraph;
 import hudson.plugins.analysis.graph.EmptyGraph;
 import hudson.plugins.analysis.graph.GraphConfiguration;
-import hudson.plugins.analysis.graph.GraphConfigurationView;
 import hudson.plugins.analysis.graph.HealthGraph;
 import hudson.plugins.analysis.graph.NewVersusFixedGraph;
 import hudson.plugins.analysis.graph.NullGraph;
 import hudson.plugins.analysis.graph.PriorityGraph;
 import hudson.plugins.analysis.graph.UserGraphConfigurationView;
+import hudson.plugins.analysis.graph.GraphConfigurationView;
 
 import hudson.util.Graph;
 
@@ -39,11 +37,7 @@ import hudson.util.Graph;
  * @author Ulli Hafner
  */
 public abstract class AbstractProjectAction<T extends ResultAction<?>> implements Action  { // NOCHECKSTYLE
-    /** Unique identifier of this class. */
-    private static final long serialVersionUID = -8775531952208541253L;
-
     /** Project that owns this action. */
-    @SuppressWarnings("Se")
     private final AbstractProject<?, ?> project;
     /** The type of the result action.  */
     private final Class<T> resultActionType;
