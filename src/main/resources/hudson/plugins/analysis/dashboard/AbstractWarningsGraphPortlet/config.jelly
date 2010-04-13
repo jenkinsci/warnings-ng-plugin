@@ -1,0 +1,48 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:entry title="${%Name}" field="name">
+      <f:textbox/>
+    </f:entry>
+
+    <f:entry title="${%Width}" field="width">
+      <f:textbox />
+    </f:entry>
+
+    <f:entry title="${%Height}" field="height">
+      <f:textbox />
+    </f:entry>
+
+    <f:entry title="${%name.builds}" description="${%description.buildCount}">
+      <f:textbox name="buildCountString" value="${it.buildCountString}" />
+    </f:entry>
+
+    <f:entry title="${%name.days}" description="${%description.dayCount}">
+      <f:textbox name="dayCountString" value="${it.dayCountString}" />
+    </f:entry>
+
+    <st:include page="local-config.jelly" optional="true"/>
+
+    <f:entry title="${%Type}">
+      <j:forEach var="graph" items="${it.availableGraphs}">
+        <j:set var="id" value="${graph.id}" />
+        <j:set var="current" value="${it.graphType}" />
+
+        <p>
+          <f:radio name="graphType" value="${id}"
+            checked="${current.id.equals(id)}" id="graphType.${id}" />
+          <st:nbsp />
+          <label for="graphType.${id}">${graph.label}</label>
+          <st:nbsp />
+        </p>
+        <p>
+          <j:if test="${it.hasMeaningfulGraph()}">
+            <img src="${it.url}/${id}/png" />
+          </j:if>
+          <j:if test="${!it.hasMeaningfulGraph()}">
+            <img src="${graph.exampleImage}" />
+          </j:if>
+        </p>
+
+      </j:forEach>
+
+    </f:entry>
+</j:jelly>

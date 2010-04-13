@@ -22,12 +22,12 @@
           <f:textbox name="buildCountString" value="${it.buildCountString}" />
         </f:entry>
 
-        <f:entry title="${%name.domain}" description="${%description.domain}">
-          <f:checkbox name="useBuildDateAsDomain" checked="${instance.useBuildDateAsDomain}"/>
-        </f:entry>
-
         <f:entry title="${%name.days}" description="${%description.dayCount}">
           <f:textbox name="dayCountString" value="${it.dayCountString}" />
+        </f:entry>
+
+        <f:entry title="${%name.domain}" description="${%description.domain}">
+          <f:checkbox name="useBuildDateAsDomain" checked="${instance.useBuildDateAsDomain}"/>
         </f:entry>
 
         <st:include page="local-config.jelly" optional="true"/>
