@@ -22,10 +22,18 @@ public class WarningsGraphPortlet extends AbstractWarningsGraphPortlet {
      *
      * @param name
      *            the name of the portlet
+     * @param width
+     *            width of the graph
+     * @param height
+     *            height of the graph
+     * @param dayCountString
+     *            number of days to consider
+     * @param graphType
+     *            type of graph to use
      */
     @DataBoundConstructor
-    public WarningsGraphPortlet(final String name, final String width, final String height, final String dayCount, final BuildResultGraph graphType) {
-        super(name, width, height, dayCount, graphType);
+    public WarningsGraphPortlet(final String name, final String width, final String height, final String dayCountString, final BuildResultGraph graphType) {
+        super(name, width, height, dayCountString, graphType);
     }
 
     /** {@inheritDoc} */
