@@ -22,16 +22,28 @@ import hudson.util.Graph;
  * @author Ulli Hafner
  */
 public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
-    private final GraphConfiguration configuration = GraphConfiguration.createDefault();
+    /** The configuration of the graph. */
+    private final GraphConfiguration configuration;
 
     /**
      * Creates a new instance of {@link AbstractWarningsGraphPortlet}.
      *
      * @param name
      *            the name of the portlet
+     * @param width
+     *            width of the graph
+     * @param height
+     *            height of the graph
+     * @param dayCountString
+     *            number of days to consider
+     * @param graphType
+     *            type of graph to use
      */
-    public AbstractWarningsGraphPortlet(final String name, final String width, final String height, final String dayCount, final BuildResultGraph graphType) {
+    public AbstractWarningsGraphPortlet(final String name, final String width, final String height, final String dayCountString, final BuildResultGraph graphType) {
         super(name);
+
+        configuration = DefaultGraph.initialize();
+        configuration.initializeFrom(width, height, graphType.getId(), dayCountString);
     }
 
     /**
@@ -41,10 +53,14 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
      */
     public Graph getWarningsGraph() {
         List<ResultAction<?>> results = getActions();
-        if (!results.isEmpty()) {
-            return new PriorityGraph().getGraph(-1, configuration, getPluginName(), results);
+        BuildResultGraph graphType;
+        if (results.isEmpty()) {
+            graphType = new NullGraph();
         }
-        return new NullGraph().getGraph(-1, configuration, getPluginName(), results);
+        else {
+            graphType = configuration.getGraphType();
+        }
+        return graphType.getGraph(-1, configuration, getPluginName(), results);
     }
 
     /**
@@ -68,7 +84,7 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
      *
      * @return the list of available graphs
      */
-    public List<? extends BuildResultGraph> getAvailableGraphs() {
+    public List<? extends BuildResultGraph> getRegisteredGraphs() {
         List<BuildResultGraph> availableGraphs = Lists.newArrayList();
 
         availableGraphs.add(new PriorityGraph());

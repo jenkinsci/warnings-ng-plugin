@@ -3,6 +3,7 @@ package hudson.plugins.analysis.graph;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +91,16 @@ public class GraphConfiguration  {
     /**
      * Creates a new instance of {@link GraphConfiguration}.
      *
+     * @param availableGraphs
+     *            the available build graphs
+     */
+    public GraphConfiguration(final BuildResultGraph... availableGraphs) {
+        this(Arrays.asList(availableGraphs));
+    }
+
+    /**
+     * Creates a new instance of {@link GraphConfiguration}.
+     *
      * @param graph
      *            the graph to use
      */
@@ -115,6 +126,79 @@ public class GraphConfiguration  {
      */
     public boolean initializeFrom(final String value) {
         return resetIfInvalid(intializeFromStringValue(value));
+    }
+
+    /**
+     * Initializes this configuration with the specified values.
+     *
+     * @param width
+     *            the width of the graph
+     * @param height
+     *            the height of the graph
+     * @param graphId
+     *            the ID of the graph to use
+     * @return <code>true</code> is the initialization was successful,
+     *         <code>false</code> otherwise
+     */
+    public boolean initializeFrom(final int width, final int height, final String graphId) { // NOCHECKSTYLE
+        return initializeFrom(width, height, graphId, 0);
+    }
+
+    /**
+     * Initializes this configuration with the specified values.
+     *
+     * @param width
+     *            the width of the graph
+     * @param height
+     *            the height of the graph
+     * @param graphId
+     *            the ID of the graph to use
+     * @param dayCount
+     *            the number of days to build the graph for
+     * @return <code>true</code> is the initialization was successful,
+     *         <code>false</code> otherwise
+     */
+    private boolean initializeFrom(final int width, final int height, final String graphId, final int dayCount) {
+        this.width = width;
+        this.height = height;
+        graphType = graphId2Graph.get(graphId);
+        this.dayCount = dayCount;
+        buildCount = 0;
+        useBuildDate = true;
+
+        return resetIfInvalid(isValid(width, height, buildCount, dayCount, graphType));
+    }
+
+    /**
+     * Initializes this configuration with the specified values.
+     *
+     * @param width
+     *            the width of the graph
+     * @param height
+     *            the height of the graph
+     * @param graphId
+     *            the ID of the graph to use
+     * @param dayCountString
+     *            the number of days to build the graph for
+     * @return <code>true</code> is the initialization was successful,
+     *         <code>false</code> otherwise
+     */
+    public boolean initializeFrom(final String width, final String height, final String graphId, final String dayCountString) { // NOCHECKSTYLE
+        try {
+            if (StringUtils.isBlank(dayCountString)) {
+                dayCount = 0;
+            }
+            else {
+                dayCount = Integer.parseInt(dayCountString);
+            }
+
+            return initializeFrom(Integer.parseInt(width), Integer.parseInt(height), graphId, dayCount);
+        }
+        catch (NumberFormatException exception) {
+            reset();
+
+            return false;
+        }
     }
 
     /**
