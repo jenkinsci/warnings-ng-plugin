@@ -22,6 +22,11 @@
           </td>
         </tr>
       </j:forEach>
+      <tr class="sortbottom">
+          <td class="pane"/>
+          <td class="pane">${it.container.numberOfAnnotations}</td>
+          <td class="pane"/>
+      </tr>
     </tbody>
   </table>
 </j:jelly>
