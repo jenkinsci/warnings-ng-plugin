@@ -23,9 +23,9 @@
         </tr>
       </j:forEach>
       <tr class="sortbottom">
-          <td class="pane"/>
-          <td class="pane">${it.container.numberOfAnnotations}</td>
-          <td class="pane"/>
+          <td class="pane-header">Total</td>
+          <td class="pane-header">${it.container.numberOfAnnotations}</td>
+          <td class="pane-header"/>
       </tr>
     </tbody>
   </table>
