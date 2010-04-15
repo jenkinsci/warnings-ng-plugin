@@ -40,11 +40,11 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
      * @param graphType
      *            type of graph to use
      */
-    public AbstractWarningsGraphPortlet(final String name, final String width, final String height, final String dayCountString, final BuildResultGraph graphType) {
+    public AbstractWarningsGraphPortlet(final String name, final String width, final String height, final String dayCountString, final String graphType) {
         super(name);
 
         configuration = DefaultGraph.initialize();
-        configuration.initializeFrom(width, height, graphType.getId(), dayCountString);
+        configuration.initializeFrom(width, height, graphType, dayCountString);
     }
 
     /**
