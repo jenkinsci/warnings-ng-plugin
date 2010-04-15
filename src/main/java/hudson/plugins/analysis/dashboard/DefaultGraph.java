@@ -20,7 +20,7 @@ public final class DefaultGraph {
         GraphConfiguration configuration = new GraphConfiguration(priorityGraph, new NewVersusFixedGraph());
         configuration.initializeFrom(500, 400, priorityGraph.getId());
 
-        return GraphConfiguration.createDefault();
+        return configuration;
     }
 
     /**

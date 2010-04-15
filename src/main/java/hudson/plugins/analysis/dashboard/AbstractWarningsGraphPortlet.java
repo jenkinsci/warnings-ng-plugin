@@ -1,5 +1,6 @@
 package hudson.plugins.analysis.dashboard;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -84,7 +85,7 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
      *
      * @return the list of available graphs
      */
-    public List<? extends BuildResultGraph> getRegisteredGraphs() {
+    public Collection<? extends BuildResultGraph> getRegisteredGraphs() {
         List<BuildResultGraph> availableGraphs = Lists.newArrayList();
 
         availableGraphs.add(new PriorityGraph());
@@ -127,15 +128,6 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
      */
     public BuildResultGraph getGraphType() {
         return configuration.getGraphType();
-    }
-
-    /**
-     * Checks whether a meaningful graph is available.
-     *
-     * @return <code>true</code>, if there is such a graph
-     */
-    public boolean hasMeaningfulGraph() {
-        return !getActions().isEmpty();
     }
 }
 
