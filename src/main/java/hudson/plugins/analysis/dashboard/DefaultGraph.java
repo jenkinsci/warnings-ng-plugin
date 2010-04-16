@@ -10,6 +10,11 @@ import hudson.plugins.analysis.graph.PriorityGraph;
  * @author Ulli Hafner
  */
 public final class DefaultGraph {
+    /** The default width. */
+    private static final int DEFAULT_WIDTH = 500;
+    /** The default height. */
+    private static final int DEFAULT_HEIGHT = 200;
+
     /**
      * Provides a default graph configuration for portlets.
      *
@@ -18,7 +23,7 @@ public final class DefaultGraph {
     public static GraphConfiguration initialize() {
         PriorityGraph priorityGraph = new PriorityGraph();
         GraphConfiguration configuration = new GraphConfiguration(priorityGraph, new NewVersusFixedGraph());
-        configuration.initializeFrom(500, 400, priorityGraph.getId());
+        configuration.initializeFrom(DEFAULT_WIDTH, DEFAULT_HEIGHT, priorityGraph.getId());
 
         return configuration;
     }

@@ -59,7 +59,16 @@ public abstract class BuildResultGraph {
      * @return a label for this graph
      */
     public String getExampleImage() {
-        return "/plugin/analysis-core/icons/" + getId() + ".png";
+        return "/plugin/" + getPlugin() + "/icons/" + getId() + ".png";
+    }
+
+    /**
+     * Returns the plug-in that owns this graph and provides an example image.
+     *
+     * @return the plug-in that owns this graph and provides an example image
+     */
+    protected String getPlugin() {
+        return "analysis-core";
     }
 
     /**
