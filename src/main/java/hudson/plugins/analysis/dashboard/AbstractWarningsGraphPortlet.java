@@ -24,7 +24,15 @@ import hudson.util.Graph;
  */
 public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
     /** The configuration of the graph. */
-    private final GraphConfiguration configuration;
+    private transient GraphConfiguration configuration;
+    /** Width of the graph. */
+    private final String width;
+    /** Height of the graph. */
+    private final String height;
+    /** Number of days to consider. */
+    private final String dayCountString;
+    /** Type of graph to use. */
+    private final String graphType;
 
     /**
      * Creates a new instance of {@link AbstractWarningsGraphPortlet}.
@@ -43,8 +51,24 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
     public AbstractWarningsGraphPortlet(final String name, final String width, final String height, final String dayCountString, final String graphType) {
         super(name);
 
+        this.width = width;
+        this.height = height;
+        this.dayCountString = dayCountString;
+        this.graphType = graphType;
+
+        readResolve();
+    }
+
+    /**
+     * Restores the configuration after deserialization.
+     *
+     * @return this instance
+     */
+    private Object readResolve() {
         configuration = DefaultGraph.initialize();
         configuration.initializeFrom(width, height, graphType, dayCountString);
+
+        return this;
     }
 
     /**

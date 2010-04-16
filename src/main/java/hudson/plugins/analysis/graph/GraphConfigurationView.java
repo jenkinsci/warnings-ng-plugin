@@ -233,7 +233,7 @@ public abstract class GraphConfigurationView implements ModelObject {
             if (hasMeaningfulGraph()) {
                 graph.setRootUrl(ROOT_URL);
                 if (graph.isVisible()) {
-                    return getGraphRenderer(graph);
+                    return graph.getGraph(-1, configuration, pluginName, lastAction);
                 }
             }
             response.sendRedirect2(request.getContextPath() + graph.getExampleImage());
@@ -248,7 +248,8 @@ public abstract class GraphConfigurationView implements ModelObject {
     /**
      * Returns the graph renderer of the specified graph.
      *
-     * @param graph the graph
+     * @param graph
+     *            the graph
      * @return the graph renderer of the specified graph
      */
     public Graph getGraphRenderer(final BuildResultGraph graph) {

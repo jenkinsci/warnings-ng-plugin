@@ -16,7 +16,7 @@
       <f:textbox/>
     </f:entry>
 
-    <f:entry title="${%name.builds}" description="${%description.dayCount}" field="dayCountString">
+    <f:entry title="${%name.days}" description="${%description.dayCount}" field="dayCountString">
       <f:textbox/>
     </f:entry>
 
