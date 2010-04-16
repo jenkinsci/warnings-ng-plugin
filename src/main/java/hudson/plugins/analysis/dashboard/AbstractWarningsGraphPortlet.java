@@ -3,6 +3,8 @@ package hudson.plugins.analysis.dashboard;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.collect.Lists;
 
 import hudson.model.Job;
@@ -144,8 +146,8 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
      *
      * @return the number of days to consider
      */
-    public int getDayCount() {
-        return configuration.getDayCount();
+    public String getDayCountString() {
+        return configuration.getDayCount() > 0 ? Integer.toString(configuration.getDayCount()) : StringUtils.EMPTY;
     }
 
     /**
