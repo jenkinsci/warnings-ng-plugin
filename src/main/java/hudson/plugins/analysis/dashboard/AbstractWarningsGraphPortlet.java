@@ -48,6 +48,7 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
      * @param graphType
      *            type of graph to use
      */
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public AbstractWarningsGraphPortlet(final String name, final String width, final String height, final String dayCountString, final String graphType) {
         super(name);
 
@@ -65,7 +66,7 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
      * @return this instance
      */
     private Object readResolve() {
-        configuration = DefaultGraph.initialize();
+        configuration = new GraphConfiguration(getRegisteredGraphs());
         configuration.initializeFrom(width, height, graphType, dayCountString);
 
         return this;
@@ -78,14 +79,14 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
      */
     public Graph getWarningsGraph() {
         List<ResultAction<?>> results = getActions();
-        BuildResultGraph graphType;
+        BuildResultGraph graph;
         if (results.isEmpty()) {
-            graphType = new NullGraph();
+            graph = new NullGraph();
         }
         else {
-            graphType = configuration.getGraphType();
+            graph = configuration.getGraphType();
         }
-        return graphType.getGraph(-1, configuration, getPluginName(), results);
+        return graph.getGraph(-1, configuration, getPluginName(), results);
     }
 
     /**
@@ -105,7 +106,9 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
     }
 
     /**
-     * Returns the list of available graphs.
+     * Returns the list of available graphs. Note: this method is invoked during
+     * construction of this object, so please make sure not to refer to any
+     * fields of your class within this method.
      *
      * @return the list of available graphs
      */

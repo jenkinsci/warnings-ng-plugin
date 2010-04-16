@@ -81,7 +81,7 @@ public class GraphConfiguration  {
      * @param availableGraphs
      *            the available build graphs
      */
-    public GraphConfiguration(final Collection<BuildResultGraph> availableGraphs) {
+    public GraphConfiguration(final Collection<? extends BuildResultGraph> availableGraphs) {
         this.availableGraphs = ImmutableList.copyOf(availableGraphs);
         for (BuildResultGraph graph : availableGraphs) {
             graphId2Graph.put(graph.getId(), graph);
@@ -158,7 +158,7 @@ public class GraphConfiguration  {
      * @return <code>true</code> is the initialization was successful,
      *         <code>false</code> otherwise
      */
-    private boolean initializeFrom(final int width, final int height, final String graphId, final int dayCount) {
+    private boolean initializeFrom(final int width, final int height, final String graphId, final int dayCount) { // NOCHECKSTYLE
         this.width = width;
         this.height = height;
         graphType = graphId2Graph.get(graphId);
