@@ -21,22 +21,4 @@
     </f:entry>
 
     <st:include page="local-config.jelly" optional="true"/>
-
-    <f:entry title="${%Type}">
-      <j:forEach var="graph" items="${instance.registeredGraphs}">
-        <j:set var="id" value="${graph.id}" />
-        <j:set var="current" value="${instance.graphType}" />
-        <p>
-          <f:radio name="graphType" value="${id}"
-            checked="${current.id.equals(id)}" id="graphType.${id}" />
-          <st:nbsp />
-          <label for="graphType.${id}">${graph.label}</label>
-          <st:nbsp />
-        </p>
-        <p>
-          <img src="${graph.exampleImage}" />
-        </p>
-      </j:forEach>
-
-    </f:entry>
 </j:jelly>

@@ -104,7 +104,7 @@ public class GraphConfiguration  {
      * @param graph
      *            the graph to use
      */
-    private GraphConfiguration(final BuildResultGraph graph) {
+    public GraphConfiguration(final BuildResultGraph graph) {
         reset();
 
         availableGraphs = Lists.newArrayList();
@@ -135,13 +135,11 @@ public class GraphConfiguration  {
      *            the width of the graph
      * @param height
      *            the height of the graph
-     * @param graphId
-     *            the ID of the graph to use
      * @return <code>true</code> is the initialization was successful,
      *         <code>false</code> otherwise
      */
-    public boolean initializeFrom(final int width, final int height, final String graphId) { // NOCHECKSTYLE
-        return initializeFrom(width, height, graphId, 0);
+    public boolean initializeFrom(final int width, final int height) { // NOCHECKSTYLE
+        return initializeFrom(width, height, 0);
     }
 
     /**
@@ -158,10 +156,9 @@ public class GraphConfiguration  {
      * @return <code>true</code> is the initialization was successful,
      *         <code>false</code> otherwise
      */
-    private boolean initializeFrom(final int width, final int height, final String graphId, final int dayCount) { // NOCHECKSTYLE
+    private boolean initializeFrom(final int width, final int height, final int dayCount) { // NOCHECKSTYLE
         this.width = width;
         this.height = height;
-        graphType = graphId2Graph.get(graphId);
         this.dayCount = dayCount;
         buildCount = 0;
         useBuildDate = true;
@@ -176,14 +173,12 @@ public class GraphConfiguration  {
      *            the width of the graph
      * @param height
      *            the height of the graph
-     * @param graphId
-     *            the ID of the graph to use
      * @param dayCountString
      *            the number of days to build the graph for
      * @return <code>true</code> is the initialization was successful,
      *         <code>false</code> otherwise
      */
-    public boolean initializeFrom(final String width, final String height, final String graphId, final String dayCountString) { // NOCHECKSTYLE
+    public boolean initializeFrom(final String width, final String height, final String dayCountString) { // NOCHECKSTYLE
         try {
             if (StringUtils.isBlank(dayCountString)) {
                 dayCount = 0;
@@ -192,7 +187,7 @@ public class GraphConfiguration  {
                 dayCount = Integer.parseInt(dayCountString);
             }
 
-            return initializeFrom(Integer.parseInt(width), Integer.parseInt(height), graphId, dayCount);
+            return initializeFrom(Integer.parseInt(width), Integer.parseInt(height), dayCount);
         }
         catch (NumberFormatException exception) {
             reset();
@@ -206,7 +201,7 @@ public class GraphConfiguration  {
      *
      * @param isSuccessful
      *            the result of the conversion
-     * @return the resul
+     * @return the result
      */
     private boolean resetIfInvalid(final boolean isSuccessful) {
         if (!isSuccessful) {

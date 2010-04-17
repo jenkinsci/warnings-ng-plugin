@@ -1,6 +1,5 @@
 package hudson.plugins.analysis.dashboard;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -13,9 +12,7 @@ import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.analysis.graph.BuildResultGraph;
 import hudson.plugins.analysis.graph.GraphConfiguration;
-import hudson.plugins.analysis.graph.NewVersusFixedGraph;
 import hudson.plugins.analysis.graph.NullGraph;
-import hudson.plugins.analysis.graph.PriorityGraph;
 
 import hudson.util.Graph;
 
@@ -33,8 +30,6 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
     private final String height;
     /** Number of days to consider. */
     private final String dayCountString;
-    /** Type of graph to use. */
-    private final String graphType;
 
     /**
      * Creates a new instance of {@link AbstractWarningsGraphPortlet}.
@@ -47,17 +42,14 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
      *            height of the graph
      * @param dayCountString
      *            number of days to consider
-     * @param graphType
-     *            type of graph to use
      */
     @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
-    public AbstractWarningsGraphPortlet(final String name, final String width, final String height, final String dayCountString, final String graphType) {
+    public AbstractWarningsGraphPortlet(final String name, final String width, final String height, final String dayCountString) {
         super(name);
 
         this.width = width;
         this.height = height;
         this.dayCountString = dayCountString;
-        this.graphType = graphType;
 
         readResolve();
     }
@@ -68,11 +60,18 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
      * @return this instance
      */
     private Object readResolve() {
-        configuration = new GraphConfiguration(getRegisteredGraphs());
-        configuration.initializeFrom(width, height, graphType, dayCountString);
+        configuration = new GraphConfiguration(getGraphType());
+        configuration.initializeFrom(width, height, dayCountString);
 
         return this;
     }
+
+    /**
+     * Returns the graph type of this portlet.
+     *
+     * @return the graph type of this portlet
+     */
+    protected abstract BuildResultGraph getGraphType();
 
     /**
      * Returns the trend graph for specified jobs.
@@ -108,22 +107,6 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
     }
 
     /**
-     * Returns the list of available graphs. Note: this method is invoked during
-     * construction of this object, so please make sure not to refer to any
-     * fields of your class within this method.
-     *
-     * @return the list of available graphs
-     */
-    public Collection<? extends BuildResultGraph> getRegisteredGraphs() {
-        List<BuildResultGraph> availableGraphs = Lists.newArrayList();
-
-        availableGraphs.add(new PriorityGraph());
-        availableGraphs.add(new NewVersusFixedGraph());
-
-        return availableGraphs;
-    }
-
-    /**
      * Returns the height.
      *
      * @return the height
@@ -148,15 +131,6 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
      */
     public String getDayCountString() {
         return configuration.getDayCount() > 0 ? Integer.toString(configuration.getDayCount()) : StringUtils.EMPTY;
-    }
-
-    /**
-     * Returns the type of the graph.
-     *
-     * @return the type
-     */
-    public BuildResultGraph getGraphType() {
-        return configuration.getGraphType();
     }
 }
 

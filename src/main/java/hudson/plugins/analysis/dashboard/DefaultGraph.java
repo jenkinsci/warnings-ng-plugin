@@ -1,8 +1,6 @@
 package hudson.plugins.analysis.dashboard;
 
 import hudson.plugins.analysis.graph.GraphConfiguration;
-import hudson.plugins.analysis.graph.NewVersusFixedGraph;
-import hudson.plugins.analysis.graph.PriorityGraph;
 
 /**
  * Provides the defaults for portlets with a trend graph.
@@ -21,9 +19,8 @@ public final class DefaultGraph {
      * @return the graph configuration
      */
     public static GraphConfiguration initialize() {
-        PriorityGraph priorityGraph = new PriorityGraph();
-        GraphConfiguration configuration = new GraphConfiguration(priorityGraph, new NewVersusFixedGraph());
-        configuration.initializeFrom(DEFAULT_WIDTH, DEFAULT_HEIGHT, priorityGraph.getId());
+        GraphConfiguration configuration = GraphConfiguration.createDefault();
+        configuration.initializeFrom(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
         return configuration;
     }
