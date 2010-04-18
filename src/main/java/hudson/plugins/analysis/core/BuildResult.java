@@ -849,7 +849,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the dynamic result of the analysis (detail page).
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
-        return DetailFactory.create().createTrendDetails(link, getOwner(), getContainer(), getFixedWarnings(),
+        return DetailFactory.create(getResultActionType()).createTrendDetails(link, getOwner(), getContainer(), getFixedWarnings(),
                 getNewWarnings(), getErrors(), getDefaultEncoding(), getDisplayName());
     }
 

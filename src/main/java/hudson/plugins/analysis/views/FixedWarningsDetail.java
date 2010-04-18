@@ -21,6 +21,8 @@ public class FixedWarningsDetail extends AbstractAnnotationsDetail {
      *
      * @param owner
      *            the current results object as owner of this action
+     * @param detailFactory
+     *            factory to create detail objects with
      * @param fixedWarnings
      *            all fixed warnings in this build
      * @param defaultEncoding
@@ -28,8 +30,8 @@ public class FixedWarningsDetail extends AbstractAnnotationsDetail {
      * @param header
      *            header to be shown on detail page
      */
-    public FixedWarningsDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> fixedWarnings, final String defaultEncoding, final String header) {
-        super(owner, fixedWarnings, defaultEncoding, header, Hierarchy.PROJECT);
+    public FixedWarningsDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> fixedWarnings, final String defaultEncoding, final String header) {
+        super(owner, detailFactory, fixedWarnings, defaultEncoding, header, Hierarchy.PROJECT);
     }
 
     /** {@inheritDoc} */

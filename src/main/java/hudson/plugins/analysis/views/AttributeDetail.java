@@ -22,6 +22,8 @@ public class AttributeDetail extends AbstractAnnotationsDetail {
      *
      * @param owner
      *            current build as owner of this action.
+     * @param detailFactory
+     *            factory to create detail objects with
      * @param annotations
      *            the module to show the details for
      * @param header
@@ -31,8 +33,8 @@ public class AttributeDetail extends AbstractAnnotationsDetail {
      * @param name
      *            name of the attribute shown in the bread crumb
      */
-    public AttributeDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final String defaultEncoding, final String header, final String name) {
-        super(owner, annotations, defaultEncoding, header, Hierarchy.PROJECT);
+    public AttributeDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String defaultEncoding, final String header, final String name) {
+        super(owner, detailFactory, annotations, defaultEncoding, header, Hierarchy.PROJECT);
         attributeName = name;
     }
 

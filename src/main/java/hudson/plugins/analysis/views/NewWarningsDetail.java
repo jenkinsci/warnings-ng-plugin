@@ -21,6 +21,8 @@ public class NewWarningsDetail extends AbstractAnnotationsDetail {
      *
      * @param owner
      *            the current build as owner of this action
+     * @param detailFactory
+     *            factory to create detail objects with
      * @param newWarnings
      *            all new warnings in this build
      * @param defaultEncoding
@@ -28,8 +30,8 @@ public class NewWarningsDetail extends AbstractAnnotationsDetail {
      * @param header
      *            header to be shown on detail page
      */
-    public NewWarningsDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> newWarnings, final String defaultEncoding, final String header) {
-        super(owner, newWarnings, defaultEncoding, header, Hierarchy.PROJECT);
+    public NewWarningsDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> newWarnings, final String defaultEncoding, final String header) {
+        super(owner, detailFactory, newWarnings, defaultEncoding, header, Hierarchy.PROJECT);
     }
 
     /** {@inheritDoc} */

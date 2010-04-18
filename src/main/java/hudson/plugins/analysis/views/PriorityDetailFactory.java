@@ -11,6 +11,19 @@ import hudson.plugins.analysis.util.model.Priority;
  * @author Ulli Hafner
  */
 public class PriorityDetailFactory {
+    /** The detail factory to use. */
+    private final DetailFactory detailFactory;
+
+    /**
+     * Creates a new instance of {@link PriorityDetailFactory}.
+     *
+     * @param detailFactory
+     *            the detail factory to use
+     */
+    public PriorityDetailFactory(final DetailFactory detailFactory) {
+        this.detailFactory = detailFactory;
+    }
+
     /**
      * Returns whether the provided value is a valid priority.
      *
@@ -71,7 +84,7 @@ public class PriorityDetailFactory {
      */
     protected PrioritiesDetail createPrioritiesDetail(final Priority priority, final AbstractBuild<?, ?> owner, final AnnotationContainer container,
             final String defaultEncoding, final String header) {
-        return new PrioritiesDetail(owner, container.getAnnotations(priority), priority, defaultEncoding, header);
+        return new PrioritiesDetail(owner, detailFactory, container.getAnnotations(priority), priority, defaultEncoding, header);
     }
 }
 

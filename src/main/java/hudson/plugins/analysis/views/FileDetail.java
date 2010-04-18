@@ -23,6 +23,8 @@ public class FileDetail extends AbstractAnnotationsDetail {
      *
      * @param owner
      *            current build as owner of this action.
+     * @param detailFactory
+     *            factory to create detail objects with
      * @param file
      *            the file to show the details for
      * @param defaultEncoding
@@ -30,8 +32,8 @@ public class FileDetail extends AbstractAnnotationsDetail {
      * @param header
      *            header to be shown on detail page
      */
-    public FileDetail(final AbstractBuild<?, ?> owner, final WorkspaceFile file, final String defaultEncoding, final String header) {
-        super(owner, file.getAnnotations(), defaultEncoding, header, Hierarchy.FILE);
+    public FileDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final WorkspaceFile file, final String defaultEncoding, final String header) {
+        super(owner, detailFactory, file.getAnnotations(), defaultEncoding, header, Hierarchy.FILE);
         this.file = file;
     }
 

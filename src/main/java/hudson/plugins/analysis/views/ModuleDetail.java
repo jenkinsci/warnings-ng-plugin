@@ -21,6 +21,8 @@ public class ModuleDetail extends AbstractAnnotationsDetail {
      *
      * @param owner
      *            current build as owner of this action.
+     * @param detailFactory
+     *            factory to create detail objects with
      * @param module
      *            the module to show the details for
      * @param defaultEncoding
@@ -28,8 +30,8 @@ public class ModuleDetail extends AbstractAnnotationsDetail {
      * @param header
      *            header to be shown on detail page
      */
-    public ModuleDetail(final AbstractBuild<?, ?> owner, final MavenModule module, final String defaultEncoding, final String header) {
-        super(owner, module.getAnnotations(), defaultEncoding, header, Hierarchy.MODULE);
+    public ModuleDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final MavenModule module, final String defaultEncoding, final String header) {
+        super(owner, detailFactory, module.getAnnotations(), defaultEncoding, header, Hierarchy.MODULE);
         this.module = module;
     }
 

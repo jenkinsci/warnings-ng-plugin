@@ -23,6 +23,8 @@ public class PrioritiesDetail extends AbstractAnnotationsDetail {
      *
      * @param owner
      *            current build as owner of this action.
+     * @param detailFactory
+     *            factory to create detail objects with
      * @param annotations
      *            the package to show the details for
      * @param priority
@@ -32,8 +34,8 @@ public class PrioritiesDetail extends AbstractAnnotationsDetail {
      * @param header
      *            header to be shown on detail page
      */
-    public PrioritiesDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final Priority priority, final String defaultEncoding, final String header) {
-        super(owner, annotations, defaultEncoding, header, Hierarchy.PROJECT);
+    public PrioritiesDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final Priority priority, final String defaultEncoding, final String header) {
+        super(owner, detailFactory, annotations, defaultEncoding, header, Hierarchy.PROJECT);
         this.priority = priority;
     }
 

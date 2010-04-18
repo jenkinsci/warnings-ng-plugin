@@ -22,6 +22,8 @@ public class TabDetail extends AbstractAnnotationsDetail {
      *
      * @param owner
      *            current build as owner of this action.
+     * @param detailFactory
+     *            factory to create detail objects with
      * @param annotations
      *            the module to show the details for
      * @param url
@@ -29,8 +31,8 @@ public class TabDetail extends AbstractAnnotationsDetail {
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
      */
-    public TabDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final String url, final String defaultEncoding) {
-        super(owner, annotations, defaultEncoding, "No Header", Hierarchy.PROJECT);
+    public TabDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String url, final String defaultEncoding) {
+        super(owner, detailFactory, annotations, defaultEncoding, "No Header", Hierarchy.PROJECT);
         this.url = url;
     }
 

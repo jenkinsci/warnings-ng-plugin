@@ -20,6 +20,8 @@ public class PackageDetail extends AbstractAnnotationsDetail {
      *
      * @param owner
      *            current build as owner of this action.
+     * @param detailFactory
+     *            factory to create detail objects with
      * @param javaPackage
      *            the package to show the details for
      * @param defaultEncoding
@@ -27,8 +29,8 @@ public class PackageDetail extends AbstractAnnotationsDetail {
      * @param header
      *            header to be shown on detail page
      */
-    public PackageDetail(final AbstractBuild<?, ?> owner, final JavaPackage javaPackage, final String defaultEncoding, final String header) {
-        super(owner, javaPackage.getAnnotations(), defaultEncoding, header, Hierarchy.PACKAGE);
+    public PackageDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final JavaPackage javaPackage, final String defaultEncoding, final String header) {
+        super(owner, detailFactory, javaPackage.getAnnotations(), defaultEncoding, header, Hierarchy.PACKAGE);
         this.javaPackage = javaPackage;
     }
 

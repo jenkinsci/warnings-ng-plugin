@@ -5,8 +5,8 @@ import java.util.Collection;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
+import hudson.model.AbstractBuild;
 
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -27,11 +27,16 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
     /** The default encoding to be used when reading and parsing files. */
     private final String defaultEncoding;
 
+    /** The factory to create detail objects with. */
+    private final DetailFactory detailFactory;
+
     /**
      * Creates a new instance of {@link AbstractAnnotationsDetail}.
      *
      * @param owner
-     *            current build as owner of this object.
+     *            current build as owner of this object
+     * @param detailFactory
+     *            factory to create detail objects with
      * @param annotations
      *            the set of warnings represented by this object
      * @param defaultEncoding
@@ -41,9 +46,10 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      * @param hierarchy
      *            the hierarchy level of this detail object
      */
-    public AbstractAnnotationsDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final String defaultEncoding, final String name, final Hierarchy hierarchy) {
+    public AbstractAnnotationsDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String defaultEncoding, final String name, final Hierarchy hierarchy) {
         super(name, hierarchy);
         this.owner = owner;
+        this.detailFactory = detailFactory;
         this.defaultEncoding = defaultEncoding;
 
         addAnnotations(annotations);
@@ -114,7 +120,7 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      * @return the dynamic result of this module detail view
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
-        return DetailFactory.create().createDetails(link, owner, getContainer(), defaultEncoding, getDisplayName());
+        return detailFactory.createDetails(link, owner, getContainer(), defaultEncoding, getDisplayName());
     }
 
     /**

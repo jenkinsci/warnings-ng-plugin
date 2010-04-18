@@ -1,13 +1,18 @@
 package hudson.plugins.analysis.views;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
-import hudson.model.AbstractBuild;
+import com.google.common.collect.Maps;
+
 import hudson.model.Item;
+import hudson.model.AbstractBuild;
 
 import hudson.plugins.analysis.Messages;
+import hudson.plugins.analysis.core.BuildResult;
+import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -19,35 +24,39 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  */
 public class DetailFactory {
     /** Default detail builder class. */
-    private static final Class<DetailFactory> DEFAULT_DETAIL_BUILDER = DetailFactory.class;
-    /** Detail builder class. */
-    private static Class<? extends DetailFactory> detailBuilder = DEFAULT_DETAIL_BUILDER;
+    private static final DetailFactory DEFAULT_DETAIL_BUILDER = new DetailFactory();
+    /** Maps plug-ins to detail builders. */
+    private static Map<Class<? extends ResultAction<? extends BuildResult>>, DetailFactory> factories = Maps.newHashMap();
 
     /**
      * Creates a new detail builder.
      *
+     * @param actionType
+     *            the type of the action (i.e., the plug-in) to get the detail
+     *            builder for
      * @return the detail builder
      */
-    public static DetailFactory create() {
-        try {
-            return detailBuilder.newInstance();
+    public static DetailFactory create(final Class<? extends ResultAction<? extends BuildResult>> actionType) {
+        if (factories.containsKey(actionType)) {
+            return factories.get(actionType);
         }
-        catch (InstantiationException exception) {
-            // ignore
-        }
-        catch (IllegalAccessException exception) {
-            // ignore
-        }
-        return new DetailFactory();
+        return DEFAULT_DETAIL_BUILDER;
     }
 
     /**
      * Sets the detail builder class to the specified value.
      *
-     * @param detailBuilder the value to set
+     * @param actionType
+     *            the type of the action (i.e., the plug-in) to set the detail
+     *            builder for
+     * @param detailBuilder
+     *            the value to set
      */
-    public static void setDetailBuilder(final Class<? extends DetailFactory> detailBuilder) {
-        DetailFactory.detailBuilder = detailBuilder;
+    public static void addDetailBuilder(final Class<? extends ResultAction<? extends BuildResult>> actionType,
+            final DetailFactory detailBuilder) {
+        synchronized (factories) {
+            factories.put(actionType, detailBuilder);
+        }
     }
 
     /**
@@ -80,10 +89,10 @@ public class DetailFactory {
             final String defaultEncoding, final String displayName) {
         // CHECKSTYLE:ON
         if ("fixed".equals(link)) {
-            return new FixedWarningsDetail(owner, fixedAnnotations, defaultEncoding, displayName);
+            return new FixedWarningsDetail(owner, this, fixedAnnotations, defaultEncoding, displayName);
         }
         else if ("new".equals(link)) {
-            return new NewWarningsDetail(owner, newAnnotations, defaultEncoding, displayName);
+            return new NewWarningsDetail(owner, this, newAnnotations, defaultEncoding, displayName);
         }
         else if ("error".equals(link)) {
             return new ErrorDetail(owner, errors);
@@ -117,18 +126,18 @@ public class DetailFactory {
      */
     public Object createDetails(final String link, final AbstractBuild<?, ?> owner, final AnnotationContainer container,
             final String defaultEncoding, final String displayName) {
-        PriorityDetailFactory factory = new PriorityDetailFactory();
+        PriorityDetailFactory factory = new PriorityDetailFactory(this);
         if (factory.isPriority(link)) {
             return factory.create(link, owner, container, defaultEncoding, displayName);
         }
         else if (link.startsWith("module.")) {
-            return new ModuleDetail(owner, container.getModule(createHashCode(link, "module.")), defaultEncoding, displayName);
+            return new ModuleDetail(owner, this, container.getModule(createHashCode(link, "module.")), defaultEncoding, displayName);
         }
         else if (link.startsWith("package.")) {
-            return new PackageDetail(owner, container.getPackage(createHashCode(link, "package.")), defaultEncoding, displayName);
+            return new PackageDetail(owner, this, container.getPackage(createHashCode(link, "package.")), defaultEncoding, displayName);
         }
         else if (link.startsWith("file.")) {
-            return new FileDetail(owner, container.getFile(createHashCode(link, "file.")), defaultEncoding, displayName);
+            return new FileDetail(owner, this, container.getFile(createHashCode(link, "file.")), defaultEncoding, displayName);
         }
         else if (link.startsWith("tab.")) {
             return createTabDetail(owner, container.getAnnotations(), createGenericTabUrl(link), defaultEncoding);
@@ -166,7 +175,7 @@ public class DetailFactory {
      */
     protected AttributeDetail createAttributeDetail(final AbstractBuild<?, ?> owner, final DefaultAnnotationContainer annotations,
             final String displayName, final String header, final String defaultEncoding) {
-        return new AttributeDetail(owner, annotations.getAnnotations(), defaultEncoding, displayName, header + " " + annotations.getName());
+        return new AttributeDetail(owner, this, annotations.getAnnotations(), defaultEncoding, displayName, header + " " + annotations.getName());
     }
 
     /**
@@ -184,7 +193,7 @@ public class DetailFactory {
      */
     protected TabDetail createTabDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations,
             final String url, final String defaultEncoding) {
-        return new TabDetail(owner, annotations, url, defaultEncoding);
+        return new TabDetail(owner, this, annotations, url, defaultEncoding);
     }
 
     /**
@@ -208,13 +217,6 @@ public class DetailFactory {
      */
     private int createHashCode(final String link, final String prefix) {
         return Integer.parseInt(StringUtils.substringAfter(link, prefix));
-    }
-
-    /**
-     * Creates a new instance of {@link DetailFactory}.
-     */
-    protected DetailFactory() {
-        // make constructor protected
     }
 }
 
