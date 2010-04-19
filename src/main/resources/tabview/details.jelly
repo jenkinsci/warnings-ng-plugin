@@ -14,8 +14,10 @@
             <j:otherwise>${warning.shortFileName}</j:otherwise>
           </j:choose>,
           ${%Line}: ${warning.primaryLineNumber}, ${%Type}: ${warning.type}, ${%Priority}:
-          ${warning.priority.localizedString}, ${%Category}:
-          ${warning.category}
+          ${warning.priority.localizedString}
+            <j:when test="${h.size2(warning.category) > 0}">
+            , ${%Category}: ${warning.category}
+            </j:when>
         </td>
       </tr>
     </table>
