@@ -2,7 +2,7 @@
   <dp:decorate portlet="${it}">
     <tr><td>
       <div align="center">
-        <img id="graph" src="${it.url}../../warningsGraph/png" lazymap="${it.url}../../warningsGraph/map" alt="${it.description}"/>
+        <img id="graph" src="${it.url}../../warningsGraph/png?width=800&amp;height=600" lazymap="${it.url}../../warningsGraph/map" alt="${it.description}"/>
        </div>
      </td></tr>
   </dp:decorate>
