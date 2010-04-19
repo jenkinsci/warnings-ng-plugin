@@ -15,9 +15,9 @@
           </j:choose>,
           ${%Line}: ${warning.primaryLineNumber}, ${%Type}: ${warning.type}, ${%Priority}:
           ${warning.priority.localizedString}
-            <j:when test="${h.size2(warning.category) > 0}">
+            <j:if test="${h.size2(warning.category) > 0}">
             , ${%Category}: ${warning.category}
-            </j:when>
+            </j:if>
         </td>
       </tr>
     </table>
