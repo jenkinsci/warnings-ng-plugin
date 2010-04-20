@@ -105,6 +105,38 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
     }
 
     /**
+     * Performs on-the-fly validation on the file name pattern.
+     *
+     * @param project
+     *            the project
+     * @param excludePattern
+     *            the file pattern
+     * @return the validation result
+     * @throws IOException
+     *             if the encoding is not valid
+     */
+    public final FormValidation doCheckExcludePattern(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final String excludePattern) throws IOException {
+        return doCheckPattern(project, excludePattern);
+    }
+
+    /**
+     * Performs on-the-fly validation on the file name pattern.
+     *
+     * @param project
+     *            the project
+     * @param includePattern
+     *            the file pattern
+     * @return the validation result
+     * @throws IOException
+     *             if the encoding is not valid
+     */
+    public final FormValidation doCheckIncludePattern(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final String includePattern) throws IOException {
+        return doCheckPattern(project, includePattern);
+    }
+
+    /**
      * Performs on-the-fly validation on the annotations threshold.
      *
      * @param threshold
