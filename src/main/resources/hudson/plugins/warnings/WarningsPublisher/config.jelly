@@ -3,10 +3,8 @@
   <f:entry title="${%Scan console log}" description="${%description.canScanConsole}">
     <f:checkbox name="canScanConsole" checked="${h.defaultToTrue(instance.canScanConsole)}"/>
   </f:entry>
-  <f:entry title="${%File pattern}"
-    description="${%description.pattern}">
-    <f:textbox name="pattern" value="${instance.pattern}"
-      checkUrl="'descriptorByName/WarningsPublisher/checkPattern?value='+escape(this.value)" />
+  <f:entry title="${%File pattern}" description="${%description.pattern}" field="pattern">
+    <f:textbox/>
   </f:entry>
 
   <f:entry title="${%Parsers}" description="${%description.parsers}">
@@ -32,13 +30,11 @@
 
   <f:advanced>
     <u:failed/>
-    <f:entry title="${%Warnings to include}" description="${%description.includePattern}">
-      <f:textbox name="includePattern" value="${instance.includePattern}"
-        checkUrl="'descriptorByName/WarningsPublisher/checkPattern?value='+escape(this.value)" />
+    <f:entry title="${%Warnings to include}" description="${%description.includePattern}" field="includePattern" >
+      <f:textbox/>
     </f:entry>
-    <f:entry title="${%Warnings to ignore}" description="${%description.excludePattern}">
-      <f:textbox name="excludePattern" value="${instance.excludePattern}"
-        checkUrl="'descriptorByName/WarningsPublisher/checkPattern?value='+escape(this.value)" />
+    <f:entry title="${%Warnings to ignore}" description="${%description.excludePattern}" field="excludePattern">
+      <f:textbox/>
     </f:entry>
     <u:thresholds id="warnings"/>
     <u:defaultEncoding id="warnings"/>
