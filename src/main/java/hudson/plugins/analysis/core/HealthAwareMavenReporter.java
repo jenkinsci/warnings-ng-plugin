@@ -177,11 +177,16 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     @Override
     public final boolean postExecute(final MavenBuildProxy build, final MavenProject pom, final MojoInfo mojo,
             final BuildListener listener, final Throwable error) throws InterruptedException, IOException {
-        if (!acceptGoal(mojo.getGoal()) || !canContinue(getCurrentResult(build))) {
+        PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
+        if (!acceptGoal(mojo.getGoal())) {
+            return true;
+        }
+        Result currentResult = getCurrentResult(build);
+        if (!canContinue(currentResult)) {
+            logger.log("Skipping reporter since build result is " + currentResult);
             return true;
         }
 
-        PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
         if (hasResultAction(build)) {
             logger.log("Skipping maven reporter: there is already a result available.");
             return true;
