@@ -1,9 +1,8 @@
 package hudson.plugins.warnings;
 
+import hudson.model.Action;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.Action;
-import hudson.model.Result;
 import hudson.plugins.analysis.core.AnnotationsClassifier;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.FilesParser;
@@ -40,8 +39,6 @@ public class WarningsPublisher extends HealthAwarePublisher {
     /** Name of parsers to use for scanning the logs. */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
     private Set<String> parserNames = new HashSet<String>();
-    /** Determines whether the plug-in should run for failed builds, too. */
-    private final boolean canRunOnFailed;
     /** Determines whether the console should be ignored. */
     private final boolean ignoreConsole;
 
@@ -77,14 +74,14 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *            Ant file-set pattern of files to exclude from report
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
-     * @param canRunOnFailed
-     *            determines whether the plug-in can run for failed builds, too
-     * @param canScanConsole
-     *            Determines whether the console should be scanned.
      * @param useDeltaValues
      *            determines whether the absolute annotations delta or the
      *            actual annotations set difference should be used to evaluate
      *            the build stability
+     * @param canRunOnFailed
+     *            determines whether the plug-in can run for failed builds, too
+     * @param canScanConsole
+     *            Determines whether the console should be scanned.
      */
     // CHECKSTYLE:OFF
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -93,12 +90,11 @@ public class WarningsPublisher extends HealthAwarePublisher {
             final String failureThreshold, final String newFailureThreshold,
             final String healthy, final String unHealthy, final String thresholdLimit,
             final String pattern, final String includePattern, final String excludePattern,
-            final String defaultEncoding, final boolean canRunOnFailed,
-            final boolean canScanConsole, final boolean useDeltaValues) {
+            final String defaultEncoding, final boolean useDeltaValues, final boolean canRunOnFailed,
+            final boolean canScanConsole) {
         super(threshold, newThreshold, failureThreshold, newFailureThreshold,
-                healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues, "WARNINGS");
+                healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues, canRunOnFailed, "WARNINGS");
         this.pattern = pattern;
-        this.canRunOnFailed = canRunOnFailed;
         ignoreConsole = !canScanConsole;
         this.includePattern = StringUtils.stripToNull(includePattern);
         this.excludePattern = StringUtils.stripToNull(excludePattern);
@@ -112,15 +108,6 @@ public class WarningsPublisher extends HealthAwarePublisher {
      */
     public Set<String> getParserNames() {
         return parserNames;
-    }
-
-    /**
-     * Returns whether this plug-in can run for failed builds, too.
-     *
-     * @return the can run on failed
-     */
-    public boolean getCanRunOnFailed() {
-        return canRunOnFailed;
     }
 
     /**
@@ -215,17 +202,6 @@ public class WarningsPublisher extends HealthAwarePublisher {
         build.getActions().add(new WarningsResultAction(build, this, result));
 
         return result;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected boolean canContinue(final Result result) {
-        if (canRunOnFailed) {
-            return true;
-        }
-        else {
-            return super.canContinue(result);
-        }
     }
 
     /** {@inheritDoc} */
