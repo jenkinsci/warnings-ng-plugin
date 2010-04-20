@@ -9,11 +9,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.maven.project.MavenProject;
 
 import hudson.FilePath;
-import hudson.maven.MavenBuild;
 import hudson.maven.MavenBuildProxy;
+import hudson.maven.MavenBuildProxy.BuildCallable;
 import hudson.maven.MavenReporter;
 import hudson.maven.MojoInfo;
-import hudson.maven.MavenBuildProxy.BuildCallable;
+import hudson.maven.MavenBuild;
 
 import hudson.model.Action;
 import hudson.model.BuildListener;
@@ -69,6 +69,57 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     private String thresholdLimit;
     /** The default encoding to be used when reading and parsing files. */
     private String defaultEncoding;
+    /** Determines whether the plug-in should run for failed builds, too. @since 1.6 */
+    private final boolean canRunOnFailed;
+
+    /**
+     * Creates a new instance of <code>HealthReportingMavenReporter</code>.
+     *
+     * @param threshold
+     *            Annotations threshold to be reached if a build should be
+     *            considered as unstable.
+     * @param newThreshold
+     *            New annotations threshold to be reached if a build should be
+     *            considered as unstable.
+     * @param failureThreshold
+     *            Annotation threshold to be reached if a build should be considered as
+     *            failure.
+     * @param newFailureThreshold
+     *            New annotations threshold to be reached if a build should be
+     *            considered as failure.
+     * @param healthy
+     *            Report health as 100% when the number of warnings is less than
+     *            this value
+     * @param unHealthy
+     *            Report health as 0% when the number of warnings is greater
+     *            than this value
+     * @param thresholdLimit
+     *            determines which warning priorities should be considered when
+     *            evaluating the build stability and health
+     * @param canRunOnFailed
+     *            determines whether the plug-in can run for failed builds, too
+     * @param pluginName
+     *            the name of the plug-in
+     */
+    // CHECKSTYLE:OFF
+    public HealthAwareMavenReporter(final String threshold, final String newThreshold,
+            final String failureThreshold, final String newFailureThreshold,
+            final String healthy, final String unHealthy,
+            final String thresholdLimit, final boolean canRunOnFailed, final String pluginName) {
+        super();
+        this.threshold = threshold;
+        this.newThreshold = newThreshold;
+        this.failureThreshold = failureThreshold;
+        this.newFailureThreshold = newFailureThreshold;
+        this.healthy = healthy;
+        this.unHealthy = unHealthy;
+        this.thresholdLimit = thresholdLimit;
+        this.canRunOnFailed = canRunOnFailed;
+        this.pluginName = "[" + pluginName + "] ";
+
+        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.Jdk14Logger");
+    }
+    // CHECKSTYLE:ON
 
     /**
      * Creates a new instance of <code>HealthReportingMavenReporter</code>.
@@ -96,23 +147,15 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      *            evaluating the build stability and health
      * @param pluginName
      *            the name of the plug-in
+     * @deprecated replaced by {@link #HealthAwareMavenReporter(String, String, String, String, String, String, String, boolean, String)}
      */
     // CHECKSTYLE:OFF
+    @Deprecated
     public HealthAwareMavenReporter(final String threshold, final String newThreshold,
             final String failureThreshold, final String newFailureThreshold,
             final String healthy, final String unHealthy,
             final String thresholdLimit, final String pluginName) {
-        super();
-        this.threshold = threshold;
-        this.newThreshold = newThreshold;
-        this.failureThreshold = failureThreshold;
-        this.newFailureThreshold = newFailureThreshold;
-        this.healthy = healthy;
-        this.unHealthy = unHealthy;
-        this.thresholdLimit = thresholdLimit;
-        this.pluginName = "[" + pluginName + "] ";
-
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.Jdk14Logger");
+        this(threshold, newThreshold, failureThreshold, newFailureThreshold, healthy, unHealthy, thresholdLimit, false, pluginName);
     }
     // CHECKSTYLE:ON
 
@@ -181,8 +224,18 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     }
 
     /**
-     * Returns whether the reporter can continue processing. This default
-     * implementation returns <code>true</code> if the build is not aborted or
+     * Returns whether this plug-in can run for failed builds, too.
+     *
+     * @return the can run on failed
+     */
+    public boolean getCanRunOnFailed() {
+        return canRunOnFailed;
+    }
+
+    /**
+     * Returns whether this reporter can continue processing. This default
+     * implementation returns <code>true</code> if the property
+     * <code>canRunOnFailed</code> is set or if the build is not aborted or
      * failed.
      *
      * @param result
@@ -190,7 +243,12 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      * @return <code>true</code> if the build can continue
      */
     protected boolean canContinue(final Result result) {
-        return result != Result.ABORTED && result != Result.FAILURE;
+        if (canRunOnFailed) {
+            return result != Result.ABORTED;
+        }
+        else {
+            return result != Result.ABORTED && result != Result.FAILURE;
+        }
     }
 
     /**

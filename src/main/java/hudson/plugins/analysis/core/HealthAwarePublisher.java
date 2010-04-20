@@ -80,7 +80,66 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      * @since 1.4
      */
     private final boolean useDeltaValues;
+    /** Determines whether the plug-in should run for failed builds, too. @since 1.6 */
+    private final boolean canRunOnFailed;
 
+    /**
+     * Creates a new instance of <code>HealthAwarePublisher</code>.
+     *
+     * @param threshold
+     *            Annotations threshold to be reached if a build should be
+     *            considered as unstable.
+     * @param newThreshold
+     *            New annotations threshold to be reached if a build should be
+     *            considered as unstable.
+     * @param failureThreshold
+     *            Annotation threshold to be reached if a build should be
+     *            considered as failure.
+     * @param newFailureThreshold
+     *            New annotations threshold to be reached if a build should be
+     *            considered as failure.
+     * @param healthy
+     *            Report health as 100% when the number of open tasks is less
+     *            than this value
+     * @param unHealthy
+     *            Report health as 0% when the number of open tasks is greater
+     *            than this value
+     * @param thresholdLimit
+     *            determines which warning priorities should be considered when
+     *            evaluating the build stability and health
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @param useDeltaValues
+     *            determines whether the absolute annotations delta or the
+     *            actual annotations set difference should be used to evaluate
+     *            the build stability
+     * @param canRunOnFailed
+     *            determines whether the plug-in can run for failed builds, too
+     * @param pluginName
+     *            the name of the plug-in
+     */
+    // CHECKSTYLE:OFF
+    @SuppressWarnings("PMD")
+    public HealthAwarePublisher(final String threshold, final String newThreshold,
+            final String failureThreshold, final String newFailureThreshold, final String healthy,
+            final String unHealthy, final String thresholdLimit,
+            final String defaultEncoding, final boolean useDeltaValues, final boolean canRunOnFailed,
+            final String pluginName) {
+        super();
+        this.threshold = threshold;
+        this.newThreshold = newThreshold;
+        this.failureThreshold = failureThreshold;
+        this.newFailureThreshold = newFailureThreshold;
+        this.healthy = healthy;
+        this.unHealthy = unHealthy;
+        this.thresholdLimit = thresholdLimit;
+        this.defaultEncoding = defaultEncoding;
+        this.useDeltaValues = useDeltaValues;
+        this.canRunOnFailed = canRunOnFailed;
+        this.pluginName = "[" + pluginName + "] ";
+    }
+
+    // CHECKSTYLE:ON
     /**
      * Creates a new instance of <code>HealthAwarePublisher</code>.
      *
@@ -113,24 +172,17 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      *            the build stability
      * @param pluginName
      *            the name of the plug-in
+     * @deprecated replaced by {@link #HealthAwarePublisher(String, String, String, String, String, String, String, String, boolean, boolean, String)}
      */
     // CHECKSTYLE:OFF
     @SuppressWarnings("PMD")
+    @Deprecated
     public HealthAwarePublisher(final String threshold, final String newThreshold,
             final String failureThreshold, final String newFailureThreshold, final String healthy,
             final String unHealthy, final String thresholdLimit,
             final String defaultEncoding, final boolean useDeltaValues, final String pluginName) {
-        super();
-        this.threshold = threshold;
-        this.newThreshold = newThreshold;
-        this.failureThreshold = failureThreshold;
-        this.newFailureThreshold = newFailureThreshold;
-        this.healthy = healthy;
-        this.unHealthy = unHealthy;
-        this.thresholdLimit = thresholdLimit;
-        this.defaultEncoding = defaultEncoding;
-        this.useDeltaValues = useDeltaValues;
-        this.pluginName = "[" + pluginName + "] ";
+        this(threshold, newThreshold, failureThreshold, newFailureThreshold,
+                healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues, false, pluginName);
     }
     // CHECKSTYLE:ON
 
@@ -255,10 +307,19 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         }
     }
 
+    /**
+     * Returns whether this plug-in can run for failed builds, too.
+     *
+     * @return the can run on failed
+     */
+    public boolean getCanRunOnFailed() {
+        return canRunOnFailed;
+    }
 
     /**
-     * Returns whether the publisher can continue processing. This default
-     * implementation returns <code>true</code> if the build is not aborted or
+     * Returns whether this publisher can continue processing. This default
+     * implementation returns <code>true</code> if the property
+     * <code>canRunOnFailed</code> is set or if the build is not aborted or
      * failed.
      *
      * @param result
@@ -266,7 +327,12 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      * @return <code>true</code> if the build can continue
      */
     protected boolean canContinue(final Result result) {
-        return result != Result.ABORTED && result != Result.FAILURE;
+        if (canRunOnFailed) {
+            return result != Result.ABORTED;
+        }
+        else {
+            return result != Result.ABORTED && result != Result.FAILURE;
+        }
     }
 
     /**
