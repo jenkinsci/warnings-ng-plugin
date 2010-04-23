@@ -24,6 +24,7 @@ import hudson.plugins.analysis.graph.NullGraph;
 import hudson.plugins.analysis.graph.PriorityGraph;
 import hudson.plugins.analysis.graph.UserGraphConfigurationView;
 import hudson.plugins.analysis.graph.GraphConfigurationView;
+import hudson.plugins.analysis.graph.TrendDetails;
 
 import hudson.util.Graph;
 
@@ -103,6 +104,17 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
         else {
             return null;
         }
+    }
+
+    /**
+     * Returns the trend graph details.
+     *
+     * @param request
+     *            Stapler request
+     * @return the details
+     */
+    public Object getTrendDetails(final StaplerRequest request) {
+        return new TrendDetails(getProject(), getTrendGraph(request));
     }
 
     /**

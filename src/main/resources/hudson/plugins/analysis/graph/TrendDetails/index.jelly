@@ -1,0 +1,10 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+  xmlns:i="jelly:fmt" xmlns:u="/util">
+  <l:layout norefresh="true">
+    <st:include it="${it.project}" page="sidepanel.jelly" />
+    <l:main-panel>
+      <img src="trendGraph/png?width=800&amp;height=600" lazymap="trendGraph/map?width=800&amp;height=600"/>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

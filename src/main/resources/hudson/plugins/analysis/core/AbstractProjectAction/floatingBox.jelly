@@ -8,7 +8,9 @@
 		    <img src="${from.urlName}/trendGraph/png" lazymap="${from.urlName}/trendGraph/map"/>
 		  </div>
 		  <div>
-		     <a href="${from.urlName}/configure">${%Configure...}</a>
+             <a href="${from.urlName}/trendDetails">${%Enlarge}</a>
+             <st:nbsp />
+		     <a href="${from.urlName}/configure">${%Configure}</a>
 		  </div>
 	   	</div>
 	</j:if>
