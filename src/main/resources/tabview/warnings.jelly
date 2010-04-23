@@ -31,12 +31,12 @@
           </td>
           <j:if test="${it.container.modules.size() > 1}">
             <td class="pane">
-              <div tooltip="${warning.message}"> ${warning.moduleName} </div>
+              <div tooltip="${warning.message}"> <a href="module.${warning.moduleName.hashCode()}/">${warning.moduleName}</a> </div>
             </td>
           </j:if>
           <j:if test="${it.container.packages.size() > 1}">
             <td class="pane">
-              <div tooltip="${warning.message}"> ${warning.packageName} </div>
+              <div tooltip="${warning.message}"> <a href="package.${warning.packageName.hashCode()}/">${warning.packageName}</a> </div>
             </td>
           </j:if>
           <td class="pane">
