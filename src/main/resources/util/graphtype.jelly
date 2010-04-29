@@ -18,7 +18,7 @@
           <img src="${it.url}/${id}" lazymap="${it.url}/${id}Map"/>
       </j:if>
         <j:if test="${!it.hasMeaningfulGraph()}">
-          <img src="/plugin/analysis-core/icons/${id}.png"/>
+          <img src="${rootURL}/plugin/analysis-core/icons/${id}.png"/>
       </j:if>
       </p>
 
