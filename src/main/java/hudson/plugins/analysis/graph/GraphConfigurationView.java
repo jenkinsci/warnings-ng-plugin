@@ -339,7 +339,9 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return the type
      */
     public BuildResultGraph getGraphType() {
-        return configuration.getGraphType();
+        BuildResultGraph graphType = configuration.getGraphType();
+        graphType.setRootUrl(getOwner().getAbsoluteUrl());
+        return graphType;
     }
 
     /**

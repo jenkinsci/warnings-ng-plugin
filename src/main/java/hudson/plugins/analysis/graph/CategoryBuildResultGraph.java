@@ -73,6 +73,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *            the name of the plug-in
      * @return the graph
      */
+    @Override
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("WMI")
     public JFreeChart createAggregation(final GraphConfiguration configuration,
             final Collection<ResultAction<? extends BuildResult>> resultActions, final String pluginName) {
