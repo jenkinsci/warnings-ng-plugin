@@ -40,6 +40,10 @@ public abstract class AbstractPortlet extends DashboardPortlet {
      *
      * @return <code>true</code>, if the dashboard view plug-in is installed,
      *         <code>false</code> otherwise
+     * @deprecated as of 1.9
+     *      Because this class itself depends on a class from the dashboard-view plugin,
+     *      if the said plugin is not available, the caller of this method gets {@link NoClassDefFoundError}.
+     *      However, do not remove this method (at least for a while) as existing plugins depend on this.
      */
     public static boolean isDashboardViewInstalled() {
         return Hudson.getInstance().getPlugin("dashboard-view") != null;
