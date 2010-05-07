@@ -29,6 +29,7 @@ import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.analysis.util.model.WorkspaceFile;
 
 import hudson.remoting.Channel;
+import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStep;
 
 /**
@@ -389,7 +390,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      * @return the path to the target folder
      */
     protected FilePath getTargetPath(final MavenProject pom) {
-        return new FilePath(new FilePath(pom.getBasedir()), "target");
+        return new FilePath((VirtualChannel)null, pom.getBuild().getDirectory());
     }
 
     /**
