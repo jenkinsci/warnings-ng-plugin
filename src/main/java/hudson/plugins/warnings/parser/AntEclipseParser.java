@@ -15,7 +15,7 @@ public class AntEclipseParser extends RegexpDocumentParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Eclipse Java Compiler";
     /** Pattern of javac compiler warnings. */
-    private static final String ANT_ECLIPSE_WARNING_PATTERN = "(WARNING|ERROR)\\s*in\\s*(.*)\\(at line\\s*(\\d+)\\).*\\r?\\n.*\\r?\\n.*\\r?\\n.*\\]\\s*(.*)";
+    private static final String ANT_ECLIPSE_WARNING_PATTERN = "(WARNING|ERROR)\\s*in\\s*(.*)\\(at line\\s*(\\d+)\\).*(?:\\r?\\n.*){2}\\r?\\n(?:\\s*\\[.*\\]\\s*)?(.*)";
 
     /**
      * Creates a new instance of <code>AntJavacParser</code>.
