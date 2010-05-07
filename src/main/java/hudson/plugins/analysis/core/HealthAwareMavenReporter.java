@@ -46,6 +46,7 @@ import hudson.tasks.BuildStep;
  * @author Ulli Hafner
  */
 // CHECKSTYLE:COUPLING-OFF
+@SuppressWarnings("PMD.TooManyFields")
 public abstract class HealthAwareMavenReporter extends MavenReporter implements HealthDescriptor {
     /** Default threshold priority limit. */
     private static final String DEFAULT_PRIORITY_THRESHOLD_LIMIT = "low";

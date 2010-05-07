@@ -149,8 +149,6 @@ public class GraphConfiguration  {
      *            the width of the graph
      * @param height
      *            the height of the graph
-     * @param graphId
-     *            the ID of the graph to use
      * @param dayCount
      *            the number of days to build the graph for
      * @return <code>true</code> is the initialization was successful,
