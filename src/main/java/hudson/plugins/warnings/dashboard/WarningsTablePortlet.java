@@ -48,14 +48,12 @@ public class WarningsTablePortlet extends AbstractWarningsTablePortlet {
         /**
          * Creates a new descriptor if the dashboard-view plug-in is installed.
          *
-         * @return the descriptor or <code>null</code> if the dashboard view is not installed
+         * @return the descriptor or <code>null</code> if the dashboard view is
+         *         not installed
          */
         @Extension
         public static WarningsPerJobDescriptor newInstance() {
-            if (isDashboardViewInstalled()) {
-                return new WarningsPerJobDescriptor();
-            }
-            return null;
+            return new WarningsPerJobDescriptor();
         }
 
         @Override

@@ -62,14 +62,12 @@ public class WarningsPriorityGraphPortlet extends AbstractWarningsGraphPortlet {
         /**
          * Creates a new descriptor if the dashboard-view plug-in is installed.
          *
-         * @return the descriptor or <code>null</code> if the dashboard view is not installed
+         * @return the descriptor or <code>null</code> if the dashboard view is
+         *         not installed
          */
         @Extension
         public static WarningsGraphDescriptor newInstance() {
-            if (isDashboardViewInstalled()) {
-                return new WarningsGraphDescriptor();
-            }
-            return null;
+            return new WarningsGraphDescriptor();
         }
 
         @Override
