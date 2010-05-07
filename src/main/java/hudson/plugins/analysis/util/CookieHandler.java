@@ -60,6 +60,7 @@ public class CookieHandler {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(name)) {
                     values = cookie.getValue();
+                    break;
                 }
             }
         }

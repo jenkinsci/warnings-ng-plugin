@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -325,12 +326,42 @@ public abstract class GraphConfigurationView implements ModelObject {
     }
 
     /**
+     * Returns the number of builds to consider.
+     *
+     * @return the number of builds to consider
+     */
+    public String getBuildCountString() {
+        return getStringValue(getBuildCount());
+    }
+
+    /**
+     * Returns the value as integer. If the value is 0, then an empty string is
+     * returned.
+     *
+     * @param value
+     *            the value to convert
+     * @return string representation of <code>value</code>
+     */
+    private String getStringValue(final int value) {
+        return value == 0 ? StringUtils.EMPTY : String.valueOf(value);
+    }
+
+    /**
      * Returns the number of days to consider.
      *
      * @return the number of days to consider
      */
     public int getDayCount() {
         return configuration.getDayCount();
+    }
+
+    /**
+     * Returns the number of days to consider.
+     *
+     * @return the number of days to consider
+     */
+    public String getDayCountString() {
+        return getStringValue(getDayCount());
     }
 
     /**
