@@ -75,6 +75,7 @@ public class ParserRegistry {
         parsers.add(new AcuCobolParser());
         parsers.add(new FlexSDKParser());
         parsers.add(new PhpParser());
+        parsers.add(new CoolfluxChessccParser());
 
         return ImmutableList.copyOf(parsers);
     }

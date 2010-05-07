@@ -909,3 +909,17 @@ PHP Fatal error:  Undefined class constant 'MESSAGE' in /MyPhpFile.php on line 3
 
 From Apache log
 [Tue Mar 02 08:22:40 2010] [error] [client 192.168.1.172] PHP Warning:  Missing argument 1 for Title::getText(), called in Title.php on line 22 and defined in Category.php on line 34
+
+
+coolflux: n6/heidrun/dsp/Modules/FirOperator_slave.c->n6/heidrun/dsp/Modules/FirOperator_slave.o
+coolflux: n6/heidrun/dsp/Modules/FirOperator_trisor6.c->n6/heidrun/dsp/Modules/FirOperator_trisor6.o
+coolflux: n6/heidrun/dsp/Modules/GenericTuner.c->n6/heidrun/dsp/Modules/GenericTuner.o
+coolflux: n6/heidrun/dsp/Modules/GunOperator.c->n6/heidrun/dsp/Modules/GunOperator.o
+coolflux: n6/heidrun/dsp/Modules/GunOperator_trisor6.c->n6/heidrun/dsp/Modules/GunOperator_trisor6.o
+coolflux: n6/heidrun/dsp/Modules/GunTuner.c->n6/heidrun/dsp/Modules/GunTuner.o
+coolflux: n6/heidrun/dsp/Modules/GunTuner_trisor6.c->n6/heidrun/dsp/Modules/GunTuner_trisor6.o
+coolflux: n6/heidrun/dsp/Modules/LocalChAdmin.c->n6/heidrun/dsp/Modules/LocalChAdmin.o
+coolflux: $MYCC  -c /nfs/autofs/nett/nessie6/dailies/Monday/src/n6/heidrun/dsp/Modules/LocalChAdmin.c -o n6/heidrun/dsp/Modules/LocalChAdmin.o  -I/nfs/autofs/nett/nessie6/dailies/Monday/coolflux -I/nfs/autofs/nett/nessie6/dailies/Monday/src -I/nett/opt/OmniWorks/client/6.7C1220/linux_2.2_x86 -D__OMNIWORKS_BUILD_NUM=1220 -D__PERL -D__GCC_VER=4 -DOMNIWORKS -DOMNI62 -DOMNI65 -DOMNI66 -DOMNI67 -DUNIX -DX86 -D_X86_ -D_M_IX86 -DLINUX -DGCC -DUSE_PKG -DHAVE_CXX -DHEIDRUN_DSP_MASTER -DHEIDRUN_DSP -DCOOLFLUX_COMPILE_TARGET -DCS_MASTER -DCS_DSN -DDBG_PRINT_IBN -DDSP_ASSERT_ENABLE -DDSP_ASSERT_DEST_IBN -DERRORCODE_DEST_IBN -DDSP_MIB_DEST_IBN -D__NO_DG
+coolflux: Warning in "/nfs/autofs/nett/nessie6/dailies/Monday/src/n6/heidrun/dsp/Modules/LocalChAdmin.c", line 150, column 19: function `unsigned configureRealCh(unsigned)' was declared static, but was not defined
+coolflux: Compilation finished successfully
+
