@@ -107,6 +107,26 @@ public class Gcc4LinkerParserTest extends ParserTester {
         assertEquals(THERE_ARE_WARNINGS_FOUND, 0, warnings.size());
     }
 
+    /**
+     * Parses a warning log with 1 warning.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-6563">Issue 6563</a>
+     */
+    @Test
+    public void issue6563() throws IOException {
+        Collection<FileAnnotation> warnings = new Gcc4LinkerParser().parse(openFile("issue6563.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        checkWarning(iterator.next(),
+                9,
+                "the 'gets' function is dangerous and should not be used.",
+                "/PRODV3/pv3_fdp/v3_fdp01/tmp/main.c",
+                WARNING_TYPE, WARNING_CATEGORY, Priority.HIGH);
+    }
+
     /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {

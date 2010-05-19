@@ -24,6 +24,20 @@ public class Gcc4CompilerParserTest extends ParserTester {
     private static final String WARNING_TYPE = Gcc4CompilerParser.WARNING_TYPE;
 
     /**
+     * Parses a warning log with 1 warning.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-6563">Issue 6563</a>
+     */
+    @Test
+    public void issue6563() throws IOException {
+        Collection<FileAnnotation> warnings = new Gcc4CompilerParser().parse(openFile("issue6563.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 10, warnings.size());
+    }
+
+    /**
      * Parses a file with GCC warnings.
      *
      * @throws IOException
