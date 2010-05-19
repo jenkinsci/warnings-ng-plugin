@@ -76,6 +76,8 @@ public class ParserRegistry {
         parsers.add(new FlexSDKParser());
         parsers.add(new PhpParser());
         parsers.add(new CoolfluxChessccParser());
+        parsers.add(new P4Parser());
+        parsers.add(new RobocopyParser());
 
         return ImmutableList.copyOf(parsers);
     }

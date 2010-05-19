@@ -1,0 +1,4 @@
+//depot/file1.txt can't add existing file
+//depot/file2.txt warning: add of existing file
+//depot/file3.txt can't add (already opened for edit)
+//depot/file4.txt nothing changed            

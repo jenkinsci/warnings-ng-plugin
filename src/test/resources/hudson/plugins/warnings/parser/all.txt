@@ -923,3 +923,11 @@ coolflux: $MYCC  -c /nfs/autofs/nett/nessie6/dailies/Monday/src/n6/heidrun/dsp/M
 coolflux: Warning in "/nfs/autofs/nett/nessie6/dailies/Monday/src/n6/heidrun/dsp/Modules/LocalChAdmin.c", line 150, column 19: function `unsigned configureRealCh(unsigned)' was declared static, but was not defined
 coolflux: Compilation finished successfully
 
+    *EXTRA File                  0        b           Unknown Task
+   100%        New File                   0        a.log
+                 same                 0        a.log
+                 
+//depot/file1.txt can't add existing file
+//depot/file2.txt warning: add of existing file
+//depot/file3.txt can't add (already opened for edit)
+//depot/file4.txt nothing changed
