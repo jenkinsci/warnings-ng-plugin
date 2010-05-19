@@ -38,7 +38,7 @@ public class Gcc4CompilerParserTest extends ParserTester {
         Iterator<FileAnnotation> iterator = warnings.iterator();
         checkWarning(iterator.next(),
                 451,
-                "`void yyunput(int, char*)' defined but not used",
+                "'void yyunput(int, char*)' defined but not used",
                 "testhist.l",
                 WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
         checkWarning(iterator.next(),
@@ -78,12 +78,12 @@ public class Gcc4CompilerParserTest extends ParserTester {
                 WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
         checkWarning(iterator.next(),
                 6,
-                "passing ‘Test’ chooses ‘int’ over ‘unsigned int’",
+                "passing 'Test' chooses 'int' over 'unsigned int'",
                 "warnings.cc",
                 WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
         checkWarning(iterator.next(),
                 6,
-                "in call to ‘std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(int) [with _CharT = char, _Traits = std::char_traits<char>]’",
+                "in call to 'std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(int) [with _CharT = char, _Traits = std::char_traits<char>]'",
                 "warnings.cc",
                 WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
         checkWarning(iterator.next(),
@@ -93,12 +93,12 @@ public class Gcc4CompilerParserTest extends ParserTester {
                 WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
         checkWarning(iterator.next(),
                 8,
-                "‘bar’ was not declared in this scope",
+                "'bar' was not declared in this scope",
                 "fo:oo.cpp",
                 WARNING_TYPE, WARNING_CATEGORY, Priority.HIGH);
         checkWarning(iterator.next(),
                 12,
-                "expected ‘;’ before ‘return’",
+                "expected ';' before 'return'",
                 "fo:oo.cpp",
                 WARNING_TYPE, WARNING_CATEGORY, Priority.HIGH);
     }

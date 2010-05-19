@@ -1,5 +1,5 @@
 ================ From Gcc.txt
-testhist.l:451: warning: `void yyunput(int, char*)' defined but not used
+testhist.l:451: warning: 'void yyunput(int, char*)' defined but not used
 
 /u1/drjohn/bfdist/packages/RegrTest/V00-03-01/RgtAddressLineScan.cc:73: error: implicit typename is deprecated, please see the documentation for details
 
@@ -15,7 +15,7 @@ src/test_simple_sgs_message.cxx:52: warning: large integer implicitly truncated 
 
 ================ Issue 3897 (not valid gcc4 errors -> should be undetected)
 /dir1/dir2/file.c:12:15: file.h: No such file or directory
-/dir1/dir3/file.cpp:233: undefined reference to `MyInterface::getValue() const'
+/dir1/dir3/file.cpp:233: undefined reference to 'MyInterface::getValue() const'
 /dir1/dir2/file.cpp:20:2: invalid preprocessing directive #include
 
 ================ Issue 4712
@@ -25,11 +25,11 @@ main/mep.cpp:352: warning: 's2.mepSector2::lubrications' may be used uninitializ
 main/mep.cpp:1477: note: 's2.mepSector2::lubrications' was declared here
 
 =============== Issue 4753
-warnings.cc: In function ‘void print(T) [with T = Test]’:
-warnings.cc:9:   instantiated from ‘void out(T) [with T = Test]’
+warnings.cc: In function 'void print(T) [with T = Test]':
+warnings.cc:9:   instantiated from 'void out(T) [with T = Test]'
 warnings.cc:14:   instantiated from here
-warnings.cc:6: warning: passing ‘Test’ chooses ‘int’ over ‘unsigned int’
-warnings.cc:6: warning:   in call to ‘std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(int) [with _CharT = char, _Traits = std::char_traits<char>]’
+warnings.cc:6: warning: passing 'Test' chooses 'int' over 'unsigned int'
+warnings.cc:6: warning:   in call to 'std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(int) [with _CharT = char, _Traits = std::char_traits<char>]'
 
 =============== Issue 5605
 In file included from /usr/include/c++/4.3/backward/hash_set:64,
@@ -38,7 +38,7 @@ In file included from /usr/include/c++/4.3/backward/hash_set:64,
 /usr/include/c++/4.3/backward/backward_warning.h:33:2: warning: #warning This file includes at least one deprecated or antiquated header which may be removed without further notice at a future date. Please use a non-deprecated interface with equivalent functionality instead. For a listing of replacement headers and interfaces, consult the file backward_warning.h. To disable this warning use -Wno-deprecated.
 
 =============== Checking uncommon file names
-fo:oo.cpp: In function ‘int main()’:
-fo:oo.cpp:8: error: ‘bar’ was not declared in this scope
-fo:oo.cpp:12: error: expected ‘;’ before ‘return’
+fo:oo.cpp: In function 'int main()':
+fo:oo.cpp:8: error: 'bar' was not declared in this scope
+fo:oo.cpp:12: error: expected ';' before 'return'
 foo bar.hello*world:12:
