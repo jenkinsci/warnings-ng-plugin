@@ -27,8 +27,10 @@ import hudson.util.FormValidation;
 public class GraphConfiguration  {
     /** The default value for use build date. */
     private static final boolean DEFAULT_USE_BUILD_DATE = false;
-    /** The default counter. */
-    private static final int DEFAULT_COUNT = 0;
+    /** The default build counter. */
+    private static final int DEFAULT_BUILD_COUNT = 50;
+    /** The default day counter. */
+    private static final int DEFAULT_DAY_COUNT = 30;
     /** The default width. */
     private static final int DEFAULT_WIDTH = 500;
     /** The default height. */
@@ -425,8 +427,8 @@ public class GraphConfiguration  {
     private void reset() {
         height = DEFAULT_HEIGHT;
         width  = DEFAULT_WIDTH;
-        buildCount = DEFAULT_COUNT;
-        dayCount = DEFAULT_COUNT;
+        buildCount = DEFAULT_BUILD_COUNT;
+        dayCount = DEFAULT_DAY_COUNT;
         graphType = DEFAULT_GRAPH;
         useBuildDate = DEFAULT_USE_BUILD_DATE;
     }
@@ -607,8 +609,8 @@ public class GraphConfiguration  {
         return width == DEFAULT_WIDTH
                 && height == DEFAULT_HEIGHT
                 && graphType == DEFAULT_GRAPH // NOPMD
-                && buildCount == DEFAULT_COUNT
-                && dayCount == DEFAULT_COUNT
+                && buildCount == DEFAULT_BUILD_COUNT
+                && dayCount == DEFAULT_DAY_COUNT
                 && useBuildDate == DEFAULT_USE_BUILD_DATE;
     }
     // CHECKSTYLE:ON
