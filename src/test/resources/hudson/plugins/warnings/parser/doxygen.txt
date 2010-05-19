@@ -1,0 +1,19 @@
+TradeFullInformation.h:60: Warning: Member setFiller(uint16_t filler) (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:62: Warning: Member getTradCond1() const  (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:63: Warning: Member setTradCond1(char tradCond1) (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:65: Warning: Member getTradCond2() const  (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:66: Warning: Member setTradCond2(char tradCond2) (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:68: Warning: Member getTradCond3() const  (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:69: Warning: Member setTradCond3(char tradCond3) (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:71: Warning: Member getTradCond4() const  (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:72: Warning: Member setTradCond4(char tradCond4) (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:74: Warning: Member getTickDirection() const  (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:75: Warning: Member setTickDirection(char tickDirection) (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:77: Warning: Member getOpeningTradeIndicator() const  (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:78: Warning: Member setOpeningTradeIndicator(char openingTradeIndicator) (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:80: Warning: Member getVariationScaleCode() const  (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:81: Warning: Member setVariationScaleCode(uint8_t variationScaleCode) (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:83: Warning: Member getPriceScaleCode() const  (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:84: Warning: Member setPriceScaleCode(uint8_t priceScaleCode) (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:86: Warning: Member readData(std::string &str) (function) of class TradeFullInformation is not documented.
+TradeFullInformation.h:88: Warning: Member swap() (function) of class TradeFullInformation is not documented.

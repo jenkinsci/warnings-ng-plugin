@@ -78,6 +78,7 @@ public class ParserRegistry {
         parsers.add(new CoolfluxChessccParser());
         parsers.add(new P4Parser());
         parsers.add(new RobocopyParser());
+        parsers.add(new DoxygenParser());
 
         return ImmutableList.copyOf(parsers);
     }
