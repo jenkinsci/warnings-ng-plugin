@@ -4,31 +4,34 @@ import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
- * A parser for Perforce execution
+ * A parser for Perforce execution.
  *
  * @author Adrián Deccico
  */
 public class P4Parser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Perforce Compiler";
-    /** Pattern of perforce compiler warnings. */
+    /** Sub-Pattern of perforce compiler warnings. */
     static final String ALREADY_OPENED = "already opened for edit";
+    /** Sub-Pattern of perforce compiler warnings. */
     static final String CANT_ADD = "can't add existing file";
+    /** Sub-Pattern of perforce compiler warnings. */
     static final String WARNING_ADD_OF = "warning: add of existing file";
+    /** Sub-Pattern of perforce compiler warnings. */
     static final String OPENED_FOR_EDIT = "can't add \\(" + ALREADY_OPENED + "\\)";
+    /** Sub-Pattern of perforce compiler warnings. */
     static final String NOTHING_CHANGED = "nothing changed";
-    
-    private static final String PERFORCE_WARNING_PATTERN = 
-                                                            "(.*)" 
-                                                            + "(" 
-                                                            + CANT_ADD + "|" 
-                                                            + WARNING_ADD_OF + "|" 
-                                                            + OPENED_FOR_EDIT + "|" 
-                                                            + NOTHING_CHANGED 
-                                                            + ")" 
+
+    /** Pattern of perforce compiler warnings. */
+    private static final String PERFORCE_WARNING_PATTERN =
+                                                            "(.*)"
+                                                            + "("
+                                                            + CANT_ADD + "|"
+                                                            + WARNING_ADD_OF + "|"
+                                                            + OPENED_FOR_EDIT + "|"
+                                                            + NOTHING_CHANGED
+                                                            + ")"
                                                             + "(.*)";
     /**
      * Creates a new instance of {@link P4Parser}.
@@ -43,7 +46,7 @@ public class P4Parser extends RegexpLineParser {
      * @param matcher
      *            the regular expression matcher
      * @return a new annotation for the specified pattern
-     * 
+     *
      */
     @Override
     protected Warning createWarning(final Matcher matcher) {
@@ -51,7 +54,7 @@ public class P4Parser extends RegexpLineParser {
         String fileName = matcher.group(1);
         String message = fileName;
         Priority p = Priority.NORMAL;
-        if (category.contains(ALREADY_OPENED) || category.equals(NOTHING_CHANGED)){
+        if (category.contains(ALREADY_OPENED) || category.equals(NOTHING_CHANGED)) {
             p = Priority.LOW;
         }
         return new Warning(fileName, 0, WARNING_TYPE, category, message, p);
