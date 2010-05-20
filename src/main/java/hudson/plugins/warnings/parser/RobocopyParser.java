@@ -4,13 +4,11 @@ import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
- * A parser for Robocopy
+ * A parser for Robocopy.
  *
  * @author Adrián Deccico
- * 
+ *
  * captured samples:
  *    *EXTRA File                  0        b           Unknown Task
  *   100%        New File                   0        a.log
