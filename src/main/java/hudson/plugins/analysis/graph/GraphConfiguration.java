@@ -156,7 +156,7 @@ public class GraphConfiguration  {
      * @return <code>true</code> is the initialization was successful,
      *         <code>false</code> otherwise
      */
-    private boolean initializeFrom(final int width, final int height, final int dayCount) { // NOCHECKSTYLE
+    public boolean initializeFrom(final int width, final int height, final int dayCount) { // NOCHECKSTYLE
         this.width = width;
         this.height = height;
         this.dayCount = dayCount;
