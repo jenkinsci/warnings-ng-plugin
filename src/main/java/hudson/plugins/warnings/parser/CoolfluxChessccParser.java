@@ -19,7 +19,13 @@ public class CoolfluxChessccParser extends RegexpLineParser {
      * Creates a new instance of <code>InterCParser</code>.
      */
     public CoolfluxChessccParser() {
-        super(CHESSCC_PATTERN, "Coolflux DSP Compiler");
+        super(CHESSCC_PATTERN, "Coolflux DSP Compiler", true);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean isLineInteresting(final String line) {
+        return line.contains("Warning");
     }
 
     /** {@inheritDoc} */

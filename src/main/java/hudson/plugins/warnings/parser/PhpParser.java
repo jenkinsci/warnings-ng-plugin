@@ -25,7 +25,13 @@ public class PhpParser extends RegexpLineParser {
      * Creates a new instance of {@link PhpParser}.
      */
     public PhpParser() {
-        super(PHP_WARNING_PATTERN, WARNING_TYPE);
+        super(PHP_WARNING_PATTERN, WARNING_TYPE, true);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean isLineInteresting(final String line) {
+        return line.contains("PHP");
     }
 
     /** {@inheritDoc} */

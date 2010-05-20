@@ -17,13 +17,20 @@ public class JavacParser extends RegexpLineParser {
      * Creates a new instance of <code>JavacParser</code>.
      */
     public JavacParser() {
-        super(JAVAC_WARNING_PATTERN, WARNING_TYPE);
+        super(JAVAC_WARNING_PATTERN, WARNING_TYPE, true);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean isLineInteresting(final String line) {
+        return line.contains("[WARNING]");
     }
 
     /**
      * Creates a new annotation for the specified pattern.
      *
-     * @param matcher the regular expression matcher
+     * @param matcher
+     *            the regular expression matcher
      * @return a new annotation for the specified pattern
      */
     @Override

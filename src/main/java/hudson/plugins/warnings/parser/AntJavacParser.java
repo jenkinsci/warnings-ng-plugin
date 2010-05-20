@@ -22,7 +22,13 @@ public class AntJavacParser extends RegexpLineParser {
      * Creates a new instance of <code>AntJavacParser</code>.
      */
     public AntJavacParser() {
-        super(ANT_JAVAC_WARNING_PATTERN, WARNING_TYPE);
+        super(ANT_JAVAC_WARNING_PATTERN, WARNING_TYPE, true);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean isLineInteresting(final String line) {
+        return line.contains("warning");
     }
 
     /**

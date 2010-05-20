@@ -17,9 +17,14 @@ public class FlexSDKParser extends RegexpLineParser {
      * Creates a new instance of {@link FlexSDKParser}.
      */
     public FlexSDKParser() {
-        super(FLEX_SDK_WARNING_PATTERN, WARNING_TYPE);
+        super(FLEX_SDK_WARNING_PATTERN, WARNING_TYPE, true);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected boolean isLineInteresting(final String line) {
+        return line.contains("Warning");
+    }
     /**
      * Creates a new annotation for the specified pattern.
      *
