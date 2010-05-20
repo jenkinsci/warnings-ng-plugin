@@ -58,18 +58,8 @@ public class WarningsPriorityGraphPortlet extends AbstractWarningsGraphPortlet {
      *
      * @author Ulli Hafner
      */
+    @Extension(optional = true)
     public static class WarningsGraphDescriptor extends Descriptor<DashboardPortlet> {
-        /**
-         * Creates a new descriptor if the dashboard-view plug-in is installed.
-         *
-         * @return the descriptor or <code>null</code> if the dashboard view is
-         *         not installed
-         */
-        @Extension
-        public static WarningsGraphDescriptor newInstance() {
-            return new WarningsGraphDescriptor();
-        }
-
         @Override
         public String getDisplayName() {
             return Messages.Portlet_WarningsPriorityGraph();

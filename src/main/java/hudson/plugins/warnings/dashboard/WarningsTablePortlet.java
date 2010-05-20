@@ -44,18 +44,8 @@ public class WarningsTablePortlet extends AbstractWarningsTablePortlet {
      *
      * @author Ulli Hafner
      */
+    @Extension(optional = true)
     public static class WarningsPerJobDescriptor extends Descriptor<DashboardPortlet> {
-        /**
-         * Creates a new descriptor if the dashboard-view plug-in is installed.
-         *
-         * @return the descriptor or <code>null</code> if the dashboard view is
-         *         not installed
-         */
-        @Extension
-        public static WarningsPerJobDescriptor newInstance() {
-            return new WarningsPerJobDescriptor();
-        }
-
         @Override
         public String getDisplayName() {
             return Messages.Portlet_WarningsTable();
