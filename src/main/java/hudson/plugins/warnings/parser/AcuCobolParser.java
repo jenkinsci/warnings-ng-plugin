@@ -19,7 +19,13 @@ public class AcuCobolParser extends RegexpLineParser {
      * Creates a new instance of {@link AcuCobolParser}.
      */
     public AcuCobolParser() {
-        super(ACUCOBOL_WARNING_PATTERN, WARNING_TYPE);
+        super(ACUCOBOL_WARNING_PATTERN, WARNING_TYPE, true);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean isLineInteresting(final String line) {
+        return line.contains("Warning");
     }
 
     /**
