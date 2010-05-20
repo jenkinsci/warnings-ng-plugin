@@ -118,13 +118,7 @@ public class Gcc4LinkerParserTest extends ParserTester {
     public void issue6563() throws IOException {
         Collection<FileAnnotation> warnings = new Gcc4LinkerParser().parse(openFile("issue6563.txt"));
 
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
-        Iterator<FileAnnotation> iterator = warnings.iterator();
-        checkWarning(iterator.next(),
-                9,
-                "the 'gets' function is dangerous and should not be used.",
-                "/PRODV3/pv3_fdp/v3_fdp01/tmp/main.c",
-                WARNING_TYPE, WARNING_CATEGORY, Priority.HIGH);
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, warnings.size());
     }
 
     /** {@inheritDoc} */

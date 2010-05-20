@@ -61,6 +61,9 @@ public class Gcc4LinkerParser extends RegexpLineParser {
                     priority = Priority.HIGH;
                 }
                 message = matcher.group(5);
+                if (StringUtils.endsWith(message, ":")) {
+                    return FALSE_POSITIVE;
+                }
             }
         }
         return new Warning(fileName, lineNumber, WARNING_TYPE, WARNING_CATEGORY, message, priority);
