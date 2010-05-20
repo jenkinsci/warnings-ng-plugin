@@ -5,7 +5,7 @@
     </j:if>
 
     <f:entry title="${%Name}" field="name">
-      <f:textbox/>
+      <f:textbox default="${descriptor.getDisplayName()}"/>
     </f:entry>
 
     <f:entry title="${%Width}" field="width">
