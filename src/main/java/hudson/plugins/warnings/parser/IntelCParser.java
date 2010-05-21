@@ -15,7 +15,7 @@ public class IntelCParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Intel";
     /** Pattern of Intel compiler warnings. */
-    private static final String INTEL_PATTERN = "(.*)\\((\\d*)\\)?:.*((?:remark|warning|error)\\s*#*\\d*)\\s*:\\s*(.*)";
+    private static final String INTEL_PATTERN = "^(.*)\\((\\d*)\\)?:.*((?:remark|warning|error)\\s*#*\\d*)\\s*:\\s*(.*)$";
 
     /**
      * Creates a new instance of <code>InterCParser</code>.

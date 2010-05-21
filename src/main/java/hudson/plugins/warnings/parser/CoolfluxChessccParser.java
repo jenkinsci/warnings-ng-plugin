@@ -13,7 +13,7 @@ public class CoolfluxChessccParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Coolflux DSP Compiler (chesscc)";
     /** Pattern of Intel compiler warnings. */
-    private static final String CHESSCC_PATTERN = ".*?Warning in \"([^\"]+)\", line (\\d+),.*?:\\s*(.*)";
+    private static final String CHESSCC_PATTERN = "^.*?Warning in \"([^\"]+)\", line (\\d+),.*?:\\s*(.*)$";
 
     /**
      * Creates a new instance of <code>InterCParser</code>.

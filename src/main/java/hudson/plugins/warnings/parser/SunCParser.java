@@ -13,7 +13,7 @@ public class SunCParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "SUN C++ Compiler";
     /** Pattern of gcc compiler warnings. */
-    private static final String SUN_CPP_WARNING_PATTERN = "\\s*\"(.*)\"\\s*,\\s*line\\s*(\\d+)\\s*:\\s*(Warning|Error)\\s*(?:, \\s*(.*))?\\s*:\\s*(.*)";
+    private static final String SUN_CPP_WARNING_PATTERN = "^\\s*\"(.*)\"\\s*,\\s*line\\s*(\\d+)\\s*:\\s*(Warning|Error)\\s*(?:, \\s*(.*))?\\s*:\\s*(.*)$";
 
     /**
      * Creates a new instance of <code>HpiCompileParser</code>.

@@ -19,7 +19,7 @@ public class GccParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "gcc";
     /** Pattern of gcc compiler warnings. */
-    private static final String GCC_WARNING_PATTERN = "^\\s*(?:\\[.*\\]\\s*)?(.*\\.[chpimxsola0-9]+):(?:(\\d*):(?:\\d*:)*\\s*(?:(warning|error|note)\\s*:|\\s*(.*))|\\s*(undefined reference to.*))(.*)|.*ld:\\s*(.*-l(.*))$";
+    private static final String GCC_WARNING_PATTERN = "^(?:\\s*(?:\\[.*\\]\\s*)?(.*\\.[chpimxsola0-9]+):(?:(\\d*):(?:\\d*:)*\\s*(?:(warning|error|note)\\s*:|\\s*(.*))|\\s*(undefined reference to.*))(.*)|.*ld:\\s*(.*-l(.*)))$";
 
     /**
      * Creates a new instance of <code>GccParser</code>.

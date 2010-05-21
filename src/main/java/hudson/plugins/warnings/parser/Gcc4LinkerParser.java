@@ -17,7 +17,7 @@ public class Gcc4LinkerParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "gcc4 linker";
     /** Pattern of gcc 4 linker warnings. */
-    private static final String LINKER_WARNING_PATTERN = "^(.+?)(?:(?::(?:(\\d+):)? (undefined reference to .*))|(?::?\\(\\.\\w+\\+0x[0-9a-fA-F]+\\)): (?:(warning): )?(.*))|.*/ld(?:\\.exe)?: (?:(warning): )?(.*)$";
+    private static final String LINKER_WARNING_PATTERN = "^(?:(.+?)(?:(?::(?:(\\d+):)? (undefined reference to .*))|(?::?\\(\\.\\w+\\+0x[0-9a-fA-F]+\\)): (?:(warning): )?(.*))|.*/ld(?:\\.exe)?: (?:(warning): )?(.*))$";
 
     /**
      * Creates a new instance of <code>Gcc4LinkerParser</code>.

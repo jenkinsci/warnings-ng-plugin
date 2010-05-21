@@ -25,14 +25,14 @@ public class P4Parser extends RegexpLineParser {
 
     /** Pattern of perforce compiler warnings. */
     private static final String PERFORCE_WARNING_PATTERN =
-                                                            "(.*) - "
+                                                            "^(.*) - "
                                                             + "("
                                                             + CANT_ADD + "|"
                                                             + WARNING_ADD_OF + "|"
                                                             + OPENED_FOR_EDIT + "|"
                                                             + NOTHING_CHANGED
                                                             + ")"
-                                                            + "(.*)";
+                                                            + "(.*)$";
     /**
      * Creates a new instance of {@link P4Parser}.
      */
@@ -59,11 +59,11 @@ public class P4Parser extends RegexpLineParser {
         }
         return new Warning(fileName, 0, WARNING_TYPE, category, message, p);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected boolean isLineInteresting(final String line) {
         return line.contains(" - ");
-    }    
+    }
 }
 

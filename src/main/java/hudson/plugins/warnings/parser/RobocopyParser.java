@@ -18,7 +18,7 @@ public class RobocopyParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Robocopy (please use /V in your commands!)";
     /** Pattern of perforce compiler warnings. */
-    private static final String ROBOCOPY_WARNING_PATTERN = "(.*)(EXTRA File|New File|same)\\s*(\\d*)\\s*(.*)";
+    private static final String ROBOCOPY_WARNING_PATTERN = "^(.*)(EXTRA File|New File|same)\\s*(\\d*)\\s*(.*)$";
 
     /**
      * Creates a new instance of {@link RobocopyParser}.
@@ -41,11 +41,11 @@ public class RobocopyParser extends RegexpLineParser {
         String category = matcher.group(2);
         return new Warning(file, 0, WARNING_TYPE, category, message, Priority.NORMAL);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected boolean isLineInteresting(final String line) {
         return line.contains("        ");
-    }        
+    }
 }
 
