@@ -25,7 +25,7 @@ public class P4Parser extends RegexpLineParser {
 
     /** Pattern of perforce compiler warnings. */
     private static final String PERFORCE_WARNING_PATTERN =
-                                                            "(.*)"
+                                                            "(.*) - "
                                                             + "("
                                                             + CANT_ADD + "|"
                                                             + WARNING_ADD_OF + "|"
@@ -37,7 +37,7 @@ public class P4Parser extends RegexpLineParser {
      * Creates a new instance of {@link P4Parser}.
      */
     public P4Parser() {
-        super(PERFORCE_WARNING_PATTERN, WARNING_TYPE);
+        super(PERFORCE_WARNING_PATTERN, WARNING_TYPE, true);
     }
 
     /**
@@ -50,8 +50,8 @@ public class P4Parser extends RegexpLineParser {
      */
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        String category = matcher.group(2);
-        String fileName = matcher.group(1);
+        String category = matcher.group(2).trim();
+        String fileName = matcher.group(1).trim();
         String message = fileName;
         Priority p = Priority.NORMAL;
         if (category.contains(ALREADY_OPENED) || category.equals(NOTHING_CHANGED)) {
@@ -59,5 +59,11 @@ public class P4Parser extends RegexpLineParser {
         }
         return new Warning(fileName, 0, WARNING_TYPE, category, message, p);
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected boolean isLineInteresting(final String line) {
+        return line.contains(" - ");
+    }    
 }
 

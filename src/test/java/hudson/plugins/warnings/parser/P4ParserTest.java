@@ -27,32 +27,45 @@ public class P4ParserTest extends ParserTester {
         assertEquals("Wrong number of warnings detected.", 4, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
-        FileAnnotation annotation = iterator.next();
+        
+        checkP4Warning(iterator.next(),
+                "//eng/Tools/Hudson/instances/PCFARM08/.owner",
+                "can't add existing file", 
+                Priority.NORMAL);
+        
+        checkP4Warning(iterator.next(),
+                "//eng/Tools/Hudson/instances/PCFARM08/jobs/EASW-FIFA DailyTasks/config.xml",
+                "warning: add of existing file", 
+                Priority.NORMAL);
+
+        checkP4Warning(iterator.next(),
+                "//eng/Tools/Hudson/instances/PCFARM08/jobs/BFBC2-DailyTasksEurope/config.xml",
+                "can't add (already opened for edit)", 
+                Priority.LOW);
+
+        checkP4Warning(iterator.next(),
+                "//eng/Tools/Hudson/instances/PCFARM08/config.xml#8",
+                "nothing changed", 
+                Priority.LOW);
+    }
+    
+    
+    /**
+     * Verifies the annotation content.
+     *
+     * @param annotation the annotation to check
+     * @param lineNumber
+     *      the line number of the warning
+     */
+    private void checkP4Warning(final FileAnnotation annotation, final String warning_file, final String category, final Priority p) {
         checkWarning(annotation,
                 0,
-                "//depot/file1.txt",
-                "//depot/file1.txt",
-                P4Parser.WARNING_TYPE, "can't add existing file", Priority.NORMAL);
-        annotation = iterator.next();
-        checkWarning(annotation,
-                0,
-                "//depot/file2.txt",
-                "//depot/file2.txt",
-                P4Parser.WARNING_TYPE, "warning: add of existing file", Priority.NORMAL);
-        annotation = iterator.next();
-        checkWarning(annotation,
-                0,
-                "//depot/file3.txt",
-                "//depot/file3.txt",
-                P4Parser.WARNING_TYPE, "can't add (already opened for edit)", Priority.LOW);
-        annotation = iterator.next();
-        checkWarning(annotation,
-                0,
-                "//depot/file4.txt",
-                "//depot/file4.txt",
-                P4Parser.WARNING_TYPE, "nothing changed", Priority.LOW);        
+                warning_file,
+                warning_file,
+                P4Parser.WARNING_TYPE, category, p);        
     }
 
+    
     /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {

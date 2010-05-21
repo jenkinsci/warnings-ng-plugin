@@ -24,7 +24,7 @@ public class RobocopyParser extends RegexpLineParser {
      * Creates a new instance of {@link RobocopyParser}.
      */
     public RobocopyParser() {
-        super(ROBOCOPY_WARNING_PATTERN, WARNING_TYPE);
+        super(ROBOCOPY_WARNING_PATTERN, WARNING_TYPE, true);
     }
 
     /**
@@ -41,5 +41,11 @@ public class RobocopyParser extends RegexpLineParser {
         String category = matcher.group(2);
         return new Warning(file, 0, WARNING_TYPE, category, message, Priority.NORMAL);
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected boolean isLineInteresting(final String line) {
+        return line.contains("        ");
+    }        
 }
 
