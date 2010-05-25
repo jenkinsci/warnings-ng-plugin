@@ -18,7 +18,7 @@ public class DoxygenParserTest extends ParserTester {
     private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
     /** The category. */
     private static final String WARNING_CATEGORY = DoxygenParser.WARNING_CATEGORY;
-    /** The type **/
+    /** The type. **/
     private static final String WARNING_TYPE = DoxygenParser.WARNING_TYPE;
 
     /**
