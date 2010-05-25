@@ -27,6 +27,7 @@ public class DoxygenParserTest extends ParserTester {
      * @throws IOException
      *      if the file could not be read
      */
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     @Test
     public void testWarningsParser() throws IOException {
         Collection<FileAnnotation> warnings = new DoxygenParser().parse(openFile());
