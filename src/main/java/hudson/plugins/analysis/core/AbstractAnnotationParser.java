@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
+import org.apache.commons.io.IOUtils;
+
 import hudson.plugins.analysis.util.ContextHashCode;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
@@ -44,11 +46,16 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
 
     /** {@inheritDoc} */
     public Collection<FileAnnotation> parse(final File file, final String moduleName) throws InvocationTargetException {
+        FileInputStream input = null;
         try {
-            return parse(new FileInputStream(file), moduleName);
+            input = new FileInputStream(file);
+            return parse(input, moduleName);
         }
         catch (FileNotFoundException exception) {
             throw new InvocationTargetException(exception);
+        }
+        finally {
+            IOUtils.closeQuietly(input);
         }
     }
 
