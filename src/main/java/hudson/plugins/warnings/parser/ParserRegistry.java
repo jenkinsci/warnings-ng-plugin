@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
 
@@ -146,7 +147,14 @@ public class ParserRegistry {
     public Collection<FileAnnotation> parse(final File file) throws IOException {
         List<FileAnnotation> allAnnotations = new ArrayList<FileAnnotation>();
         for (WarningsParser parser : parsers) {
-            allAnnotations.addAll(parser.parse(createReader(file)));
+            Reader input = null;
+            try {
+                input = createReader(file);
+                allAnnotations.addAll(parser.parse(input));
+            }
+            finally {
+                IOUtils.closeQuietly(input);
+            }
         }
         return applyExcludeFilter(allAnnotations);
     }
