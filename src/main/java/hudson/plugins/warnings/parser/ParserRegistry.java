@@ -223,6 +223,7 @@ public class ParserRegistry {
      * @return the reader
      * @throws FileNotFoundException if the file does not exist
      */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("OBL")
     protected Reader createReader(final File file) throws FileNotFoundException {
         return createReader(new FileInputStream(file));
     }
