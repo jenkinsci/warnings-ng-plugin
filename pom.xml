@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>1.7</version>
+    <version>1.8</version>
     <relativePath>../analysis-pom/pom.xml</relativePath>
   </parent>
 
