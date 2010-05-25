@@ -25,6 +25,7 @@ import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.FileFinder;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
+import java.util.TreeSet;
 
 /**
  * Stores the collection of parsed annotations and associated error messages.
@@ -148,15 +149,23 @@ public class ParserResult implements Serializable {
         LOGGER.log(Level.INFO, "Building cache of all workspace files to obtain absolute filenames for all warnings.");
 
         String[] allFiles = workspace.act(new FileFinder("**/*"));
+        Set<String> duplicates = new TreeSet<String>();
         for (String file : allFiles) {
             String fileName = new File(file).getName();
             if (fileNameCache.containsKey(fileName)) {
-                LOGGER.log(Level.INFO, "Relative filename '" + fileName + "' found more than once: absolute filename resolving disabled for this file.");
+                if (duplicates.size() >= 20) {
+                    duplicates.add("\u2026"); // HORIZONTAL ELLIPSIS sorts after ASCII whereas ... FULL STOP is before letters
+                } else {
+                    duplicates.add(fileName);
+                }
                 fileNameCache.remove(fileName);
             }
             else {
                 fileNameCache.put(fileName, file);
             }
+        }
+        if (!duplicates.isEmpty()) {
+            LOGGER.log(Level.INFO, "Relative filenames {0} found more than once; absolute filename resolution disabled for these files.", duplicates);
         }
     }
 
