@@ -6,6 +6,8 @@ import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 /**
  * A parser for the Doxygen warnings.
  *
@@ -56,25 +58,25 @@ public class DoxygenParser extends RegexpDocumentParser {
     private static final String DOXYGEN_WARNING_PATTERN =
         "^(?:(?:((?:/|[A-Za-z]:).+?):(-?\\d+): (Warning|Error)|<.+>:-?\\d+(?:: (Warning|Error))?): (.+(?:\\n[^/<\\n][^:\\n][^/\\n].+)*)|(Notice|Warning|Error): (.+))$";
 
-    /** The index of the regexp group capturing the file name (when the warning occurs in a file) */
+    /** The index of the regexp group capturing the file name (when the warning occurs in a file). */
     private static final int FILE_NAME_GROUP = 1;
 
-    /** The index of the regexp group capturing the line number (when the warning occurs in a file) */
+    /** The index of the regexp group capturing the line number (when the warning occurs in a file). */
     private static final int FILE_LINE_GROUP = 2;
 
-    /** The index of the regexp group capturing the warning type (when occuring in a file) */
+    /** The index of the regexp group capturing the warning type (when occuring in a file). */
     private static final int FILE_TYPE_GROUP = 3;
 
-    /** The index of the regexp group capturing the warning type (when occuring in a function) */
+    /** The index of the regexp group capturing the warning type (when occuring in a function). */
     private static final int FUNC_TYPE_GROUP = 4;
 
-    /** The index of the regexp group capturing the warning message (when it occurs in a local context: file or function) */
+    /** The index of the regexp group capturing the warning message (when it occurs in a local context: file or function). */
     private static final int LOCAL_MESSAGE_GROUP = 5;
 
-    /** The index of the regexp group capturing the warning type, when not attached to a local context */
+    /** The index of the regexp group capturing the warning type, when not attached to a local context. */
     private static final int GLOBAL_TYPE_GROUP = 6;
 
-    /** The index of the regexp group capturing the warning message, when not attached to a local context */
+    /** The index of the regexp group capturing the warning message, when not attached to a local context. */
     private static final int GLOBAL_MESSAGE_GROUP = 7;
 
     /**
@@ -123,10 +125,13 @@ public class DoxygenParser extends RegexpDocumentParser {
 
     /**
      * Returns the priority ordinal matching the specified warning type string.
-     * @param warningTypeString a string containing the warning type
-     * returned by a regular expression group matching it in the warnings
-     * output.
+     *
+     * @param warningTypeString
+     *            a string containing the warning type returned by a regular
+     *            expression group matching it in the warnings output.
+     * @return the priority
      */
+    @SuppressWarnings("DB")
     private Priority parsePriority(final String warningTypeString) {
         Priority priority;
         if (StringUtils.equalsIgnoreCase(warningTypeString, "notice")) {
