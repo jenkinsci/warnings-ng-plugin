@@ -169,11 +169,16 @@ public class ParserRegistry {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public Collection<FileAnnotation> parse(final InputStream file) throws IOException {
-        List<FileAnnotation> allAnnotations = new ArrayList<FileAnnotation>();
-        for (WarningsParser parser : parsers) {
-            allAnnotations.addAll(parser.parse(createReader(file)));
+        try {
+            List<FileAnnotation> allAnnotations = new ArrayList<FileAnnotation>();
+            for (WarningsParser parser : parsers) {
+                allAnnotations.addAll(parser.parse(createReader(file)));
+            }
+            return applyExcludeFilter(allAnnotations);
         }
-        return applyExcludeFilter(allAnnotations);
+        finally {
+            IOUtils.closeQuietly(file);
+        }
     }
 
 
