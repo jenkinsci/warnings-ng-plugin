@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * Base class for package detectors.
  *
@@ -15,13 +17,18 @@ public abstract class AbstractPackageDetector implements PackageDetector {
 
     /** {@inheritDoc} */
     public String detectPackageName(final String fileName) {
+        FileInputStream input = null;
         try {
             if (accepts(fileName)) {
-                return detectPackageName(new FileInputStream(new File(fileName)));
+                input = new FileInputStream(new File(fileName));
+                return detectPackageName(input);
             }
         }
         catch (FileNotFoundException exception) {
             // ignore and return empty string
+        }
+        finally {
+            IOUtils.closeQuietly(input);
         }
         return UNKNOWN_PACKAGE;
     }
