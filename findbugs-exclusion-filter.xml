@@ -2,7 +2,6 @@
 
 <FindBugsFilter>
   <Match>
-    <BugCode name="Nm"/>
     <Class name="~.*Messages.*"/>
   </Match>
 </FindBugsFilter>
