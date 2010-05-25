@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,7 +26,6 @@ import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.FileFinder;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
-import java.util.TreeSet;
 
 /**
  * Stores the collection of parsed annotations and associated error messages.
@@ -155,7 +155,8 @@ public class ParserResult implements Serializable {
             if (fileNameCache.containsKey(fileName)) {
                 if (duplicates.size() >= 20) {
                     duplicates.add("\u2026"); // HORIZONTAL ELLIPSIS sorts after ASCII whereas ... FULL STOP is before letters
-                } else {
+                }
+                else {
                     duplicates.add(fileName);
                 }
                 fileNameCache.remove(fileName);
