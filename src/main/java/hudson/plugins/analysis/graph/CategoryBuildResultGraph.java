@@ -156,7 +156,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
             valuesPerBuild.put(current.getOwner(), computeSeries(current));
 
             if (current.hasPreviousResult()) {
-                // Hack to avoid NPE, needs further investigation
+                // FIXME: Hack to avoid NPE, needs further investigation
                 BuildResult oldCurrent = current;
                 current = current.getPreviousResult();
                 if (current == null) {
