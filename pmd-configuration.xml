@@ -59,6 +59,7 @@
   </rule>
   <rule ref="rulesets/optimizations.xml">
     <exclude name="LocalVariableCouldBeFinal"/>
+    <exclude name="SimplifyStartsWith"/>
     <exclude name="AvoidInstantiatingObjectsInLoops"/>
     <exclude name="UseStringBufferForStringAppends"/>
   </rule>
