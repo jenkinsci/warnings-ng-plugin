@@ -1,18 +1,21 @@
 <?xml version="1.0"?>
-<ruleset name="Custom ruleset" xmlns="http://pmd.sf.net/ruleset/1.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
-	xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+<ruleset name="Custom ruleset"
+  xmlns="http://pmd.sf.net/ruleset/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+  xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
 
-	<description>Ulli's PMD rules.</description>
+  <description>
+    Ulli's PMD rules.
+  </description>
 
   <rule ref="rulesets/basic.xml">
     <exclude name="EmptyCatchBlock"/>
   </rule>
   <rule ref="rulesets/basic.xml/EmptyCatchBlock">
-      <properties>
-        <property name="allowCommentedBlocks" value="true"/>
-      </properties>
+    <properties>
+      <property name="allowCommentedBlocks" value="true"/>
+    </properties>
   </rule>
   <rule ref="rulesets/braces.xml"/>
   <rule ref="rulesets/clone.xml"/>
@@ -21,41 +24,40 @@
     <exclude name="TooManyMethods"/>
   </rule>
   <rule ref="rulesets/codesize.xml/CyclomaticComplexity">
-      <properties>
-        <property name="showClassesComplexity" value="false"/>
-      </properties>
+    <properties>
+      <property name="showClassesComplexity" value="false"/>
+    </properties>
   </rule>
   <rule ref="rulesets/controversial.xml">
     <exclude name="AtLeastOneConstructor"/>
     <exclude name="DataflowAnomalyAnalysis"/>
-    <exclude name="BooleanInversion"/>
     <exclude name="OnlyOneReturn"/>
+    <exclude name="BooleanInversion"/>
     <exclude name="DefaultPackage"/>
   </rule>
   <rule ref="rulesets/coupling.xml"/>
   <rule ref="rulesets/design.xml">
     <exclude name="EmptyMethodInAbstractClassShouldBeAbstract"/>
     <exclude name="UseSingleton"/>
-    <exclude name="AvoidSynchronizedAtMethodLevel"/>
     <exclude name="CloseResource"/>
-    <exclude name="AbstractClassWithoutAbstractMethod"/>
+    <exclude name="CloseResource"/>
   </rule>
   <rule ref="rulesets/finalizers.xml"/>
   <rule ref="rulesets/imports.xml">
     <exclude name="UnusedImports"/>
+    <exclude name="DuplicateImports"/>
   </rule>
   <rule ref="rulesets/junit.xml">
     <exclude name="JUnitTestsShouldIncludeAssert"/>
+    <exclude name="TestClassWithoutTestCases"/>
   </rule>
   <rule ref="rulesets/naming.xml">
     <exclude name="ShortVariable"/>
     <exclude name="LongVariable"/>
     <exclude name="AbstractNaming"/>
-    <exclude name="BooleanGetMethodName"/>
   </rule>
   <rule ref="rulesets/optimizations.xml">
     <exclude name="LocalVariableCouldBeFinal"/>
-    <exclude name="SimplifyStartsWith"/>
     <exclude name="AvoidInstantiatingObjectsInLoops"/>
     <exclude name="UseStringBufferForStringAppends"/>
   </rule>
@@ -63,17 +65,8 @@
   <rule ref="rulesets/strings.xml">
     <exclude name="AvoidDuplicateLiterals"/>
   </rule>
-  <rule ref="rulesets/strings.xml/AvoidDuplicateLiterals">
-    <properties>
-      <property name="skipAnnotations" value="true"/>
-    </properties>
-  </rule>
   <rule ref="rulesets/sunsecure.xml"/>
   <rule ref="rulesets/unusedcode.xml"/>
-  <rule ref="rulesets/logging-java.xml/SystemPrintln">
-    <priority>3</priority>
-  </rule>
-  <rule ref="rulesets/logging-java.xml/AvoidPrintStackTrace">
-    <priority>3</priority>
-  </rule>
+  <rule ref="rulesets/logging-java.xml"/>
+
 </ruleset>
