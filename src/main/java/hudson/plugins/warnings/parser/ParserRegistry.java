@@ -243,6 +243,8 @@ public class ParserRegistry {
      * Filters file names based on Ant file-set patterns.
      */
     private static final class FileFilter extends DirectoryScanner {
+        private static final String SEPARATOR = ",\\s*";
+
         /**
          * Creates a new instance of {@link FileFilter}.
          *
@@ -258,13 +260,13 @@ public class ParserRegistry {
                 setIncludes(new String[] {"**/*"});
             }
             else {
-                setIncludes(includePattern.split(",\\s*"));
+                setIncludes(includePattern.split(SEPARATOR));
             }
             if (StringUtils.isEmpty(excludePattern)) {
                 setExcludes(new String[] {});
             }
             else {
-                setExcludes(excludePattern.split(",\\s*"));
+                setExcludes(excludePattern.split(SEPARATOR));
             }
         }
 
