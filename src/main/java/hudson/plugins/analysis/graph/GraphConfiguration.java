@@ -25,17 +25,14 @@ import hudson.util.FormValidation;
  * Configuration properties of a trend graph.
  */
 public class GraphConfiguration  {
-    /** The default value for use build date. */
+    private static final int MAXIMUM_SIZE = 2000;
+    private static final int MINIMUM_SIZE = 25;
+
     private static final boolean DEFAULT_USE_BUILD_DATE = false;
-    /** The default build counter. */
     private static final int DEFAULT_BUILD_COUNT = 50;
-    /** The default day counter. */
     private static final int DEFAULT_DAY_COUNT = 30;
-    /** The default width. */
     private static final int DEFAULT_WIDTH = 500;
-    /** The default height. */
     private static final int DEFAULT_HEIGHT = 200;
-    /** The default graph. */
     private static final BuildResultGraph DEFAULT_GRAPH = new PriorityGraph();
 
     /** Separator of cookie values. */
@@ -218,6 +215,7 @@ public class GraphConfiguration  {
      * @return <code>true</code> is the initialization was successful,
      *         <code>false</code> otherwise
      */
+    // CHECKSTYLE:CONSTANTS-OFF
     private boolean intializeFromStringValue(final String value) {
         if (StringUtils.isBlank(value)) {
             return false;
@@ -257,6 +255,7 @@ public class GraphConfiguration  {
 
         return isLocalValid && isValid(width, height, buildCount, dayCount, graphType);
     }
+    // CHECKSTYLE:CONSTANTS-ON
 
     /**
      * Parses the provided array of string values and initializes the members of
@@ -510,7 +509,7 @@ public class GraphConfiguration  {
      *         otherwise
      */
     protected static boolean isValidWidth(final int newWidth) {
-        return newWidth > 25 && newWidth < 2000;
+        return newWidth > MINIMUM_SIZE && newWidth < MAXIMUM_SIZE;
     }
 
     /**
@@ -522,7 +521,7 @@ public class GraphConfiguration  {
      *         otherwise
      */
     protected static boolean isValidHeight(final int newHeight) {
-        return newHeight > 25 && newHeight  < 2000;
+        return newHeight > MINIMUM_SIZE && newHeight  < MAXIMUM_SIZE;
     }
 
     /**
@@ -678,6 +677,7 @@ public class GraphConfiguration  {
 
     /** {@inheritDoc} */
     @Override
+    // CHECKSTYLE:OFF
     public int hashCode() {
         int prime = 31;
         int result = 1;
@@ -689,10 +689,12 @@ public class GraphConfiguration  {
         result = prime * result + width;
         return result;
     }
+    // CHECKSTYLE:ON
 
     /** {@inheritDoc} */
     @Override // NOCHECKSTYLE
     @SuppressWarnings("PMD")
+    // CHECKSTYLE:OFF
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
@@ -729,5 +731,6 @@ public class GraphConfiguration  {
         }
         return true;
     }
+    // CHECKSTYLE:ON
 }
 

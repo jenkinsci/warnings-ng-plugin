@@ -13,6 +13,7 @@ import org.kohsuke.stapler.Ancestor;
  * @author Ulli Hafner
  */
 public class CookieHandler {
+    private static final int ANCESTOR_PATH_PREFIX = 3;
     /** One year (in seconds). */
     private static final int ONE_YEAR = 60 * 60 * 24 * 365;
     /** The name of the cookie. */
@@ -39,7 +40,7 @@ public class CookieHandler {
      */
     public Cookie create(final List<Ancestor> requestAncestors, final String value) {
         Cookie cookie = new Cookie(name, value);
-        Ancestor ancestor = requestAncestors.get(requestAncestors.size() - 3);
+        Ancestor ancestor = requestAncestors.get(requestAncestors.size() - ANCESTOR_PATH_PREFIX);
         cookie.setPath(ancestor.getUrl());
         cookie.setMaxAge(ONE_YEAR);
 

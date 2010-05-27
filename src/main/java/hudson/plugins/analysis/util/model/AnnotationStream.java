@@ -9,6 +9,8 @@ import hudson.util.XStream2;
  * @author Ulli Hafner
  */
 public class AnnotationStream extends XStream2 {
+    private static final int HIGH_PRIORITY = 100;
+
     /**
      * Creates a new instance of <code>AnnotationStream</code>.
      */
@@ -18,8 +20,8 @@ public class AnnotationStream extends XStream2 {
         alias("annotation", FileAnnotation.class);
         alias("hudson.plugins.tasks.util.model.LineRange", LineRange.class);
         alias("range", LineRange.class);
-        registerConverter(new HeapSpaceStringConverter(), 100);
-        registerConverter(new Priority.PriorityConverter(), 100);
+        registerConverter(new HeapSpaceStringConverter(), HIGH_PRIORITY);
+        registerConverter(new Priority.PriorityConverter(), HIGH_PRIORITY);
         addImmutableType(Priority.class);
     }
 }

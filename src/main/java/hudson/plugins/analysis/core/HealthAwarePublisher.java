@@ -51,8 +51,9 @@ import hudson.tasks.Maven;
 // CHECKSTYLE:COUPLING-OFF
 @SuppressWarnings("PMD.TooManyFields")
 public abstract class HealthAwarePublisher extends Recorder implements HealthDescriptor {
-    /** Unique ID of this class. */
     private static final long serialVersionUID = -7945220365563528457L;
+    private static final String SLASH = "/";
+
     /** Default threshold priority limit. */
     private static final String DEFAULT_PRIORITY_THRESHOLD_LIMIT = "low";
     /** Annotation threshold to be reached if a build should be considered as unstable. */
@@ -285,11 +286,11 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             IOUtils.write(String.format(
                     "Copying the source file '%s' from the workspace to the build folder '%s' on the Hudson master failed.\n",
                     slaveFileName, masterFile.getAbsolutePath()), outputStream);
-            if (!slaveFileName.startsWith("/") && !slaveFileName.contains(":")) {
+            if (!slaveFileName.startsWith(SLASH) && !slaveFileName.contains(":")) {
                 IOUtils.write("Seems that the path is relative, however an absolute path is required when copying the sources.\n", outputStream);
                 String base;
-                if (slaveFileName.contains("/")) {
-                    base = StringUtils.substringAfterLast(slaveFileName, "/");
+                if (slaveFileName.contains(SLASH)) {
+                    base = StringUtils.substringAfterLast(slaveFileName, SLASH);
                 }
                 else {
                     base = slaveFileName;
@@ -450,7 +451,6 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      * @return <code>true</code> if the current build uses maven,
      *         <code>false</code> otherwise
      */
-    @SuppressWarnings("rawtypes")
     protected boolean isMavenBuild(final AbstractBuild<?, ?> build) {
         if (build.getProject() instanceof Project) {
             Project<?, ?> project = (Project<?, ?>)build.getProject();
@@ -471,7 +471,6 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      * @return <code>true</code> if the current build uses ant,
      *         <code>false</code> otherwise
      */
-    @SuppressWarnings("rawtypes")
     protected boolean isAntBuild(final AbstractBuild<?, ?> build) {
         if (build.getProject() instanceof Project) {
             Project<?, ?> project = (Project<?, ?>)build.getProject();

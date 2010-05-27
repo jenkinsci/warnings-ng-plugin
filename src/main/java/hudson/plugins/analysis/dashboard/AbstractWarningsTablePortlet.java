@@ -16,6 +16,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * @author Ulli Hafner
  */
 public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
+    private static final String CLOSE_TAG = ">";
+    private static final String OPEN_TAG = "<";
+
     /** Message to be shown if no result action is found. */
     private static final String NO_RESULTS_FOUND = "-";
 
@@ -95,8 +98,8 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
      */
     private int toInt(final String value) {
         try {
-            if (value.contains("<")) {
-                return Integer.parseInt(StringUtils.substringBetween(value, ">", "<"));
+            if (value.contains(OPEN_TAG)) {
+                return Integer.parseInt(StringUtils.substringBetween(value, CLOSE_TAG, OPEN_TAG));
             }
             else {
                 return Integer.parseInt(value);

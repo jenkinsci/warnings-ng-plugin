@@ -33,10 +33,11 @@ import hudson.plugins.analysis.util.model.Priority;
  * @author Ulli Hafner
  */
 public class ParserResult implements Serializable {
-    /** The logger. */
-    private static final Logger LOGGER = Logger.getLogger(ParserResult.class.getName());
-    /** Unique ID of this class. */
     private static final long serialVersionUID = -8414545334379193330L;
+    private static final Logger LOGGER = Logger.getLogger(ParserResult.class.getName());
+    private static final int DUPLICATES_REPORTING_LIMIT = 20;
+    private static final String SLASH = "/";
+
     /** The parsed annotations. */
     @SuppressWarnings("Se")
     private final Set<FileAnnotation> annotations = new HashSet<FileAnnotation>();
@@ -133,7 +134,7 @@ public class ParserResult implements Serializable {
         }
 
         if (fileNameCache.containsKey(annotation.getFileName())) {
-            annotation.setFileName(workspace.getRemote() + "/" + fileNameCache.get(annotation.getFileName()));
+            annotation.setFileName(workspace.getRemote() + SLASH + fileNameCache.get(annotation.getFileName()));
         }
     }
 
@@ -153,7 +154,7 @@ public class ParserResult implements Serializable {
         for (String file : allFiles) {
             String fileName = new File(file).getName();
             if (fileNameCache.containsKey(fileName)) {
-                if (duplicates.size() >= 20) {
+                if (duplicates.size() >= DUPLICATES_REPORTING_LIMIT) {
                     duplicates.add("\u2026"); // HORIZONTAL ELLIPSIS sorts after ASCII whereas ... FULL STOP is before letters
                 }
                 else {
@@ -178,7 +179,7 @@ public class ParserResult implements Serializable {
      */
     private boolean hasRelativeFileName(final FileAnnotation annotation) {
         String fileName = annotation.getFileName();
-        return !fileName.startsWith("/") && !fileName.contains(":");
+        return !fileName.startsWith(SLASH) && !fileName.contains(":");
     }
 
     /**

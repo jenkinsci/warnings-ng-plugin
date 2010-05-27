@@ -21,11 +21,15 @@ import org.xml.sax.SAXException;
  * @author Ulli Hafner
  */
 public class ModuleDetector {
+    private static final String BACK_SLASH = "\\";
+    private static final String SLASH = "/";
+    private static final String ALL_DIRECTORIES = "**/";
+
     /** Filename of Maven pom. */
     protected static final String MAVEN_POM = "pom.xml";
     /** Filename of Ant project file. */
     protected static final String ANT_PROJECT = "build.xml";
-    /** Prefix of a maven target folder. */
+    /** Prefix of a Maven target folder. */
     private static final String TARGET = "/target";
     /** The factory to create input streams with. */
     private FileInputStreamFactory factory = new DefaultFileInputStreamFactory();
@@ -136,7 +140,7 @@ public class ModuleDetector {
      * @return the maven modules in the workspace
      */
     private String[] findMavenModules(final File workspace) {
-        return find(workspace, "**/" + MAVEN_POM);
+        return find(workspace, ALL_DIRECTORIES + MAVEN_POM);
     }
 
     /**
@@ -146,7 +150,7 @@ public class ModuleDetector {
      * @return the Ant projects in the workspace
      */
     private String[] findAntProjects(final File workspace) {
-        return find(workspace, "**/" + ANT_PROJECT);
+        return find(workspace, ALL_DIRECTORIES + ANT_PROJECT);
     }
 
     /**
@@ -164,7 +168,7 @@ public class ModuleDetector {
 
         String absolutePath = path.getAbsolutePath();
         for (int file = 0; file < absoluteFileNames.length; file++) {
-            absoluteFileNames[file] = (absolutePath + "/" + relativeFileNames[file]).replace("\\", "/");
+            absoluteFileNames[file] = (absolutePath + SLASH + relativeFileNames[file]).replace(BACK_SLASH, SLASH);
         }
         return absoluteFileNames;
     }
@@ -183,7 +187,7 @@ public class ModuleDetector {
      *         resolved
      */
     public String guessModuleName(final String fileName, final boolean isMavenBuild, final boolean isAntBuild) {
-        String unixName = fileName.replace("\\", "/");
+        String unixName = fileName.replace(BACK_SLASH, SLASH);
 
         if (isMavenBuild) {
             String projectName = parsePom(unixName);
@@ -191,7 +195,7 @@ public class ModuleDetector {
                 return projectName;
             }
         }
-        String path = StringUtils.substringBeforeLast(unixName, "/");
+        String path = StringUtils.substringBeforeLast(unixName, SLASH);
 
         if (isAntBuild) {
             String projectName = parseBuildXml(path);
@@ -200,8 +204,8 @@ public class ModuleDetector {
             }
         }
 
-        if (path.contains("/")) {
-            return StringUtils.substringAfterLast(path, "/");
+        if (path.contains(SLASH)) {
+            return StringUtils.substringAfterLast(path, SLASH);
         }
         else {
             return path;

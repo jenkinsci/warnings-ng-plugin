@@ -808,7 +808,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        int prime = 31;
+        int prime = 31; // NOCHECKSTYLE
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;

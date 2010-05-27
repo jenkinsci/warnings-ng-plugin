@@ -25,9 +25,8 @@ import hudson.plugins.analysis.util.model.Priority;
  *
  * @author Ulli Hafner
  */
-// CHECKSTYLE:COUPLING-OFF
+// CHECKSTYLE:OFF
 public class Main extends ApplicationFrame {
-// CHECKSTYLE:COUPLING-ON
     /** Unique ID. */
     private static final long serialVersionUID = 1640077724803031029L;
 

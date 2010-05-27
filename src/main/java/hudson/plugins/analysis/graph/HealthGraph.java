@@ -64,7 +64,7 @@ public class HealthGraph extends CategoryBuildResultGraph {
     /** {@inheritDoc} */
     @Override
     protected List<Integer> computeSeries(final BuildResult current) {
-        List<Integer> series = new ArrayList<Integer>(3);
+        List<Integer> series = new ArrayList<Integer>();
         int remainder = current.getNumberOfAnnotations();
 
         if (healthDescriptor.isHealthyReportEnabled()) {

@@ -11,6 +11,10 @@ import org.apache.commons.io.LineIterator;
  * @author Ulli Hafner
  */
 public class ContextHashCode {
+    /** Number of lines before and after current line to consider. */
+    private static final int LINES_LOOK_AHEAD = 3;
+    private static final int BUFFER_SIZE = 1000;
+
     /**
      * Creates a hash code from the source code of the warning line and the
      * surrounding context.
@@ -29,13 +33,13 @@ public class ContextHashCode {
     public int create(final String fileName, final int line, final String encoding) throws IOException {
         LineIterator lineIterator = EncodingValidator.readFile(fileName, encoding);
 
-        StringBuilder context = new StringBuilder(1000);
+        StringBuilder context = new StringBuilder(BUFFER_SIZE);
         for (int i = 0; lineIterator.hasNext(); i++) {
             String currentLine = lineIterator.nextLine();
-            if (i >= line - 3) {
+            if (i >= line - LINES_LOOK_AHEAD) {
                 context.append(currentLine);
             }
-            if (i > line + 3) {
+            if (i > line + LINES_LOOK_AHEAD) {
                 break;
             }
         }

@@ -184,7 +184,7 @@ public class DifferenceGraph extends BuildResultGraph {
         /** {@inheritDoc} */
         @Override
         public StringBuffer format(final long number, final StringBuffer toAppendTo, final FieldPosition pos) {
-            StringBuffer stringBuffer = new StringBuffer(20);
+            StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append('#');
             stringBuffer.append(number);
             return stringBuffer;

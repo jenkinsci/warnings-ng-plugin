@@ -63,6 +63,7 @@ public class HealthReportBuilder implements Serializable {
      *            annotations of the current build
      * @return the healthiness of a build
      */
+    // CHECKSTYLE:CONSTANTS-OFF
     protected HealthReport computeHealth(final int counter, final AnnotationProvider result) {
         if (healthDescriptor.isHealthyReportEnabled()) {
             int percentage;
@@ -80,6 +81,7 @@ public class HealthReportBuilder implements Serializable {
         }
         return null;
     }
+    // CHECKSTYLE:CONSTANTS-ON
 
     /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")

@@ -165,7 +165,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({"rawtypes"})
+    @SuppressWarnings("rawtypes")
     public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
         return !AbstractMavenProject.class.isAssignableFrom(jobType);
     }

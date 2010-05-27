@@ -27,7 +27,8 @@ import hudson.util.Graph;
  * @author Ulli Hafner
  */
 public abstract class BuildResultGraph {
-    /** The root URL. */
+    private static final int A_DAY_IN_MSEC = 24 * 3600 * 1000;
+
     private String rootUrl = StringUtils.EMPTY;
 
     /**
@@ -136,7 +137,7 @@ public abstract class BuildResultGraph {
      * @return the delta between two dates in days
      */
     protected long computeDayDelta(final Calendar first, final Calendar second) {
-        return Math.abs((first.getTimeInMillis() - second.getTimeInMillis()) / (24 * 3600 * 1000));
+        return Math.abs((first.getTimeInMillis() - second.getTimeInMillis()) / A_DAY_IN_MSEC);
     }
 
     /**
@@ -145,12 +146,14 @@ public abstract class BuildResultGraph {
      * @param plot
      *            the plot to set the properties for
      */
+    // CHECKSTYLE:OFF
     protected void setPlotProperties(final Plot plot) {
         plot.setBackgroundPaint(Color.WHITE);
         plot.setOutlinePaint(null);
         plot.setForegroundAlpha(0.8f);
         plot.setInsets(new RectangleInsets(0, 0, 0, 5.0));
     }
+    // CHECKSTYLE:ON
 
     /**
      * Creates a XY graph from the specified data set.
