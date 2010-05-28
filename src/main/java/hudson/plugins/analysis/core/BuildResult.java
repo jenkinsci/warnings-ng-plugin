@@ -22,7 +22,6 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import com.thoughtworks.xstream.XStream;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 import hudson.XmlFile;
 
 import hudson.model.ModelObject;
@@ -332,6 +331,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the created object
      */
+    @SuppressWarnings("PMD")
     protected Object readResolve() {
         if (pluginResult == null) {
             pluginResult = Result.SUCCESS;
