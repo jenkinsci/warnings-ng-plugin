@@ -60,7 +60,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     private static final String FAILED = "red.gif";
     private static final String SUCCESS = "blue.gif";
 
-    private final Object projectLock = new Object();
+    private Object projectLock = new Object();
 
     /**
      * Returns the number of days for the specified number of milliseconds.
@@ -336,6 +336,9 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         if (pluginResult == null) {
             pluginResult = Result.SUCCESS;
             resetSuccessfulState();
+        }
+        if (projectLock == null) {
+            projectLock = new Object();
         }
         if (history == null) {
             history = createHistory(owner);
