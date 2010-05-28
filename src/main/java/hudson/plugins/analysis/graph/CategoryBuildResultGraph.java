@@ -7,8 +7,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -156,12 +154,9 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
             valuesPerBuild.put(current.getOwner(), computeSeries(current));
 
             if (current.hasPreviousResult()) {
-                // FIXME: Hack to avoid NPE, needs further investigation
-                BuildResult oldCurrent = current;
                 current = current.getPreviousResult();
                 if (current == null) {
-                    Logger.getLogger(getClass().getName()).log(Level.WARNING, "Previous result is null: #" + oldCurrent.getOwner().number);
-                    break;
+                    break; // see: HUDSON-6613
                 }
             }
             else {
