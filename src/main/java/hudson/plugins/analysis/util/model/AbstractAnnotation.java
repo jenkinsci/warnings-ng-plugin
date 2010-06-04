@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
@@ -58,6 +59,8 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     private long contextHashCode;
     /** The origin of this warning. */
     private String origin;
+    /** Relative path of this duplication. @since 1.10 */
+    private String pathName;
 
     /**
      * Creates a new instance of <code>AbstractAnnotation</code>.
@@ -130,6 +133,45 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         type = copy.getType();
         moduleName = copy.getModuleName();
         packageName = copy.getPackageName();
+    }
+
+    /** {@inheritDoc} */
+    public String getLinkName() {
+        if (hasPackageName()) {
+            return getPackageName() + "." + FilenameUtils.getBaseName(getFileName());
+        }
+        else {
+            if (StringUtils.isBlank(pathName)) {
+                return getFileName();
+            }
+            else {
+                return pathName + SLASH + getShortFileName();
+            }
+        }
+    }
+
+    /**
+     * Returns whether a package name is defined for this annotation.
+     *
+     * @return <code>true</code> if this annotation has a package name,
+     *         <code>false</code> otherwise
+     */
+    public boolean hasPackageName() {
+        String actualPackageName = StringUtils.trim(getPackageName());
+
+        return StringUtils.isNotBlank(actualPackageName) && !StringUtils.equals(actualPackageName, "-");
+    }
+
+    /**
+     * Sets the pathname for this warning.
+     *
+     * @param workspacePath
+     *            the workspace path
+     */
+    public void setPathName(final String workspacePath) {
+        String normalized = workspacePath.replace('\\', '/');
+
+        pathName = StringUtils.removeStart(getFileName(), normalized);
     }
 
     /** {@inheritDoc} */
@@ -225,15 +267,6 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     /** {@inheritDoc} */
     public final String getPackageName() {
         return StringUtils.defaultIfEmpty(packageName, "Default Package");
-    }
-
-    /**
-     * Returns whether a package name has been defined.
-     *
-     * @return <code>true</code>, if a package name has been defined
-     */
-    public boolean hasPackageName() {
-        return StringUtils.isNotBlank(packageName);
     }
 
     /**
@@ -386,12 +419,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @return the short file name
      */
     public String getShortFileName() {
-        if (getFileName().contains(SLASH)) {
-            return StringUtils.substringAfterLast(getFileName(), SLASH);
-        }
-        else {
-            return getFileName();
-        }
+        return FilenameUtils.getName(fileName);
     }
 
     /**
