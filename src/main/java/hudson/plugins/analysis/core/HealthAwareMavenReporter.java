@@ -470,6 +470,17 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     }
 
     /**
+     * Returns the name of the module.
+     *
+     * @param pom
+     *            the pom
+     * @return the name of the module
+     */
+    protected String getModuleName(final MavenProject pom) {
+        return StringUtils.defaultString(pom.getName(), pom.getArtifactId());
+    }
+
+    /**
      * Gets the build result from the master.
      */
     private static final class BuildResultCallable implements BuildCallable<Result, IOException> {

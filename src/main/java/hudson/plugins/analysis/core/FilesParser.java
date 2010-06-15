@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import hudson.FilePath;
@@ -20,8 +21,8 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.remoting.VirtualChannel;
 
 /**
- * Parses files that match the specified pattern and creates a
- * corresponding project with a collection of annotations.
+ * Parses files that match the specified pattern and creates a corresponding
+ * {@link ParserResult} with a collection of annotations.
  *
  * @author Ulli Hafner
  */
@@ -39,9 +40,34 @@ public class FilesParser implements FileCallable<ParserResult> {
     private final boolean isMavenBuild;
     /** Determines whether this build uses ant. */
     private final boolean isAntBuild;
+    /** The predefined module name, might be empty. */
+    private final String moduleName;
 
     /**
-     * Creates a new instance of <code>CheckstyleCollector</code>.
+     * Creates a new instance of {@link FilesParser}.
+     *
+     * @param logger
+     *            the logger
+     * @param filePattern
+     *            ant file-set pattern to scan for files to parse
+     * @param parser
+     *            the parser to apply on the found files
+     * @param isMavenBuild
+     *            determines whether this build uses maven
+     * @param isAntBuild
+     *            determines whether this build uses maven
+     */
+    private FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final boolean isMavenBuild, final boolean isAntBuild, final String moduleName) {
+        this.logger = logger;
+        this.filePattern = filePattern;
+        this.parser = parser;
+        this.isMavenBuild = isMavenBuild;
+        this.isAntBuild = isAntBuild;
+        this.moduleName = moduleName;
+    }
+
+    /**
+     * Creates a new instance of {@link FilesParser}.
      *
      * @param logger
      *            the logger
@@ -55,11 +81,23 @@ public class FilesParser implements FileCallable<ParserResult> {
      *            determines whether this build uses maven
      */
     public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final boolean isMavenBuild, final boolean isAntBuild) {
-        this.logger = logger;
-        this.filePattern = filePattern;
-        this.parser = parser;
-        this.isMavenBuild = isMavenBuild;
-        this.isAntBuild = isAntBuild;
+        this(logger, filePattern, parser, isMavenBuild, isAntBuild, StringUtils.EMPTY);
+    }
+
+    /**
+     * Creates a new instance of {@link FilesParser}.
+     *
+     * @param logger
+     *            the logger
+     * @param filePattern
+     *            ant file-set pattern to scan for files to parse
+     * @param parser
+     *            the parser to apply on the found files
+     * @param moduleName
+     *            the name of the module to use for all files
+     */
+    public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final String moduleName) {
+        this(logger, filePattern, parser, false, false, moduleName);
     }
 
     /**
@@ -113,24 +151,30 @@ public class FilesParser implements FileCallable<ParserResult> {
         for (String fileName : fileNames) {
             File file = new File(workspace, fileName);
 
-            String moduleName = detector.guessModuleName(file.getAbsolutePath(), isMavenBuild, isAntBuild);
+            String module;
+            if (StringUtils.isBlank(moduleName)) {
+                module = detector.guessModuleName(file.getAbsolutePath(), isMavenBuild, isAntBuild);
+            }
+            else {
+                module = moduleName;
+            }
 
             if (!file.canRead()) {
-                String message = Messages.FilesParser_Error_NoPermission(moduleName, file);
+                String message = Messages.FilesParser_Error_NoPermission(module, file);
                 log(message);
-                result.addErrorMessage(moduleName, message);
+                result.addErrorMessage(module, message);
                 continue;
             }
             if (file.length() <= 0) {
-                String message = Messages.FilesParser_Error_EmptyFile(moduleName, file);
+                String message = Messages.FilesParser_Error_EmptyFile(module, file);
                 log(message);
-                result.addErrorMessage(moduleName, message);
+                result.addErrorMessage(module, message);
                 continue;
             }
 
-            parseFile(file, moduleName, result);
+            parseFile(file, module, result);
 
-            result.addModule(moduleName);
+            result.addModule(module);
         }
     }
 
