@@ -9,6 +9,7 @@ import hudson.plugins.analysis.core.FilesParser;
 import hudson.plugins.analysis.core.HealthAwarePublisher;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.PluginLogger;
+import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.warnings.parser.FileWarningsParser;
 import hudson.plugins.warnings.parser.ParserRegistry;
 
@@ -197,6 +198,9 @@ public class WarningsPublisher extends HealthAwarePublisher {
                     getDefaultEncoding(), getIncludePattern(), getExcludePattern()).parse(logFile));
         }
         project = build.getWorkspace().act(new AnnotationsClassifier(project, getDefaultEncoding()));
+        for (FileAnnotation annotation : project.getAnnotations()) {
+            annotation.setPathName(build.getWorkspace().getRemote());
+        }
 
         WarningsResult result = new WarningsResult(build, getDefaultEncoding(), project);
         build.getActions().add(new WarningsResultAction(build, this, result));
