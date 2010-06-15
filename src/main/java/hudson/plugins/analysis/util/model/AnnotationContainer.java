@@ -272,7 +272,16 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @param annotation the new annotation
      */
     private void addPackage(final FileAnnotation annotation) {
-        String packageName = annotation.getPackageName();
+        String packageName;
+        if (annotation.hasPackageName()) {
+            packageName = annotation.getPackageName();
+        }
+        else {
+            packageName = annotation.getPathName();
+        }
+        if (StringUtils.isBlank(packageName)) {
+            packageName = "-";
+        }
         if (!packagesByName.containsKey(packageName)) {
             JavaPackage javaPackage = new JavaPackage(packageName);
             packagesByName.put(packageName, javaPackage);
@@ -504,9 +513,16 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      */
     public final String getPackageCategoryName() {
         if (hasAnnotations()) {
-            String fileName = getAnnotations().iterator().next().getFileName();
+            FileAnnotation annotation = getAnnotations().iterator().next();
+            String fileName = annotation.getFileName();
             if (fileName.endsWith(".cs")) {
                 return Messages.NamespaceDetail_header();
+            }
+            if (annotation.hasPackageName()) {
+                return Messages.PackageDetail_header();
+            }
+            else {
+                return Messages.PathDetail_header();
             }
         }
         return Messages.PackageDetail_header();

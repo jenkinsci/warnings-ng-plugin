@@ -23,6 +23,7 @@ import hudson.model.AbstractBuild;
 @ExportedBean
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public abstract class AbstractAnnotation implements FileAnnotation, Serializable {
+    private static final String DEFAULT_PACKAGE = "Default Package";
     /** UNIX path separator. */
     private static final String SLASH = "/";
     /** Temporary directory holding the workspace files. */
@@ -150,14 +151,9 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         }
     }
 
-    /**
-     * Returns whether a package name is defined for this annotation.
-     *
-     * @return <code>true</code> if this annotation has a package name,
-     *         <code>false</code> otherwise
-     */
+    /** {@inheritDoc} */
     public boolean hasPackageName() {
-        String actualPackageName = StringUtils.trim(getPackageName());
+        String actualPackageName = StringUtils.trim(packageName);
 
         return StringUtils.isNotBlank(actualPackageName) && !StringUtils.equals(actualPackageName, "-");
     }
@@ -172,6 +168,14 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         String normalized = workspacePath.replace('\\', '/');
 
         pathName = StringUtils.removeStart(getFileName(), normalized);
+        pathName = StringUtils.remove(pathName, FilenameUtils.getName(getFileName()));
+        pathName = StringUtils.removeStart(pathName, SLASH);
+        pathName = StringUtils.removeEnd(pathName, SLASH);
+    }
+
+    /** {@inheritDoc} */
+    public String getPathName() {
+        return pathName;
     }
 
     /** {@inheritDoc} */
@@ -266,7 +270,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
 
     /** {@inheritDoc} */
     public final String getPackageName() {
-        return StringUtils.defaultIfEmpty(packageName, "Default Package");
+        return StringUtils.defaultIfEmpty(packageName, DEFAULT_PACKAGE);
     }
 
     /**

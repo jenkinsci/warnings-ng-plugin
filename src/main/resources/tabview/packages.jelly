@@ -4,7 +4,7 @@
   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
   <table class="pane sortable" id="packages">
     <tr>
-      <td class="pane-header">${%Package}</td>
+      <td class="pane-header">${it.container.packageCategoryName}</td>
       <td class="pane-header" style="width:2em">${%Total}</td>
       <td class="pane-header" style="width:60%">${%Distribution}</td>
     </tr>

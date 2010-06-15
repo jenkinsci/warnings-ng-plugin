@@ -1,7 +1,5 @@
 package hudson.plugins.analysis.util.model;
 
-
-
 /**
  * A serializable Java Bean class representing a Java package.
  *

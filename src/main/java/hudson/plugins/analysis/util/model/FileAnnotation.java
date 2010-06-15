@@ -135,6 +135,22 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
     String getPackageName();
 
     /**
+     * Returns whether a package name is defined for this annotation.
+     *
+     * @return <code>true</code> if this annotation has a package or namespace name,
+     *         <code>false</code> otherwise
+     */
+    boolean hasPackageName();
+
+    /**
+     * Returns the path name of this annotation (relative path to the affected
+     * file).
+     *
+     * @return the path name
+     */
+    String getPathName();
+
+    /**
      * Returns the origin of the annotation. Might be an empty string.
      *
      * @return the origin of the annotation
