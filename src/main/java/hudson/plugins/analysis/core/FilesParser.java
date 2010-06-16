@@ -183,7 +183,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      * could not be parsed then an error message is appended to the result.
      * @param file
      *            the file to parse
-     * @param moduleName
+     * @param module
      *            the associated module
      * @param result
      *            the result of the parser
@@ -191,17 +191,17 @@ public class FilesParser implements FileCallable<ParserResult> {
      * @throws InterruptedException
      *             if the user cancels the parsing
      */
-    private void parseFile(final File file, final String moduleName, final ParserResult result) throws InterruptedException {
+    private void parseFile(final File file, final String module, final ParserResult result) throws InterruptedException {
         try {
-            Collection<FileAnnotation> annotations = parser.parse(file, moduleName);
+            Collection<FileAnnotation> annotations = parser.parse(file, module);
             result.addAnnotations(annotations);
 
-            log("Successfully parsed file " + file + " of module " + moduleName + " with " + annotations.size() + " warnings.");
+            log("Successfully parsed file " + file + " of module " + module + " with " + annotations.size() + " warnings.");
         }
         catch (InvocationTargetException exception) {
             String errorMessage = Messages.FilesParser_Error_Exception(file) + "\n\n"
                     + ExceptionUtils.getStackTrace((Throwable)ObjectUtils.defaultIfNull(exception.getCause(), exception));
-            result.addErrorMessage(moduleName, errorMessage);
+            result.addErrorMessage(module, errorMessage);
 
             log(errorMessage);
         }
