@@ -202,8 +202,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
             if (!build.getWorkspace().isRemote()) {
                 String workspace = build.getWorkspace().getRemote();
                 ModuleDetector detector = new ModuleDetector(new File(workspace));
-                String module = detector.guessModuleName(build.getWorkspace().getRemote());
                 for (FileAnnotation annotation : warnings) {
+                    String module = detector.guessModuleName(annotation.getFileName());
                     annotation.setModuleName(module);
                 }
             }
