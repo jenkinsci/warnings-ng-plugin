@@ -1,3 +1,24 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <!-- nothing to configure -->
+  <f:section title="Compiler Warnings">
+    <f:entry title="${%Parsers}" description="${%title.description}">
+      <f:repeatable field="parsers">
+        <table width="100%">
+          <f:entry title="${%Name}" field="name" description="${%name.description}">
+            <f:textbox />
+          </f:entry>
+          <f:entry title="${%Regular Expression}" field="regexp" description="${%regexp.description}">
+            <f:textbox />
+          </f:entry>
+          <f:entry title="${%Warning Mapping Groovy Script}" field="script" description="${%script.description}">
+            <f:textarea />
+          </f:entry>
+          <f:entry title="">
+            <div align="right">
+              <f:repeatableDeleteButton />
+            </div>
+          </f:entry>
+        </table>
+      </f:repeatable>
+    </f:entry>
+  </f:section>
 </j:jelly>

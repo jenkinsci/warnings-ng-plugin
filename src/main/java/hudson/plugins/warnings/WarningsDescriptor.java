@@ -3,6 +3,9 @@ package hudson.plugins.warnings;
 import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.plugins.analysis.core.PluginDescriptor;
+import hudson.plugins.warnings.parser.ParserRegistry;
+import hudson.util.CopyOnWriteList;
+import hudson.util.FormValidation;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,6 +13,7 @@ import java.util.Set;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
@@ -24,6 +28,8 @@ public final class WarningsDescriptor extends PluginDescriptor {
     private static final String PLUGIN_NAME = "warnings";
     /** Icon to use for the result and project action. */
     private static final String ACTION_ICON = "/plugin/warnings/icons/warnings-24x24.png";
+
+    private final CopyOnWriteList<GroovyParser> groovyParsers = new CopyOnWriteList<GroovyParser>();
 
     /**
      * Instantiates a new {@link WarningsDescriptor}.
@@ -93,5 +99,37 @@ public final class WarningsDescriptor extends PluginDescriptor {
         }
 
         return parsers;
+    }
+
+    /**
+     * Returns the configured Groovy parsers.
+     *
+     * @return the Groovy parsers
+     */
+    public CopyOnWriteList<GroovyParser> getParsers() {
+        return groovyParsers;
+    }
+
+    @Override
+    public boolean configure(final StaplerRequest req, final JSONObject formData) {
+        groovyParsers.replaceBy(req.bindJSONToList(GroovyParser.class, formData.get("parsers")));
+
+        return true;
+    }
+
+    /**
+     * Performs on-the-fly validation on the name of the parser that needs to be unique.
+     *
+     * @param name
+     *            the name of the parser
+     * @return the validation result
+     */
+    public FormValidation doCheckName(@QueryParameter final String name) {
+        for (String parserName : ParserRegistry.getAvailableParsers()) {
+            if (parserName.equals(name)) {
+                return FormValidation.error("This parser name already exist: parser names must be unique.");
+            }
+        }
+        return FormValidation.ok();
     }
 }
