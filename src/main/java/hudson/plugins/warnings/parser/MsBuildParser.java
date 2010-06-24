@@ -15,7 +15,7 @@ public class MsBuildParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "MSBuild";
     /** Pattern of MSBuild compiler warnings. */
-    private static final String MS_BUILD_WARNING_PATTERN = "^(?:(?:(?:(.*)\\((\\d*).*\\)|.*LINK)\\s*:|(.*):)\\s*([Nn]ote|[Ii]nfo|[Ww]arning|(?:fatal\\s*)?[Ee]rror)\\s*([A-Z0-9]+):\\s*(.*)|(.*)\\s*:.*error\\s*(LNK[0-9]+):\\s*(.*))$";
+    private static final String MS_BUILD_WARNING_PATTERN = "^(?:\\s*\\d+>)?(?:(?:(?:(.*)\\((\\d*).*\\)|.*LINK)\\s*:|(.*):)\\s*([Nn]ote|[Ii]nfo|[Ww]arning|(?:fatal\\s*)?[Ee]rror)\\s*([A-Z0-9]+):\\s*(.*)|(.*)\\s*:.*error\\s*(LNK[0-9]+):\\s*(.*))$";
 
     /**
      * Creates a new instance of <code>MsBuildParser</code>.

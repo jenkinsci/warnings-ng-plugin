@@ -36,6 +36,23 @@ public class MsBuildParserTest extends ParserTester {
     }
 
     /**
+     * Parses a file with one warning of the MS Build tools (parallel build).
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-3582">Issue 3582</a>
+     */
+    @Test
+    public void issue6709() throws IOException {
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue6709.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        FileAnnotation annotation = warnings.iterator().next();
+        checkWarning(annotation, 1145, "The variable 'ex' is declared but never used", "Rules/TaskRules.cs",
+                MsBuildParser.WARNING_TYPE, "CS0168", Priority.NORMAL);
+    }
+
+    /**
      * Parses a file with warnings of the MS Build linker.
      *
      * @throws IOException
