@@ -1,0 +1,3 @@
+
+
+[javac] C:\.hudson\jobs\Foo\src\Bar.java:246: Œx: [unchecked] –³ŒŸ¸ƒLƒƒƒXƒg‚Å‚·

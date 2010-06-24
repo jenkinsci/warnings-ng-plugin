@@ -5,6 +5,7 @@ import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -139,6 +140,21 @@ public class AntJavacParserTest extends ParserTester {
                 "loadAvailable(java.lang.String,int,int,java.lang.String[]) in my.OtherClass has been deprecated",
                 "D:/path/to/my/Class.java",
                 AntJavacParser.WARNING_TYPE, "Deprecation", Priority.NORMAL);
+    }
+
+    /**
+     * Parses a warning log with 1 warnings that are generated on Japanese environment.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://fisheye.hudson-ci.org/changelog/Hudson/?cs=16376">Kosuke's commit log on changeset 16376</a>
+     */
+    @Test
+    public void parseJapaneseWarnings() throws IOException {
+        // force to use windows-31j - the default encoding on Windows Japanese.
+        InputStreamReader is = new InputStreamReader(ParserTester.class.getResourceAsStream("ant-javac-japanese.txt"), "windows-31j");
+        Collection<FileAnnotation> warnings = new AntJavacParser().parse(is);
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
     }
 
     /** {@inheritDoc} */
