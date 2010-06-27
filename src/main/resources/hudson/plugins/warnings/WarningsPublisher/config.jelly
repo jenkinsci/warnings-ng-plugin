@@ -3,7 +3,8 @@
   <f:entry title="${%Scan console log}" description="${%description.canScanConsole}">
     <f:checkbox name="canScanConsole" checked="${h.defaultToTrue(instance.canScanConsole)}"/>
   </f:entry>
-  <f:entry title="${%File pattern}" description="${%description.pattern}" field="pattern">
+  <f:entry title="${%File pattern}" field="pattern"
+     description="${%description.pattern('http://ant.apache.org/manual/Types/fileset.html')}">
     <f:textbox/>
   </f:entry>
 
@@ -30,10 +31,12 @@
 
   <f:advanced>
     <u:failed/>
-    <f:entry title="${%Warnings to include}" description="${%description.includePattern}" field="includePattern" >
+    <f:entry title="${%Warnings to include}" field="includePattern"
+       description="${%description.includePattern('http://ant.apache.org/manual/Types/fileset.html')}">
       <f:textbox/>
     </f:entry>
-    <f:entry title="${%Warnings to ignore}" description="${%description.excludePattern}" field="excludePattern">
+    <f:entry title="${%Warnings to ignore}" field="excludePattern"
+       description="${%description.excludePattern('http://ant.apache.org/manual/Types/fileset.html')}">
       <f:textbox/>
     </f:entry>
     <u:thresholds id="warnings"/>
