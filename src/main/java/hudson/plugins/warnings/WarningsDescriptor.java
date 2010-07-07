@@ -1,5 +1,6 @@
 package hudson.plugins.warnings;
 
+import groovy.lang.GroovyShell;
 import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.plugins.analysis.core.PluginDescriptor;
@@ -9,10 +10,14 @@ import hudson.util.FormValidation;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -124,12 +129,59 @@ public final class WarningsDescriptor extends PluginDescriptor {
      *            the name of the parser
      * @return the validation result
      */
-    public FormValidation doCheckName(@QueryParameter final String name) {
+    public FormValidation doCheckName(@QueryParameter(required = true) final String name) {
+        if (StringUtils.isBlank(name)) {
+            return FormValidation.error(Messages.Warnings_GroovyParser_Error_Name_isEmpty());
+        }
         for (String parserName : ParserRegistry.getAvailableParsers()) {
             if (parserName.equals(name)) {
-                return FormValidation.error("This parser name already exist: parser names must be unique.");
+                return FormValidation.error(Messages.Warnings_GroovyParser_Error_Name_isNotUnique());
             }
         }
         return FormValidation.ok();
+    }
+
+    /**
+     * Performs on-the-fly validation on the regular expression.
+     *
+     * @param regexp
+     *            the regular expression
+     * @return the validation result
+     */
+    public FormValidation doCheckRegexp(@QueryParameter(required = true)  final String regexp) {
+        try {
+            if (StringUtils.isBlank(regexp)) {
+                return FormValidation.error(Messages.Warnings_GroovyParser_Error_Regexp_isEmpty());
+            }
+            Pattern.compile(regexp);
+
+            return FormValidation.ok();
+        }
+        catch (PatternSyntaxException exception) {
+            return FormValidation.error(Messages.Warnings_GroovyParser_Error_Regexp_invalid(exception.getLocalizedMessage()));
+        }
+    }
+
+    /**
+     * Performs on-the-fly validation on the Groovy script.
+     *
+     * @param script
+     *            the script
+     * @return the validation result
+     */
+    public FormValidation doCheckScript(@QueryParameter(required = true) final String script) {
+        try {
+            if (StringUtils.isBlank(script)) {
+                return FormValidation.error(Messages.Warnings_GroovyParser_Error_Script_isEmpty());
+            }
+
+            GroovyShell groovyShell = new GroovyShell();
+            groovyShell.parse(script);
+
+            return FormValidation.ok();
+        }
+        catch (CompilationFailedException exception) {
+            return FormValidation.error(Messages.Warnings_GroovyParser_Error_Script_invalid(exception.getLocalizedMessage()));
+        }
     }
 }

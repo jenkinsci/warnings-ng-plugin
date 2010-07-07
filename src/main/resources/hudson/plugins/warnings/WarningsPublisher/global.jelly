@@ -4,13 +4,13 @@
       <f:repeatable field="parsers">
         <table width="100%">
           <f:entry title="${%Name}" field="name" description="${%name.description}">
-            <f:textbox />
+            <f:textbox checkUrl="'descriptorByName/WarningsPublisher/checkName?name='+escape(this.value)"/>
           </f:entry>
           <f:entry title="${%Regular Expression}" field="regexp" description="${%regexp.description}">
-            <f:textbox />
+            <f:textbox checkUrl="'descriptorByName/WarningsPublisher/checkRegexp?regexp='+escape(this.value)"/>
           </f:entry>
           <f:entry title="${%Warning Mapping Groovy Script}" field="script" description="${%script.description}">
-            <f:textarea />
+            <f:textarea checkUrl="'descriptorByName/WarningsPublisher/checkScript?script='+escape(this.value)"/>
           </f:entry>
           <f:entry title="">
             <div align="right">
