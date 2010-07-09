@@ -9,8 +9,11 @@
           <f:entry title="${%Regular Expression}" field="regexp" description="${%regexp.description}">
             <f:textbox checkUrl="'descriptorByName/WarningsPublisher/checkRegexp?regexp='+escape(this.value)"/>
           </f:entry>
+          <f:entry title="${%Example Log Message}" description="${%example.description}">
+            <f:textbox name="warnings.log.example"/>
+          </f:entry>
           <f:entry title="${%Warning Mapping Groovy Script}" field="script" description="${%script.description}">
-            <f:textarea checkUrl="'descriptorByName/WarningsPublisher/checkScript?script='+escape(this.value)"/>
+            <f:textarea checkUrl="'descriptorByName/WarningsPublisher/checkScript?script='+escape(this.value)+'&amp;example='+escape(Form.findMatchingInput(this,'warnings.log.example').value) "/>
           </f:entry>
           <f:entry title="">
             <div align="right">

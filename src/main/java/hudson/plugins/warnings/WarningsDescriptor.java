@@ -167,9 +167,12 @@ public final class WarningsDescriptor extends PluginDescriptor {
      *
      * @param script
      *            the script
+     * @param example
+     *            example that should be resolve to a warning
      * @return the validation result
      */
-    public FormValidation doCheckScript(@QueryParameter(required = true) final String script) {
+    public FormValidation doCheckScript(@QueryParameter(required = true) final String script,
+            @QueryParameter final String example) {
         try {
             if (StringUtils.isBlank(script)) {
                 return FormValidation.error(Messages.Warnings_GroovyParser_Error_Script_isEmpty());
