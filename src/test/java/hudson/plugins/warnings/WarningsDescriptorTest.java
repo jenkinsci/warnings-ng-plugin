@@ -54,12 +54,12 @@ public class WarningsDescriptorTest {
     public void testScriptValidation() throws IOException {
         WarningsDescriptor descriptor = new WarningsDescriptor();
 
-        assertError(descriptor.doCheckScript(null));
-        assertError(descriptor.doCheckScript(StringUtils.EMPTY));
-        assertError(descriptor.doCheckScript("Hello World"));
+        assertError(descriptor.doCheckScript(null, StringUtils.EMPTY));
+        assertError(descriptor.doCheckScript(StringUtils.EMPTY, StringUtils.EMPTY));
+        assertError(descriptor.doCheckScript("Hello World", StringUtils.EMPTY));
 
         String script = IOUtils.toString(WarningsDescriptorTest.class.getResourceAsStream("groovy.snippet"));
-        assertOk(descriptor.doCheckScript(script));
+        assertOk(descriptor.doCheckScript(script, StringUtils.EMPTY));
     }
 
     private void assertOk(final FormValidation actualResult) {
