@@ -453,4 +453,10 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
 
         return hashCode() - other.hashCode(); // fallback
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return String.format("%s(%s):%s,%s,%s:%s", getFileName(), primaryLineNumber, priority, getCategory(), getType(), getMessage());
+    }
 }
