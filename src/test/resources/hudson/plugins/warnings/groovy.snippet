@@ -5,4 +5,4 @@ String lineNumber = matcher.group(2)
 String category = matcher.group(3)
 String message = matcher.group(4)
 
-return new Warning(fileName, getLineNumber(lineNumber), "Generic Parser", category, message);
+return new Warning(fileName, Integer.parseInt(lineNumber), "Generic Parser", category, message);

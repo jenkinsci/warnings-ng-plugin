@@ -1,15 +1,19 @@
 package hudson.plugins.warnings;
 
+import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.plugins.analysis.core.PluginDescriptor;
 import hudson.plugins.warnings.parser.ParserRegistry;
+import hudson.plugins.warnings.parser.Warning;
 import hudson.util.CopyOnWriteList;
 import hudson.util.FormValidation;
+import hudson.util.FormValidation.Kind;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -169,10 +173,12 @@ public final class WarningsDescriptor extends PluginDescriptor {
      *            the script
      * @param example
      *            example that should be resolve to a warning
+     * @param regexp
+     *            the regular expression
      * @return the validation result
      */
     public FormValidation doCheckScript(@QueryParameter(required = true) final String script,
-            @QueryParameter final String example) {
+            @QueryParameter final String example, @QueryParameter final String regexp) {
         try {
             if (StringUtils.isBlank(script)) {
                 return FormValidation.error(Messages.Warnings_GroovyParser_Error_Script_isEmpty());
@@ -181,10 +187,53 @@ public final class WarningsDescriptor extends PluginDescriptor {
             GroovyShell groovyShell = new GroovyShell();
             groovyShell.parse(script);
 
-            return FormValidation.ok();
+            if (StringUtils.isNotBlank(example) && doCheckRegexp(regexp).kind == FormValidation.Kind.OK) {
+                return parseExample(script, example, regexp);
+            }
+            else {
+                return FormValidation.ok();
+            }
         }
         catch (CompilationFailedException exception) {
             return FormValidation.error(Messages.Warnings_GroovyParser_Error_Script_invalid(exception.getLocalizedMessage()));
+        }
+    }
+
+    /**
+     * Parses the example and returns a validation result of type
+     * {@link Kind#OK} if a warning has been found.
+     *
+     * @param script
+     *            the script that parses the expression
+     * @param example
+     *            example text that will be matched by the regular expression
+     * @param regexp
+     *            the regular expression
+     * @return a result of {@link Kind#OK} if a warning has been found
+     */
+    private FormValidation parseExample(final String script, final String example, final String regexp) {
+        Pattern pattern = Pattern.compile(regexp);
+        Matcher matcher = pattern.matcher(example);
+        if (matcher.matches()) {
+            Binding binding = new Binding();
+            binding.setVariable("matcher", matcher);
+            GroovyShell shell = new GroovyShell(binding);
+            Object result = null;
+            try {
+                result = shell.evaluate(script);
+            }
+            catch (Exception exception) {
+                return FormValidation.error("An exception occured during evaluation of the Groovy script: " + exception.getMessage());
+            }
+            if (result instanceof Warning) {
+                return FormValidation.ok("One warning found: " + result.toString());
+            }
+            else {
+                return FormValidation.error("Result of the script is not of type Warning");
+            }
+        }
+        else {
+            return FormValidation.error("The regular expression does not match the example text.");
         }
     }
 }

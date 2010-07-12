@@ -51,15 +51,69 @@ public class WarningsDescriptorTest {
      *             if the example file could not be read
      */
     @Test
-    public void testScriptValidation() throws IOException {
+    public void testScriptValidationWithoutExample() throws IOException {
         WarningsDescriptor descriptor = new WarningsDescriptor();
 
-        assertError(descriptor.doCheckScript(null, StringUtils.EMPTY));
-        assertError(descriptor.doCheckScript(StringUtils.EMPTY, StringUtils.EMPTY));
-        assertError(descriptor.doCheckScript("Hello World", StringUtils.EMPTY));
+        assertError(descriptor.doCheckScript(null, StringUtils.EMPTY, StringUtils.EMPTY));
+        assertError(descriptor.doCheckScript(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY));
+        assertError(descriptor.doCheckScript("Hello World", StringUtils.EMPTY, StringUtils.EMPTY));
 
-        String script = IOUtils.toString(WarningsDescriptorTest.class.getResourceAsStream("groovy.snippet"));
-        assertOk(descriptor.doCheckScript(script, StringUtils.EMPTY));
+        assertOk(descriptor.doCheckScript(readScript(), StringUtils.EMPTY, StringUtils.EMPTY));
+    }
+
+    private String readScript() throws IOException {
+        return IOUtils.toString(WarningsDescriptorTest.class.getResourceAsStream("groovy.snippet"));
+    }
+
+    /**
+     * Test the validation of the script parameter with a given regular
+     * expression and example. Expected result: the expected result is a
+     * warning.
+     *
+     * @throws IOException
+     *             if the example file could not be read
+     */
+    @Test
+    public void testScriptValidationOneWarning() throws IOException {
+        WarningsDescriptor descriptor = new WarningsDescriptor();
+
+        assertOk(descriptor.doCheckScript(readScript(),
+                "file/name/relative/unix:42:evil: this is a warning message",
+                "^\\s*(.*):(\\d+):(.*):\\s*(.*)$"));
+    }
+
+    /**
+     * Test the validation of the script parameter with a given regular
+     * expression and example. Expected result: the regular expression will not
+     * match.
+     *
+     * @throws IOException
+     *             if the example file could not be read
+     */
+    @Test
+    public void testScriptValidationNoMatchesFound() throws IOException {
+        WarningsDescriptor descriptor = new WarningsDescriptor();
+
+        assertError(descriptor.doCheckScript(readScript(),
+                "this is a warning message",
+                "^\\s*(.*):(\\d+):(.*):\\s*(.*)$"));
+    }
+
+    /**
+     * Test the validation of the script parameter with a given regular
+     * expression and example. Expected result: the regular expression will not
+     * match.
+     *
+     * @throws IOException
+     *             if the example file could not be read
+     */
+    @Test
+    public void testScriptValidationIllegalMatchAccess() throws IOException {
+        WarningsDescriptor descriptor = new WarningsDescriptor();
+
+        assertError(descriptor.doCheckScript(readScript(),
+                "file/name/relative/unix:42:evil: this is a warning message",
+                "^\\s*(.*):(\\d+):(.*)$"));
     }
 
     private void assertOk(final FormValidation actualResult) {

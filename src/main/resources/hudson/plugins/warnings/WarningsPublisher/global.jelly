@@ -13,7 +13,7 @@
             <f:textbox name="warnings.log.example"/>
           </f:entry>
           <f:entry title="${%Warning Mapping Groovy Script}" field="script" description="${%script.description}">
-            <f:textarea checkUrl="'descriptorByName/WarningsPublisher/checkScript?script='+escape(this.value)+'&amp;example='+escape(Form.findMatchingInput(this,'warnings.log.example').value) "/>
+            <f:textarea checkUrl="'descriptorByName/WarningsPublisher/checkScript?script='+escape(this.value)+'&amp;example='+escape(Form.findMatchingInput(this,'warnings.log.example').value;example='+escape(Form.findMatchingInput(this,'regexp').value) "/>
           </f:entry>
           <f:entry title="">
             <div align="right">
