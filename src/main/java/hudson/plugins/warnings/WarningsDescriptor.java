@@ -217,7 +217,7 @@ public final class WarningsDescriptor extends PluginDescriptor {
         if (matcher.matches()) {
             Binding binding = new Binding();
             binding.setVariable("matcher", matcher);
-            GroovyShell shell = new GroovyShell(binding);
+            GroovyShell shell = new GroovyShell(WarningsDescriptor.class.getClassLoader(), binding);
             Object result = null;
             try {
                 result = shell.evaluate(script);
