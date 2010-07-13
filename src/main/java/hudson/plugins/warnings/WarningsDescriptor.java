@@ -184,7 +184,7 @@ public final class WarningsDescriptor extends PluginDescriptor {
                 return FormValidation.error(Messages.Warnings_GroovyParser_Error_Script_isEmpty());
             }
 
-            GroovyShell groovyShell = new GroovyShell();
+            GroovyShell groovyShell = new GroovyShell(WarningsDescriptor.class.getClassLoader());
             groovyShell.parse(script);
 
             if (StringUtils.isNotBlank(example) && doCheckRegexp(regexp).kind == FormValidation.Kind.OK) {
