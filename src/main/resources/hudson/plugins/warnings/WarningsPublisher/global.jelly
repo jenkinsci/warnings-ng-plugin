@@ -9,11 +9,11 @@
           <f:entry title="${%Regular Expression}" field="regexp" description="${%regexp.description}">
             <f:textbox name="regexp" checkUrl="'descriptorByName/WarningsPublisher/checkRegexp?regexp='+encodeURIComponent(this.value)"/>
           </f:entry>
-          <f:entry title="${%Example Log Message}" description="${%example.description}">
-            <f:textbox name="example"/>
+          <f:entry title="${%Mapping Script}" field="script" description="${%script.description}">
+            <f:textarea name="script" checkUrl="'descriptorByName/WarningsPublisher/checkScript?script='+encodeURIComponent(this.value)"/>
           </f:entry>
-          <f:entry title="${%Warning Mapping Groovy Script}" field="script" description="${%script.description}">
-            <f:textarea checkUrl="'descriptorByName/WarningsPublisher/checkScript?script='+encodeURIComponent(this.value)+'&amp;example='+encodeURIComponent(Form.findMatchingInput(this,'example').value)+'&amp;regexp='+encodeURIComponent(Form.findMatchingInput(this,'regexp').value)"/>
+          <f:entry title="${%Example Log Message}" description="${%example.description}">
+            <f:textbox checkUrl="'descriptorByName/WarningsPublisher/checkExample?example='+encodeURIComponent(this.value)+'&amp;script='+encodeURIComponent(Form.findMatchingInput(this,'script').value)+'&amp;regexp='+encodeURIComponent(Form.findMatchingInput(this,'regexp').value)"/>
           </f:entry>
           <f:entry title="">
             <div align="right">

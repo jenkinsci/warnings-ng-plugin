@@ -171,14 +171,9 @@ public final class WarningsDescriptor extends PluginDescriptor {
      *
      * @param script
      *            the script
-     * @param example
-     *            example that should be resolve to a warning
-     * @param regexp
-     *            the regular expression
      * @return the validation result
      */
-    public FormValidation doCheckScript(@QueryParameter(required = true) final String script,
-            @QueryParameter final String example, @QueryParameter final String regexp) {
+    public FormValidation doCheckScript(@QueryParameter(required = true) final String script) {
         try {
             if (StringUtils.isBlank(script)) {
                 return FormValidation.error(Messages.Warnings_GroovyParser_Error_Script_isEmpty());
@@ -187,15 +182,31 @@ public final class WarningsDescriptor extends PluginDescriptor {
             GroovyShell groovyShell = new GroovyShell(WarningsDescriptor.class.getClassLoader());
             groovyShell.parse(script);
 
-            if (StringUtils.isNotBlank(example) && doCheckRegexp(regexp).kind == FormValidation.Kind.OK) {
-                return parseExample(script, example, regexp);
-            }
-            else {
-                return FormValidation.ok();
-            }
+            return FormValidation.ok();
         }
         catch (CompilationFailedException exception) {
             return FormValidation.error(Messages.Warnings_GroovyParser_Error_Script_invalid(exception.getLocalizedMessage()));
+        }
+    }
+
+    /**
+     * Parses the example message with the specified regular expression and script.
+     *
+     * @param example
+     *            example that should be resolve to a warning
+     * @param regexp
+     *            the regular expression
+     * @param script
+     *            the script
+     * @return the validation result
+     */
+    public FormValidation doCheckExample(@QueryParameter final String example,
+            @QueryParameter final String regexp, @QueryParameter final String script) {
+        if (StringUtils.isNotBlank(example) && StringUtils.isNotBlank(regexp) && StringUtils.isNotBlank(script)) {
+            return parseExample(script, example, regexp);
+        }
+        else {
+            return FormValidation.ok();
         }
     }
 

@@ -54,11 +54,11 @@ public class WarningsDescriptorTest {
     public void testScriptValidationWithoutExample() throws IOException {
         WarningsDescriptor descriptor = new WarningsDescriptor();
 
-        assertError(descriptor.doCheckScript(null, StringUtils.EMPTY, StringUtils.EMPTY));
-        assertError(descriptor.doCheckScript(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY));
-        assertError(descriptor.doCheckScript("Hello World", StringUtils.EMPTY, StringUtils.EMPTY));
+        assertError(descriptor.doCheckScript(null));
+        assertError(descriptor.doCheckScript(StringUtils.EMPTY));
+        assertError(descriptor.doCheckScript("Hello World"));
 
-        assertOk(descriptor.doCheckScript(readScript(), StringUtils.EMPTY, StringUtils.EMPTY));
+        assertOk(descriptor.doCheckScript(readScript()));
     }
 
     private String readScript() throws IOException {
@@ -77,9 +77,9 @@ public class WarningsDescriptorTest {
     public void testScriptValidationOneWarning() throws IOException {
         WarningsDescriptor descriptor = new WarningsDescriptor();
 
-        assertOk(descriptor.doCheckScript(readScript(),
+        assertOk(descriptor.doCheckExample(
                 "file/name/relative/unix:42:evil: this is a warning message",
-                "^\\s*(.*):(\\d+):(.*):\\s*(.*)$"));
+                "^\\s*(.*):(\\d+):(.*):\\s*(.*)$", readScript()));
     }
 
     /**
@@ -94,9 +94,9 @@ public class WarningsDescriptorTest {
     public void testScriptValidationNoMatchesFound() throws IOException {
         WarningsDescriptor descriptor = new WarningsDescriptor();
 
-        assertError(descriptor.doCheckScript(readScript(),
+        assertError(descriptor.doCheckExample(
                 "this is a warning message",
-                "^\\s*(.*):(\\d+):(.*):\\s*(.*)$"));
+                "^\\s*(.*):(\\d+):(.*):\\s*(.*)$", readScript()));
     }
 
     /**
@@ -111,9 +111,9 @@ public class WarningsDescriptorTest {
     public void testScriptValidationIllegalMatchAccess() throws IOException {
         WarningsDescriptor descriptor = new WarningsDescriptor();
 
-        assertError(descriptor.doCheckScript(readScript(),
+        assertError(descriptor.doCheckExample(
                 "file/name/relative/unix:42:evil: this is a warning message",
-                "^\\s*(.*):(\\d+):(.*)$"));
+                "^\\s*(.*):(\\d+):(.*)$", readScript()));
     }
 
     private void assertOk(final FormValidation actualResult) {
