@@ -7,7 +7,6 @@ import hudson.plugins.analysis.util.model.Priority;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-
 /**
  * Base class for parser tests. Provides an assertion test for warnings.
  */

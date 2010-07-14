@@ -22,7 +22,7 @@ public class PhpParserTest extends ParserTester {
      */
     @Test
     public void testParse() throws IOException {
-        Collection<FileAnnotation> results = new PhpParser().parse(openFile());
+        Collection<FileAnnotation> results = createParser().parse(openFile());
         Iterator<FileAnnotation> iterator = results.iterator();
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation,
@@ -44,6 +44,15 @@ public class PhpParserTest extends ParserTester {
                 34, "Missing argument 1 for Title::getText(), called in Title.php on line 22 and defined in Category.php on line 34",
                 "Category.php", PhpParser.WARNING_TYPE, PhpParser.WARNING_CATEGORY, Priority.NORMAL);
 
+    }
+
+    /**
+     * Creates the parser.
+     *
+     * @return the warnings parser
+     */
+    protected WarningsParser createParser() {
+        return new PhpParser();
     }
 
     /** {@inheritDoc} */

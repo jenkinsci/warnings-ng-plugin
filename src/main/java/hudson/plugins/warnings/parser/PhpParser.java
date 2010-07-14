@@ -44,10 +44,10 @@ public class PhpParser extends RegexpLineParser {
 
         Priority priority = Priority.NORMAL;
 
-        if (FATAL_ERROR_CATEGORY.equals(category)) {
+        if (category.contains("Fatal")) {
             priority = Priority.HIGH;
         }
 
-        return new Warning(fileName, Integer.parseInt(start), WARNING_TYPE, category, message, priority);
+        return new Warning(fileName, Integer.parseInt(start), "PHP Runtime Warning", category, message, priority);
     }
 }

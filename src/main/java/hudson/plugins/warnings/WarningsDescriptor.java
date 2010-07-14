@@ -233,18 +233,20 @@ public final class WarningsDescriptor extends PluginDescriptor {
             try {
                 result = shell.evaluate(script);
             }
-            catch (Exception exception) {
-                return FormValidation.error("An exception occured during evaluation of the Groovy script: " + exception.getMessage());
+            catch (Exception exception) { // NOCHECKSTYLE: catch all exceptions of the Groovy script
+                return FormValidation.error(
+                        Messages.Warnings_GroovyParser_Error_Example_exception(exception.getMessage()));
             }
             if (result instanceof Warning) {
-                return FormValidation.ok("One warning found: " + result.toString());
+                return FormValidation.ok(
+                        Messages.Warnings_GroovyParser_Error_Example_ok(result.toString()));
             }
             else {
-                return FormValidation.error("Result of the script is not of type Warning");
+                return FormValidation.error(Messages.Warnings_GroovyParser_Error_Example_wrongReturnType(result));
             }
         }
         else {
-            return FormValidation.error("The regular expression does not match the example text.");
+            return FormValidation.error(Messages.Warnings_GroovyParser_Error_Example_regexpDoesNotMatch());
         }
     }
 }
