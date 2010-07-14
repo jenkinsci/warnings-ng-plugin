@@ -1,7 +1,11 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.model.Hudson;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.warnings.GroovyParser;
+import hudson.plugins.warnings.WarningsDescriptor;
+import hudson.util.CopyOnWriteList;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,21 +35,48 @@ import com.google.common.collect.ImmutableList;
  */
 // CHECKSTYLE:COUPLING-OFF
 public class ParserRegistry {
-    /** The available parsers of this registry. */
-    private static final List<WarningsParser> ALL_PARSERS;
-    /** The unique set of parser names of this registry, sorted by name. */
-    private static final List<String> ALL_PARSER_NAMES;
-    static {
-        ALL_PARSERS = getAllParsers();
-        ALL_PARSER_NAMES = getAllParserNames();
-    }
-
     /** The actual parsers to use when scanning a file. */
     private final List<WarningsParser> parsers;
     /** Compound include/exclude filter for files that should get into report. */
     private final FileFilter fileFilter;
     /** The default charset to be used when reading and parsing files. */
     private final Charset defaultCharset;
+
+    /**
+     * Returns all available parser names.
+     *
+     * @return all available parser names
+     */
+    public static List<String> getAvailableParsers() {
+        Set<String> parsers = new HashSet<String>();
+        for (WarningsParser parser : getAllParsers()) {
+            parsers.add(parser.getName());
+        }
+
+        ArrayList<String> sortedParsers = new ArrayList<String>(parsers);
+        Collections.sort(sortedParsers);
+        return Collections.unmodifiableList(sortedParsers);
+    }
+
+    /**
+     * Returns a list of parsers that match the specified names. Note that the
+     * mapping of names to parsers is one to many.
+     *
+     * @param parserNames
+     *            the parser names
+     * @return a list of parsers, might be modified by the receiver
+     */
+    public static List<WarningsParser> getParsers(final Set<String> parserNames) {
+        List<WarningsParser> actualParsers = new ArrayList<WarningsParser>();
+        for (String name : parserNames) {
+            for (WarningsParser warningsParser : getAllParsers()) {
+                if (warningsParser.getName().equals(name)) {
+                    actualParsers.add(warningsParser);
+                }
+            }
+        }
+        return actualParsers;
+    }
 
     /**
      * Returns all available parsers.
@@ -81,6 +112,19 @@ public class ParserRegistry {
         parsers.add(new RobocopyParser());
         parsers.add(new DoxygenParser());
 
+        Hudson instance = Hudson.getInstance();
+        if (instance != null) {
+            WarningsDescriptor descriptor = instance.getDescriptorByType(WarningsDescriptor.class);
+            if (descriptor != null) {
+                CopyOnWriteList<GroovyParser> dynamicParsers = descriptor.getParsers();
+                for (GroovyParser groovyParser : dynamicParsers) {
+                    if (groovyParser.isValid()) {
+                        parsers.add(new DynamicParser(groovyParser.getName(), groovyParser
+                                .getRegexp(), groovyParser.getScript()));
+                    }
+                }
+            }
+        }
         return ImmutableList.copyOf(parsers);
     }
 
@@ -114,7 +158,7 @@ public class ParserRegistry {
         defaultCharset = EncodingValidator.defaultCharset(defaultEncoding);
         this.parsers = new ArrayList<WarningsParser>(parsers);
         if (this.parsers.isEmpty()) {
-            this.parsers.addAll(ALL_PARSERS);
+            this.parsers.addAll(getAllParsers());
         }
 
         if (StringUtils.isEmpty(includePattern) && StringUtils.isEmpty(excludePattern)) {
@@ -123,16 +167,6 @@ public class ParserRegistry {
         else {
             fileFilter = new FileFilter(includePattern, excludePattern);
         }
-    }
-
-    /**
-     * Returns all registers parsers. Note that removal of elements is not
-     * supported.
-     *
-     * @return the registered parsers
-     */
-    protected Iterable<WarningsParser> getParsers() {
-        return Collections.unmodifiableList(parsers);
     }
 
     /**
@@ -291,51 +325,6 @@ public class ParserRegistry {
             }
             return isIncluded(canonicalName) && !isExcluded(canonicalName);
         }
-    }
-
-    /**
-     * Returns all available parser names.
-     *
-     * @return all available parser names
-     */
-    private static List<String> getAllParserNames() {
-        Set<String> parsers = new HashSet<String>();
-        for (WarningsParser parser : ALL_PARSERS) {
-            parsers.add(parser.getName());
-        }
-
-        ArrayList<String> sortedParsers = new ArrayList<String>(parsers);
-        Collections.sort(sortedParsers);
-        return Collections.unmodifiableList(sortedParsers);
-    }
-
-    /**
-     * Returns all available parser names.
-     *
-     * @return all available parser names
-     */
-    public static List<String> getAvailableParsers() {
-        return ALL_PARSER_NAMES;
-    }
-
-    /**
-     * Returns a list of parsers that match the specified names. Note that the
-     * mapping of names to parsers is one to many.
-     *
-     * @param parserNames
-     *            the parser names
-     * @return a list of parsers, might be modified by the receiver
-     */
-    public static List<WarningsParser> getParsers(final Set<String> parserNames) {
-        List<WarningsParser> actualParsers = new ArrayList<WarningsParser>();
-        for (String name : parserNames) {
-            for (WarningsParser warningsParser : ALL_PARSERS) {
-                if (warningsParser.getName().equals(name)) {
-                    actualParsers.add(warningsParser);
-                }
-            }
-        }
-        return actualParsers;
     }
 }
 

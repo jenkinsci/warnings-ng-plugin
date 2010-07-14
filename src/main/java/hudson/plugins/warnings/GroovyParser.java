@@ -1,5 +1,13 @@
 package hudson.plugins.warnings;
 
+import groovy.lang.GroovyShell;
+import hudson.util.FormValidation;
+
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -30,6 +38,12 @@ public class GroovyParser {
         this.script = script;
     }
 
+    public boolean isValid() {
+        return doCheckScript(script).kind == FormValidation.Kind.OK
+                && doCheckRegexp(regexp).kind == FormValidation.Kind.OK
+                && doCheckName(regexp).kind == FormValidation.Kind.OK;
+    }
+
     /**
      * Returns the name.
      *
@@ -55,6 +69,64 @@ public class GroovyParser {
      */
     public String getScript() {
         return script;
+    }
+
+    /**
+     * Performs on-the-fly validation on the name of the parser that needs to be unique.
+     *
+     * @param name
+     *            the name of the parser
+     * @return the validation result
+     */
+    public static FormValidation doCheckName(final String name) {
+        if (StringUtils.isBlank(name)) {
+            return FormValidation.error(Messages.Warnings_GroovyParser_Error_Name_isEmpty());
+        }
+        return FormValidation.ok();
+    }
+
+    /**
+     * Performs on-the-fly validation on the regular expression.
+     *
+     * @param regexp
+     *            the regular expression
+     * @return the validation result
+     */
+    public static FormValidation doCheckRegexp(final String regexp) {
+        try {
+            if (StringUtils.isBlank(regexp)) {
+                return FormValidation.error(Messages.Warnings_GroovyParser_Error_Regexp_isEmpty());
+            }
+            Pattern.compile(regexp);
+
+            return FormValidation.ok();
+        }
+        catch (PatternSyntaxException exception) {
+            return FormValidation.error(Messages.Warnings_GroovyParser_Error_Regexp_invalid(exception.getLocalizedMessage()));
+        }
+    }
+
+    /**
+     * Performs on-the-fly validation on the Groovy script.
+     *
+     * @param script
+     *            the script
+     * @return the validation result
+     */
+    public static FormValidation doCheckScript(final String script) {
+        try {
+            if (StringUtils.isBlank(script)) {
+                return FormValidation.error(Messages.Warnings_GroovyParser_Error_Script_isEmpty());
+            }
+
+            GroovyShell groovyShell = new GroovyShell(WarningsDescriptor.class.getClassLoader());
+            groovyShell.parse(script);
+
+            return FormValidation.ok();
+        }
+        catch (CompilationFailedException exception) {
+            return FormValidation.error(Messages.Warnings_GroovyParser_Error_Script_invalid(exception.getLocalizedMessage()));
+        }
     }
 }
 

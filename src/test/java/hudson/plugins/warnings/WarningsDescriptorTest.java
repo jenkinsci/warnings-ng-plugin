@@ -25,7 +25,6 @@ public class WarningsDescriptorTest {
 
         assertError(descriptor.doCheckName(null));
         assertError(descriptor.doCheckName(StringUtils.EMPTY));
-        assertError(descriptor.doCheckName("Java Compiler"));
         assertOk(descriptor.doCheckName("Java Parser 2"));
     }
 
