@@ -8,7 +8,7 @@
           </f:entry>
           <f:entry title="${%Regular Expression}" field="regexp" description="${%regexp.description}">
             <f:textbox name="regexp"
-                default="^\\s*(.*):(\\d+):(.*):\\s*(.*)$"
+                default="^\s*(.*):(\d+):(.*):\s*(.*)$"
                 checkUrl="'descriptorByName/WarningsPublisher/checkRegexp?regexp='+encodeURIComponent(this.value)"/>
           </f:entry>
           <f:entry title="${%Mapping Script}" field="script" description="${%script.description}">
