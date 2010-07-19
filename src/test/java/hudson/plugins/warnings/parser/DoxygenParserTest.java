@@ -142,6 +142,33 @@ public class DoxygenParserTest extends ParserTester {
                 WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
     }
 
+    /**
+     * Parses a warning log with 2 doxygen 1.7.1 messages.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-6971">Issue 6971</a>
+     */
+    @Test
+    public void issue6971() throws IOException {
+        Collection<FileAnnotation> warnings = new DoxygenParser().parse(openFile("issue6971.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        checkWarning(iterator.next(),
+                479,
+                "the name `lcp_lexicolemke.c' supplied as the second argument in the \\file statement is not an input file",
+                "/home/user/myproject/helper/LCPcalc.cpp",
+                WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
+        checkWarning(iterator.next(),
+                19,
+                "Unexpected character `\"'",
+                "/home/user/myproject/helper/SimpleTimer.h",
+                WARNING_TYPE, WARNING_CATEGORY, Priority.HIGH);
+    }
+
+
+
     /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
