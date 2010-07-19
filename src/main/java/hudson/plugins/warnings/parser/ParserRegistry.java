@@ -111,6 +111,7 @@ public class ParserRegistry {
         parsers.add(new P4Parser());
         parsers.add(new RobocopyParser());
         parsers.add(new DoxygenParser());
+        parsers.add(new TnsdlParser());
 
         Hudson instance = Hudson.getInstance();
         if (instance != null) {
