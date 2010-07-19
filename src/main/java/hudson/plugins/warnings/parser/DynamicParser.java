@@ -4,6 +4,8 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import hudson.plugins.warnings.WarningsDescriptor;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 /**
@@ -24,7 +26,6 @@ public class DynamicParser extends RegexpLineParser {
      * @param script
      *            Groovy script
      */
-    // FIXME: error handling if parameters are invalid
     public DynamicParser(final String name, final String regexp, final String script) {
         super(regexp, name, true);
 
@@ -51,9 +52,11 @@ public class DynamicParser extends RegexpLineParser {
             }
         }
         catch (Exception exception) { // NOCHECKSTYLE: catch all exceptions of the Groovy script
-            // FIXME: where can we report errors to
+            LOGGER.log(Level.SEVERE, getName() + ": exception during parsing: ", exception);
         }
         return FALSE_POSITIVE;
     }
+
+    private static final Logger LOGGER = Logger.getLogger(DynamicParser.class.getName());
 }
 

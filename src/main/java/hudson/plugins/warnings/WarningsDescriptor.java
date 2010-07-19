@@ -34,6 +34,7 @@ public final class WarningsDescriptor extends PluginDescriptor {
     private static final String PLUGIN_NAME = "warnings";
     /** Icon to use for the result and project action. */
     private static final String ACTION_ICON = "/plugin/warnings/icons/warnings-24x24.png";
+    private static final int MAX_MESSAGE_LENGTH = 60;
 
     private final CopyOnWriteList<GroovyParser> groovyParsers = new CopyOnWriteList<GroovyParser>();
 
@@ -205,8 +206,15 @@ public final class WarningsDescriptor extends PluginDescriptor {
                         Messages.Warnings_GroovyParser_Error_Example_exception(exception.getMessage()));
             }
             if (result instanceof Warning) {
-                return FormValidation.ok(
-                        Messages.Warnings_GroovyParser_Error_Example_ok(result.toString()));
+                StringBuilder okMessage = new StringBuilder(Messages.Warnings_GroovyParser_Error_Example_ok_title());
+                Warning warning = (Warning)result;
+                message(okMessage, Messages.Warnings_GroovyParser_Error_Example_ok_file(warning.getFileName()));
+                message(okMessage, Messages.Warnings_GroovyParser_Error_Example_ok_line(warning.getPrimaryLineNumber()));
+                message(okMessage, Messages.Warnings_GroovyParser_Error_Example_ok_priority(warning.getPriority().getLongLocalizedString()));
+                message(okMessage, Messages.Warnings_GroovyParser_Error_Example_ok_category(warning.getCategory()));
+                message(okMessage, Messages.Warnings_GroovyParser_Error_Example_ok_type(warning.getType()));
+                message(okMessage, Messages.Warnings_GroovyParser_Error_Example_ok_message(warning.getMessage()));
+                return FormValidation.ok(okMessage.toString());
             }
             else {
                 return FormValidation.error(Messages.Warnings_GroovyParser_Error_Example_wrongReturnType(result));
@@ -214,6 +222,20 @@ public final class WarningsDescriptor extends PluginDescriptor {
         }
         else {
             return FormValidation.error(Messages.Warnings_GroovyParser_Error_Example_regexpDoesNotMatch());
+        }
+    }
+
+    private void message(final StringBuilder okMessage, final String message) {
+        okMessage.append("\n");
+        int max = MAX_MESSAGE_LENGTH;
+        if (message.length() > max) {
+            int size = max / 2 - 1;
+            okMessage.append(message.substring(0, size));
+            okMessage.append("[...]");
+            okMessage.append(message.substring(message.length() - size, message.length()));
+        }
+        else {
+            okMessage.append(message);
         }
     }
 }

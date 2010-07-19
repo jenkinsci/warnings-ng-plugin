@@ -11,7 +11,7 @@ import org.codehaus.groovy.control.CompilationFailedException;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * Defines the properties of a warnings parser that uses a groovy script to
+ * Defines the properties of a warnings parser that uses a Groovy script to
  * parse the warnings log.
  *
  * @author Ulli Hafner
@@ -38,6 +38,12 @@ public class GroovyParser {
         this.script = script;
     }
 
+    /**
+     * Validates this instance.
+     *
+     * @return <code>true</code> if this instance is valid, <code>false</code>
+     *         otherwise
+     */
     public boolean isValid() {
         return doCheckScript(script).kind == FormValidation.Kind.OK
                 && doCheckRegexp(regexp).kind == FormValidation.Kind.OK
