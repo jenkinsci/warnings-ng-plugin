@@ -85,7 +85,8 @@ public class FilesParser implements FileCallable<ParserResult> {
     }
 
     /**
-     * Creates a new instance of {@link FilesParser}.
+     * Creates a new instance of {@link FilesParser}. Assumes that this is a
+     * Maven build with the specified module name.
      *
      * @param logger
      *            the logger
@@ -97,7 +98,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      *            the name of the module to use for all files
      */
     public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final String moduleName) {
-        this(logger, filePattern, parser, false, false, moduleName);
+        this(logger, filePattern, parser, true, false, moduleName);
     }
 
     /**
