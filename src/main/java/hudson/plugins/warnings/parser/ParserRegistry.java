@@ -5,7 +5,6 @@ import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.warnings.GroovyParser;
 import hudson.plugins.warnings.WarningsDescriptor;
-import hudson.util.CopyOnWriteList;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -84,7 +83,7 @@ public class ParserRegistry {
      * @return all available parsers
      */
     private static List<WarningsParser> getAllParsers() {
-        ArrayList<WarningsParser> parsers = new ArrayList<WarningsParser>();
+        List<WarningsParser> parsers = new ArrayList<WarningsParser>();
         parsers.add(new JavacParser());
         parsers.add(new AntJavacParser());
         parsers.add(new JavaDocParser());
@@ -113,20 +112,31 @@ public class ParserRegistry {
         parsers.add(new DoxygenParser());
         parsers.add(new TnsdlParser());
 
+        Iterable<GroovyParser> parserDescriptions = getDynamicParserDescriptions();
+        parsers.addAll(getDynamicParsers(parserDescriptions));
+
+        return ImmutableList.copyOf(parsers);
+    }
+
+    private static Iterable<GroovyParser> getDynamicParserDescriptions() {
         Hudson instance = Hudson.getInstance();
         if (instance != null) {
             WarningsDescriptor descriptor = instance.getDescriptorByType(WarningsDescriptor.class);
             if (descriptor != null) {
-                CopyOnWriteList<GroovyParser> dynamicParsers = descriptor.getParsers();
-                for (GroovyParser groovyParser : dynamicParsers) {
-                    if (groovyParser.isValid()) {
-                        parsers.add(new DynamicParser(groovyParser.getName(), groovyParser
-                                .getRegexp(), groovyParser.getScript()));
-                    }
-                }
+                return descriptor.getParsers();
             }
         }
-        return ImmutableList.copyOf(parsers);
+        return Collections.emptyList();
+    }
+
+    private static List<WarningsParser> getDynamicParsers(final Iterable<GroovyParser> parserDescriptions) {
+        List<WarningsParser> parsers = new ArrayList<WarningsParser>();
+        for (GroovyParser description : parserDescriptions) {
+            if (description.isValid()) {
+                parsers.add(new DynamicParser(description.getName(), description .getRegexp(), description.getScript()));
+            }
+        }
+        return parsers;
     }
 
     /**
