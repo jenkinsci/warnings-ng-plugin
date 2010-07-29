@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import static org.junit.Assert.*;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
@@ -16,6 +17,8 @@ import junit.framework.Assert;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+
+import com.google.common.collect.Sets;
 
 /**
  * Tests the class {@link ParserRegistry}.
@@ -197,6 +200,18 @@ public class ParserRegistryTest {
             }
         };
         return parserRegistry;
+    }
+
+    /**
+     * Verifies that illegal names are filtered.
+     */
+    @Test
+    public void testFiltering() {
+        String validName = JavacParser.WARNING_TYPE;
+        List<String> filtered = ParserRegistry.filterExistingParserNames(Sets.newHashSet("Illegal", validName));
+
+        assertEquals("Wrong number of filteres elements", 1, filtered.size());
+        assertEquals("Wrong number of filteres elements", validName, filtered.get(0));
     }
 }
 

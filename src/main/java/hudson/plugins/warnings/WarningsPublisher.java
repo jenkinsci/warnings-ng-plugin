@@ -18,10 +18,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
+
+import com.google.common.collect.Sets;
 
 /**
  * Publishes the results of the warnings analysis (freestyle project type).
@@ -109,8 +112,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *
      * @return the parser names
      */
-    public Set<String> getParserNames() {
-        return parserNames;
+    public List<String> getParserNames() {
+        return ParserRegistry.filterExistingParserNames(parserNames);
     }
 
     /**
@@ -184,11 +187,12 @@ public class WarningsPublisher extends HealthAwarePublisher {
     public BuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger) throws InterruptedException, IOException {
         File logFile = build.getLogFile();
 
+        Set<String> validParsers = Sets.newHashSet(getParserNames());
         ParserResult project;
         if (StringUtils.isNotBlank(getPattern())) {
             logger.log("Parsing warnings in files: " + getPattern());
             FilesParser parser = new FilesParser(logger, getPattern(),
-                    new FileWarningsParser(parserNames, getDefaultEncoding(), getIncludePattern(), getExcludePattern()), isMavenBuild(build), isAntBuild(build));
+                    new FileWarningsParser(validParsers, getDefaultEncoding(), getIncludePattern(), getExcludePattern()), isMavenBuild(build), isAntBuild(build));
             project = build.getWorkspace().act(parser);
         }
         else {
@@ -197,7 +201,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
         if (!ignoreConsole || StringUtils.isBlank(getPattern())) {
             logger.log("Parsing warnings in console log...");
-            ParserRegistry registry = new ParserRegistry(ParserRegistry.getParsers(parserNames),
+            ParserRegistry registry = new ParserRegistry(ParserRegistry.getParsers(validParsers),
                     getDefaultEncoding(), getIncludePattern(), getExcludePattern());
             Collection<FileAnnotation> warnings = registry.parse(logFile);
             if (!build.getWorkspace().isRemote()) {

@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 /**
  * Registry for the active parsers in this plug-in.
@@ -47,14 +48,17 @@ public class ParserRegistry {
      * @return all available parser names
      */
     public static List<String> getAvailableParsers() {
+        ArrayList<String> sortedParsers = new ArrayList<String>(getAllParserNames());
+        Collections.sort(sortedParsers);
+        return Collections.unmodifiableList(sortedParsers);
+    }
+
+    private static Set<String> getAllParserNames() {
         Set<String> parsers = new HashSet<String>();
         for (WarningsParser parser : getAllParsers()) {
             parsers.add(parser.getName());
         }
-
-        ArrayList<String> sortedParsers = new ArrayList<String>(parsers);
-        Collections.sort(sortedParsers);
-        return Collections.unmodifiableList(sortedParsers);
+        return parsers;
     }
 
     /**
@@ -75,6 +79,28 @@ public class ParserRegistry {
             }
         }
         return actualParsers;
+    }
+
+    /**
+     * Returns all parser names that identify at least one existing parser. The
+     * returned list is sorted alphabetically.
+     *
+     * @param parserNames
+     *            the names to filter
+     * @return the filtered set, containing only valid names
+     */
+    public static List<String> filterExistingParserNames(final Set<String> parserNames) {
+        List<String> validNames = Lists.newArrayList();
+
+        Set<String> allParsers = getAllParserNames();
+        for (String name : parserNames) {
+            if (allParsers.contains(name)) {
+                validNames.add(name);
+            }
+        }
+        Collections.sort(validNames);
+
+        return validNames;
     }
 
     /**
@@ -225,7 +251,6 @@ public class ParserRegistry {
             IOUtils.closeQuietly(file);
         }
     }
-
 
     /**
      * Applies the exclude filter to the found annotations.
