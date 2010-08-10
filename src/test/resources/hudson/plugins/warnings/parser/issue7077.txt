@@ -1,0 +1,14 @@
+[INFO]     [javac] ----------
+[INFO]     [javac] 1. WARNING in /ige/hudson/work/jobs/esvclient__development/workspace/target/rcp-build/plugins/ch.ipi.esv.client.customer/src/main/java/ch/ipi/esv/client/customer/search/CustomerQuickSearch.java (at line 90)
+[INFO]     [javac] 	this.customerNumber = BoQuickSearchControl.create().setLabelText(labelText).setBoHandler(this.boHandler).build(
+[INFO]     [javac] 	                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[INFO]     [javac] Type safety: The method setBoHandler(BoHandler) belongs to the raw type BoQuickSearchControl.Builder. References to generic type BoQuickSearchControl<S>.Builder<T> should be parameterized
+[INFO]     [javac] ----------
+[INFO]     [javac] 2. WARNING in /ige/hudson/work/jobs/esvclient__development/workspace/target/rcp-build/plugins/ch.ipi.esv.client.customer/src/main/java/ch/ipi/esv/client/customer/search/CustomerQuickSearch.java (at line 90)
+[INFO]     [javac] 	this.customerNumber = BoQuickSearchControl.create().setLabelText(labelText).setBoHandler(this.boHandler).build(
+[INFO]     [javac]         quickSearchComposite);
+[INFO]     [javac] 	                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[INFO]     [javac] Type safety: The expression of type BoQuickSearchControl needs unchecked conversion to conform to BoQuickSearchControl<CustomerBO>
+[INFO]     [javac] ----------
+[INFO]     [javac] 2 problems (2 warnings)
+
