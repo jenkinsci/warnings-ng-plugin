@@ -5,8 +5,8 @@ import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -147,7 +147,7 @@ public class AntJavacParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://fisheye.hudson-ci.org/changelog/Hudson/?cs=16376">Kosuke's commit log on changeset 16376</a>
+     * @see <a href="http://fisheye.hudson-ci.org/changelog/Hudson?cs=16376">Commit log on changeset 16376</a>
      */
     @Test
     public void parseJapaneseWarnings() throws IOException {
