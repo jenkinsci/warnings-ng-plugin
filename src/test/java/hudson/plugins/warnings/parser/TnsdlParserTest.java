@@ -11,9 +11,7 @@ import java.util.Iterator;
 import org.junit.Test;
 
 /**
- * FIXME: Document type TnsdlParserTest.
- *
- * @author Ulli Hafner
+ * Tests the class {@link TnsdlParser}.
  */
 public class TnsdlParserTest extends ParserTester {
 
