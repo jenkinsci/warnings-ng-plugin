@@ -1,0 +1,710 @@
+
+====== Building:       3rdparty/boost  i686-linux-gcc41 Debug
+Precompiling 3rdparty/boost/precomp.h
+Compiling 3rdparty/boost/date_generators.cpp
+Compiling 3rdparty/boost/greg_month.cpp
+Compiling 3rdparty/boost/gregorian_types.cpp
+Compiling 3rdparty/boost/greg_weekday.cpp
+Compiling 3rdparty/boost/posix_time_types.cpp
+Creating libboost.a
+ar: creating /home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/arch/i686-linux-gcc41/build/Debug/libboost.a
+====== Done building:  3rdparty/boost  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       3rdparty/qtsolutions  i686-linux-gcc41 Debug
+Precompiling 3rdparty/qtsolutions/precomp.h
+Compiling 3rdparty/qtsolutions/qtlockedfile.cpp
+Compiling 3rdparty/qtsolutions/qtlockedfile_unix.cpp
+Compiling 3rdparty/qtsolutions/qtlockedfile_win.cpp
+Compiling 3rdparty/qtsolutions/qtsingleapplication.cpp
+Compiling 3rdparty/qtsolutions/qtsingleapplication_win.cpp
+Compiling 3rdparty/qtsolutions/qtsingleapplication_x11.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/3rdparty/qtsolutions/moc_qtsingleapplication.cpp
+Creating libqtsolutions.a
+ar: creating /home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/arch/i686-linux-gcc41/build/Debug/libqtsolutions.a
+====== Done building:  3rdparty/qtsolutions  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       library/conflib  i686-linux-gcc41 Debug
+Precompiling library/conflib/precomp.h
+Compiling library/conflib/ConfInstance.cpp
+Compiling library/conflib/ConfListParam.cpp
+Compiling library/conflib/ConfParam.cpp
+Compiling library/conflib/ConfParamInteger.cpp
+Compiling library/conflib/ConfParamReal.cpp
+Compiling library/conflib/ConfParamSet.cpp
+Compiling library/conflib/ConfParamString.cpp
+Compiling library/conflib/ConfParamType.cpp
+Compiling library/conflib/ConfParamVector.cpp
+Compiling library/conflib/ConfParamVectorInteger.cpp
+Compiling library/conflib/ConfParamVectorReal.cpp
+Compiling library/conflib/ConfParamVectorString.cpp
+Compiling library/conflib/ConfStorage.cpp
+Compiling library/conflib/ConfVectorParam.cpp
+Creating libconflib.a
+ar: creating /home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/arch/i686-linux-gcc41/build/Debug/libconflib.a
+====== Done building:  library/conflib  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       library/datetimelib  i686-linux-gcc41 Debug
+Precompiling library/datetimelib/precomp.h
+Compiling library/datetimelib/DatetimeLib.cpp
+Compiling library/datetimelib/Timestamp.cpp
+/home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/3rdparty/boost/exp/boost/date_time/time_facet.hpp: In member function ‘InItrT boost::date_time::time_input_facet<time_type, CharT, InItrT>::get(InItrT&, InItrT&, std::ios_base&, time_type&, typename boost::date_time::date_input_facet<typename time_type::date_type, CharT, InItrT>::string_type&, bool) const [with time_type = boost::posix_time::ptime, CharT = char, InItrT = std::istreambuf_iterator<char, std::char_traits<char> >]’:
+/home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/3rdparty/boost/exp/boost/date_time/time_facet.hpp:977: warning: ‘t_day_of_year.boost::CV::constrained_value<boost::CV::simple_exception_policy<short unsigned int, 1u, 366u, boost::gregorian::bad_day_of_year> >::value_’ may be used uninitialized in this function
+Compiling library/datetimelib/Timezone.cpp
+Compiling library/datetimelib/TimezoneDB.cpp
+Creating libdatetimelib.a
+ar: creating /home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/arch/i686-linux-gcc41/build/Debug/libdatetimelib.a
+====== Done building:  library/datetimelib  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       library/diaglib  i686-linux-gcc41 Debug
+Precompiling library/diaglib/precomp.h
+Compiling library/diaglib/diaglib_alarm.cpp
+Compiling library/diaglib/diaglib_alarm_link.cpp
+Compiling library/diaglib/diaglib_lru.cpp
+Compiling library/diaglib/diaglib_object.cpp
+Compiling library/diaglib/diaglib_server_link.cpp
+Compiling library/diaglib/diaglib_server_link_helper.cpp
+Compiling library/diaglib/diaglib_user.cpp
+Compiling library/diaglib/restart_device.cpp
+Compiling library/diaglib/restart_sensor.cpp
+Compiling library/diaglib/restart_snmp_device.cpp
+Compiling library/diaglib/SchemaLimits.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/diaglib/moc_diaglib_alarm_link.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/diaglib/moc_restart_device.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/diaglib/moc_diaglib_server_link.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/diaglib/moc_SchemaLimits.cpp
+Creating libdiaglib.a
+ar: creating /home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/arch/i686-linux-gcc41/build/Debug/libdiaglib.a
+====== Done building:  library/diaglib  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       library/metlib  i686-linux-gcc41 Debug
+Precompiling library/metlib/precomp.h
+Compiling library/metlib/metlib-export/constants.cpp
+Compiling library/metlib/metlib-export/CumulatingStatistics.cpp
+Compiling library/metlib/metlib-export/formulas_dewPoint.cpp
+Compiling library/metlib/metlib-export/formulas_vapourPressure.cpp
+Compiling library/metlib/metlib-export/formulas_visibility.cpp
+Compiling library/metlib/metlib-export/formulas_windChill.cpp
+Compiling library/metlib/metlib-export/internal.cpp
+Compiling library/metlib/metlib-export/RunningStatistics.cpp
+Compiling library/metlib/metlib-export/test_constants.cpp
+Compiling library/metlib/metlib-export/test.cpp
+Compiling library/metlib/metlib-export/test_CumulatingStatistics.cpp
+Compiling library/metlib/metlib-export/test_formulas.cpp
+Compiling library/metlib/metlib-export/test_math.cpp
+Compiling library/metlib/metlib-export/test_RunningStatistics.cpp
+Compiling library/metlib/metlib-export/test_stdint.cpp
+Compiling library/metlib/metlib-export/test_types.cpp
+Compiling library/metlib/metlib-export/test_units.cpp
+Compiling library/metlib/metlib-export/test_util.cpp
+Compiling library/metlib/metlib-export/types.cpp
+Compiling library/metlib/metlib-export/units.cpp
+Compiling library/metlib/metlib-export/util.cpp
+Creating libmetlib.a
+ar: creating /home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/arch/i686-linux-gcc41/build/Debug/libmetlib.a
+====== Done building:  library/metlib  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       library/model  i686-linux-gcc41 Debug
+Precompiling library/model/precomp.h
+Compiling library/model/AdaptedMeasurement.cpp
+Compiling library/model/Association.cpp
+Compiling library/model/Builder.cpp
+Compiling library/model/Communication.cpp
+Compiling library/model/Device.cpp
+Compiling library/model/Measurement.cpp
+Compiling library/model/Message.cpp
+Compiling library/model/PersistentModel.cpp
+Compiling library/model/Root.cpp
+Compiling library/model/RuntimeModel.cpp
+Compiling library/model/Runway.cpp
+Compiling library/model/Site.cpp
+Compiling library/model/Station.cpp
+Compiling library/model/Storage.cpp
+Compiling library/model/Strip.cpp
+Compiling library/model/Zone.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/model/moc_Model_Station.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/model/moc_Model_Device.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/model/moc_Model_Root.cpp
+Creating libmodel.a
+ar: creating /home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/arch/i686-linux-gcc41/build/Debug/libmodel.a
+====== Done building:  library/model  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       library/rqcore  i686-linux-gcc41 Debug
+Precompiling library/rqcore/precomp.h
+Compiling library/rqcore/RQCoastingLink.cpp
+Compiling library/rqcore/RQConsoleApplication.cpp
+Compiling library/rqcore/RQCoreTest.cpp
+Compiling library/rqcore/RQDataStream.cpp
+Compiling library/rqcore/RQEventTestApp.cpp
+Compiling library/rqcore/RQEventTestObj.cpp
+Compiling library/rqcore/RQFindFileInfo.cpp
+Compiling library/rqcore/RQHelper.cpp
+Compiling library/rqcore/RQIoChannel.cpp
+Compiling library/rqcore/RQManualField.cpp
+Compiling library/rqcore/RQManualLink.cpp
+Compiling library/rqcore/RQManualLinkX.cpp
+Compiling library/rqcore/RQNet.cpp
+Compiling library/rqcore/RQNetHelper.cpp
+Compiling library/rqcore/RQPortIoChannel.cpp
+Compiling library/rqcore/RQProcess.cpp
+Compiling library/rqcore/RQPurgeArchiveDirectory.cpp
+Compiling library/rqcore/RQServiceApplication.cpp
+Compiling library/rqcore/RQSharedLink.cpp
+Compiling library/rqcore/RQSharedLinks.cpp
+Compiling library/rqcore/RQSocketImpl.cpp
+Compiling library/rqcore/RQThread.cpp
+Compiling library/rqcore/RQTimerImpl.cpp
+Compiling library/rqcore/RQXoaCoastingLink.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQSocketImpl.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQManualLinkX.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQServiceApplication.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQIoChannel.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQConfStorage.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQXoaCoastingLink.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQConsoleApplication.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQPortIoChannel.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQManualLink.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQCoastingLink.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQHelper.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQManualField.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQApplLink.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQProcess.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQNetHelper.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQSharedLinks.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/rqcore/moc_RQSharedLink.cpp
+Creating librqcore.a
+ar: creating /home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/arch/i686-linux-gcc41/build/Debug/librqcore.a
+====== Done building:  library/rqcore  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       library/testlib  i686-linux-gcc41 Debug
+Precompiling library/testlib/precomp.h
+Compiling library/testlib/BasicRoaRunner.cpp
+Compiling library/testlib/TestApplication.cpp
+Compiling library/testlib/TestCallback.cpp
+Compiling library/testlib/Util.cpp
+Compiling library/testlib/XOATestClass.cpp
+Compiling library/testlib/XOATestLink.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/library/testlib/moc_TestLib_TestCallback.cpp
+Creating libtestlib.a
+ar: creating /home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/arch/i686-linux-gcc41/build/Debug/libtestlib.a
+====== Done building:  library/testlib  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       library/xmlhelper  i686-linux-gcc41 Debug
+Precompiling library/xmlhelper/precomp.h
+Compiling library/xmlhelper/Document.cpp
+Compiling library/xmlhelper/NonCopyable.cpp
+Compiling library/xmlhelper/ParserBase.cpp
+Compiling library/xmlhelper/Parser.cpp
+Compiling library/xmlhelper/Schema.cpp
+Compiling library/xmlhelper/SimpleParser.cpp
+Compiling library/xmlhelper/StyleSheet.cpp
+Compiling library/xmlhelper/Validator.cpp
+Compiling library/xmlhelper/xmlHelper.cpp
+Compiling library/xmlhelper/xmlReturn.cpp
+Creating libxmlhelper.a
+ar: creating /home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/arch/i686-linux-gcc41/build/Debug/libxmlhelper.a
+====== Done building:  library/xmlhelper  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       roa/roalinux  i686-linux-gcc41 Debug
+Precompiling roa/roalinux/precomp.h
+Compiling roa/roalinux/file.cpp
+Compiling roa/roalinux/handle.cpp
+Compiling roa/roalinux/interface.cpp
+Compiling roa/roalinux/log.cpp
+Compiling roa/roalinux/message.cpp
+Compiling roa/roalinux/profile.cpp
+Compiling roa/roalinux/registry.cpp
+Compiling roa/roalinux/service.cpp
+Compiling roa/roalinux/socket.cpp
+Compiling roa/roalinux/thread.cpp
+Compiling roa/roalinux/timer.cpp
+Compiling roa/roalinux/util.cpp
+Creating libroalinux.a
+ar: creating /home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/arch/i686-linux-gcc41/build/Debug/libroalinux.a
+====== Done building:  roa/roalinux  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       roa/roanet  i686-linux-gcc41 Debug
+Precompiling roa/roanet/precomp.h
+Compiling roa/roanet/rntdump.cpp
+Compiling roa/roanet/rntfuncn.cpp
+Compiling roa/roanet/rntname.cpp
+Compiling roa/roanet/rntnamed.cpp
+Compiling roa/roanet/rntnlink.cpp
+Compiling roa/roanet/rntnltcp.cpp
+Compiling roa/roanet/rntprhook.cpp
+Compiling roa/roanet/rntprot.cpp
+Compiling roa/roanet/rntprotd.cpp
+Compiling roa/roanet/rntprtcp.cpp
+Compiling roa/roanet/rntqueue.cpp
+Compiling roa/roanet/rntserv.cpp
+Compiling roa/roanet/rntsess.cpp
+Compiling roa/roanet/rntsessd.cpp
+Compiling roa/roanet/rnttimed.cpp
+Compiling roa/roanet/rnttimeh.cpp
+Compiling roa/roanet/roaalarm.cpp
+Compiling roa/roanet/roaapplc.cpp
+Compiling roa/roanet/roaappll.cpp
+Compiling roa/roanet/roabase.cpp
+Compiling roa/roanet/roaclass.cpp
+Compiling roa/roanet/roacommon.cpp
+Compiling roa/roanet/roactrl.cpp
+Compiling roa/roanet/roadiag.cpp
+Compiling roa/roanet/roafpbuf.cpp
+Compiling roa/roanet/roafpint.cpp
+Compiling roa/roanet/roafplst.cpp
+Compiling roa/roanet/roafuncb.cpp
+Compiling roa/roanet/roafunc.cpp
+Compiling roa/roanet/roafuncp.cpp
+Compiling roa/roanet/roahook.cpp
+Compiling roa/roanet/roalink.cpp
+Compiling roa/roanet/roalist.cpp
+Compiling roa/roanet/roammry.cpp
+Compiling roa/roanet/roanet.cpp
+Compiling roa/roanet/roapers.cpp
+Compiling roa/roanet/roapstor.cpp
+Compiling roa/roanet/roapstorfile.cpp
+Compiling roa/roanet/roareg.cpp
+Compiling roa/roanet/roaring.cpp
+Compiling roa/roanet/roaservc.cpp
+Compiling roa/roanet/roaserv.cpp
+Compiling roa/roanet/roaservi.cpp
+Compiling roa/roanet/roaservp.cpp
+Compiling roa/roanet/roatimer.cpp
+Compiling roa/roanet/roaversion.cpp
+Compiling roa/roanet/roawin.cpp
+Compiling roa/roanet/roaxml.cpp
+Creating libroanet.a
+ar: creating /home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/arch/i686-linux-gcc41/build/Debug/libroanet.a
+====== Done building:  roa/roanet  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       roa/roasys  i686-linux-gcc41 Debug
+Precompiling roa/roasys/precomp.h
+Compiling roa/roasys/BackupClassObserver.cpp
+Compiling roa/roasys/CapabilityContainer.cpp
+Compiling roa/roasys/CapabilityHelper.cpp
+Compiling roa/roasys/CoastingBaseHelper.cpp
+Compiling roa/roasys/CoastingClassHelper.cpp
+Compiling roa/roasys/ConnObject.cpp
+Compiling roa/roasys/InstanceContainer.cpp
+Compiling roa/roasys/ManualClassHelper.cpp
+Compiling roa/roasys/PeriodicLinkHelper.cpp
+Compiling roa/roasys/PortDevice.cpp
+Compiling roa/roasys/PortDeviceROA.cpp
+Compiling roa/roasys/PortDeviceSerial.cpp
+Compiling roa/roasys/PortDeviceSSLClient.cpp
+Compiling roa/roasys/PortDeviceSSLSocket.cpp
+Compiling roa/roasys/PortDeviceTCPClient.cpp
+Compiling roa/roasys/PortDeviceTCP.cpp
+Compiling roa/roasys/PortDeviceTCPServer.cpp
+Compiling roa/roasys/PortDeviceTCPSocket.cpp
+Compiling roa/roasys/PortDeviceUDP.cpp
+Compiling roa/roasys/PortObject.cpp
+Compiling roa/roasys/PortStorage.cpp
+Compiling roa/roasys/PortTracker.cpp
+Compiling roa/roasys/ROAArgument.cpp
+Compiling roa/roasys/ROABackupClass.cpp
+Compiling roa/roasys/ROABackupLink.cpp
+Compiling roa/roasys/ROABuffer.cpp
+Compiling roa/roasys/ROACallback.cpp
+Compiling roa/roasys/ROACapability.cpp
+Compiling roa/roasys/ROACDWrite.cpp
+Compiling roa/roasys/ROAChecksum.cpp
+Compiling roa/roasys/ROACoastingBase.cpp
+Compiling roa/roasys/ROACoastingClass.cpp
+Compiling roa/roasys/ROACoastingLink.cpp
+Compiling roa/roasys/ROACompress.cpp
+Compiling roa/roasys/ROAConnection.cpp
+Compiling roa/roasys/ROAConnectionObserver.cpp
+Compiling roa/roasys/ROACRC16C.cpp
+Compiling roa/roasys/ROACRC16.cpp
+Compiling roa/roasys/ROACRC32.cpp
+Compiling roa/roasys/ROACRC.cpp
+Compiling roa/roasys/ROACrypt.cpp
+Compiling roa/roasys/ROAFixedBuffer.cpp
+Compiling roa/roasys/ROAFixedFileBuffer.cpp
+Compiling roa/roasys/ROAFixedMemBuffer.cpp
+Compiling roa/roasys/ROAListFifo.cpp
+Compiling roa/roasys/ROALogFile.cpp
+Compiling roa/roasys/ROAManualClass.cpp
+Compiling roa/roasys/ROAManualLink.cpp
+Compiling roa/roasys/ROAMethodLog.cpp
+Compiling roa/roasys/ROAMutex.cpp
+Compiling roa/roasys/ROAMutexLock.cpp
+Compiling roa/roasys/ROAPeriodicLink.cpp
+Compiling roa/roasys/ROAPort.cpp
+Compiling roa/roasys/ROAPortObserver.cpp
+Compiling roa/roasys/ROAReliableClass.cpp
+Compiling roa/roasys/ROAReliableLink.cpp
+Compiling roa/roasys/ROAReservationQueue.cpp
+Compiling roa/roasys/ROASequenceNumber.cpp
+Compiling roa/roasys/ROAServerLog.cpp
+Compiling roa/roasys/ROASignal.cpp
+Compiling roa/roasys/ROASLPFind.cpp
+Compiling roa/roasys/ROASLPReg.cpp
+Compiling roa/roasys/ROASocketAddress.cpp
+Compiling roa/roasys/ROASocket.cpp
+Compiling roa/roasys/ROASocketManager.cpp
+Compiling roa/roasys/ROASocketObserver.cpp
+Compiling roa/roasys/ROAStatistics.cpp
+Compiling roa/roasys/ROASTLHelper.cpp
+Compiling roa/roasys/ROAStringParser.cpp
+Compiling roa/roasys/ROASUM8.cpp
+Compiling roa/roasys/ROASyncClass.cpp
+Compiling roa/roasys/ROASystemInfo.cpp
+Compiling roa/roasys/ROAThread.cpp
+Compiling roa/roasys/ROATime.cpp
+Compiling roa/roasys/ROAUnitTest.cpp
+Compiling roa/roasys/ROAUserToken.cpp
+Compiling roa/roasys/ROAUUID.cpp
+Compiling roa/roasys/ROAValidatingBase.cpp
+Compiling roa/roasys/ROAValidatingClass.cpp
+Compiling roa/roasys/ROAValidatingLink.cpp
+Compiling roa/roasys/ROAXOR8.cpp
+Compiling roa/roasys/ValidatingAlarmSet.cpp
+Compiling roa/roasys/ValidatingParam.cpp
+Compiling roa/roasys/Validator.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/roa/roasys/moc_PortDeviceSSLClient.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/roa/roasys/moc_PortDeviceSSLSocket.cpp
+Creating libroasys.a
+ar: creating /home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/arch/i686-linux-gcc41/build/Debug/libroasys.a
+====== Done building:  roa/roasys  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       xoa/xoalib  i686-linux-gcc41 Debug
+Precompiling xoa/xoalib/precomp.h
+Compiling xoa/xoalib/ROADataStream.cpp
+Compiling xoa/xoalib/XOAApplClass.cpp
+Compiling xoa/xoalib/XOAApplLink.cpp
+Compiling xoa/xoalib/XOABase.cpp
+Compiling xoa/xoalib/XOAConversion.cpp
+Compiling xoa/xoalib/XOADataType.cpp
+Compiling xoa/xoalib/XOAFile.cpp
+Compiling xoa/xoalib/XOAFPList.cpp
+Compiling xoa/xoalib/XOAInt64.cpp
+Compiling xoa/xoalib/XOAInt.cpp
+Compiling xoa/xoalib/XOAList.cpp
+Compiling xoa/xoalib/XOAReal.cpp
+Compiling xoa/xoalib/XOAString.cpp
+Compiling xoa/xoalib/XOATmpFile.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/xoa/xoalib/moc_XOAApplLink.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/xoa/xoalib/moc_XOAApplClass.cpp
+Creating libxoalib.a
+ar: creating /home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/arch/i686-linux-gcc41/build/Debug/libxoalib.a
+====== Done building:  xoa/xoalib  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       xoa/xoasys  i686-linux-gcc41 Debug
+Precompiling xoa/xoasys/precomp.h
+Compiling xoa/xoasys/XOACoastingBase.cpp
+Compiling xoa/xoasys/XOACoastingBaseHelper.cpp
+Compiling xoa/xoasys/XOACoastingClass.cpp
+Compiling xoa/xoasys/XOACoastingLink.cpp
+Compiling xoa/xoasys/XOASTLHelper.cpp
+Creating libxoasys.a
+ar: creating /home/hudson_slave/workspace/RX-kernel-daily_i686-linux-gcc41/trunk/src/arch/i686-linux-gcc41/build/Debug/libxoasys.a
+====== Done building:  xoa/xoasys  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Library projects have been built.
+===============================================================================
+====== Building:       3rdparty/cppunit  i686-linux-gcc41 Debug
+Compiling 3rdparty/cppunit/AdditionalMessage.cpp
+Compiling 3rdparty/cppunit/Asserter.cpp
+Compiling 3rdparty/cppunit/BeOsDynamicLibraryManager.cpp
+Compiling 3rdparty/cppunit/BriefTestProgressListener.cpp
+Compiling 3rdparty/cppunit/CompilerOutputter.cpp
+Compiling 3rdparty/cppunit/DefaultProtector.cpp
+Compiling 3rdparty/cppunit/DllMain.cpp
+Compiling 3rdparty/cppunit/DynamicLibraryManager.cpp
+Compiling 3rdparty/cppunit/DynamicLibraryManagerException.cpp
+Compiling 3rdparty/cppunit/Exception.cpp
+Compiling 3rdparty/cppunit/Message.cpp
+Compiling 3rdparty/cppunit/PlugInManager.cpp
+Compiling 3rdparty/cppunit/PlugInParameters.cpp
+Compiling 3rdparty/cppunit/ProtectorChain.cpp
+Compiling 3rdparty/cppunit/Protector.cpp
+Compiling 3rdparty/cppunit/RepeatedTest.cpp
+Compiling 3rdparty/cppunit/ShlDynamicLibraryManager.cpp
+Compiling 3rdparty/cppunit/SourceLine.cpp
+Compiling 3rdparty/cppunit/StringTools.cpp
+Compiling 3rdparty/cppunit/SynchronizedObject.cpp
+Compiling 3rdparty/cppunit/TestAssert.cpp
+Compiling 3rdparty/cppunit/TestCase.cpp
+Compiling 3rdparty/cppunit/TestCaseDecorator.cpp
+Compiling 3rdparty/cppunit/TestComposite.cpp
+Compiling 3rdparty/cppunit/Test.cpp
+Compiling 3rdparty/cppunit/TestDecorator.cpp
+Compiling 3rdparty/cppunit/TestFactoryRegistry.cpp
+Compiling 3rdparty/cppunit/TestFailure.cpp
+Compiling 3rdparty/cppunit/TestLeaf.cpp
+Compiling 3rdparty/cppunit/TestNamer.cpp
+Compiling 3rdparty/cppunit/TestPath.cpp
+Compiling 3rdparty/cppunit/TestPlugInDefaultImpl.cpp
+Compiling 3rdparty/cppunit/TestResultCollector.cpp
+Compiling 3rdparty/cppunit/TestResult.cpp
+Compiling 3rdparty/cppunit/TestRunner.cpp
+Compiling 3rdparty/cppunit/TestSetUp.cpp
+Compiling 3rdparty/cppunit/TestSuccessListener.cpp
+Compiling 3rdparty/cppunit/TestSuiteBuilderContext.cpp
+Compiling 3rdparty/cppunit/TestSuite.cpp
+Compiling 3rdparty/cppunit/TextOutputter.cpp
+Compiling 3rdparty/cppunit/TextTestProgressListener.cpp
+Compiling 3rdparty/cppunit/TextTestResult.cpp
+Compiling 3rdparty/cppunit/TextTestRunner.cpp
+Compiling 3rdparty/cppunit/TypeInfoHelper.cpp
+Compiling 3rdparty/cppunit/UnixDynamicLibraryManager.cpp
+Compiling 3rdparty/cppunit/Win32DynamicLibraryManager.cpp
+Compiling 3rdparty/cppunit/XmlDocument.cpp
+Compiling 3rdparty/cppunit/XmlElement.cpp
+Compiling 3rdparty/cppunit/XmlOutputter.cpp
+Compiling 3rdparty/cppunit/XmlOutputterHook.cpp
+Creating libcppunit.so
+====== Done building:  3rdparty/cppunit  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Shared projects have been built.
+===============================================================================
+====== Building:       roa/roaadmin  i686-linux-gcc41 Debug
+Precompiling roa/roaadmin/precomp.h
+Compiling roa/roaadmin/Firewall.cpp
+Compiling roa/roaadmin/ROAAdmin.cpp
+Compiling roa/roaadmin/Service.cpp
+Compiling roa/roaadmin/ServiceInfo.cpp
+Compiling roa/roaadmin/ServiceList.cpp
+Compiling roa/roaadmin/TempService.cpp
+Compiling roa/roaadmin/Upgrade.cpp
+Compiling roa/roaadmin/UsersIni.cpp
+Linking roaadmin
+====== Done building:  roa/roaadmin  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       roa/roaalarm  i686-linux-gcc41 Debug
+Precompiling roa/roaalarm/precomp.h
+Compiling roa/roaalarm/ralactiv.cpp
+Compiling roa/roaalarm/raldef.cpp
+Compiling roa/roaalarm/ralform.cpp
+Compiling roa/roaalarm/ralforms.cpp
+Compiling roa/roaalarm/rallink.cpp
+Compiling roa/roaalarm/ralmain.cpp
+Compiling roa/roaalarm/ralobjs.cpp
+Compiling roa/roaalarm/ralservc.cpp
+Compiling roa/roaalarm/ralservr.cpp
+Compiling roa/roaalarm/raltext.cpp
+Compiling roa/roaalarm/raltexts.cpp
+Compiling roa/roaalarm/raltimer.cpp
+Compiling roa/roaalarm/ROAAlarmDuplLink.cpp
+Compiling roa/roaalarm/ROAAlarmInfo.cpp
+Compiling roa/roaalarm/ROAAlarmLocation.cpp
+Compiling roa/roaalarm/ROADeviceStatusList.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/roa/roaalarm/moc_ralservc.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/roa/roaalarm/moc_ROADeviceStatusList.cpp
+Linking roaalarm
+====== Done building:  roa/roaalarm  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       roa/roaconn  i686-linux-gcc41 Debug
+Precompiling roa/roaconn/precomp.h
+Compiling roa/roaconn/ClusterMonitor.cpp
+Compiling roa/roaconn/ConnPublisher.cpp
+Compiling roa/roaconn/ConnRequester.cpp
+Compiling roa/roaconn/ConnService.cpp
+Compiling roa/roaconn/ConnSrvAlarm.cpp
+Compiling roa/roaconn/ConnSrvObject.cpp
+Compiling roa/roaconn/ConnSrvStorage.cpp
+Compiling roa/roaconn/IPObject.cpp
+Compiling roa/roaconn/IPObjectPoll.cpp
+Compiling roa/roaconn/RASObject.cpp
+Compiling roa/roaconn/RRASObject.cpp
+Linking roaconn
+====== Done building:  roa/roaconn  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       roa/roagateway  i686-linux-gcc41 Debug
+Precompiling roa/roagateway/precomp.h
+Compiling roa/roagateway/GWClient.cpp
+Compiling roa/roagateway/GWClientLink.cpp
+Compiling roa/roagateway/GWClientLinkObject.cpp
+Compiling roa/roagateway/GWClientLinks.cpp
+Compiling roa/roagateway/GWClientProtocol.cpp
+Compiling roa/roagateway/GWLocalNet.cpp
+Compiling roa/roagateway/GWRemoteNet.cpp
+Compiling roa/roagateway/GWServer.cpp
+Compiling roa/roagateway/GWServerObject.cpp
+Compiling roa/roagateway/GWServerObjectLink.cpp
+Compiling roa/roagateway/GWServerObjects.cpp
+Compiling roa/roagateway/GWServerProtocol.cpp
+Compiling roa/roagateway/GWService.cpp
+Compiling roa/roagateway/GWStorage.cpp
+Compiling roa/roagateway/SLPNetworks.cpp
+Compiling roa/roagateway/SystemLinks.cpp
+Compiling roa/roagateway/XMLClientProtocol.cpp
+Compiling roa/roagateway/XMLServerProtocol.cpp
+Linking roagateway
+====== Done building:  roa/roagateway  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       roa/roainfo  i686-linux-gcc41 Debug
+Precompiling roa/roainfo/precomp.h
+Compiling roa/roainfo/AlarmInfo.cpp
+Compiling roa/roainfo/ApplClassInfo.cpp
+Compiling roa/roainfo/ApplLinkInfo.cpp
+Compiling roa/roainfo/CapabilityInfo.cpp
+Compiling roa/roainfo/CoastingClassInfo.cpp
+Compiling roa/roainfo/CoastingLinkInfo.cpp
+Compiling roa/roainfo/DiagLinkInfo.cpp
+Compiling roa/roainfo/ExistenceInfo.cpp
+Compiling roa/roainfo/FixInfo.cpp
+Compiling roa/roainfo/FixObjectsInfo.cpp
+Compiling roa/roainfo/Info.cpp
+Compiling roa/roainfo/Maintenance.cpp
+Compiling roa/roainfo/Manager.cpp
+Compiling roa/roainfo/PeriodicLinkInfo.cpp
+Compiling roa/roainfo/PersStorageInfo.cpp
+Compiling roa/roainfo/PingInfo.cpp
+Compiling roa/roainfo/roainfo.cpp
+Compiling roa/roainfo/Task.cpp
+Compiling roa/roainfo/TimerInfo.cpp
+Compiling roa/roainfo/util.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/roa/roainfo/moc_Manager.cpp
+Linking roainfo
+====== Done building:  roa/roainfo  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       roa/roamonitor  i686-linux-gcc41 Debug
+Precompiling roa/roamonitor/precomp.h
+Compiling roa/roamonitor/AddressData.cpp
+Compiling roa/roamonitor/main.cpp
+Compiling roa/roamonitor/ModuleAddress.cpp
+Compiling roa/roamonitor/Module.cpp
+Compiling roa/roamonitor/ModuleDiag.cpp
+Compiling roa/roamonitor/ModuleHeartbeat.cpp
+Compiling roa/roamonitor/ModuleIRIGB.cpp
+Compiling roa/roamonitor/ModuleMount.cpp
+Compiling roa/roamonitor/ModuleMOXA.cpp
+Compiling roa/roamonitor/ModuleNTP.cpp
+Compiling roa/roamonitor/ModulePing.cpp
+Compiling roa/roamonitor/ModuleServices.cpp
+Compiling roa/roamonitor/ModuleSyslog.cpp
+Compiling roa/roamonitor/ModuleSystem.cpp
+Compiling roa/roamonitor/ModuleUPS.cpp
+Compiling roa/roamonitor/ModuleVersion.cpp
+Compiling roa/roamonitor/ModuleWatchdog.cpp
+Compiling roa/roamonitor/MonitorInfoClass.cpp
+Compiling roa/roamonitor/MonitorMainClass.cpp
+Compiling roa/roamonitor/MonitorMainLink.cpp
+Compiling roa/roamonitor/MonitorServerLink.cpp
+Compiling roa/roamonitor/MonitorService.cpp
+Compiling roa/roamonitor/MonitorStorage.cpp
+Compiling roa/roamonitor/MonitorTimer.cpp
+Compiling roa/roamonitor/ServiceData.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/roa/roamonitor/moc_ModulePing.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/roa/roamonitor/moc_ModuleDiag.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/roa/roamonitor/moc_ModuleUPS.cpp
+Linking roamonitor
+====== Done building:  roa/roamonitor  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       roa/roapers  i686-linux-gcc41 Debug
+Precompiling roa/roapers/precomp.h
+Compiling roa/roapers/rprfile.cpp
+Compiling roa/roapers/rprinst.cpp
+Compiling roa/roapers/rprinstd.cpp
+Compiling roa/roapers/rprmain.cpp
+Compiling roa/roapers/rprname.cpp
+Compiling roa/roapers/rprobjct.cpp
+Compiling roa/roapers/rprobjd.cpp
+Compiling roa/roapers/rprservc.cpp
+Compiling roa/roapers/rprservl.cpp
+Compiling roa/roapers/rprservr.cpp
+Compiling roa/roapers/rprsourc.cpp
+Compiling roa/roapers/rprstr.cpp
+Compiling roa/roapers/rpruser.cpp
+Compiling roa/roapers/rprvard.cpp
+Compiling roa/roapers/rprversion.cpp
+Linking roapers
+====== Done building:  roa/roapers  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       roa/roaserv  i686-linux-gcc41 Debug
+Precompiling roa/roaserv/precomp.h
+Compiling roa/roaserv/ROAServHbAlarms.cpp
+Compiling roa/roaserv/ROAServLog.cpp
+Compiling roa/roaserv/rsralarm.cpp
+Compiling roa/roaserv/rsrctrl.cpp
+Compiling roa/roaserv/rsrdefn.cpp
+Compiling roa/roaserv/rsrdefu.cpp
+Compiling roa/roaserv/rsrdiag.cpp
+Compiling roa/roaserv/rsrmain.cpp
+Compiling roa/roaserv/rsrname.cpp
+Compiling roa/roaserv/rsrnames.cpp
+Compiling roa/roaserv/rsrservc.cpp
+Compiling roa/roaserv/rsrservl.cpp
+Compiling roa/roaserv/rsrservr.cpp
+Compiling roa/roaserv/rsrsoft.cpp
+Compiling roa/roaserv/rsrtimer.cpp
+Compiling roa/roaserv/rsrtype.cpp
+Compiling roa/roaserv/rsrtypen.cpp
+Compiling roa/roaserv/rsrtypes.cpp
+Compiling roa/roaserv/rsruser.cpp
+Compiling roa/roaserv/rsrusero.cpp
+Compiling roa/roaserv/rsrusers.cpp
+Linking roaserv
+====== Done building:  roa/roaserv  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       test/config_tool  i686-linux-gcc41 Debug
+Precompiling test/config_tool/precomp.h
+Compiling test/config_tool/ConfHandler.cpp
+Compiling test/config_tool/ConfStorageHandler.cpp
+Compiling test/config_tool/Info.cpp
+Compiling test/config_tool/main.cpp
+Compiling test/config_tool/Manager.cpp
+Compiling test/config_tool/Task.cpp
+Compiling test/config_tool/Util.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/test/config_tool/moc_Manager.cpp
+Linking config_tool
+====== Done building:  test/config_tool  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       test/roasys_tool  i686-linux-gcc41 Debug
+Precompiling test/roasys_tool/precomp.h
+Compiling test/roasys_tool/CapabilityHandler.cpp
+Compiling test/roasys_tool/Info.cpp
+Compiling test/roasys_tool/main.cpp
+Compiling test/roasys_tool/Manager.cpp
+Compiling test/roasys_tool/Task.cpp
+Compiling test/roasys_tool/Util.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/test/roasys_tool/moc_Manager.cpp
+Linking roasys_tool
+====== Done building:  test/roasys_tool  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       test/slow_srv  i686-linux-gcc41 Debug
+Precompiling test/slow_srv/precomp.h
+Compiling test/slow_srv/main.cpp
+Compiling test/slow_srv/SlowService.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/test/slow_srv/moc_SlowService.cpp
+Linking slow_srv
+====== Done building:  test/slow_srv  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       test/test_example  i686-linux-gcc41 Debug
+Precompiling test/test_example/precomp.h
+Compiling test/test_example/main.cpp
+Linking test_example
+====== Done building:  test/test_example  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       test/testx  i686-linux-gcc41 Debug
+Precompiling test/testx/precomp.h
+Compiling test/testx/test_obj.cpp
+Compiling test/testx/test_serv.cpp
+Linking testx
+====== Done building:  test/testx  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Building:       xoa/tmp_srv  i686-linux-gcc41 Debug
+Precompiling xoa/tmp_srv/precomp.h
+Compiling xoa/tmp_srv/main.cpp
+Compiling xoa/tmp_srv/TmpDirectory.cpp
+Compiling xoa/tmp_srv/TmpService.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/xoa/tmp_srv/moc_TmpDirectory.cpp
+Compiling arch/i686-linux-gcc41/build/Debug/xoa/tmp_srv/moc_TmpService.cpp
+Linking tmp_srv
+====== Done building:  xoa/tmp_srv  i686-linux-gcc41 Debug
+======-------------------------------------------------------------------------
+====== Other projects have been built.
+===============================================================================
+====== All projects have been built.
+===============================================================================
+====== Labeling builds/159 svn sources: RX-kernel
+echo svn copy .. builds/159
+svn copy .. builds/159
+====== Done labeling builds/159 svn sources: RX-kernel
+===============================================================================
+[RX-kernel-daily_i686-linux-gcc41] $ /bin/sh -xe /tmp/hudson3448455625393792757.sh
++ trunk/src/make rebuild ARCH=i686-linux-gcc41 BUILD=Release
+===============================================================================
+

@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
+import junit.framework.Assert;
+
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -140,6 +143,20 @@ public class DoxygenParserTest extends ParserTester {
                 "The following parameters of sofa::component::odesolver::EulerKaapiSolver::v_peq(VecId v, VecId a, double f) are not documented:\n  parameter 'v'\n  parameter 'a'",
                 "",
                 WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
+    }
+
+    /**
+     * Verifies that parsing of long files does not fail.
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-7178">Issue 7178</a>
+     * @see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6882582">JDK Bug 6882582</a>
+     */
+    @Test @Ignore
+    public void issue7178() throws IOException {
+        Collection<FileAnnotation> warnings = new DoxygenParser().parse(openFile("issue7178.txt"));
+
+        Assert.assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, warnings.size());
     }
 
     /**
