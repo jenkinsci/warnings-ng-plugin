@@ -173,11 +173,15 @@ public class ParserResult implements Serializable {
                 annotation.setFileName(absoluteFileName);
             }
             else {
-                LOGGER.log(Level.FINE, "Multiple matches found. Absolute filename could not be resolved for: " + annotation.getFileName());
+                LOGGER.log(Level.FINE, String.format(
+                        "Absolute filename could not be resolved for: %s. Found multiple matches: %s. ",
+                        annotation.getFileName(), fileNameCache.get(fileName)));
             }
         }
         else {
-            LOGGER.log(Level.FINE, "File not found. Absolute filename could not be resolved for: " + annotation.getFileName());
+            LOGGER.log(Level.FINE, String.format(
+                    "Absolute filename could not be resolved for: %s. No such file in workspace: %s. ",
+                    annotation.getFileName(), workspace.getPath()));
         }
     }
 
@@ -191,7 +195,7 @@ public class ParserResult implements Serializable {
      */
     // TODO: Maybe the file pattern should be exposed on the UI in order to speed up the scanning, see HUDSON-2927
     private void populateFileNameCache() throws IOException, InterruptedException {
-        LOGGER.log(Level.INFO, "Building cache of all workspace files to obtain absolute filenames for all warnings: " + workspace.getPath());
+        LOGGER.log(Level.FINE, "Building cache of all workspace files to obtain absolute filenames for all warnings: " + workspace.getPath());
 
         String[] allFiles = workspace.findFiles("**/*");
         for (String file : allFiles) {
