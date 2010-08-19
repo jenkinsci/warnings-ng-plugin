@@ -189,6 +189,7 @@ public class ParserResult implements Serializable {
      * @throws InterruptedException
      *             if the user cancels the search
      */
+    // TODO: Maybe the file pattern should be exposed on the UI in order to speed up the scanning, see HUDSON-2927
     private void populateFileNameCache() throws IOException, InterruptedException {
         LOGGER.log(Level.INFO, "Building cache of all workspace files to obtain absolute filenames for all warnings.");
 
