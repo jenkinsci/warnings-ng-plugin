@@ -19,6 +19,7 @@ import hudson.plugins.analysis.util.model.Priority;
 public class ParserResultTest {
     private static final String OTHER_SCANNED_FILE = "other/file.txt";
     private static final String SCANNED_FILENAME = "relative/path/to/file.txt";
+    private static final String SCANNED_FILENAME_WINDOWS = "relative\\path\\to\\file.txt";
     private static final String WORSPACE_ROOT = "ws";
     private static final String FOUND_FILE_NAME = WORSPACE_ROOT + "/" + SCANNED_FILENAME;
 
@@ -47,6 +48,22 @@ public class ParserResultTest {
     @Test
     public void testFileNameMappingWithPrefix() throws Exception {
         ParserResult result = new ParserResult(mockWorkspace(new String[] {SCANNED_FILENAME}));
+
+        FileAnnotation warning = mockWarning("to/file.txt");
+        result.addAnnotation(warning);
+
+        verify(warning).setFileName(FOUND_FILE_NAME);
+    }
+
+    /**
+     * Verifies that a file (in Windows format) with path prefix is correctly mapped.
+     *
+     * @throws Exception
+     *             in case of an error
+     */
+    @Test
+    public void testWindowsFileNameMappingWithPrefix() throws Exception {
+        ParserResult result = new ParserResult(mockWorkspace(new String[] {SCANNED_FILENAME_WINDOWS}));
 
         FileAnnotation warning = mockWarning("to/file.txt");
         result.addAnnotation(warning);

@@ -199,7 +199,7 @@ public class ParserResult implements Serializable {
 
         String[] allFiles = workspace.findFiles("**/*");
         for (String file : allFiles) {
-            fileNameCache.put(FilenameUtils.getName(file), file);
+            fileNameCache.put(FilenameUtils.getName(file), FilenameUtils.separatorsToUnix(file));
         }
     }
 
