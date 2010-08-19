@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import hudson.model.Result;
@@ -145,6 +146,7 @@ public class BuildResultEvaluatorTest {
     private FileAnnotation createAnnotation() {
         FileAnnotation annotation = mock(FileAnnotation.class);
         when(annotation.getPriority()).thenReturn(Priority.HIGH);
+        when(annotation.getFileName()).thenReturn(StringUtils.EMPTY);
 
         return annotation;
     }
