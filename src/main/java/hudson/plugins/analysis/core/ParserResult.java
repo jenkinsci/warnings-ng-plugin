@@ -1,6 +1,5 @@
 package hudson.plugins.analysis.core;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,14 +11,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 import hudson.FilePath;
@@ -37,8 +38,6 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 public class ParserResult implements Serializable {
     private static final long serialVersionUID = -8414545334379193330L;
-    private static final Logger LOGGER = Logger.getLogger(ParserResult.class.getName());
-    private static final int DUPLICATES_REPORTING_LIMIT = 20;
     private static final String SLASH = "/";
 
     /** The parsed annotations. */
@@ -57,7 +56,7 @@ public class ParserResult implements Serializable {
     private final Workspace workspace;
     /** A mapping of relative file names to absolute file names. */
     @SuppressWarnings("Se")
-    private final Map<String, String> fileNameCache = new HashMap<String, String>();
+    private final Multimap<String, String> fileNameCache = HashMultimap.create();
 
     /**
      * Facade for the remote workspace.
@@ -123,12 +122,13 @@ public class ParserResult implements Serializable {
      *
      * @param annotation the annotation
      */
+    // TODO: this method is quite dump: when used on a slave then for each file a remote call is initiated
     private void expandRelativePaths(final FileAnnotation annotation) {
         try {
             if (hasRelativeFileName(annotation)) {
-                Workspace remote = workspace.child(annotation.getFileName());
-                if (remote.exists()) {
-                    annotation.setFileName(remote.getRemote());
+                Workspace remoteFile = workspace.child(annotation.getFileName());
+                if (remoteFile.exists()) {
+                    annotation.setFileName(remoteFile.getRemote());
                 }
                 else {
                     findFileByScanningAllWorkspaceFiles(annotation);
@@ -159,8 +159,25 @@ public class ParserResult implements Serializable {
             populateFileNameCache();
         }
 
-        if (fileNameCache.containsKey(annotation.getFileName())) {
-            annotation.setFileName(workspace.getRemote() + SLASH + fileNameCache.get(annotation.getFileName()));
+        String fileName = FilenameUtils.getName(annotation.getFileName());
+        if (fileNameCache.containsKey(fileName)) {
+            int matchesCount = 0;
+            String absoluteFileName = null;
+            for (String match : fileNameCache.get(fileName)) {
+                if (match.contains(annotation.getFileName())) {
+                    absoluteFileName = workspace.getRemote() + SLASH + match;
+                    matchesCount++;
+                }
+            }
+            if (matchesCount == 1) {
+                annotation.setFileName(absoluteFileName);
+            }
+            else {
+                LOGGER.log(Level.FINE, "Multiple matches found. Absolute filename could not be resolved for: " + annotation.getFileName());
+            }
+        }
+        else {
+            LOGGER.log(Level.FINE, "File not found. Absolute filename could not be resolved for: " + annotation.getFileName());
         }
     }
 
@@ -176,31 +193,16 @@ public class ParserResult implements Serializable {
         LOGGER.log(Level.INFO, "Building cache of all workspace files to obtain absolute filenames for all warnings.");
 
         String[] allFiles = workspace.findFiles("**/*");
-        Set<String> duplicates = new TreeSet<String>();
         for (String file : allFiles) {
-            String fileName = new File(file).getName();
-            if (fileNameCache.containsKey(fileName)) {
-                if (duplicates.size() >= DUPLICATES_REPORTING_LIMIT) {
-                    duplicates.add("\u2026"); // HORIZONTAL ELLIPSIS sorts after ASCII whereas ... FULL STOP is before letters
-                }
-                else {
-                    duplicates.add(fileName);
-                }
-                fileNameCache.remove(fileName);
-            }
-            else {
-                fileNameCache.put(fileName, file);
-            }
-        }
-        if (!duplicates.isEmpty()) {
-            LOGGER.log(Level.INFO, "Relative filenames {0} found more than once; absolute filename resolution disabled for these files.", duplicates);
+            fileNameCache.put(FilenameUtils.getName(file), file);
         }
     }
 
     /**
      * Returns whether the annotation references a relative filename.
      *
-     * @param annotation the annotation
+     * @param annotation
+     *            the annotation
      * @return <code>true</code> if the filename is relative
      */
     private boolean hasRelativeFileName(final FileAnnotation annotation) {
@@ -244,7 +246,7 @@ public class ParserResult implements Serializable {
     }
 
     /**
-     * Addds an error message for the specified module name.
+     * Adds an error message for the specified module name.
      *
      * @param module
      *            the current module
@@ -463,5 +465,7 @@ public class ParserResult implements Serializable {
             return new String[0];
         }
     }
+
+    private static final Logger LOGGER = Logger.getLogger(ParserResult.class.getName());
 }
 
