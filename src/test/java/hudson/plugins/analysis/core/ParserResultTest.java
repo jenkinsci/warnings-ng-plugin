@@ -98,7 +98,7 @@ public class ParserResultTest {
     private Workspace mockWorkspace(final String[] workspaceFiles) throws IOException, InterruptedException {
         Workspace workspace = mock(Workspace.class);
         when(workspace.child(anyString())).thenReturn(workspace);
-        when(workspace.getRemote()).thenReturn(WORSPACE_ROOT);
+        when(workspace.getPath()).thenReturn(WORSPACE_ROOT);
         when(workspace.findFiles(anyString())).thenReturn(workspaceFiles);
         return workspace;
     }

@@ -66,7 +66,7 @@ public class ParserResult implements Serializable {
 
         boolean exists() throws InterruptedException, IOException;
 
-        String getRemote();
+        String getPath();
 
         String[] findFiles(String pattern) throws IOException, InterruptedException;
     }
@@ -128,7 +128,7 @@ public class ParserResult implements Serializable {
             if (hasRelativeFileName(annotation)) {
                 Workspace remoteFile = workspace.child(annotation.getFileName());
                 if (remoteFile.exists()) {
-                    annotation.setFileName(remoteFile.getRemote());
+                    annotation.setFileName(remoteFile.getPath());
                 }
                 else {
                     findFileByScanningAllWorkspaceFiles(annotation);
@@ -165,7 +165,7 @@ public class ParserResult implements Serializable {
             String absoluteFileName = null;
             for (String match : fileNameCache.get(fileName)) {
                 if (match.contains(annotation.getFileName())) {
-                    absoluteFileName = workspace.getRemote() + SLASH + match;
+                    absoluteFileName = workspace.getPath() + SLASH + match;
                     matchesCount++;
                 }
             }
@@ -191,7 +191,7 @@ public class ParserResult implements Serializable {
      */
     // TODO: Maybe the file pattern should be exposed on the UI in order to speed up the scanning, see HUDSON-2927
     private void populateFileNameCache() throws IOException, InterruptedException {
-        LOGGER.log(Level.INFO, "Building cache of all workspace files to obtain absolute filenames for all warnings.");
+        LOGGER.log(Level.INFO, "Building cache of all workspace files to obtain absolute filenames for all warnings: " + workspace.getPath());
 
         String[] allFiles = workspace.findFiles("**/*");
         for (String file : allFiles) {
@@ -430,7 +430,7 @@ public class ParserResult implements Serializable {
         }
 
         /** {@inheritDoc} */
-        public String getRemote() {
+        public String getPath() {
             return wrapped.getRemote();
         }
 
@@ -457,7 +457,7 @@ public class ParserResult implements Serializable {
         }
 
         /** {@inheritDoc} */
-        public String getRemote() {
+        public String getPath() {
             return StringUtils.EMPTY;
         }
 
