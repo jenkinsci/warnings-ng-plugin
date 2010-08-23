@@ -21,7 +21,7 @@ public class WarningsDescriptorTest {
      */
     @Test
     public void testNameValidation() {
-        WarningsDescriptor descriptor = new WarningsDescriptor();
+        WarningsDescriptor descriptor = new WarningsDescriptor(false);
 
         assertError(descriptor.doCheckName(null));
         assertError(descriptor.doCheckName(StringUtils.EMPTY));
@@ -33,7 +33,7 @@ public class WarningsDescriptorTest {
      */
     @Test
     public void testRegexpValidation() {
-        WarningsDescriptor descriptor = new WarningsDescriptor();
+        WarningsDescriptor descriptor = new WarningsDescriptor(false);
 
         assertError(descriptor.doCheckRegexp(null));
         assertError(descriptor.doCheckRegexp(StringUtils.EMPTY));
@@ -51,7 +51,7 @@ public class WarningsDescriptorTest {
      */
     @Test
     public void testScriptValidationWithoutExample() throws IOException {
-        WarningsDescriptor descriptor = new WarningsDescriptor();
+        WarningsDescriptor descriptor = new WarningsDescriptor(false);
 
         assertError(descriptor.doCheckScript(null));
         assertError(descriptor.doCheckScript(StringUtils.EMPTY));
@@ -74,7 +74,7 @@ public class WarningsDescriptorTest {
      */
     @Test
     public void testScriptValidationOneWarning() throws IOException {
-        WarningsDescriptor descriptor = new WarningsDescriptor();
+        WarningsDescriptor descriptor = new WarningsDescriptor(false);
 
         assertOk(descriptor.doCheckExample(
                 "file/name/relative/unix:42:evil: this is a warning message",
@@ -91,7 +91,7 @@ public class WarningsDescriptorTest {
      */
     @Test
     public void testScriptValidationNoMatchesFound() throws IOException {
-        WarningsDescriptor descriptor = new WarningsDescriptor();
+        WarningsDescriptor descriptor = new WarningsDescriptor(false);
 
         assertError(descriptor.doCheckExample(
                 "this is a warning message",
@@ -108,7 +108,7 @@ public class WarningsDescriptorTest {
      */
     @Test
     public void testScriptValidationIllegalMatchAccess() throws IOException {
-        WarningsDescriptor descriptor = new WarningsDescriptor();
+        WarningsDescriptor descriptor = new WarningsDescriptor(false);
 
         assertError(descriptor.doCheckExample(
                 "file/name/relative/unix:42:evil: this is a warning message",

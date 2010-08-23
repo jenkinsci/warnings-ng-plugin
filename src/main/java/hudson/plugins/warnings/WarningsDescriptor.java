@@ -42,7 +42,22 @@ public final class WarningsDescriptor extends PluginDescriptor {
      * Instantiates a new {@link WarningsDescriptor}.
      */
     public WarningsDescriptor() {
+        this(true);
+    }
+
+    /**
+     * Instantiates a new {@link WarningsDescriptor}.
+     *
+     * @param loadConfiguration
+     *            determines whether the values of this instance should be
+     *            loaded from disk
+     */
+    public WarningsDescriptor(final boolean loadConfiguration) {
         super(WarningsPublisher.class);
+
+        if (loadConfiguration) {
+            load();
+        }
     }
 
     /** {@inheritDoc} */
@@ -120,6 +135,8 @@ public final class WarningsDescriptor extends PluginDescriptor {
     @Override
     public boolean configure(final StaplerRequest req, final JSONObject formData) {
         groovyParsers.replaceBy(req.bindJSONToList(GroovyParser.class, formData.get("parsers")));
+
+        save();
 
         return true;
     }
