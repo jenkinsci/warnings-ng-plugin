@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.console.ConsoleNote;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 import java.io.IOException;
@@ -69,7 +70,7 @@ public abstract class RegexpLineParser extends RegexpParser {
         LineIterator iterator = IOUtils.lineIterator(file);
         if (isStringMatchActivated) {
             while (iterator.hasNext()) {
-                String line = iterator.nextLine();
+                String line = getNextLine(iterator);
                 if (isLineInteresting(line)) {
                     findAnnotations(line, warnings);
                 }
@@ -77,12 +78,16 @@ public abstract class RegexpLineParser extends RegexpParser {
         }
         else {
             while (iterator.hasNext()) {
-                findAnnotations(iterator.nextLine(), warnings);
+                findAnnotations(getNextLine(iterator), warnings);
             }
         }
         iterator.close();
 
         return warnings;
+    }
+
+    private String getNextLine(final LineIterator iterator) {
+        return ConsoleNote.removeNotes(iterator.nextLine());
     }
 
     /**
