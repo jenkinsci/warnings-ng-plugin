@@ -109,9 +109,6 @@ public class AntEclipseParserTest extends ParserTester {
         int number = 0;
         for (FileAnnotation fileAnnotation : sorted) {
             boolean containsHat = fileAnnotation.getMessage().contains("^");
-            if (containsHat) {
-                System.err.println(fileAnnotation);
-            }
             assertFalse("Message " + number + " contains ^", containsHat);
             number++;
         }
