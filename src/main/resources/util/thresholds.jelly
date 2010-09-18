@@ -8,57 +8,28 @@
   xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
   xmlns:f="/lib/form" xmlns:u="/util">
 
-  <f:entry title="${%Build status}" description="${%description.status}">
+  <f:entry title="${%Health thresholds}" description="${%description.health.limit}">
     <table>
-      <thead>
-        <tr>
-          <td></td>
-          <td width="80">
-            <img src="${rootURL}/images/16x16/health-80plus.gif" alt="100%" title="${%description.healthy}" />
-          </td>
-          <td width="80">
-            <img src="${rootURL}/images/16x16/health-00to19.gif" alt="0%" title="${%description.unhealthy}" />
-          </td>
-          <td width="80">
-            <img src="${rootURL}/images/16x16/yellow.gif" alt="100%" title="${%description.threshold}" /> ${%Total}
-          </td>
-          <td width="80">
-            <img src="${rootURL}/images/16x16/yellow.gif" alt="100%" title="${%description.newThreshold}" /> ${%New}
-          </td>
-          <td width="80">
-            <img src="${rootURL}/images/16x16/red.gif" alt="100%" title="${%description.failureThreshold}" /> ${%Total}
-          </td>
-          <td width="80">
-            <img src="${rootURL}/images/16x16/red.gif" alt="100%" title="${%description.newFailureThreshold}" /> ${%New}
-          </td>
-        </tr>
-      </thead>
       <tbody>
         <tr>
-          <td style="vertical-align:middle">${%Thresholds:}</td>
+          <td>
+            <img src="${rootURL}/images/16x16/health-80plus.gif" alt="100%" title="${%description.healthy}" /> ${%threshold.100.percent}
+          </td>
           <td>
             <f:textbox name="healthy" value="${instance.healthy}" />
           </td>
+          <td width="20"/>
+          <td>
+            <img src="${rootURL}/images/16x16/health-00to19.gif" alt="0%" title="${%description.unhealthy}" /> ${%threshold.0.percent}
+          </td>
           <td>
             <f:textbox name="unHealthy" value="${instance.unHealthy}" />
-          </td>
-          <td>
-            <f:textbox name="threshold" value="${instance.threshold}" />
-          </td>
-          <td>
-            <f:textbox name="newThreshold" value="${instance.newThreshold}" />
-          </td>
-          <td>
-            <f:textbox name="failureThreshold" value="${instance.failureThreshold}" />
-          </td>
-          <td>
-            <f:textbox name="newFailureThreshold" value="${instance.newFailureThreshold}" />
           </td>
         </tr>
       </tbody>
     </table>
   </f:entry>
-  <f:entry title="${%Priority evaluation}" description="${%description.limit}">
+  <f:entry title="${%Health priorities}" description="${%description.health.priorities}">
     <f:radio name="${id}.thresholdLimit" value="high" checked="${instance.thresholdLimit == 'high'}" id="thresholdLimit.high"/>
     <st:nbsp/>
     <label for="thresholdLimit.high">${%Only priority high}</label>
@@ -76,6 +47,89 @@
     <st:nbsp/>
     <label for="thresholdLimit.low">${%All priorities}</label>
     <st:nbsp />
+  </f:entry>
+  <f:entry title="${%Status thresholds}" description="${%description.status}">
+    <table>
+      <thead>
+        <tr>
+          <td />
+          <td>${%All priorities}</td>
+          <td>${%Priority high}</td>
+          <td>${%Priority normal}</td>
+          <td>${%Priority low}</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <img src="${rootURL}/images/16x16/yellow.gif" alt="100%" title="${%description.unstableTotal.all}" /> ${%Total}
+          </td>
+          <td>
+            <f:textbox name="unstableTotalAll" value="${instance.unstableTotalAll}" />
+          </td>
+          <td>
+            <f:textbox name="unstableTotalHigh" value="${instance.unstableTotalHigh}" />
+          </td>
+          <td>
+            <f:textbox name="unstableTotalNormal" value="${instance.unstableTotalNormal}" />
+          </td>
+          <td>
+            <f:textbox name="unstableTotalLow" value="${instance.unstableTotalLow}" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <img src="${rootURL}/images/16x16/yellow.gif" alt="100%" title="${%description.unstableNew.all}" /> ${%New}
+          </td>
+          <td>
+            <f:textbox name="unstableNewAll" value="${instance.unstableNewAll}" />
+          </td>
+          <td>
+            <f:textbox name="unstableNewHigh" value="${instance.unstableNewHigh}" />
+          </td>
+          <td>
+            <f:textbox name="unstableNewNormal" value="${instance.unstableNewNormal}" />
+          </td>
+          <td>
+            <f:textbox name="unstableNewLow" value="${instance.unstableNewLow}" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <img src="${rootURL}/images/16x16/red.gif" alt="100%" title="${%description.failedTotal.all}" /> ${%Total}
+          </td>
+          <td>
+            <f:textbox name="failedTotalAll" value="${instance.failedTotalAll}" />
+          </td>
+          <td>
+            <f:textbox name="failedTotalHigh" value="${instance.failedTotalHigh}" />
+          </td>
+          <td>
+            <f:textbox name="failedTotalNormal" value="${instance.failedTotalNormal}" />
+          </td>
+          <td>
+            <f:textbox name="failedTotalLow" value="${instance.failedTotalLow}" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <img src="${rootURL}/images/16x16/red.gif" alt="100%" title="${%description.failedNew.all}" /> ${%New}
+          </td>
+          <td>
+            <f:textbox name="failedNewAll" value="${instance.failedNewAll}" />
+          </td>
+          <td>
+            <f:textbox name="failedNewHigh" value="${instance.failedNewHigh}" />
+          </td>
+          <td>
+            <f:textbox name="failedNewNormal" value="${instance.failedNewNormal}" />
+          </td>
+          <td>
+            <f:textbox name="failedNewLow" value="${instance.failedNewLow}" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </f:entry>
   <f:entry title="${%Use delta for new warnings}" description="${%description.useDeltaValues}">
     <f:checkbox name="useDeltaValues" checked="${instance.useDeltaValues}"/>

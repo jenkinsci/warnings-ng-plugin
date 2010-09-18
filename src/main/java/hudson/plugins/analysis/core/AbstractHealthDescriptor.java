@@ -19,18 +19,12 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
     private static final long serialVersionUID = -3709673381162699834L;
     /** The minimum priority to consider during health and stability calculation. */
     private final Priority priority;
-    /** Annotation threshold to be reached if a build should be considered as unstable. */
-    private final String threshold;
-    /** Threshold for new annotations to be reached if a build should be considered as unstable. */
-    private final String newThreshold;
-    /** Annotation threshold to be reached if a build should be considered as failure. */
-    private final String failureThreshold;
-    /** Threshold for new annotations to be reached if a build should be considered as failure. */
-    private final String newFailureThreshold;
     /** Report health as 100% when the number of warnings is less than this value. */
     private final String healthy;
     /** Report health as 0% when the number of warnings is greater than this value. */
     private final String unHealthy;
+    /** Build status thresholds. */
+    private Thresholds thresholds;
 
     /**
      * Creates a new instance of {@link AbstractHealthDescriptor} based on the
@@ -40,22 +34,16 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
      */
     public AbstractHealthDescriptor(final HealthDescriptor healthDescriptor) {
         priority = healthDescriptor.getMinimumPriority();
-        threshold = healthDescriptor.getThreshold();
-        newThreshold = healthDescriptor.getNewThreshold();
-        failureThreshold = healthDescriptor.getFailureThreshold();
-        newFailureThreshold = healthDescriptor.getNewFailureThreshold();
         healthy = healthDescriptor.getHealthy();
         unHealthy = healthDescriptor.getUnHealthy();
+        thresholds = healthDescriptor.getThresholds();
     }
 
     /**
      * Creates a new instance of {@link AbstractHealthDescriptor}.
      */
     public AbstractHealthDescriptor() {
-        threshold = StringUtils.EMPTY;
-        newThreshold = StringUtils.EMPTY;
-        failureThreshold = StringUtils.EMPTY;
-        newFailureThreshold = StringUtils.EMPTY;
+        thresholds = new Thresholds();
         healthy = StringUtils.EMPTY;
         unHealthy = StringUtils.EMPTY;
         priority = Priority.LOW;
@@ -67,26 +55,6 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
     }
 
     /** {@inheritDoc} */
-    public String getThreshold() {
-        return threshold;
-    }
-
-    /** {@inheritDoc} */
-    public String getNewThreshold() {
-        return newThreshold;
-    }
-
-    /** {@inheritDoc} */
-    public String getFailureThreshold() {
-        return failureThreshold;
-    }
-
-    /** {@inheritDoc} */
-    public String getNewFailureThreshold() {
-        return newFailureThreshold;
-    }
-
-    /** {@inheritDoc} */
     public String getHealthy() {
         return healthy;
     }
@@ -94,6 +62,11 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
     /** {@inheritDoc} */
     public String getUnHealthy() {
         return unHealthy;
+    }
+
+    /** {@inheritDoc} */
+    public Thresholds getThresholds() {
+        return thresholds;
     }
 
     /**
@@ -122,7 +95,7 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
      * @return <code>true</code> if a threshold has been defined
      */
     public boolean isThresholdEnabled() {
-        return isValid(threshold) || isValid(failureThreshold) || isValid(newThreshold) || isValid(newFailureThreshold);
+        return thresholds.isValid();
     }
 
     /**
@@ -200,6 +173,47 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
         throw createException();
     }
 
+    /**
+     * Initializes new fields that are not serialized yet.
+     *
+     * @return the object
+     */
+    protected Object readResolve() {
+        if (thresholds == null) {
+            thresholds = new Thresholds();
+
+            if (threshold != null) {
+                thresholds.unstableTotalAll = threshold;
+                threshold = null; // NOPMD
+            }
+            if (newThreshold != null) {
+                thresholds.unstableNewAll = newThreshold;
+                newThreshold = null; // NOPMD
+            }
+            if (failureThreshold != null) {
+                thresholds.failedTotalAll = failureThreshold;
+                failureThreshold = null; //NOPMD
+            }
+            if (newFailureThreshold != null) {
+                thresholds.failedNewAll = newFailureThreshold;
+                newFailureThreshold = null; // NOPMD
+            }
+        }
+        return this;
+    }
+
+    /** Backward compatibility. @deprecated */
+    @Deprecated
+    private transient String threshold;
+    /** Backward compatibility. @deprecated */
+    @Deprecated
+    private transient String newThreshold;
+    /** Backward compatibility. @deprecated */
+    @Deprecated
+    private transient String failureThreshold;
+    /** Backward compatibility. @deprecated */
+    @Deprecated
+    private transient String newFailureThreshold;
     /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
@@ -217,8 +231,8 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
     @Deprecated
     private transient int unHealthyAnnotations;
     /** Backward compatibility. @deprecated */
-    @SuppressWarnings("unused")
+    @SuppressWarnings("all")
     @Deprecated
-    private transient boolean isHealthyReportEnabled; // NOPMD
+    private transient boolean isHealthyReportEnabled;
 }
 

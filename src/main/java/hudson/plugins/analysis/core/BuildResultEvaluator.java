@@ -2,7 +2,9 @@ package hudson.plugins.analysis.core;
 
 import static hudson.plugins.analysis.util.ThresholdValidator.*;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Set;
 
 import hudson.model.Result;
 
@@ -17,69 +19,151 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 public class BuildResultEvaluator {
     /**
-     * Evaluates the build result. The build is marked as unstable if one of the
-     * thresholds has been exceeded.
+     * Evaluates the build result. The build is marked as unstable or failed if
+     * one of the thresholds has been exceeded.
      *
      * @param logger
      *            logs the results
-     * @param descriptor
-     *            health descriptor
+     * @param t
+     *            the thresholds
+     * @param delta
+     *            delta between this build and reference build
+     * @param highDelta
+     *            delta between this build and reference build (priority high)
+     * @param normalDelta
+     *            delta between this build and reference build (priority high)
+     * @param lowDelta
+     *            delta between this build and reference build (priority high)
      * @param allAnnotations
      *            all annotations
-     * @param annotationDelta
-     *            the annotation difference between this build and the reference
-     *            build (i.e., the difference #numbersOfAnnotations(build) - #numbersOfAnnotations(referenceBuild))
      * @return the build result
      */
-    public Result evaluateBuildResult(final PluginLogger logger, final HealthDescriptor descriptor,
-            final Collection<FileAnnotation> allAnnotations, final int annotationDelta) {
-
-        int annotationCount = extractNumberOfRelevantAnnotations(logger, descriptor, "", allAnnotations);
-        if (descriptor.getMinimumPriority() != Priority.LOW) {
-            logger.log(String.format("Considering %d annotations for build status evaluation", annotationCount));
-            logger.log(String.format("Considering %d new annotations for build status evaluation", annotationDelta));
-        }
-        if (isAnnotationCountExceeded(annotationCount, descriptor.getFailureThreshold())) {
-            logger.log("Setting build status to FAILURE since total number of annotations exceeds the threshold " + descriptor.getFailureThreshold());
+    public Result evaluateBuildResult(final PluginLogger logger, final Thresholds t,
+            final Set<FileAnnotation> allAnnotations,
+            final int delta, final int highDelta, final int normalDelta, final int lowDelta) {
+        if (check(logger, allAnnotations, Result.FAILURE,
+                t.failedTotalAll, t.failedTotalHigh, t.failedTotalNormal, t.failedTotalLow)) {
             return Result.FAILURE;
         }
-        if (isAnnotationCountExceeded(annotationDelta, descriptor.getNewFailureThreshold())) {
-            logger.log("Setting build status to FAILURE since total number of new annotations exceeds the threshold " + descriptor.getNewFailureThreshold());
+        if (checkFailedNew(logger, delta, highDelta, normalDelta, lowDelta, t)) {
             return Result.FAILURE;
         }
-        if (isAnnotationCountExceeded(annotationCount, descriptor.getThreshold())) {
-            logger.log("Setting build status to UNSTABLE since total number of annotations exceeds the threshold " + descriptor.getThreshold());
+        if (check(logger, allAnnotations, Result.UNSTABLE,
+                t.unstableTotalAll, t.unstableTotalHigh, t.unstableTotalNormal, t.unstableTotalLow)) {
             return Result.UNSTABLE;
         }
-        if (isAnnotationCountExceeded(annotationDelta, descriptor.getNewThreshold())) {
-            logger.log("Setting build status to UNSTABLE since total number of new annotations exceeds the threshold " + descriptor.getNewThreshold());
+        if (checkUnstableNew(logger, delta, highDelta, normalDelta, lowDelta, t)) {
             return Result.UNSTABLE;
         }
-        logger.log("Not changing build status, since no threshold has been exceeded");
-        return Result.SUCCESS;
 
+        return logSuccess(logger);
     }
 
     /**
-     * Evaluates the build result. The build is marked as unstable if one of the
+     * Evaluates the build result. The build is marked as unstable or failed if one of the
      * thresholds has been exceeded.
      *
      * @param logger
      *            logs the results
-     * @param descriptor
-     *            health descriptor
+     * @param t
+     *            the thresholds
      * @param allAnnotations
      *            all annotations
      * @param newAnnotations
-     *            the asymmetric set intersection of the annotations of this build and the annotations of the reference
-     *            build (i.e., the operation annotations(referenceBuild).removeAll(numbersOfAnnotations(build))
+     *            the new annotations
      * @return the build result
      */
-    public Result evaluateBuildResult(final PluginLogger logger, final HealthDescriptor descriptor,
+    public Result evaluateBuildResult(final PluginLogger logger, final Thresholds t,
             final Collection<FileAnnotation> allAnnotations, final Collection<FileAnnotation> newAnnotations) {
-        int newAnnotationCount = extractNumberOfRelevantAnnotations(logger, descriptor, "new", newAnnotations);
+        if (check(logger, allAnnotations, Result.FAILURE,
+                t.failedTotalAll, t.failedTotalHigh, t.failedTotalNormal, t.failedTotalLow)) {
+            return Result.FAILURE;
+        }
+        if (check(logger, newAnnotations, Result.FAILURE,
+                t.failedNewAll, t.failedNewHigh, t.failedNewNormal, t.failedNewLow)) {
+            return Result.FAILURE;
+        }
+        if (check(logger, allAnnotations, Result.UNSTABLE,
+                t.unstableTotalAll, t.unstableTotalHigh, t.unstableTotalNormal, t.unstableTotalLow)) {
+            return Result.UNSTABLE;
+        }
+        if (check(logger, newAnnotations, Result.UNSTABLE,
+                t.unstableNewAll, t.unstableNewHigh, t.unstableNewNormal, t.unstableNewLow)) {
+            return Result.UNSTABLE;
+        }
 
-        return evaluateBuildResult(logger, descriptor, allAnnotations, newAnnotationCount);
+        return logSuccess(logger);
+    }
+
+    private Result logSuccess(final PluginLogger logger) {
+        logger.log("Not changing build status, since no threshold has been exceeded");
+
+        return Result.SUCCESS;
+    }
+
+    private boolean check(final PluginLogger logger, final Collection<FileAnnotation> annotations,
+            final Result result, final String all, final String high, final String normal, final String low) {
+        if (checkThresholds(logger, annotations, all, result, Priority.HIGH, Priority.NORMAL, Priority.LOW)) {
+            return true;
+        }
+        if (checkThresholds(logger, annotations, high, result, Priority.HIGH)) {
+            return true;
+        }
+        if (checkThresholds(logger, annotations, normal, result, Priority.NORMAL)) {
+            return true;
+        }
+        if (checkThresholds(logger, annotations, low, result, Priority.LOW)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkFailedNew(final PluginLogger logger, final int delta, final int highDelta, final int normalDelta, final int lowDelta, final Thresholds t) {
+        if (checkThresholds(logger, delta, t.failedNewAll, Result.FAILURE, Priority.HIGH, Priority.NORMAL, Priority.LOW)) {
+            return true;
+        }
+        if (checkThresholds(logger, highDelta, t.failedNewHigh, Result.FAILURE, Priority.HIGH)) {
+            return true;
+        }
+        if (checkThresholds(logger, normalDelta, t.failedNewNormal, Result.FAILURE, Priority.NORMAL)) {
+            return true;
+        }
+        if (checkThresholds(logger, lowDelta, t.failedNewLow, Result.FAILURE, Priority.LOW)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkUnstableNew(final PluginLogger logger, final int delta, final int highDelta, final int normalDelta, final int lowDelta, final Thresholds t) {
+        if (checkThresholds(logger, delta, t.unstableNewAll, Result.UNSTABLE, Priority.HIGH, Priority.NORMAL, Priority.LOW)) {
+            return true;
+        }
+        if (checkThresholds(logger, highDelta, t.unstableNewHigh, Result.UNSTABLE, Priority.HIGH)) {
+            return true;
+        }
+        if (checkThresholds(logger, normalDelta, t.unstableNewNormal, Result.UNSTABLE, Priority.NORMAL)) {
+            return true;
+        }
+        if (checkThresholds(logger, lowDelta, t.unstableNewLow, Result.UNSTABLE, Priority.LOW)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkThresholds(final PluginLogger logger, final Collection<FileAnnotation> allAnnotations,
+            final String threshold, final Result result, final Priority... priorities) {
+        return checkThresholds(logger, countAnnotations(allAnnotations, priorities), threshold, result, priorities);
+    }
+
+    private boolean checkThresholds(final PluginLogger logger, final int annotationCount,
+            final String threshold, final Result result, final Priority... priorities) {
+        if (isAnnotationCountExceeded(annotationCount, threshold)) {
+            logger.log("Setting build status to " + result
+                    + " since total number of annotations exceeds the threshold " + threshold + ": "
+                    + Arrays.toString(priorities));
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -87,30 +171,16 @@ public class BuildResultEvaluator {
      * annotations. A annotation is relevant, if its priority is greater or
      * equal than the minimum priority of the health descriptor.
      *
-     * @param logger
-     *            logs the results
-     * @param descriptor
-     *            health descriptor
-     * @param description
-     *            the description of the analyzed annotations
      * @param annotations
      *            the annotations to consider
      * @return the number of relevant annotations
      */
-    private int extractNumberOfRelevantAnnotations(final PluginLogger logger,
-            final HealthDescriptor descriptor, final String description, final Collection<FileAnnotation> annotations) {
+    private int countAnnotations(final Collection<FileAnnotation> annotations, final Priority... priorities) {
         ParserResult result = new ParserResult(annotations);
-
         int annotationCount = 0;
-        for (Priority priority : Priority.collectPrioritiesFrom(descriptor.getMinimumPriority())) {
+        for (Priority priority : priorities) {
             annotationCount += result.getNumberOfAnnotations(priority);
         }
-        logger.log(String.format("Found %d %s annotations (%d high, %d normal, %d low)",
-                result.getNumberOfAnnotations(),
-                description,
-                result.getNumberOfAnnotations(Priority.HIGH),
-                result.getNumberOfAnnotations(Priority.NORMAL),
-                result.getNumberOfAnnotations(Priority.LOW)));
         return annotationCount;
     }
 

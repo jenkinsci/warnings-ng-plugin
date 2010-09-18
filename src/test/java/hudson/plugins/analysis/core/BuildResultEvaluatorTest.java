@@ -67,75 +67,69 @@ public class BuildResultEvaluatorTest {
 
         PluginLogger logger = mock(PluginLogger.class);
         assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "", ""), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("", "", "", ""), allAnnotations, newAnnotations));
         assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "0", "", ""), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("0", "0", "", ""), allAnnotations, newAnnotations));
         assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "0", "0"), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("", "", "0", "0"), allAnnotations, newAnnotations));
         assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "0", "0", "0"), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("0", "0", "0", "0"), allAnnotations, newAnnotations));
         allAnnotations.add(createAnnotation());
         assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "", ""), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("", "", "", ""), allAnnotations, newAnnotations));
         assertEquals(WRONG_BUILD_RESULT, Result.UNSTABLE,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "", "", ""), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("0", "", "", ""), allAnnotations, newAnnotations));
         assertEquals(WRONG_BUILD_RESULT, Result.FAILURE,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "0", "", ""), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("", "0", "", ""), allAnnotations, newAnnotations));
         assertEquals(WRONG_BUILD_RESULT, Result.FAILURE,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "0", "", ""), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("0", "0", "", ""), allAnnotations, newAnnotations));
         newAnnotations.add(createAnnotation());
         assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "", ""), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("", "", "", ""), allAnnotations, newAnnotations));
         assertEquals(WRONG_BUILD_RESULT, Result.UNSTABLE,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "0", ""), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("", "", "0", ""), allAnnotations, newAnnotations));
         assertEquals(WRONG_BUILD_RESULT, Result.FAILURE,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "", "0"), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("", "", "", "0"), allAnnotations, newAnnotations));
         assertEquals(WRONG_BUILD_RESULT, Result.FAILURE,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "0", "0"), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("", "", "0", "0"), allAnnotations, newAnnotations));
 
         assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "", "", ""), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("", "", "", ""), allAnnotations, newAnnotations));
         assertEquals(WRONG_BUILD_RESULT, Result.UNSTABLE,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "", "0", ""), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("0", "", "0", ""), allAnnotations, newAnnotations));
         assertEquals(WRONG_BUILD_RESULT, Result.FAILURE,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "0", "", "", "0"), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("0", "", "", "0"), allAnnotations, newAnnotations));
         assertEquals(WRONG_BUILD_RESULT, Result.FAILURE,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "0", "", "0"), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("", "0", "", "0"), allAnnotations, newAnnotations));
         assertEquals(WRONG_BUILD_RESULT, Result.FAILURE,
-                parser.evaluateBuildResult(logger, newDescriptor(Priority.NORMAL, "", "0", "0", ""), allAnnotations, newAnnotations));
+                parser.evaluateBuildResult(logger, newDescriptor("", "0", "0", ""), allAnnotations, newAnnotations));
     }
 
     /**
-     * Creates a mock health descriptor.
+     * Creates a thresholds object.
      *
      * @param unstableThreshold
      *            Annotations threshold to be reached if a build should be
      *            considered as unstable.
-     * @param newUnstableThreshold
-     *            New annotations threshold to be reached if a build should be
-     *            considered as unstable.
      * @param failureThreshold
      *            Annotation threshold to be reached if a build should be
      *            considered as failure.
+     * @param newUnstableThreshold
+     *            New annotations threshold to be reached if a build should be
+     *            considered as unstable.
      * @param newFailureThreshold
      *            New annotations threshold to be reached if a build should be
      *            considered as failure.
-     * @param minimumPriority
-     *            determines which warning priorities should be considered when
-     *            evaluating the build stability and health
      * @return the health descriptor
      */
-    private HealthDescriptor newDescriptor(final Priority minimumPriority,
-            final String unstableThreshold, final String failureThreshold,
+    private Thresholds newDescriptor(final String unstableThreshold, final String failureThreshold,
             final String newUnstableThreshold, final String newFailureThreshold) {
-        HealthDescriptor descriptor = mock(HealthDescriptor.class);
-        when(descriptor.getMinimumPriority()).thenReturn(minimumPriority);
-        when(descriptor.getThreshold()).thenReturn(unstableThreshold);
-        when(descriptor.getFailureThreshold()).thenReturn(failureThreshold);
-        when(descriptor.getNewThreshold()).thenReturn(newUnstableThreshold);
-        when(descriptor.getNewFailureThreshold()).thenReturn(newFailureThreshold);
-
-        return descriptor;
+        Thresholds thresholds = new Thresholds();
+        thresholds.unstableTotalAll = unstableThreshold;
+        thresholds.failedTotalAll = failureThreshold;
+        thresholds.unstableNewAll = newUnstableThreshold;
+        thresholds.failedNewAll = newFailureThreshold;
+        return thresholds;
     }
 
     /**

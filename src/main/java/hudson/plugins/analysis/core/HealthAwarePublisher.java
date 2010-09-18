@@ -56,24 +56,21 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
 
     /** Default threshold priority limit. */
     private static final String DEFAULT_PRIORITY_THRESHOLD_LIMIT = "low";
-    /** Annotation threshold to be reached if a build should be considered as unstable. */
-    private final String threshold;
-    /** Threshold for new annotations to be reached if a build should be considered as unstable. */
-    private final String newThreshold;
-    /** Annotation threshold to be reached if a build should be considered as failure. */
-    private final String failureThreshold;
-    /** Threshold for new annotations to be reached if a build should be considered as failure. */
-    private final String newFailureThreshold;
+
     /** Report health as 100% when the number of warnings is less than this value. */
     private final String healthy;
     /** Report health as 0% when the number of warnings is greater than this value. */
     private final String unHealthy;
+    /** Determines which warning priorities should be considered when evaluating the build health. */
+    private String thresholdLimit;
+
     /** The name of the plug-in. */
     private final String pluginName;
-    /** Determines which warning priorities should be considered when evaluating the build stability and health. */
-    private String thresholdLimit;
     /** The default encoding to be used when reading and parsing files. */
     private final String defaultEncoding;
+    /** Determines whether the plug-in should run for failed builds, too. @since 1.6 */
+    private final boolean canRunOnFailed;
+
     /**
      * Determines whether the absolute annotations delta or the actual
      * annotations set difference should be used to evaluate the build stability.
@@ -81,8 +78,107 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      * @since 1.4
      */
     private final boolean useDeltaValues;
-    /** Determines whether the plug-in should run for failed builds, too. @since 1.6 */
-    private final boolean canRunOnFailed;
+
+    /**
+     * Thresholds for build status unstable and failed, resp. and priorities
+     * all, high, normal, and low, resp.
+     *
+     * @since 1.14
+     */
+    private Thresholds thresholds = new Thresholds();
+
+    /**
+     * Creates a new instance of {@link HealthAwarePublisher}.
+     *
+     * @param healthy
+     *            Report health as 100% when the number of open tasks is less
+     *            than this value
+     * @param unHealthy
+     *            Report health as 0% when the number of open tasks is greater
+     *            than this value
+     * @param thresholdLimit
+     *            determines which warning priorities should be considered when
+     *            evaluating the build stability and health
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @param useDeltaValues
+     *            determines whether the absolute annotations delta or the
+     *            actual annotations set difference should be used to evaluate
+     *            the build stability
+     * @param unstableTotalAll
+     *            annotation threshold
+     * @param unstableTotalHigh
+     *            annotation threshold
+     * @param unstableTotalNormal
+     *            annotation threshold
+     * @param unstableTotalLow
+     *            annotation threshold
+     * @param unstableNewAll
+     *            annotation threshold
+     * @param unstableNewHigh
+     *            annotation threshold
+     * @param unstableNewNormal
+     *            annotation threshold
+     * @param unstableNewLow
+     *            annotation threshold
+     * @param failedTotalAll
+     *            annotation threshold
+     * @param failedTotalHigh
+     *            annotation threshold
+     * @param failedTotalNormal
+     *            annotation threshold
+     * @param failedTotalLow
+     *            annotation threshold
+     * @param failedNewAll
+     *            annotation threshold
+     * @param failedNewHigh
+     *            annotation threshold
+     * @param failedNewNormal
+     *            annotation threshold
+     * @param failedNewLow
+     *            annotation threshold
+     * @param canRunOnFailed
+     *            determines whether the plug-in can run for failed builds, too
+     * @param pluginName
+     *            the name of the plug-in
+     */
+    // CHECKSTYLE:OFF
+    @SuppressWarnings("PMD")
+    public HealthAwarePublisher(final String healthy, final String unHealthy, final String thresholdLimit,
+            final String defaultEncoding, final boolean useDeltaValues,
+            final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
+            final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,
+            final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
+            final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
+            final boolean canRunOnFailed, final String pluginName) {
+        super();
+        this.healthy = healthy;
+        this.unHealthy = unHealthy;
+        this.thresholdLimit = thresholdLimit;
+        this.defaultEncoding = defaultEncoding;
+
+        this.useDeltaValues = useDeltaValues;
+
+        thresholds.unstableTotalAll = unstableTotalAll;
+        thresholds.unstableTotalHigh = unstableTotalHigh;
+        thresholds.unstableTotalNormal = unstableTotalNormal;
+        thresholds.unstableTotalLow = unstableTotalLow;
+        thresholds.unstableNewAll = unstableNewAll;
+        thresholds.unstableNewHigh = unstableNewHigh;
+        thresholds.unstableNewNormal = unstableNewNormal;
+        thresholds.unstableNewLow = unstableNewLow;
+        thresholds.failedTotalAll = failedTotalAll;
+        thresholds.failedTotalHigh = failedTotalHigh;
+        thresholds.failedTotalNormal = failedTotalNormal;
+        thresholds.failedTotalLow = failedTotalLow;
+        thresholds.failedNewAll = failedNewAll;
+        thresholds.failedNewHigh = failedNewHigh;
+        thresholds.failedNewNormal = failedNewNormal;
+        thresholds.failedNewLow = failedNewLow;
+
+        this.canRunOnFailed = canRunOnFailed;
+        this.pluginName = "[" + pluginName + "] ";
+    }
 
     /**
      * Creates a new instance of <code>HealthAwarePublisher</code>.
@@ -121,16 +217,19 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      */
     // CHECKSTYLE:OFF
     @SuppressWarnings("PMD")
+    @Deprecated
     public HealthAwarePublisher(final String threshold, final String newThreshold,
             final String failureThreshold, final String newFailureThreshold, final String healthy,
             final String unHealthy, final String thresholdLimit,
             final String defaultEncoding, final boolean useDeltaValues, final boolean canRunOnFailed,
             final String pluginName) {
         super();
-        this.threshold = threshold;
-        this.newThreshold = newThreshold;
-        this.failureThreshold = failureThreshold;
-        this.newFailureThreshold = newFailureThreshold;
+
+        thresholds.unstableTotalAll = threshold;
+        thresholds.unstableNewAll = newThreshold;
+        thresholds.failedTotalAll = failureThreshold;
+        thresholds.failedNewAll = newFailureThreshold;
+
         this.healthy = healthy;
         this.unHealthy = unHealthy;
         this.thresholdLimit = thresholdLimit;
@@ -139,53 +238,6 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         this.canRunOnFailed = canRunOnFailed;
         this.pluginName = "[" + pluginName + "] ";
     }
-
-    // CHECKSTYLE:ON
-    /**
-     * Creates a new instance of <code>HealthAwarePublisher</code>.
-     *
-     * @param threshold
-     *            Annotations threshold to be reached if a build should be
-     *            considered as unstable.
-     * @param newThreshold
-     *            New annotations threshold to be reached if a build should be
-     *            considered as unstable.
-     * @param failureThreshold
-     *            Annotation threshold to be reached if a build should be
-     *            considered as failure.
-     * @param newFailureThreshold
-     *            New annotations threshold to be reached if a build should be
-     *            considered as failure.
-     * @param healthy
-     *            Report health as 100% when the number of open tasks is less
-     *            than this value
-     * @param unHealthy
-     *            Report health as 0% when the number of open tasks is greater
-     *            than this value
-     * @param thresholdLimit
-     *            determines which warning priorities should be considered when
-     *            evaluating the build stability and health
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param useDeltaValues
-     *            determines whether the absolute annotations delta or the
-     *            actual annotations set difference should be used to evaluate
-     *            the build stability
-     * @param pluginName
-     *            the name of the plug-in
-     * @deprecated replaced by {@link #HealthAwarePublisher(String, String, String, String, String, String, String, String, boolean, boolean, String)}
-     */
-    // CHECKSTYLE:OFF
-    @SuppressWarnings("PMD")
-    @Deprecated
-    public HealthAwarePublisher(final String threshold, final String newThreshold,
-            final String failureThreshold, final String newFailureThreshold, final String healthy,
-            final String unHealthy, final String thresholdLimit,
-            final String defaultEncoding, final boolean useDeltaValues, final String pluginName) {
-        this(threshold, newThreshold, failureThreshold, newFailureThreshold,
-                healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues, false, pluginName);
-    }
-    // CHECKSTYLE:ON
 
     /**
      * Initializes new fields that are not serialized yet.
@@ -196,6 +248,26 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         if (thresholdLimit == null) {
             thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
         }
+        if (thresholds == null) {
+            thresholds = new Thresholds();
+
+            if (threshold != null) {
+                thresholds.unstableTotalAll = threshold;
+                threshold = null; // NOPMD
+            }
+            if (newThreshold != null) {
+                thresholds.unstableNewAll = newThreshold;
+                newThreshold = null; // NOPMD
+            }
+            if (failureThreshold != null) {
+                thresholds.failedTotalAll = failureThreshold;
+                failureThreshold = null; //NOPMD
+            }
+            if (newFailureThreshold != null) {
+                thresholds.failedNewAll = newFailureThreshold;
+                newFailureThreshold = null; // NOPMD
+            }
+        }
         return this;
     }
 
@@ -205,25 +277,25 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
     public final boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
         PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
         if (canContinue(build.getResult())) {
-            BuildResult annotationsResult = perform(build, logger);
+            BuildResult result = perform(build, logger);
 
             if (new NullHealthDescriptor(this).isThresholdEnabled()) {
                 BuildResultEvaluator resultEvaluator = new BuildResultEvaluator();
                 Result buildResult;
                 if (useDeltaValues) {
                     logger.log("Using delta values to compute new warnings");
-                    buildResult = resultEvaluator.evaluateBuildResult(logger, this,
-                            annotationsResult.getAnnotations(), annotationsResult.getDelta());
+                    buildResult = resultEvaluator.evaluateBuildResult(logger, getThresholds(), result.getAnnotations(),
+                            result.getDelta(), result.getHighDelta(), result.getNormalDelta(), result.getLowDelta());
                 }
                 else {
                     logger.log("Using set difference to compute new warnings");
-                    buildResult = resultEvaluator.evaluateBuildResult(logger, this,
-                            annotationsResult.getAnnotations(), annotationsResult.getNewWarnings());
+                    buildResult = resultEvaluator.evaluateBuildResult(logger, getThresholds(),
+                            result.getAnnotations(), result.getNewWarnings());
                 }
-                annotationsResult.setResult(buildResult);
+                result.setResult(buildResult);
             }
 
-            copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), annotationsResult.getAnnotations());
+            copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), result.getAnnotations());
         }
         else {
             logger.log("Skipping publisher since build result is " + build.getResult());
@@ -363,6 +435,12 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      */
     protected abstract BuildResult perform(AbstractBuild<?, ?> build, PluginLogger logger) throws InterruptedException, IOException;
 
+
+    /** {@inheritDoc} */
+    public Thresholds getThresholds() {
+        return thresholds;
+    }
+
     /**
      * Returns the useDeltaValues.
      *
@@ -370,50 +448,6 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      */
     public boolean getUseDeltaValues() {
         return useDeltaValues;
-    }
-
-    /**
-     * Returns the annotation threshold to be reached if a build should be
-     * considered as unstable.
-     *
-     * @return the annotation threshold to be reached if a build should be
-     *         considered as unstable.
-     */
-    public String getThreshold() {
-        return threshold;
-    }
-
-    /**
-     * Returns the threshold of new annotations to be reached if a build should
-     * be considered as unstable.
-     *
-     * @return the threshold of new annotations to be reached if a build should
-     *         be considered as unstable.
-     */
-    public String getNewThreshold() {
-        return newThreshold;
-    }
-
-    /**
-     * Returns the annotation threshold to be reached if a build should be
-     * considered as failure.
-     *
-     * @return the annotation threshold to be reached if a build should be
-     *         considered as failure.
-     */
-    public String getFailureThreshold() {
-        return failureThreshold;
-    }
-
-    /**
-     * Returns the threshold of new annotations to be reached if a build should
-     * be considered as failure.
-     *
-     * @return the threshold of new annotations to be reached if a build should
-     *         be considered as failure.
-     */
-    public String getNewFailureThreshold() {
-        return newFailureThreshold;
     }
 
     /**
@@ -502,6 +536,22 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         return BuildStepMonitor.STEP;
     }
 
+    /** Annotation threshold to be reached if a build should be considered as unstable. */
+    /** Backward compatibility. @deprecated */
+    @Deprecated
+    private transient String threshold;
+    /** Threshold for new annotations to be reached if a build should be considered as unstable. */
+    /** Backward compatibility. @deprecated */
+    @Deprecated
+    private transient String newThreshold;
+    /** Annotation threshold to be reached if a build should be considered as failure. */
+    /** Backward compatibility. @deprecated */
+    @Deprecated
+    private transient String failureThreshold;
+    /** Threshold for new annotations to be reached if a build should be considered as failure. */
+    /** Backward compatibility. @deprecated */
+    @Deprecated
+    private transient String newFailureThreshold;
     /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated

@@ -102,6 +102,12 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
     /** Difference between this and the previous build. */
     private int delta;
+    /** Difference between this and the previous build (Priority low). */
+    private int lowDelta;
+    /** Difference between this and the previous build (Priority normal). */
+    private int normalDelta;
+    /** Difference between this and the previous build (Priority high). */
+    private int highDelta;
 
     /** The number of low priority warnings in this build. */
     private int lowWarnings;
@@ -236,6 +242,9 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         AnnotationContainer referenceResult = history.getReferenceAnnotations();
 
         delta = result.getNumberOfAnnotations() - referenceResult.getNumberOfAnnotations();
+        lowDelta = computeDelta(result, referenceResult, Priority.LOW);
+        normalDelta = computeDelta(result, referenceResult, Priority.NORMAL);
+        highDelta = computeDelta(result, referenceResult, Priority.HIGH);
 
         Set<FileAnnotation> allWarnings = result.getAnnotations();
 
@@ -259,6 +268,10 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         project = new WeakReference<JavaProject>(container);
 
         computeZeroWarningsHighScore(build, result);
+    }
+
+    private int computeDelta(final ParserResult result, final AnnotationContainer referenceResult, final Priority priority) {
+        return result.getNumberOfAnnotations(priority) - referenceResult.getNumberOfAnnotations(priority);
     }
 
     /**
@@ -716,6 +729,33 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      */
     public int getDelta() {
         return delta;
+    }
+
+    /**
+     * Returns the high delta.
+     *
+     * @return the delta
+     */
+    public int getHighDelta() {
+        return highDelta;
+    }
+
+    /**
+     * Returns the normal delta.
+     *
+     * @return the delta
+     */
+    public int getNormalDelta() {
+        return normalDelta;
+    }
+
+    /**
+     * Returns the low delta.
+     *
+     * @return the delta
+     */
+    public int getLowDelta() {
+        return lowDelta;
     }
 
     /**
