@@ -153,7 +153,7 @@ public class HealthGraphTest {
             final boolean isHealthEnabled, final int healthy, final int unHealthy) {
         AbstractHealthDescriptor healthDescriptor = mock(AbstractHealthDescriptor.class);
         when(healthDescriptor.isThresholdEnabled()).thenReturn(isThresholdEnabled);
-        when(healthDescriptor.getMinimumAnnotations()).thenReturn(threshold);
+        when(healthDescriptor.getLowerBoundOfThresholds()).thenReturn(threshold);
         when(healthDescriptor.isHealthyReportEnabled()).thenReturn(isHealthEnabled);
         when(healthDescriptor.getHealthyAnnotations()).thenReturn(healthy);
         when(healthDescriptor.getUnHealthyAnnotations()).thenReturn(unHealthy);

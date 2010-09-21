@@ -1,5 +1,7 @@
 package hudson.plugins.analysis.core;
 
+import static hudson.plugins.analysis.util.ThresholdValidator.*;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -72,6 +74,22 @@ public class Thresholds {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns a lower bound of warnings that will guarantee that a build
+     * neither is unstable or failed.
+     *
+     * @return the number of warnings
+     */
+    public int getLowerBound() {
+        if (isValid(unstableTotalAll)) {
+            return convert(unstableTotalAll);
+        }
+        if (isValid(failedTotalAll)) {
+            return convert(failedTotalAll);
+        }
+        return 0;
     }
 }
 

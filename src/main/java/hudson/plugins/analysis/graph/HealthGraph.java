@@ -88,9 +88,9 @@ public class HealthGraph extends CategoryBuildResultGraph {
             }
         }
         else if (healthDescriptor.isThresholdEnabled()) {
-            series.add(Math.min(remainder, healthDescriptor.getMinimumAnnotations()));
+            series.add(Math.min(remainder, healthDescriptor.getLowerBoundOfThresholds()));
 
-            remainder -= healthDescriptor.getMinimumAnnotations();
+            remainder -= healthDescriptor.getLowerBoundOfThresholds();
             if (remainder > 0) {
                 series.add(remainder);
             }

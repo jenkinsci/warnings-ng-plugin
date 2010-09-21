@@ -99,26 +99,13 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
     }
 
     /**
-     * Returns the threshold to be reached if a build should be considered as
-     * unstable.
+     * Returns a lower bound of warnings that will guarantee that a build
+     * neither is unstable or failed.
      *
-     * @return the threshold to be reached if a build should be considered as
-     *         unstable
+     * @return the number of warnings
      */
-    public int getMinimumAnnotations() {
-        if (isValid(threshold)) {
-            return convert(threshold);
-        }
-        if (isValid(failureThreshold)) {
-            return convert(failureThreshold);
-        }
-        if (isValid(newThreshold)) {
-            return convert(newThreshold);
-        }
-        if (isValid(newFailureThreshold)) {
-            return convert(newFailureThreshold);
-        }
-        return 0;
+    public int getLowerBoundOfThresholds() {
+        return thresholds.getLowerBound();
     }
 
     /**
