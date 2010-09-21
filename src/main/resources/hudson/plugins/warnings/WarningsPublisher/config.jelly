@@ -39,6 +39,7 @@
        description="${%description.excludePattern('http://ant.apache.org/manual/Types/fileset.html')}">
       <f:textbox/>
     </f:entry>
+    <u:health id="warnings"/>
     <u:thresholds id="warnings"/>
     <u:defaultEncoding id="warnings"/>
     <u:trend id="warnings"/>
