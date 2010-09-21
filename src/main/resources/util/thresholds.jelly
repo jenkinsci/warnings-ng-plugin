@@ -8,46 +8,6 @@
   xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
   xmlns:f="/lib/form" xmlns:u="/util">
 
-  <f:entry title="${%Health thresholds}" description="${%description.health.limit}">
-    <table>
-      <tbody>
-        <tr>
-          <td style="vertical-align: middle;">
-            <img src="${rootURL}/images/16x16/health-80plus.gif" alt="100%" title="${%description.healthy}" /> ${%threshold.100.percent}
-          </td>
-          <td>
-            <f:textbox name="healthy" value="${instance.healthy}" />
-          </td>
-          <td width="20"/>
-          <td style="vertical-align: middle;">
-            <img src="${rootURL}/images/16x16/health-00to19.gif" alt="0%" title="${%description.unhealthy}" /> ${%threshold.0.percent}
-          </td>
-          <td>
-            <f:textbox name="unHealthy" value="${instance.unHealthy}" />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </f:entry>
-  <f:entry title="${%Health priorities}" description="${%description.health.priorities}">
-    <f:radio name="${id}.thresholdLimit" value="high" checked="${instance.thresholdLimit == 'high'}" id="thresholdLimit.high"/>
-    <st:nbsp/>
-    <label for="thresholdLimit.high">${%Only priority high}</label>
-    <st:nbsp />
-    <f:radio name="${id}.thresholdLimit" value="normal" checked="${instance.thresholdLimit == 'normal'}" id="thresholdLimit.normal"/>
-    <st:nbsp/>
-    <label for="thresholdLimit.normal">${%Priorities high and normal}</label>
-    <st:nbsp />
-    <j:if test="${instance != null}">
-      <f:radio name="${id}.thresholdLimit" value="low" title="" checked="${instance.thresholdLimit == 'low'}" id="thresholdLimit.low"/>
-    </j:if>
-    <j:if test="${instance == null}">
-      <f:radio name="${id}.thresholdLimit" value="low" title="" checked="${true}" id="thresholdLimit.low"/>
-    </j:if>
-    <st:nbsp/>
-    <label for="thresholdLimit.low">${%All priorities}</label>
-    <st:nbsp />
-  </f:entry>
   <f:entry title="${%Status thresholds}" description="${%description.status}">
     <table>
       <thead>

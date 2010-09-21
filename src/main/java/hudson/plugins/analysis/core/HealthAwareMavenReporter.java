@@ -161,6 +161,11 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     }
     // CHECKSTYLE:ON
 
+    /** {@inheritDoc} */
+    public Thresholds getThresholds() {
+        return new Thresholds(); // TODO: see issue HUDSON-4912
+    }
+
     /**
      * Initializes new fields that are not serialized yet.
      *
