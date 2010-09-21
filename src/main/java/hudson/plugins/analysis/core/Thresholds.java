@@ -11,22 +11,22 @@ import org.apache.commons.lang.StringUtils;
 @edu.umd.cs.findbugs.annotations.SuppressWarnings("")
 @SuppressWarnings("all")
 public class Thresholds {
-    String unstableTotalAll = StringUtils.EMPTY;
-    String unstableTotalHigh = StringUtils.EMPTY;
-    String unstableTotalNormal = StringUtils.EMPTY;
-    String unstableTotalLow = StringUtils.EMPTY;
-    String unstableNewAll = StringUtils.EMPTY;
-    String unstableNewHigh = StringUtils.EMPTY;
-    String unstableNewNormal = StringUtils.EMPTY;
-    String unstableNewLow = StringUtils.EMPTY;
-    String failedTotalAll = StringUtils.EMPTY;
-    String failedTotalHigh = StringUtils.EMPTY;
-    String failedTotalNormal = StringUtils.EMPTY;
-    String failedTotalLow = StringUtils.EMPTY;
-    String failedNewAll = StringUtils.EMPTY;
-    String failedNewHigh = StringUtils.EMPTY;
-    String failedNewNormal = StringUtils.EMPTY;
-    String failedNewLow = StringUtils.EMPTY;
+    public String unstableTotalAll = StringUtils.EMPTY;
+    public String unstableTotalHigh = StringUtils.EMPTY;
+    public String unstableTotalNormal = StringUtils.EMPTY;
+    public String unstableTotalLow = StringUtils.EMPTY;
+    public String unstableNewAll = StringUtils.EMPTY;
+    public String unstableNewHigh = StringUtils.EMPTY;
+    public String unstableNewNormal = StringUtils.EMPTY;
+    public String unstableNewLow = StringUtils.EMPTY;
+    public String failedTotalAll = StringUtils.EMPTY;
+    public String failedTotalHigh = StringUtils.EMPTY;
+    public String failedTotalNormal = StringUtils.EMPTY;
+    public String failedTotalLow = StringUtils.EMPTY;
+    public String failedNewAll = StringUtils.EMPTY;
+    public String failedNewHigh = StringUtils.EMPTY;
+    public String failedNewNormal = StringUtils.EMPTY;
+    public String failedNewLow = StringUtils.EMPTY;
 
     /**
      * Returns whether at least one of the thresholds is set.
@@ -58,7 +58,7 @@ public class Thresholds {
      * threshold number, i.e. an integer value greater or equal zero.
      *
      * @param threshold
-     *            string representation of the threshold value
+     *        string representation of the threshold value
      * @return <code>true</code> if the provided threshold string parameter is a
      *         valid number >= 0
      */
