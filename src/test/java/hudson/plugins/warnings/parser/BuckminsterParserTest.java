@@ -38,7 +38,7 @@ public class BuckminsterParserTest extends ParserTester {
                 57,
                 "Type safety: The method toArray(Object[]) belongs to the raw type ArrayList. References to generic type ArrayList<E> should be parameterized",
                 "/var/lib/hudson/jobs/MailApp/workspace/plugins/org.eclipse.buckminster.tutorial.mailapp/src/org/eclipse/buckminster/tutorial/mailapp/NavigationView.java",
-                BuckminsterParser.WARNING_TYPE, "", Priority.NORMAL);
+                BuckminsterParser.WARNING_TYPE, "", Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 0,
