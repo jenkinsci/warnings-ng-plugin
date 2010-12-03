@@ -55,12 +55,37 @@ public class JavaDocParserTest extends ParserTester {
         checkWarning(iterator.next(),
                 0,
                 "Multiple sources of package comments found for package \"org.hamcrest\"",
-                "org.hamcrest",
+                "-",
                 JavaDocParser.WARNING_TYPE, StringUtils.EMPTY, Priority.NORMAL);
         checkWarning(iterator.next(),
                 94,
                 "@param argument \"<code>CoreAccountNumberTO</code>\" is not a parameter",
                 "/home/hudson-farm/.hudson/jobs/farm-toplevel/workspace/farm-toplevel/service-module/src/main/java/com/rackspace/farm/service/service/CoreAccountServiceImpl.java",
+                JavaDocParser.WARNING_TYPE, StringUtils.EMPTY, Priority.NORMAL);
+    }
+
+    /**
+     * Parses a warning log with several JavaDoc warnings.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-7718">Issue 7718</a>
+     */
+    @Test
+    public void issue7718() throws IOException {
+        Collection<FileAnnotation> warnings = new JavaDocParser().parse(openFile("issue7718.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 7, warnings.size());
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        checkWarning(iterator.next(),
+                0,
+                "Text of tag @sys.prop in class ch.post.pf.mw.service.common.alarm.AlarmingService is too long!",
+                "-",
+                JavaDocParser.WARNING_TYPE, StringUtils.EMPTY, Priority.NORMAL);
+        checkWarning(iterator.next(),
+                57,
+                "@(#) is an unknown tag.",
+                "/u01/src/KinePolygon.java",
                 JavaDocParser.WARNING_TYPE, StringUtils.EMPTY, Priority.NORMAL);
     }
 
