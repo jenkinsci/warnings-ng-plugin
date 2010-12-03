@@ -27,6 +27,7 @@ import org.apache.tools.ant.DirectoryScanner;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Registry for the active parsers in this plug-in.
@@ -192,7 +193,7 @@ public class ParserRegistry {
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
      */
-    public ParserRegistry(final List<WarningsParser> parsers, final String defaultEncoding, final String includePattern, final String excludePattern) {
+    public ParserRegistry(final List<? extends WarningsParser> parsers, final String defaultEncoding, final String includePattern, final String excludePattern) {
         defaultCharset = EncodingValidator.defaultCharset(defaultEncoding);
         this.parsers = new ArrayList<WarningsParser>(parsers);
         if (this.parsers.isEmpty()) {
@@ -217,7 +218,7 @@ public class ParserRegistry {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public Collection<FileAnnotation> parse(final File file) throws IOException {
-        List<FileAnnotation> allAnnotations = new ArrayList<FileAnnotation>();
+        Set<FileAnnotation> allAnnotations = Sets.newHashSet();
         for (WarningsParser parser : parsers) {
             Reader input = null;
             try {
@@ -240,9 +241,9 @@ public class ParserRegistry {
      *
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public Collection<FileAnnotation> parse(final InputStream file) throws IOException {
+    public Set<FileAnnotation> parse(final InputStream file) throws IOException {
         try {
-            List<FileAnnotation> allAnnotations = new ArrayList<FileAnnotation>();
+            Set<FileAnnotation> allAnnotations = Sets.newHashSet();
             for (WarningsParser parser : parsers) {
                 allAnnotations.addAll(parser.parse(createReader(file)));
             }
@@ -260,7 +261,7 @@ public class ParserRegistry {
      *            all annotations
      * @return the filtered annotations if there is a filter defined
      */
-    private Collection<FileAnnotation> applyExcludeFilter(final List<FileAnnotation> allAnnotations) {
+    private Set<FileAnnotation> applyExcludeFilter(final Set<FileAnnotation> allAnnotations) {
         if (fileFilter == null) {
             return allAnnotations;
         }
@@ -276,8 +277,8 @@ public class ParserRegistry {
      *            the annotations to filter
      * @return the annotations that are not excluded in the filter
      */
-    private Collection<FileAnnotation> filterAnnotations(final List<FileAnnotation> annotations) {
-        List<FileAnnotation> filteredAnnotations = new ArrayList<FileAnnotation>();
+    private Set<FileAnnotation> filterAnnotations(final Set<FileAnnotation> annotations) {
+        Set<FileAnnotation> filteredAnnotations = Sets.newHashSet();
         for (FileAnnotation annotation : annotations) {
             if (fileFilter.matches(annotation.getFileName())) {
                 filteredAnnotations.add(annotation);

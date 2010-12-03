@@ -18,6 +18,7 @@ import junit.framework.Assert;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -91,6 +92,21 @@ public class ParserRegistryTest {
         Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
         int excludedNumberOfWarnings = 8;
         Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, computeTotalNumberOfWarnings(createJavaParsers()) - excludedNumberOfWarnings, annotations.size());
+    }
+
+    /**
+     * Checks that we do not count duplicates.
+     *
+     * @throws IOException
+     *             if the file could not be read
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-7775">Issue 7775</a>
+     */
+    @Test
+    public void issue7775() throws IOException {
+        ParserRegistry parserRegistry = createRegistryUnderTest("issue7775.txt", StringUtils.EMPTY, StringUtils.EMPTY, Lists.newArrayList(new MsBuildParser()));
+
+        Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
+        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED,  57, annotations.size());
     }
 
     private List<WarningsParser> createJavaParsers() {
@@ -191,7 +207,7 @@ public class ParserRegistryTest {
      * @return the registry
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
-    private ParserRegistry createRegistryUnderTest(final String fileName, final String includePattern, final String excludePattern, final List<WarningsParser> parsers) {
+    private ParserRegistry createRegistryUnderTest(final String fileName, final String includePattern, final String excludePattern, final List<? extends WarningsParser> parsers) {
         ParserRegistry parserRegistry = new ParserRegistry(parsers, "", includePattern, excludePattern) {
             /** {@inheritDoc} */
             @Override
