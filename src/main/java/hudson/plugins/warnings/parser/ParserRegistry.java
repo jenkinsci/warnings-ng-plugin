@@ -20,10 +20,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.tools.ant.DirectoryScanner;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -38,10 +38,10 @@ import com.google.common.collect.Sets;
 public class ParserRegistry {
     /** The actual parsers to use when scanning a file. */
     private final List<WarningsParser> parsers;
-    /** Compound include/exclude filter for files that should get into report. */
-    private final FileFilter fileFilter;
     /** The default charset to be used when reading and parsing files. */
     private final Charset defaultCharset;
+    private final Set<Pattern> includePatterns = Sets.newHashSet();
+    private final Set<Pattern> excludePatterns = Sets.newHashSet();
 
     /**
      * Returns all available parser names.
@@ -193,18 +193,25 @@ public class ParserRegistry {
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
      */
-    public ParserRegistry(final List<? extends WarningsParser> parsers, final String defaultEncoding, final String includePattern, final String excludePattern) {
+    public ParserRegistry(final List<? extends WarningsParser> parsers, final String defaultEncoding,
+            final String includePattern, final String excludePattern) {
         defaultCharset = EncodingValidator.defaultCharset(defaultEncoding);
         this.parsers = new ArrayList<WarningsParser>(parsers);
         if (this.parsers.isEmpty()) {
             this.parsers.addAll(getAllParsers());
         }
+        addPatterns(includePatterns, includePattern);
+        addPatterns(excludePatterns, excludePattern);
+    }
 
-        if (StringUtils.isEmpty(includePattern) && StringUtils.isEmpty(excludePattern)) {
-            fileFilter = null;
-        }
-        else {
-            fileFilter = new FileFilter(includePattern, excludePattern);
+    private void addPatterns(final Set<Pattern> patterns, final String pattern) {
+        if (StringUtils.isNotBlank(pattern)) {
+            String[] splitted = StringUtils.split(pattern, ',');
+            for (String singlePattern : splitted) {
+                String trimmed = StringUtils.trim(singlePattern);
+                String directoriesReplaced = StringUtils.replace(trimmed, "**", "*"); // NOCHECKSTYLE
+                patterns.add(Pattern.compile(StringUtils.replace(directoriesReplaced, "*", ".*"))); // NOCHECKSTYLE
+            }
         }
     }
 
@@ -262,29 +269,34 @@ public class ParserRegistry {
      * @return the filtered annotations if there is a filter defined
      */
     private Set<FileAnnotation> applyExcludeFilter(final Set<FileAnnotation> allAnnotations) {
-        if (fileFilter == null) {
-            return allAnnotations;
+        Set<FileAnnotation> includedAnnotations;
+        if (includePatterns.isEmpty()) {
+            includedAnnotations = allAnnotations;
         }
         else {
-            return filterAnnotations(allAnnotations);
-        }
-    }
-
-    /**
-     * Filters the annotations based on the {@link #fileFilter}.
-     *
-     * @param annotations
-     *            the annotations to filter
-     * @return the annotations that are not excluded in the filter
-     */
-    private Set<FileAnnotation> filterAnnotations(final Set<FileAnnotation> annotations) {
-        Set<FileAnnotation> filteredAnnotations = Sets.newHashSet();
-        for (FileAnnotation annotation : annotations) {
-            if (fileFilter.matches(annotation.getFileName())) {
-                filteredAnnotations.add(annotation);
+            includedAnnotations = Sets.newHashSet();
+            for (FileAnnotation annotation : allAnnotations) {
+                for (Pattern include : includePatterns) {
+                    if (include.matcher(annotation.getFileName()).matches()) {
+                        includedAnnotations.add(annotation);
+                    }
+                }
             }
         }
-        return filteredAnnotations;
+        if (excludePatterns.isEmpty()) {
+            return includedAnnotations;
+        }
+        else {
+            Set<FileAnnotation> excludedAnnotations = Sets.newHashSet(includedAnnotations);
+            for (FileAnnotation annotation : includedAnnotations) {
+                for (Pattern exclude : excludePatterns) {
+                    if (exclude.matcher(annotation.getFileName()).matches()) {
+                        excludedAnnotations.remove(annotation);
+                    }
+                }
+            }
+            return excludedAnnotations;
+        }
     }
 
     /**
@@ -309,60 +321,6 @@ public class ParserRegistry {
      */
     protected Reader createReader(final InputStream inputStream) {
         return new InputStreamReader(inputStream, defaultCharset);
-    }
-
-    /**
-     * Filters file names based on Ant file-set patterns.
-     */
-    private static final class FileFilter extends DirectoryScanner {
-        private static final String SEPARATOR = ",\\s*";
-
-        /**
-         * Creates a new instance of {@link FileFilter}.
-         *
-         * @param includePattern
-         *            Ant file-set pattern of files to include in report
-         * @param excludePattern
-         *            Ant file-set pattern of files to exclude from report
-         */
-        public FileFilter(final String includePattern, final String excludePattern) {
-            super();
-
-            if (StringUtils.isEmpty(includePattern)) {
-                setIncludes(new String[] {"**/*"});
-            }
-            else {
-                setIncludes(includePattern.split(SEPARATOR));
-            }
-            if (StringUtils.isEmpty(excludePattern)) {
-                setExcludes(new String[] {});
-            }
-            else {
-                setExcludes(excludePattern.split(SEPARATOR));
-            }
-        }
-
-        /**
-         * Returns whether the name
-         * matches the one of the inclusion patterns
-         * and does not match one of the exclusion patterns.
-         *
-         * @param name
-         *            the file name to test
-         * @return <code>true</code> if the name
-         * matches one of the inclusion patterns
-         * and does not match any of the exclusion patterns.
-         */
-        public boolean matches(final String name) {
-            String canonicalName;
-            if (File.separatorChar == '\\') {
-                canonicalName = StringUtils.replaceChars(name, '/', '\\');
-            }
-            else {
-                canonicalName = name;
-            }
-            return isIncluded(canonicalName) && !isExcluded(canonicalName);
-        }
     }
 }
 
