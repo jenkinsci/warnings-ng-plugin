@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -23,6 +24,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 
 import hudson.model.AbstractBuild;
 
@@ -77,20 +79,72 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("WMI")
     public JFreeChart createAggregation(final GraphConfiguration configuration,
             final Collection<ResultAction<? extends BuildResult>> resultActions, final String pluginName) {
-        Multimap<LocalDate, List<Integer>> total = HashMultimap.create();
+        Set<LocalDate> availableDates = Sets.newHashSet();
+        Map<ResultAction<? extends BuildResult>, Map<LocalDate, List<Integer>>> averagesPerJob = Maps.newHashMap();
         for (ResultAction<? extends BuildResult> resultAction : resultActions) {
             Map<LocalDate, List<Integer>> averageByDate = averageByDate(
                     createSeriesPerBuild(configuration, resultAction.getResult()));
-            for (LocalDate buildDate : averageByDate.keySet()) {
-                total.put(buildDate, averageByDate.get(buildDate));
-            }
+            averagesPerJob.put(resultAction, averageByDate);
+            availableDates.addAll(averageByDate.keySet());
         }
-        Map<LocalDate, List<Integer>> seriesPerDay = createSeriesPerDay(total);
-        JFreeChart chart = createChart(createDatasetPerDay(seriesPerDay));
+        JFreeChart chart = createChart(createDatasetPerDay(
+                        createTotalsForAllAvailableDates(resultActions, availableDates, averagesPerJob)));
 
         attachRenderers(configuration, pluginName, chart, resultActions.iterator().next().getToolTipProvider());
 
         return chart;
+    }
+
+    /**
+     * Creates the totals for all available dates. If a job has no results for a
+     * given day then the previous value is used.
+     *
+     * @param jobs
+     *            the result actions belonging to the jobs
+     * @param availableDates
+     *            the available dates in all jobs
+     * @param averagesPerJob
+     *            the averages per day, mapped by job
+     * @return the aggregated values
+     */
+    private Map<LocalDate, List<Integer>> createTotalsForAllAvailableDates(
+            final Collection<ResultAction<? extends BuildResult>> jobs,
+            final Set<LocalDate> availableDates,
+            final Map<ResultAction<? extends BuildResult>, Map<LocalDate, List<Integer>>> averagesPerJob) {
+        List<LocalDate> sortedDates = Lists.newArrayList(availableDates);
+        Collections.sort(sortedDates);
+
+        Map<LocalDate, List<Integer>> totals = Maps.newHashMap();
+        for (ResultAction<? extends BuildResult> jobResult : jobs) {
+            Map<LocalDate, List<Integer>> availableResults = averagesPerJob.get(jobResult);
+            List<Integer> lastResult = Collections.emptyList();
+            for (LocalDate buildDate : sortedDates) {
+                if (availableResults.containsKey(buildDate)) {
+                    List<Integer> additionalResult = availableResults.get(buildDate);
+                    addValues(buildDate, totals, additionalResult);
+                    lastResult = additionalResult;
+                }
+                else if (!lastResult.isEmpty()) {
+                    addValues(buildDate, totals, lastResult);
+                }
+            }
+        }
+        return totals;
+    }
+
+    private void addValues(final LocalDate buildDate, final Map<LocalDate, List<Integer>> totals,
+            final List<Integer> additionalResult) {
+        if (totals.containsKey(buildDate)) {
+            List<Integer> existingResult = totals.get(buildDate);
+            List<Integer> sum = Lists.newArrayList();
+            for (int i = 0; i < existingResult.size(); i++) {
+                sum.add(existingResult.get(i) + additionalResult.get(i));
+            }
+            totals.put(buildDate, sum);
+        }
+        else {
+            totals.put(buildDate, additionalResult);
+        }
     }
 
     /**
