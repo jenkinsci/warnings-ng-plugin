@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -200,7 +201,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     private Map<AbstractBuild, List<Integer>> createSeriesPerBuild(
             final GraphConfiguration configuration, final BuildResult lastBuildResult) {
         BuildResult current = lastBuildResult;
-        Calendar buildTime = current.getOwner().getTimestamp();
+        Calendar today = new GregorianCalendar();
 
         int buildCount = 0;
         Map<AbstractBuild, List<Integer>> valuesPerBuild = Maps.newHashMap();
@@ -226,7 +227,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
 
             if (configuration.isDayCountDefined()) {
                 Calendar oldBuildTime = current.getOwner().getTimestamp();
-                if (computeDayDelta(buildTime, oldBuildTime) >= configuration.getDayCount()) {
+                if (computeDayDelta(today, oldBuildTime) >= configuration.getDayCount()) {
                     break;
                 }
             }
