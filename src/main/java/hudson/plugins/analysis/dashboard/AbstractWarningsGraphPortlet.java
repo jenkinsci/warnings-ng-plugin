@@ -43,7 +43,6 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
      * @param dayCountString
      *            number of days to consider
      */
-    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public AbstractWarningsGraphPortlet(final String name, final String width, final String height, final String dayCountString) {
         super(name);
 
