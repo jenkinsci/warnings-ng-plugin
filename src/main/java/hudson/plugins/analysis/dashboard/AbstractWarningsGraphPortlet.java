@@ -90,6 +90,15 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
     }
 
     /**
+     * Checks if the results are empty.
+     *
+     * @return <code>true</code> if the results are empty, <code>false</code> otherwise
+     */
+    public boolean isEmpty() {
+        return getActions().isEmpty();
+    }
+
+    /**
      * Returns the actions that should be used as base for the graph.
      *
      * @return the actions that should be used as base for the graph

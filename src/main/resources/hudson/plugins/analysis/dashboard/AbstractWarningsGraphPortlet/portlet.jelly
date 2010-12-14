@@ -2,7 +2,12 @@
   <dp:decorate portlet="${it}">
     <tr><td>
       <div align="center">
-        <img id="graph" src="${it.url}/warningsGraph/png" lazymap="${it.url}/warningsGraph/map" alt="${it.description}"/>
+        <j:if test="${!it.isEmpty()}">
+          <img id="graph" src="${it.url}/warningsGraph/png" lazymap="${it.url}/warningsGraph/map" alt="${it.description}"/>
+        </j:if>
+        <j:if test="${it.isEmpty()}">
+          ${%no.results}
+        </j:if>
        </div>
      </td></tr>
   </dp:decorate>
