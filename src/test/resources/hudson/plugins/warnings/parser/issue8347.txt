@@ -1,0 +1,6 @@
+MoqExtensions.cs(2,1): warning : SA1210: Using directives must be sorted alphabetically by the namespaces. [C:\hudsonSlave\workspace\MyProject\Source\Common.Tests.Stubs.csproj]
+MoqExtensions.cs(3,1): warning : SA1210: Using directives must be sorted alphabetically by the namespaces. [C:\hudsonSlave\workspace\MyProject\Source\Common.Tests.Stubs.csproj]
+MoqExtensions.cs(4,1): warning : SA1210: Using directives must be sorted alphabetically by the namespaces. [C:\hudsonSlave\workspace\MyProject\Source\Common.Tests.Stubs.csproj]
+MoqExtensions.cs(6,1): warning : SA1208: System using directives must be placed before all other using directives. [C:\hudsonSlave\workspace\MyProject\Source\Common.Tests.Stubs.csproj]
+MoqExtensions.cs(70,1): warning : SA1402: A C# document may only contain a single class at the root level unless all of the classes are partial and are of the same type. [C:\hudsonSlave\workspace\MyProject\Source\Common.Tests.Stubs.csproj]
+

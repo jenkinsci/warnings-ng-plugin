@@ -36,6 +36,23 @@ public class MsBuildParserTest extends ParserTester {
     }
 
     /**
+     * Parses a file with warnings of Stylecop.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-8347">Issue 8347</a>
+     */
+    @Test
+    public void issue8347() throws IOException {
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue8347.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 5, warnings.size());
+        FileAnnotation annotation = warnings.iterator().next();
+        checkWarning(annotation, 2, "Using directives must be sorted alphabetically by the namespaces. [C:\\hudsonSlave\\workspace\\MyProject\\Source\\Common.Tests.Stubs.csproj]",
+                "MoqExtensions.cs", MsBuildParser.WARNING_TYPE, "SA1210", Priority.NORMAL);
+    }
+
+    /**
      * Parses a file with one warning of the MS Build tools (parallel build).
      *
      * @throws IOException
