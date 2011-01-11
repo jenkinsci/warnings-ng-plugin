@@ -270,11 +270,11 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
         List<LocalDate> buildDates = Lists.newArrayList(averagePerDay.keySet());
         Collections.sort(buildDates);
 
-        DataSetBuilder<String, String> builder = new DataSetBuilder<String, String>();
+        DataSetBuilder<String, LocalDateLabel> builder = new DataSetBuilder<String, LocalDateLabel>();
         for (LocalDate date : buildDates) {
             int level = 0;
             for (Integer average : averagePerDay.get(date)) {
-                builder.add(average, getRowId(level), date.toString("MM-dd"));
+                builder.add(average, getRowId(level), new LocalDateLabel(date));
                 level++;
             }
         }
