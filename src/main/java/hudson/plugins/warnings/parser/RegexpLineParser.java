@@ -20,15 +20,15 @@ import org.apache.commons.io.LineIterator;
  */
 public abstract class RegexpLineParser extends RegexpParser {
     /**
-     * Determines if a line is checked for a string existence before the regexp
-     * is applied.
+     * Determines if a line is checked for a string existence before the regular
+     * expression is applied.
      *
      * @see #isLineInteresting(String)
      */
     private final boolean isStringMatchActivated;
 
     /**
-     * Creates a new instance of <code>RegexpParser</code>. Uses a single line
+     * Creates a new instance of {@link RegexpLineParser}. Uses a single line
      * matcher.
      *
      * @param warningPattern
@@ -41,7 +41,7 @@ public abstract class RegexpLineParser extends RegexpParser {
     }
 
     /**
-     * Creates a new instance of <code>RegexpParser</code>. Uses a single line
+     * Creates a new instance of {@link RegexpLineParser}. Uses a single line
      * matcher.
      *
      * @param warningPattern
@@ -49,7 +49,8 @@ public abstract class RegexpLineParser extends RegexpParser {
      * @param name
      *            name of the parser
      * @param isStringMatchActivated
-     *            determines if a line is checked for a string existence before the regexp is applied
+     *            determines if a line is checked for a string existence before
+     *            the regular expression is applied
      */
     public RegexpLineParser(final String warningPattern, final String name, final boolean isStringMatchActivated) {
         super(warningPattern, name);

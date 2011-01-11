@@ -183,12 +183,15 @@ public final class WarningsDescriptor extends PluginDescriptor {
      *            the regular expression
      * @param script
      *            the script
+     * @param hasMultiLineSupport
+     *            determines whether multi-lines support is activated
      * @return the validation result
      */
     public FormValidation doCheckExample(@QueryParameter final String example,
-            @QueryParameter final String regexp, @QueryParameter final String script) {
+            @QueryParameter final String regexp, @QueryParameter final String script,
+            @QueryParameter final boolean hasMultiLineSupport) {
         if (StringUtils.isNotBlank(example) && StringUtils.isNotBlank(regexp) && StringUtils.isNotBlank(script)) {
-            return parseExample(script, example, regexp);
+            return parseExample(script, example, regexp, hasMultiLineSupport);
         }
         else {
             return FormValidation.ok();
@@ -205,12 +208,20 @@ public final class WarningsDescriptor extends PluginDescriptor {
      *            example text that will be matched by the regular expression
      * @param regexp
      *            the regular expression
+     * @param hasMultiLineSupport
+     *            determines whether multi-lines support is activated
      * @return a result of {@link Kind#OK} if a warning has been found
      */
-    private FormValidation parseExample(final String script, final String example, final String regexp) {
-        Pattern pattern = Pattern.compile(regexp);
+    private FormValidation parseExample(final String script, final String example, final String regexp, final boolean hasMultiLineSupport) {
+        Pattern pattern;
+        if (hasMultiLineSupport) {
+            pattern = Pattern.compile(regexp, Pattern.MULTILINE);
+        }
+        else {
+            pattern = Pattern.compile(regexp);
+        }
         Matcher matcher = pattern.matcher(example);
-        if (matcher.matches()) {
+        if (matcher.find()) {
             Binding binding = new Binding();
             binding.setVariable("matcher", matcher);
             GroovyShell shell = new GroovyShell(WarningsDescriptor.class.getClassLoader(), binding);

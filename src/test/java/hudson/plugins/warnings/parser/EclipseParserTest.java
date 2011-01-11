@@ -15,9 +15,9 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 /**
- * Tests the class {@link AntEclipseParser}.
+ * Tests the class {@link EclipseParser}.
  */
-public class AntEclipseParserTest extends ParserTester {
+public class EclipseParserTest extends ParserTester {
     /** Error message. */
     private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
 
@@ -30,7 +30,7 @@ public class AntEclipseParserTest extends ParserTester {
      */
     @Test
     public void issue6427() throws IOException {
-        Collection<FileAnnotation> warnings = new AntEclipseParser().parse(openFile("issue6427.txt"));
+        Collection<FileAnnotation> warnings = new EclipseParser().parse(openFile("issue6427.txt"));
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 18, warnings.size());
 
@@ -40,7 +40,7 @@ public class AntEclipseParserTest extends ParserTester {
                 10,
                 "The import com.bombardier.oldinfra.export.dataAccess.InfrastructureDiagramAPI is never used",
                 "/srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_infraSoe.java",
-                AntEclipseParser.WARNING_TYPE, "", Priority.NORMAL);
+                EclipseParser.WARNING_TYPE, "", Priority.NORMAL);
     }
 
     /**
@@ -51,7 +51,7 @@ public class AntEclipseParserTest extends ParserTester {
      */
     @Test
     public void parseDeprecation() throws IOException {
-        Collection<FileAnnotation> warnings = new AntEclipseParser().parse(openFile());
+        Collection<FileAnnotation> warnings = new EclipseParser().parse(openFile());
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 8, warnings.size());
 
@@ -61,7 +61,7 @@ public class AntEclipseParserTest extends ParserTester {
                 3,
                 "The serializable class AttributeException does not declare a static final serialVersionUID field of type long",
                 "C:/Desenvolvimento/Java/jfg/src/jfg/AttributeException.java",
-                AntEclipseParser.WARNING_TYPE, "", Priority.NORMAL);
+                EclipseParser.WARNING_TYPE, "", Priority.NORMAL);
     }
 
     /**
@@ -73,7 +73,7 @@ public class AntEclipseParserTest extends ParserTester {
      */
     @Test
     public void issue7077() throws IOException {
-        Collection<FileAnnotation> warnings = new AntEclipseParser().parse(openFile("issue7077.txt"));
+        Collection<FileAnnotation> warnings = new EclipseParser().parse(openFile("issue7077.txt"));
         List<FileAnnotation> sorted = Lists.newArrayList(warnings);
         Collections.sort(sorted);
 
@@ -83,12 +83,12 @@ public class AntEclipseParserTest extends ParserTester {
                 90,
                 "Type safety: The method setBoHandler(BoHandler) belongs to the raw type BoQuickSearchControl.Builder. References to generic type BoQuickSearchControl<S>.Builder<T> should be parameterized",
                 "/ige/hudson/work/jobs/esvclient__development/workspace/target/rcp-build/plugins/ch.ipi.esv.client.customer/src/main/java/ch/ipi/esv/client/customer/search/CustomerQuickSearch.java",
-                AntEclipseParser.WARNING_TYPE, "", Priority.NORMAL);
+                EclipseParser.WARNING_TYPE, "", Priority.NORMAL);
         checkWarning(sorted.get(0),
                 90,
                 "Type safety: The expression of type BoQuickSearchControl needs unchecked conversion to conform to BoQuickSearchControl<CustomerBO>",
                 "/ige/hudson/work/jobs/esvclient__development/workspace/target/rcp-build/plugins/ch.ipi.esv.client.customer/src/main/java/ch/ipi/esv/client/customer/search/CustomerQuickSearch.java",
-                AntEclipseParser.WARNING_TYPE, "", Priority.NORMAL);
+                EclipseParser.WARNING_TYPE, "", Priority.NORMAL);
     }
 
     /**
@@ -100,7 +100,7 @@ public class AntEclipseParserTest extends ParserTester {
      */
     @Test
     public void issue7077all() throws IOException {
-        Collection<FileAnnotation> warnings = new AntEclipseParser().parse(openFile("issue7077-all.txt"));
+        Collection<FileAnnotation> warnings = new EclipseParser().parse(openFile("issue7077-all.txt"));
         List<FileAnnotation> sorted = Lists.newArrayList(warnings);
         Collections.sort(sorted);
 

@@ -7,11 +7,11 @@ import java.util.regex.Matcher;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * A parser for the ant javac compiler warnings.
+ * A parser for Eclipse compiler warnings.
  *
  * @author Ulli Hafner
  */
-public class AntEclipseParser extends RegexpDocumentParser {
+public class EclipseParser extends RegexpDocumentParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Eclipse Java Compiler";
     /** Pattern of javac compiler warnings. */
@@ -20,7 +20,7 @@ public class AntEclipseParser extends RegexpDocumentParser {
     /**
      * Creates a new instance of <code>AntJavacParser</code>.
      */
-    public AntEclipseParser() {
+    public EclipseParser() {
         super(ANT_ECLIPSE_WARNING_PATTERN, true, WARNING_TYPE);
     }
 

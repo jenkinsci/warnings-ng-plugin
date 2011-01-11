@@ -16,6 +16,34 @@ import org.junit.Test;
  * @author Ulli Hafner
  */
 public class WarningsDescriptorTest {
+    // CHECKSTYLE:OFF
+    private static final String MULTILINE_SCRIPT = "import hudson.plugins.warnings.parser.Warning\n" +
+                    "import hudson.plugins.analysis.util.model.Priority\n" +
+                    "\n" +
+                    "String type = matcher.group(1)\n" +
+                    "Priority priority;\n" +
+                    "if (\"warning\".equalsIgnoreCase(type)) {\n" +
+                    "    priority = Priority.NORMAL;\n" +
+                    "}\n" +
+                    "else {\n" +
+                    "    priority = Priority.HIGH;\n" +
+                    "}\n" +
+                    "\n" +
+                    "String fileName = matcher.group(2)\n" +
+                    "String lineNumber = matcher.group(3)\n" +
+                    "String message = matcher.group(4)\n" +
+                    "\n" +
+                    "return new Warning(fileName, Integer.parseInt(lineNumber), \"Generic Parser\", \"\", message);\n";
+    // CHECKSTYLE:ON
+    private static final String ECLIPSE_REGEXP = "(WARNING|ERROR)\\s*in\\s*(.*)\\(at line\\s*(\\d+)\\).*(?:\\r?\\n[^\\^]*)+(?:\\r?\\n.*[\\^]+.*)\\r?\\n(?:\\s*\\[.*\\]\\s*)?(.*)";
+    private static final String SINGLE_LINE_EXAMPLE = "file/name/relative/unix:42:evil: this is a warning message";
+    private static final String MULTI_LINE_EXAMPLE = "    [javac] 1. WARNING in C:\\Desenvolvimento\\Java\\jfg\\src\\jfg\\AttributeException.java (at line 3)\n"
+                    + "    [javac]     public class AttributeException extends RuntimeException\n"
+                    + "    [javac]                  ^^^^^^^^^^^^^^^^^^\n"
+                    + "    [javac] The serializable class AttributeException does not declare a static final serialVersionUID field of type long\n"
+                    + "    [javac] ----------\n";
+    private static final String REGEXP = "^\\s*(.*):(\\d+):(.*):\\s*(.*)$";
+
     /**
      * Test the validation of the name parameter.
      */
@@ -76,9 +104,7 @@ public class WarningsDescriptorTest {
     public void testScriptValidationOneWarning() throws IOException {
         WarningsDescriptor descriptor = new WarningsDescriptor(false);
 
-        assertOk(descriptor.doCheckExample(
-                "file/name/relative/unix:42:evil: this is a warning message",
-                "^\\s*(.*):(\\d+):(.*):\\s*(.*)$", readScript()));
+        assertOk(descriptor.doCheckExample(SINGLE_LINE_EXAMPLE, REGEXP, readScript(), false));
     }
 
     /**
@@ -95,7 +121,7 @@ public class WarningsDescriptorTest {
 
         assertError(descriptor.doCheckExample(
                 "this is a warning message",
-                "^\\s*(.*):(\\d+):(.*):\\s*(.*)$", readScript()));
+                REGEXP, readScript(), false));
     }
 
     /**
@@ -111,8 +137,23 @@ public class WarningsDescriptorTest {
         WarningsDescriptor descriptor = new WarningsDescriptor(false);
 
         assertError(descriptor.doCheckExample(
-                "file/name/relative/unix:42:evil: this is a warning message",
-                "^\\s*(.*):(\\d+):(.*)$", readScript()));
+                SINGLE_LINE_EXAMPLE,
+                "^\\s*(.*):(\\d+):(.*)$", readScript(), false));
+    }
+
+    /**
+     * Test the validation of the script parameter with a given regular
+     * expression and a multi-line example. Expected result: the regular
+     * expression will match.
+     *
+     * @throws IOException
+     *             if the example file could not be read
+     */
+    @Test
+    public void testMultiLineExpressionWillMatch() throws IOException {
+        WarningsDescriptor descriptor = new WarningsDescriptor(false);
+
+        assertOk(descriptor.doCheckExample(MULTI_LINE_EXAMPLE, ECLIPSE_REGEXP, MULTILINE_SCRIPT, true));
     }
 
     private void assertOk(final FormValidation actualResult) {
