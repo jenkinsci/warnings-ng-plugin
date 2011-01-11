@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
  *
  * @author Ulli Hafner
  */
-public class DynamicDocumentParser extends RegexpLineParser {
+public class DynamicDocumentParser extends RegexpDocumentParser {
     private final GroovyExpressionMatcher expressionMatcher;
 
     /**
@@ -22,7 +22,7 @@ public class DynamicDocumentParser extends RegexpLineParser {
      *            Groovy script
      */
     public DynamicDocumentParser(final String name, final String regexp, final String script) {
-        super(regexp, name, true);
+        super(regexp, true, name);
 
         expressionMatcher = new GroovyExpressionMatcher(script, FALSE_POSITIVE);
     }

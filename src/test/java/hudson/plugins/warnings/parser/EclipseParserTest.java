@@ -30,7 +30,7 @@ public class EclipseParserTest extends ParserTester {
      */
     @Test
     public void issue6427() throws IOException {
-        Collection<FileAnnotation> warnings = new EclipseParser().parse(openFile("issue6427.txt"));
+        Collection<FileAnnotation> warnings = createParser().parse(openFile("issue6427.txt"));
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 18, warnings.size());
 
@@ -40,7 +40,16 @@ public class EclipseParserTest extends ParserTester {
                 10,
                 "The import com.bombardier.oldinfra.export.dataAccess.InfrastructureDiagramAPI is never used",
                 "/srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_infraSoe.java",
-                EclipseParser.WARNING_TYPE, "", Priority.NORMAL);
+                getType(), "", Priority.NORMAL);
+    }
+
+    /**
+     * Creates the parser under test.
+     *
+     * @return the created parser
+     */
+    protected WarningsParser createParser() {
+        return new EclipseParser();
     }
 
     /**
@@ -51,7 +60,7 @@ public class EclipseParserTest extends ParserTester {
      */
     @Test
     public void parseDeprecation() throws IOException {
-        Collection<FileAnnotation> warnings = new EclipseParser().parse(openFile());
+        Collection<FileAnnotation> warnings = createParser().parse(openFile());
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 8, warnings.size());
 
@@ -61,7 +70,16 @@ public class EclipseParserTest extends ParserTester {
                 3,
                 "The serializable class AttributeException does not declare a static final serialVersionUID field of type long",
                 "C:/Desenvolvimento/Java/jfg/src/jfg/AttributeException.java",
-                EclipseParser.WARNING_TYPE, "", Priority.NORMAL);
+                getType(), "", Priority.NORMAL);
+    }
+
+    /**
+     * Returns the type of the parser.
+     *
+     * @return the type of the parser
+     */
+    protected String getType() {
+        return EclipseParser.WARNING_TYPE;
     }
 
     /**
@@ -73,7 +91,7 @@ public class EclipseParserTest extends ParserTester {
      */
     @Test
     public void issue7077() throws IOException {
-        Collection<FileAnnotation> warnings = new EclipseParser().parse(openFile("issue7077.txt"));
+        Collection<FileAnnotation> warnings = createParser().parse(openFile("issue7077.txt"));
         List<FileAnnotation> sorted = Lists.newArrayList(warnings);
         Collections.sort(sorted);
 
@@ -83,12 +101,12 @@ public class EclipseParserTest extends ParserTester {
                 90,
                 "Type safety: The method setBoHandler(BoHandler) belongs to the raw type BoQuickSearchControl.Builder. References to generic type BoQuickSearchControl<S>.Builder<T> should be parameterized",
                 "/ige/hudson/work/jobs/esvclient__development/workspace/target/rcp-build/plugins/ch.ipi.esv.client.customer/src/main/java/ch/ipi/esv/client/customer/search/CustomerQuickSearch.java",
-                EclipseParser.WARNING_TYPE, "", Priority.NORMAL);
+                getType(), "", Priority.NORMAL);
         checkWarning(sorted.get(0),
                 90,
                 "Type safety: The expression of type BoQuickSearchControl needs unchecked conversion to conform to BoQuickSearchControl<CustomerBO>",
                 "/ige/hudson/work/jobs/esvclient__development/workspace/target/rcp-build/plugins/ch.ipi.esv.client.customer/src/main/java/ch/ipi/esv/client/customer/search/CustomerQuickSearch.java",
-                EclipseParser.WARNING_TYPE, "", Priority.NORMAL);
+                getType(), "", Priority.NORMAL);
     }
 
     /**
@@ -100,7 +118,7 @@ public class EclipseParserTest extends ParserTester {
      */
     @Test
     public void issue7077all() throws IOException {
-        Collection<FileAnnotation> warnings = new EclipseParser().parse(openFile("issue7077-all.txt"));
+        Collection<FileAnnotation> warnings = createParser().parse(openFile("issue7077-all.txt"));
         List<FileAnnotation> sorted = Lists.newArrayList(warnings);
         Collections.sort(sorted);
 
