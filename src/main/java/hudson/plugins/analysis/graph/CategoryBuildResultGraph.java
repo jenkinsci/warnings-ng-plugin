@@ -108,6 +108,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *            the averages per day, mapped by job
      * @return the aggregated values
      */
+    @SuppressWarnings("unchecked")
     private Map<LocalDate, List<Integer>> createTotalsForAllAvailableDates(
             final Collection<ResultAction<? extends BuildResult>> jobs,
             final Set<LocalDate> availableDates,
