@@ -46,7 +46,13 @@ public class SourceDetailTest {
         SourceDetail source = new SourceDetail(null, annotation, null);
 
         InputStream stream = SourceDetailTest.class.getResourceAsStream("AbortException.txt");
-        String highlighted = source.highlightSource(stream);
+        String highlighted;
+        try {
+            highlighted = source.highlightSource(stream);
+        }
+        finally {
+            IOUtils.closeQuietly(stream);
+        }
 
         LineIterator lineIterator = IOUtils.lineIterator(new StringReader(highlighted));
 
@@ -128,7 +134,13 @@ public class SourceDetailTest {
 
         SourceDetail source = new SourceDetail(null, annotation, null);
 
-        String highlighted = source.highlightSource(stream);
+        String highlighted;
+        try {
+            highlighted = source.highlightSource(stream);
+        }
+        finally {
+            IOUtils.closeQuietly(stream);
+        }
         source.splitSourceFile(highlighted);
 
         List<String> expected = IOUtils.readLines(SourceDetailTest.class.getResourceAsStream(fileName));

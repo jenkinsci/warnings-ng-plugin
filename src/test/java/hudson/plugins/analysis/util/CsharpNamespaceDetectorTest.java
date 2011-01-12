@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 /**
@@ -25,8 +26,13 @@ public class CsharpNamespaceDetectorTest {
         String fileName = "ActionBinding.cs";
         InputStream stream = CsharpNamespaceDetectorTest.class.getResourceAsStream(fileName);
 
-        assertEquals("Wrong namespace name guessed.", "Avaloq.SmartClient.Utilities",
-                classifier.detectPackageName(stream));
+        try {
+            assertEquals("Wrong namespace name guessed.", "Avaloq.SmartClient.Utilities",
+                    classifier.detectPackageName(stream));
+        }
+        finally {
+            IOUtils.closeQuietly(stream);
+        }
     }
 
     /**
@@ -40,8 +46,13 @@ public class CsharpNamespaceDetectorTest {
         String fileName = "ActionBinding-Original-Formatting.cs";
         InputStream stream = CsharpNamespaceDetectorTest.class.getResourceAsStream(fileName);
 
-        assertEquals("Wrong namespace name guessed.", "Avaloq.SmartClient.Utilities",
-                classifier.detectPackageName(stream));
+        try {
+            assertEquals("Wrong namespace name guessed.", "Avaloq.SmartClient.Utilities",
+                    classifier.detectPackageName(stream));
+        }
+        finally {
+            IOUtils.closeQuietly(stream);
+        }
     }
 
     /**
@@ -55,7 +66,12 @@ public class CsharpNamespaceDetectorTest {
         String fileName = "pom.xml";
         InputStream stream = CsharpNamespaceDetectorTest.class.getResourceAsStream(fileName);
 
-        assertEquals("Wrong namespace name guessed.", "-", classifier.detectPackageName(stream));
+        try {
+            assertEquals("Wrong namespace name guessed.", "-", classifier.detectPackageName(stream));
+        }
+        finally {
+            IOUtils.closeQuietly(stream);
+        }
     }
 
     /**

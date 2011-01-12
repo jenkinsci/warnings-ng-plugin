@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 /**
@@ -26,7 +27,12 @@ public class JavaPackageDetectorTest {
         stream = JavaPackageDetectorTest.class.getResourceAsStream("MavenJavaTest.txt");
         String packageName = classifier.detectPackageName(stream);
 
-        assertEquals("Wrong package name guessed.", "hudson.plugins.tasks.util", packageName);
+        try {
+            assertEquals("Wrong package name guessed.", "hudson.plugins.tasks.util", packageName);
+        }
+        finally {
+            IOUtils.closeQuietly(stream);
+        }
     }
 
     /**
@@ -40,7 +46,12 @@ public class JavaPackageDetectorTest {
         String fileName = "pom.xml";
         InputStream stream = JavaPackageDetectorTest.class.getResourceAsStream(fileName);
 
-        assertEquals("Wrong namespace name guessed.", "-", classifier.detectPackageName(stream));
+        try {
+            assertEquals("Wrong namespace name guessed.", "-", classifier.detectPackageName(stream));
+        }
+        finally {
+            IOUtils.closeQuietly(stream);
+        }
     }
 
     /**
@@ -54,7 +65,13 @@ public class JavaPackageDetectorTest {
         String fileName = "complicated-package-declaration.txt";
         InputStream stream = JavaPackageDetectorTest.class.getResourceAsStream(fileName);
 
-        assertEquals("Wrong namespace name guessed.", "hudson.plugins.findbugs.util", classifier.detectPackageName(stream));
+        try {
+            assertEquals("Wrong namespace name guessed.", "hudson.plugins.findbugs.util",
+                    classifier.detectPackageName(stream));
+        }
+        finally {
+            IOUtils.closeQuietly(stream);
+        }
     }
 
     /**

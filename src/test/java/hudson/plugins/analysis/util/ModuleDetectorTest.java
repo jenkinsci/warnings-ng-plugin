@@ -12,7 +12,7 @@ import org.junit.Test;
 /**
  *  Tests the class {@link ModuleDetector}.
  */
-@edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
+@edu.umd.cs.findbugs.annotations.SuppressWarnings({"DMI", "OBL", "SIC"})
 public class ModuleDetectorTest {
     /** Prefix of the path in test. */
     private static final String PATH_PREFIX = "/path/to/";
@@ -90,7 +90,6 @@ public class ModuleDetectorTest {
      *             should never happen
      */
     @Test
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("DMI")
     public void testAntModules() throws FileNotFoundException {
         FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
         InputStream pom = ModuleDetectorTest.class.getResourceAsStream(ModuleDetector.ANT_PROJECT);
