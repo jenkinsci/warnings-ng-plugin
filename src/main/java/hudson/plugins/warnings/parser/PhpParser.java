@@ -48,6 +48,6 @@ public class PhpParser extends RegexpLineParser {
             priority = Priority.HIGH;
         }
 
-        return new Warning(fileName, Integer.parseInt(start), "PHP Runtime Warning", category, message, priority);
+        return new Warning(fileName, Integer.parseInt(start), WARNING_TYPE, category, message, priority);
     }
 }

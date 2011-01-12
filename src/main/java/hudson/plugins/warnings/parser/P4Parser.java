@@ -10,26 +10,21 @@ import java.util.regex.Matcher;
  * @author Adrián Deccico
  */
 public class P4Parser extends RegexpLineParser {
-    /** Warning type of this parser. */
     static final String WARNING_TYPE = "Perforce Compiler";
-    /** Sub-Pattern of perforce compiler warnings. */
-    static final String ALREADY_OPENED = "already opened for edit";
-    /** Sub-Pattern of perforce compiler warnings. */
-    static final String CANT_ADD = "can't add existing file";
-    /** Sub-Pattern of perforce compiler warnings. */
-    static final String WARNING_ADD_OF = "warning: add of existing file";
-    /** Sub-Pattern of perforce compiler warnings. */
-    static final String OPENED_FOR_EDIT = "can't add \\(" + ALREADY_OPENED + "\\)";
-    /** Sub-Pattern of perforce compiler warnings. */
-    static final String NOTHING_CHANGED = "nothing changed";
+
+    private static final String ALREADY_OPENED = "already opened for edit";
+    private static final String CANT_ADD = "can't add existing file";
+    private static final String WARNING_ADD_OF = "warning: add of existing file";
+    private static final String OPENED_FOR_EDIT = "can't add \\(" + ALREADY_OPENED + "\\)";
+    private static final String NOTHING_CHANGED = "nothing changed";
+    private static final String OR = "|";
 
     /** Pattern of perforce compiler warnings. */
-    private static final String PERFORCE_WARNING_PATTERN =
-                                                            "^(.*) - "
+    private static final String PERFORCE_WARNING_PATTERN =    "^(.*) - "
                                                             + "("
-                                                            + CANT_ADD + "|"
-                                                            + WARNING_ADD_OF + "|"
-                                                            + OPENED_FOR_EDIT + "|"
+                                                            + CANT_ADD + OR
+                                                            + WARNING_ADD_OF + OR
+                                                            + OPENED_FOR_EDIT + OR
                                                             + NOTHING_CHANGED
                                                             + ")"
                                                             + "(.*)$";

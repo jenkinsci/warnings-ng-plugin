@@ -31,6 +31,9 @@ public class GroovyParser {
      *            the regular expression
      * @param script
      *            the script to map the expression to a warning
+     * @param hasMultiLineSupport
+     *            determines whether the parser can scan messages spanning
+     *            multiple lines
      */
     @DataBoundConstructor
     public GroovyParser(final String name, final String regexp, final String script, final boolean hasMultiLineSupport) {
