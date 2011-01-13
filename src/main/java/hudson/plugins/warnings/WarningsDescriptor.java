@@ -189,7 +189,7 @@ public final class WarningsDescriptor extends PluginDescriptor {
     public FormValidation doCheckExample(@QueryParameter final String example,
             @QueryParameter final String regexp, @QueryParameter final String script) {
         if (StringUtils.isNotBlank(example) && StringUtils.isNotBlank(regexp) && StringUtils.isNotBlank(script)) {
-            boolean hasMultiLineSupport = regexp.contains(NEWLINE);
+            boolean hasMultiLineSupport = regexp.contains("\\n");
 
             return parseExample(script, example, regexp, hasMultiLineSupport);
         }

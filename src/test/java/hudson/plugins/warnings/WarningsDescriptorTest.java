@@ -17,6 +17,12 @@ import org.junit.Test;
  */
 public class WarningsDescriptorTest {
     // CHECKSTYLE:OFF
+    private static final String SINGLE_LINE_EXAMPLE = "file/name/relative/unix:42:evil: this is a warning message";
+    private static final String MULTI_LINE_EXAMPLE = "    [javac] 1. WARNING in C:\\Desenvolvimento\\Java\\jfg\\src\\jfg\\AttributeException.java (at line 3)\n"
+                    + "    [javac]     public class AttributeException extends RuntimeException\n"
+                    + "    [javac]                  ^^^^^^^^^^^^^^^^^^\n"
+                    + "    [javac] The serializable class AttributeException does not declare a static final serialVersionUID field of type long\n"
+                    + "    [javac] ----------\n";
     private static final String MULTILINE_SCRIPT = "import hudson.plugins.warnings.parser.Warning\n" +
                     "import hudson.plugins.analysis.util.model.Priority\n" +
                     "\n" +
@@ -34,15 +40,9 @@ public class WarningsDescriptorTest {
                     "String message = matcher.group(4)\n" +
                     "\n" +
                     "return new Warning(fileName, Integer.parseInt(lineNumber), \"Generic Parser\", \"\", message);\n";
+    public static final String MULTI_LINE_REGEXP = "(WARNING|ERROR)\\s*in\\s*(.*)\\(at line\\s*(\\d+)\\).*(?:\\r?\\n[^\\^]*)+(?:\\r?\\n.*[\\^]+.*)\\r?\\n(?:\\s*\\[.*\\]\\s*)?(.*)";
+    public static final String SINGLE_LINE_REGEXP = "^\\s*(.*):(\\d+):(.*):\\s*(.*)$";
     // CHECKSTYLE:ON
-    private static final String ECLIPSE_REGEXP = "(WARNING|ERROR)\\s*in\\s*(.*)\\(at line\\s*(\\d+)\\).*(?:\\r?\\n[^\\^]*)+(?:\\r?\\n.*[\\^]+.*)\\r?\\n(?:\\s*\\[.*\\]\\s*)?(.*)";
-    private static final String SINGLE_LINE_EXAMPLE = "file/name/relative/unix:42:evil: this is a warning message";
-    private static final String MULTI_LINE_EXAMPLE = "    [javac] 1. WARNING in C:\\Desenvolvimento\\Java\\jfg\\src\\jfg\\AttributeException.java (at line 3)\n"
-                    + "    [javac]     public class AttributeException extends RuntimeException\n"
-                    + "    [javac]                  ^^^^^^^^^^^^^^^^^^\n"
-                    + "    [javac] The serializable class AttributeException does not declare a static final serialVersionUID field of type long\n"
-                    + "    [javac] ----------\n";
-    private static final String REGEXP = "^\\s*(.*):(\\d+):(.*):\\s*(.*)$";
 
     /**
      * Test the validation of the name parameter.
@@ -104,7 +104,7 @@ public class WarningsDescriptorTest {
     public void testScriptValidationOneWarning() throws IOException {
         WarningsDescriptor descriptor = new WarningsDescriptor(false);
 
-        assertOk(descriptor.doCheckExample(SINGLE_LINE_EXAMPLE, REGEXP, readScript()));
+        assertOk(descriptor.doCheckExample(SINGLE_LINE_EXAMPLE, SINGLE_LINE_REGEXP, readScript()));
     }
 
     /**
@@ -119,7 +119,7 @@ public class WarningsDescriptorTest {
     public void testScriptValidationNoMatchesFound() throws IOException {
         WarningsDescriptor descriptor = new WarningsDescriptor(false);
 
-        assertError(descriptor.doCheckExample("this is a warning message", REGEXP, readScript()));
+        assertError(descriptor.doCheckExample("this is a warning message", SINGLE_LINE_REGEXP, readScript()));
     }
 
     /**
@@ -149,7 +149,7 @@ public class WarningsDescriptorTest {
     public void testMultiLineExpressionWillMatch() throws IOException {
         WarningsDescriptor descriptor = new WarningsDescriptor(false);
 
-        assertOk(descriptor.doCheckExample(MULTI_LINE_EXAMPLE, ECLIPSE_REGEXP, MULTILINE_SCRIPT));
+        assertOk(descriptor.doCheckExample(MULTI_LINE_EXAMPLE, MULTI_LINE_REGEXP, MULTILINE_SCRIPT));
     }
 
     private void assertOk(final FormValidation actualResult) {

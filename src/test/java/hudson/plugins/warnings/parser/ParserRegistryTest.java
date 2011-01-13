@@ -3,6 +3,8 @@ package hudson.plugins.warnings.parser;
 import static org.junit.Assert.*;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.warnings.GroovyParser;
+import hudson.plugins.warnings.WarningsDescriptorTest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -228,6 +230,32 @@ public class ParserRegistryTest {
 
         assertEquals("Wrong number of filteres elements", 1, filtered.size());
         assertEquals("Wrong number of filteres elements", validName, filtered.get(0));
+    }
+
+    /**
+     * Tests the construction of dynamic parsers.
+     */
+    @Test
+    public void testDynamicParsers() {
+        GroovyParser multi = new GroovyParser("name", WarningsDescriptorTest.MULTI_LINE_REGEXP, "empty");
+        GroovyParser single = new GroovyParser("name", WarningsDescriptorTest.SINGLE_LINE_REGEXP, "empty");
+
+        List<WarningsParser> allParsers = ParserRegistry.getDynamicParsers(Lists.newArrayList(single, multi));
+
+        int multiNumber = 0;
+        int singleNumber = 0;
+
+        for (WarningsParser parser : allParsers) {
+            if (parser.getClass() == DynamicParser.class) {
+                singleNumber++;
+            }
+            else if (parser.getClass() == DynamicDocumentParser.class) {
+                multiNumber++;
+            }
+        }
+
+        assertEquals("Wrong number of single line parsers" , 1, singleNumber);
+        assertEquals("Wrong number of multi line parsers" , 1, multiNumber);
     }
 }
 

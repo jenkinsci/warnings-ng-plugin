@@ -47,7 +47,7 @@ public class GroovyParser {
     public boolean isValid() {
         return doCheckScript(script).kind == FormValidation.Kind.OK
                 && doCheckRegexp(regexp).kind == FormValidation.Kind.OK
-                && doCheckName(regexp).kind == FormValidation.Kind.OK;
+                && doCheckName(name).kind == FormValidation.Kind.OK;
     }
 
     /**
@@ -84,7 +84,7 @@ public class GroovyParser {
      *         multiple lines
      */
     public boolean hasMultiLineSupport() {
-        return StringUtils.isNotBlank(regexp) && regexp.contains("\n");
+        return StringUtils.isNotBlank(regexp) && regexp.contains("\\n");
     }
 
     /**
