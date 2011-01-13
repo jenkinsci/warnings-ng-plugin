@@ -30,11 +30,12 @@ import org.kohsuke.stapler.StaplerRequest;
  */
 @Extension(ordinal = 100) // NOCHECKSTYLE
 public final class WarningsDescriptor extends PluginDescriptor {
-    /** Plug-in name. */
     private static final String PLUGIN_NAME = "warnings";
+    private static final String NEWLINE = "\n";
+    private static final int MAX_MESSAGE_LENGTH = 60;
+
     /** Icon to use for the result and project action. */
     private static final String ACTION_ICON = "/plugin/warnings/icons/warnings-24x24.png";
-    private static final int MAX_MESSAGE_LENGTH = 60;
 
     private final CopyOnWriteList<GroovyParser> groovyParsers = new CopyOnWriteList<GroovyParser>();
 
@@ -183,14 +184,13 @@ public final class WarningsDescriptor extends PluginDescriptor {
      *            the regular expression
      * @param script
      *            the script
-     * @param hasMultiLineSupport
-     *            determines whether multi-lines support is activated
      * @return the validation result
      */
     public FormValidation doCheckExample(@QueryParameter final String example,
-            @QueryParameter final String regexp, @QueryParameter final String script,
-            @QueryParameter final boolean hasMultiLineSupport) {
+            @QueryParameter final String regexp, @QueryParameter final String script) {
         if (StringUtils.isNotBlank(example) && StringUtils.isNotBlank(regexp) && StringUtils.isNotBlank(script)) {
+            boolean hasMultiLineSupport = regexp.contains(NEWLINE);
+
             return parseExample(script, example, regexp, hasMultiLineSupport);
         }
         else {
@@ -254,7 +254,7 @@ public final class WarningsDescriptor extends PluginDescriptor {
     }
 
     private void message(final StringBuilder okMessage, final String message) {
-        okMessage.append("\n");
+        okMessage.append(NEWLINE);
         int max = MAX_MESSAGE_LENGTH;
         if (message.length() > max) {
             int size = max / 2 - 1;

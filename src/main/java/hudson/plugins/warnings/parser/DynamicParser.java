@@ -38,5 +38,11 @@ public class DynamicParser extends RegexpLineParser {
     protected Warning createWarning(final Matcher matcher) {
         return expressionMatcher.createWarning(matcher);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getName() {
+        return super.getName() + " (SL)";
+    }
 }
 

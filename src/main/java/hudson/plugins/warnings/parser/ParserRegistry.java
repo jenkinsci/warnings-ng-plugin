@@ -2,6 +2,7 @@ package hudson.plugins.warnings.parser;
 
 import hudson.model.Hudson;
 import hudson.plugins.analysis.util.EncodingValidator;
+import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.warnings.GroovyParser;
 import hudson.plugins.warnings.WarningsDescriptor;
@@ -232,12 +233,30 @@ public class ParserRegistry {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public Collection<FileAnnotation> parse(final File file) throws IOException {
+        return parse(file, new NullLogger());
+    }
+
+    /**
+     * Iterates over the available parsers and parses the specified file with
+     * each parser. Returns all found warnings.
+     *
+     * @param file
+     *            the input stream
+     * @param logger
+     *            the logger to write to
+     * @return all found warnings
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
+     */
+    public Collection<FileAnnotation> parse(final File file, final PluginLogger logger) throws IOException {
         Set<FileAnnotation> allAnnotations = Sets.newHashSet();
         for (WarningsParser parser : parsers) {
             Reader input = null;
             try {
                 input = createReader(file);
-                allAnnotations.addAll(parser.parse(input));
+                Collection<FileAnnotation> warnings = parser.parse(input);
+                logger.log(String.format("%s : Found %d warnings.", parser.getName(), warnings.size()));
+                allAnnotations.addAll(warnings);
             }
             finally {
                 IOUtils.closeQuietly(input);
@@ -328,6 +347,39 @@ public class ParserRegistry {
      */
     protected Reader createReader(final InputStream inputStream) {
         return new InputStreamReader(inputStream, defaultCharset);
+    }
+
+    /**
+     * Null logger.
+     *
+     * @author Ulli Hafner
+     */
+    // TODO: move to analysis-core
+    public static final class NullLogger extends PluginLogger {
+        /**
+         * Creates a new instance of {@link NullLogger}.
+         */
+        public NullLogger() {
+            super(null, null);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void log(final String message) {
+            // do not log
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void log(final Throwable throwable) {
+            // do not log
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void printStackTrace(final Throwable throwable) {
+            // do not log
+        }
     }
 }
 

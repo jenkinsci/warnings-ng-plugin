@@ -104,7 +104,7 @@ public class WarningsDescriptorTest {
     public void testScriptValidationOneWarning() throws IOException {
         WarningsDescriptor descriptor = new WarningsDescriptor(false);
 
-        assertOk(descriptor.doCheckExample(SINGLE_LINE_EXAMPLE, REGEXP, readScript(), false));
+        assertOk(descriptor.doCheckExample(SINGLE_LINE_EXAMPLE, REGEXP, readScript()));
     }
 
     /**
@@ -119,9 +119,7 @@ public class WarningsDescriptorTest {
     public void testScriptValidationNoMatchesFound() throws IOException {
         WarningsDescriptor descriptor = new WarningsDescriptor(false);
 
-        assertError(descriptor.doCheckExample(
-                "this is a warning message",
-                REGEXP, readScript(), false));
+        assertError(descriptor.doCheckExample("this is a warning message", REGEXP, readScript()));
     }
 
     /**
@@ -136,9 +134,7 @@ public class WarningsDescriptorTest {
     public void testScriptValidationIllegalMatchAccess() throws IOException {
         WarningsDescriptor descriptor = new WarningsDescriptor(false);
 
-        assertError(descriptor.doCheckExample(
-                SINGLE_LINE_EXAMPLE,
-                "^\\s*(.*):(\\d+):(.*)$", readScript(), false));
+        assertError(descriptor.doCheckExample(SINGLE_LINE_EXAMPLE, "^\\s*(.*):(\\d+):(.*)$", readScript()));
     }
 
     /**
@@ -153,7 +149,7 @@ public class WarningsDescriptorTest {
     public void testMultiLineExpressionWillMatch() throws IOException {
         WarningsDescriptor descriptor = new WarningsDescriptor(false);
 
-        assertOk(descriptor.doCheckExample(MULTI_LINE_EXAMPLE, ECLIPSE_REGEXP, MULTILINE_SCRIPT, true));
+        assertOk(descriptor.doCheckExample(MULTI_LINE_EXAMPLE, ECLIPSE_REGEXP, MULTILINE_SCRIPT));
     }
 
     private void assertOk(final FormValidation actualResult) {

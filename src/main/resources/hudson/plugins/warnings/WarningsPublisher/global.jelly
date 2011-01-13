@@ -13,9 +13,6 @@
                 name="regexp"
                 checkUrl="'descriptorByName/WarningsPublisher/checkRegexp?regexp='+encodeURIComponent(this.value)"/>
           </f:entry>
-          <f:entry title="${%Multi-line support}" description="${%multiLine.description}">
-            <f:checkbox name="hasMultiLineSupport" checked="${instance.hasMultiLineSupport()}"/>
-          </f:entry>
           <f:entry
               field="script" title="${%Mapping Script}" description="${%script.description}"
               help="/plugin/warnings/help-script.html">

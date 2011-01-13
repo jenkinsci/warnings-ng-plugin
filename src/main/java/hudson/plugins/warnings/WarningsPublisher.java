@@ -229,7 +229,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
             logger.log("Parsing warnings in console log...");
             ParserRegistry registry = new ParserRegistry(ParserRegistry.getParsers(validParsers),
                     getDefaultEncoding(), getIncludePattern(), getExcludePattern());
-            Collection<FileAnnotation> warnings = registry.parse(logFile);
+            Collection<FileAnnotation> warnings = registry.parse(logFile, logger);
             if (!build.getWorkspace().isRemote()) {
                 String workspace = build.getWorkspace().getRemote();
                 ModuleDetector detector = new ModuleDetector(new File(workspace));
