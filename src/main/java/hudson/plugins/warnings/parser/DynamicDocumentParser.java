@@ -38,11 +38,5 @@ public class DynamicDocumentParser extends RegexpDocumentParser {
     protected Warning createWarning(final Matcher matcher) {
         return expressionMatcher.createWarning(matcher);
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getName() {
-        return super.getName() + " (ML)";
-    }
 }
 
