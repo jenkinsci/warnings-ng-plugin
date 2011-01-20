@@ -1,6 +1,8 @@
+<!--
+  Section header
+-->
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
-  xmlns:i="jelly:fmt" xmlns:local="local">
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
   <j:set var="high" value="${container.numberOfHighAnnotations}" />
   <j:set var="normal" value="${container.numberOfNormalAnnotations}" />

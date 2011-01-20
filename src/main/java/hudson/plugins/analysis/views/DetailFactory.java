@@ -204,7 +204,7 @@ public class DetailFactory {
      * @return the actual URL
      */
     private String createGenericTabUrl(final String link) {
-        return "/tabview/" + StringUtils.substringAfter(link, "tab.") + ".jelly";
+        return StringUtils.substringAfter(link, "tab.") + ".jelly";
     }
 
     /**

@@ -42,12 +42,30 @@ public class TabDetail extends AbstractAnnotationsDetail {
     }
 
     /**
-     * Returns the url.
+     * Returns the URL that renders the content of this tab.
      *
-     * @return the url
+     * @return the URL
      */
     public String getUrl() {
         return url;
+    }
+
+    /**
+     * Returns the jelly script the will render the details.
+     *
+     * @return the name of the jelly script
+     */
+    public String getDetails() {
+        return "details.jelly";
+    }
+
+    /**
+     * Returns the jelly script the will render the warnings table.
+     *
+     * @return the name of the jelly script
+     */
+    public String getWarnings() {
+        return "warnings.jelly";
     }
 }
 

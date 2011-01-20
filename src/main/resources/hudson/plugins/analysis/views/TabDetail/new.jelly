@@ -3,6 +3,6 @@
   xmlns:i="jelly:fmt">
 
   <j:set var="annotations" value="${it.container.annotations}" />
-  <st:include page="/tabview/details.jelly" />
+  <st:include page="${it.details}" />
 
 </j:jelly>

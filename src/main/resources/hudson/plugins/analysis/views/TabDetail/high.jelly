@@ -2,10 +2,7 @@
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
   xmlns:i="jelly:fmt">
 
-  <st:include page="${it.url}" />
-
-  <script type="text/javascript">
-          Behaviour.apply(document);
-  </script>
+  <j:set var="annotations" value="${it.container.highAnnotations}" />
+  <st:include page="${it.details}" />
 
 </j:jelly>
