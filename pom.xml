@@ -36,7 +36,7 @@
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-core</artifactId>
-    <version>1.15</version>
+    <version>1.16-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
