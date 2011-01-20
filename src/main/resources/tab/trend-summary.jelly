@@ -1,0 +1,36 @@
+<!-- Section header -->
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+  <h2>${%Warnings Trend}</h2>
+
+  <table class="pane" id="summary">
+    <tr>
+      <td class="pane-header">${%All Warnings}</td>
+      <td class="pane-header">${%New Warnings}</td>
+      <td class="pane-header">${%Fixed Warnings}</td>
+    </tr>
+    <tbody>
+      <tr>
+        <td class="pane">${it.numberOfAnnotations}</td>
+        <td class="pane">
+          <j:if test="${it.numberOfNewWarnings == 0}">
+            0
+          </j:if>
+          <j:if test="${it.numberOfNewWarnings != 0}">
+            <a href="new">${it.numberOfNewWarnings}</a>
+          </j:if>
+        </td>
+        <td class="pane">
+          <j:if test="${it.numberOfFixedWarnings == 0}">
+            0
+          </j:if>
+          <j:if test="${it.numberOfFixedWarnings != 0}">
+            <a href="fixed">${it.numberOfFixedWarnings}</a>
+          </j:if>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</j:jelly>
