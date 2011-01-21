@@ -9,7 +9,7 @@
 
       <h1>${it.header}</h1>
 
-      <tab:summaryTable />
+      <tab:priorities-summary />
 
       <tab:main />
 

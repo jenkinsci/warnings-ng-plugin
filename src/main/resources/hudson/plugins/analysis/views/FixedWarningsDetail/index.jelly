@@ -6,13 +6,13 @@
 		<l:main-panel>
 			<h1>${it.header}</h1>
 
-	        <tab:summaryTable />
+            <tab:priorities-summary />
 
 			<h2>${%Fixed Warnings}</h2>
 
             <j:set var="annotations" value="${it.annotations}" />
-            
-            <st:include page="/tabview/fixed.jelly" />
+
+            <tab:fixed />
 
 		</l:main-panel>
 	</l:layout>
