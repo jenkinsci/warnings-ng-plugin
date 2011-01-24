@@ -79,7 +79,7 @@
     <j:if test="${it.fixedWarnings.size() > 0}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '${%Fixed}',
-            dataSrc: 'tab.fixed',
+            dataSrc: 'tab.fixed-table',
             cacheData: true,
             active: false
         }), myTabs);

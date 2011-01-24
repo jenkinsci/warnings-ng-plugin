@@ -67,5 +67,14 @@ public class TabDetail extends AbstractAnnotationsDetail {
     public String getWarnings() {
         return "warnings.jelly";
     }
+
+    /**
+     * Returns the jelly script the will render the fixed warnings table.
+     *
+     * @return the name of the jelly script
+     */
+    public String getFixed() {
+        return "fixed.jelly";
+    }
 }
 
