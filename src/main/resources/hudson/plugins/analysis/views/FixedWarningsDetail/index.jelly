@@ -6,8 +6,6 @@
 		<l:main-panel>
 			<h1>${it.header}</h1>
 
-            <tab:priorities-summary />
-
 			<h2>${%Fixed Warnings}</h2>
 
             <j:set var="annotations" value="${it.annotations}" />
