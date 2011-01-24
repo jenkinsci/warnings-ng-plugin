@@ -89,7 +89,7 @@ public class DetailFactory {
             final String defaultEncoding, final String displayName) {
         // CHECKSTYLE:ON
         if ("fixed".equals(link)) {
-            return new FixedWarningsDetail(owner, this, fixedAnnotations, defaultEncoding, displayName);
+            return createFixedWarningsDetail(owner, fixedAnnotations, defaultEncoding, displayName);
         }
         else if ("new".equals(link)) {
             return new NewWarningsDetail(owner, this, newAnnotations, defaultEncoding, displayName);
@@ -194,6 +194,25 @@ public class DetailFactory {
     protected TabDetail createTabDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations,
             final String url, final String defaultEncoding) {
         return new TabDetail(owner, this, annotations, url, defaultEncoding);
+    }
+
+    /**
+     * Creates a generic fixed warnings detail tab with the specified link.
+     *
+     * @param owner
+     *            the build as owner of the detail page
+     * @param fixedAnnotations
+     *            the annotations to display
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @param displayName
+     *            the name of the view
+     * @return the detail view
+     */
+    protected FixedWarningsDetail createFixedWarningsDetail(final AbstractBuild<?, ?> owner,
+            final Collection<FileAnnotation> fixedAnnotations, final String defaultEncoding,
+            final String displayName) {
+        return new FixedWarningsDetail(owner, this, fixedAnnotations, defaultEncoding, displayName);
     }
 
     /**
