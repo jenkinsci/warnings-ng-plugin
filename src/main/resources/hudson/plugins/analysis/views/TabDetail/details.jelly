@@ -2,7 +2,7 @@
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
   xmlns:i="jelly:fmt" xmlns:local="local">
   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
-  <j:forEach var="warning" items="${annotations}">
+  <j:forEach var="warning" items="${annotations.sortedAnnotations}">
     <table class="pane" id="details">
       <tr>
         <td class="pane-header">

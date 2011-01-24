@@ -366,6 +366,16 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     }
 
     /**
+     * Returns the annotations with {@link Priority#HIGH}.
+     *
+     * @return the annotations with {@link Priority#HIGH}
+     */
+    public DefaultAnnotationContainer getHigh() {
+        return new DefaultAnnotationContainer(Priority.HIGH.getLocalizedString(),
+                getHighAnnotations());
+    }
+
+    /**
      * Returns the annotations with {@link Priority#NORMAL}.
      *
      * @return the annotations with {@link Priority#NORMAL}
@@ -375,12 +385,32 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     }
 
     /**
+     * Returns the annotations with {@link Priority#NORMAL}.
+     *
+     * @return the annotations with {@link Priority#NORMAL}
+     */
+    public DefaultAnnotationContainer getNormal() {
+        return new DefaultAnnotationContainer(Priority.NORMAL.getLocalizedString(),
+                getNormalAnnotations());
+    }
+
+    /**
      * Returns the annotations with {@link Priority#LOW}.
      *
      * @return the annotations with {@link Priority#LOW}
      */
     public final Set<FileAnnotation> getLowAnnotations() {
         return getAnnotations(Priority.LOW);
+    }
+
+    /**
+     * Returns the annotations with {@link Priority#LOW}.
+     *
+     * @return the annotations with {@link Priority#LOW}
+     */
+    public DefaultAnnotationContainer getLow() {
+        return new DefaultAnnotationContainer(Priority.LOW.getLocalizedString(),
+                getLowAnnotations());
     }
 
     /** {@inheritDoc} */
