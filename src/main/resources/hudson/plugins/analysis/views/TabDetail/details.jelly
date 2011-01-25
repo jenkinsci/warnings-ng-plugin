@@ -18,10 +18,14 @@
             </j:if>
         </td>
       </tr>
+      <tr>
+        <td class="pane">
+          <p>
+            <b>${warning.message}</b>
+          </p>
+          <p>${warning.toolTip}</p>
+        </td>
+      </tr>
     </table>
-    <p>
-      <b>${warning.message}</b>
-    </p>
-    <p>${warning.toolTip}</p>
   </j:forEach>
 </j:jelly>
