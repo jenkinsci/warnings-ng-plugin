@@ -19,7 +19,7 @@
         </td>
       </tr>
       <tr>
-        <td class="pane">
+        <td style="white-space: normal">
           <p>
             <b>${warning.message}</b>
           </p>
