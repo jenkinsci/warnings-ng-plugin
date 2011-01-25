@@ -1,6 +1,6 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
-  xmlns:i="jelly:fmt" xmlns:tab="/tab">
+  xmlns:i="jelly:fmt" xmlns:result="/result">
   <l:layout norefresh="true">
 
     <st:include it="${it.owner}" page="sidepanel.jelly" />
@@ -9,9 +9,9 @@
 
       <h1>${it.header}</h1>
 
-      <tab:priorities-summary />
+      <result:priorities-summary />
 
-      <tab:main />
+      <result:main />
 
     </l:main-panel>
 
