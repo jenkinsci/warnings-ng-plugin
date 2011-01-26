@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.matrix.MatrixAggregatable;
 
 import hudson.model.BuildListener;
 import hudson.model.Result;
@@ -50,7 +51,7 @@ import hudson.tasks.Maven;
  */
 // CHECKSTYLE:COUPLING-OFF
 @SuppressWarnings("PMD.TooManyFields")
-public abstract class HealthAwarePublisher extends Recorder implements HealthDescriptor {
+public abstract class HealthAwarePublisher extends Recorder implements HealthDescriptor, MatrixAggregatable {
     private static final long serialVersionUID = -7945220365563528457L;
     private static final String SLASH = "/";
 
