@@ -11,7 +11,7 @@
   <artifactId>warnings</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Plug-in</name>
-  <version>3.13</version>
+  <version>3.14-SNAPSHOT</version>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Warnings+Plugin</url>
   <description>This plug-in reads the compiler warnings from the
     console log file and generates a trend report.</description>
@@ -47,9 +47,9 @@
   </dependencies>
 
   <scm>
-    <connection>scm:svn:https://guest@svn.java.net/svn/hudson~svn/tags/warnings-3.13</connection>
-    <developerConnection>scm:svn:https://svn.java.net/svn/hudson~svn/tags/warnings-3.13</developerConnection>
-    <url>http://fisheye.hudson-ci.org/browse/Hudson/tags/warnings-3.13</url>
+    <connection>scm:svn:https://guest@svn.java.net/svn/hudson~svn/trunk/hudson/plugins/warnings</connection>
+    <developerConnection>scm:svn:https://svn.java.net/svn/hudson~svn/trunk/hudson/plugins/warnings</developerConnection>
+    <url>http://fisheye.hudson-ci.org/browse/Hudson/trunk/hudson/plugins/warnings</url>
   </scm>
 
   <repositories>
