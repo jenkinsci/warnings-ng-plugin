@@ -1,7 +1,6 @@
 package hudson.plugins.analysis.core;
 
 import java.io.IOException;
-import java.util.Collection;
 
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
@@ -10,8 +9,6 @@ import hudson.matrix.MatrixBuild;
 
 import hudson.model.Action;
 import hudson.model.BuildListener;
-
-import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
  * Aggregates {@link AbstractResultAction}s of {@link MatrixRun}s into
@@ -50,7 +47,9 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
     @Override
     public boolean endRun(final MatrixRun run) throws InterruptedException, IOException {
         if (totals.hasNoAnnotations()) {
-            totals.addAnnotations(getAnnotations(run));
+            BuildResult result = getResult(run);
+            totals.addAnnotations(result.getAnnotations());
+            totals.addModules(result.getModules());
         }
         return true;
     }
@@ -70,7 +69,7 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
      *            the run to obtain the annotations from
      * @return the annotations of the specified run
      */
-    protected abstract Collection<? extends FileAnnotation> getAnnotations(MatrixRun run);
+    protected abstract BuildResult getResult(MatrixRun run);
 
     /**
      * Creates the action that will render the aggregated results.
