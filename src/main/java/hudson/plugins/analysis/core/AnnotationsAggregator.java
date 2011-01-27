@@ -49,9 +49,10 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
     /** {@inheritDoc} */
     @Override
     public boolean endRun(final MatrixRun run) throws InterruptedException, IOException {
-        totals.addAnnotations(getAnnotations(run));
-
-        return super.endRun(run);
+        if (totals.hasNoAnnotations()) {
+            totals.addAnnotations(getAnnotations(run));
+        }
+        return true;
     }
 
     /** {@inheritDoc} */
