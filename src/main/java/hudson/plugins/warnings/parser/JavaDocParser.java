@@ -13,7 +13,7 @@ public class JavaDocParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "JavaDoc";
     /** Pattern of javac compiler warnings. */
-    private static final String JAVA_DOC_WARNING_PATTERN = "^(?:\\s*\\[(?:javadoc|WARNING)\\]\\s*)?(?:(?:(.*):(\\d+))|(?:\\s*javadoc\\s*)):[^:]*-\\s*(.*)$";
+    private static final String JAVA_DOC_WARNING_PATTERN = "(?:\\s*\\[(?:javadoc|WARNING)\\]\\s*)?(?:(?:(.*):(\\d+))|(?:\\s*javadoc\\s*)):\\s*warning\\s*-\\s*(.*)";
 
     /**
      * Creates a new instance of <code>AntJavacParser</code>.

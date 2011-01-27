@@ -65,6 +65,20 @@ public class JavaDocParserTest extends ParserTester {
     }
 
     /**
+     * Parses a log with Junit message (false positive).
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-8630">Issue 8630</a>
+     */
+    @Test
+    public void issue8630() throws IOException {
+        Collection<FileAnnotation> warnings = new JavaDocParser().parse(openFile("issue8630.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, warnings.size());
+    }
+
+    /**
      * Parses a warning log with several JavaDoc warnings.
      *
      * @throws IOException
