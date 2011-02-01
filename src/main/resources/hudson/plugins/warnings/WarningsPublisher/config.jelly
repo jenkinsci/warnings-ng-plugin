@@ -32,11 +32,11 @@
   <f:advanced>
     <u:failed/>
     <f:entry title="${%Warnings to include}" field="includePattern"
-       description="${%description.includePattern('http://ant.apache.org/manual/Types/fileset.html')}">
+       description="${%description.includePattern}">
       <f:textbox/>
     </f:entry>
     <f:entry title="${%Warnings to ignore}" field="excludePattern"
-       description="${%description.excludePattern('http://ant.apache.org/manual/Types/fileset.html')}">
+       description="${%description.excludePattern}">
       <f:textbox/>
     </f:entry>
     <u:health id="warnings"/>
