@@ -1,0 +1,62 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+  xmlns:i="jelly:fmt" xmlns:u="/util">
+  <l:layout norefresh="true">
+    <st:include it="${it.owner}" page="sidepanel.jelly" />
+    <l:main-panel>
+      <f:form method="post" action="save" name="Save">
+        <h1>${%Configure the trend graph}</h1>
+        <p>${it.description}</p>
+
+        <j:set var="instance" value="${it}" />
+
+        <f:entry title="${%Width}">
+          <f:textbox field="width" />
+        </f:entry>
+
+        <f:entry title="${%Height}">
+          <f:textbox field="height" />
+        </f:entry>
+
+        <f:entry title="${%name.builds}" description="${%description.buildCount}">
+          <f:textbox name="buildCountString" value="${it.buildCountString}" />
+        </f:entry>
+
+        <f:entry title="${%name.days}" description="${%description.dayCount}">
+          <f:textbox name="dayCountString" value="${it.dayCountString}" />
+        </f:entry>
+
+        <f:entry title="${%name.domain}" description="${%description.domain}">
+          <f:checkbox name="useBuildDateAsDomain" checked="${instance.useBuildDateAsDomain}"/>
+        </f:entry>
+
+        <st:include page="local-config.jelly" optional="true"/>
+
+        <f:entry title="${%Type}">
+          <j:forEach var="graph" items="${it.availableGraphs}">
+            <j:set var="id" value="${graph.id}" />
+            <j:set var="current" value="${it.graphType}" />
+
+            <p>
+              <f:radio name="graphType" value="${id}"
+                checked="${current.id.equals(id)}" id="graphType.${id}" />
+              <st:nbsp />
+              <label for="graphType.${id}">${graph.label}</label>
+              <st:nbsp />
+            </p>
+            <p>
+              <img src="${it.url}/${id}/png" />
+            </p>
+
+          </j:forEach>
+
+        </f:entry>
+
+        <f:entry title="">
+          <input type="submit" name="Submit'" value="${%Save}"
+            class="submit-button" />
+        </f:entry>
+      </f:form>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

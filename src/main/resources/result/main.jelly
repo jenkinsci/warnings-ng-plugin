@@ -1,0 +1,222 @@
+<!--
+  Section header
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+  <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+  <j:if test="${it.hasAnnotations()}">
+    <script type="text/javascript" src="${rootURL}/plugin/analysis-core/yui/utilities.js" />
+    <script type="text/javascript" src="${rootURL}/plugin/analysis-core/yui/tabview-min.js" />
+    <script type="text/javascript" src="${rootURL}/plugin/analysis-core/yui/dispatcher-min.js" />
+
+    <script type="text/javascript">
+      var myTabs = new YAHOO.widget.TabView("statistics");
+
+      <j:if test="${it.container.modules.size() > 1}">
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: '${%Modules}',
+            dataSrc: 'tab.modules',
+            cacheData: true,
+            active: false
+        }), myTabs);
+      </j:if>
+      <j:if test="${it.container.packages.size() > 1}">
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: '${it.container.packageCategoryName}',
+            dataSrc: 'tab.packages',
+            cacheData: true,
+            active: false
+        }), myTabs);
+    </j:if>
+    <j:if test="${it.container.files.size() > 1}">
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: '${%Files}',
+            dataSrc: 'tab.files',
+            cacheData: true,
+            active: false
+        }), myTabs);
+    </j:if>
+    <j:if test="${it.container.categories.size() > 1}">
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: '${%Categories}',
+            dataSrc: 'tab.categories',
+            cacheData: true,
+            active: false
+        }), myTabs);
+    </j:if>
+    <j:if test="${it.container.types.size() > 1}">
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: '${%Types}',
+            dataSrc: 'tab.types',
+            cacheData: true,
+            active: false
+        }), myTabs);
+    </j:if>
+    <j:if test="${it.container.numberOfAnnotations > 1}">
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: '${%Warnings}',
+            dataSrc: 'tab.table',
+            cacheData: true,
+            active: false
+        }), myTabs);
+    </j:if>
+      YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+          label: '${%Details}',
+          dataSrc: 'tab.all',
+          cacheData: true,
+          active: false
+      }), myTabs);
+
+    <j:if test="${it.newWarnings.size() > 0}">
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: '${%New}',
+            dataSrc: 'tab.new',
+            cacheData: true,
+            active: false
+        }), myTabs);
+    </j:if>
+    <j:if test="${it.fixedWarnings.size() > 0}">
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: '${%Fixed}',
+            dataSrc: 'tab.fixed-table',
+            cacheData: true,
+            active: false
+        }), myTabs);
+    </j:if>
+    <j:if test="${it.container.highAnnotations.size() > 0 and it.container.highAnnotations.size() != it.container.numberOfAnnotations}">
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: '${%High}',
+            dataSrc: 'tab.high',
+            cacheData: true,
+            active: false
+        }), myTabs);
+    </j:if>
+    <j:if test="${it.container.normalAnnotations.size() > 0 and it.container.normalAnnotations.size() != it.container.numberOfAnnotations}">
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: '${%Normal}',
+            dataSrc: 'tab.normal',
+            cacheData: true,
+            active: false
+        }), myTabs);
+    </j:if>
+    <j:if test="${it.container.lowAnnotations.size() > 0 and it.container.lowAnnotations.size() != it.container.numberOfAnnotations}">
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+            label: '${%Low}',
+            dataSrc: 'tab.low',
+            cacheData: true,
+            active: false
+        }), myTabs);
+    </j:if>
+
+      myTabs.set('activeIndex', 0);
+
+    </script>
+
+    <style type="text/css">
+
+        /* .yui-navset defaults to .yui-navset-top */
+        .yui-skin-sam .yui-navset .yui-nav,
+        .yui-skin-sam .yui-navset .yui-navset-top .yui-nav { /* protect nested tabviews from other orientations */
+            border:solid #b0b0b0; /* color between tab list and content */
+            border-width:0 0 0px;
+            color:#bbb;
+            Xposition:relative;
+            zoom:1;
+        }
+
+        .yui-skin-sam .yui-navset .yui-nav li,
+        .yui-skin-sam .yui-navset .yui-navset-top .yui-nav li {
+            margin:0 0.16em 0 0; /* space between tabs */
+            padding:1px 0 0; /* gecko: make room for overflow */
+            zoom:1;
+        }
+
+        .yui-skin-sam .yui-navset .yui-nav a,
+        .yui-skin-sam .yui-navset .yui-navset-top .yui-nav a {
+            background:#ffffff; /* tab background */
+            border:solid #b0b0b0;
+            border-width:0 1px;
+            color:#000;
+            text-decoration:none;
+        }
+
+        .yui-skin-sam .yui-navset .yui-nav a em,
+        .yui-skin-sam .yui-navset .yui-navset-top .yui-nav a em {
+            border:solid #b0b0b0;
+            border-width:1px 0 0;
+            cursor:hand;
+            padding:0.25em .75em;
+            left:0; right: 0; bottom: 0; /* protect from other orientations */
+            top:-1px; /* for 1px rounded corners */
+            position:relative;
+        }
+
+        .yui-skin-sam .yui-navset .yui-nav .selected a,
+        .yui-skin-sam .yui-navset .yui-nav .selected a:focus, /* no focus effect for selected */
+        .yui-skin-sam .yui-navset .yui-nav .selected a:hover { /* no hover effect for selected */
+            background:#f0f0f0; /* selected tab background */
+            color:#000;
+            font-weight:bold;
+        }
+
+        .yui-skin-sam .yui-navset .yui-nav a:hover,
+        .yui-skin-sam .yui-navset .yui-nav a:focus {
+            background:#b0b0b0; /* selected tab background */
+            outline:0;
+		border-bottom: 1px solid #b0b0b0;
+        }
+
+        .yui-skin-sam .yui-navset .yui-nav .selected a em {
+            padding:0.35em 0.75em; /* raise selected tab */
+        }
+
+        .yui-skin-sam .yui-navset .yui-nav .selected a,
+        .yui-skin-sam .yui-navset .yui-nav .selected a em {
+            border-color:#b0b0b0; /* selected tab border color */
+        }
+
+        .yui-skin-sam .yui-navset .yui-content {
+            background:#ffffff; /* content background color */
+        }
+
+        .yui-skin-sam .yui-navset .yui-content,
+        .yui-skin-sam .yui-navset .yui-navset-top .yui-content {
+            border:1px solid #b0b0b0; /* content border */
+            border-top-color:#b0b0b0; /* different border color */
+            padding:0.25em 0.5em; /* content padding */
+        }
+
+        #statistics .yui-content {
+            padding:1em;
+        }
+
+        #statistics .loading {
+            background:#ffffff; /* content background color */
+            background-image:url(${rootURL}/plugin/analysis-core/icons/spinner.gif);
+            background-position:center center;
+            background-repeat:no-repeat;
+        }
+
+        .priority-high {
+            background: #EF2929;
+            background-image:url(${rootURL}/plugin/analysis-core/icons/clearpixel.gif);
+        }
+
+        .priority-normal {
+            background: #FCE94F;
+            background-image:url(${rootURL}/plugin/analysis-core/icons/clearpixel.gif);
+        }
+
+        .priority-low {
+            background: #729FCF;
+            background-image:url(${rootURL}/plugin/analysis-core/icons/clearpixel.gif);
+        }
+
+    </style>
+
+    <h2>${%Details}</h2>
+    <div id="statistics" class="yui-navset" />
+
+  </j:if>
+</j:jelly>

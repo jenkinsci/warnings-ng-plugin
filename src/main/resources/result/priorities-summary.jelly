@@ -1,0 +1,31 @@
+<!--
+  Section header
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+  <h2>${%Summary}</h2>
+  <table class="pane" id="analysis.summary">
+    <tr>
+      <td class="pane-header">${%Total}</td>
+      <j:forEach var="priority" items="${it.priorities}">
+        <td class="pane-header">${priority.longLocalizedString}</td>
+      </j:forEach>
+    </tr>
+    <tbody>
+      <tr>
+        <td class="pane">${it.numberOfAnnotations}</td>
+        <j:forEach var="priority" items="${it.priorities}">
+          <td class="pane">
+            <j:if test="${it.getNumberOfAnnotations(priority) == 0}">
+              0
+            </j:if>
+            <j:if test="${it.getNumberOfAnnotations(priority) != 0}">
+              <a href="${priority}">${it.getNumberOfAnnotations(priority)}</a>
+            </j:if>
+          </td>
+        </j:forEach>
+      </tr>
+    </tbody>
+  </table>
+</j:jelly>

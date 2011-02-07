@@ -1,0 +1,15 @@
+<!--
+  Section header
+
+  <%@attribute name="id" required="true" %>
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+  <j:if test="${instance != null}">
+    <f:entry title="${%Trend graph}">
+      <a href="${id}/configureDefaults">${%configure}</a>
+    </f:entry>
+  </j:if>
+
+</j:jelly>

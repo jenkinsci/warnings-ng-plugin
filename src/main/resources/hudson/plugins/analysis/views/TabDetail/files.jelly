@@ -1,0 +1,33 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+  xmlns:i="jelly:fmt" xmlns:local="local" xmlns:result="/result">
+  <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+  <table class="pane sortable" id="files">
+    <tr>
+      <td class="pane-header">${%File}</td>
+      <td class="pane-header" style="width:2em">${%Total}</td>
+      <td class="pane-header" style="width:60%">${%Distribution}</td>
+    </tr>
+    <tbody>
+      <j:set var="max" value="${it.container.getUpperBound(it.container.files)}" />
+      <j:forEach var="container" items="${it.container.files}">
+        <tr>
+          <td class="pane">
+            <a href="file.${container.name.hashCode()}/">${container.shortName}</a>
+          </td>
+          <td class="pane">${container.numberOfAnnotations}
+          </td>
+          <td class="pane">
+            <result:priority-graph />
+          </td>
+        </tr>
+      </j:forEach>
+      <tr class="sortbottom">
+          <td class="pane-header">${%Total}</td>
+          <td class="pane-header">${it.container.numberOfAnnotations}</td>
+          <td class="pane-header"/>
+      </tr>
+    </tbody>
+  </table>
+</j:jelly>
+

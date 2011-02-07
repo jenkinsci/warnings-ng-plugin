@@ -1,0 +1,14 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:dp="/hudson/plugins/view/dashboard" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <dp:decorate portlet="${it}">
+    <tr><td>
+      <div align="center">
+        <j:if test="${!it.isEmpty()}">
+          <img id="graph" src="${it.url}/warningsGraph/png" lazymap="${it.url}/warningsGraph/map" alt="${it.description}"/>
+        </j:if>
+        <j:if test="${it.isEmpty()}">
+          ${%no.results}
+        </j:if>
+       </div>
+     </td></tr>
+  </dp:decorate>
+</j:jelly>

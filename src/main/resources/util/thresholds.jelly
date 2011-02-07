@@ -1,0 +1,98 @@
+<!--
+  Section header
+
+  <%@attribute name="id" required="true" %>
+-->
+
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+  xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+  xmlns:f="/lib/form" xmlns:u="/util">
+
+  <f:entry title="${%Status thresholds}" description="${%description.status}">
+    <table>
+      <thead>
+        <tr>
+          <td />
+          <td>${%All priorities}</td>
+          <td>${%Priority high}</td>
+          <td>${%Priority normal}</td>
+          <td>${%Priority low}</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="vertical-align: middle;">
+            <img src="${rootURL}/images/16x16/yellow.gif" alt="100%" title="${%description.unstableTotal}" /> ${%Total}
+          </td>
+          <td>
+            <f:textbox name="unstableTotalAll" value="${instance.thresholds.unstableTotalAll}" />
+          </td>
+          <td>
+            <f:textbox name="unstableTotalHigh" value="${instance.thresholds.unstableTotalHigh}" />
+          </td>
+          <td>
+            <f:textbox name="unstableTotalNormal" value="${instance.thresholds.unstableTotalNormal}" />
+          </td>
+          <td>
+            <f:textbox name="unstableTotalLow" value="${instance.thresholds.unstableTotalLow}" />
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: middle;">
+            <img src="${rootURL}/images/16x16/yellow.gif" alt="100%" title="${%description.unstableNew}" /> ${%New}
+          </td>
+          <td>
+            <f:textbox name="unstableNewAll" value="${instance.thresholds.unstableNewAll}" />
+          </td>
+          <td>
+            <f:textbox name="unstableNewHigh" value="${instance.thresholds.unstableNewHigh}" />
+          </td>
+          <td>
+            <f:textbox name="unstableNewNormal" value="${instance.thresholds.unstableNewNormal}" />
+          </td>
+          <td>
+            <f:textbox name="unstableNewLow" value="${instance.thresholds.unstableNewLow}" />
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: middle;">
+            <img src="${rootURL}/images/16x16/red.gif" alt="100%" title="${%description.failedTotal}" /> ${%Total}
+          </td>
+          <td>
+            <f:textbox name="failedTotalAll" value="${instance.thresholds.failedTotalAll}" />
+          </td>
+          <td>
+            <f:textbox name="failedTotalHigh" value="${instance.thresholds.failedTotalHigh}" />
+          </td>
+          <td>
+            <f:textbox name="failedTotalNormal" value="${instance.thresholds.failedTotalNormal}" />
+          </td>
+          <td>
+            <f:textbox name="failedTotalLow" value="${instance.thresholds.failedTotalLow}" />
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: middle;">
+            <img src="${rootURL}/images/16x16/red.gif" alt="100%" title="${%description.failedNew}" /> ${%New}
+          </td>
+          <td>
+            <f:textbox name="failedNewAll" value="${instance.thresholds.failedNewAll}" />
+          </td>
+          <td>
+            <f:textbox name="failedNewHigh" value="${instance.thresholds.failedNewHigh}" />
+          </td>
+          <td>
+            <f:textbox name="failedNewNormal" value="${instance.thresholds.failedNewNormal}" />
+          </td>
+          <td>
+            <f:textbox name="failedNewLow" value="${instance.thresholds.failedNewLow}" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </f:entry>
+  <f:entry title="${%Use delta for new warnings}" description="${%description.useDeltaValues}">
+    <f:checkbox name="useDeltaValues" checked="${instance.useDeltaValues}"/>
+  </f:entry>
+
+</j:jelly>
