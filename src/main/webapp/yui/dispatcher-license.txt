@@ -1,7 +1,0 @@
-/*
-Copyright (c) 2007, Caridy Patino. All rights reserved.
-Portions Copyright (c) 2007, Yahoo!, Inc. All rights reserved.
-Code licensed under the BSD License:
-http://www.bubbling-library.com/eng/licence
-version: 1.5.0
-*/
