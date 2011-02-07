@@ -1,0 +1,44 @@
+The gcc error parser gets an incorrect error message when it is preceded by a contextual information using the following syntax "In file included from <file1>\n from <file2>\n [...] from <fileN>".
+example:
+In file included from /usr/include/c++/4.4/backward/hash_set:59,
+from ../../../../extlibs/miniBoost/boost/graph/adjacency_list.hpp:25,
+from Node.cpp:50:
+/usr/include/c++/4.4/backward/backward_warning.h:28:2: warning: #warning This file includes at least one deprecated or antiquated header which may be removed without further notice at a future date. Please use a non-deprecated interface with equivalent functionality instead. For a listing of replacement headers and interfaces, consult the file backward_warning.h. To disable this warning use -Wno-deprecated.
+
+The message matched by the regular expression starts at: " from Node.cpp:50:".
+I ran the regexp in a text editor and it seems to be matching these 2 lines, which is obviously wrong:
+from Node.cpp:50:
+/usr/include/c++/4.4/backward/backward_warning.h:28:2: warning: #warning This file includes at least one deprecated or antiquated header which may be removed without further notice at a future
+
+The reported error is set to high priority and details look like this:
+File: from Node.cpp, Line: 0, Type: gcc, Priority: High, Category: GCC error
+
+Here are other lines where the same error occurs:
+In file included from /usr/include/c++/4.4/backward/hash_set:59,
+from ../../../../extlibs/miniBoost/boost/graph/adjacency_list.hpp:25,
+from ../../../../modules/sofa/simulation/bgl/BglGraphManager.h:44,
+from ../../../../modules/sofa/simulation/bgl/BglNode.h:41,
+from BglCollisionGroupManager.cpp:33:
+/usr/include/c++/4.4/backward/backward_warning.h:28:2: warning: #warning This file includes at least one deprecated or antiquated header which may be removed without further notice at a future date. Please use a non-deprecated interface with equivalent functionality instead. For a listing of replacement headers and interfaces, consult the file backward_warning.h. To disable this warning use -Wno-deprecated.
+
+In file included from /usr/include/c++/4.4/backward/hash_set:59,
+from ../../../../extlibs/miniBoost/boost/graph/adjacency_list.hpp:25,
+from ../../../../modules/sofa/simulation/bgl/BglGraphManager.h:44,
+from ../../../../modules/sofa/simulation/bgl/BglSimulation.h:41,
+from BglSimulation.cpp:38:
+/usr/include/c++/4.4/backward/backward_warning.h:28:2: warning: #warning This file includes at least one deprecated or antiquated header which may be removed without further notice at a future date. Please use a non-deprecated interface with equivalent functionality instead. For a listing of replacement headers and interfaces, consult the file backward_warning.h. To disable this warning use -Wno-deprecated.
+
+In file included from /usr/include/c++/4.4/backward/hash_set:59,
+from ../../../../extlibs/miniBoost/boost/graph/adjacency_list.hpp:25,
+from ../../../../modules/sofa/simulation/bgl/BglGraphManager.h:44,
+from ../../../../modules/sofa/simulation/bgl/BglGraphManager.inl:42,
+from BglGraphManager.cpp:39:
+/usr/include/c++/4.4/backward/backward_warning.h:28:2: warning: #warning This file includes at least one deprecated or antiquated header which may be removed without further notice at a future date. Please use a non-deprecated interface with equivalent functionality instead. For a listing of replacement headers and interfaces, consult the file backward_warning.h. To disable this warning use -Wno-deprecated.
+
+In file included from /usr/include/c++/4.4/backward/hash_set:59,
+from ../../../../extlibs/miniBoost/boost/graph/adjacency_list.hpp:25,
+from ../../../../modules/sofa/simulation/bgl/BglGraphManager.h:44,
+from ../../../../modules/sofa/simulation/bgl/BglSimulation.h:41,
+from ../../../../modules/sofa/simulation/bgl/GetObjectsVisitor.h:31,
+from GetObjectsVisitor.cpp:27:
+/usr/include/c++/4.4/backward/backward_warning.h:28:2: warning: #warning This file includes at least one deprecated or antiquated header which may be removed without further notice at a future date. Please use a non-deprecated interface with equivalent functionality instead. For a listing of replacement headers and interfaces, consult the file backward_warning.h. To disable this warning use -Wno-deprecated.

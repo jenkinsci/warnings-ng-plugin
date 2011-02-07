@@ -1,0 +1,47 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:u="/util">
+  <f:entry title="${%Scan console log}" description="${%description.canScanConsole}">
+    <f:checkbox name="canScanConsole" checked="${h.defaultToTrue(instance.canScanConsole)}"/>
+  </f:entry>
+  <f:entry title="${%File pattern}" field="pattern"
+     description="${%description.pattern('http://ant.apache.org/manual/Types/fileset.html')}">
+    <f:textbox/>
+  </f:entry>
+
+  <f:entry title="${%Parsers}" description="${%description.parsers}">
+    <j:invokeStatic var="allParsers" className="hudson.plugins.warnings.parser.ParserRegistry" method="getAvailableParsers"/>
+    <f:repeatable var="publisherParser" items="${instance.parserNames}" name="parsers">
+      <table cellspacing="0" width="100%">
+        <f:entry title="">
+          <select class="setting-input" name="parserName">
+            <j:forEach var="availableParser" items="${allParsers}">
+              <f:option selected="${publisherParser == availableParser}" value="${availableParser.toString()}">${availableParser.toString()}</f:option>
+            </j:forEach>
+          </select>
+        </f:entry>
+
+        <f:entry title="">
+          <div align="right">
+            <f:repeatableDeleteButton />
+          </div>
+        </f:entry>
+      </table>
+    </f:repeatable>
+  </f:entry>
+
+  <f:advanced>
+    <u:failed/>
+    <f:entry title="${%Warnings to include}" field="includePattern"
+       description="${%description.includePattern}">
+      <f:textbox/>
+    </f:entry>
+    <f:entry title="${%Warnings to ignore}" field="excludePattern"
+       description="${%description.excludePattern}">
+      <f:textbox/>
+    </f:entry>
+    <u:health id="warnings"/>
+    <u:thresholds id="warnings"/>
+    <u:defaultEncoding id="warnings"/>
+    <u:trend id="warnings"/>
+  </f:advanced>
+</j:jelly>

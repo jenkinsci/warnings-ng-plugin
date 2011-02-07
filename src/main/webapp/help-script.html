@@ -1,0 +1,28 @@
+<div>
+  <p>
+    The Groovy script works on the
+    <a href="http://download.oracle.com/docs/cd/E17476_01/javase/1.5.0/docs/api/java/util/regex/Matcher.html">Matcher</a>
+    instance that is passed to the script in the variable <tt>matcher</tt>. The script must have a single return
+    value of type <tt>hudson.plugins.warnings.parser.Warning</tt>.
+  </p>
+
+ <h4> Example </h4>
+
+ <p>
+ 	Here is an example that you can use as a starting point for your script. It composes a new warning using
+ 	the matcher of the regular expression <tt>^\s*(.*):(\d+):(.*):\s*(.*)$</tt>.
+ </p>
+ <hr/>
+ <pre>
+import hudson.plugins.warnings.parser.Warning
+
+String fileName = matcher.group(1)
+String lineNumber = matcher.group(2)
+String category = matcher.group(3)
+String message = matcher.group(4)
+
+return new Warning(fileName, Integer.parseInt(lineNumber), "Dynamic Parser", category, message);
+ </pre>
+ <hr/>
+
+</div>

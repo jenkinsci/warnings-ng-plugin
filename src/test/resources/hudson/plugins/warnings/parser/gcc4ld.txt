@@ -1,0 +1,22 @@
+foo.so: undefined reference to 'missing_symbol'
+/dir1/dir3/file.cpp:233: undefined reference to `MyInterface::getValue() const'
+/usr/bin/ld: cannot find -lMyLib
+
+foo:(.text+0x15): undefined reference to `clock_gettime'
+collect2: ld returned 1 exit status
+
+/usr/lib/gcc/x86_64-linux-gnu/4.4.1/../../../../lib/crt1.o: In function `_start':
+/build/buildd/eglibc-2.10.1/csu/../sysdeps/x86_64/elf/start.S:109: undefined reference to `main'
+collect2: ld returned 1 exit status
+
+/usr/lib/gcc/x86_64-linux-gnu/4.4.1/../../../../lib/crt1.o: In function `_start':
+/build/buildd/eglibc-2.10.1/csu/../sysdeps/x86_64/elf/start.S:109: undefined reference to `main'
+collect2: ld returned 1 exit status
+
+/tmp/cctDpmmr.o: In function `main':
+/home/me/foo.cpp:7: undefined reference to `clock_gettime'
+collect2: ld returned 1 exit status
+
+/usr/bin/ld: errno: TLS definition in /lib/libc.so.6 section .tbss mismatches non-TLS reference in /tmp/ccgdbGtN.o
+/lib/libc.so.6: could not read symbols: Bad value
+collect2: ld returned 1 exit status

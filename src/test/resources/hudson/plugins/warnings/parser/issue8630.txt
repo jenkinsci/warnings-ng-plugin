@@ -1,0 +1,1 @@
+[junit] [26 Jan 2011 12:49:09] [Thread-8] 479099 ERROR (com.company.class:356) - log message

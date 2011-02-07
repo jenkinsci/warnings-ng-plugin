@@ -1,0 +1,109 @@
+# 5/3/10 3:11:29 PM CEST
+# Eclipse Java Compiler 0.972_R35x, 3.5.1 release, Copyright IBM Corp 2000, 2009. All rights reserved.
+[45 .class files generated]
+# 5/3/10 3:11:29 PM CEST
+# Eclipse Java Compiler 0.972_R35x, 3.5.1 release, Copyright IBM Corp 2000, 2009. All rights reserved.
+[9 .class files generated]
+# 5/3/10 3:11:26 PM CEST
+# Eclipse Java Compiler 0.972_R35x, 3.5.1 release, Copyright IBM Corp 2000, 2009. All rights reserved.
+[7 .class files generated]
+# 5/3/10 3:11:26 PM CEST
+# Eclipse Java Compiler 0.972_R35x, 3.5.1 release, Copyright IBM Corp 2000, 2009. All rights reserved.
+----------
+1. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_infraSoe.java (at line 10)
+	import com.bombardier.oldinfra.export.dataAccess.InfrastructureDiagramAPI;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import com.bombardier.oldinfra.export.dataAccess.InfrastructureDiagramAPI is never used
+----------
+2. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_infraSoe.java (at line 13)
+	import com.bombardier.oldInfra.data.oldInfra.Badge;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import com.bombardier.oldInfra.data.oldInfra.Badge is never used
+----------
+3. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_infraSoe.java (at line 14)
+	import com.bombardier.oldInfra.data.oldInfra.Area;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import com.bombardier.oldInfra.data.oldInfra.Area is never used
+----------
+4. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_infraSoe.java (at line 15)
+	import com.bombardier.oldInfra.data.oldInfra.YardObject;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import com.bombardier.oldInfra.data.oldInfra.YardObject is never used
+----------
+5. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_infraSoe.java (at line 16)
+	import com.bombardier.oldInfra.data.oldInfra.FourLegLocationObject;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import com.bombardier.oldInfra.data.oldInfra.FourLegLocationObject is never used
+----------
+6. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_infraSoe.java (at line 17)
+	import com.bombardier.oldInfra.data.oldInfra.ThreeLegLocationObject;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import com.bombardier.oldInfra.data.oldInfra.ThreeLegLocationObject is never used
+----------
+7. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_infraSoe.java (at line 18)
+	import com.bombardier.oldInfra.data.oldInfra.TwoLegLocationObject;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import com.bombardier.oldInfra.data.oldInfra.TwoLegLocationObject is never used
+----------
+8. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_infraSoe.java (at line 19)
+	import com.bombardier.oldInfra.data.oldInfra.LegObject;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import com.bombardier.oldInfra.data.oldInfra.LegObject is never used
+----------
+9. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_infraSoe.java (at line 21)
+	import org.eclipse.emf.ecore.util.EcoreUtil;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import org.eclipse.emf.ecore.util.EcoreUtil is never used
+----------
+10. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_infraSoe.java (at line 24)
+	import org.eclipse.emf.common.util.EList;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import org.eclipse.emf.common.util.EList is never used
+----------
+11. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_infraSoe.java (at line 26)
+	import java.util.Iterator;
+	       ^^^^^^^^^^^^^^^^^^
+The import java.util.Iterator is never used
+----------
+----------
+12. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_toolsSystemInterface.java (at line 15)
+	import com.bombardier.ebitool.data.controlSystemInterface.Ebicos900;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import com.bombardier.ebitool.data.controlSystemInterface.Ebicos900 is never used
+----------
+----------
+13. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_transformation.java (at line 15)
+	private final static Map pathToTemplateOrdinalMap = new HashMap(4);
+	                     ^^^
+Map is a raw type. References to generic type Map<K,V> should be parameterized
+----------
+14. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_transformation.java (at line 15)
+	private final static Map pathToTemplateOrdinalMap = new HashMap(4);
+	                                                        ^^^^^^^
+HashMap is a raw type. References to generic type HashMap<K,V> should be parameterized
+----------
+15. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_transformation.java (at line 17)
+	pathToTemplateOrdinalMap.put("templates/infraSoe.jet", //$NON-NLS-1$
+                new Integer(0));
+	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Type safety: The method put(Object, Object) belongs to the raw type Map. References to generic type Map<K,V> should be parameterized
+----------
+16. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_transformation.java (at line 19)
+	pathToTemplateOrdinalMap.put("templates/main.jet", //$NON-NLS-1$
+                new Integer(1));
+	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Type safety: The method put(Object, Object) belongs to the raw type Map. References to generic type Map<K,V> should be parameterized
+----------
+17. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_transformation.java (at line 21)
+	pathToTemplateOrdinalMap.put("templates/toolsGalTelegrams.jet", //$NON-NLS-1$
+                new Integer(2));
+	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Type safety: The method put(Object, Object) belongs to the raw type Map. References to generic type Map<K,V> should be parameterized
+----------
+18. WARNING in /srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_transformation.java (at line 23)
+	pathToTemplateOrdinalMap.put("templates/toolsSystemInterface.jet", //$NON-NLS-1$
+                new Integer(3));
+	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Type safety: The method put(Object, Object) belongs to the raw type Map. References to generic type Map<K,V> should be parameterized
+----------
+18 problems (18 warnings)[5 .class files generated]

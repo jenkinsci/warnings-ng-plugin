@@ -1,0 +1,1724 @@
+started
+Updating http://pmd.svn.sourceforge.net/svnroot/pmd/trunk/pmd
+U         home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/ant/PMDTask.java
+U         home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/SimpleRuleSetNameMapper.java
+U         home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/util/ClasspathClassLoader.java
+U         home/hudson/workspace/jobs/PMD/workspace/pmd/regress/test/net/sourceforge/pmd/ant/xml/pmdtasktest.xml
+U         home/hudson/workspace/jobs/PMD/workspace/pmd/regress/test/net/sourceforge/pmd/ant/PMDTaskTest.java
+At revision 6445
+[pmd] $ ant -propertyfile ../../local.properties qa
+Buildfile: build.xml
+
+clean:
+   [delete] Deleting directory /home/hudson/workspace/jobs/PMD/workspace/pmd/build
+    [mkdir] Created dir: /home/hudson/workspace/jobs/PMD/workspace/pmd/build
+
+compile:
+    [javac] Compiling 795 source files to /home/hudson/workspace/jobs/PMD/workspace/pmd/build
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/AbstractRenderer.java:33: warning: [deprecation] render(net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public String render(Report report) {
+    [javac]                   ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/AbstractRenderer.java:36: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]             render(w, report);
+    [javac]             ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/AbstractRenderer.java:100: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]         render(writer, mainReport);
+    [javac]         ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/ant/PMDTask.java:270: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]                 public void render(Writer writer, Report r) {}
+    [javac]                             ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/OnTheFlyRenderer.java:27: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {
+    [javac]                 ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/PapariTextRenderer.java:84: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {
+    [javac]                 ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/SummaryHTMLRenderer.java:35: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {
+    [javac]                 ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/YAHTMLRenderer.java:22: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {
+    [javac]                 ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/regress/test/net/sourceforge/pmd/ReportTest.java:165: warning: [deprecation] render(net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]         String result = rend.render(r);
+    [javac]                             ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/regress/test/net/sourceforge/pmd/ReportTest.java:180: warning: [deprecation] render(net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]         String result = rend.render(r);
+    [javac]                             ^
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+    [javac] 10 warnings
+     [copy] Copying 1 file to /home/hudson/workspace/jobs/PMD/workspace/pmd/build/net/sourceforge/pmd/util/viewer/resources
+
+copy:
+     [copy] Copying 49 files to /home/hudson/workspace/jobs/PMD/workspace/pmd/build/rulesets
+     [copy] Copying 261 files to /home/hudson/workspace/jobs/PMD/workspace/pmd/build/test/net/sourceforge/pmd
+
+recompile:
+
+jar:
+      [jar] Building jar: /home/hudson/workspace/jobs/PMD/workspace/pmd/lib/pmd-5.0.jar
+      [jar] Building jar: /home/hudson/workspace/jobs/PMD/workspace/pmd/lib/pmd-test-5.0.jar
+
+weavejunit:
+[retroweaver] Processing 154 classes
+[retroweaver] 154 classes weaved.
+[retroweaver] Verifying 154 classes
+
+weave:
+[retroweaver] Processing 774 classes
+[retroweaver] 774 classes weaved.
+[retroweaver] Verifying 774 classes
+[retroweaver] Processing 206 classes
+[retroweaver] 206 classes weaved.
+[retroweaver] Verifying 206 classes
+
+dist:
+
+requires-junit:
+
+regress:
+
+test-execute:
+   [delete] Deleting directory /home/hudson/workspace/jobs/PMD/workspace/pmd/reports/regress
+    [mkdir] Created dir: /home/hudson/workspace/jobs/PMD/workspace/pmd/reports/regress/xml
+
+test-report:
+[junitreport] Processing /home/hudson/workspace/jobs/PMD/workspace/pmd/reports/regress/xml/TESTS-TestSuites.xml to /tmp/null1077291560
+[junitreport] Loading stylesheet jar:file:/usr/java/ant/apache-ant-1.7.0/lib/ant-junit.jar!/org/apache/tools/ant/taskdefs/optional/junit/xsl/junit-frames.xsl
+[junitreport] Transform time: 2979ms
+[junitreport] Deleting: /tmp/null1077291560
+     [xslt] Processing /home/hudson/workspace/jobs/PMD/workspace/pmd/reports/regress/xml/TESTS-TestSuites.xml to /home/hudson/workspace/jobs/PMD/workspace/pmd/reports/regress/summary.txt
+     [xslt] Loading stylesheet /home/hudson/workspace/jobs/PMD/workspace/pmd/etc/xslt/junit-txt-output.xsl
+   [concat]
+   [concat] Junit test results
+   [concat]
+   [concat] Summary: 736 tests
+   [concat]   failures: 0, errors: 0.
+
+regress14:
+
+test-execute:
+   [delete] Deleting directory /home/hudson/workspace/jobs/PMD/workspace/pmd/reports/regress14
+    [mkdir] Created dir: /home/hudson/workspace/jobs/PMD/workspace/pmd/reports/regress14/xml
+
+test-report:
+[junitreport] Processing /home/hudson/workspace/jobs/PMD/workspace/pmd/reports/regress14/xml/TESTS-TestSuites.xml to /tmp/null1490324726
+[junitreport] Loading stylesheet jar:file:/usr/java/ant/apache-ant-1.7.0/lib/ant-junit.jar!/org/apache/tools/ant/taskdefs/optional/junit/xsl/junit-frames.xsl
+[junitreport] Transform time: 891ms
+[junitreport] Deleting: /tmp/null1490324726
+     [xslt] Processing /home/hudson/workspace/jobs/PMD/workspace/pmd/reports/regress14/xml/TESTS-TestSuites.xml to /home/hudson/workspace/jobs/PMD/workspace/pmd/reports/regress14/summary.txt
+     [xslt] Loading stylesheet /home/hudson/workspace/jobs/PMD/workspace/pmd/etc/xslt/junit-txt-output.xsl
+   [concat]
+   [concat] Junit test results
+   [concat]
+   [concat] Summary: 736 tests
+   [concat]   failures: 0, errors: 0.
+
+pmdOnPmd:
+      [pmd] No problems found!
+
+cpdOnPmd:
+      [cpd] Starting run, minimumTokenCount is 50
+      [cpd] Tokenizing files
+      [cpd] Starting to analyze code
+      [cpd] Done analyzing code; that took 116 milliseconds
+      [cpd] Generating report
+      [cpd] Found a 437 line (2399 tokens) duplication in the following files:
+      [cpd] Starting at line 5 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/JavaParserVisitorAdapter.java
+      [cpd] Starting at line 68 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/AbstractJavaRule.java
+      [cpd]
+      [cpd]     public Object visit(JavaNode node, Object data) {
+      [cpd] 	node.childrenAccept(this, data);
+      [cpd] 	return null;
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTExtendsList node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTClassOrInterfaceDeclaration node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTImplementsList node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTTypeParameters node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTMemberSelector node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTTypeParameter node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTTypeBound node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTClassOrInterfaceBody node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTClassOrInterfaceBodyDeclaration node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTEnumBody node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTEnumConstant node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTReferenceType node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTClassOrInterfaceType node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTTypeArguments node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTTypeArgument node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTWildcardBounds node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTAnnotation node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTNormalAnnotation node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTMarkerAnnotation node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTSingleMemberAnnotation node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTMemberValuePairs node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTMemberValuePair node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTMemberValue node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTMemberValueArrayInitializer node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTAnnotationTypeDeclaration node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTAnnotationTypeBody node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTAnnotationTypeMemberDeclaration node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTAnnotationMethodDeclaration node, Object data) {
+      [cpd] 	return visit((JavaNode)node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTDefaultValue node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTRUNSIGNEDSHIFT node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTRSIGNEDSHIFT node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTCompilationUnit node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTEnumDeclaration node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTAssertStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTPackageDeclaration node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTImportDeclaration node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTTypeDeclaration node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTFieldDeclaration node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTVariableDeclarator node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTVariableDeclaratorId node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTVariableInitializer node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTArrayInitializer node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTMethodDeclaration node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTMethodDeclarator node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTFormalParameters node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTFormalParameter node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTConstructorDeclaration node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTExplicitConstructorInvocation node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTInitializer node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTType node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTPrimitiveType node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTResultType node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTName node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTNameList node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTAssignmentOperator node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTConditionalExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTConditionalOrExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTConditionalAndExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTInclusiveOrExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTExclusiveOrExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTAndExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTEqualityExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTInstanceOfExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTRelationalExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTShiftExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTAdditiveExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTMultiplicativeExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTUnaryExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTPreIncrementExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTPreDecrementExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTUnaryExpressionNotPlusMinus node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTPostfixExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTCastExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTPrimaryExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTPrimaryPrefix node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTPrimarySuffix node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTLiteral node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTBooleanLiteral node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTNullLiteral node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTArguments node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTArgumentList node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTAllocationExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTArrayDimsAndInits node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTLabeledStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTBlock node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTBlockStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTLocalVariableDeclaration node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTEmptyStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTStatementExpression node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTSwitchStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTSwitchLabel node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTIfStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTWhileStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTDoStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTForStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTForInit node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTStatementExpressionList node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTForUpdate node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTBreakStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTContinueStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTReturnStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTThrowStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTSynchronizedStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTTryStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTFinallyStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTCatchStatement node, Object data) {
+      [cpd] 	return visit((JavaNode) node, data);
+      [cpd]     }
+      [cpd] }
+      [cpd] =====================================================================
+      [cpd] Found a 89 line (485 tokens) duplication in the following files:
+      [cpd] Starting at line 5 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/jsp/ast/JspParserVisitorAdapter.java
+      [cpd] Starting at line 65 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/jsp/rule/AbstractJspRule.java
+      [cpd]
+      [cpd]     public Object visit(JspNode node, Object data) {
+      [cpd] 	node.childrenAccept(this, data);
+      [cpd] 	return null;
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTCompilationUnit node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTContent node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTJspDirective node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTJspDirectiveAttribute node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTJspScriptlet node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTJspExpression node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTJspDeclaration node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTJspComment node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTText node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTUnparsedText node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTElExpression node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTValueBinding node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTCData node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTElement node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTAttribute node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTAttributeValue node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTJspExpressionInAttribute node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTCommentTag node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTDeclaration node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTDoctypeDeclaration node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public Object visit(ASTDoctypeExternalId node, Object data) {
+      [cpd] 	return visit((JspNode) node, data);
+      [cpd]     }
+      [cpd] }
+      [cpd] =====================================================================
+      [cpd] Found a 22 line (147 tokens) duplication in the following files:
+      [cpd] Starting at line 60 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/dcd/graph/ConstructorNode.java
+      [cpd] Starting at line 39 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/dcd/graph/MethodNode.java
+      [cpd]
+      [cpd] 	public int compareTo(MethodNode that) {
+      [cpd] 		// Order by method name
+      [cpd] 		int cmp = this.getName().compareTo(that.getName());
+      [cpd] 		if (cmp == 0) {
+      [cpd] 			// Order by parameter list length
+      [cpd] 			cmp = this.getMember().getParameterTypes().length - that.getMember().getParameterTypes().length;
+      [cpd] 			if (cmp == 0) {
+      [cpd] 				// Order by parameter class name
+      [cpd] 				for (int i = 0; i < this.getMember().getParameterTypes().length; i++) {
+      [cpd] 					cmp = this.getMember().getParameterTypes()[i].getName().compareTo(
+      [cpd] 							that.getMember().getParameterTypes()[i].getName());
+      [cpd] 					if (cmp != 0) {
+      [cpd] 						break;
+      [cpd] 					}
+      [cpd] 				}
+      [cpd] 			}
+      [cpd] 		}
+      [cpd] 		return cmp;
+      [cpd] 	}
+      [cpd]
+      [cpd] 	public boolean equals(Object obj) {
+      [cpd] 		if (obj instanceof MethodNode) {
+      [cpd] =====================================================================
+      [cpd] Found a 27 line (127 tokens) duplication in the following files:
+      [cpd] Starting at line 15 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/AbstractJavaNode.java
+      [cpd] Starting at line 13 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/jsp/ast/AbstractJspNode.java
+      [cpd]
+      [cpd]     public AbstractJspNode(JspParser parser, int id) {
+      [cpd]         super(id);
+      [cpd]         this.parser = parser;
+      [cpd]     }
+      [cpd]
+      [cpd]     public void jjtOpen() {
+      [cpd] 	if (beginLine == -1 && parser.token.next != null) {
+      [cpd] 	    beginLine = parser.token.next.beginLine;
+      [cpd] 	    beginColumn = parser.token.next.beginColumn;
+      [cpd] 	}
+      [cpd]     }
+      [cpd]
+      [cpd]     public void jjtClose() {
+      [cpd] 	if (beginLine == -1 && (children == null || children.length == 0)) {
+      [cpd] 	    beginColumn = parser.token.beginColumn;
+      [cpd] 	}
+      [cpd] 	if (beginLine == -1) {
+      [cpd] 	    beginLine = parser.token.beginLine;
+      [cpd] 	}
+      [cpd] 	endLine = parser.token.endLine;
+      [cpd] 	endColumn = parser.token.endColumn;
+      [cpd]     }
+      [cpd]
+      [cpd]     /**
+      [cpd]      * Accept the visitor. *
+      [cpd]      */
+      [cpd]     public Object jjtAccept(JspParserVisitor visitor, Object data) {
+      [cpd] =====================================================================
+      [cpd] Found a 21 line (105 tokens) duplication in the following files:
+      [cpd] Starting at line 28 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/ASTFormalParameter.java
+      [cpd] Starting at line 21 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/ASTLocalVariableDeclaration.java
+      [cpd]
+      [cpd]     public Object jjtAccept(JavaParserVisitor visitor, Object data) {
+      [cpd]         return visitor.visit(this, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public boolean hasSuppressWarningsAnnotationFor(Rule rule) {
+      [cpd]         for (int i = 0; i < jjtGetNumChildren(); i++) {
+      [cpd]             if (jjtGetChild(i) instanceof ASTAnnotation) {
+      [cpd]                 ASTAnnotation a = (ASTAnnotation) jjtGetChild(i);
+      [cpd]                 if (a.suppresses(rule)) {
+      [cpd]                     return true;
+      [cpd]                 }
+      [cpd]             }
+      [cpd]         }
+      [cpd]         return false;
+      [cpd]     }
+      [cpd]
+      [cpd]     public boolean isArray() {
+      [cpd]         return checkType() + checkDecl() > 0;
+      [cpd]     }
+      [cpd]
+      [cpd]     public int getArrayDepth() {
+      [cpd] =====================================================================
+      [cpd] Found a 36 line (91 tokens) duplication in the following files:
+      [cpd] Starting at line 64 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/strictexception/SignatureDeclareThrowsExceptionRule.java
+      [cpd] Starting at line 140 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/typeresolution/rules/SignatureDeclareThrowsException.java
+      [cpd]
+      [cpd]     }
+      [cpd]
+      [cpd]     /**
+      [cpd]      * Checks all exceptions for possible violation on the exception declaration.
+      [cpd]      *
+      [cpd]      * @param exceptionList containing all exception for declaration
+      [cpd]      * @param context
+      [cpd]      */
+      [cpd]     private void evaluateExceptions(List<ASTName> exceptionList, Object context) {
+      [cpd]         for (ASTName exception: exceptionList) {
+      [cpd]             if (hasDeclaredExceptionInSignature(exception)) {
+      [cpd]                 addViolation(context, exception);
+      [cpd]             }
+      [cpd]         }
+      [cpd]     }
+      [cpd]
+      [cpd]     /**
+      [cpd]      * Checks if the given value is defined as <code>Exception</code> and the parent is either
+      [cpd]      * a method or constructor declaration.
+      [cpd]      *
+      [cpd]      * @param exception to evaluate
+      [cpd]      * @return true if <code>Exception</code> is declared and has proper parents
+      [cpd]      */
+      [cpd]     private boolean hasDeclaredExceptionInSignature(ASTName exception) {
+      [cpd]         return exception.hasImageEqualTo("Exception") && isParentSignatureDeclaration(exception);
+      [cpd]     }
+      [cpd]
+      [cpd]     /**
+      [cpd]      * @param exception to evaluate
+      [cpd]      * @return true if parent node is either a method or constructor declaration
+      [cpd]      */
+      [cpd]     private boolean isParentSignatureDeclaration(ASTName exception) {
+      [cpd]         Node parent = exception.jjtGetParent().jjtGetParent();
+      [cpd]         return parent instanceof ASTMethodDeclaration || parent instanceof ASTConstructorDeclaration;
+      [cpd]     }
+      [cpd] }
+      [cpd] =====================================================================
+      [cpd] Found a 18 line (90 tokens) duplication in the following files:
+      [cpd] Starting at line 52 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/ASTFormalParameter.java
+      [cpd] Starting at line 42 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/ASTLocalVariableDeclaration.java
+      [cpd]
+      [cpd]         return checkType() + checkDecl();
+      [cpd]     }
+      [cpd]
+      [cpd]     public ASTType getTypeNode() {
+      [cpd]         for (int i = 0; i < jjtGetNumChildren(); i++) {
+      [cpd]             if (jjtGetChild(i) instanceof ASTType) {
+      [cpd]                 return (ASTType) jjtGetChild(i);
+      [cpd]             }
+      [cpd]         }
+      [cpd]         throw new IllegalStateException("ASTType not found");
+      [cpd]     }
+      [cpd]
+      [cpd]     private int checkType() {
+      [cpd]         return getTypeNode().getArrayDepth();
+      [cpd]     }
+      [cpd]
+      [cpd]     private ASTVariableDeclaratorId getDecl() {
+      [cpd]         return (ASTVariableDeclaratorId) jjtGetChild(jjtGetNumChildren()-1).jjtGetChild(0);
+      [cpd] =====================================================================
+      [cpd] Found a 14 line (87 tokens) duplication in the following files:
+      [cpd] Starting at line 258 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/strings/ConsecutiveLiteralAppendsRule.java
+      [cpd] Starting at line 314 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/strings/InsufficientStringBufferDeclarationRule.java
+      [cpd]
+      [cpd]     private static Node getSwitchParent(Node parentNode, Node lastNode) {
+      [cpd]         int allChildren = parentNode.jjtGetNumChildren();
+      [cpd]         ASTSwitchLabel label = null;
+      [cpd]         for (int ix = 0; ix < allChildren; ix++) {
+      [cpd]             Node n = parentNode.jjtGetChild(ix);
+      [cpd]             if (n.getClass().equals(ASTSwitchLabel.class)) {
+      [cpd]                 label = (ASTSwitchLabel) n;
+      [cpd]             } else if (n.equals(lastNode)) {
+      [cpd]                 parentNode = label;
+      [cpd]                 break;
+      [cpd]             }
+      [cpd]         }
+      [cpd]         return parentNode;
+      [cpd]     }
+      [cpd] =====================================================================
+      [cpd] Found a 22 line (84 tokens) duplication in the following files:
+      [cpd] Starting at line 19 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/ASTClassOrInterfaceBodyDeclaration.java
+      [cpd] Starting at line 13 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/ASTTypeDeclaration.java
+      [cpd]
+      [cpd]         super(p, id);
+      [cpd]     }
+      [cpd]
+      [cpd]
+      [cpd]     public boolean hasSuppressWarningsAnnotationFor(Rule rule) {
+      [cpd]         for (int i = 0; i < jjtGetNumChildren(); i++) {
+      [cpd]             if (jjtGetChild(i) instanceof ASTAnnotation) {
+      [cpd]                 ASTAnnotation a = (ASTAnnotation) jjtGetChild(i);
+      [cpd]                 if (a.suppresses(rule)) {
+      [cpd]                     return true;
+      [cpd]                 }
+      [cpd]             }
+      [cpd]         }
+      [cpd]         return false;
+      [cpd]     }
+      [cpd]
+      [cpd]     /**
+      [cpd]      * Accept the visitor. *
+      [cpd]      */
+      [cpd]     public Object jjtAccept(JavaParserVisitor visitor, Object data) {
+      [cpd]         return visitor.visit(this, data);
+      [cpd]     }
+      [cpd] =====================================================================
+      [cpd] Found a 19 line (83 tokens) duplication in the following files:
+      [cpd] Starting at line 40 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/jsp/JspHandler.java
+      [cpd] Starting at line 47 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/xml/XmlHandler.java
+      [cpd]
+      [cpd] 	return new XmlParser();
+      [cpd]     }
+      [cpd]
+      [cpd]     public VisitorStarter getDataFlowFacade() {
+      [cpd] 	return VisitorStarter.DUMMY;
+      [cpd]     }
+      [cpd]
+      [cpd]     public VisitorStarter getSymbolFacade() {
+      [cpd] 	return VisitorStarter.DUMMY;
+      [cpd]     }
+      [cpd]
+      [cpd]     public VisitorStarter getTypeResolutionFacade(ClassLoader classLoader) {
+      [cpd] 	return VisitorStarter.DUMMY;
+      [cpd]     }
+      [cpd]
+      [cpd]     public VisitorStarter getDumpFacade(final Writer writer, final String prefix, final boolean recurse) {
+      [cpd] 	return new VisitorStarter() {
+      [cpd] 	    public void start(Node rootNode) {
+      [cpd] 		new DumpFacade().initializeWith(writer, prefix, recurse, (XmlNode) rootNode);
+      [cpd] =====================================================================
+      [cpd] Found a 29 line (79 tokens) duplication in the following files:
+      [cpd] Starting at line 27 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/jsp/ast/ASTAttribute.java
+      [cpd] Starting at line 23 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/jsp/ast/ASTElement.java
+      [cpd]
+      [cpd]     public boolean isHasNamespacePrefix() {
+      [cpd]         return name.indexOf(':') >= 0;
+      [cpd]     }
+      [cpd]
+      [cpd]     /**
+      [cpd]      * @return String - the part of the name that is before the (first) colon (":")
+      [cpd]      */
+      [cpd]     public String getNamespacePrefix() {
+      [cpd]         int colonIndex = name.indexOf(':');
+      [cpd]         return colonIndex >= 0
+      [cpd]                 ? name.substring(0, colonIndex)
+      [cpd]                 : "";
+      [cpd]     }
+      [cpd]
+      [cpd]     /**
+      [cpd]      * @return String - The part of the name that is after the first colon (":").
+      [cpd]      *         If the name does not contain a colon, the full name is returned.
+      [cpd]      */
+      [cpd]     public String getLocalName() {
+      [cpd]         int colonIndex = name.indexOf(':');
+      [cpd]         return colonIndex >= 0
+      [cpd]                 ? name.substring(colonIndex + 1)
+      [cpd]                 : name;
+      [cpd]     }
+      [cpd]
+      [cpd]     /**
+      [cpd]      * @return Returns the name.
+      [cpd]      */
+      [cpd]     public String getName() {
+      [cpd] =====================================================================
+      [cpd] Found a 13 line (73 tokens) duplication in the following files:
+      [cpd] Starting at line 42 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/symboltable/LocalScope.java
+      [cpd] Starting at line 51 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/symboltable/MethodScope.java
+      [cpd]
+      [cpd]         variableNames.put(variableDecl, new ArrayList<NameOccurrence>());
+      [cpd]     }
+      [cpd]
+      [cpd]     public NameDeclaration findVariableHere(NameOccurrence occurrence) {
+      [cpd]         if (occurrence.isThisOrSuper() || occurrence.isMethodOrConstructorInvocation()) {
+      [cpd]             return null;
+      [cpd]         }
+      [cpd]         ImageFinderFunction finder = new ImageFinderFunction(occurrence.getImage());
+      [cpd]         Applier.apply(finder, variableNames.keySet().iterator());
+      [cpd]         return finder.getDecl();
+      [cpd]     }
+      [cpd]
+      [cpd]     public String getName() {
+      [cpd] =====================================================================
+      [cpd] Found a 19 line (71 tokens) duplication in the following files:
+      [cpd] Starting at line 82 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/jsp/ast/DumpFacade.java
+      [cpd] Starting at line 75 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/xml/ast/DumpFacade.java
+      [cpd]
+      [cpd] 	    extras.add(attribute.getName() + "=" + attribute.getValue());
+      [cpd] 	}
+      [cpd]
+      [cpd] 	// Output image and extras
+      [cpd] 	if (image != null || !extras.isEmpty()) {
+      [cpd] 	    writer.print(":");
+      [cpd] 	    if (image != null) {
+      [cpd] 		writer.print(image);
+      [cpd] 	    }
+      [cpd] 	    for (String extra : extras) {
+      [cpd] 		writer.print("(");
+      [cpd] 		writer.print(extra);
+      [cpd] 		writer.print(")");
+      [cpd] 	    }
+      [cpd] 	}
+      [cpd]
+      [cpd] 	writer.println();
+      [cpd]     }
+      [cpd] }
+      [cpd] =====================================================================
+      [cpd] Found a 5 line (70 tokens) duplication in the following files:
+      [cpd] Starting at line 25 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/design/AssignmentToNonFinalStaticRule.java
+      [cpd] Starting at line 22 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/unusedcode/UnusedPrivateFieldRule.java
+      [cpd]
+      [cpd]     public Object visit(ASTClassOrInterfaceDeclaration node, Object data) {
+      [cpd]         Map<VariableNameDeclaration, List<NameOccurrence>> vars = node.getScope().getVariableDeclarations();
+      [cpd]         for (Map.Entry<VariableNameDeclaration, List<NameOccurrence>> entry: vars.entrySet()) {
+      [cpd]             VariableNameDeclaration decl = entry.getKey();
+      [cpd]             if (!decl.getAccessNodeParent().isPrivate() || isOK(decl.getImage())) {
+      [cpd] =====================================================================
+      [cpd] Found a 18 line (70 tokens) duplication in the following files:
+      [cpd] Starting at line 219 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/DumpFacade.java
+      [cpd] Starting at line 83 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/jsp/ast/DumpFacade.java
+      [cpd]
+      [cpd] 	}
+      [cpd]
+      [cpd] 	// Output image and extras
+      [cpd] 	if (image != null || !extras.isEmpty()) {
+      [cpd] 	    writer.print(":");
+      [cpd] 	    if (image != null) {
+      [cpd] 		writer.print(image);
+      [cpd] 	    }
+      [cpd] 	    for (String extra : extras) {
+      [cpd] 		writer.print("(");
+      [cpd] 		writer.print(extra);
+      [cpd] 		writer.print(")");
+      [cpd] 	    }
+      [cpd] 	}
+      [cpd]
+      [cpd] 	writer.println();
+      [cpd]     }
+      [cpd] }
+      [cpd] =====================================================================
+      [cpd] Found a 12 line (68 tokens) duplication in the following files:
+      [cpd] Starting at line 146 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/cpd/CPD.java
+      [cpd] Starting at line 62 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/util/Benchmark.java
+      [cpd]
+      [cpd]     }
+      [cpd]
+      [cpd]     private static String findOptionalStringValue(String[] args, String name, String defaultValue) {
+      [cpd]         for (int i = 0; i < args.length; i++) {
+      [cpd]             if (args[i].equals(name)) {
+      [cpd]                 return args[i + 1];
+      [cpd]             }
+      [cpd]         }
+      [cpd]         return defaultValue;
+      [cpd]     }
+      [cpd]
+      [cpd]     public static void main(String[] args) throws RuleSetNotFoundException, IOException, PMDException {
+      [cpd] =====================================================================
+      [cpd] Found a 13 line (66 tokens) duplication in the following files:
+      [cpd] Starting at line 296 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/design/ConstructorCallsOverridableMethodRule.java
+      [cpd] Starting at line 331 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/design/ConstructorCallsOverridableMethodRule.java
+      [cpd]
+      [cpd]                             for (int x = 1; x < i - 1; x++) {
+      [cpd]                                 ASTPrimarySuffix child = (ASTPrimarySuffix) node.jjtGetChild(x);
+      [cpd]                                 if (!child.isArguments()) {
+      [cpd]                                     String name = child.getImage();
+      [cpd]                                     if (x == i - 2) {
+      [cpd]                                         methodName = name;
+      [cpd]                                     } else {
+      [cpd]                                         varNames.add(name);
+      [cpd]                                     }
+      [cpd]                                 }
+      [cpd]                             }
+      [cpd]                         }
+      [cpd]                     }
+      [cpd] =====================================================================
+      [cpd] Found a 13 line (66 tokens) duplication in the following files:
+      [cpd] Starting at line 14 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/DumpFacade.java
+      [cpd] Starting at line 16 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/jsp/ast/DumpFacade.java
+      [cpd]
+      [cpd]     public void initializeWith(Writer writer, String prefix, boolean recurse, JspNode node) {
+      [cpd] 	this.writer = (writer instanceof PrintWriter) ? (PrintWriter) writer : new PrintWriter(writer);
+      [cpd] 	this.recurse = recurse;
+      [cpd] 	this.visit(node, prefix);
+      [cpd] 	try {
+      [cpd] 	    writer.flush();
+      [cpd] 	} catch (IOException e) {
+      [cpd] 	    throw new RuntimeException("Problem flushing PrintWriter.", e);
+      [cpd] 	}
+      [cpd]     }
+      [cpd]
+      [cpd]     @Override
+      [cpd]     public Object visit(JspNode node, Object data) {
+      [cpd] =====================================================================
+      [cpd] Found a 16 line (64 tokens) duplication in the following files:
+      [cpd] Starting at line 19 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/ASTClassOrInterfaceBodyDeclaration.java
+      [cpd] Starting at line 29 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/ASTFormalParameter.java
+      [cpd]
+      [cpd]         return visitor.visit(this, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     public boolean hasSuppressWarningsAnnotationFor(Rule rule) {
+      [cpd]         for (int i = 0; i < jjtGetNumChildren(); i++) {
+      [cpd]             if (jjtGetChild(i) instanceof ASTAnnotation) {
+      [cpd]                 ASTAnnotation a = (ASTAnnotation) jjtGetChild(i);
+      [cpd]                 if (a.suppresses(rule)) {
+      [cpd]                     return true;
+      [cpd]                 }
+      [cpd]             }
+      [cpd]         }
+      [cpd]         return false;
+      [cpd]     }
+      [cpd]
+      [cpd]     public boolean isArray() {
+      [cpd] =====================================================================
+      [cpd] Found a 14 line (63 tokens) duplication in the following files:
+      [cpd] Starting at line 153 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/util/filter/Filters.java
+      [cpd] Starting at line 185 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/util/filter/Filters.java
+      [cpd]
+      [cpd] 		if (includeRegexes != null) {
+      [cpd] 			for (String includeRegex : includeRegexes) {
+      [cpd] 				includeFilter.addFilter(new RegexStringFilter(includeRegex));
+      [cpd] 			}
+      [cpd] 		}
+      [cpd]
+      [cpd] 		OrFilter<String> excludeFilter = new OrFilter<String>();
+      [cpd] 		if (excludeRegexes != null) {
+      [cpd] 			for (String excludeRegex : excludeRegexes) {
+      [cpd] 				excludeFilter.addFilter(new RegexStringFilter(excludeRegex));
+      [cpd] 			}
+      [cpd] 		}
+      [cpd]
+      [cpd] 		return new OrFilter<String>(includeFilter, new NotFilter<String>(excludeFilter));
+      [cpd] =====================================================================
+      [cpd] Found a 6 line (63 tokens) duplication in the following files:
+      [cpd] Starting at line 400 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/RuleSetFactory.java
+      [cpd] Starting at line 483 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/RuleSetFactory.java
+      [cpd]
+      [cpd] 	    ruleReference.setExternalInfoUrl(ruleElement.getAttribute("externalInfoUrl"));
+      [cpd] 	}
+      [cpd] 	for (int i = 0; i < ruleElement.getChildNodes().getLength(); i++) {
+      [cpd] 	    Node node = ruleElement.getChildNodes().item(i);
+      [cpd] 	    if (node.getNodeType() == Node.ELEMENT_NODE) {
+      [cpd] 		if (node.getNodeName().equals("description")) {
+      [cpd] =====================================================================
+      [cpd] Found a 10 line (62 tokens) duplication in the following files:
+      [cpd] Starting at line 16 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/EmacsRenderer.java
+      [cpd] Starting at line 30 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/renderers/TextPadRenderer.java
+      [cpd]
+      [cpd]     public void start() throws IOException {}
+      [cpd]
+      [cpd]     public void renderFileViolations(Iterator<RuleViolation> violations) throws IOException {
+      [cpd]         Writer writer = getWriter();
+      [cpd]         StringBuffer buf = new StringBuffer();
+      [cpd]         while (violations.hasNext()) {
+      [cpd]             RuleViolation rv = violations.next();
+      [cpd]             buf.setLength(0);
+      [cpd]             //Filename
+      [cpd]             buf.append(PMD.EOL).append(rv.getFilename() + "(");
+      [cpd] =====================================================================
+      [cpd] Found a 8 line (62 tokens) duplication in the following files:
+      [cpd] Starting at line 108 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/strings/ConsecutiveLiteralAppendsRule.java
+      [cpd] Starting at line 76 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/strings/InsufficientStringBufferDeclarationRule.java
+      [cpd]
+      [cpd]             }
+      [cpd]             ASTPrimaryExpression s = n.getFirstParentOfType(ASTPrimaryExpression.class);
+      [cpd]             int numChildren = s.jjtGetNumChildren();
+      [cpd]             for (int jx = 0; jx < numChildren; jx++) {
+      [cpd]         	Node sn = s.jjtGetChild(jx);
+      [cpd]                 if (!(sn instanceof ASTPrimarySuffix) || sn.getImage() != null) {
+      [cpd]                     continue;
+      [cpd]                 }
+      [cpd] =====================================================================
+      [cpd] Found a 15 line (61 tokens) duplication in the following files:
+      [cpd] Starting at line 28 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/strictexception/SignatureDeclareThrowsExceptionRule.java
+      [cpd] Starting at line 93 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/typeresolution/rules/SignatureDeclareThrowsException.java
+      [cpd]
+      [cpd]     	return clazz.getName().equals("junit.framework.Test");
+      [cpd]     }
+      [cpd]
+      [cpd]     @Override
+      [cpd]     public Object visit(ASTImportDeclaration node, Object o) {
+      [cpd]         if (node.getImportedName().indexOf("junit") != -1) {
+      [cpd]             junitImported = true;
+      [cpd]         }
+      [cpd]         return super.visit(node, o);
+      [cpd]     }
+      [cpd]
+      [cpd]
+      [cpd]     @Override
+      [cpd]     public Object visit(ASTMethodDeclaration methodDeclaration, Object o) {
+      [cpd]         if (junitImported && isAllowedMethod(methodDeclaration)) {
+      [cpd] =====================================================================
+      [cpd] Found a 31 line (60 tokens) duplication in the following files:
+      [cpd] Starting at line 46 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/rule/properties/MethodMultiProperty.java
+      [cpd] Starting at line 220 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/rule/properties/MethodProperty.java
+      [cpd]
+      [cpd]         return value == null ? "" : asStringFor((Method) value);
+      [cpd]     }
+      [cpd]
+      [cpd]     /**
+      [cpd]      * Method packageNameOf.
+      [cpd]      * @param item Object
+      [cpd]      * @return String
+      [cpd]      */
+      [cpd]     @Override
+      [cpd]     protected String packageNameOf(Object item) {
+      [cpd]
+      [cpd]         final Method method = (Method) item;
+      [cpd]         return method.getDeclaringClass().getName() + '.' + method.getName();
+      [cpd]     }
+      [cpd]
+      [cpd]     /**
+      [cpd]      * Method itemTypeName.
+      [cpd]      * @return String
+      [cpd]      */
+      [cpd]     @Override
+      [cpd]     protected String itemTypeName() {
+      [cpd]         return "method";
+      [cpd]     }
+      [cpd]
+      [cpd]     /**
+      [cpd]      * Method type.
+      [cpd]      *
+      [cpd]      * @return Class
+      [cpd]      * @see net.sourceforge.pmd.PropertyDescriptor#type()
+      [cpd]      */
+      [cpd]     public Class<Method> type() {
+      [cpd] =====================================================================
+      [cpd] Found a 5 line (60 tokens) duplication in the following files:
+      [cpd] Starting at line 33 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/typeresolution/rules/CloneMethodMustImplementCloneable.java
+      [cpd] Starting at line 50 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/typeresolution/rules/SignatureDeclareThrowsException.java
+      [cpd]
+      [cpd]         ASTImplementsList impl = node.getFirstChildOfType(ASTImplementsList.class);
+      [cpd]         if (impl != null && impl.jjtGetParent().equals(node)) {
+      [cpd]             for (int ix = 0; ix < impl.jjtGetNumChildren(); ix++) {
+      [cpd]                 ASTClassOrInterfaceType type = (ASTClassOrInterfaceType) impl.jjtGetChild(ix);
+      [cpd]                 if (isJUnitTest(type)) {
+      [cpd] =====================================================================
+      [cpd] Found a 19 line (57 tokens) duplication in the following files:
+      [cpd] Starting at line 225 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/strings/ConsecutiveLiteralAppendsRule.java
+      [cpd] Starting at line 279 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/strings/InsufficientStringBufferDeclarationRule.java
+      [cpd]
+      [cpd]     }
+      [cpd]
+      [cpd]     /**
+      [cpd]      * Locate the block that the given node is in, if any
+      [cpd]      *
+      [cpd]      * @param node
+      [cpd]      *            The node we're looking for a parent of
+      [cpd]      * @return Node - The node that corresponds to any block that may be a
+      [cpd]      *         parent of this object
+      [cpd]      */
+      [cpd]     private Node getFirstParentBlock(Node node) {
+      [cpd]         Node parentNode = node.jjtGetParent();
+      [cpd]
+      [cpd]         Node lastNode = node;
+      [cpd]         while (parentNode != null && !BLOCK_PARENTS.contains(parentNode.getClass())) {
+      [cpd]             lastNode = parentNode;
+      [cpd]             parentNode = parentNode.jjtGetParent();
+      [cpd]         }
+      [cpd]         if (parentNode != null && ASTIfStatement.class.equals(parentNode.getClass())) {
+      [cpd] =====================================================================
+      [cpd] Found a 11 line (57 tokens) duplication in the following files:
+      [cpd] Starting at line 276 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/RuleSetWriter.java
+      [cpd] Starting at line 298 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/RuleSetWriter.java
+      [cpd]
+      [cpd] 		    Object value = entry.getValue();
+      [cpd] 		    if (value != defaultValue && (value == null || !value.equals(defaultValue))) {
+      [cpd] 			if (propertiesElement == null) {
+      [cpd] 			    propertiesElement = document.createElement("properties");
+      [cpd] 			}
+      [cpd] 			Element propertyElement = createPropertyValueElement(propertyDescriptor, value);
+      [cpd] 			propertiesElement.appendChild(propertyElement);
+      [cpd] 		    }
+      [cpd] 		}
+      [cpd] 	    }
+      [cpd] 	}
+      [cpd] =====================================================================
+      [cpd] Found a 26 line (56 tokens) duplication in the following files:
+      [cpd] Starting at line 16 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/ASTPrimitiveType.java
+      [cpd] Starting at line 11 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/ASTReferenceType.java
+      [cpd]
+      [cpd]         super(p, id);
+      [cpd]     }
+      [cpd]
+      [cpd]
+      [cpd]     /**
+      [cpd]      * Accept the visitor. *
+      [cpd]      */
+      [cpd]     public Object jjtAccept(JavaParserVisitor visitor, Object data) {
+      [cpd]         return visitor.visit(this, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     private int arrayDepth;
+      [cpd]
+      [cpd]     public void bumpArrayDepth() {
+      [cpd]         arrayDepth++;
+      [cpd]     }
+      [cpd]
+      [cpd]     public int getArrayDepth() {
+      [cpd]         return arrayDepth;
+      [cpd]     }
+      [cpd]
+      [cpd]     public boolean isArray() {
+      [cpd]         return arrayDepth > 0;
+      [cpd]     }
+      [cpd]
+      [cpd] }
+      [cpd] =====================================================================
+      [cpd] Found a 17 line (56 tokens) duplication in the following files:
+      [cpd] Starting at line 30 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/cpp/CppHandler.java
+      [cpd] Starting at line 40 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/jsp/JspHandler.java
+      [cpd]
+      [cpd] 	return new JspParser();
+      [cpd]     }
+      [cpd]
+      [cpd]     public VisitorStarter getDataFlowFacade() {
+      [cpd] 	return VisitorStarter.DUMMY;
+      [cpd]     }
+      [cpd]
+      [cpd]     public VisitorStarter getSymbolFacade() {
+      [cpd] 	return VisitorStarter.DUMMY;
+      [cpd]     }
+      [cpd]
+      [cpd]     public VisitorStarter getTypeResolutionFacade(ClassLoader classLoader) {
+      [cpd] 	return VisitorStarter.DUMMY;
+      [cpd]     }
+      [cpd]
+      [cpd]     public VisitorStarter getDumpFacade(final Writer writer, final String prefix, final boolean recurse) {
+      [cpd] 	return new VisitorStarter() {
+      [cpd] =====================================================================
+      [cpd] Found a 10 line (56 tokens) duplication in the following files:
+      [cpd] Starting at line 558 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/PMD.java
+      [cpd] Starting at line 631 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/PMD.java
+      [cpd]
+      [cpd] 		try {
+      [cpd] 		    long start = System.nanoTime();
+      [cpd] 		    for (Renderer r : renderers) {
+      [cpd] 			r.renderFileReport(report);
+      [cpd] 		    }
+      [cpd] 		    long end = System.nanoTime();
+      [cpd] 		    Benchmark.mark(Benchmark.TYPE_REPORTING, end - start, 1);
+      [cpd] 		} catch (IOException ioe) {
+      [cpd] 		}
+      [cpd] 	    }
+      [cpd] =====================================================================
+      [cpd] Found a 13 line (55 tokens) duplication in the following files:
+      [cpd] Starting at line 44 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/basic/DoubleCheckedLockingRule.java
+      [cpd] Starting at line 16 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/controversial/OnlyOneReturnRule.java
+      [cpd]
+      [cpd] public class OnlyOneReturnRule extends AbstractJavaRule {
+      [cpd]
+      [cpd]     @Override
+      [cpd]     public Object visit(ASTClassOrInterfaceDeclaration node, Object data) {
+      [cpd]         if (node.isInterface()) {
+      [cpd]             return data;
+      [cpd]         }
+      [cpd]         return super.visit(node, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     @Override
+      [cpd]     public Object visit(ASTMethodDeclaration node, Object data) {
+      [cpd]         if (node.isAbstract()) {
+      [cpd] =====================================================================
+      [cpd] Found a 15 line (53 tokens) duplication in the following files:
+      [cpd] Starting at line 43 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/UselessAssignment.java
+      [cpd] Starting at line 45 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/controversial/DataflowAnomalyAnalysisRule.java
+      [cpd]
+      [cpd]     private static class Usage {
+      [cpd]         public int accessType;
+      [cpd]         public DataFlowNode node;
+      [cpd]
+      [cpd]         public Usage(int accessType, DataFlowNode node) {
+      [cpd]             this.accessType = accessType;
+      [cpd]             this.node = node;
+      [cpd]         }
+      [cpd]
+      [cpd]         public String toString() {
+      [cpd]             return "accessType = " + accessType + ", line = " + node.getLine();
+      [cpd]         }
+      [cpd]     }
+      [cpd]
+      [cpd]     public DataflowAnomalyAnalysisRule() {
+      [cpd] =====================================================================
+      [cpd] Found a 15 line (52 tokens) duplication in the following files:
+      [cpd] Starting at line 216 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/ast/xpath/DocumentNavigator.java
+      [cpd] Starting at line 258 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/ast/xpath/DocumentNavigator.java
+      [cpd]
+      [cpd] 		    Node sibling = getPreviousSibling(node);
+      [cpd] 		    if (sibling == null) {
+      [cpd] 			return getFirstNode(node.jjtGetParent());
+      [cpd] 		    } else {
+      [cpd] 			return sibling;
+      [cpd] 		    }
+      [cpd] 		}
+      [cpd] 	    }
+      [cpd]
+      [cpd] 	    @Override
+      [cpd] 	    protected Node getNextNode(Node node) {
+      [cpd] 		if (node == null) {
+      [cpd] 		    return null;
+      [cpd] 		} else {
+      [cpd] 		    Node n = getLastChild(node);
+      [cpd] =====================================================================
+      [cpd] Found a 12 line (51 tokens) duplication in the following files:
+      [cpd] Starting at line 78 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/symboltable/ClassScope.java
+      [cpd] Starting at line 27 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/symboltable/LocalScope.java
+      [cpd]
+      [cpd]             } // TODO what to do with PrimarySuffix case?
+      [cpd]         }
+      [cpd]         return decl;
+      [cpd]     }
+      [cpd]
+      [cpd]     public Map<VariableNameDeclaration, List<NameOccurrence>> getVariableDeclarations() {
+      [cpd]         VariableUsageFinderFunction f = new VariableUsageFinderFunction(variableNames);
+      [cpd]         Applier.apply(f, variableNames.keySet().iterator());
+      [cpd]         return f.getUsed();
+      [cpd]     }
+      [cpd]
+      [cpd]     public void addDeclaration(VariableNameDeclaration nameDecl) {
+      [cpd] =====================================================================
+      [cpd] Found a 11 line (50 tokens) duplication in the following files:
+      [cpd] Starting at line 57 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/symboltable/ClassScope.java
+      [cpd] Starting at line 69 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/symboltable/ClassScope.java
+      [cpd]
+      [cpd]             List<NameOccurrence> nameOccurrences = variableNames.get(decl);
+      [cpd]             if (nameOccurrences == null) {
+      [cpd]                 // TODO may be a class name
+      [cpd]             } else {
+      [cpd]                 nameOccurrences.add(occurrence);
+      [cpd]                 Node n = occurrence.getLocation();
+      [cpd]                 if (n instanceof ASTName) {
+      [cpd]                     ((ASTName) n).setNameDeclaration(decl);
+      [cpd]                 } // TODO what to do with PrimarySuffix case?
+      [cpd]             }
+      [cpd]         }
+      [cpd] =====================================================================
+      [cpd] Found a 8 line (50 tokens) duplication in the following files:
+      [cpd] Starting at line 251 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/codesize/NPathComplexityRule.java
+      [cpd] Starting at line 24 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/codesize/NcssMethodCountRule.java
+      [cpd]
+      [cpd]     }
+      [cpd]
+      [cpd]     @Override
+      [cpd]     public Object[] getViolationParameters(DataPoint point) {
+      [cpd] 	return new String[] { ((ASTMethodDeclaration) point.getNode()).getMethodName(),
+      [cpd] 		String.valueOf((int) point.getScore()) };
+      [cpd]     }
+      [cpd] }
+      [cpd] =====================================================================
+      [cpd] Found a 7 line (50 tokens) duplication in the following files:
+      [cpd] Starting at line 190 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/codesize/CyclomaticComplexityRule.java
+      [cpd] Starting at line 240 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/rule/codesize/CyclomaticComplexityRule.java
+      [cpd]
+      [cpd]     Entry classEntry = entryStack.pop();
+      [cpd]     if ( classEntry.getComplexityAverage() >= reportLevel
+      [cpd]         || classEntry.highestDecisionPoints >= reportLevel ) {
+      [cpd]       addViolation( data, node, new String[] {
+      [cpd]           "class",
+      [cpd]           node.getImage(),
+      [cpd]           classEntry.getComplexityAverage() + "(Highest = "
+      [cpd] =====================================================================
+      [cpd] Found a 21 line (50 tokens) duplication in the following files:
+      [cpd] Starting at line 11 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/ASTBlock.java
+      [cpd] Starting at line 19 of /home/hudson/workspace/jobs/PMD/workspace/pmd/src/net/sourceforge/pmd/lang/java/ast/ASTConstructorDeclaration.java
+      [cpd]
+      [cpd]         return getParameters().getParameterCount();
+      [cpd]     }
+      [cpd]
+      [cpd]
+      [cpd]     /**
+      [cpd]      * Accept the visitor. *
+      [cpd]      */
+      [cpd]     public Object jjtAccept(JavaParserVisitor visitor, Object data) {
+      [cpd]         return visitor.visit(this, data);
+      [cpd]     }
+      [cpd]
+      [cpd]     private boolean containsComment;
+      [cpd]
+      [cpd]     public boolean containsComment() {
+      [cpd]         return this.containsComment;
+      [cpd]     }
+      [cpd]
+      [cpd]     public void setContainsComment() {
+      [cpd]         this.containsComment = true;
+      [cpd]     }
+      [cpd] }
+
+symtabtest:
+    [junit] Running test.net.sourceforge.pmd.symboltable.AcceptanceTest
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.013 sec
+    [junit] Running test.net.sourceforge.pmd.symboltable.ClassScopeTest
+    [junit] Tests run: 18, Failures: 0, Errors: 0, Time elapsed: 0.153 sec
+    [junit] Running test.net.sourceforge.pmd.symboltable.GlobalScopeTest
+    [junit] Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 0.002 sec
+    [junit] Running test.net.sourceforge.pmd.symboltable.ImageFinderFunctionTest
+    [junit] Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 0.002 sec
+    [junit] Running test.net.sourceforge.pmd.symboltable.LocalScopeTest
+    [junit] Tests run: 8, Failures: 0, Errors: 0, Time elapsed: 0.009 sec
+    [junit] Running test.net.sourceforge.pmd.symboltable.MethodNameDeclarationTest
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.001 sec
+    [junit] Running test.net.sourceforge.pmd.symboltable.MethodScopeTest
+    [junit] Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 0.002 sec
+    [junit] Running test.net.sourceforge.pmd.symboltable.NameOccurrencesTest
+    [junit] Tests run: 6, Failures: 0, Errors: 0, Time elapsed: 0.011 sec
+    [junit] Running test.net.sourceforge.pmd.symboltable.ScopeCreationVisitorTest
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.001 sec
+    [junit] Running test.net.sourceforge.pmd.symboltable.SourceFileScopeTest
+    [junit] Tests run: 4, Failures: 0, Errors: 0, Time elapsed: 0.003 sec
+    [junit] Running test.net.sourceforge.pmd.symboltable.TypeSetTest
+    [junit] Tests run: 18, Failures: 0, Errors: 0, Time elapsed: 0.023 sec
+    [junit] Running test.net.sourceforge.pmd.symboltable.VariableNameDeclarationTest
+    [junit] Tests run: 8, Failures: 0, Errors: 0, Time elapsed: 0.006 sec
+    [junit] Running test.net.sourceforge.pmd.symboltable.VariableUsageFinderFunctionTest
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.001 sec
+
+dfatest:
+    [junit] Running test.net.sourceforge.pmd.dfa.AcceptanceTest
+    [junit] Tests run: 31, Failures: 0, Errors: 0, Time elapsed: 0.604 sec
+    [junit] Running test.net.sourceforge.pmd.dfa.DAAPathFinderTest
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.004 sec
+    [junit] Running test.net.sourceforge.pmd.dfa.DataFlowNodeTest
+    [junit] Tests run: 5, Failures: 0, Errors: 0, Time elapsed: 0.002 sec
+    [junit] Running test.net.sourceforge.pmd.dfa.GeneralFiddlingTest
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.001 sec
+    [junit] Running test.net.sourceforge.pmd.dfa.StatementAndBraceFinderTest
+    [junit] Tests run: 6, Failures: 0, Errors: 0, Time elapsed: 0.004 sec
+    [junit] Running test.net.sourceforge.pmd.dfa.StructureTest
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0 sec
+    [junit] Running test.net.sourceforge.pmd.dfa.VariableAccessTest
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0 sec
+
+cpdtest:
+    [junit] Running test.net.sourceforge.pmd.cpd.AnyTokenizerTest
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.02 sec
+    [junit] Running test.net.sourceforge.pmd.cpd.CPPTokenizerTest
+    [junit] Tests run: 4, Failures: 0, Errors: 0, Time elapsed: 0.144 sec
+    [junit] Running test.net.sourceforge.pmd.cpd.FileReporterTest
+    [junit] Tests run: 4, Failures: 0, Errors: 0, Time elapsed: 0.002 sec
+    [junit] Running test.net.sourceforge.pmd.cpd.FortranTokenizerTest
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.007 sec
+    [junit] Running test.net.sourceforge.pmd.cpd.JavaTokensTokenizerTest
+    [junit] Tests run: 5, Failures: 0, Errors: 0, Time elapsed: 0.012 sec
+    [junit] Running test.net.sourceforge.pmd.cpd.LanguageFactoryTest
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.007 sec
+    [junit] Running test.net.sourceforge.pmd.cpd.MatchAlgorithmTest
+    [junit] Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 0.005 sec
+    [junit] Running test.net.sourceforge.pmd.cpd.MatchTest
+    [junit] Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 0.001 sec
+    [junit] Running test.net.sourceforge.pmd.cpd.RubyTokenizerTest
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0 sec
+    [junit] Running test.net.sourceforge.pmd.cpd.SourceCodeTest
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.001 sec
+    [junit] Running test.net.sourceforge.pmd.cpd.TokenEntryTest
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.001 sec
+    [junit] Running test.net.sourceforge.pmd.cpd.XMLRendererTest
+    [junit] Tests run: 3, Failures: 0, Errors: 0, Time elapsed: 0.006 sec
+
+javadoc:
+    [mkdir] Created dir: /home/hudson/workspace/jobs/PMD/workspace/pmd/docs/api
+  [javadoc] Generating Javadoc
+  [javadoc] Javadoc execution
+  [javadoc] Loading source files for package net.sourceforge.pmd...
+  [javadoc] Loading source files for package net.sourceforge.pmd.ant...
+  [javadoc] Loading source files for package net.sourceforge.pmd.cpd...
+  [javadoc] Loading source files for package net.sourceforge.pmd.dcd...
+  [javadoc] Loading source files for package net.sourceforge.pmd.dcd.asm...
+  [javadoc] Loading source files for package net.sourceforge.pmd.dcd.graph...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.ast...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.ast.xpath...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.cpp...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.cpp.ast...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.dfa...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.dfa.pathfinder...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.dfa.report...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.ast...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.dfa...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.basic...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.codesize...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.controversial...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.coupling...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.design...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.finalizers...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.imports...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.javabeans...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.junit...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.logging...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.migrating...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.naming...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.optimizations...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.regex...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.strictexception...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.strings...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.sunsecure...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.rule.unusedcode...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.symboltable...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.typeresolution...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.typeresolution.rules...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.typeresolution.rules.imports...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.typeresolution.visitors...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.java.xpath...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.jsp...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.jsp.ast...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.jsp.rule...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.jsp.rule.basic...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.rule...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.rule.properties...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.rule.stat...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.xml...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.xml.ast...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.xml.rule...
+  [javadoc] Loading source files for package net.sourceforge.pmd.lang.xpath...
+  [javadoc] Loading source files for package net.sourceforge.pmd.renderers...
+  [javadoc] Loading source files for package net.sourceforge.pmd.stat...
+  [javadoc] Loading source files for package net.sourceforge.pmd.util...
+  [javadoc] Loading source files for package net.sourceforge.pmd.util.datasource...
+  [javadoc] Loading source files for package net.sourceforge.pmd.util.designer...
+  [javadoc] Loading source files for package net.sourceforge.pmd.util.filter...
+  [javadoc] Loading source files for package net.sourceforge.pmd.util.log...
+  [javadoc] Loading source files for package net.sourceforge.pmd.util.viewer...
+  [javadoc] Loading source files for package net.sourceforge.pmd.util.viewer.gui...
+  [javadoc] Loading source files for package net.sourceforge.pmd.util.viewer.gui.menu...
+  [javadoc] Loading source files for package net.sourceforge.pmd.util.viewer.model...
+  [javadoc] Loading source files for package net.sourceforge.pmd.util.viewer.util...
+  [javadoc] Constructing Javadoc information...
+  [javadoc] Standard Doclet version 1.6.0_07
+  [javadoc] Building tree for all the packages and classes...
+  [javadoc] Building index for all the packages and classes...
+  [javadoc] Building index for all classes...
+
+qa:
+
+BUILD SUCCESSFUL
+Total time: 2 minutes 54 seconds
+[pmd] $ ant -propertyfile ../../local.properties reports
+Buildfile: build.xml
+
+checkstyle:
+[checkstyle] Running Checkstyle 4.4 on 608 files
+
+copy:
+
+compile:
+
+pmd-dogfood-goal:
+
+clover:
+
+clean:
+   [delete] Deleting directory /home/hudson/workspace/jobs/PMD/workspace/pmd/build
+   [delete] Deleting: /home/hudson/workspace/jobs/PMD/workspace/pmd/lib/pmd-5.0.jar
+   [delete] Deleting: /home/hudson/workspace/jobs/PMD/workspace/pmd/lib/pmd-test-5.0.jar
+   [delete] Deleting: /home/hudson/workspace/jobs/PMD/workspace/pmd/java14/lib/pmd14-5.0.jar
+   [delete] Deleting: /home/hudson/workspace/jobs/PMD/workspace/pmd/java14/lib/pmd14-test-5.0.jar
+   [delete] Deleting: /home/hudson/workspace/jobs/PMD/workspace/pmd/java14/lib/junit.jar
+   [delete] Deleting directory /home/hudson/workspace/jobs/PMD/workspace/pmd/docs/api
+    [mkdir] Created dir: /home/hudson/workspace/jobs/PMD/workspace/pmd/build
+
+clover.setup:
+
+with.clover:
+[clover-setup] Clover Version 2.3.2, built on July 15 2008 (build-732)
+[clover-setup] Loaded from: /usr/java/clover/clover-ant-2.3.2/lib/clover.jar
+[clover-setup] Clover: Open Source License registered to pmd .
+[clover-setup] Clover is enabled with initstring '/home/hudson/workspace/jobs/PMD/workspace/pmd/reports/clover/db/coverage.db'
+
+requires-junit:
+
+compile:
+    [javac] Compiling 795 source files to /home/hudson/workspace/jobs/PMD/workspace/pmd/build
+   [clover] Clover Version 2.3.2, built on July 15 2008 (build-732)
+   [clover] Loaded from: /usr/java/clover/clover-ant-2.3.2/lib/clover.jar
+   [clover] Clover: Open Source License registered to pmd .
+   [clover] Updating existing database at '/home/hudson/workspace/jobs/PMD/workspace/pmd/reports/clover/db/coverage.db'.
+   [clover] Processing files at 1.5 source level.
+   [clover] Clover all over. Instrumented 613 files (66 packages).
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/renderers/AbstractRenderer.java:33: warning: [deprecation] render(net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public String render(Report report) {__CLR2_3_21upp1uppfkpr11ne.R.E[86463]++;
+    [javac]                   ^
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/renderers/AbstractRenderer.java:36: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]             __CLR2_3_21upp1uppfkpr11ne.R.E[86466]++;render(w, report);
+    [javac]                                                     ^
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/renderers/AbstractRenderer.java:100: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]         __CLR2_3_21upp1uppfkpr11ne.R.E[86479]++;render(writer, mainReport);
+    [javac]                                                 ^
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/renderers/OnTheFlyRenderer.java:27: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {__CLR2_3_21uoc1uocfkpr10xs.R.E[86412]++;
+    [javac]                 ^
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/renderers/PapariTextRenderer.java:84: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {__CLR2_3_21x61x6fkpr0za4.R.E[2500]++;
+    [javac]                 ^
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/ant/PMDTask.java:270: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]                 public void render(Writer writer, Report r) {__CLR2_3_2264j264jfkpr0zbo.R.E[101380]++;}
+    [javac]                             ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/regress/test/net/sourceforge/pmd/ReportTest.java:165: warning: [deprecation] render(net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]         String result = rend.render(r);
+    [javac]                             ^
+    [javac] /home/hudson/workspace/jobs/PMD/workspace/pmd/regress/test/net/sourceforge/pmd/ReportTest.java:180: warning: [deprecation] render(net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]         String result = rend.render(r);
+    [javac]                             ^
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/renderers/SummaryHTMLRenderer.java:35: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {__CLR2_3_21uow1uowfkpr11f7.R.E[86437]++;
+    [javac]                 ^
+    [javac] /tmp/clover55196.tmp/net/sourceforge/pmd/renderers/YAHTMLRenderer.java:22: warning: [deprecation] render(java.io.Writer,net.sourceforge.pmd.Report) in net.sourceforge.pmd.renderers.Renderer has been deprecated
+    [javac]     public void render(Writer writer, Report report) throws IOException {__CLR2_3_2116116fkpr0z6e.R.E[1341]++;
+    [javac]                 ^
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+    [javac] 10 warnings
+     [copy] Copying 1 file to /home/hudson/workspace/jobs/PMD/workspace/pmd/build/net/sourceforge/pmd/util/viewer/resources
+
+copy:
+     [copy] Copying 49 files to /home/hudson/workspace/jobs/PMD/workspace/pmd/build/rulesets
+     [copy] Copying 261 files to /home/hudson/workspace/jobs/PMD/workspace/pmd/build/test/net/sourceforge/pmd
+
+regress:
+
+test-execute:
+   [delete] Deleting directory /home/hudson/workspace/jobs/PMD/workspace/pmd/reports/regress
+    [mkdir] Created dir: /home/hudson/workspace/jobs/PMD/workspace/pmd/reports/regress/xml
+
+test-report:
+[junitreport] Processing /home/hudson/workspace/jobs/PMD/workspace/pmd/reports/regress/xml/TESTS-TestSuites.xml to /tmp/null1021569917
+[junitreport] Loading stylesheet jar:file:/usr/java/ant/apache-ant-1.7.0/lib/ant-junit.jar!/org/apache/tools/ant/taskdefs/optional/junit/xsl/junit-frames.xsl
+[junitreport] Transform time: 2590ms
+[junitreport] Deleting: /tmp/null1021569917
+     [xslt] Processing /home/hudson/workspace/jobs/PMD/workspace/pmd/reports/regress/xml/TESTS-TestSuites.xml to /home/hudson/workspace/jobs/PMD/workspace/pmd/reports/regress/summary.txt
+     [xslt] Loading stylesheet /home/hudson/workspace/jobs/PMD/workspace/pmd/etc/xslt/junit-txt-output.xsl
+   [concat]
+   [concat] Junit test results
+   [concat]
+   [concat] Summary: 736 tests
+   [concat]   failures: 0, errors: 0.
+
+clover.reports:
+[clover-report] Clover Version 2.3.2, built on July 15 2008 (build-732)
+[clover-report] Loaded from: /usr/java/clover/clover-ant-2.3.2/lib/clover.jar
+[clover-report] Clover: Open Source License registered to pmd .
+[clover-report] Loading coverage database from: '/home/hudson/workspace/jobs/PMD/workspace/pmd/reports/clover/db/coverage.db'
+[clover-report] Loading coverage database from: '/home/hudson/workspace/jobs/PMD/workspace/pmd/reports/clover/db/coverage.db'
+[clover-report] Writing report to '/home/hudson/workspace/jobs/PMD/workspace/pmd/reports/clover'
+[clover-report] Done. Processed 66 packages in 41394ms (627ms per package).
+[clover-report] Writing report to '/home/hudson/workspace/jobs/PMD/workspace/pmd/reports/clover/clover.xml'
+
+reports:
+
+BUILD SUCCESSFUL
+Total time: 2 minutes 2 seconds
+[PMD] Collecting pmd analysis files...
+[PMD] Successfully parsed file /usr/java/hudson/workspace/jobs/PMD/workspace/pmd/reports/pmd-dogfood-goal.xml of module reports with 722 warnings.
+[PMD] A total of 153 annotations have been found for priority HIGH
+[PMD] A total of 508 annotations have been found for priority NORMAL
+[PMD] A total of 61 annotations have been found for priority LOW
+[TASKS] Scanning workspace files for tasks...
+[TASKS] A total of 32 annotations have been found for priority HIGH
+[TASKS] A total of 39 annotations have been found for priority NORMAL
+[TASKS] A total of 153 annotations have been found for priority LOW
+[CHECKSTYLE] Collecting checkstyle analysis files...
+[CHECKSTYLE] Successfully parsed file /usr/java/hudson/workspace/jobs/PMD/workspace/pmd/reports/checkstyle_errors.xml of module reports with 5547 warnings.
+[CHECKSTYLE] A total of 5197 annotations have been found for priority HIGH
+[CHECKSTYLE] A total of 350 annotations have been found for priority NORMAL
+[CHECKSTYLE] A total of 0 annotations have been found for priority LOW
+[WARNINGS] Parsing warnings in log file...
+[WARNINGS] A total of 0 annotations have been found for priority HIGH
+[WARNINGS] A total of 20 annotations have been found for priority NORMAL
+[WARNINGS] A total of 0 annotations have been found for priority LOW
+Publishing Clover coverage report...
+Publishing Clover coverage results...
+Recording test results
+Sending notification to: xavier.levourch@jabber.org
+finished: SUCCESS

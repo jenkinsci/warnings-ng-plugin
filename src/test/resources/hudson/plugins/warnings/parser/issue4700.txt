@@ -1,0 +1,2 @@
+[hudson_dvw_host] $ /usr/atria/bin/cleartool lshistory -all -since 24-sep-09.15:20:07utc+0000 -fmt '\"%Nd\" \"%u\" \"%En\" \"%Vn\" \"%e\" \"%o\" \n%c\n' -branch brtype:hudson_dvw_host -nco view/hudson_dvw_host/vobs/host/irm
+

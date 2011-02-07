@@ -1,0 +1,28 @@
+<div>
+  <p>
+    Das Groovy Skript arbeitet mit der
+    <a href="http://download.oracle.com/docs/cd/E17476_01/javase/1.5.0/docs/api/java/util/regex/Matcher.html">Matcher</a>
+    Instanz, die in der Variablen <tt>matcher</tt> an das Skript übergeben wird. Das Skript muss einen Rückgabewert
+    vom Typ <tt>hudson.plugins.warnings.parser.Warning</tt> haben.
+  </p>
+
+ <h4> Beispiel </h4>
+
+ <p>
+ 	Hier folgt ein Beispiel, das als Ausgangsbasis für das Skript verwendet werden kann. Es erzeugt eine neue Warnung für den
+ 	regulären Ausdruck <tt>^\s*(.*):(\d+):(.*):\s*(.*)$</tt>.
+ </p>
+ <hr/>
+ <pre>
+import hudson.plugins.warnings.parser.Warning
+
+String fileName = matcher.group(1)
+String lineNumber = matcher.group(2)
+String category = matcher.group(3)
+String message = matcher.group(4)
+
+return new Warning(fileName, Integer.parseInt(lineNumber), "Dynamic Parser", category, message);
+ </pre>
+ <hr/>
+
+</div>

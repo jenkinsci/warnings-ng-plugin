@@ -1,0 +1,9 @@
+First for Ant javac or pure javac
+
+    [javac] D:\path\to\my\Class.java:225: warning: [deprecation] loadAvailable(java.lang.String,int,int,java.lang.String[]) in my.OtherClass has been deprecated
+    [javac]         oc.loadAvailable("roottest.xml", 0xFFF, 0xFFFF, new String[]{"filter"});
+    [javac]               ^
+
+Then for maven javac
+
+[WARNING] D:\path\to\my\Class.java:[14,39] [deprecation] loadAvailable(java.lang.String,int,int,java.lang.String[]) in my.OtherClass has been deprecated

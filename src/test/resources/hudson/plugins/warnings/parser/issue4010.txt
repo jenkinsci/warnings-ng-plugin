@@ -1,0 +1,7 @@
+The following GNU Linker error is not reported by Warning plugin :
+
+g++ file1.o MyMain.o libMyMain.a  -L/dir1/lib -lMyLib -lstdc++   -o MyMain
+/usr/bin/ld: cannot find -lMyLib
+
+gcc version : 3.4.6
+ld version  : 2.15.92.0.2
