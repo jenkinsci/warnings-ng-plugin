@@ -28,7 +28,7 @@ public class Gcc4CompilerParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-6563">Issue 6563</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-6563">Issue 6563</a>
      */
     @Test
     public void issue6563() throws IOException {
@@ -122,7 +122,7 @@ public class Gcc4CompilerParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-5606">Issue 5606</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-5606">Issue 5606</a>
      */
     @Test
     public void issue5606() throws IOException {
@@ -136,7 +136,7 @@ public class Gcc4CompilerParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-5605">Issue 5605</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-5605">Issue 5605</a>
      */
     @Test
     public void issue5605() throws IOException {
@@ -150,7 +150,7 @@ public class Gcc4CompilerParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-5445">Issue 5445</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-5445">Issue 5445</a>
      */
     @Test
     public void issue5445() throws IOException {
@@ -164,7 +164,7 @@ public class Gcc4CompilerParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-5870">Issue 5870</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-5870">Issue 5870</a>
      */
     @Test
     public void issue5870() throws IOException {

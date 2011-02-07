@@ -47,7 +47,7 @@ public class AntJavacParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-2133">Issue 2133</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-2133">Issue 2133</a>
      */
     @Test
     public void issue2133() throws IOException {
@@ -73,7 +73,7 @@ public class AntJavacParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-4098">Issue 4098</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-4098">Issue 4098</a>
      */
     @Test
     public void issue4098() throws IOException {
@@ -94,7 +94,7 @@ public class AntJavacParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-2316">Issue 2316</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-2316">Issue 2316</a>
      */
     @Test
     public void issue2316() throws IOException {
@@ -147,7 +147,7 @@ public class AntJavacParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://fisheye.hudson-ci.org/changelog/Hudson?cs=16376">Commit log on changeset 16376</a>
+     * @see <a href="http://fisheye.jenkins-ci.org/changelog/Hudson?cs=16376">Commit log on changeset 16376</a>
      */
     @Test
     public void parseJapaneseWarnings() throws IOException {

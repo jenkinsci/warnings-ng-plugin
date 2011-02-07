@@ -26,7 +26,7 @@ public class EclipseParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-6427">Issue 6427</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-6427">Issue 6427</a>
      */
     @Test
     public void issue6427() throws IOException {
@@ -87,7 +87,7 @@ public class EclipseParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-7077">Issue 7077</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-7077">Issue 7077</a>
      */
     @Test
     public void issue7077() throws IOException {
@@ -114,7 +114,7 @@ public class EclipseParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-7077">Issue 7077</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-7077">Issue 7077</a>
      */
     @Test
     public void issue7077all() throws IOException {

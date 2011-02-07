@@ -12,7 +12,7 @@
   <packaging>hpi</packaging>
   <name>Warnings Plug-in</name>
   <version>3.14-SNAPSHOT</version>
-  <url>http://wiki.hudson-ci.org/display/HUDSON/Warnings+Plugin</url>
+  <url>http://wiki.jenkins-ci.org/x/G4CGAQ</url>
   <description>This plug-in reads the compiler warnings from the
     console log file and generates a trend report.</description>
 

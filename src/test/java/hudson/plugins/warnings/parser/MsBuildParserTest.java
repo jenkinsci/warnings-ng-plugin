@@ -24,7 +24,7 @@ public class MsBuildParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-3582">Issue 3582</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-3582">Issue 3582</a>
      */
     @Test
     public void issue3582() throws IOException {
@@ -40,7 +40,7 @@ public class MsBuildParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-8347">Issue 8347</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-8347">Issue 8347</a>
      */
     @Test
     public void issue8347() throws IOException {
@@ -57,7 +57,7 @@ public class MsBuildParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-3582">Issue 3582</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-3582">Issue 3582</a>
      */
     @Test
     public void issue6709() throws IOException {
@@ -74,7 +74,7 @@ public class MsBuildParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-4932">Issue 4932</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-4932">Issue 4932</a>
      */
     @Test
     public void issue4932() throws IOException {
@@ -101,7 +101,7 @@ public class MsBuildParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-4731">Issue 4731</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-4731">Issue 4731</a>
      */
     @Test
     public void issue4731() throws IOException {
@@ -186,7 +186,7 @@ public class MsBuildParserTest extends ParserTester {
      *
      * @throws IOException
      *             if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-2383">Issue
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-2383">Issue
      *      2383</a>
      */
     @Test

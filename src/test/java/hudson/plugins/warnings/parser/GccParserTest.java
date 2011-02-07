@@ -89,7 +89,7 @@ public class GccParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-3897">Issue 3897</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-3897">Issue 3897</a>
      */
     @Test
     public void issue3897and3898() throws IOException {
@@ -119,7 +119,7 @@ public class GccParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-4712">Issue 4712</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-4712">Issue 4712</a>
      */
     @Test
     public void issue4712() throws IOException {
@@ -144,7 +144,7 @@ public class GccParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-4712">Issue 4712</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-4712">Issue 4712</a>
      */
     @Test
     public void issue4700() throws IOException {
@@ -158,7 +158,7 @@ public class GccParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-4712">Issue 4707</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-4712">Issue 4707</a>
      */
     @Test
     public void issue4707() throws IOException {
@@ -178,7 +178,7 @@ public class GccParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-4010">Issue 4010</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-4010">Issue 4010</a>
      */
     @Test
     public void issue4010() throws IOException {
@@ -198,7 +198,7 @@ public class GccParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-4274">Issue 4274</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-4274">Issue 4274</a>
      */
     @Test
     public void issue4274() throws IOException {
@@ -233,7 +233,7 @@ public class GccParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-4260">Issue 4260</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-4260">Issue 4260</a>
      */
     @Test
     public void issue4260() throws IOException {

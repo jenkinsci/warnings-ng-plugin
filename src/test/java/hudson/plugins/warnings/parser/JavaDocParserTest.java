@@ -44,7 +44,7 @@ public class JavaDocParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-4576">Issue 4576</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-4576">Issue 4576</a>
      */
     @Test
     public void issue4576() throws IOException {
@@ -69,7 +69,7 @@ public class JavaDocParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-8630">Issue 8630</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-8630">Issue 8630</a>
      */
     @Test
     public void issue8630() throws IOException {
@@ -83,7 +83,7 @@ public class JavaDocParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-7718">Issue 7718</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-7718">Issue 7718</a>
      */
     @Test
     public void issue7718() throws IOException {

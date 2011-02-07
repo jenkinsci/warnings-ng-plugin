@@ -62,7 +62,7 @@ public class IntelCParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-5402">Issue 5402</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-5402">Issue 5402</a>
      */
     @Test
     public void issue5402() throws IOException {

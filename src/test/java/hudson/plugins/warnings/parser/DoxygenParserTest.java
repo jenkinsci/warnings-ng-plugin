@@ -149,7 +149,7 @@ public class DoxygenParserTest extends ParserTester {
      * Verifies that parsing of long files does not fail.
      *
      * @throws IOException Signals that an I/O exception has occurred.
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-7178">Issue 7178</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-7178">Issue 7178</a>
      * @see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6882582">JDK Bug 6882582</a>
      */
     @Test @Ignore
@@ -164,7 +164,7 @@ public class DoxygenParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-6971">Issue 6971</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-6971">Issue 6971</a>
      */
     @Test
     public void issue6971() throws IOException {

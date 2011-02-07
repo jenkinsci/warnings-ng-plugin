@@ -85,7 +85,7 @@ public class ParserRegistryTest {
      *
      * @throws IOException
      *             if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-2359">Issue 2359</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-2359">Issue 2359</a>
      */
     @Test
     public void issue2359() throws IOException {
@@ -101,7 +101,7 @@ public class ParserRegistryTest {
      *
      * @throws IOException
      *             if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-7775">Issue 7775</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-7775">Issue 7775</a>
      */
     @Test
     public void issue7775() throws IOException {
@@ -130,7 +130,7 @@ public class ParserRegistryTest {
      *
      * @throws IOException
      *             if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-2359">Issue 2359</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-2359">Issue 2359</a>
      */
     @Test
     public void multiplePatternsIssue2359() throws IOException {
@@ -147,7 +147,7 @@ public class ParserRegistryTest {
      *
      * @throws IOException
      *             if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-3866">Issue 3866</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-3866">Issue 3866</a>
      */
     @Test
     public void issue3866() throws IOException {
@@ -163,7 +163,7 @@ public class ParserRegistryTest {
      *
      * @throws IOException
      *             if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-3866">Issue 3866</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-3866">Issue 3866</a>
      */
     @Test
     public void multiplePatternsIssue3866() throws IOException {
@@ -181,7 +181,7 @@ public class ParserRegistryTest {
      *
      * @throws IOException
      *             if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-3866">Issue 3866</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-3866">Issue 3866</a>
      */
     @Test
     public void complexFilterIssue3866() throws IOException {

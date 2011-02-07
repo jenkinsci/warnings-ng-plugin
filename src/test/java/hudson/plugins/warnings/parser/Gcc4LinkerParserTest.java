@@ -84,7 +84,7 @@ public class Gcc4LinkerParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-5445">Issue 5445</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-5445">Issue 5445</a>
      */
     @Test
     public void issue5445() throws IOException {
@@ -98,7 +98,7 @@ public class Gcc4LinkerParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-5870">Issue 5870</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-5870">Issue 5870</a>
      */
     @Test
     public void issue5870() throws IOException {
@@ -112,7 +112,7 @@ public class Gcc4LinkerParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-6563">Issue 6563</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-6563">Issue 6563</a>
      */
     @Test
     public void issue6563() throws IOException {
