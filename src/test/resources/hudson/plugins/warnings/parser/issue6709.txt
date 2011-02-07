@@ -1,2 +1,0 @@
-     2>Rules\TaskRules.cs(1145,49): warning CS0168: The variable 'ex' is declared but never used
-

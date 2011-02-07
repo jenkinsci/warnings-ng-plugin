@@ -1,2 +1,0 @@
-/home/user/myproject/helper/LCPcalc.cpp:479:warning: the name `lcp_lexicolemke.c' supplied as the second argument in the \file statement is not an input file
-/home/user/myproject/helper/SimpleTimer.h:19:error: Unexpected character `"'

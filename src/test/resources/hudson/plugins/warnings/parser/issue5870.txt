@@ -1,5 +1,0 @@
-configure.ac:9: installing `auto/config.guess'
-configure.ac:9: installing `auto/config.sub'
-configure.ac:6: installing `auto/install-sh'
-configure.ac:6: installing `auto/missing'
-

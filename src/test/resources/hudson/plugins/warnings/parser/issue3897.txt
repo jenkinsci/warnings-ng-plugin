@@ -1,4 +1,0 @@
-/dir1/dir2/file.c:12:15: file.h: No such file or directory
-/dir1/dir3/file.cpp:233: undefined reference to `MyInterface::getValue() const'
-
-/dir1/dir2/file.cpp:20:2: invalid preprocessing directive #incldue
