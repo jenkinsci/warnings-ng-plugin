@@ -14,7 +14,7 @@
   <version>1.17-SNAPSHOT</version>
   <description>This plug-in provides utilities for the static code analysis plug-ins.</description>
 
-  <url>http://wiki.hudson-ci.org/display/HUDSON/Static+Code+Analysis+Plug-ins</url>
+  <url>http://wiki.jenkins-ci.org/x/CwDgAQ</url>
 
   <dependencies>
     <dependency>

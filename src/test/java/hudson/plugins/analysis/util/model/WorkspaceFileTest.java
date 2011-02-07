@@ -15,7 +15,7 @@ public class WorkspaceFileTest {
     /**
      * Verifies that the number of warnings is correctly computed.
      *
-     * @see <a href="http://issues.hudson-ci.org/browse/HUDSON-6139">Issue 6139</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-6139">Issue 6139</a>
      */
     @Test
     public void issue6139() {
