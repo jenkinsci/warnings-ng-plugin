@@ -54,6 +54,13 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
     }
 
     /**
+     * Returns the description of the trend graph.
+     */
+    public String getDescription() {
+        return getDescriptor().getDisplayName();
+    }
+
+    /**
      * Restores the configuration after deserialization.
      *
      * @return this instance
