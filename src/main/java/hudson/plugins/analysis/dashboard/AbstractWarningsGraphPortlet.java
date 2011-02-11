@@ -55,9 +55,12 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
 
     /**
      * Returns the description of the trend graph.
+     *
+     * @return the description
      */
     public String getDescription() {
-        return getDescriptor().getDisplayName();
+        return String.format("[%s ...]",
+                StringUtils.defaultString(getDescriptor().getDisplayName()));
     }
 
     /**
