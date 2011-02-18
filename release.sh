@@ -1,4 +1,4 @@
-svn update
-mvn -B -Djava.net.id=drulli release:prepare release:perform 
+git pull
+mvn -B -Djava.net.id=drulli release:prepare release:perform
 
 
