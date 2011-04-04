@@ -36,19 +36,24 @@ public class WarningsAnnotationsAggregator extends AnnotationsAggregator {
         super(build, launcher, listener, healthDescriptor, defaultEncoding);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Action createAction(final HealthDescriptor healthDescriptor, final String defaultEncoding, final ParserResult aggregatedResult) {
         return new WarningsResultAction(build, healthDescriptor,
                 new WarningsResult(build, defaultEncoding, aggregatedResult));
     }
 
-    /** {@inheritDoc} */
+    @Override
+    protected boolean hasResult(final MatrixRun run) {
+        return getAction(run) != null;
+    }
+
     @Override
     protected WarningsResult getResult(final MatrixRun run) {
-        WarningsResultAction action = run.getAction(WarningsResultAction.class);
+        return getAction(run).getResult();
+    }
 
-        return action.getResult();
+    private WarningsResultAction getAction(final MatrixRun run) {
+        return run.getAction(WarningsResultAction.class);
     }
 }
 
