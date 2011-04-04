@@ -2,6 +2,8 @@ package hudson.plugins.analysis.core;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
+
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixRun;
@@ -46,7 +48,7 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
     /** {@inheritDoc} */
     @Override
     public boolean endRun(final MatrixRun run) throws InterruptedException, IOException {
-        if (totals.hasNoAnnotations()) {
+        if (totals.hasNoAnnotations() && hasResult(run)) {
             BuildResult result = getResult(run);
             totals.addAnnotations(result.getAnnotations());
             totals.addModules(result.getModules());
@@ -63,12 +65,27 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
     }
 
     /**
+     * Returns whether the specified run has a result to aggregate.
+     *
+     * @param run
+     *            the run to obtain the annotations from
+     * @return <code>true</code> if there is a result to aggregate,
+     *         <code>false</code> otherwise
+     * @since 1.19
+     */
+    protected boolean hasResult(final MatrixRun run) {
+        return false;
+    }
+
+    /**
      * Returns the annotations of the specified run.
      *
      * @param run
      *            the run to obtain the annotations from
      * @return the annotations of the specified run
+     * @see #hasResult(MatrixRun) if there is no valid result available
      */
+    @Nonnull
     protected abstract BuildResult getResult(MatrixRun run);
 
     /**
