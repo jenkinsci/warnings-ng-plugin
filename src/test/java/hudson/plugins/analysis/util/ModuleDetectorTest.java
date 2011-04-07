@@ -1,190 +1,128 @@
 package hudson.plugins.analysis.util;
 
-import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 /**
  *  Tests the class {@link ModuleDetector}.
  */
-@edu.umd.cs.findbugs.annotations.SuppressWarnings({"DMI", "OBL", "SIC"})
+@SuppressWarnings("DMI")
 public class ModuleDetectorTest {
-    /** Prefix of the path in test. */
-    private static final String PATH_PREFIX = "/path/to/";
-    /** Expected module name for all tests. */
-    private static final String EXPECTED_MODULE = "com.avaloq.adt.core";
-    /** JUnit Error message. */
-    private static final String ERROR_MESSAGE = "Wrong module name detected.";
+    private static final File ROOT = new File("/");
+    private static final int NO_RESULT = 0;
+    private static final String PATH_PREFIX_MAVEN = "/path/to/maven";
+    private static final String PATH_PREFIX_ANT = "/path/to/ant";
+    private static final String EXPECTED_MAVEN_MODULE = "ADT Business Logic";
+    private static final String EXPECTED_ANT_MODULE = "checkstyle";
 
-    /**
-     * Checks whether we could identify a name from the file name.
-     */
-    @Test
-    public void testTopLevelModuleName() {
-        ModuleDetector detector = new ModuleDetector();
+    private ModuleDetector createDetectorUnderTest(final String fileName, final String[] workspaceScanResult) throws FileNotFoundException {
+        return createDetectorUnderTest(createFactoryMock(fileName, workspaceScanResult));
+    }
 
-        String moduleName = detector.guessModuleName("com.avaloq.adt.core/pmd.xml", false, false);
-        assertEquals(ERROR_MESSAGE, EXPECTED_MODULE, moduleName);
-        moduleName = detector.guessModuleName("com.avaloq.adt.core\\pmd.xml", false, false);
-        assertEquals(ERROR_MESSAGE, EXPECTED_MODULE, moduleName);
+    private ModuleDetector createDetectorUnderTest(final FileInputStreamFactory factory) {
+        return new ModuleDetector(ROOT, factory);
+    }
+
+    @SuppressWarnings("OBL")
+    private FileInputStreamFactory createFactoryMock(final String fileName, final String[] workspaceScanResult) throws FileNotFoundException {
+        FileInputStreamFactory factory = mock(FileInputStreamFactory.class);
+        InputStream inputFile = read(fileName);
+        when(factory.create(anyString())).thenReturn(inputFile);
+        when(factory.find((File)anyObject(), anyString())).thenReturn(workspaceScanResult);
+        return factory;
+    }
+
+    private InputStream read(final String fileName) {
+        return ModuleDetectorTest.class.getResourceAsStream(fileName);
     }
 
     /**
-     * Checks whether we could identify a maven module from a POM using the target folder.
+     * Checks whether we could identify Maven modules using the module mapping.
      *
      * @throws FileNotFoundException
      *             should never happen
      */
     @Test
-    public void testPomNameOnTarget() throws FileNotFoundException {
-        FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
-        InputStream pom = ModuleDetectorTest.class.getResourceAsStream(ModuleDetector.MAVEN_POM);
-        expect(factory.create(isA(String.class))).andReturn(pom);
-
-        ModuleDetector detector = new ModuleDetector();
-        detector.setFileInputStreamFactory(factory);
-
-        replay(factory);
-
-        assertEquals(ERROR_MESSAGE, "ADT Business Logic", detector.guessModuleName("prefix/target/suffix", true, false));
-
-        verify(factory);
-    }
-
-    /**
-     * Checks whether we could identify maven modules using the module mapping.
-     *
-     * @throws FileNotFoundException
-     *             should never happen
-     */
-    @Test
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("DMI")
     public void testPomModules() throws FileNotFoundException {
-        FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
-        InputStream pom = ModuleDetectorTest.class.getResourceAsStream(ModuleDetector.MAVEN_POM);
-        expect(factory.create(isA(String.class))).andReturn(pom);
-        replay(factory);
+        ModuleDetector detector = createDetectorUnderTest(ModuleDetector.MAVEN_POM,
+                new String[] {PATH_PREFIX_MAVEN + ModuleDetector.MAVEN_POM});
 
-        ModuleDetector detector = new ModuleDetector(new File("/"), factory) {
-            /** {@inheritDoc} */
-            @Override
-            protected String[] find(final File path, final String pattern) {
-                return new String[] {PATH_PREFIX + MAVEN_POM};
-            }
-        };
+        verifyModuleName(detector, EXPECTED_MAVEN_MODULE, PATH_PREFIX_MAVEN + "/something.txt");
+        verifyModuleName(detector, EXPECTED_MAVEN_MODULE, PATH_PREFIX_MAVEN + "/in/between/something.txt");
+        verifyModuleName(detector, StringUtils.EMPTY, "/path/to/something.txt");
+    }
 
-        assertEquals("Wrong module guessed", "ADT Business Logic", detector.guessModuleName(PATH_PREFIX));
-
-        verify(factory);
+    private void verifyModuleName(final ModuleDetector detector, final String expectedName, final String fileName) {
+        assertEquals("Wrong module guessed", expectedName, detector.guessModuleName(fileName));
     }
 
     /**
-     * Checks whether we could identify ant projects using the module mapping.
+     * Checks whether we could identify Ant projects using the module mapping.
      *
      * @throws FileNotFoundException
      *             should never happen
      */
     @Test
     public void testAntModules() throws FileNotFoundException {
-        FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
-        InputStream pom = ModuleDetectorTest.class.getResourceAsStream(ModuleDetector.ANT_PROJECT);
-        expect(factory.create(isA(String.class))).andReturn(pom);
-        replay(factory);
+        ModuleDetector detector = createDetectorUnderTest(ModuleDetector.ANT_PROJECT,
+                new String[] {PATH_PREFIX_ANT + ModuleDetector.ANT_PROJECT});
 
-        ModuleDetector detector = new ModuleDetector(new File("/"), factory) {
-            /** {@inheritDoc} */
-            @Override
-            protected String[] find(final File path, final String pattern) {
-                return new String[] {PATH_PREFIX + ModuleDetector.ANT_PROJECT};
-            }
-        };
-
-        assertEquals("Wrong number of elements in mapping", "checkstyle", detector.guessModuleName(PATH_PREFIX));
-
-        verify(factory);
+        verifyModuleName(detector, EXPECTED_ANT_MODULE, PATH_PREFIX_ANT + "/something.txt");
+        verifyModuleName(detector, EXPECTED_ANT_MODULE, PATH_PREFIX_ANT + "/in/between/something.txt");
+        verifyModuleName(detector, StringUtils.EMPTY, "/path/to/something.txt");
     }
 
     /**
-     * Checks whether we could identify a ANT project name from a build.xml file.
-     *
-     * @throws FileNotFoundException
-     *             should never happen
-     */
-    @Test
-    public void testProjectName() throws FileNotFoundException {
-        FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
-        InputStream buildXml = ModuleDetectorTest.class.getResourceAsStream(ModuleDetector.ANT_PROJECT);
-        expect(factory.create(isA(String.class))).andReturn(buildXml);
-
-        ModuleDetector detector = new ModuleDetector();
-        detector.setFileInputStreamFactory(factory);
-
-        replay(factory);
-
-        assertEquals(ERROR_MESSAGE, "checkstyle", detector.guessModuleName("prefix/checkstyle.xml", false, true));
-
-        verify(factory);
-    }
-
-    /**
-     * Checks whether we could identify a ANT project name from a build.xml file on the root.
-     *
-     * @throws FileNotFoundException
-     *             should never happen
-     */
-    @Test
-    public void testProjectNameNoPath() throws FileNotFoundException {
-        FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
-        InputStream buildXml = ModuleDetectorTest.class.getResourceAsStream(ModuleDetector.ANT_PROJECT);
-        expect(factory.create(isA(String.class))).andReturn(buildXml);
-
-        ModuleDetector detector = new ModuleDetector();
-        detector.setFileInputStreamFactory(factory);
-
-        replay(factory);
-
-        assertEquals(ERROR_MESSAGE, "checkstyle", detector.guessModuleName("checkstyle.xml", false, true));
-
-        verify(factory);
-    }
-
-    /**
-     * Checks whether we could identify a java package name and maven module.
+     * Checks whether we ignore exceptions during parsing.
      *
      * @throws FileNotFoundException
      *             should never happen
      */
     @Test
     public void testNoPomNameOnException() throws FileNotFoundException {
-        FileInputStreamFactory factory = createMock(FileInputStreamFactory.class);
-        expect(factory.create(isA(String.class))).andThrow(new FileNotFoundException()).anyTimes();
+        FileInputStreamFactory factory = createDummyFactory();
+        ModuleDetector detector = createDetectorUnderTest(factory);
 
-        ModuleDetector detector = new ModuleDetector();
-        detector.setFileInputStreamFactory(factory);
+        verifyModuleName(detector, StringUtils.EMPTY, PATH_PREFIX_ANT + "/something.txt");
+        verifyModuleName(detector, StringUtils.EMPTY, PATH_PREFIX_MAVEN + "/something.txt");
+    }
 
-        replay(factory);
-
-        assertEquals(ERROR_MESSAGE, "prefix", detector.guessModuleName("prefix/suffix", true, false));
-
-        verify(factory);
+    private FileInputStreamFactory createDummyFactory() throws FileNotFoundException {
+        FileInputStreamFactory factory = mock(FileInputStreamFactory.class);
+        when(factory.create(anyString())).thenThrow(new FileNotFoundException());
+        when(factory.find((File)anyObject(), anyString())).thenReturn(new String[NO_RESULT]);
+        return factory;
     }
 
     /**
-     * Checks whether we return the folder before the filename if there is no pom or folder match.
+     * Checks whether we could identify a maven module.
+     *
+     * @throws FileNotFoundException
+     *             should never happen
      */
     @Test
-    public void testNoGuess() {
-        ModuleDetector detector = new ModuleDetector();
+    public void testMoreEntries() throws FileNotFoundException {
+        String ant = PATH_PREFIX_ANT + ModuleDetector.ANT_PROJECT;
+        String maven = PATH_PREFIX_MAVEN + ModuleDetector.MAVEN_POM;
 
-        String moduleName = detector.guessModuleName("base/com.hello.world/com.avaloq.adt.core/pmd.xml", false, false);
-        assertEquals(ERROR_MESSAGE, "com.avaloq.adt.core", moduleName);
+        FileInputStreamFactory factory = mock(FileInputStreamFactory.class);
+        when(factory.create(ant)).thenReturn(read(ModuleDetector.ANT_PROJECT));
+        when(factory.create(maven)).thenReturn(read(ModuleDetector.MAVEN_POM));
 
-        moduleName = detector.guessModuleName("com.avaloq.adt.core/pmd.xml", false, false);
-        assertEquals(ERROR_MESSAGE, "com.avaloq.adt.core", moduleName);
+        when(factory.find((File)anyObject(), anyString())).thenReturn(new String[] {ant, maven});
+        ModuleDetector detector = createDetectorUnderTest(factory);
+
+        verifyModuleName(detector, EXPECTED_ANT_MODULE, PATH_PREFIX_ANT + "/something.txt");
+        verifyModuleName(detector, EXPECTED_MAVEN_MODULE, PATH_PREFIX_MAVEN + "/something.txt");
     }
 }

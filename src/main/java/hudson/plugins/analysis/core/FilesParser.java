@@ -39,8 +39,6 @@ public class FilesParser implements FileCallable<ParserResult> {
     private final AnnotationParser parser;
     /** Determines whether this build uses maven. */
     private final boolean isMavenBuild;
-    /** Determines whether this build uses ant. */
-    private final boolean isAntBuild;
     /** The predefined module name, might be empty. */
     private final String moduleName;
     /** Determines whether module names should be derived from Maven or Ant. */
@@ -57,15 +55,12 @@ public class FilesParser implements FileCallable<ParserResult> {
      *            the parser to apply on the found files
      * @param isMavenBuild
      *            determines whether this build uses maven
-     * @param isAntBuild
-     *            determines whether this build uses maven
      */
-    private FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final boolean isMavenBuild, final boolean isAntBuild, final String moduleName) {
+    private FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final boolean isMavenBuild, final String moduleName) {
         this.logger = logger;
         this.filePattern = filePattern;
         this.parser = parser;
         this.isMavenBuild = isMavenBuild;
-        this.isAntBuild = isAntBuild;
         this.moduleName = moduleName;
     }
 
@@ -80,11 +75,9 @@ public class FilesParser implements FileCallable<ParserResult> {
      *            the parser to apply on the found files
      * @param isMavenBuild
      *            determines whether this build uses maven
-     * @param isAntBuild
-     *            determines whether this build uses maven
      */
-    public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final boolean isMavenBuild, final boolean isAntBuild) {
-        this(logger, filePattern, parser, isMavenBuild, isAntBuild, StringUtils.EMPTY);
+    public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final boolean isMavenBuild) {
+        this(logger, filePattern, parser, isMavenBuild, StringUtils.EMPTY);
     }
 
     /**
@@ -101,7 +94,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      *            the name of the module to use for all files
      */
     public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final String moduleName) {
-        this(logger, filePattern, parser, true, false, moduleName);
+        this(logger, filePattern, parser, true, moduleName);
     }
 
     /**
@@ -116,7 +109,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      *            the parser to apply on the found files
      */
     public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser) {
-        this(logger, filePattern, parser, true, false, StringUtils.EMPTY);
+        this(logger, filePattern, parser, true, StringUtils.EMPTY);
 
         shouldDetectModules = false;
     }
@@ -167,7 +160,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      *             if the user cancels the parsing
      */
     private void parseFiles(final File workspace, final String[] fileNames, final ParserResult result) throws InterruptedException {
-        ModuleDetector detector = createModuleDetector();
+        ModuleDetector detector = createModuleDetector(workspace);
 
         for (String fileName : fileNames) {
             File file = new File(workspace, fileName);
@@ -193,9 +186,9 @@ public class FilesParser implements FileCallable<ParserResult> {
         }
     }
 
-    private ModuleDetector createModuleDetector() {
+    private ModuleDetector createModuleDetector(final File workspace) {
         if (shouldDetectModules) {
-            return new ModuleDetector();
+            return new ModuleDetector(workspace);
         }
         else {
             return new NullModuleDetector();
@@ -205,7 +198,7 @@ public class FilesParser implements FileCallable<ParserResult> {
     private String getModuleName(final ModuleDetector detector, final File file) {
         String module;
         if (StringUtils.isBlank(moduleName)) {
-            module = detector.guessModuleName(file.getAbsolutePath(), isMavenBuild, isAntBuild);
+            module = detector.guessModuleName(file.getAbsolutePath());
         }
         else {
             module = moduleName;

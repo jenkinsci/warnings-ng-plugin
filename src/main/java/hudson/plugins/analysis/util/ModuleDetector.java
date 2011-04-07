@@ -25,12 +25,10 @@ public class ModuleDetector {
     private static final String SLASH = "/";
     private static final String ALL_DIRECTORIES = "**/";
 
-    /** Filename of Maven pom. */
-    protected static final String MAVEN_POM = "pom.xml";
-    /** Filename of Ant project file. */
-    protected static final String ANT_PROJECT = "build.xml";
-    /** Prefix of a Maven target folder. */
-    private static final String TARGET = "/target";
+    static final String MAVEN_POM = "pom.xml";
+    static final String ANT_PROJECT = "build.xml";
+    private static final String PATTERN = ALL_DIRECTORIES + MAVEN_POM + ", " + ALL_DIRECTORIES + ANT_PROJECT;
+
     /** The factory to create input streams with. */
     private FileInputStreamFactory factory = new DefaultFileInputStreamFactory();
     /** Maps file names to module names. */
@@ -41,7 +39,7 @@ public class ModuleDetector {
     /**
      * Creates a new instance of {@link ModuleDetector}.
      */
-    public ModuleDetector() {
+    protected ModuleDetector() {
         fileNameToModuleName = new HashMap<String, String>();
         prefixes = new ArrayList<String>();
     }
@@ -50,7 +48,7 @@ public class ModuleDetector {
      * Creates a new instance of {@link ModuleDetector}.
      *
      * @param workspace
-     *            the workspace to scan for maven pom.xml or ant build.xml files
+     *            the workspace to scan for Maven pom.xml or Ant build.xml files
      */
     public ModuleDetector(final File workspace) {
         this(workspace, new DefaultFileInputStreamFactory());
@@ -88,29 +86,25 @@ public class ModuleDetector {
      * @return the mapping of path prefixes to module names
      */
     private Map<String, String> createFilesToModuleMapping(final File workspace) {
-        String[] projects = findMavenModules(workspace);
         Map<String, String> mapping = new HashMap<String, String>();
-        if (projects.length > 0) {
-            for (int i = 0; i < projects.length; i++) {
-                String fileName = projects[i];
-                String moduleName = parsePom(fileName);
-                if (StringUtils.isNotBlank(moduleName)) {
-                    mapping.put(StringUtils.substringBeforeLast(fileName, MAVEN_POM), moduleName);
-                }
+
+        String[] projects = factory.find(workspace, PATTERN);
+        for (String fileName : projects) {
+            if (fileName.endsWith(MAVEN_POM)) {
+                addMapping(mapping, fileName, MAVEN_POM, parsePom(fileName));
             }
-        }
-        if (mapping.isEmpty()) {
-            projects = findAntProjects(workspace);
-            for (int i = 0; i < projects.length; i++) {
-                String fileName = projects[i];
-                String moduleName = parseBuildXml(fileName);
-                if (StringUtils.isNotBlank(moduleName)) {
-                    mapping.put(StringUtils.substringBeforeLast(fileName, ANT_PROJECT), moduleName);
-                }
+            else {
+                addMapping(mapping, fileName, ANT_PROJECT, parseBuildXml(fileName));
             }
         }
 
         return mapping;
+    }
+
+    private void addMapping(final Map<String, String> mapping, final String fileName, final String suffix, final String moduleName) {
+        if (StringUtils.isNotBlank(moduleName)) {
+            mapping.put(StringUtils.substringBeforeLast(fileName, suffix), moduleName);
+        }
     }
 
     /**
@@ -134,26 +128,6 @@ public class ModuleDetector {
     }
 
     /**
-     * Returns the maven modules in the workspace.
-     *
-     * @param workspace the workspace
-     * @return the maven modules in the workspace
-     */
-    private String[] findMavenModules(final File workspace) {
-        return find(workspace, ALL_DIRECTORIES + MAVEN_POM);
-    }
-
-    /**
-     * Returns the Ant projects in the workspace.
-     *
-     * @param workspace the workspace
-     * @return the Ant projects in the workspace
-     */
-    private String[] findAntProjects(final File workspace) {
-        return find(workspace, ALL_DIRECTORIES + ANT_PROJECT);
-    }
-
-    /**
      * Finds files of the matching pattern.
      *
      * @param path
@@ -163,7 +137,7 @@ public class ModuleDetector {
      * @return the found files
      */
     protected String[] find(final File path, final String pattern) {
-        String[] relativeFileNames = new FileFinder(pattern).find(path);
+        String[] relativeFileNames = factory.find(path, PATTERN);
         String[] absoluteFileNames = new String[relativeFileNames.length];
 
         String absolutePath = path.getAbsolutePath();
@@ -171,45 +145,6 @@ public class ModuleDetector {
             absoluteFileNames[file] = (absolutePath + SLASH + relativeFileNames[file]).replace(BACK_SLASH, SLASH);
         }
         return absoluteFileNames;
-    }
-
-    /**
-     * Guesses a module name based on the source folder or the content in the pom.xml or build.xml files.
-     *
-     * @param fileName
-     *            the absolute path of the file (UNIX style) to guess the module
-     *            for
-     * @param isMavenBuild
-     *            determines whether this build uses maven
-     * @param isAntBuild
-     *            determines whether this build uses maven
-     * @return the guessed module name or an empty string if the name could not be
-     *         resolved
-     */
-    public String guessModuleName(final String fileName, final boolean isMavenBuild, final boolean isAntBuild) {
-        String unixName = fileName.replace(BACK_SLASH, SLASH);
-
-        if (isMavenBuild) {
-            String projectName = parsePom(unixName);
-            if (StringUtils.isNotBlank(projectName)) {
-                return projectName;
-            }
-        }
-        String path = StringUtils.substringBeforeLast(unixName, SLASH);
-
-        if (isAntBuild) {
-            String projectName = parseBuildXml(path);
-            if (StringUtils.isNotBlank(projectName)) {
-                return projectName;
-            }
-        }
-
-        if (path.contains(SLASH)) {
-            return StringUtils.substringAfterLast(path, SLASH);
-        }
-        else {
-            return path;
-        }
     }
 
     /**
@@ -222,15 +157,7 @@ public class ModuleDetector {
      */
     private String parseBuildXml(final String path) {
         try {
-            String fileName;
-            if (StringUtils.isBlank(path)) {
-                fileName = ANT_PROJECT;
-            }
-            else {
-                fileName = path + "/build.xml";
-            }
-            InputStream pom = factory.create(fileName);
-
+            InputStream pom = factory.create(path);
             Digester digester = new Digester();
             digester.setValidating(false);
             digester.setClassLoader(ModuleDetector.class.getClassLoader());
@@ -256,31 +183,22 @@ public class ModuleDetector {
      * Returns the project name stored in the POM.
      *
      * @param fileName
-     *            maven module root folder
+     *            Maven module root folder
      * @return the project name or an empty string if the name could not be
      *         resolved
      */
     private String parsePom(final String fileName) {
         try {
-            InputStream pom = null;
-            if (fileName.endsWith(MAVEN_POM)) {
-                pom = factory.create(fileName);
-            }
-            else if (fileName.contains(TARGET)) {
-                String module = StringUtils.substringBeforeLast(fileName, TARGET);
-                pom = factory.create(module + "/pom.xml");
-            }
-            if (pom != null) {
-                Digester digester = new Digester();
-                digester.setValidating(false);
-                digester.setClassLoader(ModuleDetector.class.getClassLoader());
+            InputStream pom = factory.create(fileName);
+            Digester digester = new Digester();
+            digester.setValidating(false);
+            digester.setClassLoader(ModuleDetector.class.getClassLoader());
 
-                digester.push(new StringBuffer());
-                digester.addCallMethod("project/name", "append", 0);
+            digester.push(new StringBuffer());
+            digester.addCallMethod("project/name", "append", 0);
 
-                StringBuffer result = (StringBuffer)digester.parse(pom);
-                return result.toString();
-            }
+            StringBuffer result = (StringBuffer)digester.parse(pom);
+            return result.toString();
         }
         catch (IOException exception) {
             // ignore
@@ -295,9 +213,12 @@ public class ModuleDetector {
      * An input stream factory based on a {@link FileInputStream}.
      */
     private static final class DefaultFileInputStreamFactory implements FileInputStreamFactory {
-        /** {@inheritDoc} */
         public InputStream create(final String fileName) throws FileNotFoundException {
             return new FileInputStream(new File(fileName));
+        }
+
+        public String[] find(final File root, final String pattern) {
+            return new FileFinder(PATTERN).find(root);
         }
     }
 }

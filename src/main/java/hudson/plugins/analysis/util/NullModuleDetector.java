@@ -8,15 +8,8 @@ import org.apache.commons.lang.StringUtils;
  * @author Ulli Hafner
  */
 public class NullModuleDetector extends ModuleDetector {
-    /** {@inheritDoc} */
     @Override
-    public String guessModuleName(final String fileName, final boolean isMavenBuild, final boolean isAntBuild) {
-        return StringUtils.EMPTY;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String guessModuleName(final String originalFileName) {
+    public String guessModuleName(final String fileName) {
         return StringUtils.EMPTY;
     }
 }
