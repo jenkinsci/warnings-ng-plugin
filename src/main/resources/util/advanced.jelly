@@ -8,6 +8,10 @@
 
     <u:failed/>
 
+    <f:entry title="${%Detect modules}" description="${%description.detectModules}">
+      <f:checkbox name="shouldDetectModules" checked="${instance.shouldDetectModules}"/>
+    </f:entry>
+
     <u:health id="${id}"/>
     <u:thresholds id="${id}"/>
     <u:defaultEncoding id="${id}"/>

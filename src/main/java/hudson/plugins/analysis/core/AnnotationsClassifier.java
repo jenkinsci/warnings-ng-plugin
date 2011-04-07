@@ -3,21 +3,16 @@ package hudson.plugins.analysis.core;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.lang.StringUtils;
-
 import hudson.FilePath.FileCallable;
 
 import hudson.plugins.analysis.util.ContextHashCode;
-import hudson.plugins.analysis.util.ModuleDetector;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 import hudson.remoting.VirtualChannel;
 
 /**
- * Scans the workspace for maven pom.xml files and ant build.xml files and maps
- * all annotations to corresponding modules. Additionally, the content of each
- * file with warnings is read and a hash code of the warning is created to
- * enable a more flexible new and fixed warnings detection.
+ * Reads the content of each file with warnings and creates a unique hash code
+ * of the warning to enable a more flexible new and fixed warnings detection.
  *
  * @author Ulli Hafner
  */
@@ -44,13 +39,9 @@ public class AnnotationsClassifier implements FileCallable<ParserResult> {
 
     /** {@inheritDoc} */
     public ParserResult invoke(final File workspace, final VirtualChannel channel) throws IOException {
-        ModuleDetector detector = new ModuleDetector(workspace);
         ContextHashCode contextHashCode = new ContextHashCode();
         for (FileAnnotation annotation : result.getAnnotations()) {
             try {
-                if (StringUtils.isBlank(annotation.getModuleName())) {
-                    annotation.setModuleName(detector.guessModuleName(annotation.getFileName()));
-                }
                 annotation.setContextHashCode(contextHashCode.create(
                         annotation.getFileName(), annotation.getPrimaryLineNumber(), defaultEncoding));
             }
@@ -60,5 +51,4 @@ public class AnnotationsClassifier implements FileCallable<ParserResult> {
         }
         return result;
     }
-
 }

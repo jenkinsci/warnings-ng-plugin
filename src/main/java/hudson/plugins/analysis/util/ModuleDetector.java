@@ -292,7 +292,7 @@ public class ModuleDetector {
     }
 
     /**
-     * A input stream factory based on a {@link FileInputStream}.
+     * An input stream factory based on a {@link FileInputStream}.
      */
     private static final class DefaultFileInputStreamFactory implements FileInputStreamFactory {
         /** {@inheritDoc} */

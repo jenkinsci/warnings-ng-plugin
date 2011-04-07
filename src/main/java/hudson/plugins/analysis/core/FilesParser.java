@@ -15,6 +15,7 @@ import hudson.FilePath.FileCallable;
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.FileFinder;
 import hudson.plugins.analysis.util.ModuleDetector;
+import hudson.plugins.analysis.util.NullModuleDetector;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
@@ -42,6 +43,8 @@ public class FilesParser implements FileCallable<ParserResult> {
     private final boolean isAntBuild;
     /** The predefined module name, might be empty. */
     private final String moduleName;
+    /** Determines whether module names should be derived from Maven or Ant. */
+    private boolean shouldDetectModules = true;
 
     /**
      * Creates a new instance of {@link FilesParser}.
@@ -102,6 +105,23 @@ public class FilesParser implements FileCallable<ParserResult> {
     }
 
     /**
+     * Creates a new instance of {@link FilesParser}. Assumes that this is a
+     * Maven build with the specified module name.
+     *
+     * @param logger
+     *            the logger
+     * @param filePattern
+     *            ant file-set pattern to scan for files to parse
+     * @param parser
+     *            the parser to apply on the found files
+     */
+    public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser) {
+        this(logger, filePattern, parser, true, false, StringUtils.EMPTY);
+
+        shouldDetectModules = false;
+    }
+
+    /**
      * Logs the specified message.
      *
      * @param message the message
@@ -147,18 +167,12 @@ public class FilesParser implements FileCallable<ParserResult> {
      *             if the user cancels the parsing
      */
     private void parseFiles(final File workspace, final String[] fileNames, final ParserResult result) throws InterruptedException {
-        ModuleDetector detector = new ModuleDetector();
+        ModuleDetector detector = createModuleDetector();
 
         for (String fileName : fileNames) {
             File file = new File(workspace, fileName);
 
-            String module;
-            if (StringUtils.isBlank(moduleName)) {
-                module = detector.guessModuleName(file.getAbsolutePath(), isMavenBuild, isAntBuild);
-            }
-            else {
-                module = moduleName;
-            }
+            String module = getModuleName(detector, file);
 
             if (!file.canRead()) {
                 String message = Messages.FilesParser_Error_NoPermission(module, file);
@@ -177,6 +191,26 @@ public class FilesParser implements FileCallable<ParserResult> {
 
             result.addModule(module);
         }
+    }
+
+    private ModuleDetector createModuleDetector() {
+        if (shouldDetectModules) {
+            return new ModuleDetector();
+        }
+        else {
+            return new NullModuleDetector();
+        }
+    }
+
+    private String getModuleName(final ModuleDetector detector, final File file) {
+        String module;
+        if (StringUtils.isBlank(moduleName)) {
+            module = detector.guessModuleName(file.getAbsolutePath(), isMavenBuild, isAntBuild);
+        }
+        else {
+            module = moduleName;
+        }
+        return module;
     }
 
     /**

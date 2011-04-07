@@ -89,6 +89,13 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
     private Thresholds thresholds = new Thresholds();
 
     /**
+     * Determines whether module names should be derived from Maven POM or Ant build files.
+     *
+     * @since 1.19
+     */
+    private final boolean shouldDetectModules;
+
+    /**
      * Creates a new instance of {@link HealthAwarePublisher}.
      *
      * @param healthy
@@ -140,6 +147,8 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      *            annotation threshold
      * @param canRunOnFailed
      *            determines whether the plug-in can run for failed builds, too
+     * @param shouldDetectModules
+     *            determines whether module names should be derived from Maven POM or Ant build files
      * @param pluginName
      *            the name of the plug-in
      */
@@ -151,7 +160,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,
             final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
             final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
-            final boolean canRunOnFailed, final String pluginName) {
+            final boolean canRunOnFailed, final boolean shouldDetectModules, final String pluginName) {
         super();
         this.healthy = healthy;
         this.unHealthy = unHealthy;
@@ -178,7 +187,25 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         thresholds.failedNewLow = failedNewLow;
 
         this.canRunOnFailed = canRunOnFailed;
+        this.shouldDetectModules = shouldDetectModules;
         this.pluginName = "[" + pluginName + "] ";
+    }
+
+    @Deprecated
+    public HealthAwarePublisher(final String healthy, final String unHealthy, final String thresholdLimit,
+            final String defaultEncoding, final boolean useDeltaValues,
+            final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
+            final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,
+            final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
+            final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
+            final boolean canRunOnFailed, final String pluginName) {
+        this(healthy, unHealthy, thresholdLimit,
+                defaultEncoding, useDeltaValues,
+                unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
+                unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow,
+                failedTotalAll, failedTotalHigh, failedTotalNormal, failedTotalLow,
+                failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
+                canRunOnFailed, false, pluginName);
     }
 
     /**
@@ -237,6 +264,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         this.defaultEncoding = defaultEncoding;
         this.useDeltaValues = useDeltaValues;
         this.canRunOnFailed = canRunOnFailed;
+        shouldDetectModules = false;
         this.pluginName = "[" + pluginName + "] ";
     }
 
@@ -391,6 +419,24 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      */
     public boolean getCanRunOnFailed() {
         return canRunOnFailed;
+    }
+
+    /**
+     * Returns whether module names should be derived from Maven POM or Ant build files.
+     *
+     * @return the can run on failed
+     */
+    public boolean getShouldDetectModules() {
+        return shouldDetectModules;
+    }
+
+    /**
+     * Returns whether module names should be derived from Maven POM or Ant build files.
+     *
+     * @return the can run on failed
+     */
+    public boolean shouldDetectModules() {
+        return shouldDetectModules;
     }
 
     /**
