@@ -228,7 +228,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
             if (shouldDetectModules()) {
                 parser = new FilesParser(logger, getPattern(), new FileWarningsParser(validParsers,
                         getDefaultEncoding(), getIncludePattern(), getExcludePattern()),
-                        isMavenBuild(build), isAntBuild(build));
+                        isMavenBuild(build));
             }
             else {
                 parser = new FilesParser(logger, getPattern(), new FileWarningsParser(validParsers,
