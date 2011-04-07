@@ -13,6 +13,7 @@ import hudson.plugins.analysis.core.FilesParser;
 import hudson.plugins.analysis.core.HealthAwarePublisher;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.ModuleDetector;
+import hudson.plugins.analysis.util.NullModuleDetector;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.warnings.parser.FileWarningsParser;
@@ -104,6 +105,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *            annotation threshold
      * @param canRunOnFailed
      *            determines whether the plug-in can run for failed builds, too
+     * @param shouldDetectModules
+     *            determines whether module names should be derived from Maven POM or Ant build files
      * @param canScanConsole
      *            Determines whether the console should be scanned.
      * @param pattern
@@ -122,14 +125,14 @@ public class WarningsPublisher extends HealthAwarePublisher {
             final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,
             final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
             final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
-            final boolean canRunOnFailed,
+            final boolean canRunOnFailed, final boolean shouldDetectModules,
             final boolean canScanConsole, final String pattern, final String includePattern, final String excludePattern) {
         super(healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues,
                 unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
                 unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow,
                 failedTotalAll, failedTotalHigh, failedTotalNormal, failedTotalLow,
                 failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
-                canRunOnFailed, "WARNINGS");
+                canRunOnFailed, shouldDetectModules, "WARNINGS");
         this.pattern = pattern;
         ignoreConsole = !canScanConsole;
         this.includePattern = StringUtils.stripToNull(includePattern);
@@ -221,8 +224,16 @@ public class WarningsPublisher extends HealthAwarePublisher {
         ParserResult project;
         if (StringUtils.isNotBlank(getPattern())) {
             logger.log("Parsing warnings in files: " + getPattern());
-            FilesParser parser = new FilesParser(logger, getPattern(),
-                    new FileWarningsParser(validParsers, getDefaultEncoding(), getIncludePattern(), getExcludePattern()), isMavenBuild(build), isAntBuild(build));
+            FilesParser parser;
+            if (shouldDetectModules()) {
+                parser = new FilesParser(logger, getPattern(), new FileWarningsParser(validParsers,
+                        getDefaultEncoding(), getIncludePattern(), getExcludePattern()),
+                        isMavenBuild(build), isAntBuild(build));
+            }
+            else {
+                parser = new FilesParser(logger, getPattern(), new FileWarningsParser(validParsers,
+                        getDefaultEncoding(), getIncludePattern(), getExcludePattern()));
+            }
             project = build.getWorkspace().act(parser);
         }
         else {
@@ -236,7 +247,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
             Collection<FileAnnotation> warnings = registry.parse(logFile, logger);
             if (!build.getWorkspace().isRemote()) {
                 String workspace = build.getWorkspace().getRemote();
-                ModuleDetector detector = new ModuleDetector(new File(workspace));
+                ModuleDetector detector = createModuleDetector(workspace);
                 for (FileAnnotation annotation : warnings) {
                     String module = detector.guessModuleName(annotation.getFileName());
                     annotation.setModuleName(module);
@@ -254,6 +265,15 @@ public class WarningsPublisher extends HealthAwarePublisher {
         build.getActions().add(new WarningsResultAction(build, this, result));
 
         return result;
+    }
+
+    private ModuleDetector createModuleDetector(final String workspace) {
+        if (shouldDetectModules()) {
+            return new ModuleDetector(new File(workspace));
+        }
+        else {
+            return new NullModuleDetector();
+        }
     }
 
     /** {@inheritDoc} */
