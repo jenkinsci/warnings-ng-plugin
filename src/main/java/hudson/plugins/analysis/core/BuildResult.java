@@ -991,6 +991,15 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
+     * Returns the {@link Result} of the plug-in.
+     *
+     * @return the plugin result
+     */
+    public Result getPluginResult() {
+        return pluginResult;
+    }
+
+    /**
      * Returns whether the successful state has been touched.
      *
      * @return <code>true</code> if the successful state has been touched,
