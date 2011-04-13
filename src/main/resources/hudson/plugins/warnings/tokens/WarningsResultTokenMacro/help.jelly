@@ -1,0 +1,8 @@
+<j:jelly xmlns:j="jelly:core">
+
+  <dt>$${WARNINGS_RESULT}</dt>
+  <dd>
+    Expands to the build result of the warnings plug-in.
+  </dd>
+
+</j:jelly>

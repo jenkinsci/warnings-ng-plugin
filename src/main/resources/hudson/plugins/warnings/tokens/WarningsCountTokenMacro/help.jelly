@@ -1,0 +1,8 @@
+<j:jelly xmlns:j="jelly:core">
+
+  <dt>$${WARNINGS_COUNT}</dt>
+  <dd>
+    Expands to the total number of compiler warnings in a build.
+  </dd>
+
+</j:jelly>
