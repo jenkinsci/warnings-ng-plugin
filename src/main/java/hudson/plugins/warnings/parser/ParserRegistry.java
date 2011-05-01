@@ -1,6 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.ExtensionList;
 import hudson.model.Hudson;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.PluginLogger;
@@ -48,8 +47,12 @@ public class ParserRegistry {
      *
      * @return the extension list
      */
-    private static ExtensionList<WarningsParser> all() {
-        return Hudson.getInstance().getExtensionList(WarningsParser.class);
+    private static List<WarningsParser> all() {
+        Hudson instance = Hudson.getInstance();
+        if (instance == null) {
+            return Lists.newArrayList();
+        }
+        return instance.getExtensionList(WarningsParser.class);
     }
 
     /**
