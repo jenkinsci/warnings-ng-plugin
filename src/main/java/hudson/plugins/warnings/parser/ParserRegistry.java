@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.ExtensionList;
 import hudson.model.Hudson;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.PluginLogger;
@@ -37,12 +38,19 @@ import com.google.common.collect.Sets;
  */
 // CHECKSTYLE:COUPLING-OFF
 public class ParserRegistry {
-    /** The actual parsers to use when scanning a file. */
     private final List<WarningsParser> parsers;
-    /** The default charset to be used when reading and parsing files. */
     private final Charset defaultCharset;
     private final Set<Pattern> includePatterns = Sets.newHashSet();
     private final Set<Pattern> excludePatterns = Sets.newHashSet();
+
+    /**
+     * Returns all warning parsers registered by the extension point.
+     *
+     * @return the extension list
+     */
+    private static ExtensionList<WarningsParser> all() {
+        return Hudson.getInstance().getExtensionList(WarningsParser.class);
+    }
 
     /**
      * Returns all available parser names.
@@ -143,6 +151,7 @@ public class ParserRegistry {
 
         Iterable<GroovyParser> parserDescriptions = getDynamicParserDescriptions();
         parsers.addAll(getDynamicParsers(parserDescriptions));
+        parsers.addAll(all());
 
         return ImmutableList.copyOf(parsers);
     }
@@ -354,7 +363,7 @@ public class ParserRegistry {
      *
      * @author Ulli Hafner
      */
-    // TODO: move to analysis-core
+    // TODO: Use class from analysis core
     public static final class NullLogger extends PluginLogger {
         /**
          * Creates a new instance of {@link NullLogger}.
