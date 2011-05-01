@@ -2,6 +2,7 @@ package hudson.plugins.warnings.parser;
 
 import hudson.model.Hudson;
 import hudson.plugins.analysis.util.EncodingValidator;
+import hudson.plugins.analysis.util.NullLogger;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.warnings.GroovyParser;
@@ -359,39 +360,6 @@ public class ParserRegistry {
      */
     protected Reader createReader(final InputStream inputStream) {
         return new InputStreamReader(inputStream, defaultCharset);
-    }
-
-    /**
-     * Null logger.
-     *
-     * @author Ulli Hafner
-     */
-    // TODO: Use class from analysis core
-    public static final class NullLogger extends PluginLogger {
-        /**
-         * Creates a new instance of {@link NullLogger}.
-         */
-        public NullLogger() {
-            super(null, null);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void log(final String message) {
-            // do not log
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void log(final Throwable throwable) {
-            // do not log
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void printStackTrace(final Throwable throwable) {
-            // do not log
-        }
     }
 }
 
