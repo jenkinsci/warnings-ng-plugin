@@ -16,8 +16,10 @@ import hudson.maven.MavenModule;
 
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
+import hudson.model.Result;
 import hudson.model.AbstractBuild;
 
+import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
 
@@ -179,7 +181,6 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * @param builds
      *            the builds for a module
      */
-    // FIXME: this method is always invoked with all available builds, check this for hierarchies
     @java.lang.SuppressWarnings("unchecked")
     protected void addModule(final ParserResult aggregatedResult, final List<MavenBuild> builds) {
         MavenBuild mavenBuild = builds.get(0);
@@ -211,13 +212,13 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      *            the build result
      */
     protected void updateBuildHealth(final MavenBuild build, final BuildResult buildResult) {
-        // FIXME: See http://issues.hudson-ci.org/browse/HUDSON-4912
-//        PluginLogger logger = new PluginLogger(System.out, "[" + getDisplayName() + "] ");
-//        Result hudsonResult = new BuildResultEvaluator().evaluateBuildResult(
-//                logger, getHealthDescriptor(), buildResult.getAnnotations(), buildResult.getNewWarnings());
-//        if (hudsonResult != Result.SUCCESS) {
-//            build.setResult(hudsonResult);
-//        }
+        PluginLogger logger = new PluginLogger(System.out, "[" + getDisplayName() + "] ");
+        Result hudsonResult = new BuildResultEvaluator().evaluateBuildResult(
+                logger, getHealthDescriptor().getThresholds(),
+                buildResult.getAnnotations(), buildResult.getNewWarnings());
+        if (hudsonResult != Result.SUCCESS) {
+            build.getParentBuild().setResult(hudsonResult);
+        }
     }
 
     /** {@inheritDoc} */

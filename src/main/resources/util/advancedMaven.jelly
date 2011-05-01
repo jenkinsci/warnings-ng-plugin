@@ -9,6 +9,7 @@
     <u:failed/>
 
     <u:health id="${id}"/>
+    <u:thresholds id="${id}"/>
     <u:trend id="${id}"/>
 
 </j:jelly>
