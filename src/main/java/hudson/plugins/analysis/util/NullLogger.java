@@ -10,7 +10,7 @@ public final class NullLogger extends PluginLogger {
      * Creates a new instance of {@link NullLogger}.
      */
     public NullLogger() {
-        super(null, null);
+        super("null");
     }
 
     /** {@inheritDoc} */
@@ -28,6 +28,12 @@ public final class NullLogger extends PluginLogger {
     /** {@inheritDoc} */
     @Override
     public void printStackTrace(final Throwable throwable) {
+        // do not log
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void logLines(final String lines) {
         // do not log
     }
 }

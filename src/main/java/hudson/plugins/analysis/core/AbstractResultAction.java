@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerProxy;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
@@ -16,13 +17,16 @@ import hudson.maven.MavenModule;
 
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
+import hudson.model.Result;
 import hudson.model.AbstractBuild;
 
+import hudson.plugins.analysis.util.PluginLogger;
+import hudson.plugins.analysis.util.StringPluginLogger;
 import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
 
 /**
- * Controls the live cycle of Hudson results. This action persists the results
+ * Controls the live cycle of the results in a job. This action persists the results
  * of a build and displays them on the build page. The actual visualization of
  * the results is defined in the matching <code>summary.jelly</code> file.
  * <p>
@@ -41,6 +45,12 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     private final AbstractHealthDescriptor healthDescriptor;
     /** The actual result of this action. */
     private T result;
+
+    private transient StringPluginLogger logger = createLogger();
+
+    private StringPluginLogger createLogger() {
+        return new StringPluginLogger("[" + StringUtils.upperCase(getDisplayName()) + "] "); //NOCHECKSTYLE
+    }
 
     /**
      * Creates a new instance of <code>AbstractResultAction</code>.
@@ -145,23 +155,6 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     }
 
     /**
-     * Aggregates the results of the specified maven module builds.
-     *
-     * @param moduleBuilds
-     *            the module builds to aggregate
-     * @return the aggregated result
-     */
-    protected ParserResult createAggregatedResult(final Map<MavenModule, List<MavenBuild>> moduleBuilds) {
-        ParserResult project = createResult();
-        for (List<MavenBuild> builds : moduleBuilds.values()) {
-            if (!builds.isEmpty()) {
-                addModule(project, builds);
-            }
-        }
-        return project;
-    }
-
-    /**
      * Factory method to create the result of this action.
      *
      * @return the result of this action
@@ -179,7 +172,6 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * @param builds
      *            the builds for a module
      */
-    // FIXME: this method is always invoked with all available builds, check this for hierarchies
     @java.lang.SuppressWarnings("unchecked")
     protected void addModule(final ParserResult aggregatedResult, final List<MavenBuild> builds) {
         MavenBuild mavenBuild = builds.get(0);
@@ -199,25 +191,6 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
                 // ignore, user canceled the operation
             }
         }
-    }
-
-    /**
-     * Updates the build status if the number of annotations exceeds one of the
-     * thresholds.
-     *
-     * @param build
-     *            the build to change the status from
-     * @param buildResult
-     *            the build result
-     */
-    protected void updateBuildHealth(final MavenBuild build, final BuildResult buildResult) {
-        // FIXME: See http://issues.hudson-ci.org/browse/HUDSON-4912
-//        PluginLogger logger = new PluginLogger(System.out, "[" + getDisplayName() + "] ");
-//        Result hudsonResult = new BuildResultEvaluator().evaluateBuildResult(
-//                logger, getHealthDescriptor(), buildResult.getAnnotations(), buildResult.getNewWarnings());
-//        if (hudsonResult != Result.SUCCESS) {
-//            build.setResult(hudsonResult);
-//        }
     }
 
     /** {@inheritDoc} */
@@ -249,6 +222,76 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     /** {@inheritDoc} */
     public boolean isSuccessful() {
         return getResult().isSuccessful();
+    }
+
+    /**
+     * Aggregates the results of the specified maven module builds.
+     *
+     * @param moduleBuilds
+     *            the module builds to aggregate
+     * @return the aggregated result
+     * @deprecated not used anymore, see MavenPmdResultAction as an example
+     */
+    @Deprecated
+    protected ParserResult createAggregatedResult(final Map<MavenModule, List<MavenBuild>> moduleBuilds) {
+        ParserResult project = createResult();
+        for (List<MavenBuild> builds : moduleBuilds.values()) {
+            if (!builds.isEmpty()) {
+                addModule(project, builds);
+            }
+        }
+        return project;
+    }
+
+    /**
+     * Updates the build status if the number of annotations exceeds one of the
+     * thresholds.
+     *
+     * @param build
+     *            the build to change the status from
+     * @param buildResult
+     *            the build result
+     * @deprecated not used anymore, see MavenPmdResultAction as an example
+     */
+    @Deprecated
+    protected void updateBuildHealth(final MavenBuild build, final BuildResult buildResult) {
+        PluginLogger logger = new PluginLogger(System.out, "[" + getDisplayName() + "] "); // NOCHECKSTYLE
+        Result hudsonResult = new BuildResultEvaluator().evaluateBuildResult(
+                logger, getHealthDescriptor().getThresholds(),
+                buildResult.getAnnotations(), buildResult.getNewWarnings());
+        if (hudsonResult != Result.SUCCESS) {
+            build.getParentBuild().setResult(hudsonResult);
+        }
+    }
+
+    /**
+     * Returns the logger.
+     *
+     * @return the logger
+     */
+    protected PluginLogger getLogger() {
+        if (logger == null) {
+            logger = createLogger();
+        }
+        return logger;
+    }
+
+    /**
+     * Returns all logging statements of this action that couldn't be printed so far.
+     *
+     * @return the logging statements
+     */
+    public String getLog() {
+        return getLogger().toString();
+    }
+
+    /**
+     * Logs the specified message.
+     *
+     * @param message the message
+     */
+    protected void log(final String message) {
+        getLogger().log(message);
     }
 
     /** Backward compatibility. @deprecated */

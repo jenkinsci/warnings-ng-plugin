@@ -309,19 +309,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             BuildResult result = perform(build, logger);
 
             if (new NullHealthDescriptor(this).isThresholdEnabled()) {
-                BuildResultEvaluator resultEvaluator = new BuildResultEvaluator();
-                Result buildResult;
-                if (useDeltaValues) {
-                    logger.log("Using delta values to compute new warnings");
-                    buildResult = resultEvaluator.evaluateBuildResult(logger, getThresholds(), result.getAnnotations(),
-                            result.getDelta(), result.getHighDelta(), result.getNormalDelta(), result.getLowDelta());
-                }
-                else {
-                    logger.log("Using set difference to compute new warnings");
-                    buildResult = resultEvaluator.evaluateBuildResult(logger, getThresholds(),
-                            result.getAnnotations(), result.getNewWarnings());
-                }
-                result.setResult(buildResult);
+                result.evaluateStatus(getThresholds(), useDeltaValues, logger);
             }
 
             copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), result.getAnnotations());

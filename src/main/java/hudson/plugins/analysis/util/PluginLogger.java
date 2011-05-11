@@ -13,7 +13,7 @@ public class PluginLogger {
     /** The plug-in name. */
     private final String pluginName;
     /** The actual print stream to log to. */
-    private final PrintStream logger;
+    private PrintStream logger;
 
     /**
      * Creates a new instance of {@link PluginLogger}.
@@ -26,6 +26,26 @@ public class PluginLogger {
     public PluginLogger(final PrintStream logger, final String pluginName) {
         this.logger = logger;
         this.pluginName = pluginName;
+    }
+
+    /**
+     * Creates a new instance of {@link PluginLogger}. Note that the logger
+     * needs to be set afterwards to avoid throwing a {@link NullPointerException}.
+     *
+     * @param pluginName
+     *            the plug-in name
+     */
+    protected PluginLogger(final String pluginName) {
+        this.pluginName = pluginName;
+    }
+
+    /**
+     * Sets the logger to the specified value.
+     *
+     * @param logger the value to set
+     */
+    protected void setLogger(final PrintStream logger) {
+        this.logger = logger;
     }
 
     /**
@@ -55,6 +75,15 @@ public class PluginLogger {
      */
     public void printStackTrace(final Throwable throwable) {
         throwable.printStackTrace(logger);
+    }
+
+    /**
+     * Logs several lines that already contain a prefix.
+     *
+     * @param lines the lines to log
+     */
+    public void logLines(final String lines) {
+        logger.println(lines);
     }
 }
 

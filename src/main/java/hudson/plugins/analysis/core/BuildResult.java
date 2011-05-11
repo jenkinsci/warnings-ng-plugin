@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.kohsuke.stapler.StaplerRequest;
@@ -31,6 +32,7 @@ import hudson.model.Api;
 import hudson.model.Hudson;
 
 import hudson.plugins.analysis.Messages;
+import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.AnnotationProvider;
 import hudson.plugins.analysis.util.model.AnnotationStream;
@@ -174,6 +176,9 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @since 1.4
      */
     private boolean isSuccessfulStateTouched;
+
+    private transient boolean useDeltaValues;
+    private transient Thresholds thresholds = new Thresholds();
 
     /**
      * Creates a new instance of {@link BuildResult}.
@@ -404,6 +409,27 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      */
     public String getDefaultEncoding() {
         return defaultEncoding;
+    }
+
+    /**
+     * Returns the thresholds used to compute the build health.
+     *
+     * @return the thresholds
+     */
+    public Thresholds getThresholds() {
+        return (Thresholds)ObjectUtils.defaultIfNull(thresholds, new Thresholds());
+    }
+
+    /**
+     * Returns the whether delta values should be used to compute the new
+     * warnings.
+     *
+     * @return <code>true</code> if the absolute annotations delta should be
+     *         used, <code>false</code> if the actual annotations set difference
+     *         should be used to evaluate the build stability.
+     */
+    public boolean canUseDeltaValues() {
+        return useDeltaValues;
     }
 
     /**
@@ -945,11 +971,50 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
-     * Sets the Hudson build result for the associated plug-in build result.
+     * Updates the build status, i.e. sets this plug-in result status field to
+     * the corresponding {@link Result}. Additionally, the {@link Result} of the
+     * build that owns this instance of {@link BuildResult} will be also
+     * changed.
      *
-     * @param result the Hudson build result
+     * @param thresholds
+     *            the failure thresholds
+     * @param useDeltaValues
+     *            the use delta values when computing the differences
+     * @param logger
+     *            the logger
      */
+    // CHECKSTYLE:OFF
+    public void evaluateStatus(final Thresholds thresholds, final boolean useDeltaValues, final PluginLogger logger) {
+    // CHECKSTYLE:ON
+        this.thresholds = thresholds;
+        this.useDeltaValues = useDeltaValues;
+
+        BuildResultEvaluator resultEvaluator = new BuildResultEvaluator();
+        Result buildResult;
+        if (useDeltaValues) {
+            logger.log("Using delta values to compute new warnings");
+            buildResult = resultEvaluator.evaluateBuildResult(logger, thresholds, getAnnotations(),
+                    getDelta(), getHighDelta(), getNormalDelta(), getLowDelta());
+        }
+        else {
+            logger.log("Using set difference to compute new warnings");
+            buildResult = resultEvaluator.evaluateBuildResult(logger, thresholds,
+                    getAnnotations(), getNewWarnings());
+        }
+        saveResult(buildResult);
+    }
+
+    // CHECKSTYLE:OFF
+    /**
+     * @deprecated use {@link #evaluateStatus(Thresholds, boolean, PluginLogger)}
+     */
+    @Deprecated
     public void setResult(final Result result) {
+        saveResult(result);
+    }
+    // CHECKSTYLE:ON
+
+    private void saveResult(final Result result) {
         isSuccessfulStateTouched = true;
         pluginResult = result;
         owner.setResult(result);
@@ -976,7 +1041,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
                 }
                 if (!isSuccessfulHighscore) {
                     successfulHighScoreGap = previous.getSuccessfulHighScore()
-                    - (owner.getTimestamp().getTimeInMillis() - successfulSinceDate);
+                            - (owner.getTimestamp().getTimeInMillis() - successfulSinceDate);
                 }
             }
             else {

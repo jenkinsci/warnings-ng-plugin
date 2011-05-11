@@ -2,6 +2,8 @@ package hudson.plugins.analysis.core;
 
 import static hudson.plugins.analysis.util.ThresholdValidator.*;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -12,7 +14,7 @@ import org.apache.commons.lang.StringUtils;
 // CHECKSTYLE:OFF
 @edu.umd.cs.findbugs.annotations.SuppressWarnings("")
 @SuppressWarnings("all")
-public class Thresholds {
+public class Thresholds implements Serializable {
     public String unstableTotalAll = StringUtils.EMPTY;
     public String unstableTotalHigh = StringUtils.EMPTY;
     public String unstableTotalNormal = StringUtils.EMPTY;
