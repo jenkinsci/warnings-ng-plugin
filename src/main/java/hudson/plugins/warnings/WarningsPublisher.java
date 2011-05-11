@@ -221,6 +221,9 @@ public class WarningsPublisher extends HealthAwarePublisher {
         File logFile = build.getLogFile();
 
         Set<String> validParsers = Sets.newHashSet(getParserNames());
+        if (validParsers.isEmpty()) {
+            logger.log("Warning: List of parsers is empty. It is recommended to select at least one parser.");
+        }
         ParserResult project;
         if (StringUtils.isNotBlank(getPattern())) {
             logger.log("Parsing warnings in files: " + getPattern());
