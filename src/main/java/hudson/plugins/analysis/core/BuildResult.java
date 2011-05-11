@@ -57,9 +57,9 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     private static final long serialVersionUID = 1110545450292087475L;
     private static final Logger LOGGER = Logger.getLogger(BuildResult.class.getName());
 
-    private static final String UNSTABLE = "yellow.gif";
-    private static final String FAILED = "red.gif";
-    private static final String SUCCESS = "blue.gif";
+    private static final String UNSTABLE = "yellow.png";
+    private static final String FAILED = "red.png";
+    private static final String SUCCESS = "blue.png";
 
     private Object projectLock = new Object();
 
