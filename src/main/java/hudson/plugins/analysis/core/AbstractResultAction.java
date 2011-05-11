@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerProxy;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
@@ -21,7 +20,6 @@ import hudson.model.Result;
 import hudson.model.AbstractBuild;
 
 import hudson.plugins.analysis.util.PluginLogger;
-import hudson.plugins.analysis.util.StringPluginLogger;
 import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
 
@@ -45,12 +43,6 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     private final AbstractHealthDescriptor healthDescriptor;
     /** The actual result of this action. */
     private T result;
-
-    private transient StringPluginLogger logger = createLogger();
-
-    private StringPluginLogger createLogger() {
-        return new StringPluginLogger("[" + StringUtils.upperCase(getDisplayName()) + "] "); //NOCHECKSTYLE
-    }
 
     /**
      * Creates a new instance of <code>AbstractResultAction</code>.
@@ -262,38 +254,6 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         if (hudsonResult != Result.SUCCESS) {
             build.getParentBuild().setResult(hudsonResult);
         }
-    }
-
-    /**
-     * Returns the logger.
-     *
-     * @return the logger
-     */
-    protected PluginLogger getLogger() {
-        if (logger == null) {
-            logger = createLogger();
-        }
-        return logger;
-    }
-
-    /**
-     * Returns all logging statements of this action that couldn't be printed so far.
-     *
-     * @return the logging statements
-     */
-    public String getLog() {
-        String message = getLogger().toString();
-        logger = createLogger();
-        return message;
-    }
-
-    /**
-     * Logs the specified message.
-     *
-     * @param message the message
-     */
-    protected void log(final String message) {
-        getLogger().log(message);
     }
 
     /** Backward compatibility. @deprecated */

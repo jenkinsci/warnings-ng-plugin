@@ -36,7 +36,7 @@ import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStep;
 
 /**
- * A base class for maven reporters with the following two characteristics:
+ * A base class for Maven reporters with the following two characteristics:
  * <ul>
  * <li>It provides a unstable threshold, that could be enabled and set in the
  * configuration screen. If the number of annotations in a build exceeds this
@@ -276,7 +276,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
     @Override
     public boolean end(final MavenBuild build, final Launcher launcher, final BuildListener listener) {
         MavenModuleSetBuild moduleSetBuild = build.getParentBuild();
-        AbstractResultAction<T> action = moduleSetBuild.getAction(getResultActionClass());
+        MavenResultAction<T> action = moduleSetBuild.getAction(getResultActionClass());
         if (action != null) {
             listener.getLogger().append(action.getLog());
         }
@@ -460,7 +460,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      *
      * @return the type of the result action
      */
-    protected abstract Class<? extends AbstractResultAction<T>> getResultActionClass();
+    protected abstract Class<? extends MavenResultAction<T>> getResultActionClass();
 
     /**
      * Returns the path to the target folder.
