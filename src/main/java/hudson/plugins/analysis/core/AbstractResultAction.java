@@ -282,7 +282,9 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * @return the logging statements
      */
     public String getLog() {
-        return getLogger().toString();
+        String message = getLogger().toString();
+        logger = createLogger();
+        return message;
     }
 
     /**
