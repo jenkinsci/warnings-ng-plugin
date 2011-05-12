@@ -33,12 +33,9 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
     /** Reuse all the functionality of the action for freestyle jobs. */
     private final AbstractResultAction<T> delegate;
 
-    private transient StringPluginLogger logger = createLogger();
+    private transient StringPluginLogger logger;
     private transient Set<MavenModule> modules = Sets.newHashSet();
-
-    private StringPluginLogger createLogger() {
-        return new StringPluginLogger("[" + StringUtils.upperCase(getDisplayName()) + "] "); //NOCHECKSTYLE
-    }
+    private transient String pluginName;
 
     /**
      * Creates a new instance of {@link MavenResultAction}.
@@ -49,9 +46,10 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
      */
-    public MavenResultAction(final AbstractResultAction<T> delegate, final String defaultEncoding) {
+    public MavenResultAction(final AbstractResultAction<T> delegate, final String defaultEncoding, final String pluginName) {
         this.defaultEncoding = defaultEncoding;
         this.delegate = delegate;
+        this.pluginName = pluginName;
     }
 
     /** {@inheritDoc} */
@@ -115,6 +113,10 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
             logger = createLogger();
         }
         return logger;
+    }
+
+    private StringPluginLogger createLogger() {
+        return new StringPluginLogger("[" + StringUtils.defaultString(pluginName, "ANALYSIS") + "] "); //NOCHECKSTYLE
     }
 
     /**
