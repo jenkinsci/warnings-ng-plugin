@@ -155,36 +155,6 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         return new ParserResult();
     }
 
-    /**
-     * Adds a new module to the specified project. The new module is obtained
-     * from the specified list of builds.
-     *
-     * @param aggregatedResult
-     *            the result to add the module to
-     * @param builds
-     *            the builds for a module
-     */
-    @java.lang.SuppressWarnings("unchecked")
-    protected void addModule(final ParserResult aggregatedResult, final List<MavenBuild> builds) {
-        MavenBuild mavenBuild = builds.get(0);
-        AbstractResultAction<T> action = mavenBuild.getAction(getClass());
-        if (action != null) {
-            aggregatedResult.addAnnotations(action.getResult().getAnnotations());
-            aggregatedResult.addModules(action.getResult().getModules());
-            aggregatedResult.addErrors(action.getResult().getErrors());
-            FilePath filePath = new FilePath(new File(mavenBuild.getRootDir(), AbstractAnnotation.WORKSPACE_FILES));
-            try {
-                filePath.copyRecursiveTo("*.tmp", new FilePath(new File(getOwner().getRootDir(), AbstractAnnotation.WORKSPACE_FILES)));
-            }
-            catch (IOException exception) {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Can't copy workspace files: ", exception);
-            }
-            catch (InterruptedException exception) {
-                // ignore, user canceled the operation
-            }
-        }
-    }
-
     /** {@inheritDoc} */
     public String getTooltip(final int numberOfItems) {
         if (numberOfItems == 1) {
@@ -222,7 +192,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * @param moduleBuilds
      *            the module builds to aggregate
      * @return the aggregated result
-     * @deprecated not used anymore, see MavenPmdResultAction as an example
+     * @deprecated replaced by {@link MavenResultAction}
      */
     @Deprecated
     protected ParserResult createAggregatedResult(final Map<MavenModule, List<MavenBuild>> moduleBuilds) {
@@ -243,7 +213,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      *            the build to change the status from
      * @param buildResult
      *            the build result
-     * @deprecated not used anymore, see MavenPmdResultAction as an example
+     * @deprecated replaced by {@link MavenResultAction}
      */
     @Deprecated
     protected void updateBuildHealth(final MavenBuild build, final BuildResult buildResult) {
@@ -253,6 +223,38 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
                 buildResult.getAnnotations(), buildResult.getNewWarnings());
         if (hudsonResult != Result.SUCCESS) {
             build.getParentBuild().setResult(hudsonResult);
+        }
+    }
+
+    /**
+     * Adds a new module to the specified project. The new module is obtained
+     * from the specified list of builds.
+     *
+     * @param aggregatedResult
+     *            the result to add the module to
+     * @param builds
+     *            the builds for a module
+     * @deprecated replaced by {@link MavenResultAction}
+     */
+    @Deprecated
+    @java.lang.SuppressWarnings("unchecked")
+    protected void addModule(final ParserResult aggregatedResult, final List<MavenBuild> builds) {
+        MavenBuild mavenBuild = builds.get(0);
+        AbstractResultAction<T> action = mavenBuild.getAction(getClass());
+        if (action != null) {
+            aggregatedResult.addAnnotations(action.getResult().getAnnotations());
+            aggregatedResult.addModules(action.getResult().getModules());
+            aggregatedResult.addErrors(action.getResult().getErrors());
+            FilePath filePath = new FilePath(new File(mavenBuild.getRootDir(), AbstractAnnotation.WORKSPACE_FILES));
+            try {
+                filePath.copyRecursiveTo("*.tmp", new FilePath(new File(getOwner().getRootDir(), AbstractAnnotation.WORKSPACE_FILES)));
+            }
+            catch (IOException exception) {
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Can't copy workspace files: ", exception);
+            }
+            catch (InterruptedException exception) {
+                // ignore, user canceled the operation
+            }
         }
     }
 

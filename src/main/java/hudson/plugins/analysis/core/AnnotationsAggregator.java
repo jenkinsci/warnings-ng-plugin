@@ -13,7 +13,7 @@ import hudson.model.Action;
 import hudson.model.BuildListener;
 
 /**
- * Aggregates {@link AbstractResultAction}s of {@link MatrixRun}s into
+ * Aggregates {@link ResultAction}s of {@link MatrixRun}s into
  * {@link MatrixBuild}.
  *
  * @author Ulli Hafner
