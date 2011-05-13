@@ -60,11 +60,11 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
      *
      * @param existingResult
      *            the existing result
-     * @param aggregatedAnnotations
+     * @param additionalResult
      *            the aggregated annotations
      * @return the created result
      */
-    protected abstract T createResult(final T existingResult, ParserResult aggregatedAnnotations);
+    protected abstract T createResult(final T existingResult, T additionalResult);
 
     /**
      * Called whenever a new module build is completed, to update the aggregated
@@ -93,19 +93,31 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
                 getOwner().setResult(additionalResult.getPluginResult());
             }
             else {
-                setResult(aggregate(existingResult, additionalResult));
+                setResult(createAggregatedResult(existingResult, additionalResult));
             }
         }
     }
 
-    private T aggregate(final T existingResult, final T additionalResult) {
+    private T createAggregatedResult(final T existingResult, final T additionalResult) {
+        T createdResult = createResult(existingResult, additionalResult);
+        createdResult.evaluateStatus(existingResult.getThresholds(), existingResult.canUseDeltaValues(), getLogger());
+        return createdResult;
+    }
+
+    /**
+     * Aggregates the results in a new instance of {@link ParserResult}.
+     *
+     * @param existingResult
+     *            the existing result
+     * @param additionalResult
+     *            the additional result
+     * @return the aggregated result
+     */
+    protected ParserResult aggregate(final T existingResult, final T additionalResult) {
         ParserResult aggregatedAnnotations = new ParserResult();
         aggregatedAnnotations.addAnnotations(existingResult.getAnnotations());
         aggregatedAnnotations.addAnnotations(additionalResult.getAnnotations());
-
-        T createdResult = createResult(existingResult, aggregatedAnnotations);
-        createdResult.evaluateStatus(existingResult.getThresholds(), existingResult.canUseDeltaValues(), getLogger());
-        return createdResult;
+        return aggregatedAnnotations;
     }
 
     private PluginLogger getLogger() {
@@ -116,7 +128,7 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
     }
 
     private StringPluginLogger createLogger() {
-        return new StringPluginLogger("[" + StringUtils.defaultString(pluginName, "ANALYSIS") + "] "); //NOCHECKSTYLE
+        return new StringPluginLogger("[" + StringUtils.defaultString(pluginName, "ANALYSIS") + "] "); // NOCHECKSTYLE
     }
 
     /**
