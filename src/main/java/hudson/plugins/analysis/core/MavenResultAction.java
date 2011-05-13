@@ -1,13 +1,18 @@
 package hudson.plugins.analysis.core;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Sets;
 
+import hudson.FilePath;
 import hudson.maven.AggregatableAction;
 import hudson.maven.MavenAggregatedReport;
 import hudson.maven.MavenBuild;
@@ -19,6 +24,7 @@ import hudson.model.AbstractBuild;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.StringPluginLogger;
 import hudson.plugins.analysis.util.ToolTipProvider;
+import hudson.plugins.analysis.util.model.AbstractAnnotation;
 
 /**
  * Base class for Maven aggregated build reports.
@@ -97,6 +103,21 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
             else {
                 setResult(createAggregatedResult(existingResult, additionalResult));
             }
+
+            copySourceFilesToModuleBuildFolder(newBuild);
+        }
+    }
+
+    private void copySourceFilesToModuleBuildFolder(final MavenBuild newBuild) {
+        FilePath filePath = new FilePath(new File(newBuild.getRootDir(), AbstractAnnotation.WORKSPACE_FILES));
+        try {
+            filePath.copyRecursiveTo("*.tmp", new FilePath(new File(getOwner().getRootDir(), AbstractAnnotation.WORKSPACE_FILES)));
+        }
+        catch (IOException exception) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Can't copy workspace files: ", exception);
+        }
+        catch (InterruptedException exception) {
+            // ignore, user canceled the operation
         }
     }
 
@@ -117,8 +138,15 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
      */
     protected ParserResult aggregate(final T existingResult, final T additionalResult) {
         ParserResult aggregatedAnnotations = new ParserResult();
+
         aggregatedAnnotations.addAnnotations(existingResult.getAnnotations());
+        aggregatedAnnotations.addModules(existingResult.getModules());
+        aggregatedAnnotations.addErrors(existingResult.getErrors());
+
         aggregatedAnnotations.addAnnotations(additionalResult.getAnnotations());
+        aggregatedAnnotations.addModules(additionalResult.getModules());
+        aggregatedAnnotations.addErrors(additionalResult.getErrors());
+
         return aggregatedAnnotations;
     }
 
