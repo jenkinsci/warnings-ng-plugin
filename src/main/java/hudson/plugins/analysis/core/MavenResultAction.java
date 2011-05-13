@@ -27,7 +27,7 @@ import hudson.plugins.analysis.util.ToolTipProvider;
  * @since 1.20
  * @param <T> type of the build result
  */
-public abstract class MavenResultAction<T extends BuildResult> implements AggregatableAction, MavenAggregatedReport {
+public abstract class MavenResultAction<T extends BuildResult> implements AggregatableAction, MavenAggregatedReport, ResultAction<T> {
     /** The default encoding to be used when reading and parsing files. */
     private final String defaultEncoding;
     /** Reuse all the functionality of the action for freestyle jobs. */
@@ -35,7 +35,7 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
 
     private transient StringPluginLogger logger;
     private transient Set<MavenModule> modules = Sets.newHashSet();
-    private transient String pluginName;
+    private final transient String pluginName;
 
     /**
      * Creates a new instance of {@link MavenResultAction}.
@@ -45,6 +45,8 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
      *            work
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
+     * @param pluginName
+     *            name of the plug-in
      */
     public MavenResultAction(final AbstractResultAction<T> delegate, final String defaultEncoding, final String pluginName) {
         this.defaultEncoding = defaultEncoding;
@@ -179,7 +181,7 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
     }
 
     // CHECKSTYLE:OFF
-    private void setResult(final T additionalResult) {
+    public void setResult(final T additionalResult) {
         delegate.setResult(additionalResult);
     }
 
@@ -215,7 +217,7 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
         return delegate.isSuccessful();
     }
 
-    public HealthDescriptor getHealthDescriptor() {
+    public AbstractHealthDescriptor getHealthDescriptor() {
         return delegate.getHealthDescriptor();
     }
     // CHECKSTYLE:ON

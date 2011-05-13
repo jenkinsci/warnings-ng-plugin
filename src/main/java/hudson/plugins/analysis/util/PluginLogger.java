@@ -83,7 +83,7 @@ public class PluginLogger {
      * @param lines the lines to log
      */
     public void logLines(final String lines) {
-        logger.println(lines);
+        logger.print(lines);
     }
 }
 
