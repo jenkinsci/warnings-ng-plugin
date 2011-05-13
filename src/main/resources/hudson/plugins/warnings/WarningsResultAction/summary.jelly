@@ -1,15 +1,5 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
 	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
-	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-	<t:summary icon="/plugin/warnings/icons/warnings-48x48.png">
-		${it.result.summary}
-		<ul>
-		${it.result.details}
-	    <j:if test="${it.result.hasError()}">
-	    	<li>
-	    		${%error.message}
-	    	</li>
-	    </j:if>
-		</ul>
-	</t:summary>
+	xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:u="/util">
+	<u:summary icon="/plugin/warnings/icons/warnings-48x48.png"/>
 </j:jelly>
