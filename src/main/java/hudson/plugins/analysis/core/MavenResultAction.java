@@ -64,15 +64,13 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
     public abstract Class<? extends MavenResultAction<T>> getIndividualActionType();
 
     /**
-     * Creates a new build result that contains the aggregated annotations.
+     * Creates a new build result that contains the aggregated results.
      *
-     * @param existingResult
-     *            the existing result
-     * @param additionalResult
-     *            the aggregated annotations
+     * @param results
+     *            the results to aggregate
      * @return the created result
      */
-    protected abstract T createResult(final T existingResult, T additionalResult);
+    protected abstract T createResult(final T... results);
 
     /**
      * Called whenever a new module build is completed, to update the aggregated
@@ -97,8 +95,7 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
             T additionalResult = additionalAction.getResult();
 
             if (existingResult == null) {
-                setResult(additionalResult);
-                getOwner().setResult(additionalResult.getPluginResult());
+                setResult(createAggregatedResult(additionalResult));
             }
             else {
                 setResult(createAggregatedResult(existingResult, additionalResult));
@@ -121,31 +118,28 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
         }
     }
 
-    private T createAggregatedResult(final T existingResult, final T additionalResult) {
-        T createdResult = createResult(existingResult, additionalResult);
-        createdResult.evaluateStatus(existingResult.getThresholds(), existingResult.canUseDeltaValues(), getLogger());
+    private T createAggregatedResult(final T... results) {
+        T createdResult = createResult(results);
+        T master = results[0];
+        createdResult.evaluateStatus(master.getThresholds(), master.canUseDeltaValues(), getLogger());
         return createdResult;
     }
 
     /**
      * Aggregates the results in a new instance of {@link ParserResult}.
      *
-     * @param existingResult
-     *            the existing result
-     * @param additionalResult
-     *            the additional result
+     * @param results
+     *            the results to aggregate
      * @return the aggregated result
      */
-    protected ParserResult aggregate(final T existingResult, final T additionalResult) {
+    protected ParserResult aggregate(final T... results) {
         ParserResult aggregatedAnnotations = new ParserResult();
 
-        aggregatedAnnotations.addAnnotations(existingResult.getAnnotations());
-        aggregatedAnnotations.addModules(existingResult.getModules());
-        aggregatedAnnotations.addErrors(existingResult.getErrors());
-
-        aggregatedAnnotations.addAnnotations(additionalResult.getAnnotations());
-        aggregatedAnnotations.addModules(additionalResult.getModules());
-        aggregatedAnnotations.addErrors(additionalResult.getErrors());
+        for (T result : results) {
+            aggregatedAnnotations.addAnnotations(result.getAnnotations());
+            aggregatedAnnotations.addModules(result.getModules());
+            aggregatedAnnotations.addErrors(result.getErrors());
+        }
 
         return aggregatedAnnotations;
     }
