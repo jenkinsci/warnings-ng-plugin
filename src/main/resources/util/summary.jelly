@@ -1,0 +1,22 @@
+<!--
+  Section header
+
+  <%@attribute name="icon" required="true" %>
+-->
+
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+  xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+  xmlns:f="/lib/form" xmlns:u="/util">
+
+	<t:summary icon="${icon}">
+		${it.result.summary}
+		<ul>
+		${it.result.details}
+	    <j:if test="${it.result.hasError()}">
+	    	<li>
+	    		${%error.message(it.urlName)}
+	    	</li>
+	    </j:if>
+		</ul>
+	</t:summary>
+</j:jelly>
