@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.StaplerProxy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -36,7 +37,7 @@ import hudson.plugins.analysis.util.model.AbstractAnnotation;
  * @since 1.20
  * @param <T> type of the build result
  */
-public abstract class MavenResultAction<T extends BuildResult> implements AggregatableAction, MavenAggregatedReport, ResultAction<T> {
+public abstract class MavenResultAction<T extends BuildResult> implements StaplerProxy, AggregatableAction, MavenAggregatedReport, ResultAction<T> {
     /** The default encoding to be used when reading and parsing files. */
     private final String defaultEncoding;
     /** Reuse all the functionality of the action for freestyle jobs. */
