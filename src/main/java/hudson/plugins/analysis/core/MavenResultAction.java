@@ -8,8 +8,11 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.CheckForNull;
+
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import hudson.FilePath;
@@ -66,11 +69,15 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
     /**
      * Creates a new build result that contains the aggregated results.
      *
-     * @param results
-     *            the results to aggregate
+     * @param existingResult
+     *            an already existing result, might be <code>null</code> for the
+     *            first aggregation
+     * @param additionalResult
+     *            the additional result to be aggregated with the existing
+     *            result
      * @return the created result
      */
-    protected abstract T createResult(final T... results);
+    protected abstract T createResult(@CheckForNull T existingResult, T additionalResult);
 
     /**
      * Called whenever a new module build is completed, to update the aggregated
@@ -94,12 +101,7 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
             T existingResult = delegate.getResult();
             T additionalResult = additionalAction.getResult();
 
-            if (existingResult == null) {
-                setResult(createAggregatedResult(additionalResult));
-            }
-            else {
-                setResult(createAggregatedResult(existingResult, additionalResult));
-            }
+            setResult(createAggregatedResult(existingResult, additionalResult));
 
             copySourceFilesToModuleBuildFolder(newBuild);
         }
@@ -118,24 +120,33 @@ public abstract class MavenResultAction<T extends BuildResult> implements Aggreg
         }
     }
 
-    private T createAggregatedResult(final T... results) {
-        T createdResult = createResult(results);
-        T master = results[0];
-        createdResult.evaluateStatus(master.getThresholds(), master.canUseDeltaValues(), getLogger());
+    private T createAggregatedResult(@CheckForNull final T existingResult, final T additionalResult) {
+        T createdResult = createResult(existingResult, additionalResult);
+        createdResult.evaluateStatus(additionalResult.getThresholds(), additionalResult.canUseDeltaValues(), getLogger());
         return createdResult;
     }
 
     /**
      * Aggregates the results in a new instance of {@link ParserResult}.
      *
-     * @param results
-     *            the results to aggregate
+     * @param existingResult
+     *            an already existing result, might be <code>null</code> for the
+     *            first aggregation
+     * @param additionalResult
+     *            the additional result to be aggregated with the existing
+     *            result
      * @return the aggregated result
      */
-    protected ParserResult aggregate(final T... results) {
+    protected ParserResult aggregate(@CheckForNull final T existingResult, final T additionalResult) {
         ParserResult aggregatedAnnotations = new ParserResult();
 
-        for (T result : results) {
+        List<BuildResult> results = Lists.newArrayList();
+        if (existingResult != null) {
+            results.add(existingResult);
+        }
+        results.add(additionalResult);
+
+        for (BuildResult result : results) {
             aggregatedAnnotations.addAnnotations(result.getAnnotations());
             aggregatedAnnotations.addModules(result.getModules());
             aggregatedAnnotations.addErrors(result.getErrors());
