@@ -17,6 +17,7 @@ import hudson.plugins.analysis.util.FileFinder;
 import hudson.plugins.analysis.util.ModuleDetector;
 import hudson.plugins.analysis.util.NullModuleDetector;
 import hudson.plugins.analysis.util.PluginLogger;
+import hudson.plugins.analysis.util.StringPluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 import hudson.remoting.VirtualChannel;
@@ -44,6 +45,9 @@ public class FilesParser implements FileCallable<ParserResult> {
     /** Determines whether module names should be derived from Maven or Ant. */
     private boolean shouldDetectModules = true;
 
+    /** Logs into a string, @since 1.20 */
+    private final StringPluginLogger stringLogger;
+
     /**
      * Creates a new instance of {@link FilesParser}.
      *
@@ -62,6 +66,7 @@ public class FilesParser implements FileCallable<ParserResult> {
         this.parser = parser;
         this.isMavenBuild = isMavenBuild;
         this.moduleName = moduleName;
+        stringLogger = null;
     }
 
     /**
@@ -75,7 +80,10 @@ public class FilesParser implements FileCallable<ParserResult> {
      *            the parser to apply on the found files
      * @param isMavenBuild
      *            determines whether this build uses maven
+     * @deprecated Use
+     *             {@link #FilesParser(StringPluginLogger, String, AnnotationParser, boolean, boolean)}
      */
+    @Deprecated
     public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final boolean isMavenBuild) {
         this(logger, filePattern, parser, isMavenBuild, StringUtils.EMPTY);
     }
@@ -92,7 +100,10 @@ public class FilesParser implements FileCallable<ParserResult> {
      *            the parser to apply on the found files
      * @param moduleName
      *            the name of the module to use for all files
+     * @deprecated Use
+     *             {@link #FilesParser(StringPluginLogger, String, AnnotationParser, boolean, boolean)}
      */
+    @Deprecated
     public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final String moduleName) {
         this(logger, filePattern, parser, true, moduleName);
     }
@@ -107,11 +118,76 @@ public class FilesParser implements FileCallable<ParserResult> {
      *            ant file-set pattern to scan for files to parse
      * @param parser
      *            the parser to apply on the found files
+     * @deprecated Use
+     *             {@link #FilesParser(StringPluginLogger, String, AnnotationParser, boolean, boolean)}
      */
+    @Deprecated
     public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser) {
         this(logger, filePattern, parser, true, StringUtils.EMPTY);
 
         shouldDetectModules = false;
+    }
+
+    /**
+     * Creates a new instance of {@link FilesParser}.
+     *
+     * @param filePattern
+     *            ant file-set pattern to scan for files to parse
+     * @param parser
+     *            the parser to apply on the found files
+     * @param shouldDetectModules
+     *            determines whether modules should be detected from pom.xml or
+     *            build.xml files
+     * @param isMavenBuild
+     *            determines whether this build uses maven
+     * @param moduleName
+     *            the name of the module to use for all files
+     */
+    private FilesParser(final StringPluginLogger stringLogger, final String filePattern,
+            final AnnotationParser parser,
+            final boolean shouldDetectModules, final boolean isMavenBuild,
+            final String moduleName) {
+        this.stringLogger = stringLogger;
+        logger = stringLogger;
+        this.filePattern = filePattern;
+        this.parser = parser;
+        this.isMavenBuild = isMavenBuild;
+        this.moduleName = moduleName;
+        this.shouldDetectModules = shouldDetectModules;
+    }
+
+    /**
+     * Creates a new instance of {@link FilesParser}.
+     *
+     * @param filePattern
+     *            ant file-set pattern to scan for files to parse
+     * @param parser
+     *            the parser to apply on the found files
+     * @param moduleName
+     *            the name of the module to use for all files
+     */
+    public FilesParser(final StringPluginLogger stringLogger, final String filePattern,
+            final AnnotationParser parser, final String moduleName) {
+        this(stringLogger, filePattern, parser, true, true, moduleName);
+    }
+
+    /**
+     * Creates a new instance of {@link FilesParser}.
+     *
+     * @param filePattern
+     *            ant file-set pattern to scan for files to parse
+     * @param parser
+     *            the parser to apply on the found files
+     * @param shouldDetectModules
+     *            determines whether modules should be detected from pom.xml or
+     *            build.xml files
+     * @param isMavenBuild
+     *            determines whether this build uses maven
+     */
+    public FilesParser(final StringPluginLogger stringLogger, final String filePattern,
+            final AnnotationParser parser,
+            final boolean shouldDetectModules, final boolean isMavenBuild) {
+        this(stringLogger, filePattern, parser, shouldDetectModules, isMavenBuild, StringUtils.EMPTY);
     }
 
     /**
@@ -143,6 +219,9 @@ public class FilesParser implements FileCallable<ParserResult> {
             log("Parsing has been canceled.");
         }
 
+        if (stringLogger != null) {
+            result.setLog(stringLogger.toString());
+        }
         return result;
     }
 

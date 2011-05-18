@@ -57,6 +57,8 @@ public class ParserResult implements Serializable {
     /** A mapping of relative file names to absolute file names. */
     @SuppressWarnings("Se")
     private final Multimap<String, String> fileNameCache = HashMultimap.create();
+    /** The log messages. @since 1.20 **/
+    private String logMessage;
 
     /**
      * Facade for the remote workspace.
@@ -403,6 +405,26 @@ public class ParserResult implements Serializable {
     @Override
     public String toString() {
         return getNumberOfAnnotations() + " annotations";
+    }
+
+    /**
+     * Sets the log messages of the parsing process.
+     *
+     * @param message a multiline message
+     * @since 1.20
+     */
+    public void setLog(final String message) {
+        logMessage = message;
+    }
+
+    /**
+     * Returns the log messages of the parsing process.
+     *
+     * @return the messages
+     * @since 1.20
+     */
+    public String getLogMessages() {
+        return StringUtils.defaultString(logMessage);
     }
 
     /**
