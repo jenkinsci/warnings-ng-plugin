@@ -15,6 +15,7 @@ import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.ModuleDetector;
 import hudson.plugins.analysis.util.NullModuleDetector;
 import hudson.plugins.analysis.util.PluginLogger;
+import hudson.plugins.analysis.util.StringPluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.warnings.parser.FileWarningsParser;
 import hudson.plugins.warnings.parser.ParserRegistry;
@@ -38,6 +39,11 @@ import com.google.common.collect.Sets;
  */
 // CHECKSTYLE:COUPLING-OFF
 public class WarningsPublisher extends HealthAwarePublisher {
+    /**
+     * FIXME: Document field PLGUIN_NAME
+     */
+    private static final String PLUGIN_NAME = "WARNINGS";
+
     /** Unique ID of this class. */
     private static final long serialVersionUID = -5936973521277401764L;
 
@@ -132,7 +138,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
                 unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow,
                 failedTotalAll, failedTotalHigh, failedTotalNormal, failedTotalLow,
                 failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
-                canRunOnFailed, shouldDetectModules, "WARNINGS");
+                canRunOnFailed, shouldDetectModules, PLUGIN_NAME);
         this.pattern = pattern;
         ignoreConsole = !canScanConsole;
         this.includePattern = StringUtils.stripToNull(includePattern);
@@ -227,17 +233,11 @@ public class WarningsPublisher extends HealthAwarePublisher {
         ParserResult project;
         if (StringUtils.isNotBlank(getPattern())) {
             logger.log("Parsing warnings in files: " + getPattern());
-            FilesParser parser;
-            if (shouldDetectModules()) {
-                parser = new FilesParser(logger, getPattern(), new FileWarningsParser(validParsers,
-                        getDefaultEncoding(), getIncludePattern(), getExcludePattern()),
-                        isMavenBuild(build));
-            }
-            else {
-                parser = new FilesParser(logger, getPattern(), new FileWarningsParser(validParsers,
-                        getDefaultEncoding(), getIncludePattern(), getExcludePattern()));
-            }
+            FilesParser parser = new FilesParser(new StringPluginLogger(PLUGIN_NAME), getPattern(),
+                    new FileWarningsParser(validParsers, getDefaultEncoding(), getIncludePattern(), getExcludePattern()),
+                    shouldDetectModules(), isMavenBuild(build));
             project = build.getWorkspace().act(parser);
+            logger.logLines(project.getLogMessages());
         }
         else {
             project = new ParserResult(build.getWorkspace());
