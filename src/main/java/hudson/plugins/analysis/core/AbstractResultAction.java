@@ -195,6 +195,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * @deprecated replaced by {@link MavenResultAction}
      */
     @Deprecated
+    @java.lang.SuppressWarnings("deprecation")
     protected ParserResult createAggregatedResult(final Map<MavenModule, List<MavenBuild>> moduleBuilds) {
         ParserResult project = createResult();
         for (List<MavenBuild> builds : moduleBuilds.values()) {

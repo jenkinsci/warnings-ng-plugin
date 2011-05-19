@@ -126,6 +126,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      *            the name of the plug-in
      */
     // CHECKSTYLE:OFF
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     public HealthAwareMavenReporter(final String healthy, final String unHealthy, final String thresholdLimit,
             final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
             final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,

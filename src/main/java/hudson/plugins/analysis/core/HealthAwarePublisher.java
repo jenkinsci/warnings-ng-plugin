@@ -192,6 +192,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
     }
 
     @Deprecated
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     public HealthAwarePublisher(final String healthy, final String unHealthy, final String thresholdLimit,
             final String defaultEncoding, final boolean useDeltaValues,
             final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
