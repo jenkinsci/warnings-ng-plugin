@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.CheckForNull;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -94,6 +96,15 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     private transient WeakReference<Collection<FileAnnotation>> fixedWarningsReference;
     /** The build history for the results of this plug-in. */
     private transient BuildHistory history;
+
+    /**
+     * Optional action to get previous results from. Overwrites the result of the method call
+     * {@link #getResultActionType()}.
+     *
+     * @since 1.20
+     */
+    @CheckForNull
+    private Class<? extends ResultAction<? extends BuildResult>> actionType;
 
     /** The number of warnings in this build. */
     private int numberOfWarnings;
@@ -219,7 +230,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the history
      */
     private BuildHistory createHistory(final AbstractBuild<?, ?> build) {
-        return new BuildHistory(build, getResultActionType());
+        return new BuildHistory(build, getActionType());
     }
 
     /**
@@ -917,8 +928,25 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the dynamic result of the analysis (detail page).
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
-        return DetailFactory.create(getResultActionType()).createTrendDetails(link, getOwner(), getContainer(), getFixedWarnings(),
+        return DetailFactory.create(getActionType()).createTrendDetails(link, getOwner(), getContainer(), getFixedWarnings(),
                 getNewWarnings(), getErrors(), getDefaultEncoding(), getDisplayName());
+    }
+
+    private Class<? extends ResultAction<? extends BuildResult>> getActionType() {
+        if (actionType != null) {
+            return actionType;
+        }
+        return getResultActionType();
+    }
+
+    /**
+     * Sets the type of the result action to the specified value.
+     *
+     * @param actionType the value to set
+     * @since 1.20
+     */
+    public void setActionType(final Class<? extends ResultAction<? extends BuildResult>> actionType) {
+        this.actionType = actionType;
     }
 
     /**
