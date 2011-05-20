@@ -39,12 +39,8 @@ import com.google.common.collect.Sets;
  */
 // CHECKSTYLE:COUPLING-OFF
 public class WarningsPublisher extends HealthAwarePublisher {
-    /**
-     * FIXME: Document field PLGUIN_NAME
-     */
     private static final String PLUGIN_NAME = "WARNINGS";
 
-    /** Unique ID of this class. */
     private static final long serialVersionUID = -5936973521277401764L;
 
     /** Ant file-set pattern of files to work with. */
