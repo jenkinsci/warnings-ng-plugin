@@ -248,7 +248,6 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         String resultLog = build.execute(new BuildCallable<String, IOException>() {
             public String call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
                 T buildResult = createResult(mavenBuild, result);
-                buildResult.setActionType(getResultActionClass());
 
                 StringPluginLogger pluginLogger = new StringPluginLogger(pluginName);
                 buildResult.evaluateStatus(thresholds, useDeltaValues, pluginLogger);

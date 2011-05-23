@@ -123,7 +123,6 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
 
     private T createAggregatedResult(@CheckForNull final T existingResult, final T additionalResult) {
         T createdResult = createResult(existingResult, additionalResult);
-        createdResult.setActionType(getIndividualActionType());
         createdResult.evaluateStatus(additionalResult.getThresholds(), additionalResult.canUseDeltaValues(), getLogger());
         return createdResult;
     }
