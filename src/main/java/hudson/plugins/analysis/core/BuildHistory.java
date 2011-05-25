@@ -77,6 +77,35 @@ public class BuildHistory {
     }
 
     /**
+     * Returns the reference build.
+     *
+     * @return the reference build
+     * @since 1.20
+     * @throws NoSuchElementException
+     *             if there is no reference build
+     * @see #hasReferenceBuild()
+     */
+    public AbstractBuild<?, ?> getReferenceBuild() {
+        ResultAction<? extends BuildResult> action = getReferenceAction();
+        if (action != null) {
+            return action.getBuild();
+        }
+        throw new NoSuchElementException("No reference build found for " + baseline);
+    }
+
+    /**
+     * Returns whether a reference build is available to compare the results
+     * with.
+     *
+     * @return <code>true</code> if a reference build exists, <code>false</code>
+     *         otherwise
+     * @since 1.20
+     */
+    public boolean hasReferenceBuild() {
+        return getReferenceBuild() != null;
+    }
+
+    /**
      * Returns whether a previous build result exists.
      *
      * @return <code>true</code> if a previous build result exists.

@@ -181,6 +181,13 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     private transient Thresholds thresholds = new Thresholds();
 
     /**
+     * Reference build number. If not defined then 0 or -1 could be used.
+     *
+     * @since 1.20
+     */
+    private int referenceBuild;
+
+    /**
      * Creates a new instance of {@link BuildResult}.
      *
      * @param build
@@ -273,6 +280,49 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         project = new WeakReference<JavaProject>(container);
 
         computeZeroWarningsHighScore(build, result);
+
+        if (history.hasReferenceBuild()) {
+            referenceBuild = history.getReferenceBuild().getNumber();
+        }
+        else {
+            referenceBuild = -1;
+        }
+    }
+
+    /**
+     * Returns whether there is a reference build available
+     *
+     * @return <code>true</code> if there is such a build, <code>false</code>
+     *         otherwise
+     */
+    public boolean hasReferenceBuild() {
+        return referenceBuild > 0 && getReferenceBuild() != null;
+    }
+
+    private AbstractBuild<?, ?> getReferenceBuild() {
+        return owner.getProject().getBuildByNumber(referenceBuild);
+    }
+
+    /**
+     * Appends a list item that shows the reference build.
+     *
+     * @param summary the summary
+     */
+    public void appendReferenceBuild(final StringBuilder summary) {
+        if (hasReferenceBuild()) {
+            AbstractBuild<?, ?> build = getReferenceBuild();
+
+            // CHECKSTYLE:OFF
+            summary.append("<li>");
+            summary.append(Messages.ReferenceBuild());
+            summary.append(": <a href=\"");
+            summary.append(build.getUrl());
+            summary.append("\">");
+            summary.append(build.getDisplayName());
+            summary.append("</a>");
+            summary.append("</li>");
+            // CHECKSTYLE:ON
+        }
     }
 
     private int computeDelta(final ParserResult result, final AnnotationContainer referenceResult, final Priority priority) {
@@ -1108,18 +1158,23 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the summary message
      */
     public String getDetails() {
-        String message = createDeltaMessage();
+        StringBuilder message = new StringBuilder();
+        message.append(createDeltaMessage());
+        if (getNumberOfNewWarnings() > 0 || getNumberOfFixedWarnings() > 0) {
+            appendReferenceBuild(message);
+        }
+
         if (getNumberOfAnnotations() == 0 && getDelta() == 0) {
-            message += createNoWarningsMessage();
-            message += createHighScoreMessage();
+            message.append(createNoWarningsMessage());
+            message.append(createHighScoreMessage());
         }
         else if (isSuccessfulTouched()) {
-            message += createListItem(Messages.ResultAction_Status() + getResultIcon());
+            message.append(createListItem(Messages.ResultAction_Status() + getResultIcon()));
             if (isSuccessful()) {
-                message += createSuccessfulHighScoreMessage();
+                message.append(createSuccessfulHighScoreMessage());
             }
         }
-        return message;
+        return message.toString();
     }
 
     /**
