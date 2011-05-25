@@ -303,28 +303,6 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         return owner.getProject().getBuildByNumber(referenceBuild);
     }
 
-    /**
-     * Appends a list item that shows the reference build.
-     *
-     * @param summary the summary
-     */
-    public void appendReferenceBuild(final StringBuilder summary) {
-        if (hasReferenceBuild()) {
-            AbstractBuild<?, ?> build = getReferenceBuild();
-
-            // CHECKSTYLE:OFF
-            summary.append("<li>");
-            summary.append(Messages.ReferenceBuild());
-            summary.append(": <a href=\"");
-            summary.append(build.getUrl());
-            summary.append("\">");
-            summary.append(build.getDisplayName());
-            summary.append("</a>");
-            summary.append("</li>");
-            // CHECKSTYLE:ON
-        }
-    }
-
     private int computeDelta(final ParserResult result, final AnnotationContainer referenceResult, final Priority priority) {
         return result.getNumberOfAnnotations(priority) - referenceResult.getNumberOfAnnotations(priority);
     }
@@ -1160,21 +1138,38 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     public String getDetails() {
         StringBuilder message = new StringBuilder();
         message.append(createDeltaMessage());
-        if (getNumberOfNewWarnings() > 0 || getNumberOfFixedWarnings() > 0) {
-            appendReferenceBuild(message);
-        }
 
         if (getNumberOfAnnotations() == 0 && getDelta() == 0) {
             message.append(createNoWarningsMessage());
             message.append(createHighScoreMessage());
         }
         else if (isSuccessfulTouched()) {
-            message.append(createListItem(Messages.ResultAction_Status() + getResultIcon()));
+            message.append(createListItem(Messages.ResultAction_Status() + getResultIcon() + getReferenceBuildUrl()));
             if (isSuccessful()) {
                 message.append(createSuccessfulHighScoreMessage());
             }
         }
         return message.toString();
+    }
+
+    private String getReferenceBuildUrl() {
+        StringBuilder summary = new StringBuilder();
+        if (hasReferenceBuild()) {
+            AbstractBuild<?, ?> build = getReferenceBuild();
+
+            summary.append("&nbsp;");
+            summary.append("(");
+            summary.append(Messages.ReferenceBuild());
+            summary.append(": <a href=\"");
+            summary.append(Hudson.getInstance().getRootUrl());
+            summary.append("/");
+            summary.append(build.getUrl());
+            summary.append("\">");
+            summary.append(build.getDisplayName());
+            summary.append("</a>");
+            summary.append(")");
+        }
+        return summary.toString();
     }
 
     /**
