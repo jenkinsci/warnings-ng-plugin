@@ -16,7 +16,7 @@
       <j:if test="${it.container.modules.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '${%Modules}',
-            dataSrc: 'tab.modules',
+            dataSrc: 'tab.modules/',
             cacheData: true,
             active: false
         }), myTabs);
@@ -24,7 +24,7 @@
       <j:if test="${it.container.packages.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '${it.container.packageCategoryName}',
-            dataSrc: 'tab.packages',
+            dataSrc: 'tab.packages/',
             cacheData: true,
             active: false
         }), myTabs);
@@ -32,7 +32,7 @@
     <j:if test="${it.container.files.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '${%Files}',
-            dataSrc: 'tab.files',
+            dataSrc: 'tab.files/',
             cacheData: true,
             active: false
         }), myTabs);
@@ -40,7 +40,7 @@
     <j:if test="${it.container.categories.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '${%Categories}',
-            dataSrc: 'tab.categories',
+            dataSrc: 'tab.categories/',
             cacheData: true,
             active: false
         }), myTabs);
@@ -48,7 +48,7 @@
     <j:if test="${it.container.types.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '${%Types}',
-            dataSrc: 'tab.types',
+            dataSrc: 'tab.types/',
             cacheData: true,
             active: false
         }), myTabs);
@@ -56,14 +56,14 @@
     <j:if test="${it.container.numberOfAnnotations > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '${%Warnings}',
-            dataSrc: 'tab.table',
+            dataSrc: 'tab.table/',
             cacheData: true,
             active: false
         }), myTabs);
     </j:if>
       YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
           label: '${%Details}',
-          dataSrc: 'tab.all',
+          dataSrc: 'tab.all/',
           cacheData: true,
           active: false
       }), myTabs);
@@ -71,7 +71,7 @@
     <j:if test="${it.newWarnings.size() > 0}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '${%New}',
-            dataSrc: 'tab.new',
+            dataSrc: 'tab.new/',
             cacheData: true,
             active: false
         }), myTabs);
@@ -79,7 +79,7 @@
     <j:if test="${it.fixedWarnings.size() > 0}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '${%Fixed}',
-            dataSrc: 'tab.fixed-table',
+            dataSrc: 'tab.fixed-table/',
             cacheData: true,
             active: false
         }), myTabs);
@@ -87,7 +87,7 @@
     <j:if test="${it.container.highAnnotations.size() > 0 and it.container.highAnnotations.size() != it.container.numberOfAnnotations}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '${%High}',
-            dataSrc: 'tab.high',
+            dataSrc: 'tab.high/',
             cacheData: true,
             active: false
         }), myTabs);
@@ -95,7 +95,7 @@
     <j:if test="${it.container.normalAnnotations.size() > 0 and it.container.normalAnnotations.size() != it.container.numberOfAnnotations}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '${%Normal}',
-            dataSrc: 'tab.normal',
+            dataSrc: 'tab.normal/',
             cacheData: true,
             active: false
         }), myTabs);
@@ -103,7 +103,7 @@
     <j:if test="${it.container.lowAnnotations.size() > 0 and it.container.lowAnnotations.size() != it.container.numberOfAnnotations}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '${%Low}',
-            dataSrc: 'tab.low',
+            dataSrc: 'tab.low/',
             cacheData: true,
             active: false
         }), myTabs);
