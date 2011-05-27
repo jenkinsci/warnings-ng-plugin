@@ -290,12 +290,12 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
-     * Returns whether there is a reference build available
+     * Returns whether there is a reference build available.
      *
      * @return <code>true</code> if there is such a build, <code>false</code>
      *         otherwise
      */
-    public boolean hasReferenceBuild() {
+    private boolean hasReferenceBuild() {
         return referenceBuild > 0 && getReferenceBuild() != null;
     }
 

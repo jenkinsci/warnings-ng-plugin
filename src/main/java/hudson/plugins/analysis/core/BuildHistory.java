@@ -77,12 +77,11 @@ public class BuildHistory {
     }
 
     /**
-     * Returns the reference build.
+     * Returns the reference build or <code>null</code> if there is no such
+     * build.
      *
      * @return the reference build
      * @since 1.20
-     * @throws NoSuchElementException
-     *             if there is no reference build
      * @see #hasReferenceBuild()
      */
     public AbstractBuild<?, ?> getReferenceBuild() {
@@ -90,7 +89,7 @@ public class BuildHistory {
         if (action != null) {
             return action.getBuild();
         }
-        throw new NoSuchElementException("No reference build found for " + baseline);
+        return null;
     }
 
     /**
