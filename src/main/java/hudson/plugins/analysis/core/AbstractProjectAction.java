@@ -41,7 +41,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     /** Project that owns this action. */
     private final AbstractProject<?, ?> project;
     /** The type of the result action.  */
-    private final Class<T> resultActionType;
+    private final Class<? extends T> resultActionType;
     /** The icon URL of this action: it will be shown as soon as a result is available. */
     private final String iconUrl;
     /** Plug-in URL. */
@@ -59,7 +59,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @param plugin
      *            the plug-in that owns this action
      */
-    public AbstractProjectAction(final AbstractProject<?, ?> project, final Class<T> resultActionType, final PluginDescriptor plugin) {
+    public AbstractProjectAction(final AbstractProject<?, ?> project, final Class<? extends T> resultActionType, final PluginDescriptor plugin) {
         this.project = project;
         this.resultActionType = resultActionType;
         iconUrl = plugin.getIconUrl();
