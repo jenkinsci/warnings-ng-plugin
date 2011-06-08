@@ -35,7 +35,7 @@
   <dependencies>
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
-      <artifactId>analysis-pom</artifactId>
+      <artifactId>analysis-core</artifactId>
       <version>1.22</version>
     </dependency>
     <dependency>
