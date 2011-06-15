@@ -11,7 +11,7 @@ import hudson.FilePath.FileCallable;
 import hudson.remoting.VirtualChannel;
 
 /**
- * Scans the workspace and finds all Java files.
+ * Scans the workspace and finds all files matching a give pattern.
  *
  * @author Ulli Hafner
  */
