@@ -1178,7 +1178,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the icon for the build result
      */
     public String getResultIcon() {
-        String rootUrl = Hudson.getInstance().getRootUrlFromRequest();
+        String rootUrl = Hudson.getInstance().getRootUrl();
 
         String message = "<img src=\"" + rootUrl + "/images/16x16/%s\" alt=\"%s\" title=\"%s\"/>";
         if (pluginResult == Result.FAILURE) {
