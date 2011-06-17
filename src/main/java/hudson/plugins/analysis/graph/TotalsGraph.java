@@ -5,12 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
-import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 
 import hudson.plugins.analysis.Messages;
@@ -45,22 +40,7 @@ public class TotalsGraph extends CategoryBuildResultGraph {
 
     @Override
     protected JFreeChart createChart(final CategoryDataset dataSet) {
-        NumberAxis numberAxis = new NumberAxis("count");
-        numberAxis.setAutoRange(true);
-        numberAxis.setAutoRangeIncludesZero(false);
-
-        CategoryAxis domainAxis = new CategoryAxis();
-        domainAxis.setCategoryMargin(0.0);
-
-        CategoryPlot plot = new CategoryPlot(dataSet, domainAxis, numberAxis, new LineAndShapeRenderer(true, false));
-        plot.setOrientation(PlotOrientation.VERTICAL);
-
-        JFreeChart chart = new JFreeChart(null, JFreeChart.DEFAULT_TITLE_FONT, plot, false);
-        chart.setBackgroundPaint(Color.white);
-
-        setCategoryPlotProperties(plot);
-
-        return chart;
+        return createLineGraph(dataSet, false);
     }
 
     @Override
