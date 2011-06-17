@@ -33,6 +33,8 @@ public class WarningsPriorityGraphPortlet extends AbstractWarningsGraphPortlet {
     @DataBoundConstructor
     public WarningsPriorityGraphPortlet(final String name, final String width, final String height, final String dayCountString) {
         super(name, width, height, dayCountString);
+
+        configureGraph(getGraphType());
     }
 
     /** {@inheritDoc} */

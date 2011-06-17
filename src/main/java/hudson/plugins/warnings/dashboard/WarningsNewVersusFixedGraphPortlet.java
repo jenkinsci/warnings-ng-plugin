@@ -33,6 +33,8 @@ public class WarningsNewVersusFixedGraphPortlet extends AbstractWarningsGraphPor
     @DataBoundConstructor
     public WarningsNewVersusFixedGraphPortlet(final String name, final String width, final String height, final String dayCountString) {
         super(name, width, height, dayCountString);
+
+        configureGraph(getGraphType());
     }
 
     /** {@inheritDoc} */
