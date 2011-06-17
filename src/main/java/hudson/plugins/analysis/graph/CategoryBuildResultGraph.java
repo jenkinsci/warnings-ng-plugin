@@ -2,6 +2,7 @@ package hudson.plugins.analysis.graph;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,6 +47,8 @@ import hudson.util.ShiftedCategoryAxis;
  * @author Ulli Hafner
  */
 public abstract class CategoryBuildResultGraph extends BuildResultGraph {
+    private static final Font LEGEND_FONT = new Font("SansSerif", Font.PLAIN, 10); // NOCHECKSTYLE
+
     /**
      * Creates a PNG image trend graph with clickable map.
      *
@@ -500,6 +503,37 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
         LineAndShapeRenderer render = new LineAndShapeRenderer(true, false);
         render.setBaseStroke(new BasicStroke(2.0f));
         return render;
+    }
+
+    /**
+     * Creates a line graph for the specified data set.
+     *
+     * @param dataSet
+     *            the data to plot
+     * @param hasLegend
+     *            determines whether to show a legend
+     * @return the graph
+     */
+    protected JFreeChart createLineGraph(final CategoryDataset dataSet, final boolean hasLegend) {
+        NumberAxis numberAxis = new NumberAxis("count");
+        numberAxis.setAutoRange(true);
+        numberAxis.setAutoRangeIncludesZero(false);
+
+        CategoryAxis domainAxis = new CategoryAxis();
+        domainAxis.setCategoryMargin(0.0);
+
+        CategoryPlot plot = new CategoryPlot(dataSet, domainAxis, numberAxis, new LineAndShapeRenderer(true, false));
+        plot.setOrientation(PlotOrientation.VERTICAL);
+
+        JFreeChart chart = new JFreeChart(null, JFreeChart.DEFAULT_TITLE_FONT, plot, hasLegend);
+        if (hasLegend) {
+            chart.getLegend().setItemFont(LEGEND_FONT);
+        }
+        chart.setBackgroundPaint(Color.white);
+
+        setCategoryPlotProperties(plot);
+
+        return chart;
     }
 }
 
