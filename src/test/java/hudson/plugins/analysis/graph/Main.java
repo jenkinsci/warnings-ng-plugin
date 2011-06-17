@@ -80,7 +80,7 @@ public class Main extends ApplicationFrame {
     private BuildResult createResult(final int buildNumber, final int fixedWarnings, final int newWarnings) {
         BuildResult result = mock(BuildResult.class);
 
-        when(result.getNumberOfWarnings()).thenReturn(newWarnings);
+        when(result.getNumberOfWarnings()).thenReturn(newWarnings + 1000);
         when(result.getNumberOfAnnotations(Priority.HIGH)).thenReturn(newWarnings);
         when(result.getNumberOfAnnotations(Priority.NORMAL)).thenReturn(fixedWarnings);
         when(result.getNumberOfAnnotations(Priority.LOW)).thenReturn(Math.abs(newWarnings - fixedWarnings));
@@ -109,6 +109,7 @@ public class Main extends ApplicationFrame {
         availableGraphs.add(new NewVersusFixedGraph());
         availableGraphs.add(new PriorityGraph());
         availableGraphs.add(new DifferenceGraph());
+        availableGraphs.add(new TotalsGraph());
 
         for (BuildResultGraph graph : availableGraphs) {
             Main chart = new Main(graph);

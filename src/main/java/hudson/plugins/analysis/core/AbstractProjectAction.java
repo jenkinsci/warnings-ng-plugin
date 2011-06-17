@@ -22,6 +22,7 @@ import hudson.plugins.analysis.graph.HealthGraph;
 import hudson.plugins.analysis.graph.NewVersusFixedGraph;
 import hudson.plugins.analysis.graph.NullGraph;
 import hudson.plugins.analysis.graph.PriorityGraph;
+import hudson.plugins.analysis.graph.TotalsGraph;
 import hudson.plugins.analysis.graph.UserGraphConfigurationView;
 import hudson.plugins.analysis.graph.GraphConfigurationView;
 import hudson.plugins.analysis.graph.TrendDetails;
@@ -212,6 +213,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
 
         availableGraphs.add(new NewVersusFixedGraph());
         availableGraphs.add(new PriorityGraph());
+        availableGraphs.add(new TotalsGraph());
         if (hasValidResults()) {
             availableGraphs.add(new HealthGraph(getLastAction().getHealthDescriptor()));
         }

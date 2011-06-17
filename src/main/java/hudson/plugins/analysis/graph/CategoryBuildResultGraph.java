@@ -1,5 +1,6 @@
 package hudson.plugins.analysis.graph;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.Calendar;
 import java.util.Collection;
@@ -18,6 +19,7 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.joda.time.LocalDate;
 
@@ -486,6 +488,18 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
         setCategoryPlotProperties(chart.getCategoryPlot());
 
         return chart;
+    }
+
+    /**
+     * Creates a line renderer with predefined stroke.
+     *
+     * @return a line renderer
+     * @since 1.23
+     */
+    protected CategoryItemRenderer createLineRenderer() {
+        LineAndShapeRenderer render = new LineAndShapeRenderer(true, false);
+        render.setBaseStroke(new BasicStroke(2.0f));
+        return render;
     }
 }
 
