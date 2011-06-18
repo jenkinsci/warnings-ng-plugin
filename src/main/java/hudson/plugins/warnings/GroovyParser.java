@@ -20,8 +20,7 @@ public class GroovyParser {
     private final String name;
     private final String regexp;
     private final String script;
-    /** @since 3.18. */
-    private final String example;
+    private final String example; // @since 3.18
 
     /**
      * Creates a new instance of {@link GroovyParser}.
