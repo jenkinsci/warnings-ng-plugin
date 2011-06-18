@@ -17,7 +17,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  *
  * @author Ulli Hafner
  */
-public class WarningsPriorityGraphPortlet extends AbstractWarningsGraphPortlet {
+public final class WarningsPriorityGraphPortlet extends AbstractWarningsGraphPortlet {
     /**
      * Creates a new instance of {@link WarningsPriorityGraphPortlet}.
      *
