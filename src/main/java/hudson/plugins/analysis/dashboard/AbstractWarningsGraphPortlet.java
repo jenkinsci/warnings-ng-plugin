@@ -51,6 +51,8 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
         this.width = width;
         this.height = height;
         this.dayCountString = dayCountString;
+
+        configureGraph(new NullGraph());
     }
 
     /**
@@ -59,7 +61,7 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
      * @param graph
      *            the graph to show
      */
-    protected void configureGraph(final BuildResultGraph graph) {
+    protected final void configureGraph(final BuildResultGraph graph) {
         configuration = new GraphConfiguration(graph);
         configuration.initializeFrom(width, height, dayCountString);
     }
