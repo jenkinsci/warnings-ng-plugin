@@ -106,7 +106,6 @@ public class ParserResult implements Serializable {
         }
     }
 
-
     /**
      * Creates a new instance of {@link ParserResult}.
      *
@@ -117,6 +116,17 @@ public class ParserResult implements Serializable {
         this(new NullWorkspace());
 
         addAnnotations(annotations);
+    }
+
+    /**
+     * Adds the warnings of the specified project to this project.
+     *
+     * @param additionalProject the project to add
+     */
+    public void addProject(final ParserResult additionalProject) {
+        addAnnotations(additionalProject.getAnnotations());
+        addErrors(additionalProject.getErrorMessages());
+        addModules(additionalProject.getModules());
     }
 
     /**
