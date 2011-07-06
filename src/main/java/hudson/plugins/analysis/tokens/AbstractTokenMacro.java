@@ -17,34 +17,35 @@ import hudson.plugins.analysis.core.ResultAction;
  * @author Ulli Hafner
  */
 public abstract class AbstractTokenMacro extends DataBoundTokenMacro {
-    private final Class<? extends ResultAction<? extends BuildResult>> resultAction;
+    private final Class<? extends ResultAction<? extends BuildResult>>[] resultActions;
     private final String tokenName;
 
     /**
      * Creates a new instance of {@link AbstractTokenMacro}.
      *
-     * @param resultAction
-     *            the associated action containing the build result
      * @param tokenName
      *            the name of the token
+     * @param resultActions
+     *            associated action types containing the build result
      */
-    public AbstractTokenMacro(final Class<? extends ResultAction<? extends BuildResult>> resultAction,
-            final String tokenName) {
+    public AbstractTokenMacro(final String tokenName,
+            final Class<? extends ResultAction<? extends BuildResult>>... resultActions) {
         super();
 
-        this.resultAction = resultAction;
+        this.resultActions = resultActions;
         this.tokenName = tokenName;
     }
 
     @Override
     public String evaluate(final AbstractBuild<?, ?> context, final TaskListener listener, final String macroName)
             throws MacroEvaluationException, IOException, InterruptedException {
-        ResultAction<? extends BuildResult> action = context.getAction(resultAction);
-        if (action == null) {
-            return "";
+        for (Class<? extends ResultAction<? extends BuildResult>> resultActionType : resultActions) {
+            ResultAction<? extends BuildResult> action = context.getAction(resultActionType);
+            if (action != null) {
+                return evaluate(action.getResult());
+            }
         }
-
-        return evaluate(action.getResult());
+        return "";
     }
 
     /**

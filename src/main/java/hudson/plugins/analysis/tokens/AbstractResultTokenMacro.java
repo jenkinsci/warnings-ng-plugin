@@ -11,15 +11,14 @@ import hudson.plugins.analysis.core.ResultAction;
 public class AbstractResultTokenMacro extends AbstractTokenMacro {
     /**
      * Creates a new instance of {@link AbstractResultTokenMacro}.
-     *
-     * @param resultAction
-     *            the associated action containing the build result
      * @param tokenName
      *            the name of the token
+     * @param resultActions
+     *            associated actions containing the build result
      */
-    public AbstractResultTokenMacro(final Class<? extends ResultAction<? extends BuildResult>> resultAction,
-            final String tokenName) {
-        super(resultAction, tokenName);
+    public AbstractResultTokenMacro(final String tokenName,
+            final Class<? extends ResultAction<? extends BuildResult>>... resultActions) {
+        super(tokenName, resultActions);
     }
 
     @Override
