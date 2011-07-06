@@ -14,8 +14,9 @@ public class WarningsResultTokenMacro extends AbstractResultTokenMacro {
     /**
      * Creates a new instance of {@link WarningsResultTokenMacro}.
      */
+    @SuppressWarnings("unchecked")
     public WarningsResultTokenMacro() {
-        super(WarningsResultAction.class, "WARNINGS_RESULT");
+        super("WARNINGS_RESULT", WarningsResultAction.class);
     }
 }
 
