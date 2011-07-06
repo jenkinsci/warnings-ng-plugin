@@ -83,7 +83,7 @@ public class ParserRegistry {
      *            the parser names
      * @return a list of parsers, might be modified by the receiver
      */
-    public static List<WarningsParser> getParsers(final Set<String> parserNames) {
+    public static List<WarningsParser> getParsers(final Collection<String> parserNames) {
         List<WarningsParser> actualParsers = new ArrayList<WarningsParser>();
         for (String name : parserNames) {
             for (WarningsParser warningsParser : getAllParsers()) {

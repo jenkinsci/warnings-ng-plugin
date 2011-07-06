@@ -3,6 +3,7 @@ package hudson.plugins.warnings;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.model.AbstractProject;
 import hudson.plugins.analysis.core.PluginDescriptor;
 import hudson.plugins.warnings.parser.Warning;
@@ -10,7 +11,9 @@ import hudson.util.CopyOnWriteList;
 import hudson.util.FormValidation;
 import hudson.util.FormValidation.Kind;
 
+import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +22,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -30,6 +34,9 @@ import org.kohsuke.stapler.StaplerRequest;
  */
 @Extension(ordinal = 100) // NOCHECKSTYLE
 public final class WarningsDescriptor extends PluginDescriptor {
+    private static final String CONSOLE_LOG_PARSERS_KEY = "consoleLogParsers";
+    private static final String FILE_LOCATIONS_KEY = "locations";
+    private static final String PARSER_NAME_ATTRIBUTE = "parserName";
     private static final String PLUGIN_NAME = "warnings";
     private static final String NEWLINE = "\n";
     private static final int MAX_MESSAGE_LENGTH = 60;
@@ -89,39 +96,43 @@ public final class WarningsDescriptor extends PluginDescriptor {
     /** {@inheritDoc} */
     @Override
     public WarningsPublisher newInstance(final StaplerRequest request, final JSONObject formData) throws FormException {
-        Set<String> parsers = extractParsers(formData);
+        Set<String> consoleLogParsers = extractConsoleLogParsers(formData);
+        List<ParserConfiguration> parserConfigurations = request.bindJSONToList(ParserConfiguration.class, formData.get(FILE_LOCATIONS_KEY));
 
         WarningsPublisher publisher = request.bindJSON(WarningsPublisher.class, formData);
-        publisher.setParserNames(parsers);
+        publisher.setConsoleLogParsers(consoleLogParsers);
+        publisher.setParserConfigurations(parserConfigurations);
 
         return publisher;
     }
 
     /**
-     * Extract the list of parsers to use from the JSON form data.
+     * Extract the list of locations and associated parsers from the JSON form data.
      *
      * @param formData
      *            the JSON form data
      * @return the list of parsers to use
      */
-    private Set<String> extractParsers(final JSONObject formData) {
+    private Set<String> extractConsoleLogParsers(final JSONObject formData) {
+        Object values = formData.get(CONSOLE_LOG_PARSERS_KEY);
         Set<String> parsers = new HashSet<String>();
-        Object values = formData.get("parsers");
         if (values instanceof JSONArray) {
             JSONArray array = (JSONArray)values;
             for (int i = 0; i < array.size(); i++) {
-                JSONObject element = array.getJSONObject(i);
-                parsers.add(element.getString("parserName"));
+                add(parsers, array.getJSONObject(i));
             }
-            formData.remove("parsers");
+            formData.remove(CONSOLE_LOG_PARSERS_KEY);
         }
         else if (values instanceof JSONObject) {
-            JSONObject object = (JSONObject)values;
-            parsers.add(object.getString("parserName"));
-            formData.remove("parsers");
+            add(parsers, (JSONObject)values);
+            formData.remove(CONSOLE_LOG_PARSERS_KEY);
         }
 
         return parsers;
+    }
+
+    private boolean add(final Set<String> parsers, final JSONObject element) {
+        return parsers.add(element.getString(PARSER_NAME_ATTRIBUTE));
     }
 
     /**
@@ -140,6 +151,18 @@ public final class WarningsDescriptor extends PluginDescriptor {
         save();
 
         return true;
+    }
+
+    @Override
+    public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final String pattern) throws IOException {
+        FormValidation required = FormValidation.validateRequired(pattern);
+        if (required.kind == FormValidation.Kind.OK) {
+            return FilePath.validateFileMask(project.getSomeWorkspace(), pattern);
+        }
+        else {
+            return required;
+        }
     }
 
     /**
