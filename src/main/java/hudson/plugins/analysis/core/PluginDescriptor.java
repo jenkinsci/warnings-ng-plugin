@@ -79,7 +79,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      *            the character encoding
      * @return the validation result
      */
-    public final FormValidation doCheckDefaultEncoding(@QueryParameter final String defaultEncoding) {
+    public FormValidation doCheckDefaultEncoding(@QueryParameter final String defaultEncoding) {
         try {
             return new EncodingValidator().check(defaultEncoding);
         }
@@ -99,7 +99,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @throws IOException
      *             if the encoding is not valid
      */
-    public final FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
+    public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
             @QueryParameter final String pattern) throws IOException {
         return FilePath.validateFileMask(project.getSomeWorkspace(), pattern);
     }
@@ -111,7 +111,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      *            the character encoding
      * @return the validation result
      */
-    public final FormValidation doCheckThreshold(@QueryParameter final String threshold) {
+    public FormValidation doCheckThreshold(@QueryParameter final String threshold) {
         try {
             return new ThresholdValidator().check(threshold);
         }
