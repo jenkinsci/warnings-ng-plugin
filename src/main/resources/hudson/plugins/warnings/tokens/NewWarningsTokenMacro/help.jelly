@@ -2,7 +2,7 @@
 
   <dt>$${WARNINGS_NEW}</dt>
   <dd>
-    Expands to the total number of compiler new warnings in a build.
+    Expands to the total number of new compiler warnings in a build.
   </dd>
 
 </j:jelly>
