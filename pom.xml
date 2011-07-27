@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>1.24</version>
+    <version>1.25-SNAPSHOT</version>
     <relativePath>../analysis-pom/pom.xml</relativePath>
   </parent>
 
@@ -20,7 +20,7 @@
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
       <artifactId>maven-plugin</artifactId>
-      <version>1.399</version>
+      <version>1.420</version>
     </dependency>
     <dependency>
       <groupId>de.java2html</groupId>

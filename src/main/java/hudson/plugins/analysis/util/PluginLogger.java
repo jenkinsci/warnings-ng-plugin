@@ -36,7 +36,12 @@ public class PluginLogger {
      *            the plug-in name
      */
     protected PluginLogger(final String pluginName) {
-        this.pluginName = pluginName;
+        if (pluginName.contains("[")) {
+            this.pluginName = pluginName;
+        }
+        else {
+            this.pluginName = "[" + pluginName + "] ";
+        }
     }
 
     /**
