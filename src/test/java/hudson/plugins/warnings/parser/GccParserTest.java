@@ -22,6 +22,24 @@ public class GccParserTest extends ParserTester {
     private static final String GCC_WARNING = "GCC warning";
 
     /**
+     * Parses a file with one warning that are started by ant.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-9926">Issue 9926</a>
+     */
+    @Test
+    public void issue9926() throws IOException {
+        Collection<FileAnnotation> warnings = new GccParser().parse(openFile("issue9926.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        FileAnnotation annotation = warnings.iterator().next();
+        checkWarning(annotation, 52, "large integer implicitly truncated to unsigned type",
+                "src/test_simple_sgs_message.cxx",
+                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+    }
+
+    /**
      * Parses a file with two GCC warnings.
      *
      * @throws IOException

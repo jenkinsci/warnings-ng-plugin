@@ -70,6 +70,24 @@ public class MsBuildParserTest extends ParserTester {
     }
 
     /**
+     * Parses a file with one warning of the MS Build tools that are started by ant.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-9926">Issue 9926</a>
+     */
+    @Test
+    public void issue9926() throws IOException {
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue9926.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        FileAnnotation annotation = warnings.iterator().next();
+        checkWarning(annotation, 125, "assignment within conditional expression",
+                "c:/jci/jobs/external_nvtristrip/workspace/compiler/cl/config/debug/platform/win32/tfields/live/external/nvtristrip/nvtristrip.cpp",
+                MsBuildParser.WARNING_TYPE, "C4706", Priority.NORMAL);
+    }
+
+    /**
      * Parses a file with warnings of the MS Build linker.
      *
      * @throws IOException
