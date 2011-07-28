@@ -35,6 +35,7 @@ public class PluginLogger {
      * @param pluginName
      *            the plug-in name
      */
+    // CHECKSTYLE:CONSTANTS-OFF
     protected PluginLogger(final String pluginName) {
         if (pluginName.contains("[")) {
             this.pluginName = pluginName;
@@ -43,6 +44,7 @@ public class PluginLogger {
             this.pluginName = "[" + pluginName + "] ";
         }
     }
+    // CHECKSTYLE:CONSTANTS-ON
 
     /**
      * Sets the logger to the specified value.
