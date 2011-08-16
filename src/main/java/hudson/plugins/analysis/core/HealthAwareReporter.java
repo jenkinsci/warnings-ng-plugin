@@ -278,9 +278,11 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
     @Override
     public boolean end(final MavenBuild build, final Launcher launcher, final BuildListener listener) {
         MavenModuleSetBuild moduleSetBuild = build.getParentBuild();
-        MavenResultAction<T> action = moduleSetBuild.getAction(getResultActionClass());
-        if (action != null) {
-            listener.getLogger().append(action.getLog());
+        if (moduleSetBuild != null) {
+            MavenResultAction<T> action = moduleSetBuild.getAction(getResultActionClass());
+            if (action != null) {
+                listener.getLogger().append(action.getLog());
+            }
         }
         return true;
     }
