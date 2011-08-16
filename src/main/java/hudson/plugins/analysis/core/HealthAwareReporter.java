@@ -247,13 +247,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
 
         String resultLog = build.execute(new BuildCallable<String, IOException>() {
             public String call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
-                T buildResult = createResult(mavenBuild, result);
-
-                StringPluginLogger pluginLogger = new StringPluginLogger(pluginName);
-                buildResult.evaluateStatus(thresholds, useDeltaValues, pluginLogger);
-                mavenBuild.getActions().add(createMavenAggregatedReport(mavenBuild, buildResult));
-                mavenBuild.registerAsProjectAction(HealthAwareReporter.this);
-                return pluginLogger.toString();
+                return registerResults(result, mavenBuild);
             }
         });
         logger.logLines(resultLog);
@@ -261,6 +255,16 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         copyFilesWithAnnotationsToBuildFolder(logger, build.getRootDir(), result.getAnnotations());
 
         return true;
+    }
+
+    private String registerResults(final ParserResult result, final MavenBuild mavenBuild) {
+        T buildResult = createResult(mavenBuild, result);
+
+        StringPluginLogger pluginLogger = new StringPluginLogger(pluginName);
+        buildResult.evaluateStatus(thresholds, useDeltaValues, pluginLogger);
+        mavenBuild.getActions().add(createMavenAggregatedReport(mavenBuild, buildResult));
+        mavenBuild.registerAsProjectAction(HealthAwareReporter.this);
+        return pluginLogger.toString();
     }
 
     /**
