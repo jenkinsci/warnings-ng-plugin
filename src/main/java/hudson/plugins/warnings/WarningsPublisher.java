@@ -229,8 +229,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
             throw new IOException("Error: No warning parsers defined.");
         }
 
-        ParserResult project = parseConsoleLog(build, logger);
-        parseFiles(build, logger, project);
+        ParserResult project = parseFiles(build, logger);
+        returnIfCanceled();
+
+        parseConsoleLog(build, logger, project);
 
         project = build.getWorkspace().act(new AnnotationsClassifier(project, getDefaultEncoding()));
         for (FileAnnotation annotation : project.getAnnotations()) {
@@ -243,7 +245,13 @@ public class WarningsPublisher extends HealthAwarePublisher {
         return result;
     }
 
-    private void parseFiles(final AbstractBuild<?, ?> build, final PluginLogger logger,
+    private void returnIfCanceled() throws InterruptedException {
+        if (Thread.interrupted()) {
+            throw new InterruptedException("Canceling parsing since build has been aborted.");
+        }
+    }
+
+    private void parseConsoleLog(final AbstractBuild<?, ?> build, final PluginLogger logger,
             final ParserResult project) throws IOException {
         if (!getConsoleLogParsers().isEmpty()) {
             logger.log("Parsing warnings in console log with parsers " + getConsoleLogParsers());
@@ -262,7 +270,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
         }
     }
 
-    private ParserResult parseConsoleLog(final AbstractBuild<?, ?> build, final PluginLogger logger)
+    private ParserResult parseFiles(final AbstractBuild<?, ?> build, final PluginLogger logger)
             throws IOException, InterruptedException {
         ParserResult project = new ParserResult(build.getWorkspace());
         for (ParserConfiguration configuration : getParserConfigurations()) {
@@ -275,6 +283,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
             ParserResult additionalProject = build.getWorkspace().act(parser);
             logger.logLines(additionalProject.getLogMessages());
             project.addProject(additionalProject);
+
+            returnIfCanceled();
         }
         return project;
     }
