@@ -236,7 +236,15 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
             return true;
         }
 
-        final ParserResult result = perform(build, pom, mojo, logger);
+        final ParserResult result;
+        try {
+            result = perform(build, pom, mojo, logger);
+        }
+        catch (InterruptedException exception) {
+            logger.log(exception.getMessage());
+
+            return false;
+        }
         logger.logLines(result.getLogMessages());
 
         defaultEncoding = pom.getProperties().getProperty("project.build.sourceEncoding");

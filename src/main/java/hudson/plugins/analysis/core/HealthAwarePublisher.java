@@ -307,7 +307,15 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
     public final boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
         PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
         if (canContinue(build.getResult())) {
-            BuildResult result = perform(build, logger);
+            BuildResult result;
+            try {
+                result = perform(build, logger);
+            }
+            catch (InterruptedException exception) {
+                logger.log(exception.getMessage());
+
+                return false;
+            }
 
             if (new NullHealthDescriptor(this).isThresholdEnabled()) {
                 result.evaluateStatus(getThresholds(), useDeltaValues, logger);
