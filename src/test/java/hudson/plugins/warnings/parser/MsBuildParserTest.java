@@ -24,6 +24,24 @@ public class MsBuildParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-10566">Issue 10566</a>
+     */
+    @Test
+    public void issue10566() throws IOException {
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue10566.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        FileAnnotation annotation = warnings.iterator().next();
+        checkWarning(annotation,
+                54, "cannot open include file: 'Header.h': No such file or directory",
+                "..//..//..//xx_Source//file.c", MsBuildParser.WARNING_TYPE, "c1083", Priority.HIGH);
+    }
+
+    /**
+     * Parses a file with warnings of the MS Build tools.
+     *
+     * @throws IOException
+     *      if the file could not be read
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-3582">Issue 3582</a>
      */
     @Test
