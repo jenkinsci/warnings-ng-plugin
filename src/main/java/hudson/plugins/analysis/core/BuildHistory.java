@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.annotation.CheckForNull;
 
+import hudson.model.Result;
 import hudson.model.AbstractBuild;
 
 import hudson.plugins.analysis.util.model.AnnotationContainer;
@@ -68,9 +69,11 @@ public class BuildHistory {
      */
     private ResultAction<? extends BuildResult> getReferenceAction() {
         for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
-            ResultAction<? extends BuildResult> action = build.getAction(type);
-            if (action != null && action.isSuccessful()) {
-                return action;
+            if (build.getResult().isBetterThan(Result.FAILURE)) {
+                ResultAction<? extends BuildResult> action = build.getAction(type);
+                if (action != null && action.isSuccessful()) {
+                    return action;
+                }
             }
         }
         return getPreviousAction(); // fallback, use previous build
@@ -87,7 +90,10 @@ public class BuildHistory {
     public AbstractBuild<?, ?> getReferenceBuild() {
         ResultAction<? extends BuildResult> action = getReferenceAction();
         if (action != null) {
-            return action.getBuild();
+            AbstractBuild<?, ?> build = action.getBuild();
+            if (build.getResult().isBetterThan(Result.FAILURE)) {
+                return build;
+            }
         }
         return null;
     }
@@ -122,9 +128,11 @@ public class BuildHistory {
     @CheckForNull
     private ResultAction<? extends BuildResult> getPreviousAction() {
         for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
-            ResultAction<? extends BuildResult> action = build.getAction(type);
-            if (action != null) {
-                return action;
+            if (build.getResult().isBetterThan(Result.FAILURE)) {
+                ResultAction<? extends BuildResult> action = build.getAction(type);
+                if (action != null) {
+                    return action;
+                }
             }
         }
         return null;
