@@ -10,8 +10,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import org.apache.commons.digester.Digester;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
@@ -20,6 +23,7 @@ import org.xml.sax.SAXException;
  * file or the ANT build.xml file.
  *
  * @author Ulli Hafner
+ * @author Christoph Läubrich (support for OSGi-Bundles)
  */
 public class ModuleDetector {
     private static final String BACK_SLASH = "\\";
@@ -28,7 +32,11 @@ public class ModuleDetector {
 
     static final String MAVEN_POM = "pom.xml";
     static final String ANT_PROJECT = "build.xml";
-    private static final String PATTERN = ALL_DIRECTORIES + MAVEN_POM + ", " + ALL_DIRECTORIES + ANT_PROJECT;
+    static final String OSGI_BUNDLE = "META-INF/MANIFEST.MF";
+
+    private static final String PATTERN = ALL_DIRECTORIES + MAVEN_POM
+            + ", " + ALL_DIRECTORIES + ANT_PROJECT
+            + ", " + ALL_DIRECTORIES + OSGI_BUNDLE;
 
     /** The factory to create input streams with. */
     private FileInputStreamFactory factory = new DefaultFileInputStreamFactory();
@@ -85,8 +93,13 @@ public class ModuleDetector {
             if (fileName.endsWith(MAVEN_POM)) {
                 addMapping(mapping, fileName, MAVEN_POM, parsePom(fileName));
             }
-            else {
+            else if (fileName.endsWith(ANT_PROJECT)) {
                 addMapping(mapping, fileName, ANT_PROJECT, parseBuildXml(fileName));
+            }
+        }
+        for (String fileName : projects) {
+            if (fileName.endsWith(OSGI_BUNDLE)) {
+                addMapping(mapping, fileName, OSGI_BUNDLE, parseManifest(fileName));
             }
         }
 
@@ -143,14 +156,15 @@ public class ModuleDetector {
     /**
      * Returns the project name stored in the build.xml.
      *
-     * @param path
-     *            root folder
+     * @param buildXml
+     *            Ant build.xml file name
      * @return the project name or an empty string if the name could not be
      *         resolved
      */
-    private String parseBuildXml(final String path) {
+    private String parseBuildXml(final String buildXml) {
+        InputStream file = null;
         try {
-            InputStream pom = factory.create(path);
+            file = factory.create(buildXml);
             Digester digester = new Digester();
             digester.setValidating(false);
             digester.setClassLoader(ModuleDetector.class.getClassLoader());
@@ -160,7 +174,7 @@ public class ModuleDetector {
             digester.addCallMethod(xPath, "append", 1);
             digester.addCallParam(xPath, 0, "name");
 
-            StringBuffer result = (StringBuffer)digester.parse(pom);
+            StringBuffer result = (StringBuffer)digester.parse(file);
             return result.toString();
         }
         catch (IOException exception) {
@@ -168,6 +182,9 @@ public class ModuleDetector {
         }
         catch (SAXException exception) {
             // ignore
+        }
+        finally {
+            IOUtils.closeQuietly(file);
         }
         return StringUtils.EMPTY;
     }
@@ -175,14 +192,15 @@ public class ModuleDetector {
     /**
      * Returns the project name stored in the POM.
      *
-     * @param fileName
-     *            Maven module root folder
+     * @param pom
+     *            Maven POM file name
      * @return the project name or an empty string if the name could not be
      *         resolved
      */
-    private String parsePom(final String fileName) {
+    private String parsePom(final String pom) {
+        InputStream file = null;
         try {
-            InputStream pom = factory.create(fileName);
+            file = factory.create(pom);
             Digester digester = new Digester();
             digester.setValidating(false);
             digester.setClassLoader(ModuleDetector.class.getClassLoader());
@@ -190,7 +208,7 @@ public class ModuleDetector {
             digester.push(new StringBuffer());
             digester.addCallMethod("project/name", "append", 0);
 
-            StringBuffer result = (StringBuffer)digester.parse(pom);
+            StringBuffer result = (StringBuffer)digester.parse(file);
             return result.toString();
         }
         catch (IOException exception) {
@@ -198,6 +216,43 @@ public class ModuleDetector {
         }
         catch (SAXException exception) {
             // ignore
+        }
+        finally {
+            IOUtils.closeQuietly(file);
+        }
+        return StringUtils.EMPTY;
+    }
+
+    /**
+     * Scans a Manifest file for OSGi Bundle Information
+     *
+     * @param manifestFile
+     *            file name of MANIFEST.MF
+     * @return the project name or an empty string if the name could not be
+     *         resolved
+     */
+    private String parseManifest(final String manifestFile) {
+        InputStream file = null;
+        try {
+            file = factory.create(manifestFile);
+            Manifest manifest = new Manifest(file);
+            Attributes attributes = manifest.getMainAttributes();
+            String symbolicName = attributes.getValue("Bundle-SymbolicName");
+            if (StringUtils.isNotBlank(symbolicName)) {
+                String vendor = attributes.getValue("Bundle-Vendor");
+                if (StringUtils.isNotBlank(vendor)) {
+                    return symbolicName + " (" + vendor + ")";
+                }
+                else {
+                    return symbolicName;
+                }
+            }
+        }
+        catch (IOException exception) {
+            // ignore
+        }
+        finally {
+            IOUtils.closeQuietly(file);
         }
         return StringUtils.EMPTY;
     }
