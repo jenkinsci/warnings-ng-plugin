@@ -16,7 +16,8 @@ import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
 /**
- * Detects module names by parsing the name of a source file, the Maven pom.xml file or the ANT build.xml file.
+ * Detects module names by parsing the name of a source file, the Maven pom.xml
+ * file or the ANT build.xml file.
  *
  * @author Ulli Hafner
  */
@@ -59,23 +60,14 @@ public class ModuleDetector {
      *
      * @param workspace
      *            the workspace to scan for Maven pom.xml or ant build.xml files
-     * @param fileInputStreamFactory the value to set
+     * @param fileInputStreamFactory
+     *            factory to load files
      */
-    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
-    public ModuleDetector(final File workspace, final FileInputStreamFactory fileInputStreamFactory) {
-        setFileInputStreamFactory(fileInputStreamFactory);
+    ModuleDetector(final File workspace, final FileInputStreamFactory fileInputStreamFactory) {
+        factory = fileInputStreamFactory;
         fileNameToModuleName = createFilesToModuleMapping(workspace);
         prefixes = new ArrayList<String>(fileNameToModuleName.keySet());
         Collections.sort(prefixes);
-    }
-
-    /**
-     * Sets the factory to the specified value.
-     *
-     * @param fileInputStreamFactory the value to set
-     */
-    public final void setFileInputStreamFactory(final FileInputStreamFactory fileInputStreamFactory) {
-        factory = fileInputStreamFactory;
     }
 
     /**
@@ -88,7 +80,7 @@ public class ModuleDetector {
     private Map<String, String> createFilesToModuleMapping(final File workspace) {
         Map<String, String> mapping = new HashMap<String, String>();
 
-        String[] projects = factory.find(workspace, PATTERN);
+        String[] projects = find(workspace);
         for (String fileName : projects) {
             if (fileName.endsWith(MAVEN_POM)) {
                 addMapping(mapping, fileName, MAVEN_POM, parsePom(fileName));
@@ -112,7 +104,7 @@ public class ModuleDetector {
      * name for the specified file.
      *
      * @param originalFileName
-     *            file name to guess a module for
+     *            file name to guess a module for, must be an absolute path
      * @return a module name or an empty string
      */
     public String guessModuleName(final String originalFileName) {
@@ -132,17 +124,18 @@ public class ModuleDetector {
      *
      * @param path
      *            root path to scan in
-     * @param pattern
-     *            pattern of files
-     * @return the found files
+     * @return the found files (as absolute paths)
      */
-    protected String[] find(final File path, final String pattern) {
+    private String[] find(final File path) {
         String[] relativeFileNames = factory.find(path, PATTERN);
         String[] absoluteFileNames = new String[relativeFileNames.length];
 
         String absolutePath = path.getAbsolutePath();
         for (int file = 0; file < absoluteFileNames.length; file++) {
-            absoluteFileNames[file] = (absolutePath + SLASH + relativeFileNames[file]).replace(BACK_SLASH, SLASH);
+            if (!relativeFileNames[file].startsWith(SLASH)) {
+                String absoluteName = absolutePath + SLASH + relativeFileNames[file];
+                absoluteFileNames[file] = absoluteName.replace(BACK_SLASH, SLASH);
+            }
         }
         return absoluteFileNames;
     }

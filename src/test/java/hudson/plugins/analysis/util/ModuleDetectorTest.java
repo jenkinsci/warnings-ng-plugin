@@ -18,10 +18,14 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  */
 @SuppressWarnings("DMI")
 public class ModuleDetectorTest {
-    private static final File ROOT = new File("/");
+    private static final File ROOT = new File("/tmp");
+    /**
+     * FIXME: Document field PREFIX
+     */
+    private static final String PREFIX = ROOT.getAbsolutePath() + "/";
     private static final int NO_RESULT = 0;
-    private static final String PATH_PREFIX_MAVEN = "/path/to/maven";
-    private static final String PATH_PREFIX_ANT = "/path/to/ant";
+    private static final String PATH_PREFIX_MAVEN = "path/to/maven";
+    private static final String PATH_PREFIX_ANT = "path/to/ant";
     private static final String EXPECTED_MAVEN_MODULE = "ADT Business Logic";
     private static final String EXPECTED_ANT_MODULE = "checkstyle";
 
@@ -63,7 +67,7 @@ public class ModuleDetectorTest {
     }
 
     private void verifyModuleName(final ModuleDetector detector, final String expectedName, final String fileName) {
-        assertEquals("Wrong module guessed", expectedName, detector.guessModuleName(fileName));
+        assertEquals("Wrong module guessed", expectedName, detector.guessModuleName(PREFIX + fileName));
     }
 
     /**
@@ -116,8 +120,8 @@ public class ModuleDetectorTest {
         String maven = PATH_PREFIX_MAVEN + ModuleDetector.MAVEN_POM;
 
         FileInputStreamFactory factory = mock(FileInputStreamFactory.class);
-        when(factory.create(ant)).thenReturn(read(ModuleDetector.ANT_PROJECT));
-        when(factory.create(maven)).thenReturn(read(ModuleDetector.MAVEN_POM));
+        when(factory.create(PREFIX + ant)).thenReturn(read(ModuleDetector.ANT_PROJECT));
+        when(factory.create(PREFIX + maven)).thenReturn(read(ModuleDetector.MAVEN_POM));
 
         when(factory.find((File)anyObject(), anyString())).thenReturn(new String[] {ant, maven});
         ModuleDetector detector = createDetectorUnderTest(factory);
