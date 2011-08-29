@@ -534,7 +534,6 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         return StringUtils.removeEnd(message.toString(), separator);
     }
 
-
     /**
      * Returns the package category name for the scanned files. Currently, only
      * java and c# files are supported.
@@ -556,6 +555,28 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
             }
         }
         return Messages.PackageDetail_header();
+    }
+
+    /**
+     * Returns the package category title for the scanned files.
+     *
+     * @return the package category title for the scanned files
+     */
+    public final String getPackageCategoryTitle() {
+        if (hasAnnotations()) {
+            FileAnnotation annotation = getAnnotations().iterator().next();
+            String fileName = annotation.getFileName();
+            if (fileName.endsWith(".cs")) {
+                return Messages.NamespaceDetail_title();
+            }
+            if (annotation.hasPackageName()) {
+                return Messages.PackageDetail_title();
+            }
+            else {
+                return Messages.PathDetail_title();
+            }
+        }
+        return Messages.PackageDetail_title();
     }
 
     /**

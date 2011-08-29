@@ -23,7 +23,7 @@
       </j:if>
       <j:if test="${it.container.packages.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '${it.container.packageCategoryName}',
+            label: '${it.container.packageCategoryTitle}',
             dataSrc: 'tab.packages/',
             cacheData: true,
             active: false
