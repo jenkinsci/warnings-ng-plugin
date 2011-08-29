@@ -1,7 +1,5 @@
 package hudson.plugins.analysis.util;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,16 +20,12 @@ public final class PackageDetectors {
      *
      * @param fileName
      *            the filename of the file to scan
-     * @param content
-     *            the content of the file
      * @return the package name or an empty string
-     * @throws IOException
-     *             if the file could not be read
      */
-    public static String detectPackage(final String fileName, final InputStream content) throws IOException {
+    public static String detectPackageName(final String fileName) {
         for (PackageDetector detector : DETECTORS) {
             if (detector.accepts(fileName)) {
-                return detector.detectPackageName(content);
+                return detector.detectPackageName(fileName);
             }
         }
         return "undefined";

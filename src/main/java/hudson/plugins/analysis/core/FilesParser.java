@@ -226,6 +226,10 @@ public class FilesParser implements FileCallable<ParserResult> {
         if (stringLogger != null) {
             result.setLog(stringLogger.toString());
         }
+
+        for (FileAnnotation annotation : result.getAnnotations()) {
+            annotation.setPathName(workspace.getAbsolutePath());
+        }
         return result;
     }
 
