@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -26,17 +27,23 @@ import org.xml.sax.SAXException;
  * @author Christoph Läubrich (support for OSGi-Bundles)
  */
 public class ModuleDetector {
+    private static final String PLUS = ", ";
     private static final String BACK_SLASH = "\\";
     private static final String SLASH = "/";
     private static final String ALL_DIRECTORIES = "**/";
+
+    private static final String BUNDLE_VENDOR = "Bundle-Vendor";
+    private static final String BUNDLE_SYMBOLIC_NAME = "Bundle-SymbolicName";
+    private static final String BUNDLE_NAME = "Bundle-Name";
+    private static final String REPLACEMENT_CHAR = "%";
 
     static final String MAVEN_POM = "pom.xml";
     static final String ANT_PROJECT = "build.xml";
     static final String OSGI_BUNDLE = "META-INF/MANIFEST.MF";
 
     private static final String PATTERN = ALL_DIRECTORIES + MAVEN_POM
-            + ", " + ALL_DIRECTORIES + ANT_PROJECT
-            + ", " + ALL_DIRECTORIES + OSGI_BUNDLE;
+            + PLUS + ALL_DIRECTORIES + ANT_PROJECT
+            + PLUS + ALL_DIRECTORIES + OSGI_BUNDLE;
 
     /** The factory to create input streams with. */
     private FileInputStreamFactory factory = new DefaultFileInputStreamFactory();
@@ -224,7 +231,7 @@ public class ModuleDetector {
     }
 
     /**
-     * Scans a Manifest file for OSGi Bundle Information
+     * Scans a Manifest file for OSGi Bundle Information.
      *
      * @param manifestFile
      *            file name of MANIFEST.MF
@@ -237,22 +244,62 @@ public class ModuleDetector {
             file = factory.create(manifestFile);
             Manifest manifest = new Manifest(file);
             Attributes attributes = manifest.getMainAttributes();
-            String symbolicName = attributes.getValue("Bundle-SymbolicName");
-            if (StringUtils.isNotBlank(symbolicName)) {
-                String vendor = attributes.getValue("Bundle-Vendor");
-                if (StringUtils.isNotBlank(vendor)) {
-                    return symbolicName + " (" + vendor + ")";
-                }
-                else {
-                    return symbolicName;
-                }
+            Properties properties = readProperties(StringUtils.substringBefore(manifestFile, OSGI_BUNDLE));
+            String name = getLocalizedValue(attributes, properties, BUNDLE_NAME);
+            if (StringUtils.isNotBlank(name)) {
+                return name;
             }
+            return getSymbolicName(attributes, properties);
         }
         catch (IOException exception) {
             // ignore
         }
         finally {
             IOUtils.closeQuietly(file);
+        }
+        return StringUtils.EMPTY;
+    }
+
+    private String getLocalizedValue(final Attributes attributes, final Properties properties, final String bundleName) {
+        String value = attributes.getValue(bundleName);
+        if (StringUtils.startsWith(StringUtils.trim(value), REPLACEMENT_CHAR)) {
+            return properties.getProperty(StringUtils.substringAfter(value, REPLACEMENT_CHAR));
+        }
+        return value;
+    }
+
+    private Properties readProperties(final String path) {
+        Properties properties = new Properties();
+        readProperties(path, properties, "plugin.properties");
+        readProperties(path, properties, "OSGI-INF/l10n/bundle.properties");
+
+        return properties;
+    }
+
+    private void readProperties(final String path, final Properties properties, final String fileName) {
+        InputStream file = null;
+        try {
+            file = factory.create(path + SLASH + fileName);
+            properties.load(file);
+        }
+        catch (IOException exception) {
+            // ignore if properties are not present or not readable
+        }
+        finally {
+            IOUtils.closeQuietly(file);
+        }
+    }
+
+    private String getSymbolicName(final Attributes attributes, final Properties properties) {
+        String symbolicName = StringUtils.substringBefore(attributes.getValue(BUNDLE_SYMBOLIC_NAME), ";");
+        if (StringUtils.isNotBlank(symbolicName)) {
+            String vendor = getLocalizedValue(attributes, properties, BUNDLE_VENDOR);
+            if (StringUtils.isNotBlank(vendor)) {
+                return symbolicName + " (" + vendor + ")";
+            }
+            else {
+                return symbolicName;
+            }
         }
         return StringUtils.EMPTY;
     }

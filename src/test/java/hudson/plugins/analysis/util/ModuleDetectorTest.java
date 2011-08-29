@@ -18,13 +18,13 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  */
 @SuppressWarnings("DMI")
 public class ModuleDetectorTest {
+    private static final String MANIFEST = "MANIFEST.MF";
+    private static final String MANIFEST_NAME = "MANIFEST-NAME.MF";
     private static final File ROOT = new File("/tmp");
-    /**
-     * FIXME: Document field PREFIX
-     */
     private static final String PREFIX = ROOT.getAbsolutePath() + "/";
     private static final int NO_RESULT = 0;
     private static final String PATH_PREFIX_MAVEN = "path/to/maven";
+    private static final String PATH_PREFIX_OSGI = "path/to/osgi";
     private static final String PATH_PREFIX_ANT = "path/to/ant";
     private static final String EXPECTED_MAVEN_MODULE = "ADT Business Logic";
     private static final String EXPECTED_ANT_MODULE = "checkstyle";
@@ -48,6 +48,59 @@ public class ModuleDetectorTest {
 
     private InputStream read(final String fileName) {
         return ModuleDetectorTest.class.getResourceAsStream(fileName);
+    }
+
+    /**
+     * Checks whether we could identify OSGi modules using the module mapping.
+     *
+     * @throws FileNotFoundException
+     *             should never happen
+     */
+    @Test
+    public void testOsgiModules() throws FileNotFoundException {
+        ModuleDetector detector = createDetectorUnderTest(MANIFEST,
+                new String[] {PATH_PREFIX_OSGI + ModuleDetector.OSGI_BUNDLE});
+
+        String expectedName = "de.faktorlogik.prototyp";
+        verifyModuleName(detector, expectedName, PATH_PREFIX_OSGI + "/something.txt");
+        verifyModuleName(detector, expectedName, PATH_PREFIX_OSGI + "/in/between/something.txt");
+        verifyModuleName(detector, StringUtils.EMPTY, "/path/to/something.txt");
+    }
+
+    /**
+     * Checks whether we could identify OSGi modules using the module mapping.
+     *
+     * @throws FileNotFoundException
+     *             should never happen
+     */
+    @Test
+    public void testOsgiModulesWithVendor() throws FileNotFoundException {
+        FileInputStreamFactory factory = createFactoryMock(MANIFEST, new String[] {PATH_PREFIX_OSGI + ModuleDetector.OSGI_BUNDLE});
+        when(factory.create(anyString())).thenReturn(read(MANIFEST)).thenReturn(read("l10n.properties"));
+        ModuleDetector detector = createDetectorUnderTest(factory);
+
+        String expectedName = "de.faktorlogik.prototyp (My Vendor)";
+        verifyModuleName(detector, expectedName, PATH_PREFIX_OSGI + "/something.txt");
+        verifyModuleName(detector, expectedName, PATH_PREFIX_OSGI + "/in/between/something.txt");
+        verifyModuleName(detector, StringUtils.EMPTY, "/path/to/something.txt");
+    }
+
+    /**
+     * Checks whether we could identify OSGi modules using the module mapping.
+     *
+     * @throws FileNotFoundException
+     *             should never happen
+     */
+    @Test
+    public void testOsgiModulesWithName() throws FileNotFoundException {
+        FileInputStreamFactory factory = createFactoryMock(MANIFEST_NAME, new String[] {PATH_PREFIX_OSGI + ModuleDetector.OSGI_BUNDLE});
+        when(factory.create(anyString())).thenReturn(read(MANIFEST_NAME)).thenReturn(read("l10n.properties"));
+        ModuleDetector detector = createDetectorUnderTest(factory);
+
+        String expectedName = "My Bundle";
+        verifyModuleName(detector, expectedName, PATH_PREFIX_OSGI + "/something.txt");
+        verifyModuleName(detector, expectedName, PATH_PREFIX_OSGI + "/in/between/something.txt");
+        verifyModuleName(detector, StringUtils.EMPTY, "/path/to/something.txt");
     }
 
     /**
