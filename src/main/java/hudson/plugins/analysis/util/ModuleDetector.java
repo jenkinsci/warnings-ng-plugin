@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
  * file or the ANT build.xml file.
  *
  * @author Ulli Hafner
- * @author Christoph Läubrich (support for OSGi-Bundles)
+ * @author Christoph Laeubrich (support for OSGi-Bundles)
  */
 public class ModuleDetector {
     private static final String PLUS = ", ";
