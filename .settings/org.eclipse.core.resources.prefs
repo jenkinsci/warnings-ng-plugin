@@ -1,7 +1,7 @@
-#Thu Jul 14 15:03:39 CEST 2011
+#Mon Aug 29 16:18:13 CEST 2011
 eclipse.preferences.version=1
-encoding//src/main/java=ISO-8859-1
 encoding//src/main/resources=ISO-8859-1
 encoding//src/test/java=ISO-8859-1
 encoding//src/test/resources=ISO-8859-1
 encoding//src/test/resources/hudson/plugins/warnings/parser/issue7178.txt=UTF-8
+encoding/<project>=ISO-8859-1
