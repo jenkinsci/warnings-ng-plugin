@@ -18,6 +18,7 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  */
 @SuppressWarnings("DMI")
 public class ModuleDetectorTest {
+    private static final String EXPECTED_OSGI_MODULE = "de.faktorlogik.prototyp";
     private static final String MANIFEST = "MANIFEST.MF";
     private static final String MANIFEST_NAME = "MANIFEST-NAME.MF";
     private static final File ROOT = new File("/tmp");
@@ -61,9 +62,8 @@ public class ModuleDetectorTest {
         ModuleDetector detector = createDetectorUnderTest(MANIFEST,
                 new String[] {PATH_PREFIX_OSGI + ModuleDetector.OSGI_BUNDLE});
 
-        String expectedName = "de.faktorlogik.prototyp";
-        verifyModuleName(detector, expectedName, PATH_PREFIX_OSGI + "/something.txt");
-        verifyModuleName(detector, expectedName, PATH_PREFIX_OSGI + "/in/between/something.txt");
+        verifyModuleName(detector, EXPECTED_OSGI_MODULE, PATH_PREFIX_OSGI + "/something.txt");
+        verifyModuleName(detector, EXPECTED_OSGI_MODULE, PATH_PREFIX_OSGI + "/in/between/something.txt");
         verifyModuleName(detector, StringUtils.EMPTY, "/path/to/something.txt");
     }
 
@@ -181,5 +181,69 @@ public class ModuleDetectorTest {
 
         verifyModuleName(detector, EXPECTED_ANT_MODULE, PATH_PREFIX_ANT + "/something.txt");
         verifyModuleName(detector, EXPECTED_MAVEN_MODULE, PATH_PREFIX_MAVEN + "/something.txt");
+    }
+
+    /**
+     * Checks whether maven has precedence over ant.
+     *
+     * @throws FileNotFoundException
+     *             should never happen
+     */
+    @Test
+    public void testMavenHasPrecedenceOverAnt() throws FileNotFoundException {
+        String prefix = "/prefix/";
+        String ant = prefix + ModuleDetector.ANT_PROJECT;
+        String maven = prefix + ModuleDetector.MAVEN_POM;
+
+        verifyOrder(prefix, ant, maven, new String[] {ant, maven});
+        verifyOrder(prefix, ant, maven, new String[] {maven, ant});
+    }
+
+    private void verifyOrder(final String prefix, final String ant, final String maven, final String[] foundFiles)
+            throws FileNotFoundException {
+        FileInputStreamFactory factory = mock(FileInputStreamFactory.class);
+        when(factory.create(ant)).thenReturn(read(ModuleDetector.ANT_PROJECT));
+        when(factory.create(maven)).thenReturn(read(ModuleDetector.MAVEN_POM));
+
+        when(factory.find((File)anyObject(), anyString())).thenReturn(foundFiles);
+        ModuleDetector detector = createDetectorUnderTest(factory);
+
+        assertEquals("Wrong module guessed", EXPECTED_MAVEN_MODULE,
+                detector.guessModuleName(prefix + "/something.txt"));
+    }
+
+    /**
+     * Checks whether OSGi has precedence over maven and ant.
+     *
+     * @throws FileNotFoundException
+     *             should never happen
+     */
+    @Test
+    public void testOsgiHasPrecedenceOvermavenAndAnt() throws FileNotFoundException {
+        String prefix = "/prefix/";
+        String ant = prefix + ModuleDetector.ANT_PROJECT;
+        String maven = prefix + ModuleDetector.MAVEN_POM;
+        String osgi = prefix + ModuleDetector.OSGI_BUNDLE;
+
+        verifyOrder(prefix, ant, maven, osgi, new String[] {ant, maven, osgi});
+        verifyOrder(prefix, ant, maven, osgi, new String[] {ant, osgi, maven});
+        verifyOrder(prefix, ant, maven, osgi, new String[] {maven, ant, osgi});
+        verifyOrder(prefix, ant, maven, osgi, new String[] {maven, osgi, ant});
+        verifyOrder(prefix, ant, maven, osgi, new String[] {osgi, ant, maven});
+        verifyOrder(prefix, ant, maven, osgi, new String[] {osgi, maven, osgi});
+    }
+
+    private void verifyOrder(final String prefix, final String ant, final String maven, final String osgi, final String[] foundFiles)
+            throws FileNotFoundException {
+        FileInputStreamFactory factory = mock(FileInputStreamFactory.class);
+        when(factory.create(ant)).thenReturn(read(ModuleDetector.ANT_PROJECT));
+        when(factory.create(maven)).thenReturn(read(ModuleDetector.MAVEN_POM));
+        when(factory.create(osgi)).thenReturn(read(MANIFEST));
+
+        when(factory.find((File)anyObject(), anyString())).thenReturn(foundFiles);
+        ModuleDetector detector = createDetectorUnderTest(factory);
+
+        assertEquals("Wrong module guessed", EXPECTED_OSGI_MODULE,
+                detector.guessModuleName(prefix + "/something.txt"));
     }
 }

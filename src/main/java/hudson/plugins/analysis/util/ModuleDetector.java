@@ -97,11 +97,13 @@ public class ModuleDetector {
 
         String[] projects = find(workspace);
         for (String fileName : projects) {
+            if (fileName.endsWith(ANT_PROJECT)) {
+                addMapping(mapping, fileName, ANT_PROJECT, parseBuildXml(fileName));
+            }
+        }
+        for (String fileName : projects) {
             if (fileName.endsWith(MAVEN_POM)) {
                 addMapping(mapping, fileName, MAVEN_POM, parsePom(fileName));
-            }
-            else if (fileName.endsWith(ANT_PROJECT)) {
-                addMapping(mapping, fileName, ANT_PROJECT, parseBuildXml(fileName));
             }
         }
         for (String fileName : projects) {
@@ -155,6 +157,9 @@ public class ModuleDetector {
             if (!relativeFileNames[file].startsWith(SLASH)) {
                 String absoluteName = absolutePath + SLASH + relativeFileNames[file];
                 absoluteFileNames[file] = absoluteName.replace(BACK_SLASH, SLASH);
+            }
+            else {
+                absoluteFileNames[file] = relativeFileNames[file];
             }
         }
         return absoluteFileNames;
@@ -280,7 +285,9 @@ public class ModuleDetector {
         InputStream file = null;
         try {
             file = factory.create(path + SLASH + fileName);
-            properties.load(file);
+            if (file != null) {
+                properties.load(file);
+            }
         }
         catch (IOException exception) {
             // ignore if properties are not present or not readable
