@@ -154,12 +154,12 @@ public class ModuleDetector {
 
         String absolutePath = path.getAbsolutePath();
         for (int file = 0; file < absoluteFileNames.length; file++) {
-            if (!relativeFileNames[file].startsWith(SLASH)) {
-                String absoluteName = absolutePath + SLASH + relativeFileNames[file];
-                absoluteFileNames[file] = absoluteName.replace(BACK_SLASH, SLASH);
+            if (relativeFileNames[file].startsWith(SLASH)) {
+                absoluteFileNames[file] = relativeFileNames[file];
             }
             else {
-                absoluteFileNames[file] = relativeFileNames[file];
+                String absoluteName = absolutePath + SLASH + relativeFileNames[file];
+                absoluteFileNames[file] = absoluteName.replace(BACK_SLASH, SLASH);
             }
         }
         return absoluteFileNames;
