@@ -23,7 +23,6 @@ import hudson.plugins.warnings.parser.ParserRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -50,8 +49,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
     private final String excludePattern;
 
     /** File pattern and parser configurations. @since 3.19 */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     private List<ParserConfiguration> parserConfigurations = Lists.newArrayList();
     /** Parser to scan the console log. @since 3.19 */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     private Set<String> consoleLogParsers = Sets.newHashSet();
 
     /**
@@ -147,11 +148,11 @@ public class WarningsPublisher extends HealthAwarePublisher {
     /**
      * Adds the specified parsers to this publisher.
      *
-     * @param parserNames
+     * @param names
      *            the parsers to use when scanning the console log
      */
-    public void setConsoleLogParsers(final Set<String> parserNames) {
-        consoleLogParsers = Sets.newHashSet(parserNames);
+    public void setConsoleLogParsers(final Set<String> names) {
+        consoleLogParsers = Sets.newHashSet(names);
     }
 
     /**
@@ -186,16 +187,22 @@ public class WarningsPublisher extends HealthAwarePublisher {
             consoleLogParsers = Sets.newHashSet();
             parserConfigurations = Lists.newArrayList();
 
-            if (!ignoreConsole) {
-                consoleLogParsers.addAll(parserNames);
-            }
-            if (StringUtils.isNotBlank(pattern)) {
-                for (String parser : parserNames) {
-                    parserConfigurations.add(new ParserConfiguration(pattern, parser));
-                }
+            if (parserNames != null) {
+                convertToNewFormat();
             }
         }
         return this;
+    }
+
+    private void convertToNewFormat() {
+        if (!ignoreConsole) {
+            consoleLogParsers.addAll(parserNames);
+        }
+        if (StringUtils.isNotBlank(pattern)) {
+            for (String parser : parserNames) {
+                parserConfigurations.add(new ParserConfiguration(pattern, parser));
+            }
+        }
     }
 
     /**
@@ -311,8 +318,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
     }
 
     /** Name of parsers to use for scanning the logs. */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
-    private transient Set<String> parserNames = new HashSet<String>();
+    private transient Set<String> parserNames;
     /** Determines whether the console should be ignored. */
     private transient boolean ignoreConsole;
     /** Ant file-set pattern of files to work with. */
