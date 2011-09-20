@@ -2,6 +2,8 @@ package hudson.plugins.analysis.core;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
@@ -39,6 +41,8 @@ import hudson.util.Graph;
  * @author Ulli Hafner
  */
 public abstract class AbstractProjectAction<T extends ResultAction<?>> implements Action  { // NOCHECKSTYLE
+    private static final Logger LOGGER = Logger.getLogger(AbstractProjectAction.class.getName());
+
     /** Project that owns this action. */
     private final AbstractProject<?, ?> project;
     /** The type of the result action.  */
@@ -112,10 +116,12 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *
      * @param request
      *            Stapler request
+     * @param response
+     *            Stapler response
      * @return the details
      */
-    public Object getTrendDetails(final StaplerRequest request) {
-        return new TrendDetails(getProject(), getTrendGraph(request));
+    public Object getTrendDetails(final StaplerRequest request, final StaplerResponse response) {
+        return new TrendDetails(getProject(), getTrendGraph(request, response));
     }
 
     /**
@@ -124,7 +130,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return the current trend graph
      */
     public Object getTrendGraph() {
-        return getTrendGraph(Stapler.getCurrentRequest());
+        return getTrendGraph(Stapler.getCurrentRequest(), Stapler.getCurrentResponse());
     }
 
     /**
@@ -132,10 +138,26 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *
      * @param request
      *            Stapler request
+     * @param response
+     *            Stapler response
      * @return the trend graph
      */
-    public Graph getTrendGraph(final StaplerRequest request) {
-        return createUserConfiguration(request).getGraphRenderer();
+    public Graph getTrendGraph(final StaplerRequest request, final StaplerResponse response) {
+        GraphConfigurationView configuration = createUserConfiguration(request);
+        if (configuration.hasMeaningfulGraph()) {
+            return configuration.getGraphRenderer();
+        }
+        else {
+            BuildResultGraph graphType = configuration.getGraphType();
+            try {
+                response.sendRedirect2(request.getContextPath() + graphType.getExampleImage());
+            }
+            catch (IOException exception) {
+                LOGGER.log(Level.SEVERE, "Can't create graph: " + graphType, exception);
+            }
+
+            return null;
+        }
     }
 
     /**

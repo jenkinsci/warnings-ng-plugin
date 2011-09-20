@@ -30,7 +30,6 @@ import hudson.util.Graph;
  * Configuration properties of a trend graph.
  */
 public abstract class GraphConfigurationView implements ModelObject {
-    /** Logger. */
     private static final Logger LOGGER = Logger.getLogger(GraphConfigurationView.class.getName());
 
     /** The root URL to return back when leaving this page. */
