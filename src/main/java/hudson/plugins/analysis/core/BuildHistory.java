@@ -69,7 +69,7 @@ public class BuildHistory {
      */
     private ResultAction<? extends BuildResult> getReferenceAction() {
         for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
-            if (build.getResult().isBetterThan(Result.FAILURE)) {
+            if (hasValidResult(build)) {
                 ResultAction<? extends BuildResult> action = build.getAction(type);
                 if (action != null && action.isSuccessful()) {
                     return action;
@@ -87,15 +87,22 @@ public class BuildHistory {
      * @since 1.20
      * @see #hasReferenceBuild()
      */
+    @CheckForNull
     public AbstractBuild<?, ?> getReferenceBuild() {
         ResultAction<? extends BuildResult> action = getReferenceAction();
         if (action != null) {
             AbstractBuild<?, ?> build = action.getBuild();
-            if (build.getResult().isBetterThan(Result.FAILURE)) {
+            if (hasValidResult(build)) {
                 return build;
             }
         }
         return null;
+    }
+
+    private boolean hasValidResult(final AbstractBuild<?, ?> build) {
+        Result result = build.getResult();
+
+        return result != null && build.getResult().isBetterThan(Result.FAILURE);
     }
 
     /**
@@ -128,7 +135,7 @@ public class BuildHistory {
     @CheckForNull
     private ResultAction<? extends BuildResult> getPreviousAction() {
         for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
-            if (build.getResult().isBetterThan(Result.FAILURE)) {
+            if (hasValidResult(build)) {
                 ResultAction<? extends BuildResult> action = build.getAction(type);
                 if (action != null) {
                     return action;
