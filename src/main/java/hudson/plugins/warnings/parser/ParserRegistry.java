@@ -152,6 +152,7 @@ public class ParserRegistry {
         parsers.add(new DoxygenParser());
         parsers.add(new TnsdlParser());
         parsers.add(new GhsMultiParser());
+        parsers.add(new YuiCompressorParser());
 
         Iterable<GroovyParser> parserDescriptions = getDynamicParserDescriptions();
         parsers.addAll(getDynamicParsers(parserDescriptions));
