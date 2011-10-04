@@ -212,8 +212,13 @@ public class FilesParser implements FileCallable<ParserResult> {
         try {
             String[] fileNames = new FileFinder(filePattern).find(workspace);
 
-            if (fileNames.length == 0 && !isMavenBuild) {
-                result.addErrorMessage(Messages.FilesParser_Error_NoFiles());
+            if (fileNames.length == 0) {
+                if (isMavenBuild) {
+                    log("No files found in " + workspace.getAbsolutePath() + " for pattern: " + filePattern);
+                }
+                else {
+                    result.addErrorMessage(Messages.FilesParser_Error_NoFiles());
+                }
             }
             else {
                 parseFiles(workspace, fileNames, result);
