@@ -15,7 +15,6 @@ import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.ModuleDetector;
 import hudson.plugins.analysis.util.NullModuleDetector;
 import hudson.plugins.analysis.util.PluginLogger;
-import hudson.plugins.analysis.util.StringPluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.warnings.parser.FileWarningsParser;
 import hudson.plugins.warnings.parser.ParserRegistry;
@@ -284,7 +283,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
             String filePattern = configuration.getPattern();
             String parserName = configuration.getParserName();
             logger.log("Parsing warnings in files '" + filePattern + "' with parser " + parserName);
-            FilesParser parser = new FilesParser(new StringPluginLogger(PLUGIN_NAME), filePattern,
+            FilesParser parser = new FilesParser(PLUGIN_NAME, filePattern,
                     new FileWarningsParser(parserName, getDefaultEncoding(), getIncludePattern(), getExcludePattern()),
                     shouldDetectModules(), isMavenBuild(build));
             ParserResult additionalProject = build.getWorkspace().act(parser);
