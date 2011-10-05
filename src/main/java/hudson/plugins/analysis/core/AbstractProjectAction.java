@@ -114,6 +114,15 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     /**
      * Returns the trend graph details.
      *
+     * @return the details
+     */
+    public Object getTrendDetails() {
+        return getTrendDetails(Stapler.getCurrentRequest(), Stapler.getCurrentResponse());
+    }
+
+    /**
+     * Returns the trend graph details.
+     *
      * @param request
      *            Stapler request
      * @param response
