@@ -281,8 +281,13 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
         computeZeroWarningsHighScore(build, result);
 
-        if (history.hasReferenceBuild()) {
-            referenceBuild = history.getReferenceBuild().getNumber();
+        defineReferenceBuild(history);
+    }
+
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("NP")
+    private void defineReferenceBuild(final BuildHistory buildHistory) {
+        if (buildHistory.hasReferenceBuild()) {
+            referenceBuild = buildHistory.getReferenceBuild().getNumber();
         }
         else {
             referenceBuild = -1;
