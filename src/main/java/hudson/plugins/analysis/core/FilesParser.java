@@ -31,11 +31,9 @@ import hudson.remoting.VirtualChannel;
 public class FilesParser implements FileCallable<ParserResult> {
     private static final long serialVersionUID = -6415863872891783891L;
 
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
-    private final transient PluginLogger logger;
     /** Logs into a string. @since 1.20 */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
-    private final transient StringPluginLogger stringLogger;
+    private transient StringPluginLogger stringLogger;
 
     /** Ant file-set pattern to scan for. */
     private final String filePattern;
@@ -48,11 +46,10 @@ public class FilesParser implements FileCallable<ParserResult> {
     /** Determines whether module names should be derived from Maven or Ant. */
     private boolean shouldDetectModules = true;
 
+    private final String pluginId;
+
     /**
      * Creates a new instance of {@link FilesParser}.
-     *
-     * @param logger
-     *            the logger
      * @param filePattern
      *            ant file-set pattern to scan for files to parse
      * @param parser
@@ -60,13 +57,12 @@ public class FilesParser implements FileCallable<ParserResult> {
      * @param isMavenBuild
      *            determines whether this build uses maven
      */
-    private FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final boolean isMavenBuild, final String moduleName) {
-        this.logger = logger;
+    private FilesParser(final String filePattern, final AnnotationParser parser, final boolean isMavenBuild, final String moduleName) {
         this.filePattern = filePattern;
         this.parser = parser;
         this.isMavenBuild = isMavenBuild;
         this.moduleName = moduleName;
-        stringLogger = null;
+        pluginId = "[ANALYSIS] ";
     }
 
     /**
@@ -85,7 +81,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      */
     @Deprecated
     public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final boolean isMavenBuild) {
-        this(logger, filePattern, parser, isMavenBuild, StringUtils.EMPTY);
+        this(filePattern, parser, isMavenBuild, StringUtils.EMPTY);
     }
 
     /**
@@ -105,7 +101,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      */
     @Deprecated
     public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final String moduleName) {
-        this(logger, filePattern, parser, true, moduleName);
+        this(filePattern, parser, true, moduleName);
     }
 
     /**
@@ -123,7 +119,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      */
     @Deprecated
     public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser) {
-        this(logger, filePattern, parser, true, StringUtils.EMPTY);
+        this(filePattern, parser, true, StringUtils.EMPTY);
 
         shouldDetectModules = false;
     }
@@ -145,7 +141,7 @@ public class FilesParser implements FileCallable<ParserResult> {
     @Deprecated
     public FilesParser(final StringPluginLogger logger, final String filePattern,
             final AnnotationParser parser, final String moduleName) {
-        this(logger, filePattern, parser, true, true, moduleName);
+        this(filePattern, parser, true, moduleName);
     }
 
     /**
@@ -169,14 +165,11 @@ public class FilesParser implements FileCallable<ParserResult> {
     public FilesParser(final StringPluginLogger logger, final String filePattern,
             final AnnotationParser parser,
             final boolean shouldDetectModules, final boolean isMavenBuild) {
-        this(logger, filePattern, parser, shouldDetectModules, isMavenBuild, StringUtils.EMPTY);
+        this(filePattern, parser, isMavenBuild, StringUtils.EMPTY);
     }
 
     /**
      * Creates a new instance of {@link FilesParser}.
-     *
-     * @param logger
-     *            the logger
      * @param filePattern
      *            ant file-set pattern to scan for files to parse
      * @param parser
@@ -189,10 +182,9 @@ public class FilesParser implements FileCallable<ParserResult> {
      * @param moduleName
      *            the name of the module to use for all files
      */
-    private FilesParser(final StringPluginLogger logger, final String filePattern, final AnnotationParser parser,
-            final boolean shouldDetectModules, final boolean isMavenBuild, final String moduleName) {
-        stringLogger = logger;
-        this.logger = logger;
+    private FilesParser(final String pluginId, final String filePattern, final AnnotationParser parser, final boolean shouldDetectModules,
+            final boolean isMavenBuild, final String moduleName) {
+        this.pluginId = pluginId;
         this.filePattern = filePattern;
         this.parser = parser;
         this.isMavenBuild = isMavenBuild;
@@ -214,7 +206,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      */
     public FilesParser(final String pluginId, final String filePattern, final AnnotationParser parser,
             final String moduleName) {
-        this(new StringPluginLogger(pluginId), filePattern, parser, true, true, moduleName);
+        this(pluginId, filePattern, parser, true, true, moduleName);
     }
 
     /**
@@ -234,8 +226,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      */
     public FilesParser(final String pluginId, final String filePattern, final AnnotationParser parser,
             final boolean shouldDetectModules, final boolean isMavenBuild) {
-        this(new StringPluginLogger(pluginId), filePattern, parser, shouldDetectModules,
-                isMavenBuild, StringUtils.EMPTY);
+        this(pluginId, filePattern, parser, shouldDetectModules, isMavenBuild, StringUtils.EMPTY);
     }
 
     /**
@@ -244,9 +235,10 @@ public class FilesParser implements FileCallable<ParserResult> {
      * @param message the message
      */
     protected void log(final String message) {
-        if (logger != null) {
-            logger.log(message);
+        if (stringLogger == null) {
+            stringLogger = new StringPluginLogger(pluginId);
         }
+        stringLogger.log(message);
     }
 
     /** {@inheritDoc} */
