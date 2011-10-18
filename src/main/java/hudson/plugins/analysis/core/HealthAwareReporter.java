@@ -239,6 +239,11 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         final ParserResult result;
         try {
             result = perform(build, pom, mojo, logger);
+
+            if (result.getModules().isEmpty()) {
+                logger.log("No report found for mojo " + mojo.getGoal());
+                return true;
+            }
         }
         catch (InterruptedException exception) {
             logger.log(exception.getMessage());
