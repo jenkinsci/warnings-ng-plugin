@@ -156,11 +156,9 @@ public class DifferenceGraph extends BuildResultGraph {
                 }
             }
 
-            if (configuration.isDayCountDefined()) {
-                Calendar oldBuildTime = current.getOwner().getTimestamp();
-                if (computeDayDelta(buildTime, oldBuildTime) >= configuration.getDayCount()) {
-                    break;
-                }
+            if (configuration.isDayCountDefined()
+                    && computeDayDelta(buildTime, current) < configuration.getDayCount()) {
+                break;
             }
         }
 

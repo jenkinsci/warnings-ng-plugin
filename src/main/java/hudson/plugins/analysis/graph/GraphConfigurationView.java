@@ -18,6 +18,7 @@ import org.kohsuke.stapler.StaplerResponse;
 import com.google.common.collect.Lists;
 
 import hudson.model.ModelObject;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 
 import hudson.plugins.analysis.core.AbstractHealthDescriptor;
@@ -184,7 +185,20 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return <code>true</code>, if there is such a graph
      */
     public boolean hasMeaningfulGraph() {
-        return lastAction != null;
+        if (lastAction == null) {
+            return false;
+        }
+        AbstractBuild<?, ?> build = lastAction.getBuild();
+        if (build != null && build.getPreviousBuild() != null) {
+            if (configuration.isDayCountDefined()) {
+                return BuildResultGraph.computeDayDelta(build.getTimestamp(),
+                        build.getPreviousBuild().getTimestamp()) < configuration.getDayCount();
+            }
+            else {
+                return true;
+            }
+        }
+        return true;
     }
 
     /**

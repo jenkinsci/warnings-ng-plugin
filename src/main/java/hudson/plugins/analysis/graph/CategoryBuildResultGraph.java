@@ -212,11 +212,9 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
         int buildCount = 0;
         Map<AbstractBuild, List<Integer>> valuesPerBuild = Maps.newHashMap();
         while (true) {
-            if (configuration.isDayCountDefined()) {
-                Calendar oldBuildTime = current.getOwner().getTimestamp();
-                if (computeDayDelta(today, oldBuildTime) >= configuration.getDayCount()) {
-                    break;
-                }
+            if (configuration.isDayCountDefined()
+                    && computeDayDelta(today, current) >= configuration.getDayCount()) {
+                break;
             }
 
             valuesPerBuild.put(current.getOwner(), computeSeries(current));
