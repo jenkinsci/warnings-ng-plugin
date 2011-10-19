@@ -40,6 +40,11 @@ import hudson.util.Graph;
  *            result action type
  * @author Ulli Hafner
  */
+/**
+ * FIXME: Document type AbstractProjectAction.
+ *
+ * @author Ulli Hafner
+ */
 public abstract class AbstractProjectAction<T extends ResultAction<?>> implements Action  { // NOCHECKSTYLE
     private static final Logger LOGGER = Logger.getLogger(AbstractProjectAction.class.getName());
 
@@ -177,7 +182,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return the graph configuration
      */
     public boolean isTrendVisible(final StaplerRequest request) {
-        return hasValidResults() && createUserConfiguration(request).isVisible();
+        return createUserConfiguration(request).isVisible();
     }
 
     /**
@@ -199,14 +204,8 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return a view to configure the trend graph for the current user
      */
     protected GraphConfigurationView createUserConfiguration(final StaplerRequest request) {
-        if (hasValidResults()) {
-            return new UserGraphConfigurationView(createConfiguration(), getProject(),
-                    getUrlName(), request.getCookies(), getLastAction());
-        }
-        else {
-            return new UserGraphConfigurationView(createConfiguration(), getProject(),
-                    getUrlName(), request.getCookies());
-        }
+        return new UserGraphConfigurationView(createConfiguration(), getProject(),
+                getUrlName(), request.getCookies(), createBuildHistory());
     }
 
     /**
@@ -215,14 +214,16 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return a view to configure the trend graph defaults
      */
     protected GraphConfigurationView createDefaultConfiguration() {
-        if (hasValidResults()) {
-            return new DefaultGraphConfigurationView(createConfiguration(), getProject(),
-                    getUrlName(), getLastAction());
-        }
-        else {
-            return new DefaultGraphConfigurationView(createConfiguration(), getProject(),
-                    getUrlName());
-        }
+        return new DefaultGraphConfigurationView(createConfiguration(), getProject(), getUrlName(), createBuildHistory());
+    }
+
+    /**
+     * Creates the build history.
+     *
+     * @return build history
+     */
+    protected BuildHistory createBuildHistory() {
+        return new BuildHistory(getLastFinishedBuild(), resultActionType);
     }
 
     /**
@@ -270,20 +271,12 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     }
 
     /**
-     * Returns whether we have enough valid results in order to draw a
-     * meaningful graph.
+     * Returns whether this project has a valid result action attached.
      *
-     * @return <code>true</code> if the results are valid in order to draw a
-     *         graph
+     * @return <code>true</code> if the results are valid
      */
     public final boolean hasValidResults() {
-        AbstractBuild<?, ?> build = getLastFinishedBuild();
-        if (build != null) {
-            BuildHistory history = new BuildHistory(build, resultActionType);
-
-            return history.hasPreviousResult();
-        }
-        return false;
+        return getLastAction() != null;
     }
 
     /**

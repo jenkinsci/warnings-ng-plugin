@@ -8,7 +8,7 @@ import org.kohsuke.stapler.StaplerResponse;
 import hudson.model.AbstractProject;
 
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.core.ResultAction;
+import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.util.CookieHandler;
 
 /**
@@ -28,32 +28,12 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      *            name that is used to persist the configuration per user.
      * @param cookies
      *            the cookies containing the graph configuration
-     */
-    public UserGraphConfigurationView(final GraphConfiguration configuration,
-            final AbstractProject<?, ?> project, final String pluginName, final Cookie[] cookies) {
-        super(configuration, project, pluginName);
-
-        initialize(configuration, project, pluginName, cookies);
-    }
-
-    /**
-     * Creates a new instance of {@link UserGraphConfigurationView}.
-     *
-     * @param configuration
-     *            the graph configuration
-     * @param project
-     *            the owning project to configure the graphs for
-     * @param pluginName
-     *            The name of the plug-in. Also used as the suffix of the cookie
-     *            name that is used to persist the configuration per user.
-     * @param cookies
-     *            the cookies containing the graph configuration
-     * @param resultAction
-     *            the last valid action for this project
+     * @param buildHistory
+     *            the build history for this project
      */
     public UserGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
-            final String pluginName, final Cookie[] cookies, final ResultAction<?> resultAction) {
-        super(configuration, project, pluginName, resultAction);
+            final String pluginName, final Cookie[] cookies, final BuildHistory buildHistory) {
+        super(configuration, project, pluginName, buildHistory);
 
         initialize(configuration, project, pluginName, cookies);
     }

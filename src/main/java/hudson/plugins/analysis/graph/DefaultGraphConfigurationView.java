@@ -11,7 +11,7 @@ import org.kohsuke.stapler.StaplerResponse;
 import hudson.model.AbstractProject;
 
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.core.ResultAction;
+import hudson.plugins.analysis.core.BuildHistory;
 
 /**
  * Configures the default values for the trend graph of this plug-in.
@@ -26,29 +26,12 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
      *            the owning project to configure the graphs for
      * @param pluginName
      *            The name of the plug-in.
+     * @param buildHistory
+     *            the build history for this project
      */
     public DefaultGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
-            final String pluginName) {
-        super(configuration, project, pluginName);
-
-        initialize(configuration, project, pluginName);
-    }
-
-    /**
-     * Creates a new instance of {@link DefaultGraphConfigurationView}.
-     *
-     * @param configuration
-     *            the graph configuration
-     * @param project
-     *            the owning project to configure the graphs for
-     * @param pluginName
-     *            The name of the plug-in.
-     * @param lastAction
-     *            the last valid action for this project
-     */
-    public DefaultGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
-            final String pluginName, final ResultAction<?> lastAction) {
-        super(configuration, project, pluginName, lastAction);
+            final String pluginName, final BuildHistory buildHistory) {
+        super(configuration, project, pluginName, buildHistory);
 
         initialize(configuration, project, pluginName);
     }
