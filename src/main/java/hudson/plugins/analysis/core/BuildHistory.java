@@ -1,5 +1,6 @@
 package hudson.plugins.analysis.core;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
@@ -39,6 +40,14 @@ public class BuildHistory {
         this.type = type;
     }
 
+    /**
+     * Returns the time of the baseline build.
+     *
+     * @return the time
+     */
+    public Calendar getTimestamp() {
+        return baseline.getTimestamp();
+    }
     /**
      * Returns whether a reference build result exists.
      *
@@ -143,6 +152,18 @@ public class BuildHistory {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the baseline action.
+     *
+     * @return the baseline action
+     * @see #hasPreviousResult()
+     * @throws NoSuchElementException
+     *             if there is no previous result
+     */
+    public ResultAction<? extends BuildResult> getBaseline() {
+        return baseline.getAction(type);
     }
 
     /**

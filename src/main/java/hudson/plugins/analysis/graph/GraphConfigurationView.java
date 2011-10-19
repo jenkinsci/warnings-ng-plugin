@@ -18,11 +18,11 @@ import org.kohsuke.stapler.StaplerResponse;
 import com.google.common.collect.Lists;
 
 import hudson.model.ModelObject;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 
 import hudson.plugins.analysis.core.AbstractHealthDescriptor;
-import hudson.plugins.analysis.core.NullHealthDescriptor;
-import hudson.plugins.analysis.core.ResultAction;
+import hudson.plugins.analysis.core.BuildHistory;
 
 import hudson.util.Graph;
 
@@ -37,14 +37,9 @@ public abstract class GraphConfigurationView implements ModelObject {
     /** The owning project to configure the graphs for. */
     private final AbstractProject<?, ?> project;
 
-    /** The plug-in name. */
     private final String pluginName;
-    /** The last result action to start the trend report computation from. */
-    private ResultAction<?> lastAction;
-    /** The health descriptor. */
-    private AbstractHealthDescriptor healthDescriptor; // NOPMD
-
-    /** The configuration of the graph. */
+    private final BuildHistory buildHistory;
+    private final AbstractHealthDescriptor healthDescriptor; // NOPMD
     private final GraphConfiguration configuration;
 
     /**
@@ -56,32 +51,16 @@ public abstract class GraphConfigurationView implements ModelObject {
      *            the owning project to configure the graphs for
      * @param pluginName
      *            the name of the plug-in
+     * @param buildHistory
+     *            the build history for this project
      */
-    public GraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project, final String pluginName) {
+    public GraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project, final String pluginName, final BuildHistory buildHistory) {
         this.configuration = configuration;
         this.project = project;
         this.pluginName = pluginName;
 
-        healthDescriptor = new NullHealthDescriptor();
-    }
-
-    /**
-     * Creates a new instance of {@link GraphConfigurationView}.
-     *
-     * @param configuration
-     *            the graph configuration
-     * @param project
-     *            the owning project to configure the graphs for
-     * @param pluginName
-     *            the name of the plug-in
-     * @param lastAction
-     *            the last valid action for this project
-     */
-    public GraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project, final String pluginName, final ResultAction<?> lastAction) {
-        this(configuration, project, pluginName);
-
-        this.lastAction = lastAction;
-        healthDescriptor = lastAction.getHealthDescriptor();
+        this.buildHistory = buildHistory;
+        healthDescriptor = buildHistory.getBaseline().getHealthDescriptor();
     }
 
     /**
@@ -184,17 +163,19 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return <code>true</code>, if there is such a graph
      */
     public boolean hasMeaningfulGraph() {
-        return lastAction != null;
-    }
+        if (buildHistory.hasPreviousResult()) {
+            if (configuration.isDayCountDefined()) {
+                AbstractBuild<?, ?> baseline = buildHistory.getBaseline().getBuild();
+                AbstractBuild<?, ?> previous = buildHistory.getPreviousResult().getOwner();
 
-    /**
-     * Returns the last {@link ResultAction}. If there is no such action, then
-     * <code>null</code> is returned.
-     *
-     * @return the last result action
-     */
-    public ResultAction<?> getLastAction() {
-        return lastAction;
+                return BuildResultGraph.computeDayDelta(baseline.getTimestamp(), previous.getTimestamp())
+                        < configuration.getDayCount();
+            }
+            else {
+                return true;
+            }
+        }
+        return true;
     }
 
     /**
@@ -233,7 +214,7 @@ public abstract class GraphConfigurationView implements ModelObject {
             if (hasMeaningfulGraph()) {
                 graph.setRootUrl(ROOT_URL);
                 if (graph.isVisible()) {
-                    return graph.getGraph(-1, configuration, pluginName, lastAction);
+                    return graph.getGraph(-1, configuration, pluginName, buildHistory.getBaseline());
                 }
             }
             response.sendRedirect2(request.getContextPath() + graph.getExampleImage());
@@ -253,7 +234,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return the graph renderer of the specified graph
      */
     public Graph getGraphRenderer(final BuildResultGraph graph) {
-        return graph.getGraph(getTimestamp(), configuration, pluginName, lastAction);
+        return graph.getGraph(getTimestamp(), configuration, pluginName, buildHistory.getBaseline());
     }
 
     /**
@@ -307,12 +288,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return the time stamp of the associated build.
      */
     public long getTimestamp() {
-        if (lastAction == null) {
-            return -1;
-        }
-        else {
-            return lastAction.getBuild().getTimestamp().getTimeInMillis();
-        }
+        return buildHistory.getTimestamp().getTimeInMillis();
     }
 
     /**
@@ -380,7 +356,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return <code>true</code>, if the trend graph is visible, <code>false</code> otherwise
      */
     public boolean isVisible() {
-        return getGraphType().isVisible();
+        return hasMeaningfulGraph() && getGraphType().isVisible();
     }
 
     /**

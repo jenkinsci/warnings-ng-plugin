@@ -136,8 +136,21 @@ public abstract class BuildResultGraph {
      *            the second date
      * @return the delta between two dates in days
      */
-    protected long computeDayDelta(final Calendar first, final Calendar second) {
+    public static long computeDayDelta(final Calendar first, final Calendar second) {
         return Math.abs((first.getTimeInMillis() - second.getTimeInMillis()) / A_DAY_IN_MSEC);
+    }
+
+    /**
+     * Computes the delta between two dates in days.
+     *
+     * @param first
+     *            the first date
+     * @param second
+     *            the second date (given by the build result)
+     * @return the delta between two dates in days
+     */
+    public static long computeDayDelta(final Calendar first, final BuildResult second) {
+        return computeDayDelta(first, second.getOwner().getTimestamp());
     }
 
     /**
