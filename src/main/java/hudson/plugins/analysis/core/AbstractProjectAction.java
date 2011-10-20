@@ -40,11 +40,6 @@ import hudson.util.Graph;
  *            result action type
  * @author Ulli Hafner
  */
-/**
- * FIXME: Document type AbstractProjectAction.
- *
- * @author Ulli Hafner
- */
 public abstract class AbstractProjectAction<T extends ResultAction<?>> implements Action  { // NOCHECKSTYLE
     private static final Logger LOGGER = Logger.getLogger(AbstractProjectAction.class.getName());
 
