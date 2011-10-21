@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 /**
  * A parser for Robocopy.
  *
- * @author Adrián Deccico
+ * @author Adrian Deccico
  *
  * captured samples:
  *    *EXTRA File                  0        b           Unknown Task

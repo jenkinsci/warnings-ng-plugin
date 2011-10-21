@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 /**
  * A parser for Perforce execution.
  *
- * @author Adrián Deccico
+ * @author Adrian Deccico
  */
 public class P4Parser extends RegexpLineParser {
     static final String WARNING_TYPE = "Perforce Compiler";
