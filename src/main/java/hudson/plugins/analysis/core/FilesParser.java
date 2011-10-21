@@ -80,6 +80,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      *             {@link #FilesParser(String, String, AnnotationParser, boolean, boolean)}
      */
     @Deprecated
+    @SuppressWarnings("PMD")
     public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final boolean isMavenBuild) {
         this(filePattern, parser, isMavenBuild, StringUtils.EMPTY);
     }
@@ -100,6 +101,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      *             {@link #FilesParser(String, String, AnnotationParser, boolean, boolean)}
      */
     @Deprecated
+    @SuppressWarnings("PMD")
     public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final String moduleName) {
         this(filePattern, parser, true, moduleName);
     }
@@ -118,6 +120,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      *             {@link #FilesParser(String, String, AnnotationParser, boolean, boolean)}
      */
     @Deprecated
+    @SuppressWarnings("PMD")
     public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser) {
         this(filePattern, parser, true, StringUtils.EMPTY);
 
@@ -139,6 +142,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      *             {@link #FilesParser(String, String, AnnotationParser, boolean, boolean)}
      */
     @Deprecated
+    @SuppressWarnings("PMD")
     public FilesParser(final StringPluginLogger logger, final String filePattern,
             final AnnotationParser parser, final String moduleName) {
         this(filePattern, parser, true, moduleName);
@@ -162,6 +166,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      *             {@link #FilesParser(String, String, AnnotationParser, boolean, boolean)}
      */
     @Deprecated
+    @SuppressWarnings("PMD")
     public FilesParser(final StringPluginLogger logger, final String filePattern,
             final AnnotationParser parser,
             final boolean shouldDetectModules, final boolean isMavenBuild) {
