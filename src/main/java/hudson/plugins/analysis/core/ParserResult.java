@@ -59,6 +59,8 @@ public class ParserResult implements Serializable {
     private final Multimap<String, String> fileNameCache = HashMultimap.create();
     /** The log messages. @since 1.20 **/
     private String logMessage;
+    /** Total number of modules. @since 1.31 **/
+    private int numberOfModules;
 
     /**
      * Facade for the remote workspace.
@@ -379,7 +381,7 @@ public class ParserResult implements Serializable {
      * @return the number of modules
      */
     public int getNumberOfModules() {
-        return modules.size();
+        return numberOfModules;
     }
 
     /**
@@ -399,6 +401,8 @@ public class ParserResult implements Serializable {
      */
     public void addModule(final String moduleName) {
         modules.add(moduleName);
+
+        numberOfModules++;
     }
 
     /**
