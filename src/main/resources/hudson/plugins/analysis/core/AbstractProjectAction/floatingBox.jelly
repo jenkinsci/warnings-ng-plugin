@@ -14,7 +14,7 @@
 		  </div>
 	   	</div>
 	</j:if>
-    <j:if test="${!from.isTrendVisible(request) and from.isTrendDeactivated(request)}">
+    <j:if test="${from.canShowEnableTrendLink(request)}">
       <div align="right">
          <a href="${from.urlName}/configure">${%enable.graph(from.trendName)}</a>
       </div>

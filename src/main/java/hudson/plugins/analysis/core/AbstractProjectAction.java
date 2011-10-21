@@ -174,10 +174,12 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *
      * @param request
      *            the request to get the cookie from
-     * @return the graph configuration
+     * @return <code>true</code> if the trend is visible
      */
     public boolean isTrendVisible(final StaplerRequest request) {
-        return createUserConfiguration(request).isVisible();
+        GraphConfigurationView configuration = createUserConfiguration(request);
+
+        return configuration.isVisible() && configuration.hasMeaningfulGraph();
     }
 
     /**
@@ -185,10 +187,25 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *
      * @param request
      *            the request to get the cookie from
-     * @return the graph configuration
+     * @return <code>true</code> if the trend is deactivated
      */
     public boolean isTrendDeactivated(final StaplerRequest request) {
         return createUserConfiguration(request).isDeactivated();
+    }
+
+    /**
+     * Returns whether the enable trend graph link should be shown.
+     *
+     * @param request
+     *            the request to get the cookie from
+     * @return the graph configuration
+     */
+    public boolean canShowEnableTrendLink(final StaplerRequest request) {
+        GraphConfigurationView configuration = createUserConfiguration(request);
+        if (configuration.hasMeaningfulGraph()) {
+            return !configuration.isDeactivated() && !configuration.isVisible();
+        }
+        return false;
     }
 
     /**

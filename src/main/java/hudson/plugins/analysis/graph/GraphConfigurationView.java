@@ -356,7 +356,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return <code>true</code>, if the trend graph is visible, <code>false</code> otherwise
      */
     public boolean isVisible() {
-        return hasMeaningfulGraph() && getGraphType().isVisible();
+        return getGraphType().isVisible();
     }
 
     /**
