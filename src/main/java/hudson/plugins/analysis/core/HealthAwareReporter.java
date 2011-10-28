@@ -240,7 +240,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         try {
             result = perform(build, pom, mojo, logger);
 
-            if (result.getModules().isEmpty()) {
+            if (result.getModules().isEmpty() && result.getNumberOfAnnotations() == 0) {
                 logger.log("No report found for mojo " + mojo.getGoal());
                 return true;
             }
