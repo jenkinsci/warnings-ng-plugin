@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.console.ConsoleNote;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 import java.io.IOException;
@@ -43,7 +44,8 @@ public abstract class RegexpDocumentParser extends RegexpParser {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public Collection<FileAnnotation> parse(final Reader file) throws IOException {
-        String content = IOUtils.toString(file);
+        String content = ConsoleNote.removeNotes(IOUtils.toString(file));
+
         file.close();
 
         ArrayList<FileAnnotation> warnings = new ArrayList<FileAnnotation>();

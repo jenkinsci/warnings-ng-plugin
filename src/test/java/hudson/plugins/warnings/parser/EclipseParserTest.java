@@ -22,6 +22,28 @@ public class EclipseParserTest extends ParserTester {
     private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
 
     /**
+     * Parses a warning log with console annotations which are removed.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-11675">Issue 11675</a>
+     */
+    @Test
+    public void issue11675() throws IOException {
+        Collection<FileAnnotation> warnings = createParser().parse(openFile("issue11675.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 8, warnings.size());
+
+        for (FileAnnotation annotation : warnings) {
+            checkWithAnnotation(annotation);
+        }
+    }
+
+    private void checkWithAnnotation(final FileAnnotation annotation) {
+        assertTrue("Wrong first characted in message", annotation.getMessage().matches("[a-zA-Z].*"));
+    }
+
+    /**
      * Parses a warning log with a ClearCase command line that should not be parsed as a warning.
      *
      * @throws IOException

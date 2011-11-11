@@ -6,6 +6,7 @@ import hudson.plugins.analysis.util.model.Priority;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Base class for parser tests. Provides an assertion test for warnings.
@@ -52,7 +53,12 @@ public abstract class ParserTester {
      * @return an input stream
      */
     protected Reader openFile(final String fileName) {
-        return new InputStreamReader(ParserTester.class.getResourceAsStream(fileName));
+        try {
+            return new InputStreamReader(ParserTester.class.getResourceAsStream(fileName), "UTF-8");
+        }
+        catch (UnsupportedEncodingException exception) {
+            return new InputStreamReader(ParserTester.class.getResourceAsStream(fileName));
+        }
     }
 
     /**
