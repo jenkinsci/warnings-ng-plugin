@@ -4,7 +4,6 @@ import static hudson.plugins.analysis.util.ThresholdValidator.*;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
 
 import hudson.model.Result;
 
@@ -26,6 +25,30 @@ public class BuildResultEvaluator {
      *            logs the results
      * @param t
      *            the thresholds
+     * @param allAnnotations
+     *            all annotations
+     * @return the build result
+     */
+    public Result evaluateBuildResult(final PluginLogger logger, final Thresholds t,
+            final Collection<? extends FileAnnotation> allAnnotations) {
+        if (checkAllWarningsForFailure(logger, t, allAnnotations)) {
+            return Result.FAILURE;
+        }
+        if (checkAllWarningsForUnstable(logger, t, allAnnotations)) {
+            return Result.UNSTABLE;
+        }
+
+        return logSuccess(logger);
+    }
+
+    /**
+     * Evaluates the build result. The build is marked as unstable or failed if
+     * one of the thresholds has been exceeded.
+     *
+     * @param logger
+     *            logs the results
+     * @param t
+     *            the thresholds
      * @param delta
      *            delta between this build and reference build
      * @param highDelta
@@ -39,17 +62,15 @@ public class BuildResultEvaluator {
      * @return the build result
      */
     public Result evaluateBuildResult(final PluginLogger logger, final Thresholds t,
-            final Set<FileAnnotation> allAnnotations,
+            final Collection<? extends FileAnnotation> allAnnotations,
             final int delta, final int highDelta, final int normalDelta, final int lowDelta) {
-        if (check(logger, allAnnotations, Result.FAILURE,
-                t.failedTotalAll, t.failedTotalHigh, t.failedTotalNormal, t.failedTotalLow)) {
+        if (checkAllWarningsForFailure(logger, t, allAnnotations)) {
             return Result.FAILURE;
         }
         if (checkFailedNew(logger, delta, highDelta, normalDelta, lowDelta, t)) {
             return Result.FAILURE;
         }
-        if (check(logger, allAnnotations, Result.UNSTABLE,
-                t.unstableTotalAll, t.unstableTotalHigh, t.unstableTotalNormal, t.unstableTotalLow)) {
+        if (checkAllWarningsForUnstable(logger, t, allAnnotations)) {
             return Result.UNSTABLE;
         }
         if (checkUnstableNew(logger, delta, highDelta, normalDelta, lowDelta, t)) {
@@ -57,6 +78,18 @@ public class BuildResultEvaluator {
         }
 
         return logSuccess(logger);
+    }
+
+    protected boolean checkAllWarningsForUnstable(final PluginLogger logger, final Thresholds t,
+            final Collection<? extends FileAnnotation> allAnnotations) {
+        return check(logger, allAnnotations, Result.UNSTABLE,
+                t.unstableTotalAll, t.unstableTotalHigh, t.unstableTotalNormal, t.unstableTotalLow);
+    }
+
+    protected boolean checkAllWarningsForFailure(final PluginLogger logger, final Thresholds t,
+            final Collection<? extends FileAnnotation> allAnnotations) {
+        return check(logger, allAnnotations, Result.FAILURE,
+                t.failedTotalAll, t.failedTotalHigh, t.failedTotalNormal, t.failedTotalLow);
     }
 
     /**
@@ -74,17 +107,16 @@ public class BuildResultEvaluator {
      * @return the build result
      */
     public Result evaluateBuildResult(final PluginLogger logger, final Thresholds t,
-            final Collection<FileAnnotation> allAnnotations, final Collection<FileAnnotation> newAnnotations) {
-        if (check(logger, allAnnotations, Result.FAILURE,
-                t.failedTotalAll, t.failedTotalHigh, t.failedTotalNormal, t.failedTotalLow)) {
+            final Collection<? extends FileAnnotation> allAnnotations,
+            final Collection<FileAnnotation> newAnnotations) {
+        if (checkAllWarningsForFailure(logger, t, allAnnotations)) {
             return Result.FAILURE;
         }
         if (check(logger, newAnnotations, Result.FAILURE,
                 t.failedNewAll, t.failedNewHigh, t.failedNewNormal, t.failedNewLow)) {
             return Result.FAILURE;
         }
-        if (check(logger, allAnnotations, Result.UNSTABLE,
-                t.unstableTotalAll, t.unstableTotalHigh, t.unstableTotalNormal, t.unstableTotalLow)) {
+        if (checkAllWarningsForUnstable(logger, t, allAnnotations)) {
             return Result.UNSTABLE;
         }
         if (check(logger, newAnnotations, Result.UNSTABLE,
@@ -101,7 +133,7 @@ public class BuildResultEvaluator {
         return Result.SUCCESS;
     }
 
-    private boolean check(final PluginLogger logger, final Collection<FileAnnotation> annotations,
+    private boolean check(final PluginLogger logger, final Collection<? extends FileAnnotation> annotations,
             final Result result, final String all, final String high, final String normal, final String low) {
         if (checkThresholds(logger, annotations, all, result, Priority.HIGH, Priority.NORMAL, Priority.LOW)) {
             return true;
@@ -150,7 +182,7 @@ public class BuildResultEvaluator {
         return false;
     }
 
-    private boolean checkThresholds(final PluginLogger logger, final Collection<FileAnnotation> allAnnotations,
+    private boolean checkThresholds(final PluginLogger logger, final Collection<? extends FileAnnotation> allAnnotations,
             final String threshold, final Result result, final Priority... priorities) {
         return checkThresholds(logger, countAnnotations(allAnnotations, priorities), threshold, result, priorities);
     }
@@ -175,7 +207,7 @@ public class BuildResultEvaluator {
      *            the annotations to consider
      * @return the number of relevant annotations
      */
-    private int countAnnotations(final Collection<FileAnnotation> annotations, final Priority... priorities) {
+    private int countAnnotations(final Collection<? extends FileAnnotation> annotations, final Priority... priorities) {
         ParserResult result = new ParserResult(annotations);
         int annotationCount = 0;
         for (Priority priority : priorities) {

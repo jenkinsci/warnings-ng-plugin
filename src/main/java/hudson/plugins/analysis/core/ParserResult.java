@@ -114,7 +114,7 @@ public class ParserResult implements Serializable {
      * @param annotations
      *            the annotations to add
      */
-    public ParserResult(final Collection<FileAnnotation> annotations) {
+    public ParserResult(final Collection<? extends FileAnnotation> annotations) {
         this(new NullWorkspace());
 
         addAnnotations(annotations);

@@ -1024,7 +1024,11 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
         BuildResultEvaluator resultEvaluator = new BuildResultEvaluator();
         Result buildResult;
-        if (useDeltaValues) {
+        if (!history.hasPreviousResult()) {
+            logger.log("Ignore new warnings since this is the first valid build");
+            buildResult = resultEvaluator.evaluateBuildResult(logger, thresholds, getAnnotations());
+        }
+        else if (useDeltaValues) {
             logger.log("Using delta values to compute new warnings");
             buildResult = resultEvaluator.evaluateBuildResult(logger, thresholds, getAnnotations(),
                     getDelta(), getHighDelta(), getNormalDelta(), getLowDelta());
