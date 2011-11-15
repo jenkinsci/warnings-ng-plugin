@@ -1024,7 +1024,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
         BuildResultEvaluator resultEvaluator = new BuildResultEvaluator();
         Result buildResult;
-        if (!history.hasPreviousResult()) {
+        if (history.isEmpty()) {
             logger.log("Ignore new warnings since this is the first valid build");
             buildResult = resultEvaluator.evaluateBuildResult(logger, thresholds, getAnnotations());
         }

@@ -130,9 +130,21 @@ public class BuildHistory {
      * Returns whether a previous build result exists.
      *
      * @return <code>true</code> if a previous build result exists.
+     * @see #isEmpty()
      */
     public boolean hasPreviousResult() {
         return getPreviousAction() != null;
+    }
+
+    /**
+     * Returns whether there is no history available, i.e. the current build is
+     * the first valid one.
+     *
+     * @return <code>true</code> if there is no previous build available
+     * @see #hasPreviousResult()
+     */
+    public boolean isEmpty() {
+        return !hasPreviousResult();
     }
 
     /**

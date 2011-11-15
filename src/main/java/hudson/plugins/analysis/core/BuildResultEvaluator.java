@@ -80,13 +80,13 @@ public class BuildResultEvaluator {
         return logSuccess(logger);
     }
 
-    protected boolean checkAllWarningsForUnstable(final PluginLogger logger, final Thresholds t,
+    private boolean checkAllWarningsForUnstable(final PluginLogger logger, final Thresholds t,
             final Collection<? extends FileAnnotation> allAnnotations) {
         return check(logger, allAnnotations, Result.UNSTABLE,
                 t.unstableTotalAll, t.unstableTotalHigh, t.unstableTotalNormal, t.unstableTotalLow);
     }
 
-    protected boolean checkAllWarningsForFailure(final PluginLogger logger, final Thresholds t,
+    private boolean checkAllWarningsForFailure(final PluginLogger logger, final Thresholds t,
             final Collection<? extends FileAnnotation> allAnnotations) {
         return check(logger, allAnnotations, Result.FAILURE,
                 t.failedTotalAll, t.failedTotalHigh, t.failedTotalNormal, t.failedTotalLow);
