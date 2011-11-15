@@ -13,7 +13,9 @@ import org.apache.commons.io.IOUtils;
  *
  * @author Ulli Hafner
  */
+// CHECKSTYLE:OFF
 public class CreateConsoleAnnotations {
+    @SuppressWarnings("unchecked")
     public static void main(final String[] args) throws IOException {
         List<String> lines = IOUtils.readLines(EclipseParserTest.class.getResourceAsStream("eclipse.txt"));
 
@@ -27,5 +29,6 @@ public class CreateConsoleAnnotations {
             IOUtils.write("\n", file);
         }
     }
+// CHECKSTYLE:ON
 }
 
