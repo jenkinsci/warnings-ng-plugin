@@ -3,12 +3,11 @@ package hudson.plugins.warnings.parser;
 import hudson.console.ConsoleNote;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.apache.commons.io.IOUtils;
 
 /**
  * Parses an input stream as a whole document for compiler warnings using the provided
@@ -44,7 +43,15 @@ public abstract class RegexpDocumentParser extends RegexpParser {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public Collection<FileAnnotation> parse(final Reader file) throws IOException {
-        String content = ConsoleNote.removeNotes(IOUtils.toString(file));
+        BufferedReader reader = new BufferedReader(file);
+        StringBuilder buf = new StringBuilder();
+        String line = reader.readLine();
+        while (line != null) {
+            buf.append(ConsoleNote.removeNotes(line)).append("\n");
+            line = reader.readLine();
+        }
+
+        String content = buf.toString();
 
         file.close();
 
