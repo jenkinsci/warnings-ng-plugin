@@ -486,7 +486,8 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
     }
 
     /**
-     * Returns the useDeltaValues.
+     * Returns whether absolute annotations delta or the actual annotations set
+     * difference should be used to evaluate the build stability.
      *
      * @return the useDeltaValues
      */

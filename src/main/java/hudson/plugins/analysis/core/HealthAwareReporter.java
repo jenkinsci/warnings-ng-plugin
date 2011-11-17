@@ -177,6 +177,16 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
     }
     // CHECKSTYLE:ON
 
+    /**
+     * Returns whether absolute annotations delta or the actual annotations set
+     * difference should be used to evaluate the build stability.
+     *
+     * @return the useDeltaValues
+     */
+    public boolean getUseDeltaValues() {
+        return useDeltaValues;
+    }
+
     /** {@inheritDoc} */
     public Thresholds getThresholds() {
         return thresholds;
