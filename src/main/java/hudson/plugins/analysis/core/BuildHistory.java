@@ -77,11 +77,14 @@ public class BuildHistory {
      *         such build exists
      */
     private ResultAction<? extends BuildResult> getReferenceAction() {
-        for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
-            if (hasValidResult(build)) {
-                ResultAction<? extends BuildResult> action = build.getAction(type);
-                if (action != null && action.isSuccessful()) {
-                    return action;
+        if (null != baseline) {
+            for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null;
+                 build = build.getPreviousBuild()) {
+                if (hasValidResult(build)) {
+                    ResultAction<? extends BuildResult> action = build.getAction(type);
+                    if (action != null && action.isSuccessful()) {
+                        return action;
+                    }
                 }
             }
         }
@@ -155,11 +158,14 @@ public class BuildHistory {
      */
     @CheckForNull
     private ResultAction<? extends BuildResult> getPreviousAction() {
-        for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
-            if (hasValidResult(build)) {
-                ResultAction<? extends BuildResult> action = build.getAction(type);
-                if (action != null) {
-                    return action;
+        if (null != baseline) {
+            for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null;
+                 build = build.getPreviousBuild()) {
+                if (hasValidResult(build)) {
+                    ResultAction<? extends BuildResult> action = build.getAction(type);
+                    if (action != null) {
+                        return action;
+                    }
                 }
             }
         }
@@ -175,7 +181,7 @@ public class BuildHistory {
      *             if there is no previous result
      */
     public ResultAction<? extends BuildResult> getBaseline() {
-        return baseline.getAction(type);
+        return null != baseline ? baseline.getAction(type) : null;
     }
 
     /**
