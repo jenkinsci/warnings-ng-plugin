@@ -60,7 +60,7 @@ public abstract class GraphConfigurationView implements ModelObject {
         this.pluginName = pluginName;
 
         this.buildHistory = buildHistory;
-        healthDescriptor = null != buildHistory.getBaseline() ? buildHistory.getBaseline().getHealthDescriptor() : null;
+        healthDescriptor = buildHistory.getBaseline().getHealthDescriptor();
     }
 
     /**
@@ -252,7 +252,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return <code>true</code>, if the health graph is available
      */
     public boolean isHealthGraphAvailable() {
-        return null != healthDescriptor && healthDescriptor.isEnabled();
+        return healthDescriptor.isEnabled();
     }
 
     /**

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.CheckForNull;
+
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -235,7 +237,13 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return build history
      */
     protected BuildHistory createBuildHistory() {
-        return new BuildHistory(getLastFinishedBuild(), resultActionType);
+        AbstractBuild<?, ?> lastFinishedBuild = getLastFinishedBuild();
+        if (lastFinishedBuild == null) {
+            return new NullBuildHistory();
+        }
+        else {
+            return new BuildHistory(lastFinishedBuild, resultActionType);
+        }
     }
 
     /**
@@ -315,6 +323,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *
      * @return the last valid result action, or <code>null</code> if no such action is found
      */
+    @CheckForNull
     public ResultAction<?> getLastAction() {
         AbstractBuild<?, ?> lastBuild = getLastFinishedBuild();
         if (lastBuild != null) {
@@ -329,6 +338,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return the last finished build or <code>null</code> if there is no
      *         such build
      */
+    @CheckForNull
     public AbstractBuild<?, ?> getLastFinishedBuild() {
         AbstractBuild<?, ?> lastBuild = project.getLastBuild();
         while (lastBuild != null && (lastBuild.isBuilding() || lastBuild.getAction(resultActionType) == null)) {
