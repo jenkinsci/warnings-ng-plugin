@@ -63,12 +63,17 @@ public abstract class RegexpParser implements WarningsParser {
     }
 
     /**
-     * Parses the specified string content and creates annotations for each found warning.
+     * Parses the specified string content and creates annotations for each
+     * found warning.
      *
-     * @param content the content to scan
-     * @param warnings the found annotations
+     * @param content
+     *            the content to scan
+     * @param warnings
+     *            the found annotations
+     * @throws ParsingCanceledException
+     *             indicates that the user canceled the operation
      */
-    protected void findAnnotations(final String content, final List<FileAnnotation> warnings) {
+    protected void findAnnotations(final String content, final List<FileAnnotation> warnings) throws ParsingCanceledException {
         Matcher matcher = pattern.matcher(content);
 
         while (matcher.find()) {
@@ -76,6 +81,9 @@ public abstract class RegexpParser implements WarningsParser {
             if (warning != FALSE_POSITIVE) { // NOPMD
                 detectPackageName(warning);
                 warnings.add(warning);
+            }
+            if (Thread.interrupted()) {
+                throw new ParsingCanceledException();
             }
         }
     }

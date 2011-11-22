@@ -31,6 +31,8 @@ public interface WarningsParser extends ExtensionPoint {
      * @return the collection of annotations
      * @throws IOException
      *             Signals that an I/O exception has occurred.
+     * @throws ParsingCanceledException // NOCHECKSTYLE
+     *             Signals that the user canceled this operation
      */
     Collection<FileAnnotation> parse(final Reader reader) throws IOException;
 

@@ -18,6 +18,7 @@ import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.warnings.parser.FileWarningsParser;
 import hudson.plugins.warnings.parser.ParserRegistry;
+import hudson.plugins.warnings.parser.ParsingCanceledException;
 
 import java.io.File;
 import java.io.IOException;
@@ -230,30 +231,41 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
     /** {@inheritDoc} */
     @Override
-    public BuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger) throws InterruptedException, IOException {
-        if (getConsoleLogParsers().isEmpty() && getParserConfigurations().isEmpty()) {
-            throw new IOException("Error: No warning parsers defined.");
+    public BuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger)
+            throws InterruptedException, IOException {
+        try {
+            if (getConsoleLogParsers().isEmpty() && getParserConfigurations().isEmpty()) {
+                throw new IOException("Error: No warning parsers defined.");
+            }
+
+            ParserResult project = parseFiles(build, logger);
+            returnIfCanceled();
+
+            parseConsoleLog(build, logger, project);
+
+            project = build.getWorkspace().act(
+                    new AnnotationsClassifier(project, getDefaultEncoding()));
+            for (FileAnnotation annotation : project.getAnnotations()) {
+                annotation.setPathName(build.getWorkspace().getRemote());
+            }
+
+            WarningsResult result = new WarningsResult(build, getDefaultEncoding(), project);
+            build.getActions().add(new WarningsResultAction(build, this, result));
+
+            return result;
         }
-
-        ParserResult project = parseFiles(build, logger);
-        returnIfCanceled();
-
-        parseConsoleLog(build, logger, project);
-
-        project = build.getWorkspace().act(new AnnotationsClassifier(project, getDefaultEncoding()));
-        for (FileAnnotation annotation : project.getAnnotations()) {
-            annotation.setPathName(build.getWorkspace().getRemote());
+        catch (ParsingCanceledException exception) {
+            throw createInterruptedException();
         }
+    }
 
-        WarningsResult result = new WarningsResult(build, getDefaultEncoding(), project);
-        build.getActions().add(new WarningsResultAction(build, this, result));
-
-        return result;
+    private InterruptedException createInterruptedException() {
+        return new InterruptedException("Canceling parsing since build has been aborted.");
     }
 
     private void returnIfCanceled() throws InterruptedException {
         if (Thread.interrupted()) {
-            throw new InterruptedException("Canceling parsing since build has been aborted.");
+            throw createInterruptedException();
         }
     }
 
