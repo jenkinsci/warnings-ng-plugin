@@ -24,6 +24,24 @@ public class MsBuildParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-10566">Issue 10566</a>
+     */
+    @Test
+    public void issue10566() throws IOException {
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue10566.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        FileAnnotation annotation = warnings.iterator().next();
+        checkWarning(annotation,
+                54, "cannot open include file: 'Header.h': No such file or directory",
+                "..//..//..//xx_Source//file.c", MsBuildParser.WARNING_TYPE, "c1083", Priority.HIGH);
+    }
+
+    /**
+     * Parses a file with warnings of the MS Build tools.
+     *
+     * @throws IOException
+     *      if the file could not be read
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-3582">Issue 3582</a>
      */
     @Test
@@ -67,6 +85,24 @@ public class MsBuildParserTest extends ParserTester {
         FileAnnotation annotation = warnings.iterator().next();
         checkWarning(annotation, 1145, "The variable 'ex' is declared but never used", "Rules/TaskRules.cs",
                 MsBuildParser.WARNING_TYPE, "CS0168", Priority.NORMAL);
+    }
+
+    /**
+     * Parses a file with one warning of the MS Build tools that are started by ant.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-9926">Issue 9926</a>
+     */
+    @Test
+    public void issue9926() throws IOException {
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue9926.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        FileAnnotation annotation = warnings.iterator().next();
+        checkWarning(annotation, 125, "assignment within conditional expression",
+                "c:/jci/jobs/external_nvtristrip/workspace/compiler/cl/config/debug/platform/win32/tfields/live/external/nvtristrip/nvtristrip.cpp",
+                MsBuildParser.WARNING_TYPE, "C4706", Priority.NORMAL);
     }
 
     /**

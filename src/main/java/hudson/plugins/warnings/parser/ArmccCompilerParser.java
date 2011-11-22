@@ -14,7 +14,7 @@ public class ArmccCompilerParser extends RegexpLineParser {
     static final String WARNING_CATEGORY = "Armcc Error";
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "armcc";
-    /** Pattern of gcc 4 compiler warnings. */
+    /** Pattern of armcc compiler warnings. */
     private static final String ARMCC_WARNING_PATTERN = "^\"(.+)\", line (\\d+): ([A-Z][a-z]+):\\D*(\\d+)\\D*?:\\s+(.+)$";
 
     /**

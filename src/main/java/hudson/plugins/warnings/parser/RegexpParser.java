@@ -1,6 +1,6 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.plugins.analysis.util.JavaPackageDetector;
+import hudson.plugins.analysis.util.PackageDetectors;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 import java.util.List;
@@ -87,8 +87,7 @@ public abstract class RegexpParser implements WarningsParser {
      */
     private void detectPackageName(final Warning warning) {
         if (!warning.hasPackageName()) {
-            String packageName = new JavaPackageDetector().detectPackageName(warning.getFileName());
-            warning.setPackageName(packageName);
+            warning.setPackageName(PackageDetectors.detectPackageName(warning.getFileName()));
         }
     }
 

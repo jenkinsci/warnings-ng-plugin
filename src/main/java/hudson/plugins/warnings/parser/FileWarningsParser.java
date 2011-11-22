@@ -9,6 +9,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
 /**
  * A {@link WarningsParser} that scans files.
  *
@@ -44,6 +46,22 @@ public class FileWarningsParser implements AnnotationParser {
         this.includePattern = includePattern;
         this.excludePattern = excludePattern;
         this.defaultEncoding = defaultEncoding;
+    }
+
+    /**
+     * Creates a new instance of {@link FileWarningsParser}.
+     *
+     * @param parserName
+     *            the parser to scan the files with
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @param includePattern
+     *            ant file-set pattern of files to include in report
+     * @param excludePattern
+     *            ant file-set pattern of files to exclude from report
+     */
+    public FileWarningsParser(final String parserName, final String defaultEncoding, final String includePattern, final String excludePattern) {
+        this(Sets.newHashSet(parserName), defaultEncoding, includePattern, excludePattern);
     }
 
     /** {@inheritDoc} */

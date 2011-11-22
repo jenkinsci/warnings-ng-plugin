@@ -2,6 +2,7 @@ package hudson.plugins.warnings.parser;
 
 import hudson.model.Hudson;
 import hudson.plugins.analysis.util.EncodingValidator;
+import hudson.plugins.analysis.util.NullLogger;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.warnings.GroovyParser;
@@ -37,12 +38,23 @@ import com.google.common.collect.Sets;
  */
 // CHECKSTYLE:COUPLING-OFF
 public class ParserRegistry {
-    /** The actual parsers to use when scanning a file. */
     private final List<WarningsParser> parsers;
-    /** The default charset to be used when reading and parsing files. */
     private final Charset defaultCharset;
     private final Set<Pattern> includePatterns = Sets.newHashSet();
     private final Set<Pattern> excludePatterns = Sets.newHashSet();
+
+    /**
+     * Returns all warning parsers registered by the extension point.
+     *
+     * @return the extension list
+     */
+    private static List<WarningsParser> all() {
+        Hudson instance = Hudson.getInstance();
+        if (instance == null) {
+            return Lists.newArrayList();
+        }
+        return instance.getExtensionList(WarningsParser.class);
+    }
 
     /**
      * Returns all available parser names.
@@ -71,7 +83,7 @@ public class ParserRegistry {
      *            the parser names
      * @return a list of parsers, might be modified by the receiver
      */
-    public static List<WarningsParser> getParsers(final Set<String> parserNames) {
+    public static List<WarningsParser> getParsers(final Collection<String> parserNames) {
         List<WarningsParser> actualParsers = new ArrayList<WarningsParser>();
         for (String name : parserNames) {
             for (WarningsParser warningsParser : getAllParsers()) {
@@ -141,9 +153,12 @@ public class ParserRegistry {
         parsers.add(new TnsdlParser());
         parsers.add(new GhsMultiParser());
         parsers.add(new ArmccCompilerParser());
+        parsers.add(new YuiCompressorParser());
+
 
         Iterable<GroovyParser> parserDescriptions = getDynamicParserDescriptions();
         parsers.addAll(getDynamicParsers(parserDescriptions));
+        parsers.addAll(all());
 
         return ImmutableList.copyOf(parsers);
     }
@@ -348,39 +363,6 @@ public class ParserRegistry {
      */
     protected Reader createReader(final InputStream inputStream) {
         return new InputStreamReader(inputStream, defaultCharset);
-    }
-
-    /**
-     * Null logger.
-     *
-     * @author Ulli Hafner
-     */
-    // TODO: move to analysis-core
-    public static final class NullLogger extends PluginLogger {
-        /**
-         * Creates a new instance of {@link NullLogger}.
-         */
-        public NullLogger() {
-            super(null, null);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void log(final String message) {
-            // do not log
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void log(final Throwable throwable) {
-            // do not log
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void printStackTrace(final Throwable throwable) {
-            // do not log
-        }
     }
 }
 

@@ -1,7 +1,8 @@
 rm -rf $HUDSON_HOME/plugins/warnings*
 
-mvn install
+mvn install || { echo "Build failed"; exit 1; }
+ 
 cp -f target/*.hpi $HUDSON_HOME/plugins/
 
 cd $HUDSON_HOME
-java -jar hudson.war
+java -jar jenkins.war

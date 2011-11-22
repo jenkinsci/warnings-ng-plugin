@@ -20,6 +20,27 @@ public class GroovyParser {
     private final String name;
     private final String regexp;
     private final String script;
+    private final String example; // @since 3.18
+
+    /**
+     * Creates a new instance of {@link GroovyParser}.
+     *
+     * @param name
+     *            the name of the parser
+     * @param regexp
+     *            the regular expression
+     * @param script
+     *            the script to map the expression to a warning
+     * @param example
+     *            the example to verify the parser
+     */
+    @DataBoundConstructor
+    public GroovyParser(final String name, final String regexp, final String script, final String example) {
+        this.name = name;
+        this.regexp = regexp;
+        this.script = script;
+        this.example = example;
+    }
 
     /**
      * Creates a new instance of {@link GroovyParser}.
@@ -31,11 +52,8 @@ public class GroovyParser {
      * @param script
      *            the script to map the expression to a warning
      */
-    @DataBoundConstructor
     public GroovyParser(final String name, final String regexp, final String script) {
-        this.name = name;
-        this.regexp = regexp;
-        this.script = script;
+        this(name, regexp, script, StringUtils.EMPTY);
     }
 
     /**
@@ -75,6 +93,16 @@ public class GroovyParser {
      */
     public String getScript() {
         return script;
+    }
+
+    /**
+     * Returns the example to verify the parser.
+     *
+     * @return the example
+     * @since 3.18
+     */
+    public String getExample() {
+        return StringUtils.defaultString(example);
     }
 
     /**

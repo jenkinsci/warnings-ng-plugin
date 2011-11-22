@@ -1,7 +1,7 @@
 package hudson.plugins.warnings.tokens;
 
 import hudson.Extension;
-import hudson.plugins.analysis.tokens.AbstractResultTokenMacro;
+import hudson.plugins.analysis.tokens.AbstractAnnotationsCountTokenMacro;
 import hudson.plugins.warnings.WarningsResultAction;
 
 /**
@@ -10,12 +10,13 @@ import hudson.plugins.warnings.WarningsResultAction;
  * @author Ulli Hafner
  */
 @Extension(optional = true)
-public class WarningsCountTokenMacro extends AbstractResultTokenMacro {
+public class WarningsCountTokenMacro extends AbstractAnnotationsCountTokenMacro {
     /**
      * Creates a new instance of {@link WarningsCountTokenMacro}.
      */
+    @SuppressWarnings("unchecked")
     public WarningsCountTokenMacro() {
-        super(WarningsResultAction.class, "WARNINGS_COUNT");
+        super("WARNINGS_COUNT", WarningsResultAction.class);
     }
 }
 
