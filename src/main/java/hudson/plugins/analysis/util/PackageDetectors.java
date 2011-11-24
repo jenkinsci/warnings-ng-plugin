@@ -10,7 +10,9 @@ import java.util.List;
  * @author Ulli Hafner
  */
 public final class PackageDetectors {
-    /** The detectors to use. */
+    /** If no package could be assigned this value is used as package name. */
+    public static final String UNDEFINED_PACKAGE = "-";
+
     private static final List<AbstractPackageDetector> DETECTORS = Arrays.asList(
             new JavaPackageDetector(), new CsharpNamespaceDetector());
 
@@ -28,7 +30,7 @@ public final class PackageDetectors {
                 return detector.detectPackageName(fileName);
             }
         }
-        return "undefined";
+        return UNDEFINED_PACKAGE;
     }
 
     /**

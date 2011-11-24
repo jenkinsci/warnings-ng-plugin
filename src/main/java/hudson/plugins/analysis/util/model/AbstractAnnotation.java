@@ -15,6 +15,8 @@ import org.kohsuke.stapler.export.ExportedBean;
 import hudson.model.Item;
 import hudson.model.AbstractBuild;
 
+import hudson.plugins.analysis.util.PackageDetectors;
+
 /**
  *  A base class for annotations.
  *
@@ -155,7 +157,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     public boolean hasPackageName() {
         String actualPackageName = StringUtils.trim(packageName);
 
-        return StringUtils.isNotBlank(actualPackageName) && !StringUtils.equals(actualPackageName, "-");
+        return StringUtils.isNotBlank(actualPackageName) && !StringUtils.equals(actualPackageName, PackageDetectors.UNDEFINED_PACKAGE);
     }
 
     /**
