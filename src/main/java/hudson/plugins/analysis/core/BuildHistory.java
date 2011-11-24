@@ -227,5 +227,14 @@ public class BuildHistory {
             return Collections.emptyList();
         }
     }
+
+    /**
+     * Returns the health descriptor used for the builds.
+     *
+     * @return the health descriptor
+     */
+    public AbstractHealthDescriptor getHealthDescriptor() {
+        return getBaseline().getHealthDescriptor();
+    }
 }
 

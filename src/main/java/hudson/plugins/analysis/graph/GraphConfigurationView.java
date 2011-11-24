@@ -60,7 +60,7 @@ public abstract class GraphConfigurationView implements ModelObject {
         this.pluginName = pluginName;
 
         this.buildHistory = buildHistory;
-        healthDescriptor = buildHistory.getBaseline().getHealthDescriptor();
+        healthDescriptor = buildHistory.getHealthDescriptor();
     }
 
     /**

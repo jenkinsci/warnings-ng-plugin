@@ -75,5 +75,11 @@ public class NullBuildHistory extends BuildHistory {
     public Collection<FileAnnotation> getFixedWarnings(final Set<FileAnnotation> annotations) {
         return Collections.emptyList();
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public AbstractHealthDescriptor getHealthDescriptor() {
+        return new NullHealthDescriptor();
+    }
 }
 
