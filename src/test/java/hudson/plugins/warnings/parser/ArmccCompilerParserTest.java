@@ -1,33 +1,29 @@
 package hudson.plugins.warnings.parser;
 
+import static junit.framework.Assert.*;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
-import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import static junit.framework.Assert.assertEquals;
+import org.junit.Test;
 
 /**
  * Tests the class {@link ArmccCompilerParser}.
  */
 public class ArmccCompilerParserTest extends ParserTester {
-
-    /**
-     * Error message.
-     */
     private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
-    /**
-     * The category.
-     */
     private static final String WARNING_CATEGORY = ArmccCompilerParser.WARNING_CATEGORY;
-    /**
-     * The type. *
-     */
     private static final String WARNING_TYPE = ArmccCompilerParser.WARNING_TYPE;
 
+    /**
+     * Detects three ARMCC warnings.
+     *
+     * @throws IOException
+     *             if file could not be read
+     */
     @Test
     public void testWarningsParser() throws IOException {
         Collection<FileAnnotation> warnings = new ArmccCompilerParser().parse(openFile());

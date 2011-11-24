@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
  * @author Emanuele Zattin
  */
 public class ArmccCompilerParser extends RegexpLineParser {
-    /** A GCC error. */
+    /** A ARMCC error. */
     static final String WARNING_CATEGORY = "Armcc Error";
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "armcc";
@@ -34,7 +34,7 @@ public class ArmccCompilerParser extends RegexpLineParser {
         String message = matcher.group(5);
         Priority priority;
 
-        if (type.equalsIgnoreCase("error")) {
+        if ("error".equalsIgnoreCase(type)) {
             priority = Priority.HIGH;
         }
         else {
