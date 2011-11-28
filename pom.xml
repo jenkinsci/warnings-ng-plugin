@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>1.29</version>
+    <version>1.31</version>
     <relativePath>../analysis-pom/pom.xml</relativePath>
   </parent>
 
@@ -30,17 +30,11 @@
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
   </scm>
 
-  <repositories>
+  <distributionManagement>
     <repository>
-      <id>m.g.o-public</id>
-      <url>http://maven.glassfish.org/content/groups/public/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
+      <id>maven.jenkins-ci.org</id>
+      <url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>
     </repository>
-  </repositories>
+  </distributionManagement>
 
 </project>
