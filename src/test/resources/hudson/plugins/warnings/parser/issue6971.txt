@@ -3,4 +3,6 @@
 
 .../XmlParser.h:357: warning: Member getInternalParser() (function) of class XmlParser is not documented.
 
+P:/Integration/DjRip/djrip/workspace/libraries/xml/XmlMemoryEntityResolver.h:39: warning: Member XmlMemoryEntityMapEntry (typedef) of class XmlMemoryEntityResolver is not documented.
+
 

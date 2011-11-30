@@ -160,7 +160,7 @@ public class DoxygenParserTest extends ParserTester {
     }
 
     /**
-     * Parses a warning log with 3 doxygen 1.7.1 messages.
+     * Parses a warning log with 4 doxygen 1.7.1 messages.
      *
      * @throws IOException
      *      if the file could not be read
@@ -170,7 +170,7 @@ public class DoxygenParserTest extends ParserTester {
     public void issue6971() throws IOException {
         Collection<FileAnnotation> warnings = new DoxygenParser().parse(openFile("issue6971.txt"));
 
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 4, warnings.size());
         Iterator<FileAnnotation> iterator = warnings.iterator();
         checkWarning(iterator.next(),
                 479,
@@ -186,6 +186,11 @@ public class DoxygenParserTest extends ParserTester {
                 357,
                 "Member getInternalParser() (function) of class XmlParser is not documented.",
                 ".../XmlParser.h",
+                WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
+        checkWarning(iterator.next(),
+                39,
+                "Member XmlMemoryEntityMapEntry (typedef) of class XmlMemoryEntityResolver is not documented.",
+                "P:/Integration/DjRip/djrip/workspace/libraries/xml/XmlMemoryEntityResolver.h",
                 WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
     }
 

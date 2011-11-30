@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
  * @author Frederic Chateau
  */
 public class Gcc4CompilerParser extends RegexpLineParser {
+    private static final String ERROR = "error";
     /** A GCC error. */
     static final String WARNING_CATEGORY = "GCC4 Error";
     /** Warning type of this parser. */
@@ -32,7 +33,7 @@ public class Gcc4CompilerParser extends RegexpLineParser {
         String message = matcher.group(4);
         Priority priority;
 
-        if (matcher.group(3).equalsIgnoreCase("error")) {
+        if (ERROR.equalsIgnoreCase(matcher.group(3))) {
             priority = Priority.HIGH;
         }
         else {

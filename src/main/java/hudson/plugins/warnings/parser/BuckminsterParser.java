@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
  * @author Johannes Utzig
  */
 public class BuckminsterParser extends RegexpLineParser {
+    private static final String ERROR = "Error";
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Buckminster Compiler";
     /** Pattern for buckminster compiler warnings. */
@@ -30,7 +31,7 @@ public class BuckminsterParser extends RegexpLineParser {
      */
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        Priority priority = matcher.group(1).equalsIgnoreCase("Error") ? Priority.HIGH : Priority.NORMAL;
+        Priority priority = ERROR.equalsIgnoreCase(matcher.group(1)) ? Priority.HIGH : Priority.NORMAL;
         return new Warning(matcher.group(2), getLineNumber(matcher.group(4)), WARNING_TYPE, classifyWarning(matcher.group(5)), matcher.group(5), priority);
 
     }
