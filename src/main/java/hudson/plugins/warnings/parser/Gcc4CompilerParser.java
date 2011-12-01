@@ -16,7 +16,7 @@ public class Gcc4CompilerParser extends RegexpLineParser {
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "gcc4";
     /** Pattern of gcc 4 compiler warnings. */
-    private static final String GCC_WARNING_PATTERN = "^(?:\\s*\\[.*\\]\\s*)?(.+?):(\\d+):(?:\\d+:)? (warning|error): (.*)$";
+    private static final String GCC_WARNING_PATTERN = ANT_TASK + "(.+?):(\\d+):(?:\\d+:)? (warning|error): (.*)$";
 
     /**
      * Creates a new instance of <code>Gcc4CompilerParser</code>.

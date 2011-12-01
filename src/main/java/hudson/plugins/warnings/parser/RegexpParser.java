@@ -21,6 +21,8 @@ public abstract class RegexpParser implements WarningsParser {
     protected static final String DEPRECATION = "Deprecation";
     /** Warning classification. */
     protected static final String PROPRIETARY_API = "Proprietary API";
+    /** Pattern identifying an ant task debug output prefix. */
+    protected static final String ANT_TASK = "^(?:.*\\[.*\\])?\\s*";
     /** Pattern of compiler warnings. */
     private final Pattern pattern;
     /** Name of this parser. */

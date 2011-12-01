@@ -154,7 +154,7 @@ public class ParserRegistryTest {
         ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, "/tmp/clover*/**", StringUtils.EMPTY, new ArrayList<WarningsParser>());
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 16, annotations.size());
+        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 17, annotations.size());
     }
 
     /**
