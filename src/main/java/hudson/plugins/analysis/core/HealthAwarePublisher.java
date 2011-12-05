@@ -79,7 +79,6 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      * @since 1.4
      */
     private final boolean useDeltaValues;
-
     /**
      * Thresholds for build status unstable and failed, resp. and priorities
      * all, high, normal, and low, resp.
@@ -87,13 +86,18 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      * @since 1.14
      */
     private Thresholds thresholds = new Thresholds();
-
     /**
      * Determines whether module names should be derived from Maven POM or Ant build files.
      *
      * @since 1.19
      */
     private final boolean shouldDetectModules;
+    /**
+     * Determines whether new warnings should be computed (with respect to baseline).
+     *
+     * @since 1.34
+     */
+    private final boolean canComputeNew;
 
     /**
      * Creates a new instance of {@link HealthAwarePublisher}.
@@ -149,6 +153,8 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      *            determines whether the plug-in can run for failed builds, too
      * @param shouldDetectModules
      *            determines whether module names should be derived from Maven POM or Ant build files
+     * @param canComputeNew
+     *            determines whether new warnings should be computed (with respect to baseline)
      * @param pluginName
      *            the name of the plug-in
      */
@@ -160,7 +166,8 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,
             final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
             final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
-            final boolean canRunOnFailed, final boolean shouldDetectModules, final String pluginName) {
+            final boolean canRunOnFailed, final boolean shouldDetectModules, final boolean canComputeNew,
+            final String pluginName) {
         super();
         this.healthy = healthy;
         this.unHealthy = unHealthy;
@@ -168,6 +175,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         this.defaultEncoding = defaultEncoding;
 
         this.useDeltaValues = useDeltaValues;
+        this.canComputeNew = canComputeNew;
 
         thresholds.unstableTotalAll = unstableTotalAll;
         thresholds.unstableTotalHigh = unstableTotalHigh;
@@ -189,6 +197,22 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         this.canRunOnFailed = canRunOnFailed;
         this.shouldDetectModules = shouldDetectModules;
         this.pluginName = "[" + pluginName + "] ";
+    }
+
+    @Deprecated
+    public HealthAwarePublisher(final String healthy, final String unHealthy, final String thresholdLimit,
+            final String defaultEncoding, final boolean useDeltaValues,
+            final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
+            final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,
+            final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
+            final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
+            final boolean canRunOnFailed, final boolean shouldDetectModules, final String pluginName) {
+        this(healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues,
+                unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
+                unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow,
+                failedTotalAll, failedTotalHigh, failedTotalNormal, failedTotalLow,
+                failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
+                canRunOnFailed, shouldDetectModules, true, pluginName);
     }
 
     @Deprecated
@@ -265,6 +289,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         this.defaultEncoding = defaultEncoding;
         this.useDeltaValues = useDeltaValues;
         this.canRunOnFailed = canRunOnFailed;
+        canComputeNew = true;
         shouldDetectModules = false;
         this.pluginName = "[" + pluginName + "] ";
     }
@@ -318,7 +343,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             }
 
             if (new NullHealthDescriptor(this).isThresholdEnabled()) {
-                result.evaluateStatus(getThresholds(), useDeltaValues, logger);
+                result.evaluateStatus(getThresholds(), useDeltaValues, canComputeNew, logger);
             }
 
             copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), result.getAnnotations());
@@ -410,9 +435,21 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
     }
 
     /**
+     * Returns whether new warnings should be computed (with respect to
+     * baseline).
+     *
+     * @return <code>true</code> if new warnings should be computed (with
+     *         respect to baseline), <code>false</code> otherwise
+     */
+    public boolean getCanComputeNew() {
+        return canComputeNew;
+    }
+
+    /**
      * Returns whether this plug-in can run for failed builds, too.
      *
-     * @return the can run on failed
+     * @return <code>true</code> if this plug-in can run for failed builds,
+     *         <code>false</code> otherwise
      */
     public boolean getCanRunOnFailed() {
         return canRunOnFailed;
@@ -489,7 +526,9 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      * Returns whether absolute annotations delta or the actual annotations set
      * difference should be used to evaluate the build stability.
      *
-     * @return the useDeltaValues
+     * @return <code>true</code> if the annotation count should be used,
+     *         <code>false</code> if the actual (set) difference should be
+     *         computed
      */
     public boolean getUseDeltaValues() {
         return useDeltaValues;
@@ -578,7 +617,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
 
     /** {@inheritDoc} */
     public BuildStepMonitor getRequiredMonitorService() {
-        return BuildStepMonitor.STEP;
+        return canComputeNew ? BuildStepMonitor.STEP : BuildStepMonitor.NONE;
     }
 
     /** Annotation threshold to be reached if a build should be considered as unstable. */

@@ -1018,13 +1018,34 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      */
     // CHECKSTYLE:OFF
     public void evaluateStatus(final Thresholds thresholds, final boolean useDeltaValues, final PluginLogger logger) {
+        evaluateStatus(thresholds, useDeltaValues, true, logger);
+    }
+
+    /**
+     * Updates the build status, i.e. sets this plug-in result status field to
+     * the corresponding {@link Result}. Additionally, the {@link Result} of the
+     * build that owns this instance of {@link BuildResult} will be also
+     * changed.
+     *
+     * @param thresholds
+     *            the failure thresholds
+     * @param useDeltaValues
+     *            the use delta values when computing the differences
+     * @param canComputeNew
+     *            determines whether new warnings should be computed (with
+     *            respect to baseline)
+     * @param logger
+     *            the logger
+     */
+    // CHECKSTYLE:OFF
+    public void evaluateStatus(final Thresholds thresholds, final boolean useDeltaValues, final boolean canComputeNew, final PluginLogger logger) {
     // CHECKSTYLE:ON
         this.thresholds = thresholds;
         this.useDeltaValues = useDeltaValues;
 
         BuildResultEvaluator resultEvaluator = new BuildResultEvaluator();
         Result buildResult;
-        if (history.isEmpty()) {
+        if (history.isEmpty() || !canComputeNew) {
             logger.log("Ignore new warnings since this is the first valid build");
             buildResult = resultEvaluator.evaluateBuildResult(logger, thresholds, getAnnotations());
         }

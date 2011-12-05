@@ -85,6 +85,12 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      * @since 1.20
      */
     private Thresholds thresholds = new Thresholds();
+    /**
+     * Determines whether new warnings should be computed (with respect to baseline).
+     *
+     * @since 1.34
+     */
+    private final boolean canComputeNew;
 
     /**
      * Creates a new instance of <code>HealthReportingMavenReporter</code>.
@@ -136,6 +142,8 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      *            annotation threshold
      * @param canRunOnFailed
      *            determines whether the plug-in can run for failed builds, too
+     * @param canComputeNew
+     *            determines whether new warnings should be computed (with respect to baseline)
      * @param pluginName
      *            the name of the plug-in
      */
@@ -146,12 +154,14 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
             final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,
             final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
             final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
-            final boolean canRunOnFailed, final String pluginName) {
+            final boolean canRunOnFailed, final boolean canComputeNew,
+            final String pluginName) {
         super();
         this.healthy = healthy;
         this.unHealthy = unHealthy;
         this.thresholdLimit = thresholdLimit;
         this.canRunOnFailed = canRunOnFailed;
+        this.canComputeNew = canComputeNew;
         this.pluginName = "[" + pluginName + "] ";
 
         this.useDeltaValues = useDeltaValues;
@@ -177,11 +187,43 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
     }
     // CHECKSTYLE:ON
 
+
+    // CHECKSTYLE:OFF
+    @SuppressWarnings("PMD.ExcessiveParameterList")
+    @Deprecated
+    public HealthAwareReporter(final String healthy, final String unHealthy, final String thresholdLimit, final boolean useDeltaValues,
+            final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
+            final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,
+            final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
+            final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
+            final boolean canRunOnFailed, final String pluginName) {
+        this(healthy, unHealthy, thresholdLimit, useDeltaValues,
+                unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
+                unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow,
+                failedTotalAll, failedTotalHigh, failedTotalNormal, failedTotalLow,
+                failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
+                canRunOnFailed, true, pluginName);
+    }
+    // CHECKSTYLE:ON
+
+    /**
+     * Returns whether new warnings should be computed (with respect to
+     * baseline).
+     *
+     * @return <code>true</code> if new warnings should be computed (with
+     *         respect to baseline), <code>false</code> otherwise
+     */
+    public boolean getCanComputeNew() {
+        return canComputeNew;
+    }
+
     /**
      * Returns whether absolute annotations delta or the actual annotations set
      * difference should be used to evaluate the build stability.
      *
-     * @return the useDeltaValues
+     * @return <code>true</code> if the annotation count should be used,
+     *         <code>false</code> if the actual (set) difference should be
+     *         computed
      */
     public boolean getUseDeltaValues() {
         return useDeltaValues;
@@ -284,7 +326,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         T buildResult = createResult(mavenBuild, result);
 
         StringPluginLogger pluginLogger = new StringPluginLogger(pluginName);
-        buildResult.evaluateStatus(thresholds, useDeltaValues, pluginLogger);
+        buildResult.evaluateStatus(thresholds, useDeltaValues, canComputeNew, pluginLogger);
         mavenBuild.getActions().add(createMavenAggregatedReport(mavenBuild, buildResult));
         mavenBuild.registerAsProjectAction(HealthAwareReporter.this);
         return pluginLogger.toString();
@@ -332,7 +374,8 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
     /**
      * Returns whether this plug-in can run for failed builds, too.
      *
-     * @return the can run on failed
+     * @return <code>true</code> if this plug-in can run for failed builds,
+     *         <code>false</code> otherwise
      */
     public boolean getCanRunOnFailed() {
         return canRunOnFailed;

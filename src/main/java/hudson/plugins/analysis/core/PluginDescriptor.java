@@ -2,8 +2,11 @@ package hudson.plugins.analysis.core;
 
 import java.io.IOException;
 
+import net.sf.json.JSONObject;
+
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
 
 import hudson.FilePath;
 import hudson.maven.AbstractMavenProject;
@@ -24,6 +27,34 @@ import hudson.util.FormValidation;
  * @author Ulli Hafner
  */
 public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
+    private static final String NEW_SECTION_KEY = "canComputeNew";
+
+    /**
+     * Converts the hierarchical JSON object that contains a sub-section for
+     * {@value #NEW_SECTION_KEY} to a corresponding flat JSON object.
+     *
+     * @param hierarchical
+     *            the JSON object containing a sub-section
+     * @return the flat structure
+     */
+    static JSONObject convertHierarchicalFormData(final JSONObject hierarchical) {
+        if (hierarchical.containsKey(NEW_SECTION_KEY)) {
+            JSONObject newSection = hierarchical.getJSONObject(NEW_SECTION_KEY);
+
+            JSONObject output = JSONObject.fromObject(hierarchical);
+            output.remove(NEW_SECTION_KEY);
+            for (Object key : newSection.keySet()) {
+                output.put((String)key, newSection.get(key));
+            }
+            output.put(NEW_SECTION_KEY, true);
+
+            return output;
+        }
+        else {
+            return hierarchical;
+        }
+    }
+
     /**
      * Creates a new instance of <code>PluginDescriptor</code>.
      *
@@ -32,6 +63,12 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      */
     public PluginDescriptor(final Class<? extends Publisher> clazz) {
         super(clazz);
+    }
+
+    @Override
+    public Publisher newInstance(final StaplerRequest req, final JSONObject formData)
+            throws hudson.model.Descriptor.FormException {
+        return super.newInstance(req, convertHierarchicalFormData(formData));
     }
 
     /** {@inheritDoc} */
