@@ -4,10 +4,12 @@ import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 import hudson.model.Job;
 
-import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.AbstractProjectAction;
+import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
@@ -121,6 +123,7 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
      *            the plug-in that is target of the link
      * @return the number of warnings
      */
+    @SuppressWarnings("NP")
     private String getWarnings(final Job<?, ?> job, final Class<? extends AbstractProjectAction<?>> actionType, final String plugin) {
         AbstractProjectAction<?> action = job.getAction(actionType);
         if (action != null && action.hasValidResults()) {
@@ -152,6 +155,7 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
      *            priority of the warnings
      * @return the number of warnings
      */
+    @SuppressWarnings("NP")
     private String getWarnings(final Job<?, ?> job, final Class<? extends AbstractProjectAction<?>> actionType, final Priority priority) {
         AbstractProjectAction<?> action = job.getAction(actionType);
         if (action != null && action.hasValidResults()) {

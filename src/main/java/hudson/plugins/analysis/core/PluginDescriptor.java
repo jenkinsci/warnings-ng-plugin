@@ -22,7 +22,7 @@ import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 
 /**
- * Base class for a Hudson plug/in descriptor.
+ * Base class for a Jankins plug-in descriptor.
  *
  * @author Ulli Hafner
  */
@@ -37,6 +37,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      *            the JSON object containing a sub-section
      * @return the flat structure
      */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("WMI")
     static JSONObject convertHierarchicalFormData(final JSONObject hierarchical) {
         if (hierarchical.containsKey(NEW_SECTION_KEY)) {
             JSONObject newSection = hierarchical.getJSONObject(NEW_SECTION_KEY);

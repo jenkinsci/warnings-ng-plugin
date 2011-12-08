@@ -13,6 +13,8 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import com.google.common.collect.Lists;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 import hudson.model.Action;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
@@ -22,14 +24,14 @@ import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
 import hudson.plugins.analysis.graph.DifferenceGraph;
 import hudson.plugins.analysis.graph.EmptyGraph;
 import hudson.plugins.analysis.graph.GraphConfiguration;
+import hudson.plugins.analysis.graph.GraphConfigurationView;
 import hudson.plugins.analysis.graph.HealthGraph;
 import hudson.plugins.analysis.graph.NewVersusFixedGraph;
 import hudson.plugins.analysis.graph.NullGraph;
 import hudson.plugins.analysis.graph.PriorityGraph;
 import hudson.plugins.analysis.graph.TotalsGraph;
-import hudson.plugins.analysis.graph.UserGraphConfigurationView;
-import hudson.plugins.analysis.graph.GraphConfigurationView;
 import hudson.plugins.analysis.graph.TrendDetails;
+import hudson.plugins.analysis.graph.UserGraphConfigurationView;
 
 import hudson.util.Graph;
 
@@ -260,6 +262,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *
      * @return the available graphs
      */
+    @SuppressWarnings("NP")
     protected List<BuildResultGraph> getAvailableGraphs() {
         List<BuildResultGraph> availableGraphs = Lists.newArrayList();
 
