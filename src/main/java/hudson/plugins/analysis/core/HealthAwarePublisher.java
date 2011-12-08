@@ -97,7 +97,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      *
      * @since 1.34
      */
-    private final boolean canComputeNew;
+    private final boolean dontComputeNew;
 
     /**
      * Creates a new instance of {@link HealthAwarePublisher}.
@@ -175,7 +175,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         this.defaultEncoding = defaultEncoding;
 
         this.useDeltaValues = useDeltaValues;
-        this.canComputeNew = canComputeNew;
+        dontComputeNew = !canComputeNew;
 
         thresholds.unstableTotalAll = unstableTotalAll;
         thresholds.unstableTotalHigh = unstableTotalHigh;
@@ -290,7 +290,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         this.defaultEncoding = defaultEncoding;
         this.useDeltaValues = useDeltaValues;
         this.canRunOnFailed = canRunOnFailed;
-        canComputeNew = true;
+        dontComputeNew = false;
         shouldDetectModules = false;
         this.pluginName = "[" + pluginName + "] ";
     }
@@ -344,7 +344,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             }
 
             if (new NullHealthDescriptor(this).isThresholdEnabled()) {
-                result.evaluateStatus(getThresholds(), useDeltaValues, canComputeNew, logger);
+                result.evaluateStatus(getThresholds(), useDeltaValues, canComputeNew(), logger);
             }
 
             copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), result.getAnnotations());
@@ -443,7 +443,18 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
      *         respect to baseline), <code>false</code> otherwise
      */
     public boolean getCanComputeNew() {
-        return canComputeNew;
+        return canComputeNew();
+    }
+
+    /**
+     * Returns whether new warnings should be computed (with respect to
+     * baseline).
+     *
+     * @return <code>true</code> if new warnings should be computed (with
+     *         respect to baseline), <code>false</code> otherwise
+     */
+    public boolean canComputeNew() {
+        return !dontComputeNew;
     }
 
     /**
@@ -618,7 +629,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
 
     /** {@inheritDoc} */
     public BuildStepMonitor getRequiredMonitorService() {
-        return canComputeNew ? BuildStepMonitor.STEP : BuildStepMonitor.NONE;
+        return canComputeNew() ? BuildStepMonitor.STEP : BuildStepMonitor.NONE;
     }
 
     /** Annotation threshold to be reached if a build should be considered as unstable. */

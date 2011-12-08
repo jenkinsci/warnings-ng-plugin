@@ -90,7 +90,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      *
      * @since 1.34
      */
-    private final boolean canComputeNew;
+    private final boolean dontComputeNew;
 
     /**
      * Creates a new instance of <code>HealthReportingMavenReporter</code>.
@@ -161,7 +161,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         this.unHealthy = unHealthy;
         this.thresholdLimit = thresholdLimit;
         this.canRunOnFailed = canRunOnFailed;
-        this.canComputeNew = canComputeNew;
+        this.dontComputeNew = !canComputeNew;
         this.pluginName = "[" + pluginName + "] ";
 
         this.useDeltaValues = useDeltaValues;
@@ -214,7 +214,18 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      *         respect to baseline), <code>false</code> otherwise
      */
     public boolean getCanComputeNew() {
-        return canComputeNew;
+        return canComputeNew();
+    }
+
+    /**
+     * Returns whether new warnings should be computed (with respect to
+     * baseline).
+     *
+     * @return <code>true</code> if new warnings should be computed (with
+     *         respect to baseline), <code>false</code> otherwise
+     */
+    public boolean canComputeNew() {
+        return !dontComputeNew;
     }
 
     /**
@@ -326,7 +337,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         T buildResult = createResult(mavenBuild, result);
 
         StringPluginLogger pluginLogger = new StringPluginLogger(pluginName);
-        buildResult.evaluateStatus(thresholds, useDeltaValues, canComputeNew, pluginLogger);
+        buildResult.evaluateStatus(thresholds, useDeltaValues, canComputeNew(), pluginLogger);
         mavenBuild.getActions().add(createMavenAggregatedReport(mavenBuild, buildResult));
         mavenBuild.registerAsProjectAction(HealthAwareReporter.this);
         return pluginLogger.toString();
