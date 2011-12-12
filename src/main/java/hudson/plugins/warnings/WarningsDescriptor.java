@@ -1,5 +1,6 @@
 package hudson.plugins.warnings;
 
+import static hudson.plugins.analysis.core.PluginDescriptor.*;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import hudson.Extension;
@@ -96,10 +97,11 @@ public final class WarningsDescriptor extends PluginDescriptor {
     /** {@inheritDoc} */
     @Override
     public WarningsPublisher newInstance(final StaplerRequest request, final JSONObject formData) throws FormException {
-        Set<String> consoleLogParsers = extractConsoleLogParsers(formData);
-        List<ParserConfiguration> parserConfigurations = request.bindJSONToList(ParserConfiguration.class, formData.get(FILE_LOCATIONS_KEY));
+        JSONObject flattenedData = convertHierarchicalFormData(formData);
+        Set<String> consoleLogParsers = extractConsoleLogParsers(flattenedData);
+        List<ParserConfiguration> parserConfigurations = request.bindJSONToList(ParserConfiguration.class, flattenedData.get(FILE_LOCATIONS_KEY));
 
-        WarningsPublisher publisher = request.bindJSON(WarningsPublisher.class, formData);
+        WarningsPublisher publisher = request.bindJSON(WarningsPublisher.class, flattenedData);
         publisher.setConsoleLogParsers(consoleLogParsers);
         publisher.setParserConfigurations(parserConfigurations);
 
