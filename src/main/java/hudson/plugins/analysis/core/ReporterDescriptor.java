@@ -1,6 +1,9 @@
 package hudson.plugins.analysis.core;
 
+import net.sf.json.JSONObject;
+
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
 
 import hudson.maven.MavenReporter;
 import hudson.maven.MavenReporterDescriptor;
@@ -68,5 +71,12 @@ public abstract class ReporterDescriptor extends MavenReporterDescriptor {
      */
     public final FormValidation doCheckHeight(@QueryParameter final String height) {
         return publisherDescriptor.doCheckHeight(height);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public MavenReporter newInstance(final StaplerRequest req, final JSONObject formData)
+            throws hudson.model.Descriptor.FormException {
+        return super.newInstance(req, PluginDescriptor.convertHierarchicalFormData(formData));
     }
 }
