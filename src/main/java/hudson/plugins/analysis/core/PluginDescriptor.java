@@ -38,7 +38,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @return the flat structure
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("WMI")
-    static JSONObject convertHierarchicalFormData(final JSONObject hierarchical) {
+    protected static JSONObject convertHierarchicalFormData(final JSONObject hierarchical) {
         if (hierarchical.containsKey(NEW_SECTION_KEY)) {
             JSONObject newSection = hierarchical.getJSONObject(NEW_SECTION_KEY);
 
