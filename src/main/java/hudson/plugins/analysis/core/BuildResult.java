@@ -284,6 +284,15 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         defineReferenceBuild(history);
     }
 
+    /**
+     * Returns the build history.
+     *
+     * @return the history
+     */
+    public BuildHistory getHistory() {
+        return history;
+    }
+
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("NP")
     private void defineReferenceBuild(final BuildHistory buildHistory) {
         if (buildHistory.hasReferenceBuild()) {

@@ -20,6 +20,7 @@ import hudson.maven.MavenModuleSetBuild;
 
 import hudson.model.BuildListener;
 import hudson.model.Result;
+import hudson.model.AbstractBuild;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.PluginLogger;
@@ -340,6 +341,10 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         buildResult.evaluateStatus(thresholds, useDeltaValues, canComputeNew(), pluginLogger);
         mavenBuild.getActions().add(createMavenAggregatedReport(mavenBuild, buildResult));
         mavenBuild.registerAsProjectAction(HealthAwareReporter.this);
+        AbstractBuild<?, ?> referenceBuild = buildResult.getHistory().getReferenceBuild();
+        if (referenceBuild != null) {
+            pluginLogger.log("Computing warning deltas based on reference build " + referenceBuild.getDisplayName());
+        }
         return pluginLogger.toString();
     }
 

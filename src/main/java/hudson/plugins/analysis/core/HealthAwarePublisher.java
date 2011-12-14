@@ -336,6 +336,10 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             BuildResult result;
             try {
                 result = perform(build, logger);
+                AbstractBuild<?, ?> referenceBuild = result.getHistory().getReferenceBuild();
+                if (referenceBuild != null) {
+                    logger.log("Computing warning deltas based on reference build " + referenceBuild.getDisplayName());
+                }
             }
             catch (InterruptedException exception) {
                 logger.log(exception.getMessage());

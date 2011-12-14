@@ -54,9 +54,9 @@ public class BuildResultEvaluator {
      * @param highDelta
      *            delta between this build and reference build (priority high)
      * @param normalDelta
-     *            delta between this build and reference build (priority high)
+     *            delta between this build and reference build (priority normal)
      * @param lowDelta
-     *            delta between this build and reference build (priority high)
+     *            delta between this build and reference build (priority low)
      * @param allAnnotations
      *            all annotations
      * @return the build result
