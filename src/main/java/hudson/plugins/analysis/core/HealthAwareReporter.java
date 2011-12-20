@@ -296,7 +296,6 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         }
 
         if (hasResultAction(build)) {
-            logger.log("Skipping maven reporter: there is already a result available.");
             return true;
         }
 
