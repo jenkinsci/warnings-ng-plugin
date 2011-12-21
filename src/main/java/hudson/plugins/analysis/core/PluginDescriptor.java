@@ -45,9 +45,9 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
             JSONObject output = JSONObject.fromObject(hierarchical);
             output.remove(NEW_SECTION_KEY);
             for (Object key : newSection.keySet()) {
-                output.put((String)key, newSection.get(key));
+                output.element((String)key, newSection.get(key));
             }
-            output.put(NEW_SECTION_KEY, true);
+            output.element(NEW_SECTION_KEY, true);
 
             return output;
         }
