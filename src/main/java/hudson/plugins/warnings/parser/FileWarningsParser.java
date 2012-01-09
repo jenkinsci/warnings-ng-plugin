@@ -59,6 +59,5 @@ public class FileWarningsParser implements AnnotationParser {
             throw new InvocationTargetException(exception, "Can't scan file for warnings: " + file.getAbsolutePath());
         }
     }
-
 }
 
