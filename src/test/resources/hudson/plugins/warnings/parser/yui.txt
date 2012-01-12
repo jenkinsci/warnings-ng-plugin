@@ -1,0 +1,8 @@
+[WARNING] Try to use a single 'var' statement per scope.
+match){returnstringResult;}for( ---> var  <--- i=0;match&&i<match
+
+[WARNING] The variable replacement has already been declared in the same scope...
+replace(variable,replacement);}var  ---> replacement <--- =globalStoredVars[name];if(replacement!=
+
+[WARNING] Using 'eval' is not recommended. Moreover, using 'eval' reduces the level of compression!
+function(condition,label){if( ---> eval <--- (condition)){this.doGotolabel(label
