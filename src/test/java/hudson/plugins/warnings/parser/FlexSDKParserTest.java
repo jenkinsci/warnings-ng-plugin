@@ -19,9 +19,6 @@ import org.junit.Test;
  * Tests the class {@link FlexSDKParser}.
  */
 public class FlexSDKParserTest extends ParserTester {
-    /** Error message. */
-    private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
-
     /**
      * Parses a file with two deprecation warnings.
      *

@@ -14,14 +14,9 @@ import org.junit.Test;
  * Tests the class {@link Gcc4LinkerParser}.
  */
 public class Gcc4LinkerParserTest extends ParserTester {
-    /** The category. */
     private static final String WARNING_CATEGORY = Gcc4LinkerParser.WARNING_CATEGORY;
-    /** The type. **/
     private static final String WARNING_TYPE = Gcc4LinkerParser.WARNING_TYPE;
-    /** Error message. */
     private static final String THERE_ARE_WARNINGS_FOUND = "There are warnings found";
-    /** Error message. */
-    private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
 
     /**
      * Parses a file with GCC linker errors.

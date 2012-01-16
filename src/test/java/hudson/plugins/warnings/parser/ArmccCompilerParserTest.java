@@ -14,7 +14,6 @@ import org.junit.Test;
  * Tests the class {@link ArmccCompilerParser}.
  */
 public class ArmccCompilerParserTest extends ParserTester {
-    private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
     private static final String WARNING_CATEGORY = ArmccCompilerParser.WARNING_CATEGORY;
     private static final String WARNING_TYPE = ArmccCompilerParser.WARNING_TYPE;
 

@@ -14,13 +14,8 @@ import org.junit.Test;
  * Tests the class {@link Gcc4CompilerParser}.
  */
 public class Gcc4CompilerParserTest extends ParserTester {
-    /** Error message. */
     private static final String THERE_ARE_WARNINGS_FOUND = "There are warnings found";
-    /** Error message. */
-    private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
-    /** The category. */
     private static final String WARNING_CATEGORY = Gcc4CompilerParser.WARNING_CATEGORY;
-    /** The type. **/
     private static final String WARNING_TYPE = Gcc4CompilerParser.WARNING_TYPE;
 
     /**

@@ -16,9 +16,6 @@ import org.junit.Test;
  * Tests the class {@link MsBuildParser}.
  */
 public class MsBuildParserTest extends ParserTester {
-    /** Error message. */
-    private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
-
     /**
      * Parses a file with warnings of the MS Build tools.
      *

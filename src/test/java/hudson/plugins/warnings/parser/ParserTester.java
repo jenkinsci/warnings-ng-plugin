@@ -12,16 +12,25 @@ import java.io.UnsupportedEncodingException;
  * Base class for parser tests. Provides an assertion test for warnings.
  */
 public abstract class ParserTester {
+    protected static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
+
     /**
      * Checks the properties of the specified warning.
      *
-     * @param annotation the warning to check
-     * @param lineNumber the expected line number
-     * @param message the expected message
-     * @param fileName the expected filename
-     * @param type the expected type
-     * @param category the expected category
-     * @param priority the expected priority
+     * @param annotation
+     *            the warning to check
+     * @param lineNumber
+     *            the expected line number
+     * @param message
+     *            the expected message
+     * @param fileName
+     *            the expected filename
+     * @param type
+     *            the expected type
+     * @param category
+     *            the expected category
+     * @param priority
+     *            the expected priority
      */
     protected void checkWarning(final FileAnnotation annotation, final int lineNumber, final String message, final String fileName, final String type, final String category, final Priority priority) {
         assertTrue("Annotation is of wrong type.", annotation instanceof Warning);

@@ -14,11 +14,7 @@ import org.junit.Test;
  * Tests the class {@link GccParser}.
  */
 public class GccParserTest extends ParserTester {
-    /** Error message. */
-    private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
-    /** An error. */
     private static final String GCC_ERROR = GccParser.GCC_ERROR;
-    /** A warning. */
     private static final String GCC_WARNING = "GCC warning";
 
     /**

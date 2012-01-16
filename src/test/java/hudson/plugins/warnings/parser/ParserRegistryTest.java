@@ -28,9 +28,7 @@ import com.google.common.collect.Sets;
  */
 public class ParserRegistryTest {
     private static final File DUMMY_FILE = new File("");
-    /** Filename with all warnings. */
     private static final String FILE_NAME = "all.txt";
-    /** Error message. */
     private static final String WRONG_NUMBER_OF_ANNOTATIONS_PARSED = "Wrong number of annotations parsed";
 
     /**

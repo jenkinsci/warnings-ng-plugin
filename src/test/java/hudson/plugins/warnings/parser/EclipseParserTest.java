@@ -18,9 +18,6 @@ import com.google.common.collect.Lists;
  * Tests the class {@link EclipseParser}.
  */
 public class EclipseParserTest extends ParserTester {
-    /** Error message. */
-    private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
-
     /**
      * Parses a warning log with console annotations which are removed.
      *

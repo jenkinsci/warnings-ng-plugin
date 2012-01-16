@@ -14,10 +14,6 @@ import org.junit.Test;
  * Tests the class {@link TnsdlParser}.
  */
 public class TnsdlParserTest extends ParserTester {
-
-    /** Error message. */
-    private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
-    /** An error. */
     private static final String WARNING_CATEGORY = TnsdlParser.WARNING_CATEGORY;
 
     /**
