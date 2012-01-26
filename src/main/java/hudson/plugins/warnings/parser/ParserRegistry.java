@@ -76,6 +76,18 @@ public class ParserRegistry {
     }
 
     /**
+     * Returns a list of parsers that match the specified name. Note that the
+     * mapping of names to parsers is one to many.
+     *
+     * @param parserName
+     *            the parser name
+     * @return a list of parsers, might be modified by the receiver
+     */
+    public static List<WarningsParser> getParsers(final String parserName) {
+        return getParsers(Collections.singleton(parserName));
+    }
+
+    /**
      * Returns a list of parsers that match the specified names. Note that the
      * mapping of names to parsers is one to many.
      *

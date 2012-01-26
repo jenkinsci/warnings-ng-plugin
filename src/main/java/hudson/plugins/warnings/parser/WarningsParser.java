@@ -5,6 +5,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -20,7 +21,7 @@ import java.util.Collection;
  *
  * @author Ulli Hafner
  */
-public interface WarningsParser extends ExtensionPoint {
+public interface WarningsParser extends ExtensionPoint, Serializable {
     /**
      * Parses the specified input stream for compiler warnings and returns the
      * found annotations. Note that the implementor of this method must not

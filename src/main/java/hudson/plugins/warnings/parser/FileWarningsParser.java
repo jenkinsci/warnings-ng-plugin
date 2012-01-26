@@ -7,9 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.Set;
-
-import com.google.common.collect.Sets;
+import java.util.List;
 
 /**
  * A {@link WarningsParser} that scans files.
@@ -25,14 +23,14 @@ public class FileWarningsParser implements AnnotationParser {
     private final String excludePattern;
     /** The parsers to scan the files with. */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
-    private final Set<String> parserNames;
+    private final List<WarningsParser> parsers;
     /** The default encoding to be used when reading and parsing files. */
     private final String defaultEncoding;
 
     /**
      * Creates a new instance of {@link FileWarningsParser}.
      *
-     * @param parserNames
+     * @param parsers
      *            the parsers to scan the files with
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
@@ -41,33 +39,17 @@ public class FileWarningsParser implements AnnotationParser {
      * @param excludePattern
      *            ant file-set pattern of files to exclude from report
      */
-    public FileWarningsParser(final Set<String> parserNames, final String defaultEncoding, final String includePattern, final String excludePattern) {
-        this.parserNames = parserNames;
+    public FileWarningsParser(final List<WarningsParser> parsers, final String defaultEncoding, final String includePattern, final String excludePattern) {
+        this.parsers = parsers;
         this.includePattern = includePattern;
         this.excludePattern = excludePattern;
         this.defaultEncoding = defaultEncoding;
     }
 
-    /**
-     * Creates a new instance of {@link FileWarningsParser}.
-     *
-     * @param parserName
-     *            the parser to scan the files with
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param includePattern
-     *            ant file-set pattern of files to include in report
-     * @param excludePattern
-     *            ant file-set pattern of files to exclude from report
-     */
-    public FileWarningsParser(final String parserName, final String defaultEncoding, final String includePattern, final String excludePattern) {
-        this(Sets.newHashSet(parserName), defaultEncoding, includePattern, excludePattern);
-    }
-
     /** {@inheritDoc} */
     public Collection<FileAnnotation> parse(final File file, final String moduleName) throws InvocationTargetException {
         try {
-            Collection<FileAnnotation> annotations = new ParserRegistry(ParserRegistry.getParsers(parserNames), defaultEncoding, includePattern, excludePattern).parse(file);
+            Collection<FileAnnotation> annotations = new ParserRegistry(parsers, defaultEncoding, includePattern, excludePattern).parse(file);
             for (FileAnnotation annotation : annotations) {
                 annotation.setModuleName(moduleName);
             }

@@ -15,6 +15,8 @@ import org.apache.commons.lang.StringUtils;
  * @author Ulli Hafner
  */
 public abstract class RegexpParser implements WarningsParser {
+    private static final long serialVersionUID = -82635675595933170L;
+
     /** Used to define a false positive warnings that should be excluded after the regular expression scan. */
     protected static final Warning FALSE_POSITIVE = new Warning(StringUtils.EMPTY, 0, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
     /** Warning classification. */
