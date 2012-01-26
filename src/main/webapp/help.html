@@ -54,4 +54,18 @@ ORDER BY object_type, object_name;
     </code>
   </pre>
 
+  <h4>Puppet-Lint</h4>
+  <p>
+    To be able to grab puppet-lint output, you will need a recent enough version that supports
+    the <code>--log-format flag</code>.<br/>
+    When running puppet-lint, make sure you use the following log format:
+  </p>
+  <pre>
+    <code>%{path}:%{linenumber}:%{check}:%{KIND}:%{message}</code>
+  </pre>
+  <p>Complete example:</p>
+  <pre>
+      <code>find . -iname *.pp -exec puppet-lint --log-format "%{path}:%{linenumber}:%{check}:%{KIND}:%{message}" {} \;</code>
+  </pre>
+
 </div>

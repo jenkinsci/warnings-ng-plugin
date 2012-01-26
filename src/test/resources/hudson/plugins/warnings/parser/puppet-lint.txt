@@ -1,0 +1,3 @@
+failtest.pp:1:autoloader_layout:ERROR:failtest not in autoload module layout
+failtest.pp:3:80chars:WARNING:line has more than 80 characters
+morefail.pp:10:80chars:WARNING:line has more than 80 characters
