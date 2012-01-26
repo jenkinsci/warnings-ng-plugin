@@ -166,6 +166,7 @@ public class ParserRegistry {
         parsers.add(new GhsMultiParser());
         parsers.add(new ArmccCompilerParser());
         parsers.add(new YuiCompressorParser());
+        parsers.add(new PuppetLintParser());
 
 
         Iterable<GroovyParser> parserDescriptions = getDynamicParserDescriptions();

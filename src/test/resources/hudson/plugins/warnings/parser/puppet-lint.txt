@@ -1,0 +1,3 @@
+failtest.pp:1:autoloader_layout:ERROR:failtest not in autoload module layout
+./modules/test/manifests/init.pp:3:80chars:WARNING:line has more than 80 characters
+./modules/test/manifests/sub/class/morefail.pp:10:80chars:WARNING:line has more than 80 characters
