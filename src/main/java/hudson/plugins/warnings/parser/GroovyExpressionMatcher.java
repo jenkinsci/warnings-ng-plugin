@@ -4,6 +4,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import hudson.plugins.warnings.WarningsDescriptor;
 
+import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -13,7 +14,9 @@ import java.util.regex.Matcher;
  *
  * @author Ulli Hafner
  */
-public class GroovyExpressionMatcher {
+public class GroovyExpressionMatcher implements Serializable {
+    private static final long serialVersionUID = -2218299240520838315L;
+
     private final String script;
     private final Warning falsePositive;
 
