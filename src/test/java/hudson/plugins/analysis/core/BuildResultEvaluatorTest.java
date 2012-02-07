@@ -5,13 +5,15 @@ import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+import org.jvnet.localizer.Localizable;
 
 import hudson.model.Result;
 
-import hudson.plugins.analysis.util.PluginLogger;
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
@@ -65,7 +67,7 @@ public class BuildResultEvaluatorTest {
         List<FileAnnotation> allAnnotations = new ArrayList<FileAnnotation>();
         List<FileAnnotation> newAnnotations = new ArrayList<FileAnnotation>();
 
-        PluginLogger logger = mock(PluginLogger.class);
+        StringBuilder logger = new StringBuilder();
         assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
                 parser.evaluateBuildResult(logger, newDescriptor("", "", "", ""), allAnnotations, newAnnotations));
         assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
@@ -103,6 +105,47 @@ public class BuildResultEvaluatorTest {
                 parser.evaluateBuildResult(logger, newDescriptor("", "0", "", "0"), allAnnotations, newAnnotations));
         assertEquals(WRONG_BUILD_RESULT, Result.FAILURE,
                 parser.evaluateBuildResult(logger, newDescriptor("", "0", "0", ""), allAnnotations, newAnnotations));
+    }
+
+    /**
+     * Verifies that the messages contain the expected result.
+     */
+    @Test
+    public void checkMessages() {
+        Locale.setDefault(Locale.ENGLISH);
+
+        BuildResultEvaluator parser = new BuildResultEvaluator();
+        List<FileAnnotation> allAnnotations = new ArrayList<FileAnnotation>();
+        List<FileAnnotation> newAnnotations = new ArrayList<FileAnnotation>();
+
+        StringBuilder logger = new StringBuilder();
+        assertEquals(WRONG_BUILD_RESULT, Result.SUCCESS,
+                parser.evaluateBuildResult(logger, newDescriptor("0", "0", "0", "0"), allAnnotations, newAnnotations));
+        assertEquals("Wrong message", Messages._BuildResultEvaluator_success().toString(Locale.ENGLISH),
+                logger.toString());
+
+        allAnnotations.add(createAnnotation());
+        allAnnotations.add(createAnnotation());
+        allAnnotations.add(createAnnotation());
+        allAnnotations.add(createAnnotation());
+
+        checkMessage(parser, allAnnotations, newAnnotations,
+                newDescriptor("0", "", "", ""), Messages._BuildResultEvaluator_failure_all(4, 0, 4));
+        checkMessage(parser, allAnnotations, newAnnotations,
+                newDescriptor("2", "", "", ""), Messages._BuildResultEvaluator_failure_all(4, 2, 2));
+        checkMessage(parser, newAnnotations, allAnnotations,
+                newDescriptor("", "", "0", ""), Messages._BuildResultEvaluator_failure_new(4, 0, 4));
+        checkMessage(parser, newAnnotations, allAnnotations,
+                newDescriptor("", "", "2", ""), Messages._BuildResultEvaluator_failure_new(4, 2, 2));
+    }
+
+    private void checkMessage(final BuildResultEvaluator parser, final List<FileAnnotation> allAnnotations,
+            final List<FileAnnotation> newAnnotations, final Thresholds thresholds, final Localizable expected) {
+        StringBuilder logger = new StringBuilder();
+        assertEquals(WRONG_BUILD_RESULT, Result.UNSTABLE,
+                parser.evaluateBuildResult(logger, thresholds, allAnnotations, newAnnotations));
+        assertEquals("wrong message", expected.toString(Locale.ENGLISH),
+                logger.toString());
     }
 
     /**

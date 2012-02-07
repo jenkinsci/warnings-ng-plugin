@@ -186,6 +186,12 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @since 1.20
      */
     private int referenceBuild;
+    /**
+     * Describes the reason for the build result evaluation.
+     *
+     * @since 1.38
+     */
+    private String reason;
 
     /**
      * Creates a new instance of {@link BuildResult}.
@@ -282,6 +288,15 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         computeZeroWarningsHighScore(build, result);
 
         defineReferenceBuild(history);
+    }
+
+    /**
+     * Returns the reason for the computed value of the build result.
+     *
+     * @return the reason
+     */
+    public String getReason() {
+        return reason;
     }
 
     /**
@@ -1054,20 +1069,23 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
         BuildResultEvaluator resultEvaluator = new BuildResultEvaluator();
         Result buildResult;
+        StringBuilder messages = new StringBuilder();
         if (history.isEmpty() || !canComputeNew) {
             logger.log("Ignore new warnings since this is the first valid build");
-            buildResult = resultEvaluator.evaluateBuildResult(logger, thresholds, getAnnotations());
+            buildResult = resultEvaluator.evaluateBuildResult(messages, thresholds, getAnnotations());
         }
         else if (useDeltaValues) {
             logger.log("Using delta values to compute new warnings");
-            buildResult = resultEvaluator.evaluateBuildResult(logger, thresholds, getAnnotations(),
+            buildResult = resultEvaluator.evaluateBuildResult(messages, thresholds, getAnnotations(),
                     getDelta(), getHighDelta(), getNormalDelta(), getLowDelta());
         }
         else {
             logger.log("Using set difference to compute new warnings");
-            buildResult = resultEvaluator.evaluateBuildResult(logger, thresholds,
+            buildResult = resultEvaluator.evaluateBuildResult(messages, thresholds,
                     getAnnotations(), getNewWarnings());
         }
+        reason = messages.toString();
+
         saveResult(buildResult);
     }
 
@@ -1183,7 +1201,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             message.append(createHighScoreMessage());
         }
         else if (isSuccessfulTouched()) {
-            message.append(createListItem(Messages.ResultAction_Status() + getResultIcon() + getReferenceBuildUrl()));
+            message.append(createListItem(Messages.ResultAction_Status() + getResultIcon() + getReason() + getReferenceBuildUrl()));
             if (isSuccessful()) {
                 message.append(createSuccessfulHighScoreMessage());
             }
