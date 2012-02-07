@@ -337,7 +337,9 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         T buildResult = createResult(mavenBuild, result);
 
         StringPluginLogger pluginLogger = new StringPluginLogger(pluginName);
-        buildResult.evaluateStatus(thresholds, useDeltaValues, canComputeNew(), pluginLogger);
+        if (new NullHealthDescriptor(this).isThresholdEnabled()) {
+            buildResult.evaluateStatus(thresholds, useDeltaValues, canComputeNew(), pluginLogger);
+        }
         mavenBuild.getActions().add(createMavenAggregatedReport(mavenBuild, buildResult));
         mavenBuild.registerAsProjectAction(HealthAwareReporter.this);
         AbstractBuild<?, ?> referenceBuild = buildResult.getHistory().getReferenceBuild();
