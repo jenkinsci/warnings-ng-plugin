@@ -22,7 +22,11 @@ public class ModuleDetectorTest {
     private static final String MANIFEST = "MANIFEST.MF";
     private static final String MANIFEST_NAME = "MANIFEST-NAME.MF";
     private static final File ROOT = new File("/tmp");
-    private static final String PREFIX = ROOT.getAbsolutePath() + "/";
+    private static final String PREFIX = normalizeRoot();
+
+    private static String normalizeRoot() {
+        return ROOT.getAbsolutePath().replace("\\", "/") + "/";
+    }
     private static final int NO_RESULT = 0;
     private static final String PATH_PREFIX_MAVEN = "path/to/maven";
     private static final String PATH_PREFIX_OSGI = "path/to/osgi";

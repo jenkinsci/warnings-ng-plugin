@@ -152,17 +152,21 @@ public class ModuleDetector {
         String[] relativeFileNames = factory.find(path, PATTERN);
         String[] absoluteFileNames = new String[relativeFileNames.length];
 
-        String absolutePath = path.getAbsolutePath();
+        String absolutePath = normalizePath(path.getAbsolutePath());
         for (int file = 0; file < absoluteFileNames.length; file++) {
-            if (relativeFileNames[file].startsWith(SLASH)) {
-                absoluteFileNames[file] = relativeFileNames[file];
+            String relativePath = normalizePath(relativeFileNames[file]);
+            if (relativePath.startsWith(SLASH)) {
+                absoluteFileNames[file] = relativePath;
             }
             else {
-                String absoluteName = absolutePath + SLASH + relativeFileNames[file];
-                absoluteFileNames[file] = absoluteName.replace(BACK_SLASH, SLASH);
+                absoluteFileNames[file] = absolutePath + SLASH + relativePath;
             }
         }
         return absoluteFileNames;
+    }
+
+    private String normalizePath(final String fileName) {
+        return fileName.replace(BACK_SLASH, SLASH);
     }
 
     /**
