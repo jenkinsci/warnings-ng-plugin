@@ -30,23 +30,10 @@
     </table>
   </f:entry>
   <f:entry title="${%Health priorities}" description="${%description.health.priorities}">
-    <f:radio name="${id}.thresholdLimit" value="high" checked="${instance.thresholdLimit == 'high'}" id="thresholdLimit.high"/>
-    <st:nbsp/>
-    <label for="thresholdLimit.high">${%Only priority high}</label>
-    <st:nbsp />
-    <f:radio name="${id}.thresholdLimit" value="normal" checked="${instance.thresholdLimit == 'normal'}" id="thresholdLimit.normal"/>
-    <st:nbsp/>
-    <label for="thresholdLimit.normal">${%Priorities high and normal}</label>
-    <st:nbsp />
-    <j:if test="${instance != null}">
-      <f:radio name="${id}.thresholdLimit" value="low" title="" checked="${instance.thresholdLimit == 'low'}" id="thresholdLimit.low"/>
-    </j:if>
-    <j:if test="${instance == null}">
-      <f:radio name="${id}.thresholdLimit" value="low" title="" checked="${true}" id="thresholdLimit.low"/>
-    </j:if>
-    <st:nbsp/>
-    <label for="thresholdLimit.low">${%All priorities}</label>
-    <st:nbsp />
+    <j:set var="pfx" value="ac-health-${app.getPlugin('analysis-core').newId}"/>
+    <f:radio name="${pfx}.thresholdLimit" value="high" checked="${instance.thresholdLimit == 'high'}" title="${%Only priority high}"/>
+    <f:radio name="${pfx}.thresholdLimit" value="normal" checked="${instance.thresholdLimit == 'normal'}" title="${%Priorities high and normal}"/>
+    <f:radio name="${pfx}.thresholdLimit" value="low" checked="${(instance == null) ? 'true' : instance.thresholdLimit == 'low'}" title="${%All priorities}"/>
   </f:entry>
 
 </j:jelly>
