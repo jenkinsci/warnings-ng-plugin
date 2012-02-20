@@ -15,6 +15,24 @@ import org.junit.Test;
  */
 public class JavacParserTest extends ParserTester {
     /**
+     * Parses a warning log with 15 warnings.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-12482">Issue 12482</a>
+     */
+    @Test
+    public void issue12482() throws IOException {
+        Collection<FileAnnotation> java6 = parse("issue12482-java6.txt");
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 62, java6.size());
+
+        Collection<FileAnnotation> java7 = parse("issue12482-java7.txt");
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 62, java7.size());
+    }
+
+    /**
      * Parses a file with two deprecation warnings.
      *
      * @throws IOException
@@ -48,7 +66,7 @@ public class JavacParserTest extends ParserTester {
      */
     @Test
     public void parseArrayInDeprecatedMethod() throws IOException {
-        Collection<FileAnnotation> warnings = new JavacParser().parse(openFile("issue5868.txt"));
+        Collection<FileAnnotation> warnings = parse("issue5868.txt");
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
 
@@ -58,6 +76,10 @@ public class JavacParserTest extends ParserTester {
                 "loadAvailable(java.lang.String,int,int,java.lang.String[]) in my.OtherClass has been deprecated",
                 "D:/path/to/my/Class.java",
                 AntJavacParser.WARNING_TYPE, "Deprecation", Priority.NORMAL);
+    }
+
+    protected Collection<FileAnnotation> parse(final String fileName) throws IOException {
+        return new JavacParser().parse(openFile(fileName));
     }
 
     /** {@inheritDoc} */

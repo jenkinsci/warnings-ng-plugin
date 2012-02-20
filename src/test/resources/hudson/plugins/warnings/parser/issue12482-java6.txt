@@ -1,0 +1,184 @@
+[INFO] --- maven-compiler-plugin:2.3.2:compile (pre-compile) @ prod ---
+[INFO] Compiling 1786 source files to /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/target/classes
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/db/DB.java:[1105,65] [unchecked] unchecked conversion
+found   : com.company.util.db.BasicTableInfo
+required: com.company.util.db.TableInfo<com.company.product.storable.Storable>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/db/DB.java:[1185,66] [unchecked] unchecked conversion
+found   : com.company.util.db.BasicTableInfo
+required: com.company.util.db.TableInfo<com.company.product.storable.Storable>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/db/DB.java:[17942,85] [unchecked] unchecked conversion
+found   : com.company.util.db.TableInfo
+required: com.company.util.db.TableInfo<com.company.product.storable.Storable>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/db/DB.java:[32782,143] [unchecked] unchecked conversion
+found   : com.company.util.db.TableInfo
+required: com.company.util.db.TableInfo<? extends com.company.product.storable.Storable>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/storable/BenefitOrder.java:[1422,123] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.storable.BenefitElementValueDetails>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/storable/BenefitOrder.java:[1490,49] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<java.lang.Object>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/storable/UserCustomReportToUser.java:[34,115] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.storable.UserCustomReportToUserNode>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/storable/UserCustomReportToUser.java:[66,84] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.Collection<com.company.product.storable.UserCustomReportToUserNode>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/storable/UserCustomReportToUser.java:[150,9] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.LinkedList<com.company.product.storable.UserCustomReportToUserNode>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/storable/UserCustomReportCommonNode.java:[71,116] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.storable.UserCustomReportCommonNode>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/storable/UserCustomReportCommonNode.java:[201,62] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.Collection<com.company.product.storable.UserCustomReportCommonNode>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/storable/FileTransferConfiguration.java:[516,62] [unchecked] unchecked conversion
+found   : java.lang.Class
+required: java.lang.Class<C>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/storable/FileTransferConfiguration.java:[957,47] [unchecked] unchecked conversion
+found   : java.util.Vector
+required: java.util.List<ch.ethz.ssh2.SFTPv3DirectoryEntry>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/Utils.java:[1042,63] [unchecked] unchecked call to compareTo(T) as a member of the raw type java.lang.Comparable
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/Utils.java:[1167,13] [unchecked] unchecked cast
+found   : java.lang.Throwable
+required: T
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/storable/UserCustomReportToUserNode.java:[65,116] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.storable.UserCustomReportToUserNode>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/handler/fileServer/sftp/ganymed2/SFTPv3Client.java:[729,21] [unchecked] unchecked call to addElement(E) as a member of the raw type java.util.Vector
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/handler/fileServer/sftp/ganymed2/SFTPv3Client.java:[858,24] [unchecked] unchecked call to put(K,V) as a member of the raw type java.util.HashMap
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/handler/fileServer/as2/AS2Utils.java:[281,66] [unchecked] unchecked conversion
+found   : java.util.Map
+required: java.util.Map<java.lang.String,byte[]>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/handler/fileServer/as2/AS2Client.java:[126,51] [unchecked] unchecked conversion
+found   : java.util.Enumeration
+required: java.util.Enumeration<javax.mail.Header>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/BaseSuperAction.java:[188,63] [unchecked] unchecked conversion
+found   : java.util.Iterator
+required: java.util.Iterator<org.apache.struts.action.ActionMessage>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/SuperAction.java:[113,61] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.Set<org.apache.struts.action.ActionMessage>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/SuperAction.java:[260,75] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.Set<org.apache.struts.action.ActionMessage>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/taglib/TagUtils.java:[512,75] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<java.lang.String>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/taglib/TagUtils.java:[521,74] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<java.lang.String>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/taglib/TagUtils.java:[530,81] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<java.lang.String>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/taglib/TagUtils.java:[531,80] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<java.lang.String>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/SsoAction.java:[52,85] [unchecked] unchecked conversion
+found   : java.lang.Class
+required: java.lang.Class<com.company.product.handler.singleSignon.AbstractFragmentRedirect>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/SsoAction.java:[66,86] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.Map<java.lang.String,com.company.product.action.SsoAction.Token>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/AjaxSuperAction.java:[74,101] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.util.Pair<java.lang.String,java.lang.Boolean>>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/AjaxSuperAction.java:[100,59] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.util.Pair<java.lang.String,java.lang.Boolean>>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/AjaxSuperAction.java:[107,95] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.validation.ValidationException>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/AjaxSuperAction.java:[115,95] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.validation.ValidationException>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/AjaxSuperAction.java:[184,74] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.Set<org.apache.struts.action.ActionMessage>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/AjaxSuperAction.java:[273,75] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.Set<org.apache.struts.action.ActionMessage>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/form/superUser/benefitFunction/BenefitFO.java:[295,27] getAdvancedModeFo() in com.company.product.form.superUser.benefitFunction.BenefitFO overrides getAdvancedModeFo() in com.company.product.form.superUser.benefitFunction.AbstractFO; return type requires unchecked conversion
+found   : com.company.product.form.superUser.benefitFunction.AbstractAdvancedFO
+required: com.company.product.form.superUser.benefitFunction.AbstractAdvancedFO<com.company.product.storable.Storable>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/EncryptionAction.java:[117,23] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.storable.PgpKeyPair>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/EncryptionAction.java:[144,23] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.storable.PgpKeyPair>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/form/superUser/benefitFunction/BenefitElementValueDetailsFO.java:[150,27] getAdvancedModeFo() in com.company.product.form.superUser.benefitFunction.BenefitElementValueDetailsFO overrides getAdvancedModeFo() in com.company.product.form.superUser.benefitFunction.AbstractFO; return type requires unchecked conversion
+found   : com.company.product.form.superUser.benefitFunction.AbstractAdvancedFO
+required: com.company.product.form.superUser.benefitFunction.AbstractAdvancedFO<com.company.product.storable.Storable>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/CompanyUnitAction.java:[274,124] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.storable.CompanyUnit>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/BillingAddressAction.java:[239,47] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.storable.BillingAddress>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/handler/periodicThread/AbstractStorablePeriodicThreadImpl.java:[29,44] [unchecked] unchecked cast
+found   : com.company.product.handler.periodicThread.PeriodicThreadConfig
+required: com.company.product.handler.periodicThread.StorablePeriodicThreadConfig<T>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/handler/StorableHandler.java:[211,40] [unchecked] unchecked conversion
+found   : com.company.util.db.BasicTableInfo
+required: com.company.util.db.TableInfo<? extends com.company.product.storable.Storable>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/handler/ScheduledTaskHandler.java:[341,15] [unchecked] unchecked conversion
+found   : java.util.Set
+required: java.util.Set<java.lang.Long>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/handler/ScheduledTaskHandler.java:[453,16] [unchecked] unchecked conversion
+found   : java.util.Set
+required: java.util.Set<java.lang.Long>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/target/generated-sources/storables/com/company/product/storable/generated/ReflectDBSummary.java:[1675,11] [unchecked] unchecked conversion
+found   : com.company.util.db.BasicTableInfo[]
+required: com.company.util.db.BasicTableInfo<com.company.product.storable.Storable>[]
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/handler/SSOHandler.java:[136,76] [unchecked] unchecked cast
+found   : org.opensaml.xml.XMLObject
+required: T
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/form/superUser/benefitFunction/BenefitElementFO.java:[142,27] getAdvancedModeFo() in com.company.product.form.superUser.benefitFunction.BenefitElementFO overrides getAdvancedModeFo() in com.company.product.form.superUser.benefitFunction.AbstractFO; return type requires unchecked conversion
+found   : com.company.product.form.superUser.benefitFunction.AbstractAdvancedFO
+required: com.company.product.form.superUser.benefitFunction.AbstractAdvancedFO<com.company.product.storable.Storable>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/BenefitOrderAction.java:[226,100] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.storable.BenefitToCustomer>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/EmploymentAgreementAction.java:[181,69] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.storable.EmploymentAgreement>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/handler/ConfigurationHandler.java:[1092,40] [unchecked] unchecked conversion
+found   : com.company.util.db.BasicTableInfo
+required: com.company.util.db.BasicTableInfo<com.company.product.storable.Storable>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/EmploymentTypeAction.java:[172,64] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.storable.EmploymentType>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/handler/webService/impl/ssek/SSEKClientFactory.java:[12,94] [unchecked] unchecked cast
+found   : java.lang.Class<capture#13 of ?>
+required: java.lang.Class<? extends com.company.product.handler.webService.impl.ssek.SSEKClient>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/form/superUser/benefitFunction/BenefitElementValueDetailsComponentFO.java:[99,27] getAdvancedModeFo() in com.company.product.form.superUser.benefitFunction.BenefitElementValueDetailsComponentFO overrides getAdvancedModeFo() in com.company.product.form.superUser.benefitFunction.AbstractFO; return type requires unchecked conversion
+found   : com.company.product.form.superUser.benefitFunction.AbstractAdvancedFO
+required: com.company.product.form.superUser.benefitFunction.AbstractAdvancedFO<com.company.product.storable.Storable>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/form/superUser/benefitFunction/BenefitElementValueFO.java:[101,27] getAdvancedModeFo() in com.company.product.form.superUser.benefitFunction.BenefitElementValueFO overrides getAdvancedModeFo() in com.company.product.form.superUser.benefitFunction.AbstractFO; return type requires unchecked conversion
+found   : com.company.product.form.superUser.benefitFunction.AbstractAdvancedFO
+required: com.company.product.form.superUser.benefitFunction.AbstractAdvancedFO<com.company.product.storable.Storable>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/superUser/SearchAction.java:[153,97] [unchecked] unchecked conversion
+found   : com.company.util.db.TableInfo
+required: com.company.util.db.TableInfo<? extends com.company.product.storable.Storable>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/RemotePluginTagAction.java:[132,86] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.Map<java.lang.String,com.company.product.action.RemotePluginTagAction.Token>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/db/DBAutoPopulate.java:[47,81] [unchecked] unchecked conversion
+found   : com.company.util.db.TableInfo
+required: com.company.util.db.TableInfo<com.company.product.storable.Storable>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/handler/FragmentHandler.java:[432,122] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.Map<java.lang.Long,com.company.product.storable.FragmentToFragmentAttribute>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/CompanyLocationAction.java:[198,48] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.storable.CompanyLocation>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/FragmentAction.java:[125,86] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.Map<java.lang.String,com.company.product.action.FragmentAction.Token>
+[WARNING] /export/jenkins_home/jobs/Code-Analysis-java6/workspace/ws-java6/src/main/java/com/company/product/action/EmployeeStatusAction.java:[172,64] [unchecked] unchecked cast
+found   : java.lang.Object
+required: java.util.List<com.company.product.storable.EmployeeStatus>
+[INFO] 
+[INFO] --- languageresource-maven-plugin:1.11.5:generate (LanguageResources) @ prod ---
