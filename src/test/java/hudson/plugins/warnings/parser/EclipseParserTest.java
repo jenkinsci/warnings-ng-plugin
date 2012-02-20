@@ -1,6 +1,7 @@
 package hudson.plugins.warnings.parser;
 
 import static junit.framework.Assert.*;
+import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
@@ -18,6 +19,23 @@ import com.google.common.collect.Lists;
  * Tests the class {@link EclipseParser}.
  */
 public class EclipseParserTest extends ParserTester {
+    /**
+     * Parses a warning log with 15 warnings.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-12822">Issue 12822</a>
+     */
+    @Test
+    public void issue12822() throws IOException {
+        Collection<FileAnnotation> warnings = createParser().parse(openFile("issue12822.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 15, warnings.size());
+
+        ParserResult result = new ParserResult(warnings);
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 15, result.getNumberOfAnnotations());
+    }
+
     /**
      * Parses a warning log with console annotations which are removed.
      *
@@ -116,12 +134,12 @@ public class EclipseParserTest extends ParserTester {
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
 
-        checkWarning(sorted.get(1),
+        checkWarning(sorted.get(0),
                 90,
                 "Type safety: The method setBoHandler(BoHandler) belongs to the raw type BoQuickSearchControl.Builder. References to generic type BoQuickSearchControl<S>.Builder<T> should be parameterized",
                 "/ige/hudson/work/jobs/esvclient__development/workspace/target/rcp-build/plugins/ch.ipi.esv.client.customer/src/main/java/ch/ipi/esv/client/customer/search/CustomerQuickSearch.java",
                 getType(), "", Priority.NORMAL);
-        checkWarning(sorted.get(0),
+        checkWarning(sorted.get(1),
                 90,
                 "Type safety: The expression of type BoQuickSearchControl needs unchecked conversion to conform to BoQuickSearchControl<CustomerBO>",
                 "/ige/hudson/work/jobs/esvclient__development/workspace/target/rcp-build/plugins/ch.ipi.esv.client.customer/src/main/java/ch/ipi/esv/client/customer/search/CustomerQuickSearch.java",
