@@ -64,6 +64,10 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     private String origin;
     /** Relative path of this duplication. @since 1.10 */
     private String pathName;
+    /** Column start of primary line range of warning. @since 1.38 */
+    private int primaryColumnStart;
+    /** Column end of primary line range of warning. @since 1.38 */
+    private int primaryColumnEnd;
 
     /**
      * Creates a new instance of <code>AbstractAnnotation</code>.
@@ -136,6 +140,19 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         type = copy.getType();
         moduleName = copy.getModuleName();
         packageName = copy.getPackageName();
+    }
+
+    /**
+     * Sets the column position of this warning.
+     *
+     * @param columnStart
+     *            starting column
+     * @param columnEnd
+     *            ending column
+     */
+    public void setColumnPosition(final int columnStart, final int columnEnd) {
+        primaryColumnStart = columnStart;
+        primaryColumnEnd = columnEnd;
     }
 
     /** {@inheritDoc} */
@@ -331,6 +348,8 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         result = prime * result + ((moduleName == null) ? 0 : moduleName.hashCode());
         result = prime * result + ((packageName == null) ? 0 : packageName.hashCode());
         result = prime * result + primaryLineNumber;
+        result = prime * result + primaryColumnStart;
+        result = prime * result + primaryColumnEnd;
         result = prime * result + ((priority == null) ? 0 : priority.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
@@ -398,6 +417,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
             return false;
         }
         if (primaryLineNumber != other.primaryLineNumber) {
+            return false;
+        }
+        if (primaryColumnStart != other.primaryColumnStart) {
+            return false;
+        }
+        if (primaryColumnEnd != other.primaryColumnEnd) {
             return false;
         }
         if (priority == null) {
