@@ -61,7 +61,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     private static final String FAILED = "red.png";
     private static final String SUCCESS = "blue.png";
 
-    private Object projectLock = new Object();
+    private transient Object projectLock = new Object();
 
     /**
      * Returns the number of days for the specified number of milliseconds.
@@ -402,12 +402,14 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
-     * Initializes members that were not present in previous versions of the associated plug-in.
+     * Initializes members that were not present in previous versions of the
+     * associated plug-in.
      *
      * @return the created object
      */
     @SuppressWarnings("PMD")
     protected Object readResolve() {
+        projectLock = new Object();
         if (pluginResult == null) {
             pluginResult = Result.SUCCESS;
             resetSuccessfulState();
