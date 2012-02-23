@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Joseph Boulos
  */
 public class GhsMultiParser extends RegexpDocumentParser {
+    private static final long serialVersionUID = 8149238560432255036L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "GHS Multi Compiler";
     /** Pattern of GHS compiler warnings. */

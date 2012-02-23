@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Ulli Hafner
  */
 public class EclipseParser extends RegexpDocumentParser {
+    private static final long serialVersionUID = 425883472788422955L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Eclipse Java Compiler";
     /** Pattern of javac compiler warnings. */

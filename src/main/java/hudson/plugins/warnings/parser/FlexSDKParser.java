@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
  * @author Vivien Tintillier
  */
 public class FlexSDKParser extends RegexpLineParser {
+    private static final long serialVersionUID = -185055018399324311L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Flex SDK Compilers (compc & mxmlc)";
     /** Pattern of mxmc and compc compiler warnings, with possible Ant task name first. */

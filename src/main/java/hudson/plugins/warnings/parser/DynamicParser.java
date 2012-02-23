@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
  * @author Ulli Hafner
  */
 public class DynamicParser extends RegexpLineParser {
+    private static final long serialVersionUID = 2964204816541183471L;
     private final GroovyExpressionMatcher expressionMatcher;
 
     /**

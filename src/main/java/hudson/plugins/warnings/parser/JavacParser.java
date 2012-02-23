@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
  * @author Ulli Hafner
  */
 public class JavacParser extends RegexpLineParser {
+    private static final long serialVersionUID = 7199325311690082782L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Java Compiler";
     /** Pattern of javac compiler warnings. */

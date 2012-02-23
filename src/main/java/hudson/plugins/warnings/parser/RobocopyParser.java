@@ -15,6 +15,7 @@ import java.util.regex.Matcher;
  *                 same                 0        a.log
  */
 public class RobocopyParser extends RegexpLineParser {
+    private static final long serialVersionUID = -671744745118772873L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Robocopy (please use /V in your commands!)";
     /** Pattern of perforce compiler warnings. */

@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Ulli Hafner
  */
 public class AntJavacParser extends RegexpLineParser {
+    private static final long serialVersionUID = 1737791073711198075L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Java Compiler";
     /** Pattern of javac compiler warnings.

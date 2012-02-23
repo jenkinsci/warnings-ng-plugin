@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
  * @author Shaohua Wen
  */
 public class TnsdlParser extends RegexpLineParser {
+    private static final long serialVersionUID = -7740789998865369930L;
     /** A TNSDL Translator error. */
     static final String WARNING_CATEGORY = "Tnsdl Error";
     /** Warning type of this parser. */

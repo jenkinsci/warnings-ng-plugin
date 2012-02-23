@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * A parser for the YUI Compressor warnings.
  */
 public class YuiCompressorParser extends RegexpDocumentParser {
-    /** Warning type of this parser. */
+    private static final long serialVersionUID = -4807932429496693096L;
     static final String WARNING_TYPE = "YUI Compressor";
     /** Pattern of the YUI Compressor 2-lines warnings. */
     private static final String YUI_COMPRESSOR_WARNING_PATTERN = "\\[WARNING\\] (.*)\\r?\\n^(.*)$";
@@ -54,7 +54,7 @@ public class YuiCompressorParser extends RegexpDocumentParser {
     }
 
     // CHECKSTYLE:OFF
-    private CategoryAndPriority getCategoryAndPriority(final String message) {
+    private CategoryAndPriority getCategoryAndPriority(final String message) { // NOPMD
         if (message.startsWith("Found an undeclared symbol")) {
             return CategoryAndPriority.UNDECLARED_SYMBOL;
         }

@@ -1,6 +1,5 @@
 package hudson.plugins.warnings;
 
-import static hudson.plugins.analysis.core.PluginDescriptor.*;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import hudson.Extension;

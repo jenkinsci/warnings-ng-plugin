@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
  * @author Frederic Chateau
  */
 public class Gcc4CompilerParser extends RegexpLineParser {
+    private static final long serialVersionUID = 5490211629355204910L;
     private static final String ERROR = "error";
     /** A GCC error. */
     static final String WARNING_CATEGORY = "GCC4 Error";

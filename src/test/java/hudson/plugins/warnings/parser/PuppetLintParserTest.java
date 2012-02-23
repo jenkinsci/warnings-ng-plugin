@@ -1,12 +1,13 @@
 package hudson.plugins.warnings.parser;
 
-import static junit.framework.Assert.assertEquals;
-
+import static junit.framework.Assert.*;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+
 import org.junit.Test;
 
 /**
@@ -17,7 +18,9 @@ import org.junit.Test;
 public class PuppetLintParserTest extends ParserTester {
     /**
      * Tests the Puppet-Lint parsing.
-     * 
+     *
+     * @throws IOException
+     *             in case of an error
      */
     @Test
     public void testParse() throws IOException {
@@ -60,11 +63,13 @@ public class PuppetLintParserTest extends ParserTester {
      * @param packageName
      *            the expected package name
      */
-    protected void checkLintWarning(final FileAnnotation annotation, final int lineNumber, final String message, final String fileName, final String type, final String category, final Priority priority, final String packageName) {
+    // CHECKSTYLE:OFF
+    private void checkLintWarning(final FileAnnotation annotation, final int lineNumber, final String message, final String fileName, final String type, final String category, final Priority priority, final String packageName) {
         checkWarning(annotation, lineNumber, message, fileName, type, category, priority);
         assertEquals("Wrong packageName detected.", packageName, annotation.getPackageName());
     }
-    
+    // CHECKSTYLE:ON
+
     /**
      * Creates the parser.
      *

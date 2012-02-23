@@ -12,7 +12,7 @@ import java.io.UnsupportedEncodingException;
  * Base class for parser tests. Provides an assertion test for warnings.
  */
 public abstract class ParserTester {
-    protected static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
+    static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
 
     /**
      * Checks the properties of the specified warning.

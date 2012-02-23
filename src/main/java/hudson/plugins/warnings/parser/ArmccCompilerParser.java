@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
  * @author Emanuele Zattin
  */
 public class ArmccCompilerParser extends RegexpLineParser {
+    private static final long serialVersionUID = -2677728927938443703L;
     /** A ARMCC error. */
     static final String WARNING_CATEGORY = "Armcc Error";
     /** Warning type of this parser. */

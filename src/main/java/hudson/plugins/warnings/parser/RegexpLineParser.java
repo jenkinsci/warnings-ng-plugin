@@ -19,6 +19,7 @@ import org.apache.commons.io.LineIterator;
  * @author Ulli Hafner
  */
 public abstract class RegexpLineParser extends RegexpParser {
+    private static final long serialVersionUID = 5932670979793111138L;
     /**
      * Determines if a line is checked for a string existence before the regular
      * expression is applied.

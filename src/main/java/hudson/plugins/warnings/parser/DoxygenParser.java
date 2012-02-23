@@ -15,6 +15,7 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  * @author Bruno Matos
  */
 public class DoxygenParser extends RegexpDocumentParser {
+    private static final long serialVersionUID = -6770174143703245309L;
     /** A Doxygen warning. */
     static final String WARNING_CATEGORY = "Doxygen warning";
     /** Warning type of this parser. */

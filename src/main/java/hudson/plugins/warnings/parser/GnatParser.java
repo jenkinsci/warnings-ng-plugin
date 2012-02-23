@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
  * @author Bernhard Berger
  */
 public class GnatParser extends RegexpLineParser {
+    private static final long serialVersionUID = -7139298560308123856L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "gnat";
     /** Pattern of Gnat compiler warnings. */

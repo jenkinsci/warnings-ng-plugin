@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Ulli Hafner
  */
 public class MsBuildParser extends RegexpLineParser {
+    private static final long serialVersionUID = -2141974437420906595L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "MSBuild";
     /** Pattern of MSBuild compiler warnings. */

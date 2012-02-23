@@ -16,6 +16,8 @@ import java.util.Collection;
  * @author Ulli Hafner
  */
 public abstract class RegexpDocumentParser extends RegexpParser {
+    private static final long serialVersionUID = -4985090860783261124L;
+
     /**
      * Creates a new instance of <code>RegexpParser</code>.
      *

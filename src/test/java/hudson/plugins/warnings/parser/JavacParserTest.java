@@ -78,7 +78,7 @@ public class JavacParserTest extends ParserTester {
                 AntJavacParser.WARNING_TYPE, "Deprecation", Priority.NORMAL);
     }
 
-    protected Collection<FileAnnotation> parse(final String fileName) throws IOException {
+    private Collection<FileAnnotation> parse(final String fileName) throws IOException {
         return new JavacParser().parse(openFile(fileName));
     }
 

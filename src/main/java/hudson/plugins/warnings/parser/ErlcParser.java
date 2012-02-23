@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
  * @author Stefan Brausch
  */
 public class ErlcParser extends RegexpLineParser {
+    private static final long serialVersionUID = 8986478184830773892L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "erlc";
     /** Pattern of erlc compiler warnings. */

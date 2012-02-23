@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Vangelis Livadiotis
  */
 public class IntelCParser extends RegexpLineParser {
+    private static final long serialVersionUID = 8409744276858003050L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Intel";
     /** Pattern of Intel compiler warnings. */

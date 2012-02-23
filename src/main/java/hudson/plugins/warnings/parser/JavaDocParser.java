@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Ulli Hafner
  */
 public class JavaDocParser extends RegexpLineParser {
+    private static final long serialVersionUID = 7127568148333474921L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "JavaDoc";
     /** Pattern of javac compiler warnings. */

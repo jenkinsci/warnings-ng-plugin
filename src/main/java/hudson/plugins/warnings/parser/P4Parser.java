@@ -10,6 +10,8 @@ import java.util.regex.Matcher;
  * @author Adrian Deccico
  */
 public class P4Parser extends RegexpLineParser {
+    private static final long serialVersionUID = -8106854254745366432L;
+
     static final String WARNING_TYPE = "Perforce Compiler";
 
     private static final String ALREADY_OPENED = "already opened for edit";

@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
  * @author jerryshea
  */
 public class AcuCobolParser extends RegexpLineParser {
+    private static final long serialVersionUID = -894639209290549425L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "AcuCobol Compiler";
     /** Pattern of cobol compiler warnings. */

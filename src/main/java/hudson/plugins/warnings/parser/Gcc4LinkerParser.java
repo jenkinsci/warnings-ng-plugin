@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Frederic Chateau
  */
 public class Gcc4LinkerParser extends RegexpLineParser {
+    private static final long serialVersionUID = -2792019431810134790L;
     /** A GCC error. */
     static final String WARNING_CATEGORY = "GCC4 Linker Error";
     /** Warning type of this parser. */

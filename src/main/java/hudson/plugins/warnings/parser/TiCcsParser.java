@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Jan Linnenkohl
  */
 public class TiCcsParser extends RegexpLineParser {
+    private static final long serialVersionUID = -8253481365175984661L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "TiCcs";
     /** Pattern of TiCcs compiler warnings. */

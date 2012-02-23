@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
  * @author Ulli Hafner
  */
 public class SunCParser extends RegexpLineParser {
+    private static final long serialVersionUID = -1251248150596418456L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "SUN C++ Compiler";
     /** Pattern of gcc compiler warnings. */

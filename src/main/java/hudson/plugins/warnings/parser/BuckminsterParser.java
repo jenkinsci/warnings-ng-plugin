@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
  * @author Johannes Utzig
  */
 public class BuckminsterParser extends RegexpLineParser {
+    private static final long serialVersionUID = -3723799140297979579L;
     private static final String ERROR = "Error";
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Buckminster Compiler";

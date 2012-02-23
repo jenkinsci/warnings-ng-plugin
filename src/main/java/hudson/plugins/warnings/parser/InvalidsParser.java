@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Ulli Hafner
  */
 public class InvalidsParser extends RegexpLineParser {
+    private static final long serialVersionUID = 440910718005095427L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Oracle ";
     /** Pattern of javac compiler warnings. */

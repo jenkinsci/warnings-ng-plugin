@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Greg Roth
  */
 public class GccParser extends RegexpLineParser {
+    private static final long serialVersionUID = 2020182274225690532L;
     /** A GCC error. */
     static final String GCC_ERROR = "GCC error";
     /** A LD error. */

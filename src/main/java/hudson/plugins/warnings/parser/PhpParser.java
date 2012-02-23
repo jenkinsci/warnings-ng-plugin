@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
  * @author Shimi Kiviti
  */
 public class PhpParser extends RegexpLineParser {
+    private static final long serialVersionUID = -5154327854315791181L;
     /** Category for PHP Fatal error. */
     static final String FATAL_ERROR_CATEGORY = "PHP Fatal error";
     /** Category for PHP Warning. */

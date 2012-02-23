@@ -10,6 +10,8 @@ import java.util.regex.Matcher;
  * @author Claus Klein
  */
 public class IarParser extends RegexpDocumentParser {
+    private static final long serialVersionUID = 7695540852439013425L;
+
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "IAR";
 

@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
  * @author Vangelis Livadiotis
  */
 public class CoolfluxChessccParser extends RegexpLineParser {
+    private static final long serialVersionUID = 4742509996511002391L;
     /** Warning type of this parser. */
     static final String WARNING_TYPE = "Coolflux DSP Compiler (chesscc)";
     /** Pattern of Intel compiler warnings. */
