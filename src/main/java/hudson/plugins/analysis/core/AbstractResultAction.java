@@ -219,6 +219,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     @Deprecated
     protected void updateBuildHealth(final MavenBuild build, final BuildResult buildResult) {
         PluginLogger logger = new PluginLogger(System.out, "[" + getDisplayName() + "] "); // NOCHECKSTYLE
+        @java.lang.SuppressWarnings("deprecation")
         Result hudsonResult = new BuildResultEvaluator().evaluateBuildResult(
                 logger, getHealthDescriptor().getThresholds(),
                 buildResult.getAnnotations(), buildResult.getNewWarnings());

@@ -24,7 +24,7 @@ import hudson.plugins.analysis.util.PackageDetectors;
  */
 @ExportedBean
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public abstract class AbstractAnnotation implements FileAnnotation, Serializable {
+public abstract class AbstractAnnotation implements FileAnnotation, Serializable { // NOPMD
     private static final String DEFAULT_PACKAGE = "Default Package";
     /** UNIX path separator. */
     private static final String SLASH = "/";
