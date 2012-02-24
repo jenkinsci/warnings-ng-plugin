@@ -412,10 +412,10 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         try {
             outputStream = new FileOutputStream(masterFile);
             IOUtils.write(String.format(
-                    "Copying the source file '%s' from the workspace to the build folder '%s' on the Hudson master failed.\n",
+                    "Copying the source file '%s' from the workspace to the build folder '%s' on the Hudson master failed.%n",
                     slaveFileName, masterFile.getAbsolutePath()), outputStream);
             if (!slaveFileName.startsWith(SLASH) && !slaveFileName.contains(":")) {
-                IOUtils.write("Seems that the path is relative, however an absolute path is required when copying the sources.\n", outputStream);
+                IOUtils.write("Seems that the path is relative, however an absolute path is required when copying the sources.%n", outputStream);
                 String base;
                 if (slaveFileName.contains(SLASH)) {
                     base = StringUtils.substringAfterLast(slaveFileName, SLASH);
@@ -423,12 +423,12 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
                 else {
                     base = slaveFileName;
                 }
-                IOUtils.write(String.format("Is the file '%s' contained more than once in your workspace?\n",
+                IOUtils.write(String.format("Is the file '%s' contained more than once in your workspace?%n",
                         base), outputStream);
             }
-            IOUtils.write(String.format("Is the file '%s' a valid filename?\n", slaveFileName), outputStream);
-            IOUtils.write(String.format("If you are building on a slave: please check if the file is accessible under '$HUDSON_HOME/[job-name]/%s'\n", slaveFileName), outputStream);
-            IOUtils.write(String.format("If you are building on the master: please check if the file is accessible under '$HUDSON_HOME/[job-name]/workspace/%s'\n", slaveFileName), outputStream);
+            IOUtils.write(String.format("Is the file '%s' a valid filename?%n", slaveFileName), outputStream);
+            IOUtils.write(String.format("If you are building on a slave: please check if the file is accessible under '$HUDSON_HOME/[job-name]/%s'%n", slaveFileName), outputStream);
+            IOUtils.write(String.format("If you are building on the master: please check if the file is accessible under '$HUDSON_HOME/[job-name]/workspace/%s'%n", slaveFileName), outputStream);
             exception.printStackTrace(new PrintStream(outputStream));
         }
         catch (IOException error) {

@@ -83,6 +83,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @param type
      *            the type of the annotation
      */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("ST")
     public AbstractAnnotation(final String message, final int start, final int end, final String category, final String type) {
         this.message = StringUtils.strip(message);
         this.category = StringUtils.defaultString(category);
@@ -125,6 +126,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @param copy
      *            the annotation to copy the values from
      */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("ST")
     public AbstractAnnotation(final AbstractAnnotation copy) {
         key = currentKey++;
 

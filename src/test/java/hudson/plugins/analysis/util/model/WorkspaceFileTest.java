@@ -54,6 +54,7 @@ public class WorkspaceFileTest {
          * @param priority
          *            the priority
          */
+        @edu.umd.cs.findbugs.annotations.SuppressWarnings("ST")
         Warning(final Priority priority) {
             super(priority, String.valueOf(key++), key++, key++, String.valueOf(key++), String.valueOf(key++));
 
