@@ -1,4 +1,4 @@
-package hudson.plugins.analysis.core;
+package hudson.plugins.analysis.core; // NOPMD
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
