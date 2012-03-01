@@ -1203,7 +1203,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             message.append(createHighScoreMessage());
         }
         else if (isSuccessfulTouched()) {
-            message.append(createListItem(Messages.ResultAction_Status() + getResultIcon() + getReason() + getReferenceBuildUrl()));
+            message.append(createListItem(Messages.ResultAction_Status() + getResultIcon() + " - " + getReason() + getReferenceBuildUrl()));
             if (isSuccessful()) {
                 message.append(createSuccessfulHighScoreMessage());
             }
