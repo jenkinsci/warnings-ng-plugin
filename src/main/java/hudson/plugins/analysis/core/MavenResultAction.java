@@ -97,7 +97,6 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
         MavenModule project = newBuild.getProject();
         if (additionalAction != null && !getModules().contains(project)) {
             getModules().add(project);
-            getLogger().log("Aggregating results of " + project.getDisplayName());
 
             T existingResult = delegate.getResult();
             T additionalResult = additionalAction.getResult();

@@ -1077,12 +1077,10 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             buildResult = resultEvaluator.evaluateBuildResult(messages, thresholds, getAnnotations());
         }
         else if (useDeltaValues) {
-            logger.log("Using delta values to compute new warnings");
             buildResult = resultEvaluator.evaluateBuildResult(messages, thresholds, getAnnotations(),
                     getDelta(), getHighDelta(), getNormalDelta(), getLowDelta());
         }
         else {
-            logger.log("Using set difference to compute new warnings");
             buildResult = resultEvaluator.evaluateBuildResult(messages, thresholds,
                     getAnnotations(), getNewWarnings());
         }
@@ -1203,12 +1201,16 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             message.append(createHighScoreMessage());
         }
         else if (isSuccessfulTouched()) {
-            message.append(createListItem(Messages.ResultAction_Status() + getResultIcon() + " - " + getReason() + getReferenceBuildUrl()));
+            message.append(createListItem(createPluginResulMessage()));
             if (isSuccessful()) {
                 message.append(createSuccessfulHighScoreMessage());
             }
         }
         return message.toString();
+    }
+
+    private String createPluginResulMessage() {
+        return Messages.ResultAction_Status() + getResultIcon() + " - " + getReason() + getReferenceBuildUrl();
     }
 
     private String getReferenceBuildUrl() {
