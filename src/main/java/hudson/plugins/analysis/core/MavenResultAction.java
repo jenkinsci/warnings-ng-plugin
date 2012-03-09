@@ -23,6 +23,7 @@ import hudson.maven.MavenBuild;
 import hudson.maven.MavenModule;
 
 import hudson.model.HealthReport;
+import hudson.model.Result;
 import hudson.model.AbstractBuild;
 
 import hudson.plugins.analysis.util.PluginLogger;
@@ -93,17 +94,19 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
      *            Newly completed build.
      */
     public void update(final Map<MavenModule, List<MavenBuild>> moduleBuilds, final MavenBuild newBuild) {
-        MavenResultAction<T> additionalAction = newBuild.getAction(getIndividualActionType());
-        MavenModule project = newBuild.getProject();
-        if (additionalAction != null && !getModules().contains(project)) {
-            getModules().add(project);
+        if (newBuild.getResult().isBetterThan(Result.FAILURE)) {
+            MavenResultAction<T> additionalAction = newBuild.getAction(getIndividualActionType());
+            MavenModule project = newBuild.getProject();
+            if (additionalAction != null && !getModules().contains(project)) {
+                getModules().add(project);
 
-            T existingResult = delegate.getResult();
-            T additionalResult = additionalAction.getResult();
+                T existingResult = delegate.getResult();
+                T additionalResult = additionalAction.getResult();
 
-            setResult(createAggregatedResult(existingResult, additionalResult));
+                setResult(createAggregatedResult(existingResult, additionalResult));
 
-            copySourceFilesToModuleBuildFolder(newBuild);
+                copySourceFilesToModuleBuildFolder(newBuild);
+            }
         }
     }
 
