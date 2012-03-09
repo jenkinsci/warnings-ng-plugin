@@ -17,6 +17,8 @@ import hudson.plugins.analysis.core.PluginDescriptor;
  * @author Ulli Hafner
  */
 public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
+    private final String name;
+
     /**
      * Creates a new instance of <code>WarningsResultAction</code>.
      *
@@ -26,26 +28,17 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
      *            health descriptor to use
      * @param result
      *            the result in this build
+     * @param parserName the name of the parser
      */
-    public WarningsResultAction(final AbstractBuild<?, ?> owner, final HealthDescriptor healthDescriptor, final WarningsResult result) {
+    public WarningsResultAction(final AbstractBuild<?, ?> owner, final HealthDescriptor healthDescriptor, final WarningsResult result, final String parserName) {
         super(owner, new WarningsHealthDescriptor(healthDescriptor), result);
-    }
 
-    /**
-     * Creates a new instance of <code>WarningsResultAction</code>.
-     *
-     * @param owner
-     *            the associated build of this action
-     * @param healthDescriptor
-     *            health descriptor to use
-     */
-    public WarningsResultAction(final AbstractBuild<?, ?> owner, final HealthDescriptor healthDescriptor) {
-        super(owner, new WarningsHealthDescriptor(healthDescriptor));
+        name = parserName;
     }
 
     /** {@inheritDoc} */
     public String getDisplayName() {
-        return Messages.Warnings_ProjectAction_Name();
+        return name;
     }
 
     /** {@inheritDoc} */

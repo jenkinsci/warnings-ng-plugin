@@ -15,7 +15,6 @@ import hudson.plugins.analysis.core.ParserResult;
  *
  * @author Ulli Hafner
  */
-
 public class WarningsAnnotationsAggregator extends AnnotationsAggregator {
     /**
      * Creates a new instance of {@link WarningsAnnotationsAggregator}.
@@ -39,7 +38,9 @@ public class WarningsAnnotationsAggregator extends AnnotationsAggregator {
     @Override
     protected Action createAction(final HealthDescriptor healthDescriptor, final String defaultEncoding, final ParserResult aggregatedResult) {
         return new WarningsResultAction(build, healthDescriptor,
-                new WarningsResult(build, defaultEncoding, aggregatedResult));
+                new WarningsResult(build, defaultEncoding, aggregatedResult),
+                "");
+        // FIXME: we need to select the corresponding results
     }
 
     @Override

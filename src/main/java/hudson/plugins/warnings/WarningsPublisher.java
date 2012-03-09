@@ -136,6 +136,19 @@ public class WarningsPublisher extends HealthAwarePublisher {
     }
     // CHECKSTYLE:ON
 
+    /** {@inheritDoc} */
+    @Override
+    public Collection<? extends Action> getProjectActions(final AbstractProject<?, ?> project) {
+        List<Action> actions = Lists.newArrayList();
+        for (String parserName : getConsoleLogParsers()) {
+            actions.add(new WarningsProjectAction(project, parserName));
+        }
+        for (ParserConfiguration configuration : getParserConfigurations()) {
+            actions.add(new WarningsProjectAction(project, configuration.getParserName()));
+        }
+        return actions;
+    }
+
     /**
      * Returns the names of the configured parsers for the console log.
      *
@@ -281,11 +294,12 @@ public class WarningsPublisher extends HealthAwarePublisher {
                 }
                 ParserResult project = new ParserResult(build.getWorkspace());
                 project.addAnnotations(warnings);
-                results.add(annotate(build, project));
+                results.add(annotate(build, project, parserName));
             }
         }
         return results;
     }
+
     protected void guessModuleNames(final AbstractBuild<?, ?> build,
             final Collection<FileAnnotation> warnings) {
         String workspace = build.getWorkspace().getRemote();
@@ -311,18 +325,20 @@ public class WarningsPublisher extends HealthAwarePublisher {
             logger.logLines(project.getLogMessages());
 
             returnIfCanceled();
-            results.add(annotate(build, project));
+            results.add(annotate(build, project, configuration.getParserName()));
         }
         return results;
     }
 
-    private ParserResult annotate(final AbstractBuild<?, ?> build, final ParserResult input) throws IOException, InterruptedException {
-        ParserResult output = build.getWorkspace().act(new AnnotationsClassifier(input, getDefaultEncoding()));
+    private ParserResult annotate(final AbstractBuild<?, ?> build, final ParserResult input, final String parserName)
+            throws IOException, InterruptedException {
+        ParserResult output = build.getWorkspace().act(
+                new AnnotationsClassifier(input, getDefaultEncoding()));
         for (FileAnnotation annotation : output.getAnnotations()) {
             annotation.setPathName(build.getWorkspace().getRemote());
         }
         WarningsResult result = new WarningsResult(build, getDefaultEncoding(), output);
-        build.getActions().add(new WarningsResultAction(build, this, result));
+        build.getActions().add(new WarningsResultAction(build, this, result, parserName));
 
         return output;
     }
