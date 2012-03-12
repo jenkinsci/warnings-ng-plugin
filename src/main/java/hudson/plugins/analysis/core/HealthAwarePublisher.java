@@ -636,19 +636,15 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         return canComputeNew() ? BuildStepMonitor.STEP : BuildStepMonitor.NONE;
     }
 
-    /** Annotation threshold to be reached if a build should be considered as unstable. */
     /** Backward compatibility. @deprecated */
     @Deprecated
     private transient String threshold;
-    /** Threshold for new annotations to be reached if a build should be considered as unstable. */
     /** Backward compatibility. @deprecated */
     @Deprecated
     private transient String newThreshold;
-    /** Annotation threshold to be reached if a build should be considered as failure. */
     /** Backward compatibility. @deprecated */
     @Deprecated
     private transient String failureThreshold;
-    /** Threshold for new annotations to be reached if a build should be considered as failure. */
     /** Backward compatibility. @deprecated */
     @Deprecated
     private transient String newFailureThreshold;
