@@ -10,6 +10,7 @@ import java.util.Iterator;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -17,8 +18,8 @@ import org.junit.Test;
  * Tests the class {@link DoxygenParser}.
  */
 public class DoxygenParserTest extends ParserTester {
-    private static final String WARNING_CATEGORY = DoxygenParser.WARNING_CATEGORY;
-    private static final String WARNING_TYPE = DoxygenParser.WARNING_TYPE;
+    private static final String WARNING_TYPE = new DoxygenParser().getGroup();
+    private static final String WARNING_CATEGORY = StringUtils.EMPTY;
 
     /**
      * Parses a file with Doxygen warnings.

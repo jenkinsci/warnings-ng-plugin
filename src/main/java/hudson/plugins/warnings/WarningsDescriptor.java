@@ -37,12 +37,15 @@ public final class WarningsDescriptor extends PluginDescriptor {
     private static final String CONSOLE_LOG_PARSERS_KEY = "consoleLogParsers";
     private static final String FILE_LOCATIONS_KEY = "locations";
     private static final String PARSER_NAME_ATTRIBUTE = "parserName";
-    private static final String PLUGIN_NAME = "warnings";
     private static final String NEWLINE = "\n";
     private static final int MAX_MESSAGE_LENGTH = 60;
 
+    /** The ID of this plug-in is used as URL. */
+    static final String PLUGIN_ID = "warnings";
+    /** The URL of the result action. */
+    static final String RESULT_URL = PluginDescriptor.createResultUrlName(PLUGIN_ID);
     /** Icon to use for the result and project action. */
-    private static final String ACTION_ICON = "/plugin/warnings/icons/warnings-24x24.png";
+    static final String ICON_URL = "/plugin/warnings/icons/warnings-24x24.png";
 
     private final CopyOnWriteList<GroovyParser> groovyParsers = new CopyOnWriteList<GroovyParser>();
 
@@ -77,13 +80,13 @@ public final class WarningsDescriptor extends PluginDescriptor {
     /** {@inheritDoc} */
     @Override
     public String getPluginName() {
-        return PLUGIN_NAME;
+        return PLUGIN_ID;
     }
 
     /** {@inheritDoc} */
     @Override
     public String getIconUrl() {
-        return ACTION_ICON;
+        return ICON_URL;
     }
 
     /** {@inheritDoc} */
@@ -175,6 +178,28 @@ public final class WarningsDescriptor extends PluginDescriptor {
      */
     public FormValidation doCheckName(@QueryParameter(required = true) final String name) {
         return GroovyParser.doCheckName(name);
+    }
+
+    /**
+     * Performs on-the-fly validation on the project action link name.
+     *
+     * @param linkName
+     *            the link name
+     * @return the validation result
+     */
+    public FormValidation doCheckLinkName(@QueryParameter(required = true) final String linkName) {
+        return GroovyParser.doCheckLinkName(linkName);
+    }
+
+    /**
+     * Performs on-the-fly validation on the trend graph title.
+     *
+     * @param trendName
+     *            the title of the trend graph
+     * @return the validation result
+     */
+    public FormValidation doCheckTrendName(@QueryParameter(required = true) final String trendName) {
+        return GroovyParser.doCheckTrendName(trendName);
     }
 
     /**

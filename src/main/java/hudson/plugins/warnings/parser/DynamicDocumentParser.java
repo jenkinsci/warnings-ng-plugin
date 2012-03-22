@@ -21,9 +21,13 @@ public class DynamicDocumentParser extends RegexpDocumentParser {
      *            regular expression
      * @param script
      *            Groovy script
+     * @param linkName
+     *            the name of the ProjectAction (link name)
+     * @param trendName
+     *            the name of the trend report
      */
-    public DynamicDocumentParser(final String name, final String regexp, final String script) {
-        super(regexp, true, name);
+    public DynamicDocumentParser(final String name, final String regexp, final String script, final String linkName, final String trendName) {
+        super(localize(name), localize(linkName), localize(trendName), regexp, true);
 
         expressionMatcher = new GroovyExpressionMatcher(script, FALSE_POSITIVE);
     }

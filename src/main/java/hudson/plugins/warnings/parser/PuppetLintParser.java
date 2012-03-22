@@ -15,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 public class PuppetLintParser extends RegexpLineParser {
     private static final long serialVersionUID = 7492869677427430346L;
     private static final String SEPARATOR = "::";
-    static final String WARNING_TYPE = "Puppet-Lint";
 
     /** Pattern of puppet-lint compiler warnings. */
     private static final String PUPPET_LINT_PATTERN_WARNING = "^\\s*([^:]+):([0-9]+):([^:]+):([^:]+):\\s*(.*)$";
@@ -24,15 +23,17 @@ public class PuppetLintParser extends RegexpLineParser {
     private final Pattern packagePattern;
 
     /**
-     * Creates a new instance of <code>PuppetLintParser</code>.
+     * Creates a new instance of {@link PuppetLintParser}.
      */
     public PuppetLintParser() {
-        super(PUPPET_LINT_PATTERN_WARNING, WARNING_TYPE);
+        super(Messages._Warnings_Puppet_ParserName(),
+                Messages._Warnings_Puppet_LinkName(),
+                Messages._Warnings_Puppet_TrendName(),
+                PUPPET_LINT_PATTERN_WARNING);
 
         packagePattern = Pattern.compile(PUPPET_LINT_PATTERN_PACKAGE);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Warning createWarning(final Matcher matcher) {
         final String fileName = matcher.group(1);
@@ -46,7 +47,7 @@ public class PuppetLintParser extends RegexpLineParser {
             priority = Priority.HIGH;
         }
 
-        Warning warning = new Warning(fileName, Integer.parseInt(start), WARNING_TYPE, category, message, priority);
+        Warning warning = createWarning(fileName, Integer.parseInt(start), category, message, priority);
         String moduleName = detectModuleName(fileName);
         if (StringUtils.isNotBlank(moduleName)) {
             warning.setPackageName(moduleName);

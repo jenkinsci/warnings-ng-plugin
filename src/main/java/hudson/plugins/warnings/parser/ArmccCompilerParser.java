@@ -11,21 +11,24 @@ import java.util.regex.Matcher;
  */
 public class ArmccCompilerParser extends RegexpLineParser {
     private static final long serialVersionUID = -2677728927938443703L;
-    /** A ARMCC error. */
-    static final String WARNING_CATEGORY = "Armcc Error";
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "armcc";
-    /** Pattern of armcc compiler warnings. */
+
     private static final String ARMCC_WARNING_PATTERN = "^\"(.+)\", line (\\d+): ([A-Z][a-z]+):\\D*(\\d+)\\D*?:\\s+(.+)$";
 
     /**
-     * Creates a new instance of <code>ArmccCompilerParser</code>.
+     * Creates a new instance of {@link ArmccCompilerParser}.
      */
     public ArmccCompilerParser() {
-        super(ARMCC_WARNING_PATTERN, "Armcc");
+        super(Messages._Warnings_Armcc_ParserName(),
+                Messages._Warnings_Armcc_LinkName(),
+                Messages._Warnings_Armcc_TrendName(),
+            ARMCC_WARNING_PATTERN);
     }
 
-    /** {@inheritDoc} */
+    @Override
+    protected String getId() {
+        return "Armcc";
+    }
+
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String fileName = matcher.group(1);
@@ -42,7 +45,7 @@ public class ArmccCompilerParser extends RegexpLineParser {
             priority = Priority.NORMAL;
         }
 
-        return new Warning(fileName, lineNumber, WARNING_TYPE, WARNING_CATEGORY, errorCode + " - " + message, priority);
+        return createWarning(fileName, lineNumber, errorCode + " - " + message, priority);
     }
 }
 

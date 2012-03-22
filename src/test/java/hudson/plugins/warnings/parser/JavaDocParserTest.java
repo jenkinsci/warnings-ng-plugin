@@ -15,6 +15,8 @@ import org.junit.Test;
  * Tests the class {@link JavaDocParser}.
  */
 public class JavaDocParserTest extends ParserTester {
+    private static final String TYPE = new JavaDocParser().getGroup();
+
     /**
      * Parses a file with two deprecation warnings.
      *
@@ -33,7 +35,7 @@ public class JavaDocParserTest extends ParserTester {
                 116,
                 "Tag @link: can't find removeSpecChangeListener(ChangeListener, String) in chenomx.ccma.common.graph.module.GraphListenerRegistry",
                 "/home/builder/hudson/workspace/Homer/oddjob/src/chenomx/ccma/common/graph/module/GraphListenerRegistry.java",
-                JavaDocParser.WARNING_TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, StringUtils.EMPTY, Priority.NORMAL);
     }
 
     /**
@@ -53,12 +55,12 @@ public class JavaDocParserTest extends ParserTester {
                 0,
                 "Multiple sources of package comments found for package \"org.hamcrest\"",
                 "-",
-                JavaDocParser.WARNING_TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, StringUtils.EMPTY, Priority.NORMAL);
         checkWarning(iterator.next(),
                 94,
                 "@param argument \"<code>CoreAccountNumberTO</code>\" is not a parameter",
                 "/home/hudson-farm/.hudson/jobs/farm-toplevel/workspace/farm-toplevel/service-module/src/main/java/com/rackspace/farm/service/service/CoreAccountServiceImpl.java",
-                JavaDocParser.WARNING_TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, StringUtils.EMPTY, Priority.NORMAL);
     }
 
     /**
@@ -92,12 +94,12 @@ public class JavaDocParserTest extends ParserTester {
                 0,
                 "Text of tag @sys.prop in class ch.post.pf.mw.service.common.alarm.AlarmingService is too long!",
                 "-",
-                JavaDocParser.WARNING_TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, StringUtils.EMPTY, Priority.NORMAL);
         checkWarning(iterator.next(),
                 57,
                 "@(#) is an unknown tag.",
                 "/u01/src/KinePolygon.java",
-                JavaDocParser.WARNING_TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, StringUtils.EMPTY, Priority.NORMAL);
     }
 
     /** {@inheritDoc} */

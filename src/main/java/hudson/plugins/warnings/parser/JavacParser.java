@@ -1,5 +1,7 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
+
 import java.util.regex.Matcher;
 
 /**
@@ -7,38 +9,38 @@ import java.util.regex.Matcher;
  *
  * @author Ulli Hafner
  */
+@Extension
 public class JavacParser extends RegexpLineParser {
     private static final long serialVersionUID = 7199325311690082782L;
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "Java Compiler";
-    /** Pattern of javac compiler warnings. */
     private static final String JAVAC_WARNING_PATTERN = "^(?:\\[WARNING\\]\\s+)?(.*):\\[(\\d*)[.,; 0-9]*\\]\\s*(?:\\[(\\w*)\\])?\\s*(.*)$";
 
     /**
-     * Creates a new instance of <code>JavacParser</code>.
+     * Creates a new instance of {@link JavacParser}.
      */
     public JavacParser() {
-        super(JAVAC_WARNING_PATTERN, WARNING_TYPE, true);
+        super(Messages._Warnings_JavaParser_ParserName(),
+                Messages._Warnings_JavaParser_LinkName(),
+                Messages._Warnings_JavaParser_TrendName(),
+                JAVAC_WARNING_PATTERN, true);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected boolean isLineInteresting(final String line) {
         return line.contains("[");
     }
 
-    /**
-     * Creates a new annotation for the specified pattern.
-     *
-     * @param matcher
-     *            the regular expression matcher
-     * @return a new annotation for the specified pattern
-     */
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String message = matcher.group(4);
         String category = classifyIfEmpty(matcher.group(3), message);
-        return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE, category, message);
+
+        return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, message);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getId() {
+        return "Java Compiler"; // old ID in serialization
     }
 }
 

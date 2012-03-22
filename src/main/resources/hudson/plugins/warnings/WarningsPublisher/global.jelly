@@ -6,6 +6,12 @@
           <f:entry field="name" title="${%Name}" description="${%name.description}" >
             <f:textbox checkUrl="'descriptorByName/WarningsPublisher/checkName?name='+encodeURIComponent(this.value)"/>
           </f:entry>
+          <f:entry field="linkName" title="${%Link name}" description="${%linkName.description}" >
+            <f:textbox checkUrl="'descriptorByName/WarningsPublisher/checkLinkName?linkName='+encodeURIComponent(this.value)"/>
+          </f:entry>
+          <f:entry field="trendName" title="${%Trend report name}" description="${%trendName.description}" >
+            <f:textbox checkUrl="'descriptorByName/WarningsPublisher/checkTrendName?trendName='+encodeURIComponent(this.value)"/>
+          </f:entry>
           <f:entry
               field="regexp" title="${%Regular Expression}" description="${%regexp.description}"
               help="/plugin/warnings/help-regexp.html">

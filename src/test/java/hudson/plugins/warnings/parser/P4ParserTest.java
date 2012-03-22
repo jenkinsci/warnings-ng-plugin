@@ -63,11 +63,10 @@ public class P4ParserTest extends ParserTester {
      *            the expected priorit
      */
     private void checkP4Warning(final FileAnnotation annotation, final String fileName, final String category, final Priority priority) {
-        checkWarning(annotation, 0, fileName, fileName, P4Parser.WARNING_TYPE, category, priority);
+        checkWarning(annotation, 0, fileName, fileName, new P4Parser().getGroup(), category, priority);
     }
 
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "perforce.txt";

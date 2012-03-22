@@ -85,7 +85,7 @@ public class EclipseParserTest extends ParserTester {
      *
      * @return the created parser
      */
-    protected WarningsParser createParser() {
+    protected AbstractWarningsParser createParser() {
         return new EclipseParser();
     }
 
@@ -116,7 +116,7 @@ public class EclipseParserTest extends ParserTester {
      * @return the type of the parser
      */
     protected String getType() {
-        return EclipseParser.WARNING_TYPE;
+        return new EclipseParser().getGroup();
     }
 
     /**

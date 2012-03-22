@@ -10,7 +10,7 @@ import java.util.Collection;
 
 /**
  * Parses an input stream for compiler warnings and returns the found
- * annotations. If your parser is based on a regular expression you can extend
+ * warnings. If your parser is based on a regular expression you can extend
  * from the existing base classes {@link RegexpLineParser} or
  * {@link RegexpDocumentParser}.
  *
@@ -20,7 +20,9 @@ import java.util.Collection;
  * @see JavacParser example
  *
  * @author Ulli Hafner
+ * @deprecated use the base class {@link AbstractWarningsParser} when implementing new parsers
  */
+@Deprecated
 public interface WarningsParser extends ExtensionPoint, Serializable {
     /**
      * Parses the specified input stream for compiler warnings and returns the

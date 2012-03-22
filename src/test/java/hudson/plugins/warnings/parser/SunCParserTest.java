@@ -14,10 +14,9 @@ import org.junit.Test;
  * Tests the class {@link SunCParser}.
  */
 public class SunCParserTest extends ParserTester {
-    /** Warning message. */
+    private static final String TYPE = new SunCParser().getGroup();
     private static final String MESSAGE = "String literal converted to char* in formal argument 1 in call to userlog(char*, ...).";
-    /** Warning category. */
-    private static final String TYPE = "badargtypel2w";
+    private static final String CATEGORY = "badargtypel2w";
 
     /**
      * Parses a file with 5 warnings.
@@ -37,31 +36,31 @@ public class SunCParserTest extends ParserTester {
                 212,
                 MESSAGE,
                 "usi_plugin.cpp",
-                SunCParser.WARNING_TYPE, TYPE, Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 224,
                 "String literal converted to char* in formal argument msg in call to except(char*).",
                 "usi_plugin.cpp",
-                SunCParser.WARNING_TYPE, TYPE, Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 8,
                 MESSAGE,
                 "ServerList.cpp",
-                SunCParser.WARNING_TYPE, "", Priority.HIGH);
+                TYPE, "", Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 44,
                 MESSAGE,
                 "ServerList.cpp",
-                SunCParser.WARNING_TYPE, TYPE, Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 50,
                 MESSAGE,
                 "ServerList.cpp",
-                SunCParser.WARNING_TYPE, TYPE, Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
     }
 
     /** {@inheritDoc} */

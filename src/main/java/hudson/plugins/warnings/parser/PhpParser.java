@@ -11,31 +11,33 @@ import java.util.regex.Matcher;
  */
 public class PhpParser extends RegexpLineParser {
     private static final long serialVersionUID = -5154327854315791181L;
-    /** Category for PHP Fatal error. */
+
     static final String FATAL_ERROR_CATEGORY = "PHP Fatal error";
-    /** Category for PHP Warning. */
     static final String WARNING_CATEGORY = "PHP Warning";
-    /** Category for PHP Notice. */
     static final String NOTICE_CATEGORY = "PHP Notice";
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "PHP Runtime Warning";
-    /** Pattern of PHP runtime warnings. */
     private static final String PHP_WARNING_PATTERN = "^.*(PHP Warning|PHP Notice|PHP Fatal error):\\s+(.+ in (.+) on line (\\d+))$";
 
     /**
      * Creates a new instance of {@link PhpParser}.
      */
     public PhpParser() {
-        super(PHP_WARNING_PATTERN, WARNING_TYPE, true);
+        super(Messages._Warnings_PHP_ParserName(),
+                Messages._Warnings_PHP_LinkName(),
+                Messages._Warnings_PHP_TrendName(),
+                PHP_WARNING_PATTERN, true);
     }
 
     /** {@inheritDoc} */
+    @Override
+    protected String getId() {
+        return "PHP Runtime Warning";
+    }
+
     @Override
     protected boolean isLineInteresting(final String line) {
         return line.contains("PHP");
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String category = matcher.group(1);
@@ -49,6 +51,6 @@ public class PhpParser extends RegexpLineParser {
             priority = Priority.HIGH;
         }
 
-        return new Warning(fileName, Integer.parseInt(start), WARNING_TYPE, category, message, priority);
+        return createWarning(fileName, Integer.parseInt(start), category, message, priority);
     }
 }

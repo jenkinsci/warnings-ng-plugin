@@ -16,6 +16,8 @@ import org.junit.Test;
  * @author Jan Vansteenkiste <jan@vstone.eu>
  */
 public class PuppetLintParserTest extends ParserTester {
+    private static final String TYPE = new PuppetLintParser().getGroup();
+
     /**
      * Tests the Puppet-Lint parsing.
      *
@@ -30,17 +32,17 @@ public class PuppetLintParserTest extends ParserTester {
         FileAnnotation annotation = iterator.next();
         checkLintWarning(annotation,
                 1, "failtest not in autoload module layout",
-                "failtest.pp", PuppetLintParser.WARNING_TYPE, "autoloader_layout", Priority.HIGH, "-");
+                "failtest.pp", TYPE, "autoloader_layout", Priority.HIGH, "-");
 
         annotation = iterator.next();
         checkLintWarning(annotation,
                 3, "line has more than 80 characters",
-                "./modules/test/manifests/init.pp", PuppetLintParser.WARNING_TYPE, "80chars", Priority.NORMAL, "::test");
+                "./modules/test/manifests/init.pp", TYPE, "80chars", Priority.NORMAL, "::test");
 
         annotation = iterator.next();
         checkLintWarning(annotation,
                 10, "line has more than 80 characters",
-                "./modules/test/manifests/sub/class/morefail.pp", PuppetLintParser.WARNING_TYPE, "80chars", Priority.NORMAL, "::test::sub::class");
+                "./modules/test/manifests/sub/class/morefail.pp", TYPE, "80chars", Priority.NORMAL, "::test::sub::class");
     }
 
     /**
@@ -75,7 +77,7 @@ public class PuppetLintParserTest extends ParserTester {
      *
      * @return the warnings parser
      */
-    protected WarningsParser createParser() {
+    protected AbstractWarningsParser createParser() {
         return new PuppetLintParser();
     }
 

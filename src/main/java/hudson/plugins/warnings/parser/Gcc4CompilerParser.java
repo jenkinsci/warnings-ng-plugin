@@ -12,21 +12,23 @@ import java.util.regex.Matcher;
 public class Gcc4CompilerParser extends RegexpLineParser {
     private static final long serialVersionUID = 5490211629355204910L;
     private static final String ERROR = "error";
-    /** A GCC error. */
-    static final String WARNING_CATEGORY = "GCC4 Error";
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "gcc4";
-    /** Pattern of gcc 4 compiler warnings. */
     private static final String GCC_WARNING_PATTERN = ANT_TASK + "(.+?):(\\d+):(?:\\d+:)? (warning|error): (.*)$";
 
     /**
      * Creates a new instance of <code>Gcc4CompilerParser</code>.
      */
     public Gcc4CompilerParser() {
-        super(GCC_WARNING_PATTERN, "GNU compiler 4 (gcc)");
+        super(Messages._Warnings_gcc4_ParserName(),
+                Messages._Warnings_gcc4_LinkName(),
+                Messages._Warnings_gcc4_TrendName(),
+                GCC_WARNING_PATTERN);
     }
 
-    /** {@inheritDoc} */
+    @Override
+    protected String getId() {
+        return "GNU compiler 4 (gcc)";
+    }
+
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String fileName = matcher.group(1);
@@ -34,14 +36,17 @@ public class Gcc4CompilerParser extends RegexpLineParser {
         String message = matcher.group(4);
         Priority priority;
 
+        String category;
         if (ERROR.equalsIgnoreCase(matcher.group(3))) {
             priority = Priority.HIGH;
+            category = "Error";
         }
         else {
             priority = Priority.NORMAL;
+            category = "Warning";
         }
 
-        return new Warning(fileName, lineNumber, WARNING_TYPE, WARNING_CATEGORY, message, priority);
+        return createWarning(fileName, lineNumber, category, message, priority);
     }
 }
 

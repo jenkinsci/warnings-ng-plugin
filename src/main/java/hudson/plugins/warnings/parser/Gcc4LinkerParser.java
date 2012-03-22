@@ -15,8 +15,6 @@ public class Gcc4LinkerParser extends RegexpLineParser {
     private static final long serialVersionUID = -2792019431810134790L;
     /** A GCC error. */
     static final String WARNING_CATEGORY = "GCC4 Linker Error";
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "gcc4 linker";
     /** Pattern of gcc 4 linker warnings. */
     private static final String LINKER_WARNING_PATTERN = "^(?:(.+?)(?:(?::(?:(\\d+):)? (undefined reference to .*))|(?::?\\(\\.\\w+\\+0x[0-9a-fA-F]+\\)): (?:(warning): )?(.*))|.*/ld(?:\\.exe)?: (?:(warning): )?(.*))$";
 
@@ -24,7 +22,16 @@ public class Gcc4LinkerParser extends RegexpLineParser {
      * Creates a new instance of <code>Gcc4LinkerParser</code>.
      */
     public Gcc4LinkerParser() {
-        super(LINKER_WARNING_PATTERN, "GNU compiler 4 (ld)");
+        super(Messages._Warnings_gcc4_ParserName(),
+                Messages._Warnings_gcc4_LinkName(),
+                Messages._Warnings_gcc4_TrendName(),
+                LINKER_WARNING_PATTERN);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected String getId() {
+        return "GNU compiler 4 (ld)";
     }
 
     /** {@inheritDoc} */
@@ -67,7 +74,7 @@ public class Gcc4LinkerParser extends RegexpLineParser {
                 }
             }
         }
-        return new Warning(fileName, lineNumber, WARNING_TYPE, WARNING_CATEGORY, message, priority);
+        return createWarning(fileName, lineNumber, WARNING_CATEGORY, message, priority);
     }
 }
 

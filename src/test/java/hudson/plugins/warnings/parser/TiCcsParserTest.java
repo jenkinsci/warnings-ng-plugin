@@ -14,6 +14,9 @@ import org.junit.Test;
  * Tests the class {@link TiCcsParser}.
  */
 public class TiCcsParserTest extends ParserTester {
+    private static final String TYPE = new TiCcsParser().getGroup();
+
+
     /**
      * Parses a file with warnings of the TI CodeComposer tools.
      *
@@ -32,61 +35,61 @@ public class TiCcsParserTest extends ParserTester {
                 341,
                 "parameter \"params\" was never referenced",
                 "C:/SCM/Lr/src/fxns.c",
-                TiCcsParser.WARNING_TYPE, "#880-D", Priority.LOW);
+                TYPE, "#880-D", Priority.LOW);
         annotation = iterator.next();
         checkWarning(annotation,
                 177,
                 "may want to suffix float constant with an f",
                 "C:/SCM/Lr/src/edge.c",
-                TiCcsParser.WARNING_TYPE, "#1116-D", Priority.LOW);
+                TYPE, "#1116-D", Priority.LOW);
         annotation = iterator.next();
         checkWarning(annotation,
                 0,
                 "symbol 'memset' redeclared with incompatible type",
                 "unknown.file",
-                TiCcsParser.WARNING_TYPE, "", Priority.NORMAL);
+                TYPE, "", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 12,
                 "variable \"h\" was declared but never referenced",
                 "i2cDisplay12x2.c",
-                TiCcsParser.WARNING_TYPE, "", Priority.NORMAL);
+                TYPE, "", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 2578,
                 "variable",
                 "c:/DOCUME~1/JLINNE~1/LOCALS~1/Temp/0360811",
-                TiCcsParser.WARNING_TYPE, "", Priority.NORMAL);
+                TYPE, "", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 11,
                 "expected a \";\"",
                 "i2cDisplay12x2.c",
-                TiCcsParser.WARNING_TYPE, "", Priority.HIGH);
+                TYPE, "", Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 0,
                 "unresolved symbols remain",
                 "unknown.file",
-                TiCcsParser.WARNING_TYPE, "", Priority.HIGH);
+                TYPE, "", Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 0,
                 "errors encountered during linking; \"../../bin/Debug/lrxyz.out\" not",
                 "unknown.file",
-                TiCcsParser.WARNING_TYPE, "", Priority.HIGH);
+                TYPE, "", Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 3,
                 "could not open source file \"i2cDisplay12x12.h\"",
                 "i2cDisplay12x2.c",
-                TiCcsParser.WARNING_TYPE, "", Priority.HIGH);
+                TYPE, "", Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 5,
                 "[E0002] Illegal mnemonic specified",
                 "foo.asm",
-                TiCcsParser.WARNING_TYPE, "", Priority.HIGH);
+                TYPE, "", Priority.HIGH);
     }
 
 

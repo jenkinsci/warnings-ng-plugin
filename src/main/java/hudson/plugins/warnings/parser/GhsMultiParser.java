@@ -13,25 +13,18 @@ import org.apache.commons.lang.StringUtils;
  */
 public class GhsMultiParser extends RegexpDocumentParser {
     private static final long serialVersionUID = 8149238560432255036L;
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "GHS Multi Compiler";
-    /** Pattern of GHS compiler warnings. */
     private static final String GHS_MULTI_WARNING_PATTERN = "\\.(.*)\\,\\s*line\\s*(\\d+):\\s*(warning|error)\\s*([^:]+):\\s*(?m)([^\\^]*)\\s*\\^";
 
     /**
      * Creates a new instance of {@link GhsMultiParser}.
      */
     public GhsMultiParser() {
-        super(GHS_MULTI_WARNING_PATTERN, true, WARNING_TYPE);
+        super(Messages._Warnings_ghs_ParserName(),
+                Messages._Warnings_ghs_LinkName(),
+                Messages._Warnings_ghs_TrendName(),
+                GHS_MULTI_WARNING_PATTERN, true);
     }
 
-    /**
-     * Creates a new annotation for the specified pattern.
-     *
-     * @param matcher
-     *            the regular expression matcher
-     * @return a new annotation for the specified pattern
-     */
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String fileName = matcher.group(1);
@@ -46,7 +39,7 @@ public class GhsMultiParser extends RegexpDocumentParser {
         else {
             priority = Priority.HIGH;
         }
-        return new Warning(fileName, lineNumber, WARNING_TYPE, category, message, priority);
+        return createWarning(fileName, lineNumber, category, message, priority);
     }
 }
 

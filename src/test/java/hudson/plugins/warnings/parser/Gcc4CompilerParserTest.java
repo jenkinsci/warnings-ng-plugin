@@ -15,8 +15,9 @@ import org.junit.Test;
  */
 public class Gcc4CompilerParserTest extends ParserTester {
     private static final String THERE_ARE_WARNINGS_FOUND = "There are warnings found";
-    private static final String WARNING_CATEGORY = Gcc4CompilerParser.WARNING_CATEGORY;
-    private static final String WARNING_TYPE = Gcc4CompilerParser.WARNING_TYPE;
+    private static final String WARNING_CATEGORY = "Warning";
+    private static final String ERROR_CATEGORY = "Error";
+    private static final String WARNING_TYPE = new Gcc4CompilerParser().getGroup();
 
     /**
      * Parses a file with one warning that are started by ant.
@@ -72,12 +73,12 @@ public class Gcc4CompilerParserTest extends ParserTester {
                 73,
                 "implicit typename is deprecated, please see the documentation for details",
                 "/u1/drjohn/bfdist/packages/RegrTest/V00-03-01/RgtAddressLineScan.cc",
-                WARNING_TYPE, WARNING_CATEGORY, Priority.HIGH);
+                WARNING_TYPE, ERROR_CATEGORY, Priority.HIGH);
         checkWarning(iterator.next(),
                 4,
                 "foo.h: No such file or directory",
                 "foo.cc",
-                WARNING_TYPE, WARNING_CATEGORY, Priority.HIGH);
+                WARNING_TYPE, ERROR_CATEGORY, Priority.HIGH);
         checkWarning(iterator.next(),
                 678,
                 "missing initializer for member sigaltstack::ss_sp",
@@ -122,12 +123,12 @@ public class Gcc4CompilerParserTest extends ParserTester {
                 8,
                 "'bar' was not declared in this scope",
                 "fo:oo.cpp",
-                WARNING_TYPE, WARNING_CATEGORY, Priority.HIGH);
+                WARNING_TYPE, ERROR_CATEGORY, Priority.HIGH);
         checkWarning(iterator.next(),
                 12,
                 "expected ';' before 'return'",
                 "fo:oo.cpp",
-                WARNING_TYPE, WARNING_CATEGORY, Priority.HIGH);
+                WARNING_TYPE, ERROR_CATEGORY, Priority.HIGH);
     }
 
     /**

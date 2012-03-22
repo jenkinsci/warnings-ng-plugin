@@ -1,0 +1,99 @@
+package hudson.plugins.warnings.parser;
+
+/**
+ * Describes a parser.
+ *
+ * @author Ulli Hafner
+ */
+public class ParserDescription implements Comparable<ParserDescription> {
+    private final String group;
+    private final String name;
+
+    /**
+     * Creates a new instance of {@link ParserDescription}.
+     *
+     * @param group
+     *            the group of the parser
+     * @param name
+     *            the human readable name of the parser
+     */
+    public ParserDescription(final String group, final String name) {
+        super();
+        this.group = group;
+        this.name = name;
+    }
+
+    /**
+     * Returns the group of the parser (ID).
+     *
+     * @return the group of the parser
+     */
+    public String getGroup() {
+        return group;
+    }
+
+    /**
+     * Returns whether this parser is in the specified group.
+     *
+     * @param other the name of the group
+     * @return <code>true</code> if this parser is in the specified group
+     */
+    public boolean isInGroup(final String other) {
+        return group.equals(other);
+    }
+
+    /**
+     * Returns the human readable name of the parser (localized).
+     *
+     * @return the human readable name of the parser
+     */
+    public String getName() {
+        return name;
+    }
+
+    /** {@inheritDoc} */
+    public int compareTo(final ParserDescription o) {
+        return name.compareTo(o.name);
+    }
+
+    @Override
+    public int hashCode() {
+        int prime = 31;
+        int result = 1;
+        result = prime * result + ((group == null) ? 0 : group.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) { // NOPMD
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ParserDescription other = (ParserDescription)obj;
+        if (group == null) {
+            if (other.group != null) {
+                return false;
+            }
+        }
+        else if (!group.equals(other.group)) {
+            return false;
+        }
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        }
+        else if (!name.equals(other.name)) {
+            return false;
+        }
+        return true;
+    }
+}
+

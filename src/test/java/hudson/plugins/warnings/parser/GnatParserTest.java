@@ -14,7 +14,7 @@ import org.junit.Test;
  * Tests the class {@link GnatParser}.
  */
 public class GnatParserTest extends ParserTester {
-    /** Warning type. */
+    private static final String TYPE = new GnatParser().getGroup();
     private static final String GNAT_WARNING = "GNAT warning";
 
     /**
@@ -40,7 +40,7 @@ public class GnatParserTest extends ParserTester {
                 402,
                 "call to obsolescent procedure \"Very_Verbose\" declared at debug.ads:59",
                 "/home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/utilities/class_utilities.adb",
-                GnatParser.WARNING_TYPE, GNAT_WARNING, Priority.NORMAL);
+                TYPE, GNAT_WARNING, Priority.NORMAL);
 
         // /home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/utilities/iml-interfaces-cfg.adb:63:14:
         // warning: variable "E" is not referenced
@@ -50,7 +50,7 @@ public class GnatParserTest extends ParserTester {
                 63,
                 "variable \"E\" is not referenced",
                 "/home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/utilities/iml-interfaces-cfg.adb",
-                GnatParser.WARNING_TYPE, GNAT_WARNING, Priority.NORMAL);
+                TYPE, GNAT_WARNING, Priority.NORMAL);
 
         // /home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/pointsto/andersen_results.adb:96:80:
         // (style) this line is too long
@@ -60,7 +60,7 @@ public class GnatParserTest extends ParserTester {
                 96,
                 "this line is too long",
                 "/home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/pointsto/andersen_results.adb",
-                GnatParser.WARNING_TYPE, "GNAT style", Priority.LOW);
+                TYPE, "GNAT style", Priority.LOW);
 
         // /home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/generated/ada_delta_constraints.adb:3:06:
         // warning: redundant with clause in body
@@ -70,7 +70,7 @@ public class GnatParserTest extends ParserTester {
                 3,
                 "redundant with clause in body",
                 "/home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/generated/ada_delta_constraints.adb",
-                GnatParser.WARNING_TYPE, GNAT_WARNING, Priority.NORMAL);
+                TYPE, GNAT_WARNING, Priority.NORMAL);
 
         // /home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/reuse/src/array_tables.adb:97:07:
         // warning: variable "Dummy_Empty_Array_Item" is read but never assigned
@@ -80,7 +80,7 @@ public class GnatParserTest extends ParserTester {
                 97,
                 "variable \"Dummy_Empty_Array_Item\" is read but never assigned",
                 "/home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/reuse/src/array_tables.adb",
-                GnatParser.WARNING_TYPE, GNAT_WARNING, Priority.NORMAL);
+                TYPE, GNAT_WARNING, Priority.NORMAL);
 
         // /home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/reuse/src/graph_algorithms-generic_explorers.adb:63:14:
         // warning: "C" is not modified, could be declared constant
@@ -90,7 +90,7 @@ public class GnatParserTest extends ParserTester {
                 63,
                 "\"C\" is not modified, could be declared constant",
                 "/home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/reuse/src/graph_algorithms-generic_explorers.adb",
-                GnatParser.WARNING_TYPE, GNAT_WARNING, Priority.NORMAL);
+                TYPE, GNAT_WARNING, Priority.NORMAL);
 
         // /home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/reuse/src/process_data.adb:257:49:
         // (style) bad casing of "False" declared in Standard
@@ -100,7 +100,7 @@ public class GnatParserTest extends ParserTester {
                 257,
                 "bad casing of \"False\" declared in Standard",
                 "/home/bergerbd/.hudson/jobs/Test/workspace/projects/libs/reuse/src/process_data.adb",
-                GnatParser.WARNING_TYPE, "GNAT style", Priority.LOW);
+                TYPE, "GNAT style", Priority.LOW);
 
         // /home/bergerbd/.hudson/jobs/Test/workspace/projects/tools/scangen/src/scangen.adb:23:35:
         // error: binary operator expected
@@ -110,7 +110,7 @@ public class GnatParserTest extends ParserTester {
                 23,
                 "binary operator expected",
                 "/home/bergerbd/.hudson/jobs/Test/workspace/projects/tools/scangen/src/scangen.adb",
-                GnatParser.WARNING_TYPE, "GNAT error", Priority.HIGH);
+                TYPE, "GNAT error", Priority.HIGH);
 
         // /home/bergerbd/.hudson/jobs/Test/workspace/projects/tools/scangen/src/scangen.adb:23:36:
         // error: identifier cannot start with underline
@@ -120,7 +120,7 @@ public class GnatParserTest extends ParserTester {
                 23,
                 "identifier cannot start with underline",
                 "/home/bergerbd/.hudson/jobs/Test/workspace/projects/tools/scangen/src/scangen.adb",
-                GnatParser.WARNING_TYPE, "GNAT error", Priority.HIGH);
+                TYPE, "GNAT error", Priority.HIGH);
     }
 
     /** {@inheritDoc} */

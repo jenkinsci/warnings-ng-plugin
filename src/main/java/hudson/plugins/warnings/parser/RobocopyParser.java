@@ -16,8 +16,6 @@ import java.util.regex.Matcher;
  */
 public class RobocopyParser extends RegexpLineParser {
     private static final long serialVersionUID = -671744745118772873L;
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "Robocopy (please use /V in your commands!)";
     /** Pattern of perforce compiler warnings. */
     private static final String ROBOCOPY_WARNING_PATTERN = "^(.*)(EXTRA File|New File|same)\\s*(\\d*)\\s*(.*)$";
 
@@ -25,25 +23,25 @@ public class RobocopyParser extends RegexpLineParser {
      * Creates a new instance of {@link RobocopyParser}.
      */
     public RobocopyParser() {
-        super(ROBOCOPY_WARNING_PATTERN, WARNING_TYPE, true);
+        super(Messages._Warnings_Robocopy_ParserName(),
+                Messages._Warnings_Robocopy_LinkName(),
+                Messages._Warnings_Robocopy_TrendName(),
+                ROBOCOPY_WARNING_PATTERN, true);
     }
 
-    /**
-     * Creates a new annotation for the specified pattern.
-     *
-     * @param matcher
-     *            the regular expression matcher
-     * @return a new annotation for the specified pattern
-     */
+    @Override
+    protected String getId() {
+        return "Robocopy (please use /V in your commands!)";
+    }
+
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String file = matcher.group(4).split("\\s{11}")[0];
         String message = file;
         String category = matcher.group(2);
-        return new Warning(file, 0, WARNING_TYPE, category, message, Priority.NORMAL);
+        return createWarning(file, 0, category, message, Priority.NORMAL);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected boolean isLineInteresting(final String line) {
         return line.contains("        ");

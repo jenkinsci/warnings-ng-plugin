@@ -12,9 +12,12 @@ import org.junit.Test;
 
 /**
  * Tests the class {@link YuiCompressorParser}.
+ *
  * @author Emidio Stani
  */
 public class YuiCompressorParserTest extends ParserTester {
+    private static final String TYPE = new YuiCompressorParser().getGroup();
+
     /**
      * Parses a file with 3 warnings.
      *
@@ -35,7 +38,7 @@ public class YuiCompressorParserTest extends ParserTester {
                 "Try to use a single 'var' statement per scope."
                 + " [match){returnstringResult;}for( ---> var  <--- i=0;match&&i<match]",
                 "unknown.file",
-                YuiCompressorParser.WARNING_TYPE, "Use single 'var' per scope", Priority.LOW);
+                TYPE, "Use single 'var' per scope", Priority.LOW);
 
         annotation = iterator.next();
         checkWarning(annotation,
@@ -43,7 +46,7 @@ public class YuiCompressorParserTest extends ParserTester {
                 "The variable replacement has already been declared in the same scope..."
                 + " [replace(variable,replacement);}var  ---> replacement <--- =globalStoredVars[name];if(replacement!=]",
                 "unknown.file",
-               YuiCompressorParser.WARNING_TYPE, "Duplicate variable", Priority.HIGH);
+               TYPE, "Duplicate variable", Priority.HIGH);
 
         annotation = iterator.next();
         checkWarning(annotation,
@@ -51,7 +54,7 @@ public class YuiCompressorParserTest extends ParserTester {
                 "Using 'eval' is not recommended. Moreover, using 'eval' reduces the level of compression!"
                 + " [function(condition,label){if( ---> eval <--- (condition)){this.doGotolabel(label]",
                 "unknown.file",
-                YuiCompressorParser.WARNING_TYPE, "Use eval", Priority.HIGH);
+                TYPE, "Use eval", Priority.HIGH);
 
     }
 

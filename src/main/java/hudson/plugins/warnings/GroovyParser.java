@@ -3,6 +3,7 @@ package hudson.plugins.warnings;
 import groovy.lang.GroovyShell;
 import hudson.util.FormValidation;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -20,7 +21,12 @@ public class GroovyParser {
     private final String name;
     private final String regexp;
     private final String script;
-    private final String example; // @since 3.18
+    /** Example. @since 3.18 */
+    private final String example;
+    /** ProjectAction name. @since 4.0 */
+    private String linkName;
+    /** Trend report name. @since 4.0 */
+    private String trendName;
 
     /**
      * Creates a new instance of {@link GroovyParser}.
@@ -33,13 +39,20 @@ public class GroovyParser {
      *            the script to map the expression to a warning
      * @param example
      *            the example to verify the parser
+     * @param linkName
+     *            the name of the ProjectAction (link name)
+     * @param trendName
+     *            the name of the trend report
      */
     @DataBoundConstructor
-    public GroovyParser(final String name, final String regexp, final String script, final String example) {
+    public GroovyParser(final String name, final String regexp, final String script, final String example,
+            final String linkName, final String trendName) {
         this.name = name;
         this.regexp = regexp;
         this.script = script;
         this.example = example;
+        this.linkName = linkName;
+        this.trendName = trendName;
     }
 
     /**
@@ -53,7 +66,23 @@ public class GroovyParser {
      *            the script to map the expression to a warning
      */
     public GroovyParser(final String name, final String regexp, final String script) {
-        this(name, regexp, script, StringUtils.EMPTY);
+        this(name, regexp, script, StringUtils.EMPTY, name, name);
+    }
+
+    /**
+     * Adds link and trend names for 3.x serializations.
+     *
+     * @return the created object
+     */
+    private Object readResolve() {
+        if (linkName == null) {
+            linkName = Messages._Warnings_ProjectAction_Name().toString(Locale.ENGLISH);
+        }
+        if (trendName == null) {
+            trendName = Messages._Warnings_Trend_Name().toString(Locale.ENGLISH);
+        }
+
+        return this;
     }
 
     /**
@@ -75,6 +104,24 @@ public class GroovyParser {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Returns the trend name.
+     *
+     * @return the trend name
+     */
+    public String getTrendName() {
+        return trendName;
+    }
+
+    /**
+     * Returns the link name.
+     *
+     * @return the link name
+     */
+    public String getLinkName() {
+        return linkName;
     }
 
     /**
@@ -115,6 +162,13 @@ public class GroovyParser {
         return StringUtils.isNotBlank(regexp) && regexp.contains("\\n");
     }
 
+    private static FormValidation validate(final String name, final String message) {
+        if (StringUtils.isBlank(name)) {
+            return FormValidation.error(message);
+        }
+        return FormValidation.ok();
+    }
+
     /**
      * Performs on-the-fly validation on the name of the parser that needs to be unique.
      *
@@ -123,10 +177,29 @@ public class GroovyParser {
      * @return the validation result
      */
     public static FormValidation doCheckName(final String name) {
-        if (StringUtils.isBlank(name)) {
-            return FormValidation.error(Messages.Warnings_GroovyParser_Error_Name_isEmpty());
-        }
-        return FormValidation.ok();
+        return validate(name, Messages.Warnings_GroovyParser_Error_Name_isEmpty());
+    }
+
+    /**
+     * Performs on-the-fly validation on the link name of the parser.
+     *
+     * @param name
+     *            the name of the link
+     * @return the validation result
+     */
+    public static FormValidation doCheckLinkName(final String name) {
+        return validate(name, Messages.Warnings_GroovyParser_Error_LinkName_isEmpty());
+    }
+
+    /**
+     * Performs on-the-fly validation on the trend name of the parser.
+     *
+     * @param name
+     *            the name of the trend
+     * @return the validation result
+     */
+    public static FormValidation doCheckTrendName(final String name) {
+        return validate(name, Messages.Warnings_GroovyParser_Error_TrendName_isEmpty());
     }
 
     /**

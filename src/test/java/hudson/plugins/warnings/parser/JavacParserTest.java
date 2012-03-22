@@ -7,6 +7,7 @@ import hudson.plugins.analysis.util.model.Priority;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Locale;
 
 import org.junit.Test;
 
@@ -14,6 +15,8 @@ import org.junit.Test;
  * Tests the class {@link JavacParser}.
  */
 public class JavacParserTest extends ParserTester {
+    private static final String WARNING_TYPE = Messages._Warnings_JavaParser_ParserName().toString(Locale.ENGLISH);
+
     /**
      * Parses a warning log with 15 warnings.
      *
@@ -50,13 +53,13 @@ public class JavacParserTest extends ParserTester {
                 12,
                 "org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated",
                 "C:/Build/Results/jobs/ADT-Base/workspace/com.avaloq.adt.ui/src/main/java/com/avaloq/adt/ui/elements/AvaloqDialog.java",
-                JavacParser.WARNING_TYPE, RegexpParser.DEPRECATION, Priority.NORMAL);
+                WARNING_TYPE, RegexpParser.DEPRECATION, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 40,
                 "org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated",
                 "C:/Build/Results/jobs/ADT-Base/workspace/com.avaloq.adt.ui/src/main/java/com/avaloq/adt/ui/elements/AvaloqDialog.java",
-                JavacParser.WARNING_TYPE, RegexpParser.DEPRECATION, Priority.NORMAL);
+                WARNING_TYPE, RegexpParser.DEPRECATION, Priority.NORMAL);
     }
 
     /**
@@ -75,7 +78,7 @@ public class JavacParserTest extends ParserTester {
                 14,
                 "loadAvailable(java.lang.String,int,int,java.lang.String[]) in my.OtherClass has been deprecated",
                 "D:/path/to/my/Class.java",
-                AntJavacParser.WARNING_TYPE, "Deprecation", Priority.NORMAL);
+                WARNING_TYPE, "Deprecation", Priority.NORMAL);
     }
 
     private Collection<FileAnnotation> parse(final String fileName) throws IOException {

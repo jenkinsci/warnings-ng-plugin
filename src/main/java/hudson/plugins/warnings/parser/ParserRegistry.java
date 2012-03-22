@@ -19,8 +19,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -32,74 +32,105 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * Registry for the active parsers in this plug-in.
+ * Registry of parsers that are available for the warnings plug-in.
  *
  * @author Ulli Hafner
  */
 // CHECKSTYLE:COUPLING-OFF
 public class ParserRegistry {
-    private final List<WarningsParser> parsers;
+    private final List<AbstractWarningsParser> parsers;
     private final Charset defaultCharset;
     private final Set<Pattern> includePatterns = Sets.newHashSet();
     private final Set<Pattern> excludePatterns = Sets.newHashSet();
 
     /**
-     * Returns all warning parsers registered by the extension point.
+     * Returns all warning parsers registered by extension points
+     * {@link WarningsParser} and {@link AbstractWarningsParser}.
      *
      * @return the extension list
      */
-    private static List<WarningsParser> all() {
+    @SuppressWarnings("javadoc")
+    private static List<AbstractWarningsParser> all() {
         Hudson instance = Hudson.getInstance();
         if (instance == null) {
             return Lists.newArrayList();
         }
-        return instance.getExtensionList(WarningsParser.class);
-    }
+        List<AbstractWarningsParser> parsers = Lists.newArrayList(instance.getExtensionList(AbstractWarningsParser.class));
+        addParsersWithDeprecatedApi(instance, parsers);
 
-    /**
-     * Returns all available parser names.
-     *
-     * @return all available parser names
-     */
-    public static List<String> getAvailableParsers() {
-        ArrayList<String> sortedParsers = new ArrayList<String>(getAllParserNames());
-        Collections.sort(sortedParsers);
-        return Collections.unmodifiableList(sortedParsers);
-    }
-
-    private static Set<String> getAllParserNames() {
-        Set<String> parsers = new HashSet<String>();
-        for (WarningsParser parser : getAllParsers()) {
-            parsers.add(parser.getName());
-        }
         return parsers;
     }
 
+    @SuppressWarnings("deprecation")
+    private static void addParsersWithDeprecatedApi(final Hudson instance, final List<AbstractWarningsParser> parsers) {
+        for (WarningsParser parser : instance.getExtensionList(WarningsParser.class)) {
+            if (!(parser instanceof AbstractWarningsParser)) {
+                parsers.add(new ParserAdapter(parser));
+            }
+        }
+    }
+
     /**
-     * Returns a list of parsers that match the specified name. Note that the
-     * mapping of names to parsers is one to many.
+     * Returns all available parsers groups, sorted alphabetically.
      *
-     * @param parserName
-     *            the parser name
+     * @return all available parser names
+     */
+    public static List<ParserDescription> getAvailableParsers() {
+        Set<String> groups = Sets.newHashSet();
+        for (AbstractWarningsParser parser : getAllParsers()) {
+            groups.add(parser.getGroup());
+        }
+
+        List<ParserDescription> sorted = Lists.newArrayList();
+        for (String group : groups) {
+            List<AbstractWarningsParser> parsers = getParsers(group);
+            sorted.add(new ParserDescription(group, parsers.get(0).getParserName()));
+        }
+        Collections.sort(sorted);
+        return sorted;
+    }
+
+    /**
+     * Returns a list of parsers that match the specified group name. Note that the
+     * mapping of groups to parsers is one to many.
+     *
+     * @param group
+     *            the parser group
      * @return a list of parsers, might be modified by the receiver
      */
-    public static List<WarningsParser> getParsers(final String parserName) {
-        return getParsers(Collections.singleton(parserName));
+    public static List<AbstractWarningsParser> getParsers(final String group) {
+        return getParsers(Collections.singleton(group));
+    }
+
+    /**
+     * Returns the parser ID which could be used as a URL.
+     *
+     * @param group the parser group
+     * @return the ID
+     */
+    public static int getUrl(final String group) {
+        List<AbstractWarningsParser> allParsers = getAllParsers();
+        for (int number = 0; number < allParsers.size(); number++) {
+            if (allParsers.get(number).isInGroup(group)) {
+                return number;
+            }
+        }
+        throw new NoSuchElementException("No parser found for group: " + group);
     }
 
     /**
      * Returns a list of parsers that match the specified names. Note that the
      * mapping of names to parsers is one to many.
      *
-     * @param parserNames
+     * @param parserGroups
      *            the parser names
      * @return a list of parsers, might be modified by the receiver
      */
-    public static List<WarningsParser> getParsers(final Collection<String> parserNames) {
-        List<WarningsParser> actualParsers = new ArrayList<WarningsParser>();
-        for (String name : parserNames) {
-            for (WarningsParser warningsParser : getAllParsers()) {
-                if (warningsParser.getName().equals(name)) {
+    public static List<AbstractWarningsParser> getParsers(final Collection<String> parserGroups) {
+        List<AbstractWarningsParser> actualParsers = new ArrayList<AbstractWarningsParser>();
+        for (String name : parserGroups) {
+            for (AbstractWarningsParser warningsParser : getAllParsers()) {
+                if (warningsParser.isInGroup(name)) {
                     actualParsers.add(warningsParser);
                 }
             }
@@ -118,9 +149,8 @@ public class ParserRegistry {
     public static List<String> filterExistingParserNames(final Set<String> parserNames) {
         List<String> validNames = Lists.newArrayList();
 
-        Set<String> allParsers = getAllParserNames();
         for (String name : parserNames) {
-            if (allParsers.contains(name)) {
+            if (!getParsers(name).isEmpty()) {
                 validNames.add(name);
             }
         }
@@ -134,8 +164,8 @@ public class ParserRegistry {
      *
      * @return all available parsers
      */
-    private static List<WarningsParser> getAllParsers() {
-        List<WarningsParser> parsers = new ArrayList<WarningsParser>();
+    private static List<AbstractWarningsParser> getAllParsers() {
+        List<AbstractWarningsParser> parsers = new ArrayList<AbstractWarningsParser>();
         parsers.add(new JavacParser());
         parsers.add(new AntJavacParser());
         parsers.add(new JavaDocParser());
@@ -150,8 +180,9 @@ public class ParserRegistry {
         parsers.add(new ErlcParser());
         parsers.add(new IntelCParser());
         parsers.add(new IarParser());
-        MsBuildParser pclintParser = new MsBuildParser();
-        pclintParser.setName("PC-Lint");
+        MsBuildParser pclintParser = new MsBuildParser(Messages._Warnings_PCLint_ParserName(),
+                Messages._Warnings_PCLint_LinkName(),
+                Messages._Warnings_PCLint_TrendName());
         parsers.add(pclintParser);
         parsers.add(new BuckminsterParser());
         parsers.add(new TiCcsParser());
@@ -167,7 +198,6 @@ public class ParserRegistry {
         parsers.add(new ArmccCompilerParser());
         parsers.add(new YuiCompressorParser());
         parsers.add(new PuppetLintParser());
-
 
         Iterable<GroovyParser> parserDescriptions = getDynamicParserDescriptions();
         parsers.addAll(getDynamicParsers(parserDescriptions));
@@ -187,16 +217,18 @@ public class ParserRegistry {
         return Collections.emptyList();
     }
 
-    static List<WarningsParser> getDynamicParsers(final Iterable<GroovyParser> parserDescriptions) {
-        List<WarningsParser> parsers = new ArrayList<WarningsParser>();
+    static List<AbstractWarningsParser> getDynamicParsers(final Iterable<GroovyParser> parserDescriptions) {
+        List<AbstractWarningsParser> parsers = Lists.newArrayList();
         for (GroovyParser description : parserDescriptions) {
             if (description.isValid()) {
-                WarningsParser parser;
+                AbstractWarningsParser parser;
                 if (description.hasMultiLineSupport()) {
-                    parser = new DynamicDocumentParser(description.getName(), description.getRegexp(), description.getScript());
+                    parser = new DynamicDocumentParser(description.getName(), description.getRegexp(), description.getScript(),
+                            description.getLinkName(), description.getTrendName());
                 }
                 else {
-                    parser = new DynamicParser(description.getName(), description.getRegexp(), description.getScript());
+                    parser = new DynamicParser(description.getName(), description.getRegexp(), description.getScript(),
+                            description.getLinkName(), description.getTrendName());
                 }
                 parsers.add(parser);
             }
@@ -212,7 +244,7 @@ public class ParserRegistry {
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
      */
-    public ParserRegistry(final List<WarningsParser> parsers, final String defaultEncoding) {
+    public ParserRegistry(final List<? extends AbstractWarningsParser> parsers, final String defaultEncoding) {
         this(parsers, defaultEncoding, StringUtils.EMPTY, StringUtils.EMPTY);
     }
 
@@ -230,10 +262,10 @@ public class ParserRegistry {
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
      */
-    public ParserRegistry(final List<? extends WarningsParser> parsers, final String defaultEncoding,
+    public ParserRegistry(final List<? extends AbstractWarningsParser> parsers, final String defaultEncoding,
             final String includePattern, final String excludePattern) {
         defaultCharset = EncodingValidator.defaultCharset(defaultEncoding);
-        this.parsers = new ArrayList<WarningsParser>(parsers);
+        this.parsers = new ArrayList<AbstractWarningsParser>(parsers);
         if (this.parsers.isEmpty()) {
             this.parsers.addAll(getAllParsers());
         }
@@ -279,12 +311,12 @@ public class ParserRegistry {
      */
     public Collection<FileAnnotation> parse(final File file, final PluginLogger logger) throws IOException {
         Set<FileAnnotation> allAnnotations = Sets.newHashSet();
-        for (WarningsParser parser : parsers) {
+        for (AbstractWarningsParser parser : parsers) {
             Reader input = null;
             try {
                 input = createReader(file);
                 Collection<FileAnnotation> warnings = parser.parse(input);
-                logger.log(String.format("%s : Found %d warnings.", parser.getName(), warnings.size()));
+                logger.log(String.format("%s : Found %d warnings.", parser.getParserName(), warnings.size()));
                 allAnnotations.addAll(warnings);
             }
             finally {
@@ -306,7 +338,7 @@ public class ParserRegistry {
     public Set<FileAnnotation> parse(final InputStream file) throws IOException {
         try {
             Set<FileAnnotation> allAnnotations = Sets.newHashSet();
-            for (WarningsParser parser : parsers) {
+            for (AbstractWarningsParser parser : parsers) {
                 allAnnotations.addAll(parser.parse(createReader(file)));
             }
             return applyExcludeFilter(allAnnotations);

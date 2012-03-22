@@ -15,6 +15,8 @@ import org.junit.Test;
  * Tests the class {@link AcuCobolParser}.
  */
 public class AcuCobolParserTest extends ParserTester {
+    private static final String TYPE = new AcuCobolParser().getGroup();
+
     /**
      * Parses a file with 4 COBOL warnings.
      *
@@ -33,25 +35,25 @@ public class AcuCobolParserTest extends ParserTester {
                 39,
                 "Imperative statement required",
                 "COPY/zzz.CPY",
-                AcuCobolParser.WARNING_TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, StringUtils.EMPTY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 111,
                 "Don't run with knives",
                 "C:/Documents and Settings/xxxx/COB/bbb.COB",
-                AcuCobolParser.WARNING_TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, StringUtils.EMPTY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 115,
                 "Don't run with knives",
                 "C:/Documents and Settings/xxxx/COB/bbb.COB",
-                AcuCobolParser.WARNING_TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, StringUtils.EMPTY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 123,
                 "I'm a green banana",
                 "C:/Documents and Settings/xxxx/COB/ccc.COB",
-                AcuCobolParser.WARNING_TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, StringUtils.EMPTY, Priority.NORMAL);
     }
 
     /** {@inheritDoc} */

@@ -16,6 +16,8 @@ import org.junit.Test;
  * @author Claus Klein
  */
 public class IarParserTest extends ParserTester {
+    private static final String TYPE = new IarParser().getGroup();
+
     /**
      * Parses a file with two IAR warnings.
      *
@@ -34,49 +36,49 @@ public class IarParserTest extends ParserTester {
                 451,
                 "`void yyunput(int, char*)' defined but not used",
                 "testhist.l",
-                IarParser.WARNING_TYPE, "Pe0815", Priority.NORMAL);
+                TYPE, "Pe0815", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 73,
                 "implicit typename is deprecated, please see the documentation for details",
                 "/u1/drjohn/bfdist/packages/RegrTest/V00-03-01/RgtAddressLineScan.cc",
-                IarParser.WARNING_TYPE, "Pe0815", Priority.HIGH);
+                TYPE, "Pe0815", Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 39,
                 "foo.h: No such file or directory",
                 "foo.cc",
-                IarParser.WARNING_TYPE, "Pe0815", Priority.HIGH);
+                TYPE, "Pe0815", Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 56,
                 "type qualifier on return type is meaningless",
                 "D:/src/CSpiBus.h",
-                IarParser.WARNING_TYPE, "Pe815", Priority.NORMAL);
+                TYPE, "Pe815", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 38,
                 "identifier \"OS_EnterNestableInterrupt\" is undefined",
                 "D:/src/InterruptTabO7.cpp",
-                IarParser.WARNING_TYPE, "Pe020", Priority.HIGH);
+                TYPE, "Pe020", Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 229,
                 "variable \"ret\" was set but never used",
                 "z:/src/O7_LabSample_embOS/EmbosConfig/CANopen/main.cpp",
-                IarParser.WARNING_TYPE, "Pe550", Priority.NORMAL);
+                TYPE, "Pe550", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 525,
                 "variable \"ret\" was set but never used",
                 "z:/src/O7_LabSample_embOS/EmbosConfig/CANopen/main.cpp",
-                IarParser.WARNING_TYPE, "Pe550", Priority.NORMAL);
+                TYPE, "Pe550", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 78,
                 "missing return statement at end of non-void function \"CPwmOutput::setDutyCycle\"",
                 "z:/src/O7_LabSample_embOS/EmbosConfig/CPwmOutput.cpp",
-                IarParser.WARNING_TYPE, "Pe940", Priority.NORMAL);
+                TYPE, "Pe940", Priority.NORMAL);
     }
 
     /** {@inheritDoc} */

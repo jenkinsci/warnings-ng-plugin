@@ -5,6 +5,7 @@ import hudson.plugins.analysis.util.model.Priority;
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
+import org.jvnet.localizer.Localizable;
 
 /**
  * A parser for the MSBuild/PcLint compiler warnings.
@@ -13,27 +14,40 @@ import org.apache.commons.lang.StringUtils;
  */
 public class MsBuildParser extends RegexpLineParser {
     private static final long serialVersionUID = -2141974437420906595L;
-    /** Warning type of this parser. */
     static final String WARNING_TYPE = "MSBuild";
-    /** Pattern of MSBuild compiler warnings. */
     private static final String MS_BUILD_WARNING_PATTERN = ANT_TASK + "(?:\\s*\\d+>)?(?:(?:(?:(.*)\\((\\d*).*\\)|.*LINK)\\s*:|(.*):)\\s*([Nn]ote|[Ii]nfo|[Ww]arning|(?:fatal\\s*)?[Ee]rror)\\s*:?\\s*([A-Za-z0-9]+):\\s*(.*)|(.*)\\s*:.*error\\s*(LNK[0-9]+):\\s*(.*))$";
 
     /**
-     * Creates a new instance of <code>MsBuildParser</code>.
+     * Creates a new instance of {@link MsBuildParser}.
      */
     public MsBuildParser() {
-        super(MS_BUILD_WARNING_PATTERN, WARNING_TYPE);
+        this(Messages._Warnings_MSBuild_ParserName(),
+                Messages._Warnings_MSBuild_LinkName(),
+                Messages._Warnings_MSBuild_TrendName());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Creates a new instance of {@link MsBuildParser}.
+     *
+     * @param parserName
+     *            name of the parser
+     * @param linkName
+     *            name of the project action link
+     * @param trendName
+     *            name of the trend graph
+     */
+    public MsBuildParser(final Localizable parserName, final Localizable linkName, final Localizable trendName) {
+        super(parserName, linkName, trendName, MS_BUILD_WARNING_PATTERN);
+    }
+
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String fileName = determineFileName(matcher);
         if (StringUtils.isNotBlank(matcher.group(7))) {
-            return new Warning(fileName, 0, getName(), matcher.group(8), matcher.group(9), Priority.HIGH);
+            return createWarning(fileName, 0, matcher.group(8), matcher.group(9), Priority.HIGH);
         }
         else {
-            return new Warning(fileName, getLineNumber(matcher.group(2)), getName(),
+            return createWarning(fileName, getLineNumber(matcher.group(2)),
                     matcher.group(5), matcher.group(6), determinePriority(matcher));
         }
     }

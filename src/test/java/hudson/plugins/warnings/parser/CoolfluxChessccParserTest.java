@@ -32,7 +32,7 @@ public class CoolfluxChessccParserTest extends ParserTester {
                 150,
                 "function `unsigned configureRealCh(unsigned)' was declared static, but was not defined",
                 "/nfs/autofs/nett/nessie6/dailies/Monday/src/n6/heidrun/dsp/Modules/LocalChAdmin.c",
-                CoolfluxChessccParser.WARNING_TYPE, "Warning", Priority.HIGH);
+                new CoolfluxChessccParser().getGroup(), "", Priority.HIGH);
 
     }
 

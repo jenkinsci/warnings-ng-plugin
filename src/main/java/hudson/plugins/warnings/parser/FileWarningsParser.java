@@ -10,20 +10,21 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A {@link WarningsParser} that scans files.
+ * Uses a collection of {@link AbstractWarningsParser parsers} to scans a set of files for warnings.
  *
  * @author Ulli Hafner
  */
 public class FileWarningsParser implements AnnotationParser {
-    /** Unique ID of this parser. */
     private static final long serialVersionUID = -262047528431480332L;
+
     /** Ant file-set pattern of files to include in report. */
     private final String includePattern;
     /** Ant file-set pattern of files to exclude from report. */
     private final String excludePattern;
+
     /** The parsers to scan the files with. */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
-    private final List<WarningsParser> parsers;
+    private final List<AbstractWarningsParser> parsers;
     /** The default encoding to be used when reading and parsing files. */
     private final String defaultEncoding;
 
@@ -39,7 +40,7 @@ public class FileWarningsParser implements AnnotationParser {
      * @param excludePattern
      *            ant file-set pattern of files to exclude from report
      */
-    public FileWarningsParser(final List<WarningsParser> parsers, final String defaultEncoding, final String includePattern, final String excludePattern) {
+    public FileWarningsParser(final List<AbstractWarningsParser> parsers, final String defaultEncoding, final String includePattern, final String excludePattern) {
         this.parsers = parsers;
         this.includePattern = includePattern;
         this.excludePattern = excludePattern;

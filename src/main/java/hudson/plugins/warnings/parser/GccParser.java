@@ -13,28 +13,29 @@ import org.apache.commons.lang.StringUtils;
  */
 public class GccParser extends RegexpLineParser {
     private static final long serialVersionUID = 2020182274225690532L;
-    /** A GCC error. */
     static final String GCC_ERROR = "GCC error";
-    /** A LD error. */
     static final String LINKER_ERROR = "Linker error";
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "gcc";
-    /** Pattern of gcc compiler warnings. */
     private static final String GCC_WARNING_PATTERN = "^(?:\\s*(?:\\[.*\\]\\s*)?(.*\\.[chpimxsola0-9]+):(?:(\\d*):(?:\\d*:)*\\s*(?:(warning|error|note)\\s*:|\\s*(.*))|\\s*(undefined reference to.*))(.*)|.*ld:\\s*(.*-l(.*)))$";
 
     /**
-     * Creates a new instance of <code>GccParser</code>.
+     * Creates a new instance of {@link GccParser}.
      */
     public GccParser() {
-        super(GCC_WARNING_PATTERN, "GNU compiler (gcc)");
+        super(Messages._Warnings_gcc3_ParserName(),
+                Messages._Warnings_gcc3_LinkName(),
+                Messages._Warnings_gcc3_TrendName(),
+                GCC_WARNING_PATTERN);
     }
 
-    /** {@inheritDoc} */
+    @Override
+    protected String getId() {
+        return "GNU compiler (gcc)";
+    }
+
     @Override
     protected Warning createWarning(final Matcher matcher) {
         if (StringUtils.isNotBlank(matcher.group(7))) {
-            return new Warning(matcher.group(8), 0, WARNING_TYPE,
-                    LINKER_ERROR, matcher.group(7), Priority.HIGH);
+            return createWarning(matcher.group(8), 0, LINKER_ERROR, matcher.group(7), Priority.HIGH);
         }
         Priority priority;
         String fileName = matcher.group(1);
@@ -54,20 +55,13 @@ public class GccParser extends RegexpLineParser {
             if (matcher.group(4).contains("instantiated from here")) {
                 return FALSE_POSITIVE;
             }
-            priority = Priority.HIGH;
-            String category = GCC_ERROR;
-            return new Warning(fileName, getLineNumber(matcher.group(2)), WARNING_TYPE,
-                   category, matcher.group(4), priority);
+            return createWarning(fileName, getLineNumber(matcher.group(2)), GCC_ERROR, matcher.group(4), Priority.HIGH);
         }
         else {
-            priority = Priority.HIGH;
-            String category = GCC_ERROR;
-            return new Warning(fileName, 0, WARNING_TYPE,
-                    category, matcher.group(5), priority);
+            return createWarning(fileName, 0, GCC_ERROR, matcher.group(5), Priority.HIGH);
         }
         String category = "GCC " + matcher.group(3);
-        return new Warning(fileName, getLineNumber(matcher.group(2)), WARNING_TYPE,
-                category, matcher.group(6), priority);
+        return createWarning(fileName, getLineNumber(matcher.group(2)), category, matcher.group(6), priority);
     }
 }
 

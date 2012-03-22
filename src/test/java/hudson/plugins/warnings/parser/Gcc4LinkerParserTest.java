@@ -15,7 +15,7 @@ import org.junit.Test;
  */
 public class Gcc4LinkerParserTest extends ParserTester {
     private static final String WARNING_CATEGORY = Gcc4LinkerParser.WARNING_CATEGORY;
-    private static final String WARNING_TYPE = Gcc4LinkerParser.WARNING_TYPE;
+    private static final String WARNING_TYPE = new Gcc4LinkerParser().getGroup();
     private static final String THERE_ARE_WARNINGS_FOUND = "There are warnings found";
 
     /**

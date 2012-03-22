@@ -14,6 +14,8 @@ import org.junit.Test;
  * Tests the class {@link ErlcParser}.
  */
 public class ErlcParserTest extends ParserTester {
+    private static final String TYPE = new ErlcParser().getGroup();
+
     /**
      * Parses a file with two Erlc warnings.
      *
@@ -32,13 +34,13 @@ public class ErlcParserTest extends ParserTester {
                 125,
                 "variable 'Name' is unused",
                 "./test.erl",
-                ErlcParser.WARNING_TYPE, "ERLC Warning", Priority.NORMAL);
+                TYPE, "Warning", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 175,
                 "record 'Extension' undefined",
                 "./test2.erl",
-                ErlcParser.WARNING_TYPE, "ERLC Error", Priority.HIGH);
+                TYPE, "Error", Priority.HIGH);
     }
 
     /** {@inheritDoc} */

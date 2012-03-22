@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Locale;
 
 import junit.framework.Assert;
 
@@ -18,6 +19,8 @@ import org.junit.Test;
  * Tests the class {@link AntJavacParser}.
  */
 public class AntJavacParserTest extends ParserTester {
+    private static final String WARNING_TYPE = Messages._Warnings_JavaParser_ParserName().toString(Locale.ENGLISH);
+
     /**
      * Parses a file with two deprecation warnings.
      *
@@ -36,7 +39,7 @@ public class AntJavacParserTest extends ParserTester {
                 28,
                 "begrussen() in ths.types.IGruss has been deprecated",
                 "C:/Users/tiliven/.hudson/jobs/Hello THS Trunk - compile/workspace/HelloTHSTest/src/ths/Hallo.java",
-                AntJavacParser.WARNING_TYPE, "Deprecation", Priority.NORMAL);
+                WARNING_TYPE, "Deprecation", Priority.NORMAL);
     }
 
     /**
@@ -57,12 +60,12 @@ public class AntJavacParserTest extends ParserTester {
                 86,
                 "non-varargs call of varargs method with inexact argument type for last parameter;",
                 "/home/hudson/hudson/data/jobs/Mockito/workspace/trunk/test/org/mockitousage/misuse/DescriptiveMessagesOnMisuseTest.java",
-                AntJavacParser.WARNING_TYPE, "", Priority.NORMAL);
+                WARNING_TYPE, "", Priority.NORMAL);
         checkWarning(iterator.next(),
                 51,
                 "<T>stubVoid(T) in org.mockito.Mockito has been deprecated",
                 "/home/hudson/hudson/data/jobs/Mockito/workspace/trunk/test/org/mockitousage/stubbing/StubbingWithThrowablesTest.java",
-                AntJavacParser.WARNING_TYPE, RegexpParser.DEPRECATION, Priority.NORMAL);
+                WARNING_TYPE, RegexpParser.DEPRECATION, Priority.NORMAL);
     }
 
     /**
@@ -83,7 +86,7 @@ public class AntJavacParserTest extends ParserTester {
                 0,
                 "bad path element \"C:\\...\\.hudson\\jobs\\...\\log4j.jar\": no such file or directory",
                 "C:/.../.hudson/jobs/.../log4j.jar",
-                AntJavacParser.WARNING_TYPE, "Path", Priority.NORMAL);
+                WARNING_TYPE, "Path", Priority.NORMAL);
     }
 
     /**
@@ -136,7 +139,7 @@ public class AntJavacParserTest extends ParserTester {
                 225,
                 "loadAvailable(java.lang.String,int,int,java.lang.String[]) in my.OtherClass has been deprecated",
                 "D:/path/to/my/Class.java",
-                AntJavacParser.WARNING_TYPE, "Deprecation", Priority.NORMAL);
+                WARNING_TYPE, "Deprecation", Priority.NORMAL);
     }
 
     /**

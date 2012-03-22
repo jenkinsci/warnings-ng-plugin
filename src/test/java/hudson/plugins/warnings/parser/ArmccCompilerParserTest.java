@@ -8,14 +8,15 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 /**
  * Tests the class {@link ArmccCompilerParser}.
  */
 public class ArmccCompilerParserTest extends ParserTester {
-    private static final String WARNING_CATEGORY = ArmccCompilerParser.WARNING_CATEGORY;
-    private static final String WARNING_TYPE = ArmccCompilerParser.WARNING_TYPE;
+    private static final String WARNING_CATEGORY = StringUtils.EMPTY;
+    private static final String WARNING_TYPE = new ArmccCompilerParser().getGroup();
 
     /**
      * Detects three ARMCC warnings.

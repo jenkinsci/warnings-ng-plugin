@@ -14,6 +14,7 @@ import org.junit.Test;
  * Tests the class {@link TnsdlParser}.
  */
 public class TnsdlParserTest extends ParserTester {
+    private static final String TYPE = new TnsdlParser().getGroup();
     private static final String WARNING_CATEGORY = TnsdlParser.WARNING_CATEGORY;
 
     /**
@@ -34,28 +35,28 @@ public class TnsdlParserTest extends ParserTester {
                 398,
                 "unused variable sender_pid",
                 "tstmasgx.sdl",
-                TnsdlParser.WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
+                TYPE, WARNING_CATEGORY, Priority.NORMAL);
         annotation = iterator.next();
 
         checkWarning(annotation,
                 399,
                 "unused variable a_sender_pid",
                 "tstmasgx.sdl",
-                TnsdlParser.WARNING_TYPE, WARNING_CATEGORY, Priority.HIGH);
+                TYPE, WARNING_CATEGORY, Priority.HIGH);
         annotation = iterator.next();
 
         checkWarning(annotation,
                 3,
                 "Id. length is reserved in PL/M 386 intrinsics",
                 "s_dat:dty0132c.sdt",
-                TnsdlParser.WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
+                TYPE, WARNING_CATEGORY, Priority.NORMAL);
         annotation = iterator.next();
 
         checkWarning(annotation,
                 4,
                 "Id. length is reserved in PL/M 386 intrinsics",
                 "s_dat:dty0132c.sdt",
-                TnsdlParser.WARNING_TYPE, WARNING_CATEGORY, Priority.HIGH);
+                TYPE, WARNING_CATEGORY, Priority.HIGH);
 
     }
 

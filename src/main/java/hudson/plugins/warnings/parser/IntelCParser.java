@@ -13,19 +13,23 @@ import org.apache.commons.lang.StringUtils;
  */
 public class IntelCParser extends RegexpLineParser {
     private static final long serialVersionUID = 8409744276858003050L;
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "Intel";
-    /** Pattern of Intel compiler warnings. */
     private static final String INTEL_PATTERN = "^(.*)\\((\\d*)\\)?:.*((?:remark|warning|error)\\s*#*\\d*)\\s*:\\s*(.*)$";
 
     /**
-     * Creates a new instance of <code>InterCParser</code>.
+     * Creates a new instance of {@link IntelCParser}.
      */
     public IntelCParser() {
-        super(INTEL_PATTERN, "Intel compiler", true);
+        super(Messages._Warnings_IntelC_ParserName(),
+                Messages._Warnings_IntelC_LinkName(),
+                Messages._Warnings_IntelC_TrendName(),
+                INTEL_PATTERN, true);
     }
 
-    /** {@inheritDoc} */
+    @Override
+    protected String getId() {
+        return "Intel compiler";
+    }
+
     @Override
     protected boolean isLineInteresting(final String line) {
         return line.contains("warning")
@@ -33,7 +37,6 @@ public class IntelCParser extends RegexpLineParser {
                 || line.contains("remark");
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String category = StringUtils.capitalize(matcher.group(3));
@@ -49,8 +52,7 @@ public class IntelCParser extends RegexpLineParser {
             priority = Priority.NORMAL;
         }
 
-        return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE,
-                category, matcher.group(4), priority);
+        return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, matcher.group(4), priority);
     }
 }
 

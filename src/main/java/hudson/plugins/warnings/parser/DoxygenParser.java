@@ -6,8 +6,6 @@ import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
-
 /**
  * A parser for the Doxygen warnings.
  *
@@ -16,10 +14,7 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  */
 public class DoxygenParser extends RegexpDocumentParser {
     private static final long serialVersionUID = -6770174143703245309L;
-    /** A Doxygen warning. */
-    static final String WARNING_CATEGORY = "Doxygen warning";
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "doxygen";
+
     /**
      * Pattern of Doxygen warnings.
      * Here are explanations of this fairly complex (yet efficient) pattern.
@@ -81,13 +76,15 @@ public class DoxygenParser extends RegexpDocumentParser {
     private static final int GLOBAL_MESSAGE_GROUP = 7;
 
     /**
-     * Creates a new instance of <code>DoxygenParser</code>.
+     * Creates a new instance of {@link DoxygenParser}.
      */
     public DoxygenParser() {
-        super(DOXYGEN_WARNING_PATTERN, true, "Doxygen");
+        super(Messages._Warnings_Doxygen_ParserName(),
+                Messages._Warnings_Doxygen_LinkName(),
+                Messages._Warnings_Doxygen_TrendName(),
+                DOXYGEN_WARNING_PATTERN, true);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String message;
@@ -121,7 +118,7 @@ public class DoxygenParser extends RegexpDocumentParser {
             // should never happen
         }
 
-        return new Warning(fileName, lineNumber, WARNING_TYPE, WARNING_CATEGORY, message, priority);
+        return createWarning(fileName, lineNumber, message, priority);
     }
 
     /**
@@ -132,22 +129,19 @@ public class DoxygenParser extends RegexpDocumentParser {
      *            expression group matching it in the warnings output.
      * @return the priority
      */
-    @SuppressWarnings("DB")
     private Priority parsePriority(final String warningTypeString) {
-        Priority priority;
         if (StringUtils.equalsIgnoreCase(warningTypeString, "notice")) {
-            priority = Priority.LOW;
+            return Priority.LOW;
         }
         else if (StringUtils.equalsIgnoreCase(warningTypeString, "warning")) {
-            priority = Priority.NORMAL;
+            return Priority.NORMAL;
         }
         else if (StringUtils.equalsIgnoreCase(warningTypeString, "error")) {
-            priority = Priority.HIGH;
+            return Priority.HIGH;
         }
         else {
             // empty label or other unexpected input
-            priority = Priority.HIGH;
+            return Priority.HIGH;
         }
-        return priority;
     }
 }

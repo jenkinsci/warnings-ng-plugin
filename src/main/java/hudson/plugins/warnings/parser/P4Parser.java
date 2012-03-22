@@ -12,8 +12,6 @@ import java.util.regex.Matcher;
 public class P4Parser extends RegexpLineParser {
     private static final long serialVersionUID = -8106854254745366432L;
 
-    static final String WARNING_TYPE = "Perforce Compiler";
-
     private static final String ALREADY_OPENED = "already opened for edit";
     private static final String CANT_ADD = "can't add existing file";
     private static final String WARNING_ADD_OF = "warning: add of existing file";
@@ -30,21 +28,17 @@ public class P4Parser extends RegexpLineParser {
                                                             + NOTHING_CHANGED
                                                             + ")"
                                                             + "(.*)$";
+
     /**
      * Creates a new instance of {@link P4Parser}.
      */
     public P4Parser() {
-        super(PERFORCE_WARNING_PATTERN, WARNING_TYPE, true);
+        super(Messages._Warnings_Perforce_ParserName(),
+                Messages._Warnings_Perforce_LinkName(),
+                Messages._Warnings_Perforce_TrendName(),
+                PERFORCE_WARNING_PATTERN, true);
     }
 
-    /**
-     * Creates a new annotation for the specified pattern.
-     *
-     * @param matcher
-     *            the regular expression matcher
-     * @return a new annotation for the specified pattern
-     *
-     */
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String category = matcher.group(2).trim();
@@ -54,10 +48,9 @@ public class P4Parser extends RegexpLineParser {
         if (category.contains(ALREADY_OPENED) || category.equals(NOTHING_CHANGED)) {
             p = Priority.LOW;
         }
-        return new Warning(fileName, 0, WARNING_TYPE, category, message, p);
+        return createWarning(fileName, 0, category, message, p);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected boolean isLineInteresting(final String line) {
         return line.contains(" - ");

@@ -12,9 +12,9 @@ public class DynamicDocumentParserTest extends EclipseParserTest {
 
     /** {@inheritDoc} */
     @Override
-    protected WarningsParser createParser() {
+    protected AbstractWarningsParser createParser() {
         // CHECKSTYLE:OFF
-        return new DynamicDocumentParser("Eclipse Dynamic",
+        return new DynamicDocumentParser(TYPE,
                 "(WARNING|ERROR)\\s*in\\s*(.*)\\(at line\\s*(\\d+)\\).*(?:\\r?\\n[^\\^]*)+(?:\\r?\\n(.*)([\\^]+).*)\\r?\\n(?:\\s*\\[.*\\]\\s*)?(.*)",
                 "import hudson.plugins.warnings.parser.Warning\n" +
                 "import org.apache.commons.lang.StringUtils\n" +
@@ -36,7 +36,7 @@ public class DynamicDocumentParserTest extends EclipseParserTest {
                 "int columnEnd = columnStart + matcher.group(5).length();\n" +
                 "warning.setColumnPosition(columnStart, columnEnd);\n" +
                 "\n" +
-                "        return warning;\n");
+                "        return warning;\n", TYPE, TYPE);
         // CHECKSTYLE:ON
     }
 

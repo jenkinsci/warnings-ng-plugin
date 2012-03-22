@@ -14,6 +14,8 @@ import org.junit.Test;
  * Tests the class {@link GhsMultiParser}.
  */
 public class GhsMultiParserTest extends ParserTester {
+    private static final String TYPE = new GhsMultiParser().getGroup();
+
     /**
      * Parses a file with two deprecation warnings.
      *
@@ -30,17 +32,17 @@ public class GhsMultiParserTest extends ParserTester {
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation, 37,
                 "transfer of control bypasses initialization of:\n            variable \"CF_TRY_FLAG\" (declared at line 42)\n            variable \"CF_EXCEPTION_NOT_CAUGHT\" (declared at line 42)\n        CF_TRY_CHECK_EX(ex2);",
-                "/maindir/tests/TestCase_0101.cpp\"", GhsMultiParser.WARNING_TYPE, "#546-D",
+                "/maindir/tests/TestCase_0101.cpp\"", TYPE, "#546-D",
                 Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation, 29,
                 "label\n          \"CF_TRY_LABELex1\" was declared but never referenced\n     CF_TRY_EX(ex1)",
-                "/maindir/tests/TestCase_0101.cpp\"", GhsMultiParser.WARNING_TYPE, "#177-D",
+                "/maindir/tests/TestCase_0101.cpp\"", TYPE, "#177-D",
                 Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation, 9,
                 "extra\n          \";\" ignored\n  TEST_DSS( CHECK_4TH_CONFIG_DATA, 18, 142, 'F');",
-                "/maindir/tests/TestCase_1601.cpp\"", GhsMultiParser.WARNING_TYPE, "#381-D",
+                "/maindir/tests/TestCase_1601.cpp\"", TYPE, "#381-D",
                 Priority.NORMAL);
     }
 

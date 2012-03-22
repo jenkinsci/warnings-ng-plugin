@@ -11,19 +11,24 @@ import java.util.regex.Matcher;
  */
 public class ErlcParser extends RegexpLineParser {
     private static final long serialVersionUID = 8986478184830773892L;
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "erlc";
     /** Pattern of erlc compiler warnings. */
     private static final String ERLC_WARNING_PATTERN = "^(.+\\.(?:erl|yrl|mib|bin|rel|asn1|idl)):(\\d*): ([wW]arning: )?(.+)$";
 
     /**
-     * Creates a new instance of <code>ErlcCompileParser</code>.
+     * Creates a new instance of {@link ErlcParser}.
      */
     public ErlcParser() {
-        super(ERLC_WARNING_PATTERN, "Erlang Compiler");
+        super(Messages._Warnings_Erlang_ParserName(),
+                Messages._Warnings_Erlang_LinkName(),
+                Messages._Warnings_Erlang_TrendName(),
+                ERLC_WARNING_PATTERN);
     }
 
-    /** {@inheritDoc} */
+    @Override
+    protected String getId() {
+        return "Erlang Compiler";
+    }
+
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String filename = matcher.group(1);
@@ -35,13 +40,13 @@ public class ErlcParser extends RegexpLineParser {
 
         if ("warning: ".equalsIgnoreCase(categoryMatch)) {
             priority = Priority.NORMAL;
-            category = "ERLC " + categoryMatch.substring(0, categoryMatch.length() - 2);
+            category = categoryMatch.substring(0, categoryMatch.length() - 2);
         }
         else {
             priority = Priority.HIGH;
-            category = "ERLC Error";
+            category = "Error";
         }
-        return new Warning(filename, linenumber, WARNING_TYPE, category, message, priority);
+        return createWarning(filename, linenumber, category, message, priority);
     }
 }
 

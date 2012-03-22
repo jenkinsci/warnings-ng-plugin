@@ -11,29 +11,31 @@ import java.util.regex.Matcher;
  */
 public class CoolfluxChessccParser extends RegexpLineParser {
     private static final long serialVersionUID = 4742509996511002391L;
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "Coolflux DSP Compiler (chesscc)";
-    /** Pattern of Intel compiler warnings. */
     private static final String CHESSCC_PATTERN = "^.*?Warning in \"([^\"]+)\", line (\\d+),.*?:\\s*(.*)$";
 
     /**
-     * Creates a new instance of <code>InterCParser</code>.
+     * Creates a new instance of {@link CoolfluxChessccParser}.
      */
     public CoolfluxChessccParser() {
-        super(CHESSCC_PATTERN, "Coolflux DSP Compiler", true);
+        super(Messages._Warnings_Coolflux_ParserName(),
+                Messages._Warnings_Coolflux_LinkName(),
+                Messages._Warnings_Coolflux_TrendName(),
+                CHESSCC_PATTERN, true);
     }
 
-    /** {@inheritDoc} */
+    @Override
+    protected String getId() {
+        return "Coolflux DSP Compiler";
+    }
+
     @Override
     protected boolean isLineInteresting(final String line) {
         return line.contains("Warning");
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE,
-                "Warning", matcher.group(3), Priority.HIGH);
+        return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), matcher.group(3), Priority.HIGH);
     }
 }
 

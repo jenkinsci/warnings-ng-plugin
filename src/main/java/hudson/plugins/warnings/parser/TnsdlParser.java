@@ -11,33 +11,24 @@ import java.util.regex.Matcher;
  */
 public class TnsdlParser extends RegexpLineParser {
     private static final long serialVersionUID = -7740789998865369930L;
-    /** A TNSDL Translator error. */
-    static final String WARNING_CATEGORY = "Tnsdl Error";
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "TNSDL Translator";
-    /** Pattern of tnsdl translator warnings. */
+    static final String WARNING_CATEGORY = "Error";
     private static final String TNSDL_WARNING_PATTERN = "^tnsdl((.*)?):\\(.*\\) (.*) \\((.*)\\):(.*)$";
 
     /**
-     * Creates a new instance of <code>TnsdlParser</code>.
+     * Creates a new instance of {@link TnsdlParser}.
      */
     public TnsdlParser() {
-        super(TNSDL_WARNING_PATTERN, WARNING_TYPE, true);
+        super(Messages._Warnings_TNSDL_ParserName(),
+                Messages._Warnings_TNSDL_LinkName(),
+                Messages._Warnings_TNSDL_TrendName(),
+                TNSDL_WARNING_PATTERN, true);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected boolean isLineInteresting(final String line) {
         return line.contains("tnsdl");
     }
 
-    /**
-     * Creates a new annotation for the specified pattern.
-     *
-     * @param matcher
-     *            the regular expression matcher
-     * @return a new annotation for the specified pattern
-     */
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String fileName = matcher.group(3);
@@ -52,7 +43,7 @@ public class TnsdlParser extends RegexpLineParser {
             priority = Priority.NORMAL;
         }
 
-        return new Warning(fileName, lineNumber, WARNING_TYPE, WARNING_CATEGORY, message, priority);
+        return createWarning(fileName, lineNumber, WARNING_CATEGORY, message, priority);
     }
 }
 

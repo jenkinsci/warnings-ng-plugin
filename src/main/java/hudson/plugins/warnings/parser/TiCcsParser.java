@@ -13,19 +13,18 @@ import org.apache.commons.lang.StringUtils;
  */
 public class TiCcsParser extends RegexpLineParser {
     private static final long serialVersionUID = -8253481365175984661L;
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "TiCcs";
-    /** Pattern of TiCcs compiler warnings. */
     private static final String TI_CCS_WARNING_PATTERN = "^((\"(.*)\",\\s*)(line\\s*(\\d+)(\\s*\\(.*\\))?:)?\\s*)?(WARNING|ERROR|remark|warning|(fatal\\s*)?error)(!\\s*at line\\s(\\d+))?\\s*([^:]*)\\s*:\\s*(.*)$";
 
     /**
-     * Creates a new instance of <code>TiCcsParser</code>.
+     * Creates a new instance of {@link TiCcsParser}.
      */
     public TiCcsParser() {
-        super(TI_CCS_WARNING_PATTERN, "Texas Instruments Code Composer Studio (C/C++)");
+        super(Messages._Warnings_TexasI_ParserName(),
+                Messages._Warnings_TexasI_LinkName(),
+                Messages._Warnings_TexasI_TrendName(),
+                TI_CCS_WARNING_PATTERN);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Warning createWarning(final Matcher matcher) {
         Priority priority;
@@ -46,7 +45,7 @@ public class TiCcsParser extends RegexpLineParser {
         if (StringUtils.isBlank(lineNumber)) {
             lineNumber = matcher.group(10);
         }
-        return new Warning(fileName, getLineNumber(lineNumber), WARNING_TYPE, matcher.group(11), matcher.group(12), priority);
+        return createWarning(fileName, getLineNumber(lineNumber), matcher.group(11), matcher.group(12), priority);
     }
 
     /**

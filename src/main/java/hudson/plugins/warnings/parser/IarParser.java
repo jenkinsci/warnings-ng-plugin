@@ -12,9 +12,6 @@ import java.util.regex.Matcher;
 public class IarParser extends RegexpDocumentParser {
     private static final long serialVersionUID = 7695540852439013425L;
 
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "IAR";
-
     /**
      * Pattern of IAR compiler warnings.
      *
@@ -31,17 +28,21 @@ public class IarParser extends RegexpDocumentParser {
      * Creates a new instance of <code>IarParser</code>.
      */
     public IarParser() {
-        super(IAR_WARNING_PATTERN, true, "IAR compiler (C/C++)");
+        super(Messages._Warnings_iar_ParserName(),
+                Messages._Warnings_iar_LinkName(),
+                Messages._Warnings_iar_TrendName(),
+                IAR_WARNING_PATTERN, true);
     }
 
-    /** {@inheritDoc} */
+    @Override
+    protected String getId() {
+        return "IAR compiler (C/C++)";
+    }
+
     @Override
     protected Warning createWarning(final Matcher matcher) {
         Priority priority;
-        /**
-         * Note: we normalize all white spaces at the message text!
-         */
-        String message = matcher.group(5).replaceAll("\\s+", " ");
+        String message = normalizeWhitespaceInMessage(matcher.group(5));
         if ("remark".equalsIgnoreCase(matcher.group(3))) {
             priority = Priority.LOW;
         }
@@ -54,9 +55,13 @@ public class IarParser extends RegexpDocumentParser {
         else {
             priority = Priority.HIGH;
             String category = "IAR Error";
-            return new Warning(matcher.group(1), 0, WARNING_TYPE, category, message, priority);
+            return new Warning(matcher.group(1), 0, getGroup(), category, message, priority);
         }
         String category = matcher.group(4);
-        return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE, category, message, priority);
+        return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, message, priority);
+    }
+
+    private String normalizeWhitespaceInMessage(final String message) {
+        return message.replaceAll("\\s+", " ");
     }
 }

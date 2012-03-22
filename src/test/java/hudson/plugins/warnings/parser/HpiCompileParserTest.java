@@ -7,6 +7,7 @@ import hudson.plugins.analysis.util.model.Priority;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Locale;
 
 import org.junit.Test;
 
@@ -14,6 +15,8 @@ import org.junit.Test;
  * Tests the class {@link AntJavacParser} for output log of a HPI compile.
  */
 public class HpiCompileParserTest extends ParserTester {
+    private static final String WARNING_TYPE = Messages._Warnings_JavaParser_ParserName().toString(Locale.ENGLISH);
+
     /**
      * Parses a file with two deprecation warnings.
      *
@@ -32,13 +35,13 @@ public class HpiCompileParserTest extends ParserTester {
                 46,
                 "newInstance(org.kohsuke.stapler.StaplerRequest) in hudson.model.Descriptor has been deprecated",
                 "C:/Build/Results/jobs/ADT-Base/workspace/tasks/src/main/java/hudson/plugins/tasks/TasksDescriptor.java",
-                AntJavacParser.WARNING_TYPE, "Deprecation", Priority.NORMAL);
+                WARNING_TYPE, "Deprecation", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 34,
                 "newInstance(org.kohsuke.stapler.StaplerRequest) in hudson.model.Descriptor has been deprecated",
                 "C:/Build/Results/jobs/ADT-Base/workspace/tasks/src/main/java/hudson/plugins/tasks/TasksReporterDescriptor.java",
-                AntJavacParser.WARNING_TYPE, "Deprecation", Priority.NORMAL);
+                WARNING_TYPE, "Deprecation", Priority.NORMAL);
     }
 
     /** {@inheritDoc} */

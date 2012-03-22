@@ -8,13 +8,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.jvnet.localizer.Localizable;
 
 /**
  * Parses an input stream for compiler warnings using the provided regular expression.
  *
  * @author Ulli Hafner
  */
-public abstract class RegexpParser implements WarningsParser {
+@SuppressWarnings("deprecation")
+public abstract class RegexpParser extends AbstractWarningsParser implements WarningsParser {
     private static final long serialVersionUID = -82635675595933170L;
 
     /** Used to define a false positive warnings that should be excluded after the regular expression scan. */
@@ -25,13 +27,17 @@ public abstract class RegexpParser implements WarningsParser {
     protected static final String PROPRIETARY_API = "Proprietary API";
     /** Pattern identifying an ant task debug output prefix. */
     protected static final String ANT_TASK = "^(?:.*\\[.*\\])?\\s*";
+
     /** Pattern of compiler warnings. */
-    private final Pattern pattern;
-    /** Name of this parser. */
-    private String name;
+    private Pattern pattern;
+
+    /** {@inheritDoc} */
+    public String getName() {
+        return getParserName();
+    }
 
     /**
-     * Creates a new instance of <code>RegexpParser</code>. Uses a single line matcher.
+     * Creates a new instance of {@link RegexpParser}. Uses a single line matcher.
      *
      * @param warningPattern
      *            pattern of compiler warnings.
@@ -43,7 +49,7 @@ public abstract class RegexpParser implements WarningsParser {
     }
 
     /**
-     * Creates a new instance of <code>RegexpParser</code>.
+     * Creates a new instance of {@link RegexpParser}.
      *
      * @param warningPattern
      *            pattern of compiler warnings.
@@ -57,13 +63,42 @@ public abstract class RegexpParser implements WarningsParser {
      *            name of the parser
      */
     public RegexpParser(final String warningPattern, final boolean useMultiLine, final String name) {
-        this.name = name;
+        super(name);
+
+        setPattern(warningPattern, useMultiLine);
+    }
+
+    private void setPattern(final String warningPattern, final boolean useMultiLine) {
         if (useMultiLine) {
             pattern = Pattern.compile(warningPattern, Pattern.MULTILINE);
         }
         else {
             pattern = Pattern.compile(warningPattern);
         }
+    }
+
+    /**
+     * Creates a new instance of {@link RegexpParser}.
+     * @param parserName
+     *            name of the parser
+     * @param linkName
+     *            name of the project action link
+     * @param trendName
+     *            name of the trend graph
+     * @param warningPattern
+     *            pattern of compiler warnings.
+     * @param useMultiLine
+     *            Enables multi line mode. In multi line mode the expressions
+     *            <tt>^</tt> and <tt>$</tt> match just after or just before,
+     *            respectively, a line terminator or the end of the input
+     *            sequence. By default these expressions only match at the
+     *            beginning and the end of the entire input sequence.
+     */
+    public RegexpParser(final Localizable parserName, final Localizable linkName, final Localizable trendName,
+            final String warningPattern, final boolean useMultiLine) {
+        super(parserName, linkName, trendName);
+
+        setPattern(warningPattern, useMultiLine);
     }
 
     /**
@@ -103,27 +138,6 @@ public abstract class RegexpParser implements WarningsParser {
         }
     }
 
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    /** {@inheritDoc} */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the name to the specified value.
-     *
-     * @param name the value to set
-     */
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     /**
      * Creates a new annotation for the specified pattern. This method is called
      * for each matching line in the specified file. If a match is a false
@@ -137,10 +151,12 @@ public abstract class RegexpParser implements WarningsParser {
     protected abstract Warning createWarning(final Matcher matcher);
 
     /**
-     * Converts a string line number to an integer value. If the string is not a valid line number,
-     * then 0 is returned which indicates a warning at the top of the file.
+     * Converts a string line number to an integer value. If the string is not a
+     * valid line number, then 0 is returned which indicates a warning at the
+     * top of the file.
      *
-     * @param lineNumber the line number (as a string)
+     * @param lineNumber
+     *            the line number (as a string)
      * @return the line number
      */
     protected final int getLineNumber(final String lineNumber) {
@@ -156,9 +172,11 @@ public abstract class RegexpParser implements WarningsParser {
     }
 
     /**
-     * Classifies the warning message: tries to guess a category from the warning message.
+     * Classifies the warning message: tries to guess a category from the
+     * warning message.
      *
-     * @param message the message to check
+     * @param message
+     *            the message to check
      * @return warning category, empty string if unknown
      */
     protected String classifyWarning(final String message) {

@@ -14,6 +14,8 @@ import org.junit.Test;
  * Tests the class {@link BuckminsterParser}.
  */
 public class BuckminsterParserTest extends ParserTester {
+    private static final String TYPE = new BuckminsterParser().getGroup();
+
     /**
      * Parses a file with three Buckminster warnings.
      *
@@ -32,19 +34,19 @@ public class BuckminsterParserTest extends ParserTester {
                 43,
                 "ArrayList is a raw type. References to generic type ArrayList<E> should be parameterized",
                 "/var/lib/hudson/jobs/MailApp/workspace/plugins/org.eclipse.buckminster.tutorial.mailapp/src/org/eclipse/buckminster/tutorial/mailapp/NavigationView.java",
-                BuckminsterParser.WARNING_TYPE, "", Priority.NORMAL);
+                TYPE, "", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 57,
                 "Type safety: The method toArray(Object[]) belongs to the raw type ArrayList. References to generic type ArrayList<E> should be parameterized",
                 "/var/lib/hudson/jobs/MailApp/workspace/plugins/org.eclipse.buckminster.tutorial.mailapp/src/org/eclipse/buckminster/tutorial/mailapp/NavigationView.java",
-                BuckminsterParser.WARNING_TYPE, "", Priority.HIGH);
+                TYPE, "", Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 0,
                 "Build path specifies execution environment J2SE-1.5. There are no JREs installed in the workspace that are strictly compatible with this environment.",
                 "/var/lib/hudson/jobs/MailApp/workspace/plugins/org.eclipse.buckminster.tutorial.mailapp",
-                BuckminsterParser.WARNING_TYPE, "", Priority.NORMAL);
+                TYPE, "", Priority.NORMAL);
     }
 
     /** {@inheritDoc} */

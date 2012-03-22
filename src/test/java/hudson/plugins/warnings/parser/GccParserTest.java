@@ -14,6 +14,7 @@ import org.junit.Test;
  * Tests the class {@link GccParser}.
  */
 public class GccParserTest extends ParserTester {
+    private static final String TYPE = new GccParser().getGroup();
     private static final String GCC_ERROR = GccParser.GCC_ERROR;
     private static final String GCC_WARNING = "GCC warning";
 
@@ -32,7 +33,7 @@ public class GccParserTest extends ParserTester {
         FileAnnotation annotation = warnings.iterator().next();
         checkWarning(annotation, 52, "large integer implicitly truncated to unsigned type",
                 "src/test_simple_sgs_message.cxx",
-                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+                TYPE, GCC_WARNING, Priority.NORMAL);
     }
 
     /**
@@ -53,49 +54,49 @@ public class GccParserTest extends ParserTester {
                 451,
                 "`void yyunput(int, char*)' defined but not used",
                 "testhist.l",
-                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+                TYPE, GCC_WARNING, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 73,
                 "implicit typename is deprecated, please see the documentation for details",
                 "/u1/drjohn/bfdist/packages/RegrTest/V00-03-01/RgtAddressLineScan.cc",
-                GccParser.WARNING_TYPE, GCC_ERROR, Priority.HIGH);
+                TYPE, GCC_ERROR, Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 4,
                 "foo.h: No such file or directory",
                 "foo.cc",
-                GccParser.WARNING_TYPE, GCC_ERROR, Priority.HIGH);
+                TYPE, GCC_ERROR, Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 0,
                 "undefined reference to 'missing_symbol'",
                 "foo.so",
-                GccParser.WARNING_TYPE, GCC_ERROR, Priority.HIGH);
+                TYPE, GCC_ERROR, Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 678,
                 "missing initializer for member sigaltstack::ss_sp",
                 "../../lib/linux-i686/include/boost/test/impl/execution_monitor.ipp",
-                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+                TYPE, GCC_WARNING, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 678,
                 "missing initializer for member sigaltstack::ss_flags",
                 "../../lib/linux-i686/include/boost/test/impl/execution_monitor.ipp",
-                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+                TYPE, GCC_WARNING, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 678,
                 "missing initializer for member sigaltstack::ss_size",
                 "../../lib/linux-i686/include/boost/test/impl/execution_monitor.ipp",
-                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+                TYPE, GCC_WARNING, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 52,
                 "large integer implicitly truncated to unsigned type",
                 "src/test_simple_sgs_message.cxx",
-                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+                TYPE, GCC_WARNING, Priority.NORMAL);
     }
 
     /**
@@ -115,17 +116,17 @@ public class GccParserTest extends ParserTester {
                 12,
                 "file.h: No such file or directory",
                 "/dir1/dir2/file.c",
-                GccParser.WARNING_TYPE, GccParser.GCC_ERROR, Priority.HIGH);
+                TYPE, GccParser.GCC_ERROR, Priority.HIGH);
         checkWarning(iterator.next(),
                 233,
                 "undefined reference to `MyInterface::getValue() const'",
                 "/dir1/dir3/file.cpp",
-                GccParser.WARNING_TYPE, GccParser.GCC_ERROR, Priority.HIGH);
+                TYPE, GccParser.GCC_ERROR, Priority.HIGH);
         checkWarning(iterator.next(),
                 20,
                 "invalid preprocessing directive #incldue",
                 "/dir1/dir2/file.cpp",
-                GccParser.WARNING_TYPE, GccParser.GCC_ERROR, Priority.HIGH);
+                TYPE, GccParser.GCC_ERROR, Priority.HIGH);
     }
 
     /**
@@ -145,12 +146,12 @@ public class GccParserTest extends ParserTester {
                 352,
                 "'s2.mepSector2::lubrications' may be used",
                 "main/mep.cpp",
-                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+                TYPE, GCC_WARNING, Priority.NORMAL);
         checkWarning(iterator.next(),
                 1477,
                 "'s2.mepSector2::lubrications' was declared here",
                 "main/mep.cpp",
-                GccParser.WARNING_TYPE, "GCC note", Priority.LOW);
+                TYPE, "GCC note", Priority.LOW);
     }
 
     /**
@@ -184,7 +185,7 @@ public class GccParserTest extends ParserTester {
                 1128,
                 "NULL used in arithmetic",
                 "/Users/rthomson/hudson/jobs/Bryce7-MacWarnings/workspace/bryce7/src/Bryce/Plugins/3DSExport/3DSExport.cpp",
-                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+                TYPE, GCC_WARNING, Priority.NORMAL);
     }
 
     /**
@@ -204,7 +205,7 @@ public class GccParserTest extends ParserTester {
                 0,
                 "cannot find -lMyLib",
                 "MyLib",
-                GccParser.WARNING_TYPE, GccParser.LINKER_ERROR, Priority.HIGH);
+                TYPE, GccParser.LINKER_ERROR, Priority.HIGH);
     }
 
     /**
@@ -224,22 +225,22 @@ public class GccParserTest extends ParserTester {
                 638,
                 "local declaration of \"command\" hides instance variable",
                 "folder1/file1.m",
-                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+                TYPE, GCC_WARNING, Priority.NORMAL);
         checkWarning(iterator.next(),
                 640,
                 "instance variable \"command\" accessed in class method",
                 "folder1/file1.m",
-                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+                TYPE, GCC_WARNING, Priority.NORMAL);
         checkWarning(iterator.next(),
                 47,
                 "\"oldGeb\" might be used uninitialized in this function",
                 "file1.m",
-                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+                TYPE, GCC_WARNING, Priority.NORMAL);
         checkWarning(iterator.next(),
                 640,
                 "local declaration of \"command\" hides instance variable",
                 "file1.m",
-                GccParser.WARNING_TYPE, GCC_WARNING, Priority.NORMAL);
+                TYPE, GCC_WARNING, Priority.NORMAL);
     }
 
     /**

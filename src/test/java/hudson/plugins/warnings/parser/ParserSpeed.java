@@ -5,9 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
@@ -23,16 +21,14 @@ public class ParserSpeed {
      */
     @Test
     public void testAllParsersOnOneFile() throws IOException {
-        for (String parserName : ParserRegistry.getAvailableParsers()) {
-            Set<String> names = new HashSet<String>();
-            names.add(parserName);
-            List<WarningsParser> parsers = ParserRegistry.getParsers(names);
+        for (ParserDescription parser : ParserRegistry.getAvailableParsers()) {
+            List<AbstractWarningsParser> parsers = ParserRegistry.getParsers(parser.getGroup());
             ParserRegistry parserRegistry = createRegistry(parsers);
 
             long start = System.currentTimeMillis();
             parserRegistry.parse(new File(""));
             long end = System.currentTimeMillis();
-            System.out.println(parserName + ": " + (end-start) + "ms"); // NOCHECKSTYLE NOPMD
+            System.out.println(parser.getName() + ": " + (end-start) + "ms"); // NOCHECKSTYLE NOPMD
         }
     }
 
@@ -44,7 +40,7 @@ public class ParserSpeed {
      * @return the registry
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
-    private ParserRegistry createRegistry(final List<WarningsParser> parsers) {
+    private ParserRegistry createRegistry(final List<AbstractWarningsParser> parsers) {
         ParserRegistry parserRegistry = new ParserRegistry(parsers, "", StringUtils.EMPTY, StringUtils.EMPTY) {
             /** {@inheritDoc} */
             @Override

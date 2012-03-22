@@ -10,6 +10,7 @@ import java.util.Collection;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
+import org.jvnet.localizer.Localizable;
 
 /**
  * Parses an input stream line by line for compiler warnings using the provided
@@ -20,6 +21,7 @@ import org.apache.commons.io.LineIterator;
  */
 public abstract class RegexpLineParser extends RegexpParser {
     private static final long serialVersionUID = 5932670979793111138L;
+
     /**
      * Determines if a line is checked for a string existence before the regular
      * expression is applied.
@@ -36,7 +38,10 @@ public abstract class RegexpLineParser extends RegexpParser {
      *            pattern of compiler warnings.
      * @param name
      *            name of the parser
+     * @deprecated use
+     *             {@link #RegexpLineParser(Localizable, Localizable, Localizable, String, boolean)}
      */
+    @Deprecated
     public RegexpLineParser(final String warningPattern, final String name) {
         this(warningPattern, name, false);
     }
@@ -52,38 +57,78 @@ public abstract class RegexpLineParser extends RegexpParser {
      * @param isStringMatchActivated
      *            determines if a line is checked for a string existence before
      *            the regular expression is applied
+     * @deprecated use
+     *             {@link #RegexpLineParser(Localizable, Localizable, Localizable, String, boolean)}
      */
+    @Deprecated
     public RegexpLineParser(final String warningPattern, final String name, final boolean isStringMatchActivated) {
         super(warningPattern, name);
+
         this.isStringMatchActivated = isStringMatchActivated;
     }
 
     /**
-     * Parses the specified input stream for compiler warnings using the provided regular expression.
+     * Creates a new instance of {@link RegexpDocumentParser}.
      *
-     * @param file the file to parse
-     * @return the collection of annotations
-     *
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @param parserName
+     *            name of the parser
+     * @param linkName
+     *            name of the project action link
+     * @param trendName
+     *            name of the trend graph
+     * @param warningPattern
+     *            pattern of compiler warnings.
+     * @param isStringMatchActivated
+     *            determines if a line is checked for a string existence before
+     *            the regular expression is applied
      */
-    public Collection<FileAnnotation> parse(final Reader file) throws IOException {
+    public RegexpLineParser(final Localizable parserName, final Localizable linkName, final Localizable trendName,
+            final String warningPattern, final boolean isStringMatchActivated) {
+        super(parserName, linkName, trendName, warningPattern, false);
+
+        this.isStringMatchActivated = isStringMatchActivated;
+    }
+
+    /**
+     * Creates a new instance of {@link RegexpDocumentParser}.
+     *
+     * @param parserName
+     *            name of the parser
+     * @param linkName
+     *            name of the project action link
+     * @param trendName
+     *            name of the trend graph
+     * @param warningPattern
+     *            pattern of compiler warnings.
+     */
+    public RegexpLineParser(final Localizable parserName, final Localizable linkName, final Localizable trendName,
+            final String warningPattern) {
+        this(parserName, linkName, trendName, warningPattern, false);
+    }
+
+    @Override
+    public Collection<FileAnnotation> parse(final Reader file) throws IOException, ParsingCanceledException {
         ArrayList<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
 
         LineIterator iterator = IOUtils.lineIterator(file);
-        if (isStringMatchActivated) {
-            while (iterator.hasNext()) {
-                String line = getNextLine(iterator);
-                if (isLineInteresting(line)) {
-                    findAnnotations(line, warnings);
+        try {
+            if (isStringMatchActivated) {
+                while (iterator.hasNext()) {
+                    String line = getNextLine(iterator);
+                    if (isLineInteresting(line)) {
+                        findAnnotations(line, warnings);
+                    }
+                }
+            }
+            else {
+                while (iterator.hasNext()) {
+                    findAnnotations(getNextLine(iterator), warnings);
                 }
             }
         }
-        else {
-            while (iterator.hasNext()) {
-                findAnnotations(getNextLine(iterator), warnings);
-            }
+        finally {
+            iterator.close();
         }
-        iterator.close();
 
         return warnings;
     }

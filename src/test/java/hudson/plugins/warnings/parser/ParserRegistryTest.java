@@ -14,6 +14,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import junit.framework.Assert;
 
@@ -38,7 +39,7 @@ public class ParserRegistryTest {
      */
     @Test
     public void testOracleInvalidsParser() throws IOException {
-        List<WarningsParser> parsers = new ArrayList<WarningsParser>();
+        List<AbstractWarningsParser> parsers = new ArrayList<AbstractWarningsParser>();
         parsers.add(new InvalidsParser());
         ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, StringUtils.EMPTY, StringUtils.EMPTY, parsers);
 
@@ -60,7 +61,7 @@ public class ParserRegistryTest {
      */
     @Test
     public void testTwoParsers() throws IOException {
-        List<WarningsParser> parsers = new ArrayList<WarningsParser>();
+        List<AbstractWarningsParser> parsers = new ArrayList<AbstractWarningsParser>();
         parsers.add(new InvalidsParser());
         parsers.add(new JavaDocParser());
         ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, StringUtils.EMPTY, StringUtils.EMPTY, parsers);
@@ -109,14 +110,14 @@ public class ParserRegistryTest {
         Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED,  57, annotations.size());
     }
 
-    private List<WarningsParser> createJavaParsers() {
-        List<WarningsParser> parsers = new ArrayList<WarningsParser>();
+    private List<AbstractWarningsParser> createJavaParsers() {
+        List<AbstractWarningsParser> parsers = new ArrayList<AbstractWarningsParser>();
         parsers.add(new JavacParser());
         parsers.add(new AntJavacParser());
         return parsers;
     }
 
-    private int computeTotalNumberOfWarnings(final List<WarningsParser> parsers) throws IOException {
+    private int computeTotalNumberOfWarnings(final List<AbstractWarningsParser> parsers) throws IOException {
         ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, StringUtils.EMPTY, StringUtils.EMPTY, parsers);
 
         return parserRegistry.parse(DUMMY_FILE).size();
@@ -149,7 +150,7 @@ public class ParserRegistryTest {
      */
     @Test
     public void issue3866() throws IOException {
-        ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, "/tmp/clover*/**", StringUtils.EMPTY, new ArrayList<WarningsParser>());
+        ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, "/tmp/clover*/**", StringUtils.EMPTY, new ArrayList<AbstractWarningsParser>());
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
         Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 17, annotations.size());
@@ -165,7 +166,7 @@ public class ParserRegistryTest {
      */
     @Test
     public void multiplePatternsIssue3866() throws IOException {
-        ArrayList<WarningsParser> parsers = new ArrayList<WarningsParser>();
+        List<AbstractWarningsParser> parsers = new ArrayList<AbstractWarningsParser>();
         parsers.add(new AntJavacParser());
         ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, "/tmp/clover*/**, **/renderers/*", StringUtils.EMPTY, parsers);
 
@@ -183,7 +184,7 @@ public class ParserRegistryTest {
      */
     @Test
     public void complexFilterIssue3866() throws IOException {
-        ArrayList<WarningsParser> parsers = new ArrayList<WarningsParser>();
+        List<AbstractWarningsParser> parsers = new ArrayList<AbstractWarningsParser>();
         parsers.add(new AntJavacParser());
         ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, "/tmp/clover*/**", "**/renderers/*", parsers);
 
@@ -207,7 +208,7 @@ public class ParserRegistryTest {
      * @return the registry
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
-    private ParserRegistry createRegistryUnderTest(final String fileName, final String includePattern, final String excludePattern, final List<? extends WarningsParser> parsers) {
+    private ParserRegistry createRegistryUnderTest(final String fileName, final String includePattern, final String excludePattern, final List<? extends AbstractWarningsParser> parsers) {
         ParserRegistry parserRegistry = new ParserRegistry(parsers, "", includePattern, excludePattern) {
             /** {@inheritDoc} */
             @Override
@@ -223,7 +224,11 @@ public class ParserRegistryTest {
      */
     @Test
     public void testFiltering() {
-        String validName = JavacParser.WARNING_TYPE;
+        verifyFiltering("Java Compiler");
+        verifyFiltering(Messages._Warnings_JavaParser_ParserName().toString(Locale.ENGLISH));
+    }
+
+    private void verifyFiltering(final String validName) {
         List<String> filtered = ParserRegistry.filterExistingParserNames(Sets.newHashSet("Illegal", validName));
 
         assertEquals("Wrong number of filteres elements", 1, filtered.size());
@@ -238,12 +243,12 @@ public class ParserRegistryTest {
         GroovyParser multi = new GroovyParser("name", WarningsDescriptorTest.MULTI_LINE_REGEXP, "empty");
         GroovyParser single = new GroovyParser("name", WarningsDescriptorTest.SINGLE_LINE_REGEXP, "empty");
 
-        List<WarningsParser> allParsers = ParserRegistry.getDynamicParsers(Lists.newArrayList(single, multi));
+        List<AbstractWarningsParser> allParsers = ParserRegistry.getDynamicParsers(Lists.newArrayList(single, multi));
 
         int multiNumber = 0;
         int singleNumber = 0;
 
-        for (WarningsParser parser : allParsers) {
+        for (AbstractWarningsParser parser : allParsers) {
             if (parser.getClass() == DynamicParser.class) {
                 singleNumber++;
             }

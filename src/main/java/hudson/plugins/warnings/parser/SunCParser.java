@@ -11,16 +11,17 @@ import java.util.regex.Matcher;
  */
 public class SunCParser extends RegexpLineParser {
     private static final long serialVersionUID = -1251248150596418456L;
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "SUN C++ Compiler";
-    /** Pattern of gcc compiler warnings. */
+
     private static final String SUN_CPP_WARNING_PATTERN = "^\\s*\"(.*)\"\\s*,\\s*line\\s*(\\d+)\\s*:\\s*(Warning|Error)\\s*(?:, \\s*(.*))?\\s*:\\s*(.*)$";
 
     /**
      * Creates a new instance of <code>HpiCompileParser</code>.
      */
     public SunCParser() {
-        super(SUN_CPP_WARNING_PATTERN, WARNING_TYPE);
+        super(Messages._Warnings_sunc_ParserName(),
+                Messages._Warnings_sunc_LinkName(),
+                Messages._Warnings_sunc_TrendName(),
+                SUN_CPP_WARNING_PATTERN);
     }
 
     /** {@inheritDoc} */
@@ -33,8 +34,7 @@ public class SunCParser extends RegexpLineParser {
         else {
             priority = Priority.HIGH;
         }
-        return new Warning(matcher.group(1), getLineNumber(matcher.group(2)), WARNING_TYPE,
-                matcher.group(4), matcher.group(5), priority);
+        return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), matcher.group(4), matcher.group(5), priority);
     }
 }
 

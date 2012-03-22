@@ -7,6 +7,7 @@ import hudson.plugins.analysis.util.model.Priority;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Locale;
 
 import org.junit.Test;
 
@@ -14,6 +15,8 @@ import org.junit.Test;
  * Tests the class {@link JavacParser} for output log of a maven compile.
  */
 public class MavenParserTest extends ParserTester {
+    private static final String WARNING_TYPE = Messages._Warnings_JavaParser_ParserName().toString(Locale.ENGLISH);
+
     /**
      * Parses a file with two deprecation warnings.
      *
@@ -45,7 +48,7 @@ public class MavenParserTest extends ParserTester {
         checkWarning(annotation, lineNumber,
                 "com.sun.org.apache.xerces.internal.impl.dv.util.Base64 is Sun proprietary API and may be removed in a future release",
                 "/home/hudson/hudson/data/jobs/Hudson main/workspace/remoting/src/test/java/hudson/remoting/BinarySafeStreamTest.java",
-                JavacParser.WARNING_TYPE, RegexpParser.PROPRIETARY_API, Priority.NORMAL);
+                WARNING_TYPE, RegexpParser.PROPRIETARY_API, Priority.NORMAL);
     }
 
     /** {@inheritDoc} */

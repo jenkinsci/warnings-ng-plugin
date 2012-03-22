@@ -20,10 +20,12 @@ import com.google.common.collect.Lists;
  * @author Ulli Hafner
  */
 public class DynamicParserTest extends PhpParserTest {
+    private static final String TYPE = "PHP Runtime";
+
     /** {@inheritDoc} */
     @Override
-    protected WarningsParser createParser() {
-        return new DynamicParser("PHP Runtime Warning",
+    protected AbstractWarningsParser createParser() {
+        return new DynamicParser(TYPE,
                 "^.*(PHP Warning|PHP Notice|PHP Fatal error):\\s+(.+ in (.+) on line (\\d+))$",
                 "        import hudson.plugins.analysis.util.model.Priority;\n"
               + "        import hudson.plugins.warnings.parser.Warning\n"
@@ -35,7 +37,8 @@ public class DynamicParserTest extends PhpParserTest {
               + "        if (category.contains(\"Fatal\")) {\n"
               + "            priority = Priority.HIGH;\n"
               + "        }\n"
-              + "        return new Warning(fileName, Integer.parseInt(start), \"PHP Runtime Warning\", category, message, priority);\n");
+              + "        return new Warning(fileName, Integer.parseInt(start), \"PHP Runtime\", category, message, priority);\n",
+              TYPE, TYPE);
     }
 
 
@@ -54,7 +57,7 @@ public class DynamicParserTest extends PhpParserTest {
                 + "    String fileName = matcher.group(3)\n"
                 + "    String category = matcher.group(1)\n"
                 + "    String message = matcher.group(2)\n"
-                + "    return new Warning(fileName, 0, \"Xml Doc\", category, message);")
+                + "    return new Warning(fileName, 0, \"Xml Doc\", category, message);", TYPE, TYPE)
                 .parse(openFile("issue12280.txt"));
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 9, warnings.size());
@@ -84,7 +87,7 @@ public class DynamicParserTest extends PhpParserTest {
                         + "String lineNumber = matcher.group(4)\n"
                         + "String type = matcher.group(1)\n"
                         + "String message = matcher.group(5)\n"
-                        + "return new Warning(fileName, Integer.parseInt(lineNumber), type, code, message);");
+                        + "return new Warning(fileName, Integer.parseInt(lineNumber), type, code, message);", TYPE, TYPE);
     }
 
     /**

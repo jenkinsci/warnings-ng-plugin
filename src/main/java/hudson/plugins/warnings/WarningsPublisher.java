@@ -136,19 +136,6 @@ public class WarningsPublisher extends HealthAwarePublisher {
     }
     // CHECKSTYLE:ON
 
-    /** {@inheritDoc} */
-    @Override
-    public Collection<? extends Action> getProjectActions(final AbstractProject<?, ?> project) {
-        List<Action> actions = Lists.newArrayList();
-        for (String parserName : getConsoleLogParsers()) {
-            actions.add(new WarningsProjectAction(project, parserName));
-        }
-        for (ParserConfiguration configuration : getParserConfigurations()) {
-            actions.add(new WarningsProjectAction(project, configuration.getParserName()));
-        }
-        return actions;
-    }
-
     /**
      * Returns the names of the configured parsers for the console log.
      *
@@ -239,7 +226,20 @@ public class WarningsPublisher extends HealthAwarePublisher {
     /** {@inheritDoc} */
     @Override
     public Action getProjectAction(final AbstractProject<?, ?> project) {
-        return new WarningsProjectAction(project);
+        throw new IllegalStateException("Not available since release 4.0.");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Collection<? extends Action> getProjectActions(final AbstractProject<?, ?> project) {
+        List<Action> actions = Lists.newArrayList();
+        for (String parserName : getConsoleLogParsers()) {
+            actions.add(new WarningsProjectAction(project, parserName));
+        }
+        for (ParserConfiguration configuration : getParserConfigurations()) {
+            actions.add(new WarningsProjectAction(project, configuration.getParserName()));
+        }
+        return actions;
     }
 
     /** {@inheritDoc} */

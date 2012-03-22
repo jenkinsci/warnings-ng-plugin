@@ -13,25 +13,18 @@ import org.apache.commons.lang.StringUtils;
  */
 public class EclipseParser extends RegexpDocumentParser {
     private static final long serialVersionUID = 425883472788422955L;
-    /** Warning type of this parser. */
-    static final String WARNING_TYPE = "Eclipse Java Compiler";
-    /** Pattern of javac compiler warnings. */
     private static final String ANT_ECLIPSE_WARNING_PATTERN = "(WARNING|ERROR)\\s*in\\s*(.*)\\(at line\\s*(\\d+)\\).*(?:\\r?\\n[^\\^]*)+(?:\\r?\\n(.*)([\\^]+).*)\\r?\\n(?:\\s*\\[.*\\]\\s*)?(.*)";
 
     /**
-     * Creates a new instance of <code>EclipseParser</code>.
+     * Creates a new instance of {@link EclipseParser}.
      */
     public EclipseParser() {
-        super(ANT_ECLIPSE_WARNING_PATTERN, true, WARNING_TYPE);
+        super(Messages._Warnings_EclipseParser_ParserName(),
+                Messages._Warnings_EclipseParser_LinkName(),
+                Messages._Warnings_EclipseParser_TrendName(),
+                ANT_ECLIPSE_WARNING_PATTERN, true);
     }
 
-    /**
-     * Creates a new annotation for the specified pattern.
-     *
-     * @param matcher
-     *            the regular expression matcher
-     * @return a new annotation for the specified pattern
-     */
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String type = StringUtils.capitalize(matcher.group(1));
@@ -42,7 +35,7 @@ public class EclipseParser extends RegexpDocumentParser {
         else {
             priority = Priority.HIGH;
         }
-        Warning warning = new Warning(matcher.group(2), getLineNumber(matcher.group(3)), WARNING_TYPE, StringUtils.EMPTY, matcher.group(6), priority);
+        Warning warning = createWarning(matcher.group(2), getLineNumber(matcher.group(3)), matcher.group(6), priority);
 
         int columnStart = StringUtils.defaultString(matcher.group(4)).length();
         int columnEnd = columnStart + matcher.group(5).length();

@@ -15,6 +15,8 @@ import org.junit.Test;
  * @author Shimi Kiviti
  */
 public class PhpParserTest extends ParserTester {
+    private static final String TYPE = new PhpParser().getGroup();
+
     /**
      * Tests the PHP parsing.
      *
@@ -27,22 +29,22 @@ public class PhpParserTest extends ParserTester {
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation,
                 25, "include_once(): Failed opening \'RegexpLineParser.php\' for inclusion (include_path=\'.:/usr/share/pear\') in PhpParser.php on line 25",
-                "PhpParser.php", PhpParser.WARNING_TYPE, PhpParser.WARNING_CATEGORY, Priority.NORMAL);
+                "PhpParser.php", TYPE, PhpParser.WARNING_CATEGORY, Priority.NORMAL);
 
         annotation = iterator.next();
         checkWarning(annotation,
                 25, "Undefined index:  SERVER_NAME in /path/to/file/Settings.php on line 25",
-                "/path/to/file/Settings.php", PhpParser.WARNING_TYPE, PhpParser.NOTICE_CATEGORY, Priority.NORMAL);
+                "/path/to/file/Settings.php", TYPE, PhpParser.NOTICE_CATEGORY, Priority.NORMAL);
 
         annotation = iterator.next();
         checkWarning(annotation,
                 35, "Undefined class constant 'MESSAGE' in /MyPhpFile.php on line 35",
-                "/MyPhpFile.php", PhpParser.WARNING_TYPE, PhpParser.FATAL_ERROR_CATEGORY, Priority.HIGH);
+                "/MyPhpFile.php", TYPE, PhpParser.FATAL_ERROR_CATEGORY, Priority.HIGH);
 
         annotation = iterator.next();
         checkWarning(annotation,
                 34, "Missing argument 1 for Title::getText(), called in Title.php on line 22 and defined in Category.php on line 34",
-                "Category.php", PhpParser.WARNING_TYPE, PhpParser.WARNING_CATEGORY, Priority.NORMAL);
+                "Category.php", TYPE, PhpParser.WARNING_CATEGORY, Priority.NORMAL);
 
     }
 
@@ -51,7 +53,7 @@ public class PhpParserTest extends ParserTester {
      *
      * @return the warnings parser
      */
-    protected WarningsParser createParser() {
+    protected AbstractWarningsParser createParser() {
         return new PhpParser();
     }
 

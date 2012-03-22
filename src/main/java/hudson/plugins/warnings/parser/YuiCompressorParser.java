@@ -10,8 +10,6 @@ import java.util.regex.Pattern;
  */
 public class YuiCompressorParser extends RegexpDocumentParser {
     private static final long serialVersionUID = -4807932429496693096L;
-    static final String WARNING_TYPE = "YUI Compressor";
-    /** Pattern of the YUI Compressor 2-lines warnings. */
     private static final String YUI_COMPRESSOR_WARNING_PATTERN = "\\[WARNING\\] (.*)\\r?\\n^(.*)$";
 
     private static final Pattern UNUSED_SYMBOL_PATTERN = Pattern.compile(
@@ -33,23 +31,19 @@ public class YuiCompressorParser extends RegexpDocumentParser {
      * Creates a new instance of <code>YuiCompressorParser</code>.
      */
     public YuiCompressorParser() {
-        super(YUI_COMPRESSOR_WARNING_PATTERN, true, WARNING_TYPE);
+        super(Messages._Warnings_YUICompressor_ParserName(),
+                Messages._Warnings_YUICompressor_LinkName(),
+                Messages._Warnings_YUICompressor_TrendName(),
+                YUI_COMPRESSOR_WARNING_PATTERN, true);
     }
 
-    /**
-     * Creates a new annotation for the specified pattern.
-     *
-     * @param matcher
-     *            the regular expression matcher
-     * @return a new annotation for the specified pattern
-     */
     @Override
     protected Warning createWarning(final Matcher matcher) {
         final String messageHeader = matcher.group(1);
         CategoryAndPriority categoryAndPriority = getCategoryAndPriority(messageHeader);
         final String messageDetails = matcher.group(2);
         final String message = messageHeader + " [" + messageDetails + "]";
-        return new Warning("unknown.file", 0, WARNING_TYPE,
+        return createWarning("unknown.file", 0,
                 categoryAndPriority.getCategory(), message, categoryAndPriority.getPriority());
     }
 

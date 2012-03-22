@@ -14,7 +14,7 @@ import org.junit.Test;
  * Tests the class {@link RobocopyParser}.
  */
 public class RobocopyParserTest extends ParserTester {
-    /** Expected file name. */
+    private static final String TYPE = new RobocopyParser().getGroup();
     private static final String FILENAME = "a.log";
 
     /**
@@ -35,19 +35,19 @@ public class RobocopyParserTest extends ParserTester {
                 0,
                 "b",
                 "b",
-                RobocopyParser.WARNING_TYPE, "EXTRA File", Priority.NORMAL);
+                TYPE, "EXTRA File", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 0,
                 FILENAME,
                 FILENAME,
-                RobocopyParser.WARNING_TYPE, "New File", Priority.NORMAL);
+                TYPE, "New File", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 0,
                 FILENAME,
                 FILENAME,
-                RobocopyParser.WARNING_TYPE, "same", Priority.NORMAL);
+                TYPE, "same", Priority.NORMAL);
     }
 
     /** {@inheritDoc} */
