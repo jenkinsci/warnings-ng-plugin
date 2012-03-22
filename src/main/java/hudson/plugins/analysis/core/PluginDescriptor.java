@@ -30,6 +30,17 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
     private static final String NEW_SECTION_KEY = "canComputeNew";
 
     /**
+     * Returns the result URL for the specified plug-in.
+     *
+     * @param pluginName
+     *            the name of the plug-in
+     * @return the result URL of the plug-in
+     */
+    public static String createResultUrlName(final String pluginName) {
+        return pluginName + "Result";
+    }
+
+    /**
      * Converts the hierarchical JSON object that contains a sub-section for
      * {@value #NEW_SECTION_KEY} to a corresponding flat JSON object.
      *
@@ -93,7 +104,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @return the name of the plug-in
      */
     public final String getPluginResultUrlName() {
-        return getPluginName() + "Result";
+        return createResultUrlName(getPluginName());
     }
 
     /**

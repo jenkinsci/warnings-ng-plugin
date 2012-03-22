@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import javax.annotation.CheckForNull;
 
+import org.jvnet.localizer.Localizable;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -24,14 +25,14 @@ import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
 import hudson.plugins.analysis.graph.DifferenceGraph;
 import hudson.plugins.analysis.graph.EmptyGraph;
 import hudson.plugins.analysis.graph.GraphConfiguration;
-import hudson.plugins.analysis.graph.GraphConfigurationView;
 import hudson.plugins.analysis.graph.HealthGraph;
 import hudson.plugins.analysis.graph.NewVersusFixedGraph;
 import hudson.plugins.analysis.graph.NullGraph;
 import hudson.plugins.analysis.graph.PriorityGraph;
 import hudson.plugins.analysis.graph.TotalsGraph;
-import hudson.plugins.analysis.graph.TrendDetails;
 import hudson.plugins.analysis.graph.UserGraphConfigurationView;
+import hudson.plugins.analysis.graph.GraphConfigurationView;
+import hudson.plugins.analysis.graph.TrendDetails;
 
 import hudson.util.Graph;
 
@@ -44,7 +45,7 @@ import hudson.util.Graph;
  *            result action type
  * @author Ulli Hafner
  */
-public abstract class AbstractProjectAction<T extends ResultAction<?>> implements Action  { // NOCHECKSTYLE
+public abstract class AbstractProjectAction<T extends ResultAction<?>> implements Action {
     private static final Logger LOGGER = Logger.getLogger(AbstractProjectAction.class.getName());
 
     /** Project that owns this action. */
@@ -54,26 +55,55 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     /** The icon URL of this action: it will be shown as soon as a result is available. */
     private final String iconUrl;
     /** Plug-in URL. */
-    private final String url;
+    private final String pluginUrl;
     /** Plug-in results URL. */
     private final String resultUrl;
+    /** Human readable name of this action. */
+    private final Localizable name;
+    /** Human readable title of the trend graph. */
+    private final Localizable trendName;
 
     /**
-     * Creates a new instance of <code>AbstractProjectAction</code>.
+     * Creates a new instance of {@link AbstractProjectAction}.
      *
      * @param project
      *            the project that owns this action
      * @param resultActionType
      *            the type of the result action
-     * @param plugin
-     *            the plug-in that owns this action
+     * @param name
+     *            the human readable name of this action
+     * @param trendName
+     *            the human readable name of the trend graph
+     * @param pluginUrl
+     *            the URL of the associated plug-in
+     * @param iconUrl
+     *            the icon to show
+     * @param resultUrl
+     *            the URL of the associated build results
      */
-    public AbstractProjectAction(final AbstractProject<?, ?> project, final Class<? extends T> resultActionType, final PluginDescriptor plugin) {
+    public AbstractProjectAction(final AbstractProject<?, ?> project, final Class<? extends T> resultActionType,
+            final Localizable name, final Localizable trendName, final String pluginUrl, final String iconUrl, final String resultUrl) {
         this.project = project;
         this.resultActionType = resultActionType;
-        iconUrl = plugin.getIconUrl();
-        url = plugin.getPluginName();
-        resultUrl = plugin.getPluginResultUrlName();
+        this.name = name;
+        this.trendName = trendName;
+        this.pluginUrl = pluginUrl;
+        this.iconUrl = iconUrl;
+        this.resultUrl = resultUrl;
+    }
+
+    /** {@inheritDoc} */
+    public String getDisplayName() {
+        return asString(name);
+    }
+
+    private String asString(final Localizable localizable) {
+        if (localizable == null) {
+            return null;
+        }
+        else {
+            return localizable.toString();
+        }
     }
 
     /**
@@ -81,10 +111,12 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *
      * @return the title of the trend graph.
      */
-    public abstract String getTrendName();
+    public String getTrendName() {
+        return asString(trendName);
+    }
 
     /**
-     * Returns the project.
+     * Returns the project this action belongs to.
      *
      * @return the project
      */
@@ -93,10 +125,12 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     }
 
     /**
-     * Returns the graph configuration for this project.
+     * Returns the graph configuration view for this project. If the requested
+     * link is neither the user graph configuration nor the default
+     * configuration then <code>null</code> is returned.
      *
      * @param link
-     *            not used
+     *            the requested link
      * @param request
      *            Stapler request
      * @param response
@@ -318,7 +352,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
 
     /** {@inheritDoc} */
     public final String getUrlName() {
-        return url;
+        return pluginUrl;
     }
 
     /**
@@ -366,5 +400,22 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
         if (build != null) {
             response.sendRedirect2(String.format("../%d/%s", build.getNumber(), resultUrl));
         }
+    }
+
+    /**
+     * Creates a new instance of <code>AbstractProjectAction</code>.
+     *
+     * @param project
+     *            the project that owns this action
+     * @param resultActionType
+     *            the type of the result action
+     * @param plugin
+     *            the plug-in that owns this action
+     * @deprecated use
+     *             {@link #AbstractProjectAction(AbstractProject, Class, Localizable, Localizable, String, String, String)}
+     */
+    @Deprecated
+    public AbstractProjectAction(final AbstractProject<?, ?> project, final Class<? extends T> resultActionType, final PluginDescriptor plugin) {
+        this(project, resultActionType, null, null, plugin.getPluginName(), plugin.getIconUrl(), plugin.getPluginResultUrlName());
     }
 }
