@@ -83,11 +83,26 @@ public class ParserRegistry {
 
         List<ParserDescription> sorted = Lists.newArrayList();
         for (String group : groups) {
-            List<AbstractWarningsParser> parsers = getParsers(group);
-            sorted.add(new ParserDescription(group, parsers.get(0).getParserName()));
+            sorted.add(new ParserDescription(group, getParser(group).getParserName()));
         }
         Collections.sort(sorted);
         return sorted;
+    }
+
+    /**
+     * Returns a parser for the specified group. If there is no such parser, then a null object is returned.
+     *
+     * @param group the parser group
+     * @return the parser
+     */
+    public static AbstractWarningsParser getParser(final String group) {
+        List<AbstractWarningsParser> parsers = ParserRegistry.getParsers(group);
+        if (parsers.isEmpty()) {
+            return new NullWarnigsParser(group);
+        }
+        else {
+            return parsers.get(0);
+        }
     }
 
     /**
@@ -408,6 +423,28 @@ public class ParserRegistry {
      */
     protected Reader createReader(final InputStream inputStream) {
         return new InputStreamReader(inputStream, defaultCharset);
+    }
+
+    /**
+     * Null object pattern.
+     *
+     * @author Ulli Hafner
+     */
+    private static final class NullWarnigsParser extends AbstractWarningsParser {
+        NullWarnigsParser(final String group) {
+            super(hudson.plugins.warnings.parser.Messages._Warnings_NotLocalizedName(group),
+                    hudson.plugins.warnings.Messages._Warnings_ProjectAction_Name(),
+                    hudson.plugins.warnings.Messages._Warnings_Trend_Name());
+        }
+
+        private static final long serialVersionUID = 1L;
+
+        /** {@inheritDoc} */
+        @Override
+        public Collection<FileAnnotation> parse(final Reader reader) throws IOException,
+                ParsingCanceledException {
+            return Collections.emptyList();
+        }
     }
 }
 

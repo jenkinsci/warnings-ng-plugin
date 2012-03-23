@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
 import org.jvnet.hudson.test.TestExtension;
+import org.jvnet.localizer.Localizable;
 
 /**
  * Tests the class {@link ParserRegistry} in context of a running Jenkins instance.
@@ -34,11 +35,11 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
     // CHECKSTYLE:OFF Test implementations
     @TestExtension
     public static class TestBothParser extends RegexpLineParser {
+        private static final Localizable DUMMY = Messages._Warnings_NotLocalizedName(MIXED_API);
         private static final long serialVersionUID = 1L;
 
-        @SuppressWarnings("deprecation")
         public TestBothParser() {
-            super("empty", MIXED_API);
+            super(DUMMY, DUMMY, DUMMY, MIXED_API);
         }
 
         /** {@inheritDoc} */
@@ -78,4 +79,3 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
         }
     }
 }
-

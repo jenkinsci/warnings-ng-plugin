@@ -33,39 +33,7 @@ public abstract class RegexpParser extends AbstractWarningsParser implements War
 
     /** {@inheritDoc} */
     public String getName() {
-        return getParserName();
-    }
-
-    /**
-     * Creates a new instance of {@link RegexpParser}. Uses a single line matcher.
-     *
-     * @param warningPattern
-     *            pattern of compiler warnings.
-     * @param name
-     *            name of the parser
-     */
-    public RegexpParser(final String warningPattern, final String name) {
-        this(warningPattern, false, name);
-    }
-
-    /**
-     * Creates a new instance of {@link RegexpParser}.
-     *
-     * @param warningPattern
-     *            pattern of compiler warnings.
-     * @param useMultiLine
-     *            Enables multi line mode. In multi line mode the expressions
-     *            <tt>^</tt> and <tt>$</tt> match just after or just before,
-     *            respectively, a line terminator or the end of the input
-     *            sequence. By default these expressions only match at the
-     *            beginning and the end of the entire input sequence.
-     * @param name
-     *            name of the parser
-     */
-    public RegexpParser(final String warningPattern, final boolean useMultiLine, final String name) {
-        super(name);
-
-        setPattern(warningPattern, useMultiLine);
+        return getGroup();
     }
 
     private void setPattern(final String warningPattern, final boolean useMultiLine) {
@@ -206,5 +174,43 @@ public abstract class RegexpParser extends AbstractWarningsParser implements War
             category = classifyWarning(message);
         }
         return category;
+    }
+
+    /**
+     * Creates a new instance of {@link RegexpParser}. Uses a single line matcher.
+     *
+     * @param warningPattern
+     *            pattern of compiler warnings.
+     * @param name
+     *            name of the parser
+     * @deprecated use
+     *             {@link #RegexpParser(Localizable, Localizable, Localizable, String, boolean)}
+     */
+    @Deprecated
+    public RegexpParser(final String warningPattern, final String name) {
+        this(warningPattern, false, name);
+    }
+
+    /**
+     * Creates a new instance of {@link RegexpParser}.
+     *
+     * @param warningPattern
+     *            pattern of compiler warnings.
+     * @param useMultiLine
+     *            Enables multi line mode. In multi line mode the expressions
+     *            <tt>^</tt> and <tt>$</tt> match just after or just before,
+     *            respectively, a line terminator or the end of the input
+     *            sequence. By default these expressions only match at the
+     *            beginning and the end of the entire input sequence.
+     * @param name
+     *            name of the parser
+     * @deprecated use
+     *             {@link #RegexpParser(Localizable, Localizable, Localizable, String, boolean)}
+     */
+    @Deprecated
+    public RegexpParser(final String warningPattern, final boolean useMultiLine, final String name) {
+        super(name);
+
+        setPattern(warningPattern, useMultiLine);
     }
 }

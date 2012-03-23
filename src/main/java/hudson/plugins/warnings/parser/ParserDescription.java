@@ -1,5 +1,7 @@
 package hudson.plugins.warnings.parser;
 
+import org.jvnet.localizer.Localizable;
+
 /**
  * Describes a parser.
  *
@@ -7,7 +9,7 @@ package hudson.plugins.warnings.parser;
  */
 public class ParserDescription implements Comparable<ParserDescription> {
     private final String group;
-    private final String name;
+    private final Localizable name;
 
     /**
      * Creates a new instance of {@link ParserDescription}.
@@ -17,7 +19,7 @@ public class ParserDescription implements Comparable<ParserDescription> {
      * @param name
      *            the human readable name of the parser
      */
-    public ParserDescription(final String group, final String name) {
+    public ParserDescription(final String group, final Localizable name) {
         super();
         this.group = group;
         this.name = name;
@@ -35,7 +37,8 @@ public class ParserDescription implements Comparable<ParserDescription> {
     /**
      * Returns whether this parser is in the specified group.
      *
-     * @param other the name of the group
+     * @param other
+     *            the name of the group
      * @return <code>true</code> if this parser is in the specified group
      */
     public boolean isInGroup(final String other) {
@@ -48,12 +51,12 @@ public class ParserDescription implements Comparable<ParserDescription> {
      * @return the human readable name of the parser
      */
     public String getName() {
-        return name;
+        return name.toString();
     }
 
     /** {@inheritDoc} */
     public int compareTo(final ParserDescription o) {
-        return name.compareTo(o.name);
+        return name.toString().compareTo(o.name.toString());
     }
 
     @Override

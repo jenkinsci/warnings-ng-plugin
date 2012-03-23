@@ -112,11 +112,8 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
      *
      * @return the name of parser
      */
-    public String getParserName() {
-        if (parserName == null) {
-            return name;
-        }
-        return parserName.toString();
+    public Localizable getParserName() {
+        return parserName;
     }
 
     /**

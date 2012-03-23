@@ -28,9 +28,26 @@ import com.google.common.collect.Sets;
  * Tests the class {@link ParserRegistry}.
  */
 public class ParserRegistryTest {
+    private static final String UNDEFINED = "undefined";
     private static final File DUMMY_FILE = new File("");
     private static final String FILE_NAME = "all.txt";
     private static final String WRONG_NUMBER_OF_ANNOTATIONS_PARSED = "Wrong number of annotations parsed";
+
+    /**
+     * Verifies that we get a null object if the parser is not found.
+     */
+    @Test
+    public void testNullObject() {
+        AbstractWarningsParser parser = ParserRegistry.getParser(UNDEFINED);
+
+        assertEquals("Wrong name", UNDEFINED, parser.getParserName().toString());
+        assertEquals("Wrong link",
+                hudson.plugins.warnings.Messages._Warnings_ProjectAction_Name().toString(),
+                parser.getLinkName().toString());
+        assertEquals("Wrong trend",
+                hudson.plugins.warnings.Messages._Warnings_Trend_Name().toString(),
+                parser.getTrendName().toString());
+    }
 
     /**
      * Checks whether we correctly find all Oracle invalids in the log file.
@@ -225,7 +242,7 @@ public class ParserRegistryTest {
     @Test
     public void testFiltering() {
         verifyFiltering("Java Compiler");
-        verifyFiltering(Messages._Warnings_JavaParser_ParserName().toString(Locale.ENGLISH));
+        verifyFiltering(hudson.plugins.warnings.parser.Messages._Warnings_JavaParser_ParserName().toString(Locale.ENGLISH));
     }
 
     private void verifyFiltering(final String validName) {

@@ -233,13 +233,18 @@ public class WarningsPublisher extends HealthAwarePublisher {
     @Override
     public Collection<? extends Action> getProjectActions(final AbstractProject<?, ?> project) {
         List<Action> actions = Lists.newArrayList();
-        for (String parserName : getConsoleLogParsers()) {
+        for (String parserName : getParsers()) {
             actions.add(new WarningsProjectAction(project, parserName));
         }
-        for (ParserConfiguration configuration : getParserConfigurations()) {
-            actions.add(new WarningsProjectAction(project, configuration.getParserName()));
-        }
         return actions;
+    }
+
+    private Set<String> getParsers() {
+        Set<String> parsers = Sets.newHashSet(getConsoleLogParsers());
+        for (ParserConfiguration configuration : getParserConfigurations()) {
+            parsers.add(configuration.getParserName());
+        }
+        return parsers;
     }
 
     /** {@inheritDoc} */
@@ -265,7 +270,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
         }
     }
 
-    protected void add(final ParserResult totals, final List<ParserResult> results) {
+    private void add(final ParserResult totals, final List<ParserResult> results) {
         for (ParserResult result : results) {
             totals.addProject(result);
         }
@@ -300,8 +305,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
         return results;
     }
 
-    protected void guessModuleNames(final AbstractBuild<?, ?> build,
-            final Collection<FileAnnotation> warnings) {
+    private void guessModuleNames(final AbstractBuild<?, ?> build, final Collection<FileAnnotation> warnings) {
         String workspace = build.getWorkspace().getRemote();
         ModuleDetector detector = createModuleDetector(workspace);
         for (FileAnnotation annotation : warnings) {
@@ -337,7 +341,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
         for (FileAnnotation annotation : output.getAnnotations()) {
             annotation.setPathName(build.getWorkspace().getRemote());
         }
-        WarningsResult result = new WarningsResult(build, getDefaultEncoding(), output);
+        WarningsResult result = new WarningsResult(build, getDefaultEncoding(), output, parserName);
         build.getActions().add(new WarningsResultAction(build, this, result, parserName));
 
         return output;
@@ -359,8 +363,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
     }
 
     /** {@inheritDoc} */
-    public MatrixAggregator createAggregator(final MatrixBuild build, final Launcher launcher,
-            final BuildListener listener) {
+    public MatrixAggregator createAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener) {
         return new WarningsAnnotationsAggregator(build, launcher, listener, this, getDefaultEncoding());
     }
 
