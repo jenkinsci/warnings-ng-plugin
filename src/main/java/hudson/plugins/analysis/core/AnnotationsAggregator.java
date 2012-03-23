@@ -45,7 +45,6 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
         this.defaultEncoding = defaultEncoding;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean endRun(final MatrixRun run) throws InterruptedException, IOException {
         if (totals.hasNoAnnotations() && hasResult(run)) {
@@ -56,7 +55,6 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean endBuild() throws InterruptedException, IOException {
         build.addAction(createAction(healthDescriptor, defaultEncoding, totals));
