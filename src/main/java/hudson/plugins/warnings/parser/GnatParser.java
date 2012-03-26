@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
@@ -9,6 +10,7 @@ import java.util.regex.Matcher;
  *
  * @author Bernhard Berger
  */
+@Extension
 public class GnatParser extends RegexpLineParser {
     private static final long serialVersionUID = -7139298560308123856L;
     private static final String GNAT_WARNING_PATTERN = "^(.+.(?:ads|adb)):(\\d+):(\\d+): ((?:error:)|(?:warning:)|(?:\\(style\\))) (.+)$";

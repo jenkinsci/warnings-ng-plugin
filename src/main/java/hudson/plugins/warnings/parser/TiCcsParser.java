@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
@@ -11,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Jan Linnenkohl
  */
+@Extension
 public class TiCcsParser extends RegexpLineParser {
     private static final long serialVersionUID = -8253481365175984661L;
     private static final String TI_CCS_WARNING_PATTERN = "^((\"(.*)\",\\s*)(line\\s*(\\d+)(\\s*\\(.*\\))?:)?\\s*)?(WARNING|ERROR|remark|warning|(fatal\\s*)?error)(!\\s*at line\\s(\\d+))?\\s*([^:]*)\\s*:\\s*(.*)$";

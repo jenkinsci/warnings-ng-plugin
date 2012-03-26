@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
@@ -8,6 +9,7 @@ import java.util.regex.Pattern;
 /**
  * A parser for the YUI Compressor warnings.
  */
+@Extension
 public class YuiCompressorParser extends RegexpDocumentParser {
     private static final long serialVersionUID = -4807932429496693096L;
     private static final String YUI_COMPRESSOR_WARNING_PATTERN = "\\[WARNING\\] (.*)\\r?\\n^(.*)$";

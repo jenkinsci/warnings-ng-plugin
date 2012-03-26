@@ -1,5 +1,7 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
+
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Ulli Hafner
  */
+@Extension
 public class AntJavacParser extends RegexpLineParser {
     private static final long serialVersionUID = 1737791073711198075L;
 

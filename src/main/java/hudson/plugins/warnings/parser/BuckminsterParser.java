@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
@@ -9,6 +10,7 @@ import java.util.regex.Matcher;
  *
  * @author Johannes Utzig
  */
+@Extension
 public class BuckminsterParser extends RegexpLineParser {
     private static final long serialVersionUID = -3723799140297979579L;
     private static final String BUCKMINSTER_WARNING_PATTERN = "^.*(Warning|Error): file (.*?)(, line )?(\\d*): (.*)$";

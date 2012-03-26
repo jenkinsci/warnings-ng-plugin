@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
@@ -11,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Joseph Boulos
  */
+@Extension
 public class GhsMultiParser extends RegexpDocumentParser {
     private static final long serialVersionUID = 8149238560432255036L;
     private static final String GHS_MULTI_WARNING_PATTERN = "\\.(.*)\\,\\s*line\\s*(\\d+):\\s*(warning|error)\\s*([^:]+):\\s*(?m)([^\\^]*)\\s*\\^";

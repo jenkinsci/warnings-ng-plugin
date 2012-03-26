@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
@@ -14,6 +15,7 @@ import java.util.regex.Matcher;
  *   100%        New File                   0        a.log
  *                 same                 0        a.log
  */
+@Extension
 public class RobocopyParser extends RegexpLineParser {
     private static final long serialVersionUID = -671744745118772873L;
     /** Pattern of perforce compiler warnings. */

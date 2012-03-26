@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
@@ -12,6 +13,7 @@ import org.jvnet.localizer.Localizable;
  *
  * @author Ulli Hafner
  */
+@Extension
 public class MsBuildParser extends RegexpLineParser {
     private static final long serialVersionUID = -2141974437420906595L;
     static final String WARNING_TYPE = "MSBuild";

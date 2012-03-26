@@ -14,7 +14,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 import junit.framework.Assert;
 
@@ -22,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Tests the class {@link ParserRegistry}.
@@ -32,21 +30,6 @@ public class ParserRegistryTest {
     private static final File DUMMY_FILE = new File("");
     private static final String FILE_NAME = "all.txt";
     private static final String WRONG_NUMBER_OF_ANNOTATIONS_PARSED = "Wrong number of annotations parsed";
-
-    /**
-     * Verifies that we get a null object if the parser is not found.
-     */
-    @Test
-    public void testOldJavaSerialization() {
-        AbstractWarningsParser parser = ParserRegistry.getParser("Java Compiler (javac)");
-
-        assertEquals("Wrong name",
-                Messages._Warnings_JavaParser_ParserName().toString(), parser.getParserName().toString());
-        assertEquals("Wrong link",
-                Messages._Warnings_JavaParser_LinkName().toString(), parser.getLinkName().toString());
-        assertEquals("Wrong trend",
-                Messages._Warnings_JavaParser_TrendName().toString(), parser.getTrendName().toString());
-    }
 
     /**
      * Verifies that we get a null object if the parser is not found.
@@ -182,10 +165,12 @@ public class ParserRegistryTest {
      */
     @Test
     public void issue3866() throws IOException {
-        ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, "/tmp/clover*/**", StringUtils.EMPTY, new ArrayList<AbstractWarningsParser>());
+        List<AbstractWarningsParser> parsers = new ArrayList<AbstractWarningsParser>();
+        parsers.add(new AntJavacParser());
+        ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, "/tmp/clover*/**", StringUtils.EMPTY, parsers);
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 17, annotations.size());
+        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 8, annotations.size());
     }
 
     /**
@@ -249,22 +234,6 @@ public class ParserRegistryTest {
             }
         };
         return parserRegistry;
-    }
-
-    /**
-     * Verifies that illegal names are filtered.
-     */
-    @Test
-    public void testFiltering() {
-        verifyFiltering("Java Compiler");
-        verifyFiltering(hudson.plugins.warnings.parser.Messages._Warnings_JavaParser_ParserName().toString(Locale.ENGLISH));
-    }
-
-    private void verifyFiltering(final String validName) {
-        List<String> filtered = ParserRegistry.filterExistingParserNames(Sets.newHashSet("Illegal", validName));
-
-        assertEquals("Wrong number of filteres elements", 1, filtered.size());
-        assertEquals("Wrong number of filteres elements", validName, filtered.get(0));
     }
 
     /**

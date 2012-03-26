@@ -1,5 +1,7 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
+
 import java.util.regex.Matcher;
 
 /**
@@ -7,6 +9,7 @@ import java.util.regex.Matcher;
  *
  * @author jerryshea
  */
+@Extension
 public class AcuCobolParser extends RegexpLineParser {
     private static final long serialVersionUID = -894639209290549425L;
     private static final String ACUCOBOL_WARNING_PATTERN = "^\\s*(\\[.*\\])?\\s*?(.*), line ([0-9]*): Warning: (.*)$";

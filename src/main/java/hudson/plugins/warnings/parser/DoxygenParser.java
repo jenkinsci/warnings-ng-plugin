@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
@@ -12,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Frederic Chateau
  * @author Bruno Matos
  */
+@Extension
 public class DoxygenParser extends RegexpDocumentParser {
     private static final long serialVersionUID = -6770174143703245309L;
 

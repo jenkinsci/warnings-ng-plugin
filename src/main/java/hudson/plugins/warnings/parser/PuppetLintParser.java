@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
@@ -12,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Jan Vansteenkiste <jan@vstone.eu>
  */
+@Extension
 public class PuppetLintParser extends RegexpLineParser {
     private static final long serialVersionUID = 7492869677427430346L;
     private static final String SEPARATOR = "::";

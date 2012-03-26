@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
@@ -11,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Ulli Hafner
  */
+@Extension
 public class InvalidsParser extends RegexpLineParser {
     private static final long serialVersionUID = 440910718005095427L;
     static final String WARNING_PREFIX = "Oracle ";

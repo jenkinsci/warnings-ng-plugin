@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
@@ -11,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Ulli Hafner
  */
+@Extension
 public class EclipseParser extends RegexpDocumentParser {
     private static final long serialVersionUID = 425883472788422955L;
     private static final String ANT_ECLIPSE_WARNING_PATTERN = "(WARNING|ERROR)\\s*in\\s*(.*)\\(at line\\s*(\\d+)\\).*(?:\\r?\\n[^\\^]*)+(?:\\r?\\n(.*)([\\^]+).*)\\r?\\n(?:\\s*\\[.*\\]\\s*)?(.*)";

@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
@@ -11,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Vangelis Livadiotis
  */
+@Extension
 public class IntelCParser extends RegexpLineParser {
     private static final long serialVersionUID = 8409744276858003050L;
     private static final String INTEL_PATTERN = "^(.*)\\((\\d*)\\)?:.*((?:remark|warning|error)\\s*#*\\d*)\\s*:\\s*(.*)$";

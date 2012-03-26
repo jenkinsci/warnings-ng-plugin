@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
@@ -11,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Frederic Chateau
  */
+@Extension
 public class Gcc4LinkerParser extends RegexpLineParser {
     private static final long serialVersionUID = -2792019431810134790L;
     /** A GCC error. */

@@ -37,7 +37,6 @@ public class JavacParser extends RegexpLineParser {
         return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, message);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getId() {
         return "Java Compiler"; // old ID in serialization

@@ -183,44 +183,16 @@ public class ParserRegistry {
     }
 
     /**
-     * Returns all available parsers.
+     * Returns all available parsers. Parsers are automatically detected using
+     * the extension point mechanism.
      *
      * @return all available parsers
      */
     private static List<AbstractWarningsParser> getAllParsers() {
-        List<AbstractWarningsParser> parsers = new ArrayList<AbstractWarningsParser>();
-        parsers.add(new JavacParser());
-        parsers.add(new AntJavacParser());
-        parsers.add(new JavaDocParser());
-        parsers.add(new EclipseParser());
-        parsers.add(new MsBuildParser());
-        parsers.add(new GccParser());
-        parsers.add(new Gcc4CompilerParser());
-        parsers.add(new Gcc4LinkerParser());
-        parsers.add(new InvalidsParser());
-        parsers.add(new SunCParser());
-        parsers.add(new GnatParser());
-        parsers.add(new ErlcParser());
-        parsers.add(new IntelCParser());
-        parsers.add(new IarParser());
-        MsBuildParser pclintParser = new MsBuildParser(Messages._Warnings_PCLint_ParserName(),
-                Messages._Warnings_PCLint_LinkName(),
-                Messages._Warnings_PCLint_TrendName());
-        parsers.add(pclintParser);
-        parsers.add(new BuckminsterParser());
-        parsers.add(new TiCcsParser());
-        parsers.add(new AcuCobolParser());
-        parsers.add(new FlexSDKParser());
-        parsers.add(new PhpParser());
-        parsers.add(new CoolfluxChessccParser());
-        parsers.add(new P4Parser());
-        parsers.add(new RobocopyParser());
-        parsers.add(new DoxygenParser());
-        parsers.add(new TnsdlParser());
-        parsers.add(new GhsMultiParser());
-        parsers.add(new ArmccCompilerParser());
-        parsers.add(new YuiCompressorParser());
-        parsers.add(new PuppetLintParser());
+        List<AbstractWarningsParser> parsers = Lists.newArrayList();
+        parsers.add(new MsBuildParser(Messages._Warnings_PCLint_ParserName(),
+                            Messages._Warnings_PCLint_LinkName(),
+                            Messages._Warnings_PCLint_TrendName()));
 
         Iterable<GroovyParser> parserDescriptions = getDynamicParserDescriptions();
         parsers.addAll(getDynamicParsers(parserDescriptions));

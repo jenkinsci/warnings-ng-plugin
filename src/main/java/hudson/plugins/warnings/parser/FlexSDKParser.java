@@ -1,5 +1,7 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
+
 import java.util.regex.Matcher;
 
 /**
@@ -7,6 +9,7 @@ import java.util.regex.Matcher;
  *
  * @author Vivien Tintillier
  */
+@Extension
 public class FlexSDKParser extends RegexpLineParser {
     private static final long serialVersionUID = -185055018399324311L;
     private static final String FLEX_SDK_WARNING_PATTERN = "^\\s*(?:\\[.*\\])?\\s*(.*\\.as|.*\\.mxml)\\((\\d*)\\):\\s*(?:col:\\s*\\d*\\s*)?(?:Warning)\\s*:\\s*(.*)$";

@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
@@ -9,6 +10,7 @@ import java.util.regex.Matcher;
  *
  * @author Shaohua Wen
  */
+@Extension
 public class TnsdlParser extends RegexpLineParser {
     private static final long serialVersionUID = -7740789998865369930L;
     static final String WARNING_CATEGORY = "Error";

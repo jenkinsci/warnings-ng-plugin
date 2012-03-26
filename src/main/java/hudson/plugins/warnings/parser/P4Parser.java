@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
@@ -9,6 +10,7 @@ import java.util.regex.Matcher;
  *
  * @author Adrian Deccico
  */
+@Extension
 public class P4Parser extends RegexpLineParser {
     private static final long serialVersionUID = -8106854254745366432L;
 
