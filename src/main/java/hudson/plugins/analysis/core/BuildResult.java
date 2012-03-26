@@ -205,8 +205,8 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @param history
      *            the history of build results of the associated plug-in
      */
-    public BuildResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result,
-            final BuildHistory history) {
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
+    public BuildResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result, final BuildHistory history) {
         initialize(history, build, defaultEncoding, result);
     }
 
@@ -220,6 +220,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @param result
      *            the parsed result with all annotations
      */
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public BuildResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result) {
         initialize(createHistory(build), build, defaultEncoding, result);
     }
@@ -640,13 +641,26 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *            the annotations to store
      */
     private void serializeAnnotations(final Collection<FileAnnotation> annotations) {
-        try {
-            Collection<FileAnnotation> files = annotations;
-            getDataFile().write(files.toArray(new FileAnnotation[files.size()]));
+        if (canSerialize()) {
+            try {
+                Collection<FileAnnotation> files = annotations;
+                getDataFile().write(files.toArray(new FileAnnotation[files.size()]));
+            }
+            catch (IOException exception) {
+                LOGGER.log(Level.SEVERE, "Failed to serialize the annotations of the build.", exception);
+            }
         }
-        catch (IOException exception) {
-            LOGGER.log(Level.SEVERE, "Failed to serialize the annotations of the build.", exception);
-        }
+    }
+
+    /**
+     * Returns whether this result should write to the data file. This method
+     * can be overwritten in test cases to suppress the saving of the
+     * serialization.
+     *
+     * @return <code>true</code> if the file should be written
+     */
+    protected boolean canSerialize() {
+        return true;
     }
 
     /**
