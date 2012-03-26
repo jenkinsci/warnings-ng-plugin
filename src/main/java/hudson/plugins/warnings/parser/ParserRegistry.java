@@ -24,6 +24,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.annotation.CheckForNull;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -90,12 +92,18 @@ public class ParserRegistry {
     }
 
     /**
-     * Returns a parser for the specified group. If there is no such parser, then a null object is returned.
+     * Returns a parser for the specified group. If there is no such parser,
+     * then a null object is returned.
      *
-     * @param group the parser group
+     * @param group
+     *            the parser group
      * @return the parser
      */
-    public static AbstractWarningsParser getParser(final String group) {
+    public static AbstractWarningsParser getParser(@CheckForNull final String group) {
+        if (StringUtils.isEmpty(group)) {
+            return new NullWarnigsParser("NULL");
+        }
+
         List<AbstractWarningsParser> parsers = ParserRegistry.getParsers(group);
         if (parsers.isEmpty()) {
             return new NullWarnigsParser(group);

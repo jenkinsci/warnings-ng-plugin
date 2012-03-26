@@ -25,24 +25,10 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
     public WarningsProjectAction(final AbstractProject<?, ?> project, final String group) {
         super(project, WarningsResultAction.class,
                 ParserRegistry.getParser(group).getLinkName(), ParserRegistry.getParser(group).getTrendName(),
-                getUrl(WarningsDescriptor.PLUGIN_ID, group),
+                WarningsDescriptor.getProjectUrl(group),
                 WarningsDescriptor.ICON_URL,
-                getUrl(WarningsDescriptor.RESULT_URL, group));
+                WarningsDescriptor.getResultUrl(group));
         this.group = group;
-    }
-
-    /**
-     * Creates a unique URL for this action. Uses the provided parser group to
-     * get a unique ID from the parser registry.
-     *
-     * @param baseUrl
-     *            the base URL
-     * @param group
-     *            the parser group
-     * @return a unique URL
-     */
-    private static String getUrl(final String baseUrl, final String group) {
-        return baseUrl + ParserRegistry.getUrl(group);
     }
 }
 

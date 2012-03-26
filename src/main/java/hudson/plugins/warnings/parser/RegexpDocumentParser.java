@@ -62,6 +62,7 @@ public abstract class RegexpDocumentParser extends RegexpParser {
 
         return warnings;
     }
+
     /**
      * Creates a new instance of {@link RegexpDocumentParser}.
      *
@@ -78,6 +79,7 @@ public abstract class RegexpDocumentParser extends RegexpParser {
      * @deprecated use
      *             {@link #RegexpDocumentParser(Localizable, Localizable, Localizable, String, boolean)}
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     public RegexpDocumentParser(final String warningPattern, final boolean useMultiLine, final String name) {
         super(warningPattern, useMultiLine, name);

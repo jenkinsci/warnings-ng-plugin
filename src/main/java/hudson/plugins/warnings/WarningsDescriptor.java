@@ -6,6 +6,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
 import hudson.plugins.analysis.core.PluginDescriptor;
+import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.plugins.warnings.parser.Warning;
 import hudson.util.CopyOnWriteList;
 import hudson.util.FormValidation;
@@ -48,6 +49,38 @@ public final class WarningsDescriptor extends PluginDescriptor {
     static final String ICON_URL = "/plugin/warnings/icons/warnings-24x24.png";
 
     private final CopyOnWriteList<GroovyParser> groovyParsers = new CopyOnWriteList<GroovyParser>();
+
+    /**
+     * Returns the URL of the warning results for the specified parser.
+     *
+     * @param group
+     *            the parser group
+     * @return a unique URL
+     */
+    public static String getResultUrl(final String group) {
+        if (group == null) { // prior 4.0
+            return RESULT_URL;
+        }
+        else {
+            return RESULT_URL + ParserRegistry.getUrl(group);
+        }
+    }
+
+    /**
+     * Returns the URL of the warning project for the specified parser.
+     *
+     * @param group
+     *            the parser group
+     * @return a unique URL
+     */
+    public static String getProjectUrl(final String group) {
+        if (group == null) { // prior 4.0
+            return PLUGIN_ID;
+        }
+        else {
+            return PLUGIN_ID + ParserRegistry.getUrl(group);
+        }
+    }
 
     /**
      * Instantiates a new {@link WarningsDescriptor}.

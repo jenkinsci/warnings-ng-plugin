@@ -37,6 +37,21 @@ public class ParserRegistryTest {
      * Verifies that we get a null object if the parser is not found.
      */
     @Test
+    public void testOldJavaSerialization() {
+        AbstractWarningsParser parser = ParserRegistry.getParser("Java Compiler (javac)");
+
+        assertEquals("Wrong name",
+                Messages._Warnings_JavaParser_ParserName().toString(), parser.getParserName().toString());
+        assertEquals("Wrong link",
+                Messages._Warnings_JavaParser_LinkName().toString(), parser.getLinkName().toString());
+        assertEquals("Wrong trend",
+                Messages._Warnings_JavaParser_TrendName().toString(), parser.getTrendName().toString());
+    }
+
+    /**
+     * Verifies that we get a null object if the parser is not found.
+     */
+    @Test
     public void testNullObject() {
         AbstractWarningsParser parser = ParserRegistry.getParser(UNDEFINED);
 

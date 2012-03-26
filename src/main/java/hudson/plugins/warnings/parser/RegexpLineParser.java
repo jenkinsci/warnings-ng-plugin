@@ -31,43 +31,6 @@ public abstract class RegexpLineParser extends RegexpParser {
     private final boolean isStringMatchActivated;
 
     /**
-     * Creates a new instance of {@link RegexpLineParser}. Uses a single line
-     * matcher.
-     *
-     * @param warningPattern
-     *            pattern of compiler warnings.
-     * @param name
-     *            name of the parser
-     * @deprecated use
-     *             {@link #RegexpLineParser(Localizable, Localizable, Localizable, String, boolean)}
-     */
-    @Deprecated
-    public RegexpLineParser(final String warningPattern, final String name) {
-        this(warningPattern, name, false);
-    }
-
-    /**
-     * Creates a new instance of {@link RegexpLineParser}. Uses a single line
-     * matcher.
-     *
-     * @param warningPattern
-     *            pattern of compiler warnings.
-     * @param name
-     *            name of the parser
-     * @param isStringMatchActivated
-     *            determines if a line is checked for a string existence before
-     *            the regular expression is applied
-     * @deprecated use
-     *             {@link #RegexpLineParser(Localizable, Localizable, Localizable, String, boolean)}
-     */
-    @Deprecated
-    public RegexpLineParser(final String warningPattern, final String name, final boolean isStringMatchActivated) {
-        super(warningPattern, name);
-
-        this.isStringMatchActivated = isStringMatchActivated;
-    }
-
-    /**
      * Creates a new instance of {@link RegexpDocumentParser}.
      *
      * @param parserName
@@ -151,5 +114,43 @@ public abstract class RegexpLineParser extends RegexpParser {
      */
     protected boolean isLineInteresting(final String line) {
         return true;
+    }
+
+    /**
+     * Creates a new instance of {@link RegexpLineParser}. Uses a single line
+     * matcher.
+     *
+     * @param warningPattern
+     *            pattern of compiler warnings.
+     * @param name
+     *            name of the parser
+     * @deprecated use
+     *             {@link #RegexpLineParser(Localizable, Localizable, Localizable, String, boolean)}
+     */
+    @Deprecated
+    public RegexpLineParser(final String warningPattern, final String name) {
+        this(warningPattern, name, false);
+    }
+
+    /**
+     * Creates a new instance of {@link RegexpLineParser}. Uses a single line
+     * matcher.
+     *
+     * @param warningPattern
+     *            pattern of compiler warnings.
+     * @param name
+     *            name of the parser
+     * @param isStringMatchActivated
+     *            determines if a line is checked for a string existence before
+     *            the regular expression is applied
+     * @deprecated use
+     *             {@link #RegexpLineParser(Localizable, Localizable, Localizable, String, boolean)}
+     */
+    @SuppressWarnings("deprecation")
+    @Deprecated
+    public RegexpLineParser(final String warningPattern, final String name, final boolean isStringMatchActivated) {
+        super(warningPattern, name);
+
+        this.isStringMatchActivated = isStringMatchActivated;
     }
 }
