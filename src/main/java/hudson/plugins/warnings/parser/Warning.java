@@ -1,6 +1,7 @@
 package hudson.plugins.warnings.parser;
 
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
+import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
 import org.apache.commons.lang.StringUtils;
@@ -58,6 +59,26 @@ public class Warning extends AbstractAnnotation {
         super(priority, message, start, start, category, type);
 
         setFileName(fileName);
+        setOrigin(ORIGIN);
+    }
+
+    /**
+     * Creates a new instance of {@link Warning}. This warning is a copy of the
+     * specified warning with the additional message text (at the specified
+     * line).
+     *
+     * @param copy
+     *            the warning to copy
+     * @param additionalMessage
+     *            the additional message text
+     * @param currentLine
+     *            the current line
+     */
+    public Warning(final FileAnnotation copy, final String additionalMessage, final int currentLine) {
+        super(copy.getPriority(), copy.getMessage() + "\n" + additionalMessage,
+                copy.getPrimaryLineNumber(), currentLine, copy.getCategory(), copy.getType());
+
+        setFileName(copy.getFileName());
         setOrigin(ORIGIN);
     }
 

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
@@ -29,6 +30,8 @@ public abstract class RegexpLineParser extends RegexpParser {
      * @see #isLineInteresting(String)
      */
     private final boolean isStringMatchActivated;
+
+    private int currentLine;
 
     /**
      * Creates a new instance of {@link RegexpDocumentParser}.
@@ -75,17 +78,20 @@ public abstract class RegexpLineParser extends RegexpParser {
 
         LineIterator iterator = IOUtils.lineIterator(file);
         try {
+            currentLine = 0;
             if (isStringMatchActivated) {
                 while (iterator.hasNext()) {
                     String line = getNextLine(iterator);
                     if (isLineInteresting(line)) {
                         findAnnotations(line, warnings);
                     }
+                    currentLine++;
                 }
             }
             else {
                 while (iterator.hasNext()) {
                     findAnnotations(getNextLine(iterator), warnings);
+                    currentLine++;
                 }
             }
         }
@@ -93,7 +99,27 @@ public abstract class RegexpLineParser extends RegexpParser {
             iterator.close();
         }
 
+        return postProcessWarnings(warnings);
+    }
+
+    /**
+     * Post processes the warnings. This default implementation does nothing.
+     *
+     * @param warnings
+     *            the warnings after the parsing process
+     * @return the post processed warnings
+     */
+    protected Collection<FileAnnotation> postProcessWarnings(final List<FileAnnotation> warnings) {
         return warnings;
+    }
+
+    /**
+     * Returns the number of the current line in the parsed file.
+     *
+     * @return the current line
+     */
+    public int getCurrentLine() {
+        return currentLine;
     }
 
     private String getNextLine(final LineIterator iterator) {
