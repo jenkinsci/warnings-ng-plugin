@@ -42,7 +42,7 @@ public class ParserDescription implements Comparable<ParserDescription> {
      * @return <code>true</code> if this parser is in the specified group
      */
     public boolean isInGroup(final String other) {
-        return group.equals(other);
+        return ParserRegistry.getParser(other).getGroup() == ParserRegistry.getParser(group).getGroup();
     }
 
     /**

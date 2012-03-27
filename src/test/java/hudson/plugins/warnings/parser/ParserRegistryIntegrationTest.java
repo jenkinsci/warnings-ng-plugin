@@ -22,19 +22,13 @@ import com.google.common.collect.Sets;
  * @author Ulli Hafner
  */
 public class ParserRegistryIntegrationTest extends HudsonTestCase {
+    /**
+     * FIXME: Document field OLD_ID_O_JAVA_COMPILER
+     */
+    private static final String OLD_ID_JAVA_COMPILER = "Java Compiler";
     private static final String MIXED_API = "Both APIs";
     private static final String NEW_API = "New Parser API";
     private static final String OLD_API = "Old Parser API";
-
-    /**
-     * Verifies that the registry detects old and new API extensions and maps them correctly.
-     */
-    @Test
-    public void testRegistry() {
-        assertEquals("Wrong new API implementations", 1, ParserRegistry.getParsers(NEW_API).size());
-        assertEquals("Wrong old API implementations", 1, ParserRegistry.getParsers(OLD_API).size());
-        assertEquals("Wrong mixed API implementations", 1, ParserRegistry.getParsers(MIXED_API).size());
-    }
 
     /**
      * Verifies the current number of parsers. If you add a new parser then this
@@ -48,12 +42,27 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
     }
 
     /**
-     * Verifies that we get a null object if the parser is not found.
+     * Verifies that the registry detects old and new API extensions and maps them correctly.
+     */
+    @Test
+    public void testRegistry() {
+        assertEquals("Wrong new API implementations", 1, ParserRegistry.getParsers(NEW_API).size());
+        assertEquals("Wrong old API implementations", 1, ParserRegistry.getParsers(OLD_API).size());
+        assertEquals("Wrong mixed API implementations", 1, ParserRegistry.getParsers(MIXED_API).size());
+    }
+
+    /**
+     * Verifies that we get the Java parser if we use the key of the 3.x
+     * version.
      */
     @Test
     public void testOldJavaSerialization() {
-        AbstractWarningsParser parser = ParserRegistry.getParser("Java Compiler (javac)");
+        AbstractWarningsParser parser = ParserRegistry.getParser(OLD_ID_JAVA_COMPILER);
 
+        verifyJavaParser(parser);
+    }
+
+    private void verifyJavaParser(final AbstractWarningsParser parser) {
         assertEquals("Wrong name",
                 Messages._Warnings_JavaParser_ParserName().toString(), parser.getParserName().toString());
         assertEquals("Wrong link",
@@ -63,11 +72,28 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
     }
 
     /**
+     * Verifies that we get the Java parser (using
+     * {@link ParserRegistry#getAvailableParsers()} and
+     * {@link ParserDescription}) if we use the key of the 3.x version.
+     */
+    @Test
+    public void testUiMapping() {
+        boolean isFound = false;
+        for (ParserDescription description : ParserRegistry.getAvailableParsers()) {
+            if (description.isInGroup(OLD_ID_JAVA_COMPILER)) {
+                verifyJavaParser(ParserRegistry.getParser(description.getGroup()));
+                isFound = true;
+            }
+        }
+        assertTrue("No parser found", isFound);
+    }
+
+    /**
      * Verifies that illegal names are filtered.
      */
     @Test
     public void testFiltering() {
-        verifyFiltering("Java Compiler");
+        verifyFiltering(OLD_ID_JAVA_COMPILER);
         verifyFiltering(Messages._Warnings_JavaParser_ParserName().toString(Locale.ENGLISH));
     }
 
