@@ -46,5 +46,11 @@ public class AntJavacParser extends RegexpLineParser {
             return createWarning(matcher.group(6), 0, "Path", matcher.group(5));
         }
     }
+
+    @Override
+    protected String getId() {
+        return "Java Compiler"; // old ID in serialization
+    }
+
 }
 

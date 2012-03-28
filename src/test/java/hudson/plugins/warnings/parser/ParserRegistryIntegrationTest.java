@@ -2,7 +2,10 @@ package hudson.plugins.warnings.parser;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
@@ -22,9 +25,7 @@ import com.google.common.collect.Sets;
  * @author Ulli Hafner
  */
 public class ParserRegistryIntegrationTest extends HudsonTestCase {
-    /**
-     * FIXME: Document field OLD_ID_O_JAVA_COMPILER
-     */
+    private static final String JAVA_WARNINGS_FILE = "deprecations.txt";
     private static final String OLD_ID_JAVA_COMPILER = "Java Compiler";
     private static final String MIXED_API = "Both APIs";
     private static final String NEW_API = "New Parser API";
@@ -52,14 +53,26 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
     }
 
     /**
+     * Verifies that we parse two warnings if we use the key of the 3.x version.
+     *
+     * @throws IOException
+     *             if the file could not be read
+     */
+    @Test
+    public void testOldJavaSerializationActualParsing() throws IOException {
+        ParserRegistry registry = createRegistryUnderTest(JAVA_WARNINGS_FILE, OLD_ID_JAVA_COMPILER);
+        Collection<FileAnnotation> annotations = registry.parse(new File(JAVA_WARNINGS_FILE));
+
+        assertEquals("Wrong number of warnings parsed.", 3, annotations.size());
+    }
+
+    /**
      * Verifies that we get the Java parser if we use the key of the 3.x
      * version.
      */
     @Test
     public void testOldJavaSerialization() {
-        AbstractWarningsParser parser = ParserRegistry.getParser(OLD_ID_JAVA_COMPILER);
-
-        verifyJavaParser(parser);
+        verifyJavaParser(ParserRegistry.getParser(OLD_ID_JAVA_COMPILER));
     }
 
     private void verifyJavaParser(final AbstractWarningsParser parser) {
@@ -104,6 +117,26 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
         assertEquals("Wrong number of filteres elements", validName, filtered.get(0));
     }
 
+    /**
+     * Creates the registry under test.
+     *
+     * @param fileName
+     *            file name with the warnings
+     * @param group
+     *            the parsers to use
+     * @return the registry
+     */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
+    private ParserRegistry createRegistryUnderTest(final String fileName, final String group) {
+        ParserRegistry parserRegistry = new ParserRegistry(ParserRegistry.getParsers(group), "", "", "") {
+            /** {@inheritDoc} */
+            @Override
+            protected Reader createReader(final File file) throws FileNotFoundException {
+                return new InputStreamReader(ParserRegistryTest.class.getResourceAsStream(fileName));
+            }
+        };
+        return parserRegistry;
+    }
     // CHECKSTYLE:OFF Test implementations
     @TestExtension
     public static class TestBothParser extends RegexpLineParser {
