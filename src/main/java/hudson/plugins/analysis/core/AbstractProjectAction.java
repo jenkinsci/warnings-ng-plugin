@@ -364,9 +364,23 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     public ResultAction<?> getLastAction() {
         AbstractBuild<?, ?> lastBuild = getLastFinishedBuild();
         if (lastBuild != null) {
-            return lastBuild.getAction(resultActionType);
+            return null;
         }
-        return null;
+        else {
+            return getResultAction(lastBuild);
+        }
+    }
+
+    /**
+     * Returns the result action for the specified build.
+     *
+     * @param lastBuild
+     *            the build to get the action for
+     * @return the action or <code>null</code> if there is no such action
+     */
+    @CheckForNull
+    protected T getResultAction(final AbstractBuild<?, ?> lastBuild) {
+        return lastBuild.getAction(resultActionType);
     }
 
     /**
@@ -378,7 +392,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     @CheckForNull
     public AbstractBuild<?, ?> getLastFinishedBuild() {
         AbstractBuild<?, ?> lastBuild = project.getLastBuild();
-        while (lastBuild != null && (lastBuild.isBuilding() || lastBuild.getAction(resultActionType) == null)) {
+        while (lastBuild != null && (lastBuild.isBuilding() || getResultAction(lastBuild) == null)) {
             lastBuild = lastBuild.getPreviousBuild();
         }
         return lastBuild;

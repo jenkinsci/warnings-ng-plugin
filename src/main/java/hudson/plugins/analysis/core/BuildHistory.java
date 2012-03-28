@@ -77,15 +77,49 @@ public class BuildHistory {
      *         such build exists
      */
     private ResultAction<? extends BuildResult> getReferenceAction() {
+        ResultAction<? extends BuildResult> action = getAction(true);
+        if (action == null) {
+            return getPreviousAction(); // fallback, use action of previous build regardless of result
+        }
+        else {
+            return action;
+        }
+    }
+
+    protected ResultAction<? extends BuildResult> getAction(final boolean isStatusRelevant) {
         for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
             if (hasValidResult(build)) {
-                ResultAction<? extends BuildResult> action = build.getAction(type);
-                if (action != null && action.isSuccessful()) {
+                ResultAction<? extends BuildResult> action = getResultAction(build);
+                if (action != null && (action.isSuccessful() || !isStatusRelevant)) {
                     return action;
                 }
             }
         }
-        return getPreviousAction(); // fallback, use previous build
+        return null;
+    }
+
+    /**
+     * Returns the result action of the specified build that should be used to
+     * compute the history.
+     *
+     * @param build
+     *            the build
+     * @return the result action
+     */
+    @CheckForNull
+    public ResultAction<? extends BuildResult> getResultAction(final AbstractBuild<?, ?> build) {
+        return build.getAction(type);
+    }
+
+    /**
+     * Returns the action of the previous build.
+     *
+     * @return the action of the previous build, or <code>null</code> if no
+     *         such build exists
+     */
+    @CheckForNull
+    private ResultAction<? extends BuildResult> getPreviousAction() {
+        return getAction(false);
     }
 
     /**
@@ -145,25 +179,6 @@ public class BuildHistory {
      */
     public boolean isEmpty() {
         return !hasPreviousResult();
-    }
-
-    /**
-     * Returns the action of the previous build.
-     *
-     * @return the action of the previous build, or <code>null</code> if no
-     *         such build exists
-     */
-    @CheckForNull
-    private ResultAction<? extends BuildResult> getPreviousAction() {
-        for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
-            if (hasValidResult(build)) {
-                ResultAction<? extends BuildResult> action = build.getAction(type);
-                if (action != null) {
-                    return action;
-                }
-            }
-        }
-        return null;
     }
 
     /**
