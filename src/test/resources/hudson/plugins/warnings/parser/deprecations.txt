@@ -1,0 +1,11 @@
+Note: Generating hudson/plugins/warnings/WarningsDescriptor/doCheckExample.stapler
+/media/ssd/default/workspace/Jenkins Analysis Plug-ins/warnings/src/main/java/hudson/plugins/warnings/parser/RegexpParser.java:19: warning: [deprecation] hudson.plugins.warnings.parser.WarningsParser in hudson.plugins.warnings.parser has been deprecated
+public abstract class RegexpParser extends AbstractWarningsParser implements WarningsParser {
+                                                                             ^
+/media/ssd/default/workspace/Jenkins Analysis Plug-ins/warnings/src/main/java/hudson/plugins/warnings/parser/ParserAdapter.java:18: warning: [deprecation] hudson.plugins.warnings.parser.WarningsParser in hudson.plugins.warnings.parser has been deprecated
+    private final WarningsParser wrapped;
+                  ^
+/media/ssd/default/workspace/Jenkins Analysis Plug-ins/warnings/src/main/java/hudson/plugins/warnings/parser/ParserAdapter.java:26: warning: [deprecation] hudson.plugins.warnings.parser.WarningsParser in hudson.plugins.warnings.parser has been deprecated
+    public ParserAdapter(final WarningsParser wrapped) {
+                               ^
+Note: hudson.plugins.warnings.parser.TiCcsParser indexed under hudson.Extension
