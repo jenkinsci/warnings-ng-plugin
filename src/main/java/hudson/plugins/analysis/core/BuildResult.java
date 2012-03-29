@@ -195,35 +195,24 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     private String reason;
 
     /**
-     * Creates a new instance of {@link BuildResult}.
+     * Creates a new instance of {@link BuildResult}. Note that the warnings are
+     * not serialized anymore automatically. You need to call
+     * {@link #serializeAnnotations(Collection)} manually in your constructor to
+     * persist them.
      *
      * @param build
      *            the current build as owner of this action
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param result
-     *            the parsed result with all annotations
      * @param history
-     *            the history of build results of the associated plug-in
-     */
-    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
-    public BuildResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result, final BuildHistory history) {
-        initialize(history, build, defaultEncoding, result);
-    }
-
-    /**
-     * Creates a new instance of {@link BuildResult}.
-     *
-     * @param build
-     *            the current build as owner of this action
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
+     *            build history
      * @param result
      *            the parsed result with all annotations
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @since 1.39
      */
-    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
-    public BuildResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result) {
-        initialize(createHistory(build), build, defaultEncoding, result);
+    protected BuildResult(final AbstractBuild<?, ?> build, final BuildHistory history,
+            final ParserResult result, final String defaultEncoding) {
+        initialize(history, build, defaultEncoding, result);
     }
 
     /**
@@ -279,8 +268,6 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         highWarnings = result.getNumberOfAnnotations(Priority.HIGH);
         normalWarnings = result.getNumberOfAnnotations(Priority.NORMAL);
         lowWarnings = result.getNumberOfAnnotations(Priority.LOW);
-
-        serializeAnnotations(result.getAnnotations());
 
         JavaProject container = new JavaProject();
         container.addAnnotations(result.getAnnotations());
@@ -636,32 +623,20 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
-     * Serializes the annotations of the specified project.
+     * Serializes the annotations of the specified project and writes them to
+     * the file specified by method {@link #getDataFile()}.
      *
      * @param annotations
      *            the annotations to store
      */
-    private void serializeAnnotations(final Collection<FileAnnotation> annotations) {
-        if (canSerialize()) {
-            try {
-                Collection<FileAnnotation> files = annotations;
-                getDataFile().write(files.toArray(new FileAnnotation[files.size()]));
-            }
-            catch (IOException exception) {
-                LOGGER.log(Level.SEVERE, "Failed to serialize the annotations of the build.", exception);
-            }
+    protected void serializeAnnotations(final Collection<FileAnnotation> annotations) {
+        try {
+            Collection<FileAnnotation> files = annotations;
+            getDataFile().write(files.toArray(new FileAnnotation[files.size()]));
         }
-    }
-
-    /**
-     * Returns whether this result should write to the data file. This method
-     * can be overwritten in test cases to suppress the saving of the
-     * serialization.
-     *
-     * @return <code>true</code> if the file should be written
-     */
-    protected boolean canSerialize() {
-        return true;
+        catch (IOException exception) {
+            LOGGER.log(Level.SEVERE, "Failed to serialize the annotations of the build.", exception);
+        }
     }
 
     /**
@@ -1321,6 +1296,48 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     @Override
     public String toString() {
         return getDisplayName() + " : " + getNumberOfAnnotations() + " annotations";
+    }
+
+    /**
+     * Creates a new instance of {@link BuildResult}.
+     *
+     * @param build
+     *            the current build as owner of this action
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @param result
+     *            the parsed result with all annotations
+     * @param history
+     *            the history of build results of the associated plug-in
+     * @deprecated use {@link #BuildResult(AbstractBuild, BuildHistory, ParserResult, String)}
+     *             The new constructor will not save the annotations anymore.
+     *             you need to save them manually
+     */
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
+    @Deprecated
+    public BuildResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result, final BuildHistory history) {
+        initialize(history, build, defaultEncoding, result);
+        serializeAnnotations(result.getAnnotations());
+    }
+
+    /**
+     * Creates a new instance of {@link BuildResult}.
+     *
+     * @param build
+     *            the current build as owner of this action
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @param result
+     *            the parsed result with all annotations
+     * @deprecated use {@link #BuildResult(AbstractBuild, BuildHistory, ParserResult, String)}
+     *             The new constructor will not save the annotations anymore.
+     *             you need to save them manually
+     */
+    @Deprecated
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
+    public BuildResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result) {
+        initialize(createHistory(build), build, defaultEncoding, result);
+        serializeAnnotations(result.getAnnotations());
     }
 
     // Backward compatibility. Do not remove.
