@@ -86,7 +86,7 @@ public class BuildHistory {
         }
     }
 
-    protected ResultAction<? extends BuildResult> getAction(final boolean isStatusRelevant) {
+    private ResultAction<? extends BuildResult> getAction(final boolean isStatusRelevant) {
         for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
             if (hasValidResult(build)) {
                 ResultAction<? extends BuildResult> action = getResultAction(build);

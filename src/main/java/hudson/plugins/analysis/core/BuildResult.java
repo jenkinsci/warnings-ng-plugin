@@ -32,6 +32,7 @@ import hudson.model.Api;
 import hudson.model.Hudson;
 
 import hudson.plugins.analysis.Messages;
+import hudson.plugins.analysis.util.HtmlPrinter;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.AnnotationProvider;
@@ -1207,20 +1208,20 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the summary message
      */
     public String getDetails() {
-        StringBuilder message = new StringBuilder();
-        message.append(createDeltaMessage());
+        HtmlPrinter printer = new HtmlPrinter();
+        printer.append(createDeltaMessage());
 
         if (getNumberOfAnnotations() == 0 && getDelta() == 0) {
-            message.append(createNoWarningsMessage());
-            message.append(createHighScoreMessage());
+            printer.append(printer.item(Messages.ResultAction_NoWarningsSince(getZeroWarningsSinceBuild())));
+            printer.append(printer.item(createHighScoreMessage()));
         }
         else if (isSuccessfulTouched()) {
-            message.append(createListItem(createPluginResulMessage()));
+            printer.append(printer.item(createPluginResulMessage()));
             if (isSuccessful()) {
-                message.append(createSuccessfulHighScoreMessage());
+                printer.append(printer.item(createSuccessfulHighScoreMessage()));
             }
         }
-        return message.toString();
+        return printer.toString();
     }
 
     private String createPluginResulMessage() {
@@ -1228,23 +1229,19 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     private String getReferenceBuildUrl() {
-        StringBuilder summary = new StringBuilder();
+        HtmlPrinter printer = new HtmlPrinter();
         if (hasReferenceBuild()) {
             AbstractBuild<?, ?> build = getReferenceBuild();
 
-            summary.append("&nbsp;");
-            summary.append("(");
-            summary.append(Messages.ReferenceBuild());
-            summary.append(": <a href=\"");
-            summary.append(Hudson.getInstance().getRootUrl());
-            summary.append("/");
-            summary.append(build.getUrl());
-            summary.append("\">");
-            summary.append(build.getDisplayName());
-            summary.append("</a>");
-            summary.append(")");
+            printer.append("&nbsp;");
+            printer.append("(");
+            printer.append(Messages.ReferenceBuild());
+            printer.append(": ");
+            printer.append(printer.link(Hudson.getInstance().getRootUrl() + "/" + build.getUrl(),
+                    build.getDisplayName()));
+            printer.append(")");
         }
-        return summary.toString();
+        return printer.toString();
     }
 
     /**
@@ -1271,27 +1268,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
-     * Creates a message that shows the number of warnings since a given build.
-     *
-     * @return a message
-     */
-    protected String createNoWarningsMessage() {
-        return createListItem(Messages.ResultAction_NoWarningsSince(getZeroWarningsSinceBuild()));
-    }
-
-    /**
-     * Creates a HTML list item.
-     *
-     * @param text
-     *            the item text
-     * @return the HTML item
-     */
-    protected String createListItem(final String text) {
-        return "<li>" + text + "</li>";
-    }
-
-    /**
-     * Returns the build summary HTML message.
+     * Returns the build summary HTML delta message.
      *
      * @return the build summary HTML message
      */
@@ -1299,66 +1276,51 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         return StringUtils.EMPTY;
     }
 
-    /**
-     * Creates a highscore message.
-     *
-     * @return a highscore message
-     */
-    protected String createHighScoreMessage() {
-        String message;
+    private String createHighScoreMessage() {
         if (isNewZeroWarningsHighScore()) {
             long days = getDays(getZeroWarningsHighScore());
             if (days == 1) {
-                message = Messages.ResultAction_OneHighScore();
+                return Messages.ResultAction_OneHighScore();
             }
             else {
-                message = Messages.ResultAction_MultipleHighScore(days);
+                return Messages.ResultAction_MultipleHighScore(days);
             }
         }
         else {
             long days = getDays(getHighScoreGap());
             if (days == 1) {
-                message = Messages.ResultAction_OneNoHighScore();
+                return Messages.ResultAction_OneNoHighScore();
             }
             else {
-                message = Messages.ResultAction_MultipleNoHighScore(days);
+                return Messages.ResultAction_MultipleNoHighScore(days);
             }
         }
-        return createListItem(message);
     }
 
-    /**
-     * Creates a successful highscore message.
-     *
-     * @return a successful highscore message
-     */
-    protected String createSuccessfulHighScoreMessage() {
-        String message;
+    private String createSuccessfulHighScoreMessage() {
         if (isNewSuccessfulHighScore()) {
             long days = getDays(getSuccessfulHighScore());
             if (days == 1) {
-                message = Messages.ResultAction_SuccessfulOneHighScore();
+                return Messages.ResultAction_SuccessfulOneHighScore();
             }
             else {
-                message = Messages.ResultAction_SuccessfulMultipleHighScore(days);
+                return Messages.ResultAction_SuccessfulMultipleHighScore(days);
             }
         }
         else {
             long days = getDays(getSuccessfulHighScoreGap());
             if (days == 1) {
-                message = Messages.ResultAction_SuccessfulOneNoHighScore();
+                return Messages.ResultAction_SuccessfulOneNoHighScore();
             }
             else {
-                message = Messages.ResultAction_SuccessfulMultipleNoHighScore(days);
+                return Messages.ResultAction_SuccessfulMultipleNoHighScore(days);
             }
         }
-        return createListItem(message);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
-        return getDisplayName() + ": " + getNumberOfAnnotations() + " annotations";
+        return getDisplayName() + " : " + getNumberOfAnnotations() + " annotations";
     }
 
     // Backward compatibility. Do not remove.
