@@ -45,6 +45,7 @@ import hudson.util.Graph;
  *            result action type
  * @author Ulli Hafner
  */
+// CHECKSTYLE:COUPLING-OFF
 public abstract class AbstractProjectAction<T extends ResultAction<?>> implements Action {
     private static final Logger LOGGER = Logger.getLogger(AbstractProjectAction.class.getName());
 
