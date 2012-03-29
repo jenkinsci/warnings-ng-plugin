@@ -5,6 +5,8 @@ import hudson.plugins.analysis.core.BuildHistory;
 
 import java.util.List;
 
+import javax.annotation.CheckForNull;
+
 /**
  * A build history for warnings results. Picks the right action using the parser group.
  *
@@ -21,7 +23,7 @@ public class WarningsBuildHistory extends BuildHistory {
      * @param group
      *            the parser group
      */
-    public WarningsBuildHistory(final AbstractBuild<?, ?> lastFinishedBuild, final String group) {
+    public WarningsBuildHistory(final AbstractBuild<?, ?> lastFinishedBuild, @CheckForNull final String group) {
         super(lastFinishedBuild, WarningsResultAction.class);
 
         this.group = group;
@@ -31,9 +33,11 @@ public class WarningsBuildHistory extends BuildHistory {
     @Override
     public WarningsResultAction getResultAction(final AbstractBuild<?, ?> build) {
         List<WarningsResultAction> actions = build.getActions(WarningsResultAction.class);
-        for (WarningsResultAction action : actions) {
-            if (group.equals(action.getParser())) {
-               return action;
+        if (group != null) {
+            for (WarningsResultAction action : actions) {
+                if (group.equals(action.getParser())) {
+                    return action;
+                }
             }
         }
         if (!actions.isEmpty() && actions.get(0).getParser() == null) { // fallback 3.x

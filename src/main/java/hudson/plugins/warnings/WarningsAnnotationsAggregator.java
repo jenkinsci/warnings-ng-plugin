@@ -67,8 +67,9 @@ public class WarningsAnnotationsAggregator extends MatrixAggregator {
     @Override
     public boolean endBuild() throws InterruptedException, IOException {
         for (String parser : totalsPerParser.keySet()) {
-            build.addAction(new WarningsResultAction(build, healthDescriptor,
-                    new WarningsResult(build, defaultEncoding, totalsPerParser.get(parser)), parser));
+            WarningsBuildHistory history = new WarningsBuildHistory(build, parser);
+            WarningsResult result = new WarningsResult(build, history, totalsPerParser.get(parser), defaultEncoding, parser);
+            build.addAction(new WarningsResultAction(build, healthDescriptor, result, parser));
         }
 
         return true;

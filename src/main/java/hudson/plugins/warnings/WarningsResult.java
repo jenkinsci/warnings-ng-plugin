@@ -28,18 +28,29 @@ public class WarningsResult extends BuildResult {
      *
      * @param build
      *            the current build as owner of this action
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
+     * @param history
+     *            the build history
      * @param result
      *            the parsed result with all annotations
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      * @param group
      *            the parser group this result belongs to
      */
-    public WarningsResult(final AbstractBuild<?, ?> build, final String defaultEncoding,
-            final ParserResult result, final String group) {
-        super(build, defaultEncoding, result);
+    public WarningsResult(final AbstractBuild<?, ?> build, final BuildHistory history,
+            final ParserResult result, final String defaultEncoding, final String group) {
+        this(build, history, result, defaultEncoding, group, true);
+    }
+
+    WarningsResult(final AbstractBuild<?, ?> build, final BuildHistory history,
+            final ParserResult result, final String defaultEncoding, final String group,
+            final boolean canSerialize) {
+        super(build, history, result, defaultEncoding);
 
         this.group = group;
+        if (canSerialize) {
+            serializeAnnotations(result.getAnnotations());
+        }
     }
 
     @Override
@@ -114,7 +125,6 @@ public class WarningsResult extends BuildResult {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getSerializationFileName() {
         if (group == null) { // prior 4.0
@@ -138,55 +148,5 @@ public class WarningsResult extends BuildResult {
     @Override
     protected Class<? extends ResultAction<? extends BuildResult>> getResultActionType() {
         return WarningsResultAction.class;
-    }
-
-    /**
-     * Creates a new instance of {@link WarningsResult}.
-     *
-     * @param build
-     *            the current build as owner of this action
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param result
-     *            the parsed result with all annotations
-     * @param history
-     *            the history of build results of the associated plug-in
-     */
-    WarningsResult(final AbstractBuild<?, ?> build, final String defaultEncoding,
-            final ParserResult result, final BuildHistory history) {
-        this(build, defaultEncoding, result, history, null);
-    }
-
-    /**
-     * Creates a new instance of {@link WarningsResult}.
-     *
-     * @param build
-     *            the current build as owner of this action
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param result
-     *            the parsed result with all annotations
-     * @param history
-     *            the history of build results of the associated plug-in
-     */
-    WarningsResult(final AbstractBuild<?, ?> build, final String defaultEncoding,
-            final ParserResult result, final BuildHistory history, final String group) {
-        super(build, defaultEncoding, result, history);
-
-        this.group = group;
-    }
-
-    /**
-     * Creates a new instance of {@link WarningsResult}.
-     *
-     * @param build
-     *            the current build as owner of this action
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param result
-     *            the parsed result with all annotations
-     */
-    WarningsResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result) {
-        this(build, defaultEncoding, result, (String)null);
     }
 }

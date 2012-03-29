@@ -22,7 +22,7 @@ public class WarningsResultTest extends BuildResultTest<WarningsResult> {
     /** {@inheritDoc} */
     @Override
     protected WarningsResult createBuildResult(final AbstractBuild<?, ?> build, final ParserResult project, final BuildHistory history) {
-        return new WarningsResult(build, null, project, history);
+        return new WarningsResult(build, history, project, "UTF-8", null, false);
     }
 
     /**
@@ -88,16 +88,8 @@ public class WarningsResultTest extends BuildResultTest<WarningsResult> {
         return createResultUnderTest(newWarnings, history, build);
     }
 
-    @SuppressWarnings("serial")
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     private WarningsResult createResultUnderTest(final ParserResult newWarnings, final BuildHistory history, @SuppressWarnings("rawtypes") final AbstractBuild build) {
-        return new WarningsResult(build, "", newWarnings, history) {
-            /** {@inheritDoc} */
-            @Override
-            protected boolean canSerialize() {
-                return false;
-            }
-        };
+        return new WarningsResult(build, history, newWarnings, "", null, false);
     }
 
     private WarningsResult createResult(final int numberOfFixedWarnings, final int numberOfNewWarnings) {

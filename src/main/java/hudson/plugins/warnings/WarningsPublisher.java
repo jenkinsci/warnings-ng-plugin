@@ -263,7 +263,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
             add(totals, consoleResults);
             add(totals, fileResults);
 
-            return new WarningsResult(build, getDefaultEncoding(), totals);
+            return new WarningsResult(build, new WarningsBuildHistory(build, null), totals,
+                    getDefaultEncoding(), null);
         }
         catch (ParsingCanceledException exception) {
             throw createInterruptedException();
@@ -341,7 +342,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
         for (FileAnnotation annotation : output.getAnnotations()) {
             annotation.setPathName(build.getWorkspace().getRemote());
         }
-        WarningsResult result = new WarningsResult(build, getDefaultEncoding(), output, parserName);
+        WarningsResult result = new WarningsResult(build, new WarningsBuildHistory(build, parserName),
+                output, getDefaultEncoding(), parserName);
         build.getActions().add(new WarningsResultAction(build, this, result, parserName));
 
         return output;
