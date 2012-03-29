@@ -5,6 +5,7 @@ import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.core.ResultAction;
+import hudson.plugins.analysis.util.HtmlPrinter;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.plugins.warnings.parser.Warning;
 
@@ -52,29 +53,28 @@ public class WarningsResult extends BuildResult {
      * @return the summary message
      */
     public String getSummary() {
-        StringBuilder summary = new StringBuilder();
-        int warnings = getNumberOfAnnotations();
-
+        HtmlPrinter summary = new HtmlPrinter();
         summary.append(ParserRegistry.getParser(group).getLinkName());
         summary.append(": ");
+
+        int warnings = getNumberOfAnnotations();
         if (warnings > 0) {
-            summary.append(createLink(getUrl()));
-        }
-        if (warnings == 1) {
-            summary.append(Messages.Warnings_ResultAction_OneWarning());
+            summary.append(summary.link(getUrl(), getSummaryText(warnings)));
         }
         else {
-            summary.append(Messages.Warnings_ResultAction_MultipleWarnings(warnings));
-        }
-        if (warnings > 0) {
-            summary.append("</a>");
+            summary.append(getSummaryText(warnings));
         }
         summary.append(".");
         return summary.toString();
     }
 
-    private String createLink(final String url) {
-        return String.format("<a href=\"%s\">", url);
+    private String getSummaryText(final int warnings) {
+        if (warnings == 1) {
+            return Messages.Warnings_ResultAction_OneWarning();
+        }
+        else {
+            return Messages.Warnings_ResultAction_MultipleWarnings(warnings);
+        }
     }
 
     private String getUrl() {
@@ -83,31 +83,35 @@ public class WarningsResult extends BuildResult {
 
     @Override
     protected String createDeltaMessage() {
-        StringBuilder summary = new StringBuilder();
+        HtmlPrinter summary = new HtmlPrinter();
         if (getNumberOfNewWarnings() > 0) {
-            summary.append("<li>");
-            summary.append(createLink(getUrl() + "/new"));
-            if (getNumberOfNewWarnings() == 1) {
-                summary.append(Messages.Warnings_ResultAction_OneNewWarning());
-            }
-            else {
-                summary.append(Messages.Warnings_ResultAction_MultipleNewWarnings(getNumberOfNewWarnings()));
-            }
-            summary.append("</a></li>");
+            summary.append(summary.item(
+                    summary.link(getUrl() + "/new", createNewText())));
         }
         if (getNumberOfFixedWarnings() > 0) {
-            summary.append("<li>");
-            summary.append(createLink(getUrl() + "/fixed"));
-            if (getNumberOfFixedWarnings() == 1) {
-                summary.append(Messages.Warnings_ResultAction_OneFixedWarning());
-            }
-            else {
-                summary.append(Messages.Warnings_ResultAction_MultipleFixedWarnings(getNumberOfFixedWarnings()));
-            }
-            summary.append("</a></li>");
+            summary.append(summary.item(
+                    summary.link(getUrl() + "/fixed", createFixedText())));
         }
 
         return summary.toString();
+    }
+
+    private String createFixedText() {
+        if (getNumberOfFixedWarnings() == 1) {
+            return Messages.Warnings_ResultAction_OneFixedWarning();
+        }
+        else {
+            return Messages.Warnings_ResultAction_MultipleFixedWarnings(getNumberOfFixedWarnings());
+        }
+    }
+
+    private String createNewText() {
+        if (getNumberOfNewWarnings() == 1) {
+            return Messages.Warnings_ResultAction_OneNewWarning();
+        }
+        else {
+            return Messages.Warnings_ResultAction_MultipleNewWarnings(getNumberOfNewWarnings());
+        }
     }
 
     /** {@inheritDoc} */
