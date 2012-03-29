@@ -363,7 +363,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     @CheckForNull
     public ResultAction<?> getLastAction() {
         AbstractBuild<?, ?> lastBuild = getLastFinishedBuild();
-        if (lastBuild != null) {
+        if (lastBuild == null) {
             return null;
         }
         else {
