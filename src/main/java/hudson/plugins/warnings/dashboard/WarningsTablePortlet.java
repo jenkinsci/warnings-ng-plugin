@@ -27,13 +27,11 @@ public class WarningsTablePortlet extends AbstractWarningsTablePortlet {
         super(name);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Class<? extends AbstractProjectAction<?>> getAction() {
         return WarningsProjectAction.class;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getPluginName() {
         return "warnings";

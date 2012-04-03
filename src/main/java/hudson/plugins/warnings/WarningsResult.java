@@ -2,9 +2,9 @@ package hudson.plugins.warnings; // NOPMD
 
 import hudson.model.AbstractBuild;
 import hudson.plugins.analysis.core.BuildHistory;
-import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.core.ResultAction;
+import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.HtmlPrinter;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.plugins.warnings.parser.Warning;
@@ -58,11 +58,12 @@ public class WarningsResult extends BuildResult {
         xstream.alias("warning", Warning.class);
     }
 
-    /**
-     * Returns a summary message for the summary.jelly file.
-     *
-     * @return the summary message
-     */
+    @Override
+    public String getHeader() {
+        return ParserRegistry.getParser(group).getLinkName().toString();
+    }
+
+    @Override
     public String getSummary() {
         HtmlPrinter summary = new HtmlPrinter();
         summary.append(ParserRegistry.getParser(group).getLinkName());
