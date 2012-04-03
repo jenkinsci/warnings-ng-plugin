@@ -280,15 +280,6 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
-     * Returns the reason for the computed value of the build result.
-     *
-     * @return the reason
-     */
-    public String getReason() {
-        return reason;
-    }
-
-    /**
      * Returns the build history.
      *
      * @return the history
@@ -1178,6 +1169,22 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
+     * Returns the reason for the computed value of the build result.
+     *
+     * @return the reason
+     */
+    public String getReason() {
+        return reason;
+    }
+
+    /**
+     * Returns a summary message for the summary.jelly file.
+     *
+     * @return the summary message
+     */
+    public abstract String getSummary();
+
+    /**
      * Returns the detail messages for the summary.jelly file.
      *
      * @return the summary message
@@ -1240,6 +1247,15 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             return String.format(message, SUCCESS,
                     hudson.model.Messages.BallColor_Success(), hudson.model.Messages.BallColor_Success());
         }
+    }
+
+    /**
+     * Returns the header for the build result page.
+     *
+     * @return the header for the build result page
+     */
+    public String getHeader() {
+        return StringUtils.EMPTY;
     }
 
     /**
