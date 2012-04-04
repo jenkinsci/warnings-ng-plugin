@@ -7,6 +7,10 @@ import hudson.plugins.analysis.core.NullBuildHistory;
 import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.warnings.parser.ParserRegistry;
 
+import javax.annotation.CheckForNull;
+
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Entry point to visualize the warnings trend graph in the project screen.
  * Drawing of the graph is delegated to the associated
@@ -15,7 +19,7 @@ import hudson.plugins.warnings.parser.ParserRegistry;
  * @author Ulli Hafner
  */
 public class WarningsProjectAction extends AbstractProjectAction<WarningsResultAction> {
-    private final String group;
+    private final String parser;
 
     /**
      * Creates a new instance of {@link WarningsProjectAction}.
@@ -31,10 +35,21 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
                 WarningsDescriptor.getProjectUrl(group),
                 WarningsDescriptor.ICON_URL,
                 WarningsDescriptor.getResultUrl(group));
-        this.group = group;
+        parser = group;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns whether the specified parser is the parser group of this action.
+     *
+     * @param the
+     *            group to check
+     * @return <code>true</code> if the parser is in the same group,
+     *         <code>false</code> otherwise
+     */
+    public boolean isInGroup(@CheckForNull final String group) {
+        return StringUtils.equals(parser, group);
+    }
+
     @Override
     protected WarningsResultAction getResultAction(final AbstractBuild<?, ?> lastBuild) {
         return createHistory(lastBuild).getResultAction(lastBuild);
@@ -57,7 +72,7 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
     }
 
     private WarningsBuildHistory createHistory(final AbstractBuild<?, ?> build) {
-        return new WarningsBuildHistory(build, group);
+        return new WarningsBuildHistory(build, parser);
     }
 }
 

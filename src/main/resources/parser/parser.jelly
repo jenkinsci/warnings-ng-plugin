@@ -1,0 +1,23 @@
+<!--
+  Section header
+
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:u="/util">
+
+   <j:if test="${instance == null}">
+        <j:invokeStatic var="instance" className="hudson.plugins.analysis.dashboard.DefaultGraph" method="initialize"/>
+    </j:if>
+
+  <j:invokeStatic var="allParsers" className="hudson.plugins.warnings.parser.ParserRegistry" method="getAvailableParsers"/>
+  
+  <f:entry title="${%Parser}" description="${%description.parser}">
+    <select class="setting-input" name="parserName">
+      <j:forEach var="availableParser" items="${allParsers}">
+        <f:option selected="${availableParser.isInGroup(instance == null ? null : instance.parserName)}"
+          value="${availableParser.group}">${availableParser.name}</f:option>
+      </j:forEach>
+    </select>
+  </f:entry>
+
+</j:jelly>

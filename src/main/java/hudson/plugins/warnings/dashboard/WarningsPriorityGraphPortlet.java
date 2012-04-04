@@ -2,13 +2,10 @@ package hudson.plugins.warnings.dashboard;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
-import hudson.plugins.analysis.core.AbstractProjectAction;
-import hudson.plugins.analysis.dashboard.AbstractWarningsGraphPortlet;
 import hudson.plugins.analysis.graph.BuildResultGraph;
 import hudson.plugins.analysis.graph.PriorityGraph;
 import hudson.plugins.view.dashboard.DashboardPortlet;
 import hudson.plugins.warnings.Messages;
-import hudson.plugins.warnings.WarningsProjectAction;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -17,7 +14,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  *
  * @author Ulli Hafner
  */
-public final class WarningsPriorityGraphPortlet extends AbstractWarningsGraphPortlet {
+public final class WarningsPriorityGraphPortlet extends AbstractTrendPortlet {
     /**
      * Creates a new instance of {@link WarningsPriorityGraphPortlet}.
      *
@@ -29,27 +26,17 @@ public final class WarningsPriorityGraphPortlet extends AbstractWarningsGraphPor
      *            height of the graph
      * @param dayCountString
      *            number of days to consider
+     * @param parserName
+     *            the name of the parser
      */
     @DataBoundConstructor
-    public WarningsPriorityGraphPortlet(final String name, final String width, final String height, final String dayCountString) {
-        super(name, width, height, dayCountString);
+    public WarningsPriorityGraphPortlet(final String name, final String width, final String height,
+            final String dayCountString, final String parserName) {
+        super(name, width, height, dayCountString, parserName);
 
         configureGraph(getGraphType());
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected Class<? extends AbstractProjectAction<?>> getAction() {
-        return WarningsProjectAction.class;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected String getPluginName() {
-        return "warnings";
-    }
-
-    /** {@inheritDoc} */
     @Override
     protected BuildResultGraph getGraphType() {
         return new PriorityGraph();
