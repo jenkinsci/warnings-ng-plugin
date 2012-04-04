@@ -4,8 +4,6 @@ import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
-
 import hudson.model.Job;
 
 import hudson.plugins.analysis.core.AbstractProjectAction;
@@ -35,6 +33,17 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
     }
 
     /**
+     * Returns the name of the plug-in this portlet belongs to.
+     *
+     * @return the plug-in name
+     * @deprecated is not used anymore, the URL is resolved from the actions
+     */
+    @Deprecated
+    protected String getPluginName() {
+        return StringUtils.EMPTY;
+    }
+
+    /**
      * Returns the total number of warnings for the specified job.
      *
      * @param job
@@ -42,7 +51,7 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
      * @return the number of compiler warnings
      */
     public String getWarnings(final Job<?, ?> job) {
-        return getWarnings(job, getAction(), getPluginName());
+        return getWarnings(job, getAction());
     }
 
     /**
@@ -112,26 +121,14 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
         }
     }
 
-    /**
-     * Returns the warnings for the specified action.
-     *
-     * @param job
-     *            the job to get the action from
-     * @param actionType
-     *            the type of the action
-     * @param plugin
-     *            the plug-in that is target of the link
-     * @return the number of warnings
-     */
-    @SuppressWarnings("NP")
-    private String getWarnings(final Job<?, ?> job, final Class<? extends AbstractProjectAction<?>> actionType, final String plugin) {
-        AbstractProjectAction<?> action = job.getAction(actionType);
-        if (action != null && action.hasValidResults()) {
+    private String getWarnings(final Job<?, ?> job, final Class<? extends AbstractProjectAction<?>> actionType) {
+        AbstractProjectAction<?> action = selectAction(job, actionType);
+        if (isActionValid(action)) {
             BuildResult result = action.getLastAction().getResult();
             int numberOfAnnotations = result.getNumberOfAnnotations();
             String value;
             if (numberOfAnnotations > 0) {
-                value = String.format("<a href=\"%s%s\">%d</a>", job.getShortUrl(), plugin, numberOfAnnotations);
+                value = String.format("<a href=\"%s%s\">%d</a>", job.getShortUrl(), action.getUrlName(), numberOfAnnotations);
             }
             else {
                 value = String.valueOf(numberOfAnnotations);
@@ -144,26 +141,32 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
         return NO_RESULTS_FOUND;
     }
 
-    /**
-     * Returns the warnings for the specified action.
-     *
-     * @param job
-     *            the job to get the action from
-     * @param actionType
-     *            the type of the action
-     * @param priority
-     *            priority of the warnings
-     * @return the number of warnings
-     */
-    @SuppressWarnings("NP")
+    private boolean isActionValid(final AbstractProjectAction<?> action) {
+        return action != null && action.getLastAction() != null;
+    }
+
     private String getWarnings(final Job<?, ?> job, final Class<? extends AbstractProjectAction<?>> actionType, final Priority priority) {
-        AbstractProjectAction<?> action = job.getAction(actionType);
-        if (action != null && action.hasValidResults()) {
+        AbstractProjectAction<?> action = selectAction(job, actionType);
+        if (action != null && action.getLastAction() != null) {
             BuildResult result = action.getLastAction().getResult();
 
             return String.valueOf(result.getNumberOfAnnotations(priority));
         }
         return NO_RESULTS_FOUND;
+    }
+
+    /**
+     * Selects the action to show the results from. This default implementation
+     * simply returns the first action that matches the given type.
+     *
+     * @param job
+     *            the job to get the action from
+     * @param actionType
+     *            the type of the action
+     * @return the action
+     */
+    protected AbstractProjectAction<?> selectAction(final Job<?, ?> job, final Class<? extends AbstractProjectAction<?>> actionType) {
+        return job.getAction(actionType);
     }
 }
 

@@ -112,6 +112,13 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
     }
 
     /**
+     * Returns the name of the plug-in that is used to create the link to the results.
+     *
+     * @return the name of the plug-in
+     */
+    protected abstract String getPluginName();
+
+    /**
      * Checks if the results are empty.
      *
      * @return <code>true</code> if the results are empty, <code>false</code> otherwise

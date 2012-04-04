@@ -25,12 +25,5 @@ public abstract class AbstractPortlet extends DashboardPortlet {
      * @return the action type
      */
     protected abstract Class<? extends AbstractProjectAction<?>> getAction();
-
-    /**
-     * Returns the name of the plug-in that is used to create the link to the results.
-     *
-     * @return the name of the plug-in
-     */
-    protected abstract String getPluginName();
 }
 
