@@ -135,12 +135,24 @@ public abstract class AbstractWarningsGraphPortlet extends AbstractPortlet {
     private List<ResultAction<?>> getActions() {
         List<ResultAction<?>> results = Lists.newArrayList();
         for (Job<?, ?> job : getDashboard().getJobs()) {
-            AbstractProjectAction<?> action = job.getAction(getAction());
+            AbstractProjectAction<?> action = selectAction(job);
             if (action != null && action.hasValidResults()) {
                 results.add(action.getLastAction());
             }
         }
         return results;
+    }
+
+    /**
+     * Selects the action to show the results from. This default implementation
+     * simply returns the first action that matches the given type.
+     *
+     * @param job
+     *            the job to get the action from
+     * @return the action
+     */
+    protected AbstractProjectAction<?> selectAction(final Job<?, ?> job) {
+        return job.getAction(getAction());
     }
 
     /**

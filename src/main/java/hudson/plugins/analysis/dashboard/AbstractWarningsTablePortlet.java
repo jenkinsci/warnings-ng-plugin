@@ -122,8 +122,8 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
     }
 
     private String getWarnings(final Job<?, ?> job, final Class<? extends AbstractProjectAction<?>> actionType) {
-        AbstractProjectAction<?> action = selectAction(job, actionType);
-        if (isActionValid(action)) {
+        AbstractProjectAction<?> action = selectAction(job);
+        if (action != null && action.getLastAction() != null) {
             BuildResult result = action.getLastAction().getResult();
             int numberOfAnnotations = result.getNumberOfAnnotations();
             String value;
@@ -141,12 +141,8 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
         return NO_RESULTS_FOUND;
     }
 
-    private boolean isActionValid(final AbstractProjectAction<?> action) {
-        return action != null && action.getLastAction() != null;
-    }
-
     private String getWarnings(final Job<?, ?> job, final Class<? extends AbstractProjectAction<?>> actionType, final Priority priority) {
-        AbstractProjectAction<?> action = selectAction(job, actionType);
+        AbstractProjectAction<?> action = selectAction(job);
         if (action != null && action.getLastAction() != null) {
             BuildResult result = action.getLastAction().getResult();
 
@@ -161,12 +157,10 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
      *
      * @param job
      *            the job to get the action from
-     * @param actionType
-     *            the type of the action
      * @return the action
      */
-    protected AbstractProjectAction<?> selectAction(final Job<?, ?> job, final Class<? extends AbstractProjectAction<?>> actionType) {
-        return job.getAction(actionType);
+    protected AbstractProjectAction<?> selectAction(final Job<?, ?> job) {
+        return job.getAction(getAction());
     }
 }
 
