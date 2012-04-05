@@ -23,39 +23,19 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      *            the graph configuration
      * @param project
      *            the owning project to configure the graphs for
-     * @param pluginName
-     *            The name of the plug-in. Also used as the suffix of the cookie
-     *            name that is used to persist the configuration per user.
+     * @param projectActionUrl
+     *            The URL of the project action
      * @param cookies
      *            the cookies containing the graph configuration
      * @param buildHistory
      *            the build history for this project
      */
     public UserGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
-            final String pluginName, final Cookie[] cookies, final BuildHistory buildHistory) {
-        super(configuration, project, pluginName, buildHistory);
+            final String projectActionUrl, final Cookie[] cookies, final BuildHistory buildHistory) {
+        super(configuration, project, projectActionUrl, buildHistory);
 
-        initialize(configuration, project, pluginName, cookies);
-    }
-
-    /**
-     * Initializes the configuration values from the cookie. If not set or
-     * invalid, then the values are read from the default value file.
-     *
-     * @param configuration
-     *            the configuration
-     * @param project
-     *            the owning project to configure the graphs for
-     * @param pluginName
-     *            The name of the plug-in. Also used as the suffix of the cookie
-     *            name that is used to persist the configuration per user.
-     * @param cookies
-     *            the cookies containing the graph configuration
-     */
-    private void initialize(final GraphConfiguration configuration,
-            final AbstractProject<?, ?> project, final String pluginName, final Cookie[] cookies) {
-        if (!configuration.initializeFrom(createCookieHandler(pluginName).getValue(cookies))) {
-            configuration.initializeFromFile(createDefaultsFile(project, pluginName));
+        if (!configuration.initializeFrom(createCookieHandler(projectActionUrl).getValue(cookies))) {
+            configuration.initializeFromFile(createDefaultsFile(project, projectActionUrl));
         }
     }
 

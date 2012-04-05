@@ -27,6 +27,7 @@ import hudson.util.FormValidation;
  * @author Ulli Hafner
  */
 public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
+    protected static final String RESULT_URL_SUFFIX = "Result";
     private static final String NEW_SECTION_KEY = "canComputeNew";
 
     /**
@@ -37,7 +38,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @return the result URL of the plug-in
      */
     public static String createResultUrlName(final String pluginName) {
-        return pluginName + "Result";
+        return pluginName + RESULT_URL_SUFFIX;
     }
 
     /**

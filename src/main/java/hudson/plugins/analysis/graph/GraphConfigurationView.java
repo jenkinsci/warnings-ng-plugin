@@ -37,7 +37,7 @@ public abstract class GraphConfigurationView implements ModelObject {
     /** The owning project to configure the graphs for. */
     private final AbstractProject<?, ?> project;
 
-    private final String pluginName;
+    private final String projectActionUrl;
     private final BuildHistory buildHistory;
     private final AbstractHealthDescriptor healthDescriptor; // NOPMD
     private final GraphConfiguration configuration;
@@ -49,15 +49,15 @@ public abstract class GraphConfigurationView implements ModelObject {
      *            the graph configuration
      * @param project
      *            the owning project to configure the graphs for
-     * @param pluginName
-     *            the name of the plug-in
+     * @param projectActionUrl
+     *            The URL of the project action
      * @param buildHistory
      *            the build history for this project
      */
-    public GraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project, final String pluginName, final BuildHistory buildHistory) {
+    public GraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project, final String projectActionUrl, final BuildHistory buildHistory) {
         this.configuration = configuration;
         this.project = project;
-        this.pluginName = pluginName;
+        this.projectActionUrl = projectActionUrl;
 
         this.buildHistory = buildHistory;
         healthDescriptor = buildHistory.getHealthDescriptor();
@@ -106,7 +106,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return the root URL of this object
      */
     public String getRootUrl() {
-        return project.getAbsoluteUrl() + pluginName;
+        return project.getAbsoluteUrl() + projectActionUrl;
     }
 
     /**
@@ -115,7 +115,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return the plug-in name
      */
     public String getPluginName() {
-        return pluginName;
+        return projectActionUrl;
     }
 
     /**
@@ -214,7 +214,7 @@ public abstract class GraphConfigurationView implements ModelObject {
             if (hasMeaningfulGraph()) {
                 graph.setRootUrl(ROOT_URL);
                 if (graph.isVisible()) {
-                    return graph.getGraph(-1, configuration, pluginName, buildHistory.getBaseline());
+                    return graph.getGraph(-1, configuration, projectActionUrl, buildHistory.getBaseline());
                 }
             }
             response.sendRedirect2(request.getContextPath() + graph.getExampleImage());
@@ -234,7 +234,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return the graph renderer of the specified graph
      */
     public Graph getGraphRenderer(final BuildResultGraph graph) {
-        return graph.getGraph(getTimestamp(), configuration, pluginName, buildHistory.getBaseline());
+        return graph.getGraph(getTimestamp(), configuration, projectActionUrl, buildHistory.getBaseline());
     }
 
     /**
