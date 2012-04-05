@@ -62,7 +62,7 @@ public final class WarningsDescriptor extends PluginDescriptor {
             return RESULT_URL;
         }
         else {
-            return RESULT_URL + ParserRegistry.getUrl(group);
+            return PLUGIN_ID + ParserRegistry.getUrl(group) + RESULT_URL_SUFFIX;
         }
     }
 

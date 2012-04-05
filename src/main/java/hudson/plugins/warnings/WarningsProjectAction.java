@@ -5,6 +5,8 @@ import hudson.model.AbstractProject;
 import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.NullBuildHistory;
 import hudson.plugins.analysis.core.AbstractProjectAction;
+import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
+import hudson.plugins.analysis.graph.GraphConfigurationView;
 import hudson.plugins.warnings.parser.ParserRegistry;
 
 import javax.annotation.CheckForNull;
@@ -38,11 +40,18 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
         parser = group;
     }
 
+    @Override
+    protected GraphConfigurationView createDefaultConfiguration() {
+        return new DefaultGraphConfigurationView(createConfiguration(getAvailableGraphs()), getProject(),
+                WarningsDescriptor.getProjectUrl(parser),
+                createBuildHistory(), WarningsDescriptor.getProjectUrl(null));
+    }
+
     /**
      * Returns whether the specified parser is the parser group of this action.
      *
-     * @param the
-     *            group to check
+     * @param group
+     *            the group to check
      * @return <code>true</code> if the parser is in the same group,
      *         <code>false</code> otherwise
      */

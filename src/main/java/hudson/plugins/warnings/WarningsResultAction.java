@@ -55,12 +55,7 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
     }
     @Override
     public String getUrlName() {
-        if (parserName == null) {
-            return super.getUrlName();
-        }
-        else {
-            return super.getUrlName() +  ParserRegistry.getUrl(parserName);
-        }
+        return WarningsDescriptor.getResultUrl(parserName);
     }
 
     /**
