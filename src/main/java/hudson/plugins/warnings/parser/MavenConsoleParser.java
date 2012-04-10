@@ -54,7 +54,6 @@ public class MavenConsoleParser extends RegexpLineParser {
         return createWarning("Console Log", getCurrentLine(), category, matcher.group(2), priority);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Collection<FileAnnotation> postProcessWarnings(final List<FileAnnotation> warnings) {
         List<FileAnnotation> condensed = Lists.newArrayList();

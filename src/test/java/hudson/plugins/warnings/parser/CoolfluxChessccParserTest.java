@@ -37,7 +37,6 @@ public class CoolfluxChessccParserTest extends ParserTester {
     }
 
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "coolfluxchesscc.txt";

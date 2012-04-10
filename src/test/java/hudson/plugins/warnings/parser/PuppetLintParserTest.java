@@ -81,7 +81,6 @@ public class PuppetLintParserTest extends ParserTester {
         return new PuppetLintParser();
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "puppet-lint.txt";

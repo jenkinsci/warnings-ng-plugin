@@ -44,7 +44,6 @@ public class HpiCompileParserTest extends ParserTester {
                 WARNING_TYPE, "Deprecation", Priority.NORMAL);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "hpi.txt";

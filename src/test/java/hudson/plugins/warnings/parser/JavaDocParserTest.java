@@ -102,7 +102,6 @@ public class JavaDocParserTest extends ParserTester {
                 TYPE, StringUtils.EMPTY, Priority.NORMAL);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "javadoc.txt";

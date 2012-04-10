@@ -63,7 +63,6 @@ public class SunCParserTest extends ParserTester {
                 TYPE, CATEGORY, Priority.NORMAL);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "sunc.txt";

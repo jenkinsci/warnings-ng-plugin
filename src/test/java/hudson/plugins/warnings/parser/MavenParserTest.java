@@ -51,7 +51,6 @@ public class MavenParserTest extends ParserTester {
                 WARNING_TYPE, RegexpParser.PROPRIETARY_API, Priority.NORMAL);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "maven.txt";

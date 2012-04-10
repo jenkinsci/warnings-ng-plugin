@@ -57,7 +57,6 @@ public class PhpParserTest extends ParserTester {
         return new PhpParser();
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "php.txt";

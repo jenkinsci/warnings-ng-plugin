@@ -104,19 +104,16 @@ public final class WarningsDescriptor extends PluginDescriptor {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDisplayName() {
         return Messages.Warnings_Publisher_Name();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getPluginName() {
         return PLUGIN_ID;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getIconUrl() {
         return ICON_URL;
@@ -129,7 +126,6 @@ public final class WarningsDescriptor extends PluginDescriptor {
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public WarningsPublisher newInstance(final StaplerRequest request, final JSONObject formData) throws FormException {
         JSONObject flattenedData = convertHierarchicalFormData(formData);

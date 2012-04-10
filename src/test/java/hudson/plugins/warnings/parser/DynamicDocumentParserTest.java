@@ -10,7 +10,6 @@ package hudson.plugins.warnings.parser;
 public class DynamicDocumentParserTest extends EclipseParserTest {
     private static final String TYPE = "Eclipse Dynamic";
 
-    /** {@inheritDoc} */
     @Override
     protected AbstractWarningsParser createParser() {
         // CHECKSTYLE:OFF
@@ -40,7 +39,6 @@ public class DynamicDocumentParserTest extends EclipseParserTest {
         // CHECKSTYLE:ON
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getType() {
         return TYPE;

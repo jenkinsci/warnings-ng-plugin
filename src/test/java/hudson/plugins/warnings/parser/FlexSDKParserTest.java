@@ -71,7 +71,6 @@ public class FlexSDKParserTest extends ParserTester {
                 TYPE, "", Priority.NORMAL);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "flexsdk.txt";

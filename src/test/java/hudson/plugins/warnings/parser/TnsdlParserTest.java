@@ -60,7 +60,6 @@ public class TnsdlParserTest extends ParserTester {
 
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "tnsdl.txt";

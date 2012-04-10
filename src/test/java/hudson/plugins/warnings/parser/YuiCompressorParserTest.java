@@ -58,7 +58,6 @@ public class YuiCompressorParserTest extends ParserTester {
 
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "yui.txt";

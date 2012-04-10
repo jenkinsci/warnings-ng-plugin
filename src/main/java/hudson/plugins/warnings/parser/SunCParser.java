@@ -26,7 +26,6 @@ public class SunCParser extends RegexpLineParser {
                 SUN_CPP_WARNING_PATTERN);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Warning createWarning(final Matcher matcher) {
         Priority priority;

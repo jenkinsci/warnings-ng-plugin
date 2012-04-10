@@ -19,7 +19,6 @@ import org.junit.Test;
  * Tests the class {@link WarningsResult}.
  */
 public class WarningsResultTest extends BuildResultTest<WarningsResult> {
-    /** {@inheritDoc} */
     @Override
     protected WarningsResult createBuildResult(final AbstractBuild<?, ?> build, final ParserResult project, final BuildHistory history) {
         return new WarningsResult(build, history, project, "UTF-8", null, false);

@@ -49,7 +49,6 @@ public class BuckminsterParserTest extends ParserTester {
                 TYPE, "", Priority.NORMAL);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "buckminster.txt";

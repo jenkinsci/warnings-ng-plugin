@@ -91,7 +91,6 @@ public class IntelCParserTest extends ParserTester {
                 TYPE, "Error #1786", Priority.HIGH);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "intelc.txt";

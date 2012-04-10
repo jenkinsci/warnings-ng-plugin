@@ -136,7 +136,6 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
         return trendName;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return name;

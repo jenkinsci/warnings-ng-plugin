@@ -56,7 +56,6 @@ public class AcuCobolParserTest extends ParserTester {
                 TYPE, StringUtils.EMPTY, Priority.NORMAL);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "acu.txt";

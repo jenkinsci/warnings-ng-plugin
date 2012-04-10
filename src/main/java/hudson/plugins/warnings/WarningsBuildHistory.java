@@ -29,7 +29,6 @@ public class WarningsBuildHistory extends BuildHistory {
         this.group = group;
     }
 
-    /** {@inheritDoc} */
     @Override
     public WarningsResultAction getResultAction(final AbstractBuild<?, ?> build) {
         List<WarningsResultAction> actions = build.getActions(WarningsResultAction.class);

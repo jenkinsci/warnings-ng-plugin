@@ -22,7 +22,6 @@ import com.google.common.collect.Lists;
 public class DynamicParserTest extends PhpParserTest {
     private static final String TYPE = "PHP Runtime";
 
-    /** {@inheritDoc} */
     @Override
     protected AbstractWarningsParser createParser() {
         return new DynamicParser(TYPE,
@@ -116,7 +115,6 @@ public class DynamicParserTest extends PhpParserTest {
 
 
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "php.txt";

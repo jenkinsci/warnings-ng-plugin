@@ -81,7 +81,6 @@ public class IarParserTest extends ParserTester {
                 TYPE, "Pe940", Priority.NORMAL);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "iar.txt";

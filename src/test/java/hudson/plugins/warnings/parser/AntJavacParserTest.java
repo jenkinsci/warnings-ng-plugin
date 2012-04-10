@@ -157,7 +157,6 @@ public class AntJavacParserTest extends ParserTester {
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "ant-javac.txt";

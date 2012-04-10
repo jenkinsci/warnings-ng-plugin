@@ -259,7 +259,6 @@ public class GccParserTest extends ParserTester {
 
 
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "gcc.txt";

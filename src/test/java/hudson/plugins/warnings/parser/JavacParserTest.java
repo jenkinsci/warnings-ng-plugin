@@ -85,7 +85,6 @@ public class JavacParserTest extends ParserTester {
         return new JavacParser().parse(openFile(fileName));
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "javac.txt";

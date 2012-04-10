@@ -223,13 +223,11 @@ public class WarningsPublisher extends HealthAwarePublisher {
         return excludePattern;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Action getProjectAction(final AbstractProject<?, ?> project) {
         throw new IllegalStateException("Not available since release 4.0.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public Collection<? extends Action> getProjectActions(final AbstractProject<?, ?> project) {
         List<Action> actions = Lists.newArrayList();
@@ -247,7 +245,6 @@ public class WarningsPublisher extends HealthAwarePublisher {
         return parsers;
     }
 
-    /** {@inheritDoc} */
     @Override
     public BuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger)
             throws InterruptedException, IOException {
@@ -358,7 +355,6 @@ public class WarningsPublisher extends HealthAwarePublisher {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public WarningsDescriptor getDescriptor() {
         return (WarningsDescriptor)super.getDescriptor();

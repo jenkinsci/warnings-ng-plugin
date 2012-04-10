@@ -29,7 +29,6 @@ public class PhpParser extends RegexpLineParser {
                 PHP_WARNING_PATTERN, true);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getId() {
         return "PHP Runtime Warning";

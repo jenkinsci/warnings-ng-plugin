@@ -170,7 +170,6 @@ public class EclipseParserTest extends ParserTester {
     }
 
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "eclipse.txt";

@@ -116,7 +116,6 @@ public class Gcc4LinkerParserTest extends ParserTester {
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, warnings.size());
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "gcc4ld.txt";

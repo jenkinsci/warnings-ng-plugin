@@ -43,7 +43,6 @@ public class ErlcParserTest extends ParserTester {
                 TYPE, "Error", Priority.HIGH);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "erlc.txt";

@@ -249,7 +249,6 @@ public class MsBuildParserTest extends ParserTester {
 
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "msbuild.txt";

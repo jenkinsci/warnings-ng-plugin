@@ -30,13 +30,11 @@ public class Gcc4LinkerParser extends RegexpLineParser {
                 LINKER_WARNING_PATTERN);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getId() {
         return "GNU compiler 4 (ld)";
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String fileName = StringUtils.defaultString(matcher.group(1));

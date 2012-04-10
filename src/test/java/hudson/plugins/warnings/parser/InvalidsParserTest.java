@@ -48,7 +48,6 @@ public class InvalidsParserTest extends ParserTester {
         assertEquals("wrong schema detected", "E", annotation.getPackageName());
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "invalids.txt";

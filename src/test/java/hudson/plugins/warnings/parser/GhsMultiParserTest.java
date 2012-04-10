@@ -46,7 +46,6 @@ public class GhsMultiParserTest extends ParserTester {
                 Priority.NORMAL);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "ghsmulti.txt";

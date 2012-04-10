@@ -50,7 +50,6 @@ public class RobocopyParserTest extends ParserTester {
                 TYPE, "same", Priority.NORMAL);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "robocopy.txt";

@@ -123,7 +123,6 @@ public class GnatParserTest extends ParserTester {
                 TYPE, "GNAT error", Priority.HIGH);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "gnat.txt";

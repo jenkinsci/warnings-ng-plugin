@@ -86,7 +86,6 @@ public class BugSerializeModelTest extends AbstractSerializeModelTest {
         ensureSerialization("project.ser.xml");
     }
 
-    /** {@inheritDoc} */
     @Override
     protected XmlFile createXmlFile(final File file) {
         return new XmlFile(XSTREAM, file);

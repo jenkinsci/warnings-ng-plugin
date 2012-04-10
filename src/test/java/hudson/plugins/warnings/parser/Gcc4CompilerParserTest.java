@@ -187,7 +187,6 @@ public class Gcc4CompilerParserTest extends ParserTester {
         assertEquals(THERE_ARE_WARNINGS_FOUND, 0, warnings.size());
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "gcc4.txt";

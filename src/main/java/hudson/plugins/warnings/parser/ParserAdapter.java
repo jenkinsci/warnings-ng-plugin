@@ -29,7 +29,6 @@ public class ParserAdapter extends AbstractWarningsParser {
         this.wrapped = wrapped;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Collection<FileAnnotation> parse(final Reader reader) throws IOException, ParsingCanceledException {
         return wrapped.parse(reader);

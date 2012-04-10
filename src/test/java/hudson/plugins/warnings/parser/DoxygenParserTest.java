@@ -193,7 +193,6 @@ public class DoxygenParserTest extends ParserTester {
 
 
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "doxygen.txt";

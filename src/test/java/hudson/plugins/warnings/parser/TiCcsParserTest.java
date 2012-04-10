@@ -93,7 +93,6 @@ public class TiCcsParserTest extends ParserTester {
     }
 
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "ticcs.txt";
