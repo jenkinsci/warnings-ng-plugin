@@ -7,19 +7,16 @@ package hudson.plugins.analysis.graph;
  * @author Ulli Hafner
  */
 public class NullGraph extends EmptyGraph {
-    /** {@inheritDoc} */
     @Override
     public String getId() {
         return "NULL";
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isDeactivated() {
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isSelectable() {
         return false;

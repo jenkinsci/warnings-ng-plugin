@@ -25,7 +25,6 @@ public class NullBuildHistory extends BuildHistory {
         super(null, null);
     }
 
-    /** {@inheritDoc} */
     @Override
     public ResultAction<? extends BuildResult> getBaseline() {
         return null;
@@ -76,7 +75,6 @@ public class NullBuildHistory extends BuildHistory {
         return Collections.emptyList();
     }
 
-    /** {@inheritDoc} */
     @Override
     public AbstractHealthDescriptor getHealthDescriptor() {
         return new NullHealthDescriptor();

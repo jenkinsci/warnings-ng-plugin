@@ -368,7 +368,6 @@ public abstract class GraphConfigurationView implements ModelObject {
         return getGraphType().isDeactivated();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return configuration.toString();

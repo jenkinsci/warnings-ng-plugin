@@ -25,13 +25,11 @@ public class LocalDateLabel implements Comparable<LocalDateLabel> {
         return date.compareTo(o.date);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return date.toString("MM-dd");
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int prime = 31;
@@ -40,7 +38,6 @@ public class LocalDateLabel implements Comparable<LocalDateLabel> {
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {

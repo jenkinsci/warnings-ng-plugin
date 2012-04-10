@@ -21,7 +21,6 @@ public class NullHealthDescriptor extends AbstractHealthDescriptor {
     /** Unique ID of this class. */
     private static final long serialVersionUID = -4856077818215392075L;
 
-    /** {@inheritDoc} */
     @Override
     protected Localizable createDescription(final AnnotationProvider result) {
         return NULL_LOCALIZABLE;

@@ -29,7 +29,6 @@ public class ToolTipAreaRenderer extends StackedAreaRenderer2 {
         this.toolTipGenerator = toolTipGenerator;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String generateToolTip(final CategoryDataset dataset, final int row, final int column) {
         return toolTipGenerator.generateToolTip(dataset, row, column);

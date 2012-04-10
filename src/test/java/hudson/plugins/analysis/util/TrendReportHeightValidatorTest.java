@@ -29,7 +29,6 @@ public class TrendReportHeightValidatorTest extends AbstractValidatorTest {
         assertThatInputIsInvalid("49");
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Validator createValidator() {
         return new TrendReportHeightValidator();

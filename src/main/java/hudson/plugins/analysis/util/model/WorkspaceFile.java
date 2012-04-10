@@ -63,7 +63,6 @@ public class WorkspaceFile extends AnnotationContainer {
         return Integer.toHexString(getName().hashCode()) + ".tmp";
     }
 
-    /** {@inheritDoc} */
     @Override
     public int compareTo(final AnnotationContainer other) {
         if (other instanceof WorkspaceFile) {

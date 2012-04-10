@@ -29,7 +29,6 @@ public class AreaRenderer extends ToolTipAreaRenderer {
         this.urlGenerator = urlGenerator;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String generateURL(final CategoryDataset dataset, final int row, final int column) {
         return urlGenerator.generateURL(dataset, row, column);

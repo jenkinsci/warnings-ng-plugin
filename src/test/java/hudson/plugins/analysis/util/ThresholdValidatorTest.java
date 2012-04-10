@@ -71,7 +71,6 @@ public class ThresholdValidatorTest extends AbstractValidatorTest {
         ThresholdValidator.convert("-1");
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Validator createValidator() {
         return new ThresholdValidator();

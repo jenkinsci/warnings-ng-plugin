@@ -30,13 +30,11 @@ public abstract class ReporterDescriptor extends MavenReporterDescriptor {
         publisherDescriptor = pluginDescriptor;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getDisplayName() {
         return publisherDescriptor.getDisplayName();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getHelpFile() {
         return publisherDescriptor.getPluginRoot() + "help-m2.html";
@@ -73,7 +71,6 @@ public abstract class ReporterDescriptor extends MavenReporterDescriptor {
         return publisherDescriptor.doCheckHeight(height);
     }
 
-    /** {@inheritDoc} */
     @Override
     public MavenReporter newInstance(final StaplerRequest req, final JSONObject formData)
             throws hudson.model.Descriptor.FormException {

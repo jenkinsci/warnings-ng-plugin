@@ -872,7 +872,6 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         return getName().compareTo(other.getName());
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int prime = 31; // NOCHECKSTYLE
@@ -881,7 +880,6 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -905,7 +903,6 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return getName() + ": " + getNumberOfAnnotations() + " annotations";

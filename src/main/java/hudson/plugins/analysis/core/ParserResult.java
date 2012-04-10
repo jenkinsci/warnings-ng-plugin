@@ -415,7 +415,6 @@ public class ParserResult implements Serializable {
         modules.addAll(additionalModules);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return getNumberOfAnnotations() + " annotations";

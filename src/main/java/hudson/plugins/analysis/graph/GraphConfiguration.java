@@ -623,7 +623,6 @@ public class GraphConfiguration  {
         return graphType.isVisible();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "type: " + graphType + ", size: " + width + "x" + height
@@ -675,7 +674,6 @@ public class GraphConfiguration  {
         return FormValidation.error("Invalid height value: " + height);
     }
 
-    /** {@inheritDoc} */
     @Override
     // CHECKSTYLE:OFF
     public int hashCode() {

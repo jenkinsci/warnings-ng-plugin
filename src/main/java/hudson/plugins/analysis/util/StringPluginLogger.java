@@ -24,7 +24,6 @@ public class StringPluginLogger extends PluginLogger {
         setLogger(new PrintStream(stream));
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return stream.toString();

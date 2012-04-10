@@ -26,19 +26,16 @@ import hudson.util.ColorPalette;
  * @author Ulli Hafner
  */
 public class NewVersusFixedGraph extends CategoryBuildResultGraph {
-    /** {@inheritDoc} */
     @Override
     public String getId() {
         return "FIXED";
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getLabel() {
         return Messages.Trend_type_fixed();
     }
 
-    /** {@inheritDoc} */
     @Override
     protected List<Integer> computeSeries(final BuildResult current) {
         List<Integer> series = new ArrayList<Integer>();
@@ -47,13 +44,11 @@ public class NewVersusFixedGraph extends CategoryBuildResultGraph {
         return series;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected JFreeChart createChart(final CategoryDataset dataSet) {
         return createBlockChart(dataSet);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Color[] getColors() {
         return new Color[] {ColorPalette.RED, ColorPalette.BLUE};

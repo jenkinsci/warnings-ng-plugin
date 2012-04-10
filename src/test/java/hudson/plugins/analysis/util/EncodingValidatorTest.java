@@ -32,7 +32,6 @@ public class EncodingValidatorTest extends AbstractValidatorTest {
         assertThatInputIsInvalid("ISO-8859-42");
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Validator createValidator() {
         return new EncodingValidator();

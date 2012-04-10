@@ -56,7 +56,6 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
         return Messages.UserGraphConfiguration_Name();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return Messages.UserGraphConfiguration_Description();
@@ -71,7 +70,6 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
         return getRootUrl() + "/configure";
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void persistValue(final String value, final String pluginName, final StaplerRequest request, final StaplerResponse response) {
         Cookie cookie = createCookieHandler(pluginName).create(request.getAncestors(), value);

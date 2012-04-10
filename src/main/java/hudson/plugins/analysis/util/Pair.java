@@ -78,7 +78,6 @@ public final class Pair<H, T> {
         tail = newTail;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object other) {
         if (other == this) {
@@ -122,13 +121,11 @@ public final class Pair<H, T> {
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return ((head == null) ? 0 : head.hashCode()) + ((tail == null) ? 0 : tail.hashCode());
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "<" + head + ":" + tail + ">";

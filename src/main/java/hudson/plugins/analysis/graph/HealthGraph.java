@@ -43,25 +43,21 @@ public class HealthGraph extends CategoryBuildResultGraph {
         this.healthDescriptor = healthDescriptor;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isSelectable() {
         return healthDescriptor.isEnabled();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getId() {
         return "HEALTH";
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getLabel() {
         return Messages.Trend_type_health();
     }
 
-    /** {@inheritDoc} */
     @Override
     protected List<Integer> computeSeries(final BuildResult current) {
         List<Integer> series = new ArrayList<Integer>();
@@ -105,7 +101,6 @@ public class HealthGraph extends CategoryBuildResultGraph {
         return series;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected JFreeChart createChart(final CategoryDataset dataSet) {
         return createAreaChart(dataSet);
@@ -150,7 +145,6 @@ public class HealthGraph extends CategoryBuildResultGraph {
     }
     // CHECKSTYLE:ON
 
-    /** {@inheritDoc} */
     @Override
     protected Color[] getColors() {
         if (useThreeColors()) {

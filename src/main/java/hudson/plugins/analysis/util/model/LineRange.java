@@ -68,7 +68,6 @@ public class LineRange implements Serializable {
         return end;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int prime = 31; // NOCHECKSTYLE
@@ -78,7 +77,6 @@ public class LineRange implements Serializable {
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {

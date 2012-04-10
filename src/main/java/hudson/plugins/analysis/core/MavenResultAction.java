@@ -171,11 +171,6 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
         return new StringPluginLogger("[" + StringUtils.defaultString(pluginName, "ANALYSIS") + "] "); // NOCHECKSTYLE
     }
 
-    /**
-     * Returns the modules.
-     *
-     * @return the modules
-     */
     private Set<MavenModule> getModules() {
         if (modules == null) {
             modules = Sets.newHashSet();

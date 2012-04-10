@@ -63,7 +63,6 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
         return Messages.DefaultGraphConfiguration_Name();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return Messages.DefaultGraphConfiguration_Description();
@@ -78,7 +77,6 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
         return getOwner().getAbsoluteUrl() + defaultsUrl + "/configureDefaults";
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void persistValue(final String value, final String pluginName, final StaplerRequest request, final StaplerResponse response) throws FileNotFoundException, IOException {
         FileOutputStream output = new FileOutputStream(createDefaultsFile(getOwner(), defaultsUrl));

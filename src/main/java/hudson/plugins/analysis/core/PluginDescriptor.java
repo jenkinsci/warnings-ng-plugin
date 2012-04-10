@@ -84,7 +84,6 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
         return super.newInstance(req, convertHierarchicalFormData(formData));
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getHelpFile() {
         return getPluginRoot() + "help.html";
@@ -181,7 +180,6 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
         return GraphConfiguration.checkHeight(height);
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("rawtypes")
     public boolean isApplicable(final Class<? extends AbstractProject> jobType) {

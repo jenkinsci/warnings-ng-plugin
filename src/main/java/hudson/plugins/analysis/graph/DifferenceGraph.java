@@ -30,13 +30,11 @@ import hudson.plugins.analysis.util.Pair;
  * @author Ulli Hafner
  */
 public class DifferenceGraph extends BuildResultGraph {
-    /** {@inheritDoc} */
     @Override
     public String getId() {
         return "DIFFERENCE";
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getLabel() {
         return Messages.Trend_type_difference();
@@ -78,7 +76,6 @@ public class DifferenceGraph extends BuildResultGraph {
         return chart;
     }
 
-    /** {@inheritDoc} */
     @Override
     public JFreeChart createAggregation(final GraphConfiguration configuration,
             final Collection<ResultAction<? extends BuildResult>> resultActions, final String pluginName) {

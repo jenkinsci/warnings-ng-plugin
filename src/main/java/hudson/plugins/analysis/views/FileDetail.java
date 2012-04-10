@@ -52,7 +52,6 @@ public class FileDetail extends AbstractAnnotationsDetail {
         return file.getShortName();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Collection<WorkspaceFile> getFiles() {
         ArrayList<WorkspaceFile> files = new ArrayList<WorkspaceFile>();
@@ -60,13 +59,11 @@ public class FileDetail extends AbstractAnnotationsDetail {
         return files;
     }
 
-    /** {@inheritDoc} */
     @Override
     public WorkspaceFile getFile(final int hashCode) {
         return file;
     }
 
-    /** {@inheritDoc} */
     @Override
     public WorkspaceFile getFile(final String name) {
         return file;
