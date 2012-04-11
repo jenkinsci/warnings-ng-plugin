@@ -5,9 +5,12 @@ import hudson.model.AbstractProject;
 import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.NullBuildHistory;
 import hudson.plugins.analysis.core.AbstractProjectAction;
+import hudson.plugins.analysis.graph.BuildResultGraph;
 import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
 import hudson.plugins.analysis.graph.GraphConfigurationView;
 import hudson.plugins.warnings.parser.ParserRegistry;
+
+import java.util.List;
 
 import javax.annotation.CheckForNull;
 
@@ -22,6 +25,15 @@ import org.apache.commons.lang.StringUtils;
  */
 public class WarningsProjectAction extends AbstractProjectAction<WarningsResultAction> {
     private final String parser;
+
+    /**
+     * Returns all the graphs.
+     *
+     * @return the graphs
+     */
+    public static List<BuildResultGraph> getAllGraphs() {
+        return new WarningsProjectAction(null, null).getAvailableGraphs();
+    }
 
     /**
      * Creates a new instance of {@link WarningsProjectAction}.

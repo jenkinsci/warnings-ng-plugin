@@ -49,6 +49,7 @@
     </f:repeatable>
   </f:entry>
 
+  <a href="descriptorByName/WarningsPublisher/helloWorld">Hello World</a>
   <f:advanced>
     <f:entry title="${%Warnings to include}" field="includePattern"
        description="${%description.includePattern}">
@@ -59,7 +60,18 @@
       <f:textbox/>
     </f:entry>
 
-    <u:advanced id="warnings"/>
+    <u:failed/>
+
+    <f:entry title="${%Detect modules}" description="${%description.detectModules}">
+      <f:checkbox name="shouldDetectModules" checked="${instance.shouldDetectModules}"/>
+    </f:entry>
+
+    <u:health id="warnings"/>
+    <u:thresholds id="warnings"/>
+    <u:defaultEncoding id="warnings"/>
+    <f:entry title="${%Trend graph}">
+      <a href="descriptorByName/WarningsPublisher/configureDefaults">${%configure}</a>
+    </f:entry>
 
   </f:advanced>
 </j:jelly>

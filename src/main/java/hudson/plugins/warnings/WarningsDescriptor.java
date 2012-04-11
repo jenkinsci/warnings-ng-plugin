@@ -5,7 +5,10 @@ import groovy.lang.GroovyShell;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
+import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.PluginDescriptor;
+import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
+import hudson.plugins.analysis.graph.GraphConfiguration;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.plugins.warnings.parser.Warning;
 import hudson.util.CopyOnWriteList;
@@ -23,9 +26,12 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Descriptor for the class {@link WarningsPublisher}. Used as a singleton. The
@@ -34,7 +40,7 @@ import org.kohsuke.stapler.StaplerRequest;
  * @author Ulli Hafner
  */
 @Extension(ordinal = 100) // NOCHECKSTYLE
-public final class WarningsDescriptor extends PluginDescriptor {
+public final class WarningsDescriptor extends PluginDescriptor implements StaplerProxy {
     private static final String CONSOLE_LOG_PARSERS_KEY = "consoleLogParsers";
     private static final String FILE_LOCATIONS_KEY = "locations";
     private static final String PARSER_NAME_ATTRIBUTE = "parserName";
@@ -80,6 +86,31 @@ public final class WarningsDescriptor extends PluginDescriptor {
         else {
             return PLUGIN_ID + ParserRegistry.getUrl(group);
         }
+    }
+
+    /**
+     * Returns the graph configuration screen.
+     *
+     * @param link
+     *            the link to check
+     * @param request
+     *            stapler request
+     * @param response
+     *            stapler response
+     * @return the graph configuration or <code>null</code>
+     */
+    public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
+        if ("configureDefaults".equals(link)) {
+            Ancestor ancestor = request.findAncestor(AbstractProject.class);
+            if (ancestor.getObject() instanceof AbstractProject) {
+                AbstractProject<?, ?> project = (AbstractProject<?, ?>)ancestor.getObject();
+                return new DefaultGraphConfigurationView(
+                        new GraphConfiguration(WarningsProjectAction.getAllGraphs()), project, "warnings",
+                        BuildHistory.create(project, WarningsResultAction.class),
+                        project.getAbsoluteUrl() + "/descriptorByName/WarningsPublisher/configureDefaults/");
+            }
+        }
+        return null;
     }
 
     /**
@@ -343,5 +374,10 @@ public final class WarningsDescriptor extends PluginDescriptor {
         else {
             okMessage.append(message);
         }
+    }
+
+    /** {@inheritDoc} */
+    public Object getTarget() {
+        return this;
     }
 }
