@@ -18,8 +18,8 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ResultAction;
+import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.CategoryUrlBuilder;
 import hudson.plugins.analysis.util.Pair;
 
@@ -40,17 +40,6 @@ public class DifferenceGraph extends BuildResultGraph {
         return Messages.Trend_type_difference();
     }
 
-    /**
-     * Creates a PNG image trend graph.
-     *
-     * @param configuration
-     *            the configuration parameters
-     * @param resultAction
-     *            the result action to start the graph computation from
-     * @param pluginName
-     *            the name of the plug-in
-     * @return the graph
-     */
     @Override
     public JFreeChart create(final GraphConfiguration configuration,
             final ResultAction<? extends BuildResult> resultAction, final String pluginName) {
@@ -216,7 +205,5 @@ public class DifferenceGraph extends BuildResultGraph {
             return getRootUrl() + (int)dataset.getXValue(series, item) + getPluginName();
         }
     }
-
-    /** {@inheritDoc} */
 }
 

@@ -2,6 +2,8 @@ package hudson.plugins.analysis.dashboard;
 
 import java.util.Collection;
 
+import javax.annotation.CheckForNull;
+
 import org.apache.commons.lang.StringUtils;
 
 import hudson.model.Job;
@@ -159,8 +161,14 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
      *            the job to get the action from
      * @return the action
      */
+    @CheckForNull
     protected AbstractProjectAction<?> selectAction(final Job<?, ?> job) {
-        return job.getAction(getAction());
+        if (job == null) {
+            return null;
+        }
+        else {
+            return job.getAction(getAction());
+        }
     }
 }
 

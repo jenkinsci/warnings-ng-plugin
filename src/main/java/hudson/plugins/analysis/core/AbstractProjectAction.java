@@ -193,7 +193,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     public Graph getTrendGraph(final StaplerRequest request, final StaplerResponse response) {
         GraphConfigurationView configuration = createUserConfiguration(request);
         if (configuration.hasMeaningfulGraph()) {
-            return configuration.getGraphRenderer();
+            return configuration.getGraphRenderer(getUrlName());
         }
         else {
             BuildResultGraph graphType = configuration.getGraphType();
@@ -265,7 +265,8 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return a view to configure the trend graph defaults
      */
     protected GraphConfigurationView createDefaultConfiguration() {
-        return new DefaultGraphConfigurationView(createConfiguration(), getProject(), getUrlName(), createBuildHistory());
+        return new DefaultGraphConfigurationView(createConfiguration(), getProject(),
+                getUrlName(), createBuildHistory());
     }
 
     /**
@@ -274,13 +275,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return build history
      */
     protected BuildHistory createBuildHistory() {
-        AbstractBuild<?, ?> lastFinishedBuild = getLastFinishedBuild();
-        if (lastFinishedBuild == null) {
-            return new NullBuildHistory();
-        }
-        else {
-            return new BuildHistory(lastFinishedBuild, resultActionType);
-        }
+        return BuildHistory.create(project, resultActionType);
     }
 
     /**
@@ -392,6 +387,9 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      */
     @CheckForNull
     public AbstractBuild<?, ?> getLastFinishedBuild() {
+        if (project == null) {
+            return null;
+        }
         AbstractBuild<?, ?> lastBuild = project.getLastBuild();
         while (lastBuild != null && (lastBuild.isBuilding() || getResultAction(lastBuild) == null)) {
             lastBuild = lastBuild.getPreviousBuild();

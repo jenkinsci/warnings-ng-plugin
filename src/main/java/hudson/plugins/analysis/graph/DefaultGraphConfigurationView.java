@@ -17,7 +17,7 @@ import hudson.plugins.analysis.core.BuildHistory;
  * Configures the default values for the trend graph of this plug-in.
  */
 public class DefaultGraphConfigurationView extends GraphConfigurationView {
-    private final String defaultsUrl;
+    private final String url;
 
     /**
      * Creates a new instance of {@link DefaultGraphConfigurationView}.
@@ -26,19 +26,19 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
      *            the graph configuration
      * @param project
      *            the owning project to configure the graphs for
-     * @param projectActionUrl
+     * @param pluginName
      *            The URL of the project action (there might be a one to many mapping to this defaults view)
      * @param buildHistory
      *            the build history for this project
-     * @param defaultsUrl
-     *            The URL of this defaults view
+     * @param url
+     *            The URL of this view
      */
     public DefaultGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
-            final String projectActionUrl, final BuildHistory buildHistory, final String defaultsUrl) {
-        super(configuration, project, projectActionUrl, buildHistory);
+            final String pluginName, final BuildHistory buildHistory, final String url) {
+        super(configuration, project, pluginName, buildHistory);
+        this.url = url;
 
-        this.defaultsUrl = defaultsUrl;
-        configuration.initializeFromFile(createDefaultsFile(project, defaultsUrl));
+        configuration.initializeFromFile(createDefaultsFile(project, pluginName));
     }
 
     /**
@@ -55,7 +55,8 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
      */
     public DefaultGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
             final String pluginName, final BuildHistory buildHistory) {
-        this(configuration, project, pluginName, buildHistory, pluginName);
+        this(configuration, project, pluginName, buildHistory,
+                project.getAbsoluteUrl() + pluginName + "/configureDefaults");
     }
 
     /** {@inheritDoc} */
@@ -74,12 +75,12 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
      * @return the URL of this object
      */
     public String getUrl() {
-        return getOwner().getAbsoluteUrl() + defaultsUrl + "/configureDefaults";
+        return url;
     }
 
     @Override
     protected void persistValue(final String value, final String pluginName, final StaplerRequest request, final StaplerResponse response) throws FileNotFoundException, IOException {
-        FileOutputStream output = new FileOutputStream(createDefaultsFile(getOwner(), defaultsUrl));
+        FileOutputStream output = new FileOutputStream(createDefaultsFile(getOwner(), getKey()));
         try {
             IOUtils.write(value, output);
         }

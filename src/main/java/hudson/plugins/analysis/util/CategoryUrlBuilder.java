@@ -29,12 +29,27 @@ public class CategoryUrlBuilder implements SerializableUrlGenerator {
      */
     public CategoryUrlBuilder(final String rootUrl, final String pluginName) {
         this.rootUrl = rootUrl;
-        this.pluginName = "/" + pluginName + "Result/";
+        if (isBlank(pluginName)) {
+            this.pluginName = StringUtils.EMPTY;
+        }
+        else {
+            this.pluginName = "/" + pluginName + "Result/";
+        }
     }
 
     /** {@inheritDoc} */
     public String generateURL(final CategoryDataset dataset, final int row, final int column) {
-        return rootUrl + getLabel(dataset, column).build.getNumber() + pluginName + getDetailUrl(row);
+        String prefix = rootUrl + getLabel(dataset, column).build.getNumber();
+        if (isBlank(pluginName)) {
+            return prefix;
+        }
+        else {
+            return prefix + pluginName + getDetailUrl(row);
+        }
+    }
+
+    protected boolean isBlank(final String value) {
+        return StringUtils.isBlank(value);
     }
 
     /**
@@ -69,7 +84,7 @@ public class CategoryUrlBuilder implements SerializableUrlGenerator {
     }
 
     /**
-     * Returns the Hudson build label at the specified column.
+     * Returns the build label at the specified column.
      *
      * @param dataset
      *            data set of values

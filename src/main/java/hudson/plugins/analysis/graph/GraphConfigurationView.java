@@ -32,12 +32,10 @@ import hudson.util.Graph;
 public abstract class GraphConfigurationView implements ModelObject {
     private static final Logger LOGGER = Logger.getLogger(GraphConfigurationView.class.getName());
 
-    /** The root URL to return back when leaving this page. */
-    private static final String ROOT_URL = "../../";
     /** The owning project to configure the graphs for. */
     private final AbstractProject<?, ?> project;
 
-    private final String projectActionUrl;
+    private final String key;
     private final BuildHistory buildHistory;
     private final AbstractHealthDescriptor healthDescriptor; // NOPMD
     private final GraphConfiguration configuration;
@@ -49,16 +47,15 @@ public abstract class GraphConfigurationView implements ModelObject {
      *            the graph configuration
      * @param project
      *            the owning project to configure the graphs for
-     * @param projectActionUrl
-     *            The URL of the project action
+     * @param key
+     *            unique key of this graph
      * @param buildHistory
      *            the build history for this project
      */
-    public GraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project, final String projectActionUrl, final BuildHistory buildHistory) {
+    public GraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project, final String key, final BuildHistory buildHistory) {
         this.configuration = configuration;
         this.project = project;
-        this.projectActionUrl = projectActionUrl;
-
+        this.key = key;
         this.buildHistory = buildHistory;
         healthDescriptor = buildHistory.getHealthDescriptor();
     }
@@ -101,21 +98,12 @@ public abstract class GraphConfigurationView implements ModelObject {
     }
 
     /**
-     * Returns the root URL of this object.
+     * Returns the key of this graph.
      *
-     * @return the root URL of this object
+     * @return the key
      */
-    public String getRootUrl() {
-        return project.getAbsoluteUrl() + projectActionUrl;
-    }
-
-    /**
-     * Returns the plug-in name.
-     *
-     * @return the plug-in name
-     */
-    public String getPluginName() {
-        return projectActionUrl;
+    public String getKey() {
+        return key;
     }
 
     /**
@@ -138,7 +126,7 @@ public abstract class GraphConfigurationView implements ModelObject {
             JSONObject formData = request.getSubmittedForm();
 
             if (configuration.initializeFrom(formData)) {
-                persistValue(configuration.serializeToString(), getPluginName(), request, response);
+                persistValue(configuration.serializeToString(), key, request, response);
             }
         }
         catch (IOException exception) {
@@ -149,7 +137,7 @@ public abstract class GraphConfigurationView implements ModelObject {
         }
         finally {
             try {
-                response.sendRedirect(ROOT_URL);
+                response.sendRedirect(project.getAbsoluteUrl());
             }
             catch (IOException exception) {
                 LOGGER.log(Level.SEVERE, "Can't redirect", exception);
@@ -207,14 +195,13 @@ public abstract class GraphConfigurationView implements ModelObject {
      *            Stapler response
      * @return <code>null</code>
      */
-    public Object getDynamic(final String graphId, final StaplerRequest request,
-            final StaplerResponse response) {
+    public Object getDynamic(final String graphId, final StaplerRequest request, final StaplerResponse response) {
         try {
             BuildResultGraph graph = configuration.getGraph(graphId);
             if (hasMeaningfulGraph()) {
-                graph.setRootUrl(ROOT_URL);
+                graph.setRootUrl(project.getAbsoluteUrl());
                 if (graph.isVisible()) {
-                    return graph.getGraph(-1, configuration, projectActionUrl, buildHistory.getBaseline());
+                    return graph.getGraph(-1, configuration, null, buildHistory.getBaseline());
                 }
             }
             response.sendRedirect2(request.getContextPath() + graph.getExampleImage());
@@ -231,10 +218,12 @@ public abstract class GraphConfigurationView implements ModelObject {
      *
      * @param graph
      *            the graph
+     * @param url
+     *            the URL of links in the trend graph
      * @return the graph renderer of the specified graph
      */
-    public Graph getGraphRenderer(final BuildResultGraph graph) {
-        return graph.getGraph(getTimestamp(), configuration, projectActionUrl, buildHistory.getBaseline());
+    public Graph getGraphRenderer(final BuildResultGraph graph, final String url) {
+        return graph.getGraph(getTimestamp(), configuration, url, buildHistory.getBaseline());
     }
 
     /**
@@ -243,7 +232,18 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return the graph renderer of the current graph
      */
     public Graph getGraphRenderer() {
-        return getGraphRenderer(getGraphType());
+        return getGraphRenderer(getGraphType(), null);
+    }
+
+    /**
+     * Returns the graph renderer of the current graph.
+     *
+     * @param url
+     *            the URL of links in the trend graph
+     * @return the graph renderer of the current graph
+     */
+    public Graph getGraphRenderer(final String url) {
+        return getGraphRenderer(getGraphType(), url);
     }
 
     /**
@@ -382,4 +382,3 @@ public abstract class GraphConfigurationView implements ModelObject {
         return healthDescriptor;
     }
 }
-

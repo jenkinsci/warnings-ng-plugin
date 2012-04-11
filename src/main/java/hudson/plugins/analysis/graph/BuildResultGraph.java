@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.util.Calendar;
 import java.util.Collection;
 
+import javax.annotation.CheckForNull;
+
 import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -15,8 +17,8 @@ import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
-import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ResultAction;
+import hudson.plugins.analysis.core.BuildResult;
 
 import hudson.util.ColorPalette;
 import hudson.util.Graph;
@@ -107,11 +109,12 @@ public abstract class BuildResultGraph {
      * @param resultAction
      *            the result action to start the graph computation from
      * @param pluginName
-     *            the name of the plug-in
+     *            the name of the plug-in (project action URL) to create links
+     *            to. If set to <code>null</code> then no links are created
      * @return the graph
      */
     public abstract JFreeChart create(final GraphConfiguration configuration,
-            final ResultAction<? extends BuildResult> resultAction, final String pluginName);
+            final ResultAction<? extends BuildResult> resultAction, @CheckForNull final String pluginName);
 
     /**
      * Creates a PNG image trend graph with clickable map.

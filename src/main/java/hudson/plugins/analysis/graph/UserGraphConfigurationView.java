@@ -67,7 +67,7 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      * @return the URL of this object
      */
     public String getUrl() {
-        return getRootUrl() + "/configure";
+        return getOwner().getAbsoluteUrl() + "/" + getKey() + "/configure";
     }
 
     @Override
