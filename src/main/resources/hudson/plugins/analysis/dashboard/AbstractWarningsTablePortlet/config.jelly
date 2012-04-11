@@ -4,5 +4,5 @@
       <f:textbox default="${descriptor.getDisplayName()}"/>
     </f:entry>
 
-    <st:include it="${descriptor}" page="local-config.jelly"/>
+    <st:include it="${descriptor}" page="local-config.jelly" optional="true"/>
 </j:jelly>
