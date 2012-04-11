@@ -400,7 +400,6 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     }
 
     /**
-     *
      * Redirects the index page to the last result.
      *
      * @param request

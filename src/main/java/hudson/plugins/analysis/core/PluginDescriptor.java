@@ -27,6 +27,7 @@ import hudson.util.FormValidation;
  * @author Ulli Hafner
  */
 public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
+    /** Suffix of the URL of the plug-in result. */
     protected static final String RESULT_URL_SUFFIX = "Result";
     private static final String NEW_SECTION_KEY = "canComputeNew";
 
