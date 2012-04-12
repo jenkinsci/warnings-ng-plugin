@@ -8,10 +8,8 @@ import java.util.Set;
 
 import javax.annotation.CheckForNull;
 
-import hudson.model.Action;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
 
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
@@ -28,30 +26,6 @@ public class BuildHistory {
     private final AbstractBuild<?, ?> baseline;
     /** Type of the action that contains the build results. */
     private final Class<? extends ResultAction<? extends BuildResult>> type;
-
-    public static BuildHistory create(final AbstractProject<?, ?> project,
-            final Class<? extends ResultAction<?>> actionType) {
-        AbstractBuild<?, ?> lastFinishedBuild = getLastBuildWithValidResult(project, actionType);
-        if (lastFinishedBuild == null) {
-            return new NullBuildHistory();
-        }
-        else {
-            return new BuildHistory(lastFinishedBuild, actionType);
-        }
-    }
-
-    private static AbstractBuild<?, ?> getLastBuildWithValidResult(final AbstractProject<?, ?> project,
-            final Class<? extends Action> actionType) {
-        AbstractBuild<?, ?> lastFinishedBuild = project.getLastBuild();
-        while (lastFinishedBuild != null && hasNoResult(lastFinishedBuild, actionType)) {
-            lastFinishedBuild = lastFinishedBuild.getPreviousBuild();
-        }
-        return lastFinishedBuild;
-    }
-
-    protected static boolean hasNoResult(final AbstractBuild<?, ?> build, final Class<? extends Action> actionType) {
-        return build.isBuilding() || build.getAction(actionType) == null;
-    }
 
     /**
      * Creates a new instance of {@link BuildHistory}.

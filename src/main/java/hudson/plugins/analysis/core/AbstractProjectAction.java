@@ -275,7 +275,13 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return build history
      */
     protected BuildHistory createBuildHistory() {
-        return BuildHistory.create(project, resultActionType);
+        AbstractBuild<?, ?> lastFinishedBuild = getLastFinishedBuild();
+        if (lastFinishedBuild == null) {
+            return new NullBuildHistory();
+        }
+        else {
+            return new BuildHistory(lastFinishedBuild, resultActionType);
+        }
     }
 
     /**
@@ -324,15 +330,6 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     }
 
     /**
-     * Returns whether this project has a valid result action attached.
-     *
-     * @return <code>true</code> if the results are valid
-     */
-    public final boolean hasValidResults() {
-        return getLastAction() != null;
-    }
-
-    /**
      * Returns the icon URL for the side-panel in the project screen. If there
      * is no valid result yet, then <code>null</code> is returned.
      *
@@ -352,9 +349,19 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     }
 
     /**
+     * Returns whether this project has a valid result action attached.
+     *
+     * @return <code>true</code> if the results are valid
+     */
+    public final boolean hasValidResults() {
+        return getLastAction() != null;
+    }
+
+    /**
      * Returns the last valid result action.
      *
-     * @return the last valid result action, or <code>null</code> if no such action is found
+     * @return the last valid result action, or <code>null</code> if no such
+     *         action is found
      */
     @CheckForNull
     public ResultAction<?> getLastAction() {
