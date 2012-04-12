@@ -865,7 +865,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             FileAnnotation[] annotations = (FileAnnotation[])getDataFile().read();
             newProject.addAnnotations(annotations);
 
-            LOGGER.log(Level.INFO, "Loaded data file " + getDataFile() + " for build " + getOwner().getNumber());
+            LOGGER.log(Level.FINE, "Loaded data file " + getDataFile() + " for build " + getOwner().getNumber());
             result = newProject;
         }
         catch (IOException exception) {
