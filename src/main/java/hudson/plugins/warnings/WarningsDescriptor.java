@@ -5,7 +5,7 @@ import groovy.lang.GroovyShell;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
-import hudson.plugins.analysis.core.BuildHistory;
+import hudson.plugins.analysis.core.NullBuildHistory;
 import hudson.plugins.analysis.core.PluginDescriptor;
 import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
 import hudson.plugins.analysis.graph.GraphConfiguration;
@@ -106,7 +106,7 @@ public final class WarningsDescriptor extends PluginDescriptor implements Staple
                 AbstractProject<?, ?> project = (AbstractProject<?, ?>)ancestor.getObject();
                 return new DefaultGraphConfigurationView(
                         new GraphConfiguration(WarningsProjectAction.getAllGraphs()), project, "warnings",
-                        BuildHistory.create(project, WarningsResultAction.class),
+                        new NullBuildHistory(),
                         project.getAbsoluteUrl() + "/descriptorByName/WarningsPublisher/configureDefaults/");
             }
         }
