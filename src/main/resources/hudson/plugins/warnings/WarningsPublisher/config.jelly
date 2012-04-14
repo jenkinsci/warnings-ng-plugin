@@ -49,7 +49,6 @@
     </f:repeatable>
   </f:entry>
 
-  <a href="descriptorByName/WarningsPublisher/helloWorld">Hello World</a>
   <f:advanced>
     <f:entry title="${%Warnings to include}" field="includePattern"
        description="${%description.includePattern}">
