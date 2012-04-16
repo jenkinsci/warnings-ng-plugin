@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jslint>
+  <file name="duckworth/hudson-jslint-freestyle/src/prototype.js">
+    <issue char="3" evidence="  Version: &apos;1.6.1&apos;," line="10" reason="Expected &apos;Version&apos; to have an indentation at 5 instead at 3." />
+    <issue char="3" evidence="  Browser: (function(){" line="12" reason="Expected &apos;Browser&apos; to have an indentation at 5 instead at 3." />
+    <issue char="21" evidence="  Browser: (function(){" line="12" reason="Missing space after &apos;function&apos;." />
+    <issue char="23" evidence="  Browser: (function(){" line="12" reason="Missing space after &apos;)&apos;." />
+    <issue char="5" evidence="    var ua = navigator.userAgent;" line="13" reason="Expected &apos;var&apos; to have an indentation at 9 instead at 5." />
+    <issue char="14" evidence="    var ua = navigator.userAgent;" line="13" reason="&apos;navigator&apos; is not defined." />
+    <issue char="5" evidence="    var isOpera = Object.prototype.toString.call(window.opera) == &apos;[object Opera]&apos;;" line="14" reason="Expected &apos;var&apos; to have an indentation at 9 instead at 5." />
+    <issue char="50" evidence="    var isOpera = Object.prototype.toString.call(window.opera) == &apos;[object Opera]&apos;;" line="14" reason="&apos;window&apos; is not defined." />
+    <issue char="5" evidence="    return {" line="15" reason="Expected &apos;return&apos; to have an indentation at 9 instead at 5." />
+    <issue char="7" evidence="      IE:             !!window.attachEvent &amp;&amp; !isOpera," line="16" reason="Expected &apos;IE&apos; to have an indentation at 13 instead at 7." />
+    <issue char="25" evidence="      IE:             !!window.attachEvent &amp;&amp; !isOpera," line="16" reason="&apos;window&apos; is not defined." />
+    <issue char="7" evidence="      Opera:          isOpera," line="17" reason="Expected &apos;Opera&apos; to have an indentation at 13 instead at 7." />
+    <issue char="7" evidence="      WebKit:         ua.indexOf(&apos;AppleWebKit/&apos;) &gt; -1," line="18" reason="Expected &apos;WebKit&apos; to have an indentation at 13 instead at 7." />
+    <issue char="7" evidence="      Gecko:          ua.indexOf(&apos;Gecko&apos;) &gt; -1 &amp;&amp; ua.indexOf(&apos;KHTML&apos;) === -1," line="19" reason="Expected &apos;Gecko&apos; to have an indentation at 13 instead at 7." />
+    <issue char="7" evidence="      MobileSafari:   /Apple.*Mobile.*Safari/.test(ua)" line="20" reason="Expected &apos;MobileSafari&apos; to have an indentation at 13 instead at 7." />
+    <issue char="5" evidence="    }" line="21" reason="Expected &apos;}&apos; to have an indentation at 9 instead at 5." />
+    <issue char="6" evidence="    }" line="21" reason="Missing semicolon." />
+    <issue char="3" evidence="  })()," line="22" reason="Expected &apos;}&apos; to have an indentation at 5 instead at 3." />
+    <issue char="3" evidence="  BrowserFeatures: {" line="24" reason="Expected &apos;BrowserFeatures&apos; to have an indentation at 5 instead at 3." />
+    <issue char="5" evidence="    XPath: !!document.evaluate," line="25" reason="Expected &apos;XPath&apos; to have an indentation at 9 instead at 5." />
+    <issue char="14" evidence="    XPath: !!document.evaluate," line="25" reason="&apos;document&apos; is not defined." />
+    <issue char="5" evidence="    SelectorsAPI: !!document.querySelector," line="26" reason="Expected &apos;SelectorsAPI&apos; to have an indentation at 9 instead at 5." />
+    <issue char="21" evidence="    SelectorsAPI: !!document.querySelector," line="26" reason="&apos;document&apos; is not defined." />
+    <issue char="5" evidence="    ElementExtensions: (function() {" line="27" reason="Expected &apos;ElementExtensions&apos; to have an indentation at 9 instead at 5." />
+    <issue char="33" evidence="    ElementExtensions: (function() {" line="27" reason="Missing space after &apos;function&apos;." />
+    <issue char="7" evidence="      var constructor = window.Element || window.HTMLElement;" line="28" reason="Expected &apos;var&apos; to have an indentation at 13 instead at 7." />
+    <issue char="25" evidence="      var constructor = window.Element || window.HTMLElement;" line="28" reason="&apos;window&apos; is not defined." />
+    <issue char="43" evidence="      var constructor = window.Element || window.HTMLElement;" line="28" reason="&apos;window&apos; is not defined." />
+    <issue char="7" evidence="      return !!(constructor &amp;&amp; constructor.prototype);" line="29" reason="Expected &apos;return&apos; to have an indentation at 13 instead at 7." />
+    <issue char="5" evidence="    })()," line="30" reason="Expected &apos;}&apos; to have an indentation at 9 instead at 5." />
+    <issue char="5" evidence="    SpecificElementExtensions: (function() {" line="31" reason="Expected &apos;SpecificElementExtensions&apos; to have an indentation at 9 instead at 5." />
+    <issue char="41" evidence="    SpecificElementExtensions: (function() {" line="31" reason="Missing space after &apos;function&apos;." />
+    <issue char="7" evidence="      if (typeof window.HTMLDivElement !== &apos;undefined&apos;)" line="32" reason="Expected &apos;if&apos; to have an indentation at 13 instead at 7." />
+    <issue char="18" evidence="      if (typeof window.HTMLDivElement !== &apos;undefined&apos;)" line="32" reason="&apos;window&apos; is not defined." />
+    <issue char="9" evidence="        return true;" line="33" reason="Expected &apos;{&apos; and instead saw &apos;return&apos;." />
+    <issue char="9" evidence="        return true;" line="33" reason="Expected &apos;return&apos; to have an indentation at 13 instead at 9." />
+    <issue char="7" evidence="      var div = document.createElement(&apos;div&apos;);" line="35" reason="Expected &apos;var&apos; to have an indentation at 13 instead at 7." />
+    <issue char="17" evidence="      var div = document.createElement(&apos;div&apos;);" line="35" reason="&apos;document&apos; is not defined." />
+    <issue char="7" evidence="      var form = document.createElement(&apos;form&apos;);" line="36" reason="Expected &apos;var&apos; to have an indentation at 13 instead at 7." />
+    <issue char="18" evidence="      var form = document.createElement(&apos;form&apos;);" line="36" reason="&apos;document&apos; is not defined." />
+    <issue char="7" evidence="      var isSupported = false;" line="37" reason="Expected &apos;var&apos; to have an indentation at 13 instead at 7." />
+    <issue char="7" evidence="      if (div[&apos;__proto__&apos;] &amp;&amp; (div[&apos;__proto__&apos;] !== form[&apos;__proto__&apos;])) {" line="39" reason="Expected &apos;if&apos; to have an indentation at 13 instead at 7." />
+    <issue char="15" evidence="      if (div[&apos;__proto__&apos;] &amp;&amp; (div[&apos;__proto__&apos;] !== form[&apos;__proto__&apos;])) {" line="39" reason="[&apos;__proto__&apos;] is better written in dot notation." />
+    <issue char="36" evidence="      if (div[&apos;__proto__&apos;] &amp;&amp; (div[&apos;__proto__&apos;] !== form[&apos;__proto__&apos;])) {" line="39" reason="[&apos;__proto__&apos;] is better written in dot notation." />
+    <issue char="58" evidence="      if (div[&apos;__proto__&apos;] &amp;&amp; (div[&apos;__proto__&apos;] !== form[&apos;__proto__&apos;])) {" line="39" reason="[&apos;__proto__&apos;] is better written in dot notation." />
+    <issue char="9" evidence="        isSupported = true;" line="40" reason="Expected &apos;isSupported&apos; to have an indentation at 17 instead at 9." />
+    <issue char="7" evidence="      }" line="41" reason="Expected &apos;}&apos; to have an indentation at 13 instead at 7." />
+    <issue char="7" evidence="      div = form = null;" line="43" reason="Expected &apos;div&apos; to have an indentation at 13 instead at 7." />
+    <issue char="7" evidence="      return isSupported;" line="45" reason="Expected &apos;return&apos; to have an indentation at 13 instead at 7." />
+    <issue char="5" evidence="    })()" line="46" reason="Expected &apos;}&apos; to have an indentation at 9 instead at 5." />
+    <issue char="5" evidence="" line="46" reason="Too many errors. (0% scanned)." />
+  </file>
+  <file name="duckworth/hudson-jslint-freestyle/src/scriptaculous.js">
+    <issue char="3" evidence="  Version: &apos;1.8.3&apos;," line="27" reason="Expected &apos;Version&apos; to have an indentation at 5 instead at 3." />
+    <issue char="3" evidence="  require: function(libraryName) {" line="28" reason="Expected &apos;require&apos; to have an indentation at 5 instead at 3." />
+    <issue char="20" evidence="  require: function(libraryName) {" line="28" reason="Missing space after &apos;function&apos;." />
+    <issue char="5" evidence="    try{" line="29" reason="Expected &apos;try&apos; to have an indentation at 9 instead at 5." />
+    <issue char="8" evidence="    try{" line="29" reason="Missing space after &apos;try&apos;." />
+    <issue char="7" evidence="      document.write(&apos;&lt;script type=&quot;text/javascript&quot; src=&quot;&apos;+libraryName+&apos;&quot;&gt;&lt;\/script&gt;&apos;);" line="31" reason="Expected &apos;document&apos; to have an indentation at 13 instead at 7." />
+    <issue char="7" evidence="      document.write(&apos;&lt;script type=&quot;text/javascript&quot; src=&quot;&apos;+libraryName+&apos;&quot;&gt;&lt;\/script&gt;&apos;);" line="31" reason="&apos;document&apos; is not defined." />
+    <issue char="7" evidence="      document.write(&apos;&lt;script type=&quot;text/javascript&quot; src=&quot;&apos;+libraryName+&apos;&quot;&gt;&lt;\/script&gt;&apos;);" line="31" reason="document.write can be a form of eval." />
+    <issue char="61" evidence="      document.write(&apos;&lt;script type=&quot;text/javascript&quot; src=&quot;&apos;+libraryName+&apos;&quot;&gt;&lt;\/script&gt;&apos;);" line="31" reason="Missing space after &apos;&lt;script type=&quot;text/javascript&quot; src=&quot;&apos;." />
+    <issue char="61" evidence="      document.write(&apos;&lt;script type=&quot;text/javascript&quot; src=&quot;&apos;+libraryName+&apos;&quot;&gt;&lt;\/script&gt;&apos;);" line="31" reason="Missing space after &apos;+&apos;." />
+    <issue char="73" evidence="      document.write(&apos;&lt;script type=&quot;text/javascript&quot; src=&quot;&apos;+libraryName+&apos;&quot;&gt;&lt;\/script&gt;&apos;);" line="31" reason="Missing space after &apos;libraryName&apos;." />
+    <issue char="73" evidence="      document.write(&apos;&lt;script type=&quot;text/javascript&quot; src=&quot;&apos;+libraryName+&apos;&quot;&gt;&lt;\/script&gt;&apos;);" line="31" reason="Missing space after &apos;+&apos;." />
+    <issue char="5" evidence="    } catch(e) {" line="32" reason="Expected &apos;}&apos; to have an indentation at 9 instead at 5." />
+    <issue char="12" evidence="    } catch(e) {" line="32" reason="Missing space after &apos;catch&apos;." />
+    <issue char="7" evidence="      var script = document.createElement(&apos;script&apos;);" line="34" reason="Expected &apos;var&apos; to have an indentation at 13 instead at 7." />
+    <issue char="20" evidence="      var script = document.createElement(&apos;script&apos;);" line="34" reason="&apos;document&apos; is not defined." />
+    <issue char="7" evidence="      script.type = &apos;text/javascript&apos;;" line="35" reason="Expected &apos;script&apos; to have an indentation at 13 instead at 7." />
+    <issue char="7" evidence="      script.src = libraryName;" line="36" reason="Expected &apos;script&apos; to have an indentation at 13 instead at 7." />
+    <issue char="7" evidence="      document.getElementsByTagName(&apos;head&apos;)[0].appendChild(script);" line="37" reason="Expected &apos;document&apos; to have an indentation at 13 instead at 7." />
+    <issue char="7" evidence="      document.getElementsByTagName(&apos;head&apos;)[0].appendChild(script);" line="37" reason="&apos;document&apos; is not defined." />
+    <issue char="5" evidence="    }" line="38" reason="Expected &apos;}&apos; to have an indentation at 9 instead at 5." />
+    <issue char="3" evidence="  }," line="39" reason="Expected &apos;}&apos; to have an indentation at 5 instead at 3." />
+    <issue char="3" evidence="  REQUIRED_PROTOTYPE: &apos;1.6.0.3&apos;," line="40" reason="Expected &apos;REQUIRED_PROTOTYPE&apos; to have an indentation at 5 instead at 3." />
+    <issue char="3" evidence="  load: function() {" line="41" reason="Expected &apos;load&apos; to have an indentation at 5 instead at 3." />
+    <issue char="17" evidence="  load: function() {" line="41" reason="Missing space after &apos;function&apos;." />
+    <issue char="5" evidence="    function convertVersionString(versionString) {" line="42" reason="Expected &apos;function&apos; to have an indentation at 9 instead at 5." />
+    <issue char="7" evidence="      var v = versionString.replace(/_.*|\./g, &apos;&apos;);" line="43" reason="Expected &apos;var&apos; to have an indentation at 13 instead at 7." />
+    <issue char="7" evidence="      v = parseInt(v + &apos;0&apos;.times(4-v.length));" line="44" reason="Expected &apos;v&apos; to have an indentation at 13 instead at 7." />
+    <issue char="36" evidence="      v = parseInt(v + &apos;0&apos;.times(4-v.length));" line="44" reason="Missing space after &apos;4&apos;." />
+    <issue char="36" evidence="      v = parseInt(v + &apos;0&apos;.times(4-v.length));" line="44" reason="Missing space after &apos;-&apos;." />
+    <issue char="11" evidence="      v = parseInt(v + &apos;0&apos;.times(4-v.length));" line="44" reason="Missing radix parameter." />
+    <issue char="7" evidence="      return versionString.indexOf(&apos;_&apos;) &gt; -1 ? v-1 : v;" line="45" reason="Expected &apos;return&apos; to have an indentation at 13 instead at 7." />
+    <issue char="50" evidence="      return versionString.indexOf(&apos;_&apos;) &gt; -1 ? v-1 : v;" line="45" reason="Missing space after &apos;v&apos;." />
+    <issue char="50" evidence="      return versionString.indexOf(&apos;_&apos;) &gt; -1 ? v-1 : v;" line="45" reason="Missing space after &apos;-&apos;." />
+    <issue char="5" evidence="    }" line="46" reason="Expected &apos;}&apos; to have an indentation at 9 instead at 5." />
+    <issue char="5" evidence="    if((typeof Prototype==&apos;undefined&apos;) ||" line="48" reason="Expected &apos;if&apos; to have an indentation at 9 instead at 5." />
+    <issue char="8" evidence="    if((typeof Prototype==&apos;undefined&apos;) ||" line="48" reason="Missing space after &apos;if&apos;." />
+    <issue char="16" evidence="    if((typeof Prototype==&apos;undefined&apos;) ||" line="48" reason="&apos;Prototype&apos; is not defined." />
+    <issue char="27" evidence="    if((typeof Prototype==&apos;undefined&apos;) ||" line="48" reason="Missing space after &apos;Prototype&apos;." />
+    <issue char="27" evidence="    if((typeof Prototype==&apos;undefined&apos;) ||" line="48" reason="Missing space after &apos;==&apos;." />
+    <issue char="16" evidence="       (typeof Element == &apos;undefined&apos;) ||" line="49" reason="&apos;Element&apos; is not defined." />
+    <issue char="16" evidence="       (typeof Element.Methods==&apos;undefined&apos;) ||" line="50" reason="&apos;Element&apos; is not defined." />
+    <issue char="33" evidence="       (typeof Element.Methods==&apos;undefined&apos;) ||" line="50" reason="Missing space after &apos;Methods&apos;." />
+    <issue char="33" evidence="       (typeof Element.Methods==&apos;undefined&apos;) ||" line="50" reason="Missing space after &apos;==&apos;." />
+    <issue char="30" evidence="       (convertVersionString(Prototype.Version) &lt;" line="51" reason="&apos;Prototype&apos; is not defined." />
+    <issue char="8" evidence="       throw(&quot;script.aculo.us requires the Prototype JavaScript framework &gt;= &quot; +" line="53" reason="Expected &apos;{&apos; and instead saw &apos;throw&apos;." />
+    <issue char="8" evidence="       throw(&quot;script.aculo.us requires the Prototype JavaScript framework &gt;= &quot; +" line="53" reason="Expected &apos;throw&apos; to have an indentation at 9 instead at 8." />
+    <issue char="13" evidence="       throw(&quot;script.aculo.us requires the Prototype JavaScript framework &gt;= &quot; +" line="53" reason="Missing space after &apos;throw&apos;." />
+    <issue char="5" evidence="    var js = /scriptaculous\.js(\?.*)?$/;" line="56" reason="Expected &apos;var&apos; to have an indentation at 9 instead at 5." />
+    <issue char="5" evidence="    $$(&apos;head script[src]&apos;).findAll(function(s) {" line="57" reason="Expected &apos;$$&apos; to have an indentation at 9 instead at 5." />
+    <issue char="5" evidence="" line="57" reason="Too many errors. (83% scanned)." />
+  </file>
+</jslint>

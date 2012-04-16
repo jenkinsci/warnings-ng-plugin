@@ -23,12 +23,14 @@ public class ParserSpeed {
     public void testAllParsersOnOneFile() throws IOException {
         for (ParserDescription parser : ParserRegistry.getAvailableParsers()) {
             List<AbstractWarningsParser> parsers = ParserRegistry.getParsers(parser.getGroup());
-            ParserRegistry parserRegistry = createRegistry(parsers);
+            if (!(parsers.get(0) instanceof ViolationsAdapter)) {
+                ParserRegistry parserRegistry = createRegistry(parsers);
 
-            long start = System.currentTimeMillis();
-            parserRegistry.parse(new File(""));
-            long end = System.currentTimeMillis();
-            System.out.println(parser.getName() + ": " + (end-start) + "ms"); // NOCHECKSTYLE NOPMD
+                long start = System.currentTimeMillis();
+                parserRegistry.parse(new File(""));
+                long end = System.currentTimeMillis();
+                System.out.println(parser.getName() + ": " + (end-start) + "ms"); // NOCHECKSTYLE NOPMD
+            }
         }
     }
 

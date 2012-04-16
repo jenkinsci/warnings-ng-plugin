@@ -1,0 +1,5 @@
+<SourceAnalysisViolations>
+  <Violation Section="Root.UnitTests.MainClass" LineNumber="7" Source="MainClass.cs" RuleNamespace="Microsoft.SourceAnalysis.CSharp.DocumentationRules" Rule="ElementsMustBeDocumented" RuleId="SA1600">The class must have a documentation header.</Violation>
+  <Violation Section="Root.UnitTests.MainClass.m_Value" LineNumber="9" Source="MainClass.cs" RuleNamespace="Microsoft.SourceAnalysis.CSharp.DocumentationRules" Rule="ElementsMustBeDocumented" RuleId="SA1600">The field must have a documentation header.</Violation>
+  <Violation Section="Root.UnitTests.MainClass.Value" LineNumber="10" Source="MainClass.cs" RuleNamespace="Microsoft.SourceAnalysis.CSharp.DocumentationRules" Rule="ElementsMustBeDocumented" RuleId="SA1600">The property must have a documentation header.</Violation>
+</SourceAnalysisViolations>

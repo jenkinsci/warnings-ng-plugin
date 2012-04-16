@@ -5,6 +5,14 @@ import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.NullLogger;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.violations.types.codenarc.CodenarcParser;
+import hudson.plugins.violations.types.cpplint.CppLintParser;
+import hudson.plugins.violations.types.csslint.CssLintParser;
+import hudson.plugins.violations.types.fxcop.FxCopParser;
+import hudson.plugins.violations.types.gendarme.GendarmeParser;
+import hudson.plugins.violations.types.jcreport.JcReportParser;
+import hudson.plugins.violations.types.jslint.JsLintParser;
+import hudson.plugins.violations.types.pep8.Pep8Parser;
 import hudson.plugins.warnings.GroovyParser;
 import hudson.plugins.warnings.WarningsDescriptor;
 
@@ -193,6 +201,38 @@ public class ParserRegistry {
         parsers.add(new MsBuildParser(Messages._Warnings_PCLint_ParserName(),
                             Messages._Warnings_PCLint_LinkName(),
                             Messages._Warnings_PCLint_TrendName()));
+        parsers.add(new ViolationsAdapter(new CodenarcParser(),
+                Messages._Warnings_Codenarc_ParserName(),
+                Messages._Warnings_Codenarc_LinkName(),
+                Messages._Warnings_Codenarc_TrendName()));
+        parsers.add(new ViolationsAdapter(new CppLintParser(),
+                Messages._Warnings_CppLint_ParserName(),
+                Messages._Warnings_CppLint_LinkName(),
+                Messages._Warnings_CppLint_TrendName()));
+        parsers.add(new ViolationsAdapter(new CssLintParser(),
+                Messages._Warnings_CssLint_ParserName(),
+                Messages._Warnings_CssLint_LinkName(),
+                Messages._Warnings_CssLint_TrendName()));
+        parsers.add(new ViolationsAdapter(new FxCopParser(),
+                Messages._Warnings_FxCop_ParserName(),
+                Messages._Warnings_FxCop_LinkName(),
+                Messages._Warnings_FxCop_TrendName()));
+        parsers.add(new ViolationsAdapter(new GendarmeParser(),
+                Messages._Warnings_Gendarme_ParserName(),
+                Messages._Warnings_Gendarme_LinkName(),
+                Messages._Warnings_Gendarme_TrendName()));
+        parsers.add(new ViolationsAdapter(new JcReportParser(),
+                Messages._Warnings_JCReport_ParserName(),
+                Messages._Warnings_JCReport_LinkName(),
+                Messages._Warnings_JCReport_TrendName()));
+        parsers.add(new ViolationsAdapter(new JsLintParser(),
+                Messages._Warnings_JSLint_ParserName(),
+                Messages._Warnings_JSLint_LinkName(),
+                Messages._Warnings_JSLint_TrendName()));
+        parsers.add(new ViolationsAdapter(new Pep8Parser(),
+                Messages._Warnings_Pep8_ParserName(),
+                Messages._Warnings_Pep8_LinkName(),
+                Messages._Warnings_Pep8_TrendName()));
 
         Iterable<GroovyParser> parserDescriptions = getDynamicParserDescriptions();
         parsers.addAll(getDynamicParsers(parserDescriptions));
