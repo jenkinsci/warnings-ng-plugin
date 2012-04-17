@@ -28,6 +28,16 @@ public class EclipseParser extends RegexpDocumentParser {
     }
 
     @Override
+    public String getSmallImage() {
+        return JavacParser.JAVA_SMALL_ICON;
+    }
+
+    @Override
+    public String getLargeImage() {
+        return JavacParser.JAVA_LARGE_ICON;
+    }
+
+    @Override
     protected Warning createWarning(final Matcher matcher) {
         String type = StringUtils.capitalize(matcher.group(1));
         Priority priority;

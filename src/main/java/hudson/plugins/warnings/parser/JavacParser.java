@@ -1,6 +1,7 @@
 package hudson.plugins.warnings.parser;
 
 import hudson.Extension;
+import hudson.plugins.warnings.WarningsDescriptor;
 
 import java.util.regex.Matcher;
 
@@ -11,6 +12,9 @@ import java.util.regex.Matcher;
  */
 @Extension
 public class JavacParser extends RegexpLineParser {
+    static final String JAVA_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-24x24.png";
+    static final String JAVA_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-48x48.png";
+
     private static final long serialVersionUID = 7199325311690082782L;
     private static final String JAVAC_WARNING_PATTERN = "^(?:\\[WARNING\\]\\s+)?(.*):\\[(\\d*)[.,; 0-9]*\\]\\s*(?:\\[(\\w*)\\])?\\s*(.*)$";
 
@@ -35,6 +39,16 @@ public class JavacParser extends RegexpLineParser {
         String category = classifyIfEmpty(matcher.group(3), message);
 
         return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, message);
+    }
+
+    @Override
+    public String getSmallImage() {
+        return JAVA_SMALL_ICON;
+    }
+
+    @Override
+    public String getLargeImage() {
+        return JAVA_LARGE_ICON;
     }
 
     @Override

@@ -31,6 +31,16 @@ public class AntJavacParser extends RegexpLineParser {
     }
 
     @Override
+    public String getSmallImage() {
+        return JavacParser.JAVA_SMALL_ICON;
+    }
+
+    @Override
+    public String getLargeImage() {
+        return JavacParser.JAVA_LARGE_ICON;
+    }
+
+    @Override
     protected boolean isLineInteresting(final String line) {
         return line.contains("warning") || line.contains("\u8b66\u544a");
     }

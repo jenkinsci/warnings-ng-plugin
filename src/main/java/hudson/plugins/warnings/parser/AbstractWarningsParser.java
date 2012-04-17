@@ -4,6 +4,7 @@ import hudson.ExtensionPoint;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.warnings.Messages;
+import hudson.plugins.warnings.WarningsDescriptor;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -241,6 +242,24 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
      */
     public Warning createWarning(final String fileName, final int start, final String message, final Priority priority) {
         return createWarning(fileName, start, StringUtils.EMPTY, message, priority);
+    }
+
+    /**
+     * Returns the small image used for the side bar link.
+     *
+     * @return small image
+     */
+    public String getSmallImage() {
+        return WarningsDescriptor.SMALL_ICON_URL;
+    }
+
+    /**
+     * Returns the large image used for the build summary.
+     *
+     * @return large image
+     */
+    public String getLargeImage() {
+        return WarningsDescriptor.LARGE_ICON_URL;
     }
 }
 

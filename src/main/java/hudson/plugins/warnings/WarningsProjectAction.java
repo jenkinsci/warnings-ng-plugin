@@ -47,7 +47,7 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
         super(project, WarningsResultAction.class,
                 ParserRegistry.getParser(group).getLinkName(), ParserRegistry.getParser(group).getTrendName(),
                 WarningsDescriptor.getProjectUrl(group),
-                WarningsDescriptor.ICON_URL,
+                ParserRegistry.getParser(group).getSmallImage(),
                 WarningsDescriptor.getResultUrl(group));
         parser = group;
     }
