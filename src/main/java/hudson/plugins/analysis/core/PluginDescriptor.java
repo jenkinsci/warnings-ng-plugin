@@ -12,6 +12,7 @@ import hudson.FilePath;
 import hudson.maven.AbstractMavenProject;
 
 import hudson.model.AbstractProject;
+import hudson.model.Hudson;
 
 import hudson.plugins.analysis.graph.GraphConfiguration;
 import hudson.plugins.analysis.util.EncodingValidator;
@@ -40,6 +41,22 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      */
     public static String createResultUrlName(final String pluginName) {
         return pluginName + RESULT_URL_SUFFIX;
+    }
+
+    /**
+     * Returns whether the specified plug-in is installed.
+     *
+     * @param shortName
+     *            the plug-in to check
+     * @return <code>true</code> if the specified plug-in is installed,
+     *         <code>false</code> if not.
+     */
+    public static boolean isPluginInstalled(final String shortName) {
+        Hudson instance = Hudson.getInstance();
+        if (instance != null) {
+            return instance.getPlugin(shortName) != null;
+        }
+        return true;
     }
 
     /**
