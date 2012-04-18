@@ -39,7 +39,7 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
     public void testParserRegistration() {
         List<ParserDescription> groups = ParserRegistry.getAvailableParsers();
 
-        assertEquals("Wrong number of registered parsers", 38, groups.size());
+        assertEquals("Wrong number of registered parsers", 39, groups.size());
     }
 
     /**
