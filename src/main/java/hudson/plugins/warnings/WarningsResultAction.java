@@ -72,6 +72,11 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
         return actionName.toString();
     }
 
+    @Override
+    protected String getSmallImage() {
+        return ParserRegistry.getParser(parserName).getSmallImage();
+    }
+
     public String getLargeImage() {
         return ParserRegistry.getParser(parserName).getLargeImage();
     }
