@@ -141,9 +141,18 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     /** {@inheritDoc} */
     public String getIconFileName() {
         if (getResult().getNumberOfAnnotations() > 0) {
-            return getDescriptor().getIconUrl();
+            return getSmallImage();
         }
         return null;
+    }
+
+    /**
+     * Returns the URL of the 24x24 image used in the build link.
+     *
+     * @return the URL of the image
+     */
+    protected String getSmallImage() {
+        return getDescriptor().getIconUrl();
     }
 
     /**
