@@ -41,6 +41,8 @@ public abstract class AbstractTrendPortlet extends AbstractWarningsGraphPortlet 
      * @return this
      */
     private Object readResolve() {
+        configureGraph(getGraphType());
+
         if (actionSelector == null) {
             actionSelector = new ActionSelector();
         }
