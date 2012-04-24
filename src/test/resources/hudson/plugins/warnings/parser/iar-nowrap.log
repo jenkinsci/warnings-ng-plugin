@@ -1,0 +1,62 @@
+(in /tmp/x)
+======================================================================
++ iccarm --no_wrap_diagnostics --remarks --only_stdout --silent --c++ -e icc-error-memory.c
+
+  __root inline int twice(int i)
+                    ^
+"/tmp/x/icc-error-memory.c",3  Error[Be031]: an inline function cannot be root as well
+======================================================================
++ iccarm --no_wrap_diagnostics --remarks --only_stdout --silent --c++ -e icc-fatal-include.c
+
+  #include "non-existing.h"
+                           ^
+"/tmp/x/icc-fatal-include.c",3  Fatal error[Pe1696]: cannot open source file "non-existing.h"
+            searched: "/tmp/x/"
+            searched: "/home/johan/work/proj/cpp--120410/src/arm/translator/stage/t2run/arm/bin/../inc/./"
+            searched: "/home/johan/work/proj/cpp--120410/src/arm/translator/stage/t2run/arm/bin/../inc/c/"
+            searched: "/home/johan/work/proj/cpp--120410/src/arm/translator/stage/t2run/arm/bin/../inc/cpp/"
+Fatal error detected, aborting.
+======================================================================
++ iccarm --no_wrap_diagnostics --remarks --only_stdout --silent --c++ -e icc-warning-unused.c
+
+    int j;
+        ^
+"/tmp/x/icc-warning-unused.c",5  Warning[Pe177]: variable "j" was declared but never referenced
+======================================================================
++ iccarm --no_wrap_diagnostics --remarks --only_stdout --silent --c++ -e icc-error-return.c
+
+    return 2 * i;
+           ^
+"/tmp/x/icc-error-return.c",5  Error[Pe120]: return value type ("int") does not match the function type ("void")
+======================================================================
++ iccarm --no_wrap_diagnostics --remarks --only_stdout --silent --c++ -e icc-tgt-error.c
+
+    asm(" add R0,R0,#100000");
+                     ^
+"/tmp/x/icc-tgt-error.c",5  Error[Og006]: Syntax error in inline assembly: "Error[400]: Expression out of range"
+======================================================================
++ iccarm --no_wrap_diagnostics --remarks --only_stdout --silent --c++ -e icc-remark.c
+
+  };
+   ^
+"/tmp/x/icc-remark.c",6  Remark[Pe381]: extra ";" ignored
+======================================================================
++ iasmarm -S asm-fatal.s
+
+        #include "nonexistent.h"
+--------------------------------^
+"/tmp/x/asm-fatal.s",3  Error[2]: Failed to open #include file 'nonexistent.h'
+
+Fatal! Execution terminated...
+======================================================================
++ iasmarm -S asm-warning.s
+
+        DC32 "a\k"
+---------------^
+"/tmp/x/asm-warning.s",13  Warning[2]: Unknown escape sequence
+======================================================================
++ iasmarm -S asm-error.s
+
+        LSLS     R0,R0,#+10000
+-----------------------^
+"/tmp/x/asm-error.s",26  Error[400]: Expression out of range
