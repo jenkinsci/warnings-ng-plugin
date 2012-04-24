@@ -28,10 +28,13 @@ public class WarningsTablePortlet extends AbstractWarningsTablePortlet {
      *            the name of the portlet
      * @param parserName
      *            the name of the parser
+     * @param canHideZeroWarningsProjects
+     *            determines if zero warnings projects should be hidden in the
+     *            table
      */
     @DataBoundConstructor
-    public WarningsTablePortlet(final String name, final String parserName) {
-        super(name);
+    public WarningsTablePortlet(final String name, final String parserName, final boolean canHideZeroWarningsProjects) {
+        super(name, canHideZeroWarningsProjects);
         actionSelector = new ActionSelector(parserName);
     }
 
