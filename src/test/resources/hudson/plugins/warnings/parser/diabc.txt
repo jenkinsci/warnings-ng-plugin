@@ -1,0 +1,6 @@
+"lint.c", line 7: warning (dcc:1521): missing return expression
+"lint.c", line 22: warning (dcc:1643): narrowing or signed-to-unsigned type conversion found: int to unsigned char
+"lint.c", line 28: warning (dcc:1243): constant out of range
+"lint.c", line 4: warning (dcc:1517): function f4 is never used
+"lint.c", line 11: error (dcc:1378): function f5 is not found
+
