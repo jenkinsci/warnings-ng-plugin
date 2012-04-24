@@ -48,7 +48,7 @@ public class CategoryUrlBuilder implements SerializableUrlGenerator {
         }
     }
 
-    protected boolean isBlank(final String value) {
+    private boolean isBlank(final String value) {
         return StringUtils.isBlank(value);
     }
 
