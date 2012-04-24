@@ -3,9 +3,9 @@
   xmlns:i="jelly:fmt">
 
   <st:include page="${it.url}" />
-
+  
   <script type="text/javascript">
-          Behaviour.apply(document);
+          Behaviour.applySubtree(document.getElementById('statistics'));
   </script>
 
 </j:jelly>
