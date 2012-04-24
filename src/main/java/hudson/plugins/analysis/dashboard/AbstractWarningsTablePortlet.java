@@ -1,16 +1,19 @@
 package hudson.plugins.analysis.dashboard;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.collect.Lists;
+
 import hudson.model.Job;
 
+import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.analysis.core.BuildResult;
-import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A portlet that shows a table with the number of warnings in the selected jobs.
@@ -23,6 +26,7 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
 
     /** Message to be shown if no result action is found. */
     private static final String NO_RESULTS_FOUND = "-";
+    private final boolean canHideZeroWarningsProjects;
 
     /**
      * Creates a new instance of {@link AbstractWarningsTablePortlet}.
@@ -31,7 +35,80 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
      *            the name of the portlet
      */
     public AbstractWarningsTablePortlet(final String name) {
+        this(name, false);
+    }
+
+    /**
+     * Creates a new instance of {@link AbstractWarningsTablePortlet}.
+     *
+     * @param name
+     *            the name of the portlet
+     * @param canHideZeroWarningsProjects
+     *            determines if zero warnings projects should be hidden in the
+     *            table
+     */
+    public AbstractWarningsTablePortlet(final String name, final boolean canHideZeroWarningsProjects) {
         super(name);
+
+        this.canHideZeroWarningsProjects = canHideZeroWarningsProjects;
+    }
+
+    /**
+     * Returns whether zero warnings projects should be hidden in the table.
+     *
+     * @return <code>true</code> then only projects that contain warnings are
+     *         shown, <code>false</code> all projects are shown
+     */
+    public boolean getCanHideZeroWarningsProjects() {
+        return canHideZeroWarningsProjects;
+    }
+
+    /**
+     * Returns all jobs that have warnings.
+     *
+     * @param jobs
+     *            all jobs
+     * @return the jobs with warnings
+     */
+    public Collection<Job<?, ?>> filterZeroWarningsJobs(final Collection<Job<?, ?>> jobs) {
+        if (canHideZeroWarningsProjects) {
+            return filter(jobs);
+        }
+        else {
+            return jobs;
+        }
+    }
+
+    /**
+     * Filters the specified collection of jobs using overridable method
+     * {@link #isVisibleJob(Job)}.
+     *
+     * @param jobs
+     *            the jobs to filter
+     * @return the filtered jobs
+     * @see #isVisibleJob(Job) filter predicate
+     */
+    protected Collection<Job<?, ?>> filter(final Collection<Job<?, ?>> jobs) {
+        List<Job<?, ?>> filtered = Lists.newArrayList();
+        for (Job<?, ?> job : jobs) {
+            if (isVisibleJob(job)) {
+                filtered.add(job);
+            }
+        }
+        return filtered;
+    }
+
+    /**
+     * Returns whether the specified job is visible. This default implementation
+     * returns true if there is at least one warning for the job.
+     *
+     * @param job
+     *            the job to check
+     * @return <code>true</code> if the job is visible, <code>false</code>
+     *         otherwise
+     */
+    protected boolean isVisibleJob(final Job<?, ?> job) {
+        return toInt(getWarnings(job)) > 0;
     }
 
     /**
@@ -43,30 +120,6 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
     @Deprecated
     protected String getPluginName() {
         return StringUtils.EMPTY;
-    }
-
-    /**
-     * Returns the total number of warnings for the specified job.
-     *
-     * @param job
-     *            the job to get the warnings for
-     * @return the number of compiler warnings
-     */
-    public String getWarnings(final Job<?, ?> job) {
-        return getWarnings(job, getAction());
-    }
-
-    /**
-     * Returns the total number of warnings for the specified job.
-     *
-     * @param job
-     *            the job to get the warnings for
-     * @param priority
-     *            the priority
-     * @return the number of compiler warnings
-     */
-    public String getWarnings(final Job<?, ?> job, final String priority) {
-        return getWarnings(job, getAction(), Priority.valueOf(priority));
     }
 
     /**
@@ -109,7 +162,7 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
      *            the value to convert
      * @return the integer value or 0
      */
-    private int toInt(final String value) {
+    protected int toInt(final String value) {
         try {
             if (value.contains(OPEN_TAG)) {
                 return Integer.parseInt(StringUtils.substringBetween(value, CLOSE_TAG, OPEN_TAG));
@@ -123,32 +176,54 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
         }
     }
 
-    private String getWarnings(final Job<?, ?> job, final Class<? extends AbstractProjectAction<?>> actionType) {
+    /**
+     * Returns the total number of warnings for the specified job.
+     *
+     * @param job
+     *            the job to get the warnings for
+     * @return the number of compiler warnings
+     */
+    public String getWarnings(final Job<?, ?> job) {
         AbstractProjectAction<?> action = selectAction(job);
-        if (action != null && action.getLastAction() != null) {
-            BuildResult result = action.getLastAction().getResult();
-            int numberOfAnnotations = result.getNumberOfAnnotations();
-            String value;
-            if (numberOfAnnotations > 0) {
-                value = String.format("<a href=\"%s%s\">%d</a>", job.getShortUrl(), action.getUrlName(), numberOfAnnotations);
+        if (action != null) {
+            ResultAction<?> lastAction = action.getLastAction();
+            if (lastAction != null) {
+                BuildResult result = lastAction.getResult();
+                int numberOfAnnotations = result.getNumberOfAnnotations();
+                String value;
+                if (numberOfAnnotations > 0) {
+                    value = String.format("<a href=\"%s%s\">%d</a>", job.getShortUrl(), action.getUrlName(), numberOfAnnotations);
+                }
+                else {
+                    value = String.valueOf(numberOfAnnotations);
+                }
+                if (result.isSuccessfulTouched() && !result.isSuccessful()) {
+                    return value + result.getResultIcon();
+                }
+                return value;
             }
-            else {
-                value = String.valueOf(numberOfAnnotations);
-            }
-            if (result.isSuccessfulTouched() && !result.isSuccessful()) {
-                return value + result.getResultIcon();
-            }
-            return value;
         }
         return NO_RESULTS_FOUND;
     }
 
-    private String getWarnings(final Job<?, ?> job, final Class<? extends AbstractProjectAction<?>> actionType, final Priority priority) {
+    /**
+     * Returns the total number of warnings for the specified job.
+     *
+     * @param job
+     *            the job to get the warnings for
+     * @param priority
+     *            the priority
+     * @return the number of compiler warnings
+     */
+    public String getWarnings(final Job<?, ?> job, final String priority) {
         AbstractProjectAction<?> action = selectAction(job);
-        if (action != null && action.getLastAction() != null) {
-            BuildResult result = action.getLastAction().getResult();
+        if (action != null) {
+            ResultAction<?> lastAction = action.getLastAction();
+            if (lastAction != null) {
+                BuildResult result = lastAction.getResult();
 
-            return String.valueOf(result.getNumberOfAnnotations(priority));
+                return String.valueOf(result.getNumberOfAnnotations(priority));
+            }
         }
         return NO_RESULTS_FOUND;
     }

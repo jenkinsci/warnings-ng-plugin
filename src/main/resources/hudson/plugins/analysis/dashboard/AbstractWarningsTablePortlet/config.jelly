@@ -3,6 +3,9 @@
     <f:entry title="${%Name}" field="name">
       <f:textbox default="${descriptor.getDisplayName()}"/>
     </f:entry>
+    <f:entry title="${%Hide zero warnings projects}" field="canHideZeroWarningsProjects">
+      <f:checkbox />
+    </f:entry>
 
     <st:include it="${descriptor}" page="local-config.jelly" optional="true"/>
 </j:jelly>
