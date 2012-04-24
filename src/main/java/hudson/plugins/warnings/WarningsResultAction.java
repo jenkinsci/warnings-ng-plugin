@@ -77,6 +77,11 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
         return ParserRegistry.getParser(parserName).getSmallImage();
     }
 
+    /**
+     * Returns the URL of the 48x48 image used in the build summary.
+     *
+     * @return the URL of the image
+     */
     public String getLargeImage() {
         return ParserRegistry.getParser(parserName).getLargeImage();
     }

@@ -28,6 +28,11 @@ public class EclipseParser extends RegexpDocumentParser {
     }
 
     @Override
+    protected String getId() {
+        return "Eclipse Java Compiler";
+    }
+
+    @Override
     public String getSmallImage() {
         return JavacParser.JAVA_SMALL_ICON;
     }

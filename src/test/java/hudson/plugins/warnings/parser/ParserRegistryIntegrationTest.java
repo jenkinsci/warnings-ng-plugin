@@ -25,6 +25,7 @@ import com.google.common.collect.Sets;
  * @author Ulli Hafner
  */
 public class ParserRegistryIntegrationTest extends HudsonTestCase {
+    private static final String OLD_ID_ECLIPSE_JAVA_COMPILER = "Eclipse Java Compiler";
     private static final String JAVA_WARNINGS_FILE = "deprecations.txt";
     private static final String OLD_ID_JAVA_COMPILER = "Java Compiler";
     private static final String MIXED_API = "Both APIs";
@@ -67,6 +68,24 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
     }
 
     /**
+     * Verifies that we get the Java Eclipse parser if we use the key of the 3.x
+     * version.
+     */
+    @Test
+    public void testOldEclipseSerialization() {
+        verifyEclipseParser(ParserRegistry.getParser(OLD_ID_ECLIPSE_JAVA_COMPILER));
+    }
+
+    private void verifyEclipseParser(final AbstractWarningsParser parser) {
+        assertEquals("Wrong name",
+                Messages._Warnings_EclipseParser_ParserName().toString(), parser.getParserName().toString());
+        assertEquals("Wrong link",
+                Messages._Warnings_EclipseParser_LinkName().toString(), parser.getLinkName().toString());
+        assertEquals("Wrong trend",
+                Messages._Warnings_EclipseParser_TrendName().toString(), parser.getTrendName().toString());
+    }
+
+    /**
      * Verifies that we get the Java parser if we use the key of the 3.x
      * version.
      */
@@ -90,15 +109,30 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
      * {@link ParserDescription}) if we use the key of the 3.x version.
      */
     @Test
-    public void testUiMapping() {
-        boolean isFound = false;
+    public void testUiMappingJava() {
+        ParserDescription description = verifyThatParserExists(OLD_ID_JAVA_COMPILER);
+        verifyJavaParser(ParserRegistry.getParser(description.getGroup()));
+    }
+
+    /**
+     * Verifies that we get the Eclipse parser (using
+     * {@link ParserRegistry#getAvailableParsers()} and
+     * {@link ParserDescription}) if we use the key of the 3.x version.
+     */
+    @Test
+    public void testUiMappingEclipse() {
+        ParserDescription description = verifyThatParserExists(OLD_ID_ECLIPSE_JAVA_COMPILER);
+        verifyEclipseParser(ParserRegistry.getParser(description.getGroup()));
+    }
+
+    private ParserDescription verifyThatParserExists(final String parserName) {
         for (ParserDescription description : ParserRegistry.getAvailableParsers()) {
-            if (description.isInGroup(OLD_ID_JAVA_COMPILER)) {
-                verifyJavaParser(ParserRegistry.getParser(description.getGroup()));
-                isFound = true;
+            if (description.isInGroup(parserName)) {
+                return description;
             }
         }
-        assertTrue("No parser found", isFound);
+        fail("No parser found for ID: " + parserName);
+        return null;
     }
 
     /**

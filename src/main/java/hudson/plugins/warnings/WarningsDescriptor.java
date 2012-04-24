@@ -51,9 +51,11 @@ public final class WarningsDescriptor extends PluginDescriptor implements Staple
     static final String PLUGIN_ID = "warnings";
     /** The URL of the result action. */
     static final String RESULT_URL = PluginDescriptor.createResultUrlName(PLUGIN_ID);
-    /** Icon to use for the result and project action. */
+    /** Prefix of icons in this plug-in. */
     public static final String IMAGE_PREFIX = "/plugin/warnings/icons/";
+    /** Icon to use for the sidebar links. */
     public static final String SMALL_ICON_URL = IMAGE_PREFIX + "warnings-24x24.png";
+    /** Icon to use for the result summary. */
     public static final String LARGE_ICON_URL = IMAGE_PREFIX + "warnings-48x48.png";
 
     private final CopyOnWriteList<GroovyParser> groovyParsers = new CopyOnWriteList<GroovyParser>();

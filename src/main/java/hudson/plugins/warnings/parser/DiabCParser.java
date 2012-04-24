@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 /**
  * A parser for the Diab C++ compiler warnings.
  *
- * @author Ulli Hafner
+ * @author Yuta Namiki
  */
 @Extension
 public class DiabCParser extends RegexpLineParser {
@@ -21,9 +21,9 @@ public class DiabCParser extends RegexpLineParser {
      */
     public DiabCParser() {
         super(Messages._Warnings_diabc_ParserName(),
-	      Messages._Warnings_diabc_LinkName(),
-	      Messages._Warnings_diabc_TrendName(),
-	      DIAB_CPP_WARNING_PATTERN);
+                Messages._Warnings_diabc_LinkName(),
+                Messages._Warnings_diabc_TrendName(),
+                DIAB_CPP_WARNING_PATTERN);
     }
 
     @Override
