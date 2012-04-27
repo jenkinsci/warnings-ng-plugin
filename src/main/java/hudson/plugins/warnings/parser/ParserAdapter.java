@@ -12,9 +12,9 @@ import java.util.Collection;
  *
  * @author Ulli Hafner
  */
-@SuppressWarnings({"deprecation", "javadoc"})
 public class ParserAdapter extends AbstractWarningsParser {
     private static final long serialVersionUID = 1591875174941046868L;
+    @SuppressWarnings("deprecation")
     private final WarningsParser wrapped;
 
     /**
@@ -23,12 +23,14 @@ public class ParserAdapter extends AbstractWarningsParser {
      * @param wrapped
      *            the wrapped parser
      */
+    @SuppressWarnings("deprecation")
     public ParserAdapter(final WarningsParser wrapped) {
         super(wrapped.getName());
 
         this.wrapped = wrapped;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public Collection<FileAnnotation> parse(final Reader reader) throws IOException, ParsingCanceledException {
         return wrapped.parse(reader);
