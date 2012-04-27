@@ -25,6 +25,8 @@ import com.google.common.collect.Sets;
  * @author Ulli Hafner
  */
 public class ParserRegistryIntegrationTest extends HudsonTestCase {
+    /** If you add a new parser then this value needs to be adapted. */
+    private static final int NUMBER_OF_AVAILABLE_PARSERS = 40;
     private static final String OLD_ID_ECLIPSE_JAVA_COMPILER = "Eclipse Java Compiler";
     private static final String JAVA_WARNINGS_FILE = "deprecations.txt";
     private static final String OLD_ID_JAVA_COMPILER = "Java Compiler";
@@ -33,14 +35,13 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
     private static final String OLD_API = "Old Parser API";
 
     /**
-     * Verifies the current number of parsers. If you add a new parser then this
-     * value needs to be adapted.
+     * Verifies the current number of parsers.
      */
     @Test
     public void testParserRegistration() {
         List<ParserDescription> groups = ParserRegistry.getAvailableParsers();
 
-        assertEquals("Wrong number of registered parsers", 39, groups.size());
+        assertEquals("Wrong number of registered parsers", NUMBER_OF_AVAILABLE_PARSERS, groups.size());
     }
 
     /**
