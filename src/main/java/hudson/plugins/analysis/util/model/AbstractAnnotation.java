@@ -315,6 +315,15 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     }
 
     /**
+     * Returns the line number that should be shown on top of the source code view.
+     *
+     * @return the line number
+     */
+    public final int getLinkLineNumber() {
+        return Math.max(1, primaryLineNumber - 10);
+    }
+
+    /**
      * Adds another line range to this annotation.
      *
      * @param lineRange

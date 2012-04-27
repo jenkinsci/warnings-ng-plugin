@@ -1,0 +1,19 @@
+<!--
+  Section header
+
+  <%@attribute name="it" required="true" %>
+  <%@attribute name="warning" required="true" %>
+-->
+
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+  xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+  xmlns:f="/lib/form" xmlns:u="/util">
+
+    <j:choose>
+      <j:when test="${warning.canDisplayFile(it.owner)}">
+        <a href="source.${warning.key}/#${warning.linkLineNumber}">${warning.shortFileName}:${warning.primaryLineNumber}</a>
+      </j:when>
+      <j:otherwise>${warning.shortFileName}:${warning.primaryLineNumber}</j:otherwise>
+    </j:choose>
+
+</j:jelly>
