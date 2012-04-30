@@ -1,0 +1,27 @@
+<div>
+  <p>
+    Groovyスクリプトは、変数<tt>matcher</tt>としてスクリプトに渡される<a 
+    href="http://docs.oracle.com/javase/jp/1.5.0/api/java/util/regex/Matcher.html">Matcher</a>オブジェクトに対して使用します。  
+    スクリプトは、<tt>hudson.plugins.warnings.parser.Warning</tt>型の値を1つ返す必要があります。
+  </p>
+
+ <h4>例</h4>
+
+ <p>
+     ここでは、スクリプトの出発点として使用できる例を示します。
+     正規表現  <tt>^\s*(.*):(\d+):(.*):\s*(.*)$</tt> を使用して、新しい警告を組み立てます。
+ </p>
+ <hr/>
+ <pre>
+import hudson.plugins.warnings.parser.Warning
+
+String fileName = matcher.group(1)
+String lineNumber = matcher.group(2)
+String category = matcher.group(3)
+String message = matcher.group(4)
+
+return new Warning(fileName, Integer.parseInt(lineNumber), "Dynamic Parser", category, message);
+ </pre>
+ <hr/>
+
+</div>
