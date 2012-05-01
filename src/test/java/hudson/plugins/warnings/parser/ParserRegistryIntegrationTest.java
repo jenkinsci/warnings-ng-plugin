@@ -26,7 +26,7 @@ import com.google.common.collect.Sets;
  */
 public class ParserRegistryIntegrationTest extends HudsonTestCase {
     /** If you add a new parser then this value needs to be adapted. */
-    private static final int NUMBER_OF_AVAILABLE_PARSERS = 40;
+    private static final int NUMBER_OF_AVAILABLE_PARSERS = 41;
     private static final String OLD_ID_ECLIPSE_JAVA_COMPILER = "Eclipse Java Compiler";
     private static final String JAVA_WARNINGS_FILE = "deprecations.txt";
     private static final String OLD_ID_JAVA_COMPILER = "Java Compiler";
