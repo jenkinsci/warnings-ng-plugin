@@ -190,7 +190,7 @@ public class BuildHistory {
      *             if there is no previous result
      */
     public ResultAction<? extends BuildResult> getBaseline() {
-        return baseline.getAction(type);
+        return getResultAction(baseline);
     }
 
     /**
