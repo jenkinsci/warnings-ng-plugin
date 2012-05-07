@@ -54,6 +54,11 @@ public class WarningsResult extends BuildResult {
     }
 
     @Override
+    protected BuildHistory createHistory(final AbstractBuild<?, ?> build) {
+        return new WarningsBuildHistory(build, group);
+    }
+
+    @Override
     protected void configure(final XStream xstream) {
         xstream.alias("warning", Warning.class);
     }
