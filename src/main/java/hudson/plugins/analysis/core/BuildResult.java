@@ -222,7 +222,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *            the build to start with
      * @return the history
      */
-    private BuildHistory createHistory(final AbstractBuild<?, ?> build) {
+    protected BuildHistory createHistory(final AbstractBuild<?, ?> build) {
         return new BuildHistory(build, getResultActionType());
     }
 
