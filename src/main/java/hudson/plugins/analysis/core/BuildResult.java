@@ -1178,6 +1178,112 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
+     * Creates a default summary message for the build result. Typically, you
+     * can call this method in {@link #getSummary()} to create the actual
+     * visible user message.
+     *
+     * @param url
+     *            the URL to the build results
+     * @param warnings
+     *            number of warnings
+     * @param modules
+     *            number of modules
+     * @return the summary message
+     */
+    protected static String createDefaultSummary(final String url, final int warnings, final int modules) {
+        HtmlPrinter summary = new HtmlPrinter();
+
+        String message = createWarningsMessage(warnings);
+        if (warnings > 0) {
+            summary.append(summary.link(url, message));
+        }
+        else {
+            summary.append(message);
+        }
+        if (modules > 0) {
+            summary.append(" ");
+            summary.append(createAnalysesMessage(modules));
+        }
+        else {
+            summary.append(".");
+        }
+        return summary.toString();
+    }
+
+    private static String createAnalysesMessage(final int modules) {
+        if (modules == 1) {
+            return Messages.ResultAction_OneFile();
+        }
+        else {
+            return Messages.ResultAction_MultipleFiles(modules);
+        }
+    }
+
+    private static String createWarningsMessage(final int warnings) {
+        if (warnings == 1) {
+            return Messages.ResultAction_OneWarning();
+        }
+        else {
+            return Messages.ResultAction_MultipleWarnings(warnings);
+        }
+    }
+
+    /**
+     * Creates an HTML URL reference start tag.
+     *
+     * @param url the URL
+     * @return the HTML tag
+     */
+    protected static String createUrl(final String url) {
+        return String.format("<a href=\"%s\">", url);
+    }
+
+    /**
+     * Creates a default delta message for the build result. Typically, you can
+     * call this method in {@link #createDeltaMessage()} to create the actual
+     * visible user message.
+     *
+     * @param url
+     *            the URL to the build results
+     * @param newWarnings
+     *            number of new warnings
+     * @param fixedWarnings
+     *            number of fixed warnings
+     * @return the summary message
+     */
+    protected static String createDefaultDeltaMessage(final String url, final int newWarnings, final int fixedWarnings) {
+        HtmlPrinter summary = new HtmlPrinter();
+        if (newWarnings > 0) {
+            summary.append(summary.item(
+                    summary.link(url + "/new", createNewWarningsLinkName(newWarnings))));
+        }
+        if (fixedWarnings > 0) {
+            summary.append(summary.item(
+                    summary.link(url + "/fixed", createFixedWarningsLinkName(fixedWarnings))));
+        }
+
+        return summary.toString();
+    }
+
+    private static String createNewWarningsLinkName(final int newWarnings) {
+        if (newWarnings == 1) {
+            return Messages.ResultAction_OneNewWarning();
+        }
+        else {
+            return Messages.ResultAction_MultipleNewWarnings(newWarnings);
+        }
+    }
+
+    private static String createFixedWarningsLinkName(final int fixedWarnings) {
+        if (fixedWarnings == 1) {
+            return Messages.ResultAction_OneFixedWarning();
+        }
+        else {
+            return Messages.ResultAction_MultipleFixedWarnings(fixedWarnings);
+        }
+    }
+
+    /**
      * Returns a summary message for the summary.jelly file.
      *
      * @return the summary message

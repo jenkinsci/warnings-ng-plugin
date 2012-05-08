@@ -26,7 +26,7 @@ public class HtmlPrinter {
     }
 
     /**
-     * Adds a list item.
+     * Adds a hyperlink.
      *
      * @param url
      *            the link URL
