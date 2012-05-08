@@ -90,14 +90,4 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
     protected PluginDescriptor getDescriptor() {
         return new WarningsDescriptor();
     }
-
-    @Override
-    public String getMultipleItemsTooltip(final int numberOfItems) {
-        return Messages.Warnings_ResultAction_MultipleWarnings(numberOfItems);
-    }
-
-    @Override
-    public String getSingleItemTooltip() {
-        return Messages.Warnings_ResultAction_OneWarning();
-    }
 }
