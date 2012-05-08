@@ -19,6 +19,7 @@ import hudson.model.HealthReportingAction;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
 
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
@@ -181,14 +182,18 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      *            the number of items to display the tooltip for
      * @return the tooltip for several items
      */
-    protected abstract String getMultipleItemsTooltip(int numberOfItems);
+    protected String getMultipleItemsTooltip(final int numberOfItems) {
+        return Messages.ResultAction_MultipleWarnings(numberOfItems);
+    }
 
     /**
      * Returns the tooltip for exactly one item.
      *
      * @return the tooltip for exactly one item
      */
-    protected abstract String getSingleItemTooltip();
+    protected String getSingleItemTooltip() {
+        return Messages.ResultAction_OneWarning();
+    }
 
     /** {@inheritDoc} */
     public boolean isSuccessful() {
