@@ -1,9 +1,9 @@
 package hudson.plugins.warnings;
 
 import hudson.model.AbstractBuild;
-import hudson.plugins.analysis.core.AbstractResultAction;
 import hudson.plugins.analysis.core.HealthDescriptor;
 import hudson.plugins.analysis.core.PluginDescriptor;
+import hudson.plugins.analysis.core.AbstractResultAction;
 import hudson.plugins.warnings.parser.ParserRegistry;
 
 import org.jvnet.localizer.Localizable;
@@ -20,7 +20,6 @@ import org.jvnet.localizer.Localizable;
  * @author Ulli Hafner
  */
 public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
-    private Localizable actionName;
     private final String parserName;
 
     /**
@@ -38,21 +37,8 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
         super(owner, new WarningsHealthDescriptor(healthDescriptor), result);
 
         this.parserName = parserName;
-        actionName = ParserRegistry.getParser(parserName).getLinkName();
     }
 
-    /**
-     * Adds old name for 3.x serializations.
-     *
-     * @return the created object
-     */
-    private Object readResolve() {
-        if (actionName == null) {
-            actionName = Messages._Warnings_ProjectAction_Name();
-        }
-
-        return this;
-    }
     @Override
     public String getUrlName() {
         return WarningsDescriptor.getResultUrl(parserName);
@@ -69,7 +55,7 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
 
     /** {@inheritDoc} */
     public String getDisplayName() {
-        return actionName.toString();
+        return ParserRegistry.getParser(parserName).getLinkName().toString();
     }
 
     @Override
@@ -77,12 +63,8 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
         return ParserRegistry.getParser(parserName).getSmallImage();
     }
 
-    /**
-     * Returns the URL of the 48x48 image used in the build summary.
-     *
-     * @return the URL of the image
-     */
-    public String getLargeImage() {
+    @Override
+    public String getLargeImageName() {
         return ParserRegistry.getParser(parserName).getLargeImage();
     }
 
@@ -90,4 +72,8 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
     protected PluginDescriptor getDescriptor() {
         return new WarningsDescriptor();
     }
+
+    @SuppressWarnings("unused")
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("")
+    private transient Localizable actionName;
 }
