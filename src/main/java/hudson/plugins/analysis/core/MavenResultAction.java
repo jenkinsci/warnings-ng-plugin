@@ -198,6 +198,28 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
         return defaultEncoding;
     }
 
+    /**
+     * Returns whether a large image is defined.
+     *
+     * @return <code>true</code> if a large image is defined, <code>false</code>
+     *         otherwise. If no large image is defined, then the attribute
+     *         {@code icon} must to be provided in jelly tag {@code summary}.
+     * @since 1.41
+     */
+    public boolean hasLargeImage() {
+        return delegate.hasLargeImage();
+    }
+
+    /**
+     * Returns the URL of the 48x48 image used in the build summary.
+     *
+     * @return the URL of the image
+     * @since 1.41
+     */
+    public String getLargeImageName() {
+        return delegate.getLargeImageName();
+    }
+
     /** {@inheritDoc} */
     public String getIconFileName() {
         return delegate.getIconFileName();

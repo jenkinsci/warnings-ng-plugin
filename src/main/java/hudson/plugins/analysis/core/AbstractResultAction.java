@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerProxy;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
@@ -145,6 +146,38 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
             return getSmallImage();
         }
         return null;
+    }
+
+    /**
+     * Returns whether a large image is defined.
+     *
+     * @return <code>true</code> if a large image is defined, <code>false</code>
+     *         otherwise. If no large image is defined, then the attribute
+     *         {@code icon} must to be provided in jelly tag {@code summary}.
+     * @since 1.41
+     */
+    public boolean hasLargeImage() {
+        return StringUtils.isNotBlank(getLargeImageName());
+    }
+
+    /**
+     * Returns the URL of the 48x48 image used in the build summary.
+     *
+     * @return the URL of the image
+     * @since 1.41
+     */
+    public String getLargeImageName() {
+        return getDescriptor().getSummaryIconUrl();
+    }
+
+    /**
+     * Returns the URL of the 24x24 image used in the build link.
+     *
+     * @return the URL of the image
+     * @since 1.41
+     */
+    public String getSmallImageName() {
+        return getSmallImage();
     }
 
     /**

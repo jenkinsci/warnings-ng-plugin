@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -138,6 +139,16 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @return the URL of the plug-in icon
      */
     public abstract String getIconUrl();
+
+    /**
+     * Returns the URL of the build summary icon (48x48 image).
+     *
+     * @return the URL of the plug-in icon
+     * @since 1.41
+     */
+    public String getSummaryIconUrl() {
+        return StringUtils.EMPTY;
+    }
 
     /**
      * Performs on-the-fly validation on the character encoding.

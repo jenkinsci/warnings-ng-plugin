@@ -1,14 +1,14 @@
 <!--
   Section header
 
-  <%@attribute name="icon" required="true" %>
+  <%@attribute name="icon" required="false" %>
 -->
 
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
   xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
   xmlns:f="/lib/form" xmlns:u="/util">
-
-	<t:summary icon="${icon}">
+    
+	<t:summary icon="${it.hasLargeImage() ? it.largeImageName : icon}">
 		${it.result.summary}
 		<ul>
 		${it.result.details}
