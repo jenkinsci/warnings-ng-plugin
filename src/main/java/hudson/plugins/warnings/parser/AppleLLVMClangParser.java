@@ -1,15 +1,17 @@
 package hudson.plugins.warnings.parser;
 
 import hudson.Extension;
+
 import java.util.regex.Matcher;
 
-
 /**
- * A parser for the Apple LLVM compiler warnings
+ * A parser for the Apple LLVM compiler warnings.
+ *
  * @author Neil Davis
  */
 @Extension
 public class AppleLLVMClangParser extends RegexpLineParser {
+    private static final long serialVersionUID = -3015592762345283182L;
     private static final String CLANG_WARNING_PATTERN = "^\\s*(.*?):(\\d+):(?:\\d+:)?(?:(?:\\{\\d+:\\d+-\\d+:\\d+\\})+:)?\\s*warning:\\s*(.*?)(?:\\[(.*)\\])?$";
 
     /**
@@ -23,17 +25,17 @@ public class AppleLLVMClangParser extends RegexpLineParser {
     }
 
     @Override
-    protected Warning createWarning(Matcher matcher) {
+    protected Warning createWarning(final Matcher matcher) {
         String filename = matcher.group(1);
         int lineNumber = getLineNumber(matcher.group(2));
         String message = matcher.group(3);
         String category = matcher.group(4);
-        
+
         if (category == null) {
             return createWarning(filename, lineNumber, message);
         }
-        
+
         return createWarning(filename, lineNumber, category, message);
     }
-    
+
 }
