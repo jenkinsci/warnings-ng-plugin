@@ -205,36 +205,69 @@ public class BuildResultEvaluator {
         if (isAnnotationCountExceeded(annotationCount, threshold)) {
             int delta = annotationCount - convert(threshold);
             if (isTotals) {
-                if (priorities.length == 1) {
-                    Priority priority = priorities[0];
-                    logger.append(Messages.BuildResultEvaluator_unstable_all_priority(
-                            annotationCount, threshold, delta,
-                            priorities[0].getLongLocalizedString(),
-                            url, getPriorityUrl(priority)));
-                }
-                else {
-                    logger.append(Messages.BuildResultEvaluator_unstable_all(annotationCount,
-                            threshold, delta, url));
-                }
+                createAllMessage(logger, annotationCount, threshold, delta, priorities);
             }
             else {
-                String newUrl = url + "/new";
-                if (priorities.length == 1) {
-                    Priority priority = priorities[0];
-                    logger.append(Messages.BuildResultEvaluator_unstable_new_priority(
-                            annotationCount, threshold, delta,
-                            priorities[0].getLongLocalizedString(),
-                            newUrl, getPriorityUrl(priority)));
-                }
-                else {
-                    logger.append(Messages.BuildResultEvaluator_unstable_new(annotationCount,
-                            threshold, delta, newUrl));
-                }
-
+                createNewMessage(logger, annotationCount, threshold, delta, priorities);
             }
             return true;
         }
         return false;
+    }
+
+    private void createNewMessage(final StringBuilder logger, final int annotationCount,
+            final String threshold, final int delta, final Priority... priorities) {
+        String newUrl = url + "/new";
+        if (priorities.length == 1) {
+            Priority priority = priorities[0];
+            if (annotationCount == 1) {
+                logger.append(Messages.BuildResultEvaluator_unstable_one_new_priority(threshold, delta,
+                        priorities[0].getLongLocalizedString(),
+                        newUrl, getPriorityUrl(priority)));
+            }
+            else {
+                logger.append(Messages.BuildResultEvaluator_unstable_new_priority(
+                        annotationCount, threshold, delta,
+                        priorities[0].getLongLocalizedString(),
+                        newUrl, getPriorityUrl(priority)));
+            }
+        }
+        else {
+            if (annotationCount == 1) {
+                logger.append(Messages.BuildResultEvaluator_unstable_one_new(threshold, delta, newUrl));
+            }
+            else {
+                logger.append(Messages.BuildResultEvaluator_unstable_new(annotationCount,
+                        threshold, delta, newUrl));
+            }
+        }
+    }
+
+    private void createAllMessage(final StringBuilder logger, final int annotationCount,
+            final String threshold, final int delta, final Priority... priorities) {
+        if (priorities.length == 1) {
+            Priority priority = priorities[0];
+            if (annotationCount == 1) {
+                logger.append(Messages.BuildResultEvaluator_unstable_one_all_priority(
+                        threshold, delta, priorities[0].getLongLocalizedString(), url,
+                        getPriorityUrl(priority)));
+            }
+            else {
+                logger.append(Messages.BuildResultEvaluator_unstable_all_priority(annotationCount,
+                        threshold, delta, priorities[0].getLongLocalizedString(), url,
+                        getPriorityUrl(priority)));
+            }
+        }
+        else {
+            if (annotationCount == 1) {
+                logger.append(Messages.BuildResultEvaluator_unstable_one_all(
+                        threshold, delta, url));
+            }
+            else {
+                logger.append(Messages.BuildResultEvaluator_unstable_all(annotationCount,
+                        threshold, delta, url));
+            }
+        }
     }
 
     private String getPriorityUrl(final Priority priority) {
