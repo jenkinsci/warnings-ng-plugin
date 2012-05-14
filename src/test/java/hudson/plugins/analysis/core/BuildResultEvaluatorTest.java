@@ -23,13 +23,8 @@ import hudson.plugins.analysis.util.model.Priority;
  * @author Ulli Hafner
  */
 public class BuildResultEvaluatorTest {
-    /**
-     * FIXME: Document field URL
-     */
     private static final String URL = "url";
-    /** Error message. */
     private static final String WRONG_BUILD_RESULT = "Wrong build result";
-    /** Error message. */
     private static final String WRONG_BUILD_FAILURE_STATE = "Wrong build failure state.";
 
     /**
