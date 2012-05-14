@@ -1,29 +1,21 @@
 package hudson.plugins.analysis.core;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerProxy;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
-import hudson.FilePath;
 import hudson.maven.MavenBuild;
 import hudson.maven.MavenModule;
 
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
-import hudson.model.Result;
 import hudson.model.AbstractBuild;
 
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.ToolTipProvider;
-import hudson.plugins.analysis.util.model.AbstractAnnotation;
 
 /**
  * Controls the live cycle of the results in a job. This action persists the results
@@ -242,15 +234,8 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * @deprecated replaced by {@link MavenResultAction}
      */
     @Deprecated
-    @java.lang.SuppressWarnings("deprecation")
     protected ParserResult createAggregatedResult(final Map<MavenModule, List<MavenBuild>> moduleBuilds) {
-        ParserResult project = createResult();
-        for (List<MavenBuild> builds : moduleBuilds.values()) {
-            if (!builds.isEmpty()) {
-                addModule(project, builds);
-            }
-        }
-        return project;
+        return new ParserResult();
     }
 
     /**
@@ -265,14 +250,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      */
     @Deprecated
     protected void updateBuildHealth(final MavenBuild build, final BuildResult buildResult) {
-        PluginLogger logger = new PluginLogger(System.out, "[" + getDisplayName() + "] "); // NOCHECKSTYLE
-        @java.lang.SuppressWarnings("deprecation")
-        Result hudsonResult = new BuildResultEvaluator().evaluateBuildResult(
-                logger, getHealthDescriptor().getThresholds(),
-                buildResult.getAnnotations(), buildResult.getNewWarnings());
-        if (hudsonResult != Result.SUCCESS) {
-            build.getParentBuild().setResult(hudsonResult);
-        }
+        // does nothing
     }
 
     /**
@@ -286,25 +264,8 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * @deprecated replaced by {@link MavenResultAction}
      */
     @Deprecated
-    @java.lang.SuppressWarnings("unchecked")
     protected void addModule(final ParserResult aggregatedResult, final List<MavenBuild> builds) {
-        MavenBuild mavenBuild = builds.get(0);
-        AbstractResultAction<T> action = mavenBuild.getAction(getClass());
-        if (action != null) {
-            aggregatedResult.addAnnotations(action.getResult().getAnnotations());
-            aggregatedResult.addModules(action.getResult().getModules());
-            aggregatedResult.addErrors(action.getResult().getErrors());
-            FilePath filePath = new FilePath(new File(mavenBuild.getRootDir(), AbstractAnnotation.WORKSPACE_FILES));
-            try {
-                filePath.copyRecursiveTo("*.tmp", new FilePath(new File(getOwner().getRootDir(), AbstractAnnotation.WORKSPACE_FILES)));
-            }
-            catch (IOException exception) {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Can't copy workspace files: ", exception);
-            }
-            catch (InterruptedException exception) {
-                // ignore, user canceled the operation
-            }
-        }
+        // does nothing
     }
 
     /** Backward compatibility. @deprecated */

@@ -348,7 +348,8 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             }
 
             if (new NullHealthDescriptor(this).isThresholdEnabled()) {
-                result.evaluateStatus(getThresholds(), useDeltaValues, canComputeNew(), logger);
+                String baseUrl = getDescriptor().getPluginResultUrlName();
+                result.evaluateStatus(getThresholds(), useDeltaValues, canComputeNew(), logger, baseUrl);
             }
 
             copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), result.getAnnotations());
@@ -357,6 +358,11 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             logger.log("Skipping publisher since build result is " + build.getResult());
         }
         return true;
+    }
+
+    @Override
+    public PluginDescriptor getDescriptor() {
+        return (PluginDescriptor)super.getDescriptor();
     }
 
     /**

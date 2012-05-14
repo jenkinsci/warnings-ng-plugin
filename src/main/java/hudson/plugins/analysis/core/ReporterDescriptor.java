@@ -50,6 +50,15 @@ public abstract class ReporterDescriptor extends MavenReporterDescriptor {
     }
 
     /**
+     * Returns the name of the plug-in.
+     *
+     * @return the name of the plug-in
+     */
+    public final String getPluginResultUrlName() {
+        return publisherDescriptor.getPluginResultUrlName();
+    }
+
+    /**
      * Performs on-the-fly validation on the annotations threshold.
      *
      * @param threshold

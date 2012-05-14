@@ -338,7 +338,8 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
 
         StringPluginLogger pluginLogger = new StringPluginLogger(pluginName);
         if (new NullHealthDescriptor(this).isThresholdEnabled()) {
-            buildResult.evaluateStatus(thresholds, useDeltaValues, canComputeNew(), pluginLogger);
+            String baseUrl = getDescriptor().getPluginResultUrlName();
+            buildResult.evaluateStatus(thresholds, useDeltaValues, canComputeNew(), pluginLogger, baseUrl);
         }
         mavenBuild.getActions().add(createMavenAggregatedReport(mavenBuild, buildResult));
         mavenBuild.registerAsProjectAction(HealthAwareReporter.this);
@@ -347,6 +348,12 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
             pluginLogger.log("Computing warning deltas based on reference build " + referenceBuild.getDisplayName());
         }
         return pluginLogger.toString();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ReporterDescriptor getDescriptor() {
+        return (ReporterDescriptor)super.getDescriptor();
     }
 
     /**

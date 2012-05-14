@@ -1022,10 +1022,12 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *            the use delta values when computing the differences
      * @param logger
      *            the logger
+     * @param url
+     *            the URL of the results
      */
     // CHECKSTYLE:OFF
-    public void evaluateStatus(final Thresholds thresholds, final boolean useDeltaValues, final PluginLogger logger) {
-        evaluateStatus(thresholds, useDeltaValues, true, logger);
+    public void evaluateStatus(final Thresholds thresholds, final boolean useDeltaValues, final PluginLogger logger, final String url) {
+        evaluateStatus(thresholds, useDeltaValues, true, logger, url);
     }
 
     /**
@@ -1043,14 +1045,17 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *            respect to baseline)
      * @param logger
      *            the logger
+     * @param url
+     *            the URL of the results
      */
     // CHECKSTYLE:OFF
-    public void evaluateStatus(final Thresholds thresholds, final boolean useDeltaValues, final boolean canComputeNew, final PluginLogger logger) {
+    public void evaluateStatus(final Thresholds thresholds, final boolean useDeltaValues, final boolean canComputeNew,
+            final PluginLogger logger, final String url) {
     // CHECKSTYLE:ON
         this.thresholds = thresholds;
         this.useDeltaValues = useDeltaValues;
 
-        BuildResultEvaluator resultEvaluator = new BuildResultEvaluator();
+        BuildResultEvaluator resultEvaluator = new BuildResultEvaluator(url);
         Result buildResult;
         StringBuilder messages = new StringBuilder();
         if (history.isEmpty() || !canComputeNew) {

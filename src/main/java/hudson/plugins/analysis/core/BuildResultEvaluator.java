@@ -17,6 +17,18 @@ import hudson.plugins.analysis.util.model.Priority;
  * @author Ulli Hafner
  */
 public class BuildResultEvaluator {
+    private final String url;
+
+    /**
+     * Creates a new instance of {@link BuildResultEvaluator}.
+     *
+     * @param url
+     *            the url of the build results
+     */
+    public BuildResultEvaluator(final String url) {
+        this.url = url;
+    }
+
     /**
      * Evaluates the build result. The build is marked as unstable or failed if
      * one of the thresholds has been exceeded.
@@ -194,30 +206,39 @@ public class BuildResultEvaluator {
             int delta = annotationCount - convert(threshold);
             if (isTotals) {
                 if (priorities.length == 1) {
-                    logger.append(Messages.BuildResultEvaluator_failure_all_priority(
+                    Priority priority = priorities[0];
+                    logger.append(Messages.BuildResultEvaluator_unstable_all_priority(
                             annotationCount, threshold, delta,
-                            priorities[0].getLongLocalizedString()));
+                            priorities[0].getLongLocalizedString(),
+                            url, getPriorityUrl(priority)));
                 }
                 else {
-                    logger.append(Messages.BuildResultEvaluator_failure_all(annotationCount,
-                            threshold, delta));
+                    logger.append(Messages.BuildResultEvaluator_unstable_all(annotationCount,
+                            threshold, delta, url));
                 }
             }
             else {
+                String newUrl = url + "/new";
                 if (priorities.length == 1) {
-                    logger.append(Messages.BuildResultEvaluator_failure_new_priority(
+                    Priority priority = priorities[0];
+                    logger.append(Messages.BuildResultEvaluator_unstable_new_priority(
                             annotationCount, threshold, delta,
-                            priorities[0].getLongLocalizedString()));
+                            priorities[0].getLongLocalizedString(),
+                            newUrl, getPriorityUrl(priority)));
                 }
                 else {
-                    logger.append(Messages.BuildResultEvaluator_failure_new(annotationCount,
-                            threshold, delta));
+                    logger.append(Messages.BuildResultEvaluator_unstable_new(annotationCount,
+                            threshold, delta, newUrl));
                 }
 
             }
             return true;
         }
         return false;
+    }
+
+    private String getPriorityUrl(final Priority priority) {
+        return url + "/" + priority.name();
     }
 
     /**

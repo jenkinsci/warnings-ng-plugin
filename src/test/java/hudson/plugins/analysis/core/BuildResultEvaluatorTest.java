@@ -23,6 +23,10 @@ import hudson.plugins.analysis.util.model.Priority;
  * @author Ulli Hafner
  */
 public class BuildResultEvaluatorTest {
+    /**
+     * FIXME: Document field URL
+     */
+    private static final String URL = "url";
     /** Error message. */
     private static final String WRONG_BUILD_RESULT = "Wrong build result";
     /** Error message. */
@@ -33,7 +37,7 @@ public class BuildResultEvaluatorTest {
      */
     @Test
     public void checkThresholds() {
-        BuildResultEvaluator parser = new BuildResultEvaluator();
+        BuildResultEvaluator parser = new BuildResultEvaluator(URL);
 
         assertFalse(WRONG_BUILD_FAILURE_STATE, parser.isAnnotationCountExceeded(0, ""));
         assertFalse(WRONG_BUILD_FAILURE_STATE, parser.isAnnotationCountExceeded(0, "0"));
@@ -63,7 +67,7 @@ public class BuildResultEvaluatorTest {
      */
     @Test
     public void checkResultComputation() {
-        BuildResultEvaluator parser = new BuildResultEvaluator();
+        BuildResultEvaluator parser = new BuildResultEvaluator(URL);
         List<FileAnnotation> allAnnotations = new ArrayList<FileAnnotation>();
         List<FileAnnotation> newAnnotations = new ArrayList<FileAnnotation>();
 
@@ -114,7 +118,7 @@ public class BuildResultEvaluatorTest {
     public void checkMessages() {
         Locale.setDefault(Locale.ENGLISH);
 
-        BuildResultEvaluator parser = new BuildResultEvaluator();
+        BuildResultEvaluator parser = new BuildResultEvaluator(URL);
         List<FileAnnotation> allAnnotations = new ArrayList<FileAnnotation>();
         List<FileAnnotation> newAnnotations = new ArrayList<FileAnnotation>();
 
@@ -130,13 +134,14 @@ public class BuildResultEvaluatorTest {
         allAnnotations.add(createAnnotation());
 
         checkMessage(parser, allAnnotations, newAnnotations,
-                newDescriptor("0", "", "", ""), Messages._BuildResultEvaluator_failure_all(4, 0, 4));
+                newDescriptor("0", "", "", ""), Messages._BuildResultEvaluator_unstable_all(4, 0, 4, URL));
         checkMessage(parser, allAnnotations, newAnnotations,
-                newDescriptor("2", "", "", ""), Messages._BuildResultEvaluator_failure_all(4, 2, 2));
+                newDescriptor("2", "", "", ""), Messages._BuildResultEvaluator_unstable_all(4, 2, 2, URL));
+        String newUrl = URL + "/new";
         checkMessage(parser, newAnnotations, allAnnotations,
-                newDescriptor("", "", "0", ""), Messages._BuildResultEvaluator_failure_new(4, 0, 4));
+                newDescriptor("", "", "0", ""), Messages._BuildResultEvaluator_unstable_new(4, 0, 4, newUrl));
         checkMessage(parser, newAnnotations, allAnnotations,
-                newDescriptor("", "", "2", ""), Messages._BuildResultEvaluator_failure_new(4, 2, 2));
+                newDescriptor("", "", "2", ""), Messages._BuildResultEvaluator_unstable_new(4, 2, 2, newUrl));
     }
 
     private void checkMessage(final BuildResultEvaluator parser, final List<FileAnnotation> allAnnotations,
