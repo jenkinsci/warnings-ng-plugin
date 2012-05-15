@@ -27,6 +27,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Gavin Mogan <gavin@kodekoan.com>
  */
+@SuppressWarnings("deprecation")
 @Extension
 public class JSLintParser extends AbstractWarningsParser implements WarningsParser {
 
