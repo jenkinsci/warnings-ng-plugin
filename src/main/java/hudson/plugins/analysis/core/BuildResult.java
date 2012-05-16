@@ -1079,6 +1079,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     /**
      * @deprecated use {@link #evaluateStatus(Thresholds, boolean, PluginLogger)}
      */
+    @SuppressWarnings("javadoc")
     @Deprecated
     public void setResult(final Result result) {
         saveResult(result);
