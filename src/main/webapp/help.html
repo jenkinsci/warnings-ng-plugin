@@ -67,5 +67,20 @@ ORDER BY object_type, object_name;
   <pre>
       <code>find . -iname *.pp -exec puppet-lint --log-format "%{path}:%{linenumber}:%{check}:%{KIND}:%{message}" {} \;</code>
   </pre>
+  
+  <h4>JSLint</h4>
+  <p>
+  Various versions/forks of jslint are supported. So far tested with:
+  <ul>
+    <li>
+    <a href="https://github.com/jshint/node-jshint">node-jshint</a> <b>(Prefered)</b> <br />
+      Install: <code>npm install jshint</code> <br />
+      Run as: <code> jshint --jslint-reporter *.js &gt; jslint.xml || true</code>
+    </li>
+    <li>
+      <a href="http://code.google.com/p/jslint4java/">jslint4java</a><br/>
+      Run as: <code>java -jar jslint4java-2.0.2.jar --report xml *.js &gt; jslint.xml</code>
+    </li>
+  </ul>
 
 </div>
