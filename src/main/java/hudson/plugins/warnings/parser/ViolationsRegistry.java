@@ -49,10 +49,6 @@ public final class ViolationsRegistry {
                 Messages._Warnings_JCReport_ParserName(),
                 Messages._Warnings_JCReport_LinkName(),
                 Messages._Warnings_JCReport_TrendName()));
-        parsers.add(new ViolationsAdapter(new JsLintParser(),
-                Messages._Warnings_JSLint_ParserName(),
-                Messages._Warnings_JSLint_LinkName(),
-                Messages._Warnings_JSLint_TrendName()));
         parsers.add(new ViolationsAdapter(new Pep8Parser(),
                 Messages._Warnings_Pep8_ParserName(),
                 Messages._Warnings_Pep8_LinkName(),
