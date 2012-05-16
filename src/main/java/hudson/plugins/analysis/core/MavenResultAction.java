@@ -69,6 +69,16 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
     public abstract Class<? extends MavenResultAction<T>> getIndividualActionType();
 
     /**
+     * Returns the URL of the 24x24 image used in the build link.
+     *
+     * @return the URL of the image
+     * @since 1.42
+     */
+    public String getSmallImageName() {
+        return delegate.getSmallImageName();
+    }
+
+    /**
      * Creates a new build result that contains the aggregated results.
      *
      * @param existingResult
