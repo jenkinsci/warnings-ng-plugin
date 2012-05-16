@@ -6,7 +6,6 @@ import hudson.plugins.violations.types.csslint.CssLintParser;
 import hudson.plugins.violations.types.fxcop.FxCopParser;
 import hudson.plugins.violations.types.gendarme.GendarmeParser;
 import hudson.plugins.violations.types.jcreport.JcReportParser;
-import hudson.plugins.violations.types.jslint.JsLintParser;
 import hudson.plugins.violations.types.pep8.Pep8Parser;
 
 import java.util.List;

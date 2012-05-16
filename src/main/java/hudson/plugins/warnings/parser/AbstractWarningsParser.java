@@ -261,5 +261,26 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
     public String getLargeImage() {
         return WarningsDescriptor.LARGE_ICON_URL;
     }
+
+    /**
+     * Converts a string line number to an integer value. If the string is not a
+     * valid line number, then 0 is returned which indicates a warning at the
+     * top of the file.
+     *
+     * @param lineNumber
+     *            the line number (as a string)
+     * @return the line number
+     */
+    protected final int getLineNumber(final String lineNumber) {
+        if (StringUtils.isNotBlank(lineNumber)) {
+            try {
+                return Integer.parseInt(lineNumber);
+            }
+            catch (NumberFormatException exception) {
+                // ignore and return 0
+            }
+        }
+        return 0;
+    }
 }
 

@@ -119,27 +119,6 @@ public abstract class RegexpParser extends AbstractWarningsParser implements War
     protected abstract Warning createWarning(final Matcher matcher);
 
     /**
-     * Converts a string line number to an integer value. If the string is not a
-     * valid line number, then 0 is returned which indicates a warning at the
-     * top of the file.
-     *
-     * @param lineNumber
-     *            the line number (as a string)
-     * @return the line number
-     */
-    protected final int getLineNumber(final String lineNumber) {
-        if (StringUtils.isNotBlank(lineNumber)) {
-            try {
-                return Integer.parseInt(lineNumber);
-            }
-            catch (NumberFormatException exception) {
-                // ignore and return 0
-            }
-        }
-        return 0;
-    }
-
-    /**
      * Classifies the warning message: tries to guess a category from the
      * warning message.
      *

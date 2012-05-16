@@ -7,7 +7,7 @@ import java.io.Reader;
 import java.util.Collection;
 
 /**
- * Decorator of {@link WarningsParser} instances. Makes instances of the old
+ * Decorator of <code>WarningsParser</code> instances. Makes instances of the old
  * extension point look like instances of the new extension point.
  *
  * @author Ulli Hafner

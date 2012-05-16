@@ -21,24 +21,21 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-
 /**
  * A parser for JSLint checks warnings.
  *
  * @author Gavin Mogan <gavin@kodekoan.com>
  */
-@SuppressWarnings("deprecation")
 @Extension
-public class JSLintParser extends AbstractWarningsParser implements WarningsParser {
-
+public class JSLintParser extends AbstractWarningsParser {
     private static final long serialVersionUID = 8613418992526753095L;
+    private static final Logger LOGGER = Logger.getLogger(JSLintParser.class.toString());
 
-    static final Logger logger = Logger.getLogger(JSLintParser.class.toString());
-
-    /** Categories */
+    /** Categories. */
     static final String CATEGORY_PARSING = "Parsing";
     static final String CATEGORY_UNDEFINED_VARIABLE = "Undefined Variable";
     static final String CATEGORY_FORMATTING = "Formatting";
+
     /**
      * Creates a new instance of {@link JSLintParser}.
      */
@@ -48,33 +45,51 @@ public class JSLintParser extends AbstractWarningsParser implements WarningsPars
                 Messages._Warnings_JSLint_TrendName());
     }
 
-    /** {@inheritDoc} */
-    public String getName() {
-        return getGroup();
+    @Override
+    public Collection<FileAnnotation> parse(final Reader file) throws IOException, ParsingCanceledException {
+        try {
+            List<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
+            SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+
+            SAXParser parser = parserFactory.newSAXParser();
+            parser.parse(new ReaderInputStream(file, "UTF-8"), new JSLintXMLSaxParser(warnings));
+
+            return warnings;
+        }
+        catch (SAXException exception) {
+            throw new IOException(exception);
+        }
+        catch (ParserConfigurationException exception) {
+            throw new IOException(exception);
+        }
     }
 
-    class JSLintXMLSaxParser extends DefaultHandler
-    {
-        final List<FileAnnotation> warnings;
+    /**
+     * Handles parsing.
+     */
+    private class JSLintXMLSaxParser extends DefaultHandler {
+        private final List<FileAnnotation> warnings;
         private String fileName;
-        public JSLintXMLSaxParser(final List<FileAnnotation> warnings)
-        {
+
+        public JSLintXMLSaxParser(final List<FileAnnotation> warnings) {
+            super();
+
             this.warnings = warnings;
         }
+
         @Override
-        public void startElement(final String namespaceURI, final String localName, final String qName, final Attributes atts) throws SAXException {
+        public void startElement(final String namespaceURI, final String localName,
+                final String qName, final Attributes atts) throws SAXException {
             String key = qName;
 
-            // Start element, good to skip
-            if (key.equals("jslint")) { return; }
-
-            if (key.equals("file"))
-            {
+            if ("jslint".equals(key)) {
+                return; // Start element, good to skip
+            }
+            if ("file".equals(key)) {
                 fileName = atts.getValue("name");
                 return;
             }
-            if (key.equals("issue"))
-            {
+            if ("issue".equals(key)) {
                 String category = StringUtils.EMPTY;
                 Priority priority = Priority.NORMAL;
 
@@ -98,49 +113,15 @@ public class JSLintParser extends AbstractWarningsParser implements WarningsPars
                     category = JSLintParser.CATEGORY_FORMATTING;
                 }
 
-                Warning warning = createWarning(
-                        fileName,
-                        Integer.parseInt(atts.getValue("line")),
-                        category,
-                        message,
-                        priority
-                );
+                int lineNumber = getLineNumber(atts.getValue("line"));
+                Warning warning = createWarning( fileName, lineNumber, category, message, priority);
 
                 warnings.add(warning);
                 return;
             }
-
-            logger.info("Unknown jslint xml tag: " + key );
+            else {
+                LOGGER.info("Unknown jslint xml tag: " + key);
+            }
         }
-    }
-
-    @Override
-    public Collection<FileAnnotation> parse(final Reader file) throws IOException, ParsingCanceledException {
-
-        ArrayList<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
-
-        ReaderInputStream ris = new ReaderInputStream(file,"UTF-8");
-        JSLintXMLSaxParser parser = new JSLintXMLSaxParser(warnings);
-
-      //get a factory
-        SAXParserFactory spf = SAXParserFactory.newInstance();
-        try {
-
-            //get a new instance of parser
-            SAXParser sp = spf.newSAXParser();
-
-            //parse the file and also register this class for call backs
-            sp.parse(ris, parser);
-
-        }catch(SAXException se) {
-            se.printStackTrace();
-        }catch(ParserConfigurationException pce) {
-            pce.printStackTrace();
-        }catch (IOException ie) {
-            ie.printStackTrace();
-        }
-
-        return warnings;
     }
 }
-
