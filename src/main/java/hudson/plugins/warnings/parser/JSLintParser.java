@@ -114,7 +114,7 @@ public class JSLintParser extends AbstractWarningsParser {
                 }
 
                 int lineNumber = getLineNumber(atts.getValue("line"));
-                Warning warning = createWarning( fileName, lineNumber, category, message, priority);
+                Warning warning = createWarning(fileName, lineNumber, category, message, priority);
 
                 warnings.add(warning);
                 return;

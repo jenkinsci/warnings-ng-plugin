@@ -217,10 +217,5 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
         public String getName() {
             return OLD_API;
         }
-
-        /** {@inheritDoc} */
-        public final int getLineNumber(final String lineNumber) {
-            return 0;
-        }
     }
 }
