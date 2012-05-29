@@ -6,8 +6,8 @@ import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.NullLogger;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.warnings.GroovyParser;
 import hudson.plugins.warnings.WarningsDescriptor;
+import hudson.plugins.warnings.GroovyParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -210,7 +210,7 @@ public class ParserRegistry {
         if (instance != null) {
             WarningsDescriptor descriptor = instance.getDescriptorByType(WarningsDescriptor.class);
             if (descriptor != null) {
-                return descriptor.getParsers();
+                return Lists.newArrayList(descriptor.getParsers());
             }
         }
         return Collections.emptyList();

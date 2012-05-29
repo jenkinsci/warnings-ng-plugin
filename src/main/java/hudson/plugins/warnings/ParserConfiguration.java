@@ -1,5 +1,10 @@
 package hudson.plugins.warnings;
 
+import hudson.Extension;
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.Descriptor;
+
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -7,7 +12,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  *
  * @author Ulli Hafner
  */
-public class ParserConfiguration {
+public class ParserConfiguration extends AbstractDescribableImpl<ParserConfiguration> {
     private final String pattern;
     private final String parserName;
 
@@ -42,5 +47,18 @@ public class ParserConfiguration {
     public String getPattern() {
         return pattern;
     }
+
+    /**
+     * Dummy descriptor for {@link ParserConfiguration}.
+     *
+     * @author Ulli Hafner
+     */
+   @Extension
+   public static class DescriptorImpl extends Descriptor<ParserConfiguration> {
+       @Override
+       public String getDisplayName() {
+           return StringUtils.EMPTY;
+       }
+   }
 }
 

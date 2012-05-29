@@ -3,8 +3,8 @@ package hudson.plugins.warnings.parser;
 import static org.junit.Assert.*;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.warnings.GroovyParserTest;
 import hudson.plugins.warnings.GroovyParser;
-import hudson.plugins.warnings.WarningsDescriptorTest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -241,8 +241,8 @@ public class ParserRegistryTest {
      */
     @Test
     public void testDynamicParsers() {
-        GroovyParser multi = new GroovyParser("name", WarningsDescriptorTest.MULTI_LINE_REGEXP, "empty");
-        GroovyParser single = new GroovyParser("name", WarningsDescriptorTest.SINGLE_LINE_REGEXP, "empty");
+        GroovyParser multi = new GroovyParser("name", GroovyParserTest.MULTI_LINE_REGEXP, "empty");
+        GroovyParser single = new GroovyParser("name", GroovyParserTest.SINGLE_LINE_REGEXP, "empty");
 
         List<AbstractWarningsParser> allParsers = ParserRegistry.getDynamicParsers(Lists.newArrayList(single, multi));
 
