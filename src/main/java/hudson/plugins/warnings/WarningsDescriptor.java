@@ -12,11 +12,7 @@ import hudson.util.CopyOnWriteList;
 import hudson.util.FormValidation;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.Ancestor;
@@ -34,10 +30,6 @@ import org.kohsuke.stapler.StaplerResponse;
  */
 @Extension(ordinal = 100) // NOCHECKSTYLE
 public final class WarningsDescriptor extends PluginDescriptor implements StaplerProxy {
-    private static final String CONSOLE_LOG_PARSERS_KEY = "consoleLogParsers";
-    private static final String FILE_LOCATIONS_KEY = "locations";
-    private static final String PARSER_NAME_ATTRIBUTE = "parserName";
-
     /** The ID of this plug-in is used as URL. */
     static final String PLUGIN_ID = "warnings";
     /** The URL of the result action. */
@@ -145,53 +137,10 @@ public final class WarningsDescriptor extends PluginDescriptor implements Staple
         return SMALL_ICON_URL;
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("rawtypes")
     @Override
     public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
         return true;
-    }
-
-    @Override
-    public WarningsPublisher newInstance(final StaplerRequest request, final JSONObject formData) throws FormException {
-        JSONObject flattenedData = convertHierarchicalFormData(formData);
-        Set<String> consoleLogParsers = extractConsoleLogParsers(flattenedData);
-        List<ParserConfiguration> parserConfigurations = request.bindJSONToList(ParserConfiguration.class, flattenedData.get(FILE_LOCATIONS_KEY));
-
-        WarningsPublisher publisher = request.bindJSON(WarningsPublisher.class, flattenedData);
-        publisher.setConsoleLogParsers(consoleLogParsers);
-        publisher.setParserConfigurations(parserConfigurations);
-
-        return publisher;
-    }
-
-    /**
-     * Extract the list of locations and associated parsers from the JSON form data.
-     *
-     * @param formData
-     *            the JSON form data
-     * @return the list of parsers to use
-     */
-    private Set<String> extractConsoleLogParsers(final JSONObject formData) {
-        Object values = formData.get(CONSOLE_LOG_PARSERS_KEY);
-        Set<String> parsers = new HashSet<String>();
-        if (values instanceof JSONArray) {
-            JSONArray array = (JSONArray)values;
-            for (int i = 0; i < array.size(); i++) {
-                add(parsers, array.getJSONObject(i));
-            }
-            formData.remove(CONSOLE_LOG_PARSERS_KEY);
-        }
-        else if (values instanceof JSONObject) {
-            add(parsers, (JSONObject)values);
-            formData.remove(CONSOLE_LOG_PARSERS_KEY);
-        }
-
-        return parsers;
-    }
-
-    private boolean add(final Set<String> parsers, final JSONObject element) {
-        return parsers.add(element.getString(PARSER_NAME_ATTRIBUTE));
     }
 
     /**

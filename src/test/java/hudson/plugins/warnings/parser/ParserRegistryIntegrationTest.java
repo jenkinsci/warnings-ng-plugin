@@ -9,15 +9,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 
 import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
 import org.jvnet.hudson.test.TestExtension;
 import org.jvnet.localizer.Localizable;
-
-import com.google.common.collect.Sets;
 
 /**
  * Tests the class {@link ParserRegistry} in context of a running Jenkins instance.
@@ -134,22 +131,6 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
         }
         fail("No parser found for ID: " + parserName);
         return null;
-    }
-
-    /**
-     * Verifies that illegal names are filtered.
-     */
-    @Test
-    public void testFiltering() {
-        verifyFiltering(OLD_ID_JAVA_COMPILER);
-        verifyFiltering(Messages._Warnings_JavaParser_ParserName().toString(Locale.ENGLISH));
-    }
-
-    private void verifyFiltering(final String validName) {
-        List<String> filtered = ParserRegistry.filterExistingParserNames(Sets.newHashSet("Illegal", validName));
-
-        assertEquals("Wrong number of filteres elements", 1, filtered.size());
-        assertEquals("Wrong number of filteres elements", validName, filtered.get(0));
     }
 
     /**

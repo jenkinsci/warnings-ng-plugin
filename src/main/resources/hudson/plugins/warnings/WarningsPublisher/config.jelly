@@ -2,51 +2,13 @@
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:u="/util" xmlns:w="/warnings">
 
   <j:invokeStatic var="allParsers" className="hudson.plugins.warnings.parser.ParserRegistry" method="getAvailableParsers"/>
-
+  
   <f:entry title="${%Scan console log}" description="${%description.consoleLogParsers}">
-    <f:repeatable var="consoleLogParser" items="${instance.consoleLogParsers}" name="consoleLogParsers">
-      <table cellspacing="0" width="100%">
-        <f:entry title="${%Parser}" description="${%description.parser}">
-          <select class="setting-input" name="parserName">
-            <j:forEach var="availableParser" items="${allParsers}">
-              <f:option selected="${availableParser.isInGroup(consoleLogParser)}" 
-                  value="${availableParser.group}">${availableParser.name}</f:option>
-            </j:forEach>
-          </select>
-        </f:entry>
-        
-        <f:entry title="">
-          <div align="right">
-            <f:repeatableDeleteButton />
-          </div>
-        </f:entry>
-      </table>
-    </f:repeatable>
+    <f:repeatableProperty field="consoleParsers"/>
   </f:entry>
   
   <f:entry title="${%Scan workspace files}" description="${%description.logFilesParsers}">
-    <f:repeatable var="configuration" name="locations" items="${instance.parserConfigurations}">
-      <table cellspacing="0" width="100%">
-        <f:entry title="${%File pattern}" 
-           description="${%description.pattern('http://ant.apache.org/manual/Types/fileset.html')}">
-          <f:textbox name="pattern" value="${configuration.pattern}" 
-              checkUrl="'descriptorByName/WarningsPublisher/checkPattern?pattern='+encodeURIComponent(this.value)"/>
-        </f:entry>
-        <f:entry title="${%Parser}" description="${%description.parser}">
-          <select class="setting-input" name="parserName">
-            <j:forEach var="availableParser" items="${allParsers}">
-              <f:option selected="${availableParser.isInGroup(configuration.parserName)}" value="${availableParser.group}">${availableParser.name}</f:option>
-            </j:forEach>
-          </select>
-        </f:entry>
-
-        <f:entry title="">
-          <div align="right">
-            <f:repeatableDeleteButton />
-          </div>
-        </f:entry>
-      </table>
-    </f:repeatable>
+    <f:repeatableProperty field="parserConfigurations"/>
   </f:entry>
 
   <f:advanced>

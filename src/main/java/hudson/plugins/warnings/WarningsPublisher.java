@@ -50,10 +50,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
     /** File pattern and parser configurations. @since 3.19 */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
-    private List<ParserConfiguration> parserConfigurations = Lists.newArrayList();
-    /** Parser to scan the console log. @since 3.19 */
+    private final List<ParserConfiguration> parserConfigurations = Lists.newArrayList();
+    /** Parser configurations of the console. @since 4.6 */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
-    private Set<String> consoleLogParsers = Sets.newHashSet();
+    private List<ConsoleParser> consoleParsers = Lists.newArrayList();
 
     /**
      * Creates a new instance of <code>WarningPublisher</code>.
@@ -124,7 +124,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
             final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
             final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
             final boolean canRunOnFailed, final boolean shouldDetectModules, final boolean canComputeNew,
-            final String includePattern, final String excludePattern) {
+            final String includePattern, final String excludePattern,
+            final List<ParserConfiguration> parserConfigurations, final List<ConsoleParser> consoleParsers) {
         super(healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues,
                 unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
                 unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow,
@@ -133,6 +134,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
                 canRunOnFailed, shouldDetectModules, canComputeNew, PLUGIN_NAME);
         this.includePattern = StringUtils.stripToNull(includePattern);
         this.excludePattern = StringUtils.stripToNull(excludePattern);
+        this.consoleParsers.addAll(consoleParsers);
+        this.parserConfigurations.addAll(parserConfigurations);
     }
     // CHECKSTYLE:ON
 
@@ -141,28 +144,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *
      * @return the parser names
      */
-    public List<String> getConsoleLogParsers() {
-        return ParserRegistry.filterExistingParserNames(consoleLogParsers);
-    }
-
-    /**
-     * Adds the specified parsers to this publisher.
-     *
-     * @param names
-     *            the parsers to use when scanning the console log
-     */
-    public void setConsoleLogParsers(final Set<String> names) {
-        consoleLogParsers = Sets.newHashSet(names);
-    }
-
-    /**
-     * Adds the specified parser configurations to this publisher.
-     *
-     * @param parserConfigurations
-     *            the parser configurations to use
-     */
-    public void setParserConfigurations(final List<ParserConfiguration> parserConfigurations) {
-        this.parserConfigurations = Lists.newArrayList(parserConfigurations);
+    public ConsoleParser[] getConsoleParsers() {
+        return ConsoleParser.filterExisting(consoleParsers);
     }
 
     /**
@@ -170,12 +153,12 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *
      * @return the parserConfigurations
      */
-    public List<ParserConfiguration> getParserConfigurations() {
-        return parserConfigurations;
+    public ParserConfiguration[] getParserConfigurations() {
+        return ParserConfiguration.filterExisting(parserConfigurations);
     }
 
     /**
-     * Upgrade for release 3.18 or older.
+     * Upgrade for release 4.5 or older.
      *
      * @return this
      */
@@ -183,26 +166,13 @@ public class WarningsPublisher extends HealthAwarePublisher {
     protected Object readResolve() {
         super.readResolve();
 
-        if (consoleLogParsers == null || parserConfigurations == null) {
-            consoleLogParsers = Sets.newHashSet();
-            parserConfigurations = Lists.newArrayList();
-
-            if (parserNames != null) {
-                convertToNewFormat();
+        if (consoleParsers == null) {
+            consoleParsers = Lists.newArrayList();
+            for (String  parser : consoleLogParsers) {
+                consoleParsers.add(new ConsoleParser(parser));
             }
         }
         return this;
-    }
-
-    private void convertToNewFormat() {
-        if (!ignoreConsole) {
-            consoleLogParsers.addAll(parserNames);
-        }
-        if (StringUtils.isNotBlank(pattern)) {
-            for (String parser : parserNames) {
-                parserConfigurations.add(new ParserConfiguration(pattern, parser));
-            }
-        }
     }
 
     /**
@@ -238,7 +208,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
     }
 
     private Set<String> getParsers() {
-        Set<String> parsers = Sets.newHashSet(getConsoleLogParsers());
+        Set<String> parsers = Sets.newHashSet();
+        for (ConsoleParser configuration : getConsoleParsers()) {
+            parsers.add(configuration.getParserName());
+        }
         for (ParserConfiguration configuration : getParserConfigurations()) {
             parsers.add(configuration.getParserName());
         }
@@ -249,7 +222,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
     public BuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger)
             throws InterruptedException, IOException {
         try {
-            if (getConsoleLogParsers().isEmpty() && getParserConfigurations().isEmpty()) {
+            if (!hasConsoleParsers() && !hasFileParsers()) {
                 throw new IOException("Error: No warning parsers defined in the job configuration.");
             }
 
@@ -268,6 +241,14 @@ public class WarningsPublisher extends HealthAwarePublisher {
         }
     }
 
+    private boolean hasFileParsers() {
+        return getParserConfigurations().length > 0;
+    }
+
+    private boolean hasConsoleParsers() {
+        return getConsoleParsers().length > 0;
+    }
+
     private void add(final ParserResult totals, final List<ParserResult> results) {
         for (ParserResult result : results) {
             totals.addProject(result);
@@ -284,21 +265,23 @@ public class WarningsPublisher extends HealthAwarePublisher {
         }
     }
 
-    private List<ParserResult> parseConsoleLog(final AbstractBuild<?, ?> build, final PluginLogger logger) throws IOException, InterruptedException {
+    private List<ParserResult> parseConsoleLog(final AbstractBuild<?, ?> build,
+            final PluginLogger logger) throws IOException, InterruptedException {
         List<ParserResult> results = Lists.newArrayList();
-        if (!getConsoleLogParsers().isEmpty()) {
-            for (String parserName : getConsoleLogParsers()) {
-                logger.log("Parsing warnings in console log with parser " + parserName);
+        for (ConsoleParser parser : getConsoleParsers()) {
+            String parserName = parser.getParserName();
+            logger.log("Parsing warnings in console log with parser " + parserName);
 
-                Collection<FileAnnotation> warnings = new ParserRegistry(ParserRegistry.getParsers(parserName),
-                        getDefaultEncoding(), getIncludePattern(), getExcludePattern()).parse(build.getLogFile());
-                if (!build.getWorkspace().isRemote()) {
-                    guessModuleNames(build, warnings);
-                }
-                ParserResult project = new ParserResult(build.getWorkspace());
-                project.addAnnotations(warnings);
-                results.add(annotate(build, project, parserName));
+            Collection<FileAnnotation> warnings = new ParserRegistry(
+                    ParserRegistry.getParsers(parserName),
+                    getDefaultEncoding(), getIncludePattern(), getExcludePattern()).parse(build
+                    .getLogFile());
+            if (!build.getWorkspace().isRemote()) {
+                guessModuleNames(build, warnings);
             }
+            ParserResult project = new ParserResult(build.getWorkspace());
+            project.addAnnotations(warnings);
+            results.add(annotate(build, project, parserName));
         }
         return results;
     }
@@ -371,4 +354,6 @@ public class WarningsPublisher extends HealthAwarePublisher {
     private transient boolean ignoreConsole;
     /** Ant file-set pattern of files to work with. */
     private transient String pattern;
+    /** Parser to scan the console log. @since 3.19 */
+    private transient Set<String> consoleLogParsers;
 }

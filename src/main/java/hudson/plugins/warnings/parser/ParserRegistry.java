@@ -163,24 +163,14 @@ public class ParserRegistry {
     }
 
     /**
-     * Returns all parser names that identify at least one existing parser. The
-     * returned list is sorted alphabetically.
+     * Returns whether the specified parser exists.
      *
-     * @param parserNames
-     *            the names to filter
-     * @return the filtered set, containing only valid names
+     * @param parserName
+     *            the names to check for
+     * @return true if the parser exist, <code>false</code> otherwise
      */
-    public static List<String> filterExistingParserNames(final Set<String> parserNames) {
-        List<String> validNames = Lists.newArrayList();
-
-        for (String name : parserNames) {
-            if (!getParsers(name).isEmpty()) {
-                validNames.add(name);
-            }
-        }
-        Collections.sort(validNames);
-
-        return validNames;
+    public static boolean exists(final String parserName) {
+        return !getParsers(parserName).isEmpty();
     }
 
     /**
@@ -430,5 +420,6 @@ public class ParserRegistry {
             return Collections.emptyList();
         }
     }
+
 }
 
