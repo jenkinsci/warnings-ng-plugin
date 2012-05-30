@@ -5,7 +5,6 @@ import hudson.FilePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
-import hudson.plugins.warnings.parser.ParserDescription;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
@@ -99,11 +98,7 @@ public class ParserConfiguration extends AbstractDescribableImpl<ParserConfigura
          * @return the model of the list box
          */
         public ListBoxModel doFillParserNameItems() {
-            ListBoxModel items = new ListBoxModel();
-            for (ParserDescription parser : ParserRegistry.getAvailableParsers()) {
-                items.add(parser.getGroup());
-            }
-            return items;
+            return ParserRegistry.getParsersAsListModel();
         }
 
        @Override

@@ -3,7 +3,6 @@ package hudson.plugins.warnings;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
-import hudson.plugins.warnings.parser.ParserDescription;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.util.ListBoxModel;
 
@@ -76,11 +75,7 @@ public class ConsoleParser extends AbstractDescribableImpl<ConsoleParser> {
         * @return the model of the list box
         */
        public ListBoxModel doFillParserNameItems() {
-           ListBoxModel items = new ListBoxModel();
-           for (ParserDescription parser : ParserRegistry.getAvailableParsers()) {
-               items.add(parser.getGroup());
-           }
-           return items;
+           return ParserRegistry.getParsersAsListModel();
        }
 
        @Override
@@ -88,5 +83,4 @@ public class ConsoleParser extends AbstractDescribableImpl<ConsoleParser> {
            return StringUtils.EMPTY;
        }
    }
-
 }

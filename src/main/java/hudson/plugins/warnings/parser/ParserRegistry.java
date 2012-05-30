@@ -8,6 +8,7 @@ import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.warnings.WarningsDescriptor;
 import hudson.plugins.warnings.GroovyParser;
+import hudson.util.ListBoxModel;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,6 +72,19 @@ public class ParserRegistry {
                 parsers.add(new ParserAdapter(parser));
             }
         }
+    }
+
+    /**
+     * Returns the available parsers as a list model.
+     *
+     * @return the model of the list box
+     */
+    public static ListBoxModel getParsersAsListModel() {
+        ListBoxModel items = new ListBoxModel();
+        for (ParserDescription parser : getAvailableParsers()) {
+            items.add(parser.getGroup());
+        }
+        return items;
     }
 
     /**
