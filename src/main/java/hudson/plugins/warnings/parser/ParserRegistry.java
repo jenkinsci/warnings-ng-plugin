@@ -82,7 +82,7 @@ public class ParserRegistry {
     public static ListBoxModel getParsersAsListModel() {
         ListBoxModel items = new ListBoxModel();
         for (ParserDescription parser : getAvailableParsers()) {
-            items.add(parser.getGroup());
+            items.add(parser.getName(), parser.getGroup());
         }
         return items;
     }
