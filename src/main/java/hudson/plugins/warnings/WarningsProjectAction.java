@@ -7,6 +7,7 @@ import hudson.plugins.analysis.core.NullBuildHistory;
 import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.analysis.graph.BuildResultGraph;
 import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
+import hudson.plugins.analysis.graph.UserGraphConfigurationView;
 import hudson.plugins.analysis.graph.GraphConfigurationView;
 import hudson.plugins.warnings.parser.ParserRegistry;
 
@@ -15,6 +16,7 @@ import java.util.List;
 import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * Entry point to visualize the warnings trend graph in the project screen.
@@ -52,9 +54,19 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
         parser = group;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected GraphConfigurationView createUserConfiguration(final StaplerRequest request) {
+        return new UserGraphConfigurationView(
+                createConfiguration(getAvailableGraphs()), getProject(),
+                WarningsDescriptor.getProjectUrl(parser), WarningsDescriptor.getProjectUrl(null),
+                request.getCookies(), createBuildHistory());
+    }
+
     @Override
     protected GraphConfigurationView createDefaultConfiguration() {
-        return new DefaultGraphConfigurationView(createConfiguration(getAvailableGraphs()), getProject(),
+        return new DefaultGraphConfigurationView(
+                createConfiguration(getAvailableGraphs()), getProject(),
                 WarningsDescriptor.getProjectUrl(parser),
                 createBuildHistory(), WarningsDescriptor.getProjectUrl(null));
     }
