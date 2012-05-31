@@ -24,6 +24,31 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      * @param project
      *            the owning project to configure the graphs for
      * @param projectActionUrl
+     *            The URL of the project action (used as cookie ID)
+     * @param globalFileName
+     *            The file name of the global configuration
+     * @param cookies
+     *            the cookies containing the graph configuration
+     * @param buildHistory
+     *            the build history for this project
+     */
+    public UserGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
+            final String projectActionUrl, final String globalFileName, final Cookie[] cookies, final BuildHistory buildHistory) {
+        super(configuration, project, projectActionUrl, buildHistory);
+
+        if (!configuration.initializeFrom(createCookieHandler(projectActionUrl).getValue(cookies))) {
+            configuration.initializeFromFile(createDefaultsFile(project, globalFileName));
+        }
+    }
+
+    /**
+     * Creates a new instance of {@link UserGraphConfigurationView}.
+     *
+     * @param configuration
+     *            the graph configuration
+     * @param project
+     *            the owning project to configure the graphs for
+     * @param projectActionUrl
      *            The URL of the project action
      * @param cookies
      *            the cookies containing the graph configuration
@@ -32,11 +57,7 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      */
     public UserGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
             final String projectActionUrl, final Cookie[] cookies, final BuildHistory buildHistory) {
-        super(configuration, project, projectActionUrl, buildHistory);
-
-        if (!configuration.initializeFrom(createCookieHandler(projectActionUrl).getValue(cookies))) {
-            configuration.initializeFromFile(createDefaultsFile(project, projectActionUrl));
-        }
+        this(configuration, project, projectActionUrl, projectActionUrl, cookies, buildHistory);
     }
 
     /**
