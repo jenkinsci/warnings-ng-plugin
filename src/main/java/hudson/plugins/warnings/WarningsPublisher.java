@@ -134,8 +134,12 @@ public class WarningsPublisher extends HealthAwarePublisher {
                 canRunOnFailed, shouldDetectModules, canComputeNew, PLUGIN_NAME);
         this.includePattern = StringUtils.stripToNull(includePattern);
         this.excludePattern = StringUtils.stripToNull(excludePattern);
-        this.consoleParsers.addAll(consoleParsers);
-        this.parserConfigurations.addAll(parserConfigurations);
+        if (consoleParsers != null) {
+            this.consoleParsers.addAll(consoleParsers);
+        }
+        if (parserConfigurations != null) {
+            this.parserConfigurations.addAll(parserConfigurations);
+        }
     }
     // CHECKSTYLE:ON
 
