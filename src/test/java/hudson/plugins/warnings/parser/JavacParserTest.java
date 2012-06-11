@@ -18,6 +18,20 @@ public class JavacParserTest extends ParserTester {
     private static final String WARNING_TYPE = Messages._Warnings_JavaParser_ParserName().toString(Locale.ENGLISH);
 
     /**
+     * Parses a warning log with two false positives.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-14043">Issue 14043</a>
+     */
+    @Test
+    public void issue14043() throws IOException {
+        Collection<FileAnnotation> warnings = parse("issue14043.txt");
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, warnings.size());
+    }
+
+    /**
      * Parses a warning log with 15 warnings.
      *
      * @throws IOException
