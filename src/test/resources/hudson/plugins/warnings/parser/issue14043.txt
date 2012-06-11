@@ -5,3 +5,5 @@
 
 [junit] <misc junit stdout printout> [data within brackets] [] empty bracket
 
+[junit] G GOT < + 120512,21:18:18.005->120512,21:18:18.632 Ab Micid:192.168.0.1 0 2 PEAK_REPORT(3) PSS:12253413403527718 status=NORMAL issi=123456789012345 ssisfn=123456789012 Contexts:[] cpn=mylabs RET=3
+
