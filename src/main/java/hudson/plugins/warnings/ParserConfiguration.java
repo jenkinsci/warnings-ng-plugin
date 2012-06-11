@@ -89,8 +89,8 @@ public class ParserConfiguration extends AbstractDescribableImpl<ParserConfigura
      *
      * @author Ulli Hafner
      */
-   @Extension
-   public static class DescriptorImpl extends Descriptor<ParserConfiguration> {
+    @Extension
+    public static class DescriptorImpl extends Descriptor<ParserConfiguration> {
         /**
          * Returns the available parsers. These values will be shown in the list
          * box of the config.jelly view part.
@@ -101,21 +101,32 @@ public class ParserConfiguration extends AbstractDescribableImpl<ParserConfigura
             return ParserRegistry.getParsersAsListModel();
         }
 
-       @Override
-       public String getDisplayName() {
-           return StringUtils.EMPTY;
-       }
+        @Override
+        public String getDisplayName() {
+            return StringUtils.EMPTY;
+        }
 
-       public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
-               @QueryParameter final String pattern) throws IOException {
-           FormValidation required = FormValidation.validateRequired(pattern);
-           if (required.kind == FormValidation.Kind.OK) {
-               return FilePath.validateFileMask(project.getSomeWorkspace(), pattern);
-           }
-           else {
-               return required;
-           }
-       }
-   }
+        /**
+         * Verifies the file pattern. Checks, if the path is valid and exists.
+         *
+         * @param project
+         *            the selected project
+         * @param pattern
+         *            the specified pattern
+         * @return the validation result
+         * @throws IOException
+         *             in case of an exception during file system access
+         */
+        public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String pattern) throws IOException {
+            FormValidation required = FormValidation.validateRequired(pattern);
+            if (required.kind == FormValidation.Kind.OK) {
+                return FilePath.validateFileMask(project.getSomeWorkspace(), pattern);
+            }
+            else {
+                return required;
+            }
+        }
+    }
 }
 
