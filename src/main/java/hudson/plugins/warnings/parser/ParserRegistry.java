@@ -1,4 +1,4 @@
-package hudson.plugins.warnings.parser;
+package hudson.plugins.warnings.parser; // NOPMD
 
 import hudson.model.Hudson;
 import hudson.plugins.analysis.core.PluginDescriptor;

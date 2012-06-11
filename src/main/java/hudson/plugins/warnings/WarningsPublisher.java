@@ -353,10 +353,13 @@ public class WarningsPublisher extends HealthAwarePublisher {
     }
 
     /** Name of parsers to use for scanning the logs. */
+    @SuppressWarnings({"unused", "PMD"})
     private transient Set<String> parserNames;
     /** Determines whether the console should be ignored. */
+    @SuppressWarnings({"unused", "PMD"})
     private transient boolean ignoreConsole;
     /** Ant file-set pattern of files to work with. */
+    @SuppressWarnings({"unused", "PMD"})
     private transient String pattern;
     /** Parser to scan the console log. @since 3.19 */
     private transient Set<String> consoleLogParsers;
