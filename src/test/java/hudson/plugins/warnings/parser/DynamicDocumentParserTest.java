@@ -7,7 +7,7 @@ package hudson.plugins.warnings.parser;
  *
  * @author Ulli Hafner
  */
-public class DynamicDocumentParserTest extends EclipseParserTest {
+public class DynamicDocumentParserTest extends AbstractEclipseParserTest {
     private static final String TYPE = "Eclipse Dynamic";
 
     @Override

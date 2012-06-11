@@ -15,7 +15,7 @@ import org.apache.commons.lang.StringUtils;
 @Extension
 public class EclipseParser extends RegexpDocumentParser {
     private static final long serialVersionUID = 425883472788422955L;
-    private static final String ANT_ECLIPSE_WARNING_PATTERN = "(WARNING|ERROR)\\s*in\\s*(.*)\\(at line\\s*(\\d+)\\).*(?:\\r?\\n[^\\^]*)+(?:\\r?\\n(.*)([\\^]+).*)\\r?\\n(?:\\s*\\[.*\\]\\s*)?(.*)";
+    private static final String ANT_ECLIPSE_WARNING_PATTERN = "\\[?(WARNING|ERROR)\\]?\\s*(?:in)?\\s*(.*)(?:\\(at line\\s*(\\d+)\\)|:\\[(\\d+),).*(?:\\r?\\n[^\\^]*)+(?:\\r?\\n(.*)([\\^]+).*)\\r?\\n(?:\\s*\\[.*\\]\\s*)?(.*)";
 
     /**
      * Creates a new instance of {@link EclipseParser}.
@@ -52,13 +52,20 @@ public class EclipseParser extends RegexpDocumentParser {
         else {
             priority = Priority.HIGH;
         }
-        Warning warning = createWarning(matcher.group(2), getLineNumber(matcher.group(3)), matcher.group(6), priority);
+        Warning warning = createWarning(matcher.group(2), getLineNumber(getLine(matcher)), matcher.group(7), priority);
 
-        int columnStart = StringUtils.defaultString(matcher.group(4)).length();
-        int columnEnd = columnStart + matcher.group(5).length();
+        int columnStart = StringUtils.defaultString(matcher.group(5)).length();
+        int columnEnd = columnStart + matcher.group(6).length();
         warning.setColumnPosition(columnStart, columnEnd);
 
         return warning;
+    }
+
+    private String getLine(final Matcher matcher) {
+        String eclipse34 = matcher.group(3);
+        String eclipse38 = matcher.group(4);
+
+        return StringUtils.defaultIfEmpty(eclipse34, eclipse38);
     }
 }
 

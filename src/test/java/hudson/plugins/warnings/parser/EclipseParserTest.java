@@ -18,7 +18,41 @@ import com.google.common.collect.Lists;
 /**
  * Tests the class {@link EclipseParser}.
  */
-public class EclipseParserTest extends ParserTester {
+public class EclipseParserTest extends AbstractEclipseParserTest {
+    /**
+     * Parses a warning log with 2 previously undetected warnings.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-13696">Issue 13696</a>
+     */
+    @Test
+    public void issue13969() throws IOException {
+        Collection<FileAnnotation> warnings = createParser().parse(openFile("issue13969.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
+
+        ParserResult result = new ParserResult(warnings);
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, result.getNumberOfAnnotations());
+
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        checkWarning(iterator.next(),
+                369,
+                "The method compare(List<String>, List<String>) from the type PmModelImporter is never used locally",
+                "/media/ssd/multi-x-processor/workspace/msgPM_Access/com.faktorzehn.pa2msgpm.core/src/com/faktorzehn/pa2msgpm/core/loader/PmModelImporter.java",
+                getType(), "", Priority.NORMAL);
+        checkWarning(iterator.next(),
+                391,
+                "The method getTableValues(PropertyRestrictionType) from the type PmModelImporter is never used locally",
+                "/media/ssd/multi-x-processor/workspace/msgPM_Access/com.faktorzehn.pa2msgpm.core/src/com/faktorzehn/pa2msgpm/core/loader/PmModelImporter.java",
+                getType(), "", Priority.NORMAL);
+        checkWarning(iterator.next(),
+                56,
+                "The value of the field PropertyImporterTest.ERROR_RESPONSE is not used",
+                "/media/ssd/multi-x-processor/workspace/msgPM_Access/com.faktorzehn.pa2msgpm.core.test/src/com/faktorzehn/pa2msgpm/core/importer/PropertyImporterTest.java",
+                getType(), "", Priority.NORMAL);
+    }
+
     /**
      * Parses a warning log with 15 warnings.
      *
@@ -81,45 +115,6 @@ public class EclipseParserTest extends ParserTester {
     }
 
     /**
-     * Creates the parser under test.
-     *
-     * @return the created parser
-     */
-    protected AbstractWarningsParser createParser() {
-        return new EclipseParser();
-    }
-
-    /**
-     * Parses a file with two deprecation warnings.
-     *
-     * @throws IOException
-     *      if the file could not be read
-     */
-    @Test
-    public void parseDeprecation() throws IOException {
-        Collection<FileAnnotation> warnings = createParser().parse(openFile());
-
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 8, warnings.size());
-
-        Iterator<FileAnnotation> iterator = warnings.iterator();
-        FileAnnotation annotation = iterator.next();
-        checkWarning(annotation,
-                3,
-                "The serializable class AttributeException does not declare a static final serialVersionUID field of type long",
-                "C:/Desenvolvimento/Java/jfg/src/jfg/AttributeException.java",
-                getType(), "", Priority.NORMAL);
-    }
-
-    /**
-     * Returns the type of the parser.
-     *
-     * @return the type of the parser
-     */
-    protected String getType() {
-        return new EclipseParser().getGroup();
-    }
-
-    /**
      * Parses a warning log with 2 eclipse messages, the affected source text spans one and two lines.
      *
      * @throws IOException
@@ -167,12 +162,6 @@ public class EclipseParserTest extends ParserTester {
             assertFalse("Message " + number + " contains ^", containsHat);
             number++;
         }
-    }
-
-
-    @Override
-    protected String getWarningsFile() {
-        return "eclipse.txt";
     }
 }
 
