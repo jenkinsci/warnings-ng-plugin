@@ -348,8 +348,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             }
 
             if (new NullHealthDescriptor(this).isThresholdEnabled()) {
-                String baseUrl = getDescriptor().getPluginResultUrlName();
-                result.evaluateStatus(getThresholds(), useDeltaValues, canComputeNew(), logger, baseUrl);
+                updateBuildResult(result, logger);
             }
 
             copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), result.getAnnotations());
@@ -358,6 +357,19 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
             logger.log("Skipping publisher since build result is " + build.getResult());
         }
         return true;
+    }
+
+    /**
+     * Will be invoked after the build result has been evaluated.
+     *
+     * @param result
+     *            the evaluated build result
+     * @param logger
+     *            the logger
+     */
+    protected void updateBuildResult(final BuildResult result, final PluginLogger logger) {
+        String baseUrl = getDescriptor().getPluginResultUrlName();
+        result.evaluateStatus(getThresholds(), useDeltaValues, canComputeNew(), logger, baseUrl);
     }
 
     @Override
