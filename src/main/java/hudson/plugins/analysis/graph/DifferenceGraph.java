@@ -4,7 +4,6 @@ import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -122,8 +121,11 @@ public class DifferenceGraph extends BuildResultGraph {
             final List<Pair<Integer, Integer>> fixedWarnings, final List<Pair<Integer, Integer>> newWarnings) {
         int buildCount = 0;
         BuildResult current = action.getResult();
-        Calendar buildTime = current.getOwner().getTimestamp();
         while (true) {
+            if (isBuildTooOld(configuration, current)) {
+                break;
+            }
+
             int build = current.getOwner().getNumber();
             fixedWarnings.add(new Pair<Integer, Integer>(build, current.getNumberOfFixedWarnings()));
             newWarnings.add(new Pair<Integer, Integer>(build, current.getNumberOfNewWarnings()));
@@ -140,11 +142,6 @@ public class DifferenceGraph extends BuildResultGraph {
                 if (buildCount >= configuration.getBuildCount()) {
                     break;
                 }
-            }
-
-            if (configuration.isDayCountDefined()
-                    && computeDayDelta(buildTime, current) < configuration.getDayCount()) {
-                break;
             }
         }
 

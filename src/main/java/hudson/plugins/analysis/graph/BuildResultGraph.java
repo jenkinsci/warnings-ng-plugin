@@ -3,6 +3,7 @@ package hudson.plugins.analysis.graph;
 import java.awt.Color;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 
 import javax.annotation.CheckForNull;
 
@@ -259,6 +260,23 @@ public abstract class BuildResultGraph {
      */
     public boolean isDeactivated() {
         return false;
+    }
+
+    /**
+     * Returns whether the specified build result is too old in order to be
+     * considered for the trend graph.
+     *
+     * @param configuration
+     *            the graph configuration
+     * @param current
+     *            the current build
+     * @return <code>true</code> if the build is too old
+     */
+    protected boolean isBuildTooOld(final GraphConfiguration configuration, final BuildResult current) {
+        Calendar today = new GregorianCalendar();
+
+        return configuration.isDayCountDefined()
+                && computeDayDelta(today, current) >= configuration.getDayCount();
     }
 }
 

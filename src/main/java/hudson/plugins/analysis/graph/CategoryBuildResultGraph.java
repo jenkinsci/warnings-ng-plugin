@@ -3,10 +3,8 @@ package hudson.plugins.analysis.graph;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +30,8 @@ import com.google.common.collect.Sets;
 
 import hudson.model.AbstractBuild;
 
-import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ResultAction;
+import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
 import hudson.util.ChartUtil.NumberOnlyBuildLabel;
@@ -207,13 +205,11 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     private Map<AbstractBuild, List<Integer>> createSeriesPerBuild(
             final GraphConfiguration configuration, final BuildResult lastBuildResult) {
         BuildResult current = lastBuildResult;
-        Calendar today = new GregorianCalendar();
 
         int buildCount = 0;
         Map<AbstractBuild, List<Integer>> valuesPerBuild = Maps.newHashMap();
         while (true) {
-            if (configuration.isDayCountDefined()
-                    && computeDayDelta(today, current) >= configuration.getDayCount()) {
+            if (isBuildTooOld(configuration, current)) {
                 break;
             }
 
