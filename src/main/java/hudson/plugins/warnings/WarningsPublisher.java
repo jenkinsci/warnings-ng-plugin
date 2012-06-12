@@ -237,11 +237,18 @@ public class WarningsPublisher extends HealthAwarePublisher {
             add(totals, consoleResults);
             add(totals, fileResults);
 
-            return new WarningsResult(build, new WarningsBuildHistory(build, null), totals,
-                    getDefaultEncoding(), null);
+            return new WarningsResult(build, new WarningsBuildHistory(build, null), totals, getDefaultEncoding(), null);
         }
         catch (ParsingCanceledException exception) {
             throw createInterruptedException();
+        }
+    }
+
+    @Override
+    protected void updateBuildResult(final BuildResult result, final PluginLogger logger) {
+        for (WarningsResultAction action : result.getOwner().getActions(WarningsResultAction.class)) {
+            action.getResult().evaluateStatus(getThresholds(), getUseDeltaValues(), canComputeNew(), logger,
+                    action.getUrlName());
         }
     }
 
