@@ -7,7 +7,7 @@
   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
   <j:if test="${it.hasAnnotations()}">
     <script type="text/javascript" src="${rootURL}/plugin/analysis-core/yui/utilities.js" />
-    <script type="text/javascript" src="${rootURL}/plugin/analysis-core/yui/tabview-min.js" />
+    <l:yui module="tabview" />
     <script type="text/javascript" src="${rootURL}/plugin/analysis-core/yui/dispatcher-min.js" />
 
     <script type="text/javascript">
