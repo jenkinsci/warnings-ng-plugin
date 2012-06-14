@@ -52,9 +52,9 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     /** The name of the package (or name space) that contains this annotation. */
     private String packageName;
     /** Bug category. */
-    private final String category;
+    private /*almost final*/ String category;
     /** Bug type. */
-    private final String type;
+    private /*almost final*/ String type;
     /**
      * Context hash code of this annotation. This hash code is used to decide if
      * two annotations are equal even if the equals method returns <code>false</code>.
@@ -142,6 +142,25 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         type = copy.getType();
         moduleName = copy.getModuleName();
         packageName = copy.getPackageName();
+    }
+
+    /**
+     * Called after XStream de-serialization to improve the memory usage.
+     *
+     * Ideally we'd like this to be protected, so that the subtype can call this method,
+     * but some plugins that depends on this (such as findbugs) already define "private Object readResolve()",
+     * so defining it as protected will break those subtypes. So instead, we expose "superReadResolve" as the
+     * protected entry point for this method.
+     */
+    private Object readResolve() {
+        origin = origin.intern();
+        category = category.intern();
+        type = type.intern();
+        return this;
+    }
+
+    protected void superReadResolve() {
+        readResolve();
     }
 
     /**
