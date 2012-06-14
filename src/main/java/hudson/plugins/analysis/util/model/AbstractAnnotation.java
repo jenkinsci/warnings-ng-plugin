@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import hudson.plugins.analysis.util.TreeString;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.export.Exported;
@@ -36,7 +37,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     private static long currentKey;
 
     /** The message of this annotation. */
-    private final String message;
+    private final TreeString message;
     /** The priority of this annotation. */
     private Priority priority;
     /** Unique key of this annotation. */
@@ -46,11 +47,11 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     /** Primary line number of this warning, i.e., the start line of the first line range. */
     private final int primaryLineNumber;
     /** The filename of the class that contains this annotation. */
-    private String fileName;
+    private TreeString fileName;
     /** The name of the maven or ant module that contains this annotation. */
-    private String moduleName;
+    private TreeString moduleName;
     /** The name of the package (or name space) that contains this annotation. */
-    private String packageName;
+    private TreeString packageName;
     /** Bug category. */
     private final String category;
     /** Bug type. */
@@ -63,7 +64,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     /** The origin of this warning. */
     private String origin;
     /** Relative path of this duplication. @since 1.10 */
-    private String pathName;
+    private TreeString pathName;
     /** Column start of primary line range of warning. @since 1.38 */
     private int primaryColumnStart;
     /** Column end of primary line range of warning. @since 1.38 */
@@ -85,7 +86,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("ST")
     public AbstractAnnotation(final String message, final int start, final int end, final String category, final String type) {
-        this.message = StringUtils.strip(message);
+        this.message = TreeString.of(StringUtils.strip(message));
         this.category = StringUtils.defaultString(category);
         this.type = StringUtils.defaultString(type);
 
@@ -130,18 +131,18 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     public AbstractAnnotation(final AbstractAnnotation copy) {
         key = currentKey++;
 
-        message = copy.getMessage();
+        message = TreeString.of(copy.getMessage());
         priority = copy.getPriority();
         primaryLineNumber = copy.getPrimaryLineNumber();
         lineRanges = new ArrayList<LineRange>(copy.getLineRanges());
 
         contextHashCode = copy.getContextHashCode();
 
-        fileName = copy.getFileName();
+        fileName = TreeString.of(copy.getFileName());
         category = copy.getCategory();
         type = copy.getType();
-        moduleName = copy.getModuleName();
-        packageName = copy.getPackageName();
+        moduleName = TreeString.of(copy.getModuleName());
+        packageName = TreeString.of(copy.getPackageName());
     }
 
     /**
@@ -163,7 +164,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
             return getPackageName() + "." + FilenameUtils.getBaseName(getFileName());
         }
         else {
-            if (StringUtils.isBlank(pathName)) {
+            if (pathName==null || pathName.isBlank()) {
                 return getFileName();
             }
             else {
@@ -174,7 +175,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
 
     /** {@inheritDoc} */
     public boolean hasPackageName() {
-        String actualPackageName = StringUtils.trim(packageName);
+        String actualPackageName = StringUtils.trim(TreeString.toString(packageName));
 
         return StringUtils.isNotBlank(actualPackageName) && !StringUtils.equals(actualPackageName, PackageDetectors.UNDEFINED_PACKAGE);
     }
@@ -188,15 +189,16 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     public void setPathName(final String workspacePath) {
         String normalized = workspacePath.replace('\\', '/');
 
-        pathName = StringUtils.removeStart(getFileName(), normalized);
-        pathName = StringUtils.remove(pathName, FilenameUtils.getName(getFileName()));
-        pathName = StringUtils.removeStart(pathName, SLASH);
-        pathName = StringUtils.removeEnd(pathName, SLASH);
+        String s = StringUtils.removeStart(getFileName(), normalized);
+        s = StringUtils.remove(s, FilenameUtils.getName(getFileName()));
+        s = StringUtils.removeStart(s, SLASH);
+        s = StringUtils.removeEnd(s, SLASH);
+        this.pathName = TreeString.of(s);
     }
 
     /** {@inheritDoc} */
     public String getPathName() {
-        return pathName;
+        return TreeString.toString(pathName);
     }
 
     /** {@inheritDoc} */
@@ -225,7 +227,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     /** {@inheritDoc} */
     @Exported
     public String getMessage() {
-        return message;
+        return TreeString.toString(message);
     }
 
     /** {@inheritDoc} */
@@ -243,7 +245,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     /** {@inheritDoc} */
     @Exported
     public final String getFileName() {
-        return fileName;
+        return TreeString.toString(fileName);
     }
 
     /** {@inheritDoc} */
@@ -272,12 +274,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @param fileName the value to set
      */
     public final void setFileName(final String fileName) {
-        this.fileName = StringUtils.strip(fileName).replace('\\', '/');
+        this.fileName = TreeString.of(StringUtils.strip(fileName).replace('\\', '/'));
     }
 
     /** {@inheritDoc} */
     public final String getModuleName() {
-        return StringUtils.defaultIfEmpty(moduleName, "Default Module");
+        return StringUtils.defaultIfEmpty(TreeString.toString(moduleName), "Default Module");
     }
 
     /**
@@ -286,12 +288,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @param moduleName the value to set
      */
     public final void setModuleName(final String moduleName) {
-        this.moduleName = moduleName;
+        this.moduleName = TreeString.of(moduleName);
     }
 
     /** {@inheritDoc} */
     public final String getPackageName() {
-        return StringUtils.defaultIfEmpty(packageName, DEFAULT_PACKAGE);
+        return StringUtils.defaultIfEmpty(TreeString.toString(packageName), DEFAULT_PACKAGE);
     }
 
     /**
@@ -300,7 +302,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @param packageName the value to set
      */
     public final void setPackageName(final String packageName) {
-        this.packageName = packageName;
+        this.packageName = TreeString.of(packageName);
     }
 
     /** {@inheritDoc} */
@@ -461,7 +463,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @return the short file name
      */
     public String getShortFileName() {
-        return FilenameUtils.getName(fileName);
+        return FilenameUtils.getName(TreeString.toString(fileName));
     }
 
     /**
