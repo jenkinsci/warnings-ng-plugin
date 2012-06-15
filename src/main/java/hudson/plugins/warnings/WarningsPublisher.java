@@ -113,6 +113,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *            Ant file-set pattern of files to include in report
      * @param excludePattern
      *            Ant file-set pattern of files to exclude from report
+     * @param canResolveRelativePaths
+     *            determines whether relative paths in warnings should be
+     *            resolved using a time expensive operation that scans the whole
+     *            workspace for matching files.
      */
     // CHECKSTYLE:OFF
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -124,14 +128,14 @@ public class WarningsPublisher extends HealthAwarePublisher {
             final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
             final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
             final boolean canRunOnFailed, final boolean shouldDetectModules, final boolean canComputeNew,
-            final String includePattern, final String excludePattern,
+            final String includePattern, final String excludePattern, final boolean canResolveRelativePaths,
             final List<ParserConfiguration> parserConfigurations, final List<ConsoleParser> consoleParsers) {
         super(healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues,
                 unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
                 unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow,
                 failedTotalAll, failedTotalHigh, failedTotalNormal, failedTotalLow,
                 failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
-                canRunOnFailed, shouldDetectModules, canComputeNew, PLUGIN_NAME);
+                canRunOnFailed, shouldDetectModules, canComputeNew, canResolveRelativePaths, PLUGIN_NAME);
         this.includePattern = StringUtils.stripToNull(includePattern);
         this.excludePattern = StringUtils.stripToNull(excludePattern);
         if (consoleParsers != null) {
@@ -290,7 +294,14 @@ public class WarningsPublisher extends HealthAwarePublisher {
             if (!build.getWorkspace().isRemote()) {
                 guessModuleNames(build, warnings);
             }
-            ParserResult project = new ParserResult(build.getWorkspace());
+            ParserResult project;
+            if (canResolveRelativePaths()) {
+                project = new ParserResult(build.getWorkspace());
+            }
+            else {
+                project = new ParserResult();
+            }
+            project = new ParserResult(build.getWorkspace());
             project.addAnnotations(warnings);
             results.add(annotate(build, project, parserName));
         }
@@ -316,7 +327,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
             FilesParser parser = new FilesParser(PLUGIN_NAME, filePattern,
                     new FileWarningsParser(ParserRegistry.getParsers(parserName), getDefaultEncoding(), getIncludePattern(), getExcludePattern()),
-                    shouldDetectModules(), isMavenBuild(build));
+                    shouldDetectModules(), isMavenBuild(build), canResolveRelativePaths());
             ParserResult project = build.getWorkspace().act(parser);
             logger.logLines(project.getLogMessages());
 

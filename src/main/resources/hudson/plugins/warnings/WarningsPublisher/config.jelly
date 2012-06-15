@@ -26,6 +26,9 @@
     <f:entry title="${%Detect modules}" description="${%description.detectModules}">
       <f:checkbox name="shouldDetectModules" checked="${instance.shouldDetectModules}"/>
     </f:entry>
+    <f:entry title="${%Resolve relative paths}" description="${%description.resolveRelativePaths}">
+      <f:checkbox name="canResolveRelativePaths" checked="${instance.canResolveRelativePaths}"/>
+    </f:entry>
 
     <u:health id="warnings"/>
     <u:thresholds id="warnings"/>
