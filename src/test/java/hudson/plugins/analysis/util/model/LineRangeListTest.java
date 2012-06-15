@@ -5,8 +5,12 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
+ * Tests the class {@link LineRangeList}.
+ *
  * @author Kohsuke Kawaguchi
  */
+@SuppressWarnings({"PMD", "all"})
+//CHECKSTYLE:OFF
 public class LineRangeListTest {
     @Test
     public void bigValues() {

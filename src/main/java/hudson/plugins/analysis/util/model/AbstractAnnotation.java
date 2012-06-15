@@ -164,6 +164,9 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         return this;
     }
 
+    /**
+     * Simply calls {@link #readResolve()}.
+     */
     protected void superReadResolve() {
         readResolve();
     }
@@ -187,7 +190,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
             return getPackageName() + "." + FilenameUtils.getBaseName(getFileName());
         }
         else {
-            if (pathName==null || pathName.isBlank()) {
+            if (pathName == null || pathName.isBlank()) {
                 return getFileName();
             }
             else {
