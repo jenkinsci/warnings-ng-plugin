@@ -2,21 +2,21 @@ package hudson.plugins.analysis.util.model;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
-import hudson.plugins.analysis.util.TreeString;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import com.google.common.collect.ImmutableList;
+
 import hudson.model.Item;
 import hudson.model.AbstractBuild;
 
 import hudson.plugins.analysis.util.PackageDetectors;
+import hudson.plugins.analysis.util.TreeString;
 
 /**
  *  A base class for annotations.
@@ -42,8 +42,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     private Priority priority;
     /** Unique key of this annotation. */
     private final long key;
-    /** The ordered list of line ranges that show the origin of the annotation in the associated file. */
-    private final List<LineRange> lineRanges;
+    /**
+     * The ordered list of line ranges that show the origin of the annotation in
+     * the associated file. To save memory consumption, this can be
+     * {@link ImmutableList}, in which case updates requires a new copy.
+     */
+    private final LineRangeList lineRanges;
     /** Primary line number of this warning, i.e., the start line of the first line range. */
     private final int primaryLineNumber;
     /** The filename of the class that contains this annotation. */
@@ -92,7 +96,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
 
         key = currentKey++;
 
-        lineRanges = new ArrayList<LineRange>();
+        lineRanges = new LineRangeList();
         lineRanges.add(new LineRange(start, end));
         primaryLineNumber = start;
 
@@ -134,7 +138,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         message = TreeString.of(copy.getMessage());
         priority = copy.getPriority();
         primaryLineNumber = copy.getPrimaryLineNumber();
-        lineRanges = new ArrayList<LineRange>(copy.getLineRanges());
+        lineRanges = new LineRangeList(copy.getLineRanges());
 
         contextHashCode = copy.getContextHashCode();
 
@@ -212,7 +216,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         s = StringUtils.remove(s, FilenameUtils.getName(getFileName()));
         s = StringUtils.removeStart(s, SLASH);
         s = StringUtils.removeEnd(s, SLASH);
-        this.pathName = TreeString.of(s);
+        pathName = TreeString.of(s);
     }
 
     /** {@inheritDoc} */
