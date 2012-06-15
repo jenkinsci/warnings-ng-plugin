@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
+import hudson.plugins.analysis.util.TreeStringBuilder;
+import hudson.plugins.analysis.util.model.AbstractAnnotation;
 import org.apache.commons.io.IOUtils;
 
 import hudson.plugins.analysis.util.ContextHashCode;
@@ -24,6 +26,12 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
 
     /** The default encoding to be used when reading and parsing files. */
     private final String defaultEncoding;
+
+    /**
+     * Used to pool string instances shared by {@link FileAnnotation}s
+     * to reduce the runtime memory footprint.
+     */
+    private final TreeStringBuilder stringPool = new TreeStringBuilder();
 
     /**
      * Creates a new instance of {@link AbstractAnnotationParser}.
@@ -49,7 +57,7 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
         FileInputStream input = null;
         try {
             input = new FileInputStream(file);
-            return parse(input, moduleName);
+            return intern(parse(input, moduleName));
         }
         catch (FileNotFoundException exception) {
             throw new InvocationTargetException(exception);
@@ -57,6 +65,27 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
         finally {
             IOUtils.closeQuietly(input);
         }
+    }
+
+    /**
+     * Let {@link FileAnnotation}s share some of their internal data structure to reduce memory footprint.
+     *
+     * @return
+     *      The same object as passed in the 'annotations' parameter to let this function used as a filter.
+     */
+    protected Collection<FileAnnotation> intern(Collection<FileAnnotation> annotations) {
+        for (FileAnnotation a : annotations) {
+            if (a instanceof AbstractAnnotation) {
+                AbstractAnnotation aa = (AbstractAnnotation) a;
+                aa.intern(this);
+            }
+        }
+        getTreeStringBuilder().dedup();
+        return annotations;
+    }
+
+    public TreeStringBuilder getTreeStringBuilder() {
+        return stringPool;
     }
 
     /**

@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 
+import hudson.plugins.analysis.core.AbstractAnnotationParser;
+import hudson.plugins.analysis.util.TreeStringBuilder;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.export.Exported;
@@ -37,7 +39,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     private static long currentKey;
 
     /** The message of this annotation. */
-    private final TreeString message;
+    private /*almost final*/ TreeString message;
     /** The priority of this annotation. */
     private Priority priority;
     /** Unique key of this annotation. */
@@ -175,6 +177,23 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      */
     protected void superReadResolve() {
         readResolve();
+    }
+
+    /**
+     * {@link AbstractAnnotationParser} can call this method to let {@link AbstractAnnotation}s to
+     * reduce their memory footprint by sharing what they can share with other {@link AbstractAnnotation}s.
+     *
+     * @param parser
+     *      Parser acts as the context for internal data sharing.
+     */
+    public void intern(AbstractAnnotationParser parser) {
+        TreeStringBuilder tsb = parser.getTreeStringBuilder();
+        lineRanges.trim();
+        message     = tsb.intern(message);
+        fileName    = tsb.intern(fileName);
+        moduleName  = tsb.intern(moduleName);
+        packageName = tsb.intern(packageName);
+        readResolve();  // String.intern some of the data fields
     }
 
     /**
