@@ -1,5 +1,6 @@
 package hudson.plugins.analysis.util;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,7 +23,9 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  */
 // CHECKSTYLE:OFF
 @SuppressWarnings("PMD")
-public final class TreeString {
+public final class TreeString implements Serializable {
+    private static final long serialVersionUID = 3621959682117480904L;
+
     /**
      * Parent node that represents the prefix.
      */
