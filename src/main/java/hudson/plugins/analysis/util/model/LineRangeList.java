@@ -1,5 +1,6 @@
 package hudson.plugins.analysis.util.model;
 
+import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -36,7 +37,7 @@ import hudson.util.RobustCollectionConverter;
  */
 @SuppressWarnings({"PMD", "all"})
 // CHECKSTYLE:OFF
-public class LineRangeList extends AbstractList<LineRange> {
+public class LineRangeList extends AbstractList<LineRange> implements Serializable {
     /**
      * Encoded bits.
      */
