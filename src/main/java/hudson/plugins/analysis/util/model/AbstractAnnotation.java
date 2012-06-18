@@ -151,16 +151,22 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
 
     /**
      * Called after XStream de-serialization to improve the memory usage.
-     *
-     * Ideally we'd like this to be protected, so that the subtype can call this method,
-     * but some plugins that depends on this (such as findbugs) already define "private Object readResolve()",
-     * so defining it as protected will break those subtypes. So instead, we expose "superReadResolve" as the
+     * Ideally we'd like this to be protected, so that the subtype can call this
+     * method, but some plugins that depends on this (such as findbugs) already
+     * define "private Object readResolve()", so defining it as protected will
+     * break those subtypes. So instead, we expose "superReadResolve" as the
      * protected entry point for this method.
      */
     private Object readResolve() {
-        origin = origin.intern();
-        category = category.intern();
-        type = type.intern();
+        if (origin != null) {
+            origin = origin.intern();
+        }
+        if (category != null) {
+            category = category.intern();
+        }
+        if (type != null) {
+            type = type.intern();
+        }
         return this;
     }
 
