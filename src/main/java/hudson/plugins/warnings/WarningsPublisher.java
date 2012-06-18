@@ -301,7 +301,6 @@ public class WarningsPublisher extends HealthAwarePublisher {
             else {
                 project = new ParserResult();
             }
-            project = new ParserResult(build.getWorkspace());
             project.addAnnotations(warnings);
             results.add(annotate(build, project, parserName));
         }
