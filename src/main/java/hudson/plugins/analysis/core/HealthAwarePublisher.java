@@ -449,11 +449,11 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         FileOutputStream outputStream = null;
         try {
             outputStream = new FileOutputStream(masterFile);
-            IOUtils.write(String.format(
+            print(outputStream,
                     "Copying the source file '%s' from the workspace to the build folder '%s' on the Hudson master failed.%n",
-                    slaveFileName, masterFile.getAbsolutePath()), outputStream);
+                            slaveFileName, masterFile.getAbsolutePath());
             if (!slaveFileName.startsWith(SLASH) && !slaveFileName.contains(":")) {
-                IOUtils.write("Seems that the path is relative, however an absolute path is required when copying the sources.%n", outputStream);
+                print(outputStream, "Seems that the path is relative, however an absolute path is required when copying the sources.%n");
                 String base;
                 if (slaveFileName.contains(SLASH)) {
                     base = StringUtils.substringAfterLast(slaveFileName, SLASH);
@@ -461,13 +461,12 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
                 else {
                     base = slaveFileName;
                 }
-                IOUtils.write(String.format("Is the file '%s' contained more than once in your workspace?%n",
-                        base), outputStream);
+                print(outputStream, "Is the file '%s' contained more than once in your workspace?%n", base);
             }
-            IOUtils.write(String.format("Is the file '%s' a valid filename?%n", slaveFileName), outputStream);
-            IOUtils.write(String.format("If you are building on a slave: please check if the file is accessible under '$HUDSON_HOME/[job-name]/%s'%n", slaveFileName), outputStream);
-            IOUtils.write(String.format("If you are building on the master: please check if the file is accessible under '$HUDSON_HOME/[job-name]/workspace/%s'%n", slaveFileName), outputStream);
-            exception.printStackTrace(new PrintStream(outputStream));
+            print(outputStream, "Is the file '%s' a valid filename?%n", slaveFileName);
+            print(outputStream, "If you are building on a slave: please check if the file is accessible under '$JENKINS_HOME/[job-name]/%s'%n", slaveFileName);
+            print(outputStream, "If you are building on the master: please check if the file is accessible under '$JENKINS_HOME/[job-name]/workspace/%s'%n", slaveFileName);
+            exception.printStackTrace(new PrintStream(outputStream, false, getDefaultEncoding()));
         }
         catch (IOException error) {
             // ignore
@@ -475,6 +474,10 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
         finally {
             IOUtils.closeQuietly(outputStream);
         }
+    }
+
+    private void print(final FileOutputStream outputStream, final String message, final Object... arguments) throws IOException {
+        IOUtils.write(String.format(message, arguments), outputStream, getDefaultEncoding());
     }
 
     /**
