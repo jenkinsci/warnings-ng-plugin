@@ -6,7 +6,7 @@ import hudson.plugins.analysis.util.model.Priority;
 import java.util.regex.Matcher;
 
 /**
- * A parser for the ant javac compiler warnings.
+ * A parser for C++ Lint compiler warnings.
  *
  * @author Ulli Hafner
  */
