@@ -38,6 +38,8 @@ import hudson.util.RobustCollectionConverter;
 @SuppressWarnings({"PMD", "all"})
 // CHECKSTYLE:OFF
 public class LineRangeList extends AbstractList<LineRange> implements Serializable {
+    private static final long serialVersionUID = -1123973098942984623L;
+
     /**
      * Encoded bits.
      */
