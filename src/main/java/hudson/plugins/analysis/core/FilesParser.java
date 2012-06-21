@@ -153,6 +153,7 @@ public class FilesParser implements FileCallable<ParserResult> {
             result = new ParserResult();
         }
         try {
+            log("Finding all files that match the pattern " + filePattern);
             String[] fileNames = new FileFinder(filePattern).find(workspace);
 
             if (fileNames.length == 0) {
