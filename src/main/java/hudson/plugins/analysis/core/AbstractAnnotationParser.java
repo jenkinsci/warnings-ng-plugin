@@ -8,11 +8,11 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
-import hudson.plugins.analysis.util.TreeStringBuilder;
-import hudson.plugins.analysis.util.model.AbstractAnnotation;
 import org.apache.commons.io.IOUtils;
 
 import hudson.plugins.analysis.util.ContextHashCode;
+import hudson.plugins.analysis.util.TreeStringBuilder;
+import hudson.plugins.analysis.util.model.AbstractAnnotation;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
@@ -68,23 +68,32 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
     }
 
     /**
-     * Let {@link FileAnnotation}s share some of their internal data structure to reduce memory footprint.
+     * Let {@link FileAnnotation}s share some of their internal data structure
+     * to reduce memory footprint.
      *
-     * @return
-     *      The same object as passed in the 'annotations' parameter to let this function used as a filter.
+     * @param annotations
+     *            the annotations to compress
+     * @return The same object as passed in the 'annotations' parameter to let
+     *         this function used as a filter.
      */
-    protected Collection<FileAnnotation> intern(Collection<FileAnnotation> annotations) {
-        for (FileAnnotation a : annotations) {
-            if (a instanceof AbstractAnnotation) {
-                AbstractAnnotation aa = (AbstractAnnotation) a;
-                aa.intern(this);
+    protected Collection<FileAnnotation> intern(final Collection<FileAnnotation> annotations) {
+        for (FileAnnotation annotation : annotations) {
+            if (annotation instanceof AbstractAnnotation) {
+                AbstractAnnotation aa = (AbstractAnnotation) annotation;
+                aa.intern(stringPool);
             }
         }
         getTreeStringBuilder().dedup();
         return annotations;
     }
 
-    public TreeStringBuilder getTreeStringBuilder() {
+    /**
+     * Provides a tree string builder to reduce memory footprint.
+     *
+     * @return the tree string builder that caches string
+     * @since 1.43
+     */
+    protected TreeStringBuilder getTreeStringBuilder() {
         return stringPool;
     }
 

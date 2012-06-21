@@ -5,8 +5,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 
-import hudson.plugins.analysis.core.AbstractAnnotationParser;
-import hudson.plugins.analysis.util.TreeStringBuilder;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.export.Exported;
@@ -17,8 +15,10 @@ import com.google.common.collect.ImmutableList;
 import hudson.model.Item;
 import hudson.model.AbstractBuild;
 
+import hudson.plugins.analysis.core.AbstractAnnotationParser;
 import hudson.plugins.analysis.util.PackageDetectors;
 import hudson.plugins.analysis.util.TreeString;
+import hudson.plugins.analysis.util.TreeStringBuilder;
 
 /**
  *  A base class for annotations.
@@ -180,20 +180,22 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     }
 
     /**
-     * {@link AbstractAnnotationParser} can call this method to let {@link AbstractAnnotation}s to
-     * reduce their memory footprint by sharing what they can share with other {@link AbstractAnnotation}s.
+     * {@link AbstractAnnotationParser} can call this method to let
+     * {@link AbstractAnnotation}s to reduce their memory footprint by sharing
+     * what they can share with other {@link AbstractAnnotation}s.
      *
-     * @param parser
-     *      Parser acts as the context for internal data sharing.
+     * @param builder
+     *            caches previously used strings
+     * @since 1.43
      */
-    public void intern(AbstractAnnotationParser parser) {
-        TreeStringBuilder tsb = parser.getTreeStringBuilder();
+    public void intern(final TreeStringBuilder builder) {
         lineRanges.trim();
-        message     = tsb.intern(message);
-        fileName    = tsb.intern(fileName);
-        moduleName  = tsb.intern(moduleName);
-        packageName = tsb.intern(packageName);
-        readResolve();  // String.intern some of the data fields
+        message = builder.intern(message);
+        fileName = builder.intern(fileName);
+        moduleName = builder.intern(moduleName);
+        packageName = builder.intern(packageName);
+
+        readResolve(); // String.intern some of the data fields
     }
 
     /**
