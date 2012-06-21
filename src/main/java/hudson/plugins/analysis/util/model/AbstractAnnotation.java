@@ -159,6 +159,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * break those subtypes. So instead, we expose "superReadResolve" as the
      * protected entry point for this method.
      */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     private Object readResolve() {
         if (origin != null) {
             origin = origin.intern();
