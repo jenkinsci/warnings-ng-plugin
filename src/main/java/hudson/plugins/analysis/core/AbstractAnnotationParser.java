@@ -28,12 +28,6 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
     private final String defaultEncoding;
 
     /**
-     * Used to pool string instances shared by {@link FileAnnotation}s
-     * to reduce the runtime memory footprint.
-     */
-    private final TreeStringBuilder stringPool = new TreeStringBuilder();
-
-    /**
      * Creates a new instance of {@link AbstractAnnotationParser}.
      *
      * @param defaultEncoding
@@ -77,24 +71,15 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
      *         this function used as a filter.
      */
     protected Collection<FileAnnotation> intern(final Collection<FileAnnotation> annotations) {
+        TreeStringBuilder stringPool = new TreeStringBuilder();
         for (FileAnnotation annotation : annotations) {
             if (annotation instanceof AbstractAnnotation) {
                 AbstractAnnotation aa = (AbstractAnnotation) annotation;
                 aa.intern(stringPool);
             }
         }
-        getTreeStringBuilder().dedup();
+        stringPool.dedup();
         return annotations;
-    }
-
-    /**
-     * Provides a tree string builder to reduce memory footprint.
-     *
-     * @return the tree string builder that caches string
-     * @since 1.43
-     */
-    protected TreeStringBuilder getTreeStringBuilder() {
-        return stringPool;
     }
 
     /**
