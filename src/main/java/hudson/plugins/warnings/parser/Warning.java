@@ -21,6 +21,9 @@ public class Warning extends AbstractAnnotation {
     /** Origin of the annotation. */
     public static final String ORIGIN = "warnings";
 
+    /** Additional warning description. Might be empty. @since 4.8 */
+    private String toolTip;
+
     /**
      * Creates a new instance of {@link Warning}.
      *
@@ -84,7 +87,16 @@ public class Warning extends AbstractAnnotation {
 
     /** {@inheritDoc} */
     public String getToolTip() {
-        return StringUtils.EMPTY;
+        return StringUtils.defaultString(toolTip);
+    }
+
+    /**
+     * Sets the tool tip for this warning to the specified value.
+     *
+     * @param value the value to set
+     */
+    public void setToolTip(final String value) {
+        toolTip = value;
     }
 }
 
