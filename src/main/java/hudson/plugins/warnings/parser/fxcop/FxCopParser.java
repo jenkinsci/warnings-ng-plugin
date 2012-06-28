@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser.fxcop;
 
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.warnings.parser.AbstractWarningsParser;
@@ -33,6 +34,7 @@ import com.google.common.collect.Lists;
  * </p>
  */
 @SuppressWarnings("unused")
+@Extension
 public class FxCopParser extends AbstractWarningsParser {
     private static final long serialVersionUID = -7208558002331355408L;
 

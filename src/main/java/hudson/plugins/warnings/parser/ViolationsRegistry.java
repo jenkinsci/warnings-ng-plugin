@@ -2,7 +2,6 @@ package hudson.plugins.warnings.parser;
 
 import hudson.plugins.violations.types.codenarc.CodenarcParser;
 import hudson.plugins.violations.types.csslint.CssLintParser;
-import hudson.plugins.violations.types.fxcop.FxCopParser;
 import hudson.plugins.violations.types.gendarme.GendarmeParser;
 import hudson.plugins.violations.types.jcreport.JcReportParser;
 import hudson.plugins.violations.types.pep8.Pep8Parser;
@@ -31,10 +30,6 @@ public final class ViolationsRegistry {
                 Messages._Warnings_CssLint_ParserName(),
                 Messages._Warnings_CssLint_LinkName(),
                 Messages._Warnings_CssLint_TrendName()));
-        parsers.add(new ViolationsAdapter(new FxCopParser(),
-                Messages._Warnings_FxCop_ParserName(),
-                Messages._Warnings_FxCop_LinkName(),
-                Messages._Warnings_FxCop_TrendName()));
         parsers.add(new ViolationsAdapter(new GendarmeParser(),
                 Messages._Warnings_Gendarme_ParserName(),
                 Messages._Warnings_Gendarme_LinkName(),
