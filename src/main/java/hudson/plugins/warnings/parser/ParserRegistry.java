@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import javax.annotation.CheckForNull;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.ImmutableList;
@@ -410,7 +411,7 @@ public class ParserRegistry {
      * @return the reader
      */
     protected Reader createReader(final InputStream inputStream) {
-        return new InputStreamReader(inputStream, defaultCharset);
+        return new InputStreamReader(new BOMInputStream(inputStream), defaultCharset);
     }
 
     /**

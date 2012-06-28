@@ -11,12 +11,28 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+
 /**
  * Tests the class {@link FxCopParser}.
  *
  * @author Ulli Hafner
  */
 public class FxcopParserTest extends ParserTester {
+    /**
+     * Verifies that the FXCop parser works as expected.
+     *
+     * @throws IOException
+     *             if the file could not be read
+     */
+    @Test
+    public void testJenkins14172() throws IOException {
+        ParserRegistry registry = new ParserRegistry(Lists.newArrayList(new FxCopParser()), "UTF-8");
+        Collection<FileAnnotation> result = registry.parse(FxcopParserTest.class.getResourceAsStream("issue14172.xml"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 44, result.size());
+    }
+
     /**
      * Verifies that the FXCop parser works as expected.
      *

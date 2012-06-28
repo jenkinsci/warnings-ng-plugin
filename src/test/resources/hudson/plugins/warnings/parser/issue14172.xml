@@ -1,0 +1,434 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="http://www.gotdotnet.com/team/fxcop//xsl/1.35/FxCopReport.xsl"?>
+<FxCopReport Version="1.35">
+ <Namespaces>
+  <Namespace Name="xxx.xxxCore">
+   <Messages>
+    <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="95" Level="Error">Correct the casing of namespace name 'xxx.xxxCore'.</Issue>
+    </Message>
+    <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="85" Level="Error">Correct the capitalization of namespace name 'xxx.xxxCore'.</Issue>
+    </Message>
+   </Messages>
+  </Namespace>
+  <Namespace Name="xxx.xxxCore.DataProviders">
+   <Messages>
+    <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="95" Level="Error">Correct the casing of namespace name 'xxx.xxxCore.DataProviders'.</Issue>
+    </Message>
+    <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="85" Level="Error">Correct the capitalization of namespace name 'xxx.xxxCore.DataProviders'.</Issue>
+    </Message>
+   </Messages>
+  </Namespace>
+  <Namespace Name="xxx.xxxCore.DBManager">
+   <Messages>
+    <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="95" Level="Error">Correct the casing of namespace name 'xxx.xxxCore.DBManager'.</Issue>
+    </Message>
+    <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="85" Level="Error">Correct the capitalization of namespace name 'xxx.xxxCore.DBManager'.</Issue>
+    </Message>
+   </Messages>
+  </Namespace>
+  <Namespace Name="xxx.xxxCore.DBManager.SourceWrapper">
+   <Messages>
+    <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="95" Level="Error">Correct the casing of namespace name 'xxx.xxxCore.DBManager.SourceWrapper'.</Issue>
+    </Message>
+    <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="85" Level="Error">Correct the capitalization of namespace name 'xxx.xxxCore.DBManager.SourceWrapper'.</Issue>
+    </Message>
+   </Messages>
+  </Namespace>
+  <Namespace Name="xxx.xxxCore.Dialogs">
+   <Messages>
+    <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="95" Level="Error">Correct the casing of namespace name 'xxx.xxxCore.Dialogs'.</Issue>
+    </Message>
+    <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="85" Level="Error">Correct the capitalization of namespace name 'xxx.xxxCore.Dialogs'.</Issue>
+    </Message>
+   </Messages>
+  </Namespace>
+  <Namespace Name="xxx.xxxCore.Dms">
+   <Messages>
+    <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Status="Active" Created="2012-06-26 13:28:32Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="95" Level="Error">Correct the casing of namespace name 'xxx.xxxCore.Dms'.</Issue>
+    </Message>
+    <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2012-06-26 13:28:32Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="85" Level="Error">Correct the capitalization of namespace name 'xxx.xxxCore.Dms'.</Issue>
+    </Message>
+   </Messages>
+  </Namespace>
+  <Namespace Name="xxx.xxxCore.xxxxConfigurationInstaller">
+   <Messages>
+    <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Status="Active" Created="2012-06-26 13:28:32Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="95" Level="Error">Correct the casing of namespace name 'xxx.xxxCore.xxxxConfigurationInstaller'.</Issue>
+    </Message>
+    <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2012-06-26 13:28:32Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="85" Level="Error">Correct the capitalization of namespace name 'xxx.xxxCore.xxxxConfigurationInstaller'.</Issue>
+    </Message>
+   </Messages>
+  </Namespace>
+  <Namespace Name="xxx.xxxCore.Engine">
+   <Messages>
+    <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="95" Level="Error">Correct the casing of namespace name 'xxx.xxxCore.Engine'.</Issue>
+    </Message>
+    <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="85" Level="Error">Correct the capitalization of namespace name 'xxx.xxxCore.Engine'.</Issue>
+    </Message>
+   </Messages>
+  </Namespace>
+  <Namespace Name="xxx.xxxCore.Exceptions">
+   <Messages>
+    <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="95" Level="Error">Correct the casing of namespace name 'xxx.xxxCore.Exceptions'.</Issue>
+    </Message>
+    <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="85" Level="Error">Correct the capitalization of namespace name 'xxx.xxxCore.Exceptions'.</Issue>
+    </Message>
+   </Messages>
+  </Namespace>
+  <Namespace Name="xxx.xxxCore.Geo">
+   <Messages>
+    <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="95" Level="Error">Correct the casing of namespace name 'xxx.xxxCore.Geo'.</Issue>
+    </Message>
+    <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="85" Level="Error">Correct the capitalization of namespace name 'xxx.xxxCore.Geo'.</Issue>
+    </Message>
+   </Messages>
+  </Namespace>
+  <Namespace Name="xxx.xxxCore.Licensing">
+   <Messages>
+    <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="95" Level="Error">Correct the casing of namespace name 'xxx.xxxCore.Licensing'.</Issue>
+    </Message>
+    <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="85" Level="Error">Correct the capitalization of namespace name 'xxx.xxxCore.Licensing'.</Issue>
+    </Message>
+   </Messages>
+  </Namespace>
+  <Namespace Name="xxx.xxxCore.Logging">
+   <Messages>
+    <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="95" Level="Error">Correct the casing of namespace name 'xxx.xxxCore.Logging'.</Issue>
+    </Message>
+    <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="85" Level="Error">Correct the capitalization of namespace name 'xxx.xxxCore.Logging'.</Issue>
+    </Message>
+   </Messages>
+  </Namespace>
+  <Namespace Name="xxx.xxxCore.ResultsetFormating">
+   <Messages>
+    <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="95" Level="Error">Correct the casing of namespace name 'xxx.xxxCore.ResultsetFormating'.</Issue>
+    </Message>
+    <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="85" Level="Error">Correct the capitalization of namespace name 'xxx.xxxCore.ResultsetFormating'.</Issue>
+    </Message>
+   </Messages>
+  </Namespace>
+  <Namespace Name="xxx.xxxCore.ResultsetFormating.UnitsOfMeasurement">
+   <Messages>
+    <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Status="Active" Created="2011-07-04 14:29:56Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="95" Level="Error">Correct the casing of namespace name 'xxx.xxxCore.ResultsetFormating.UnitsOfMeasurement'.</Issue>
+    </Message>
+    <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2011-07-04 14:29:56Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="85" Level="Error">Correct the capitalization of namespace name 'xxx.xxxCore.ResultsetFormating.UnitsOfMeasurement'.</Issue>
+    </Message>
+   </Messages>
+  </Namespace>
+  <Namespace Name="xxx.xxxCore.Utils">
+   <Messages>
+    <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="95" Level="Error">Correct the casing of namespace name 'xxx.xxxCore.Utils'.</Issue>
+    </Message>
+    <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="Breaking">
+     <Issue Name="Namespace" Certainty="85" Level="Error">Correct the capitalization of namespace name 'xxx.xxxCore.Utils'.</Issue>
+    </Message>
+   </Messages>
+  </Namespace>
+ </Namespaces>
+ <Targets>
+  <Target Name="$(ProjectDir)/Implementation/Product/Artefacts/xxxxCore.dll">
+   <Modules>
+    <Module Name="xxxxcore.dll">
+     <Namespaces>
+      <Namespace Name="xxx.xxxCore">
+       <Types>
+        <Type Name="xxxxCoreResources" Kind="Class" Accessibility="Assembly" ExternallyVisible="False">
+         <Messages>
+          <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2012-06-26 13:28:32Z" FixCategory="Breaking">
+           <Issue Name="Type" Certainty="85" Level="Error">Correct the capitalization of type name 'xxxxCoreResources'.</Issue>
+          </Message>
+         </Messages>
+        </Type>
+        <Type Name="xxxxCore" Kind="Class" Accessibility="Assembly" ExternallyVisible="False">
+         <Messages>
+          <Message TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Status="Active" Created="2012-06-26 13:28:32Z" FixCategory="Breaking">
+           <Issue Name="Type" Certainty="85" Level="Error">Correct the capitalization of type name 'xxxxCore'.</Issue>
+          </Message>
+         </Messages>
+        </Type>
+       </Types>
+      </Namespace>
+      <Namespace Name="xxx.xxxCore.DBManager.SourceWrapper">
+       <Types>
+        <Type Name="DataSourceWrapper" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Members>
+          <Member Name="DumpData(System.Boolean):System.Xml.Linq.XElement" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Status="Active" Created="2011-03-17 10:31:31Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="CriticalError" Path="c:\_hudson\jobs\xxxx 12r2\workspace\xxxx\Implementation\Product\xxxx-Core\DBManager" File="DataSourceWrapper.cs" Line="212">Modify 'DataSourceWrapper.DumpData(Boolean):XElement' to catch a more specific exception than 'System.Exception' or rethrow the exception.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+       </Types>
+      </Namespace>
+      <Namespace Name="xxx.xxxCore.Dialogs">
+       <Types>
+        <Type Name="FormattingRulesTestDialog" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Members>
+          <Member Name="Recalculate():System.Void" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="False">
+           <Messages>
+            <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Status="Active" Created="2011-03-17 10:31:31Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="CriticalError" Path="c:\_hudson\jobs\xxxx 12r2\workspace\xxxx\Implementation\Product\xxxx-Core\Dialogs" File="FormattingRulesTestDialog.cs" Line="30">Modify 'FormattingRulesTestDialog.Recalculate():Void' to catch a more specific exception than 'System.Exception' or rethrow the exception.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+       </Types>
+      </Namespace>
+      <Namespace Name="xxx.xxxCore.Licensing">
+       <Types>
+        <Type Name="ChartLicensingProvider" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Members>
+          <Member Name="LoadLicensableChartsInfo():System.Collections.Generic.IList`1&lt;System.String&gt;" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Status="Active" Created="2012-06-26 13:28:32Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="CriticalError" Path="c:\_hudson\jobs\xxxx 12r2\workspace\xxxx\Implementation\Product\xxxx-Core\Licensing" File="ChartLicensing.cs" Line="60">Modify 'ChartLicensingProvider.LoadLicensableChartsInfo():IList`1&lt;System.String&gt;' to catch a more specific exception than 'System.Exception' or rethrow the exception.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+       </Types>
+      </Namespace>
+      <Namespace Name="xxx.xxxCore.Logging">
+       <Types>
+        <Type Name="RootLogger" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Members>
+          <Member Name=".cctor()" Kind="Method" Static="True" Accessibility="Private" ExternallyVisible="False">
+           <Messages>
+            <Message TypeName="InitializeReferenceTypeStaticFieldsInline" Category="Microsoft.Performance" CheckId="CA1810" Status="Active" Created="2011-03-17 10:31:31Z" FixCategory="NonBreaking">
+             <Issue Certainty="90" Level="CriticalWarning" Path="c:\_hudson\jobs\xxxx 12r2\workspace\xxxx\Implementation\Product\xxxx-Core\Logging" File="RootLogger.cs" Line="374">Initialize all static fields in xxx.xxxCore.Logging.RootLogger when those fields are declared and remove the explicit static constructor.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+       </Types>
+      </Namespace>
+      <Namespace Name="xxx.xxxCore.ResultsetFormating">
+       <Types>
+        <Type Name="BaseFormat" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Members>
+          <Member Name="ParseAma(System.String,System.String):System.String" Kind="Method" Static="True" Accessibility="Family" ExternallyVisible="True">
+           <Messages>
+            <Message Id="format" TypeName="AvoidUnnecessaryStringCreation" Category="Microsoft.Performance" CheckId="CA1807" Status="Active" Created="2011-06-24 11:09:10Z" FixCategory="NonBreaking">
+             <Issue Name="UseStringCompareParameter" Certainty="90" Level="Warning" Path="c:\_hudson\jobs\xxxx 12r2\workspace\xxxx\Implementation\Product\xxxx-Core\ResultsetFormating" File="IFormat.cs" Line="235">BaseFormat.ParseAma(String, String):String calls String.op_Equality(String, String):Boolean after converting 'format', a parameter, to upper or lowercase. If possible, eliminate the string creation and call the overload of String.Compare that performs a case-insensitive comparison.</Issue>
+             <Issue Name="UseStringCompareParameter" Certainty="90" Level="Warning" Path="c:\_hudson\jobs\xxxx 12r2\workspace\xxxx\Implementation\Product\xxxx-Core\ResultsetFormating" File="IFormat.cs" Line="231">BaseFormat.ParseAma(String, String):String calls String.op_Equality(String, String):Boolean after converting 'format', a parameter, to upper or lowercase. If possible, eliminate the string creation and call the overload of String.Compare that performs a case-insensitive comparison.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+        <Type Name="FormatSignature" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Messages>
+          <Message TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710" Status="Active" Created="2011-03-17 10:31:31Z" FixCategory="Breaking">
+           <Issue Certainty="95" Level="Error">Rename 'xxx.xxxCore.ResultsetFormating.FormatSignature' to end in 'Attribute'.</Issue>
+          </Message>
+         </Messages>
+        </Type>
+       </Types>
+      </Namespace>
+      <Namespace Name="xxx.xxxCore.Utils">
+       <Types>
+        <Type Name="CommonUtils" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Members>
+          <Member Name="AddVersionFieldToFileProps(System.String,System.String,System.String,System.Int32):System.Boolean" Kind="Method" Static="True" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Status="Active" Created="2011-03-17 10:31:31Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="CriticalError" Path="c:\_hudson\jobs\xxxx 12r2\workspace\xxxx\Implementation\Product\xxxx-Core\Utils" File="CommonUtils.cs" Line="118">Modify 'CommonUtils.AddVersionFieldToFileProps(String, String, String, Int32):Boolean' to catch a more specific exception than 'System.Object' or rethrow the exception.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="GetLevelVersionFromFileProps(System.String):System.String" Kind="Method" Static="True" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Status="Active" Created="2011-03-17 10:31:31Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="CriticalError" Path="c:\_hudson\jobs\xxxx 12r2\workspace\xxxx\Implementation\Product\xxxx-Core\Utils" File="CommonUtils.cs" Line="79">Modify 'CommonUtils.GetLevelVersionFromFileProps(String):String' to catch a more specific exception than 'System.Object' or rethrow the exception.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+       </Types>
+      </Namespace>
+     </Namespaces>
+    </Module>
+   </Modules>
+  </Target>
+  <Target Name="$(ProjectDir)/Implementation/Product/Artefacts/xxxxConfigurationInstaller.exe">
+   <Modules>
+    <Module Name="xxxxconfigurationinstaller.exe">
+     <Messages>
+      <Message TypeName="AssembliesShouldDeclareMinimumSecurity" Category="Microsoft.Usage" CheckId="CA2209" Status="Active" Created="2011-07-04 14:29:56Z" FixCategory="Breaking">
+       <Issue Certainty="95" Level="CriticalError">No valid permission requests were found for assembly 'xxxxConfigurationInstaller'. You should always specify the minimum security permissions using SecurityAction.RequestMinimum.</Issue>
+      </Message>
+      <Message TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210" Status="Active" Created="2011-07-04 14:29:56Z" FixCategory="NonBreaking">
+       <Issue Name="NoStrongName" Certainty="95" Level="CriticalError">Sign 'xxxxConfigurationInstaller' with a strong name key.</Issue>
+      </Message>
+     </Messages>
+     <Namespaces>
+      <Namespace Name="xxx.xxxCore.xxxxConfigurationInstaller">
+       <Types>
+        <Type Name="Program" Kind="Class" Accessibility="Assembly" ExternallyVisible="False">
+         <Members>
+          <Member Name="Deploy(System.String,System.Boolean):System.Boolean" Kind="Method" Static="True" Accessibility="Public" ExternallyVisible="False">
+           <Messages>
+            <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Status="Active" Created="2011-07-04 14:29:56Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="CriticalError" Path="c:\_hudson\jobs\xxxx 12r2\workspace\xxxx\Implementation\Product\xxxxConfigurationInstaller" File="Program.cs" Line="162">Modify 'Program.Deploy(String, Boolean):Boolean' to catch a more specific exception than 'System.Exception' or rethrow the exception.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+       </Types>
+      </Namespace>
+     </Namespaces>
+    </Module>
+   </Modules>
+  </Target>
+ </Targets>
+ <Rules>
+  <Rule TypeName="AssembliesShouldDeclareMinimumSecurity" Category="Microsoft.Usage" CheckId="CA2209">
+   <Name>Assemblies should declare minimum security</Name>
+   <Description>Permission requests prevent security exceptions from being thrown after code in an assembly has already begun executing. If permission requests are specified on an assembly, the assembly will not load at runtime if it has insufficient permissions. To resolve violations of this rule, add attributes that specify what permissions the assembly will demand or might demand, and what permissions it does not want granted.  To specify required permissions, use SecurityAction.Minimum. To specify permissions that the assembly might demand, use SecurityAction.RequestOptional. To specify permissions that the assembly must not be granted, use SecurityAction.RequestRefuse.</Description>
+   <Resolution Name="Default">No valid permission requests were found for assembly '{0}'. You should always specify the minimum security permissions using SecurityAction.RequestMinimum.</Resolution>
+   <Owner />
+   <Url>http://www.gotdotnet.com/team/fxcop/docs/rules.aspx?version=1.35&amp;url=/Usage/AssembliesShouldDeclareMinimumSecurity.html</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="95">CriticalError</MessageLevel>
+   <File Name="UsageRules.dll" Version="1.35.0.0" />
+  </Rule>
+  <Rule TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210">
+   <Name>Assemblies should have valid strong names</Name>
+   <Description>Either the assembly has no strong name, an invalid one, or the strong name is valid only because of the computer configuration. The assembly should not be deployed in this state. The most common causes of this are: 1) The assembly's contents were modified after it was signed. 2) The signing process failed. 3) The assembly was delay-signed. 4) A registry key existed that allowed the check to pass (where it would not have otherwise).</Description>
+   <Resolution Name="NoStrongName">Sign '{0}' with a strong name key.</Resolution>
+   <Owner />
+   <Url>http://www.gotdotnet.com/team/fxcop/docs/rules.aspx?version=1.35&amp;url=/Design/AssembliesShouldHaveValidStrongNames.html</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="95">CriticalError</MessageLevel>
+   <File Name="DesignRules.dll" Version="1.35.0.0" />
+  </Rule>
+  <Rule TypeName="AvoidUnnecessaryStringCreation" Category="Microsoft.Performance" CheckId="CA1807">
+   <Name>Avoid unnecessary string creation</Name>
+   <Description>Avoid creating strings unnecessarily. When converting strings to upper or lowercase, cache the result when necessary rather than duplicating a previous string creation. Prefer String.Compare over converting strings to upper or lowercase when performing case-insensitive comparisons. Do not create strings that are not subsequently assigned to variables.</Description>
+   <Resolution Name="UseStringCompareParameter">{0} calls {1} after converting '{2}', a parameter, to upper or lowercase. If possible, eliminate the string creation and call the overload of String.Compare that performs a case-insensitive comparison.</Resolution>
+   <Owner />
+   <Url>http://www.gotdotnet.com/team/fxcop/docs/rules.aspx?version=1.35&amp;url=/Performance/AvoidUnnecessaryStringCreation.html</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="90">Warning</MessageLevel>
+   <File Name="PerformanceRules.dll" Version="1.35.0.0" />
+  </Rule>
+  <Rule TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031">
+   <Name>Do not catch general exception types</Name>
+   <Description>You should not catch Exception or SystemException. Catching generic exception types can hide run-time problems from the library user, and can complicate debugging. You should catch only those exceptions that you can handle gracefully.</Description>
+   <Resolution Name="Default">Modify '{0}' to catch a more specific exception than '{1}' or rethrow the exception.</Resolution>
+   <Owner />
+   <Url>http://www.gotdotnet.com/team/fxcop/docs/rules.aspx?version=1.35&amp;url=/Design/DoNotCatchGeneralExceptionTypes.html</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="95">CriticalError</MessageLevel>
+   <File Name="DesignRules.dll" Version="1.35.0.0" />
+  </Rule>
+  <Rule TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709">
+   <Name>Identifiers should be cased correctly</Name>
+   <Description>Type, namespace, and member identifiers are pascal-cased. Parameter identifiers are camel-cased. The pascal-casing convention capitalizes the first letter of each word, as in BackColor. The camel-casing convention formats the first letter of the first word in lowercase and capitalizes the first letter of all subsequent words, as in backgroundColor.</Description>
+   <Resolution Name="Namespace">Correct the casing of namespace name '{0}'.</Resolution>
+   <Owner />
+   <Url>http://www.gotdotnet.com/team/fxcop/docs/rules.aspx?version=1.35&amp;url=/Naming/IdentifiersShouldBeCasedCorrectly.html</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="95">Error</MessageLevel>
+   <File Name="NamingRules.dll" Version="1.35.0.0" />
+  </Rule>
+  <Rule TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710">
+   <Name>Identifiers should have correct suffix</Name>
+   <Description>Types that extend certain base types have specified name suffixes. Types that extend Attribute, for example, should be suffixed in 'Attribute', as in ObsoleteAttribute. This rules checks types that extend several base types, including Attribute, Exception, EventArgs, IMembershipPermission, Stream, and others.</Description>
+   <Resolution Name="Default">Rename '{0}' to end in '{1}'.</Resolution>
+   <Owner />
+   <Url>http://www.gotdotnet.com/team/fxcop/docs/rules.aspx?version=1.35&amp;url=/Naming/IdentifiersShouldHaveCorrectSuffix.html</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="95">Error</MessageLevel>
+   <File Name="NamingRules.dll" Version="1.35.0.0" />
+  </Rule>
+  <Rule TypeName="InitializeReferenceTypeStaticFieldsInline" Category="Microsoft.Performance" CheckId="CA1810">
+   <Name>Initialize reference type static fields inline</Name>
+   <Description>Static fields should be initialized when declared. Initializing static data in explicit static constructors results in less performant code.</Description>
+   <Resolution Name="Default">Initialize all static fields in {0} when those fields are declared and remove the explicit static constructor.</Resolution>
+   <Owner />
+   <Url>http://www.gotdotnet.com/team/fxcop/docs/rules.aspx?version=1.35&amp;url=/Performance/InitializeReferenceTypeStaticFieldsInline.html</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="90">CriticalWarning</MessageLevel>
+   <File Name="PerformanceRules.dll" Version="1.35.0.0" />
+  </Rule>
+  <Rule TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705">
+   <Name>Long acronyms should be pascal-cased</Name>
+   <Description>Acronyms of three or more letters should be Pascal-cased. For example, use XmlSpace rather than XMLSpace. A violation of this rule might be required for compatibility with existing, non-managed symbol schemes. In general, however, these symbols should not be visible outside the assembly that uses them.</Description>
+   <Resolution Name="Namespace">Correct the capitalization of namespace name '{0}'.</Resolution>
+   <Resolution Name="Type">Correct the capitalization of type name '{0}'.</Resolution>
+   <Owner />
+   <Url>http://www.gotdotnet.com/team/fxcop/docs/rules.aspx?version=1.35&amp;url=/Naming/LongAcronymsShouldBePascalCased.html</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="85">Error</MessageLevel>
+   <File Name="NamingRules.dll" Version="1.35.0.0" />
+  </Rule>
+ </Rules>
+ <Localized>
+  <String Key="Category">Category</String>
+  <String Key="CollapseAll">Collapse All</String>
+  <String Key="CheckId">Check Id</String>
+  <String Key="Error">Error</String>
+  <String Key="Errors">error(s)</String>
+  <String Key="Line">Line</String>
+  <String Key="LocationNotStoredInPdb">[Location not stored in Pdb]</String>
+  <String Key="Project">Project</String>
+  <String Key="Rule">Rule</String>
+  <String Key="RuleDescription">Rule Description</String>
+  <String Key="Source">Source</String>
+  <String Key="Target">Target</String>
+  <String Key="Warning">Warning</String>
+  <String Key="Warnings">warning(s)</String>
+  <String Key="ReportTitle">Code Analysis Report</String>
+ </Localized>
+ <Exceptions>
+  <Exception Keyword="CA0057" Kind="ProjectLoad">
+   <Type>Microsoft.FxCop.Common.MissingMessagesException</Type>
+   <ExceptionMessage>Could not import all messages.</ExceptionMessage>
+  </Exception>
+  <Exception Keyword="CA0058" Kind="Engine">
+   <Type>Microsoft.FxCop.Sdk.FxCopException</Type>
+   <ExceptionMessage>Not all assembly references could be resolved. Results might be compromised or incomplete.</ExceptionMessage>
+  </Exception>
+  <Exception Keyword="CA0058" Kind="Engine">
+   <Type>Microsoft.FxCop.Sdk.FxCopException</Type>
+   <ExceptionMessage>Missing dependency 'Bentley.Interop.MicroStationDGN, Version=8.0.0.0, Culture=neutral, PublicKeyToken=4bf6c96a266e58d4' could not be located. This module was referenced by: xxxxCore.dll, xxxxCore.dll</ExceptionMessage>
+  </Exception>
+ </Exceptions>
+</FxCopReport>
