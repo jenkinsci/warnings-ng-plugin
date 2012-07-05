@@ -186,10 +186,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
                 }
             }
 
-            if (consoleLogParsers != null) {
-                for (String  parser : consoleLogParsers) {
-                    consoleParsers.add(new ConsoleParser(parser));
-                }
+            for (String  parser : consoleLogParsers) {
+                consoleParsers.add(new ConsoleParser(parser));
             }
         }
 
