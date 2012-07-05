@@ -4,7 +4,6 @@ import static junit.framework.Assert.*;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.violations.ViolationsParser;
 import hudson.plugins.violations.types.codenarc.CodenarcParser;
-import hudson.plugins.violations.types.fxcop.FxCopParser;
 import hudson.plugins.violations.types.gendarme.GendarmeParser;
 import hudson.plugins.violations.types.jcreport.JcReportParser;
 import hudson.plugins.violations.types.stylecop.StyleCopParser;
@@ -23,18 +22,6 @@ import com.google.common.collect.Sets;
  * @author Ulli Hafner
  */
 public class ViolationsAdapterTest extends ParserTester {
-
-    /**
-     * Verifies that the FXCop parser works as expected.
-     *
-     * @throws IOException
-     *             if the file could not be read
-     */
-    @Test
-    public void testFXCop() throws IOException {
-        verify(new FxCopParser(), "fxcop.xml", 2, 2);
-    }
-
     /**
      * Verifies that the StyleCop parser works as expected.
      *
