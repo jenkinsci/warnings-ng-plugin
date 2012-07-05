@@ -50,7 +50,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
     /** File pattern and parser configurations. @since 3.19 */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
-    private final List<ParserConfiguration> parserConfigurations = Lists.newArrayList();
+    private List<ParserConfiguration> parserConfigurations = Lists.newArrayList();
     /** Parser configurations of the console. @since 4.6 */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     private List<ConsoleParser> consoleParsers = Lists.newArrayList();
@@ -176,13 +176,35 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
         if (consoleParsers == null) {
             consoleParsers = Lists.newArrayList();
+
+            if (consoleLogParsers == null || parserConfigurations == null) { // release 3.18 or older
+                consoleLogParsers = Sets.newHashSet();
+                parserConfigurations = Lists.newArrayList();
+
+                if (parserNames != null) {
+                    convertToNewFormat();
+                }
+            }
+
             if (consoleLogParsers != null) {
                 for (String  parser : consoleLogParsers) {
                     consoleParsers.add(new ConsoleParser(parser));
                 }
             }
         }
+
         return this;
+    }
+
+    private void convertToNewFormat() {
+        if (!ignoreConsole) {
+            consoleLogParsers.addAll(parserNames);
+        }
+        if (StringUtils.isNotBlank(pattern)) {
+            for (String parser : parserNames) {
+                parserConfigurations.add(new ParserConfiguration(pattern, parser));
+            }
+        }
     }
 
     /**
