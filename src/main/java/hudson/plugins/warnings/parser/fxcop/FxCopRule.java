@@ -1,7 +1,7 @@
 package hudson.plugins.warnings.parser.fxcop;
 
 /**
- * Internal model for a FxCop rule
+ * Internal model for a FxCop rule.
  *
  * @author Erik Ramfelt
  */

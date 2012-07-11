@@ -177,13 +177,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
         if (consoleParsers == null) {
             consoleParsers = Lists.newArrayList();
 
-            if (consoleLogParsers == null || parserConfigurations == null) { // release 3.18 or older
-                consoleLogParsers = Sets.newHashSet();
-                parserConfigurations = Lists.newArrayList();
-
-                if (parserNames != null) {
-                    convertToNewFormat();
-                }
+            if (isOlderThanRelease318()) {
+                upgradeFrom318();
             }
 
             for (String  parser : consoleLogParsers) {
@@ -192,6 +187,19 @@ public class WarningsPublisher extends HealthAwarePublisher {
         }
 
         return this;
+    }
+
+    private void upgradeFrom318() {
+        consoleLogParsers = Sets.newHashSet();
+        parserConfigurations = Lists.newArrayList();
+
+        if (parserNames != null) {
+            convertToNewFormat();
+        }
+    }
+
+    private boolean isOlderThanRelease318() {
+        return consoleLogParsers == null || parserConfigurations == null;
     }
 
     private void convertToNewFormat() {
@@ -392,13 +400,13 @@ public class WarningsPublisher extends HealthAwarePublisher {
     }
 
     /** Name of parsers to use for scanning the logs. */
-    @SuppressWarnings({"unused", "PMD"})
+    @SuppressWarnings("PMD")
     private transient Set<String> parserNames;
     /** Determines whether the console should be ignored. */
-    @SuppressWarnings({"unused", "PMD"})
+    @SuppressWarnings("PMD")
     private transient boolean ignoreConsole;
     /** Ant file-set pattern of files to work with. */
-    @SuppressWarnings({"unused", "PMD"})
+    @SuppressWarnings("PMD")
     private transient String pattern;
     /** Parser to scan the console log. @since 3.19 */
     private transient Set<String> consoleLogParsers;

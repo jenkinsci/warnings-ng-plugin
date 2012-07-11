@@ -2,8 +2,8 @@ package hudson.plugins.warnings;
 
 import hudson.model.AbstractBuild;
 import hudson.plugins.analysis.core.HealthDescriptor;
-import hudson.plugins.analysis.core.PluginDescriptor;
 import hudson.plugins.analysis.core.AbstractResultAction;
+import hudson.plugins.analysis.core.PluginDescriptor;
 import hudson.plugins.warnings.parser.ParserRegistry;
 
 import org.jvnet.localizer.Localizable;
@@ -73,7 +73,7 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
         return new WarningsDescriptor();
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings("PMD")
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("")
     private transient Localizable actionName;
 }

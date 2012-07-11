@@ -39,6 +39,7 @@ public class FxCopParser extends AbstractWarningsParser {
     private static final long serialVersionUID = -7208558002331355408L;
 
     private transient FxCopRuleSet ruleSet;
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     private transient List<FileAnnotation> warnings;
 
     /**

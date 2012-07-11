@@ -6,7 +6,7 @@ import java.util.Map;
 import org.w3c.dom.Element;
 
 /**
- * Internal set containing rules for FxCop
+ * Internal set containing rules for FxCop.
  *
  * @author Erik Ramfelt
  */

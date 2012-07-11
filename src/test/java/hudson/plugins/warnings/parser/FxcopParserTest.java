@@ -6,9 +6,11 @@ import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.warnings.parser.fxcop.FxCopParser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -27,10 +29,17 @@ public class FxcopParserTest extends ParserTester {
      */
     @Test
     public void testJenkins14172() throws IOException {
-        ParserRegistry registry = new ParserRegistry(Lists.newArrayList(new FxCopParser()), "UTF-8");
-        Collection<FileAnnotation> result = registry.parse(FxcopParserTest.class.getResourceAsStream("issue14172.xml"));
+        InputStream file = null;
+        try {
+            ParserRegistry registry = new ParserRegistry(Lists.newArrayList(new FxCopParser()), "UTF-8");
+            file = FxcopParserTest.class.getResourceAsStream("issue14172.xml");
+            Collection<FileAnnotation> result = registry.parse(file);
 
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 44, result.size());
+            assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 44, result.size());
+        }
+        finally {
+            IOUtils.closeQuietly(file);
+        }
     }
 
     /**
