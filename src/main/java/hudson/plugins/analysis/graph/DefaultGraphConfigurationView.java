@@ -85,9 +85,7 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
             IOUtils.write(value, output);
         }
         finally {
-            if (output != null) {
-                output.close();
-            }
+            output.close();
         }
     }
 }

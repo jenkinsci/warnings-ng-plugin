@@ -158,6 +158,8 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * define "private Object readResolve()", so defining it as protected will
      * break those subtypes. So instead, we expose "superReadResolve" as the
      * protected entry point for this method.
+     *
+     * @return this
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
     private Object readResolve() {

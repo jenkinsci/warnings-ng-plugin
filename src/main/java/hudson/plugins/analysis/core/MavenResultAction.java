@@ -255,10 +255,20 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
         return delegate.getResult();
     }
 
+    /**
+     * Returns the associated build of this action.
+     *
+     * @return the associated build of this action
+     */
     public AbstractBuild<?, ?> getOwner() {
         return delegate.getOwner();
     }
 
+    /**
+     * Returns the health of this action.
+     *
+     * @return the health of this action
+     */
     public final HealthReport getBuildHealth() {
         return delegate.getBuildHealth();
     }
@@ -275,6 +285,13 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
         return delegate.getTarget();
     }
 
+    /**
+     * Returns the tooltip for the specified number of items.
+     *
+     * @param numberOfItems
+     *            the number of items to display the tooltip for
+     * @return the tooltip for the specified items
+     */
     public String getTooltip(final int numberOfItems) {
         return delegate.getTooltip(numberOfItems);
     }

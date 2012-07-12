@@ -97,6 +97,7 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
      *            the aggregated annotations
      * @return the created action
      */
+    @SuppressWarnings("hiding")
     protected abstract Action createAction(HealthDescriptor healthDescriptor, String defaultEncoding, ParserResult aggregatedResult);
 }
 

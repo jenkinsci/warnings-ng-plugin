@@ -348,7 +348,6 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("deprecation") // Eclipse bug #298563
     @Override
     public final boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
         PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
@@ -715,7 +714,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
     @Deprecated
     private transient String height;
     @Deprecated
-    @SuppressWarnings("PMD.ExcessiveParameterList")
+    @SuppressWarnings({"PMD.ExcessiveParameterList","javadoc"})
     public HealthAwarePublisher(final String healthy, final String unHealthy, final String thresholdLimit,
             final String defaultEncoding, final boolean useDeltaValues,
             final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
@@ -731,7 +730,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
                 canRunOnFailed, shouldDetectModules, true, pluginName);
     }
     @Deprecated
-    @SuppressWarnings("PMD.ExcessiveParameterList")
+    @SuppressWarnings({"PMD.ExcessiveParameterList","javadoc"})
     public HealthAwarePublisher(final String healthy, final String unHealthy, final String thresholdLimit,
             final String defaultEncoding, final boolean useDeltaValues,
             final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
@@ -747,7 +746,7 @@ public abstract class HealthAwarePublisher extends Recorder implements HealthDes
                 failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
                 canRunOnFailed, false, pluginName);
     }
-    @SuppressWarnings("PMD")
+    @SuppressWarnings({"PMD","javadoc"})
     @Deprecated
     public HealthAwarePublisher(final String threshold, final String newThreshold,
             final String failureThreshold, final String newFailureThreshold, final String healthy,

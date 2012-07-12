@@ -137,6 +137,7 @@ public class GraphConfiguration  {
      * @return <code>true</code> is the initialization was successful,
      *         <code>false</code> otherwise
      */
+    @SuppressWarnings("hiding")
     public boolean initializeFrom(final int width, final int height) { // NOCHECKSTYLE
         return initializeFrom(width, height, 0);
     }
@@ -153,6 +154,7 @@ public class GraphConfiguration  {
      * @return <code>true</code> is the initialization was successful,
      *         <code>false</code> otherwise
      */
+    @SuppressWarnings("hiding")
     public boolean initializeFrom(final int width, final int height, final int dayCount) { // NOCHECKSTYLE
         this.width = width;
         this.height = height;
@@ -175,6 +177,7 @@ public class GraphConfiguration  {
      * @return <code>true</code> is the initialization was successful,
      *         <code>false</code> otherwise
      */
+    @SuppressWarnings("hiding")
     public boolean initializeFrom(final String width, final String height, final String dayCountString) { // NOCHECKSTYLE
         try {
             if (StringUtils.isBlank(dayCountString)) {

@@ -22,7 +22,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * @author Kohsuke Kawaguchi
  */
 // CHECKSTYLE:OFF
-@SuppressWarnings("PMD")
+@SuppressWarnings("all")
 public final class TreeString implements Serializable {
     private static final long serialVersionUID = 3621959682117480904L;
 

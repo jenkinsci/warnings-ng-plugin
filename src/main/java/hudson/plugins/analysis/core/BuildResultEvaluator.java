@@ -281,6 +281,8 @@ public class BuildResultEvaluator {
      *
      * @param annotations
      *            the annotations to consider
+     * @param priorities
+     *            the priorities to count
      * @return the number of relevant annotations
      */
     private int countAnnotations(final Collection<? extends FileAnnotation> annotations, final Priority... priorities) {
