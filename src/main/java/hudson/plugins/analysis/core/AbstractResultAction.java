@@ -270,7 +270,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
 
     /** Backward compatibility. @deprecated */
     @Deprecated
-    @java.lang.SuppressWarnings("unused")
+    @java.lang.SuppressWarnings("PMD")
     @SuppressWarnings("UuF")
     private transient HealthReportBuilder healthReportBuilder; // NOPMD
 }

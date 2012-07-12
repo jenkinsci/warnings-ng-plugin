@@ -85,47 +85,47 @@ public class HealthReportBuilder implements Serializable {
 
     /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
-    @SuppressWarnings("unused")
+    @SuppressWarnings("PMD")
     @Deprecated
     private transient int healthy;
     /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
-    @SuppressWarnings("unused")
+    @SuppressWarnings("PMD")
     @Deprecated
     private transient int unHealthy;
     /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
-    @SuppressWarnings("unused")
+    @SuppressWarnings("PMD")
     @Deprecated
     private transient boolean isHealthEnabled;
     /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
-    @SuppressWarnings("unused")
+    @SuppressWarnings("PMD")
     @Deprecated
     private transient boolean isThresholdEnabled;
     /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
-    @SuppressWarnings("unused")
+    @SuppressWarnings("PMD")
     @Deprecated
     private transient int threshold;
     /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
-    @SuppressWarnings("unused")
+    @SuppressWarnings("PMD")
     @Deprecated
     private transient String reportName;
     /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
-    @SuppressWarnings("unused")
+    @SuppressWarnings("PMD")
     @Deprecated
     private transient String itemName;
     /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
-    @SuppressWarnings("unused")
+    @SuppressWarnings("PMD")
     @Deprecated
     private transient String reportSingleCount;
     /** Backward compatibility. @deprecated */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
-    @SuppressWarnings("unused")
+    @SuppressWarnings("PMD")
     @Deprecated
     private transient String reportMultipleCount;
 }

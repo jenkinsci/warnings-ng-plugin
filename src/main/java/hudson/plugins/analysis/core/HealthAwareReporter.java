@@ -251,7 +251,6 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      *
      * @return the object
      */
-    @SuppressWarnings("deprecation")
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
     private Object readResolve() {
         if (thresholdLimit == null) {
