@@ -27,7 +27,7 @@ public class DynamicParser extends RegexpLineParser {
      *            the name of the trend report
      */
     public DynamicParser(final String name, final String regexp, final String script, final String linkName, final String trendName) {
-        super(localize(name), localize(linkName), localize(trendName), regexp, true);
+        super(localize(name), localize(linkName), localize(trendName), regexp);
 
         expressionMatcher = new GroovyExpressionMatcher(script, FALSE_POSITIVE);
     }

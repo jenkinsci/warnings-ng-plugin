@@ -40,7 +40,6 @@ public class DynamicParserTest extends PhpParserTest {
               TYPE, TYPE);
     }
 
-
     /**
      * Parses a file with 9 warnings of a custom parser.
      *
