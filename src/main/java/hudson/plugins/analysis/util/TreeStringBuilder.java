@@ -19,6 +19,7 @@ import java.util.Map;
  *
  * @author Kohsuke Kawaguchi
  */
+@edu.umd.cs.findbugs.annotations.SuppressWarnings("")
 @SuppressWarnings({"PMD", "all"})
 //CHECKSTYLE:OFF
 public class TreeStringBuilder {
@@ -125,7 +126,9 @@ public class TreeStringBuilder {
      * Interns a string.
      */
     public TreeString intern(final String s) {
-        if (s==null)    return null;
+        if (s==null) {
+            return null;
+        }
         return root.intern(s).node;
     }
 
@@ -133,7 +136,9 @@ public class TreeStringBuilder {
      * Interns a {@link TreeString} created elsewhere.
      */
     public TreeString intern(final TreeString s) {
-        if (s==null)    return null;
+        if (s==null) {
+            return null;
+        }
         return root.intern(s.toString()).node;
     }
 
