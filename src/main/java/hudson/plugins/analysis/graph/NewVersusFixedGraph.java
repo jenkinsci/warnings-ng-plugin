@@ -8,8 +8,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
-
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.BoxRenderer;
@@ -54,36 +52,10 @@ public class NewVersusFixedGraph extends CategoryBuildResultGraph {
         return new Color[] {ColorPalette.RED, ColorPalette.BLUE};
     }
 
-    // CHECKSTYLE:OFF
-    /** {@inheritDoc} */
-    @java.lang.SuppressWarnings("serial")
-    @SuppressWarnings("SIC")
     @Override
     protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName, final ToolTipProvider toolTipProvider) {
-        CategoryUrlBuilder url = new CategoryUrlBuilder(getRootUrl(), pluginName) {
-            /** {@inheritDoc} */
-            @Override
-            protected String getDetailUrl(final int row) {
-                if (row == 1) {
-                    return "fixed";
-                }
-                else {
-                    return "new";
-                }
-            }
-        };
-        ToolTipBuilder toolTip = new ToolTipBuilder(toolTipProvider) {
-            /** {@inheritDoc} */
-            @Override
-            protected String getShortDescription(final int row) {
-                if (row == 1) {
-                    return Messages.Trend_Fixed();
-                }
-                else {
-                    return Messages.Trend_New();
-                }
-            }
-        };
+        CategoryUrlBuilder url = new UrlBuilder(getRootUrl(), pluginName);
+        ToolTipBuilder toolTip = new DescriptionBuilder(toolTipProvider);
         if (configuration.useBuildDateAsDomain()) {
             return new ToolTipBoxRenderer(toolTip);
         }
@@ -91,6 +63,47 @@ public class NewVersusFixedGraph extends CategoryBuildResultGraph {
             return new BoxRenderer(url, toolTip);
         }
     }
-    // CHECKSTYLE:ON
+
+    /**
+     * Shows URLs for the graph.
+     */
+    private static final class UrlBuilder extends CategoryUrlBuilder {
+        private static final long serialVersionUID = -513005297527489127L;
+
+        UrlBuilder(final String rootUrl, final String pluginName) {
+            super(rootUrl, pluginName);
+        }
+
+        @Override
+        protected String getDetailUrl(final int row) {
+            if (row == 1) {
+                return "fixed";
+            }
+            else {
+                return "new";
+            }
+        }
+    }
+
+    /**
+     * Shows tooltips for the graph.
+     */
+    private static final class DescriptionBuilder extends ToolTipBuilder {
+        private static final long serialVersionUID = 2680597046798379462L;
+
+        DescriptionBuilder(final ToolTipProvider provider) {
+            super(provider);
+        }
+
+        @Override
+        protected String getShortDescription(final int row) {
+            if (row == 1) {
+                return Messages.Trend_Fixed();
+            }
+            else {
+                return Messages.Trend_New();
+            }
+        }
+    }
 }
 
