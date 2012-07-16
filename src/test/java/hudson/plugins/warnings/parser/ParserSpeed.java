@@ -11,6 +11,8 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 /**
  * Speed test of the parsers in the {@link ParserRegistry}.
  */
@@ -63,6 +65,7 @@ public class ParserSpeed {
      *            the file to read
      * @return an input stream
      */
+    @SuppressWarnings("Dm")
     protected Reader openFile(final String fileName) {
         try {
             return new InputStreamReader(ParserTester.class.getResourceAsStream(fileName), "UTF-8");
@@ -79,11 +82,11 @@ public class ParserSpeed {
      *            the parsers to use
      * @return the registry
      */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
+    @SuppressWarnings("SIC")
     private ParserRegistry createRegistry(final List<AbstractWarningsParser> parsers) {
         ParserRegistry parserRegistry = new ParserRegistry(parsers, "", StringUtils.EMPTY, StringUtils.EMPTY) {
-            /** {@inheritDoc} */
             @Override
+            @SuppressWarnings("Dm")
             protected Reader createReader(final File file) throws FileNotFoundException {
                 return new InputStreamReader(ParserSpeed.class.getResourceAsStream("all.txt"));
             }
