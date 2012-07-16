@@ -107,8 +107,12 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *            annotation threshold
      * @param canRunOnFailed
      *            determines whether the plug-in can run for failed builds, too
+     * @param canComputeNew
+     *            determines whether new warnings should be computed (with
+     *            respect to baseline)
      * @param shouldDetectModules
-     *            determines whether module names should be derived from Maven POM or Ant build files
+     *            determines whether module names should be derived from Maven
+     *            POM or Ant build files
      * @param includePattern
      *            Ant file-set pattern of files to include in report
      * @param excludePattern
@@ -117,6 +121,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *            determines whether relative paths in warnings should be
      *            resolved using a time expensive operation that scans the whole
      *            workspace for matching files.
+     * @param parserConfigurations
+     *            the parser configurations to scan files
+     * @param consoleParsers
+     *            the parsers to scan the console
      */
     // CHECKSTYLE:OFF
     @SuppressWarnings("PMD.ExcessiveParameterList")

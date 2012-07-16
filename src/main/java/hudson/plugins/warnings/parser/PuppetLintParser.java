@@ -57,11 +57,6 @@ public class PuppetLintParser extends RegexpLineParser {
         return warning;
     }
 
-    /**
-     * Detects the module name for the specified filename.
-     *
-     * @param fileName the file name
-     */
     private String detectModuleName(final String fileName) {
         if (StringUtils.isNotBlank(fileName)) {
             return splitFileName(fileName);

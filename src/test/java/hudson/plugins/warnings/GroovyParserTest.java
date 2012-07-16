@@ -41,7 +41,9 @@ public class GroovyParserTest {
                     "String message = matcher.group(4)\n" +
                     "\n" +
                     "return new Warning(fileName, Integer.parseInt(lineNumber), \"Generic Parser\", \"\", message);\n";
+    @SuppressWarnings("javadoc")
     public static final String MULTI_LINE_REGEXP = "(WARNING|ERROR)\\s*in\\s*(.*)\\(at line\\s*(\\d+)\\).*(?:\\r?\\n[^\\^]*)+(?:\\r?\\n.*[\\^]+.*)\\r?\\n(?:\\s*\\[.*\\]\\s*)?(.*)";
+    @SuppressWarnings("javadoc")
     public static final String SINGLE_LINE_REGEXP = "^\\s*(.*):(\\d+):(.*):\\s*(.*)$";
     // CHECKSTYLE:ON
 

@@ -98,7 +98,13 @@ public class ViolationsAdapter extends AbstractWarningsParser {
     private File copyContentToTemporaryFile(final Reader reader) throws IOException, FileNotFoundException {
         File temp = File.createTempFile("warnings", "log");
         temp.deleteOnExit();
-        IOUtils.copy(reader, new FileOutputStream(temp), "UTF-8");
+        FileOutputStream output = new FileOutputStream(temp);
+        try {
+            IOUtils.copy(reader, output, "UTF-8");
+        }
+        finally {
+            IOUtils.closeQuietly(output);
+        }
         return temp;
     }
 }

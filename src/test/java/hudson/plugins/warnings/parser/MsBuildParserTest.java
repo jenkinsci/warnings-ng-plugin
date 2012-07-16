@@ -229,7 +229,8 @@ public class MsBuildParserTest extends ParserTester {
         testData.append("\r\n");
         testData.append("C:\\Src\\Parser\\CSharp\\file.cs (10): Error XXX: An error occurred");
 
-        Collection<FileAnnotation> warnings = new MsBuildParser().parse(new InputStreamReader(IOUtils.toInputStream(testData.toString())));
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(new InputStreamReader(
+                IOUtils.toInputStream(testData.toString())));
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
 

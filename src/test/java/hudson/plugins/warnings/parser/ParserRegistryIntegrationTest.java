@@ -154,6 +154,7 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
         return parserRegistry;
     }
     // CHECKSTYLE:OFF Test implementations
+    @SuppressWarnings("javadoc")
     @TestExtension
     public static class TestBothParser extends RegexpLineParser {
         private static final Localizable DUMMY = Messages._Warnings_NotLocalizedName(MIXED_API);
@@ -170,6 +171,7 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
         }
 
     }
+    @SuppressWarnings("javadoc")
     @TestExtension
     public static class TestNewParser extends AbstractWarningsParser {
         private static final long serialVersionUID = 1L;
@@ -185,7 +187,7 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
             return null;
         }
     }
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"javadoc", "deprecation"})
     @TestExtension
     public static class TestOldParser implements WarningsParser {
         private static final long serialVersionUID = 1L;
