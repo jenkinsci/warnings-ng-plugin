@@ -38,7 +38,7 @@ public class GnuMakeGccParserTest extends ParserTester {
         checkWarning(iterator.next(),
                 73,
                 "implicit typename is deprecated, please see the documentation for details",
-                "/dir1//u1/drjohn/bfdist/packages/RegrTest/V00-03-01/RgtAddressLineScan.cc",
+                "/u1/drjohn/bfdist/packages/RegrTest/V00-03-01/RgtAddressLineScan.cc",
                 WARNING_TYPE, ERROR_CATEGORY, Priority.HIGH);
         checkWarning(iterator.next(),
                 4,
@@ -83,7 +83,7 @@ public class GnuMakeGccParserTest extends ParserTester {
         checkWarning(iterator.next(),
                 33,
                 "#warning This file includes at least one deprecated or antiquated header which may be removed without further notice at a future date. Please use a non-deprecated interface with equivalent functionality instead. For a listing of replacement headers and interfaces, consult the file backward_warning.h. To disable this warning use -Wno-deprecated.",
-                "/dir1/dir2/dir3//usr/include/c++/4.3/backward/backward_warning.h",
+                "/usr/include/c++/4.3/backward/backward_warning.h",
                 WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
         checkWarning(iterator.next(),
                 8,
