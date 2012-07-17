@@ -1,11 +1,13 @@
 package hudson.plugins.warnings.parser;
 
+import static org.junit.Assert.*;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
-import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 /**
@@ -14,14 +16,15 @@ import org.junit.Test;
  * @author vichak
  */
 public class GnuMakeGccParserTest extends ParserTester {
-
-    private static final String THERE_ARE_WARNINGS_FOUND = "There are warnings found";
     private static final String WARNING_CATEGORY = "Warning";
     private static final String ERROR_CATEGORY = "Error";
     private static final String WARNING_TYPE = new GnuMakeGccParser().getGroup();
 
     /**
-     * Test of createWarning method, of class GnuMakeGccParser.
+     * Test of createWarning method, of class {@link GnuMakeGccParser}.
+     *
+     * @throws IOException
+     *             in case of an error
      */
     @Test
     public void testCreateWarning() throws IOException {
