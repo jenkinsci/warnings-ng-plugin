@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 @Extension
 public class AppleLLVMClangParser extends RegexpLineParser {
     private static final long serialVersionUID = -3015592762345283182L;
-    private static final String CLANG_WARNING_PATTERN = "^\\s*(.*?):(\\d+):(?:\\d+:)?(?:(?:\\{\\d+:\\d+-\\d+:\\d+\\})+:)?\\s*warning:\\s*(.*?)(?:\\[(.*)\\])?$";
+    private static final String CLANG_WARNING_PATTERN = "^\\s*(?:\\d+%)?([^%]*?):(\\d+):(?:\\d+:)?(?:(?:\\{\\d+:\\d+-\\d+:\\d+\\})+:)?\\s*warning:\\s*(.*?)(?:\\[(.*)\\])?$";
 
     /**
      * Creates a new instance of {@link AppleLLVMClangParser}.
@@ -21,7 +21,7 @@ public class AppleLLVMClangParser extends RegexpLineParser {
         super(Messages._Warnings_AppleLLVMClang_ParserName(),
                 Messages._Warnings_AppleLLVMClang_LinkName(),
                 Messages._Warnings_AppleLLVMClang_TrendName(),
-                CLANG_WARNING_PATTERN, true);
+                CLANG_WARNING_PATTERN);
     }
 
     @Override

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 
@@ -18,6 +19,23 @@ import org.junit.Test;
  */
 public class AppleLLVMClangParserTest extends ParserTester {
     private static final String TYPE = new AppleLLVMClangParser().getGroup();
+
+    /**
+     * Parses a file with one warning that are started by ant.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-14333">Issue 14333</a>
+     */
+    @Test
+    public void issue14333() throws IOException {
+        Collection<FileAnnotation> warnings = new AppleLLVMClangParser().parse(openFile("issue14333.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        FileAnnotation annotation = warnings.iterator().next();
+        checkWarning(annotation, 1518, "Array access (via field 'yy_buffer_stack') results in a null pointer dereference",
+                "scanner.cpp", StringUtils.EMPTY, Priority.NORMAL);
+    }
 
     /**
      * Verifies that all messages are correctly parsed.
