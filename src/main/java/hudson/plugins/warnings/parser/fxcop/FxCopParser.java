@@ -7,6 +7,7 @@ import hudson.plugins.warnings.parser.AbstractWarningsParser;
 import hudson.plugins.warnings.parser.Messages;
 import hudson.plugins.warnings.parser.ParsingCanceledException;
 import hudson.plugins.warnings.parser.Warning;
+import hudson.util.IOException2;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -74,10 +75,10 @@ public class FxCopParser extends AbstractWarningsParser {
             return warnings;
         }
         catch (ParserConfigurationException exception) {
-            throw new IOException(exception);
+            throw new IOException2(exception);
         }
         catch (SAXException exception) {
-            throw new IOException(exception);
+            throw new IOException2(exception);
         }
     }
 
