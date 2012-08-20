@@ -253,8 +253,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
         return actions;
     }
 
-    private Set<String> getParsers() {
-        Set<String> parsers = Sets.newHashSet();
+    private List<String> getParsers() {
+        List<String> parsers = Lists.newArrayList();
         for (ConsoleParser configuration : getConsoleParsers()) {
             parsers.add(configuration.getParserName());
         }
