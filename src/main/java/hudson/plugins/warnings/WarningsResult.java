@@ -8,6 +8,8 @@ import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.plugins.warnings.parser.Warning;
 
+import java.io.File;
+
 import com.thoughtworks.xstream.XStream;
 
 /**
@@ -17,6 +19,8 @@ import com.thoughtworks.xstream.XStream;
  * @author Ulli Hafner
  */
 public class WarningsResult extends BuildResult {
+    /** Version < 4.0 file name of warnings. */
+    static final String ORIGINAL_COMPILER_WARNINGS_XML = "compiler-warnings.xml";
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -137460587767210579L;
     /** The group of the parser. @since 4.0 */
@@ -84,12 +88,26 @@ public class WarningsResult extends BuildResult {
 
     @Override
     protected String getSerializationFileName() {
-        if (group == null) { // prior 4.0
-            return "compiler-warnings.xml";
+        FileChecker fileChecker = new FileChecker(getOwner().getRootDir());
+        return getFileName(fileChecker, ParserRegistry.getUrl(group));
+    }
+
+    String getFileName(final FileChecker fileChecker, final int groupUrl) {
+        String fileName = ORIGINAL_COMPILER_WARNINGS_XML;
+        if (fileChecker.canRead(fileName)) {
+            return fileName;
         }
-        else {
-            return "compiler-" + ParserRegistry.getUrl(group) + "-warnings.xml";
+
+        fileName = createFileName(groupUrl);
+        if (fileChecker.canRead(fileName)) {
+            return fileName;
         }
+
+        return group.replaceAll("\\W+", "") + ".xml";
+    }
+
+    String createFileName(final int groupUrl) {
+        return "compiler-" + groupUrl + "-warnings.xml";
     }
 
     /** {@inheritDoc} */
@@ -105,5 +123,22 @@ public class WarningsResult extends BuildResult {
     @Override
     protected Class<? extends ResultAction<? extends BuildResult>> getResultActionType() {
         return WarningsResultAction.class;
+    }
+
+    /**
+     * Provides a way to hide file system access during testing.
+     *
+     * @author Ulli Hafner
+     */
+    static class FileChecker {
+        private final File root;
+
+        FileChecker(final File root) {
+            this.root = root;
+        }
+
+        boolean canRead(final String fileName) {
+            return new File(root, fileName).canRead();
+        }
     }
 }

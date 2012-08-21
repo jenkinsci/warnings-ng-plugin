@@ -1,12 +1,15 @@
 package hudson.plugins.warnings;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import hudson.model.AbstractBuild;
 import hudson.plugins.analysis.core.BuildHistory;
+import hudson.plugins.analysis.core.NullBuildHistory;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.test.BuildResultTest;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
+import hudson.plugins.warnings.WarningsResult.FileChecker;
 import hudson.plugins.warnings.parser.Warning;
 
 import java.util.GregorianCalendar;
@@ -19,9 +22,46 @@ import org.junit.Test;
  * Tests the class {@link WarningsResult}.
  */
 public class WarningsResultTest extends BuildResultTest<WarningsResult> {
+    private static final int GROUP_URL = 1;
+    private static final String ORIGINAL_FILENAME = WarningsResult.ORIGINAL_COMPILER_WARNINGS_XML;
+
     @Override
     protected WarningsResult createBuildResult(final AbstractBuild<?, ?> build, final ParserResult project, final BuildHistory history) {
-        return new WarningsResult(build, history, project, "UTF-8", null, false);
+        return createResult(build, project, history, null);
+    }
+
+    private WarningsResult createResult(final AbstractBuild<?, ?> build, final ParserResult project, final BuildHistory history, final String group) {
+        return new WarningsResult(build, history, project, "UTF-8", group, false);
+    }
+
+    /**
+     * Verifies that filenames are correctly parsed.
+     *
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-14570">Issue 14570</a>
+     */
+    @Test
+    public void testWarningsFileName() {
+        FileChecker stub = mock(FileChecker.class);
+
+        WarningsResult result = createResult("group1");
+        verifyFileName(result, stub, "group1");
+
+        result = createResult("charCHAR/( 2");
+        verifyFileName(result, stub, "charCHAR2");
+
+        when(stub.canRead(result.createFileName(GROUP_URL))).thenReturn(true);
+        verifyFileName(result, stub, result.createFileName(GROUP_URL).replaceFirst(".xml", ""));
+
+        when(stub.canRead(ORIGINAL_FILENAME)).thenReturn(true);
+        verifyFileName(result, stub, ORIGINAL_FILENAME.replaceFirst(".xml", ""));
+    }
+
+    private WarningsResult createResult(final String group) {
+        return createResult(createBuild(), new ParserResult(), new NullBuildHistory(), group);
+    }
+
+    private void verifyFileName(final WarningsResult result, final FileChecker stub, final String expected) {
+        assertEquals("Wrong filename selected", expected + ".xml", result.getFileName(stub, GROUP_URL));
     }
 
     /**
@@ -80,11 +120,14 @@ public class WarningsResultTest extends BuildResultTest<WarningsResult> {
         BuildHistory history = mock(BuildHistory.class);
         when(history.getReferenceAnnotations()).thenReturn(oldWarnings);
 
-        @SuppressWarnings("rawtypes")
+        return createResultUnderTest(newWarnings, history, createBuild());
+    }
+
+    @SuppressWarnings("rawtypes")
+    private AbstractBuild<?, ?> createBuild() {
         AbstractBuild build = mock(AbstractBuild.class);
         when(build.getTimestamp()).thenReturn(new GregorianCalendar());
-
-        return createResultUnderTest(newWarnings, history, build);
+        return build;
     }
 
     private WarningsResult createResultUnderTest(final ParserResult newWarnings, final BuildHistory history, @SuppressWarnings("rawtypes") final AbstractBuild build) {
