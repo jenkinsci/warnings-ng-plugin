@@ -21,7 +21,6 @@ import org.jfree.ui.RectangleInsets;
 import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.core.BuildResult;
 
-import hudson.util.ColorPalette;
 import hudson.util.Graph;
 
 /**

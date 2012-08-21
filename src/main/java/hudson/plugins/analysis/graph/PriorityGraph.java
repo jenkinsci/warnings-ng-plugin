@@ -19,8 +19,6 @@ import hudson.plugins.analysis.util.ToolTipBuilder;
 import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.Priority;
 
-import hudson.util.ColorPalette;
-
 /**
  * Builds a graph showing all warnings by priority.
  *

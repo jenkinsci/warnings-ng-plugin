@@ -12,8 +12,6 @@ import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
-import hudson.util.ColorPalette;
-
 /**
  * Builds a graph showing the total of warnings in a scaled line graph.
  *

@@ -16,8 +16,6 @@ import hudson.plugins.analysis.util.ToolTipBoxRenderer;
 import hudson.plugins.analysis.util.ToolTipBuilder;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
-import hudson.util.ColorPalette;
-
 /**
  * Builds a new versus fixed warnings graph for a specified result action.
  *

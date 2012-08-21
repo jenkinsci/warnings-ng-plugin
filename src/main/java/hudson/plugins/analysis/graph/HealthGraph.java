@@ -20,8 +20,6 @@ import hudson.plugins.analysis.util.SerializableUrlGenerator;
 import hudson.plugins.analysis.util.ToolTipAreaRenderer;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
-import hudson.util.ColorPalette;
-
 /**
  * Builds a graph showing all warnings by health descriptor.
  *
