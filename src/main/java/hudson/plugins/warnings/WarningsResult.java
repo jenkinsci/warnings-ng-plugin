@@ -42,7 +42,7 @@ public class WarningsResult extends BuildResult {
      */
     public WarningsResult(final AbstractBuild<?, ?> build, final BuildHistory history,
             final ParserResult result, final String defaultEncoding, final String group) {
-        this(build, history, result, defaultEncoding, group, true);
+        this(build, history, result, defaultEncoding, group, group == null ? false : true);
     }
 
     WarningsResult(final AbstractBuild<?, ?> build, final BuildHistory history,
