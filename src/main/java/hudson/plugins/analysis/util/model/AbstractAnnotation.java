@@ -101,8 +101,6 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         lineRanges = new LineRangeList();
         lineRanges.add(new LineRange(start, end));
         primaryLineNumber = start;
-
-        contextHashCode = currentKey;
     }
 
     /**
