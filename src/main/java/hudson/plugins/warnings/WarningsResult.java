@@ -19,6 +19,7 @@ import com.thoughtworks.xstream.XStream;
  * @author Ulli Hafner
  */
 public class WarningsResult extends BuildResult {
+    private static final String FILENAME_SUFFIX = "-warnings.xml";
     /** Version < 4.0 file name of warnings. */
     static final String ORIGINAL_COMPILER_WARNINGS_XML = "compiler-warnings.xml";
     /** Unique identifier of this class. */
@@ -104,11 +105,11 @@ public class WarningsResult extends BuildResult {
             return fileName;
         }
 
-        return group.replaceAll("\\W+", "") + ".xml";
+        return group.replaceAll("\\W+", "") + FILENAME_SUFFIX;
     }
 
     String createFileName(final int groupUrl) {
-        return "compiler-" + groupUrl + "-warnings.xml";
+        return "compiler-" + groupUrl + FILENAME_SUFFIX;
     }
 
     /** {@inheritDoc} */

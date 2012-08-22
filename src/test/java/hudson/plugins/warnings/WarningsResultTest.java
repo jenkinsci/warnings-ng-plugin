@@ -44,10 +44,10 @@ public class WarningsResultTest extends BuildResultTest<WarningsResult> {
         FileChecker stub = mock(FileChecker.class);
 
         WarningsResult result = createResult("group1");
-        verifyFileName(result, stub, "group1");
+        verifyFileName(result, stub, "group1-warnings");
 
         result = createResult("charCHAR/( 2");
-        verifyFileName(result, stub, "charCHAR2");
+        verifyFileName(result, stub, "charCHAR2-warnings");
 
         when(stub.canRead(result.createFileName(GROUP_URL))).thenReturn(true);
         verifyFileName(result, stub, result.createFileName(GROUP_URL).replaceFirst(".xml", ""));
