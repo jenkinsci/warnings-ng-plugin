@@ -89,7 +89,8 @@ public class WarningsResult extends BuildResult {
     @Override
     protected String getSerializationFileName() {
         FileChecker fileChecker = new FileChecker(getOwner().getRootDir());
-        return getFileName(fileChecker, ParserRegistry.getUrl(group));
+
+        return getFileName(fileChecker, group == null ? 0 : ParserRegistry.getUrl(group));
     }
 
     String getFileName(final FileChecker fileChecker, final int groupUrl) {
