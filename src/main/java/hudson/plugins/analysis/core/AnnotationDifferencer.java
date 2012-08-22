@@ -14,17 +14,17 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  */
 public final class AnnotationDifferencer {
     /**
-     * Returns the new annotations, i.e., the annotations that are in the actual build
+     * Returns the new annotations, i.e., the annotations that are in the current build
      * but not in the previous.
      *
-     * @param actual
-     *            annotations in actual build
+     * @param current
+     *            annotations in current build
      * @param previous
      *            annotations in previous build
      * @return the new annotations
      */
-    public static Set<FileAnnotation> getNewAnnotations(final Set<FileAnnotation> actual, final Set<FileAnnotation> previous) {
-        return removeDuplicates(difference(actual, previous), previous);
+    public static Set<FileAnnotation> getNewAnnotations(final Set<FileAnnotation> current, final Set<FileAnnotation> previous) {
+        return removeDuplicates(difference(current, previous), previous);
     }
 
     /**
@@ -84,16 +84,16 @@ public final class AnnotationDifferencer {
 
     /**
      * Returns the fixed annotations, i.e., the annotations that are in the previous build
-     * but not in the actual.
+     * but not in the current.
      *
-     * @param actual
-     *            annotations in actual build
+     * @param current
+     *            annotations in current build
      * @param previous
      *            annotations in previous build
      * @return the fixed annotations
      */
-    public static Set<FileAnnotation> getFixedAnnotations(final Set<FileAnnotation> actual, final Set<FileAnnotation> previous) {
-        return removeDuplicates(difference(previous, actual), actual);
+    public static Set<FileAnnotation> getFixedAnnotations(final Set<FileAnnotation> current, final Set<FileAnnotation> previous) {
+        return removeDuplicates(difference(previous, current), current);
     }
 
     /**
