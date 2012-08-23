@@ -36,29 +36,20 @@ public class GroovyExpressionMatcher implements Serializable {
     public GroovyExpressionMatcher(final String script, final Warning falsePositive) {
         this.script = script;
         this.falsePositive = falsePositive;
-
-        compileScript();
     }
 
-    private void compileScript() {
-        GroovyShell shell = new GroovyShell(WarningsDescriptor.class.getClassLoader());
-        try {
-            compiled = shell.parse(script);
+    private void compileScriptIfNotYetDone() {
+        synchronized (script) {
+             if (compiled == null) {
+                 GroovyShell shell = new GroovyShell(WarningsDescriptor.class.getClassLoader());
+                 try {
+                     compiled = shell.parse(script);
+                 }
+                 catch (CompilationFailedException exception) {
+                     LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during compiling: ", exception);
+                 }
+            }
         }
-        catch (CompilationFailedException exception) {
-            LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during compiling: ", exception);
-        }
-    }
-
-    /**
-     * Compiles the script.
-     *
-     * @return this
-     */
-    protected Object readResolve() {
-        compileScript();
-
-        return this;
     }
 
     /**
@@ -69,6 +60,8 @@ public class GroovyExpressionMatcher implements Serializable {
      * @return a new annotation for the specified pattern
      */
     public Warning createWarning(final Matcher matcher) {
+        compileScriptIfNotYetDone();
+
         Binding binding = new Binding();
         binding.setVariable("matcher", matcher);
         Object result = null;
