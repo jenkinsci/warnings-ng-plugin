@@ -3,7 +3,7 @@ package hudson.plugins.warnings.dashboard;
 import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.plugins.analysis.graph.BuildResultGraph;
-import hudson.plugins.analysis.graph.PriorityGraph;
+import hudson.plugins.analysis.graph.TotalsGraph;
 import hudson.plugins.view.dashboard.DashboardPortlet;
 import hudson.plugins.warnings.Messages;
 
@@ -39,7 +39,7 @@ public final class WarningsTotalsGraphPortlet extends AbstractTrendPortlet {
 
     @Override
     protected BuildResultGraph getGraphType() {
-        return new PriorityGraph();
+        return new TotalsGraph();
     }
 
     /**
