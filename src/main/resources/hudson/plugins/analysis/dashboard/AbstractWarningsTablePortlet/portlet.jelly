@@ -1,3 +1,4 @@
+<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
     xmlns:dp="/hudson/plugins/view/dashboard"
     xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
@@ -19,7 +20,7 @@
                     <dp:jobLink job="${job}"/>
                 </td>
                 <td class="pane">
-                    ${it.getWarnings(job)}
+                    <j:out value="${it.getWarnings(job)}" /> 
                 </td>
                 <td class="pane">
                     ${it.getWarnings(job, 'HIGH')}
