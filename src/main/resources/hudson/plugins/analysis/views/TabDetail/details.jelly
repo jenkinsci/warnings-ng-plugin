@@ -17,9 +17,11 @@
       <tr>
         <td style="white-space: normal">
           <p>
-            <b>${warning.message}</b>
+            <b><j:out value="${warning.message}"/></b> 
           </p>
-          <p>${warning.toolTip}</p>
+          <p>
+            <j:out value="${warning.toolTip}"/>
+          </p>
         </td>
       </tr>
     </table>
