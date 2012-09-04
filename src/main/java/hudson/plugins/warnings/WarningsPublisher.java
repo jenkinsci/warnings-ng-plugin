@@ -9,9 +9,8 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.plugins.analysis.core.AnnotationsClassifier;
 import hudson.plugins.analysis.core.FilesParser;
-import hudson.plugins.analysis.core.HealthAwarePublisher;
+import hudson.plugins.analysis.core.HealthAwareRecorder;
 import hudson.plugins.analysis.core.ParserResult;
-import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.ModuleDetector;
 import hudson.plugins.analysis.util.NullModuleDetector;
 import hudson.plugins.analysis.util.PluginLogger;
@@ -38,7 +37,7 @@ import com.google.common.collect.Sets;
  * @author Ulli Hafner
  */
 // CHECKSTYLE:COUPLING-OFF
-public class WarningsPublisher extends HealthAwarePublisher {
+public class WarningsPublisher extends HealthAwareRecorder {
     private static final String PLUGIN_NAME = "WARNINGS";
 
     private static final long serialVersionUID = -5936973521277401764L;
@@ -264,8 +263,9 @@ public class WarningsPublisher extends HealthAwarePublisher {
         return parsers;
     }
 
+    /** {@inheritDoc} */
     @Override
-    public BuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger)
+    protected boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final PluginLogger logger)
             throws InterruptedException, IOException {
         try {
             if (!hasConsoleParsers() && !hasFileParsers()) {
@@ -279,18 +279,40 @@ public class WarningsPublisher extends HealthAwarePublisher {
             add(totals, consoleResults);
             add(totals, fileResults);
 
-            return new WarningsResult(build, new WarningsBuildHistory(build, null), totals, getDefaultEncoding(), null);
+            if (isThresholdEnabled()) {
+                evaluateBuildHealth(build, logger);
+            }
+
+            copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), totals.getAnnotations());
+
+            return true;
         }
         catch (ParsingCanceledException exception) {
-            throw createInterruptedException();
+            return stopParsing(logger, exception);
+        }
+        catch (InterruptedException exception) {
+            return stopParsing(logger, exception);
         }
     }
 
-    @Override
-    protected void updateBuildResult(final BuildResult result, final PluginLogger logger) {
-        for (WarningsResultAction action : result.getOwner().getActions(WarningsResultAction.class)) {
-            action.getResult().evaluateStatus(getThresholds(), getUseDeltaValues(), canComputeNew(), logger,
-                    action.getUrlName());
+    private boolean stopParsing(final PluginLogger logger, final Exception exception) {
+        logger.log(exception.getMessage());
+
+        return false;
+    }
+
+    private void evaluateBuildHealth(final AbstractBuild<?, ?> build, final PluginLogger logger) {
+        for (WarningsResultAction action : build.getActions(WarningsResultAction.class)) {
+            WarningsBuildHistory history = new WarningsBuildHistory(build, action.getParser());
+            AbstractBuild<?, ?> referenceBuild = history.getReferenceBuild();
+            if (referenceBuild == null) {
+                logger.log("Skipping warning delta computation since no reference build is found");
+            }
+            else {
+                logger.log("Computing warning deltas based on reference build " + referenceBuild.getDisplayName());
+                action.getResult().evaluateStatus(getThresholds(), getUseDeltaValues(), canComputeNew(),
+                        logger, action.getUrlName());
+            }
         }
     }
 
