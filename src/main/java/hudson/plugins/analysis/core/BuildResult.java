@@ -836,6 +836,36 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
+     * Returns the number of warnings with high priority.
+     *
+     * @return the number of warnings with high priority
+     */
+    @Exported
+    public int getNumberOfHighPriorityWarnings() {
+        return highWarnings;
+    }
+
+    /**
+     * Returns the number of warnings with normal priority.
+     *
+     * @return the number of warnings with normal priority
+     */
+    @Exported
+    public int getNumberOfNormalPriorityWarnings() {
+        return normalWarnings;
+    }
+
+    /**
+     * Returns the number of warnings with low priority.
+     *
+     * @return the number of warnings with low priority
+     */
+    @Exported
+    public int getNumberOfLowPriorityWarnings() {
+        return lowWarnings;
+    }
+
+    /**
      * Returns the associated project of this result.
      *
      * @return the associated project of this result.
