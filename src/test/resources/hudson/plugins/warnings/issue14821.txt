@@ -1,0 +1,32 @@
+main.c: In function "main":
+main.c:2:1: warning: control reaches end of non-void function [-Wreturn-type]
+main2.c: In function "main":
+main2.c:2:1: warning: control reaches end of non-void function [-Wreturn-type]
+main2.c: In function "main":
+main2.c:3:1: warning: control reaches end of non-void function [-Wreturn-type]
+main2.c: In function "main":
+main2.c:4:1: warning: control reaches end of non-void function [-Wreturn-type]
+main.c: In function "main":
+main.c:3:1: warning: control reaches end of non-void function [-Wreturn-type]
+main.c: In function "main":
+main.c:4:1: warning: control reaches end of non-void function [-Wreturn-type]
+main.c: In function "main":
+main.c:5:1: warning: control reaches end of non-void function [-Wreturn-type]
+main2.c: In function "main":
+main2.c:5:1: warning: control reaches end of non-void function [-Wreturn-type]
+main3.c: In function "main":
+main3.c:2:1: warning: control reaches end of non-void function [-Wreturn-type]
+main4.c: In function "main":
+main4.c:2:1: warning: control reaches end of non-void function [-Wreturn-type]
+main4.c: In function "main":
+main4.c:3:1: warning: control reaches end of non-void function [-Wreturn-type]
+main4.c: In function "main":
+main4.c:4:1: warning: control reaches end of non-void function [-Wreturn-type]
+main3.c: In function "main":
+main3.c:3:1: warning: control reaches end of non-void function [-Wreturn-type]
+main3.c: In function "main":
+main3.c:4:1: warning: control reaches end of non-void function [-Wreturn-type]
+main3.c: In function "main":
+main3.c:5:1: warning: control reaches end of non-void function [-Wreturn-type]
+main4.c: In function "main":
+main4.c:5:1: warning: control reaches end of non-void function [-Wreturn-type]
