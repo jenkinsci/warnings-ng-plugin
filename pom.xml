@@ -11,7 +11,7 @@
   <artifactId>warnings</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Plug-in</name>
-  <version>4.17</version>
+  <version>4.18-SNAPSHOT</version>
   <url>http://wiki.jenkins-ci.org/x/G4CGAQ</url>
   <description>This plug-in reads the compiler warnings from the
     console log file and generates a trend report.</description>
