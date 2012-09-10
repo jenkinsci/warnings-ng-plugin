@@ -11,7 +11,6 @@ import java.util.Collection;
 import org.apache.commons.io.IOUtils;
 
 import hudson.plugins.analysis.util.ContextHashCode;
-import hudson.plugins.analysis.util.TreeStringBuilder;
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
@@ -71,15 +70,7 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
      *         this function used as a filter.
      */
     protected Collection<FileAnnotation> intern(final Collection<FileAnnotation> annotations) {
-        TreeStringBuilder stringPool = new TreeStringBuilder();
-        for (FileAnnotation annotation : annotations) {
-            if (annotation instanceof AbstractAnnotation) {
-                AbstractAnnotation aa = (AbstractAnnotation) annotation;
-                aa.intern(stringPool);
-            }
-        }
-        stringPool.dedup();
-        return annotations;
+        return AbstractAnnotation.intern(annotations);
     }
 
     /**

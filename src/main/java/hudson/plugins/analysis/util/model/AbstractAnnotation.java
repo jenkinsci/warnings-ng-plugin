@@ -201,6 +201,28 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         readResolve(); // String.intern some of the data fields
     }
 
+
+    /**
+     * Let {@link FileAnnotation}s share some of their internal data structure
+     * to reduce memory footprint.
+     *
+     * @param annotations
+     *            the annotations to compress
+     * @return The same object as passed in the 'annotations' parameter to let
+     *         this function used as a filter.
+     */
+    public static Collection<FileAnnotation> intern(final Collection<FileAnnotation> annotations) {
+        TreeStringBuilder stringPool = new TreeStringBuilder();
+        for (FileAnnotation annotation : annotations) {
+            if (annotation instanceof AbstractAnnotation) {
+                AbstractAnnotation aa = (AbstractAnnotation) annotation;
+                aa.intern(stringPool);
+            }
+        }
+        stringPool.dedup();
+        return annotations;
+    }
+
     /**
      * Sets the column position of this warning.
      *
@@ -450,7 +472,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
                 return false;
             }
         }
-        else if (!fileName.equals(other.fileName)) {
+        else if (!fileName.toString().equals(other.fileName.toString())) {
             return false;
         }
         if (lineRanges == null) {
@@ -466,7 +488,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
                 return false;
             }
         }
-        else if (!message.equals(other.message)) {
+        else if (!message.toString().equals(other.message.toString())) {
             return false;
         }
         if (moduleName == null) {
@@ -474,7 +496,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
                 return false;
             }
         }
-        else if (!moduleName.equals(other.moduleName)) {
+        else if (!moduleName.toString().equals(other.moduleName.toString())) {
             return false;
         }
         if (packageName == null) {
@@ -482,7 +504,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
                 return false;
             }
         }
-        else if (!packageName.equals(other.packageName)) {
+        else if (!packageName.toString().equals(other.packageName.toString())) {
             return false;
         }
         if (primaryLineNumber != other.primaryLineNumber) {
