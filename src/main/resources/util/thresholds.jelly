@@ -1,8 +1,8 @@
 <?jelly escape-by-default='true'?>
-<!-- 
-  Section header 
-  
-  <%@attribute name="id" required="true" %> 
+<!--
+  Section header
+
+  <%@attribute name="id" required="true" %>
 -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
@@ -133,6 +133,10 @@
         <f:entry title="${%Use delta for new warnings}"
           description="${%description.useDeltaValues}">
           <f:checkbox name="useDeltaValues" checked="${instance.useDeltaValues}" />
+        </f:entry>
+        <f:entry title="${%Only use stable builds as reference}"
+          description="${%description.onlyUseStableBuildsAsReference}">
+          <f:checkbox name="useStableBuildAsReference" checked="${instance.useStableBuildAsReference}" />
         </f:entry>
       </f:optionalBlock>
     </table>
