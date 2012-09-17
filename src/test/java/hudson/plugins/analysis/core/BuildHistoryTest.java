@@ -187,6 +187,52 @@ public class BuildHistoryTest {
         assertSame("Build has wrong reference result", used, history.getReferenceAnnotations());
     }
 
+    /**
+     * Verifies that the previous build is used as reference build when it's unstable
+     * and history is NOT configured to use only stable builds as reference builds.
+     * @throws Exception
+     */
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testUsesUnstableBuildAsReferenceBuildWhenConfigured() throws Exception {
+        AbstractBuild unstableBuild = mockBuild(Result.UNSTABLE);
+        AbstractBuild stableBuild = mockBuild(Result.SUCCESS);
+        AbstractBuild baseline = mockBuild();
+
+        when(baseline.getPreviousBuild()).thenReturn(unstableBuild);
+        when(unstableBuild.getPreviousBuild()).thenReturn(stableBuild);
+
+        createSuccessfulResult(unstableBuild);
+        createSuccessfulResult(stableBuild);
+
+        BuildHistory history = createHistory(baseline);
+
+        assertSame("Unstable build is not reference build", unstableBuild, history.getReferenceBuild());
+    }
+
+    /**
+     * Verifies that the most recent STABLE build is used as reference build when the previous
+     * build is unstable and history IS configured to use only stable builds as reference builds.
+     * @throws Exception
+     */
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testUsesStableBuildAsReferenceBuildWhenConfigured() throws Exception {
+        AbstractBuild unstableBuild = mockBuild(Result.UNSTABLE);
+        AbstractBuild stableBuild = mockBuild(Result.SUCCESS);
+        AbstractBuild baseline = mockBuild();
+
+        when(baseline.getPreviousBuild()).thenReturn(unstableBuild);
+        when(unstableBuild.getPreviousBuild()).thenReturn(stableBuild);
+
+        createSuccessfulResult(unstableBuild);
+        createSuccessfulResult(stableBuild);
+
+        BuildHistory history = createStableBuildReferenceHistory(baseline);
+
+        assertSame("Stable build is not reference build", stableBuild, history.getReferenceBuild());
+    }
+
     @SuppressWarnings("rawtypes")
     private BuildResult createFailureResult(final AbstractBuild withFailureResult) {
         TestResultAction failureAction = mockAction(withFailureResult);
@@ -224,7 +270,11 @@ public class BuildHistoryTest {
      * @return the build history under test
      */
     private BuildHistory createHistory(final AbstractBuild<?, ?> baseline) {
-        return new BuildHistory(baseline, TestResultAction.class);
+        return new BuildHistory(baseline, TestResultAction.class, false);
+    }
+
+    private BuildHistory createStableBuildReferenceHistory(final AbstractBuild<?, ?> baseline) {
+        return new BuildHistory(baseline, TestResultAction.class, true);
     }
 
     /**
