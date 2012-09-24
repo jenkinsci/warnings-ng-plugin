@@ -223,7 +223,17 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the history
      */
     protected BuildHistory createHistory(final AbstractBuild<?, ?> build) {
-        return new BuildHistory(build, getResultActionType());
+        return new BuildHistory(build, getResultActionType(), false);
+    }
+
+    /**
+     * Determines whether only stable builds should be used as reference builds
+     * or not.
+     *
+     * @return <code>true</code> if only stable builds should be used
+     */
+    public boolean useOnlyStableBuildsAsReference() {
+        return history.useOnlyStableBuildsAsReference();
     }
 
     /**

@@ -26,7 +26,7 @@ public class BuildHistory {
     private final AbstractBuild<?, ?> baseline;
     /** Type of the action that contains the build results. */
     private final Class<? extends ResultAction<? extends BuildResult>> type;
-    /** Determines whether only stable builds should be used as reference builds or not */
+    /** Determines whether only stable builds should be used as reference builds or not. */
     private final boolean useStableBuildAsReference;
 
     /**
@@ -49,16 +49,13 @@ public class BuildHistory {
     }
 
     /**
-     * Creates a new instance of {@link BuildHistory}.
+     * Determines whether only stable builds should be used as reference builds
+     * or not.
      *
-     * @param baseline
-     *            the build to start the history from
-     * @param type
-     *            type of the action that contains the build results
+     * @return <code>true</code> if only stable builds should be used
      */
-    @Deprecated
-    public BuildHistory(final AbstractBuild<?, ?> baseline, final Class<? extends ResultAction<? extends BuildResult>> type) {
-        this(baseline, type, false);
+    public boolean useOnlyStableBuildsAsReference() {
+        return useStableBuildAsReference;
     }
 
     /**
@@ -284,6 +281,20 @@ public class BuildHistory {
      */
     public AbstractHealthDescriptor getHealthDescriptor() {
         return getBaseline().getHealthDescriptor();
+    }
+
+    /**
+     * Creates a new instance of {@link BuildHistory}.
+     *
+     * @param baseline
+     *            the build to start the history from
+     * @param type
+     *            type of the action that contains the build results
+     * @deprecated use {@link #BuildHistory(AbstractBuild, Class, boolean)}
+     */
+    @Deprecated
+    public BuildHistory(final AbstractBuild<?, ?> baseline, final Class<? extends ResultAction<? extends BuildResult>> type) {
+        this(baseline, type, false);
     }
 }
 

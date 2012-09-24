@@ -50,8 +50,7 @@ import hudson.tasks.Maven;
  */
 // CHECKSTYLE:COUPLING-OFF
 @SuppressWarnings("PMD.TooManyFields")
-public abstract class HealthAwareRecorder extends Recorder implements HealthDescriptor,
-        MatrixAggregatable {
+public abstract class HealthAwareRecorder extends Recorder implements HealthDescriptor, MatrixAggregatable {
     private static final String SLASH = "/";
 
     /** Default threshold priority limit. */
@@ -73,7 +72,13 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @since 1.6
      */
     private final boolean canRunOnFailed;
-
+    /**
+     * Determines whether only stable builds should be used as reference builds
+     * or not.
+     *
+     * @since 1.48
+     */
+    private final boolean useStableBuildAsReference;
     /**
      * Determines whether the absolute annotations delta or the actual
      * annotations set difference should be used to evaluate the build
@@ -164,6 +169,9 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      *            annotation threshold
      * @param canRunOnFailed
      *            determines whether the plug-in can run for failed builds, too
+     * @param useStableBuildAsReference
+     *            determines whether only stable builds should be used as
+     *            reference builds or not
      * @param shouldDetectModules
      *            determines whether module names should be derived from Maven
      *            POM or Ant build files
@@ -188,9 +196,9 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
             final String unstableNewLow, final String failedTotalAll, final String failedTotalHigh,
             final String failedTotalNormal, final String failedTotalLow, final String failedNewAll,
             final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
-            final boolean canRunOnFailed, final boolean shouldDetectModules,
-            final boolean canComputeNew, final boolean canResolveRelativePaths,
-            final String pluginName) {
+            final boolean canRunOnFailed, final boolean useStableBuildAsReference,
+            final boolean shouldDetectModules, final boolean canComputeNew,
+            final boolean canResolveRelativePaths, final String pluginName) {
         super();
         this.healthy = healthy;
         this.unHealthy = unHealthy;
@@ -219,9 +227,11 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.failedNewLow = failedNewLow;
 
         this.canRunOnFailed = canRunOnFailed;
+        this.useStableBuildAsReference = useStableBuildAsReference;
         this.shouldDetectModules = shouldDetectModules;
         this.pluginName = "[" + pluginName + "] ";
     }
+
     // CHECKSTYLE:ON
 
     /**
@@ -246,6 +256,36 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      */
     public boolean canResolveRelativePaths() {
         return getCanResolveRelativePaths();
+    }
+
+    /**
+     * Returns whether there is a health threshold enabled.
+     *
+     * @return <code>true</code> if at least one threshold is enabled,
+     *         <code>false</code> otherwise
+     */
+    protected boolean isThresholdEnabled() {
+        return new NullHealthDescriptor(this).isThresholdEnabled();
+    }
+
+    /**
+     * Determines whether only stable builds should be used as reference builds
+     * or not.
+     *
+     * @return <code>true</code> if only stable builds should be used
+     */
+    public boolean getUseStableBuildAsReference() {
+        return useStableBuildAsReference;
+    }
+
+    /**
+     * Determines whether only stable builds should be used as reference builds
+     * or not.
+     *
+     * @return <code>true</code> if only stable builds should be used
+     */
+    public boolean useOnlyStableBuildsAsReference() {
+        return getUseStableBuildAsReference();
     }
 
     /**
@@ -311,8 +351,8 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @throws InterruptedException
      *             if the user canceled the build
      */
-    protected abstract boolean perform(AbstractBuild<?, ?> build, Launcher launcher, PluginLogger logger)
-            throws InterruptedException, IOException;
+    protected abstract boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
+            PluginLogger logger) throws InterruptedException, IOException;
 
     @Override
     public PluginDescriptor getDescriptor() {
@@ -587,16 +627,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         return canComputeNew() ? BuildStepMonitor.STEP : BuildStepMonitor.NONE;
     }
 
-    /**
-     * Returns whether there is a health threshold enabled.
-     *
-     * @return <code>true</code> if at least one threshold is enabled,
-     *         <code>false</code> otherwise
-     */
-    protected boolean isThresholdEnabled() {
-        return new NullHealthDescriptor(this).isThresholdEnabled();
-    }
-
     // CHECKSTYLE:OFF
     /** Backward compatibility. @deprecated */
     @Deprecated
@@ -635,6 +665,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     @Deprecated
     private transient String height;
 
+    /** Backward compatibility. @deprecated */
     @SuppressWarnings({"PMD","javadoc"})
     @Deprecated
     public HealthAwareRecorder(final String threshold, final String newThreshold,
@@ -655,8 +686,33 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         this.defaultEncoding = defaultEncoding;
         this.useDeltaValues = useDeltaValues;
         this.canRunOnFailed = canRunOnFailed;
+        useStableBuildAsReference = false;
         dontComputeNew = false;
         shouldDetectModules = false;
         this.pluginName = "[" + pluginName + "] ";
     }
+
+    /** Backward compatibility. @deprecated */
+    @SuppressWarnings({"PMD","javadoc"})
+    @Deprecated
+    public HealthAwareRecorder(final String healthy, final String unHealthy,
+            final String thresholdLimit, final String defaultEncoding,
+            final boolean useDeltaValues, final String unstableTotalAll,
+            final String unstableTotalHigh, final String unstableTotalNormal,
+            final String unstableTotalLow, final String unstableNewAll,
+            final String unstableNewHigh, final String unstableNewNormal,
+            final String unstableNewLow, final String failedTotalAll, final String failedTotalHigh,
+            final String failedTotalNormal, final String failedTotalLow, final String failedNewAll,
+            final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
+            final boolean canRunOnFailed,
+            final boolean shouldDetectModules, final boolean canComputeNew,
+            final boolean canResolveRelativePaths, final String pluginName) {
+        this(healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues,
+                unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
+                unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow,
+                failedTotalAll, failedTotalHigh, failedTotalNormal, failedTotalLow,
+                failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
+                canRunOnFailed, false, shouldDetectModules, canComputeNew, canResolveRelativePaths, pluginName);
+    }
+    // CHECKSTYLE:OFF
 }

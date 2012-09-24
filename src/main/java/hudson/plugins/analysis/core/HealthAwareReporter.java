@@ -93,9 +93,9 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      */
     private final boolean dontComputeNew;
     /**
-     * Determines whether only stable builds should be used as reference builds or not
+     * Determines whether only stable builds should be used as reference builds or not.
      *
-     * @since 1.47
+     * @since 1.48
      */
     private final boolean useStableBuildAsReference;
 
@@ -197,99 +197,6 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
     }
     // CHECKSTYLE:ON
 
-    /**
-     * Creates a new instance of <code>HealthReportingMavenReporter</code>.
-     *
-     * @param healthy
-     *            Report health as 100% when the number of warnings is less than
-     *            this value
-     * @param unHealthy
-     *            Report health as 0% when the number of warnings is greater
-     *            than this value
-     * @param thresholdLimit
-     *            determines which warning priorities should be considered when
-     *            evaluating the build stability and health
-     * @param useDeltaValues
-     *            determines whether the absolute annotations delta or the
-     *            actual annotations set difference should be used to evaluate
-     *            the build stability
-     * @param unstableTotalAll
-     *            annotation threshold
-     * @param unstableTotalHigh
-     *            annotation threshold
-     * @param unstableTotalNormal
-     *            annotation threshold
-     * @param unstableTotalLow
-     *            annotation threshold
-     * @param unstableNewAll
-     *            annotation threshold
-     * @param unstableNewHigh
-     *            annotation threshold
-     * @param unstableNewNormal
-     *            annotation threshold
-     * @param unstableNewLow
-     *            annotation threshold
-     * @param failedTotalAll
-     *            annotation threshold
-     * @param failedTotalHigh
-     *            annotation threshold
-     * @param failedTotalNormal
-     *            annotation threshold
-     * @param failedTotalLow
-     *            annotation threshold
-     * @param failedNewAll
-     *            annotation threshold
-     * @param failedNewHigh
-     *            annotation threshold
-     * @param failedNewNormal
-     *            annotation threshold
-     * @param failedNewLow
-     *            annotation threshold
-     * @param canRunOnFailed
-     *            determines whether the plug-in can run for failed builds, too
-     * @param canComputeNew
-     *            determines whether new warnings should be computed (with respect to baseline)
-     * @param pluginName
-     *            the name of the plug-in
-     */
-    // CHECKSTYLE:OFF
-    @SuppressWarnings("PMD.ExcessiveParameterList")
-    @Deprecated
-    public HealthAwareReporter(final String healthy, final String unHealthy, final String thresholdLimit, final boolean useDeltaValues,
-            final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
-            final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,
-            final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
-            final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
-            final boolean canRunOnFailed, final boolean canComputeNew,
-            final String pluginName) {
-        this(healthy, unHealthy, thresholdLimit, useDeltaValues,
-                unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
-                unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow,
-                failedTotalAll, failedTotalHigh, failedTotalNormal, failedTotalLow,
-                failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
-                canRunOnFailed, false, canComputeNew,
-                pluginName);
-    }
-    // CHECKSTYLE:ON
-
-
-    // CHECKSTYLE:OFF
-    @SuppressWarnings({"PMD.ExcessiveParameterList","javadoc"})
-    @Deprecated
-    public HealthAwareReporter(final String healthy, final String unHealthy, final String thresholdLimit, final boolean useDeltaValues,
-            final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
-            final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,
-            final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
-            final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
-            final boolean canRunOnFailed, final String pluginName) {
-        this(healthy, unHealthy, thresholdLimit, useDeltaValues,
-                unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
-                unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow,
-                failedTotalAll, failedTotalHigh, failedTotalNormal, failedTotalLow,
-                failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
-                canRunOnFailed, true, pluginName);
-    }
-    // CHECKSTYLE:ON
 
     /**
      * Returns whether new warnings should be computed (with respect to
@@ -326,12 +233,22 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
     }
 
     /**
-     * Determines whether only stable builds should be used as reference builds or not
+     * Determines whether only stable builds should be used as reference builds or not.
      *
      * @return <code>true</code> if only stable builds should be used
      */
     public boolean getUseStableBuildAsReference() {
         return useStableBuildAsReference;
+    }
+
+    /**
+     * Determines whether only stable builds should be used as reference builds
+     * or not.
+     *
+     * @return <code>true</code> if only stable builds should be used
+     */
+    public boolean useOnlyStableBuildsAsReference() {
+        return getUseStableBuildAsReference();
     }
 
     /** {@inheritDoc} */
@@ -754,5 +671,41 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
     /** Backward compatibility. @deprecated */
     @Deprecated
     private transient String newThreshold;
+    // CHECKSTYLE:OFF
+    /** Backward compatibility. @deprecated */
+    @SuppressWarnings({"PMD.ExcessiveParameterList","javadoc"})
+    @Deprecated
+    public HealthAwareReporter(final String healthy, final String unHealthy, final String thresholdLimit, final boolean useDeltaValues,
+            final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
+            final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,
+            final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
+            final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
+            final boolean canRunOnFailed, final boolean canComputeNew,
+            final String pluginName) {
+        this(healthy, unHealthy, thresholdLimit, useDeltaValues,
+                unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
+                unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow,
+                failedTotalAll, failedTotalHigh, failedTotalNormal, failedTotalLow,
+                failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
+                canRunOnFailed, false, canComputeNew,
+                pluginName);
+    }
+    /** Backward compatibility. @deprecated */
+    @SuppressWarnings({"PMD.ExcessiveParameterList","javadoc"})
+    @Deprecated
+    public HealthAwareReporter(final String healthy, final String unHealthy, final String thresholdLimit, final boolean useDeltaValues,
+            final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
+            final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,
+            final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
+            final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
+            final boolean canRunOnFailed, final String pluginName) {
+        this(healthy, unHealthy, thresholdLimit, useDeltaValues,
+                unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
+                unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow,
+                failedTotalAll, failedTotalHigh, failedTotalNormal, failedTotalLow,
+                failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
+                canRunOnFailed, true, pluginName);
+    }
+    // CHECKSTYLE:ON
 }
 

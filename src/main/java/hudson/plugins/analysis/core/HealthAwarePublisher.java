@@ -27,9 +27,6 @@ import hudson.tasks.BuildStep;
  */
 // CHECKSTYLE:OFF
 public abstract class HealthAwarePublisher extends HealthAwareRecorder {
-
-    private final boolean useStableBuildAsReference;
-
     /**
      * Creates a new instance of {@link HealthAwarePublisher}.
      *
@@ -97,7 +94,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
      *            workspace for matching files.
      * @param pluginName
      *            the name of the plug-in
-     * @since 1.47
+     * @since 1.48
      */
     @SuppressWarnings("PMD")
     public HealthAwarePublisher(final String healthy, final String unHealthy,
@@ -116,177 +113,8 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
                 unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
                 unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow, failedTotalAll,
                 failedTotalHigh, failedTotalNormal, failedTotalLow, failedNewAll, failedNewHigh,
-                failedNewNormal, failedNewLow, canRunOnFailed,
+                failedNewNormal, failedNewLow, canRunOnFailed, useStableBuildAsReference,
                 shouldDetectModules, canComputeNew, canResolveRelativePaths, pluginName);
-        this.useStableBuildAsReference = useStableBuildAsReference;
-
-    }
-
-    /**
-     * Creates a new instance of {@link HealthAwarePublisher}.
-     *
-     * @param healthy
-     *            Report health as 100% when the number of open tasks is less
-     *            than this value
-     * @param unHealthy
-     *            Report health as 0% when the number of open tasks is greater
-     *            than this value
-     * @param thresholdLimit
-     *            determines which warning priorities should be considered when
-     *            evaluating the build stability and health
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param useDeltaValues
-     *            determines whether the absolute annotations delta or the
-     *            actual annotations set difference should be used to evaluate
-     *            the build stability
-     * @param unstableTotalAll
-     *            annotation threshold
-     * @param unstableTotalHigh
-     *            annotation threshold
-     * @param unstableTotalNormal
-     *            annotation threshold
-     * @param unstableTotalLow
-     *            annotation threshold
-     * @param unstableNewAll
-     *            annotation threshold
-     * @param unstableNewHigh
-     *            annotation threshold
-     * @param unstableNewNormal
-     *            annotation threshold
-     * @param unstableNewLow
-     *            annotation threshold
-     * @param failedTotalAll
-     *            annotation threshold
-     * @param failedTotalHigh
-     *            annotation threshold
-     * @param failedTotalNormal
-     *            annotation threshold
-     * @param failedTotalLow
-     *            annotation threshold
-     * @param failedNewAll
-     *            annotation threshold
-     * @param failedNewHigh
-     *            annotation threshold
-     * @param failedNewNormal
-     *            annotation threshold
-     * @param failedNewLow
-     *            annotation threshold
-     * @param canRunOnFailed
-     *            determines whether the plug-in can run for failed builds, too
-     * @param shouldDetectModules
-     *            determines whether module names should be derived from Maven
-     *            POM or Ant build files
-     * @param canComputeNew
-     *            determines whether new warnings should be computed (with
-     *            respect to baseline)
-     * @param canResolveRelativePaths
-     *            determines whether relative paths in warnings should be
-     *            resolved using a time expensive operation that scans the whole
-     *            workspace for matching files.
-     * @param pluginName
-     *            the name of the plug-in
-     */
-    @SuppressWarnings("PMD")
-    public HealthAwarePublisher(final String healthy, final String unHealthy,
-            final String thresholdLimit, final String defaultEncoding,
-            final boolean useDeltaValues, final String unstableTotalAll,
-            final String unstableTotalHigh, final String unstableTotalNormal,
-            final String unstableTotalLow, final String unstableNewAll,
-            final String unstableNewHigh, final String unstableNewNormal,
-            final String unstableNewLow, final String failedTotalAll, final String failedTotalHigh,
-            final String failedTotalNormal, final String failedTotalLow, final String failedNewAll,
-            final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
-            final boolean canRunOnFailed, final boolean shouldDetectModules,
-            final boolean canComputeNew, final boolean canResolveRelativePaths,
-            final String pluginName) {
-        this(healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues,
-                unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
-                unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow, failedTotalAll,
-                failedTotalHigh, failedTotalNormal, failedTotalLow, failedNewAll, failedNewHigh,
-                failedNewNormal, failedNewLow, canRunOnFailed, false, shouldDetectModules, canComputeNew,
-                canResolveRelativePaths, pluginName);
-    }
-
-    /**
-     * Creates a new instance of {@link HealthAwarePublisher}.
-     *
-     * @param healthy
-     *            Report health as 100% when the number of open tasks is less
-     *            than this value
-     * @param unHealthy
-     *            Report health as 0% when the number of open tasks is greater
-     *            than this value
-     * @param thresholdLimit
-     *            determines which warning priorities should be considered when
-     *            evaluating the build stability and health
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param useDeltaValues
-     *            determines whether the absolute annotations delta or the
-     *            actual annotations set difference should be used to evaluate
-     *            the build stability
-     * @param unstableTotalAll
-     *            annotation threshold
-     * @param unstableTotalHigh
-     *            annotation threshold
-     * @param unstableTotalNormal
-     *            annotation threshold
-     * @param unstableTotalLow
-     *            annotation threshold
-     * @param unstableNewAll
-     *            annotation threshold
-     * @param unstableNewHigh
-     *            annotation threshold
-     * @param unstableNewNormal
-     *            annotation threshold
-     * @param unstableNewLow
-     *            annotation threshold
-     * @param failedTotalAll
-     *            annotation threshold
-     * @param failedTotalHigh
-     *            annotation threshold
-     * @param failedTotalNormal
-     *            annotation threshold
-     * @param failedTotalLow
-     *            annotation threshold
-     * @param failedNewAll
-     *            annotation threshold
-     * @param failedNewHigh
-     *            annotation threshold
-     * @param failedNewNormal
-     *            annotation threshold
-     * @param failedNewLow
-     *            annotation threshold
-     * @param canRunOnFailed
-     *            determines whether the plug-in can run for failed builds, too
-     * @param shouldDetectModules
-     *            determines whether module names should be derived from Maven
-     *            POM or Ant build files
-     * @param canComputeNew
-     *            determines whether new warnings should be computed (with
-     *            respect to baseline)
-     * @param pluginName
-     *            the name of the plug-in
-     */
-    @SuppressWarnings("PMD")
-    public HealthAwarePublisher(final String healthy, final String unHealthy,
-            final String thresholdLimit, final String defaultEncoding,
-            final boolean useDeltaValues, final String unstableTotalAll,
-            final String unstableTotalHigh, final String unstableTotalNormal,
-            final String unstableTotalLow, final String unstableNewAll,
-            final String unstableNewHigh, final String unstableNewNormal,
-            final String unstableNewLow, final String failedTotalAll, final String failedTotalHigh,
-            final String failedTotalNormal, final String failedTotalLow, final String failedNewAll,
-            final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
-            final boolean canRunOnFailed, final boolean shouldDetectModules,
-            final boolean canComputeNew, final String pluginName) {
-        this(healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues, unstableTotalAll,
-                unstableTotalHigh, unstableTotalNormal, unstableTotalLow, unstableNewAll,
-                unstableNewHigh, unstableNewNormal, unstableNewLow, failedTotalAll,
-                failedTotalHigh, failedTotalNormal, failedTotalLow, failedNewAll, failedNewHigh,
-                failedNewNormal, failedNewLow, canRunOnFailed, shouldDetectModules, canComputeNew,
-                true, pluginName);
     }
 
     /**
@@ -316,8 +144,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
             result = perform(build, logger);
             AbstractBuild<?, ?> referenceBuild = result.getHistory().getReferenceBuild();
             if (referenceBuild != null) {
-                logger.log("Computing warning deltas based on reference build "
-                        + referenceBuild.getDisplayName());
+                logger.log("Computing warning deltas based on reference build " + referenceBuild.getDisplayName());
             }
         }
         catch (InterruptedException exception) {
@@ -346,8 +173,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
      */
     protected void updateBuildResult(final BuildResult result, final PluginLogger logger) {
         String baseUrl = getDescriptor().getPluginResultUrlName();
-        result.evaluateStatus(getThresholds(), getUseDeltaValues(), canComputeNew(), logger,
-                baseUrl);
+        result.evaluateStatus(getThresholds(), getUseDeltaValues(), canComputeNew(), logger, baseUrl);
     }
 
     /**
@@ -374,14 +200,6 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
      */
     protected abstract BuildResult perform(AbstractBuild<?, ?> build, PluginLogger logger)
             throws InterruptedException, IOException;
-
-    /**
-     * Determines whether only stable builds should be used as reference builds or not
-     * @return <code>true</code> if only stable builds should be used
-     */
-    public boolean getUseStableBuildAsReference() {
-        return useStableBuildAsReference;
-    }
 
     // CHECKSTYLE:OFF
     @Deprecated
@@ -423,7 +241,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
                 failedNewNormal, failedNewLow, canRunOnFailed, false, pluginName);
     }
 
-    @SuppressWarnings({"PMD","javadoc"})
+    @SuppressWarnings({"PMD", "javadoc", "deprecation"})
     @Deprecated
     public HealthAwarePublisher(final String threshold, final String newThreshold,
             final String failureThreshold, final String newFailureThreshold, final String healthy,
@@ -431,6 +249,48 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
             final boolean useDeltaValues, final boolean canRunOnFailed, final String pluginName) {
         super(threshold, newThreshold, failureThreshold, newFailureThreshold, healthy, unHealthy,
                 thresholdLimit, defaultEncoding, useDeltaValues, canRunOnFailed, pluginName);
-        useStableBuildAsReference = false;
+    }
+
+    @SuppressWarnings({"PMD","javadoc"})
+    @Deprecated
+    public HealthAwarePublisher(final String healthy, final String unHealthy,
+            final String thresholdLimit, final String defaultEncoding,
+            final boolean useDeltaValues, final String unstableTotalAll,
+            final String unstableTotalHigh, final String unstableTotalNormal,
+            final String unstableTotalLow, final String unstableNewAll,
+            final String unstableNewHigh, final String unstableNewNormal,
+            final String unstableNewLow, final String failedTotalAll, final String failedTotalHigh,
+            final String failedTotalNormal, final String failedTotalLow, final String failedNewAll,
+            final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
+            final boolean canRunOnFailed, final boolean shouldDetectModules,
+            final boolean canComputeNew, final boolean canResolveRelativePaths,
+            final String pluginName) {
+        this(healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues,
+                unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
+                unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow, failedTotalAll,
+                failedTotalHigh, failedTotalNormal, failedTotalLow, failedNewAll, failedNewHigh,
+                failedNewNormal, failedNewLow, canRunOnFailed, false, shouldDetectModules, canComputeNew,
+                canResolveRelativePaths, pluginName);
+    }
+
+    @SuppressWarnings({"PMD","javadoc"})
+    @Deprecated
+    public HealthAwarePublisher(final String healthy, final String unHealthy,
+            final String thresholdLimit, final String defaultEncoding,
+            final boolean useDeltaValues, final String unstableTotalAll,
+            final String unstableTotalHigh, final String unstableTotalNormal,
+            final String unstableTotalLow, final String unstableNewAll,
+            final String unstableNewHigh, final String unstableNewNormal,
+            final String unstableNewLow, final String failedTotalAll, final String failedTotalHigh,
+            final String failedTotalNormal, final String failedTotalLow, final String failedNewAll,
+            final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
+            final boolean canRunOnFailed, final boolean shouldDetectModules,
+            final boolean canComputeNew, final String pluginName) {
+        this(healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues, unstableTotalAll,
+                unstableTotalHigh, unstableTotalNormal, unstableTotalLow, unstableNewAll,
+                unstableNewHigh, unstableNewNormal, unstableNewLow, failedTotalAll,
+                failedTotalHigh, failedTotalNormal, failedTotalLow, failedNewAll, failedNewHigh,
+                failedNewNormal, failedNewLow, canRunOnFailed, shouldDetectModules, canComputeNew,
+                true, pluginName);
     }
 }

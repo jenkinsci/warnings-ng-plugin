@@ -190,11 +190,10 @@ public class BuildHistoryTest {
     /**
      * Verifies that the previous build is used as reference build when it's unstable
      * and history is NOT configured to use only stable builds as reference builds.
-     * @throws Exception
      */
     @SuppressWarnings("rawtypes")
     @Test
-    public void testUsesUnstableBuildAsReferenceBuildWhenConfigured() throws Exception {
+    public void testUsesUnstableBuildAsReferenceBuildWhenConfigured() {
         AbstractBuild unstableBuild = mockBuild(Result.UNSTABLE);
         AbstractBuild stableBuild = mockBuild(Result.SUCCESS);
         AbstractBuild baseline = mockBuild();
@@ -213,11 +212,10 @@ public class BuildHistoryTest {
     /**
      * Verifies that the most recent STABLE build is used as reference build when the previous
      * build is unstable and history IS configured to use only stable builds as reference builds.
-     * @throws Exception
      */
     @SuppressWarnings("rawtypes")
     @Test
-    public void testUsesStableBuildAsReferenceBuildWhenConfigured() throws Exception {
+    public void testUsesStableBuildAsReferenceBuildWhenConfigured() {
         AbstractBuild unstableBuild = mockBuild(Result.UNSTABLE);
         AbstractBuild stableBuild = mockBuild(Result.SUCCESS);
         AbstractBuild baseline = mockBuild();

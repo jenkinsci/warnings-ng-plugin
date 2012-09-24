@@ -22,7 +22,7 @@ public class NullBuildHistory extends BuildHistory {
      * Creates a new instance of {@link NullBuildHistory}.
      */
     public NullBuildHistory() {
-        super(null, null);
+        super(null, null, false);
     }
 
     @Override

@@ -22,7 +22,13 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
     private final ParserResult totals = new ParserResult();
     private final HealthDescriptor healthDescriptor;
     private final String defaultEncoding;
-
+    /**
+     * Determines whether only stable builds should be used as reference builds
+     * or not.
+     *
+     * @since 1.48
+     */
+    private final boolean useStableBuildAsReference;
     /**
      * Creates a new instance of {@link AnnotationsAggregator}.
      *
@@ -36,13 +42,17 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
      *            health descriptor
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
+     * @param useStableBuildAsReference
+     *            determines whether only stable builds should be used as
+     *            reference builds or not
      */
     public AnnotationsAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener,
-            final HealthDescriptor healthDescriptor, final String defaultEncoding) {
+            final HealthDescriptor healthDescriptor, final String defaultEncoding, final boolean useStableBuildAsReference) {
         super(build, launcher, listener);
 
         this.healthDescriptor = healthDescriptor;
         this.defaultEncoding = defaultEncoding;
+        this.useStableBuildAsReference = useStableBuildAsReference;
     }
 
     @Override
@@ -76,6 +86,16 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
     }
 
     /**
+     * Determines whether only stable builds should be used as reference builds
+     * or not.
+     *
+     * @return <code>true</code> if only stable builds should be used
+     */
+    public boolean useOnlyStableBuildsAsReference() {
+        return useStableBuildAsReference;
+    }
+
+    /**
      * Returns the annotations of the specified run.
      *
      * @param run
@@ -99,5 +119,26 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
      */
     @SuppressWarnings("hiding")
     protected abstract Action createAction(HealthDescriptor healthDescriptor, String defaultEncoding, ParserResult aggregatedResult);
+
+    /**
+     * Creates a new instance of {@link AnnotationsAggregator}.
+     *
+     * @param build
+     *            the matrix build
+     * @param launcher
+     *            the launcher
+     * @param listener
+     *            the build listener
+     * @param healthDescriptor
+     *            health descriptor
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     *            @deprecated use {@link #AnnotationsAggregator(MatrixBuild, Launcher, BuildListener, HealthDescriptor, String, boolean)}
+     */
+    @Deprecated
+    public AnnotationsAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener,
+            final HealthDescriptor healthDescriptor, final String defaultEncoding) {
+        this(build, launcher, listener, healthDescriptor, defaultEncoding, false);
+    }
 }
 

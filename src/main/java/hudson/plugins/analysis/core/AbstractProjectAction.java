@@ -280,7 +280,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
             return new NullBuildHistory();
         }
         else {
-            return new BuildHistory(lastFinishedBuild, resultActionType);
+            return new BuildHistory(lastFinishedBuild, resultActionType, false);
         }
     }
 
