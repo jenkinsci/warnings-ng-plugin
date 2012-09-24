@@ -110,7 +110,7 @@ public class EncodingValidator implements Validator {
      */
     public FormValidation check(final String encoding) throws FormValidation {
         try {
-            if (StringUtils.isBlank(encoding) || Charset.forName(encoding) != null) {
+            if (StringUtils.isBlank(encoding) || Charset.forName(encoding).canEncode()) {
                 return FormValidation.ok();
             }
         }
