@@ -82,14 +82,13 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
      * Creates a new build result that contains the aggregated results.
      *
      * @param existingResult
-     *            an already existing result, might be <code>null</code> for the
-     *            first aggregation
+     *            the already existing result
      * @param additionalResult
      *            the additional result to be aggregated with the existing
      *            result
      * @return the created result
      */
-    protected abstract T createResult(@CheckForNull T existingResult, T additionalResult);
+    protected abstract T createResult(T existingResult, T additionalResult);
 
     /**
      * Called whenever a new module build is completed, to update the aggregated

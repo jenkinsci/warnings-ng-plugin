@@ -55,19 +55,6 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     }
 
     /**
-     * Creates a new instance of <code>AbstractResultAction</code>.
-     *
-     * @param owner
-     *            the associated build of this action
-     * @param healthDescriptor
-     *            health descriptor
-     */
-    public AbstractResultAction(final AbstractBuild<?, ?> owner, final AbstractHealthDescriptor healthDescriptor) {
-        this.owner = owner;
-        this.healthDescriptor = healthDescriptor;
-    }
-
-    /**
      * Returns the healthDescriptor.
      *
      * @return the healthDescriptor
@@ -267,6 +254,23 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     @Deprecated
     protected void addModule(final ParserResult aggregatedResult, final List<MavenBuild> builds) {
         // does nothing
+    }
+
+    /**
+     * Creates a new instance of <code>AbstractResultAction</code>.
+     *
+     * @param owner
+     *            the associated build of this action
+     * @param healthDescriptor
+     *            health descriptor
+     * @deprecated use
+     *             {@link #AbstractResultAction(AbstractBuild, AbstractHealthDescriptor, BuildResult)}
+     *             so that every action will have a result that is not null
+     */
+    @Deprecated
+    public AbstractResultAction(final AbstractBuild<?, ?> owner, final AbstractHealthDescriptor healthDescriptor) {
+        this.owner = owner;
+        this.healthDescriptor = healthDescriptor;
     }
 
     /** Backward compatibility. @deprecated */
