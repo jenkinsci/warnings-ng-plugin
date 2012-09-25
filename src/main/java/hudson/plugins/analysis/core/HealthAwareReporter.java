@@ -168,7 +168,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         super();
         this.healthy = healthy;
         this.unHealthy = unHealthy;
-        this.thresholdLimit = thresholdLimit;
+        this.thresholdLimit = StringUtils.defaultIfEmpty(thresholdLimit, DEFAULT_PRIORITY_THRESHOLD_LIMIT);
         this.canRunOnFailed = canRunOnFailed;
         this.useStableBuildAsReference = useStableBuildAsReference;
         this.dontComputeNew = !canComputeNew;

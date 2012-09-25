@@ -202,7 +202,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         super();
         this.healthy = healthy;
         this.unHealthy = unHealthy;
-        this.thresholdLimit = thresholdLimit;
+        this.thresholdLimit = StringUtils.defaultIfEmpty(thresholdLimit, DEFAULT_PRIORITY_THRESHOLD_LIMIT);
         this.defaultEncoding = defaultEncoding;
         this.useDeltaValues = useDeltaValues;
 
