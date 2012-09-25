@@ -491,20 +491,10 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         else if (!message.toString().equals(other.message.toString())) {
             return false;
         }
-        if (moduleName == null) {
-            if (other.moduleName != null) {
-                return false;
-            }
-        }
-        else if (!moduleName.toString().equals(other.moduleName.toString())) {
+        if (!getModuleName().equals(other.getModuleName())) {
             return false;
         }
-        if (packageName == null) {
-            if (other.packageName != null) {
-                return false;
-            }
-        }
-        else if (!packageName.toString().equals(other.packageName.toString())) {
+        if (!getPackageName().equals(other.getPackageName())) {
             return false;
         }
         if (primaryLineNumber != other.primaryLineNumber) {
