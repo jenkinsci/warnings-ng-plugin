@@ -2,6 +2,7 @@ package hudson.plugins.warnings.parser;
 
 import static org.junit.Assert.*;
 import hudson.plugins.analysis.core.AnnotationDifferencer;
+import hudson.plugins.analysis.util.TreeString;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 import java.util.HashSet;
@@ -21,11 +22,11 @@ public class WarningTest {
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-14821">Issue 14821</a>
      */
     @Test
-    public void testEquals() {
-        Warning expected = new Warning("filename", 0, "type", "category", "message");
+    public void testEqualsIssue14821() {
+        Warning expected = createWarning();
         expected.setContextHashCode(1);
 
-        Warning actual = new Warning("filename", 0, "type", "category", "message");
+        Warning actual = createWarning();
         expected.setContextHashCode(2);
 
         assertEquals("The objects are not the same", expected, actual);
@@ -38,6 +39,27 @@ public class WarningTest {
 
         Set<FileAnnotation> annotations = AnnotationDifferencer.getNewAnnotations(current, reference);
         assertTrue("There are new warnings", annotations.isEmpty());
+    }
+
+    /**
+     * Verifies that we correctly handle <code>null</code> values in {@link TreeString} instances.
+     *
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-15250">Issue 15250</a>
+     */
+    @Test
+    public void testEqualsIssue15250() {
+        Warning first = createWarning();
+        Warning second = createWarning();
+
+        assertEquals("The objects are not the same", first, second);
+        first.setPackageName("something");
+        assertFalse("The objects are the same", first.equals(second));
+        first.setModuleName("something");
+        assertFalse("The objects are the same", first.equals(second));
+    }
+
+    private Warning createWarning() {
+        return new Warning("filename", 0, "type", "category", "message");
     }
 }
 
