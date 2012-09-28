@@ -165,7 +165,7 @@
         .yui-skin-sam .yui-navset .yui-nav a:focus {
             background:#b0b0b0; /* selected tab background */
             outline:0;
-		border-bottom: 1px solid #b0b0b0;
+            border-bottom: 1px solid #b0b0b0;
         }
 
         .yui-skin-sam .yui-navset .yui-nav .selected a em {
