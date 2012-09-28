@@ -1,39 +1,38 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:u="/util" xmlns:w="/warnings">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+  xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:u="/util" xmlns:w="/warnings">
 
-  <j:invokeStatic var="allParsers" className="hudson.plugins.warnings.parser.ParserRegistry" method="getAvailableParsers"/>
-  
+  <j:invokeStatic var="allParsers" className="hudson.plugins.warnings.parser.ParserRegistry"
+    method="getAvailableParsers" />
+
   <f:entry title="${%Scan console log}" description="${%description.consoleLogParsers}">
-    <f:repeatableProperty field="consoleParsers"/>
+    <f:repeatableProperty field="consoleParsers" />
   </f:entry>
-  
+
   <f:entry title="${%Scan workspace files}" description="${%description.logFilesParsers}">
-    <f:repeatableProperty field="parserConfigurations"/>
+    <f:repeatableProperty field="parserConfigurations" />
   </f:entry>
 
   <f:advanced>
-    <f:entry title="${%Warnings to include}" field="includePattern"
-       description="${%description.includePattern}">
-      <f:textbox/>
+    <f:entry title="${%Warnings to include}" field="includePattern" description="${%description.includePattern}">
+      <f:textbox />
     </f:entry>
-    <f:entry title="${%Warnings to ignore}" field="excludePattern"
-       description="${%description.excludePattern}">
-      <f:textbox/>
+    <f:entry title="${%Warnings to ignore}" field="excludePattern" description="${%description.excludePattern}">
+      <f:textbox />
     </f:entry>
 
-    <u:failed/>
+    <u:failed />
 
     <f:entry title="${%Detect modules}" description="${%description.detectModules}">
-      <f:checkbox name="shouldDetectModules" checked="${instance.shouldDetectModules}"/>
+      <f:checkbox name="shouldDetectModules" checked="${instance.shouldDetectModules}" />
     </f:entry>
     <f:entry title="${%Resolve relative paths}" description="${%description.resolveRelativePaths}">
-      <f:checkbox name="canResolveRelativePaths" checked="${instance.canResolveRelativePaths}"/>
+      <f:checkbox name="canResolveRelativePaths" checked="${instance.canResolveRelativePaths}" />
     </f:entry>
 
-    <u:health id="warnings"/>
-    <u:thresholds id="warnings"/>
-    <u:defaultEncoding id="warnings"/>
+    <u:health id="warnings" />
+    <u:thresholds id="warnings" />
+    <u:defaultEncoding id="warnings" />
     <f:entry title="${%Trend graph}">
       <a href="descriptorByName/WarningsPublisher/configureDefaults">${%configure}</a>
     </f:entry>

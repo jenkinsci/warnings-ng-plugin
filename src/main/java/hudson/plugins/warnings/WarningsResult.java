@@ -47,8 +47,8 @@ public class WarningsResult extends BuildResult {
     }
 
     WarningsResult(final AbstractBuild<?, ?> build, final BuildHistory history,
-            final ParserResult result, final String defaultEncoding, final String group,
-            final boolean canSerialize) {
+            final ParserResult result, final String defaultEncoding,
+            final String group, final boolean canSerialize) {
         super(build, history, result, defaultEncoding);
 
         this.group = group;
@@ -59,7 +59,7 @@ public class WarningsResult extends BuildResult {
 
     @Override
     protected BuildHistory createHistory(final AbstractBuild<?, ?> build) {
-        return new WarningsBuildHistory(build, group);
+        return new WarningsBuildHistory(build, group, false);
     }
 
     @Override

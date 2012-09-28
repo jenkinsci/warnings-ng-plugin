@@ -105,7 +105,7 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
     }
 
     private WarningsBuildHistory createHistory(final AbstractBuild<?, ?> build) {
-        return new WarningsBuildHistory(build, parser);
+        return new WarningsBuildHistory(build, parser, false);
     }
 }
 

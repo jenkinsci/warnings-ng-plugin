@@ -22,9 +22,13 @@ public class WarningsBuildHistory extends BuildHistory {
      *            the last finished build
      * @param group
      *            the parser group
+     * @param useStableBuildAsReference
+     *            determines whether only stable builds should be used as
+     *            reference builds or not
      */
-    public WarningsBuildHistory(final AbstractBuild<?, ?> lastFinishedBuild, @CheckForNull final String group) {
-        super(lastFinishedBuild, WarningsResultAction.class);
+    public WarningsBuildHistory(final AbstractBuild<?, ?> lastFinishedBuild, @CheckForNull final String group,
+            final boolean useStableBuildAsReference) {
+        super(lastFinishedBuild, WarningsResultAction.class, useStableBuildAsReference);
 
         this.group = group;
     }

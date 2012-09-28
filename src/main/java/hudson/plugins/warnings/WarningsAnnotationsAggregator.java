@@ -24,6 +24,7 @@ public class WarningsAnnotationsAggregator extends MatrixAggregator {
     private final HealthDescriptor healthDescriptor;
     private final String defaultEncoding;
     private final Map<String, ParserResult> totalsPerParser = Maps.newHashMap();
+    private final boolean useStableBuildAsReference;
 
     /**
      * Creates a new instance of {@link WarningsAnnotationsAggregator}.
@@ -38,13 +39,18 @@ public class WarningsAnnotationsAggregator extends MatrixAggregator {
      *            health descriptor
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
+     * @param useStableBuildAsReference
+     *            determines whether only stable builds should be used as
+     *            reference builds or not
      */
     public WarningsAnnotationsAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener,
-            final HealthDescriptor healthDescriptor, final String defaultEncoding) {
+            final HealthDescriptor healthDescriptor, final String defaultEncoding,
+            final boolean useStableBuildAsReference) {
         super(build, launcher, listener);
 
         this.healthDescriptor = healthDescriptor;
         this.defaultEncoding = defaultEncoding;
+        this.useStableBuildAsReference = useStableBuildAsReference;
     }
 
     @Override
@@ -67,7 +73,7 @@ public class WarningsAnnotationsAggregator extends MatrixAggregator {
     @Override
     public boolean endBuild() throws InterruptedException, IOException {
         for (String parser : totalsPerParser.keySet()) {
-            WarningsBuildHistory history = new WarningsBuildHistory(build, parser);
+            WarningsBuildHistory history = new WarningsBuildHistory(build, parser, useStableBuildAsReference);
             WarningsResult result = new WarningsResult(build, history, totalsPerParser.get(parser), defaultEncoding, parser);
             build.addAction(new WarningsResultAction(build, healthDescriptor, result, parser));
         }

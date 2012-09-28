@@ -71,13 +71,13 @@ public class WarningsPublisherTest extends HudsonTestCase {
     }
 
     private void checkFileOrder(final List<ParserConfiguration> fileParsers, final List<String> expected) {
-        WarningsPublisher publisher = new WarningsPublisher(null, null, null, null, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, false, false, false, null, null, false,
+        WarningsPublisher publisher = new WarningsPublisher(null, null, null, null, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, false, false, false, false, null, null, false,
                 fileParsers, null);
         checkOrder(expected, publisher);
     }
 
     private void checkConsoleOrder(final List<ConsoleParser> consoleParsers, final List<String> expected) {
-        WarningsPublisher publisher = new WarningsPublisher(null, null, null, null, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, false, false, false, null, null, false,
+        WarningsPublisher publisher = new WarningsPublisher(null, null, null, null, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, false, false, false, false, null, null, false,
                 null, consoleParsers);
         checkOrder(expected, publisher);
     }
