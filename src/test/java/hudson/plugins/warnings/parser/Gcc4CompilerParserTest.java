@@ -187,6 +187,42 @@ public class Gcc4CompilerParserTest extends ParserTester {
         assertEquals(THERE_ARE_WARNINGS_FOUND, 0, warnings.size());
     }
 
+    /**
+     * Classify warnings by gcc 4.6 or later.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-11799">Issue 11799</a>
+     */
+    @Test
+    public void issue11799() throws IOException {
+        Collection<FileAnnotation> warnings = new Gcc4CompilerParser().parse(openFile("issue11799.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 4, warnings.size());
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+
+        checkWarning(iterator.next(),
+                4,
+                "implicit declaration of function 'undeclared_function' [-Wimplicit-function-declaration]",
+                "gcc4warning.c",
+                WARNING_TYPE, WARNING_CATEGORY + ":implicit-function-declaration", Priority.NORMAL);
+        checkWarning(iterator.next(),
+                3,
+                "unused variable 'unused_local' [-Wunused-variable]",
+                "gcc4warning.c",
+                WARNING_TYPE, WARNING_CATEGORY + ":unused-variable", Priority.NORMAL);
+        checkWarning(iterator.next(),
+                1,
+                "unused parameter 'unused_parameter' [-Wunused-parameter]",
+                "gcc4warning.c",
+                WARNING_TYPE, WARNING_CATEGORY + ":unused-parameter", Priority.NORMAL);
+        checkWarning(iterator.next(),
+                5,
+                "control reaches end of non-void function [-Wreturn-type]",
+                "gcc4warning.c",
+                WARNING_TYPE, WARNING_CATEGORY + ":return-type", Priority.NORMAL);
+    }
+
     @Override
     protected String getWarningsFile() {
         return "gcc4.txt";

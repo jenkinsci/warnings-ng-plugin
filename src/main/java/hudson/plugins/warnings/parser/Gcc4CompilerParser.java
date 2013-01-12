@@ -4,6 +4,7 @@ import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A parser for gcc 4.x compiler warnings.
@@ -46,6 +47,12 @@ public class Gcc4CompilerParser extends RegexpLineParser {
         else {
             priority = Priority.NORMAL;
             category = "Warning";
+
+            Pattern classPattern = Pattern.compile("\\[-W(.+)\\]$");
+            Matcher classMatcher = classPattern.matcher(message);
+            if (classMatcher.find() && classMatcher.group(1) != null) {
+                category += ":" + classMatcher.group(1);
+            }
         }
 
         return createWarning(fileName, lineNumber, category, message, priority);
