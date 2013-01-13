@@ -16,6 +16,7 @@ public class Gcc4CompilerParser extends RegexpLineParser {
     private static final long serialVersionUID = 5490211629355204910L;
     private static final String ERROR = "error";
     private static final String GCC_WARNING_PATTERN = ANT_TASK + "(.+?):(\\d+):(?:\\d+:)? (warning|error): (.*)$";
+    private static final Pattern CLASS_PATTERN = Pattern.compile("\\[-W(.+)\\]$");
 
     /**
      * Creates a new instance of <code>Gcc4CompilerParser</code>.
@@ -39,23 +40,22 @@ public class Gcc4CompilerParser extends RegexpLineParser {
         String message = matcher.group(4);
         Priority priority;
 
-        String category;
+        StringBuilder category = new StringBuilder();
         if (ERROR.equalsIgnoreCase(matcher.group(3))) {
             priority = Priority.HIGH;
-            category = "Error";
+            category.append("Error");
         }
         else {
             priority = Priority.NORMAL;
-            category = "Warning";
+            category.append("Warning");
 
-            Pattern classPattern = Pattern.compile("\\[-W(.+)\\]$");
-            Matcher classMatcher = classPattern.matcher(message);
+            Matcher classMatcher = CLASS_PATTERN.matcher(message);
             if (classMatcher.find() && classMatcher.group(1) != null) {
-                category += ":" + classMatcher.group(1);
+                category.append(":").append(classMatcher.group(1));
             }
         }
 
-        return createWarning(fileName, lineNumber, category, message, priority);
+        return createWarning(fileName, lineNumber, category.toString(), message, priority);
     }
 }
 

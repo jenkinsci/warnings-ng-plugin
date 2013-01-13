@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
  */
 public class DynamicParserTest extends PhpParserTest {
     private static final String TYPE = "PHP Runtime";
+    private static final String NEW_LINE = System.getProperty("line.separator");
 
     @Override
     protected AbstractWarningsParser createParser() {
@@ -107,9 +108,8 @@ public class DynamicParserTest extends PhpParserTest {
 
         StringPluginLogger logger = new StringPluginLogger("warnings");
         Collection<FileAnnotation> warnings = registry.parse(file, logger);
-        String newLine = System.getProperty("line.separator");
 
-        assertEquals("Wrong logging message", "[warnings] issue11926 : Found 4 warnings." + newLine, logger.toString());
+        assertEquals("Wrong logging message", "[warnings] issue11926 : Found 4 warnings." + NEW_LINE, logger.toString());
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
     }
 
