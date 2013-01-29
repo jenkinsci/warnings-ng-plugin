@@ -5,14 +5,17 @@ import groovy.lang.GroovyShell;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.plugins.warnings.parser.AbstractWarningsParser;
+import hudson.plugins.warnings.parser.DynamicDocumentParser;
+import hudson.plugins.warnings.parser.DynamicParser;
 import hudson.plugins.warnings.parser.Warning;
 import hudson.util.FormValidation;
-import hudson.util.FormValidation.Kind;
 
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -35,6 +38,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
     private String linkName;
     /** Trend report name. @since 4.0 */
     private String trendName;
+    private transient @CheckForNull AbstractWarningsParser parser;
 
     /**
      * Creates a new instance of {@link GroovyParser}.
@@ -63,6 +67,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         this.example = example;
         this.linkName = linkName;
         this.trendName = trendName;
+        parser = createParser();
     }
 
     /**
@@ -91,7 +96,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         if (trendName == null) {
             trendName = Messages._Warnings_Trend_Name().toString(Locale.ENGLISH);
         }
-
+        parser = createParser();
         return this;
     }
 
@@ -175,6 +180,22 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
 
     private static boolean containsNewline(final String expression) {
         return StringUtils.contains(expression, "\\n");
+    }
+
+    private @CheckForNull AbstractWarningsParser createParser() {
+        if (isValid()) {
+            if (hasMultiLineSupport()) {
+                return new DynamicDocumentParser(name, regexp, script, linkName, trendName);
+            } else {
+                return new DynamicParser(name, regexp, script, linkName, trendName);
+            }
+        } else {
+            return null;
+        }
+    }
+    
+    public @CheckForNull AbstractWarningsParser getParser() {
+        return parser;
     }
 
     /**
