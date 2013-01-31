@@ -224,9 +224,8 @@ public class ParserRegistry {
     static List<AbstractWarningsParser> getDynamicParsers(final Iterable<GroovyParser> parserDescriptions) {
         List<AbstractWarningsParser> parsers = Lists.newArrayList();
         for (GroovyParser description : parserDescriptions) {
-            AbstractWarningsParser parser = description.getParser();
-            if (parser != null) {
-                parsers.add(parser);
+            if (description.isValid()) {
+                parsers.add(description.getParser());
             }
         }
         return parsers;

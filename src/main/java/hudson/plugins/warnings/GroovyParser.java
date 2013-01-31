@@ -10,11 +10,13 @@ import hudson.plugins.warnings.parser.DynamicDocumentParser;
 import hudson.plugins.warnings.parser.DynamicParser;
 import hudson.plugins.warnings.parser.Warning;
 import hudson.util.FormValidation;
+import hudson.util.FormValidation.Kind;
 
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
 import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang.StringUtils;
@@ -38,7 +40,8 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
     private String linkName;
     /** Trend report name. @since 4.0 */
     private String trendName;
-    private transient @CheckForNull AbstractWarningsParser parser;
+    @CheckForNull
+    private transient AbstractWarningsParser parser;
 
     /**
      * Creates a new instance of {@link GroovyParser}.
@@ -107,6 +110,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
      *         otherwise
      */
     public boolean isValid() {
+        return parser != null;
+    }
+
+    private boolean canCreateParser() {
         DescriptorImpl d = new DescriptorImpl();
         return d.doCheckScript(script).kind == FormValidation.Kind.OK
                 && d.doCheckRegexp(regexp).kind == FormValidation.Kind.OK
@@ -174,7 +181,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
      * @return <code>true</code> if the parser can scan messages spanning
      *         multiple lines
      */
-    public boolean hasMultiLineSupport() {
+    public final boolean hasMultiLineSupport() {
         return containsNewline(regexp);
     }
 
@@ -182,19 +189,28 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         return StringUtils.contains(expression, "\\n");
     }
 
-    private @CheckForNull AbstractWarningsParser createParser() {
-        if (isValid()) {
+    @CheckForNull
+    private AbstractWarningsParser createParser() {
+        if (canCreateParser()) {
             if (hasMultiLineSupport()) {
                 return new DynamicDocumentParser(name, regexp, script, linkName, trendName);
-            } else {
+            }
+            else {
                 return new DynamicParser(name, regexp, script, linkName, trendName);
             }
-        } else {
+        }
+        else {
             return null;
         }
     }
-    
-    public @CheckForNull AbstractWarningsParser getParser() {
+
+    /**
+     * Returns a valid parser instance. If this parsers configuration is not valid, then <code>null</code> is returned.
+     *
+     * @return a valid parser instance or <code>null</code> if this parsers configuration is not valid.
+     */
+    @CheckForNull
+    public AbstractWarningsParser getParser() {
         return parser;
     }
 
