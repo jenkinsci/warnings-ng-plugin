@@ -36,6 +36,7 @@ public class XlcCompilerParser extends RegexpLineParser {
         return "IBM XLC Compiler";
     }
 
+    @SuppressWarnings("PMD.MissingBreakInSwitch")
     private Priority toPriority(final String severity) {
         switch (severity.charAt(0)) {
             case 'U':
@@ -46,8 +47,9 @@ public class XlcCompilerParser extends RegexpLineParser {
                 return Priority.NORMAL;
             case 'I':
                 return Priority.LOW;
+            default:
+                return Priority.HIGH;
         }
-        return Priority.HIGH;
     }
 
     @Override
@@ -65,7 +67,7 @@ public class XlcCompilerParser extends RegexpLineParser {
         }
         matcher = PATTERN_2.matcher(line);
         if (matcher.find()) {
-            String fileName ="";
+            String fileName = "";
             int lineNumber = 0;
             String category = matcher.group(1).trim();
             String severity = matcher.group(2);
