@@ -24,7 +24,7 @@ public class XlcLinkerParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParser_Error1() throws IOException {
+    public void testWarningsParserError1() throws IOException {
         Collection<FileAnnotation> warnings = new XlcLinkerParser().parse(
                 new StringReader("ld: 0711-987 Error occurred while reading file"));
 
@@ -48,7 +48,7 @@ public class XlcLinkerParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParser_Error2() throws IOException {
+    public void testWarningsParserError2() throws IOException {
         Collection<FileAnnotation> warnings = new XlcLinkerParser().parse(
                 new StringReader("ld: 0711-317 ERROR: Undefined symbol: nofun()"));
 
@@ -72,7 +72,7 @@ public class XlcLinkerParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParser_SevereError() throws IOException {
+    public void testWarningsParserSevereError() throws IOException {
         Collection<FileAnnotation> warnings = new XlcLinkerParser().parse(
                 new StringReader("ld: 0711-634 SEVERE ERROR: EXEC binder commands nested too deeply."));
 
@@ -96,7 +96,7 @@ public class XlcLinkerParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParser_Warning1() throws IOException {
+    public void testWarningsParserWarning1() throws IOException {
         Collection<FileAnnotation> warnings = new XlcLinkerParser().parse(
                 new StringReader("ld: 0706-012 The -9 flag is not recognized."));
 
@@ -120,7 +120,7 @@ public class XlcLinkerParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParser_Warning2() throws IOException {
+    public void testWarningsParserWarning2() throws IOException {
         Collection<FileAnnotation> warnings = new XlcLinkerParser().parse(
                 new StringReader("ld: 0711-224 WARNING: Duplicate symbol: dupe"));
 
@@ -144,7 +144,7 @@ public class XlcLinkerParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParser_Info1() throws IOException {
+    public void testWarningsParserInfo1() throws IOException {
         Collection<FileAnnotation> warnings = new XlcLinkerParser().parse(
                 new StringReader("ld: 0711-345 Use the -bloadmap or -bnoquiet option to obtain more information."));
 

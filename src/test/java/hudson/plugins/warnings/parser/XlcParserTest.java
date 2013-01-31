@@ -24,7 +24,7 @@ public class XlcParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParser_Error() throws IOException {
+    public void testWarningsParserError() throws IOException {
         Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
                 new StringReader("\"file.c\", line 9.17: 1506-098 (E) Missing argument(s)."));
 
@@ -48,7 +48,7 @@ public class XlcParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParser_SevereError() throws IOException {
+    public void testWarningsParserSevereError() throws IOException {
         Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
                 new StringReader("file.c, line 11.18: 1506-189 (S) Floating point constant 10.23.3 is not valid"));
 
@@ -72,7 +72,7 @@ public class XlcParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParser_UnrecoverableError1() throws IOException {
+    public void testWarningsParserUnrecoverableError1() throws IOException {
         Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
                 new StringReader("file.c, line 5.1: 1506-001 (U) INTERNAL COMPILER ERROR"));
 
@@ -96,7 +96,7 @@ public class XlcParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParser_UnrecoverableError2() throws IOException {
+    public void testWarningsParserUnrecoverableError2() throws IOException {
         Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
                 new StringReader("1586-346 (U) An error occurred during code generation.  The code generation return code was 1."));
 
@@ -120,7 +120,7 @@ public class XlcParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParser_UnrecoverableError3() throws IOException {
+    public void testWarningsParserUnrecoverableError3() throws IOException {
         Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
                 new StringReader("    1500-004: (U) INTERNAL COMPILER ERROR while compiling ----.  Compilation ended.  Contact your Service Representative and provide the following information: Internal abort. For more information visit: http://www.ibm.com/support/docview.wss?uid=swg21110810"));
 
@@ -144,7 +144,7 @@ public class XlcParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParser_Warning() throws IOException {
+    public void testWarningsParserWarning() throws IOException {
         Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
                 new StringReader("file.c, line 5.9: 1506-304 (W) No function prototype given for \"printf\"."));
 
@@ -168,7 +168,7 @@ public class XlcParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParser_Info1() throws IOException {
+    public void testWarningsParserInfo1() throws IOException {
         Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
                 new StringReader("file.c, line 12.9: 1506-478 (I) The then branch of conditional is an empty statement."));
 
@@ -192,7 +192,7 @@ public class XlcParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParser_Info2() throws IOException {
+    public void testWarningsParserInfo2() throws IOException {
         Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
                 new StringReader("    1500-030: (I) INFORMATION: clazz::fun(): Additional optimization may be attained by recompiling and specifying MAXMEM option with a value greater than 8192."));
 
@@ -216,7 +216,7 @@ public class XlcParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParser_Info3() throws IOException {
+    public void testWarningsParserInfo3() throws IOException {
         Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
                 new StringReader("1540-5336 (I) Global variable \"__td __td__Q2_3std13runtime_error\" is not used."));
 
