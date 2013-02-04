@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -209,7 +210,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
      *
      * @return a valid parser instance or <code>null</code> if this parsers configuration is not valid.
      */
-    @CheckForNull
+    @Nullable
     public AbstractWarningsParser getParser() {
         return parser;
     }
