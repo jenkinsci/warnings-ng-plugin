@@ -50,7 +50,8 @@ public class FilesParser implements FileCallable<ParserResult> {
 
     private final boolean canResolveRelativePaths;
 
-    private FilesParser(final String filePattern, final AnnotationParser parser, final boolean isMavenBuild, final String moduleName) {
+    private FilesParser(final String filePattern, final AnnotationParser parser,
+            final boolean isMavenBuild, final String moduleName) {
         this.filePattern = filePattern;
         this.parser = parser;
         this.isMavenBuild = isMavenBuild;
@@ -59,8 +60,10 @@ public class FilesParser implements FileCallable<ParserResult> {
         canResolveRelativePaths = true;
     }
 
-    private FilesParser(final String pluginId, final String filePattern, final AnnotationParser parser, final boolean shouldDetectModules,
-            final boolean isMavenBuild, final String moduleName, final boolean canResolveRelativePaths) {
+    private FilesParser(final String pluginId, final String filePattern,
+            final AnnotationParser parser, final boolean shouldDetectModules,
+            final boolean isMavenBuild, final String moduleName,
+            final boolean canResolveRelativePaths) {
         this.pluginId = pluginId;
         this.filePattern = filePattern;
         this.parser = parser;
@@ -68,6 +71,22 @@ public class FilesParser implements FileCallable<ParserResult> {
         this.moduleName = moduleName;
         this.shouldDetectModules = shouldDetectModules;
         this.canResolveRelativePaths = canResolveRelativePaths;
+    }
+
+    /**
+     * Creates a new instance of {@link FilesParser}. Since no file pattern is
+     * given, this parser assumes that it is invoked on a file rather than on a
+     * directory.
+     *
+     * @param pluginId
+     *            the ID of the plug-in that uses this parser
+     * @param parser
+     *            the parser to apply on the found files
+     * @param moduleName
+     *            the name of the module to use for all files
+     */
+    public FilesParser(final String pluginId, final AnnotationParser parser, final String moduleName) {
+        this(pluginId, "", parser, true, true, moduleName, true);
     }
 
     /**
@@ -82,8 +101,8 @@ public class FilesParser implements FileCallable<ParserResult> {
      * @param moduleName
      *            the name of the module to use for all files
      */
-    public FilesParser(final String pluginId, final String filePattern, final AnnotationParser parser,
-            final String moduleName) {
+    public FilesParser(final String pluginId, final String filePattern,
+            final AnnotationParser parser, final String moduleName) {
         this(pluginId, filePattern, parser, true, true, moduleName, true);
     }
 
@@ -102,8 +121,9 @@ public class FilesParser implements FileCallable<ParserResult> {
      * @param isMavenBuild
      *            determines whether this build uses maven
      */
-    public FilesParser(final String pluginId, final String filePattern, final AnnotationParser parser,
-            final boolean shouldDetectModules, final boolean isMavenBuild) {
+    public FilesParser(final String pluginId, final String filePattern,
+            final AnnotationParser parser, final boolean shouldDetectModules,
+            final boolean isMavenBuild) {
         this(pluginId, filePattern, parser, shouldDetectModules, isMavenBuild, true);
     }
 
@@ -126,15 +146,18 @@ public class FilesParser implements FileCallable<ParserResult> {
      *            resolved using a time expensive operation that scans the whole
      *            workspace for matching files.
      */
-    public FilesParser(final String pluginId, final String filePattern, final AnnotationParser parser,
-            final boolean shouldDetectModules, final boolean isMavenBuild, final boolean canResolveRelativePaths) {
-        this(pluginId, filePattern, parser, shouldDetectModules, isMavenBuild, StringUtils.EMPTY, canResolveRelativePaths);
+    public FilesParser(final String pluginId, final String filePattern,
+            final AnnotationParser parser, final boolean shouldDetectModules,
+            final boolean isMavenBuild, final boolean canResolveRelativePaths) {
+        this(pluginId, filePattern, parser, shouldDetectModules, isMavenBuild, StringUtils.EMPTY,
+                canResolveRelativePaths);
     }
 
     /**
      * Logs the specified message.
      *
-     * @param message the message
+     * @param message
+     *            the message
      */
     protected void log(final String message) {
         if (stringLogger == null) {
@@ -144,7 +167,8 @@ public class FilesParser implements FileCallable<ParserResult> {
     }
 
     /** {@inheritDoc} */
-    public ParserResult invoke(final File workspace, final VirtualChannel channel) throws IOException {
+    public ParserResult invoke(final File workspace, final VirtualChannel channel)
+            throws IOException {
         ParserResult result;
         if (canResolveRelativePaths) {
             result = new ParserResult(new FilePath(workspace));
@@ -153,20 +177,11 @@ public class FilesParser implements FileCallable<ParserResult> {
             result = new ParserResult();
         }
         try {
-            log("Finding all files that match the pattern " + filePattern);
-            String[] fileNames = new FileFinder(filePattern).find(workspace);
-
-            if (fileNames.length == 0) {
-                if (isMavenBuild) {
-                    log("No files found in " + workspace.getAbsolutePath() + " for pattern: " + filePattern);
-                }
-                else {
-                    result.addErrorMessage(Messages.FilesParser_Error_NoFiles());
-                }
+            if (StringUtils.isBlank(filePattern)) {
+                parseSingleFile(workspace, result);
             }
             else {
-                log("Parsing " + fileNames.length + " files in " + workspace.getAbsolutePath());
-                parseFiles(workspace, fileNames, result);
+                parserCollectionOfFiles(workspace, result);
             }
         }
         catch (InterruptedException exception) {
@@ -183,6 +198,30 @@ public class FilesParser implements FileCallable<ParserResult> {
         return result;
     }
 
+    private void parserCollectionOfFiles(final File workspace, final ParserResult result) throws InterruptedException {
+        log("Finding all files that match the pattern " + filePattern);
+        String[] fileNames = new FileFinder(filePattern).find(workspace);
+
+        if (fileNames.length == 0) {
+            if (isMavenBuild) {
+                log("No files found in " + workspace.getAbsolutePath() + " for pattern: " + filePattern);
+            }
+            else {
+                result.addErrorMessage(Messages.FilesParser_Error_NoFiles());
+            }
+        }
+        else {
+            log("Parsing " + fileNames.length + " files in " + workspace.getAbsolutePath());
+            parseFiles(workspace, fileNames, result);
+        }
+    }
+
+    private void parseSingleFile(final File workspace, final ParserResult result) throws InterruptedException {
+        String[] fileNames = new String[] {workspace.getAbsolutePath()};
+        log("Parsing file " + workspace.getAbsolutePath());
+        parseFiles(workspace, fileNames, result);
+    }
+
     /**
      * Parses the specified collection of files and appends the results to the
      * provided container.
@@ -196,11 +235,16 @@ public class FilesParser implements FileCallable<ParserResult> {
      * @throws InterruptedException
      *             if the user cancels the parsing
      */
-    private void parseFiles(final File workspace, final String[] fileNames, final ParserResult result) throws InterruptedException {
+    private void parseFiles(final File workspace, final String[] fileNames,
+            final ParserResult result) throws InterruptedException {
         ModuleDetector detector = createModuleDetector(workspace);
 
         for (String fileName : fileNames) {
-            File file = new File(workspace, fileName);
+            File file = new File(fileName);
+
+            if (!file.isAbsolute()) {
+                file = new File(workspace, fileName);
+            }
 
             String module = getModuleName(detector, file);
 
@@ -256,21 +300,26 @@ public class FilesParser implements FileCallable<ParserResult> {
      * @throws InterruptedException
      *             if the user cancels the parsing
      */
-    private void parseFile(final File file, final String module, final ParserResult result) throws InterruptedException {
+    private void parseFile(final File file, final String module, final ParserResult result)
+            throws InterruptedException {
         try {
             Collection<FileAnnotation> annotations = parser.parse(file, module);
             result.addAnnotations(annotations);
 
-            log("Successfully parsed file " + file + " of module " + module + " with " + annotations.size() + " warnings.");
+            log("Successfully parsed file " + file + " of module " + module + " with "
+                    + annotations.size() + " warnings.");
         }
         catch (InvocationTargetException exception) {
-            String errorMessage = Messages.FilesParser_Error_Exception(file) + "\n\n"
-                    + ExceptionUtils.getStackTrace((Throwable)ObjectUtils.defaultIfNull(exception.getCause(), exception));
+            String errorMessage = Messages.FilesParser_Error_Exception(file)
+                    + "\n\n"
+                    + ExceptionUtils.getStackTrace((Throwable)ObjectUtils.defaultIfNull(
+                            exception.getCause(), exception));
             result.addErrorMessage(module, errorMessage);
 
             log(errorMessage);
         }
     }
+
     /**
      * Creates a new instance of {@link FilesParser}.
      *
@@ -287,7 +336,8 @@ public class FilesParser implements FileCallable<ParserResult> {
      */
     @Deprecated
     @SuppressWarnings("PMD")
-    public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final boolean isMavenBuild) {
+    public FilesParser(final PluginLogger logger, final String filePattern,
+            final AnnotationParser parser, final boolean isMavenBuild) {
         this(filePattern, parser, isMavenBuild, StringUtils.EMPTY);
     }
 
@@ -308,7 +358,8 @@ public class FilesParser implements FileCallable<ParserResult> {
      */
     @Deprecated
     @SuppressWarnings("PMD")
-    public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser, final String moduleName) {
+    public FilesParser(final PluginLogger logger, final String filePattern,
+            final AnnotationParser parser, final String moduleName) {
         this(filePattern, parser, true, moduleName);
     }
 
@@ -327,7 +378,8 @@ public class FilesParser implements FileCallable<ParserResult> {
      */
     @Deprecated
     @SuppressWarnings("PMD")
-    public FilesParser(final PluginLogger logger, final String filePattern, final AnnotationParser parser) {
+    public FilesParser(final PluginLogger logger, final String filePattern,
+            final AnnotationParser parser) {
         this(filePattern, parser, true, StringUtils.EMPTY);
 
         shouldDetectModules = false;
@@ -374,8 +426,8 @@ public class FilesParser implements FileCallable<ParserResult> {
     @Deprecated
     @SuppressWarnings("PMD")
     public FilesParser(final StringPluginLogger logger, final String filePattern,
-            final AnnotationParser parser,
-            final boolean shouldDetectModules, final boolean isMavenBuild) {
+            final AnnotationParser parser, final boolean shouldDetectModules,
+            final boolean isMavenBuild) {
         this(filePattern, parser, isMavenBuild, StringUtils.EMPTY);
     }
 }
