@@ -3,6 +3,8 @@ package hudson.plugins.analysis.core;
 import java.util.List;
 import java.util.Map;
 
+import jenkins.model.Jenkins;
+
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerProxy;
 
@@ -166,7 +168,11 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * @return the URL of the image
      */
     protected String getSmallImage() {
-        return getDescriptor().getIconUrl();
+        return createStaticIconUrl(getDescriptor().getIconUrl());
+    }
+
+    private String createStaticIconUrl(final String iconUrl) {
+        return Jenkins.RESOURCE_PATH + "/" + iconUrl;
     }
 
     /**

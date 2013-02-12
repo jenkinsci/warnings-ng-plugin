@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import jenkins.model.Jenkins;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -1388,9 +1390,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the icon for the build result
      */
     public String getResultIcon() {
-        String rootUrl = Hudson.getInstance().getRootUrl();
-
-        String message = "<img src=\"" + rootUrl + "/images/16x16/%s\" alt=\"%s\" title=\"%s\"/>";
+        String message = "<img src=\"" + Jenkins.RESOURCE_PATH + "/images/16x16/%s\" alt=\"%s\" title=\"%s\"/>";
         if (pluginResult == Result.FAILURE) {
             return String.format(message, FAILED,
                     hudson.model.Messages.BallColor_Failed(), hudson.model.Messages.BallColor_Failed());

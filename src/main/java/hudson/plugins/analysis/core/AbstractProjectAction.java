@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 
 import javax.annotation.CheckForNull;
 
+import jenkins.model.Jenkins;
+
 import org.jvnet.localizer.Localizable;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
@@ -338,7 +340,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     public String getIconFileName() {
         ResultAction<?> lastAction = getLastAction();
         if (lastAction != null && lastAction.getResult().hasAnnotations()) {
-            return iconUrl;
+            return Jenkins.RESOURCE_PATH + "/" + iconUrl;
         }
         return null;
     }
