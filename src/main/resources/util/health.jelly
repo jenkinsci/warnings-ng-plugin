@@ -13,14 +13,14 @@
       <tbody>
         <tr>
           <td style="vertical-align: middle;">
-            <img src="${rootURL}/images/16x16/health-80plus.gif" alt="100%" title="${%description.healthy}" /> ${%threshold.100.percent}
+            <img src="${resURL}/images/16x16/health-80plus.gif" alt="100%" title="${%description.healthy}" /> ${%threshold.100.percent}
           </td>
           <td>
             <f:textbox name="healthy" value="${instance.healthy}" />
           </td>
           <td width="20"/>
           <td style="vertical-align: middle;">
-            <img src="${rootURL}/images/16x16/health-00to19.gif" alt="0%" title="${%description.unhealthy}" /> ${%threshold.0.percent}
+            <img src="${resURL}/images/16x16/health-00to19.gif" alt="0%" title="${%description.unhealthy}" /> ${%threshold.0.percent}
           </td>
           <td>
             <f:textbox name="unHealthy" value="${instance.unHealthy}" />

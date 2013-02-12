@@ -7,9 +7,9 @@
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
   <j:if test="${it.hasAnnotations()}">
-    <script type="text/javascript" src="${rootURL}/plugin/analysis-core/yui/utilities.js" />
+    <script type="text/javascript" src="${resURL}/plugin/analysis-core/yui/utilities.js" />
     <l:yui module="tabview" />
-    <script type="text/javascript" src="${rootURL}/plugin/analysis-core/yui/dispatcher-min.js" />
+    <script type="text/javascript" src="${resURL}/plugin/analysis-core/yui/dispatcher-min.js" />
 
     <script type="text/javascript">
       var myTabs = new YAHOO.widget.TabView("statistics");
@@ -194,24 +194,24 @@
 
         #statistics .loading {
             background:#ffffff; /* content background color */
-            background-image:url(${rootURL}/plugin/analysis-core/icons/spinner.gif);
+            background-image:url(${resURL}/plugin/analysis-core/icons/spinner.gif);
             background-position:center center;
             background-repeat:no-repeat;
         }
 
         .priority-high {
             background: #EF2929;
-            background-image:url(${rootURL}/plugin/analysis-core/icons/clearpixel.gif);
+            background-image:url(${resURL}/plugin/analysis-core/icons/clearpixel.gif);
         }
 
         .priority-normal {
             background: #FCE94F;
-            background-image:url(${rootURL}/plugin/analysis-core/icons/clearpixel.gif);
+            background-image:url(${resURL}/plugin/analysis-core/icons/clearpixel.gif);
         }
 
         .priority-low {
             background: #729FCF;
-            background-image:url(${rootURL}/plugin/analysis-core/icons/clearpixel.gif);
+            background-image:url(${resURL}/plugin/analysis-core/icons/clearpixel.gif);
         }
 
     </style>

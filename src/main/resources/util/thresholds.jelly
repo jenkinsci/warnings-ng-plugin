@@ -23,7 +23,7 @@
       <tbody>
         <tr>
           <td style="vertical-align: middle;">
-            <img src="${rootURL}/images/16x16/yellow.gif" alt="100%"
+            <img src="${resURL}/images/16x16/yellow.gif" alt="100%"
               title="${%description.unstableTotal}" />
           </td>
           <td>
@@ -45,7 +45,7 @@
         </tr>
         <tr>
           <td style="vertical-align: middle;">
-            <img src="${rootURL}/images/16x16/red.gif" alt="100%"
+            <img src="${resURL}/images/16x16/red.gif" alt="100%"
               title="${%description.failedTotal}" />
           </td>
           <td>
@@ -85,7 +85,7 @@
             <tbody>
               <tr>
                 <td style="vertical-align: middle;">
-                  <img src="${rootURL}/images/16x16/yellow.gif" alt="100%"
+                  <img src="${resURL}/images/16x16/yellow.gif" alt="100%"
                     title="${%description.unstableNew}" />
                 </td>
                 <td>
@@ -107,7 +107,7 @@
               </tr>
               <tr>
                 <td style="vertical-align: middle;">
-                  <img src="${rootURL}/images/16x16/red.gif" alt="100%"
+                  <img src="${resURL}/images/16x16/red.gif" alt="100%"
                     title="${%description.failedNew}" />
                 </td>
                 <td>
