@@ -19,6 +19,7 @@ import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.model.Project;
 
+import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
@@ -450,7 +451,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
 
     private void print(final FileOutputStream outputStream, final String message,
             final Object... arguments) throws IOException {
-        IOUtils.write(String.format(message, arguments), outputStream, getDefaultEncoding());
+        IOUtils.write(String.format(message, arguments), outputStream, EncodingValidator.getEncoding(getDefaultEncoding()));
     }
 
     /**

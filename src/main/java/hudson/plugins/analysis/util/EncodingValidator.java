@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.CheckForNull;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang.StringUtils;
@@ -31,7 +33,8 @@ public class EncodingValidator implements Validator {
 
     static {
         try {
-            allCharacterSets = Collections.unmodifiableSet(new HashSet<String>(Charset.availableCharsets().keySet()));
+            allCharacterSets = Collections.unmodifiableSet(new HashSet<String>(Charset
+                    .availableCharsets().keySet()));
         }
         // CHECKSTYLE:OFF
         catch (Exception exception) {
@@ -54,11 +57,11 @@ public class EncodingValidator implements Validator {
      * default encoding is empty or <code>null</code>, or if the charset is not
      * valid then the default encoding of the platform is returned.
      *
-     * @param defaultEncoding identifier of the character set
-     *
+     * @param defaultEncoding
+     *            identifier of the character set
      * @return the default charset for the specified encoding string
      */
-    public static Charset defaultCharset(final String defaultEncoding) {
+    public static Charset defaultCharset(@CheckForNull final String defaultEncoding) {
         try {
             if (StringUtils.isNotBlank(defaultEncoding)) {
                 return Charset.forName(defaultEncoding);
@@ -88,7 +91,8 @@ public class EncodingValidator implements Validator {
      *             Signals that an I/O exception has occurred during reading of
      *             the file.
      */
-    public static LineIterator readFile(final String fileName, final String encoding) throws FileNotFoundException, IOException {
+    public static LineIterator readFile(final String fileName, @CheckForNull final String encoding)
+            throws FileNotFoundException, IOException {
         FileInputStream stream = new FileInputStream(new File(fileName));
         if (StringUtils.isNotBlank(encoding)) {
             return IOUtils.lineIterator(stream, encoding);
@@ -122,5 +126,20 @@ public class EncodingValidator implements Validator {
         }
         throw FormValidation.error(Messages.FieldValidator_Error_DefaultEncoding());
     }
-}
 
+    /**
+     * Returns the encoding used to read a file. If the specified
+     * encoding is empty or <code>null</code>, or if the encoding is not valid
+     * then the default encoding of the platform is returned.
+     *
+     * @param encoding
+     *            identifier of the character set
+     * @return the default encoding for the specified encoding string
+     */
+    public static String getEncoding(@CheckForNull final String encoding) {
+        if (StringUtils.isNotBlank(encoding) && Charset.forName(encoding).canEncode()) {
+            return encoding;
+        }
+        return Charset.defaultCharset().name();
+    }
+}

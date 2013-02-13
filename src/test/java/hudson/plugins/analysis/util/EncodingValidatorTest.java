@@ -1,5 +1,9 @@
 package hudson.plugins.analysis.util;
 
+import static org.junit.Assert.*;
+
+import java.nio.charset.Charset;
+
 import org.junit.Test;
 
 /**
@@ -30,6 +34,17 @@ public class EncodingValidatorTest extends AbstractValidatorTest {
         assertThatInputIsInvalid("NIX");
         assertThatInputIsInvalid("UTF-9");
         assertThatInputIsInvalid("ISO-8859-42");
+    }
+
+    /**
+     * Verifies that the platform encoding is used if encoding is invalid.
+     */
+    @Test
+    public void testDefaultEncoding() {
+        assertEquals("Wrong encoding used", "UTF-8", EncodingValidator.getEncoding("UTF-8"));
+        String osCharset = Charset.defaultCharset().name();
+        assertEquals("Wrong encoding used", osCharset, EncodingValidator.getEncoding(""));
+        assertEquals("Wrong encoding used", osCharset, EncodingValidator.getEncoding(null));
     }
 
     @Override
