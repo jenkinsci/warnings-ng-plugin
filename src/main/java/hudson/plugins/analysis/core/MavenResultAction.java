@@ -103,15 +103,14 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
      *            Newly completed build.
      */
     public void update(final Map<MavenModule, List<MavenBuild>> moduleBuilds, final MavenBuild newBuild) {
-        if (newBuild.getResult().isBetterThan(Result.FAILURE)) {
-            MavenResultAction<T> additionalAction = newBuild.getAction(getIndividualActionType());
-            MavenModule project = newBuild.getProject();
-            if (additionalAction != null && !getModules().contains(project)) {
+        MavenResultAction<T> additionalAction = newBuild.getAction(getIndividualActionType());
+        MavenModule project = newBuild.getProject();
+        if (additionalAction != null && !getModules().contains(project)) {
+            T existingResult = delegate.getResult();
+            T additionalResult = additionalAction.getResult();
+
+            if (newBuild.getResult().isBetterThan(Result.FAILURE) || additionalResult.getPluginResult().isWorseOrEqualTo(Result.FAILURE)) {
                 getModules().add(project);
-
-                T existingResult = delegate.getResult();
-                T additionalResult = additionalAction.getResult();
-
                 setResult(createAggregatedResult(existingResult, additionalResult));
 
                 copySourceFilesToModuleBuildFolder(newBuild);
