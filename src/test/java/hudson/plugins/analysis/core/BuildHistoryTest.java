@@ -73,11 +73,16 @@ public class BuildHistoryTest {
      * <li>Build with no result</li>
      * <li>Baseline</li>
      * </ol>
-     * @throws Exception the exception
+     * If the plug-in caused the failure then there will be a result available, otherwise not.
      */
     @Test
+    public void testHasPreviousResultDueToFailure() {
+        verifyHasResult(false, Result.SUCCESS);
+        verifyHasResult(true, Result.FAILURE);
+    }
+
     @SuppressWarnings("rawtypes")
-    public void testHasNoPreviousResultDueToFailure() throws Exception {
+    private void verifyHasResult(final boolean expectedResult, final Result pluginResult) {
         AbstractBuild withResult = mockBuild(Result.ABORTED);
         AbstractBuild noResult = mockBuild();
         AbstractBuild baseline = mockBuild();
@@ -91,9 +96,10 @@ public class BuildHistoryTest {
         when(action.getResult()).thenReturn(result);
         AnnotationContainer container = mock(AnnotationContainer.class);
         when(result.getContainer()).thenReturn(container);
+        when(result.getPluginResult()).thenReturn(pluginResult);
         BuildHistory history = createHistory(baseline);
 
-        assertFalse("Build has previous result", history.hasPreviousResult());
+        assertEquals("Build has previous result", expectedResult, history.hasPreviousResult());
     }
 
     @SuppressWarnings("rawtypes")
@@ -238,6 +244,8 @@ public class BuildHistoryTest {
         when(failureAction.isSuccessful()).thenReturn(false);
         BuildResult failureResult = mock(BuildResult.class);
         when(failureAction.getResult()).thenReturn(failureResult);
+        when(failureResult.getPluginResult()).thenReturn(Result.SUCCESS);
+
         return failureResult;
     }
 
@@ -250,6 +258,7 @@ public class BuildHistoryTest {
         AnnotationContainer container = mock(AnnotationContainer.class);
         when(successResult.getContainer()).thenReturn(container);
         when(successAction.getResult()).thenReturn(successResult);
+        when(successResult.getPluginResult()).thenReturn(Result.SUCCESS);
         return container;
     }
 

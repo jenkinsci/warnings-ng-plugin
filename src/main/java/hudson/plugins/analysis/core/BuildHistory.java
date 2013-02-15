@@ -110,8 +110,8 @@ public class BuildHistory {
 
     private ResultAction<? extends BuildResult> getAction(final boolean isStatusRelevant, final boolean mustBeStable) {
         for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
-            if (hasValidResult(build, mustBeStable)) {
-                ResultAction<? extends BuildResult> action = getResultAction(build);
+            ResultAction<? extends BuildResult> action = getResultAction(build);
+            if (hasValidResult(build, mustBeStable, action)) {
                 if (action != null && (action.isSuccessful() || !isStatusRelevant)) {
                     return action;
                 }
@@ -165,9 +165,10 @@ public class BuildHistory {
     }
 
     private boolean hasValidResult(final AbstractBuild<?, ?> build) {
-        return hasValidResult(build, false);
+        return hasValidResult(build, false, null);
     }
-    private boolean hasValidResult(final AbstractBuild<?, ?> build, final boolean mustBeStable) {
+
+    private boolean hasValidResult(final AbstractBuild<?, ?> build, final boolean mustBeStable, @CheckForNull final ResultAction<? extends BuildResult> action) {
         Result result = build.getResult();
 
         if (result == null) {
@@ -176,7 +177,16 @@ public class BuildHistory {
         if (mustBeStable) {
             return result == Result.SUCCESS;
         }
-        return build.getResult().isBetterThan(Result.FAILURE);
+        return result.isBetterThan(Result.FAILURE) || isPluginCauseForFailure(action);
+    }
+
+    private boolean isPluginCauseForFailure(@CheckForNull final ResultAction<? extends BuildResult> action) {
+        if (action == null) {
+            return false;
+        }
+        else {
+            return action.getResult().getPluginResult().isWorseOrEqualTo(Result.FAILURE);
+        }
     }
 
     /**
