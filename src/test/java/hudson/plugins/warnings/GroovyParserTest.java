@@ -1,6 +1,6 @@
 package hudson.plugins.warnings;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 import hudson.plugins.warnings.GroovyParser.DescriptorImpl;
 import hudson.util.FormValidation;
 import hudson.util.FormValidation.Kind;

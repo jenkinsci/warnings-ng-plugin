@@ -14,7 +14,7 @@ import hudson.plugins.warnings.parser.Warning;
 
 import java.util.GregorianCalendar;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 

@@ -9,7 +9,7 @@ import hudson.plugins.analysis.util.model.Priority;
 
 import java.io.File;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 
