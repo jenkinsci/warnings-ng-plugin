@@ -52,6 +52,7 @@ import hudson.tasks.Maven;
 // CHECKSTYLE:COUPLING-OFF
 @SuppressWarnings("PMD.TooManyFields")
 public abstract class HealthAwareRecorder extends Recorder implements HealthDescriptor, MatrixAggregatable {
+    private static final long serialVersionUID = 8892994325541840827L;
     private static final String SLASH = "/";
 
     /** Default threshold priority limit. */

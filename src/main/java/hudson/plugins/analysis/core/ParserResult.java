@@ -38,6 +38,7 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 public class ParserResult implements Serializable {
     private static final long serialVersionUID = -8414545334379193330L;
+    private static final Logger LOGGER = Logger.getLogger(ParserResult.class.getName());
     private static final String SLASH = "/";
 
     /** The parsed annotations. */
@@ -61,19 +62,6 @@ public class ParserResult implements Serializable {
     private String logMessage;
     /** Total number of modules. @since 1.31 **/
     private int numberOfModules;
-
-    /**
-     * Facade for the remote workspace.
-     */
-    interface Workspace extends Serializable {
-        Workspace child(String fileName);
-
-        boolean exists() throws InterruptedException, IOException;
-
-        String getPath();
-
-        String[] findFiles(String pattern) throws IOException, InterruptedException;
-    }
 
     /**
      * Creates a new instance of {@link ParserResult}.
@@ -441,6 +429,19 @@ public class ParserResult implements Serializable {
     }
 
     /**
+     * Facade for the remote workspace.
+     */
+    interface Workspace extends Serializable {
+        Workspace child(String fileName);
+
+        boolean exists() throws InterruptedException, IOException;
+
+        String getPath();
+
+        String[] findFiles(String pattern) throws IOException, InterruptedException;
+    }
+
+    /**
      * Default implementation that delegates to an {@link FilePath} instance.
      */
     private static class FilePathAdapter implements Workspace {
@@ -505,7 +506,5 @@ public class ParserResult implements Serializable {
             return new String[0];
         }
     }
-
-    private static final Logger LOGGER = Logger.getLogger(ParserResult.class.getName());
 }
 

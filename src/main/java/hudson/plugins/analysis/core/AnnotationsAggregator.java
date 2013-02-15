@@ -29,6 +29,7 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
      * @since 1.48
      */
     private final boolean useStableBuildAsReference;
+
     /**
      * Creates a new instance of {@link AnnotationsAggregator}.
      *

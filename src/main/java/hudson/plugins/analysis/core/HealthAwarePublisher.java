@@ -27,6 +27,8 @@ import hudson.tasks.BuildStep;
  */
 // CHECKSTYLE:OFF
 public abstract class HealthAwarePublisher extends HealthAwareRecorder {
+    private static final long serialVersionUID = -4225952809165635796L;
+
     /**
      * Creates a new instance of {@link HealthAwarePublisher}.
      *

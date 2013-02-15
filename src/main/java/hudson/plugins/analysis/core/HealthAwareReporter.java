@@ -622,19 +622,6 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         return StringUtils.defaultString(pom.getName(), pom.getArtifactId());
     }
 
-    /**
-     * Gets the build result from the master.
-     */
-    private static final class BuildResultCallable implements BuildCallable<Result, IOException> {
-        /** Unique ID. */
-        private static final long serialVersionUID = -270795641776014760L;
-
-        /** {@inheritDoc} */
-        public Result call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
-            return mavenBuild.getResult();
-        }
-    }
-
     /** Backward compatibility. @deprecated */
     @SuppressWarnings("unused")
     @Deprecated
@@ -707,5 +694,18 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
                 canRunOnFailed, true, pluginName);
     }
     // CHECKSTYLE:ON
+
+    /**
+     * Gets the build result from the master.
+     */
+    private static final class BuildResultCallable implements BuildCallable<Result, IOException> {
+        /** Unique ID. */
+        private static final long serialVersionUID = -270795641776014760L;
+
+        /** {@inheritDoc} */
+        public Result call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
+            return mavenBuild.getResult();
+        }
+    }
 }
 

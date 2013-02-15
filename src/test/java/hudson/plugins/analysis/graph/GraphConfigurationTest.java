@@ -1,6 +1,6 @@
 package hudson.plugins.analysis.graph;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 import net.sf.json.JSONObject;
 
 import org.junit.Test;
