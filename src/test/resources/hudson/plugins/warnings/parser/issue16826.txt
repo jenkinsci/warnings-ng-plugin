@@ -1,0 +1,6 @@
+[WARNING] bootstrap class path not set in conjunction with -source 1.6
+/home/jan/.jenkins/jobs/Static_code_analysis/workspace/common/src/main/java/com/noesis/optimus/model/SerializedArray.java:[126,53] [unchecked] unchecked cast
+[WARNING]
+    T extends Object declared in class SerializedArray
+/home/jan/.jenkins/jobs/Static_code_analysis/workspace/common/src/main/java/com/noesis/optimus/model/LongIdEntity.java:[147,37] [unchecked] unchecked cast
+[WARNING]

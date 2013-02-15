@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.collect.Lists;
 
 /**
@@ -71,7 +73,13 @@ public class MavenConsoleParser extends RegexpLineParser {
             }
             line = warning.getPrimaryLineNumber();
         }
-        return condensed;
+        List<FileAnnotation> noBlank = Lists.newArrayList();
+        for (FileAnnotation warning : condensed) {
+            if (StringUtils.isNotBlank(warning.getMessage())) {
+                noBlank.add(warning);
+            }
+        }
+        return noBlank;
     }
 }
 
