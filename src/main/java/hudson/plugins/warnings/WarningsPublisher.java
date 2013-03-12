@@ -1,24 +1,5 @@
 package hudson.plugins.warnings;
 
-import hudson.Launcher;
-import hudson.matrix.MatrixAggregator;
-import hudson.matrix.MatrixBuild;
-import hudson.model.Action;
-import hudson.model.BuildListener;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.plugins.analysis.core.AnnotationsClassifier;
-import hudson.plugins.analysis.core.FilesParser;
-import hudson.plugins.analysis.core.HealthAwareRecorder;
-import hudson.plugins.analysis.core.ParserResult;
-import hudson.plugins.analysis.util.ModuleDetector;
-import hudson.plugins.analysis.util.NullModuleDetector;
-import hudson.plugins.analysis.util.PluginLogger;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.warnings.parser.FileWarningsParser;
-import hudson.plugins.warnings.parser.ParserRegistry;
-import hudson.plugins.warnings.parser.ParsingCanceledException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -31,6 +12,27 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import hudson.Launcher;
+import hudson.matrix.MatrixAggregator;
+import hudson.matrix.MatrixBuild;
+
+import hudson.model.Action;
+import hudson.model.BuildListener;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+
+import hudson.plugins.analysis.core.AnnotationsClassifier;
+import hudson.plugins.analysis.core.FilesParser;
+import hudson.plugins.analysis.core.HealthAwareRecorder;
+import hudson.plugins.analysis.core.ParserResult;
+import hudson.plugins.analysis.util.ModuleDetector;
+import hudson.plugins.analysis.util.NullModuleDetector;
+import hudson.plugins.analysis.util.PluginLogger;
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.warnings.parser.FileWarningsParser;
+import hudson.plugins.warnings.parser.ParserRegistry;
+import hudson.plugins.warnings.parser.ParsingCanceledException;
+
 /**
  * Publishes the results of the warnings analysis (freestyle project type).
  *
@@ -38,6 +40,11 @@ import com.google.common.collect.Sets;
  */
 // CHECKSTYLE:COUPLING-OFF
 public class WarningsPublisher extends HealthAwareRecorder {
+    /**
+     * FIXME: Document field CONSOLE_LOG_ENCODING
+     */
+    private static final String CONSOLE_LOG_ENCODING = "UTF-8";
+
     private static final String PLUGIN_NAME = "WARNINGS";
 
     private static final long serialVersionUID = -5936973521277401764L;
@@ -349,10 +356,8 @@ public class WarningsPublisher extends HealthAwareRecorder {
             String parserName = parser.getParserName();
             logger.log("Parsing warnings in console log with parser " + parserName);
 
-            Collection<FileAnnotation> warnings = new ParserRegistry(
-                    ParserRegistry.getParsers(parserName),
-                    getDefaultEncoding(), getIncludePattern(), getExcludePattern()).parse(build
-                    .getLogFile());
+            Collection<FileAnnotation> warnings = new ParserRegistry(ParserRegistry.getParsers(parserName),
+                    CONSOLE_LOG_ENCODING, getIncludePattern(), getExcludePattern()).parse(build.getLogFile());
             if (!build.getWorkspace().isRemote()) {
                 guessModuleNames(build, warnings);
             }
