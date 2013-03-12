@@ -40,13 +40,8 @@ import hudson.plugins.warnings.parser.ParsingCanceledException;
  */
 // CHECKSTYLE:COUPLING-OFF
 public class WarningsPublisher extends HealthAwareRecorder {
-    /**
-     * FIXME: Document field CONSOLE_LOG_ENCODING
-     */
     private static final String CONSOLE_LOG_ENCODING = "UTF-8";
-
     private static final String PLUGIN_NAME = "WARNINGS";
-
     private static final long serialVersionUID = -5936973521277401764L;
 
     /** Ant file-set pattern of files to include to report. */
