@@ -1,0 +1,4 @@
+MSBUILD : warning : CA1823 : Microsoft.Performance : It appears that field 'Program.a' is never used or is only ever assigned to. Use this field or remove it. [C:\Src\Parser\CSharp\Test.csproj]
+
+C:\Src\Parser\CSharp\test.cs(140): warning : CA1031 : Microsoft.Design : Modify 'AccountController.ChangePassword(ChangePasswordModel)' to catch a more specific exception than 'Exception' or rethrow the exception. [C:\Src\Parser\CSharp\Test.csproj]
+ 
