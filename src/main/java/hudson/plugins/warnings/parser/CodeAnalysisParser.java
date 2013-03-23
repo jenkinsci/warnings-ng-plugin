@@ -46,11 +46,11 @@ public class CodeAnalysisParser extends RegexpLineParser {
     @Override
     protected Warning createWarning(final Matcher matcher) {
         if (StringUtils.isNotBlank(matcher.group(2))){
-			return createWarning(matcher.group(8), 0, matcher.group(6), matcher.group(7), Priority.NORMAL);
-		}
-		else{
-			return createWarning(matcher.group(4), getLineNumber(matcher.group(5)), matcher.group(6), matcher.group(7), Priority.NORMAL);
-		}
+            return createWarning(matcher.group(8), 0, matcher.group(6), matcher.group(7), Priority.NORMAL);
+        }
+        else{
+            return createWarning(matcher.group(4), getLineNumber(matcher.group(5)), matcher.group(6), matcher.group(7), Priority.NORMAL);
+        }
     }
 }
 

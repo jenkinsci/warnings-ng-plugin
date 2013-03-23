@@ -34,7 +34,7 @@ public class CodeAnalysisParserTest extends ParserTester {
                 "Microsoft.Performance : It appears that field 'Program.a' is never used or is only ever assigned to. Use this field or remove it.",
                 "C:/Src/Parser/CSharp/Test.csproj",
                 CodeAnalysisParser.WARNING_TYPE, "CA1823", Priority.NORMAL);
-		annotation = iterator.next();
+        annotation = iterator.next();
         checkWarning(annotation,
                 140,
                 "Microsoft.Design : Modify 'AccountController.ChangePassword(ChangePasswordModel)' to catch a more specific exception than 'Exception' or rethrow the exception.",
