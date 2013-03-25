@@ -5,7 +5,7 @@ import hudson.Extension;
 import java.util.regex.Matcher;
 
 /**
- * A parser for the Apple LLVM compiler warnings.
+ * A parser for the Clang compiler warnings.
  *
  * @author Neil Davis
  */
@@ -38,4 +38,8 @@ public class AppleLLVMClangParser extends RegexpLineParser {
         return createWarning(filename, lineNumber, category, message);
     }
 
+    @Override
+    protected String getId() {
+        return "Apple LLVM Compiler (Clang)"; // old ID in serialization
+    }
 }
