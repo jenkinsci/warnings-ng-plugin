@@ -31,15 +31,19 @@ public class CodeAnalysisParserTest extends ParserTester {
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation,
                 0,
-                "Microsoft.Performance : It appears that field 'Program.a' is never used or is only ever assigned to. Use this field or remove it.",
+                "It appears that field 'Program.a' is never used or is only ever assigned to. Use this field or remove it.",
                 "C:/Src/Parser/CSharp/Test.csproj",
-                CodeAnalysisParser.WARNING_TYPE, "CA1823", Priority.NORMAL);
+                "CA1823",
+                "Performance",
+                Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 140,
-                "Microsoft.Design : Modify 'AccountController.ChangePassword(ChangePasswordModel)' to catch a more specific exception than 'Exception' or rethrow the exception.",
+                "Modify 'AccountController.ChangePassword(ChangePasswordModel)' to catch a more specific exception than 'Exception' or rethrow the exception.",
                 "C:/Src/Parser/CSharp/test.cs",
-                CodeAnalysisParser.WARNING_TYPE, "CA1031", Priority.NORMAL);
+                "CA1031",
+                "Design",
+                Priority.NORMAL);
     }
 
     @Override
