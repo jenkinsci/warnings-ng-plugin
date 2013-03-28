@@ -225,6 +225,27 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
     public Warning createWarning(final String fileName, final int start, final String category, final String message, final Priority priority) {
         return new Warning(fileName, start, getGroup(), category, message, priority);
     }
+    
+    /**
+     * Creates a new instance of {@link Warning}.
+     *
+     * @param fileName
+     *            the name of the file
+     * @param start
+     *            the first line of the line range
+     * @param type 
+     *            the type of warning
+     * @param category
+     *            the warning category
+     * @param message
+     *            the message of the warning
+     * @param priority
+     *            the priority of the warning
+     * @return the warning
+     */
+    public Warning createWarning(final String fileName, final int start, final String type, final String category, final String message, final Priority priority) {
+        return new Warning(fileName, start, type, category, message, priority);
+    }
 
     /**
      * Creates a new instance of {@link Warning} using the parser's group as
