@@ -400,13 +400,12 @@ public class WarningsPublisher extends HealthAwareRecorder {
 
     private ParserResult annotate(final AbstractBuild<?, ?> build, final ParserResult input, final String parserName)
             throws IOException, InterruptedException {
-        ParserResult output = build.getWorkspace().act(
-                new AnnotationsClassifier(input, getDefaultEncoding()));
+        ParserResult output = build.getWorkspace().act(new AnnotationsClassifier(input, getDefaultEncoding()));
         for (FileAnnotation annotation : output.getAnnotations()) {
             annotation.setPathName(build.getWorkspace().getRemote());
         }
-        WarningsResult result = new WarningsResult(build, new WarningsBuildHistory(build, parserName, useOnlyStableBuildsAsReference()),
-                output, getDefaultEncoding(), parserName);
+        WarningsBuildHistory history = new WarningsBuildHistory(build, parserName, useOnlyStableBuildsAsReference());
+        WarningsResult result = new WarningsResult(build, history, output, getDefaultEncoding(), parserName);
         build.getActions().add(new WarningsResultAction(build, this, result, parserName));
 
         return output;
