@@ -1,11 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.ExtensionPoint;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
-import hudson.plugins.warnings.Messages;
-import hudson.plugins.warnings.WarningsDescriptor;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
@@ -14,6 +8,13 @@ import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.jvnet.localizer.Localizable;
+
+import hudson.ExtensionPoint;
+
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
+import hudson.plugins.warnings.Messages;
+import hudson.plugins.warnings.WarningsDescriptor;
 
 /**
  * Parses an input stream for compiler warnings and returns the found
@@ -225,7 +226,7 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
     public Warning createWarning(final String fileName, final int start, final String category, final String message, final Priority priority) {
         return new Warning(fileName, start, getGroup(), category, message, priority);
     }
-    
+
     /**
      * Creates a new instance of {@link Warning}.
      *
@@ -233,7 +234,7 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
      *            the name of the file
      * @param start
      *            the first line of the line range
-     * @param type 
+     * @param type
      *            the type of warning
      * @param category
      *            the warning category
@@ -242,6 +243,7 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
      * @param priority
      *            the priority of the warning
      * @return the warning
+     * @since 4.24
      */
     public Warning createWarning(final String fileName, final int start, final String type, final String category, final String message, final Priority priority) {
         return new Warning(fileName, start, type, category, message, priority);
