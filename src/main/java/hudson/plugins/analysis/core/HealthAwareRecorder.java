@@ -418,7 +418,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         try {
             outputStream = new FileOutputStream(masterFile);
             print(outputStream,
-                    "Copying the source file '%s' from the workspace to the build folder '%s' on the Hudson master failed.%n",
+                    "Copying the source file '%s' from the workspace to the build folder '%s' on the Jenkins master failed.%n",
                     slaveFileName, masterFile.getAbsolutePath());
             if (!slaveFileName.startsWith(SLASH) && !slaveFileName.contains(":")) {
                 print(outputStream,
