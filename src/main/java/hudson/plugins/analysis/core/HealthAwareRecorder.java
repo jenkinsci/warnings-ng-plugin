@@ -1,4 +1,4 @@
-package hudson.plugins.analysis.core;
+package hudson.plugins.analysis.core; // NOPMD
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collection;
+
+import javax.annotation.CheckForNull;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -440,7 +442,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
             print(outputStream,
                     "If you are building on the master: please check if the file is accessible under '$JENKINS_HOME/[job-name]/workspace/%s'%n",
                     slaveFileName);
-            exception.printStackTrace(new PrintStream(outputStream, false, getDefaultEncoding()));
+            exception.printStackTrace(new PrintStream(outputStream, false, getEncoding()));
         }
         catch (IOException error) {
             // ignore
@@ -452,7 +454,11 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
 
     private void print(final FileOutputStream outputStream, final String message,
             final Object... arguments) throws IOException {
-        IOUtils.write(String.format(message, arguments), outputStream, EncodingValidator.getEncoding(getDefaultEncoding()));
+        IOUtils.write(String.format(message, arguments), outputStream, getEncoding());
+    }
+
+    private String getEncoding() {
+        return EncodingValidator.getEncoding(getDefaultEncoding());
     }
 
     /**
@@ -566,6 +572,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      *
      * @return the default encoding
      */
+    @CheckForNull
     public String getDefaultEncoding() {
         return defaultEncoding;
     }
