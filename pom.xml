@@ -47,7 +47,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>violations</artifactId>
-      <version>0.7.10</version>
+      <version>0.7.11</version>
       <optional>true</optional>
     </dependency>
     <dependency>

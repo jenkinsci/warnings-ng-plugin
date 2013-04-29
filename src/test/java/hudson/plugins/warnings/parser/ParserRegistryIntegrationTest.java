@@ -1,7 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.plugins.analysis.util.model.FileAnnotation;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,6 +14,8 @@ import org.jvnet.hudson.test.HudsonTestCase;
 import org.jvnet.hudson.test.TestExtension;
 import org.jvnet.localizer.Localizable;
 
+import hudson.plugins.analysis.util.model.FileAnnotation;
+
 /**
  * Tests the class {@link ParserRegistry} in context of a running Jenkins instance.
  *
@@ -23,7 +23,7 @@ import org.jvnet.localizer.Localizable;
  */
 public class ParserRegistryIntegrationTest extends HudsonTestCase {
     /** If you add a new parser then this value needs to be adapted. */
-    private static final int NUMBER_OF_AVAILABLE_PARSERS = 44;
+    private static final int NUMBER_OF_AVAILABLE_PARSERS = 47;
     private static final String OLD_ID_ECLIPSE_JAVA_COMPILER = "Eclipse Java Compiler";
     private static final String JAVA_WARNINGS_FILE = "deprecations.txt";
     private static final String OLD_ID_JAVA_COMPILER = "Java Compiler";

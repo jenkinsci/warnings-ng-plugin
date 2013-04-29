@@ -1,12 +1,15 @@
 package hudson.plugins.warnings.parser;
 
+import java.util.List;
+
 import hudson.plugins.violations.types.codenarc.CodenarcParser;
 import hudson.plugins.violations.types.csslint.CssLintParser;
 import hudson.plugins.violations.types.gendarme.GendarmeParser;
 import hudson.plugins.violations.types.jcreport.JcReportParser;
 import hudson.plugins.violations.types.pep8.Pep8Parser;
-
-import java.util.List;
+import hudson.plugins.violations.types.perlcritic.PerlCriticParser;
+import hudson.plugins.violations.types.pylint.PyLintParser;
+import hudson.plugins.violations.types.stylecop.StyleCopParser;
 
 /**
  * Registers the parsers of the violations plug-in.
@@ -42,6 +45,18 @@ public final class ViolationsRegistry {
                 Messages._Warnings_Pep8_ParserName(),
                 Messages._Warnings_Pep8_LinkName(),
                 Messages._Warnings_Pep8_TrendName()));
+        parsers.add(new ViolationsAdapter(new PerlCriticParser(),
+                Messages._Warnings_PerlCritic_ParserName(),
+                Messages._Warnings_PerlCritic_LinkName(),
+                Messages._Warnings_PerlCritic_TrendName()));
+        parsers.add(new ViolationsAdapter(new PyLintParser(),
+                Messages._Warnings_PyLint_ParserName(),
+                Messages._Warnings_PyLint_LinkName(),
+                Messages._Warnings_PyLint_TrendName()));
+        parsers.add(new ViolationsAdapter(new StyleCopParser(),
+                Messages._Warnings_StyleCop_ParserName(),
+                Messages._Warnings_StyleCop_LinkName(),
+                Messages._Warnings_StyleCop_TrendName()));
     }
 
     /**
