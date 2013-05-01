@@ -2,6 +2,7 @@ package hudson.plugins.warnings;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -197,7 +198,44 @@ public class WarningsPublisher extends HealthAwareRecorder {
             }
         }
 
+        replaceConsoleParsersWithChangedName();
+        replaceFileParsersWithChangedName();
+
         return this;
+    }
+
+    private void replaceConsoleParsersWithChangedName() {
+        List<ConsoleParser> updatedConsoleParsers = new ArrayList<ConsoleParser>(consoleParsers);
+        for (ConsoleParser parser : consoleParsers) {
+            String parserName = parser.getParserName();
+            if (ParserRegistry.exists(parserName)) {
+                String group = getGroup(parserName);
+                if (!group.equals(parserName)) {
+                    updatedConsoleParsers.remove(parser);
+                    updatedConsoleParsers.add(new ConsoleParser(group));
+                }
+            }
+            consoleParsers = updatedConsoleParsers;
+        }
+    }
+
+    private void replaceFileParsersWithChangedName() {
+        List<ParserConfiguration> updatedFileParsers = new ArrayList<ParserConfiguration>(parserConfigurations);
+        for (ParserConfiguration parser : parserConfigurations) {
+            String parserName = parser.getParserName();
+            if (ParserRegistry.exists(parserName)) {
+                String group = getGroup(parserName);
+                if (!group.equals(parserName)) {
+                    updatedFileParsers.remove(parser);
+                    updatedFileParsers.add(new ParserConfiguration(parser.getPattern(), group));
+                }
+            }
+            parserConfigurations = updatedFileParsers;
+        }
+    }
+
+    private String getGroup(final String parserName) {
+        return ParserRegistry.getParser(parserName).getGroup();
     }
 
     private void upgradeFrom318() {
