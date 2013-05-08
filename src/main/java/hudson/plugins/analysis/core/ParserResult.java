@@ -124,7 +124,7 @@ public class ParserResult implements Serializable {
      *
      * @param annotation the annotation
      */
-    // TODO: this method is quite dump: when used on a slave then for each file a remote call is initiated
+    // TODO: when used on a slave then for each file a remote call is initiated
     private void expandRelativePaths(final FileAnnotation annotation) {
         try {
             if (hasRelativeFileName(annotation)) {
@@ -442,7 +442,7 @@ public class ParserResult implements Serializable {
     }
 
     /**
-     * Default implementation that delegates to an {@link FilePath} instance.
+     * Default implementation that delegates to a {@link FilePath} instance.
      */
     private static class FilePathAdapter implements Workspace {
         private static final long serialVersionUID = 1976601889843466249L;
