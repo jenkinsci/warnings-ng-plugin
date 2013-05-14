@@ -1,9 +1,10 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.Extension;
-import hudson.plugins.warnings.WarningsDescriptor;
-
 import java.util.regex.Matcher;
+
+import hudson.Extension;
+
+import hudson.plugins.warnings.WarningsDescriptor;
 
 /**
  * A parser for the javac compiler warnings.

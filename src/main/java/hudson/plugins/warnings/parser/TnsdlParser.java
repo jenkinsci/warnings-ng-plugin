@@ -1,9 +1,10 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.Extension;
-import hudson.plugins.analysis.util.model.Priority;
-
 import java.util.regex.Matcher;
+
+import hudson.Extension;
+
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A parser for the tnsdl translator warnings.

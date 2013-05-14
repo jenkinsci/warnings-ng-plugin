@@ -1,12 +1,13 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.ExtensionPoint;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
 import java.util.Collection;
+
+import hudson.ExtensionPoint;
+
+import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
  * Parses an input stream for compiler warnings and returns the found

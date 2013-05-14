@@ -1,12 +1,13 @@
 package hudson.plugins.warnings;
 
 import static org.junit.Assert.*;
-import hudson.plugins.warnings.parser.JavacParser;
 
 import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
 
 import com.google.common.collect.Lists;
+
+import hudson.plugins.warnings.parser.JavacParser;
 
 /**
  * Tests the class {@link ParserConfiguration}.

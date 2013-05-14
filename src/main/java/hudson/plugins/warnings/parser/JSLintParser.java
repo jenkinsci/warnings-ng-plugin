@@ -1,9 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.Extension;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -21,6 +17,11 @@ import org.kohsuke.stapler.framework.io.IOException2;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import hudson.Extension;
+
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A parser for JSLint checks warnings.

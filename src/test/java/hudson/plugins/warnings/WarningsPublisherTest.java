@@ -1,7 +1,5 @@
 package hudson.plugins.warnings;
 
-import hudson.model.Action;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -9,6 +7,8 @@ import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
 
 import com.google.common.collect.Lists;
+
+import hudson.model.Action;
 
 /**
  * Tests the class {@link WarningsPublisher}.

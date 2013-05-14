@@ -1,12 +1,13 @@
 package hudson.plugins.warnings.dashboard;
 
-import hudson.model.Job;
-import hudson.plugins.analysis.core.AbstractProjectAction;
-import hudson.plugins.warnings.WarningsProjectAction;
-
 import java.util.List;
 
 import javax.annotation.CheckForNull;
+
+import hudson.model.Job;
+
+import hudson.plugins.analysis.core.AbstractProjectAction;
+import hudson.plugins.warnings.WarningsProjectAction;
 
 /**
  * Selects a specific action from the available set of actions.

@@ -1,14 +1,6 @@
 package hudson.plugins.warnings;
 
 import static org.junit.Assert.*;
-import hudson.plugins.analysis.core.AnnotationDifferencer;
-import hudson.plugins.analysis.test.AnnotationDifferencerTest;
-import hudson.plugins.analysis.util.TreeString;
-import hudson.plugins.analysis.util.model.AbstractAnnotation;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
-import hudson.plugins.warnings.parser.Gcc4CompilerParser;
-import hudson.plugins.warnings.parser.Warning;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +11,15 @@ import java.util.Set;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableSet;
+
+import hudson.plugins.analysis.core.AnnotationDifferencer;
+import hudson.plugins.analysis.test.AnnotationDifferencerTest;
+import hudson.plugins.analysis.util.TreeString;
+import hudson.plugins.analysis.util.model.AbstractAnnotation;
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
+import hudson.plugins.warnings.parser.Gcc4CompilerParser;
+import hudson.plugins.warnings.parser.Warning;
 
 /**
  * Tests the {@link AnnotationDifferencer} for warnings.

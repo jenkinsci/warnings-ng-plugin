@@ -1,13 +1,13 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.plugins.analysis.core.AnnotationParser;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
+
+import hudson.plugins.analysis.core.AnnotationParser;
+import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
  * Uses a collection of {@link AbstractWarningsParser parsers} to scans a set of files for warnings.

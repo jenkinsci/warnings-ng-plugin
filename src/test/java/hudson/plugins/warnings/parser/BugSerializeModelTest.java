@@ -1,19 +1,19 @@
 package hudson.plugins.warnings.parser;
 
+import java.io.File;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import com.thoughtworks.xstream.XStream;
+
 import hudson.XmlFile;
+
 import hudson.plugins.analysis.test.AbstractSerializeModelTest;
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
 import hudson.plugins.analysis.util.model.AnnotationStream;
 import hudson.plugins.analysis.util.model.JavaProject;
 import hudson.plugins.analysis.util.model.Priority;
-
-import java.io.File;
-
-import org.junit.Assert;
-
-import org.junit.Test;
-
-import com.thoughtworks.xstream.XStream;
 
 /**
  * Tests the serialization of the model.

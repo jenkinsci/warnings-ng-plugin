@@ -1,15 +1,17 @@
 package hudson.plugins.warnings;
 
 import static org.junit.Assert.*;
-import hudson.plugins.warnings.GroovyParser.DescriptorImpl;
-import hudson.util.FormValidation;
-import hudson.util.FormValidation.Kind;
 
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+
+import hudson.plugins.warnings.GroovyParser.DescriptorImpl;
+
+import hudson.util.FormValidation;
+import hudson.util.FormValidation.Kind;
 
 /**
  * Tests the class {@link GroovyParser}.

@@ -2,7 +2,14 @@ package hudson.plugins.warnings;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+
+import java.util.GregorianCalendar;
+
+import org.junit.Assert;
+import org.junit.Test;
+
 import hudson.model.AbstractBuild;
+
 import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.NullBuildHistory;
 import hudson.plugins.analysis.core.ParserResult;
@@ -11,12 +18,6 @@ import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 import hudson.plugins.warnings.WarningsResult.FileChecker;
 import hudson.plugins.warnings.parser.Warning;
-
-import java.util.GregorianCalendar;
-
-import org.junit.Assert;
-
-import org.junit.Test;
 
 /**
  * Tests the class {@link WarningsResult}.

@@ -1,8 +1,6 @@
 package hudson.plugins.warnings.parser;
 
 import static org.junit.Assert.*;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,6 +9,9 @@ import java.util.Iterator;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * Tests the class {@link MsBuildParser}.
