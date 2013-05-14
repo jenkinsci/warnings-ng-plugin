@@ -1,8 +1,6 @@
 package hudson.plugins.warnings.parser;
 
 import static org.junit.Assert.*;
-import hudson.plugins.analysis.util.StringPluginLogger;
-import hudson.plugins.analysis.util.model.FileAnnotation;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +11,9 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+
+import hudson.plugins.analysis.util.StringPluginLogger;
+import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
  * Test the class {@link DynamicParser}.

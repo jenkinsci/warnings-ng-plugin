@@ -1,9 +1,6 @@
 package hudson.plugins.warnings.parser;
 
 import static org.junit.Assert.*;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
-import hudson.plugins.warnings.parser.fxcop.FxCopParser;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +11,10 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
+import hudson.plugins.warnings.parser.fxcop.FxCopParser;
 
 /**
  * Tests the class {@link FxCopParser}.

@@ -1,10 +1,6 @@
 package hudson.plugins.warnings.parser;
 
 import static org.junit.Assert.*;
-import hudson.plugins.analysis.core.ParserResult;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.warnings.GroovyParserTest;
-import hudson.plugins.warnings.GroovyParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,12 +11,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Assert;
-
 import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+
+import hudson.plugins.analysis.core.ParserResult;
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.warnings.GroovyParserTest;
+import hudson.plugins.warnings.GroovyParser;
 
 /**
  * Tests the class {@link ParserRegistry}.

@@ -1,13 +1,13 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.junit.Test;
+
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * Tests the class {@link PhpParser}.

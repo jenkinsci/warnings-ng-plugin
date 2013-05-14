@@ -1,7 +1,15 @@
 package hudson.plugins.warnings;
 
+import java.util.List;
+
+import javax.annotation.CheckForNull;
+
+import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.StaplerRequest;
+
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+
 import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.NullBuildHistory;
 import hudson.plugins.analysis.core.AbstractProjectAction;
@@ -10,13 +18,6 @@ import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
 import hudson.plugins.analysis.graph.UserGraphConfigurationView;
 import hudson.plugins.analysis.graph.GraphConfigurationView;
 import hudson.plugins.warnings.parser.ParserRegistry;
-
-import java.util.List;
-
-import javax.annotation.CheckForNull;
-
-import org.apache.commons.lang.StringUtils;
-import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * Entry point to visualize the warnings trend graph in the project screen.

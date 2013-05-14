@@ -1,14 +1,15 @@
 package hudson.plugins.warnings.parser;
 
 import static org.junit.Assert.*;
-import hudson.plugins.analysis.core.AnnotationDifferencer;
-import hudson.plugins.analysis.util.TreeString;
-import hudson.plugins.analysis.util.model.FileAnnotation;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
+
+import hudson.plugins.analysis.core.AnnotationDifferencer;
+import hudson.plugins.analysis.util.TreeString;
+import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
  * Tests the class {@link Warning}.

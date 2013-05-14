@@ -1,6 +1,7 @@
 package hudson.plugins.warnings.tokens;
 
 import hudson.Extension;
+
 import hudson.plugins.analysis.tokens.AbstractFixedAnnotationsTokenMacro;
 import hudson.plugins.warnings.WarningsResultAction;
 

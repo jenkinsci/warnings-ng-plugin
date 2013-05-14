@@ -1,12 +1,13 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.Extension;
-import hudson.plugins.analysis.util.model.Priority;
-
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
 import org.jvnet.localizer.Localizable;
+
+import hudson.Extension;
+
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A parser for the MSBuild/PcLint compiler warnings.

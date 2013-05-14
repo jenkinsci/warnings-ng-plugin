@@ -1,17 +1,19 @@
 package hudson.plugins.warnings.dashboard;
 
+import javax.annotation.CheckForNull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import hudson.Extension;
+
 import hudson.model.Descriptor;
 import hudson.model.Job;
+
 import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.analysis.dashboard.AbstractWarningsTablePortlet;
 import hudson.plugins.view.dashboard.DashboardPortlet;
 import hudson.plugins.warnings.Messages;
 import hudson.plugins.warnings.WarningsProjectAction;
-
-import javax.annotation.CheckForNull;
-
-import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * A portlet that shows a table with the number of warnings in a job.

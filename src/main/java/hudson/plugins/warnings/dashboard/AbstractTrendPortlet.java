@@ -1,11 +1,12 @@
 package hudson.plugins.warnings.dashboard;
 
+import javax.annotation.CheckForNull;
+
 import hudson.model.Job;
+
 import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.analysis.dashboard.AbstractWarningsGraphPortlet;
 import hudson.plugins.warnings.WarningsProjectAction;
-
-import javax.annotation.CheckForNull;
 
 /**
  * Base class for portlets that show trends of the warnings plug-in.

@@ -1,12 +1,13 @@
 package hudson.plugins.warnings;
 
+import org.jvnet.localizer.Localizable;
+
 import hudson.model.AbstractBuild;
+
 import hudson.plugins.analysis.core.HealthDescriptor;
 import hudson.plugins.analysis.core.AbstractResultAction;
 import hudson.plugins.analysis.core.PluginDescriptor;
 import hudson.plugins.warnings.parser.ParserRegistry;
-
-import org.jvnet.localizer.Localizable;
 
 /**
  * Controls the live cycle of the warnings results. This action persists the

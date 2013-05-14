@@ -1,14 +1,5 @@
 package hudson.plugins.warnings.parser.fxcop;
 
-import hudson.Extension;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
-import hudson.plugins.warnings.parser.AbstractWarningsParser;
-import hudson.plugins.warnings.parser.Messages;
-import hudson.plugins.warnings.parser.ParsingCanceledException;
-import hudson.plugins.warnings.parser.Warning;
-import hudson.util.IOException2;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
@@ -25,6 +16,17 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
+
+import hudson.Extension;
+
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
+import hudson.plugins.warnings.parser.AbstractWarningsParser;
+import hudson.plugins.warnings.parser.Messages;
+import hudson.plugins.warnings.parser.ParsingCanceledException;
+import hudson.plugins.warnings.parser.Warning;
+
+import hudson.util.IOException2;
 
 /**
  * Parses a fxcop xml report file. This does not uses the XML Pull parser as it

@@ -1,18 +1,20 @@
 package hudson.plugins.warnings;
 
-import hudson.Launcher;
-import hudson.matrix.MatrixAggregator;
-import hudson.matrix.MatrixRun;
-import hudson.matrix.MatrixBuild;
-import hudson.model.BuildListener;
-import hudson.plugins.analysis.core.HealthDescriptor;
-import hudson.plugins.analysis.core.ParserResult;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+
+import hudson.Launcher;
+import hudson.matrix.MatrixAggregator;
+import hudson.matrix.MatrixRun;
+import hudson.matrix.MatrixBuild;
+
+import hudson.model.BuildListener;
+
+import hudson.plugins.analysis.core.HealthDescriptor;
+import hudson.plugins.analysis.core.ParserResult;
 
 /**
  * Aggregates {@link WarningsResultAction}s of {@link MatrixRun}s into

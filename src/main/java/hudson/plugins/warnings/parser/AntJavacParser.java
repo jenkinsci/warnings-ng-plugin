@@ -1,10 +1,10 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.Extension;
-
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
+
+import hudson.Extension;
 
 /**
  * A parser for the ant javac compiler warnings.

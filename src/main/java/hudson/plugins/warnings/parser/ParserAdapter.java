@@ -1,10 +1,10 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.plugins.analysis.util.model.FileAnnotation;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
+
+import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
  * Decorator of <code>WarningsParser</code> instances. Makes instances of the old

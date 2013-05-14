@@ -1,16 +1,5 @@
 package hudson.plugins.warnings;
 
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.model.AbstractProject;
-import hudson.plugins.analysis.core.NullBuildHistory;
-import hudson.plugins.analysis.core.PluginDescriptor;
-import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
-import hudson.plugins.analysis.graph.GraphConfiguration;
-import hudson.plugins.warnings.parser.ParserRegistry;
-import hudson.util.CopyOnWriteList;
-import hudson.util.FormValidation;
-
 import java.io.IOException;
 
 import net.sf.json.JSONObject;
@@ -21,6 +10,20 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+
+import hudson.Extension;
+import hudson.FilePath;
+
+import hudson.model.AbstractProject;
+
+import hudson.plugins.analysis.core.NullBuildHistory;
+import hudson.plugins.analysis.core.PluginDescriptor;
+import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
+import hudson.plugins.analysis.graph.GraphConfiguration;
+import hudson.plugins.warnings.parser.ParserRegistry;
+
+import hudson.util.CopyOnWriteList;
+import hudson.util.FormValidation;
 
 /**
  * Descriptor for the class {@link WarningsPublisher}. Used as a singleton. The

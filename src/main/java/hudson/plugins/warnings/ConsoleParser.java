@@ -1,11 +1,5 @@
 package hudson.plugins.warnings;
 
-import hudson.Extension;
-import hudson.model.AbstractDescribableImpl;
-import hudson.model.Descriptor;
-import hudson.plugins.warnings.parser.ParserRegistry;
-import hudson.util.ListBoxModel;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -13,6 +7,15 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import com.google.common.collect.Lists;
+
+import hudson.Extension;
+
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.Descriptor;
+
+import hudson.plugins.warnings.parser.ParserRegistry;
+
+import hudson.util.ListBoxModel;
 
 /**
  * Defines the configuration to parse a set of files using a predefined parser.
