@@ -1,9 +1,10 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.Extension;
-import hudson.plugins.analysis.util.model.Priority;
-
 import java.util.regex.Matcher;
+
+import hudson.Extension;
+
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A parser for the Diab C++ compiler warnings.
@@ -14,7 +15,7 @@ import java.util.regex.Matcher;
 public class DiabCParser extends RegexpLineParser {
     private static final long serialVersionUID = -1251248150596418456L;
 
-    private static final String DIAB_CPP_WARNING_PATTERN = "^\\s*\"(.*)\"\\s*,\\s*line\\s*(\\d+)\\s*:\\s*(warning|error)\\s*\\(dcc:(\\d+)\\)\\s*:\\s*(.*)$";
+    private static final String DIAB_CPP_WARNING_PATTERN = "^\\s*\"(.*)\"\\s*,\\s*line\\s*(\\d+)\\s*:\\s*(warning|error|fatal\\s{1}error)\\s*\\(dcc:(\\d+)\\)\\s*:\\s*(.*)$";
 
     /**
      * Creates a new instance of <code>HpiCompileParser</code>.

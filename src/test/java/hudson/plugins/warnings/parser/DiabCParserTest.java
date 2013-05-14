@@ -1,14 +1,15 @@
 package hudson.plugins.warnings.parser;
 
 import static org.junit.Assert.*;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.junit.Test;
+
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * Tests the class {@link DiabCParser}.
@@ -25,7 +26,7 @@ public class DiabCParserTest extends ParserTester {
     public void parseDiabCpp() throws IOException {
         Collection<FileAnnotation> warnings = new DiabCParser().parse(openFile());
 
-        assertEquals("Wrong number of warnings detected.", 5, warnings.size());
+        assertEquals("Wrong number of warnings detected.", 8, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -58,6 +59,24 @@ public class DiabCParserTest extends ParserTester {
                 "function f5 is not found",
                 "lint.c",
                 TYPE, "1378", Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                5,
+                "division by zero",
+                "main.c",
+                TYPE, "1025", Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                5,
+                "division by zero",
+                "main.c",
+                TYPE, "1025", Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                5,
+                "division by zero",
+                "main.c",
+                TYPE, "1025", Priority.HIGH);
     }
 
     @Override
