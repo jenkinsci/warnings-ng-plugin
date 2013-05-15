@@ -1,0 +1,1 @@
+C:\dev\bsc\daqtask.c(43) : Warning[Pe177]: variable "pgMsgEnv" was declared but never referenced

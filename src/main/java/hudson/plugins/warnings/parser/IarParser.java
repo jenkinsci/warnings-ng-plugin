@@ -1,9 +1,10 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.Extension;
-import hudson.plugins.analysis.util.model.Priority;
-
 import java.util.regex.Matcher;
+
+import hudson.Extension;
+
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A parser for the IAR C/C++ compiler warnings. Note, that since release 4.1
@@ -16,16 +17,10 @@ import java.util.regex.Matcher;
  */
 @Extension
 public class IarParser extends RegexpLineParser {
-    private static final String OR = "|";
-    private static final String FATAL_ERROR = "Fatal error";
-    private static final String WARNING = "Warning";
-    private static final String REMARK = "Remark";
-    private static final String ERROR = "Error";
-
     private static final long serialVersionUID = 7695540852439013425L;
 
     private static final String IAR_WARNING_PATTERN =
-        "^\"(.*?)\",(\\d+)\\s+(" + ERROR + OR + REMARK + OR + WARNING + OR + FATAL_ERROR + ")\\[(\\w+)\\]: (.*)$";
+        "^\"?(.*?)\"?(?:,|\\()(\\d+)(?:\\s*|\\)\\s*:\\s*)(Error|Remark|Warning|Fatal error)\\[(\\w+)\\]: (.*)$";
 
     /**
      * Creates a new instance of {@link IarParser}.
@@ -39,7 +34,7 @@ public class IarParser extends RegexpLineParser {
 
     @Override
     protected boolean isLineInteresting(final String line) {
-        return line.contains(WARNING) || line.contains("rror") || line.contains(REMARK);
+        return line.contains("Warning") || line.contains("rror") || line.contains("Remark");
     }
 
     @Override
@@ -51,16 +46,16 @@ public class IarParser extends RegexpLineParser {
     protected Warning createWarning(final Matcher matcher) {
         Priority priority;
         String message = normalizeWhitespaceInMessage(matcher.group(5));
-        if (REMARK.equals(matcher.group(3))) {
+        if ("Remark".equals(matcher.group(3))) {
             priority = Priority.LOW;
         }
-        else if (WARNING.equals(matcher.group(3))) {
+        else if ("Warning".equals(matcher.group(3))) {
             priority = Priority.NORMAL;
         }
-        else if (ERROR.equals(matcher.group(3))) {
+        else if ("Error".equals(matcher.group(3))) {
             priority = Priority.HIGH;
         }
-        else if (FATAL_ERROR.equals(matcher.group(3))) {
+        else if ("Fatal error".equals(matcher.group(3))) {
             priority = Priority.HIGH;
         }
         else {
