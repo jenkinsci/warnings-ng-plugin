@@ -1,0 +1,3 @@
+nagfor file.f90 > not_a_message_line
+Info: C:\file1.inc, line 1: Unterminated last line of INCLUDE file
+[NAG Fortran Compiler - not a message line]
