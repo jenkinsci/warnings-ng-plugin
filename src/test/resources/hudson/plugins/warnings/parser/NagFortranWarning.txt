@@ -1,0 +1,3 @@
+nagfor file.f90 > not_a_message_line
+Warning: C:/file2.f90, line 5: Procedure pointer F pointer-assigned but otherwise unused
+[NAG Fortran Compiler - not a message line]

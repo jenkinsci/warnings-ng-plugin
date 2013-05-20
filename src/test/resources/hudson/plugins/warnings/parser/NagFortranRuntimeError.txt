@@ -1,0 +1,3 @@
+nagfor file.f90 > not_a_message_line
+Runtime Error: file8.f90, line 7: Reference to undefined POINTER P
+[NAG Fortran Compiler - not a message line]

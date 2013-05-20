@@ -1,0 +1,3 @@
+nagfor file.f90 > not_a_message_line
+Obsolescent: file5.f, line 1: Fixed source form
+[NAG Fortran Compiler - not a message line]
