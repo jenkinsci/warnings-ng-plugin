@@ -7,31 +7,43 @@ import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
- * FIXME: Document type PerlCriticParser.
+ * A parser for the Perl::Critic warnings.
  *
  * @author Mihail Menev, menev@hm.edu
  */
 @Extension
 public class PerlCriticParser extends RegexpLineParser {
 
-    private static final String PERLCRITIC_WARNING_PATTERN = "(?:(^/.*?):)?(.*)\\s+at\\s+line\\s+(\\d+),\\s+column\\s+(\\d+)\\.\\s*(?:See page[s]?\\s+)?(.*)\\.\\s*\\(?Severity:\\s*(\\d)\\)?";
+    private static final long serialVersionUID = -6481203155449490873L;
+
+    private static final String PERLCRITIC_WARNING_PATTERN = "(?:(.*?):)?(.*)\\s+at\\s+line\\s+(\\d+),\\s+column\\s+(\\d+)\\.\\s*(?:See page[s]?\\s+)?(.*)\\.\\s*\\(?Severity:\\s*(\\d)\\)?";
+
+    /**
+     * Creates a new instance of {@link PerlCriticParser}.
+     */
+    public PerlCriticParser() {
+        super(Messages._Warnings_PerlCritic_ParserName(), Messages._Warnings_PerlCritic_LinkName(), Messages
+                ._Warnings_PerlCritic_TrendName(), PERLCRITIC_WARNING_PATTERN, true);
+    }
 
     /** {@inheritDoc} */
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        int offset = 0;
-        String filename = "-";
 
-        if (matcher.groupCount() == 6) {
-            offset = 1;
-            filename = matcher.group(offset);
+        String filename;
+
+        if (matcher.group(1) == null) {
+            filename = "-";
+        }
+        else {
+            filename = matcher.group(1);
         }
 
-        String message = matcher.group(1 + offset);
-        String category = matcher.group(4 + offset);
-        int line = Integer.parseInt(matcher.group(2 + offset));
-        int column = Integer.parseInt(matcher.group(3 + offset));
-        Priority priority = checkPriority(Integer.parseInt(matcher.group(5 + offset)));
+        String message = matcher.group(2);
+        int line = Integer.parseInt(matcher.group(3));
+        int column = Integer.parseInt(matcher.group(4));
+        String category = matcher.group(5);
+        Priority priority = checkPriority(Integer.parseInt(matcher.group(6)));
 
         Warning warning = createWarning(filename, line, category, message, priority);
         warning.setColumnPosition(column, column);
@@ -56,13 +68,4 @@ public class PerlCriticParser extends RegexpLineParser {
             return Priority.HIGH;
         }
     }
-
-    /**
-     * Creates a new instance of {@link PerlCriticParser}.
-     */
-    public PerlCriticParser() {
-        super(Messages._Warnings_PerlCritic_ParserName(), Messages._Warnings_PerlCritic_LinkName(), Messages
-                ._Warnings_PerlCritic_TrendName(), PERLCRITIC_WARNING_PATTERN, true);
-    }
-
 }
