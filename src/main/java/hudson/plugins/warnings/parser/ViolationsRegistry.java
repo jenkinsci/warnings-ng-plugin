@@ -48,12 +48,6 @@ public final class ViolationsRegistry {
                 Messages._Warnings_PerlCritic_ParserName(),
                 Messages._Warnings_PerlCritic_LinkName(),
                 Messages._Warnings_PerlCritic_TrendName()));
-        // Kann hier später entfernt werden
-        /*parsers.add(new ViolationsAdapter(new PyLintParser(),
-                Messages._Warnings_PyLint_ParserName(),
-                Messages._Warnings_PyLint_LinkName(),
-                Messages._Warnings_PyLint_TrendName()));
-        */
         parsers.add(new ViolationsAdapter(new StyleCopParser(),
                 Messages._Warnings_StyleCop_ParserName(),
                 Messages._Warnings_StyleCop_LinkName(),

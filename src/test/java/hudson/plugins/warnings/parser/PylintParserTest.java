@@ -60,9 +60,4 @@ public class PylintParserTest extends ParserTester {
     protected String getWarningsFile() {
         return "pyLint.txt";
     }
-
 }
-
-
-
-
