@@ -103,3 +103,32 @@
 /media/sf_lab/projects/perl/ch1/hello: Regular expression without "/m" flag at line 9, column 2.  See page 237 of PBP.  (Severity: 2)
 /media/sf_lab/projects/perl/ch1/hello: Return value of flagged function ignored - print at line 10, column 2.  See pages 208,278 of PBP.  (Severity: 1)
 /media/sf_lab/projects/perl/ch1/hello: String *may* require interpolation at line 13, column 8.  See page 51 of PBP.  (Severity: 1)
+
+Jun  4 15:24:47 localhost kernel: intel8x0_measure_ac97_clock: measured 51107 usecs (12560 samples)
+Jun  4 15:24:47 localhost kernel: intel8x0: measured clock 245758 rejected
+Jun  4 15:24:47 localhost kernel: intel8x0_measure_ac97_clock: measured 50935 usecs (12445 samples)
+Jun  4 15:24:47 localhost kernel: intel8x0: measured clock 244331 rejected
+Jun  4 15:24:47 localhost kernel: intel8x0: clocking to 48000
+Jun  4 15:24:47 localhost kernel: piix4_smbus 0000:00:07.0: SMBus base address uninitialized - upgrade BIOS or use force_addr=0xaddr
+Jun  4 15:24:47 localhost kernel: parport_pc 00:04: reported by Plug and Play ACPI
+Jun  4 15:24:47 localhost kernel: ppdev: user-space parallel port driver
+Jun  4 15:24:47 localhost kernel: EXT4-fs (sda1): mounted filesystem with ordered data mode. Opts: 
+Jun  4 15:24:47 localhost kernel: hrtimer: interrupt took 3924175 ns
+Jun  4 15:24:47 localhost kernel: Adding 1015800k swap on /dev/mapper/VolGroup-lv_swap.  Priority:-1 extents:1 across:1015800k 
+Jun  4 15:24:47 localhost kernel: NET: Registered protocol family 10
+Jun  4 15:24:47 localhost kernel: lo: Disabled Privacy Extensions
+Jun  4 15:24:47 localhost kernel: ip6_tables: (C) 2000-2006 Netfilter Core Team
+Jun  4 15:24:47 localhost kernel: nf_conntrack version 0.5.0 (3925 buckets, 15700 max)
+Jun  4 15:24:47 localhost kernel: ip_tables: (C) 2000-2006 Netfilter Core Team
+Jun  4 15:24:47 localhost kernel: usb usb2: New USB device found, idVendor=1d6b, idProduct=0001
+Jun  4 15:24:47 localhost kernel: usb usb2: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+Jun  4 15:24:47 localhost kernel: usb usb2: Product: OHCI Host Controller
+Jun  4 15:24:47 localhost kernel: usb usb2: Manufacturer: Linux 2.6.32-358.6.2.el6.x86_64 ohci_hcd
+Jun  4 15:24:47 localhost kernel: usb usb2: SerialNumber: 0000:00:06.0
+Jun  4 15:24:47 localhost kernel: usb usb2: configuration #1 chosen from 1 choice
+Jun  4 15:24:47 localhost kernel: hub 2-0:1.0: USB hub found
+Jun  4 15:24:47 localhost kernel: hub 2-0:1.0: 8 ports detected
+Jun  4 15:24:47 localhost kernel: uhci_hcd: USB Universal Host Controller Interface driver
+Jun  4 15:24:47 localhost kernel: PNP: PS/2 Controller [PNP0303:PS2K,PNP0f03:PS2M] at 0x60,0x64 irq 1,12
+Jun  4 15:24:47 localhost kernel: serio: i8042 KBD port at 0x60,0x64 irq 1
+Jun  4 15:24:47 localhost kernel: serio: i8042 AUX port at 0x60,0x64 irq 12
