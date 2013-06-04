@@ -2,6 +2,8 @@ package hudson.plugins.warnings.parser;
 
 import java.util.regex.Matcher;
 
+import hudson.Extension;
+
 import hudson.plugins.warnings.WarningsDescriptor;
 
 /**
@@ -9,6 +11,7 @@ import hudson.plugins.warnings.WarningsDescriptor;
  *
  * @author Ulli Hafner
  */
+@Extension
 public class PyLintParser extends RegexpLineParser {
 
     private static final long serialVersionUID = 4464053085862883240L;
