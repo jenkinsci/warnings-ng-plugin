@@ -1,8 +1,15 @@
 package hudson.plugins.warnings.parser;
-import org.junit.Assert;
+
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.junit.Test;
 
-import hudson.plugins.violations.types.pylint.PyLintParser;
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * FIXME: Document type NewPylintParserTest.
@@ -10,37 +17,55 @@ import hudson.plugins.violations.types.pylint.PyLintParser;
  * @author Ulli Hafner
  */
 public class NewPylintParserTest extends ParserTester {
-    @Test
-    public void testParseLineSimple() {
-        NewPyLintParser parser = new NewPyLintParser();
-        PyLintParser.PyLintViolation violation = parser.getPyLintViolation("trunk/src/python/cachedhttp.py:3: [C] Line too long (85/80)");
 
-        Assert.assertEquals("The message is incorrect", "Line too long (85/80)", violation.getMessage());
-        Assert.assertEquals("The violation id is incorrect", "C", violation.getViolationId());
-        Assert.assertEquals("The line str is incorrect", "3", violation.getLineStr());
-        Assert.assertEquals("The file name is incorrect", "trunk/src/python/cachedhttp.py", violation.getFileName());
+    private static final String WARNING_TYPE = Messages._Warnings_PyLint_ParserName().toString();
+
+    /**
+     * Parses a txt file, containing 3 warnings.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     */
+    @Test
+    public void pyLintTest() throws IOException {
+        Collection<FileAnnotation> warnings = new NewPyLintParser().parse(openFile());
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
+
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        FileAnnotation warning;
+
+        warning = iterator.next();
+        checkWarning(warning,
+                3,
+                "Line too long (85/80)",
+                "trunk/src/python/cachedhttp.py",
+                WARNING_TYPE, "C", Priority.NORMAL);
+
+        warning = iterator.next();
+        checkWarning(warning,
+                28,
+                "Invalid name \"seasonCount\" (should match [a-z_][a-z0-9_]{2,30}$)",
+                "trunk/src/python/tv.py",
+                WARNING_TYPE, "C0103", Priority.NORMAL);
+
+        warning = iterator.next();
+        checkWarning(warning,
+                35,
+                "Missing docstring",
+                "trunk/src/python/tv.py",
+                WARNING_TYPE, "C0111", Priority.NORMAL);
     }
 
-    @Test
-    public void testExtraViolationInfo() {
-        PyLintParser parser = new PyLintParser();
-        PyLintParser.PyLintViolation violation = parser.getPyLintViolation("trunk/src/python/tv.py:28: [C0103, Show.__init__] Invalid name \"seasonCount\" (should match [a-z_][a-z0-9_]{2,30}$)");
-
-        Assert.assertEquals("The message is incorrect", "Invalid name \"seasonCount\" (should match [a-z_][a-z0-9_]{2,30}$)", violation.getMessage());
-        Assert.assertEquals("The violation id is incorrect", "C0103", violation.getViolationId());
-        Assert.assertEquals("The line str is incorrect", "28", violation.getLineStr());
-        Assert.assertEquals("The file name is incorrect", "trunk/src/python/tv.py", violation.getFileName());
+    //Extension for upcomming issues
+    private Collection<FileAnnotation> parse(final String fileName) throws IOException {
+        return new NewPyLintParser().parse(openFile(fileName));
     }
 
-    @Test
-    public void testExtraViolationInfo2() {
-        PyLintParser parser = new PyLintParser();
-        PyLintParser.PyLintViolation violation = parser.getPyLintViolation("trunk/src/python/tv.py:35: [C0111, Episode] Missing docstring");
-
-        Assert.assertEquals("The message is incorrect", "Missing docstring", violation.getMessage());
-        Assert.assertEquals("The violation id is incorrect", "C0111", violation.getViolationId());
-        Assert.assertEquals("The line str is incorrect", "35", violation.getLineStr());
-        Assert.assertEquals("The file name is incorrect", "trunk/src/python/tv.py", violation.getFileName());
+    /** {@inheritDoc} */
+    @Override
+    protected String getWarningsFile() {
+        return "pyLint.txt";
     }
 
 }
