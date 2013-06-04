@@ -12,11 +12,9 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
- * FIXME: Document type NewPylintParserTest.
- *
- * @author Ulli Hafner
+ * Tests the class {@link PyLintParser}.
  */
-public class NewPylintParserTest extends ParserTester {
+public class PylintParserTest extends ParserTester {
 
     private static final String WARNING_TYPE = Messages._Warnings_PyLint_ParserName().toString();
 
@@ -28,7 +26,7 @@ public class NewPylintParserTest extends ParserTester {
      */
     @Test
     public void pyLintTest() throws IOException {
-        Collection<FileAnnotation> warnings = new NewPyLintParser().parse(openFile());
+        Collection<FileAnnotation> warnings = new PyLintParser().parse(openFile());
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
 
@@ -55,11 +53,6 @@ public class NewPylintParserTest extends ParserTester {
                 "Missing docstring",
                 "trunk/src/python/tv.py",
                 WARNING_TYPE, "C0111", Priority.NORMAL);
-    }
-
-    //Extension for upcomming issues
-    private Collection<FileAnnotation> parse(final String fileName) throws IOException {
-        return new NewPyLintParser().parse(openFile(fileName));
     }
 
     /** {@inheritDoc} */

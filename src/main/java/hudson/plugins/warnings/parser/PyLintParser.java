@@ -5,11 +5,11 @@ import java.util.regex.Matcher;
 import hudson.plugins.warnings.WarningsDescriptor;
 
 /**
- * FIXME: Document type NewPyLintParser.
+ * A parser for the PyLint compiler warnings.
  *
  * @author Ulli Hafner
  */
-public class NewPyLintParser extends RegexpLineParser {
+public class PyLintParser extends RegexpLineParser {
 
     private static final long serialVersionUID = 4464053085862883240L;
     static final String PYLINT_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "pyLint-16x16.ico";
@@ -17,9 +17,9 @@ public class NewPyLintParser extends RegexpLineParser {
     private static final String PYLINT_ERROR_PATTERN = "(.*):(\\d+): \\[(\\D\\d*).*\\] (.*)";
 
     /**
-     * Creates a new instance of {@link NewPyLintParser}.
+     * Creates a new instance of {@link PyLintParser}.
      */
-    public NewPyLintParser() {
+    public PyLintParser() {
         super(Messages._Warnings_PyLint_ParserName(),
                 Messages._Warnings_PyLint_LinkName(),
                 Messages._Warnings_PyLint_TrendName(),
