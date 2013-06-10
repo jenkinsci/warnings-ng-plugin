@@ -35,12 +35,14 @@ public class StyleCopParserTest extends ParserTester {
         checkWarning(iterator.next(), 18,
                 "The call to components must begin with the 'this.' prefix to indicate that the item is a member of the class.",
                 "Form1.Designer.cs",
-                "stylecop",
+                "PrefixLocalCallsWithThis",
+                "ReadabilityRules",
                 Priority.NORMAL);
         checkWarning(iterator.next(), 16,
                 "The call to components must begin with the 'this.' prefix to indicate that the item is a member of the class.",
                 "Form1.Designer.cs",
-                "stylecop",
+                "PrefixLocalCallsWithThis",
+                "ReadabilityRules",
                 Priority.NORMAL);
     }
 
