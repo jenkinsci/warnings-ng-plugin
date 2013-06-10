@@ -29,7 +29,7 @@ public class StyleCopParserTest extends ParserTester {
     public void testStyleCop() throws IOException {
         Collection<FileAnnotation> result = new StyleCopParser().parse(openFile());
 
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, result.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 5, result.size());
 
         Iterator<FileAnnotation> iterator = result.iterator();
         checkWarning(iterator.next(), 18,
@@ -43,6 +43,24 @@ public class StyleCopParserTest extends ParserTester {
                 "Form1.Designer.cs",
                 "PrefixLocalCallsWithThis",
                 "ReadabilityRules",
+                Priority.NORMAL);
+        checkWarning(iterator.next(), 7,
+                "The class must have a documentation header.",
+                "MainClass.cs",
+                "ElementsMustBeDocumented",
+                "DocumentationRules",
+                Priority.NORMAL);
+        checkWarning(iterator.next(), 9,
+                "The field must have a documentation header.",
+                "MainClass.cs",
+                "ElementsMustBeDocumented",
+                "DocumentationRules",
+                Priority.NORMAL);
+        checkWarning(iterator.next(), 10,
+                "The property must have a documentation header.",
+                "MainClass.cs",
+                "ElementsMustBeDocumented",
+                "DocumentationRules",
                 Priority.NORMAL);
     }
 
