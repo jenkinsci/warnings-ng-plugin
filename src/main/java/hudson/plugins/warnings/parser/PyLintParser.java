@@ -4,18 +4,15 @@ import java.util.regex.Matcher;
 
 import hudson.Extension;
 
-import hudson.plugins.warnings.WarningsDescriptor;
-
 /**
  * A parser for the PyLint compiler warnings.
  *
- * @author Ulli Hafner
+ * @author Sebastian Hansbauer
  */
 @Extension
 public class PyLintParser extends RegexpLineParser {
 
     private static final long serialVersionUID = 4464053085862883240L;
-    static final String PYLINT_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "pyLint-16x16.ico";
 
     private static final String PYLINT_ERROR_PATTERN = "(.*):(\\d+): \\[(\\D\\d*).*\\] (.*)";
 
@@ -43,7 +40,7 @@ public class PyLintParser extends RegexpLineParser {
     }
 
     @Override
-    public String getSmallImage() {
-        return PYLINT_SMALL_ICON;
+    protected String getId() {
+    return "PyLint"; // old ID in serialization
     }
 }
