@@ -38,9 +38,4 @@ public class PyLintParser extends RegexpLineParser {
 
         return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, message);
     }
-
-    @Override
-    protected String getId() {
-    return "PyLint"; // old ID in serialization
-    }
 }
