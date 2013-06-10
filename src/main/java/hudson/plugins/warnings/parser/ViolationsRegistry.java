@@ -8,7 +8,6 @@ import hudson.plugins.violations.types.gendarme.GendarmeParser;
 import hudson.plugins.violations.types.jcreport.JcReportParser;
 import hudson.plugins.violations.types.pep8.Pep8Parser;
 import hudson.plugins.violations.types.perlcritic.PerlCriticParser;
-import hudson.plugins.violations.types.pylint.PyLintParser;
 import hudson.plugins.violations.types.stylecop.StyleCopParser;
 
 /**
@@ -49,10 +48,6 @@ public final class ViolationsRegistry {
                 Messages._Warnings_PerlCritic_ParserName(),
                 Messages._Warnings_PerlCritic_LinkName(),
                 Messages._Warnings_PerlCritic_TrendName()));
-        parsers.add(new ViolationsAdapter(new PyLintParser(),
-                Messages._Warnings_PyLint_ParserName(),
-                Messages._Warnings_PyLint_LinkName(),
-                Messages._Warnings_PyLint_TrendName()));
         parsers.add(new ViolationsAdapter(new StyleCopParser(),
                 Messages._Warnings_StyleCop_ParserName(),
                 Messages._Warnings_StyleCop_LinkName(),

@@ -1,12 +1,13 @@
 package hudson.plugins.warnings.parser;
 
 import static org.junit.Assert.*;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * Base class for parser tests. Provides an assertion test for warnings.

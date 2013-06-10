@@ -1,0 +1,3 @@
+trunk/src/python/cachedhttp.py:3: [C] Line too long (85/80)
+trunk/src/python/tv.py:28: [C0103, Show.__init__] Invalid name "seasonCount" (should match [a-z_][a-z0-9_]{2,30}$)
+trunk/src/python/tv.py:35: [C0111, Episode] Missing docstring
