@@ -40,8 +40,8 @@ public class PerlCriticParser extends RegexpLineParser {
         }
 
         String message = matcher.group(2);
-        int line = Integer.parseInt(matcher.group(3));
-        int column = Integer.parseInt(matcher.group(4));
+        int line = getLineNumber(matcher.group(3));
+        int column = getLineNumber(matcher.group(4));
         String category = matcher.group(5);
         Priority priority = checkPriority(Integer.parseInt(matcher.group(6)));
 
