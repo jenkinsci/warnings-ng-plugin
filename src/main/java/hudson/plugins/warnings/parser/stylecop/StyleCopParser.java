@@ -87,12 +87,29 @@ public class StyleCopParser extends AbstractWarningsParser {
 
         for (Element element : elements) {
             Warning warning = createWarning(getString(element, "Source"),                getInt(element, "LineNumber"),
-                TYPE_NAME,
-                TYPE_NAME,
+                getString(element, "Rule"),
+                getCategory(element),
                 element.getTextContent(),
                 Priority.NORMAL);
 
                 warnings.add(warning);
+        }
+    }
+
+    /**
+     * Gets the Category of an Warning getCategory.
+     * @param element The Element which represents the warning
+     * @return Category of element
+     */
+    private String getCategory(final Element element) {
+        String ruleNameSpace = getString(element, "RuleNamespace");
+
+        int i = ruleNameSpace.lastIndexOf('.');
+        if (i == -1) {
+           return getString(element, "RuleId");
+        }
+        else {
+            return ruleNameSpace.substring(i+1);
         }
     }
 
