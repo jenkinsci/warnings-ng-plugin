@@ -1,16 +1,17 @@
 package hudson.plugins.warnings; // NOPMD
 
+import java.io.File;
+
+import com.thoughtworks.xstream.XStream;
+
 import hudson.model.AbstractBuild;
+
 import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.plugins.warnings.parser.Warning;
-
-import java.io.File;
-
-import com.thoughtworks.xstream.XStream;
 
 /**
  * Represents the results of the warning analysis. One instance of this class is persisted for

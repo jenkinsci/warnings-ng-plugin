@@ -1,13 +1,15 @@
 package hudson.plugins.warnings.dashboard;
 
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import hudson.Extension;
+
 import hudson.model.Descriptor;
+
 import hudson.plugins.analysis.graph.BuildResultGraph;
 import hudson.plugins.analysis.graph.TotalsGraph;
 import hudson.plugins.view.dashboard.DashboardPortlet;
 import hudson.plugins.warnings.Messages;
-
-import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * A portlet that shows the warnings trend graph by priority.

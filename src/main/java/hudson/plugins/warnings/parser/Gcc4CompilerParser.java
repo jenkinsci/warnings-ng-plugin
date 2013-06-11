@@ -1,10 +1,11 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.Extension;
-import hudson.plugins.analysis.util.model.Priority;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import hudson.Extension;
+
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A parser for gcc 4.x compiler warnings.

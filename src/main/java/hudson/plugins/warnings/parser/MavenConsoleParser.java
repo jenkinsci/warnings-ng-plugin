@@ -1,9 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.Extension;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -11,6 +7,11 @@ import java.util.regex.Matcher;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Lists;
+
+import hudson.Extension;
+
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A parser for maven console warnings.

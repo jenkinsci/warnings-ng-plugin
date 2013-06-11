@@ -1,8 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.console.ConsoleNote;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -10,6 +7,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.jvnet.localizer.Localizable;
+
+import hudson.console.ConsoleNote;
+
+import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
  * Parses an input stream as a whole document for compiler warnings using the provided

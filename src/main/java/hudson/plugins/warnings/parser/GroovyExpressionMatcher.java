@@ -1,16 +1,17 @@
 package hudson.plugins.warnings.parser;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
-import groovy.lang.Script;
-import hudson.plugins.warnings.WarningsDescriptor;
-
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 import org.codehaus.groovy.control.CompilationFailedException;
+
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+import groovy.lang.Script;
+
+import hudson.plugins.warnings.WarningsDescriptor;
 
 /**
  * Creates a warning based on a regular expression match and groovy script.

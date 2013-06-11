@@ -1,12 +1,6 @@
 package hudson.plugins.warnings.parser;
 
 import static org.junit.Assert.*;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.violations.ViolationsParser;
-import hudson.plugins.violations.types.codenarc.CodenarcParser;
-import hudson.plugins.violations.types.gendarme.GendarmeParser;
-import hudson.plugins.violations.types.jcreport.JcReportParser;
-import hudson.plugins.violations.types.stylecop.StyleCopParser;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -15,6 +9,13 @@ import java.util.Set;
 import org.junit.Test;
 
 import com.google.common.collect.Sets;
+
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.violations.ViolationsParser;
+import hudson.plugins.violations.types.codenarc.CodenarcParser;
+import hudson.plugins.violations.types.gendarme.GendarmeParser;
+import hudson.plugins.violations.types.jcreport.JcReportParser;
+import hudson.plugins.violations.types.stylecop.StyleCopParser;
 
 /**
  * Tests the class {@link ViolationsAdapter}.

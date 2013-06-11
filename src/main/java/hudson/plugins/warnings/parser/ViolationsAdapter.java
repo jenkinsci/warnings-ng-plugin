@@ -1,13 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
-import hudson.plugins.violations.ViolationsParser;
-import hudson.plugins.violations.model.FullBuildModel;
-import hudson.plugins.violations.model.FullFileModel;
-import hudson.plugins.violations.model.Severity;
-import hudson.plugins.violations.model.Violation;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -22,6 +14,14 @@ import org.apache.commons.lang.StringUtils;
 import org.jvnet.localizer.Localizable;
 
 import com.google.common.collect.Lists;
+
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
+import hudson.plugins.violations.ViolationsParser;
+import hudson.plugins.violations.model.FullBuildModel;
+import hudson.plugins.violations.model.FullFileModel;
+import hudson.plugins.violations.model.Severity;
+import hudson.plugins.violations.model.Violation;
 
 /**
  * Adapter for warnings parsers of the violations plug-in.

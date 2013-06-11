@@ -1,14 +1,14 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.plugins.analysis.util.PackageDetectors;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.jvnet.localizer.Localizable;
+
+import hudson.plugins.analysis.util.PackageDetectors;
+import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
  * Parses an input stream for compiler warnings using the provided regular expression.

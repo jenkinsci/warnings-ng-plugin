@@ -1,11 +1,12 @@
 package hudson.plugins.warnings;
 
-import hudson.model.AbstractBuild;
-import hudson.plugins.analysis.core.BuildHistory;
-
 import java.util.List;
 
 import javax.annotation.CheckForNull;
+
+import hudson.model.AbstractBuild;
+
+import hudson.plugins.analysis.core.BuildHistory;
 
 /**
  * A build history for warnings results. Picks the right action using the parser group.

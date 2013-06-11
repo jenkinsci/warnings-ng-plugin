@@ -1,10 +1,10 @@
 package hudson.plugins.warnings.parser;
 
+import org.apache.commons.lang.StringUtils;
+
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * A serializable Java Bean class representing a warning.

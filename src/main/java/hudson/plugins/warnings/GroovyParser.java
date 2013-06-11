@@ -1,17 +1,5 @@
 package hudson.plugins.warnings;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
-import hudson.Extension;
-import hudson.model.AbstractDescribableImpl;
-import hudson.model.Descriptor;
-import hudson.plugins.warnings.parser.AbstractWarningsParser;
-import hudson.plugins.warnings.parser.DynamicDocumentParser;
-import hudson.plugins.warnings.parser.DynamicParser;
-import hudson.plugins.warnings.parser.Warning;
-import hudson.util.FormValidation;
-import hudson.util.FormValidation.Kind;
-
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,6 +11,21 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+import hudson.Extension;
+
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.Descriptor;
+
+import hudson.plugins.warnings.parser.AbstractWarningsParser;
+import hudson.plugins.warnings.parser.DynamicDocumentParser;
+import hudson.plugins.warnings.parser.DynamicParser;
+import hudson.plugins.warnings.parser.Warning;
+
+import hudson.util.FormValidation;
+import hudson.util.FormValidation.Kind;
 
 /**
  * Defines the properties of a warnings parser that uses a Groovy script to

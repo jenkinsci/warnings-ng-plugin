@@ -1,14 +1,5 @@
 package hudson.plugins.warnings;
 
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.model.AbstractDescribableImpl;
-import hudson.model.AbstractProject;
-import hudson.model.Descriptor;
-import hudson.plugins.warnings.parser.ParserRegistry;
-import hudson.util.FormValidation;
-import hudson.util.ListBoxModel;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -18,6 +9,18 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 import com.google.common.collect.Lists;
+
+import hudson.Extension;
+import hudson.FilePath;
+
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.AbstractProject;
+import hudson.model.Descriptor;
+
+import hudson.plugins.warnings.parser.ParserRegistry;
+
+import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 
 /**
  * Defines the configuration to parse a set of files using a predefined parser.

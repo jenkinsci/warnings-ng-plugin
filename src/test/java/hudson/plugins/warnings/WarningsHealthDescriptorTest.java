@@ -2,14 +2,15 @@ package hudson.plugins.warnings;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+
+import org.junit.Test;
+import org.jvnet.localizer.Localizable;
+
 import hudson.plugins.analysis.core.AbstractHealthDescriptor;
 import hudson.plugins.analysis.core.HealthDescriptor;
 import hudson.plugins.analysis.core.NullHealthDescriptor;
 import hudson.plugins.analysis.test.AbstractHealthDescriptorTest;
 import hudson.plugins.analysis.util.model.AnnotationProvider;
-
-import org.junit.Test;
-import org.jvnet.localizer.Localizable;
 
 /**
  * Tests the class {@link WarningsHealthDescriptor}.

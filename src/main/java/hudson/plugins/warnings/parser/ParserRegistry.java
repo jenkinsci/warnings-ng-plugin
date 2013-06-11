@@ -1,15 +1,5 @@
 package hudson.plugins.warnings.parser; // NOPMD
 
-import hudson.model.Hudson;
-import hudson.plugins.analysis.core.PluginDescriptor;
-import hudson.plugins.analysis.util.EncodingValidator;
-import hudson.plugins.analysis.util.NullLogger;
-import hudson.plugins.analysis.util.PluginLogger;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.warnings.WarningsDescriptor;
-import hudson.plugins.warnings.GroovyParser;
-import hudson.util.ListBoxModel;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -35,6 +25,18 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import hudson.model.Hudson;
+
+import hudson.plugins.analysis.core.PluginDescriptor;
+import hudson.plugins.analysis.util.EncodingValidator;
+import hudson.plugins.analysis.util.NullLogger;
+import hudson.plugins.analysis.util.PluginLogger;
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.warnings.WarningsDescriptor;
+import hudson.plugins.warnings.GroovyParser;
+
+import hudson.util.ListBoxModel;
 
 /**
  * Registry of parsers that are available for the warnings plug-in.
