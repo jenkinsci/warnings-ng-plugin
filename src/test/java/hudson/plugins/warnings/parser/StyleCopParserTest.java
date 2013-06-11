@@ -11,7 +11,6 @@ import org.junit.Test;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.warnings.parser.fxcop.FxCopParser;
-import hudson.plugins.warnings.parser.stylecop.StyleCopParser;
 
 /**
  * Tests the class {@link FxCopParser}.

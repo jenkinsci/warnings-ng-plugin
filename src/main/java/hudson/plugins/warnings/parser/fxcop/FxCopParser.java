@@ -25,6 +25,7 @@ import hudson.plugins.warnings.parser.AbstractWarningsParser;
 import hudson.plugins.warnings.parser.Messages;
 import hudson.plugins.warnings.parser.ParsingCanceledException;
 import hudson.plugins.warnings.parser.Warning;
+import hudson.plugins.warnings.util.XmlElementUtil;
 
 import hudson.util.IOException2;
 
