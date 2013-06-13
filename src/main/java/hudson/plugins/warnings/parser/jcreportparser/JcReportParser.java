@@ -19,6 +19,8 @@ import hudson.plugins.warnings.parser.Messages;
 import hudson.plugins.warnings.parser.ParsingCanceledException;
 import hudson.plugins.warnings.parser.Warning;
 
+import hudson.util.IOException2;
+
 /**
  * JcReportParser-Class.
  * This class parses from the jcReport.xml and creates
@@ -150,7 +152,7 @@ public class JcReportParser extends AbstractWarningsParser {
         }
 
         catch (SAXException exception) {
-            throw new IOException(exception);
+            throw new IOException2(exception);
         }
     }
 

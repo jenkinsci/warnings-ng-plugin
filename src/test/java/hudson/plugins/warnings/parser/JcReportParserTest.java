@@ -16,6 +16,8 @@ import hudson.plugins.warnings.parser.jcreportparser.Item;
 import hudson.plugins.warnings.parser.jcreportparser.JcReportParser;
 import hudson.plugins.warnings.parser.jcreportparser.Report;
 
+import hudson.util.IOException2;
+
 
 
 /**
@@ -109,7 +111,7 @@ public class JcReportParserTest {
      * @Coverage The missing coverage is a known issue with ECLEMMA.
      *           For further Information: http://www.eclemma.org/faq.html#trouble05
      */
-    @Test(expected = IOException.class)
+    @Test(expected = IOException2.class)
     public void testSAXEception() throws ParsingCanceledException, IOException {
         new JcReportParser().parse(new InputStreamReader(new FileInputStream("src/test/resources/hudson/plugins/warnings/parser/jcreport/testCorrupt.xml") , "UTF-8"));
     }
