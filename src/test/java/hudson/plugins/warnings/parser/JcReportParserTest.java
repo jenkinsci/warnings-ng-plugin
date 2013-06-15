@@ -38,7 +38,7 @@ public class JcReportParserTest {
         ArrayList<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
         InputStreamReader readCorrectXml = new InputStreamReader(new FileInputStream("src/test/resources/hudson/plugins/warnings/parser/jcreport/testCorrect.xml"), "UTF-8");
         warnings.addAll(jcrp.parse(readCorrectXml));
-        assertEquals("Should be 5: ", 5, warnings.size());
+        assertEquals("Should be 7: ", 7, warnings.size());
         assertEquals("Wrong Parse FileName: ", "SomeDirectory/SomeClass.java", warnings.get(0).getFileName());
         assertEquals("Wrong Parse Origin: ", "Checkstyle", warnings.get(0).getOrigin());
         assertEquals("Wrong Parse Priority: ", Priority.HIGH, warnings.get(0).getPriority());
@@ -60,9 +60,8 @@ public class JcReportParserTest {
         JcReportParser jcrp = new JcReportParser();
         ArrayList<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
         InputStreamReader readCorrectXml = new InputStreamReader(new FileInputStream("src/test/resources/hudson/plugins/warnings/parser/jcreport/testCorrect.xml"), "UTF-8");
-        jcrp.parse(readCorrectXml);
-        warnings.addAll(jcrp.getWarnings());
-        assertEquals("Size is 5: ", 5, warnings.size());
+        warnings.addAll(jcrp.parse(readCorrectXml));
+        assertEquals("Size is 7: ", 7, warnings.size());
     }
 
 

@@ -5,6 +5,9 @@
         <item column="8" end-column="1" end-line="173" finding-type="MoreThanOneLogger" line="50" message="Class contains more than one logger." origin="PMD" severity="Error"/>
         <item column="11" end-column="4" end-line="140" finding-type="UnnecessaryConstructor" line="137" message="Avoid unnecessary constructors - the compiler will generate these for you" origin="PMD" severity="Warning"/>
 		<item column="11" end-column="4" end-line="140" finding-type="UnnecessaryConstructor" line="137" message="Avoid unnecessary constructors - the compiler will generate these for you" origin="PMD" severity="CriticalWarning"/>
+    		<item column="11" end-column="4" end-line="140" finding-type="UnnecessaryConstructor" line="137" message="Avoid unnecessary constructors - the compiler will generate these for you" origin="PMD"/>
+				<item column="11" end-column="4" end-line="140" finding-type="UnnecessaryConstructor" line="137" message="Avoid unnecessary constructors - the compiler will generate these for you" origin="PMD" severity=""/>
+    		
     </file>
     <!-- INFO level is not reported as violation at all. -->
    
