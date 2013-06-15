@@ -12,14 +12,30 @@ import org.junit.Test;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
-
 /**
- * Tests the class {@link AppleLLVMClangParser}.
+ * Tests the class {@link ClangParser}.
  *
  * @author Neil Davis
  */
-public class AppleLLVMClangParserTest extends ParserTester {
-    private static final String TYPE = new AppleLLVMClangParser().getGroup();
+public class ClangParserTest extends ParserTester {
+    private static final String TYPE = new ClangParser().getGroup();
+
+    /**
+     * Parses a file with fatal error message.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-18084">Issue 18084</a>
+     */
+    @Test
+    public void issue18084() throws IOException {
+        Collection<FileAnnotation> warnings = new ClangParser().parse(openFile("issue18084.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        FileAnnotation annotation = warnings.iterator().next();
+        checkWarning(annotation, 10, "'test.h' file not found",
+                "./test.h", StringUtils.EMPTY, Priority.HIGH);
+    }
 
     /**
      * Parses a file with one warning that are started by ant.
@@ -30,7 +46,7 @@ public class AppleLLVMClangParserTest extends ParserTester {
      */
     @Test
     public void issue14333() throws IOException {
-        Collection<FileAnnotation> warnings = new AppleLLVMClangParser().parse(openFile("issue14333.txt"));
+        Collection<FileAnnotation> warnings = new ClangParser().parse(openFile("issue14333.txt"));
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
         FileAnnotation annotation = warnings.iterator().next();
@@ -46,7 +62,7 @@ public class AppleLLVMClangParserTest extends ParserTester {
      */
     @Test
     public void testWarningsParser() throws IOException {
-        Collection<FileAnnotation> warnings = new AppleLLVMClangParser().parse(openFile());
+        Collection<FileAnnotation> warnings = new ClangParser().parse(openFile());
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 8, warnings.size());
 
@@ -100,10 +116,7 @@ public class AppleLLVMClangParserTest extends ParserTester {
                 "invalid operands to binary expression ('int *' and '_Complex float')",
                 "exprs.c",
                 TYPE, "", Priority.NORMAL);
-
-
      }
-
 
     @Override
     protected String getWarningsFile() {
