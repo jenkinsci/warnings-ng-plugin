@@ -21,6 +21,24 @@ public class Gcc4CompilerParserTest extends ParserTester {
     private static final String WARNING_TYPE = new Gcc4CompilerParser().getGroup();
 
     /**
+     * Parses a file with one fatal error.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-18081">Issue 18081</a>
+     */
+    @Test
+    public void issue18081() throws IOException {
+        Collection<FileAnnotation> warnings = new Gcc4CompilerParser().parse(openFile("issue18081.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        FileAnnotation annotation = warnings.iterator().next();
+        checkWarning(annotation, 10, "'test.h' file not found",
+                "./test.h",
+                WARNING_TYPE, ERROR_CATEGORY, Priority.HIGH);
+    }
+
+    /**
      * Parses a file with one warning that are started by ant.
      *
      * @throws IOException

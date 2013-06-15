@@ -16,7 +16,7 @@ import hudson.plugins.analysis.util.model.Priority;
 public class Gcc4CompilerParser extends RegexpLineParser {
     private static final long serialVersionUID = 5490211629355204910L;
     private static final String ERROR = "error";
-    private static final String GCC_WARNING_PATTERN = ANT_TASK + "(.+?):(\\d+):(?:\\d+:)? (warning|error): (.*)$";
+    private static final String GCC_WARNING_PATTERN = ANT_TASK + "(.+?):(\\d+):(?:\\d+:)? (warning|.*error): (.*)$";
     private static final Pattern CLASS_PATTERN = Pattern.compile("\\[-W(.+)\\]$");
 
     /**
@@ -42,7 +42,7 @@ public class Gcc4CompilerParser extends RegexpLineParser {
         Priority priority;
 
         StringBuilder category = new StringBuilder();
-        if (ERROR.equalsIgnoreCase(matcher.group(3))) {
+        if (matcher.group(3).contains(ERROR)) {
             priority = Priority.HIGH;
             category.append("Error");
         }
