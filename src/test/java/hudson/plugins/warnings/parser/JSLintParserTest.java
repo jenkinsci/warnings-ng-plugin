@@ -21,7 +21,7 @@ public class JSLintParserTest extends ParserTester {
     private static final String EXPECTED_FILE_NAME = "duckworth/hudson-jslint-freestyle/src/prototype.js";
 
     /**
-     * Tests the Puppet-Lint parsing.
+     * Tests the JS-Lint parsing for warnings in different files.
      *
      * @throws IOException
      *             in case of an error
@@ -40,6 +40,30 @@ public class JSLintParserTest extends ParserTester {
         assertEquals("Wrong number of files", 2, files.size());
         assertTrue("File not found", files.contains(EXPECTED_FILE_NAME));
         assertTrue("File not found", files.contains("duckworth/hudson-jslint-freestyle/src/scriptaculous.js"));
+    }
+
+    /**
+     * Tests the JS-Lint parsing for warnings in a single file.
+     *
+     * @throws IOException
+     *             in case of an error
+     */
+    @Test
+    public void testParseWithSingleFile() throws IOException {
+        Collection<FileAnnotation> results = createParser().parse(openFile("jslint/single.xml"));
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 51, results.size());
+    }
+
+    /**
+     * Tests parsing of CSS-Lint files.
+     *
+     * @throws IOException
+     *             in case of an error
+     */
+    @Test
+    public void testCssLint() throws IOException {
+        Collection<FileAnnotation> results = createParser().parse(openFile("jslint/csslint.xml"));
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 51, results.size());
     }
 
     /**

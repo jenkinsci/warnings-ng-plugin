@@ -295,6 +295,20 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
      * @return the line number
      */
     protected final int getLineNumber(final String lineNumber) {
+        return convertLineNumber(lineNumber);
+    }
+
+    /**
+     * Converts a string line number to an integer value. If the string is not a
+     * valid line number, then 0 is returned which indicates a warning at the
+     * top of the file.
+     *
+     * @param lineNumber
+     *            the line number (as a string)
+     * @return the line number
+     * @since 4.37
+     */
+    public static int convertLineNumber(final String lineNumber) {
         if (StringUtils.isNotBlank(lineNumber)) {
             try {
                 return Integer.parseInt(lineNumber);
