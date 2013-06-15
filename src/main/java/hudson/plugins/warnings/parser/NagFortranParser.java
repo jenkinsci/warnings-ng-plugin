@@ -1,11 +1,12 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.Extension;
-import hudson.plugins.analysis.util.model.Priority;
-
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
+
+import hudson.Extension;
+
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A parser for messages from the NAG Fortran Compiler.
@@ -41,24 +42,19 @@ public class NagFortranParser extends RegexpDocumentParser {
       lineNumber = Integer.parseInt(matcher.group(4));
     }
 
-    if (category.equals("Error") ||
-        category.equals("Runtime Error") ||
-        category.equals("Fatal Error") ||
-        category.equals("Panic")) {
+    if ("Error".equals(category) || "Runtime Error".equals(category)
+            || "Fatal Error".equals(category) || "Panic".equals(category)) {
       priority = Priority.HIGH;
     }
-    else if (category.equals("Info")) {
+    else if ("Info".equals(category)) {
       priority = Priority.LOW;
     }
     else {
       priority = Priority.NORMAL;
     }
 
-    return createWarning(matcher.group(2),
-                         lineNumber,
-                         category,
-                         matcher.group(5),
-                         priority);
+    return createWarning(matcher.group(2), lineNumber, category,
+                         matcher.group(5), priority);
   }
 
   @Override
