@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.digester3.Digester;
 import org.apache.commons.digester3.binder.DigesterLoader;
+import org.apache.commons.lang.StringUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -93,7 +94,7 @@ public class JcReportParser extends AbstractWarningsParser {
      */
     private Priority getPriority(final String issueLevel) {
 
-        if (issueLevel == null || issueLevel.isEmpty()) {
+        if (issueLevel == null || StringUtils.isEmpty(issueLevel)) {
             return Priority.HIGH;
         }
 
