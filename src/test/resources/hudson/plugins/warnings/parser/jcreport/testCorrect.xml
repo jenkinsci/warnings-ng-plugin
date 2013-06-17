@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><report>
+    <file classname="SomeClass" level="SomeLevel" loc="173" name="SomeDirectory/SomeClass.java" package="SomePackage" src-dir ="D:\projects\fawkez\test\java">
+        <item column="0" end-column="3" finding-type="SomeType" line="50" message="SomeMessage" origin="Checkstyle" severity="CriticalError"/>
+        <item column="0" finding-type="CS_FINAL_CLASS" line="60" message="Class LogElementHandler should be declared as final." origin="Checkstyle" severity="code-style"/>
+        <item column="8" end-column="1" end-line="173" finding-type="MoreThanOneLogger" line="50" message="Class contains more than one logger." origin="PMD" severity="Error"/>
+        <item column="11" end-column="4" end-line="140" finding-type="UnnecessaryConstructor" line="137" message="Avoid unnecessary constructors - the compiler will generate these for you" origin="PMD" severity="Warning"/>
+		<item column="11" end-column="4" end-line="140" finding-type="UnnecessaryConstructor" line="137" message="Avoid unnecessary constructors - the compiler will generate these for you" origin="PMD" severity="CriticalWarning"/>
+    		<item column="11" end-column="4" end-line="140" finding-type="UnnecessaryConstructor" line="137" message="Avoid unnecessary constructors - the compiler will generate these for you" origin="PMD"/>
+				<item column="11" end-column="4" end-line="140" finding-type="UnnecessaryConstructor" line="137" message="Avoid unnecessary constructors - the compiler will generate these for you" origin="PMD" severity=""/>
+    		
+    </file>
+    <!-- INFO level is not reported as violation at all. -->
+   
+</report>
