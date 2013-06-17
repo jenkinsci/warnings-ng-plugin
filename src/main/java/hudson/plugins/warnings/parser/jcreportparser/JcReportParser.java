@@ -93,8 +93,7 @@ public class JcReportParser extends AbstractWarningsParser {
      *            -> the severity-level parsed from the JcReport.
      */
     private Priority getPriority(final String issueLevel) {
-
-        if (issueLevel == null || StringUtils.isEmpty(issueLevel)) {
+        if (StringUtils.isEmpty(issueLevel)) {
             return Priority.HIGH;
         }
 
@@ -113,7 +112,6 @@ public class JcReportParser extends AbstractWarningsParser {
         else {
             return Priority.LOW;
         }
-
     }
 
     /**
@@ -136,5 +134,4 @@ public class JcReportParser extends AbstractWarningsParser {
             throw new IOException2(exception);
         }
     }
-
 }
