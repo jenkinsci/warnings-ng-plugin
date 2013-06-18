@@ -325,6 +325,12 @@ public class WarningsPublisher extends HealthAwareRecorder {
                 evaluateBuildHealth(build, logger);
             }
 
+            //new ....(totals)
+            String allParsers = "*";
+            WarningsBuildHistory history = new WarningsBuildHistory(build, allParsers, useOnlyStableBuildsAsReference());
+            WarningsResult result = new WarningsResult(build, history, totals, getDefaultEncoding(), allParsers);
+            build.getActions().add(new WarningsTotalResultAction(build, this, result));
+
             copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), totals.getAnnotations());
 
             return true;
