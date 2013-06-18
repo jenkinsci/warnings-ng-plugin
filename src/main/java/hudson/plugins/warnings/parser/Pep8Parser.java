@@ -36,25 +36,24 @@ public class Pep8Parser extends RegexpLineParser {
 
     @Override
     protected boolean isLineInteresting(final String line) {
-        return line.contains("E") || line.contains("W") || line.contains("F") ||
-                line.contains("R") || line.contains("C");
+        return line.contains(":");
     }
 
     /**
      * Determined the Priority of the Warning.
      *
      * @param priority
-     *            the Warningcode
+     *            the warning priority code
      * @return the Priority of the Warning
      */
     private Priority mapPriority(final String priority) {
-        if(priority.contains("F") || priority.contains("E") || priority.contains("W")){
+        if (priority.contains("F") || priority.contains("E") || priority.contains("W")) {
             return Priority.HIGH;
         }
-        else if(priority.contains("R")){
+        else if (priority.contains("R")) {
             return Priority.NORMAL;
         }
-        else{
+        else {
             return Priority.LOW;
         }
     }
