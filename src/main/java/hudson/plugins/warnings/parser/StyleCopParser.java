@@ -124,8 +124,8 @@ public class StyleCopParser extends AbstractWarningsParser {
     /***
      * Returns the LineNumber for the given violation.
      * @param violation the xml Element "violation" to get the Linenumber from.
-     * @return the lineNumber of the violation. -1 if there is no LineNumber or
-     * the LineNumber cant't be parsed as an Integer.
+     * @return the lineNumber of the violation. 0 if there is no LineNumber or
+     * the LineNumber cant't be parsed into an Integer.
      */
     private int getLineNumber(final Element violation) {
         if (violation.hasAttribute("LineNumber")) {
@@ -133,11 +133,11 @@ public class StyleCopParser extends AbstractWarningsParser {
                 return Integer.parseInt(violation.getAttribute("LineNumber"));
             }
             catch (NumberFormatException e) {
-                return -1;
+                return 0;
             }
         }
         else {
-            return -1;
+            return 0;
         }
     }
 }
