@@ -1,4 +1,4 @@
-package hudson.plugins.warnings.parser.fxcop;
+package hudson.plugins.warnings.util;
 
 import java.util.ArrayList;
 import java.util.List;

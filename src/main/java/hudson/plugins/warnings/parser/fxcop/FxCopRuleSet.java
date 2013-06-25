@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
+import hudson.plugins.warnings.util.XmlElementUtil;
+
 /**
  * Internal set containing rules for FxCop.
  *

@@ -3,4 +3,6 @@
 "lint.c", line 28: warning (dcc:1243): constant out of range
 "lint.c", line 4: warning (dcc:1517): function f4 is never used
 "lint.c", line 11: error (dcc:1378): function f5 is not found
-
+"main.c", line 5: warning (dcc:1025): division by zero
+"main.c", line 5: error (dcc:1025): division by zero
+"main.c", line 5: fatal error (dcc:1025): division by zero
