@@ -11,7 +11,6 @@ import hudson.Extension;
  */
 @Extension
 public class PyLintParser extends RegexpLineParser {
-
     private static final long serialVersionUID = 4464053085862883240L;
 
     private static final String PYLINT_ERROR_PATTERN = "(.*):(\\d+): \\[(\\D\\d*).*\\] (.*)";
