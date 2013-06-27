@@ -96,7 +96,6 @@ public class WarningsResult extends WarningsTotalResult {
         return group.replaceAll("\\W+", "") + FILENAME_SUFFIX;
     }
 
-    //@Override
     String createFileName(final int groupUrl) {
         return "compiler-" + groupUrl + FILENAME_SUFFIX;
     }
