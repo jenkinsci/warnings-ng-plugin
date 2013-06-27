@@ -71,11 +71,6 @@ public class WarningsResult extends WarningsTotalResult {
                 + createDefaultSummary(getUrl(), getNumberOfAnnotations(), getNumberOfModules());
     }
 
-    @Override
-    protected String createDeltaMessage() {
-        return createDefaultDeltaMessage(getUrl(), getNumberOfNewWarnings(), getNumberOfFixedWarnings());
-    }
-
     private String getUrl() {
         return WarningsDescriptor.getResultUrl(group);
     }
@@ -101,7 +96,7 @@ public class WarningsResult extends WarningsTotalResult {
         return group.replaceAll("\\W+", "") + FILENAME_SUFFIX;
     }
 
-    @Override
+    //@Override
     String createFileName(final int groupUrl) {
         return "compiler-" + groupUrl + FILENAME_SUFFIX;
     }
