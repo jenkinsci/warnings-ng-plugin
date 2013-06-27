@@ -13,7 +13,7 @@ import hudson.plugins.analysis.core.PluginDescriptor;
  *
  * @author Ulli Hafner
  */
-public class WarningsTotalResultAction extends AbstractResultAction<WarningsResult>{
+public class WarningsTotalResultAction extends AbstractResultAction<WarningsTotalResult>{
 
    /**
    * Creates a new instance of <code>WarningsResultAction</code>.
@@ -26,7 +26,7 @@ public class WarningsTotalResultAction extends AbstractResultAction<WarningsResu
    *            the result in this build
    * @param parserName the name of the parser
    */
-  public WarningsTotalResultAction(final AbstractBuild<?, ?> owner, final HealthDescriptor healthDescriptor, final WarningsResult result) {
+  public WarningsTotalResultAction(final AbstractBuild<?, ?> owner, final HealthDescriptor healthDescriptor, final WarningsTotalResult result) {
       super(owner, new WarningsHealthDescriptor(healthDescriptor), result);
   }
 

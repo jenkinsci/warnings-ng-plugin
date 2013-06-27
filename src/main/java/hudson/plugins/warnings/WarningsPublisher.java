@@ -328,7 +328,7 @@ public class WarningsPublisher extends HealthAwareRecorder {
             //new ....(totals)
             String allParsers = "*";
             WarningsBuildHistory history = new WarningsBuildHistory(build, allParsers, useOnlyStableBuildsAsReference());
-            WarningsResult result = new WarningsResult(build, history, totals, getDefaultEncoding(), allParsers);
+            WarningsTotalResult result = new WarningsTotalResult(build, history, totals, getDefaultEncoding());
             build.getActions().add(new WarningsTotalResultAction(build, this, result));
 
             copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), totals.getAnnotations());

@@ -2,8 +2,6 @@ package hudson.plugins.warnings; // NOPMD
 
 import java.io.File;
 
-import com.thoughtworks.xstream.XStream;
-
 import hudson.model.AbstractBuild;
 
 import hudson.plugins.analysis.core.BuildHistory;
@@ -11,7 +9,6 @@ import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.warnings.parser.ParserRegistry;
-import hudson.plugins.warnings.parser.Warning;
 
 /**
  * Represents the results of the warning analysis. One instance of this class is persisted for
@@ -19,7 +16,7 @@ import hudson.plugins.warnings.parser.Warning;
  *
  * @author Ulli Hafner
  */
-public class WarningsResult extends BuildResult {
+public class WarningsResult extends WarningsTotalResult {
     private static final String FILENAME_SUFFIX = "-warnings.xml";
     /** Version < 4.0 file name of warnings. */
     static final String ORIGINAL_COMPILER_WARNINGS_XML = "compiler-warnings.xml";
@@ -64,11 +61,6 @@ public class WarningsResult extends BuildResult {
     }
 
     @Override
-    protected void configure(final XStream xstream) {
-        xstream.alias("warning", Warning.class);
-    }
-
-    @Override
     public String getHeader() {
         return ParserRegistry.getParser(group).getLinkName().toString();
     }
@@ -109,11 +101,13 @@ public class WarningsResult extends BuildResult {
         return group.replaceAll("\\W+", "") + FILENAME_SUFFIX;
     }
 
+    @Override
     String createFileName(final int groupUrl) {
         return "compiler-" + groupUrl + FILENAME_SUFFIX;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         if (group == null) {
             return Messages.Warnings_ProjectAction_Name();
