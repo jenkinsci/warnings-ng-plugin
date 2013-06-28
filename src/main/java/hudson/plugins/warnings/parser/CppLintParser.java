@@ -14,7 +14,7 @@ import hudson.plugins.analysis.util.model.Priority;
 @Extension
 public class CppLintParser extends RegexpLineParser {
     private static final long serialVersionUID = 1737791073711198075L;
-    private static final String PATTERN = "^\\s*(.*)\\s*\\((\\d*)\\):\\s*(.*)\\s*\\[(.*)\\] \\[(.*)\\]$";
+    private static final String PATTERN = "^\\s*(.*)\\s*[(:](\\d*)\\)?:\\s*(.*)\\s*\\[(.*)\\] \\[(.*)\\]$";
 
     /**
      * Creates a new instance of {@link CppLintParser}.
