@@ -54,6 +54,21 @@ public class WarningsTotalResultAction extends AbstractResultAction<WarningsTota
 //      return ParserRegistry.getParser(parserName).getLargeImage();
 //  }
 
+  @Override
+  public String getUrlName() {
+      return "warningsTotal";
+  }
+
+  /**
+   *
+   * Returns the parser name.
+   * @return parser name
+   */
+  public String getParser() {
+      return "totalParsers";
+  }
+
+
   /** {@inheritDoc} */
   public String getDisplayName() {
       return "All parser warnings";
