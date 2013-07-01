@@ -37,8 +37,8 @@ public class WarningsTotalResultAction extends AbstractResultAction<WarningsTota
   }
 
   /**
-   *
    * Returns the parser name.
+   *
    * @return parser name
    */
   public String getParser() {
@@ -60,6 +60,4 @@ public class WarningsTotalResultAction extends AbstractResultAction<WarningsTota
   @edu.umd.cs.findbugs.annotations.SuppressWarnings("")
   private transient Localizable actionName;
 
-
 }
-

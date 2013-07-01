@@ -1,7 +1,5 @@
 package hudson.plugins.warnings;
 
-import java.io.File;
-
 import com.thoughtworks.xstream.XStream;
 
 import hudson.model.AbstractBuild;
@@ -52,6 +50,7 @@ public class WarningsTotalResult extends BuildResult{
         return "warningsTotal: " + createDefaultSummary(getUrl(), getNumberOfAnnotations(), getNumberOfModules());
     }
 
+    //TODO
     private String getUrl() {
         //return "warningsTotal";
         return "warningsResult";
@@ -75,48 +74,6 @@ public class WarningsTotalResult extends BuildResult{
     @Override
     protected Class<? extends ResultAction<? extends BuildResult>> getResultActionType() {
         return WarningsTotalResultAction.class;
-    }
-
-    //übernommen aus WarningsResult
-
-    private static final String FILENAME_SUFFIX = "-totalWarnings.xml";
-    static final String ORIGINAL_COMPILER_WARNINGS_XML = "totalCompiler-warnings.xml";
-
-
-    String getFileName(final FileChecker fileChecker, final int groupUrl) {
-        String fileName = ORIGINAL_COMPILER_WARNINGS_XML;
-        if (fileChecker.canRead(fileName)) {
-            return fileName;
-        }
-
-        fileName = createFileName(groupUrl);
-        if (fileChecker.canRead(fileName)) {
-            return fileName;
-        }
-
-        //return group.replaceAll("\\W+", "") + FILENAME_SUFFIX;
-        return "totalWarningsGrp";
-    }
-
-    String createFileName(final int groupUrl) {
-        return "compiler-" + groupUrl + FILENAME_SUFFIX;
-    }
-
-    /**
-     * Provides a way to hide file system access during testing.
-     *
-     * @author Ulli Hafner
-     */
-    static class FileChecker {
-        private final File root;
-
-        FileChecker(final File root) {
-            this.root = root;
-        }
-
-        boolean canRead(final String fileName) {
-            return new File(root, fileName).canRead();
-        }
     }
 }
 
