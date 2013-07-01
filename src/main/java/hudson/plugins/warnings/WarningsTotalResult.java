@@ -53,7 +53,8 @@ public class WarningsTotalResult extends BuildResult{
     }
 
     private String getUrl() {
-        return "warningsTotal";
+        //return "warningsTotal";
+        return "warningsResult";
     }
 
     @Override
