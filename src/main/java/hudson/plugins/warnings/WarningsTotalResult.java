@@ -42,7 +42,8 @@ public class WarningsTotalResult extends BuildResult{
 
     @Override
     public String getHeader() {
-        return "WarningsTotal";
+        //return "WarningsTotal";
+        return "warningsResult";
     }
 
     @Override
@@ -51,7 +52,8 @@ public class WarningsTotalResult extends BuildResult{
     }
 
     private String getUrl() {
-        return "WarningsTotal";
+        //return "WarningsTotal";
+        return "warningsResult";
     }
 
     @Override
