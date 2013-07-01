@@ -71,7 +71,7 @@ public class WarningsTotalResult extends BuildResult{
 
     @Override
     protected Class<? extends ResultAction<? extends BuildResult>> getResultActionType() {
-        return WarningsResultAction.class;
+        return WarningsTotalResultAction.class;
     }
 }
 
