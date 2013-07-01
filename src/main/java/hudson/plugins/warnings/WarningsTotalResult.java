@@ -42,18 +42,16 @@ public class WarningsTotalResult extends BuildResult{
 
     @Override
     public String getHeader() {
-        //return "WarningsTotal";
-        return "warningsResult";
+        return "warningsTotal";
     }
 
     @Override
     public String getSummary() {
-        return "WarningsTotal: " + createDefaultSummary(getUrl(), getNumberOfAnnotations(), getNumberOfModules());
+        return "warningsTotal: " + createDefaultSummary(getUrl(), getNumberOfAnnotations(), getNumberOfModules());
     }
 
     private String getUrl() {
-        //return "WarningsTotal";
-        return "warningsResult";
+        return "warningsTotal";
     }
 
     @Override

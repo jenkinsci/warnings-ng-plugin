@@ -30,33 +30,10 @@ public class WarningsTotalResultAction extends AbstractResultAction<WarningsTota
       super(owner, new WarningsHealthDescriptor(healthDescriptor), result);
   }
 
-//  @Override
-//  public String getUrlName() {
-//      return WarningsDescriptor.getResultUrl(parserName);
-//  }
-//
-//  /**
-//   * Returns the parser group this result belongs to.
-//   *
-//   * @return the parser group
-//   */
-//  public String getParser() {
-//      return parserName;
-//  }
-//
-//  @Override
-//  protected String getSmallImage() {
-//      return ParserRegistry.getParser(parserName).getSmallImage();
-//  }
-//
-//  @Override
-//  public String getLargeImageName() {
-//      return ParserRegistry.getParser(parserName).getLargeImage();
-//  }
-
   @Override
+  //Gibt die Zugriffs Url an
   public String getUrlName() {
-      return "warningsTotal";
+      return "warningsTotalResult";
   }
 
   /**

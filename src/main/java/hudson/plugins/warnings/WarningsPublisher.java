@@ -326,7 +326,7 @@ public class WarningsPublisher extends HealthAwareRecorder {
             }
 
             //new ....(totals)
-            String allParsers = "*";
+            String allParsers = "totalParsers";
             WarningsBuildHistory history = new WarningsBuildHistory(build, allParsers, useOnlyStableBuildsAsReference());
             WarningsTotalResult result = new WarningsTotalResult(build, history, totals, getDefaultEncoding());
             build.getActions().add(new WarningsTotalResultAction(build, this, result));
