@@ -10,9 +10,9 @@ import org.junit.Test;
 import hudson.plugins.analysis.core.GlobalSettings;
 
 /**
- * FIXME: Document type LoggerFactoryTest.
+ * TestCases for {@link PluginLogger}.
  *
- * @author Ulli Hafner
+ * @author Sebastian Seidl
  */
 public class LoggerFactoryTest {
 
