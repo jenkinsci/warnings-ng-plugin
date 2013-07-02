@@ -9,10 +9,12 @@ import hudson.plugins.analysis.core.AbstractResultAction;
 import hudson.plugins.analysis.core.PluginDescriptor;
 
 /**
- * FIXME: Document type WarningsTotalResultAction.
+ * WarningsTotalResultAction.
  *
- * @author Ulli Hafner
+ * @author Marvin Schütz
+ * @authot Sebastian Hansbauer
  */
+
 public class WarningsTotalResultAction extends AbstractResultAction<WarningsTotalResult>{
 
    /**
@@ -43,7 +45,6 @@ public class WarningsTotalResultAction extends AbstractResultAction<WarningsTota
   public String getParser() {
       return "totalParsers";
   }
-
 
   /** {@inheritDoc} */
   public String getDisplayName() {
