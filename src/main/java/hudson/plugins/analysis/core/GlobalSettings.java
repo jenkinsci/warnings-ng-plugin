@@ -34,7 +34,7 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
      */
     @Extension
     public static class DescriptorImpl extends Descriptor<GlobalSettings> {
-        private Boolean isFailed;
+        private Boolean failOnCorrupt;
 
         @Override
         public String getDisplayName() {
@@ -64,7 +64,7 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
          * @return the status of the checkbox boolean property
          */
         public Boolean getFailOnCorrupt() {
-            return isFailed;
+            return failOnCorrupt == null ? Boolean.FALSE : failOnCorrupt;
         }
 
         /**
@@ -73,7 +73,7 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
          * @param value the value to set
          */
         public void setFailOnCorrupt(final Boolean value) {
-            isFailed = value;
+            failOnCorrupt = value;
         }
     }
 }
