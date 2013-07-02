@@ -321,7 +321,12 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         return referenceBuild > 0 && getReferenceBuild() != null;
     }
 
-    private AbstractBuild<?, ?> getReferenceBuild() {
+    /**
+     * Returns the reference build.
+     * @return the reference build.
+     */
+    @Exported
+    public AbstractBuild<?, ?> getReferenceBuild() {
         return owner.getProject().getBuildByNumber(referenceBuild);
     }
 
@@ -1178,6 +1183,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the plugin result
      */
+    @Exported
     public Result getPluginResult() {
         return pluginResult;
     }
