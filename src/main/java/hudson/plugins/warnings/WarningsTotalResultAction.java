@@ -31,7 +31,6 @@ public class WarningsTotalResultAction extends AbstractResultAction<WarningsTota
   }
 
   @Override
-  //Gibt die Zugriffs Url an
   public String getUrlName() {
       return "warningsTotalResult";
   }
