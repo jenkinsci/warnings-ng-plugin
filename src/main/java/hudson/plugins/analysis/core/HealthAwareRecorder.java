@@ -22,6 +22,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.Project;
 
 import hudson.plugins.analysis.util.EncodingValidator;
+import hudson.plugins.analysis.util.LoggerFactory;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
@@ -328,7 +329,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     @Override
     public final boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher,
             final BuildListener listener) throws InterruptedException, IOException {
-        PluginLogger logger = new PluginLogger(listener.getLogger(), pluginName);
+        PluginLogger logger = new LoggerFactory().createLogger(listener.getLogger(), pluginName);
         if (canContinue(build.getResult())) {
             return perform(build, launcher, logger);
         }

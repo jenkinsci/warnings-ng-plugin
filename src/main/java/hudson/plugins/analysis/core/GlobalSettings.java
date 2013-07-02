@@ -34,7 +34,7 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
      */
     @Extension
     public static class DescriptorImpl extends Descriptor<GlobalSettings> {
-        private Boolean isExample;
+        private Boolean isQuiet;
 
         @Override
         public String getDisplayName() {
@@ -63,8 +63,8 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
          *
          * @return the status of the example boolean property
          */
-        public Boolean getExample() {
-            return isExample;
+        public Boolean getQuiet() {
+            return isQuiet;
         }
 
         /**
@@ -72,8 +72,8 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
          *
          * @param value the value to set
          */
-        public void setExample(final Boolean value) {
-            isExample = value;
+        public void setQuiet(final Boolean value) {
+            isQuiet = value;
         }
     }
 }
