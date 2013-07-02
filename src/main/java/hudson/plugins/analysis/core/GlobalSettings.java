@@ -37,7 +37,7 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
 
         private Boolean isQuiet;
 
-        private Boolean isFailed;
+        private Boolean failOnCorrupt;
 
 
         @Override
@@ -77,7 +77,7 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
          * @return the status of the failOnCorrupt boolean property
          */
         public Boolean getFailOnCorrupt() {
-            return isFailed;
+            return failOnCorrupt == null ? Boolean.FALSE : failOnCorrupt;
         }
 
         /**
@@ -86,7 +86,7 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
          * @param value the value to set
          */
         public void setFailOnCorrupt(final Boolean value) {
-            isFailed = value;
+            failOnCorrupt = value;
         }
 
         /**
