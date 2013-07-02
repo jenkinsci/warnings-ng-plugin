@@ -34,7 +34,11 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
      */
     @Extension
     public static class DescriptorImpl extends Descriptor<GlobalSettings> {
+
         private Boolean isQuiet;
+
+        private Boolean failOnCorrupt;
+
 
         @Override
         public String getDisplayName() {
@@ -59,16 +63,34 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
         }
 
         /**
-         * Returns the value of the example boolean property.
+         * Returns the value of the quiet boolean property.
          *
-         * @return the status of the example boolean property
+         * @return the status of the quiet boolean property
          */
         public Boolean getQuiet() {
             return isQuiet;
         }
 
         /**
-         * Sets the value of the example boolean property.
+         * Returns the value of the failOnCorrupt boolean property.
+         *
+         * @return the status of the failOnCorrupt boolean property
+         */
+        public Boolean getFailOnCorrupt() {
+            return failOnCorrupt == null ? Boolean.FALSE : failOnCorrupt;
+        }
+
+        /**
+         * Sets the value of the failOnCorrupt boolean property.
+         *
+         * @param value the value to set
+         */
+        public void setFailOnCorrupt(final Boolean value) {
+            failOnCorrupt = value;
+        }
+
+        /**
+         * Sets the value of the quiet boolean property.
          *
          * @param value the value to set
          */

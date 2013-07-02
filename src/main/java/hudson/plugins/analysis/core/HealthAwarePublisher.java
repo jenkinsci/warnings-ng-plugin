@@ -2,6 +2,7 @@ package hudson.plugins.analysis.core;
 
 import java.io.IOException;
 
+import jenkins.model.Jenkins;
 import hudson.Launcher;
 
 import hudson.model.Result;
@@ -120,10 +121,9 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
     }
 
     /**
-     * Callback method that is invoked after the build where this recorder can
-     * collect the results. This default implementation provides a template
-     * method that updates the build status based on the results and copies all
-     * files with warnings to the build folder on the master.
+     * Callback method that is invoked after the build where this recorder can collect the results. This default
+     * implementation provides a template method that updates the build status based on the results and copies all files
+     * with warnings to the build folder on the master.
      *
      * @param build
      *            current build
@@ -131,20 +131,26 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
      *            the launcher for this build
      * @param logger
      *            the logger
-     * @return <code>true</code> if the build can continue, <code>false</code>
-     *         otherwise
+     * @return <code>true</code> if the build can continue, <code>false</code> otherwise
      * @throws IOException
      *             in case of problems during file copying
      * @throws InterruptedException
      *             if the user canceled the build
      */
     @Override
-    protected boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher,
-            final PluginLogger logger) throws IOException, InterruptedException {
+    protected boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final PluginLogger logger)
+            throws IOException, InterruptedException {
         BuildResult result;
         try {
             result = perform(build, logger);
             AbstractBuild<?, ?> referenceBuild = result.getHistory().getReferenceBuild();
+            GlobalSettings.DescriptorImpl descriptor = (GlobalSettings.DescriptorImpl)Jenkins.getInstance()
+                    .getDescriptorOrDie(GlobalSettings.class);
+
+            if (descriptor.getFailOnCorrupt() && !result.getErrors().isEmpty()) {
+                return false;
+            }
+
             if (referenceBuild != null) {
                 logger.log("Computing warning deltas based on reference build " + referenceBuild.getDisplayName());
             }
@@ -159,8 +165,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
             updateBuildResult(result, logger);
         }
 
-        copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(),
-                result.getAnnotations());
+        copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), result.getAnnotations());
 
         return true;
     }
