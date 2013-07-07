@@ -18,13 +18,26 @@ import hudson.model.listeners.RunListener;
  * yet, this object is only used to provide a model for the view global.jelly.
  *
  * @author Ulli Hafner
+ * @since 1.50
  */
 @Extension
 public class GlobalSettings extends RunListener<Run<?, ?>> implements Describable<GlobalSettings> {
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
-    public Descriptor<GlobalSettings> getDescriptor() {
-        return Jenkins.getInstance().getDescriptorOrDie(getClass());
+    public DescriptorImpl getDescriptor() {
+        return findDescriptor();
+    }
+
+    private static DescriptorImpl findDescriptor() {
+        return (DescriptorImpl)Jenkins.getInstance().getDescriptorOrDie(GlobalSettings.class);
+    }
+
+    /**
+     * Returns the global settings.
+     *
+     * @return the global settings
+     */
+    public static Settings instance() {
+        return findDescriptor();
     }
 
     /**
@@ -33,12 +46,9 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
      * @author Ulli Hafner
      */
     @Extension
-    public static class DescriptorImpl extends Descriptor<GlobalSettings> {
-
+    public static class DescriptorImpl extends Descriptor<GlobalSettings> implements Settings {
         private Boolean isQuiet;
-
         private Boolean failOnCorrupt;
-
 
         @Override
         public String getDisplayName() {
@@ -62,40 +72,38 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
             return true;
         }
 
-        /**
-         * Returns the value of the quiet boolean property.
-         *
-         * @return the status of the quiet boolean property
-         */
-        public Boolean getQuiet() {
-            return isQuiet;
-        }
-
-        /**
-         * Returns the value of the failOnCorrupt boolean property.
-         *
-         * @return the status of the failOnCorrupt boolean property
-         */
-        public Boolean getFailOnCorrupt() {
-            return failOnCorrupt == null ? Boolean.FALSE : failOnCorrupt;
-        }
-
-        /**
-         * Sets the value of the failOnCorrupt boolean property.
-         *
-         * @param value the value to set
-         */
-        public void setFailOnCorrupt(final Boolean value) {
-            failOnCorrupt = value;
+        /** {@inheritDoc} */
+        public Boolean getQuietMode() {
+            return getValidBoolean(isQuiet);
         }
 
         /**
          * Sets the value of the quiet boolean property.
          *
-         * @param value the value to set
+         * @param value
+         *            the value to set
          */
-        public void setQuiet(final Boolean value) {
+        public void setQuietMode(final Boolean value) {
             isQuiet = value;
+        }
+
+        /** {@inheritDoc} */
+        public Boolean getFailOnCorrupt() {
+            return getValidBoolean(failOnCorrupt);
+        }
+
+        /**
+         * Sets the value of the failOnCorrupt boolean property.
+         *
+         * @param value
+         *            the value to set
+         */
+        public void setFailOnCorrupt(final Boolean value) {
+            failOnCorrupt = value;
+        }
+
+        private Boolean getValidBoolean(final Boolean value) {
+            return value == null ? Boolean.FALSE : value;
         }
     }
 }

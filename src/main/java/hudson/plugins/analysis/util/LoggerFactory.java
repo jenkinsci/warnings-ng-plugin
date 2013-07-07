@@ -2,39 +2,32 @@ package hudson.plugins.analysis.util;
 
 import java.io.PrintStream;
 
-import jenkins.model.Jenkins;
-
+import hudson.plugins.analysis.core.Settings;
 import hudson.plugins.analysis.core.GlobalSettings;
 
 /**
- * Provides a Mechanism to create a PluginLogger
- * which depends on the QuietMode.
- * QuietMode can be set in GlobalSettings.
+ * Provides a Mechanism to create a PluginLogger which depends on the QuietMode. QuietMode can be set in GlobalSettings.
  *
  * @author Sebastian Seidl
  */
 public class LoggerFactory {
-
-    /**
-     * Provides the setting of QuitMode.
-     */
-    private final GlobalSettings.DescriptorImpl settings;
+    private final Settings settings;
 
     /**
      * Creates a new instance of {@link LoggerFactory}.
      */
     public LoggerFactory() {
-       settings  = (GlobalSettings.DescriptorImpl)Jenkins.getInstance().getDescriptorOrDie(GlobalSettings.class);
+        this(GlobalSettings.instance());
     }
 
     /**
      * Creates a new instance of {@link LoggerFactory}.
-     * Note: This Contructor is used for test purpose only.
      *
-     * @param settings Mock of GlobalSettings.DescriptorImpl
+     * @param settings
+     *            the settings to use
      */
-    public LoggerFactory(final GlobalSettings.DescriptorImpl settings) {
-       this.settings  = settings;
+    LoggerFactory(final Settings settings) {
+        this.settings = settings;
     }
 
     /**
@@ -44,7 +37,7 @@ public class LoggerFactory {
      *            the actual print stream to log to
      * @param pluginName
      *            the plug-in name
-     * @return Pluginlogger the PluginLogger to use
+     * @return the PluginLogger to use
      */
     public PluginLogger createLogger(final PrintStream logger, final String pluginName) {
         if (isQuiet()) {
@@ -56,7 +49,6 @@ public class LoggerFactory {
     }
 
     private boolean isQuiet() {
-        return settings.getQuiet();
+        return settings.getQuietMode();
     }
 }
-

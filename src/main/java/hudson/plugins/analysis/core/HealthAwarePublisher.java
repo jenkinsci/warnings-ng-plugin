@@ -2,7 +2,6 @@ package hudson.plugins.analysis.core;
 
 import java.io.IOException;
 
-import jenkins.model.Jenkins;
 import hudson.Launcher;
 
 import hudson.model.Result;
@@ -144,10 +143,8 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
         try {
             result = perform(build, logger);
             AbstractBuild<?, ?> referenceBuild = result.getHistory().getReferenceBuild();
-            GlobalSettings.DescriptorImpl descriptor = (GlobalSettings.DescriptorImpl)Jenkins.getInstance()
-                    .getDescriptorOrDie(GlobalSettings.class);
 
-            if (descriptor.getFailOnCorrupt() && !result.getErrors().isEmpty()) {
+            if (GlobalSettings.instance().getFailOnCorrupt() && result.hasError()) {
                 return false;
             }
 

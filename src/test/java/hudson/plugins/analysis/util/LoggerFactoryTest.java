@@ -7,7 +7,7 @@ import java.io.PrintStream;
 
 import org.junit.Test;
 
-import hudson.plugins.analysis.core.GlobalSettings;
+import hudson.plugins.analysis.core.Settings;
 
 /**
  * TestCases for {@link PluginLogger}.
@@ -21,15 +21,15 @@ public class LoggerFactoryTest {
      */
     @Test
     public void quietModeDeactivated() {
-        //Given
-        GlobalSettings.DescriptorImpl settings = mock(GlobalSettings.DescriptorImpl.class);
-        LoggerFactory lf = new LoggerFactory(settings);
+        // Given
+        Settings settings = mock(Settings.class);
+        LoggerFactory loggerFactory = new LoggerFactory(settings);
 
-        //When
-        when(settings.getQuiet()).thenReturn(false);
-        PluginLogger logger = lf.createLogger(mock(PrintStream.class), "");
+        // When
+        when(settings.getQuietMode()).thenReturn(false);
+        PluginLogger logger = loggerFactory.createLogger(mock(PrintStream.class), "");
 
-        //Then
+        // Then
         assertFalse("LogMode is not Quiet but LoggerFactory creates a NullLogger!", logger instanceof NullLogger);
     }
 
@@ -38,15 +38,15 @@ public class LoggerFactoryTest {
      */
     @Test
     public void quietModeActivated() {
-        //Given
-        GlobalSettings.DescriptorImpl settings = mock(GlobalSettings.DescriptorImpl.class);
+        // Given
+        Settings settings = mock(Settings.class);
         LoggerFactory lf = new LoggerFactory(settings);
 
-        //When
-        when(settings.getQuiet()).thenReturn(true);
+        // When
+        when(settings.getQuietMode()).thenReturn(true);
         PluginLogger logger = lf.createLogger(mock(PrintStream.class), "");
 
-        //Then
+        // Then
         assertTrue("LogMode is Quiet but LoggerFactory creates not a NullLogger!", logger instanceof NullLogger);
     }
 }
