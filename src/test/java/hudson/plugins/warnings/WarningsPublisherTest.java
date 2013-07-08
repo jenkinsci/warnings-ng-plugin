@@ -85,7 +85,7 @@ public class WarningsPublisherTest extends HudsonTestCase {
     private void checkOrder(final List<String> expected, final WarningsPublisher publisher) {
         List<Action> ordered = Lists.newArrayList(publisher.getProjectActions(null));
 
-        assertEquals("Wrong number of actions.", 2, ordered.size());
+        assertEquals("Wrong number of actions.", 3, ordered.size());
 
         for (int position = 0; position < expected.size(); position++) {
             assertPosition(ordered, expected, position);

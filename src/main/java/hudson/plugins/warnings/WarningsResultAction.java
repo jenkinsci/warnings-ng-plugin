@@ -74,6 +74,8 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
         return new WarningsDescriptor();
     }
 
+    /** Backward compatibility. @deprecated */
+    @Deprecated
     @SuppressWarnings("PMD")
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("")
     private transient Localizable actionName;

@@ -30,16 +30,10 @@ import hudson.util.IOException2;
  */
 @Extension
 public class JcReportParser extends AbstractWarningsParser {
-
-    /**
-     * Generated document field serialVersionUID.
-     */
     private static final long serialVersionUID = -1302787609831475403L;
 
     /**
-     * Creates a new instance of JcReportParser.
-     *
-     * @author Johann Vierthaler, johann.vierthaler@web.de
+     * Creates a new instance of {@link JcReportParser}.
      */
     public JcReportParser() {
         super(Messages._Warnings_JCReport_ParserName(),
@@ -48,30 +42,28 @@ public class JcReportParser extends AbstractWarningsParser {
     }
 
     /**
-     * Inherited from the super-class.
+     * This overwritten method passes the reader to createReport() and starts adding all the warnings to the Collection
+     * that will be returned at the end of the method.
      *
-     * @author Johann Vierthaler, johann.vierthaler@web.de This overwritten method passes the reader to createReport()
-     *         and starts adding all the warnings to the Collection that will be returned at the end of the method.
-     * @return warnings -> the collection of Warnings parsed from the Report.
+     * @return the collection of Warnings parsed from the Report.
      * @param reader
-     *            -> the reader that parses from the source-file.
+     *            the reader that parses from the source-file.
      * @exception IOException
-     *                -> thrown by createReport()
+     *                thrown by createReport()
      * @exception ParsingCanceledException
-     *                -> thrown by createReport()
+     *                thrown by createReport()
      */
     @Override
     public Collection<FileAnnotation> parse(final Reader reader) throws IOException, ParsingCanceledException {
-        final Report report = createReport(reader);
+        Report report = createReport(reader);
         List<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
 
         for (int i = 0; i < report.getFiles().size(); i++) {
-
-            final File file = report.getFiles().get(i);
+            File file = report.getFiles().get(i);
 
             for (int j = 0; j < file.getItems().size(); j++) {
-                final Item item = file.getItems().get(j);
-                final Warning warning = createWarning(file.getName(), getLineNumber(item.getLine()),
+                Item item = file.getItems().get(j);
+                Warning warning = createWarning(file.getName(), getLineNumber(item.getLine()),
                         item.getFindingtype(), item.getMessage(), getPriority(item.getSeverity()));
 
                 warning.setOrigin(item.getOrigin());
@@ -87,10 +79,9 @@ public class JcReportParser extends AbstractWarningsParser {
     /**
      * The severity-level parsed from the JcReport will be matched with a priority.
      *
-     * @author Johann Vierthaler, johann.vierthaler@web.de
-     * @return priority -> the priority-enum matching with the issueLevel.
      * @param issueLevel
-     *            -> the severity-level parsed from the JcReport.
+     *            the severity-level parsed from the JcReport.
+     * @return the priority-enum matching with the issueLevel.
      */
     private Priority getPriority(final String issueLevel) {
         if (StringUtils.isEmpty(issueLevel)) {
@@ -118,16 +109,17 @@ public class JcReportParser extends AbstractWarningsParser {
      * Creates a Report-Object out of the content within the JcReport.xml.
      *
      * @param source
-     *            -> the Reader-object that is the source to build the Report-Object.
-     * @return report -> the finished Report-Object that creates the Warnings.
+     *            the Reader-object that is the source to build the Report-Object.
+     * @return the finished Report-Object that creates the Warnings.
      * @throws IOException
-     *             -> due to digester.parse(new InputSource(source))
+     *              due to digester.parse(new InputSource(source))
      */
     public Report createReport(final Reader source) throws IOException {
         try {
-            final DigesterLoader digesterLoader = DigesterLoader.newLoader(new JcReportModule());
-            final Digester digester = digesterLoader.newDigester();
-            digester.setClassLoader(JcReportModule.class.getClassLoader());
+            DigesterLoader digesterLoader = DigesterLoader.newLoader(new JcReportModule());
+            digesterLoader.setClassLoader(JcReportModule.class.getClassLoader());
+
+            Digester digester = digesterLoader.newDigester();
             return digester.parse(new InputSource(source));
         }
 

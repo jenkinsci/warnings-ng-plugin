@@ -11,28 +11,32 @@ import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.warnings.parser.Warning;
 
 /**
- * Represents the results of the whole warning analysis. One instance of this class is persisted for
- * each build via an XML file.
-
+ * Represents the aggregated results of all warnings parsers. One instance of this class is persisted for each build via
+ * an XML file.
  *
  * @author Marvin Schütz
  * @author Sebastian Hansbauer
  */
-public class WarningsTotalResult extends BuildResult{
-
-     /** Unique identifier of this class. */
-     private static final long serialVersionUID = 4572019928324067680L;
+public class AggregatedWarningsResult extends BuildResult {
+    private static final long serialVersionUID = 4572019928324067680L;
 
     /**
-     * Creates a new instance of {@link WarningsTotalResult}.
+     * Creates a new instance of {@link AggregatedWarningsResult}.
+     *
      * @param build
+     *            the current build as owner of this action
      * @param history
+     *            build history
      * @param result
+     *            the parsed result with all annotations
      * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
      */
-    public WarningsTotalResult(final AbstractBuild<?, ?> build, final BuildHistory history, final ParserResult result,
+    public AggregatedWarningsResult(final AbstractBuild<?, ?> build, final BuildHistory history, final ParserResult result,
             final String defaultEncoding) {
         super(build, history, result, defaultEncoding);
+
+        serializeAnnotations(result.getAnnotations());
     }
 
     @Override
@@ -42,18 +46,16 @@ public class WarningsTotalResult extends BuildResult{
 
     @Override
     public String getHeader() {
-        return "warningsTotal";
+        return Messages.Warnings_Totals_Name();
     }
 
     @Override
     public String getSummary() {
-        return "warningsTotal: " + createDefaultSummary(getUrl(), getNumberOfAnnotations(), getNumberOfModules());
+        return Messages.Warnings_ProjectAction_Name() + ": " + createDefaultSummary(getUrl(), getNumberOfAnnotations(), getNumberOfModules());
     }
 
-    //TODO
-    private String getUrl() {
-        //return "warningsTotal";
-        return "warningsResult";
+    private static String getUrl() {
+        return WarningsDescriptor.RESULT_URL;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class WarningsTotalResult extends BuildResult{
 
     @Override
     protected String getSerializationFileName() {
-        return "warningsTotal.xml";
+        return "aggregated-warnings.xml";
     }
 
     /** {@inheritDoc} */
@@ -73,7 +75,6 @@ public class WarningsTotalResult extends BuildResult{
 
     @Override
     protected Class<? extends ResultAction<? extends BuildResult>> getResultActionType() {
-        return WarningsTotalResultAction.class;
+        return AggregatedWarningsResultAction.class;
     }
 }
-
