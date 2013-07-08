@@ -13,7 +13,6 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 @Extension
 public class PerlCriticParser extends RegexpLineParser {
-
     private static final long serialVersionUID = -6481203155449490873L;
 
     private static final String PERLCRITIC_WARNING_PATTERN = "(?:(.*?):)?(.*)\\s+at\\s+line\\s+(\\d+),\\s+column\\s+(\\d+)\\.\\s*(?:See page[s]?\\s+)?(.*)\\.\\s*\\(?Severity:\\s*(\\d)\\)?";
@@ -22,16 +21,14 @@ public class PerlCriticParser extends RegexpLineParser {
      * Creates a new instance of {@link PerlCriticParser}.
      */
     public PerlCriticParser() {
-        super(Messages._Warnings_PerlCritic_ParserName(), Messages._Warnings_PerlCritic_LinkName(), Messages
-                ._Warnings_PerlCritic_TrendName(), PERLCRITIC_WARNING_PATTERN, true);
+        super(Messages._Warnings_PerlCritic_ParserName(), Messages._Warnings_PerlCritic_LinkName(),
+                Messages._Warnings_PerlCritic_TrendName(), PERLCRITIC_WARNING_PATTERN, true);
     }
 
     /** {@inheritDoc} */
     @Override
     protected Warning createWarning(final Matcher matcher) {
-
         String filename;
-
         if (matcher.group(1) == null) {
             filename = "-";
         }

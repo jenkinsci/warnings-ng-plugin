@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -16,6 +17,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
+
+import hudson.Extension;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -28,11 +31,9 @@ import hudson.util.IOException2;
  *
  * @author Sebastian Seidl
  */
+@Extension
 public class StyleCopParser extends AbstractWarningsParser {
     private static final long serialVersionUID = 1L;
-
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
-    private transient List<FileAnnotation> warnings;
 
     /**
      * Creates a new instance of {@link StyleCopParser}.
@@ -48,7 +49,6 @@ public class StyleCopParser extends AbstractWarningsParser {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder;
         try {
-            warnings = Lists.newArrayList();
 
             docBuilder = docBuilderFactory.newDocumentBuilder();
             Document doc = docBuilder.parse(new InputSource(reader));
@@ -60,38 +60,40 @@ public class StyleCopParser extends AbstractWarningsParser {
                 mainNode = doc.getElementsByTagName("StyleCopViolations");
             }
 
-            Element rootElement = (Element) mainNode.item(0);
-            parseViolations(XmlElementUtil.getNamedChildElements(rootElement, "Violation"));
+            Element rootElement = (Element)mainNode.item(0);
+            return parseViolations(XmlElementUtil.getNamedChildElements(rootElement, "Violation"));
         }
-        catch (ParserConfigurationException pce) {
-            throw new IOException2(pce);
+        catch (ParserConfigurationException exception) {
+            throw new IOException2(exception);
         }
-        catch (SAXException se) {
-            throw new IOException2(se);
+        catch (SAXException exception) {
+            throw new IOException2(exception);
         }
+    }
 
+    /**
+     * Parses the "Violation" tag and adds one warning for each element.
+     *
+     * @param elements
+     *            list of Violation tags
+     * @return the corresponding warnings
+     */
+    private Collection<FileAnnotation> parseViolations(final List<Element> elements) {
+        Collection<FileAnnotation> warnings = Lists.newArrayList();
+        for (Element element : elements) {
+            Warning warning = createWarning(getString(element, "Source"), getLineNumber(element),
+                    getString(element, "Rule"), getCategory(element), element.getTextContent(), Priority.NORMAL);
+
+            warnings.add(warning);
+        }
         return warnings;
     }
 
     /**
-     * Parse the Violation tag and add it to the warnings.
-     * @param elements list of Violation tags
-     */
-    private void parseViolations(final List<Element> elements) {
-        for (Element element : elements) {
-            Warning warning = createWarning(getString(element, "Source"),                getLineNumber(element),
-                getString(element, "Rule"),
-                getCategory(element),
-                element.getTextContent(),
-                Priority.NORMAL);
-
-                warnings.add(warning);
-        }
-    }
-
-    /**
      * Returns the Category of a StyleCop Violation.
-     * @param element The Element which represents the violation
+     *
+     * @param element
+     *            The Element which represents the violation
      * @return Category of violation
      */
     private String getCategory(final Element element) {
@@ -99,7 +101,7 @@ public class StyleCopParser extends AbstractWarningsParser {
 
         int i = ruleNameSpace.lastIndexOf('.');
         if (i == -1) {
-           return getString(element, "RuleId");
+            return getString(element, "RuleId");
         }
         else {
             return ruleNameSpace.substring(i + 1);
@@ -108,8 +110,11 @@ public class StyleCopParser extends AbstractWarningsParser {
 
     /***
      * Returns the value for the named attribute if it exists.
-     * @param element the element to check for an attribute
-     * @param name the name of the attribute
+     *
+     * @param element
+     *            the element to check for an attribute
+     * @param name
+     *            the name of the attribute
      * @return the value of the attribute; "" if there is no such attribute.
      */
     private String getString(final Element element, final String name) {
@@ -117,24 +122,21 @@ public class StyleCopParser extends AbstractWarningsParser {
             return element.getAttribute(name);
         }
         else {
-            return "";
+            return StringUtils.EMPTY;
         }
     }
 
     /***
      * Returns the LineNumber for the given violation.
-     * @param violation the xml Element "violation" to get the Linenumber from.
-     * @return the lineNumber of the violation. 0 if there is no LineNumber or
-     * the LineNumber cant't be parsed into an Integer.
+     *
+     * @param violation
+     *            the xml Element "violation" to get the Linenumber from.
+     * @return the lineNumber of the violation. 0 if there is no LineNumber or the LineNumber cant't be parsed into an
+     *         Integer.
      */
     private int getLineNumber(final Element violation) {
         if (violation.hasAttribute("LineNumber")) {
-            try {
-                return Integer.parseInt(violation.getAttribute("LineNumber"));
-            }
-            catch (NumberFormatException e) {
-                return 0;
-            }
+            return getLineNumber(violation.getAttribute("LineNumber"));
         }
         else {
             return 0;

@@ -40,11 +40,11 @@ public class JcReportParser extends AbstractWarningsParser {
      * Creates a new instance of JcReportParser.
      *
      * @author Johann Vierthaler, johann.vierthaler@web.de
-     * @NOTE: Only the Super-Constructor is called with 3 Localizables.
      */
     public JcReportParser() {
-        super(Messages._Warnings_JCReport_ParserName(), Messages._Warnings_JCReport_LinkName(), Messages
-                ._Warnings_JCReport_TrendName());
+        super(Messages._Warnings_JCReport_ParserName(),
+                Messages._Warnings_JCReport_LinkName(),
+                Messages._Warnings_JCReport_TrendName());
     }
 
     /**
@@ -127,6 +127,7 @@ public class JcReportParser extends AbstractWarningsParser {
         try {
             final DigesterLoader digesterLoader = DigesterLoader.newLoader(new JcReportModule());
             final Digester digester = digesterLoader.newDigester();
+            digester.setClassLoader(JcReportModule.class.getClassLoader());
             return digester.parse(new InputSource(source));
         }
 

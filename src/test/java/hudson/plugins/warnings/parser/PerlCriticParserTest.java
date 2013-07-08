@@ -17,7 +17,6 @@ import hudson.plugins.analysis.util.model.Priority;
  * @author Mihail Menev, menev@hm.edu
  */
 public class PerlCriticParserTest extends ParserTester {
-
     /**
      * Parses a mixed log file with 105 perlcritic warnings and /var/log/ messages.
      *
@@ -89,5 +88,4 @@ public class PerlCriticParserTest extends ParserTester {
     protected String getWarningsFile() {
         return "perlcritic.txt";
     }
-
 }

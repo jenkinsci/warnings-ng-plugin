@@ -18,14 +18,11 @@ import hudson.plugins.warnings.parser.jcreportparser.Report;
 
 import hudson.util.IOException2;
 
-
-
 /**
  * Tests the JcReportParser-Class.
  * @author Johann Vierthaler, johann.vierthaler@web.de
  */
 public class JcReportParserTest {
-
     /**
      * Parses Report with 5 Warnings.
      * @author Johann Vierthaler, johann.vierthaler@web.de

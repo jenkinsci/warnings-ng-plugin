@@ -40,13 +40,6 @@ public class Pep8Parser extends RegexpLineParser {
         return line.contains(":");
     }
 
-    /**
-     * Determined the Priority of the Warning.
-     *
-     * @param priority
-     *            the warning priority code
-     * @return the priority of the warning
-     */
     private Priority mapPriority(final String priority) {
         if (priority.contains("F") || priority.contains("E") || priority.contains("W")) {
             return Priority.HIGH;

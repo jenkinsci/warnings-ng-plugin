@@ -10,16 +10,15 @@ import org.junit.Test;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
-import hudson.plugins.warnings.parser.fxcop.FxCopParser;
 
 /**
- * Tests the class {@link FxCopParser}.
+ * Tests the class {@link StyleCopParser}.
  *
- * @author Ulli Hafner
+ * @author Sebastian Seidl
  */
 public class StyleCopParserTest extends ParserTester {
     /**
-     * Verifies that the StyleCop parser works as expected.
+     * Verifies that the StyleCop parser works as expected with a file of 5 warnings.
      *
      * @throws IOException
      *             if the file could not be read
@@ -61,6 +60,32 @@ public class StyleCopParserTest extends ParserTester {
                 "ElementsMustBeDocumented",
                 "DocumentationRules",
                 Priority.NORMAL);
+    }
+
+    /**
+     * Verifies that the StyleCop parser works as expected with a file of 3 warnings.
+     *
+     * @throws IOException
+     *             if the file could not be read
+     */
+    @Test
+    public void testStyleCopOneFile() throws IOException {
+        Collection<FileAnnotation> result = new StyleCopParser().parse(openFile("stylecop/onefile.xml"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, result.size());
+    }
+
+    /**
+     * Verifies that the StyleCop parser works as expected with a file of 2 warnings (4.3 format).
+     *
+     * @throws IOException
+     *             if the file could not be read
+     */
+    @Test
+    public void testStyleCop43() throws IOException {
+        Collection<FileAnnotation> result = new StyleCopParser().parse(openFile("stylecop/stylecop-v4.3.xml"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, result.size());
     }
 
     @Override

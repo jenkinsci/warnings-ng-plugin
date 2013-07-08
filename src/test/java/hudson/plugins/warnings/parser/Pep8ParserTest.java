@@ -10,7 +10,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
- * Tests the class {@link Pep8parser}}.
+ * Tests the class {@link Pep8Parser}.
  *
  * @author Marvin Schütz
  */
@@ -18,13 +18,13 @@ public class Pep8ParserTest extends ParserTester {
     private static final String WARNING_TYPE = "Pep8";
 
     /**
-     * Parses a Testfile with a simple and a complexe Warning and 2 complexe Warnings with lower Priority.
+     * Parses a file with a simple and a complex warning and 2 complex warnings with lower Priority.
      *
      * @throws IOException
-     *             falls das File nicht geoeffnet werden kann
+     *             if the file could not be read
      */
     @Test
-    public void testParseSimpleAndComplexMessage() throws  IOException {
+    public void testParseSimpleAndComplexMessage() throws IOException {
         Pep8Parser parser = new Pep8Parser();
 
         Collection<FileAnnotation> warnings = parser.parse(openFile());
@@ -49,7 +49,6 @@ public class Pep8ParserTest extends ParserTester {
         checkWarning(warning, 98, "Message #has! 12special-_ chars|?.",
                 "trunk3/src/python/file.py", WARNING_TYPE, "C111", Priority.LOW);
     }
-
 
     /** {@inheritDoc} */
     @Override

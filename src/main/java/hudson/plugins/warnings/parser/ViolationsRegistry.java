@@ -4,7 +4,6 @@ import java.util.List;
 
 import hudson.plugins.violations.types.codenarc.CodenarcParser;
 import hudson.plugins.violations.types.gendarme.GendarmeParser;
-import hudson.plugins.violations.types.stylecop.StyleCopParser;
 
 /**
  * Registers the parsers of the violations plug-in.
@@ -28,10 +27,6 @@ public final class ViolationsRegistry {
                 Messages._Warnings_Gendarme_ParserName(),
                 Messages._Warnings_Gendarme_LinkName(),
                 Messages._Warnings_Gendarme_TrendName()));
-        parsers.add(new ViolationsAdapter(new StyleCopParser(),
-                Messages._Warnings_StyleCop_ParserName(),
-                Messages._Warnings_StyleCop_LinkName(),
-                Messages._Warnings_StyleCop_TrendName()));
     }
 
     /**
