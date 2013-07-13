@@ -57,7 +57,7 @@ public class ViolationsAdapter extends AbstractWarningsParser {
         File temp = copyContentToTemporaryFile(reader);
 
         FullBuildModel model = new FullBuildModel();
-        parser.parse(model, temp.getParentFile(), temp.getName(), null);
+        parser.parse(model, temp.getParentFile(), temp.getName(), new String[] {});
 
         return convertToWarnings(model);
     }
