@@ -1,4 +1,4 @@
-package hudson.plugins.warnings.parser.jcreportparser;
+package hudson.plugins.warnings.parser.jcreport;
 
 import java.io.IOException;
 import java.io.Reader;

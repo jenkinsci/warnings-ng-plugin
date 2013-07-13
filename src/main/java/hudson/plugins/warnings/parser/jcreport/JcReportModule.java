@@ -1,4 +1,4 @@
-package hudson.plugins.warnings.parser.jcreportparser;
+package hudson.plugins.warnings.parser.jcreport;
 
 import org.apache.commons.digester3.binder.AbstractRulesModule;
 

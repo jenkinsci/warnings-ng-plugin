@@ -1,4 +1,4 @@
-package hudson.plugins.warnings.parser.jcreportparser;
+package hudson.plugins.warnings.parser.jcreport;
 
 import java.util.ArrayList;
 import java.util.Collections;

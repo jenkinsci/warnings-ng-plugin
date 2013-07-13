@@ -1,4 +1,4 @@
-package hudson.plugins.warnings.parser.jcreportparser;
+package hudson.plugins.warnings.parser.jcreport;
 
 /**
  * This the Item-Class

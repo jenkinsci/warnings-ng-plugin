@@ -11,10 +11,10 @@ import org.junit.Test;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
-import hudson.plugins.warnings.parser.jcreportparser.File;
-import hudson.plugins.warnings.parser.jcreportparser.Item;
-import hudson.plugins.warnings.parser.jcreportparser.JcReportParser;
-import hudson.plugins.warnings.parser.jcreportparser.Report;
+import hudson.plugins.warnings.parser.jcreport.File;
+import hudson.plugins.warnings.parser.jcreport.Item;
+import hudson.plugins.warnings.parser.jcreport.JcReportParser;
+import hudson.plugins.warnings.parser.jcreport.Report;
 
 import hudson.util.IOException2;
 
