@@ -111,13 +111,15 @@ public class BuildHistory {
     private ResultAction<? extends BuildResult> getAction(final boolean isStatusRelevant, final boolean mustBeStable) {
         for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
             ResultAction<? extends BuildResult> action = getResultAction(build);
-            if (hasValidResult(build, mustBeStable, action)) {
-                if (action != null && (action.isSuccessful() || !isStatusRelevant)) {
-                    return action;
-                }
+            if (hasValidResult(build, mustBeStable, action) && isSuccessfulAction(action, isStatusRelevant)) {
+                return action;
             }
         }
         return null;
+    }
+
+    private boolean isSuccessfulAction(final ResultAction<? extends BuildResult> action, final boolean isStatusRelevant) {
+        return action != null && (action.isSuccessful() || !isStatusRelevant);
     }
 
     /**

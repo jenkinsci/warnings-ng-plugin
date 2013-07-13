@@ -297,8 +297,10 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         if (!acceptGoal(mojo.getGoal())) {
             return true;
         }
+
         Result currentResult = getCurrentResult(build);
         PluginLogger logger = new LoggerFactory(receiveSettingsFromMaster(build)).createLogger(listener.getLogger(), pluginName);
+
         if (!canContinue(currentResult)) {
             logger.log("Skipping reporter since build result is " + currentResult);
             return true;
@@ -308,7 +310,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
             return true;
         }
 
-        final ParserResult result;
+        ParserResult result;
         try {
             result = perform(build, pom, mojo, logger);
 
@@ -324,12 +326,15 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         }
         logger.logLines(result.getLogMessages());
 
-        defaultEncoding = pom.getProperties().getProperty("project.build.sourceEncoding");
-        if (defaultEncoding == null) {
-            logger.log(Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
-            result.addErrorMessage(pom.getName(), Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
-        }
+        setEncoding(pom, result, logger);
+        registerResultsOnMaster(build, result, logger);
+        copyFilesWithAnnotationsToBuildFolder(logger, build.getRootDir(), result.getAnnotations());
 
+        return true;
+    }
+
+    private void registerResultsOnMaster(final MavenBuildProxy build, final ParserResult result, final PluginLogger logger)
+            throws IOException, InterruptedException {
         @SuppressWarnings("serial")
         String resultLog = build.execute(new BuildCallable<String, IOException>() {
             public String call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
@@ -337,10 +342,14 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
             }
         });
         logger.logLines(resultLog);
+    }
 
-        copyFilesWithAnnotationsToBuildFolder(logger, build.getRootDir(), result.getAnnotations());
-
-        return true;
+    private void setEncoding(final MavenProject pom, final ParserResult result, final PluginLogger logger) {
+        defaultEncoding = pom.getProperties().getProperty("project.build.sourceEncoding");
+        if (defaultEncoding == null) {
+            logger.log(Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
+            result.addErrorMessage(pom.getName(), Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
+        }
     }
 
     @SuppressWarnings("serial")
