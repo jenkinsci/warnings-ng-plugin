@@ -26,7 +26,7 @@ public class LoggerFactory {
      * @param settings
      *            the settings to use
      */
-    LoggerFactory(final Settings settings) {
+    public LoggerFactory(final Settings settings) {
         this.settings = settings;
     }
 

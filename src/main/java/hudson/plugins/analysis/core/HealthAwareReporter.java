@@ -291,15 +291,14 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"serial", "PMD.AvoidFinalLocalVariable"})
     @Override
     public final boolean postExecute(final MavenBuildProxy build, final MavenProject pom, final MojoInfo mojo,
             final BuildListener listener, final Throwable error) throws InterruptedException, IOException {
-        PluginLogger logger = new LoggerFactory().createLogger(listener.getLogger(), pluginName);
         if (!acceptGoal(mojo.getGoal())) {
             return true;
         }
         Result currentResult = getCurrentResult(build);
+        PluginLogger logger = new LoggerFactory(receiveSettingsFromMaster(build)).createLogger(listener.getLogger(), pluginName);
         if (!canContinue(currentResult)) {
             logger.log("Skipping reporter since build result is " + currentResult);
             return true;
@@ -331,6 +330,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
             result.addErrorMessage(pom.getName(), Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
         }
 
+        @SuppressWarnings("serial")
         String resultLog = build.execute(new BuildCallable<String, IOException>() {
             public String call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
                 return registerResults(result, mavenBuild);
@@ -341,6 +341,14 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         copyFilesWithAnnotationsToBuildFolder(logger, build.getRootDir(), result.getAnnotations());
 
         return true;
+    }
+
+    @SuppressWarnings("serial")
+    private Settings receiveSettingsFromMaster(final MavenBuildProxy build) throws IOException, InterruptedException {
+        return build.execute(new BuildCallable<Settings, IOException>() {
+            public Settings call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
+                return new SerializableSettings(GlobalSettings.instance());
+            }});
     }
 
     private String registerResults(final ParserResult result, final MavenBuild mavenBuild) {
