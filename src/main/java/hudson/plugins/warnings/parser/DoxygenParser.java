@@ -42,7 +42,9 @@ public class DoxygenParser extends RegexpDocumentParser {
      * can get quite complex.
      * The message is made of the remaining of the current line and of
      * an arbitrary long (and optional) sequence of lines which can take many
-     * shapes, but that never begins like an absolute path or a function.
+     * shapes, but that never begins like an absolute path, a function or
+     * a global message. Global messages are excluded with a lookahead and
+     * file messages are detected via their first three characters:
      * So we accept anything except '/' and '<' for the first character,
      * anything except ':' (windows drive colon) for the second character,
      * and anything except '/' (doxygen uses slash instead of backslash, after
@@ -52,10 +54,10 @@ public class DoxygenParser extends RegexpDocumentParser {
      * suspicious).
      * After these 3 characters, we accept anything until the end of the line.
      * The whole multi-line message is matched by:
-     * (.+(?:\\n[^/<\\n][^:\\n][^\\\\\\n].+)*
+     * (.+(?:\\n(?!\\s*(?:[Nn]otice|[Ww]arning|[Ee]rror): )[^/<\\n][^:\\n][^/\\n].+)*)
      * */
     private static final String DOXYGEN_WARNING_PATTERN =
-        ANT_TASK + "(?:(?:((?:[/.]|[A-Za-z]:).+?):(-?\\d+):\\s*([Ww]arning|[Ee]rror)|<.+>:-?\\d+(?::\\s*([Ww]arning|[Ee]rror))?): (.+(?:\\n[^/<\\n][^:\\n][^/\\n].+)*)|\\s*([Nn]otice|[Ww]arning|[Ee]rror): (.+))$";
+        ANT_TASK + "(?:(?:((?:[/.]|[A-Za-z]:).+?):(-?\\d+):\\s*([Ww]arning|[Ee]rror)|<.+>:-?\\d+(?::\\s*([Ww]arning|[Ee]rror))?): (.+(?:\\n(?!\\s*(?:[Nn]otice|[Ww]arning|[Ee]rror): )[^/<\\n][^:\\n][^/\\n].+)*)|\\s*([Nn]otice|[Ww]arning|[Ee]rror): (.+))$";
 
     /** The index of the regexp group capturing the file name (when the warning occurs in a file). */
     private static final int FILE_NAME_GROUP = 1;
