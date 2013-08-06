@@ -285,6 +285,26 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     }
 
     /**
+     * Returns the end column of the position of this warning.
+     *
+     * @return the end column
+     * @since 1.51
+     */
+    public int getColumnEnd() {
+        return primaryColumnEnd;
+    }
+
+    /**
+     * Returns the start column of the position of this warning.
+     *
+     * @return the start column
+     * @since 1.51
+     */
+    public int getColumnStart() {
+        return primaryColumnStart;
+    }
+
+    /**
      * Sets the origin of this annotation to the specified value.
      *
      * @param origin the value to set
@@ -557,6 +577,13 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         result = getPrimaryLineNumber() - other.getPrimaryLineNumber();
         if (result != 0) {
             return result;
+        }
+        if (other instanceof AbstractAnnotation) {
+            AbstractAnnotation otherWarning = (AbstractAnnotation)other;
+            result = getColumnStart() - otherWarning.getColumnStart();
+            if (result != 0) {
+                return result;
+            }
         }
 
         return hashCode() - other.hashCode(); // fallback
