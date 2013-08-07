@@ -1124,6 +1124,8 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         reason = messages.toString();
 
         saveResult(buildResult);
+
+        logger.log(String.format("%s %s - %s", Messages.ResultAction_Status(), buildResult.color.getDescription(), getReason()));
     }
 
     // CHECKSTYLE:OFF
@@ -1362,7 +1364,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             printer.append(printer.item(createHighScoreMessage()));
         }
         else if (isSuccessfulTouched()) {
-            printer.append(printer.item(createPluginResulMessage()));
+            printer.append(printer.item(createPluginResultMessage()));
             if (isSuccessful()) {
                 printer.append(printer.item(createSuccessfulHighScoreMessage()));
             }
@@ -1370,7 +1372,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         return printer.toString();
     }
 
-    private String createPluginResulMessage() {
+    private String createPluginResultMessage() {
         return Messages.ResultAction_Status() + getResultIcon() + " - " + getReason() + getReferenceBuildUrl();
     }
 
