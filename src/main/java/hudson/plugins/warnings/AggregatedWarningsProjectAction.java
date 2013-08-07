@@ -1,5 +1,7 @@
 package hudson.plugins.warnings;
 
+import org.kohsuke.stapler.StaplerRequest;
+
 import hudson.model.AbstractProject;
 
 import hudson.plugins.analysis.core.ResultAction;
@@ -40,6 +42,12 @@ public class AggregatedWarningsProjectAction extends AbstractProjectAction<Resul
     @Override
     public String getIconFileName() {
         return null; // do not show aggregation in UI
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isTrendVisible(final StaplerRequest request) {
+        return false;
     }
 }
 
