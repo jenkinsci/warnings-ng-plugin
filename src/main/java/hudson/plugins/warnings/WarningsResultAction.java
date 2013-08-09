@@ -35,7 +35,7 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
      * @param parserName the name of the parser
      */
     public WarningsResultAction(final AbstractBuild<?, ?> owner, final HealthDescriptor healthDescriptor, final WarningsResult result, final String parserName) {
-        super(owner, new WarningsHealthDescriptor(healthDescriptor), result);
+        super(owner, new WarningsHealthDescriptor(healthDescriptor, ParserRegistry.getParser(parserName).getParserName()), result);
 
         this.parserName = parserName;
     }

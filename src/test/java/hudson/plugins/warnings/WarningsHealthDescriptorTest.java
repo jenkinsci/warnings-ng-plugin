@@ -18,29 +18,32 @@ import hudson.plugins.analysis.util.model.AnnotationProvider;
  * @author Ulli Hafner
  */
 public class WarningsHealthDescriptorTest extends AbstractHealthDescriptorTest {
+    private static final Localizable NAME = Messages._Warnings_Publisher_Name();
+
     /**
      * Verify number of items.
      */
     @Test
     public void verifyNumberOfItems() {
+
         AnnotationProvider provider = mock(AnnotationProvider.class);
-        WarningsHealthDescriptor healthDescriptor = new WarningsHealthDescriptor(NullHealthDescriptor.NULL_HEALTH_DESCRIPTOR);
+        WarningsHealthDescriptor healthDescriptor = new WarningsHealthDescriptor(NullHealthDescriptor.NULL_HEALTH_DESCRIPTOR, NAME);
 
         Localizable description = healthDescriptor.createDescription(provider);
-        assertEquals(WRONG_DESCRIPTION, Messages.Warnings_ResultAction_HealthReportNoItem(), description.toString());
+        assertEquals(WRONG_DESCRIPTION, Messages.Warnings_ResultAction_HealthReportNoItem(NAME), description.toString());
 
         when(provider.getNumberOfAnnotations()).thenReturn(1);
         description = healthDescriptor.createDescription(provider);
-        assertEquals(WRONG_DESCRIPTION, Messages.Warnings_ResultAction_HealthReportSingleItem(), description.toString());
+        assertEquals(WRONG_DESCRIPTION, Messages.Warnings_ResultAction_HealthReportSingleItem(NAME), description.toString());
 
         when(provider.getNumberOfAnnotations()).thenReturn(2);
         description = healthDescriptor.createDescription(provider);
-        assertEquals(WRONG_DESCRIPTION, Messages.Warnings_ResultAction_HealthReportMultipleItem(2), description.toString());
+        assertEquals(WRONG_DESCRIPTION, Messages.Warnings_ResultAction_HealthReportMultipleItem(NAME, 2), description.toString());
     }
 
     @Override
     protected AbstractHealthDescriptor createHealthDescriptor(final HealthDescriptor healthDescriptor) {
-        return new WarningsHealthDescriptor(healthDescriptor);
+        return new WarningsHealthDescriptor(healthDescriptor, NAME);
     }
 }
 
