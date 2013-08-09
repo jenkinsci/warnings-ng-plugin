@@ -329,7 +329,7 @@ public class WarningsPublisher extends HealthAwareRecorder {
 
             BuildHistory history = new BuildHistory(build, AggregatedWarningsResultAction.class, useOnlyStableBuildsAsReference());
             AggregatedWarningsResult result = new AggregatedWarningsResult(build, history, totals, getDefaultEncoding());
-            build.getActions().add(new AggregatedWarningsResultAction(build, this, result));
+            build.getActions().add(new AggregatedWarningsResultAction(build, result));
 
             copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), totals.getAnnotations());
 

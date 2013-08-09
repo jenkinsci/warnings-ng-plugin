@@ -2,7 +2,7 @@ package hudson.plugins.warnings;
 
 import hudson.model.AbstractBuild;
 
-import hudson.plugins.analysis.core.HealthDescriptor;
+import hudson.plugins.analysis.core.NullHealthDescriptor;
 import hudson.plugins.analysis.core.AbstractResultAction;
 import hudson.plugins.analysis.core.PluginDescriptor;
 
@@ -14,19 +14,18 @@ import hudson.plugins.analysis.core.PluginDescriptor;
  * @author Sebastian Hansbauer
  */
 public class AggregatedWarningsResultAction extends AbstractResultAction<AggregatedWarningsResult> {
+    private static final NullHealthDescriptor NULL_HEALTH_DESCRIPTOR = new NullHealthDescriptor();
+
     /**
      * Creates a new instance of <code>WarningsResultAction</code>.
      *
      * @param owner
      *            the associated build of this action
-     * @param healthDescriptor
-     *            health descriptor to use
      * @param result
      *            the result in this build
      */
-    public AggregatedWarningsResultAction(final AbstractBuild<?, ?> owner, final HealthDescriptor healthDescriptor,
-            final AggregatedWarningsResult result) {
-        super(owner, new WarningsHealthDescriptor(healthDescriptor), result);
+    public AggregatedWarningsResultAction(final AbstractBuild<?, ?> owner, final AggregatedWarningsResult result) {
+        super(owner, NULL_HEALTH_DESCRIPTOR, result);
     }
 
     @Override
