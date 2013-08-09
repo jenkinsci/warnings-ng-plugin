@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
@@ -38,7 +40,7 @@ public abstract class ParserTester {
         assertEquals("Wrong number of ranges detected.", 1, warning.getLineRanges().size());
         assertEquals("Wrong ranges start detected.", lineNumber, warning.getLineRanges().iterator().next().getStart());
         assertEquals("Wrong ranges end detected.", lineNumber, warning.getLineRanges().iterator().next().getEnd());
-        assertEquals("Wrong message detected.", message, warning.getMessage());
+        assertEquals("Wrong message detected.", StringEscapeUtils.escapeXml(message), warning.getMessage());
         assertEquals("Wrong filename detected.", fileName, warning.getFileName());
     }
 
