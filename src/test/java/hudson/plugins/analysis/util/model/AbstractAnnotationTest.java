@@ -39,6 +39,19 @@ public class AbstractAnnotationTest {
         verifyOrder(warnings, false);
     }
 
+    /**
+     * Verifies that the message contains escaped XML characters.
+     *
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-17287">Issue 17287</a>
+     */
+    @Test
+    public void issue17287() {
+        Warning warning = new Warning(Priority.HIGH, "dereferencing pointer '<anonymous>' does break strict-aliasing rules",
+                0, 0, "category", "type");
+
+        assertEquals("Wrong message escaping", "dereferencing pointer &apos;&lt;anonymous&gt;&apos; does break strict-aliasing rules", warning.getMessage());
+    }
+
     private void verifyOrder(final List<AbstractAnnotation> warnings, final boolean isAscending) {
         int position = 0;
         for (AbstractAnnotation warning : warnings) {
