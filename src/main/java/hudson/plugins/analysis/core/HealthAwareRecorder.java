@@ -35,7 +35,6 @@ import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Builder;
 import hudson.tasks.Recorder;
-import hudson.tasks.Ant;
 import hudson.tasks.Maven;
 
 /**
@@ -607,15 +606,12 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      *         <code>false</code> otherwise
      */
     protected boolean isAntBuild(final AbstractBuild<?, ?> build) {
-        if (build.getProject() instanceof Project) {
-            Project<?, ?> project = (Project<?, ?>)build.getProject();
-            for (Builder builder : project.getBuilders()) {
-                if (builder instanceof Ant) {
-                    return true;
-                }
-            }
+        try {
+            return AntBuilderCheck.isAntBuild(build);
         }
-        return false;
+        catch (Throwable exception) { // NOPMD NOCHECKSTYLE
+            return false; // fallback if ant is not installed
+        }
     }
 
     /** {@inheritDoc} */

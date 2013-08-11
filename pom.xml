@@ -21,6 +21,7 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ant</artifactId>
       <version>1.1</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>de.java2html</groupId>
