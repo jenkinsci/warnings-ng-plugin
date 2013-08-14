@@ -184,4 +184,20 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
      * @param contextHashCode the value to set
      */
     void setContextHashCode(long contextHashCode);
+
+    /**
+     * Returns the start column of the position of this warning.
+     *
+     * @return the start column
+     * @since 1.52
+     */
+    int getColumnStart();
+
+    /**
+     * Returns the end column of the position of this warning.
+     *
+     * @return the end column
+     * @since 1.52
+     */
+    int getColumnEnd();
 }

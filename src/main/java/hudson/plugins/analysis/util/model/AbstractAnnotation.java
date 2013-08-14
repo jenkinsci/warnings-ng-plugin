@@ -135,7 +135,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      *            the annotation to copy the values from
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("ST")
-    public AbstractAnnotation(final AbstractAnnotation copy) {
+    public AbstractAnnotation(final FileAnnotation copy) {
         key = currentKey++;
 
         message = TreeString.of(copy.getMessage());
@@ -295,22 +295,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         return StringUtils.defaultString(origin);
     }
 
-    /**
-     * Returns the end column of the position of this warning.
-     *
-     * @return the end column
-     * @since 1.51
-     */
+    /** {@inheritDoc} */
     public int getColumnEnd() {
         return primaryColumnEnd;
     }
 
-    /**
-     * Returns the start column of the position of this warning.
-     *
-     * @return the start column
-     * @since 1.51
-     */
+    /** {@inheritDoc} */
     public int getColumnStart() {
         return primaryColumnStart;
     }
@@ -589,12 +579,9 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         if (result != 0) {
             return result;
         }
-        if (other instanceof AbstractAnnotation) {
-            AbstractAnnotation otherWarning = (AbstractAnnotation)other;
-            result = getColumnStart() - otherWarning.getColumnStart();
-            if (result != 0) {
-                return result;
-            }
+        result = getColumnStart() - other.getColumnStart();
+        if (result != 0) {
+            return result;
         }
 
         return hashCode() - other.hashCode(); // fallback

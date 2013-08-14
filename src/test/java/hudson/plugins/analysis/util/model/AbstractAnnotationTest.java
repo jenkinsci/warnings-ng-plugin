@@ -54,7 +54,7 @@ public class AbstractAnnotationTest {
 
     private void verifyOrder(final List<AbstractAnnotation> warnings, final boolean isAscending) {
         int position = 0;
-        for (AbstractAnnotation warning : warnings) {
+        for (FileAnnotation warning : warnings) {
             int actualPosition = isAscending ? position : warnings.size() - position - 1;
             assertEquals("Wrong position: ", String.valueOf(actualPosition), warning.getMessage());
 
