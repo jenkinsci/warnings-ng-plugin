@@ -10,7 +10,6 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import hudson.FilePath;
-import hudson.maven.AbstractMavenProject;
 
 import hudson.model.AbstractProject;
 import hudson.model.Hudson;
@@ -24,7 +23,7 @@ import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 
 /**
- * Base class for a Jankins plug-in descriptor.
+ * Base class for a Jenkins plug-in descriptor.
  *
  * @author Ulli Hafner
  */
@@ -212,6 +211,6 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
     @Override
     @SuppressWarnings("rawtypes")
     public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
-        return !AbstractMavenProject.class.isAssignableFrom(jobType);
+        return !(isPluginInstalled("maven") && MavenProjectChecker.isMavenProject(jobType));
     }
 }
