@@ -1,16 +1,3 @@
-1  file(s) deleted.
-Updating build tree...
-reservations.c board.c digio.c int.c led.c mcu.c mem.c
-cstartup.s51
-debug.s51
-Linking
-Warning[w18]: Segment XDATA_AN (seg part no 62, symbol "pDataBuffer" in module "reservations", address [f4e8-fd7f])  overlaps segment XDATA_AN (seg part no 64, symbol "sharedBufMemory" in module "reservations", address [f4e8-fd7f])
-
-Total number of errors: 0
-Total number of warnings: 1
-
-c:\hudson\jobs\SmartRF05 FW\workspace>exit 0
-[WARNINGS] Parsing warnings in console log...
-Archiving artifacts
-Finished: SUCCESS
-
+[exec] D:\continuousIntegration\modifiedcomps\forcedproduct\MHSM-Cascade\Cascade-Config\config\src\RDR_Config.c(3767) : Warning[Pe188]: enumerated type mixed with another type
+[exec] D:\continuousIntegration\modifiedcomps\forcedproduct\MHSM-Cascade\Cascade-Config\config\src\RDR_Config.c(3767) : Warning[Pe188]: enumerated type mixed with another type
+[exec] D:\continuousIntegration\modifiedcomps\forcedproduct\MHSM-Cascade\Cascade-Config\config\src\RDR_Config.c(3918) : Warning[Pe188]: enumerated type mixed with another type

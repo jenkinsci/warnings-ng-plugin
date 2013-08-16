@@ -20,6 +20,24 @@ public class IarParserTest extends ParserTester {
     private static final String TYPE = new IarParser().getGroup();
 
     /**
+     * Parses a file with warnings that are prefixed with exec tag.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-8823">Issue 8823</a>
+     */
+    @Test
+    public void issue8823() throws IOException {
+        Collection<FileAnnotation> warnings = new IarParser().parse(openFile("issue8823.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
+        FileAnnotation annotation = warnings.iterator().next();
+        checkWarning(annotation, 3767, "enumerated type mixed with another type",
+                "D:/continuousIntegration/modifiedcomps/forcedproduct/MHSM-Cascade/Cascade-Config/config/src/RDR_Config.c",
+                "Pe188", Priority.NORMAL);
+    }
+
+    /**
      * Parses a file with two IAR warnings.
      *
      * @throws IOException
