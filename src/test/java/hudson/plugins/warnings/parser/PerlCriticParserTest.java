@@ -45,13 +45,13 @@ public class PerlCriticParserTest extends ParserTester {
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
 
-        checkWarning(annotation, 1, "Code is not tidy", "perl/dir_handler.pl", "33 of PBP", Priority.LOW);
+        checkWarning(annotation, 1, 1, "Code is not tidy", "perl/dir_handler.pl", "33 of PBP", Priority.LOW);
 
         annotation = iterator.next();
-        checkWarning(annotation, 10, "Code before warnings are enabled", "perl/system.pl", "431 of PBP", Priority.HIGH);
+        checkWarning(annotation, 10, 1, "Code before warnings are enabled", "perl/system.pl", "431 of PBP", Priority.HIGH);
 
         annotation = iterator.next();
-        checkWarning(annotation, 7, "Backtick operator used", "perl/ch1/hello", "Use IPC::Open3 instead",
+        checkWarning(annotation, 7, 10, "Backtick operator used", "perl/ch1/hello", "Use IPC::Open3 instead",
                 Priority.NORMAL);
     }
 
@@ -70,13 +70,13 @@ public class PerlCriticParserTest extends ParserTester {
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
 
-        checkWarning(annotation, 18, "Found \"\\N{SPACE}\" at the end of the line", "-", "Don't use whitespace at the end of lines", Priority.LOW);
+        checkWarning(annotation, 18, 77, "Found \"\\N{SPACE}\" at the end of the line", "-", "Don't use whitespace at the end of lines", Priority.LOW);
 
         annotation = iterator.next();
-        checkWarning(annotation, 16, "Regular expression without \"/s\" flag", "-", "240,241 of PBP", Priority.NORMAL);
+        checkWarning(annotation, 16, 28, "Regular expression without \"/s\" flag", "-", "240,241 of PBP", Priority.NORMAL);
 
         annotation = iterator.next();
-        checkWarning(annotation, 15, "Bareword file handle opened", "-", "202,204 of PBP", Priority.HIGH);
+        checkWarning(annotation, 15, 1, "Bareword file handle opened", "-", "202,204 of PBP", Priority.HIGH);
     }
 
     private Collection<FileAnnotation> parse(final String fileName) throws IOException {

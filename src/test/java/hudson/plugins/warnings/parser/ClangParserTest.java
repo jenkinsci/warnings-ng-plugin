@@ -33,7 +33,7 @@ public class ClangParserTest extends ParserTester {
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
         FileAnnotation annotation = warnings.iterator().next();
-        checkWarning(annotation, 10, "'test.h' file not found",
+        checkWarning(annotation, 10, 10, "'test.h' file not found",
                 "./test.h", StringUtils.EMPTY, Priority.HIGH);
     }
 
@@ -50,7 +50,7 @@ public class ClangParserTest extends ParserTester {
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
         FileAnnotation annotation = warnings.iterator().next();
-        checkWarning(annotation, 1518, "Array access (via field 'yy_buffer_stack') results in a null pointer dereference",
+        checkWarning(annotation, 1518, 28, "Array access (via field 'yy_buffer_stack') results in a null pointer dereference",
                 "scanner.cpp", StringUtils.EMPTY, Priority.NORMAL);
     }
 
@@ -69,13 +69,13 @@ public class ClangParserTest extends ParserTester {
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation,
-                28,
+                28, 8,
                 "extra tokens at end of #endif directive",
                 "test.c",
                 TYPE, "-Wextra-tokens", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
-                28,
+                28, 8,
                 "extra tokens at end of #endif directive",
                 "/path/to/test.c",
                 TYPE, "-Wextra-tokens", Priority.NORMAL);
@@ -93,26 +93,26 @@ public class ClangParserTest extends ParserTester {
                 TYPE, "", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
-                3,
+                3, 11,
                 "conversion specifies type 'char *' but the argument has type 'int'",
                 "t.c",
                 TYPE, "-Wformat", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
-                3,
+                3, 11,
                 "conversion specifies type 'char *' but the argument has type 'int'",
                 "t.c",
                 TYPE, "-Wformat,1", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
-                3,
+                3, 11,
                 "conversion specifies type 'char *' but the argument has type 'int'",
                 "t.c",
                 TYPE, "-Wformat,Format String", Priority.NORMAL);
 
         annotation = iterator.next();
         checkWarning(annotation,
-                47,
+                47, 15,
                 "invalid operands to binary expression ('int *' and '_Complex float')",
                 "exprs.c",
                 TYPE, "", Priority.NORMAL);

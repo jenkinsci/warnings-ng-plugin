@@ -192,7 +192,7 @@ public class MsBuildParserTest extends ParserTester {
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation,
-                2242,
+                2242, 17,
                 "The variable 'type' is declared but never used",
                 "Src/Parser/CSharp/cs.ATG",
                 MsBuildParser.WARNING_TYPE, "CS0168", Priority.NORMAL);
@@ -210,7 +210,7 @@ public class MsBuildParserTest extends ParserTester {
                 MsBuildParser.WARNING_TYPE, "CS0618", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
-                3001,
+                3001, 5,
                 "Hier kommt der Warnings Text",
                 "MediaPortal.cs",
                 MsBuildParser.WARNING_TYPE, "CS0162", Priority.NORMAL);

@@ -94,7 +94,7 @@ public class Gcc4CompilerParserTest extends ParserTester {
                 "/u1/drjohn/bfdist/packages/RegrTest/V00-03-01/RgtAddressLineScan.cc",
                 WARNING_TYPE, ERROR_CATEGORY, Priority.HIGH);
         checkWarning(iterator.next(),
-                4,
+                4, 39,
                 "foo.h: No such file or directory",
                 "foo.cc",
                 WARNING_TYPE, ERROR_CATEGORY, Priority.HIGH);

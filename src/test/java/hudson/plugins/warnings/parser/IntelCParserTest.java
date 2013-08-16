@@ -32,14 +32,14 @@ public class IntelCParserTest extends ParserTester {
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation,
-                1460,
+                1460, 20,
                 "LOOP WAS VECTORIZED.",
                 "D:/Hudson/workspace/foo/busdates.cpp",
                 TYPE, "Remark", Priority.LOW);
         annotation = iterator.next();
         // remark
         checkWarning(annotation,
-                2630,
+                2630, 15,
                 "FUSED LOOP WAS VECTORIZED.",
                 "D:/Hudson/workspace/foo/hols.cpp",
                 TYPE, "Remark", Priority.LOW);

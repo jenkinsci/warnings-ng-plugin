@@ -16,7 +16,7 @@ import hudson.plugins.analysis.util.model.Priority;
 @Extension
 public class IntelCParser extends RegexpLineParser {
     private static final long serialVersionUID = 8409744276858003050L;
-    private static final String INTEL_PATTERN = "^(.*)\\((\\d*)\\)?:.*((?:remark|warning|error)\\s*#*\\d*)\\s*:\\s*(.*)$";
+    private static final String INTEL_PATTERN = "^(.*)\\((\\d*)\\)?:(?:\\s*\\(col\\. (\\d+)\\))?.*((?:remark|warning|error)\\s*#*\\d*)\\s*:\\s*(.*)$";
 
     /**
      * Creates a new instance of {@link IntelCParser}.
@@ -42,7 +42,7 @@ public class IntelCParser extends RegexpLineParser {
 
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        String category = StringUtils.capitalize(matcher.group(3));
+        String category = StringUtils.capitalize(matcher.group(4));
 
         Priority priority;
         if (StringUtils.startsWith(category, "Remark")) {
@@ -55,7 +55,9 @@ public class IntelCParser extends RegexpLineParser {
             priority = Priority.NORMAL;
         }
 
-        return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, matcher.group(4), priority);
+        Warning warning = createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, matcher.group(5), priority);
+        warning.setColumnPosition(getLineNumber(matcher.group(3)));
+        return warning;
     }
 }
 

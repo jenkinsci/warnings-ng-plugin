@@ -17,7 +17,7 @@ public class JavacParser extends RegexpLineParser {
     static final String JAVA_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-48x48.png";
 
     private static final long serialVersionUID = 7199325311690082782L;
-    private static final String JAVAC_WARNING_PATTERN = "^(?:\\[WARNING\\]\\s+)?([^\\[]*):\\[(\\d+)[.,; 0-9]*\\]\\s*(?:\\[(\\w+)\\])?\\s*(.*)$";
+    private static final String JAVAC_WARNING_PATTERN = "^(?:\\[WARNING\\]\\s+)?([^\\[]*):\\[(\\d+)[.,;]*(\\d+)?\\]\\s*(?:\\[(\\w+)\\])?\\s*(.*)$";
 
     /**
      * Creates a new instance of {@link JavacParser}.
@@ -36,10 +36,12 @@ public class JavacParser extends RegexpLineParser {
 
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        String message = matcher.group(4);
-        String category = classifyIfEmpty(matcher.group(3), message);
+        String message = matcher.group(5);
+        String category = classifyIfEmpty(matcher.group(4), message);
 
-        return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, message);
+        Warning warning = createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, message);
+        warning.setColumnPosition(getLineNumber(matcher.group(3)));
+        return warning;
     }
 
     @Override

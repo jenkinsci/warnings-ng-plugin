@@ -31,22 +31,22 @@ public class Pep8ParserTest extends ParserTester {
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation warning = iterator.next();
 
-        checkWarning(warning, 1, "trailing whitespace", "trunk/src/python/file.py",
+        checkWarning(warning, 1, 2, "trailing whitespace", "trunk/src/python/file.py",
                     WARNING_TYPE, "W291", Priority.HIGH);
 
         warning = iterator.next();
 
-        checkWarning(warning, 98, "Message #has! 12special-_ chars|?.",
+        checkWarning(warning, 98, 11, "Message #has! 12special-_ chars|?.",
                     "trunk/src/python/file.py", WARNING_TYPE, "E111", Priority.HIGH);
 
         warning = iterator.next();
 
-        checkWarning(warning, 98, "Message #has! 12special-_ chars|?.",
+        checkWarning(warning, 98, 11, "Message #has! 12special-_ chars|?.",
                 "trunk2/src/python/file.py", WARNING_TYPE, "R111", Priority.NORMAL);
 
         warning = iterator.next();
 
-        checkWarning(warning, 98, "Message #has! 12special-_ chars|?.",
+        checkWarning(warning, 98, 11, "Message #has! 12special-_ chars|?.",
                 "trunk3/src/python/file.py", WARNING_TYPE, "C111", Priority.LOW);
     }
 

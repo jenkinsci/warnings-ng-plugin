@@ -14,7 +14,7 @@ import hudson.plugins.analysis.util.model.Priority;
 @Extension
 public class ClangParser extends RegexpLineParser {
     private static final long serialVersionUID = -3015592762345283182L;
-    private static final String CLANG_WARNING_PATTERN = "^\\s*(?:\\d+%)?([^%]*?):(\\d+):(?:\\d+:)?(?:(?:\\{\\d+:\\d+-\\d+:\\d+\\})+:)?\\s*(warning|.*error):\\s*(.*?)(?:\\[(.*)\\])?$";
+    private static final String CLANG_WARNING_PATTERN = "^\\s*(?:\\d+%)?([^%]*?):(\\d+):(?:(\\d+):)?(?:(?:\\{\\d+:\\d+-\\d+:\\d+\\})+:)?\\s*(warning|.*error):\\s*(.*?)(?:\\[(.*)\\])?$";
 
     /**
      * Creates a new instance of {@link ClangParser}.
@@ -30,9 +30,10 @@ public class ClangParser extends RegexpLineParser {
     protected Warning createWarning(final Matcher matcher) {
         String filename = matcher.group(1);
         int lineNumber = getLineNumber(matcher.group(2));
-        String type = matcher.group(3);
-        String message = matcher.group(4);
-        String category = matcher.group(5);
+        int column = getLineNumber(matcher.group(3));
+        String type = matcher.group(4);
+        String message = matcher.group(5);
+        String category = matcher.group(6);
 
         Priority priority;
         if (type.contains("error")) {
@@ -41,11 +42,15 @@ public class ClangParser extends RegexpLineParser {
         else {
             priority = Priority.NORMAL;
         }
+        Warning warning;
         if (category == null) {
-            return createWarning(filename, lineNumber, message, priority);
+            warning = createWarning(filename, lineNumber, message, priority);
         }
-
-        return createWarning(filename, lineNumber, category, message, priority);
+        else {
+            warning = createWarning(filename, lineNumber, category, message, priority);
+        }
+        warning.setColumnPosition(column);
+        return warning;
     }
 
     @Override

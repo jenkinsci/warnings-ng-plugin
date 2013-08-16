@@ -15,7 +15,7 @@ import hudson.plugins.analysis.util.model.Priority;
 public class Pep8Parser extends RegexpLineParser {
     private static final long serialVersionUID = -8444940209330966997L;
 
-    private static final String PEP8_WARNING_PATTERN = "(.*):(\\d+):\\d+: (\\D\\d*) (.*)";
+    private static final String PEP8_WARNING_PATTERN = "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)";
 
     /**
      * Creates a new instance of {@link Pep8Parser}.
@@ -29,10 +29,12 @@ public class Pep8Parser extends RegexpLineParser {
 
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        String message = matcher.group(4);
-        String category = classifyIfEmpty(matcher.group(3), message);
+        String message = matcher.group(5);
+        String category = classifyIfEmpty(matcher.group(4), message);
 
-        return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, message, mapPriority(category));
+        Warning warning = createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, message, mapPriority(category));
+        warning.setColumnPosition(getLineNumber(matcher.group(3)));
+        return warning;
     }
 
     @Override

@@ -65,13 +65,13 @@ public class JavacParserTest extends ParserTester {
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation,
-                12,
+                12, 39,
                 "org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated",
                 "C:/Build/Results/jobs/ADT-Base/workspace/com.avaloq.adt.ui/src/main/java/com/avaloq/adt/ui/elements/AvaloqDialog.java",
                 WARNING_TYPE, RegexpParser.DEPRECATION, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
-                40,
+                40, 36,
                 "org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated",
                 "C:/Build/Results/jobs/ADT-Base/workspace/com.avaloq.adt.ui/src/main/java/com/avaloq/adt/ui/elements/AvaloqDialog.java",
                 WARNING_TYPE, RegexpParser.DEPRECATION, Priority.NORMAL);
