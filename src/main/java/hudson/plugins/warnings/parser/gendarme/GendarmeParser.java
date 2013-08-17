@@ -23,6 +23,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import hudson.Extension;
+
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.violations.types.fxcop.XmlElementUtil;
@@ -37,6 +39,7 @@ import hudson.util.IOException2;
  *
  * @author mathias.kluba@gmail.com
  */
+@Extension
 public class GendarmeParser extends AbstractWarningsParser {
     private static final long serialVersionUID = 1677715364464119907L;
 
