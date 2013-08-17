@@ -258,8 +258,6 @@ public class GccParserTest extends ParserTester {
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
     }
 
-
-
     @Override
     protected String getWarningsFile() {
         return "gcc.txt";

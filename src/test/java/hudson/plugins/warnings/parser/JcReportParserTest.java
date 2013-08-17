@@ -20,20 +20,25 @@ import hudson.util.IOException2;
 
 /**
  * Tests the JcReportParser-Class.
+ *
  * @author Johann Vierthaler, johann.vierthaler@web.de
  */
 public class JcReportParserTest {
     /**
      * Parses Report with 5 Warnings.
+     *
      * @author Johann Vierthaler, johann.vierthaler@web.de
-     * @throws ParsingCanceledException -> thrown by jcrp.parse();
-     * @throws IOException -> thrown by jcrp.parse();
+     * @throws ParsingCanceledException
+     *             -> thrown by jcrp.parse();
+     * @throws IOException
+     *             -> thrown by jcrp.parse();
      */
     @Test
     public void testParserWithValidFile() throws ParsingCanceledException, IOException {
-       JcReportParser jcrp = new JcReportParser();
+        JcReportParser jcrp = new JcReportParser();
         ArrayList<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
-        InputStreamReader readCorrectXml = new InputStreamReader(new FileInputStream("src/test/resources/hudson/plugins/warnings/parser/jcreport/testCorrect.xml"), "UTF-8");
+        InputStreamReader readCorrectXml = new InputStreamReader(new FileInputStream(
+                "src/test/resources/hudson/plugins/warnings/parser/jcreport/testCorrect.xml"), "UTF-8");
         warnings.addAll(jcrp.parse(readCorrectXml));
         assertEquals("Should be 7: ", 7, warnings.size());
         assertEquals("Wrong Parse FileName: ", "SomeDirectory/SomeClass.java", warnings.get(0).getFileName());
@@ -47,33 +52,38 @@ public class JcReportParserTest {
 
     /**
      * Gets Collection with size of 5.
+     *
      * @author Johann Vierthaler, johann.vierthaler@web.de
-     * @throws ParsingCanceledException -> thrown by jcrp.parse();
-     * @throws IOException -> thrown by jcrp.parse();
+     * @throws ParsingCanceledException
+     *             -> thrown by jcrp.parse();
+     * @throws IOException
+     *             -> thrown by jcrp.parse();
      */
     @Test
     public void testGetWarningList() throws ParsingCanceledException, IOException {
 
         JcReportParser jcrp = new JcReportParser();
         ArrayList<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
-        InputStreamReader readCorrectXml = new InputStreamReader(new FileInputStream("src/test/resources/hudson/plugins/warnings/parser/jcreport/testCorrect.xml"), "UTF-8");
+        InputStreamReader readCorrectXml = new InputStreamReader(new FileInputStream(
+                "src/test/resources/hudson/plugins/warnings/parser/jcreport/testCorrect.xml"), "UTF-8");
         warnings.addAll(jcrp.parse(readCorrectXml));
         assertEquals("Size is 7: ", 7, warnings.size());
     }
 
-
     /**
-     * This test assures that all properties within Report-, File- and Item-Objects are parsed correctly.
-     * Not all properties are needed to create a warning.
-     * So it was decided to keep them anyway in case Jenkins is modified to contain more
-     * information in the Warning-Objects.
-     * For reasons of simplicity only a Report with 1 file and 1 item was created.
+     * This test assures that all properties within Report-, File- and Item-Objects are parsed correctly. Not all
+     * properties are needed to create a warning. So it was decided to keep them anyway in case Jenkins is modified to
+     * contain more information in the Warning-Objects. For reasons of simplicity only a Report with 1 file and 1 item
+     * was created.
+     *
      * @author Johann Vierthaler, johann.vierthaler@web.de
-     * @throws IOException -> createReport can cause an IOException.
+     * @throws IOException
+     *             -> createReport can cause an IOException.
      */
     @Test
     public void testReportParserProperties() throws IOException {
-        InputStreamReader readCorrectXml = new InputStreamReader(new FileInputStream("src/test/resources/hudson/plugins/warnings/parser/jcreport/testReportProps.xml"), "UTF-8");
+        InputStreamReader readCorrectXml = new InputStreamReader(new FileInputStream(
+                "src/test/resources/hudson/plugins/warnings/parser/jcreport/testReportProps.xml"), "UTF-8");
         Report testReportProps = new JcReportParser().createReport(readCorrectXml);
 
         assertEquals("Should be 1: ", 1, testReportProps.getFiles().size());
@@ -96,19 +106,21 @@ public class JcReportParserTest {
         assertEquals("Should be 'CriticalError'", "CriticalError", item.getSeverity());
     }
 
-
     /**
-     * Test the SAXException when file is corrupted.
-     * When a SAXException is triggered a new IOException is thrown.
-     * This explains the expected = IOException.class.
+     * Test the SAXException when file is corrupted. When a SAXException is triggered a new IOException is thrown. This
+     * explains the expected = IOException.class.
+     *
      * @author Johann Vierthaler, johann.vierthaler@web.de
-     * @throws ParsingCanceledException -> thrown by jcrp.parse();
-     * @throws IOException -> thrown by jcrp.parse();
-     * @Coverage The missing coverage is a known issue with ECLEMMA.
-     *           For further Information: http://www.eclemma.org/faq.html#trouble05
+     * @throws ParsingCanceledException
+     *             -> thrown by jcrp.parse();
+     * @throws IOException
+     *             -> thrown by jcrp.parse();
+     * @Coverage The missing coverage is a known issue with ECLEMMA. For further Information:
+     *           http://www.eclemma.org/faq.html#trouble05
      */
     @Test(expected = IOException2.class)
     public void testSAXEception() throws ParsingCanceledException, IOException {
-        new JcReportParser().parse(new InputStreamReader(new FileInputStream("src/test/resources/hudson/plugins/warnings/parser/jcreport/testCorrupt.xml") , "UTF-8"));
+        new JcReportParser().parse(new InputStreamReader(new FileInputStream(
+                "src/test/resources/hudson/plugins/warnings/parser/jcreport/testCorrupt.xml"), "UTF-8"));
     }
 }

@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -145,7 +146,7 @@ public abstract class ParserTester {
      */
     protected Reader openFile(final String fileName) {
         try {
-            return new InputStreamReader(ParserTester.class.getResourceAsStream(fileName), "UTF-8");
+            return new InputStreamReader(new BOMInputStream(ParserTester.class.getResourceAsStream(fileName)), "UTF-8");
         }
         catch (UnsupportedEncodingException exception) {
             return new InputStreamReader(ParserTester.class.getResourceAsStream(fileName));
