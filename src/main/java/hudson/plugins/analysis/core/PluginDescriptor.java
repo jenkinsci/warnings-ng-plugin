@@ -211,6 +211,6 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
     @Override
     @SuppressWarnings("rawtypes")
     public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
-        return !(isPluginInstalled("maven") && MavenProjectChecker.isMavenProject(jobType));
+        return !(isPluginInstalled("maven-plugin") && MavenProjectChecker.isMavenProject(jobType));
     }
 }
