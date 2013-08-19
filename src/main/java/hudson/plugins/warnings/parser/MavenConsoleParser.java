@@ -20,6 +20,7 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 @Extension
 public class MavenConsoleParser extends RegexpLineParser {
+    private static final String CONSOLE = "";
     private static final String WARNING = "WARNING";
     private static final String ERROR = "ERROR";
 
@@ -54,7 +55,7 @@ public class MavenConsoleParser extends RegexpLineParser {
             priority = Priority.NORMAL;
             category = "Warning";
         }
-        return createWarning("Console Log", getCurrentLine(), category, matcher.group(2), priority);
+        return createWarning(CONSOLE, getCurrentLine(), category, matcher.group(2), priority);
     }
 
     @Override
