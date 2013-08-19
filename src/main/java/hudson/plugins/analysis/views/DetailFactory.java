@@ -11,11 +11,12 @@ import hudson.model.Item;
 import hudson.model.AbstractBuild;
 
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ResultAction;
+import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.LineRange;
 
 /**
  * Creates detail objects for the selected element of a annotation container.
@@ -145,7 +146,14 @@ public class DetailFactory {
         else if (link.startsWith("source.")) {
             owner.checkPermission(Item.WORKSPACE);
 
-            return new SourceDetail(owner, container.getAnnotation(StringUtils.substringAfter(link, "source.")), defaultEncoding);
+            FileAnnotation annotation = container.getAnnotation(StringUtils.substringAfter(link, "source."));
+            if (annotation.isInConsoleLog()) {
+                LineRange lines = annotation.getLineRanges().iterator().next();
+                return new ConsoleDetail(owner, lines.getStart(), lines.getEnd());
+            }
+            else {
+                return new SourceDetail(owner, annotation, defaultEncoding);
+            }
         }
         else if (link.startsWith("category.")) {
             DefaultAnnotationContainer category = container.getCategory(createHashCode(link, "category."));

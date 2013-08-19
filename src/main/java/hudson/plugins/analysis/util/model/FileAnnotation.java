@@ -5,8 +5,7 @@ import java.util.Collection;
 import hudson.model.AbstractBuild;
 
 /**
- * Annotates a collection of line ranges in a file. An annotation consists of a
- * description and a tooltip.
+ * Annotates a collection of line ranges in a file. An annotation consists of a description and a tooltip.
  *
  * @author Ulli Hafner
  */
@@ -26,8 +25,7 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
     String getToolTip();
 
     /**
-     * Returns the primary line number of this annotation that defines the
-     * anchor of this annotation.
+     * Returns the primary line number of this annotation that defines the anchor of this annotation.
      *
      * @return the primary line number of this annotation
      */
@@ -69,14 +67,12 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
     String getLinkName();
 
     /**
-     * Returns a file name for a temporary file that will hold the contents of
-     * the source. This temporary file is used in a master - slave scenario
-     * where the original file remains on the slave while this temporary file is
+     * Returns a file name for a temporary file that will hold the contents of the source. This temporary file is used
+     * in a master - slave scenario where the original file remains on the slave while this temporary file is
      * transferred to the master.
      *
      * @param owner
-     *            the owner that provides the root directory where the files are
-     *            stored
+     *            the owner that provides the root directory where the files are stored
      * @return the temporary name
      */
     String getTempName(AbstractBuild<?, ?> owner);
@@ -84,7 +80,8 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
     /**
      * Sets the file name to the specified value.
      *
-     * @param fileName the value to set
+     * @param fileName
+     *            the value to set
      */
     void setFileName(final String fileName);
 
@@ -100,8 +97,7 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
      * Checks if the file exists.
      *
      * @param owner
-     *            the owner that provides the root directory where the files are
-     *            stored
+     *            the owner that provides the root directory where the files are stored
      * @return <code>true</code>, if successful
      */
     boolean canDisplayFile(AbstractBuild<?, ?> owner);
@@ -123,7 +119,8 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
     /**
      * Sets the name of the maven or ant module that contains this annotation.
      *
-     * @param moduleName the name of the module that contains this annotation
+     * @param moduleName
+     *            the name of the module that contains this annotation
      */
     void setModuleName(String moduleName);
 
@@ -137,14 +134,12 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
     /**
      * Returns whether a package name is defined for this annotation.
      *
-     * @return <code>true</code> if this annotation has a package or namespace name,
-     *         <code>false</code> otherwise
+     * @return <code>true</code> if this annotation has a package or namespace name, <code>false</code> otherwise
      */
     boolean hasPackageName();
 
     /**
-     * Returns the path name of this annotation (relative path to the affected
-     * file).
+     * Returns the path name of this annotation (relative path to the affected file).
      *
      * @return the path name
      */
@@ -181,7 +176,8 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
     /**
      * Sets the context hash code to the specified value.
      *
-     * @param contextHashCode the value to set
+     * @param contextHashCode
+     *            the value to set
      */
     void setContextHashCode(long contextHashCode);
 
@@ -200,4 +196,13 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
      * @since 1.52
      */
     int getColumnEnd();
+
+    /**
+     * Returns whether this annotation is in the console log or in a file in the filesystem.
+     *
+     * @return <code>true</code> if this annotation is in the console log, or <code>false</code> if this annotation is
+     *         in a file in the filesystem.
+     * @since 1.53
+     */
+    boolean isInConsoleLog();
 }

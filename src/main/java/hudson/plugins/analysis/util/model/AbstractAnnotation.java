@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableList;
 import hudson.model.Item;
 import hudson.model.AbstractBuild;
 
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.AbstractAnnotationParser;
 import hudson.plugins.analysis.util.PackageDetectors;
 import hudson.plugins.analysis.util.TreeString;
@@ -552,6 +553,9 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @return the short file name
      */
     public String getShortFileName() {
+        if (isInConsoleLog()) {
+            return Messages.ConsoleLog_Name();
+        }
         return FilenameUtils.getName(TreeString.toString(fileName));
     }
 
@@ -562,7 +566,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      */
     public final boolean canDisplayFile(final AbstractBuild<?, ?> owner) {
         if (owner.hasPermission(Item.WORKSPACE)) {
-            return new File(getFileName()).exists() || new File(getTempName(owner)).exists();
+            return isInConsoleLog() || new File(getFileName()).exists() || new File(getTempName(owner)).exists();
         }
         return false;
     }
@@ -590,5 +594,10 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     @Override
     public String toString() {
         return String.format("%s(%s):%s,%s,%s:%s", getFileName(), primaryLineNumber, priority, getCategory(), getType(), getMessage());
+    }
+
+    /** {@inheritDoc} */
+    public boolean isInConsoleLog() {
+        return fileName == null || StringUtils.isBlank(fileName.toString());
     }
 }
