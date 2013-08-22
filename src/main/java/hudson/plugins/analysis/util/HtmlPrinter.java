@@ -1,9 +1,7 @@
 package hudson.plugins.analysis.util;
 
-
 /**
- * Simple wrapper of a {@link StringBuffer} that is capable of writing HTML
- * sequences used in Jelly scripts.
+ * Simple wrapper of a {@link StringBuffer} that is capable of writing HTML sequences used in Jelly scripts.
  *
  * @author Ulli Hafner
  */
@@ -13,11 +11,23 @@ public class HtmlPrinter {
     /**
      * Adds a list item.
      *
-     * @param text the item text
+     * @param text
+     *            the item text
      * @return HTML item
      */
     public String item(final String text) {
         return String.format("<li>%s</li>", text);
+    }
+
+    /**
+     * Adds a table line. A line is a row with one column.
+     *
+     * @param text
+     *            the line text
+     * @return table line
+     */
+    public String line(final String text) {
+        return String.format("<tr><td>%s</td></tr>", text);
     }
 
     @Override
@@ -41,7 +51,8 @@ public class HtmlPrinter {
     /**
      * Appends the specified text to the buffer.
      *
-     * @param text the text
+     * @param text
+     *            the text
      */
     public void append(final String text) {
         buffer.append(text);
@@ -57,4 +68,3 @@ public class HtmlPrinter {
         buffer.append(object);
     }
 }
-
