@@ -4,4 +4,5 @@
     <ruleSetFile>../analysis-config/etc/pmd-configuration.xml</ruleSetFile>
     <includeDerivedFiles>false</includeDerivedFiles>
     <violationsAsErrors>false</violationsAsErrors>
+    <fullBuildEnabled>true</fullBuildEnabled>
 </pmd>
