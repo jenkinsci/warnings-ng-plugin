@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -59,14 +58,14 @@ public class ParserRegistryTest {
         ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, StringUtils.EMPTY, StringUtils.EMPTY, parsers);
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 2, annotations.size());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 2, annotations.size());
 
         ParserResult result = new ParserResult();
         result.addAnnotations(annotations);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 2, result.getNumberOfAnnotations());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 2, result.getNumberOfAnnotations());
 
         result.addAnnotations(annotations);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 2, result.getNumberOfAnnotations());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 2, result.getNumberOfAnnotations());
     }
 
     /**
@@ -82,14 +81,14 @@ public class ParserRegistryTest {
         ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, StringUtils.EMPTY, StringUtils.EMPTY, parsers);
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 10, annotations.size());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 10, annotations.size());
 
         ParserResult result = new ParserResult();
         result.addAnnotations(annotations);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 10, result.getNumberOfAnnotations());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 10, result.getNumberOfAnnotations());
 
         result.addAnnotations(annotations);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 10, result.getNumberOfAnnotations());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 10, result.getNumberOfAnnotations());
     }
 
     /**
@@ -107,7 +106,7 @@ public class ParserRegistryTest {
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
         int excludedNumberOfWarnings = 8;
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, computeTotalNumberOfWarnings(createJavaParsers()) - excludedNumberOfWarnings, annotations.size());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, computeTotalNumberOfWarnings(createJavaParsers()) - excludedNumberOfWarnings, annotations.size());
     }
 
     /**
@@ -122,7 +121,7 @@ public class ParserRegistryTest {
         ParserRegistry parserRegistry = createRegistryUnderTest("issue7775.txt", StringUtils.EMPTY, StringUtils.EMPTY, Lists.newArrayList(new MsBuildParser()));
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED,  57, annotations.size());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED,  57, annotations.size());
     }
 
     private List<AbstractWarningsParser> createJavaParsers() {
@@ -151,7 +150,7 @@ public class ParserRegistryTest {
         ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, StringUtils.EMPTY, "/tmp/clover*/**, **/renderers/*", createJavaParsers());
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, computeTotalNumberOfWarnings(createJavaParsers()) - 15, annotations.size());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, computeTotalNumberOfWarnings(createJavaParsers()) - 15, annotations.size());
     }
 
     /**
@@ -170,7 +169,7 @@ public class ParserRegistryTest {
         ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, "/tmp/clover*/**", StringUtils.EMPTY, parsers);
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 8, annotations.size());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 8, annotations.size());
     }
 
     /**
@@ -188,7 +187,7 @@ public class ParserRegistryTest {
         ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, "/tmp/clover*/**, **/renderers/*", StringUtils.EMPTY, parsers);
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 15, annotations.size());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 15, annotations.size());
     }
 
     /**
@@ -206,7 +205,7 @@ public class ParserRegistryTest {
         ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, "/tmp/clover*/**", "**/renderers/*", parsers);
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
-        Assert.assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 1, annotations.size());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 1, annotations.size());
     }
 
     /**

@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -158,7 +157,7 @@ public class DoxygenParserTest extends ParserTester {
     public void issue7178() throws IOException {
         Collection<FileAnnotation> warnings = new DoxygenParser().parse(openFile("issue7178.txt"));
 
-        Assert.assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, warnings.size());
     }
 
     /**

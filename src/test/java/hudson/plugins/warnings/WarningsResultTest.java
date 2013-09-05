@@ -5,7 +5,6 @@ import static org.mockito.Mockito.*;
 
 import java.util.GregorianCalendar;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import hudson.model.AbstractBuild;
@@ -101,7 +100,7 @@ public class WarningsResultTest extends BuildResultTest<WarningsResult> {
     private void checkSummaryText(final int numberOfWarnings, final String expectedMessage) {
         WarningsResult result = createResult(numberOfWarnings);
 
-        Assert.assertEquals("Wrong summary message created.", expectedMessage, result.getSummary());
+        assertEquals("Wrong summary message created.", expectedMessage, result.getSummary());
     }
 
     private WarningsResult createResult(final int numberOfWarnings) {
@@ -237,7 +236,7 @@ public class WarningsResultTest extends BuildResultTest<WarningsResult> {
     private void checkDeltaText(final int numberOfFixedWarnings, final int numberOfNewWarnings, final String expectedMessage) {
         WarningsResult result = createResult(numberOfFixedWarnings, numberOfNewWarnings);
 
-        Assert.assertEquals("Wrong delta message created.", expectedMessage, result.createDeltaMessage());
+        assertEquals("Wrong delta message created.", expectedMessage, result.createDeltaMessage());
     }
 }
 
