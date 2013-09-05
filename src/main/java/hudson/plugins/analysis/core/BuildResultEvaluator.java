@@ -141,7 +141,7 @@ public class BuildResultEvaluator {
 
 
     private Result logSuccess(final StringBuilder logger) {
-        logger.append(hudson.plugins.analysis.Messages.BuildResultEvaluator_success());
+        logger.append(Messages.BuildResultEvaluator_success());
 
         return Result.SUCCESS;
     }
