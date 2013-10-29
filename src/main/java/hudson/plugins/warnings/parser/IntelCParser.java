@@ -9,7 +9,7 @@ import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
- * A parser for the Inter C compiler warnings.
+ * A parser for messages from the Intel C and Fortran compilers.
  *
  * @author Vangelis Livadiotis
  */

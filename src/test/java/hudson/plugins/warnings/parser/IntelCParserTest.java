@@ -18,7 +18,7 @@ public class IntelCParserTest extends ParserTester {
     private static final String TYPE = new IntelCParser().getGroup();
 
     /**
-     * Parses a file with two Intel warnings.
+     * Parses a file of messages from the Intel C and Fortran compilers.
      *
      * @throws IOException
      *      if the file could not be read
@@ -27,7 +27,7 @@ public class IntelCParserTest extends ParserTester {
     public void testWarningsParser() throws IOException {
         Collection<FileAnnotation> warnings = new IntelCParser().parse(openFile());
 
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 4, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 7, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -55,10 +55,29 @@ public class IntelCParserTest extends ParserTester {
                 "external function definition with no prior declaration",
                 "D:/Hudson/workspace/boo/serviceif.cpp",
                 TYPE, "Remark #1418", Priority.LOW);
+        annotation = iterator.next();
+        // Messages from the Fortran compiler:
+        checkWarning(annotation,
+                     1,
+                     "A dummy argument with an explicit INTENT(OUT) declaration is not given an explicit value.   [X]",
+                     "/path/to/file1.f90",
+                     TYPE, "Warning #6843", Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                     806,
+                     "The scale factor (k) and number of fractional digits (d) do not have the allowed combination of either -d < k <= 0 or 0 < k < d+2. Expect asterisks as output.",
+                     "/path/to/file2.f",
+                     TYPE, "Remark #8577", Priority.LOW);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                     1,
+                     "Syntax error, found END-OF-STATEMENT when expecting one of: ( % [ : . = =>",
+                     "t.f90",
+                     TYPE, "Error #5082", Priority.HIGH);
     }
 
     /**
-     * Parses a warning log with 3 warnings.
+     * Parses a warning log with 3 warnings and 1 error.
      *
      * @throws IOException
      *      if the file could not be read
