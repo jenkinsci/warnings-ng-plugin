@@ -1,0 +1,89 @@
+Microsoft (R) Build Engine version 4.0.30319.17929
+[Microsoft .NET Framework, version 4.0.30319.18052]
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 10/21/2013 11:33:17 AM.
+Project "I:\devel\projects\SampleCodeAnalysis\msbuild.proj" on node 1 (RebuildAll target(s)).
+Project "I:\devel\projects\SampleCodeAnalysis\msbuild.proj" (1) is building "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis.sln" (2) on node 1 (Rebuild target(s)).
+ValidateSolutionConfiguration:
+  Building solution configuration "Debug|Any CPU".
+Project "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis.sln" (2) is building "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\SampleCodeAnalysis.csproj" (3) on node 1 (Rebuild target(s)).
+CoreClean:
+  Deleting file "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\bin\Debug\SampleCodeAnalysis.exe.config".
+  Deleting file "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\bin\Debug\SampleCodeAnalysis.exe".
+  Deleting file "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\bin\Debug\SampleCodeAnalysis.pdb".
+  Deleting file "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\bin\Debug\SampleCodeAnalysis.exe.CodeAnalysisLog.xml".
+  Deleting file "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\bin\Debug\SampleCodeAnalysis.exe.lastcodeanalysissucceeded".
+  Deleting file "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\obj\Debug\SampleCodeAnalysis.csprojResolveAssemblyReference.cache".
+  Deleting file "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\obj\Debug\SampleCodeAnalysis.exe".
+  Deleting file "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\obj\Debug\SampleCodeAnalysis.pdb".
+GenerateTargetFrameworkMonikerAttribute:
+Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
+CoreCompile:
+  C:\Windows\Microsoft.NET\Framework\v4.0.30319\Csc.exe /noconfig /nowarn:1701,1702 /nostdlib+ /platform:anycpu32bitpreferred /errorreport:prompt /warn:4 /define:CODE_ANALYSIS;DEBUG;TRACE /highentropyva+ /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\Microsoft.CSharp.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\mscorlib.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Core.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Data.DataSetExtensions.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Data.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Xml.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Xml.Linq.dll" /debug+ /debug:full /filealign:512 /optimize- /out:obj\Debug\SampleCodeAnalysis.exe /subsystemversion:6.00 /target:exe /utf8output Program.cs Properties\AssemblyInfo.cs "C:\Users\mhambidge\AppData\Local\Temp\.NETFramework,Version=v4.5.AssemblyAttributes.cs"
+_CopyAppConfigFile:
+  Copying file from "App.config" to "bin\Debug\SampleCodeAnalysis.exe.config".
+CopyFilesToOutputDirectory:
+  Copying file from "obj\Debug\SampleCodeAnalysis.exe" to "bin\Debug\SampleCodeAnalysis.exe".
+  SampleCodeAnalysis -> I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\bin\Debug\SampleCodeAnalysis.exe
+  Copying file from "obj\Debug\SampleCodeAnalysis.pdb" to "bin\Debug\SampleCodeAnalysis.pdb".
+RunCodeAnalysis:
+  Running Code Analysis...
+  C:\Program Files (x86)\Microsoft Visual Studio 11.0\Team Tools\Static Analysis Tools\FxCop\FxCopCmd.exe  /outputCulture:1033 /out:"bin\Debug\SampleCodeAnalysis.exe.CodeAnalysisLog.xml" /file:"bin\Debug\SampleCodeAnalysis.exe" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\Microsoft.CSharp.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\mscorlib.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Core.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Data.DataSetExtensions.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Data.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Xml.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Xml.Linq.dll" /directory:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5" /ruleSet:"=AllRules.ruleset" /rulesetdirectory:"C:\Program Files (x86)\Microsoft Visual Studio 11.0\Team Tools\Static Analysis Tools\\Rule Sets" /rule:"-C:\Program Files (x86)\Microsoft Visual Studio 11.0\Team Tools\Static Analysis Tools\FxCop\\Rules" /searchgac /ignoreinvalidtargets /forceoutput /successfile /ignoregeneratedcode /saveMessagesToReport:Active /timeout:120
+MSBUILD : warning : CA2210 : Microsoft.Design : Sign 'SampleCodeAnalysis.exe' with a strong name key. [I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\SampleCodeAnalysis.csproj]
+i:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\Program.cs(12): warning : CA1801 : Microsoft.Usage : Parameter 'args' of 'Program.Main(string[])' is never used. Remove the parameter or use it in the method body. [I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\SampleCodeAnalysis.csproj]
+  Code Analysis Complete -- 0 error(s), 2 warning(s)
+Done Building Project "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\SampleCodeAnalysis.csproj" (Rebuild target(s)).
+Done Building Project "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis.sln" (Rebuild target(s)).
+Project "I:\devel\projects\SampleCodeAnalysis\msbuild.proj" (1) is building "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis.sln" (2:2) on node 1 (Rebuild target(s)).
+ValidateSolutionConfiguration:
+  Building solution configuration "Release|Any CPU".
+Project "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis.sln" (2:2) is building "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\SampleCodeAnalysis.csproj" (3:2) on node 1 (Rebuild target(s)).
+CoreClean:
+  Deleting file "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\bin\Release\SampleCodeAnalysis.exe.config".
+  Deleting file "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\bin\Release\SampleCodeAnalysis.exe".
+  Deleting file "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\bin\Release\SampleCodeAnalysis.pdb".
+  Deleting file "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\bin\Release\SampleCodeAnalysis.exe.CodeAnalysisLog.xml".
+  Deleting file "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\bin\Release\SampleCodeAnalysis.exe.lastcodeanalysissucceeded".
+  Deleting file "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\obj\Release\SampleCodeAnalysis.exe".
+  Deleting file "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\obj\Release\SampleCodeAnalysis.pdb".
+GenerateTargetFrameworkMonikerAttribute:
+Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
+CoreCompile:
+  C:\Windows\Microsoft.NET\Framework\v4.0.30319\Csc.exe /noconfig /nowarn:1701,1702 /nostdlib+ /platform:anycpu32bitpreferred /errorreport:prompt /warn:4 /define:CODE_ANALYSIS;TRACE /highentropyva+ /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\Microsoft.CSharp.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\mscorlib.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Core.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Data.DataSetExtensions.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Data.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Xml.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Xml.Linq.dll" /debug:pdbonly /filealign:512 /optimize+ /out:obj\Release\SampleCodeAnalysis.exe /subsystemversion:6.00 /target:exe /utf8output Program.cs Properties\AssemblyInfo.cs "C:\Users\mhambidge\AppData\Local\Temp\.NETFramework,Version=v4.5.AssemblyAttributes.cs"
+_CopyAppConfigFile:
+  Copying file from "App.config" to "bin\Release\SampleCodeAnalysis.exe.config".
+CopyFilesToOutputDirectory:
+  Copying file from "obj\Release\SampleCodeAnalysis.exe" to "bin\Release\SampleCodeAnalysis.exe".
+  SampleCodeAnalysis -> I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\bin\Release\SampleCodeAnalysis.exe
+  Copying file from "obj\Release\SampleCodeAnalysis.pdb" to "bin\Release\SampleCodeAnalysis.pdb".
+RunCodeAnalysis:
+  Running Code Analysis...
+  C:\Program Files (x86)\Microsoft Visual Studio 11.0\Team Tools\Static Analysis Tools\FxCop\FxCopCmd.exe  /outputCulture:1033 /out:"bin\Release\SampleCodeAnalysis.exe.CodeAnalysisLog.xml" /file:"bin\Release\SampleCodeAnalysis.exe" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\Microsoft.CSharp.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\mscorlib.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Core.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Data.DataSetExtensions.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Data.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Xml.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Xml.Linq.dll" /directory:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5" /ruleSet:"=AllRules.ruleset" /rulesetdirectory:"C:\Program Files (x86)\Microsoft Visual Studio 11.0\Team Tools\Static Analysis Tools\\Rule Sets" /rule:"-C:\Program Files (x86)\Microsoft Visual Studio 11.0\Team Tools\Static Analysis Tools\FxCop\\Rules" /searchgac /ignoreinvalidtargets /forceoutput /successfile /ignoregeneratedcode /saveMessagesToReport:Active /timeout:120
+MSBUILD : warning : CA2210 : Microsoft.Design : Sign 'SampleCodeAnalysis.exe' with a strong name key. [I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\SampleCodeAnalysis.csproj]
+i:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\Program.cs(13): warning : CA1801 : Microsoft.Usage : Parameter 'args' of 'Program.Main(string[])' is never used. Remove the parameter or use it in the method body. [I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\SampleCodeAnalysis.csproj]
+  Code Analysis Complete -- 0 error(s), 2 warning(s)
+Done Building Project "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\SampleCodeAnalysis.csproj" (Rebuild target(s)).
+Done Building Project "I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis.sln" (Rebuild target(s)).
+Done Building Project "I:\devel\projects\SampleCodeAnalysis\msbuild.proj" (RebuildAll target(s)).
+
+Build succeeded.
+
+"I:\devel\projects\SampleCodeAnalysis\msbuild.proj" (RebuildAll target) (1) ->
+"I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis.sln" (Rebuild target) (2) ->
+"I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\SampleCodeAnalysis.csproj" (Rebuild target) (3) ->
+(RunCodeAnalysis target) ->
+  MSBUILD : warning : CA2210 : Microsoft.Design : Sign 'SampleCodeAnalysis.exe' with a strong name key. [I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\SampleCodeAnalysis.csproj]
+  i:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\Program.cs(12): warning : CA1801 : Microsoft.Usage : Parameter 'args' of 'Program.Main(string[])' is never used. Remove the parameter or use it in the method body. [I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\SampleCodeAnalysis.csproj]
+
+
+"I:\devel\projects\SampleCodeAnalysis\msbuild.proj" (RebuildAll target) (1) ->
+"I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis.sln" (Rebuild target) (2:2) ->
+"I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\SampleCodeAnalysis.csproj" (Rebuild target) (3:2) ->
+  MSBUILD : warning : CA2210 : Microsoft.Design : Sign 'SampleCodeAnalysis.exe' with a strong name key. [I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\SampleCodeAnalysis.csproj]
+  i:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\Program.cs(13): warning : CA1801 : Microsoft.Usage : Parameter 'args' of 'Program.Main(string[])' is never used. Remove the parameter or use it in the method body. [I:\devel\projects\SampleCodeAnalysis\SampleCodeAnalysis\SampleCodeAnalysis.csproj]
+
+    4 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:06.02

@@ -18,7 +18,8 @@ import hudson.plugins.analysis.util.model.Priority;
 public class MsBuildParser extends RegexpLineParser {
     private static final long serialVersionUID = -2141974437420906595L;
     static final String WARNING_TYPE = "MSBuild";
-    private static final String MS_BUILD_WARNING_PATTERN = ANT_TASK + "(?:\\s*\\d+>)?(?:(?:(?:(.*)\\((\\d*)(?:,(\\d+))?.*\\)|.*LINK)\\s*:|(.*):)\\s*([Nn]ote|[Ii]nfo|[Ww]arning|(?:fatal\\s*)?[Ee]rror)\\s*:?\\s*([A-Za-z0-9]+):\\s*(.*)|(.*)\\s*:.*error\\s*(LNK[0-9]+):\\s*(.*))$";
+    private static final String MS_BUILD_WARNING_PATTERN = ANT_TASK + "(?:\\s*\\d+>)?(?:(?:(?:(.*)\\((\\d*)(?:,(\\d+))?.*\\)|.*LINK)\\s*:|(.*):)\\s*([Nn]ote|[Ii]nfo|[Ww]arning|(?:fatal\\s*)?[Ee]rror)\\s*:?\\s*([A-Za-z0-9]+)\\s*:(?:\\s*([A-Za-z0-9.]+)\\s*:)?\\s*(.*)"
+            + "|(.*)\\s*:.*error\\s*(LNK[0-9]+):\\s*(.*))$";
 
     /**
      * Creates a new instance of {@link MsBuildParser}.
@@ -46,12 +47,19 @@ public class MsBuildParser extends RegexpLineParser {
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String fileName = determineFileName(matcher);
-        if (StringUtils.isNotBlank(matcher.group(8))) {
-            return createWarning(fileName, 0, matcher.group(9), matcher.group(10), Priority.HIGH);
+        if (StringUtils.isNotBlank(matcher.group(9))) {
+            return createWarning(fileName, 0, matcher.group(10), matcher.group(11), Priority.HIGH);
         }
         else {
-            Warning warning = createWarning(fileName, getLineNumber(matcher.group(2)),
-                    matcher.group(6), matcher.group(7), determinePriority(matcher));
+            Warning warning;
+            if (StringUtils.isNotEmpty(matcher.group(7))) {
+                warning = createWarning(fileName, getLineNumber(matcher.group(2)),
+                        matcher.group(7), matcher.group(6), matcher.group(8), determinePriority(matcher));
+            }
+            else {
+                warning = createWarning(fileName, getLineNumber(matcher.group(2)),
+                        matcher.group(6), matcher.group(8), determinePriority(matcher));
+            }
             warning.setColumnPosition(getLineNumber(matcher.group(3)));
             return warning;
         }
@@ -69,14 +77,14 @@ public class MsBuildParser extends RegexpLineParser {
         if (StringUtils.isNotBlank(matcher.group(4))) {
             fileName = matcher.group(4);
         }
-        else if (StringUtils.isNotBlank(matcher.group(8))) {
-            fileName = matcher.group(8);
+        else if (StringUtils.isNotBlank(matcher.group(9))) {
+            fileName = matcher.group(9);
         }
         else {
             fileName = matcher.group(1);
         }
         if (StringUtils.isBlank(fileName)) {
-            fileName = StringUtils.substringBetween(matcher.group(7), "'");
+            fileName = StringUtils.substringBetween(matcher.group(8), "'");
         }
         if (StringUtils.isBlank(fileName)) {
             fileName = "unknown.file";

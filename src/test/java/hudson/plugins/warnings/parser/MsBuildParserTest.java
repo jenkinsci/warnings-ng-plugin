@@ -18,6 +18,30 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 public class MsBuildParserTest extends ParserTester {
     /**
+     * Parses a file with  warnings of a Visual Studio analysis.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-20154">Issue 20154</a>
+     */
+    @Test
+    public void issue20154() throws IOException {
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue20154.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 8, warnings.size());
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        FileAnnotation annotation;
+        annotation = iterator.next();
+        checkWarning(annotation,
+                0, "Sign 'SampleCodeAnalysis.exe' with a strong name key. [I:\\devel\\projects\\SampleCodeAnalysis\\SampleCodeAnalysis\\SampleCodeAnalysis.csproj]",
+                "MSBUILD", "Microsoft.Design", "CA2210", Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                12, "Parameter 'args' of 'Program.Main(string[])' is never used. Remove the parameter or use it in the method body. [I:\\devel\\projects\\SampleCodeAnalysis\\SampleCodeAnalysis\\SampleCodeAnalysis.csproj]",
+                "i:/devel/projects/SampleCodeAnalysis/SampleCodeAnalysis/Program.cs", "Microsoft.Usage", "CA1801", Priority.NORMAL);
+     }
+
+    /**
      * Parses a file with 4 warnings of PCLint tools.
      *
      * @throws IOException
