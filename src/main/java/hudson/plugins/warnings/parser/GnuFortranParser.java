@@ -66,10 +66,4 @@ public class GnuFortranParser extends RegexpDocumentParser {
     }
     return warning;
   }
-
-  @Override
-  protected String getId() {
-    return "GNU Fortran Compiler (gfortran)";
-  }
-
 }
