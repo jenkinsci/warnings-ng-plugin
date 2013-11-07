@@ -31,7 +31,7 @@ public class Gcc4CompilerParser extends RegexpLineParser {
 
     @Override
     protected String getId() {
-        return "GNU C compiler 4 (gcc)";
+        return "GNU compiler 4 (gcc)";
     }
 
     @Override

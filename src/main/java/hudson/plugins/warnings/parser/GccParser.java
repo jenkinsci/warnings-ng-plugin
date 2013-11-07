@@ -32,7 +32,7 @@ public class GccParser extends RegexpLineParser {
 
     @Override
     protected String getId() {
-        return "GNU C compiler (gcc)";
+        return "GNU compiler (gcc)";
     }
 
     @Override
