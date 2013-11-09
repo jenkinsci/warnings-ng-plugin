@@ -23,15 +23,22 @@ public class IntelParser extends RegexpLineParser {
      * Creates a new instance of {@link IntelParser}.
      */
     public IntelParser() {
-        this(Messages._Warnings_IntelC_ParserName(),
-             Messages._Warnings_IntelC_LinkName(),
-             Messages._Warnings_IntelC_TrendName());
+        this(Messages._Warnings_IntelC_ParserName(), Messages._Warnings_IntelC_LinkName(),
+                Messages._Warnings_IntelC_TrendName());
     }
 
-    public IntelParser(final Localizable parserName,
-                       final Localizable linkName,
-                       final Localizable trendName) {
-      super(parserName, linkName, trendName, INTEL_PATTERN);
+    /**
+     * Creates a new instance of {@link IntelParser} using the specified names.
+     *
+     * @param parserName
+     *            name of the parser
+     * @param linkName
+     *            name of the project action link
+     * @param trendName
+     *            name of the trend graph
+     */
+    public IntelParser(final Localizable parserName, final Localizable linkName, final Localizable trendName) {
+        super(parserName, linkName, trendName, INTEL_PATTERN);
     }
 
     @Override
@@ -41,9 +48,7 @@ public class IntelParser extends RegexpLineParser {
 
     @Override
     protected boolean isLineInteresting(final String line) {
-        return line.contains("warning")
-                || line.contains("error")
-                || line.contains("remark");
+        return line.contains("warning") || line.contains("error") || line.contains("remark");
     }
 
     @Override
@@ -66,5 +71,3 @@ public class IntelParser extends RegexpLineParser {
         return warning;
     }
 }
-
-
