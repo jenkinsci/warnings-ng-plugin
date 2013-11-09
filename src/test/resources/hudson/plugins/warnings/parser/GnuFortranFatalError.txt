@@ -1,0 +1,5 @@
+/path/to/file.f90:7.10:
+
+      Use ieee_arithmetic, Only: ieee_value
+          1
+Fatal Error: Can't open module file 'ieee_arithmetic.mod' for reading at (1): No such file or directory

@@ -3,6 +3,7 @@ package hudson.plugins.warnings.parser;
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
+import org.jvnet.localizer.Localizable;
 
 import hudson.Extension;
 
@@ -14,18 +15,23 @@ import hudson.plugins.analysis.util.model.Priority;
  * @author Vangelis Livadiotis
  */
 @Extension
-public class IntelCParser extends RegexpLineParser {
+public class IntelParser extends RegexpLineParser {
     private static final long serialVersionUID = 8409744276858003050L;
     private static final String INTEL_PATTERN = "^(.*)\\((\\d*)\\)?:(?:\\s*\\(col\\. (\\d+)\\))?.*((?:remark|warning|error)\\s*#*\\d*)\\s*:\\s*(.*)$";
 
     /**
-     * Creates a new instance of {@link IntelCParser}.
+     * Creates a new instance of {@link IntelParser}.
      */
-    public IntelCParser() {
-        super(Messages._Warnings_IntelC_ParserName(),
-                Messages._Warnings_IntelC_LinkName(),
-                Messages._Warnings_IntelC_TrendName(),
-                INTEL_PATTERN, true);
+    public IntelParser() {
+        this(Messages._Warnings_IntelC_ParserName(),
+             Messages._Warnings_IntelC_LinkName(),
+             Messages._Warnings_IntelC_TrendName());
+    }
+
+    public IntelParser(final Localizable parserName,
+                       final Localizable linkName,
+                       final Localizable trendName) {
+      super(parserName, linkName, trendName, INTEL_PATTERN);
     }
 
     @Override

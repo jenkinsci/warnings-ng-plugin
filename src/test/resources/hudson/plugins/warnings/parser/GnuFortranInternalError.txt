@@ -1,0 +1,6 @@
+linear_algebra_mod.f90:5.8:
+
+use csr_matrix_mod
+    1
+Internal Error at (1):
+free_pi_tree(): Unresolved fixup

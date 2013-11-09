@@ -12,10 +12,10 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
- * Tests the class {@link IntelCParserTest}.
+ * Tests the class {@link IntelParserTest}.
  */
-public class IntelCParserTest extends ParserTester {
-    private static final String TYPE = new IntelCParser().getGroup();
+public class IntelParserTest extends ParserTester {
+    private static final String TYPE = new IntelParser().getGroup();
 
     /**
      * Parses a file of messages from the Intel C and Fortran compilers.
@@ -25,7 +25,7 @@ public class IntelCParserTest extends ParserTester {
      */
     @Test
     public void testWarningsParser() throws IOException {
-        Collection<FileAnnotation> warnings = new IntelCParser().parse(openFile());
+        Collection<FileAnnotation> warnings = new IntelParser().parse(openFile());
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 7, warnings.size());
 
@@ -85,7 +85,7 @@ public class IntelCParserTest extends ParserTester {
      */
     @Test
     public void issue5402() throws IOException {
-        Collection<FileAnnotation> warnings = new IntelCParser().parse(openFile("issue5402.txt"));
+        Collection<FileAnnotation> warnings = new IntelParser().parse(openFile("issue5402.txt"));
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 4, warnings.size());
         Iterator<FileAnnotation> iterator = warnings.iterator();

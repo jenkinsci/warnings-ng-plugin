@@ -201,6 +201,9 @@ public class ParserRegistry {
         parsers.add(new MsBuildParser(Messages._Warnings_PCLint_ParserName(),
                             Messages._Warnings_PCLint_LinkName(),
                             Messages._Warnings_PCLint_TrendName()));
+        parsers.add(new IntelParser(Messages._Warnings_IntelFortran_ParserName(),
+                                    Messages._Warnings_IntelFortran_LinkName(),
+                                    Messages._Warnings_IntelFortran_TrendName()));
 
         if (PluginDescriptor.isPluginInstalled("violations")) {
             ViolationsRegistry.addParsers(parsers);
