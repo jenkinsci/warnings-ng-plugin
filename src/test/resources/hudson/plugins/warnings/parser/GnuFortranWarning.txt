@@ -1,0 +1,14 @@
+C:/zlaror.f:318:
+    Included at inc1.inc:4:
+    Included at foo.f90:4:
+
+      IF( XABS.NE.ZERO ) THEN                                           
+          1
+Warning: Inequality comparison for REAL(8) at (1)
+gfortran  -O2 -frecursive -W -Wall -c zlarot.f -o zlarot.o
+gfortran  -O2 -frecursive -W -Wall -c zlatm1.f -o zlatm1.o
+gfortran  -O2 -frecursive -W -Wall -c zlarnd.f -o zlarnd.o
+zlarnd.f: In function ‘zlarnd’:
+zlarnd.f:76:0: warning: ‘__result_zlarnd’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+       COMPLEX*16   FUNCTION ZLARND( IDIST, ISEED )
+ ^
