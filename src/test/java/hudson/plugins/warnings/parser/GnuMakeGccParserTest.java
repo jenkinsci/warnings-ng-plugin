@@ -29,7 +29,7 @@ public class GnuMakeGccParserTest extends ParserTester {
      */
     @Test
     public void testCreateWarning() throws IOException {
-        Collection<FileAnnotation> warnings = new GnuMakeGccParser().parse(openFile("gnuMakeGcc.txt"));
+        Collection<FileAnnotation> warnings = new GnuMakeGccParser().parse(openFile());
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 13, warnings.size());
 
@@ -103,6 +103,6 @@ public class GnuMakeGccParserTest extends ParserTester {
 
     @Override
     protected String getWarningsFile() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "gnuMakeGcc.txt";
     }
 }
