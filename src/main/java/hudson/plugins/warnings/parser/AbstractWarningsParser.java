@@ -150,7 +150,7 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
      * @return <code>true</code> if this parser is in the specified group
      */
     public boolean isInGroup(final String group) {
-        return name.equals(group) || getId().equals(group);
+        return name.equals(group) || getId().equalsIgnoreCase(group);
     }
 
     /**

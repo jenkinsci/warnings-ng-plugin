@@ -59,8 +59,23 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
         String oldClang = "Apple LLVM Compiler (Clang)";
         String newClang = "Clang (LLVM based)";
 
-        assertEquals("Wrong new API implementations", 1, ParserRegistry.getParsers(oldClang).size());
-        assertEquals("Wrong old API implementations", 1, ParserRegistry.getParsers(newClang).size());
+        assertEquals("Wrong old API implementations", 1, ParserRegistry.getParsers(oldClang).size());
+        assertEquals("Wrong new API implementations", 1, ParserRegistry.getParsers(newClang).size());
+
+        assertTrue("Parser does not exist: " + oldClang, ParserRegistry.exists(oldClang));
+        assertTrue("Parser does not exist: " + newClang, ParserRegistry.exists(newClang));
+    }
+
+    /**
+     * Verifies that the registry detects old and new API extensions and maps them correctly.
+     */
+    @Test
+    public void testIssue20545() {
+        String oldClang = "GNU Compiler 4 (gcc)";
+        String newClang = "GNU C Compiler 4 (gcc)";
+
+        assertEquals("Wrong old API implementations", 2, ParserRegistry.getParsers(oldClang).size());
+        assertEquals("Wrong new API implementations", 2, ParserRegistry.getParsers(newClang).size());
 
         assertTrue("Parser does not exist: " + oldClang, ParserRegistry.exists(oldClang));
         assertTrue("Parser does not exist: " + newClang, ParserRegistry.exists(newClang));
