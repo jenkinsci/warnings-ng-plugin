@@ -2,12 +2,12 @@ package hudson.plugins.warnings.parser;
 
 import java.util.regex.Matcher;
 
-import org.apache.commons.lang.StringUtils;
 import org.jvnet.localizer.Localizable;
 
 import hudson.Extension;
 
 import hudson.plugins.analysis.util.model.Priority;
+import hudson.plugins.warnings.WarningsDescriptor;
 
 /**
  * A parser for the Reshaper InspectCode compiler warnings.
@@ -16,15 +16,18 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 @Extension
 public class ReshaperInspectCodeParser extends RegexpLineParser {
+    private static final String RESHAPER_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "reshaper-24x24.png";
+    private static final String RESHAPER_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + "reshaper-48x48.png";
+
     private static final long serialVersionUID = 526872513348892L;
-    static final String WARNING_TYPE = "ReshaperInspectCode";
+    private static final String WARNING_TYPE = "ReshaperInspectCode";
     private static final String WARNING_PATTERN = "<Issue.*?TypeId=\"(?<Type>.*?)\".*?File=\"(?<File>.*?)\".*?Line=\"(?<Line>.*?)\".*?Message=\"(?<Message>.*?)\"";
 
     /**
      * Creates a new instance of {@link ReshaperInspectCodeParser}.
      */
     public ReshaperInspectCodeParser() {
-        this(Messages._Warnings_ReshaperInspectCode_ParserName(), 
+        this(Messages._Warnings_ReshaperInspectCode_ParserName(),
                 Messages._Warnings_ReshaperInspectCode_LinkName(),
                 Messages._Warnings_ReshaperInspectCode_TrendName());
     }
@@ -52,5 +55,15 @@ public class ReshaperInspectCodeParser extends RegexpLineParser {
             matcher.group(1),
             matcher.group(4),
             Priority.NORMAL);
+    }
+
+    @Override
+    public String getSmallImage() {
+        return RESHAPER_SMALL_ICON;
+    }
+
+    @Override
+    public String getLargeImage() {
+        return RESHAPER_LARGE_ICON;
     }
 }
