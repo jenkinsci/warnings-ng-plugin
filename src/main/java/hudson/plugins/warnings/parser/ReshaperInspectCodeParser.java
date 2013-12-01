@@ -43,7 +43,7 @@ public class ReshaperInspectCodeParser extends RegexpLineParser {
      *            name of the trend graph
      */
     public ReshaperInspectCodeParser(final Localizable parserName, final Localizable linkName, final Localizable trendName) {
-        super(parserName, linkName, trendName, WARNING_PATTERN);
+        super(parserName, linkName, trendName, WARNING_PATTERN, true);
     }
 
     @Override
@@ -65,5 +65,10 @@ public class ReshaperInspectCodeParser extends RegexpLineParser {
     @Override
     public String getLargeImage() {
         return RESHAPER_LARGE_ICON;
+    }
+
+    @Override
+    protected boolean isLineInteresting(final String line) {
+        return line.contains("<Issue");
     }
 }
