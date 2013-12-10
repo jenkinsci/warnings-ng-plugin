@@ -438,7 +438,7 @@ public class WarningsPublisher extends HealthAwareRecorder {
             for(int i = 0; i < resolveDepth ; i++) {
                 String old = filePattern;
                 filePattern = Util.replaceMacro(filePattern, buildParameterMap);
-                if (old == filePattern) { break; }
+                if (old.equals(filePattern)) { break; }
             }
             logger.log("Parsing warnings in files '" + filePattern + "' with parser " + parserName);
 
