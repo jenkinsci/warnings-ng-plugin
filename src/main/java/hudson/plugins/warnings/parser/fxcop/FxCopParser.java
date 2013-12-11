@@ -191,7 +191,7 @@ public class FxCopParser extends AbstractWarningsParser {
         StringBuilder msgBuilder = new StringBuilder();
         if (subName != null) {
             msgBuilder.append(subName);
-            msgBuilder.append(" ");
+            msgBuilder.append(' ');
         }
         FxCopRule rule = ruleSet.getRule(category, checkId);
         if (rule == null) {

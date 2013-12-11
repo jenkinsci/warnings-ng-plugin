@@ -46,7 +46,7 @@ public class PuppetLintParser extends RegexpLineParser {
         final String message = matcher.group(5);
 
         Priority priority = Priority.NORMAL;
-        if (level.contains("error") || (level.contains("ERROR"))) {
+        if (level.contains("error") || level.contains("ERROR")) {
             priority = Priority.HIGH;
         }
 

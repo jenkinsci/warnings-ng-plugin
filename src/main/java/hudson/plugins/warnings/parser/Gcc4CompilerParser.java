@@ -53,7 +53,7 @@ public class Gcc4CompilerParser extends RegexpLineParser {
 
             Matcher classMatcher = CLASS_PATTERN.matcher(message);
             if (classMatcher.find() && classMatcher.group(1) != null) {
-                category.append(":").append(classMatcher.group(1));
+                category.append(':').append(classMatcher.group(1));
             }
         }
 

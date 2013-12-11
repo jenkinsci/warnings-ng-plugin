@@ -50,7 +50,7 @@ public abstract class RegexpDocumentParser extends RegexpParser {
         StringBuilder buf = new StringBuilder();
         String line = reader.readLine();
         while (line != null) {
-            buf.append(ConsoleNote.removeNotes(line)).append("\n");
+            buf.append(ConsoleNote.removeNotes(line)).append('\n');
             line = reader.readLine();
         }
 

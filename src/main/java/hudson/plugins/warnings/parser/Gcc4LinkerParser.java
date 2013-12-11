@@ -38,11 +38,9 @@ public class Gcc4LinkerParser extends RegexpLineParser {
 
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        String fileName = StringUtils.defaultString(matcher.group(1));
-        int lineNumber = getLineNumber(matcher.group(2));
-        String message;
         Priority priority = Priority.LOW;
 
+        String message;
         if (StringUtils.isNotBlank(matcher.group(7))) {
             // link error in ld
             if (StringUtils.equalsIgnoreCase(matcher.group(6), "warning")) {
@@ -75,6 +73,9 @@ public class Gcc4LinkerParser extends RegexpLineParser {
                 }
             }
         }
+
+        String fileName = StringUtils.defaultString(matcher.group(1));
+        int lineNumber = getLineNumber(matcher.group(2));
         return createWarning(fileName, lineNumber, WARNING_CATEGORY, message, priority);
     }
 }

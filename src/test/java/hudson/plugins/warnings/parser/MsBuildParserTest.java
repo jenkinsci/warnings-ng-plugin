@@ -263,7 +263,7 @@ public class MsBuildParserTest extends ParserTester {
      */
     @Test
     public void shouldDetectKeywordsInRegexCaseInsensitive() throws IOException {
-        StringBuilder testData = new StringBuilder();
+        StringBuilder testData = new StringBuilder(256);
         testData.append("Src\\Parser\\CSharp\\cs.ATG (2242,17):  Warning CS0168: The variable 'type' is declared but never used");
         testData.append("\r\n");
         testData.append("C:\\Src\\Parser\\CSharp\\file.cs (10): Error XXX: An error occurred");

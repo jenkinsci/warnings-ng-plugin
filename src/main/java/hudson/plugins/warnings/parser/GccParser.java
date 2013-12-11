@@ -40,11 +40,11 @@ public class GccParser extends RegexpLineParser {
         if (StringUtils.isNotBlank(matcher.group(7))) {
             return createWarning(matcher.group(8), 0, LINKER_ERROR, matcher.group(7), Priority.HIGH);
         }
-        Priority priority;
         String fileName = matcher.group(1);
         if (StringUtils.contains(fileName, "cleartool")) {
             return FALSE_POSITIVE;
         }
+        Priority priority;
         if ("warning".equalsIgnoreCase(matcher.group(3))) {
             priority = Priority.NORMAL;
         }

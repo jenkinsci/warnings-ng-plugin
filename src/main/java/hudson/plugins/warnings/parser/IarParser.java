@@ -45,7 +45,6 @@ public class IarParser extends RegexpLineParser {
     @Override
     protected Warning createWarning(final Matcher matcher) {
         Priority priority;
-        String message = normalizeWhitespaceInMessage(matcher.group(5));
         if ("Remark".equals(matcher.group(3))) {
             priority = Priority.LOW;
         }
@@ -61,6 +60,7 @@ public class IarParser extends RegexpLineParser {
         else {
             return FALSE_POSITIVE;
         }
+        String message = normalizeWhitespaceInMessage(matcher.group(5));
         return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), matcher.group(4), message, priority);
     }
 

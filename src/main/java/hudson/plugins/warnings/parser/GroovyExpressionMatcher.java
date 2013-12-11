@@ -73,7 +73,7 @@ public class GroovyExpressionMatcher implements Serializable {
                 return (Warning)result;
             }
         }
-        catch (Exception exception) { // NOCHECKSTYLE: catch all exceptions of the Groovy script
+        catch (Exception exception) { // NOPMD NOCHECKSTYLE: catch all exceptions of the Groovy script
             LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during parsing: ", exception);
         }
         return falsePositive;

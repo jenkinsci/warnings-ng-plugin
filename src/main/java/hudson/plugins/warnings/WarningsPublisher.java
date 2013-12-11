@@ -1,4 +1,4 @@
-package hudson.plugins.warnings;
+package hudson.plugins.warnings; // NOPMD
 
 import java.io.File;
 import java.io.IOException;
