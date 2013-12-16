@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -14,6 +15,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import hudson.Launcher;
+import hudson.Util; // replace macro
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
 
@@ -428,7 +430,18 @@ public class WarningsPublisher extends HealthAwareRecorder {
         for (ParserConfiguration configuration : getParserConfigurations()) {
             String filePattern = configuration.getPattern();
             String parserName = configuration.getParserName();
+
+            // Resolve build parameters in the file pattern
+            // up to resolveDepth times
+            final int resolveDepth = 10;
+            final Map<String,String> buildParameterMap = build.getBuildVariables();
+            for(int i = 0; i < resolveDepth ; i++) {
+                String old = filePattern;
+                filePattern = Util.replaceMacro(filePattern, buildParameterMap);
+                if (old.equals(filePattern)) { break; }
+            }
             logger.log("Parsing warnings in files '" + filePattern + "' with parser " + parserName);
+
 
             FilesParser parser = new FilesParser(PLUGIN_NAME, filePattern,
                     new FileWarningsParser(ParserRegistry.getParsers(parserName), getDefaultEncoding(), getIncludePattern(), getExcludePattern()),
