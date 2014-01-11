@@ -323,7 +323,7 @@ public class ParserRegistry {
                 IOUtils.closeQuietly(input);
             }
         }
-        return applyExcludeFilter(allAnnotations);
+        return applyExcludeFilter(allAnnotations, logger);
     }
 
     /**
@@ -341,7 +341,7 @@ public class ParserRegistry {
             for (AbstractWarningsParser parser : parsers) {
                 allAnnotations.addAll(parser.parse(createReader(file)));
             }
-            return applyExcludeFilter(allAnnotations);
+            return applyExcludeFilter(allAnnotations, new NullLogger());
         }
         finally {
             IOUtils.closeQuietly(file);
@@ -355,7 +355,7 @@ public class ParserRegistry {
      *            all annotations
      * @return the filtered annotations if there is a filter defined
      */
-    private Set<FileAnnotation> applyExcludeFilter(final Set<FileAnnotation> allAnnotations) {
+    private Set<FileAnnotation> applyExcludeFilter(final Set<FileAnnotation> allAnnotations, final PluginLogger logger) {
         Set<FileAnnotation> includedAnnotations;
         if (includePatterns.isEmpty()) {
             includedAnnotations = allAnnotations;
@@ -382,6 +382,7 @@ public class ParserRegistry {
                     }
                 }
             }
+            logger.log(String.format("Found %d warnings after exclusion.", excludedAnnotations.size()));
             return excludedAnnotations;
         }
     }
