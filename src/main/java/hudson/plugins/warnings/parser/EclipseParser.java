@@ -16,7 +16,7 @@ import hudson.plugins.analysis.util.model.Priority;
 @Extension
 public class EclipseParser extends RegexpDocumentParser {
     private static final long serialVersionUID = 425883472788422955L;
-    private static final String ANT_ECLIPSE_WARNING_PATTERN = "\\[?(WARNING|ERROR)\\]?\\s*(?:in)?\\s*(.*)(?:\\(at line\\s*(\\d+)\\)|:\\[(\\d+),).*(?:\\r?\\n[^\\^]*)+(?:\\r?\\n(.*)([\\^]+).*)\\r?\\n(?:\\s*\\[.*\\]\\s*)?(.*)";
+    private static final String ANT_ECLIPSE_WARNING_PATTERN = "\\[?(WARNING|ERROR)\\]?\\s*(?:in)?\\s*(.*)(?:\\(at line\\s*(\\d+)\\)|:\\[(\\d+)).*(?:\\r?\\n[^\\^]*)+(?:\\r?\\n(.*)([\\^]+).*)\\r?\\n(?:\\s*\\[.*\\]\\s*)?(.*)";
 
     /**
      * Creates a new instance of {@link EclipseParser}.
