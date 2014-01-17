@@ -1,0 +1,6 @@
+[INFO] Compiling 5 source files to /path/to/job/job-name/module/target/classes
+[WARNING] /path/to/job/job-name/module/src/main/java/com/example/Example.java:[13]
+    something.getOldValue();
+              ^^^^^^^^^^^^^
+The method getOldValue() from the type SomeType is deprecated
+1 problem (1 warning)

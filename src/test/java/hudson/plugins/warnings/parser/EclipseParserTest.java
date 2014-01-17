@@ -21,11 +21,35 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 public class EclipseParserTest extends AbstractEclipseParserTest {
     /**
+     * Parses a warning log with previously undetected warnings.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-21377">Issue 21377</a>
+     */
+    @Test
+    public void issue21377() throws IOException {
+        Collection<FileAnnotation> warnings = createParser().parse(openFile("issue21377.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+
+        ParserResult result = new ParserResult(warnings);
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, result.getNumberOfAnnotations());
+
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        checkWarning(iterator.next(),
+                13,
+                "The method getOldValue() from the type SomeType is deprecated",
+                "/path/to/job/job-name/module/src/main/java/com/example/Example.java",
+                getType(), "", Priority.NORMAL);
+    }
+
+    /**
      * Parses a warning log with 2 previously undetected warnings.
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-13696">Issue 13696</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-13969">Issue 13969</a>
      */
     @Test
     public void issue13969() throws IOException {
