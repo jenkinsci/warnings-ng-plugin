@@ -2,7 +2,6 @@ package hudson.plugins.warnings.parser;
 
 import static org.junit.Assert.*;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -125,7 +124,7 @@ public class JcReportParserTest {
         new JcReportParser().parse(getReader("testCorrupt.xml"));
     }
 
-    private InputStreamReader getReader(String fileName) throws UnsupportedEncodingException {
+    private InputStreamReader getReader(final String fileName) throws UnsupportedEncodingException {
         return new InputStreamReader(JcReportParserTest.class.getResourceAsStream("jcreport/" + fileName), "UTF-8");
     }
 }
