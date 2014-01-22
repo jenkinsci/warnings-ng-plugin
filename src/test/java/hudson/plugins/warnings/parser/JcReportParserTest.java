@@ -5,7 +5,9 @@ import static org.junit.Assert.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -35,11 +37,12 @@ public class JcReportParserTest {
      */
     @Test
     public void testParserWithValidFile() throws ParsingCanceledException, IOException {
-        JcReportParser jcrp = new JcReportParser();
-        ArrayList<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
-        InputStreamReader readCorrectXml = new InputStreamReader(new FileInputStream(
-                "src/test/resources/hudson/plugins/warnings/parser/jcreport/testCorrect.xml"), "UTF-8");
-        warnings.addAll(jcrp.parse(readCorrectXml));
+        JcReportParser parser = new JcReportParser();
+        List<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
+        InputStreamReader readCorrectXml = getReader("testCorrect.xml");
+
+        warnings.addAll(parser.parse(readCorrectXml));
+
         assertEquals("Should be 7: ", 7, warnings.size());
         assertEquals("Wrong Parse FileName: ", "SomeDirectory/SomeClass.java", warnings.get(0).getFileName());
         assertEquals("Wrong Parse Origin: ", "Checkstyle", warnings.get(0).getOrigin());
@@ -61,12 +64,12 @@ public class JcReportParserTest {
      */
     @Test
     public void testGetWarningList() throws ParsingCanceledException, IOException {
-
         JcReportParser jcrp = new JcReportParser();
-        ArrayList<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
-        InputStreamReader readCorrectXml = new InputStreamReader(new FileInputStream(
-                "src/test/resources/hudson/plugins/warnings/parser/jcreport/testCorrect.xml"), "UTF-8");
+        List<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
+        InputStreamReader readCorrectXml = getReader("testCorrect.xml");
+
         warnings.addAll(jcrp.parse(readCorrectXml));
+
         assertEquals("Size is 7: ", 7, warnings.size());
     }
 
@@ -82,8 +85,7 @@ public class JcReportParserTest {
      */
     @Test
     public void testReportParserProperties() throws IOException {
-        InputStreamReader readCorrectXml = new InputStreamReader(new FileInputStream(
-                "src/test/resources/hudson/plugins/warnings/parser/jcreport/testReportProps.xml"), "UTF-8");
+        InputStreamReader readCorrectXml = getReader("testReportProps.xml");
         Report testReportProps = new JcReportParser().createReport(readCorrectXml);
 
         assertEquals("Should be 1: ", 1, testReportProps.getFiles().size());
@@ -120,7 +122,10 @@ public class JcReportParserTest {
      */
     @Test(expected = IOException2.class)
     public void testSAXEception() throws ParsingCanceledException, IOException {
-        new JcReportParser().parse(new InputStreamReader(new FileInputStream(
-                "src/test/resources/hudson/plugins/warnings/parser/jcreport/testCorrupt.xml"), "UTF-8"));
+        new JcReportParser().parse(getReader("testCorrupt.xml"));
+    }
+
+    private InputStreamReader getReader(String fileName) throws UnsupportedEncodingException {
+        return new InputStreamReader(JcReportParserTest.class.getResourceAsStream("jcreport/" + fileName), "UTF-8");
     }
 }
