@@ -21,7 +21,7 @@ public class ReshaperInspectCodeParser extends RegexpLineParser {
 
     private static final long serialVersionUID = 526872513348892L;
     private static final String WARNING_TYPE = "ReshaperInspectCode";
-    private static final String WARNING_PATTERN = "<Issue.*?TypeId=\"(?<Type>.*?)\".*?File=\"(?<File>.*?)\".*?Line=\"(?<Line>.*?)\".*?Message=\"(?<Message>.*?)\"";
+    private static final String WARNING_PATTERN = "\\<Issue.*?TypeId=\"(.*?)\".*?File=\"(.*?)\".*?Line=\"(.*?)\".*?Message=\"(.*?)\"";
 
     /**
      * Creates a new instance of {@link ReshaperInspectCodeParser}.
