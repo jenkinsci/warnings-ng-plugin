@@ -2,6 +2,8 @@ package hudson.plugins.warnings.parser;
 
 import org.jvnet.localizer.Localizable;
 
+import javax.annotation.Nonnull;
+
 /**
  * Describes a parser.
  *
@@ -54,8 +56,13 @@ public class ParserDescription implements Comparable<ParserDescription> {
         return name.toString();
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     /** {@inheritDoc} */
-    public int compareTo(final ParserDescription o) {
+    public int compareTo(@Nonnull final ParserDescription o) {
         return name.toString().compareTo(o.name.toString());
     }
 
