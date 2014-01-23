@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import hudson.plugins.analysis.core.PluginDescriptor;
 import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
 import org.jvnet.hudson.test.TestExtension;
@@ -38,7 +39,14 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
     public void testParserRegistration() {
         List<ParserDescription> groups = ParserRegistry.getAvailableParsers();
 
-        assertEquals("Wrong number of registered parsers", NUMBER_OF_AVAILABLE_PARSERS, groups.size());
+        int expected;
+        if (PluginDescriptor.isPluginInstalled("violations")) {
+            expected = NUMBER_OF_AVAILABLE_PARSERS;
+        }
+        else {
+            expected = NUMBER_OF_AVAILABLE_PARSERS - 1;
+        }
+        assertEquals("Wrong number of registered parsers", expected, groups.size());
     }
 
     /**

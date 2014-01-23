@@ -275,8 +275,8 @@ public class ParserRegistry {
 
     private void addPatterns(final Set<Pattern> patterns, final String pattern) {
         if (StringUtils.isNotBlank(pattern)) {
-            String[] splitted = StringUtils.split(pattern, ',');
-            for (String singlePattern : splitted) {
+            String[] split = StringUtils.split(pattern, ',');
+            for (String singlePattern : split) {
                 String trimmed = StringUtils.trim(singlePattern);
                 String directoriesReplaced = StringUtils.replace(trimmed, "**", "*"); // NOCHECKSTYLE
                 patterns.add(Pattern.compile(StringUtils.replace(directoriesReplaced, "*", ".*"))); // NOCHECKSTYLE
