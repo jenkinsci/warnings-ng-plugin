@@ -18,6 +18,7 @@ import jenkins.model.Jenkins;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
@@ -1398,7 +1399,8 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the icon for the build result
      */
     public String getResultIcon() {
-        String message = "<img src=\"" + Jenkins.RESOURCE_PATH + "/images/16x16/%s\" alt=\"%s\" title=\"%s\"/>";
+        String message = "<img src=\"" + Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH
+                + "/images/16x16/%s\" alt=\"%s\" title=\"%s\"/>";
         if (pluginResult == Result.FAILURE) {
             return String.format(message, FAILED,
                     hudson.model.Messages.BallColor_Failed(), hudson.model.Messages.BallColor_Failed());
