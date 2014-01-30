@@ -18,6 +18,20 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 public class MsBuildParserTest extends ParserTester {
     /**
+     * Parses a file with gcc warnings that should be skipped.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-20544">Issue 20544</a>
+     */
+    @Test
+    public void issue20544() throws IOException {
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue20544.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, warnings.size());
+     }
+
+    /**
      * Parses a file with  warnings of a Visual Studio analysis.
      *
      * @throws IOException

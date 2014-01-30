@@ -1,0 +1,2 @@
+ld: warning: object file compiled with -mlong-branch which is no longer needed. To remove this warning, recompile without -mlong-branch: /usr/lib/gcc/powerpc-apple-darwin10/4.0.1/crt2.o creating bin/paqa_devs
+ld: warning: object file compiled with -mlong-branch which is no longer needed. To remove this warning, recompile without -mlong-branch: /usr/lib/gcc/powerpc-apple-darwin10/4.0.1/crt2.o creating bin/patest1
