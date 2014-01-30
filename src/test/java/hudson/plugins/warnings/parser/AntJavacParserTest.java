@@ -21,6 +21,24 @@ public class AntJavacParserTest extends ParserTester {
     private static final String WARNING_TYPE = Messages._Warnings_JavaParser_ParserName().toString(Locale.ENGLISH);
 
     /**
+     * Parses a warning log with one warning that refers to a missing class file.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-21240">Issue 21240</a>
+     */
+    @Test
+    public void issue21240() throws IOException {
+        Collection<FileAnnotation> warnings = new AntJavacParser().parse(openFile("issue21240.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        checkWarning(warnings.iterator().next(),
+                0,
+                "Cannot find annotation method 'xxx()' in type 'yyyy': class file for fully.qualified.ClassName not found",
+                "aaa.class", WARNING_TYPE, Priority.NORMAL);
+    }
+
+    /**
      * Parses a file with two deprecation warnings.
      *
      * @throws IOException
