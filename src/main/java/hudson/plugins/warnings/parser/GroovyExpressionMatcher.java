@@ -63,7 +63,7 @@ public class GroovyExpressionMatcher implements Serializable {
      *            the current line number
      * @return a new annotation for the specified pattern
      */
-    public Warning createWarning(Matcher matcher, int lineNumber) {
+    public Warning createWarning(final Matcher matcher, final int lineNumber) {
         compileScriptIfNotYetDone();
 
         Binding binding = new Binding();
