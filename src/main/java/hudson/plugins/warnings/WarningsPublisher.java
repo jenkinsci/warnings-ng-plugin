@@ -402,13 +402,7 @@ public class WarningsPublisher extends HealthAwareRecorder {
             if (!build.getWorkspace().isRemote()) {
                 guessModuleNames(build, warnings);
             }
-            ParserResult project;
-            if (canResolveRelativePaths()) {
-                project = new ParserResult(build.getWorkspace());
-            }
-            else {
-                project = new ParserResult();
-            }
+            ParserResult project = new ParserResult(build.getWorkspace(), canResolveRelativePaths());
             project.addAnnotations(warnings);
             results.add(annotate(build, project, parserName));
         }
