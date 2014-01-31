@@ -7,7 +7,7 @@ import org.apache.xerces.parsers.SAXParser;
  */
 public class SaxSetup {
     /** Property of SAX parser factory. */
-    private static final String SAX_DRIVER_PROPERTY = "org.xml.sax.driver";
+    public static final String SAX_DRIVER_PROPERTY = "org.xml.sax.driver";
 
     private String oldProperty;
 
