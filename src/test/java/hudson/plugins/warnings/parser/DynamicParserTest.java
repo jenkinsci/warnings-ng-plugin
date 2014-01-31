@@ -64,6 +64,32 @@ public class DynamicParserTest extends PhpParserTest {
     }
 
     /**
+     * Parses a file with 9 warnings of a custom parser. Should show all line numbers correctly.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-21569">Issue 21569</a>
+     */
+    @Test
+    public void issue21569() throws IOException {
+        Collection<FileAnnotation> warnings = new DynamicParser("issue12280",
+                "^.*: XmlDoc warning (\\w+): (.* type ([^\\s]+)\\..*)$",
+                "import hudson.plugins.warnings.parser.Warning\n"
+                + "    String fileName = matcher.group(3)\n"
+                + "    String category = matcher.group(1)\n"
+                + "    String message = matcher.group(2)\n"
+                + "    return new Warning(fileName, lineNumber, \"Xml Doc\", category, message);", TYPE, TYPE)
+                .parse(openFile("issue12280.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 9, warnings.size());
+
+        int lineNumber = 2;
+        for (FileAnnotation warning : warnings) {
+            assertEquals("Wrong line number parsed", lineNumber++, warning.getPrimaryLineNumber());
+        }
+    }
+
+    /**
      * Parses a file with several warnings from a custom parser.
      *
      * @throws IOException

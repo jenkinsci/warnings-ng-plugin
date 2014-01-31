@@ -23,7 +23,6 @@ public class GroovyExpressionMatcher implements Serializable {
 
     private final Warning falsePositive;
     private final String script;
-    private int currentLine;
 
     private transient Script compiled;
 
@@ -56,35 +55,20 @@ public class GroovyExpressionMatcher implements Serializable {
     }
 
     /**
-     * Returns the current line number that is handled by the parser.
-     *
-     * @return the current line number
-     */
-    public int getCurrentLine() {
-        return currentLine;
-    }
-
-    /**
-     * Sets the current line number to the specified value.
-     *
-     * @param currentLine the new line number
-     */
-    void setCurrentLine(int currentLine) {
-        this.currentLine = currentLine;
-    }
-
-    /**
      * Creates a new annotation for the specified match.
      *
      * @param matcher
      *            the regular expression matcher
+     * @param lineNumber
+     *            the current line number
      * @return a new annotation for the specified pattern
      */
-    public Warning createWarning(final Matcher matcher) {
+    public Warning createWarning(Matcher matcher, int lineNumber) {
         compileScriptIfNotYetDone();
 
         Binding binding = new Binding();
         binding.setVariable("matcher", matcher);
+        binding.setVariable("lineNumber", lineNumber);
         Object result = null;
         try {
             compiled.setBinding(binding);
@@ -97,6 +81,17 @@ public class GroovyExpressionMatcher implements Serializable {
             LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during parsing: ", exception);
         }
         return falsePositive;
+    }
+
+    /**
+     * Creates a new annotation for the specified match.
+     *
+     * @param matcher
+     *            the regular expression matcher
+     * @return a new annotation for the specified pattern
+     */
+    public Warning createWarning(final Matcher matcher) {
+        return createWarning(matcher, 0);
     }
 
     private static final Logger LOGGER = Logger.getLogger(GroovyExpressionMatcher.class.getName());

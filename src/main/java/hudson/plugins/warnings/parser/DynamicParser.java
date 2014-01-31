@@ -41,9 +41,7 @@ public class DynamicParser extends RegexpLineParser {
      */
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        expressionMatcher.setCurrentLine(getCurrentLine());
-
-        return expressionMatcher.createWarning(matcher);
+        return expressionMatcher.createWarning(matcher, getCurrentLine());
     }
 }
 
