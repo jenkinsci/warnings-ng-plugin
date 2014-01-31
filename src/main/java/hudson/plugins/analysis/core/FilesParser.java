@@ -169,13 +169,7 @@ public class FilesParser implements FileCallable<ParserResult> {
     /** {@inheritDoc} */
     public ParserResult invoke(final File workspace, final VirtualChannel channel)
             throws IOException {
-        ParserResult result;
-        if (canResolveRelativePaths) {
-            result = new ParserResult(new FilePath(workspace));
-        }
-        else {
-            result = new ParserResult();
-        }
+        ParserResult result = new ParserResult(new FilePath(workspace), canResolveRelativePaths);
         try {
             if (StringUtils.isBlank(filePattern)) {
                 parseSingleFile(workspace, result);

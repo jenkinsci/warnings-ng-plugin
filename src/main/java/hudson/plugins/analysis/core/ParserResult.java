@@ -62,6 +62,14 @@ public class ParserResult implements Serializable {
     private String logMessage;
     /** Total number of modules. @since 1.31 **/
     private int numberOfModules;
+    /**
+     * Determines whether relative paths in warnings should be
+     * resolved using a time expensive operation that scans the whole
+     * workspace for matching files.
+     *
+     * @since 1.55
+     */
+    private final boolean canResolveRelativePaths;
 
     /**
      * Creates a new instance of {@link ParserResult}.
@@ -77,7 +85,7 @@ public class ParserResult implements Serializable {
      *            the workspace to find the files in
      */
     public ParserResult(final FilePath workspace) {
-        this(new FilePathAdapter(workspace));
+        this(asWorkspace(workspace));
     }
 
     /**
@@ -87,13 +95,46 @@ public class ParserResult implements Serializable {
      *            the workspace to find the files in
      */
     public ParserResult(final Workspace workspace) {
+        this(workspace, false);
+    }
+
+    /**
+     * Creates a new instance of {@link ParserResult}.
+     *
+     * @param workspace
+     *            the workspace to find the files in
+     * @param canResolveRelativePaths
+     *            determines whether relative paths in warnings should be
+     *            resolved using a time expensive operation that scans the whole
+     *            workspace for matching files
+     */
+    public ParserResult(final FilePath workspace, boolean canResolveRelativePaths) {
+        this(asWorkspace(workspace), canResolveRelativePaths);
+    }
+
+    /**
+     * Creates a new instance of {@link ParserResult}.
+     *
+     * @param workspace
+     *            the workspace to find the files in
+     * @param canResolveRelativePaths
+     *            determines whether relative paths in warnings should be
+     *            resolved using a time expensive operation that scans the whole
+     *            workspace for matching files
+     */
+    public ParserResult(Workspace workspace, boolean canResolveRelativePaths) {
         this.workspace = workspace;
+        this.canResolveRelativePaths = canResolveRelativePaths;
 
         Priority[] priorities = Priority.values();
 
         for (int priority = 0; priority < priorities.length; priority++) {
             annotationCountByPriority.put(priorities[priority], 0);
         }
+    }
+
+    private static FilePathAdapter asWorkspace(FilePath workspace) {
+        return new FilePathAdapter(workspace);
     }
 
     /**
@@ -107,6 +148,7 @@ public class ParserResult implements Serializable {
 
         addAnnotations(annotations);
     }
+
 
     /**
      * Adds the warnings of the specified project to this project.
@@ -132,7 +174,7 @@ public class ParserResult implements Serializable {
                 if (remoteFile.exists()) {
                     annotation.setFileName(remoteFile.getPath());
                 }
-                else {
+                else if (canResolveRelativePaths) {
                     findFileByScanningAllWorkspaceFiles(annotation);
                 }
             }
@@ -461,7 +503,7 @@ public class ParserResult implements Serializable {
 
         /** {@inheritDoc} */
         public Workspace child(final String fileName) {
-            return new FilePathAdapter(wrapped.child(fileName));
+            return asWorkspace(wrapped.child(fileName));
         }
 
         /** {@inheritDoc} */

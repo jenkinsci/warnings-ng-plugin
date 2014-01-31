@@ -31,7 +31,8 @@ public class ParserResultTest {
      */
     @Test
     public void testSimpleFileNameMapping() throws Exception {
-        ParserResult result = new ParserResult(mockWorkspace(new String[] {SCANNED_FILENAME}));
+        String[] workspaceFiles = {SCANNED_FILENAME};
+        ParserResult result = createParserResult(workspaceFiles);
 
         FileAnnotation warning = mockWarning("file.txt");
         result.addAnnotation(warning);
@@ -47,7 +48,8 @@ public class ParserResultTest {
      */
     @Test
     public void testFileNameMappingWithPrefix() throws Exception {
-        ParserResult result = new ParserResult(mockWorkspace(new String[] {SCANNED_FILENAME}));
+        String[] workspaceFiles = {SCANNED_FILENAME};
+        ParserResult result = createParserResult(workspaceFiles);
 
         FileAnnotation warning = mockWarning("to/file.txt");
         result.addAnnotation(warning);
@@ -63,7 +65,8 @@ public class ParserResultTest {
      */
     @Test
     public void testWindowsFileNameMappingWithPrefix() throws Exception {
-        ParserResult result = new ParserResult(mockWorkspace(new String[] {SCANNED_FILENAME_WINDOWS}));
+        String[] workspaceFiles = {SCANNED_FILENAME_WINDOWS};
+        ParserResult result = createParserResult(workspaceFiles);
 
         FileAnnotation warning = mockWarning("to/file.txt");
         result.addAnnotation(warning);
@@ -80,12 +83,17 @@ public class ParserResultTest {
      */
     @Test
     public void testDuplicate() throws Exception {
-        ParserResult result = new ParserResult(mockWorkspace(new String[] {SCANNED_FILENAME, OTHER_SCANNED_FILE}));
+        String[] workspaceFiles = {SCANNED_FILENAME, OTHER_SCANNED_FILE};
+        ParserResult result = createParserResult(workspaceFiles);
 
         FileAnnotation warning = mockWarning("file.txt");
         result.addAnnotation(warning);
 
         verify(warning, never()).setFileName(anyString());
+    }
+
+    private ParserResult createParserResult(String[] workspaceFiles) throws IOException, InterruptedException {
+        return new ParserResult(mockWorkspace(workspaceFiles), true);
     }
 
     /**
@@ -97,7 +105,7 @@ public class ParserResultTest {
      */
     @Test
     public void testUniquePrefixDuplicate() throws Exception {
-        ParserResult result = new ParserResult(mockWorkspace(new String[] {SCANNED_FILENAME, OTHER_SCANNED_FILE}));
+        ParserResult result = createParserResult(new String[] {SCANNED_FILENAME, OTHER_SCANNED_FILE});
 
         FileAnnotation warning = mockWarning("path/to/file.txt");
         result.addAnnotation(warning);
