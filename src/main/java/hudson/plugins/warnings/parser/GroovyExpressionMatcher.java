@@ -23,8 +23,10 @@ public class GroovyExpressionMatcher implements Serializable {
 
     private final Warning falsePositive;
     private final String script;
+    private int currentLine;
 
     private transient Script compiled;
+
 
     /**
      * Creates a new instance of {@link GroovyExpressionMatcher}.
@@ -51,6 +53,24 @@ public class GroovyExpressionMatcher implements Serializable {
                  }
             }
         }
+    }
+
+    /**
+     * Returns the current line number that is handled by the parser.
+     *
+     * @return the current line number
+     */
+    public int getCurrentLine() {
+        return currentLine;
+    }
+
+    /**
+     * Sets the current line number to the specified value.
+     *
+     * @param currentLine the new line number
+     */
+    void setCurrentLine(int currentLine) {
+        this.currentLine = currentLine;
     }
 
     /**
