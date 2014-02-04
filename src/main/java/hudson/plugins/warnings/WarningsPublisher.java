@@ -440,15 +440,16 @@ public class WarningsPublisher extends HealthAwareRecorder {
     }
 
     /**
-     * Resolve build parameters in the file pattern up to resolveDepth times
+     * Resolve build parameters in the file pattern up to resolveDepth times.
      */
-    private String expandFilePattern(AbstractBuild<?, ?> build, String filePattern) {
+    private String expandFilePattern(final AbstractBuild<?, ?> build, final String filePattern) {
+        String expanded = filePattern;
         int resolveDepth = 10;
-        Map<String,String> buildParameterMap = build.getBuildVariables();
-        for(int i = 0; i < resolveDepth ; i++) {
-            String old = filePattern;
-            filePattern = Util.replaceMacro(filePattern, buildParameterMap);
-            if (old.equals(filePattern)) {
+        Map<String, String> buildParameterMap = build.getBuildVariables();
+        for (int i = 0; i < resolveDepth; i++) {
+            String old = expanded;
+            expanded = Util.replaceMacro(expanded, buildParameterMap);
+            if (old.equals(expanded)) {
                 break;
             }
         }
