@@ -11,13 +11,21 @@ public class SaxSetup {
 
     private String oldProperty;
 
+    /**
+     * Creates a new instance of {@link SaxSetup}.
+     *
+     * Registers a valid SAX driver.
+     */
     public SaxSetup() {
-        oldProperty = System.getProperty(SAX_DRIVER_PROPERTY);
+                oldProperty = System.getProperty(SAX_DRIVER_PROPERTY);
         if (oldProperty != null) {
-            System.setProperty(SAX_DRIVER_PROPERTY, SAXParser.class.getName());
+                    System.setProperty(SAX_DRIVER_PROPERTY, SAXParser.class.getName());
         }
     }
 
+    /**
+     * Removes the registered SAX driver.
+     */
     public void cleanup() {
         if (oldProperty != null) {
             System.setProperty(SAX_DRIVER_PROPERTY, oldProperty);
