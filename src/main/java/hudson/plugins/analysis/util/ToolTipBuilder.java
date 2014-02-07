@@ -27,7 +27,7 @@ public abstract class ToolTipBuilder implements SerializableToolTipGenerator {
     public String generateToolTip(final CategoryDataset dataset, final int row, final int column) {
         StringBuilder tooltip = new StringBuilder();
         tooltip.append(provider.getTooltip(dataset.getValue(row, column).intValue()));
-        tooltip.append(" ");
+        tooltip.append(' ');
         tooltip.append(getShortDescription(row));
 
         return tooltip.toString();

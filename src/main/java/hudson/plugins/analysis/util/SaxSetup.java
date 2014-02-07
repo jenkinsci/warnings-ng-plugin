@@ -9,17 +9,17 @@ public class SaxSetup {
     /** Property of SAX parser factory. */
     public static final String SAX_DRIVER_PROPERTY = "org.xml.sax.driver";
 
-    private String oldProperty;
+    private final String oldProperty;
 
     /**
      * Creates a new instance of {@link SaxSetup}.
-     *
+     * <p/>
      * Registers a valid SAX driver.
      */
     public SaxSetup() {
-                oldProperty = System.getProperty(SAX_DRIVER_PROPERTY);
+        oldProperty = System.getProperty(SAX_DRIVER_PROPERTY);
         if (oldProperty != null) {
-                    System.setProperty(SAX_DRIVER_PROPERTY, SAXParser.class.getName());
+            System.setProperty(SAX_DRIVER_PROPERTY, SAXParser.class.getName());
         }
     }
 

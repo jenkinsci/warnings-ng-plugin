@@ -526,7 +526,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         for (Priority priority : Priority.values()) {
             if (hasAnnotations(priority)) {
                 message.append(priority.getLocalizedString());
-                message.append(":");
+                message.append(':');
                 message.append(getNumberOfAnnotations(priority));
                 message.append(separator);
             }

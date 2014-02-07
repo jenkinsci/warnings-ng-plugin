@@ -59,7 +59,7 @@ public class ConsoleDetail implements ModelObject {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(owner.getLogFile()), "UTF8"));
-            StringBuilder console = new StringBuilder();
+            StringBuilder console = new StringBuilder(1024);
 
             console.append("<table>\n");
             int lineCount = 0;

@@ -122,7 +122,7 @@ public class ParserResult implements Serializable {
      *            resolved using a time expensive operation that scans the whole
      *            workspace for matching files
      */
-    public ParserResult(Workspace workspace, boolean canResolveRelativePaths) {
+    public ParserResult(final Workspace workspace, final boolean canResolveRelativePaths) {
         this.workspace = workspace;
         this.canResolveRelativePaths = canResolveRelativePaths;
 
@@ -133,7 +133,7 @@ public class ParserResult implements Serializable {
         }
     }
 
-    private static FilePathAdapter asWorkspace(FilePath workspace) {
+    private static FilePathAdapter asWorkspace(final FilePath workspace) {
         return new FilePathAdapter(workspace);
     }
 
