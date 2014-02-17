@@ -10,29 +10,16 @@ import org.apache.maven.project.MavenProject;
 
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.maven.MavenAggregatedReport;
-import hudson.maven.MavenBuildProxy;
+import hudson.maven.*;
 import hudson.maven.MavenBuildProxy.BuildCallable;
-import hudson.maven.MavenReporter;
-import hudson.maven.MojoInfo;
-import hudson.maven.MavenBuild;
-import hudson.maven.MavenModuleSetBuild;
-
+import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Result;
-import hudson.model.AbstractBuild;
-
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.LoggerFactory;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.StringPluginLogger;
-import hudson.plugins.analysis.util.model.AbstractAnnotation;
-import hudson.plugins.analysis.util.model.AnnotationContainer;
-import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
-import hudson.plugins.analysis.util.model.WorkspaceFile;
-
+import hudson.plugins.analysis.util.model.*;
 import hudson.remoting.Channel;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStep;
@@ -637,7 +624,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      * @return the name of the module
      */
     protected String getModuleName(final MavenProject pom) {
-        return StringUtils.defaultString(pom.getName(), pom.getArtifactId());
+        return StringUtils.defaultIfEmpty(pom.getName(), pom.getArtifactId());
     }
 
     /** Backward compatibility. @deprecated */
