@@ -1,29 +1,22 @@
 package hudson.plugins.warnings;
 
+import javax.annotation.CheckForNull;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
-import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
-import hudson.Extension;
 
+import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
-
-import hudson.plugins.warnings.parser.AbstractWarningsParser;
-import hudson.plugins.warnings.parser.DynamicDocumentParser;
-import hudson.plugins.warnings.parser.DynamicParser;
-import hudson.plugins.warnings.parser.Warning;
-
+import hudson.plugins.warnings.parser.*;
 import hudson.util.FormValidation;
 import hudson.util.FormValidation.Kind;
 
@@ -356,12 +349,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
             }
             Matcher matcher = pattern.matcher(example);
             if (matcher.find()) {
-                Binding binding = new Binding();
-                binding.setVariable("matcher", matcher);
-                GroovyShell shell = new GroovyShell(WarningsDescriptor.class.getClassLoader(), binding);
+                GroovyExpressionMatcher checker = new GroovyExpressionMatcher(script, null);
                 Object result = null;
                 try {
-                    result = shell.evaluate(script);
+                    result = checker.run(matcher, 0);
                 }
                 catch (Exception exception) { // NOCHECKSTYLE: catch all exceptions of the Groovy script
                     return FormValidation.error(
@@ -369,7 +360,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
                 }
                 if (result instanceof Warning) {
                     StringBuilder okMessage = new StringBuilder(Messages.Warnings_GroovyParser_Error_Example_ok_title());
-                    Warning warning = (Warning)result;
+                    Warning warning = (Warning) result;
                     message(okMessage, Messages.Warnings_GroovyParser_Error_Example_ok_file(warning.getFileName()));
                     message(okMessage, Messages.Warnings_GroovyParser_Error_Example_ok_line(warning.getPrimaryLineNumber()));
                     message(okMessage, Messages.Warnings_GroovyParser_Error_Example_ok_priority(warning.getPriority().getLongLocalizedString()));

@@ -64,15 +64,8 @@ public class GroovyExpressionMatcher implements Serializable {
      * @return a new annotation for the specified pattern
      */
     public Warning createWarning(final Matcher matcher, final int lineNumber) {
-        compileScriptIfNotYetDone();
-
-        Binding binding = new Binding();
-        binding.setVariable("matcher", matcher);
-        binding.setVariable("lineNumber", lineNumber);
-        Object result = null;
         try {
-            compiled.setBinding(binding);
-            result = compiled.run();
+            Object result = run(matcher, lineNumber);
             if (result instanceof Warning) {
                 return (Warning)result;
             }
@@ -81,6 +74,26 @@ public class GroovyExpressionMatcher implements Serializable {
             LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during parsing: ", exception);
         }
         return falsePositive;
+    }
+
+    /**
+     * Runs the groovy script. No exceptions are caught.
+     *
+     * @param matcher
+     *            the regular expression matcher
+     * @param lineNumber
+     *            the current line number
+     * @return unchecked result of the script
+     */
+    public Object run(final Matcher matcher, final int lineNumber) {
+        compileScriptIfNotYetDone();
+
+        Binding binding = new Binding();
+        binding.setVariable("matcher", matcher);
+        binding.setVariable("lineNumber", lineNumber);
+
+        compiled.setBinding(binding);
+        return compiled.run();
     }
 
     /**
