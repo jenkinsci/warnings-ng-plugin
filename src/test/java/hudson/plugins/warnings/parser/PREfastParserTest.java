@@ -5,8 +5,8 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -27,17 +27,43 @@ public class PREfastParserTest extends ParserTester {
      *             in case of an error
      */
     @Test
-    @Ignore("java.util.NoSuchElementException")
     public void testParse() throws IOException {
         Collection<FileAnnotation> results = createParser().parse(openFile());
         Iterator<FileAnnotation> iterator = results.iterator();
 
+        // Check the first 3 warnings
         FileAnnotation annotation = iterator.next();
-        /*
         checkWarning(annotation,
                 102, "The Drivers module has inferred that the current function is a DRIVER_INITIALIZE function:  This is informational only. No problem has been detected.",
-                "sys.c", TYPE, "28101", Priority.HIGH, "-");
-        */
+                "sys.c", TYPE, "28101", Priority.NORMAL, "-");
+
+        annotation = iterator.next();
+        checkWarning(annotation,
+                116, "(PFD)Leaking memory 'device'.",
+                "sys.c", TYPE, "6014", Priority.NORMAL, "-");
+
+        annotation = iterator.next();
+        checkWarning(annotation,
+                137, "The function being assigned or passed should be a DRIVER_UNLOAD function:  Add the declaration 'DRIVER_UNLOAD OnUnload;' before the current first declaration of OnUnload.",
+                "sys.c", TYPE, "28155", Priority.NORMAL, "-");
+
+        // Read the remaining warnings
+        final int warningsRemaining = 8;
+        for (int i=0; i<warningsRemaining; ++i)
+        {
+            annotation = iterator.next();
+        }
+
+        // Failure
+        try
+        {
+            annotation = iterator.next();
+            fail("Please check the number of warnings in " + getWarningsFile());
+        }
+        catch (NoSuchElementException ex)
+        {
+            // Success (Expected)
+        }
     }
 
     /**

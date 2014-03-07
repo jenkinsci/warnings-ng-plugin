@@ -5,7 +5,10 @@ import java.util.regex.Matcher;
 import hudson.Extension;
 
 /**
- * A parser for Microsoft PREfast XML files.
+ * A parser for Microsoft PREfast (aka Code Analysis for C/C++) XML files.
+ *
+ * @see MSDN: "/analyze (Code Analysis)"
+ * http://msdn.microsoft.com/en-us/library/ms173498.aspx
  *
  * @author Charles Chan
  */
@@ -41,8 +44,8 @@ public class PREfastParser extends RegexpLineParser {
      * </DEFECTS>
      *
      * The following regular expression performs the following matches:
-     * <DEFECT> ... </DEFECT>
-     *     - the tag containing 1 violation
+     * <DEFECT.*?> ... </DEFECT>
+     *     - the tag containing 1 violation (seq number ignored)
      * .*?
      *     - zero or more characters
      * <FILENAME>(.+?)</FILENAME>
@@ -54,7 +57,7 @@ public class PREfastParser extends RegexpLineParser {
      * <DESCRIPTION>(.+?)</DESCRIPTION>
      *     - capture group 4 to get the description
      */
-    private static final String PREFAST_PATTERN_WARNING = "<DEFECT>.*?<FILENAME>(.+?)</FILENAME>.*?<LINE>(.+?)</LINE>.*?<DEFECTCODE>(.+?)</DEFECTCODE>.*?<DESCRIPTION>(.+?)</DESCRIPTION>.*?</DEFECT>";
+    private static final String PREFAST_PATTERN_WARNING = "<DEFECT.*?>.*?<FILENAME>(.+?)</FILENAME>.*?<LINE>(.+?)</LINE>.*?<DEFECTCODE>(.+?)</DEFECTCODE>.*?<DESCRIPTION>(.+?)</DESCRIPTION>.*?</DEFECT>";
 
     /**
      * Creates a new instance of {@link PREfastParser}.
@@ -63,7 +66,8 @@ public class PREfastParser extends RegexpLineParser {
         super(Messages._Warnings_PREfast_ParserName(),
                 Messages._Warnings_PREfast_LinkName(),
                 Messages._Warnings_PREfast_TrendName(),
-                PREFAST_PATTERN_WARNING);
+                PREFAST_PATTERN_WARNING,
+                true);
     }
 
     @Override
@@ -76,4 +80,3 @@ public class PREfastParser extends RegexpLineParser {
         return createWarning(fileName, Integer.parseInt(lineNumber), category, message);
     }
 }
-
