@@ -16,8 +16,6 @@ import hudson.Extension;
 public class PREfastParser extends RegexpLineParser {
     private static final long serialVersionUID = 1409381677034028504L;
 
-    private static final String IDENTIFIER_TYPE = "Static Code Analyzer (PREfast)";
-
     /*
      * Microsoft PREfast static code analyzer produces XML files with the
      * following schema.
@@ -66,8 +64,7 @@ public class PREfastParser extends RegexpLineParser {
         super(Messages._Warnings_PREfast_ParserName(),
                 Messages._Warnings_PREfast_LinkName(),
                 Messages._Warnings_PREfast_TrendName(),
-                PREFAST_PATTERN_WARNING,
-                true);
+                PREFAST_PATTERN_WARNING);
     }
 
     @Override
@@ -77,6 +74,6 @@ public class PREfastParser extends RegexpLineParser {
         final String category = matcher.group(3);
         final String message = matcher.group(4);
 
-        return createWarning(fileName, Integer.parseInt(lineNumber), category, message);
+        return createWarning(fileName, getLineNumber(lineNumber), category, message);
     }
 }
