@@ -2,15 +2,7 @@ package hudson.plugins.analysis.core;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,8 +15,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
-import hudson.FilePath;
 
+import hudson.FilePath;
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.FileFinder;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -256,7 +248,8 @@ public class ParserResult implements Serializable {
      */
     private boolean hasRelativeFileName(final FileAnnotation annotation) {
         String fileName = annotation.getFileName();
-        return !fileName.startsWith(SLASH) && !fileName.contains(":");
+
+        return StringUtils.isNotBlank(fileName) && !fileName.startsWith(SLASH) && !fileName.contains(":");
     }
 
     /**
