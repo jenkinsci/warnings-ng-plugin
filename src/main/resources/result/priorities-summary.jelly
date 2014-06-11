@@ -1,8 +1,7 @@
 <!--
   Section header
 -->
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core">
 
   <h2>${%Summary}</h2>
   <table class="pane" id="analysis.summary">
@@ -17,12 +16,14 @@
         <td class="pane">${it.numberOfAnnotations}</td>
         <j:forEach var="priority" items="${it.priorities}">
           <td class="pane">
-            <j:if test="${it.getNumberOfAnnotations(priority) == 0}">
-              0
-            </j:if>
-            <j:if test="${it.getNumberOfAnnotations(priority) != 0}">
-              <a href="${priority}">${it.getNumberOfAnnotations(priority)}</a>
-            </j:if>
+            <div id="${priority.name()}">
+              <j:if test="${it.getNumberOfAnnotations(priority) == 0}">
+                0
+              </j:if>
+              <j:if test="${it.getNumberOfAnnotations(priority) != 0}">
+                <a href="${priority}">${it.getNumberOfAnnotations(priority)}</a>
+              </j:if>
+            </div>
           </td>
         </j:forEach>
       </tr>
