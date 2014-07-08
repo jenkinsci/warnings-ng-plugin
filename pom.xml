@@ -1,12 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.jvnet.hudson.plugins</groupId>
-        <artifactId>analysis-pom</artifactId>
-        <version>1.50</version>
-        <relativePath>../analysis-pom/pom.xml</relativePath>
-    </parent>
+  <parent>
+    <groupId>org.jvnet.hudson.plugins</groupId>
+    <artifactId>analysis-pom</artifactId>
+    <version>1.50</version>
+    <relativePath>../analysis-pom/pom.xml</relativePath>
+  </parent>
 
   <artifactId>warnings</artifactId>
   <packaging>hpi</packaging>
@@ -14,7 +15,8 @@
   <version>4.41-SNAPSHOT</version>
   <url>http://wiki.jenkins-ci.org/x/G4CGAQ</url>
   <description>This plug-in reads the compiler warnings from the
-    console log file and generates a trend report.</description>
+    console log file and generates a trend report.
+  </description>
 
   <licenses>
     <license>
@@ -24,20 +26,22 @@
     <license>
       <name>LGPL</name>
       <comments>All icons are made by Carlitus (Carles Carbonell
-        Bernado) and are under the LGPL.</comments>
+        Bernado) and are under the LGPL.
+      </comments>
     </license>
     <license>
       <name>BSD license</name>
-      <comments>All YUI source code is under the BSD license. Duke, the Java mascot also is under the BSD license.</comments>
+      <comments>All YUI source code is under the BSD license. Duke, the Java mascot also is under the BSD license.
+      </comments>
     </license>
   </licenses>
 
   <dependencies>
-      <dependency>
-          <groupId>org.jvnet.hudson.plugins</groupId>
-          <artifactId>analysis-core</artifactId>
-          <version>1.55</version>
-      </dependency>
+    <dependency>
+      <groupId>org.jvnet.hudson.plugins</groupId>
+      <artifactId>analysis-core</artifactId>
+      <version>1.55</version>
+    </dependency>
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-test</artifactId>
@@ -56,9 +60,9 @@
       <version>2.2</version>
     </dependency>
     <dependency>
-    	<groupId>org.apache.commons</groupId>
-    	<artifactId>commons-digester3</artifactId>
-    	<version>3.2</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-digester3</artifactId>
+      <version>3.2</version>
     </dependency>
   </dependencies>
 

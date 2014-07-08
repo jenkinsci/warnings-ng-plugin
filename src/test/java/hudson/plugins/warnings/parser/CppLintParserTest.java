@@ -18,7 +18,6 @@ import hudson.plugins.analysis.util.model.Priority;
  * @author Ulli Hafner
  */
 public class CppLintParserTest extends ParserTester {
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "cpplint.txt";

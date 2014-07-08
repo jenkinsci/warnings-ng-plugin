@@ -47,7 +47,7 @@ public class FileWarningsParser implements AnnotationParser {
         this.defaultEncoding = defaultEncoding;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Collection<FileAnnotation> parse(final File file, final String moduleName) throws InvocationTargetException {
         try {
             Collection<FileAnnotation> annotations = new ParserRegistry(parsers, defaultEncoding, includePattern, excludePattern).parse(file);

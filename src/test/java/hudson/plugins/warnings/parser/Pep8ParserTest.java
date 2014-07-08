@@ -50,7 +50,6 @@ public class Pep8ParserTest extends ParserTester {
                 "trunk3/src/python/file.py", WARNING_TYPE, "C111", Priority.LOW);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "pep8Test.txt";

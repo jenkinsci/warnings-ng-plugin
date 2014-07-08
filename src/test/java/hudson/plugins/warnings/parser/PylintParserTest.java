@@ -55,7 +55,6 @@ public class PylintParserTest extends ParserTester {
                 WARNING_TYPE, "C0111", Priority.NORMAL);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "pyLint.txt";

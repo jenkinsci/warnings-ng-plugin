@@ -176,7 +176,7 @@ public final class WarningsDescriptor extends PluginDescriptor implements Staple
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Object getTarget() {
         return this;
     }

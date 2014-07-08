@@ -198,8 +198,7 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
     private ParserRegistry createRegistryUnderTest(final String fileName, final String group) {
         ParserRegistry parserRegistry = new ParserRegistry(ParserRegistry.getParsers(group), "", "", "") {
-            /** {@inheritDoc} */
-            @Override
+                    @Override
             protected Reader createReader(final File file) throws FileNotFoundException {
                 return new InputStreamReader(ParserRegistryTest.class.getResourceAsStream(fileName));
             }
@@ -217,8 +216,7 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
             super(DUMMY, DUMMY, DUMMY, MIXED_API);
         }
 
-        /** {@inheritDoc} */
-        @Override
+            @Override
         protected Warning createWarning(final Matcher matcher) {
             return null;
         }
@@ -233,8 +231,7 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
             super(NEW_API);
         }
 
-        /** {@inheritDoc} */
-        @Override
+            @Override
         public Collection<FileAnnotation> parse(final Reader reader) throws IOException,
                 ParsingCanceledException {
             return null;
@@ -245,11 +242,12 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
     public static class TestOldParser implements WarningsParser {
         private static final long serialVersionUID = 1L;
 
+        @Override
         public Collection<FileAnnotation> parse(final Reader reader) throws IOException {
             return null;
         }
 
-        /** {@inheritDoc} */
+            @Override
         public String getName() {
             return OLD_API;
         }

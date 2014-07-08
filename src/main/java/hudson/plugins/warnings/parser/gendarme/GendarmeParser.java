@@ -54,7 +54,6 @@ public class GendarmeParser extends AbstractWarningsParser {
                 Messages._Warnings_Gendarme_TrendName());
     }
 
-    /** {@inheritDoc} */
     @Override
     public Collection<FileAnnotation> parse(final Reader reader) throws IOException, ParsingCanceledException {
         try {

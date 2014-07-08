@@ -55,7 +55,6 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
         parser = group;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected GraphConfigurationView createUserConfiguration(final StaplerRequest request) {
         return new UserGraphConfigurationView(

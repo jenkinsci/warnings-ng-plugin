@@ -39,7 +39,6 @@ public class GnuMakeGccParser extends RegexpLineParser {
                 GNUMAKEGCC_WARNING_PATTERN);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getId() {
         return "GNU Make + GNU Compiler (gcc)";

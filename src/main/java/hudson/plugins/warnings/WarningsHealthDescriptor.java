@@ -27,7 +27,6 @@ public class WarningsHealthDescriptor extends AbstractHealthDescriptor {
         this.name = name;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Object readResolve() {
         if (name == null) {

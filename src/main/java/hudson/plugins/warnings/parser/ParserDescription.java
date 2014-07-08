@@ -61,7 +61,7 @@ public class ParserDescription implements Comparable<ParserDescription> {
         return getName();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public int compareTo(@Nonnull final ParserDescription o) {
         return name.toString().compareTo(o.name.toString());
     }

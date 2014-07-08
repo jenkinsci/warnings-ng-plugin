@@ -68,7 +68,7 @@ public class AggregatedWarningsResult extends BuildResult {
         return "aggregated-warnings.xml";
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return Messages.Warnings_ProjectAction_Name();
     }

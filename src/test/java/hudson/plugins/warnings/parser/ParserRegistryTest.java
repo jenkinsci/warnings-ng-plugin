@@ -1,12 +1,6 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -16,10 +10,12 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import static org.junit.Assert.*;
+
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.warnings.GroovyParserTest;
 import hudson.plugins.warnings.GroovyParser;
+import hudson.plugins.warnings.GroovyParserTest;
 
 /**
  * Tests the class {@link ParserRegistry}.
@@ -102,7 +98,7 @@ public class ParserRegistryTest {
      */
     @Test
     public void issue2359() throws IOException {
-        ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, StringUtils.EMPTY, "/tmp/clover*/**", createJavaParsers());
+        ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, StringUtils.EMPTY, ".*/clover.*", createJavaParsers());
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
         int excludedNumberOfWarnings = 8;
@@ -147,7 +143,7 @@ public class ParserRegistryTest {
      */
     @Test
     public void multiplePatternsIssue2359() throws IOException {
-        ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, StringUtils.EMPTY, "/tmp/clover*/**, **/renderers/*", createJavaParsers());
+        ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, StringUtils.EMPTY, ".*/clover.*/.*, .*/renderers/.*", createJavaParsers());
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
         assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, computeTotalNumberOfWarnings(createJavaParsers()) - 15, annotations.size());
@@ -226,8 +222,7 @@ public class ParserRegistryTest {
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
     private ParserRegistry createRegistryUnderTest(final String fileName, final String includePattern, final String excludePattern, final List<? extends AbstractWarningsParser> parsers) {
         ParserRegistry parserRegistry = new ParserRegistry(parsers, "", includePattern, excludePattern) {
-            /** {@inheritDoc} */
-            @Override
+                    @Override
             protected Reader createReader(final File file) throws FileNotFoundException {
                 return new InputStreamReader(ParserRegistryTest.class.getResourceAsStream(fileName));
             }

@@ -113,7 +113,7 @@ public class WarningsResult extends BuildResult {
         return "compiler-" + groupUrl + FILENAME_SUFFIX;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         if (group == null) {
             return Messages.Warnings_ProjectAction_Name();

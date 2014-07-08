@@ -33,12 +33,11 @@ public class AggregatedWarningsResultAction extends AbstractResultAction<Aggrega
         return WarningsDescriptor.RESULT_URL;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return Messages.Warnings_ProjectAction_Name();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getIconFileName() {
         return null; // do not show aggregation in UI

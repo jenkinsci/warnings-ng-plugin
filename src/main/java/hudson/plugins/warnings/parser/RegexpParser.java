@@ -31,7 +31,7 @@ public abstract class RegexpParser extends AbstractWarningsParser implements War
     /** Pattern of compiler warnings. */
     private Pattern pattern;
 
-    /** {@inheritDoc} */
+    @Override
     public String getName() {
         return getGroup();
     }

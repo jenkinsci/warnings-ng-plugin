@@ -38,13 +38,11 @@ public class AggregatedWarningsProjectAction extends AbstractProjectAction<Resul
                 WarningsDescriptor.PLUGIN_ID, null, WarningsDescriptor.RESULT_URL);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getIconFileName() {
         return null; // do not show aggregation in UI
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isTrendVisible(final StaplerRequest request) {
         return false;

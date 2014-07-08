@@ -25,7 +25,6 @@ public class PerlCriticParser extends RegexpLineParser {
                 Messages._Warnings_PerlCritic_TrendName(), PERLCRITIC_WARNING_PATTERN, true);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String filename;

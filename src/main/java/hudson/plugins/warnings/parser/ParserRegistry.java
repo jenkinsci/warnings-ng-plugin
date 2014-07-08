@@ -425,8 +425,7 @@ public class ParserRegistry {
 
         private static final long serialVersionUID = 1L;
 
-        /** {@inheritDoc} */
-        @Override
+            @Override
         public Collection<FileAnnotation> parse(final Reader reader) throws IOException,
                 ParsingCanceledException {
             return Collections.emptyList();

@@ -83,7 +83,6 @@ public class PerlCriticParserTest extends ParserTester {
         return new PerlCriticParser().parse(openFile(fileName));
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "perlcritic.txt";

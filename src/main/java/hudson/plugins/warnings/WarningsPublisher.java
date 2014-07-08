@@ -309,7 +309,6 @@ public class WarningsPublisher extends HealthAwareRecorder {
         return parsers;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final PluginLogger logger)
             throws InterruptedException, IOException {
@@ -483,7 +482,7 @@ public class WarningsPublisher extends HealthAwareRecorder {
         return (WarningsDescriptor)super.getDescriptor();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public MatrixAggregator createAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener) {
         return new WarningsAnnotationsAggregator(build, launcher, listener, this, getDefaultEncoding(), useOnlyStableBuildsAsReference());
     }

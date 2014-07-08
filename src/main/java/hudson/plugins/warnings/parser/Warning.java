@@ -85,7 +85,7 @@ public class Warning extends AbstractAnnotation {
         setOrigin(ORIGIN);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getToolTip() {
         return StringUtils.defaultString(toolTip);
     }

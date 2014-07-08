@@ -39,7 +39,6 @@ public class GendarmeParserTest extends ParserTester {
                 "c:/Dev/src/hudson/Hudson.Domain/Dog.cs", "MethodCanBeMadeStaticRule", Priority.LOW);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected String getWarningsFile() {
         return "gendarme/Gendarme.xml";

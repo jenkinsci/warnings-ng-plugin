@@ -54,7 +54,7 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
         return parserName;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return ParserRegistry.getParser(parserName).getLinkName().toString();
     }

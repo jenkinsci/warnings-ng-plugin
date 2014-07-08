@@ -18,7 +18,7 @@ import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.util.ListBoxModel;
 
 /**
- * Defines the configuration to parse a set of files using a predefined parser.
+ * Defines the configuration to parse the console log using a predefined parser.
  *
  * @author Ulli Hafner
  */
