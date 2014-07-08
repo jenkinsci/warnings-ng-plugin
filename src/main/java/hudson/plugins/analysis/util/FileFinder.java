@@ -53,6 +53,7 @@ public class FileFinder implements FileCallable<String[]> {
      * @throws IOException
      *             if the workspace could not be read
      */
+    @Override
     public String[] invoke(final File workspace, final VirtualChannel channel) throws IOException {
         return find(workspace);
     }

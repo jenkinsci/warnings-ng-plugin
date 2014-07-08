@@ -34,7 +34,7 @@ public class NewWarningsDetail extends AbstractAnnotationsDetail {
         super(owner, detailFactory, newWarnings, defaultEncoding, header, Hierarchy.PROJECT);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return Messages.NewWarningsDetail_Name();
     }

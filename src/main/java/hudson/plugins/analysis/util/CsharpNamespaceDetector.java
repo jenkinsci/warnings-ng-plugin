@@ -14,12 +14,13 @@ import org.apache.commons.lang.StringUtils;
  */
 // CHECKSTYLE:CONSTANTS-OFF
 public class CsharpNamespaceDetector extends AbstractPackageDetector {
-    /** {@inheritDoc} */
+    @Override
     public boolean accepts(final String fileName) {
         return fileName.endsWith(".cs");
     }
 
     /** {@inheritDoc}*/
+    @Override
     public String detectPackageName(final InputStream stream) {
         try {
             LineIterator iterator = IOUtils.lineIterator(stream, "UTF-8");

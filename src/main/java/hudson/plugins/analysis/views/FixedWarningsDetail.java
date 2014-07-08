@@ -34,7 +34,7 @@ public class FixedWarningsDetail extends AbstractAnnotationsDetail {
         super(owner, detailFactory, fixedWarnings, defaultEncoding, header, Hierarchy.PROJECT);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return Messages.FixedWarningsDetail_Name();
     }

@@ -59,7 +59,7 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
                 project.getAbsoluteUrl() + pluginName + "/configureDefaults");
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return Messages.DefaultGraphConfiguration_Name();
     }

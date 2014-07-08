@@ -156,14 +156,12 @@ public class DifferenceGraph extends BuildResultGraph {
         /** Unique ID of this class. */
         private static final long serialVersionUID = 3487003853901042584L;
 
-        /** {@inheritDoc} */
-        @Override
+            @Override
         public StringBuffer format(final double number, final StringBuffer toAppendTo, final FieldPosition pos) {
             return format((long)number, toAppendTo, pos);
         }
 
-        /** {@inheritDoc} */
-        @Override
+            @Override
         public StringBuffer format(final long number, final StringBuffer toAppendTo, final FieldPosition pos) {
             StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append('#');
@@ -171,8 +169,7 @@ public class DifferenceGraph extends BuildResultGraph {
             return stringBuffer;
         }
 
-        /** {@inheritDoc} */
-        @Override
+            @Override
         public Number parse(final String source, final ParsePosition parsePosition) {
             return null; // ignore
         }
@@ -197,7 +194,7 @@ public class DifferenceGraph extends BuildResultGraph {
             super(rootUrl, pluginName);
         }
 
-        /** {@inheritDoc} */
+            @Override
         public String generateURL(final XYDataset dataset, final int series, final int item) {
             return getRootUrl() + (int)dataset.getXValue(series, item) + getPluginName();
         }

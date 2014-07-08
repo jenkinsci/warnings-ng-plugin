@@ -72,7 +72,7 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
         return new CookieHandler(cookieName);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return Messages.UserGraphConfiguration_Name();
     }

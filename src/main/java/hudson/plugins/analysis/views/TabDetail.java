@@ -36,7 +36,7 @@ public class TabDetail extends AbstractAnnotationsDetail {
         this.url = url;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return "NOT USED";
     }

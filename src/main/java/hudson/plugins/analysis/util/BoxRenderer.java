@@ -31,7 +31,7 @@ public class BoxRenderer extends ToolTipBoxRenderer implements CategoryURLGenera
         setItemURLGenerator(this);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final String generateURL(final CategoryDataset dataset, final int row, final int column) {
         return urlGenerator.generateURL(dataset, row, column);
     }

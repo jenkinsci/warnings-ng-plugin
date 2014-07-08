@@ -15,7 +15,7 @@ public abstract class AbstractPackageDetector implements PackageDetector {
     /** Identifies an unknown package. */
     protected static final String UNKNOWN_PACKAGE = "-";
 
-    /** {@inheritDoc} */
+    @Override
     public String detectPackageName(final String fileName) {
         FileInputStream input = null;
         try {

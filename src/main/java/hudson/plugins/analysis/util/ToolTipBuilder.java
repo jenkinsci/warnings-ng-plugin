@@ -23,7 +23,7 @@ public abstract class ToolTipBuilder implements SerializableToolTipGenerator {
         this.provider = provider;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String generateToolTip(final CategoryDataset dataset, final int row, final int column) {
         StringBuilder tooltip = new StringBuilder();
         tooltip.append(provider.getTooltip(dataset.getValue(row, column).intValue()));

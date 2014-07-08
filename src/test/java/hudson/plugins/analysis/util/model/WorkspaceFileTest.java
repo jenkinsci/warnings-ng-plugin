@@ -62,7 +62,7 @@ public class WorkspaceFileTest {
             key++;
         }
 
-        /** {@inheritDoc} */
+            @Override
         public String getToolTip() {
             return StringUtils.EMPTY;
         }

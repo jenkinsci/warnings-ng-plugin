@@ -47,7 +47,7 @@ public class FileDetail extends AbstractAnnotationsDetail {
         return getName() + " - File " + file.getShortName();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return file.getShortName();
     }

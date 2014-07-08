@@ -239,7 +239,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         return getUseStableBuildAsReference();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Thresholds getThresholds() {
         return thresholds;
     }
@@ -277,7 +277,6 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         return this;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean postExecute(final MavenBuildProxy build, final MavenProject pom, final MojoInfo mojo,
             final BuildListener listener, final Throwable error) throws InterruptedException, IOException {
@@ -324,6 +323,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
             throws IOException, InterruptedException {
         @SuppressWarnings("serial")
         String resultLog = build.execute(new BuildCallable<String, IOException>() {
+            @Override
             public String call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
                 return registerResults(result, mavenBuild);
             }
@@ -342,6 +342,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
     @SuppressWarnings("serial")
     private Settings receiveSettingsFromMaster(final MavenBuildProxy build) throws IOException, InterruptedException {
         return build.execute(new BuildCallable<Settings, IOException>() {
+            @Override
             public Settings call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
                 return new SerializableSettings(GlobalSettings.instance());
             }});
@@ -364,7 +365,6 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         return pluginLogger.toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     public ReporterDescriptor getDescriptor() {
         return (ReporterDescriptor)super.getDescriptor();
@@ -561,6 +561,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
     @SuppressWarnings("serial")
     private Boolean hasResultAction(final MavenBuildProxy build) throws IOException, InterruptedException {
         return build.execute(new BuildCallable<Boolean, IOException>() {
+            @Override
             public Boolean call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
                 return mavenBuild.getAction(getResultActionClass()) != null;
             }
@@ -589,6 +590,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      *
      * @return the 100% healthiness
      */
+    @Override
     public String getHealthy() {
         return healthy;
     }
@@ -598,11 +600,12 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      *
      * @return the 0% unhealthiness
      */
+    @Override
     public String getUnHealthy() {
         return unHealthy;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Priority getMinimumPriority() {
         return Priority.valueOf(StringUtils.upperCase(getThresholdLimit()));
     }
@@ -707,7 +710,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         /** Unique ID. */
         private static final long serialVersionUID = -270795641776014760L;
 
-        /** {@inheritDoc} */
+            @Override
         public Result call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
             return mavenBuild.getResult();
         }

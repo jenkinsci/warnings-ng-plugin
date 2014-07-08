@@ -29,7 +29,7 @@ public class ToolTipBoxRenderer extends StackedBarRenderer implements CategoryTo
         setToolTipGenerator(this);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String generateToolTip(final CategoryDataset dataset, final int row, final int column) {
         return toolTipGenerator.generateToolTip(dataset, row, column);
     }

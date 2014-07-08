@@ -319,10 +319,12 @@ public class ModuleDetector {
      * An input stream factory based on a {@link FileInputStream}.
      */
     private static final class DefaultFileInputStreamFactory implements FileInputStreamFactory {
+        @Override
         public InputStream create(final String fileName) throws FileNotFoundException {
             return new FileInputStream(new File(fileName));
         }
 
+        @Override
         public String[] find(final File root, final String pattern) {
             return new FileFinder(PATTERN).find(root);
         }

@@ -49,7 +49,7 @@ public class PrioritiesDetail extends AbstractAnnotationsDetail {
         return getName() + " - " + priority.getLongLocalizedString();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return priority.getLongLocalizedString();
     }

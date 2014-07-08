@@ -27,6 +27,7 @@ public class JavaPackageDetector extends AbstractPackageDetector {
     }
 
     /** {@inheritDoc}*/
+    @Override
     public String detectPackageName(final InputStream stream) {
         try {
             LineIterator iterator = IOUtils.lineIterator(stream, null);
@@ -47,7 +48,7 @@ public class JavaPackageDetector extends AbstractPackageDetector {
         return UNKNOWN_PACKAGE;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean accepts(final String fileName) {
         return fileName.endsWith(".java");
     }

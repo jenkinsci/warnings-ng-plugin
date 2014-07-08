@@ -112,6 +112,7 @@ public class EncodingValidator implements Validator {
      * @throws FormValidation
      *             if the encoding is not valid
      */
+    @Override
     public FormValidation check(final String encoding) throws FormValidation {
         try {
             if (StringUtils.isBlank(encoding) || Charset.forName(encoding).canEncode()) {

@@ -61,6 +61,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      *
      * @return the healthDescriptor
      */
+    @Override
     public AbstractHealthDescriptor getHealthDescriptor() {
         if (healthDescriptor == null) {
             return NullHealthDescriptor.NULL_HEALTH_DESCRIPTOR; // for old serialized actions
@@ -77,17 +78,17 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      */
     protected abstract PluginDescriptor getDescriptor();
 
-    /** {@inheritDoc} */
+    @Override
     public String getUrlName() {
         return getDescriptor().getPluginResultUrlName();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final HealthReport getBuildHealth() {
         return new HealthReportBuilder(getHealthDescriptor()).computeHealth(getResult());
     }
 
-    /** {@inheritDoc} */
+    @Override
     public ToolTipProvider getToolTipProvider() {
         return this;
     }
@@ -101,27 +102,27 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         return owner;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final AbstractBuild<?, ?> getBuild() {
         return owner;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final Object getTarget() {
         return getResult();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final T getResult() {
         return result;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final void setResult(final T result) {
         this.result = result;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getIconFileName() {
         T currentResult = getResult();
         if (currentResult != null && currentResult.getNumberOfAnnotations() > 0) {
@@ -184,7 +185,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         return new ParserResult();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getTooltip(final int numberOfItems) {
         if (numberOfItems == 1) {
             return getSingleItemTooltip();
@@ -214,7 +215,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         return Messages.ResultAction_OneWarning();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean isSuccessful() {
         return getResult().isSuccessful();
     }

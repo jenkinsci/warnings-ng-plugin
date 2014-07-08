@@ -38,15 +38,13 @@ public enum Priority {
      * Converts priorities for {@link XStream} deserialization.
      */
     public static final class PriorityConverter extends AbstractSingleValueConverter {
-        /** {@inheritDoc} */
-        @SuppressWarnings("rawtypes")
+            @SuppressWarnings("rawtypes")
         @Override
         public boolean canConvert(final Class type) {
             return type.equals(Priority.class);
         }
 
-        /** {@inheritDoc} */
-        @Override
+            @Override
         public Object fromString(final String str) {
             return Priority.valueOf(str);
         }

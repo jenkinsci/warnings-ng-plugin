@@ -79,7 +79,7 @@ public class AbstractAnnotationTest {
             super(priority, message, start, end, category, type);
         }
 
-        /** {@inheritDoc} */
+            @Override
         public String getToolTip() {
             return StringUtils.EMPTY;
         }

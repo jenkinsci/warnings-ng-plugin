@@ -94,7 +94,7 @@ public class SourceDetail implements ModelObject {
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return fileName;
     }

@@ -38,7 +38,7 @@ public class AttributeDetail extends AbstractAnnotationsDetail {
         attributeName = name;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return attributeName;
     }

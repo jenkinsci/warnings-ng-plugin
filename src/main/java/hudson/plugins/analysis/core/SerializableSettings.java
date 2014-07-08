@@ -24,12 +24,12 @@ public class SerializableSettings implements Settings, Serializable {
         quietMode = original.getQuietMode();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Boolean getQuietMode() {
         return quietMode;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Boolean getFailOnCorrupt() {
         return failOnCorrupt;
     }

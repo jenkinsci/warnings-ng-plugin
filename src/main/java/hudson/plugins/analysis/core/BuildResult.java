@@ -545,48 +545,48 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         return owner;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean hasAnnotations(final Priority priority) {
         return getContainer().hasAnnotations(priority);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean hasAnnotations(final String priority) {
         return getContainer().hasAnnotations(priority);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean hasAnnotations() {
         return numberOfWarnings != 0;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean hasNoAnnotations() {
         return numberOfWarnings == 0;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean hasNoAnnotations(final Priority priority) {
         return getContainer().hasAnnotations(priority);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean hasNoAnnotations(final String priority) {
         return getContainer().hasAnnotations(priority);
     }
 
-    /** {@inheritDoc} */
+    @Override
     @Exported(name = "warnings")
     public Set<FileAnnotation> getAnnotations() {
         return getContainer().getAnnotations();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public FileAnnotation getAnnotation(final long key) {
         return getContainer().getAnnotation(key);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public FileAnnotation getAnnotation(final String key) {
         return getContainer().getAnnotation(key);
     }
@@ -627,7 +627,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         numberOfWarnings = warnings;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Set<FileAnnotation> getAnnotations(final Priority priority) {
         return getContainer().getAnnotations(priority);
     }
@@ -762,6 +762,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the number of warnings
      */
+    @Override
     public int getNumberOfAnnotations() {
         return getNumberOfWarnings();
     }
@@ -775,6 +776,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return total number of annotations of the specified priority for this
      *         object
      */
+    @Override
     public int getNumberOfAnnotations(final Priority priority) {
         if (priority == Priority.HIGH) {
             return highWarnings;
@@ -1019,12 +1021,12 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         return Priority.values();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Set<FileAnnotation> getAnnotations(final String priority) {
         return getContainer().getAnnotations(priority);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public int getNumberOfAnnotations(final String priority) {
         return getNumberOfAnnotations(Priority.fromString(priority));
     }

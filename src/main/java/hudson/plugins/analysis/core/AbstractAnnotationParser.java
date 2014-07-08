@@ -45,7 +45,7 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
         return defaultEncoding;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Collection<FileAnnotation> parse(final File file, final String moduleName) throws InvocationTargetException {
         FileInputStream input = null;
         try {

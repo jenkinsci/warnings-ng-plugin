@@ -13,7 +13,7 @@ import hudson.util.FormValidation;
  * @author Ulli Hafner
  */
 public class ThresholdValidator implements Validator {
-    /** {@inheritDoc} */
+    @Override
     public FormValidation check(final String value) throws FormValidation {
         if (!StringUtils.isEmpty(value)) {
             try {

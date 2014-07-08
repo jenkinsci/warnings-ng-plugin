@@ -494,22 +494,22 @@ public class ParserResult implements Serializable {
             wrapped = workspace;
         }
 
-        /** {@inheritDoc} */
+            @Override
         public Workspace child(final String fileName) {
             return asWorkspace(wrapped.child(fileName));
         }
 
-        /** {@inheritDoc} */
+            @Override
         public boolean exists() throws IOException, InterruptedException {
             return wrapped.exists();
         }
 
-        /** {@inheritDoc} */
+            @Override
         public String getPath() {
             return wrapped.getRemote();
         }
 
-        /** {@inheritDoc} */
+            @Override
         public String[] findFiles(final String pattern) throws IOException, InterruptedException {
             return wrapped.act(new FileFinder(pattern));
         }
@@ -521,22 +521,22 @@ public class ParserResult implements Serializable {
     private static class NullWorkspace implements Workspace {
         private static final long serialVersionUID = 2307259492760554066L;
 
-        /** {@inheritDoc} */
+            @Override
         public Workspace child(final String fileName) {
             return this;
         }
 
-        /** {@inheritDoc} */
+            @Override
         public boolean exists() throws IOException, InterruptedException {
             return false;
         }
 
-        /** {@inheritDoc} */
+            @Override
         public String getPath() {
             return StringUtils.EMPTY;
         }
 
-        /** {@inheritDoc} */
+            @Override
         public String[] findFiles(final String pattern) throws IOException, InterruptedException {
             return new String[0];
         }

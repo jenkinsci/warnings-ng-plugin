@@ -35,7 +35,7 @@ public class ModuleDetail extends AbstractAnnotationsDetail {
         this.module = module;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return module.getName();
     }

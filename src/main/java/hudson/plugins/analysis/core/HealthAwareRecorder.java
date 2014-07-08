@@ -1,13 +1,8 @@
 package hudson.plugins.analysis.core; // NOPMD
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Collection;
-
 import javax.annotation.CheckForNull;
+import java.io.*;
+import java.util.Collection;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -15,27 +10,19 @@ import org.apache.commons.lang.StringUtils;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregatable;
-
-import hudson.model.BuildListener;
-import hudson.model.Result;
 import hudson.model.AbstractBuild;
+import hudson.model.BuildListener;
 import hudson.model.Project;
-
+import hudson.model.Result;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.LoggerFactory;
 import hudson.plugins.analysis.util.PluginLogger;
-import hudson.plugins.analysis.util.model.AbstractAnnotation;
-import hudson.plugins.analysis.util.model.AnnotationContainer;
-import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
-import hudson.plugins.analysis.util.model.WorkspaceFile;
-
+import hudson.plugins.analysis.util.model.*;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Builder;
-import hudson.tasks.Recorder;
 import hudson.tasks.Maven;
+import hudson.tasks.Recorder;
 
 /**
  * A base class for publishers with the following two characteristics:
@@ -324,7 +311,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         return this;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher,
             final BuildListener listener) throws InterruptedException, IOException {
@@ -532,7 +518,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Thresholds getThresholds() {
         return thresholds;
     }
@@ -554,6 +540,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      *
      * @return the 100% healthiness
      */
+    @Override
     public String getHealthy() {
         return healthy;
     }
@@ -563,6 +550,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      *
      * @return the 0% unhealthiness
      */
+    @Override
     public String getUnHealthy() {
         return unHealthy;
     }
@@ -614,7 +602,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Priority getMinimumPriority() {
         return Priority.valueOf(StringUtils.upperCase(getThresholdLimit()));
     }
@@ -628,7 +616,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         return thresholdLimit;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public BuildStepMonitor getRequiredMonitorService() {
         return canComputeNew() ? BuildStepMonitor.STEP : BuildStepMonitor.NONE;
     }

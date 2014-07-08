@@ -248,7 +248,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         primaryColumnEnd = columnEnd;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getLinkName() {
         if (hasPackageName()) {
             return getPackageName() + "." + FilenameUtils.getBaseName(getFileName());
@@ -263,7 +263,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean hasPackageName() {
         String actualPackageName = StringUtils.trim(TreeString.toString(packageName));
 
@@ -276,6 +276,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @param workspacePath
      *            the workspace path
      */
+    @Override
     public void setPathName(final String workspacePath) {
         String normalized = workspacePath.replace('\\', '/');
 
@@ -286,22 +287,22 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         pathName = TreeString.of(s);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getPathName() {
         return TreeString.toString(pathName);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getOrigin() {
         return StringUtils.defaultString(origin);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public int getColumnEnd() {
         return primaryColumnEnd;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public int getColumnStart() {
         return primaryColumnStart;
     }
@@ -324,31 +325,31 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         this.priority = priority;
     }
 
-    /** {@inheritDoc} */
+    @Override
     @Exported
     public String getMessage() {
         return TreeString.toString(message);
     }
 
-    /** {@inheritDoc} */
+    @Override
     @Exported
     public Priority getPriority() {
         return priority;
     }
 
-    /** {@inheritDoc} */
+    @Override
     @Exported
     public final long getKey() {
         return key;
     }
 
-    /** {@inheritDoc} */
+    @Override
     @Exported
     public final String getFileName() {
         return TreeString.toString(fileName);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getTempName(final AbstractBuild<?, ?> owner) {
         if (fileName != null) {
             return owner.getRootDir().getAbsolutePath()
@@ -358,12 +359,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         return StringUtils.EMPTY;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getCategory() {
         return category;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getType() {
         return type;
     }
@@ -373,11 +374,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      *
      * @param fileName the value to set
      */
+    @Override
     public final void setFileName(final String fileName) {
         this.fileName = TreeString.of(StringUtils.strip(fileName).replace('\\', '/'));
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final String getModuleName() {
         return StringUtils.defaultIfEmpty(TreeString.toString(moduleName), "Default Module");
     }
@@ -387,11 +389,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      *
      * @param moduleName the value to set
      */
+    @Override
     public final void setModuleName(final String moduleName) {
         this.moduleName = TreeString.of(moduleName);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final String getPackageName() {
         return StringUtils.defaultIfEmpty(TreeString.toString(packageName), DEFAULT_PACKAGE);
     }
@@ -405,12 +408,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         this.packageName = TreeString.of(packageName);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final Collection<LineRange> getLineRanges() {
         return Collections.unmodifiableCollection(lineRanges);
     }
 
-    /** {@inheritDoc} */
+    @Override
     @Exported
     public final int getPrimaryLineNumber() {
         return primaryLineNumber;
@@ -437,12 +440,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
     public long getContextHashCode() {
         return contextHashCode;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void setContextHashCode(final long contextHashCode) {
         this.contextHashCode = contextHashCode;
     }
@@ -552,6 +555,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      *
      * @return the short file name
      */
+    @Override
     public String getShortFileName() {
         if (isInConsoleLog()) {
             return Messages.ConsoleLog_Name();
@@ -564,6 +568,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      *
      * @return <code>true</code>, if successful
      */
+    @Override
     public final boolean canDisplayFile(final AbstractBuild<?, ?> owner) {
         if (owner.hasPermission(Item.WORKSPACE)) {
             return isInConsoleLog() || new File(getFileName()).exists() || new File(getTempName(owner)).exists();
@@ -571,7 +576,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         return false;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public int compareTo(final FileAnnotation other) {
         int result;
 
@@ -596,7 +601,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         return String.format("%s(%s):%s,%s,%s:%s", getFileName(), primaryLineNumber, priority, getCategory(), getType(), getMessage());
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean isInConsoleLog() {
         return fileName == null || StringUtils.isBlank(fileName.toString());
     }

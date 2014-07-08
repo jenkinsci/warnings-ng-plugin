@@ -40,14 +40,12 @@ public class NullHealthDescriptor extends AbstractHealthDescriptor {
             super(null, null);
         }
 
-        /** {@inheritDoc} */
-        @Override
+            @Override
         public String toString() {
             return StringUtils.EMPTY;
         }
 
-        /** {@inheritDoc} */
-        @Override
+            @Override
         public String toString(final Locale locale) {
             return toString();
         }

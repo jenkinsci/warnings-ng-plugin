@@ -87,7 +87,7 @@ public class ConsoleDetail implements ModelObject {
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return Messages.ConsoleLog_Title(start, end);
     }

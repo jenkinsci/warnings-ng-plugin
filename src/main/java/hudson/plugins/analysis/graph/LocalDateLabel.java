@@ -20,7 +20,7 @@ public class LocalDateLabel implements Comparable<LocalDateLabel> {
         this.date = date;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public int compareTo(final LocalDateLabel o) {
         return date.compareTo(o.date);
     }

@@ -95,7 +95,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
         this.resultUrl = resultUrl;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return asString(name);
     }
@@ -337,6 +337,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *
      * @return the icon URL for the side-panel in the project screen
      */
+    @Override
     public String getIconFileName() {
         ResultAction<?> lastAction = getLastAction();
         if (lastAction != null && lastAction.getResult().hasAnnotations()) {
@@ -345,7 +346,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
         return null;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final String getUrlName() {
         return pluginUrl;
     }

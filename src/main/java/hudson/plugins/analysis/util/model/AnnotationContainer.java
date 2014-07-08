@@ -346,12 +346,12 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         return ImmutableSortedSet.copyOf(annotations.values());
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final Set<FileAnnotation> getAnnotations() {
         return ImmutableSet.copyOf(annotations.values());
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final Set<FileAnnotation> getAnnotations(final Priority priority) {
         return ImmutableSortedSet.copyOf(annotationsByPriority.get(priority));
     }
@@ -413,7 +413,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
                 getLowAnnotations());
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final Set<FileAnnotation> getAnnotations(final String priority) {
         return getAnnotations(getPriority(priority));
     }
@@ -429,7 +429,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         return Priority.fromString(priority);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public int getNumberOfAnnotations() {
         return annotations.size();
     }
@@ -461,47 +461,47 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         return getHighAnnotations().size();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public int getNumberOfAnnotations(final Priority priority) {
         return annotationsByPriority.get(priority).size();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final int getNumberOfAnnotations(final String priority) {
         return getNumberOfAnnotations(getPriority(priority));
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final boolean hasAnnotations() {
         return !hasNoAnnotations();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final boolean hasAnnotations(final Priority priority) {
         return !hasNoAnnotations(priority);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final boolean hasAnnotations(final String priority) {
         return !hasNoAnnotations(priority);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final boolean hasNoAnnotations() {
         return annotations.isEmpty();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final boolean hasNoAnnotations(final Priority priority) {
         return annotationsByPriority.get(priority).isEmpty();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final boolean hasNoAnnotations(final String priority) {
         return hasNoAnnotations(getPriority(priority));
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final FileAnnotation getAnnotation(final long key) {
         FileAnnotation annotation = annotations.get(key);
         if (annotation != null) {
@@ -510,7 +510,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         throw new NoSuchElementException("Annotation not found: key=" + key);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public final FileAnnotation getAnnotation(final String key) {
         return getAnnotation(Long.parseLong(key));
     }
@@ -867,7 +867,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         return Priority.LOW;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public int compareTo(final AnnotationContainer other) {
         return getName().compareTo(other.getName());
     }

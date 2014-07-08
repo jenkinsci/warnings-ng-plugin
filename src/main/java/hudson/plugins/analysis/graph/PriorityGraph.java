@@ -55,15 +55,13 @@ public class PriorityGraph extends CategoryBuildResultGraph {
     }
 
     // CHECKSTYLE:OFF
-    /** {@inheritDoc} */
     @java.lang.SuppressWarnings("serial")
     @SuppressWarnings("SIC")
     @Override
     protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName, final ToolTipProvider toolTipProvider) {
         CategoryUrlBuilder url = new UrlBuilder(getRootUrl(), pluginName);
         ToolTipBuilder toolTip = new ToolTipBuilder(toolTipProvider) {
-            /** {@inheritDoc} */
-            @Override
+                    @Override
             protected String getShortDescription(final int row) {
                 if (row == 0) {
                     return Messages.Trend_PriorityLow();

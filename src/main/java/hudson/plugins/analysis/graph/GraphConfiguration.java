@@ -692,7 +692,6 @@ public class GraphConfiguration  {
     }
     // CHECKSTYLE:ON
 
-    /** {@inheritDoc} */
     @Override // NOCHECKSTYLE
     @SuppressWarnings("PMD")
     // CHECKSTYLE:OFF

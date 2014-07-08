@@ -37,7 +37,7 @@ public class AnnotationsClassifier implements FileCallable<ParserResult> {
         this.defaultEncoding = defaultEncoding;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public ParserResult invoke(final File workspace, final VirtualChannel channel) throws IOException {
         ContextHashCode contextHashCode = new ContextHashCode();
         for (FileAnnotation annotation : result.getAnnotations()) {

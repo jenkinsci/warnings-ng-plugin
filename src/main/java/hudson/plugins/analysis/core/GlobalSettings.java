@@ -22,7 +22,7 @@ import hudson.model.listeners.RunListener;
  */
 @Extension
 public class GlobalSettings extends RunListener<Run<?, ?>> implements Describable<GlobalSettings> {
-    /** {@inheritDoc} */
+    @Override
     public DescriptorImpl getDescriptor() {
         return findDescriptor();
     }
@@ -72,7 +72,7 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
             return true;
         }
 
-        /** {@inheritDoc} */
+            @Override
         public Boolean getQuietMode() {
             return getValidBoolean(isQuiet);
         }
@@ -87,7 +87,7 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
             isQuiet = value;
         }
 
-        /** {@inheritDoc} */
+            @Override
         public Boolean getFailOnCorrupt() {
             return getValidBoolean(failOnCorrupt);
         }

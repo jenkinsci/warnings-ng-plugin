@@ -44,7 +44,7 @@ public class PackageDetail extends AbstractAnnotationsDetail {
         return getName() + " - " + javaPackage.getPackageCategoryName() + " " + javaPackage.getName();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return javaPackage.getName();
     }

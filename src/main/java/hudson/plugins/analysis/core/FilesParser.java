@@ -166,7 +166,7 @@ public class FilesParser implements FileCallable<ParserResult> {
         stringLogger.log(message);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public ParserResult invoke(final File workspace, final VirtualChannel channel)
             throws IOException {
         ParserResult result = new ParserResult(new FilePath(workspace), canResolveRelativePaths);

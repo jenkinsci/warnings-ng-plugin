@@ -249,7 +249,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     }
     // CHECKSTYLE:ON
 
-    /** {@inheritDoc} */
+    @Override
     public Thresholds getThresholds() {
         return thresholds;
     }
@@ -287,7 +287,6 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         return this;
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings({"serial", "PMD.AvoidFinalLocalVariable"})
     @Override
     public final boolean postExecute(final MavenBuildProxy build, final MavenProject pom, final MojoInfo mojo,
@@ -316,6 +315,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         }
 
         build.execute(new BuildCallable<Void, IOException>() {
+            @Override
             public Void call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
                 persistResult(result, mavenBuild);
 
@@ -483,6 +483,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     @SuppressWarnings("serial")
     private Boolean hasResultAction(final MavenBuildProxy build) throws IOException, InterruptedException {
         return build.execute(new BuildCallable<Boolean, IOException>() {
+            @Override
             public Boolean call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
                 return mavenBuild.getAction(getResultActionClass()) != null;
             }
@@ -555,6 +556,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      *
      * @return the 100% healthiness
      */
+    @Override
     public String getHealthy() {
         return healthy;
     }
@@ -564,11 +566,12 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      *
      * @return the 0% unhealthiness
      */
+    @Override
     public String getUnHealthy() {
         return unHealthy;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Priority getMinimumPriority() {
         return Priority.valueOf(StringUtils.upperCase(getThresholdLimit()));
     }
@@ -638,7 +641,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         /** Unique ID. */
         private static final long serialVersionUID = -270795641776014760L;
 
-        /** {@inheritDoc} */
+            @Override
         public Result call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
             return mavenBuild.getResult();
         }

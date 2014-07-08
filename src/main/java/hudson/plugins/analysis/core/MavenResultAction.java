@@ -65,7 +65,7 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
         this.pluginName = pluginName;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public abstract Class<? extends MavenResultAction<T>> getIndividualActionType();
 
     /**
@@ -102,6 +102,7 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
      * @param newBuild
      *            Newly completed build.
      */
+    @Override
     public void update(final Map<MavenModule, List<MavenBuild>> moduleBuilds, final MavenBuild newBuild) {
         MavenResultAction<T> additionalAction = newBuild.getAction(getIndividualActionType());
         MavenModule project = newBuild.getProject();
@@ -229,26 +230,28 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
         return delegate.getLargeImageName();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getIconFileName() {
         return delegate.getIconFileName();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return delegate.getDisplayName();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getUrlName() {
         return delegate.getUrlName();
     }
 
     // CHECKSTYLE:OFF
+    @Override
     public void setResult(final T additionalResult) {
         delegate.setResult(additionalResult);
     }
 
+    @Override
     public T getResult() {
         return delegate.getResult();
     }
@@ -271,14 +274,17 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
         return delegate.getBuildHealth();
     }
 
+    @Override
     public ToolTipProvider getToolTipProvider() {
         return delegate.getToolTipProvider();
     }
 
+    @Override
     public final AbstractBuild<?, ?> getBuild() {
         return delegate.getBuild();
     }
 
+    @Override
     public final Object getTarget() {
         return delegate.getTarget();
     }
@@ -294,10 +300,12 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
         return delegate.getTooltip(numberOfItems);
     }
 
+    @Override
     public boolean isSuccessful() {
         return delegate.isSuccessful();
     }
 
+    @Override
     public AbstractHealthDescriptor getHealthDescriptor() {
         return delegate.getHealthDescriptor();
     }

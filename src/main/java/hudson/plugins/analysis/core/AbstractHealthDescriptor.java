@@ -49,22 +49,22 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
         priority = Priority.LOW;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Priority getMinimumPriority() {
         return priority;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getHealthy() {
         return healthy;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getUnHealthy() {
         return unHealthy;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Thresholds getThresholds() {
         return thresholds;
     }

@@ -40,7 +40,7 @@ public class ErrorDetail implements ModelObject  {
         return owner;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getDisplayName() {
         return Messages.Errors();
     }

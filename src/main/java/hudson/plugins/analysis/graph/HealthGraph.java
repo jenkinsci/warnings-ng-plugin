@@ -115,14 +115,13 @@ public class HealthGraph extends CategoryBuildResultGraph {
     }
 
     // CHECKSTYLE:OFF
-    /** {@inheritDoc} */
     @java.lang.SuppressWarnings("serial")
     @SuppressWarnings("SIC")
     @Override
     protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName, final ToolTipProvider toolTipProvider) {
         SerializableUrlGenerator urlGenerator = new CategoryUrlBuilder(getRootUrl(), pluginName);
         SerializableToolTipGenerator toolTipGenerator = new SerializableToolTipGenerator() {
-            /** {@inheritDoc} */
+                    @Override
             public String generateToolTip(final CategoryDataset dataset, final int row, final int column) {
                 int number = 0;
                 for (int index = 0; index < dataset.getRowCount(); index++) {
