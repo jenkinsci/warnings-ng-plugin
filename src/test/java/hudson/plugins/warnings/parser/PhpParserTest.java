@@ -6,6 +6,8 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
@@ -17,6 +19,11 @@ import hudson.plugins.analysis.util.model.Priority;
 public class PhpParserTest extends ParserTester {
     private static final String TYPE = new PhpParser().getGroup();
 
+    private static final String PARSE_ERROR_CATEGORY = "PHP Parse error";
+    private static final String FATAL_ERROR_CATEGORY = "PHP Fatal error";
+    private static final String WARNING_CATEGORY = "PHP Warning";
+    private static final String NOTICE_CATEGORY = "PHP Notice";
+
     /**
      * Tests the PHP parsing.
      *
@@ -25,26 +32,33 @@ public class PhpParserTest extends ParserTester {
     @Test
     public void testParse() throws IOException {
         Collection<FileAnnotation> results = createParser().parse(openFile());
+        assertEquals(5, results.size());
+
         Iterator<FileAnnotation> iterator = results.iterator();
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation,
                 25, "include_once(): Failed opening \'RegexpLineParser.php\' for inclusion (include_path=\'.:/usr/share/pear\') in PhpParser.php on line 25",
-                "PhpParser.php", TYPE, PhpParser.WARNING_CATEGORY, Priority.NORMAL);
+                "PhpParser.php", TYPE, WARNING_CATEGORY, Priority.NORMAL);
 
         annotation = iterator.next();
         checkWarning(annotation,
                 25, "Undefined index:  SERVER_NAME in /path/to/file/Settings.php on line 25",
-                "/path/to/file/Settings.php", TYPE, PhpParser.NOTICE_CATEGORY, Priority.NORMAL);
+                "/path/to/file/Settings.php", TYPE, NOTICE_CATEGORY, Priority.NORMAL);
 
         annotation = iterator.next();
         checkWarning(annotation,
                 35, "Undefined class constant 'MESSAGE' in /MyPhpFile.php on line 35",
-                "/MyPhpFile.php", TYPE, PhpParser.FATAL_ERROR_CATEGORY, Priority.HIGH);
+                "/MyPhpFile.php", TYPE, FATAL_ERROR_CATEGORY, Priority.HIGH);
+
+        annotation = iterator.next();
+        checkWarning(annotation,
+                35, "Undefined class constant 'MESSAGE' in /MyPhpFile.php on line 35",
+                "/MyPhpFile.php", TYPE, PARSE_ERROR_CATEGORY, Priority.HIGH);
 
         annotation = iterator.next();
         checkWarning(annotation,
                 34, "Missing argument 1 for Title::getText(), called in Title.php on line 22 and defined in Category.php on line 34",
-                "Category.php", TYPE, PhpParser.WARNING_CATEGORY, Priority.NORMAL);
+                "Category.php", TYPE, WARNING_CATEGORY, Priority.NORMAL);
 
     }
 

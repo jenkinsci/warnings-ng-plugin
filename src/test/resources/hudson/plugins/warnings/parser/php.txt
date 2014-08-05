@@ -5,5 +5,7 @@ PHP Notice:  Undefined index:  SERVER_NAME in /path/to/file/Settings.php on line
 
 PHP Fatal error:  Undefined class constant 'MESSAGE' in /MyPhpFile.php on line 35
 
+PHP Parse error:  Undefined class constant 'MESSAGE' in /MyPhpFile.php on line 35
+
 From Apache log
 [Tue Mar 02 08:22:40 2010] [error] [client 192.168.1.172] PHP Warning:  Missing argument 1 for Title::getText(), called in Title.php on line 22 and defined in Category.php on line 34

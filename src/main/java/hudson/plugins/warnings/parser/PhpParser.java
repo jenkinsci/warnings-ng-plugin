@@ -15,9 +15,6 @@ import hudson.plugins.analysis.util.model.Priority;
 public class PhpParser extends RegexpLineParser {
     private static final long serialVersionUID = -5154327854315791181L;
 
-    static final String FATAL_ERROR_CATEGORY = "PHP Fatal error";
-    static final String WARNING_CATEGORY = "PHP Warning";
-    static final String NOTICE_CATEGORY = "PHP Notice";
     private static final String PHP_WARNING_PATTERN = "^.*(PHP Warning|PHP Notice|PHP Fatal error|PHP Parse error):\\s+(.+ in (.+) on line (\\d+))$";
 
     /**
