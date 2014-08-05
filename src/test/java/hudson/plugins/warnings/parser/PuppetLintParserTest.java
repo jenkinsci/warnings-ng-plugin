@@ -1,12 +1,12 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -28,6 +28,8 @@ public class PuppetLintParserTest extends ParserTester {
     @Test
     public void testParse() throws IOException {
         Collection<FileAnnotation> results = createParser().parse(openFile());
+        assertEquals(3, results.size());
+
         Iterator<FileAnnotation> iterator = results.iterator();
 
         FileAnnotation annotation = iterator.next();
