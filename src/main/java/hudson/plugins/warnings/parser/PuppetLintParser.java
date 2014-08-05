@@ -20,7 +20,7 @@ public class PuppetLintParser extends RegexpLineParser {
     private static final String SEPARATOR = "::";
 
     /** Pattern of puppet-lint compiler warnings. */
-    private static final String PUPPET_LINT_PATTERN_WARNING = "^\\s*([^:]+):([0-9]+):([^:]+):([^:]+):\\s*(.*)$";
+    private static final String PUPPET_LINT_PATTERN_WARNING = "^\\s*([^:]+):([0-9]+):([^:]+):((?:WARNING)|(?:ERROR)):\\s*(.*)$";
     private static final String PUPPET_LINT_PATTERN_PACKAGE = "^(.*/?modules/)?([^/]*)/manifests(.*)?(/([^/]*)\\.pp)$";
 
     private final Pattern packagePattern;
