@@ -64,14 +64,15 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
      */
     @Test
     public void testIssue17762() {
-        String oldClang = "Apple LLVM Compiler (Clang)";
-        String newClang = "Clang (LLVM based)";
+        verifyRegistryWithOldAndNewName("Apple LLVM Compiler (Clang)", "Clang (LLVM based)", 1);
+    }
 
-        assertEquals("Wrong old API implementations", 1, ParserRegistry.getParsers(oldClang).size());
-        assertEquals("Wrong new API implementations", 1, ParserRegistry.getParsers(newClang).size());
+    private void verifyRegistryWithOldAndNewName(final String oldId, final String newId, final int expectedNumberOfParsers) {
+        assertEquals("Wrong old API implementations", expectedNumberOfParsers, ParserRegistry.getParsers(oldId).size());
+        assertEquals("Wrong new API implementations", expectedNumberOfParsers, ParserRegistry.getParsers(newId).size());
 
-        assertTrue("Parser does not exist: " + oldClang, ParserRegistry.exists(oldClang));
-        assertTrue("Parser does not exist: " + newClang, ParserRegistry.exists(newClang));
+        assertTrue("Parser does not exist: " + oldId, ParserRegistry.exists(oldId));
+        assertTrue("Parser does not exist: " + newId, ParserRegistry.exists(newId));
     }
 
     /**
@@ -79,14 +80,7 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
      */
     @Test
     public void testIssue20545() {
-        String oldClang = "GNU Compiler 4 (gcc)";
-        String newClang = "GNU C Compiler 4 (gcc)";
-
-        assertEquals("Wrong old API implementations", 2, ParserRegistry.getParsers(oldClang).size());
-        assertEquals("Wrong new API implementations", 2, ParserRegistry.getParsers(newClang).size());
-
-        assertTrue("Parser does not exist: " + oldClang, ParserRegistry.exists(oldClang));
-        assertTrue("Parser does not exist: " + newClang, ParserRegistry.exists(newClang));
+        verifyRegistryWithOldAndNewName("GNU Compiler 4 (gcc)", "GNU C Compiler 4 (gcc)", 2);
     }
 
     /**
@@ -94,14 +88,7 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
      */
     @Test
     public void testIssue20658() {
-        String oldClang = "GNU Make + GNU Compiler (gcc)";
-        String newClang = "GNU Make + GNU C Compiler (gcc)";
-
-        assertEquals("Wrong old API implementations", 1, ParserRegistry.getParsers(oldClang).size());
-        assertEquals("Wrong new API implementations", 1, ParserRegistry.getParsers(newClang).size());
-
-        assertTrue("Parser does not exist: " + oldClang, ParserRegistry.exists(oldClang));
-        assertTrue("Parser does not exist: " + newClang, ParserRegistry.exists(newClang));
+        verifyRegistryWithOldAndNewName("GNU Make + GNU Compiler (gcc)", "GNU Make + GNU C Compiler (gcc)", 1);
     }
 
     /**
@@ -109,14 +96,7 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
      */
     @Test
     public void testPullRequest41() {
-        String oldResharper = "Reshaper InspectCode";
-        String newResharper = "Resharper InspectCode";
-
-        assertEquals("Wrong old API implementations", 1, ParserRegistry.getParsers(oldResharper).size());
-        assertEquals("Wrong new API implementations", 1, ParserRegistry.getParsers(newResharper).size());
-
-        assertTrue("Parser does not exist: " + oldResharper, ParserRegistry.exists(oldResharper));
-        assertTrue("Parser does not exist: " + newResharper, ParserRegistry.exists(newResharper));
+        verifyRegistryWithOldAndNewName("Reshaper InspectCode", "Resharper InspectCode", 1);
     }
 
     /**
@@ -220,6 +200,7 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
         };
         return parserRegistry;
     }
+
     // CHECKSTYLE:OFF Test implementations
     @SuppressWarnings("javadoc")
     @TestExtension

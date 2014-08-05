@@ -33,14 +33,14 @@ public class ResharperInspectCodeParserTest extends ParserTester {
                 4,
                 "Using directive is not required by the code and can be safely removed",
                 "euler61/Program.cs",
-                "ReshaperInspectCode",
+                "ResharperInspectCode",
                 "RedundantUsingDirective",
                 Priority.NORMAL);
     }
 
     @Override
     protected String getWarningsFile() {
-        return "ReshaperInspectCode.txt";
+        return "ResharperInspectCode.txt";
     }
 }
 
