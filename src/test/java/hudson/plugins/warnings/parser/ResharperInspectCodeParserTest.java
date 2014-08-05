@@ -1,20 +1,20 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
- * Tests the class {@link ReshaperInspectCodeParser }.
+ * Tests the class {@link ResharperInspectCodeParser}.
  */
-public class ReshaperInspectCodeParserTest  extends ParserTester {
+public class ResharperInspectCodeParserTest extends ParserTester {
     /**
      * Parses a file with warnings of the Reshaper InspectCodeParser  tools.
      *
@@ -23,7 +23,7 @@ public class ReshaperInspectCodeParserTest  extends ParserTester {
      */
     @Test
     public void parseWarnings() throws IOException {
-        Collection<FileAnnotation> warnings = new ReshaperInspectCodeParser().parse(openFile());
+        Collection<FileAnnotation> warnings = new ResharperInspectCodeParser().parse(openFile());
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
 

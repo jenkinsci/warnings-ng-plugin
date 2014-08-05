@@ -105,6 +105,21 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
     }
 
     /**
+     * Verifies that the registry detects old and new API extensions and maps them correctly.
+     */
+    @Test
+    public void testPullRequest41() {
+        String oldResharper = "Reshaper InspectCode";
+        String newResharper = "Resharper InspectCode";
+
+        assertEquals("Wrong old API implementations", 1, ParserRegistry.getParsers(oldResharper).size());
+        assertEquals("Wrong new API implementations", 1, ParserRegistry.getParsers(newResharper).size());
+
+        assertTrue("Parser does not exist: " + oldResharper, ParserRegistry.exists(oldResharper));
+        assertTrue("Parser does not exist: " + newResharper, ParserRegistry.exists(newResharper));
+    }
+
+    /**
      * Verifies that we parse two warnings if we use the key of the 3.x version.
      *
      * @throws IOException
