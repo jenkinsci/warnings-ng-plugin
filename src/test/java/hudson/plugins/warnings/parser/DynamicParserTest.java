@@ -1,7 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -11,6 +9,8 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.util.StringPluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -27,7 +27,7 @@ public class DynamicParserTest extends PhpParserTest {
     @Override
     protected AbstractWarningsParser createParser() {
         return new DynamicParser(TYPE,
-                "^.*(PHP Warning|PHP Notice|PHP Fatal error):\\s+(.+ in (.+) on line (\\d+))$",
+                "^.*(PHP Warning|PHP Notice|PHP Fatal error|PHP Parse error):\\s+(.+ in (.+) on line (\\d+))$",
                 "        import hudson.plugins.analysis.util.model.Priority;\n"
               + "        import hudson.plugins.warnings.parser.Warning\n"
               + "        String category = matcher.group(1);\n"
@@ -35,7 +35,7 @@ public class DynamicParserTest extends PhpParserTest {
               + "        String fileName = matcher.group(3);\n"
               + "        String start = matcher.group(4);\n"
               + "        Priority priority = Priority.NORMAL;\n"
-              + "        if (category.contains(\"Fatal\")) {\n"
+              + "        if (category.contains(\"Fatal\") || category.contains(\"Parse\")) {\n"
               + "            priority = Priority.HIGH;\n"
               + "        }\n"
               + "        return new Warning(fileName, Integer.parseInt(start), \"PHP Runtime\", category, message, priority);\n",
