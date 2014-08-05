@@ -18,7 +18,7 @@ public class PhpParser extends RegexpLineParser {
     static final String FATAL_ERROR_CATEGORY = "PHP Fatal error";
     static final String WARNING_CATEGORY = "PHP Warning";
     static final String NOTICE_CATEGORY = "PHP Notice";
-    private static final String PHP_WARNING_PATTERN = "^.*(PHP Warning|PHP Notice|PHP Fatal error):\\s+(.+ in (.+) on line (\\d+))$";
+    private static final String PHP_WARNING_PATTERN = "^.*(PHP Warning|PHP Notice|PHP Fatal error|PHP Parse error):\\s+(.+ in (.+) on line (\\d+))$";
 
     /**
      * Creates a new instance of {@link PhpParser}.
@@ -49,7 +49,7 @@ public class PhpParser extends RegexpLineParser {
 
         Priority priority = Priority.NORMAL;
 
-        if (category.contains("Fatal")) {
+        if (category.contains("Fatal") || category.contains("Parse")) {
             priority = Priority.HIGH;
         }
 
