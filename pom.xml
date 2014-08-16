@@ -40,7 +40,7 @@
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-core</artifactId>
-      <version>1.55</version>
+      <version>1.58</version>
     </dependency>
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
