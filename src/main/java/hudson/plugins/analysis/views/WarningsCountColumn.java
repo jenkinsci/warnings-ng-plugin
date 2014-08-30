@@ -34,7 +34,7 @@ public abstract class WarningsCountColumn<T extends AbstractProjectAction<?>> ex
             return null;
         }
         else {
-            return project.getUrl() + action.getUrlName();
+            return action.getUrlName();
         }
     }
 

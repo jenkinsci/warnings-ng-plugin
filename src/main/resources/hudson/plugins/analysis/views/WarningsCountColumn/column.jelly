@@ -1,11 +1,11 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+<j:jelly xmlns:j="jelly:core">
   <td tooltip="${it.getDetails(job)}">
     <j:if test="${!it.hasUrl(job)}">
       ${it.getNumberOfAnnotations(job)}
     </j:if>
     <j:if test="${it.hasUrl(job)}">
-      <a href="${it.getUrl(job)}">${it.getNumberOfAnnotations(job)}</a>
+      <a href="${jobBaseUrl}${job.shortUrl}${it.getUrl(job)}">${it.getNumberOfAnnotations(job)}</a>
     </j:if>
   </td>
 </j:jelly>
