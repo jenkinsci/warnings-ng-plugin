@@ -25,7 +25,7 @@ public class CodeAnalysisParserTest extends ParserTester {
     public void parseWarnings() throws IOException {
         Collection<FileAnnotation> warnings = new CodeAnalysisParser().parse(openFile());
 
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -35,6 +35,14 @@ public class CodeAnalysisParserTest extends ParserTester {
                 "C:/Src/Parser/CSharp/Test.csproj",
                 "CA1823",
                 "Performance",
+                Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                0,
+                "'CanvasHandler.Canvas.CreateImage(out bool, out ImageFormat)' has a cyclomatic complexity of 53. Rewrite or refactor the method to reduce complexity to 25.",
+                "D:/somefolder/someproject.csproj",
+                "CA1502",
+                "Maintainability",
                 Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,

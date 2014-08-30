@@ -18,7 +18,7 @@ import hudson.plugins.analysis.util.model.Priority;
 public class CodeAnalysisParser extends RegexpLineParser {
     private static final long serialVersionUID = -125874563249851L;
     private static final String WARNING_PATTERN = ANT_TASK
-            + "((MSBUILD)|((.+)\\((\\d+)\\)))\\s*:\\s*[Ww]arning\\s*:\\s*(\\w*)\\s*:\\s*(Microsoft\\.|)(\\w*(\\.\\w*)*)\\s*:\\s*(.*)\\[(.*)\\]\\s*$";
+            + "((MSBUILD)|((.+)\\((\\d+)\\)))\\s*:\\s*[Ww]arning\\s*:?\\s*(\\w*)\\s*:\\s*(Microsoft\\.|)(\\w*(\\.\\w*)*)\\s*:\\s*(.*)\\[(.*)\\]\\s*$";
 
     /**
      * Creates a new instance of {@link CodeAnalysisParser}.
