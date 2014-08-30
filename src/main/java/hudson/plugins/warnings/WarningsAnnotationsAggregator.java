@@ -61,12 +61,13 @@ public class WarningsAnnotationsAggregator extends MatrixAggregator {
         if (!actions.isEmpty()) {
             for (WarningsResultAction action : actions) {
                 if (!totalsPerParser.containsKey(action.getParser())) {
-                    WarningsResult result = action.getResult();
-                    ParserResult aggregation = new ParserResult();
-                    aggregation.addAnnotations(result.getAnnotations());
-                    aggregation.addModules(result.getModules());
-                    totalsPerParser.put(action.getParser(), aggregation);
+                    totalsPerParser.put(action.getParser(), new ParserResult());
                 }
+
+                ParserResult aggregation = totalsPerParser.get(action.getParser());
+                WarningsResult result = action.getResult();
+                aggregation.addAnnotations(result.getAnnotations());
+                aggregation.addModules(result.getModules());
             }
         }
         return true;
