@@ -3,6 +3,7 @@ package hudson.plugins.warnings.parser;
 import java.util.regex.Matcher;
 
 import hudson.Extension;
+import hudson.plugins.warnings.WarningsDescriptor;
 
 /**
  * A parser for the javac compiler warnings.
@@ -12,6 +13,8 @@ import hudson.Extension;
  */
 @Extension
 public class ScalacParser extends RegexpLineParser {
+    static final String SCALA_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "scala-24x24.png";
+    static final String SCALA_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + "scala-48x48.png";
 
     private static final String JAVAC_WARNING_PATTERN = "^(\\[WARNING\\]|\\[ERROR\\])\\s*(.*):(\\d+):\\s*([a-z]*):\\s*(.*)$";
 
@@ -32,5 +35,15 @@ public class ScalacParser extends RegexpLineParser {
         String category = matcher.group(4);
         String message = matcher.group(5);
         return createWarning(fileName, getLineNumber(lineNumber), category, message);
+    }
+
+    @Override
+    public String getSmallImage() {
+        return SCALA_SMALL_ICON;
+    }
+
+    @Override
+    public String getLargeImage() {
+        return SCALA_LARGE_ICON;
     }
 }
