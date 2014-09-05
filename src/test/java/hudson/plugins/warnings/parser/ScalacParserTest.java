@@ -19,7 +19,7 @@ public class ScalacParserTest extends ParserTester {
     @Test
     public void issue14043() throws IOException {
         Collection<FileAnnotation> warnings = parse("scalac.txt");
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
         for(FileAnnotation a : warnings)
             assertEquals(WRONG_CATEGORY_PARSING, a.getCategory() , "warning");
     }

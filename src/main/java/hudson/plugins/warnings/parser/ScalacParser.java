@@ -13,7 +13,7 @@ import hudson.Extension;
 @Extension
 public class ScalacParser extends RegexpLineParser {
 
-    private static final String JAVAC_WARNING_PATTERN = "^\\[WARNING\\]\\s*(.*):(\\d+):\\s*([a-z]*):\\s*(.*)$";
+    private static final String JAVAC_WARNING_PATTERN = "^(\\[WARNING\\]|\\[ERROR\\])\\s*(.*):(\\d+):\\s*([a-z]*):\\s*(.*)$";
 
     /**
      * Creates a new instance of {@link ScalacParser}.
@@ -27,10 +27,10 @@ public class ScalacParser extends RegexpLineParser {
 
     @Override
     protected Warning createWarning(Matcher matcher) {
-        String fileName = matcher.group(1);
-        String lineNumber = matcher.group(2);
-        String category = matcher.group(3);
-        String message = matcher.group(4);
+        String fileName = matcher.group(2);
+        String lineNumber = matcher.group(3);
+        String category = matcher.group(4);
+        String message = matcher.group(5);
         return createWarning(fileName, getLineNumber(lineNumber), category, message);
     }
 }
