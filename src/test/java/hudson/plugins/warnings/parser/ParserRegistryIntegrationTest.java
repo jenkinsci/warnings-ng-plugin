@@ -3,12 +3,17 @@ package hudson.plugins.warnings.parser;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.ReaderInputStream;
 import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
 import org.jvnet.hudson.test.TestExtension;
@@ -31,6 +36,23 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
     private static final String MIXED_API = "Both APIs";
     private static final String NEW_API = "New Parser API";
     private static final String OLD_API = "Old Parser API";
+
+    /**
+     * Parses a warning log with two warnings.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-24611">Issue 24611</a>
+     */
+    @Test
+    public void testIssue24611() throws IOException {
+        InputStream file = ParserRegistryIntegrationTest.class.getResourceAsStream("issue24611.txt");
+        ParserRegistry registry = new ParserRegistry(ParserRegistry.getParsers("Java Compiler (javac)"), null);
+        String text = IOUtils.toString(file);
+        Set<FileAnnotation> warnings = registry.parse(new ReaderInputStream(new StringReader(text)));
+
+        assertEquals("There should be 2 warnings", 2, warnings.size());
+    }
 
     /**
      * Verifies the current number of parsers.
