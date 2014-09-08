@@ -8,9 +8,8 @@ import static org.junit.Assert.*;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
+ * Tests the class {@link ScalacParser}.
  * Author: <a href="mailto:alexey.kislin@gmail.com">Alexey Kislin</a>
- * Date: 9/5/14
- * Time: 3:23 PM
  */
 public class ScalacParserTest extends ParserTester {
 

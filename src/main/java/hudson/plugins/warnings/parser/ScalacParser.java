@@ -6,7 +6,7 @@ import hudson.Extension;
 import hudson.plugins.warnings.WarningsDescriptor;
 
 /**
- * A parser for the javac compiler warnings.
+ * A parser for the scalac compiler warnings.
  * You should use -feature & -deprecation compiler opts.
  *
  * @author <a href="mailto:alexey.kislin@gmail.com">Alexey Kislin</a>
