@@ -1,7 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
@@ -9,6 +7,8 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -19,6 +19,20 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 public class AntJavacParserTest extends ParserTester {
     private static final String WARNING_TYPE = Messages._Warnings_JavaParser_ParserName().toString(Locale.ENGLISH);
+
+    /**
+     * Parses a warning log with two warnings.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-24611">Issue 24611</a>
+     */
+    @Test
+    public void testIssue24611() throws IOException {
+        Collection<FileAnnotation> warnings = new AntJavacParser().parse(openFile("issue24611.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
+    }
 
     /**
      * Parses a warning log with one warning that refers to a missing class file.
