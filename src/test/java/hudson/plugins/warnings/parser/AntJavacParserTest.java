@@ -1,11 +1,13 @@
 package hudson.plugins.warnings.parser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 
+import org.apache.commons.io.input.BOMInputStream;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -29,7 +31,9 @@ public class AntJavacParserTest extends ParserTester {
      */
     @Test
     public void testIssue24611() throws IOException {
-        Collection<FileAnnotation> warnings = new AntJavacParser().parse(openFile("issue24611.txt"));
+        InputStream file = AntJavacParser.class.getResourceAsStream("issue24611.txt");
+        InputStreamReader reader = new InputStreamReader(new BOMInputStream(file), "UTF8");
+        Collection<FileAnnotation> warnings = new AntJavacParser().parse(reader);
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
     }
