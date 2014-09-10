@@ -3,6 +3,7 @@ package hudson.plugins.warnings.parser;
 import java.util.regex.Matcher;
 
 import hudson.Extension;
+import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.warnings.WarningsDescriptor;
 
 /**
@@ -30,11 +31,12 @@ public class ScalacParser extends RegexpLineParser {
 
     @Override
     protected Warning createWarning(Matcher matcher) {
+        Priority p = matcher.group(1).equals("[ERROR]") ? Priority.HIGH : Priority.NORMAL;
         String fileName = matcher.group(2);
         String lineNumber = matcher.group(3);
         String category = matcher.group(4);
         String message = matcher.group(5);
-        return createWarning(fileName, getLineNumber(lineNumber), category, message);
+        return createWarning(fileName, getLineNumber(lineNumber), category, message, p);
     }
 
     @Override

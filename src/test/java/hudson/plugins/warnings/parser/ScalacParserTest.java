@@ -26,7 +26,7 @@ public class ScalacParserTest extends ParserTester {
         checkWarning(iter.next(), 408, "method asJavaMap in object JavaConversions is deprecated: use mapAsJavaMap instead",
                 "/home/user/.jenkins/jobs/job/workspace/another/path/SomeFile.scala", "warning", Priority.NORMAL);
         checkWarning(iter.next(), 59, "method error in object Predef is deprecated: Use `sys.error(message)` instead",
-                "/home/user/.jenkins/jobs/job/workspace/yet/another/path/SomeFile.scala", "warning", Priority.NORMAL);
+                "/home/user/.jenkins/jobs/job/workspace/yet/another/path/SomeFile.scala", "warning", Priority.HIGH);
     }
 
     private Collection<FileAnnotation> parse(final String fileName) throws IOException {
