@@ -10,6 +10,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/localizer" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/target/analysis-core" />
+      <excludeFolder url="file://$MODULE_DIR$/target/checkout" />
       <excludeFolder url="file://$MODULE_DIR$/target/classes" />
       <excludeFolder url="file://$MODULE_DIR$/target/generated-sources/groovy-stubs" />
       <excludeFolder url="file://$MODULE_DIR$/target/surefire" />
