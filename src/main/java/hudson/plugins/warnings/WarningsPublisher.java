@@ -44,7 +44,6 @@ import hudson.plugins.warnings.parser.ParsingCanceledException;
  */
 // CHECKSTYLE:COUPLING-OFF
 public class WarningsPublisher extends HealthAwareRecorder {
-    private static final String CONSOLE_LOG_ENCODING = "UTF-8";
     private static final String PLUGIN_NAME = "WARNINGS";
     private static final long serialVersionUID = -5936973521277401764L;
 
@@ -397,7 +396,7 @@ public class WarningsPublisher extends HealthAwareRecorder {
             logger.log("Parsing warnings in console log with parser " + parserName);
 
             Collection<FileAnnotation> warnings = new ParserRegistry(ParserRegistry.getParsers(parserName),
-                    CONSOLE_LOG_ENCODING, getIncludePattern(), getExcludePattern()).parse(build.getLogFile());
+                    getDefaultEncoding(), getIncludePattern(), getExcludePattern()).parse(build.getLogFile());
             if (!build.getWorkspace().isRemote()) {
                 guessModuleNames(build, warnings);
             }
