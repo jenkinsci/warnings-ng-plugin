@@ -33,6 +33,11 @@
       <comments>All YUI source code is under the BSD license. Duke, the Java mascot also is under the BSD license.
       </comments>
     </license>
+      <license>
+          <name>Scala License</name>
+          <url>http://www.scala-lang.org/license.html</url>
+          <comments>Scala icons are made by converting of http://www.scala-lang.org/resources/img/smooth-spiral.png</comments>
+      </license>
   </licenses>
 
   <dependencies>

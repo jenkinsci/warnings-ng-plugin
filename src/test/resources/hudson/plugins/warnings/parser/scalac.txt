@@ -1,0 +1,3 @@
+[WARNING] /home/user/.jenkins/jobs/job/workspace/some/path/SomeFile.scala:29: warning: implicit conversion method toLab2OI should be enabled
+[WARNING] /home/user/.jenkins/jobs/job/workspace/another/path/SomeFile.scala:408: warning: method asJavaMap in object JavaConversions is deprecated: use mapAsJavaMap instead
+[ERROR] /home/user/.jenkins/jobs/job/workspace/yet/another/path/SomeFile.scala:59: warning: method error in object Predef is deprecated: Use `sys.error(message)` instead
