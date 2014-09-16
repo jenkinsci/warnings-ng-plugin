@@ -1,0 +1,63 @@
+package hudson.plugins.warnings.parser;
+
+import java.util.regex.Matcher;
+
+import hudson.Extension;
+
+import hudson.plugins.warnings.WarningsDescriptor;
+
+/**
+ * A parser for the golint tool in the Go toolchain
+ *
+ * @author Ryan Cox
+ */
+@Extension
+public class GoLintParser extends RegexpLineParser {
+
+
+    private static final long serialVersionUID = -5895416507693444713L;
+    static final String GO_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "go-24x24.png";
+    static final String GO_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + "go-48x48.png";
+
+    // conn.go:360:3: should replace c.writeSeq += 1 with c.writeSeq++
+    private static final String GOLINT_WARNING_PATTERN = "^(.*?):(\\d+?):(\\d*?):\\s*(.*)$";
+
+
+    /**
+     * Creates a new instance of {@link GoLintParser}.
+     */
+    public GoLintParser() {
+
+        super(Messages._Warnings_GoLintParser_ParserName(),
+                Messages._Warnings_GoLintParser_LinkName(),
+                Messages._Warnings_GoLintParser_TrendName(),
+                GOLINT_WARNING_PATTERN, true);
+    }
+
+
+    @Override
+    protected Warning createWarning(final Matcher matcher) {
+        String message = matcher.group(4);
+        String category = classifyIfEmpty("", message);
+
+        Warning warning = createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, message);
+        warning.setColumnPosition(getLineNumber(matcher.group(3)));
+        return warning;
+    }
+
+    @Override
+    public String getSmallImage() {
+        return GO_SMALL_ICON;
+    }
+
+    @Override
+    public String getLargeImage() {
+        return GO_LARGE_ICON;
+    }
+
+    @Override
+    protected String getId() {
+        return "Go Lint";
+    }
+}
+

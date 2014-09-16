@@ -1,0 +1,3 @@
+ui_colored_test.go:46: missing argument for Fatalf("%#v"): format reads arg 2, have only 1 args
+ui_colored_test.go:59: missing argument for Fatalf("%#v"): format reads arg 2, have only 1 args
+exit status 1
