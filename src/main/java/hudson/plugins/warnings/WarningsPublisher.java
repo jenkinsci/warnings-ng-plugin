@@ -36,6 +36,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.warnings.parser.FileWarningsParser;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.plugins.warnings.parser.ParsingCanceledException;
+import hudson.plugins.warnings.parser.WarningsFilter;
 
 /**
  * Publishes the results of the warnings analysis (freestyle project type).
@@ -396,15 +397,26 @@ public class WarningsPublisher extends HealthAwareRecorder {
             logger.log("Parsing warnings in console log with parser " + parserName);
 
             Collection<FileAnnotation> warnings = new ParserRegistry(ParserRegistry.getParsers(parserName),
-                    getDefaultEncoding(), getIncludePattern(), getExcludePattern()).parse(build.getLogFile());
+                    getDefaultEncoding()).parse(build.getLogFile());
             if (!build.getWorkspace().isRemote()) {
                 guessModuleNames(build, warnings);
             }
             ParserResult project = new ParserResult(build.getWorkspace(), canResolveRelativePaths());
             project.addAnnotations(warnings);
-            results.add(annotate(build, project, parserName));
+
+            results.add(annotate(build, filterWarnings(project, logger), parserName));
         }
         return results;
+    }
+
+    private ParserResult filterWarnings(final ParserResult project, final PluginLogger logger) {
+        WarningsFilter filter = new WarningsFilter();
+        if (filter.isActive(getIncludePattern(), getExcludePattern())) {
+            Collection<FileAnnotation> filtered = filter.apply(project.getAnnotations(),
+                    getIncludePattern(), getExcludePattern(), logger);
+            return new ParserResult(filtered);
+        }
+        return project;
     }
 
     private void guessModuleNames(final AbstractBuild<?, ?> build, final Collection<FileAnnotation> warnings) {
@@ -426,13 +438,13 @@ public class WarningsPublisher extends HealthAwareRecorder {
             logger.log("Parsing warnings in files '" + filePattern + "' with parser " + parserName);
 
             FilesParser parser = new FilesParser(PLUGIN_NAME, filePattern,
-                    new FileWarningsParser(ParserRegistry.getParsers(parserName), getDefaultEncoding(), getIncludePattern(), getExcludePattern()),
+                    new FileWarningsParser(ParserRegistry.getParsers(parserName), getDefaultEncoding()),
                     shouldDetectModules(), isMavenBuild(build), canResolveRelativePaths());
             ParserResult project = build.getWorkspace().act(parser);
             logger.logLines(project.getLogMessages());
 
             returnIfCanceled();
-            results.add(annotate(build, project, configuration.getParserName()));
+            results.add(annotate(build, filterWarnings(project, logger), configuration.getParserName()));
         }
         return results;
     }

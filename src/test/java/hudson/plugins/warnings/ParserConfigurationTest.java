@@ -1,11 +1,12 @@
 package hudson.plugins.warnings;
 
-import static org.junit.Assert.*;
-
+import org.junit.Rule;
 import org.junit.Test;
-import org.jvnet.hudson.test.HudsonTestCase;
+import org.jvnet.hudson.test.JenkinsRule;
 
 import com.google.common.collect.Lists;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.warnings.parser.JavacParser;
 
@@ -14,8 +15,11 @@ import hudson.plugins.warnings.parser.JavacParser;
  *
  * @author Ulli Hafner
  */
-public class ParserConfigurationTest extends HudsonTestCase {
+public class ParserConfigurationTest {
     private static final String PATTERN = "**/*.java";
+
+    @Rule
+    public JenkinsRule jenkins = new JenkinsRule();
 
     /**
      * Verifies that filtering of non-existing parsers works.

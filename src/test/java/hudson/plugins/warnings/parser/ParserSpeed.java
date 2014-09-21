@@ -84,7 +84,7 @@ public class ParserSpeed {
      */
     @SuppressWarnings("SIC")
     private ParserRegistry createRegistry(final List<AbstractWarningsParser> parsers) {
-        ParserRegistry parserRegistry = new ParserRegistry(parsers, "", StringUtils.EMPTY, StringUtils.EMPTY) {
+        ParserRegistry parserRegistry = new ParserRegistry(parsers, StringUtils.EMPTY) {
             @Override
             @SuppressWarnings("Dm")
             protected Reader createReader(final File file) throws FileNotFoundException {

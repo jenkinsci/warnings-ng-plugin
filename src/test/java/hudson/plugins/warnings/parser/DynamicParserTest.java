@@ -129,7 +129,7 @@ public class DynamicParserTest extends PhpParserTest {
         FileUtils.writeStringToFile(file, IOUtils.toString(openFile("issue11926.txt")), "UTF-8");
 
         DynamicParser dynamicParser = createCustomParser();
-        ParserRegistry registry = new ParserRegistry(Lists.newArrayList(dynamicParser), "UTF-8", "", "");
+        ParserRegistry registry = new ParserRegistry(Lists.newArrayList(dynamicParser), "UTF-8");
 
         file.deleteOnExit();
 

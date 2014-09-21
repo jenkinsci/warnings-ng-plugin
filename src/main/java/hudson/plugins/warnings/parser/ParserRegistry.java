@@ -1,5 +1,6 @@
 package hudson.plugins.warnings.parser; // NOPMD
 
+import javax.annotation.CheckForNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,9 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.regex.Pattern;
-
-import javax.annotation.CheckForNull;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
@@ -27,15 +25,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import hudson.model.Hudson;
-
 import hudson.plugins.analysis.core.PluginDescriptor;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.NullLogger;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.warnings.WarningsDescriptor;
 import hudson.plugins.warnings.GroovyParser;
-
+import hudson.plugins.warnings.WarningsDescriptor;
 import hudson.util.ListBoxModel;
 
 /**
@@ -47,8 +43,6 @@ import hudson.util.ListBoxModel;
 public class ParserRegistry {
     private final List<AbstractWarningsParser> parsers;
     private final Charset defaultCharset;
-    private final Set<Pattern> includePatterns = Sets.newHashSet();
-    private final Set<Pattern> excludePatterns = Sets.newHashSet();
 
     /**
      * Returns all warning parsers registered by extension points
@@ -245,42 +239,10 @@ public class ParserRegistry {
      *            the default encoding to be used when reading and parsing files
      */
     public ParserRegistry(final List<? extends AbstractWarningsParser> parsers, final String defaultEncoding) {
-        this(parsers, defaultEncoding, StringUtils.EMPTY, StringUtils.EMPTY);
-    }
-
-    /**
-     * Creates a new instance of <code>ParserRegistry</code>.
-     *
-     * @param parsers
-     *            the parsers to use when scanning a file
-     * @param includePattern
-     *            Ant file-set pattern of files to include in report,
-     *            <code>null</code> or an empty string do not filter the output
-     * @param excludePattern
-     *            Ant file-set pattern of files to exclude from report,
-     *            <code>null</code> or an empty string do not filter the output
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     */
-    public ParserRegistry(final List<? extends AbstractWarningsParser> parsers, final String defaultEncoding,
-            final String includePattern, final String excludePattern) {
         defaultCharset = EncodingValidator.defaultCharset(defaultEncoding);
         this.parsers = new ArrayList<AbstractWarningsParser>(parsers);
         if (this.parsers.isEmpty()) {
             this.parsers.addAll(getAllParsers());
-        }
-        addPatterns(includePatterns, includePattern);
-        addPatterns(excludePatterns, excludePattern);
-    }
-
-    private void addPatterns(final Set<Pattern> patterns, final String pattern) {
-        if (StringUtils.isNotBlank(pattern)) {
-            String[] split = StringUtils.split(pattern, ',');
-            for (String singlePattern : split) {
-                String trimmed = StringUtils.trim(singlePattern);
-                String directoriesReplaced = StringUtils.replace(trimmed, "**", "*"); // NOCHECKSTYLE
-                patterns.add(Pattern.compile(StringUtils.replace(directoriesReplaced, "*", ".*"))); // NOCHECKSTYLE
-            }
         }
     }
 
@@ -323,7 +285,7 @@ public class ParserRegistry {
                 IOUtils.closeQuietly(input);
             }
         }
-        return applyExcludeFilter(allAnnotations, logger);
+        return allAnnotations;
     }
 
     /**
@@ -341,49 +303,10 @@ public class ParserRegistry {
             for (AbstractWarningsParser parser : parsers) {
                 allAnnotations.addAll(parser.parse(createReader(file)));
             }
-            return applyExcludeFilter(allAnnotations, new NullLogger());
+            return allAnnotations;
         }
         finally {
             IOUtils.closeQuietly(file);
-        }
-    }
-
-    /**
-     * Applies the exclude filter to the found annotations.
-     *
-     * @param allAnnotations
-     *            all annotations
-     * @return the filtered annotations if there is a filter defined
-     */
-    private Set<FileAnnotation> applyExcludeFilter(final Set<FileAnnotation> allAnnotations, final PluginLogger logger) {
-        Set<FileAnnotation> includedAnnotations;
-        if (includePatterns.isEmpty()) {
-            includedAnnotations = allAnnotations;
-        }
-        else {
-            includedAnnotations = Sets.newHashSet();
-            for (FileAnnotation annotation : allAnnotations) {
-                for (Pattern include : includePatterns) {
-                    if (include.matcher(annotation.getFileName()).matches()) {
-                        includedAnnotations.add(annotation);
-                    }
-                }
-            }
-        }
-        if (excludePatterns.isEmpty()) {
-            return includedAnnotations;
-        }
-        else {
-            Set<FileAnnotation> excludedAnnotations = Sets.newHashSet(includedAnnotations);
-            for (FileAnnotation annotation : includedAnnotations) {
-                for (Pattern exclude : excludePatterns) {
-                    if (exclude.matcher(annotation.getFileName()).matches()) {
-                        excludedAnnotations.remove(annotation);
-                    }
-                }
-            }
-            logger.log(String.format("Found %d warnings after exclusion.", excludedAnnotations.size()));
-            return excludedAnnotations;
         }
     }
 

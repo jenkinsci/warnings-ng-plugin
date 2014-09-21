@@ -14,10 +14,13 @@ import java.util.regex.Matcher;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ReaderInputStream;
+import org.junit.Rule;
 import org.junit.Test;
-import org.jvnet.hudson.test.HudsonTestCase;
+import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.TestExtension;
 import org.jvnet.localizer.Localizable;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.core.PluginDescriptor;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -27,7 +30,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  *
  * @author Ulli Hafner
  */
-public class ParserRegistryIntegrationTest extends HudsonTestCase {
+public class ParserRegistryIntegrationTest {
     /** If you add a new parser then this value needs to be adapted. */
     private static final int NUMBER_OF_AVAILABLE_PARSERS = 54;
     private static final String OLD_ID_ECLIPSE_JAVA_COMPILER = "Eclipse Java Compiler";
@@ -36,6 +39,9 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
     private static final String MIXED_API = "Both APIs";
     private static final String NEW_API = "New Parser API";
     private static final String OLD_API = "Old Parser API";
+
+    @Rule
+    public JenkinsRule jenkins = new JenkinsRule();
 
     /**
      * Parses a warning log with two warnings.
@@ -214,7 +220,7 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
     private ParserRegistry createRegistryUnderTest(final String fileName, final String group) {
-        ParserRegistry parserRegistry = new ParserRegistry(ParserRegistry.getParsers(group), "", "", "") {
+        ParserRegistry parserRegistry = new ParserRegistry(ParserRegistry.getParsers(group), "") {
                     @Override
             protected Reader createReader(final File file) throws FileNotFoundException {
                 return new InputStreamReader(ParserRegistryTest.class.getResourceAsStream(fileName));

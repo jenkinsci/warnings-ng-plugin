@@ -3,10 +3,13 @@ package hudson.plugins.warnings;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Rule;
 import org.junit.Test;
-import org.jvnet.hudson.test.HudsonTestCase;
+import org.jvnet.hudson.test.JenkinsRule;
 
 import com.google.common.collect.Lists;
+
+import static org.junit.Assert.*;
 
 import hudson.model.Action;
 
@@ -15,11 +18,14 @@ import hudson.model.Action;
  *
  * @author Ulli Hafner
  */
-public class WarningsPublisherTest extends HudsonTestCase {
+public class WarningsPublisherTest {
     private static final String SUFFIX_NAME = " Warnings";
     private static final String SECOND = "JSLint";
     private static final String FIRST = "Maven";
     private static final String PATTERN = "Pattern";
+
+    @Rule
+    public JenkinsRule jenkins = new JenkinsRule();
 
     /**
      * Verifies that the order of warnings is preserved.
