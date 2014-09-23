@@ -416,7 +416,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     public void doIndex(final StaplerRequest request, final StaplerResponse response) throws IOException {
         AbstractBuild<?, ?> build = getLastFinishedBuild();
         if (build != null) {
-            response.sendRedirect(String.format("../%d/%s", build.getNumber(), resultUrl));
+            response.sendRedirect2(String.format("../%d/%s", build.getNumber(), resultUrl));
         }
     }
 
