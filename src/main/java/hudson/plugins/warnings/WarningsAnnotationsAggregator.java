@@ -13,6 +13,7 @@ import hudson.matrix.MatrixBuild;
 
 import hudson.model.BuildListener;
 
+import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.HealthDescriptor;
 import hudson.plugins.analysis.core.ParserResult;
 
@@ -69,8 +70,19 @@ public class WarningsAnnotationsAggregator extends MatrixAggregator {
                 aggregation.addAnnotations(result.getAnnotations());
                 aggregation.addModules(result.getModules());
             }
+            createTotalsAction();
         }
         return true;
+    }
+
+    private void createTotalsAction() {
+        ParserResult totals = new ParserResult();
+        for (ParserResult result : totalsPerParser.values()) {
+            totals.addProject(result);
+        }
+        BuildHistory history = new BuildHistory(build, AggregatedWarningsResultAction.class, useStableBuildAsReference);
+        AggregatedWarningsResult result = new AggregatedWarningsResult(build, history, totals, defaultEncoding);
+        build.getActions().add(new AggregatedWarningsResultAction(build, result));
     }
 
     @Override
