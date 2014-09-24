@@ -10,6 +10,8 @@ import org.jvnet.localizer.Localizable;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
 import com.google.common.collect.Lists;
 
@@ -44,6 +46,7 @@ import hudson.util.Graph;
  * @author Ulli Hafner
  */
 // CHECKSTYLE:COUPLING-OFF
+@ExportedBean
 public abstract class AbstractProjectAction<T extends ResultAction<?>> implements Action {
     private static final Logger LOGGER = Logger.getLogger(AbstractProjectAction.class.getName());
 
@@ -91,7 +94,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
         this.resultUrl = resultUrl;
     }
 
-    @Override
+    @Override @Exported
     public String getDisplayName() {
         return asString(name);
     }
@@ -391,7 +394,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return the last finished build or <code>null</code> if there is no
      *         such build
      */
-    @CheckForNull
+    @CheckForNull @Exported
     public AbstractBuild<?, ?> getLastFinishedBuild() {
         if (project == null) {
             return null;

@@ -3,19 +3,19 @@ package hudson.plugins.analysis.core;
 import java.util.List;
 import java.util.Map;
 
-import jenkins.model.Jenkins;
-
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerProxy;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import jenkins.model.Jenkins;
+
 import hudson.maven.MavenBuild;
 import hudson.maven.MavenModule;
-
+import hudson.model.AbstractBuild;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
-import hudson.model.AbstractBuild;
-
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
@@ -32,6 +32,7 @@ import hudson.plugins.analysis.util.ToolTipProvider;
  * @author Ulli Hafner
  */
 //CHECKSTYLE:COUPLING-OFF
+@ExportedBean
 public abstract class AbstractResultAction<T extends BuildResult> implements StaplerProxy, HealthReportingAction, ToolTipProvider, ResultAction<T> {
     /** The associated build of this action. */
     private final AbstractBuild<?, ?> owner;
@@ -78,12 +79,17 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      */
     protected abstract PluginDescriptor getDescriptor();
 
+    @Exported
+    public String getName() {
+        return getDescriptor().getPluginName();
+    }
+
     @Override
     public String getUrlName() {
         return getDescriptor().getPluginResultUrlName();
     }
 
-    @Override
+    @Override @Exported
     public final HealthReport getBuildHealth() {
         return new HealthReportBuilder(getHealthDescriptor()).computeHealth(getResult());
     }
@@ -112,7 +118,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         return getResult();
     }
 
-    @Override
+    @Override @Exported
     public final T getResult() {
         return result;
     }
@@ -185,7 +191,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         return new ParserResult();
     }
 
-    @Override
+    @Override @Exported
     public String getTooltip(final int numberOfItems) {
         if (numberOfItems == 1) {
             return getSingleItemTooltip();
@@ -215,7 +221,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         return Messages.ResultAction_OneWarning();
     }
 
-    @Override
+    @Override @Exported
     public boolean isSuccessful() {
         return getResult().isSuccessful();
     }

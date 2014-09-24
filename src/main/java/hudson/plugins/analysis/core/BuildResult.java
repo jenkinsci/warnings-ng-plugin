@@ -447,6 +447,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the modules
      */
+    @Exported
     public Collection<String> getModules() {
         return modules;
     }

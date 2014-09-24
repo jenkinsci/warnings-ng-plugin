@@ -1,9 +1,11 @@
 package hudson.plugins.analysis.core;
 
-import static hudson.plugins.analysis.util.ThresholdValidator.*;
-
 import org.apache.commons.lang.StringUtils;
 import org.jvnet.localizer.Localizable;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
+
+import static hudson.plugins.analysis.util.ThresholdValidator.*;
 
 import hudson.plugins.analysis.util.model.AnnotationProvider;
 import hudson.plugins.analysis.util.model.Priority;
@@ -14,6 +16,7 @@ import hudson.plugins.analysis.util.model.Priority;
  *
  * @author Ulli Hafner
  */
+@ExportedBean
 public abstract class AbstractHealthDescriptor implements HealthDescriptor {
     /** Unique ID of this class. */
     private static final long serialVersionUID = -3709673381162699834L;
@@ -49,22 +52,22 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
         priority = Priority.LOW;
     }
 
-    @Override
+    @Override @Exported
     public Priority getMinimumPriority() {
         return priority;
     }
 
-    @Override
+    @Override @Exported
     public String getHealthy() {
         return healthy;
     }
 
-    @Override
+    @Override @Exported
     public String getUnHealthy() {
         return unHealthy;
     }
 
-    @Override
+    @Override @Exported
     public Thresholds getThresholds() {
         return thresholds;
     }

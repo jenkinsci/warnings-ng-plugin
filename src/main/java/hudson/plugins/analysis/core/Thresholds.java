@@ -1,10 +1,12 @@
 package hudson.plugins.analysis.core;
 
-import static hudson.plugins.analysis.util.ThresholdValidator.*;
-
 import java.io.Serializable;
 
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
+
+import static hudson.plugins.analysis.util.ThresholdValidator.*;
 
 /**
  * Data object that simply stores the thresholds.
@@ -14,22 +16,39 @@ import org.apache.commons.lang.StringUtils;
 // CHECKSTYLE:OFF
 @edu.umd.cs.findbugs.annotations.SuppressWarnings("")
 @SuppressWarnings("all")
+@ExportedBean
 public class Thresholds implements Serializable {
+    @Exported
     public String unstableTotalAll = StringUtils.EMPTY;
+    @Exported
     public String unstableTotalHigh = StringUtils.EMPTY;
+    @Exported
     public String unstableTotalNormal = StringUtils.EMPTY;
+    @Exported
     public String unstableTotalLow = StringUtils.EMPTY;
+    @Exported
     public String unstableNewAll = StringUtils.EMPTY;
+    @Exported
     public String unstableNewHigh = StringUtils.EMPTY;
+    @Exported
     public String unstableNewNormal = StringUtils.EMPTY;
+    @Exported
     public String unstableNewLow = StringUtils.EMPTY;
+    @Exported
     public String failedTotalAll = StringUtils.EMPTY;
+    @Exported
     public String failedTotalHigh = StringUtils.EMPTY;
+    @Exported
     public String failedTotalNormal = StringUtils.EMPTY;
+    @Exported
     public String failedTotalLow = StringUtils.EMPTY;
+    @Exported
     public String failedNewAll = StringUtils.EMPTY;
+    @Exported
     public String failedNewHigh = StringUtils.EMPTY;
+    @Exported
     public String failedNewNormal = StringUtils.EMPTY;
+    @Exported
     public String failedNewLow = StringUtils.EMPTY;
 
     /**
