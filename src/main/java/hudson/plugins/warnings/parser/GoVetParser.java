@@ -12,16 +12,12 @@ import hudson.plugins.warnings.WarningsDescriptor;
  * @author Ryan Cox
  */
 @Extension
-public class GoVetParser extends RegexpLineParser {
-
+public class GoVetParser extends GoBaseParser {
 
     private static final long serialVersionUID = 1451787851164850844L;
-    static final String GO_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "go-24x24.png";
-    static final String GO_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + "go-48x48.png";
 
     // ui_colored_test.go:59: missing argument for Fatalf("%#v"): format reads arg 2, have only 1 args
     private static final String GOVET_WARNING_PATTERN = "^(.+?):(\\d+?):\\s*(.*)$";
-
 
     /**
      * Creates a new instance of {@link GoVetParser}.
@@ -34,7 +30,6 @@ public class GoVetParser extends RegexpLineParser {
                 GOVET_WARNING_PATTERN, true);
     }
 
-
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String message = matcher.group(3);
@@ -43,20 +38,4 @@ public class GoVetParser extends RegexpLineParser {
         Warning warning = createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, message);
         return warning;
     }
-
-    @Override
-    public String getSmallImage() {
-        return GO_SMALL_ICON;
-    }
-
-    @Override
-    public String getLargeImage() {
-        return GO_LARGE_ICON;
-    }
-
-    @Override
-    protected String getId() {
-        return "Go Vet";
-    }
 }
-

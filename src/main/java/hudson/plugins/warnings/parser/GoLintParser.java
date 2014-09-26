@@ -12,16 +12,12 @@ import hudson.plugins.warnings.WarningsDescriptor;
  * @author Ryan Cox
  */
 @Extension
-public class GoLintParser extends RegexpLineParser {
-
+public class GoLintParser extends GoBaseParser {
 
     private static final long serialVersionUID = -5895416507693444713L;
-    static final String GO_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "go-24x24.png";
-    static final String GO_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + "go-48x48.png";
 
     // conn.go:360:3: should replace c.writeSeq += 1 with c.writeSeq++
     private static final String GOLINT_WARNING_PATTERN = "^(.*?):(\\d+?):(\\d*?):\\s*(.*)$";
-
 
     /**
      * Creates a new instance of {@link GoLintParser}.
@@ -34,7 +30,6 @@ public class GoLintParser extends RegexpLineParser {
                 GOLINT_WARNING_PATTERN, true);
     }
 
-
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String message = matcher.group(4);
@@ -43,21 +38,6 @@ public class GoLintParser extends RegexpLineParser {
         Warning warning = createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, message);
         warning.setColumnPosition(getLineNumber(matcher.group(3)));
         return warning;
-    }
-
-    @Override
-    public String getSmallImage() {
-        return GO_SMALL_ICON;
-    }
-
-    @Override
-    public String getLargeImage() {
-        return GO_LARGE_ICON;
-    }
-
-    @Override
-    protected String getId() {
-        return "Go Lint";
     }
 }
 
