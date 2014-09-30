@@ -324,8 +324,9 @@ public class FilesParser implements FileCallable<ParserResult> {
             result.addAnnotations(annotations);
 
             final int moduleCount = StringUtils.isBlank(module) ? 0 : 1;
+            final int duplicateCount = annotations.size() - result.getNumberOfAnnotations();
             log("Successfully parsed file " + file + p(moduleCount, " of module " + module) + " with "
-                    + p(annotations.size(), "%d warning") + ".");
+                    + p(result.getNumberOfAnnotations(), "%d unique warning") + p(duplicateCount, " and %d duplicate") + ".");
         }
         catch (InvocationTargetException exception) {
             String errorMessage = Messages.FilesParser_Error_Exception(file)
