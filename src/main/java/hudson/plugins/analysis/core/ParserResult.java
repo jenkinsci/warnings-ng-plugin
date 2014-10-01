@@ -118,10 +118,8 @@ public class ParserResult implements Serializable {
         this.workspace = workspace;
         this.canResolveRelativePaths = canResolveRelativePaths;
 
-        Priority[] priorities = Priority.values();
-
-        for (int priority = 0; priority < priorities.length; priority++) {
-            annotationCountByPriority.put(priorities[priority], 0);
+        for (Priority priority : Priority.values()) {
+            annotationCountByPriority.put(priority, 0);
         }
     }
 
