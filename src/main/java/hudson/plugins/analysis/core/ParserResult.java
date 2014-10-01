@@ -256,10 +256,8 @@ public class ParserResult implements Serializable {
      * @param annotation the annotation to add
      */
     public final void addAnnotation(final FileAnnotation annotation) {
-        if (!annotations.contains(annotation)) {
-            expandRelativePaths(annotation);
-
-            annotations.add(annotation);
+        expandRelativePaths(annotation);
+        if (annotations.add(annotation)) {
             Integer count = annotationCountByPriority.get(annotation.getPriority());
             annotationCountByPriority.put(annotation.getPriority(), count + 1);
         }
