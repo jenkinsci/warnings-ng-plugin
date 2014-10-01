@@ -1,5 +1,6 @@
 target
-
+*.iml
+.idea
 analysis-core.iws
 .DS_Store
 /work

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component inheritJdk="true">
+	<output-test url="file://$MODULE_DIR$/target/test-classes"/>
+	<contentEntry url="file://$MODULE_DIR$">
+		<testFolder url="file://$MODULE_DIR$/src/test/java"/>
+		<testFolder url="file://$MODULE_DIR$/src/test/resources"/>
+		<excludeFolder url="file://$MODULE_DIR$/target/analysis-core"/>
+		<excludeFolder url="file://$MODULE_DIR$/target/classes"/>
+		<excludeFolder url="file://$MODULE_DIR$/target/surefire"/>
+		<excludeFolder url="file://$MODULE_DIR$/target/surefire-reports"/>
+		<excludeFolder url="file://$MODULE_DIR$/target/test-classes"/>
+	</contentEntry>
+</component>
