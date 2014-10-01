@@ -166,6 +166,29 @@ public class FilesParser implements FileCallable<ParserResult> {
         stringLogger.log(message);
     }
 
+    /**
+     * Creates a formatted message in singular or plural form.
+     *
+     * @param count
+     *            the number of occurrences
+     * @param message
+     *            the message containing the format in singular form
+     * @return
+     *            the message in singular or plural form depending on the count,
+     *            or an empty string if the count is 0 and no format is specified
+     */
+    protected String p(final int count, String message) {
+        if (count == 0 && !message.contains("%")) {
+            return "";
+        }
+
+        if (count != 1) {
+            message += "s";
+        }
+
+        return String.format(message, count);
+    }
+
     @Override
     public ParserResult invoke(final File workspace, final VirtualChannel channel)
             throws IOException {
@@ -205,7 +228,7 @@ public class FilesParser implements FileCallable<ParserResult> {
             }
         }
         else {
-            log("Parsing " + fileNames.length + " files in " + workspace.getAbsolutePath());
+            log("Parsing " + p(fileNames.length, "%d file") + " in " + workspace.getAbsolutePath());
             parseFiles(workspace, fileNames, result);
         }
     }
@@ -300,8 +323,10 @@ public class FilesParser implements FileCallable<ParserResult> {
             Collection<FileAnnotation> annotations = parser.parse(file, module);
             result.addAnnotations(annotations);
 
-            log("Successfully parsed file " + file + " of module " + module + " with "
-                    + annotations.size() + " warnings.");
+            final int moduleCount = StringUtils.isBlank(module) ? 0 : 1;
+            final int duplicateCount = annotations.size() - result.getNumberOfAnnotations();
+            log("Successfully parsed file " + file + p(moduleCount, " of module " + module) + " with "
+                    + p(result.getNumberOfAnnotations(), "%d unique warning") + p(duplicateCount, " and %d duplicate") + ".");
         }
         catch (InvocationTargetException exception) {
             String errorMessage = Messages.FilesParser_Error_Exception(file)
