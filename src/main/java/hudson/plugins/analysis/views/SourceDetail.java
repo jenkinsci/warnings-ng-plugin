@@ -150,7 +150,7 @@ public class SourceDetail implements ModelObject {
                 }
                 output.append("</code>\n");
                 output.append("</td></tr>\n");
-                output.append("<tr><td bgcolor=\"");
+                output.append("<tr><td style=\"background-color:");
                 appendRangeColor(output, isFirstRange);
                 output.append("\">\n");
                 output.append("<div tooltip=\"");

@@ -67,7 +67,7 @@ public class ConsoleDetail implements ModelObject {
                 if (lineCount >= start) {
                     console.append("<tr><td ");
                     if (lineCount >= from && lineCount <= to) {
-                        console.append("bgcolor=\"#FCAF3E\"");
+                        console.append("style=\"background-color:#FCAF3E\"");
                     }
                     console.append(">\n");
                     console.append(StringEscapeUtils.escapeHtml(line));

@@ -1,5 +1,8 @@
 target
-
+*.eml
+.idea
 analysis-core.iws
 .DS_Store
 /work
+.classpath
+.project
