@@ -1,11 +1,10 @@
 package hudson.plugins.analysis.core;
 
-import static hudson.plugins.analysis.util.ThresholdValidator.*;
-
 import java.util.Collection;
 
-import hudson.model.Result;
+import static hudson.plugins.analysis.util.ThresholdValidator.*;
 
+import hudson.model.Result;
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -222,13 +221,13 @@ public class BuildResultEvaluator {
             Priority priority = priorities[0];
             if (annotationCount == 1) {
                 logger.append(Messages.BuildResultEvaluator_unstable_one_new_priority(threshold, delta,
-                        priorities[0].getLongLocalizedString(),
+                        priorities[0].getLocalizedString(),
                         newUrl, getPriorityUrl(priority)));
             }
             else {
                 logger.append(Messages.BuildResultEvaluator_unstable_new_priority(
                         annotationCount, threshold, delta,
-                        priorities[0].getLongLocalizedString(),
+                        priorities[0].getLocalizedString(),
                         newUrl, getPriorityUrl(priority)));
             }
         }
@@ -249,12 +248,12 @@ public class BuildResultEvaluator {
             Priority priority = priorities[0];
             if (annotationCount == 1) {
                 logger.append(Messages.BuildResultEvaluator_unstable_one_all_priority(
-                        threshold, delta, priorities[0].getLongLocalizedString(), url,
+                        threshold, delta, priorities[0].getLocalizedString(), url,
                         getPriorityUrl(priority)));
             }
             else {
                 logger.append(Messages.BuildResultEvaluator_unstable_all_priority(annotationCount,
-                        threshold, delta, priorities[0].getLongLocalizedString(), url,
+                        threshold, delta, priorities[0].getLocalizedString(), url,
                         getPriorityUrl(priority)));
             }
         }
