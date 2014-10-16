@@ -191,7 +191,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         return new ParserResult();
     }
 
-    @Override @Exported
+    @Override
     public String getTooltip(final int numberOfItems) {
         if (numberOfItems == 1) {
             return getSingleItemTooltip();
