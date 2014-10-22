@@ -50,6 +50,8 @@ public class GroovyExpressionMatcher implements Serializable {
                  catch (CompilationFailedException exception) {
                      LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during compiling: ", exception);
                  }
+
+                 compiled.getBinding().setVariable("falsePositive", falsePositive);
             }
         }
     }
@@ -88,11 +90,10 @@ public class GroovyExpressionMatcher implements Serializable {
     public Object run(final Matcher matcher, final int lineNumber) {
         compileScriptIfNotYetDone();
 
-        Binding binding = new Binding();
+        Binding binding = compiled.getBinding();
         binding.setVariable("matcher", matcher);
         binding.setVariable("lineNumber", lineNumber);
 
-        compiled.setBinding(binding);
         return compiled.run();
     }
 
