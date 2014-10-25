@@ -177,7 +177,7 @@ public class FilesParser implements FileCallable<ParserResult> {
      *            the message in singular or plural form depending on the count,
      *            or an empty string if the count is 0 and no format is specified
      */
-    protected String p(final int count, String message) {
+    protected String plural(final int count, String message) {
         if (count == 0 && !message.contains("%")) {
             return "";
         }
@@ -228,7 +228,7 @@ public class FilesParser implements FileCallable<ParserResult> {
             }
         }
         else {
-            log("Parsing " + p(fileNames.length, "%d file") + " in " + workspace.getAbsolutePath());
+            log("Parsing " + plural(fileNames.length, "%d file") + " in " + workspace.getAbsolutePath());
             parseFiles(workspace, fileNames, result);
         }
     }
@@ -321,12 +321,12 @@ public class FilesParser implements FileCallable<ParserResult> {
             throws InterruptedException {
         try {
             Collection<FileAnnotation> annotations = parser.parse(file, module);
-            result.addAnnotations(annotations);
+            int duplicateCount = annotations.size() - result.addAnnotations(annotations);
+            int moduleCount = StringUtils.isBlank(module) ? 0 : 1;
 
-            final int moduleCount = StringUtils.isBlank(module) ? 0 : 1;
-            final int duplicateCount = annotations.size() - result.getNumberOfAnnotations();
-            log("Successfully parsed file " + file + p(moduleCount, " of module " + module) + " with "
-                    + p(result.getNumberOfAnnotations(), "%d unique warning") + p(duplicateCount, " and %d duplicate") + ".");
+            log("Successfully parsed file " + file + plural(moduleCount, " of module " + module) + " with "
+                    + plural(result.getNumberOfAnnotations(), "%d unique warning")
+                    + plural(duplicateCount, " and %d duplicate") + ".");
         }
         catch (InvocationTargetException exception) {
             String errorMessage = Messages.FilesParser_Error_Exception(file)

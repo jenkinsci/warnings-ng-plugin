@@ -254,24 +254,30 @@ public class ParserResult implements Serializable {
      * Adds the specified annotation to this container.
      *
      * @param annotation the annotation to add
+     * @return the number of added annotations
      */
-    public final void addAnnotation(final FileAnnotation annotation) {
+    public final int addAnnotation(final FileAnnotation annotation) {
         expandRelativePaths(annotation);
         if (annotations.add(annotation)) {
             Integer count = annotationCountByPriority.get(annotation.getPriority());
             annotationCountByPriority.put(annotation.getPriority(), count + 1);
+            return 1;
         }
+        return 0;
     }
 
     /**
      * Adds the specified annotations to this container.
      *
      * @param newAnnotations the annotations to add
+     * @return the number of added annotations
      */
-    public final void addAnnotations(final Collection<? extends FileAnnotation> newAnnotations) {
+    public final int addAnnotations(final Collection<? extends FileAnnotation> newAnnotations) {
+        int count = 0;
         for (FileAnnotation annotation : newAnnotations) {
-            addAnnotation(annotation);
+            count += addAnnotation(annotation);
         }
+        return count;
     }
 
     /**

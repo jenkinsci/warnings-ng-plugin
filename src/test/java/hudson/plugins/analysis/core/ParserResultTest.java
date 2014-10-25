@@ -1,11 +1,15 @@
 package hudson.plugins.analysis.core;
 
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.Test;
+
+import com.google.common.collect.Lists;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 import hudson.plugins.analysis.core.ParserResult.Workspace;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -22,6 +26,36 @@ public class ParserResultTest {
     private static final String SCANNED_FILENAME_WINDOWS = "relative\\path\\to\\file.txt";
     private static final String WORSPACE_ROOT = "ws";
     private static final String FOUND_FILE_NAME = WORSPACE_ROOT + "/" + SCANNED_FILENAME;
+
+    /**
+     * Verifies that the number of annotations is correctly returned.
+     *
+     * @throws Exception
+     *             in case of an error
+     */
+    @Test
+    public void testCountingOfAddAnnotation() {
+        ParserResult result = new ParserResult();
+        FileAnnotation warning = mockWarning("file.txt");
+        assertEquals("Warning correctly added.", 1, result.addAnnotation(warning));
+        assertEquals("Warning correctly not added.", 0, result.addAnnotation(warning));
+    }
+
+    /**
+     * Verifies that the number of annotations is correctly returned.
+     *
+     * @throws Exception
+     *             in case of an error
+     */
+    @Test
+    public void testCountingOfAddAnnotations() {
+        ParserResult result = new ParserResult();
+        List<FileAnnotation> warnings = Lists.newArrayList();
+        warnings.add(mockWarning("1"));
+        warnings.add(mockWarning("2"));
+        assertEquals("Warnings correctly added.", 2, result.addAnnotations(warnings));
+        assertEquals("Warnings correctly not added.", 0, result.addAnnotations(warnings));
+    }
 
     /**
      * Verifies that a simple file without path is correctly mapped.
