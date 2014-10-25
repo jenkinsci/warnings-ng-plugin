@@ -1,11 +1,11 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
@@ -44,6 +44,20 @@ public class MavenConsoleParserTest extends ParserTester {
     @Test
     public void issue16826() throws IOException {
         Collection<FileAnnotation> warnings = new MavenConsoleParser().parse(openFile("issue16826.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+    }
+
+    /**
+     * Parses a file with three warnings, two of them will be ignored beacuse they are blank.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-16826">Issue 16826</a>
+     */
+    @Test
+    public void largeFile() throws IOException {
+        Collection<FileAnnotation> warnings = new MavenConsoleParser().parse(openFile("maven-large.log"));
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
     }

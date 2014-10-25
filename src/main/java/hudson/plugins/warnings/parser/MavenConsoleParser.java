@@ -1,6 +1,7 @@
 package hudson.plugins.warnings.parser;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -9,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.collect.Lists;
 
 import hudson.Extension;
-
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
@@ -60,13 +60,13 @@ public class MavenConsoleParser extends RegexpLineParser {
 
     @Override
     protected Collection<FileAnnotation> postProcessWarnings(final List<FileAnnotation> warnings) {
-        List<FileAnnotation> condensed = Lists.newArrayList();
+        LinkedList<FileAnnotation> condensed = new LinkedList<FileAnnotation>();
         int line = -1;
         for (FileAnnotation warning : warnings) {
             if (warning.getPrimaryLineNumber() == line + 1 && !condensed.isEmpty()) {
-                FileAnnotation previous = condensed.get(condensed.size() - 1);
+                FileAnnotation previous = condensed.getLast();
                 if (previous.getPriority() == warning.getPriority()) {
-                    condensed.remove(condensed.size() - 1);
+                    condensed.removeLast();
                     condensed.add(new Warning(previous, warning.getMessage(), warning.getPrimaryLineNumber()));
                 }
             }
