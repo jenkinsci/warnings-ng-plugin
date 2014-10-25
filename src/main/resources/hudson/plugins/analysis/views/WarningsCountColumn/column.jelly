@@ -5,7 +5,7 @@
       ${it.getNumberOfAnnotations(job)}
     </j:if>
     <j:if test="${it.hasUrl(job)}">
-      <a href="${jobBaseUrl}${job.shortUrl}${it.getUrl(job)}">${it.getNumberOfAnnotations(job)}</a>
+      <a href="${rootURL}/${it.getUrl(job)}">${it.getNumberOfAnnotations(job)}</a>
     </j:if>
   </td>
 </j:jelly>

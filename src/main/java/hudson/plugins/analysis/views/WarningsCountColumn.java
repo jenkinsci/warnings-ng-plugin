@@ -1,13 +1,11 @@
 package hudson.plugins.analysis.views;
 
 import hudson.model.Job;
-
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.HtmlPrinter;
 import hudson.plugins.analysis.util.model.Priority;
-
 import hudson.views.ListViewColumn;
 
 /**
@@ -34,7 +32,7 @@ public abstract class WarningsCountColumn<T extends AbstractProjectAction<?>> ex
             return null;
         }
         else {
-            return action.getUrlName();
+            return project.getUrl() + action.getUrlName();
         }
     }
 
