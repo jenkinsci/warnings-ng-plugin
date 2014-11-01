@@ -3,6 +3,7 @@ package hudson.plugins.warnings.parser;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -53,9 +54,9 @@ public class MavenConsoleParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-16826">Issue 16826</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-25278">Issue 25278</a>
      */
-    @Test
+    @Test @Ignore("Until JENKINS-25278 is fixed")
     public void largeFile() throws IOException {
         Collection<FileAnnotation> warnings = new MavenConsoleParser().parse(openFile("maven-large.log"));
 
