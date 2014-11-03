@@ -13,6 +13,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
@@ -256,6 +257,7 @@ public class ParserResult implements Serializable {
      * @param annotation the annotation to add
      * @return the number of added annotations
      */
+    @WithBridgeMethods(value=void.class) // JENKINS-25405
     public final int addAnnotation(final FileAnnotation annotation) {
         expandRelativePaths(annotation);
         if (annotations.add(annotation)) {
@@ -272,6 +274,7 @@ public class ParserResult implements Serializable {
      * @param newAnnotations the annotations to add
      * @return the number of added annotations
      */
+    @WithBridgeMethods(value=void.class) // JENKINS-25405
     public final int addAnnotations(final Collection<? extends FileAnnotation> newAnnotations) {
         int count = 0;
         for (FileAnnotation annotation : newAnnotations) {
