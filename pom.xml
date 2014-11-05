@@ -77,6 +77,20 @@
           </excludes>
         </configuration>
       </plugin>
+
+      <!-- JENKINS-25405 -->
+      <plugin>
+        <groupId>com.infradna.tool</groupId>
+        <artifactId>bridge-method-injector</artifactId>
+        <version>1.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>process</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
