@@ -1,9 +1,8 @@
 package hudson.plugins.warnings.tokens;
 
 import hudson.Extension;
-
 import hudson.plugins.analysis.tokens.AbstractResultTokenMacro;
-import hudson.plugins.warnings.WarningsResultAction;
+import hudson.plugins.warnings.AggregatedWarningsResultAction;
 
 /**
  * Provides a token that evaluates to the compiler warnings build result.
@@ -17,7 +16,7 @@ public class WarningsResultTokenMacro extends AbstractResultTokenMacro {
      */
     @SuppressWarnings("unchecked")
     public WarningsResultTokenMacro() {
-        super("WARNINGS_RESULT", WarningsResultAction.class);
+        super("WARNINGS_RESULT", AggregatedWarningsResultAction.class);
     }
 }
 

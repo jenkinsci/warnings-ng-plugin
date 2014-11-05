@@ -1,9 +1,8 @@
 package hudson.plugins.warnings.tokens;
 
 import hudson.Extension;
-
 import hudson.plugins.analysis.tokens.AbstractNewAnnotationsTokenMacro;
-import hudson.plugins.warnings.WarningsResultAction;
+import hudson.plugins.warnings.AggregatedWarningsResultAction;
 
 /**
  * Provides a token that evaluates to the number of new warnings.
@@ -17,7 +16,7 @@ public class NewWarningsTokenMacro extends AbstractNewAnnotationsTokenMacro {
      */
     @SuppressWarnings("unchecked")
     public NewWarningsTokenMacro() {
-        super("WARNINGS_NEW", WarningsResultAction.class);
+        super("WARNINGS_NEW", AggregatedWarningsResultAction.class);
     }
 }
 

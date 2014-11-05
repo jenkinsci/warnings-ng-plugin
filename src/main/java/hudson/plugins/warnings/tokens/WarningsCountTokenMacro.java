@@ -1,9 +1,8 @@
 package hudson.plugins.warnings.tokens;
 
 import hudson.Extension;
-
 import hudson.plugins.analysis.tokens.AbstractAnnotationsCountTokenMacro;
-import hudson.plugins.warnings.WarningsResultAction;
+import hudson.plugins.warnings.AggregatedWarningsResultAction;
 
 /**
  * Provides a token that evaluates to the number of compiler warnings.
@@ -17,7 +16,7 @@ public class WarningsCountTokenMacro extends AbstractAnnotationsCountTokenMacro 
      */
     @SuppressWarnings("unchecked")
     public WarningsCountTokenMacro() {
-        super("WARNINGS_COUNT", WarningsResultAction.class);
+        super("WARNINGS_COUNT", AggregatedWarningsResultAction.class);
     }
 }
 
