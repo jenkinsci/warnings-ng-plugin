@@ -67,7 +67,13 @@ public class MavenConsoleParser extends RegexpLineParser {
                 FileAnnotation previous = condensed.getLast();
                 if (previous.getPriority() == warning.getPriority()) {
                     condensed.removeLast();
-                    condensed.add(new Warning(previous, warning.getMessage(), warning.getPrimaryLineNumber()));
+                    if (previous.getMessage().length() + warning.getMessage().length() >= getMaxMessageLength()) {
+                        condensed.add(new Warning(previous, warning.getPrimaryLineNumber()));
+                    } else {
+                        condensed.add(new Warning(previous, warning.getMessage(), warning.getPrimaryLineNumber()));
+                    }
+                } else {
+                    condensed.add(warning);
                 }
             }
             else {
@@ -82,6 +88,15 @@ public class MavenConsoleParser extends RegexpLineParser {
             }
         }
         return noBlank;
+    }
+
+    /**
+     * Returns the maximum length authorized for a message.
+     *
+     * @return the maximum length for a message
+     */
+    protected int getMaxMessageLength() {
+        return 4000;
     }
 }
 

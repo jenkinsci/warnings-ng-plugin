@@ -85,6 +85,13 @@ public class Warning extends AbstractAnnotation {
         setOrigin(ORIGIN);
     }
 
+    public Warning(final FileAnnotation copy, final int currentLine) {
+        super(copy.getPriority(), copy.getMessage(), copy.getPrimaryLineNumber(), currentLine, copy.getCategory(),
+                copy.getType());
+        setFileName(copy.getFileName());
+        setOrigin(ORIGIN);
+    }
+
     @Override
     public String getToolTip() {
         return StringUtils.defaultString(toolTip);
