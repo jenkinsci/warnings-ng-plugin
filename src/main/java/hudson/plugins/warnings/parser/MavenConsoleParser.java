@@ -23,6 +23,7 @@ public class MavenConsoleParser extends RegexpLineParser {
     private static final String CONSOLE = "";
     private static final String WARNING = "WARNING";
     private static final String ERROR = "ERROR";
+    private static final int MAX_MESSAGE_LENGTH = 4000;
 
     private static final long serialVersionUID = 1737791073711198075L;
 
@@ -67,7 +68,7 @@ public class MavenConsoleParser extends RegexpLineParser {
                 FileAnnotation previous = condensed.getLast();
                 if (previous.getPriority() == warning.getPriority()) {
                     condensed.removeLast();
-                    if (previous.getMessage().length() + warning.getMessage().length() >= getMaxMessageLength()) {
+                    if (previous.getMessage().length() + warning.getMessage().length() >= MAX_MESSAGE_LENGTH) {
                         condensed.add(new Warning(previous, warning.getPrimaryLineNumber()));
                     } else {
                         condensed.add(new Warning(previous, warning.getMessage(), warning.getPrimaryLineNumber()));
@@ -88,15 +89,6 @@ public class MavenConsoleParser extends RegexpLineParser {
             }
         }
         return noBlank;
-    }
-
-    /**
-     * Returns the maximum length authorized for a message.
-     *
-     * @return the maximum length for a message
-     */
-    protected int getMaxMessageLength() {
-        return 4000;
     }
 }
 
