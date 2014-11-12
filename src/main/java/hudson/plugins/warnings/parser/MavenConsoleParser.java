@@ -59,6 +59,7 @@ public class MavenConsoleParser extends RegexpLineParser {
         return createWarning(CONSOLE, getCurrentLine(), category, matcher.group(2), priority);
     }
 
+    // FIXME: post processing is quite slow for large number of warnings, see JENKINS-25278
     @Override
     protected Collection<FileAnnotation> postProcessWarnings(final List<FileAnnotation> warnings) {
         LinkedList<FileAnnotation> condensed = new LinkedList<FileAnnotation>();
@@ -70,10 +71,12 @@ public class MavenConsoleParser extends RegexpLineParser {
                     condensed.removeLast();
                     if (previous.getMessage().length() + warning.getMessage().length() >= MAX_MESSAGE_LENGTH) {
                         condensed.add(new Warning(previous, warning.getPrimaryLineNumber()));
-                    } else {
+                    }
+                    else {
                         condensed.add(new Warning(previous, warning.getMessage(), warning.getPrimaryLineNumber()));
                     }
-                } else {
+                }
+                else {
                     condensed.add(warning);
                 }
             }
