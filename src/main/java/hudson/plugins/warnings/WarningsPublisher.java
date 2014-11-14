@@ -15,19 +15,19 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import hudson.Launcher;
-import hudson.Util; // replace macro
+import hudson.Util;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
-
-import hudson.model.Action;
-import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-
+import hudson.model.Action;
+import hudson.model.BuildListener;
 import hudson.plugins.analysis.core.AnnotationsClassifier;
 import hudson.plugins.analysis.core.BuildHistory;
+import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.FilesParser;
-import hudson.plugins.analysis.core.HealthAwareRecorder;
+import hudson.plugins.analysis.core.HealthAwarePublisher;
+import hudson.plugins.analysis.core.NullBuildHistory;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.ModuleDetector;
 import hudson.plugins.analysis.util.NullModuleDetector;
@@ -44,7 +44,7 @@ import hudson.plugins.warnings.parser.WarningsFilter;
  * @author Ulli Hafner
  */
 // CHECKSTYLE:COUPLING-OFF
-public class WarningsPublisher extends HealthAwareRecorder {
+public class WarningsPublisher extends HealthAwarePublisher {
     private static final String PLUGIN_NAME = "WARNINGS";
     private static final long serialVersionUID = -5936973521277401764L;
 
@@ -310,7 +310,7 @@ public class WarningsPublisher extends HealthAwareRecorder {
     }
 
     @Override
-    protected boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final PluginLogger logger)
+    protected BuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger)
             throws InterruptedException, IOException {
         try {
             if (!hasConsoleParsers() && !hasFileParsers()) {
@@ -324,30 +324,24 @@ public class WarningsPublisher extends HealthAwareRecorder {
             add(totals, consoleResults);
             add(totals, fileResults);
 
-            if (isThresholdEnabled()) {
-                evaluateBuildHealth(build, logger);
-            }
-
             BuildHistory history = new BuildHistory(build, AggregatedWarningsResultAction.class, useOnlyStableBuildsAsReference());
             AggregatedWarningsResult result = new AggregatedWarningsResult(build, history, totals, getDefaultEncoding());
             build.getActions().add(new AggregatedWarningsResultAction(build, result));
 
-            copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), totals.getAnnotations());
-
-            return true;
+            return result;
         }
         catch (ParsingCanceledException exception) {
-            return stopParsing(logger, exception);
+            return emptyBuildResult(build, logger, exception);
         }
         catch (InterruptedException exception) {
-            return stopParsing(logger, exception);
+            return emptyBuildResult(build, logger, exception);
         }
     }
 
-    private boolean stopParsing(final PluginLogger logger, final Exception exception) {
+    private BuildResult emptyBuildResult(final AbstractBuild<?, ?> build, final PluginLogger logger, final Exception exception) {
         logger.log(exception.getMessage());
 
-        return false;
+        return new AggregatedWarningsResult(build, new NullBuildHistory(), new ParserResult(), getDefaultEncoding());
     }
 
     private void evaluateBuildHealth(final AbstractBuild<?, ?> build, final PluginLogger logger) {
