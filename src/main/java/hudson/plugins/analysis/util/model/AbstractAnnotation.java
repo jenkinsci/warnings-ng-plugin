@@ -6,16 +6,14 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import com.google.common.collect.ImmutableList;
 
-import hudson.model.Item;
 import hudson.model.AbstractBuild;
-
+import hudson.model.Item;
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.AbstractAnnotationParser;
 import hudson.plugins.analysis.util.PackageDetectors;
@@ -94,7 +92,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("ST")
     public AbstractAnnotation(final String message, final int start, final int end, final String category, final String type) {
-        this.message = TreeString.of(StringUtils.strip(StringEscapeUtils.escapeXml(message)));
+        this.message = TreeString.of(StringUtils.strip(message));
         this.category = StringUtils.defaultString(category);
         this.type = StringUtils.defaultString(type);
 
