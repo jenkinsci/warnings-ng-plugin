@@ -1,12 +1,12 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -18,6 +18,21 @@ public class GccParserTest extends ParserTester {
     private static final String TYPE = new GccParser().getGroup();
     private static final String GCC_ERROR = GccParser.GCC_ERROR;
     private static final String GCC_WARNING = "GCC warning";
+
+    /**
+     * Verifies that the message contains escaped XML characters.
+     *
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-17309">Issue 17309</a>
+     */
+    @Test
+    public void issue17309() throws IOException {
+        Collection<FileAnnotation> warnings = new GccParser().parse(openFile("issue17309.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        FileAnnotation annotation = warnings.iterator().next();
+        checkWarning(annotation, 4, "dereferencing pointer &apos;&lt;anonymous&gt;&apos; does break strict-aliasing rules",
+                "foo.cc", TYPE, GCC_ERROR, Priority.HIGH);
+    }
 
     /**
      * Parses a file with one warning that are started by ant.
@@ -53,7 +68,7 @@ public class GccParserTest extends ParserTester {
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation,
                 451,
-                "`void yyunput(int, char*)' defined but not used",
+                "`void yyunput(int, char*)&apos; defined but not used",
                 "testhist.l",
                 TYPE, GCC_WARNING, Priority.NORMAL);
         annotation = iterator.next();
@@ -71,7 +86,7 @@ public class GccParserTest extends ParserTester {
         annotation = iterator.next();
         checkWarning(annotation,
                 0,
-                "undefined reference to 'missing_symbol'",
+                "undefined reference to &apos;missing_symbol&apos;",
                 "foo.so",
                 TYPE, GCC_ERROR, Priority.HIGH);
         annotation = iterator.next();
@@ -120,7 +135,7 @@ public class GccParserTest extends ParserTester {
                 TYPE, GccParser.GCC_ERROR, Priority.HIGH);
         checkWarning(iterator.next(),
                 233,
-                "undefined reference to `MyInterface::getValue() const'",
+                "undefined reference to `MyInterface::getValue() const&apos;",
                 "/dir1/dir3/file.cpp",
                 TYPE, GccParser.GCC_ERROR, Priority.HIGH);
         checkWarning(iterator.next(),
@@ -145,12 +160,12 @@ public class GccParserTest extends ParserTester {
         Iterator<FileAnnotation> iterator = warnings.iterator();
         checkWarning(iterator.next(),
                 352,
-                "'s2.mepSector2::lubrications' may be used",
+                "&apos;s2.mepSector2::lubrications&apos; may be used",
                 "main/mep.cpp",
                 TYPE, GCC_WARNING, Priority.NORMAL);
         checkWarning(iterator.next(),
                 1477,
-                "'s2.mepSector2::lubrications' was declared here",
+                "&apos;s2.mepSector2::lubrications&apos; was declared here",
                 "main/mep.cpp",
                 TYPE, "GCC note", Priority.LOW);
     }
@@ -224,22 +239,22 @@ public class GccParserTest extends ParserTester {
         Iterator<FileAnnotation> iterator = warnings.iterator();
         checkWarning(iterator.next(),
                 638,
-                "local declaration of \"command\" hides instance variable",
+                "local declaration of &quot;command&quot; hides instance variable",
                 "folder1/file1.m",
                 TYPE, GCC_WARNING, Priority.NORMAL);
         checkWarning(iterator.next(),
                 640,
-                "instance variable \"command\" accessed in class method",
+                "instance variable &quot;command&quot; accessed in class method",
                 "folder1/file1.m",
                 TYPE, GCC_WARNING, Priority.NORMAL);
         checkWarning(iterator.next(),
                 47,
-                "\"oldGeb\" might be used uninitialized in this function",
+                "&quot;oldGeb&quot; might be used uninitialized in this function",
                 "file1.m",
                 TYPE, GCC_WARNING, Priority.NORMAL);
         checkWarning(iterator.next(),
                 640,
-                "local declaration of \"command\" hides instance variable",
+                "local declaration of &quot;command&quot; hides instance variable",
                 "file1.m",
                 TYPE, GCC_WARNING, Priority.NORMAL);
     }

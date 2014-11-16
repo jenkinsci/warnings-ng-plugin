@@ -5,7 +5,6 @@ import java.util.regex.Matcher;
 import org.apache.commons.lang.StringUtils;
 
 import hudson.Extension;
-
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
@@ -58,13 +57,14 @@ public class GccParser extends RegexpLineParser {
             if (matcher.group(4).contains("instantiated from here")) {
                 return FALSE_POSITIVE;
             }
-            return createWarning(fileName, getLineNumber(matcher.group(2)), GCC_ERROR, matcher.group(4), Priority.HIGH);
+            return createWarning(fileName, getLineNumber(matcher.group(2)), GCC_ERROR, escapeXml(matcher.group(4)), Priority.HIGH);
         }
         else {
-            return createWarning(fileName, 0, GCC_ERROR, matcher.group(5), Priority.HIGH);
+            return createWarning(fileName, 0, GCC_ERROR, escapeXml(matcher.group(5)), Priority.HIGH);
         }
         String category = "GCC " + matcher.group(3);
-        return createWarning(fileName, getLineNumber(matcher.group(2)), category, matcher.group(6), priority);
+        return createWarning(fileName, getLineNumber(matcher.group(2)), category, escapeXml(matcher.group(6)), priority);
     }
+
 }
 

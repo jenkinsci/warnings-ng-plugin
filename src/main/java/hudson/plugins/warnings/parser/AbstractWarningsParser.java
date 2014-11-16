@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jvnet.localizer.Localizable;
 
 import hudson.ExtensionPoint;
@@ -318,6 +319,17 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
             }
         }
         return 0;
+    }
+
+    /**
+     * Escapes the characters in a {@code String} using XML entities.
+     *
+     * @param text the text to escape
+     * @return the escaped text
+     * @see StringEscapeUtils#escapeXml11
+     */
+    protected String escapeXml(final String text) {
+        return StringEscapeUtils.escapeXml10(text);
     }
 }
 
