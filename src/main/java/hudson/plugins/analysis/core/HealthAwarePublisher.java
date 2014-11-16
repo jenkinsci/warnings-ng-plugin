@@ -29,6 +29,7 @@ import hudson.tasks.BuildStep;
 public abstract class HealthAwarePublisher extends HealthAwareRecorder {
     private static final long serialVersionUID = -4225952809165635796L;
 
+
     /**
      * Creates a new instance of {@link HealthAwarePublisher}.
      *
@@ -81,6 +82,9 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
      *            annotation threshold
      * @param canRunOnFailed
      *            determines whether the plug-in can run for failed builds, too
+     * @param usePreviousBuildAsReference
+     *            determine if the previous build should always be used as the
+     *            reference build, no matter its overall result.
      * @param useStableBuildAsReference
      *            determines whether only stable builds should be used as
      *            reference builds or not
@@ -108,15 +112,20 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
             final String unstableNewLow, final String failedTotalAll, final String failedTotalHigh,
             final String failedTotalNormal, final String failedTotalLow, final String failedNewAll,
             final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
-            final boolean canRunOnFailed, final boolean useStableBuildAsReference,
+            final boolean canRunOnFailed,
+            final boolean usePreviousBuildAsReference,
+            final boolean useStableBuildAsReference,
             final boolean shouldDetectModules, final boolean canComputeNew,
             final boolean canResolveRelativePaths, final String pluginName) {
-        super(healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues,
-                unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
-                unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow, failedTotalAll,
-                failedTotalHigh, failedTotalNormal, failedTotalLow, failedNewAll, failedNewHigh,
-                failedNewNormal, failedNewLow, canRunOnFailed, useStableBuildAsReference,
-                shouldDetectModules, canComputeNew, canResolveRelativePaths, pluginName);
+        super(healthy, unHealthy, thresholdLimit, defaultEncoding,
+                useDeltaValues, unstableTotalAll, unstableTotalHigh,
+                unstableTotalNormal, unstableTotalLow, unstableNewAll,
+                unstableNewHigh, unstableNewNormal, unstableNewLow,
+                failedTotalAll, failedTotalHigh, failedTotalNormal,
+                failedTotalLow, failedNewAll, failedNewHigh, failedNewNormal,
+                failedNewLow, canRunOnFailed, usePreviousBuildAsReference,
+                useStableBuildAsReference, shouldDetectModules, canComputeNew,
+                canResolveRelativePaths, pluginName);
     }
 
     /**
@@ -253,6 +262,35 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
             final boolean useDeltaValues, final boolean canRunOnFailed, final String pluginName) {
         super(threshold, newThreshold, failureThreshold, newFailureThreshold, healthy, unHealthy,
                 thresholdLimit, defaultEncoding, useDeltaValues, canRunOnFailed, pluginName);
+    }
+
+    /** Backwards compatibility.
+     * @deprecated
+     */
+    @Deprecated
+    public HealthAwarePublisher(final String healthy, final String unHealthy,
+            final String thresholdLimit, final String defaultEncoding,
+            final boolean useDeltaValues, final String unstableTotalAll,
+            final String unstableTotalHigh, final String unstableTotalNormal,
+            final String unstableTotalLow, final String unstableNewAll,
+            final String unstableNewHigh, final String unstableNewNormal,
+            final String unstableNewLow, final String failedTotalAll,
+            final String failedTotalHigh, final String failedTotalNormal,
+            final String failedTotalLow, final String failedNewAll,
+            final String failedNewHigh, final String failedNewNormal,
+            final String failedNewLow, final boolean canRunOnFailed,
+            final boolean useStableBuildAsReference,
+            final boolean shouldDetectModules, final boolean canComputeNew,
+            final boolean canResolveRelativePaths, final String pluginName) {
+        this(healthy, unHealthy, thresholdLimit, defaultEncoding,
+                useDeltaValues, unstableTotalAll, unstableTotalHigh,
+                unstableTotalNormal, unstableTotalLow, unstableNewAll,
+                unstableNewHigh, unstableNewNormal, unstableNewLow,
+                failedTotalAll, failedTotalHigh, failedTotalNormal,
+                failedTotalLow, failedNewAll, failedNewHigh, failedNewNormal,
+                failedNewLow, canRunOnFailed, false, useStableBuildAsReference,
+                shouldDetectModules, canComputeNew, canResolveRelativePaths,
+                pluginName);
     }
 
     @SuppressWarnings({"PMD","javadoc"})

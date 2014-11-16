@@ -28,6 +28,33 @@ public class BuildHistory {
     private final Class<? extends ResultAction<? extends BuildResult>> type;
     /** Determines whether only stable builds should be used as reference builds or not. */
     private final boolean useStableBuildAsReference;
+    /** Determines if the previous build should always be used as the reference build. */
+    private final boolean usePreviousBuildAsReference;
+
+    /**
+     * Creates a new instance of {@link BuildHistory}.
+     *
+     * @param baseline
+     *            the build to start the history from
+     * @param type
+     *            type of the action that contains the build results
+     * @param useStableBuildAsReference
+     *            determines whether only stable builds should be used as
+     *            reference builds or not
+     * @param usePreviousBuildAsReference
+     *            determines whether the previous build should always be used
+     *            as the reference build
+     * @since 1.47
+     */
+    public BuildHistory(final AbstractBuild<?, ?> baseline,
+            final Class<? extends ResultAction<? extends BuildResult>> type,
+            final boolean useStableBuildAsReference,
+            final boolean usePreviousBuildAsReference) {
+        this.baseline = baseline;
+        this.type = type;
+        this.useStableBuildAsReference = useStableBuildAsReference;
+        this.usePreviousBuildAsReference = usePreviousBuildAsReference;
+    }
 
     /**
      * Creates a new instance of {@link BuildHistory}.
@@ -40,12 +67,12 @@ public class BuildHistory {
      *            determines whether only stable builds should be used as
      *            reference builds or not
      * @since 1.47
+     * @deprecated
      */
+    @Deprecated
     public BuildHistory(final AbstractBuild<?, ?> baseline, final Class<? extends ResultAction<? extends BuildResult>> type,
             final boolean useStableBuildAsReference) {
-        this.baseline = baseline;
-        this.type = type;
-        this.useStableBuildAsReference = useStableBuildAsReference;
+        this(baseline, type, useStableBuildAsReference, false);
     }
 
     /**
@@ -95,6 +122,10 @@ public class BuildHistory {
      *         such build exists
      */
     private ResultAction<? extends BuildResult> getReferenceAction() {
+        if (usePreviousBuildAsReference)
+        {
+            return getPreviousAction();
+        }
         ResultAction<? extends BuildResult> action = getAction(true, useStableBuildAsReference);
         if (action == null) {
             return getPreviousAction(); // fallback, use action of previous build regardless of result
