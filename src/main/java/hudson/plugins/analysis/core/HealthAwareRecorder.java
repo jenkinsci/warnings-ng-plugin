@@ -65,6 +65,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     private final boolean canRunOnFailed;
     /** Determines whether the previous build should always be used as the
      * reference build.
+     * @since 1.66
      */
     private final boolean usePreviousBuildAsReference;
     /**

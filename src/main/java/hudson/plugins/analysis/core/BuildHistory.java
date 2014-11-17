@@ -28,7 +28,9 @@ public class BuildHistory {
     private final Class<? extends ResultAction<? extends BuildResult>> type;
     /** Determines whether only stable builds should be used as reference builds or not. */
     private final boolean useStableBuildAsReference;
-    /** Determines if the previous build should always be used as the reference build. */
+    /** Determines if the previous build should always be used as the reference build.
+     * @since 1.66
+     */
     private final boolean usePreviousBuildAsReference;
 
     /**
@@ -44,7 +46,7 @@ public class BuildHistory {
      * @param usePreviousBuildAsReference
      *            determines whether the previous build should always be used
      *            as the reference build
-     * @since 1.47
+     * @since 1.66
      */
     public BuildHistory(final AbstractBuild<?, ?> baseline,
             final Class<? extends ResultAction<? extends BuildResult>> type,
@@ -122,8 +124,7 @@ public class BuildHistory {
      *         such build exists
      */
     private ResultAction<? extends BuildResult> getReferenceAction() {
-        if (usePreviousBuildAsReference)
-        {
+        if (usePreviousBuildAsReference) {
             return getPreviousAction();
         }
         ResultAction<? extends BuildResult> action = getAction(true, useStableBuildAsReference);

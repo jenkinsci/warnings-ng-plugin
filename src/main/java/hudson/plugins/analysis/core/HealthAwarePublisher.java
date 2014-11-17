@@ -100,7 +100,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
      *            workspace for matching files.
      * @param pluginName
      *            the name of the plug-in
-     * @since 1.48
+     * @since 1.66
      */
     @SuppressWarnings("PMD")
     public HealthAwarePublisher(final String healthy, final String unHealthy,

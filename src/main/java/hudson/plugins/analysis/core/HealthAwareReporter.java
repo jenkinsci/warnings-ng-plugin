@@ -83,6 +83,8 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
     /**
      * Determine if the previous build should always be used as the reference
      * build, no matter its overall result.
+     *
+     * @since 1.66
      */
     private final boolean usePreviousBuildAsReference;
     /**
@@ -159,7 +161,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
             final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,
             final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
             final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
-            final boolean canRunOnFailed, final boolean usePreviousBuildAsReference,final boolean useStableBuildAsReference, final boolean canComputeNew,
+            final boolean canRunOnFailed, final boolean usePreviousBuildAsReference, final boolean useStableBuildAsReference, final boolean canComputeNew,
             final String pluginName) {
         super();
         this.healthy = healthy;
