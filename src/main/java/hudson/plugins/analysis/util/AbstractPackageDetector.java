@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
  *
  * @author Ulli Hafner
  */
+// FIXME: Add method that uses the specified encoding when reading the files
 public abstract class AbstractPackageDetector implements PackageDetector {
     /** Identifies an unknown package. */
     protected static final String UNKNOWN_PACKAGE = "-";

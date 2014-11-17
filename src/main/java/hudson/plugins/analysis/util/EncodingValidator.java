@@ -1,5 +1,6 @@
 package hudson.plugins.analysis.util;
 
+import javax.annotation.CheckForNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,14 +12,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.annotation.CheckForNull;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang.StringUtils;
 
 import hudson.plugins.analysis.Messages;
-
 import hudson.util.FormValidation;
 
 /**
@@ -98,7 +96,7 @@ public class EncodingValidator implements Validator {
             return IOUtils.lineIterator(stream, encoding);
         }
         else {
-            return IOUtils.lineIterator(stream, null);
+            return IOUtils.lineIterator(stream, Charset.defaultCharset());
         }
     }
 

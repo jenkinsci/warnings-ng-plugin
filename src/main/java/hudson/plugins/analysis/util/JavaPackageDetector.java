@@ -2,6 +2,7 @@ package hudson.plugins.analysis.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +31,7 @@ public class JavaPackageDetector extends AbstractPackageDetector {
     @Override
     public String detectPackageName(final InputStream stream) {
         try {
-            LineIterator iterator = IOUtils.lineIterator(stream, null);
+            LineIterator iterator = IOUtils.lineIterator(stream, Charset.defaultCharset());
             while (iterator.hasNext()) {
                 String line = iterator.nextLine();
                 Matcher matcher = pattern.matcher(line);
