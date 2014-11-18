@@ -40,22 +40,22 @@ public class BuildHistory {
      *            the build to start the history from
      * @param type
      *            type of the action that contains the build results
-     * @param useStableBuildAsReference
-     *            determines whether only stable builds should be used as
-     *            reference builds or not
      * @param usePreviousBuildAsReference
      *            determines whether the previous build should always be used
      *            as the reference build
+     * @param useStableBuildAsReference
+     *            determines whether only stable builds should be used as
+     *            reference builds or not
      * @since 1.66
      */
     public BuildHistory(final AbstractBuild<?, ?> baseline,
             final Class<? extends ResultAction<? extends BuildResult>> type,
-            final boolean useStableBuildAsReference,
-            final boolean usePreviousBuildAsReference) {
+            final boolean usePreviousBuildAsReference,
+            final boolean useStableBuildAsReference) {
         this.baseline = baseline;
         this.type = type;
-        this.useStableBuildAsReference = useStableBuildAsReference;
         this.usePreviousBuildAsReference = usePreviousBuildAsReference;
+        this.useStableBuildAsReference = useStableBuildAsReference;
     }
 
     /**
@@ -74,7 +74,7 @@ public class BuildHistory {
     @Deprecated
     public BuildHistory(final AbstractBuild<?, ?> baseline, final Class<? extends ResultAction<? extends BuildResult>> type,
             final boolean useStableBuildAsReference) {
-        this(baseline, type, useStableBuildAsReference, false);
+        this(baseline, type, false, useStableBuildAsReference);
     }
 
     /**

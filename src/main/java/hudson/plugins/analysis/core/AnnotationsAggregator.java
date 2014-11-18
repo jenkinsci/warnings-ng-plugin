@@ -29,6 +29,12 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
      * @since 1.48
      */
     private final boolean useStableBuildAsReference;
+    /**
+     * Determines whether to always use the previous build as the reference build.
+     *
+     * @since 1.66
+     */
+    private final boolean usePreviousBuildAsReference;
 
     /**
      * Creates a new instance of {@link AnnotationsAggregator}.
@@ -43,16 +49,23 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
      *            health descriptor
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
+     * @param usePreviousBuildAsReference
+     *            determines whether the previous build should be used as the
+     *            reference build
      * @param useStableBuildAsReference
      *            determines whether only stable builds should be used as
      *            reference builds or not
+     * @since 1.66
      */
     public AnnotationsAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener,
-            final HealthDescriptor healthDescriptor, final String defaultEncoding, final boolean useStableBuildAsReference) {
+            final HealthDescriptor healthDescriptor, final String defaultEncoding,
+            final boolean usePreviousBuildAsReference,
+            final boolean useStableBuildAsReference) {
         super(build, launcher, listener);
 
         this.healthDescriptor = healthDescriptor;
         this.defaultEncoding = defaultEncoding;
+        this.usePreviousBuildAsReference = usePreviousBuildAsReference;
         this.useStableBuildAsReference = useStableBuildAsReference;
     }
 
@@ -97,6 +110,18 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
     }
 
     /**
+     * Determines whether to always use the previous build as the reference
+     * build.
+     *
+     * @return <code>true</code> if the previous build should always be used as
+     *      the reference build.
+     * @since 1.66
+     */
+    public boolean usePreviousBuildAsReference() {
+        return usePreviousBuildAsReference;
+    }
+
+    /**
      * Returns the annotations of the specified run.
      *
      * @param run
@@ -121,6 +146,31 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
     @SuppressWarnings("hiding")
     protected abstract Action createAction(HealthDescriptor healthDescriptor, String defaultEncoding, ParserResult aggregatedResult);
 
+        /**
+     * Creates a new instance of {@link AnnotationsAggregator}.
+     *
+     * @param build
+     *            the matrix build
+     * @param launcher
+     *            the launcher
+     * @param listener
+     *            the build listener
+     * @param healthDescriptor
+     *            health descriptor
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @param useStableBuildAsReference
+     *            determines whether only stable builds should be used as
+     *            reference builds or not
+     * @deprecated use {@link #AnnotationsAggregator(MatrixBuild, Launcher,
+     *             BuildListener, HealthDescriptor, String, boolean, boolean)}
+     */
+    @Deprecated
+    public AnnotationsAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener,
+            final HealthDescriptor healthDescriptor, final String defaultEncoding, final boolean useStableBuildAsReference)
+    {
+        this(build, launcher, listener, healthDescriptor, defaultEncoding, false, useStableBuildAsReference);
+    }
     /**
      * Creates a new instance of {@link AnnotationsAggregator}.
      *
