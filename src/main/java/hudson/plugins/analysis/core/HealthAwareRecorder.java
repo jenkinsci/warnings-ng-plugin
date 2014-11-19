@@ -63,6 +63,11 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @since 1.6
      */
     private final boolean canRunOnFailed;
+    /** Determines whether the previous build should always be used as the
+     * reference build.
+     * @since 1.66
+     */
+    private final boolean usePreviousBuildAsReference;
     /**
      * Determines whether only stable builds should be used as reference builds
      * or not.
@@ -160,6 +165,9 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      *            annotation threshold
      * @param canRunOnFailed
      *            determines whether the plug-in can run for failed builds, too
+     * @param usePreviousBuildAsReference
+     *            determine if the previous build should always be used as the
+     *            reference build, no matter its overall result.
      * @param useStableBuildAsReference
      *            determines whether only stable builds should be used as
      *            reference builds or not
@@ -187,7 +195,8 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
             final String unstableNewLow, final String failedTotalAll, final String failedTotalHigh,
             final String failedTotalNormal, final String failedTotalLow, final String failedNewAll,
             final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
-            final boolean canRunOnFailed, final boolean useStableBuildAsReference,
+            final boolean canRunOnFailed, final boolean usePreviousBuildAsReference,
+            final boolean useStableBuildAsReference,
             final boolean shouldDetectModules, final boolean canComputeNew,
             final boolean canResolveRelativePaths, final String pluginName) {
         super();
@@ -218,6 +227,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.failedNewLow = failedNewLow;
 
         this.canRunOnFailed = canRunOnFailed;
+        this.usePreviousBuildAsReference = usePreviousBuildAsReference;
         this.useStableBuildAsReference = useStableBuildAsReference;
         this.shouldDetectModules = shouldDetectModules;
         this.pluginName = "[" + pluginName + "] ";
@@ -257,6 +267,10 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      */
     protected boolean isThresholdEnabled() {
         return new NullHealthDescriptor(this).isThresholdEnabled();
+    }
+
+    public boolean getUsePreviousBuildAsReference() {
+        return usePreviousBuildAsReference;
     }
 
     /**
@@ -659,6 +673,36 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     @Deprecated
     private transient String height;
 
+    /** Backwards compatibility.
+     * @deprecated
+     */
+    @Deprecated
+    @SuppressWarnings("PMD")
+    public HealthAwareRecorder(final String healthy, final String unHealthy,
+            final String thresholdLimit, final String defaultEncoding,
+            final boolean useDeltaValues, final String unstableTotalAll,
+            final String unstableTotalHigh, final String unstableTotalNormal,
+            final String unstableTotalLow, final String unstableNewAll,
+            final String unstableNewHigh, final String unstableNewNormal,
+            final String unstableNewLow, final String failedTotalAll,
+            final String failedTotalHigh, final String failedTotalNormal,
+            final String failedTotalLow, final String failedNewAll,
+            final String failedNewHigh, final String failedNewNormal,
+            final String failedNewLow, final boolean canRunOnFailed,
+            final boolean useStableBuildAsReference,
+            final boolean shouldDetectModules, final boolean canComputeNew,
+            final boolean canResolveRelativePaths, final String pluginName) {
+        this(healthy, unHealthy, thresholdLimit, defaultEncoding,
+                useDeltaValues, unstableTotalAll, unstableTotalHigh,
+                unstableTotalNormal, unstableTotalLow, unstableNewAll,
+                unstableNewHigh, unstableNewNormal, unstableNewLow,
+                failedTotalAll, failedTotalHigh, failedTotalNormal,
+                failedTotalLow, failedNewAll, failedNewHigh, failedNewNormal,
+                failedNewLow, canRunOnFailed, false, useStableBuildAsReference,
+                shouldDetectModules, canComputeNew, canResolveRelativePaths,
+                pluginName);
+    }
+
     /** Backward compatibility. @deprecated */
     @SuppressWarnings({"PMD","javadoc"})
     @Deprecated
@@ -680,6 +724,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         this.defaultEncoding = defaultEncoding;
         this.useDeltaValues = useDeltaValues;
         this.canRunOnFailed = canRunOnFailed;
+        this.usePreviousBuildAsReference = false;
         useStableBuildAsReference = false;
         dontComputeNew = false;
         shouldDetectModules = false;

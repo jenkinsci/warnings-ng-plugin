@@ -134,6 +134,10 @@
           description="${%description.useDeltaValues}">
           <f:checkbox name="useDeltaValues" checked="${instance.useDeltaValues}" />
         </f:entry>
+        <f:entry title="${%title.usePreviousBuildAsReference}">
+          <f:checkbox name="usePreviousBuildAsReference"
+            checked="${instance.usePreviousBuildAsReference}" />
+        </f:entry>
         <f:entry title="${%Only use stable builds as reference}"
           description="${%description.onlyUseStableBuildsAsReference}">
           <f:checkbox name="useStableBuildAsReference" checked="${instance.useStableBuildAsReference}" />
