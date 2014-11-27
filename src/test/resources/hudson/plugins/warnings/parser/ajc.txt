@@ -1,0 +1,54 @@
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Unnamed - com.company.products:project-ejb:ejb:6.1.0-SNAPSHOT
+[INFO]    task-segment: [clean, deploy]
+[INFO] ------------------------------------------------------------------------
+[INFO] [clean:clean {execution: default-clean}]
+[INFO] Deleting directory /home/hudson/workspace/project/project-ejb/target
+[INFO] [enforcer:enforce {execution: enforce-banned-dependencies}]
+-----------------------------------------------------
+[INFO] [aspectj:compile {execution: default}]
+[INFO] Showing AJC message detail for messages of types: [error, warning, fail]
+[WARNING] incorrect classpath: /home/hudson/.m2/repository/org/apache/cxf/cxf/2.6.1/cxf-2.6.1.pom
+Missing message: configure.invalidClasspathSection in: org.aspectj.ajdt.ajc.messages
+	<unknown source file>:<no line information>
+
+[WARNING] The type SimpleFormController is deprecated
+	/home/hudson/workspace/project/project-ejb/src/main/java/com/product/foo/pro/controllers/BarController.java:12
+import org.springframework.web.servlet.mvc.SimpleFormController;
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[WARNING] The type SimpleFormController is deprecated
+	/home/hudson/workspace/project/project-ejb/src/main/java/com/product/foo/pro/controllers/BarController.java:19
+public class BarController extends SimpleFormController {
+                                                 ^^^^^^^^^^^^^^^^^^^
+
+[WARNING] The method BarController.initBinder(HttpServletRequest, ServletRequestDataBinder) overrides a deprecated method from BaseCommandController
+	/home/hudson/workspace/project/project-ejb/src/main/java/com/product/foo/pro/controllers/BarController.java:32
+protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[WARNING] The method initBinder(HttpServletRequest, ServletRequestDataBinder) from the type BaseCommandController is deprecated
+	/home/hudson/workspace/project/project-ejb/src/main/java/com/product/foo/pro/controllers/BarController.java:33
+super.initBinder(request, binder);
+      ^^^^^^^^^^^^^^^^^^^^^^^^
+
+[WARNING] The method NewBarController.initBinder(HttpServletRequest, ServletRequestDataBinder) overrides a deprecated method from BaseCommandController
+	/home/hudson/workspace/project/project-ejb/src/main/java/com/product/foo/pro/controllers/NewBarController.java:31
+protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[WARNING] The method NewFooController.onSubmit(HttpServletRequest, HttpServletResponse, Object, BindException) overrides a deprecated method from SimpleFormController
+	C:\Users\hudson\workspace\project\project-ejb\src\main\java\com\product\foo\pro\controllers\NewFooController.java:28
+protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
+                                    Object command, BindException bindException) throws Exception {
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[WARNING] advice defined in com.company.foo.common.security.aspect.FooBarAspect has not been applied [Xlint:adviceDidNotMatch]
+	/home/hudson/workspace/project/project-ejb/src/main/java/com/product/foo/common/security/aspect/FooBarAspect.java:38
+
+[WARNING] advice defined in org.springframework.orm.jpa.aspectj.JpaExceptionTranslatorAspect has not been applied [Xlint:adviceDidNotMatch]
+	/home/hudson/.m2/repository/org/springframework/spring-aspects/3.2.8.RELEASE/spring-aspects-3.2.8.RELEASE.jar!org/springframework/orm/jpa/aspectj/JpaExceptionTranslatorAspect.class:32
+
+[INFO] [resources:resources {execution: default-resources}]
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 152 resources
