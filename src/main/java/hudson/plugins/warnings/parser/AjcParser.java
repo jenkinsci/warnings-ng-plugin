@@ -83,7 +83,8 @@ public class AjcParser extends AbstractWarningsParser {
                         }
                         message = "";
                         file = "";
-                        lineNo = -1;
+                        category = "";
+                        lineNo = 0;
                         state = PARSING;
                     }
 
@@ -96,7 +97,8 @@ public class AjcParser extends AbstractWarningsParser {
                         }
                         message = "";
                         file = "";
-                        lineNo = -1;
+                        category = "";
+                        lineNo = 0;
                         state = PARSING;
                     }
             }
