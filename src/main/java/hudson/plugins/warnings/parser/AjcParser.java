@@ -8,17 +8,19 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-import static hudson.plugins.warnings.parser.AjcParser.States.*;
 
 /**
+ * A parser for AspectJ (ajc) compiler warnings.
+ *
  * @author Tom Diamond
  */
 @Extension
 public class AjcParser extends AbstractWarningsParser {
     private static final long serialVersionUID = -9123765511497052454L;
 
-    protected static final String ADVICE = "Advice";
+    static final String ADVICE = "Advice";
 
 
     /**
@@ -32,11 +34,11 @@ public class AjcParser extends AbstractWarningsParser {
 
     @Override
     public Collection<FileAnnotation> parse(Reader reader) throws IOException {
-        ArrayList<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
+        List<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
 
         BufferedReader br = new BufferedReader(reader);
         String line;
-        States state = START;
+        States state = States.START;
         String message = "", file = "", category = "";
         int lineNo = 0;
 
@@ -47,12 +49,12 @@ public class AjcParser extends AbstractWarningsParser {
             switch (state) {
                 case START:
                     if (line.startsWith("[INFO] Showing AJC message detail for messages of types")) {
-                        state = PARSING;
+                        state = States.PARSING;
                     }
                     break;
                 case PARSING:
                     if (line.startsWith("[WARNING] ")) {
-                        state = PARSED_WARNING;
+                        state = States.PARSED_WARNING;
                         message = line.replaceAll("\\[WARNING\\] ", "");
 
                         if (message.contains("is deprecated") || message.contains("overrides a deprecated")) {
@@ -64,14 +66,13 @@ public class AjcParser extends AbstractWarningsParser {
                     break;
                 case PARSED_WARNING:
                     if (line.startsWith("\t")) {
-                        state = PARSED_FILE;
+                        state = States.PARSED_FILE;
 
                         int idx = line.lastIndexOf(":");
                         if (idx != -1) {
                             file = line.substring(0, idx);
                             try {
-                                lineNo = Integer.parseInt(line.substring(idx + 1));
-                            } catch (NumberFormatException ignored) {
+                                lineNo = convertLineNumber(line.substring(idx + 1));
                             } catch (IndexOutOfBoundsException ignored) {
                             }
                         }
@@ -85,7 +86,7 @@ public class AjcParser extends AbstractWarningsParser {
                         file = "";
                         category = "";
                         lineNo = 0;
-                        state = PARSING;
+                        state = States.PARSING;
                     }
 
                     break;
@@ -99,7 +100,7 @@ public class AjcParser extends AbstractWarningsParser {
                         file = "";
                         category = "";
                         lineNo = 0;
-                        state = PARSING;
+                        state = States.PARSING;
                     }
             }
         }
@@ -108,7 +109,7 @@ public class AjcParser extends AbstractWarningsParser {
     }
 
 
-    enum States {
+    private enum States {
         START, PARSING, PARSED_WARNING, PARSED_FILE
     }
 }
