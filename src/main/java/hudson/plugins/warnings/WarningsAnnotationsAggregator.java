@@ -27,6 +27,7 @@ public class WarningsAnnotationsAggregator extends MatrixAggregator {
     private final HealthDescriptor healthDescriptor;
     private final String defaultEncoding;
     private final Map<String, ParserResult> totalsPerParser = Maps.newHashMap();
+    private final boolean usePreviousBuildAsReference;
     private final boolean useStableBuildAsReference;
 
     /**
@@ -42,17 +43,21 @@ public class WarningsAnnotationsAggregator extends MatrixAggregator {
      *            health descriptor
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
+     * @param usePreviousBuildAsReference
+     *            determines whether the previous build should be used as the
+     *            reference build
      * @param useStableBuildAsReference
      *            determines whether only stable builds should be used as
      *            reference builds or not
      */
     public WarningsAnnotationsAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener,
             final HealthDescriptor healthDescriptor, final String defaultEncoding,
-            final boolean useStableBuildAsReference) {
+            final boolean usePreviousBuildAsReference, final boolean useStableBuildAsReference) {
         super(build, launcher, listener);
 
         this.healthDescriptor = healthDescriptor;
         this.defaultEncoding = defaultEncoding;
+        this.usePreviousBuildAsReference = usePreviousBuildAsReference;
         this.useStableBuildAsReference = useStableBuildAsReference;
     }
 
@@ -80,15 +85,17 @@ public class WarningsAnnotationsAggregator extends MatrixAggregator {
         for (ParserResult result : totalsPerParser.values()) {
             totals.addProject(result);
         }
-        BuildHistory history = new BuildHistory(build, AggregatedWarningsResultAction.class, useStableBuildAsReference);
+        BuildHistory history = new BuildHistory(build, AggregatedWarningsResultAction.class,
+                usePreviousBuildAsReference, useStableBuildAsReference);
         AggregatedWarningsResult result = new AggregatedWarningsResult(build, history, totals, defaultEncoding);
-        build.getActions().add(new AggregatedWarningsResultAction(build, result));
+        build.addAction(new AggregatedWarningsResultAction(build, result));
     }
 
     @Override
     public boolean endBuild() throws InterruptedException, IOException {
         for (String parser : totalsPerParser.keySet()) {
-            WarningsBuildHistory history = new WarningsBuildHistory(build, parser, useStableBuildAsReference);
+            WarningsBuildHistory history = new WarningsBuildHistory(build, parser,
+                    usePreviousBuildAsReference, useStableBuildAsReference);
             WarningsResult result = new WarningsResult(build, history, totalsPerParser.get(parser), defaultEncoding, parser);
             build.addAction(new WarningsResultAction(build, healthDescriptor, result, parser));
         }

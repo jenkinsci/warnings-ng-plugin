@@ -1,22 +1,20 @@
 package hudson.plugins.warnings;
 
-import java.util.List;
-
 import javax.annotation.CheckForNull;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-
+import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.NullBuildHistory;
-import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.analysis.graph.BuildResultGraph;
 import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
-import hudson.plugins.analysis.graph.UserGraphConfigurationView;
 import hudson.plugins.analysis.graph.GraphConfigurationView;
+import hudson.plugins.analysis.graph.UserGraphConfigurationView;
 import hudson.plugins.warnings.parser.ParserRegistry;
 
 /**
@@ -105,7 +103,7 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
     }
 
     private WarningsBuildHistory createHistory(final AbstractBuild<?, ?> build) {
-        return new WarningsBuildHistory(build, parser, false);
+        return new WarningsBuildHistory(build, parser, false, false);
     }
 }
 

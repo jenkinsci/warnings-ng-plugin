@@ -112,6 +112,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
      *            annotation threshold
      * @param canRunOnFailed
      *            determines whether the plug-in can run for failed builds, too
+     * @param usePreviousBuildAsReference
+     *            determines whether to always use the previous build as the reference build
      * @param useStableBuildAsReference
      *            determines whether only stable builds should be used as reference builds or not
      * @param canComputeNew
@@ -142,15 +144,16 @@ public class WarningsPublisher extends HealthAwarePublisher {
             final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,
             final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
             final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
-            final boolean canRunOnFailed, final boolean useStableBuildAsReference, final boolean shouldDetectModules,
-            final boolean canComputeNew, final String includePattern, final String excludePattern, final boolean canResolveRelativePaths,
-            final List<ParserConfiguration> parserConfigurations, final List<ConsoleParser> consoleParsers) {
+            final boolean canRunOnFailed, final boolean usePreviousBuildAsReference, final boolean useStableBuildAsReference,
+            final boolean shouldDetectModules, final boolean canComputeNew, final String includePattern, final String excludePattern,
+            final boolean canResolveRelativePaths, final List<ParserConfiguration> parserConfigurations, final List<ConsoleParser> consoleParsers) {
         super(healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues,
                 unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
                 unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow,
                 failedTotalAll, failedTotalHigh, failedTotalNormal, failedTotalLow,
                 failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
-                canRunOnFailed, useStableBuildAsReference, shouldDetectModules, canComputeNew, canResolveRelativePaths, PLUGIN_NAME);
+                canRunOnFailed, usePreviousBuildAsReference, useStableBuildAsReference,
+                shouldDetectModules, canComputeNew, canResolveRelativePaths, PLUGIN_NAME);
         this.includePattern = StringUtils.stripToNull(includePattern);
         this.excludePattern = StringUtils.stripToNull(excludePattern);
         if (consoleParsers != null) {
@@ -324,9 +327,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
             add(totals, consoleResults);
             add(totals, fileResults);
 
-            BuildHistory history = new BuildHistory(build, AggregatedWarningsResultAction.class, useOnlyStableBuildsAsReference());
+            BuildHistory history = new BuildHistory(build, AggregatedWarningsResultAction.class,
+                    usePreviousBuildAsReference(), useOnlyStableBuildsAsReference());
             AggregatedWarningsResult result = new AggregatedWarningsResult(build, history, totals, getDefaultEncoding());
-            build.getActions().add(new AggregatedWarningsResultAction(build, result));
+            build.addAction(new AggregatedWarningsResultAction(build, result));
 
             return result;
         }
@@ -342,21 +346,6 @@ public class WarningsPublisher extends HealthAwarePublisher {
         logger.log(exception.getMessage());
 
         return new AggregatedWarningsResult(build, new NullBuildHistory(), new ParserResult(), getDefaultEncoding());
-    }
-
-    private void evaluateBuildHealth(final AbstractBuild<?, ?> build, final PluginLogger logger) {
-        for (WarningsResultAction action : build.getActions(WarningsResultAction.class)) {
-            WarningsBuildHistory history = new WarningsBuildHistory(build, action.getParser(), useOnlyStableBuildsAsReference());
-            AbstractBuild<?, ?> referenceBuild = history.getReferenceBuild();
-            if (referenceBuild == null) {
-                logger.log("Skipping warning delta computation since no reference build is found");
-            }
-            else {
-                logger.log("Computing warning deltas based on reference build " + referenceBuild.getDisplayName());
-                action.getResult().evaluateStatus(getThresholds(), getUseDeltaValues(), canComputeNew(),
-                        logger, action.getUrlName());
-            }
-        }
     }
 
     private boolean hasFileParsers() {
@@ -466,9 +455,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
         for (FileAnnotation annotation : output.getAnnotations()) {
             annotation.setPathName(build.getWorkspace().getRemote());
         }
-        WarningsBuildHistory history = new WarningsBuildHistory(build, parserName, useOnlyStableBuildsAsReference());
+        WarningsBuildHistory history = new WarningsBuildHistory(build, parserName,
+                usePreviousBuildAsReference(), useOnlyStableBuildsAsReference());
         WarningsResult result = new WarningsResult(build, history, output, getDefaultEncoding(), parserName);
-        build.getActions().add(new WarningsResultAction(build, this, result, parserName));
+        build.addAction(new WarningsResultAction(build, this, result, parserName));
 
         return output;
     }
@@ -489,7 +479,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
     @Override
     public MatrixAggregator createAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener) {
-        return new WarningsAnnotationsAggregator(build, launcher, listener, this, getDefaultEncoding(), useOnlyStableBuildsAsReference());
+        return new WarningsAnnotationsAggregator(build, launcher, listener, this, getDefaultEncoding(),
+                usePreviousBuildAsReference(), useOnlyStableBuildsAsReference());
     }
 
     /** Name of parsers to use for scanning the logs. */

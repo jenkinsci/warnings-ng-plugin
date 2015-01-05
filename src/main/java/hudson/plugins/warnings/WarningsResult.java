@@ -60,7 +60,7 @@ public class WarningsResult extends BuildResult {
 
     @Override
     protected BuildHistory createHistory(final AbstractBuild<?, ?> build) {
-        return new WarningsBuildHistory(build, group, false);
+        return new WarningsBuildHistory(build, group, false, false);
     }
 
     @Override
