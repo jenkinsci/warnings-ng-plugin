@@ -1,16 +1,14 @@
 package hudson.plugins.analysis.core;
 
+import javax.annotation.CheckForNull;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import javax.annotation.CheckForNull;
-
-import hudson.model.Result;
 import hudson.model.AbstractBuild;
-
+import hudson.model.Result;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -28,7 +26,8 @@ public class BuildHistory {
     private final Class<? extends ResultAction<? extends BuildResult>> type;
     /** Determines whether only stable builds should be used as reference builds or not. */
     private final boolean useStableBuildAsReference;
-    /** Determines if the previous build should always be used as the reference build.
+    /**
+     * Determines if the previous build should always be used as the reference build.
      * @since 1.66
      */
     private final boolean usePreviousBuildAsReference;
@@ -59,25 +58,6 @@ public class BuildHistory {
     }
 
     /**
-     * Creates a new instance of {@link BuildHistory}.
-     *
-     * @param baseline
-     *            the build to start the history from
-     * @param type
-     *            type of the action that contains the build results
-     * @param useStableBuildAsReference
-     *            determines whether only stable builds should be used as
-     *            reference builds or not
-     * @since 1.47
-     * @deprecated
-     */
-    @Deprecated
-    public BuildHistory(final AbstractBuild<?, ?> baseline, final Class<? extends ResultAction<? extends BuildResult>> type,
-            final boolean useStableBuildAsReference) {
-        this(baseline, type, false, useStableBuildAsReference);
-    }
-
-    /**
      * Determines whether only stable builds should be used as reference builds
      * or not.
      *
@@ -85,6 +65,15 @@ public class BuildHistory {
      */
     public boolean useOnlyStableBuildsAsReference() {
         return useStableBuildAsReference;
+    }
+
+    /**
+     * Determines whether to always use the previous build as the reference.
+     *
+     * @return <code>true</code> if the previous build should always be used.
+     */
+    public boolean usePreviousBuildAsStable() {
+        return usePreviousBuildAsReference;
     }
 
     /**
@@ -334,7 +323,26 @@ public class BuildHistory {
      *            the build to start the history from
      * @param type
      *            type of the action that contains the build results
-     * @deprecated use {@link #BuildHistory(AbstractBuild, Class, boolean)}
+     * @param useStableBuildAsReference
+     *            determines whether only stable builds should be used as
+     *            reference builds or not
+     * @since 1.47
+     * @deprecated use {@link #BuildHistory(AbstractBuild, Class, boolean, boolean)}
+     */
+    @Deprecated
+    public BuildHistory(final AbstractBuild<?, ?> baseline, final Class<? extends ResultAction<? extends BuildResult>> type,
+            final boolean useStableBuildAsReference) {
+        this(baseline, type, false, useStableBuildAsReference);
+    }
+
+    /**
+     * Creates a new instance of {@link BuildHistory}.
+     *
+     * @param baseline
+     *            the build to start the history from
+     * @param type
+     *            type of the action that contains the build results
+     * @deprecated use {@link #BuildHistory(AbstractBuild, Class, boolean, boolean)}
      */
     @Deprecated
     public BuildHistory(final AbstractBuild<?, ?> baseline, final Class<? extends ResultAction<? extends BuildResult>> type) {

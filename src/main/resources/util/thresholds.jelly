@@ -130,11 +130,10 @@
             </tbody>
           </table>
         </f:entry>
-        <f:entry title="${%Use delta for new warnings}"
-          description="${%description.useDeltaValues}">
+        <f:entry title="${%Use delta for new warnings}" description="${%description.useDeltaValues}">
           <f:checkbox name="useDeltaValues" checked="${instance.useDeltaValues}" />
         </f:entry>
-        <f:entry title="${%title.usePreviousBuildAsReference}">
+        <f:entry title="${%title.usePreviousBuildAsReference}" description="${%description.useDeltaValues}">
           <f:checkbox name="usePreviousBuildAsReference"
             checked="${instance.usePreviousBuildAsReference}" />
         </f:entry>

@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import hudson.plugins.analysis.util.ContextHashCode;
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
@@ -96,8 +97,35 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
      *            the line of the warning
      * @return a has code of the source code
      * @throws IOException if the contents of the file could not be read
+     * @deprecated use {@link AbstractAnnotationParser#createContextHashCode(String, int, String)}
      */
+    @Deprecated
     protected int createContextHashCode(final String fileName, final int line) throws IOException {
         return new ContextHashCode().create(fileName, line, defaultEncoding);
+    }
+
+    /**
+     * Creates a hash code from the source code of the warning line and the
+     * surrounding context. If the source file could not be read then the hashcode is computed from the filename and line.
+     *
+     * @param fileName
+     *            the absolute path of the file to read
+     * @param line
+     *            the line of the warning
+     * @param warningType
+     *            the type of the warning
+     * @return a hashcode of the source code
+     * @since 1.66
+     */
+    protected int createContextHashCode(final String fileName, final int line, final String warningType) {
+        HashCodeBuilder builder = new HashCodeBuilder();
+        try {
+            builder.append(new ContextHashCode().create(fileName, line, defaultEncoding));
+        }
+        catch (IOException exception) {
+            builder.append(fileName).append(line);
+        }
+        builder.append(warningType);
+        return builder.toHashCode();
     }
 }

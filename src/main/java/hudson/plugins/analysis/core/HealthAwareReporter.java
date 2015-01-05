@@ -240,6 +240,14 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         return usePreviousBuildAsReference;
     }
 
+    /**
+     * Determines whether to always use the previous build as the reference.
+     *
+     * @return <code>true</code> if the previous build should always be used.
+     */
+    public boolean usePreviousBuildAsStable() {
+        return getUsePreviousBuildAsStable();
+    }
 
     /**
      * Determines whether only stable builds should be used as reference builds or not.

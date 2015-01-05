@@ -1,15 +1,14 @@
 package hudson.plugins.analysis.core;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 import java.util.NoSuchElementException;
 
 import org.junit.Test;
 
-import hudson.model.Result;
-import hudson.model.AbstractBuild;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
+import hudson.model.AbstractBuild;
+import hudson.model.Result;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 
 /**
@@ -17,14 +16,13 @@ import hudson.plugins.analysis.util.model.AnnotationContainer;
  *
  * @author Ulli Hafner
  */
+@SuppressWarnings("rawtypes")
 public class BuildHistoryTest {
     /**
      * Verifies that we have no results for the first build.
-     *
-     * @throws Exception the exception
      */
     @Test(expected = NoSuchElementException.class)
-    public void testNoPreviousResult() throws Exception {
+    public void testNoPreviousResult() {
         BuildHistory history = createHistory(mockBuild());
 
         assertFalse("Build has a previous result", history.hasPreviousResult());
@@ -41,11 +39,9 @@ public class BuildHistoryTest {
      * <li>Build with no result</li>
      * <li>Baseline</li>
      * </ol>
-     * @throws Exception the exception
      */
     @Test
-    @SuppressWarnings("rawtypes")
-    public void testHasPreviousResult() throws Exception {
+    public void testHasPreviousResult() {
         AbstractBuild withResult = mockBuild();
         AbstractBuild noResult = mockBuild();
         AbstractBuild baseline = mockBuild();
@@ -81,7 +77,6 @@ public class BuildHistoryTest {
         verifyHasResult(true, Result.FAILURE);
     }
 
-    @SuppressWarnings("rawtypes")
     private void verifyHasResult(final boolean expectedResult, final Result pluginResult) {
         AbstractBuild withResult = mockBuild(Result.ABORTED);
         AbstractBuild noResult = mockBuild();
@@ -102,12 +97,10 @@ public class BuildHistoryTest {
         assertEquals("Build has previous result", expectedResult, history.hasPreviousResult());
     }
 
-    @SuppressWarnings("rawtypes")
     private AbstractBuild mockBuild() {
         return mockBuild(Result.SUCCESS);
     }
 
-    @SuppressWarnings("rawtypes")
     private AbstractBuild mockBuild(final Result result) {
         AbstractBuild build = mock(AbstractBuild.class);
         when(build.getResult()).thenReturn(result);
@@ -123,11 +116,9 @@ public class BuildHistoryTest {
      * <li>Build with no result</li>
      * <li>Baseline</li>
      * </ol>
-     * @throws Exception the exception
      */
-    @SuppressWarnings("rawtypes")
     @Test
-    public void testHasReferenceResult() throws Exception {
+    public void testHasReferenceResult() {
         AbstractBuild withSuccessResult = mockBuild();
         AbstractBuild noResult2 = mockBuild();
         AbstractBuild withFailureResult = mockBuild();
@@ -161,11 +152,9 @@ public class BuildHistoryTest {
      * <li>Build with no result</li>
      * <li>Baseline</li>
      * </ol>
-     * @throws Exception the exception
      */
-    @SuppressWarnings("rawtypes")
     @Test
-    public void testHasNoReferenceResult() throws Exception {
+    public void testHasNoReferenceResult() {
         AbstractBuild withSuccessResultAndSuccessfulBuild = mockBuild();
         AbstractBuild withSuccessResult = mockBuild(Result.ABORTED);
         AbstractBuild noResult2 = mockBuild();
@@ -197,7 +186,6 @@ public class BuildHistoryTest {
      * Verifies that the previous build is used as reference build when it's unstable
      * and history is NOT configured to use only stable builds as reference builds.
      */
-    @SuppressWarnings("rawtypes")
     @Test
     public void testUsesUnstableBuildAsReferenceBuildWhenConfigured() {
         AbstractBuild unstableBuild = mockBuild(Result.UNSTABLE);
@@ -219,7 +207,6 @@ public class BuildHistoryTest {
      * Verifies that the most recent STABLE build is used as reference build when the previous
      * build is unstable and history IS configured to use only stable builds as reference builds.
      */
-    @SuppressWarnings("rawtypes")
     @Test
     public void testUsesStableBuildAsReferenceBuildWhenConfigured() {
         AbstractBuild unstableBuild = mockBuild(Result.UNSTABLE);
@@ -237,19 +224,41 @@ public class BuildHistoryTest {
         assertSame("Stable build is not reference build", stableBuild, history.getReferenceBuild());
     }
 
-    @SuppressWarnings("rawtypes")
+    /**
+     * Verifies that the most recent STABLE build is used as reference build when the previous
+     * build is unstable and history IS configured to use only stable builds as reference builds.
+     *
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-13458">Issue 13458</a>
+     */
+    @Test
+    public void testUsesPreviousBuildAsReferenceBuildWhenConfigured() {
+        AbstractBuild referenceBuild = mockBuild();
+        AbstractBuild previous = mockBuild();
+        AbstractBuild baseline = mockBuild();
+
+        when(baseline.getPreviousBuild()).thenReturn(previous);
+        when(previous.getPreviousBuild()).thenReturn(referenceBuild);
+
+        createSuccessfulResult(referenceBuild);
+        createFailureResult(previous);
+
+        BuildHistory referenceHistory = new BuildHistory(baseline, TestResultAction.class, false, false);
+        assertSame("First build is not reference build", referenceBuild, referenceHistory.getReferenceBuild());
+        BuildHistory previousHistory = new BuildHistory(baseline, TestResultAction.class, true, false);
+        assertSame("Previous build is not reference build", previous, previousHistory.getReferenceBuild());
+    }
+
     private BuildResult createFailureResult(final AbstractBuild withFailureResult) {
         TestResultAction failureAction = mockAction(withFailureResult);
         when(withFailureResult.getAction(TestResultAction.class)).thenReturn(failureAction);
         when(failureAction.isSuccessful()).thenReturn(false);
         BuildResult failureResult = mock(BuildResult.class);
         when(failureAction.getResult()).thenReturn(failureResult);
-        when(failureResult.getPluginResult()).thenReturn(Result.SUCCESS);
+        when(failureResult.getPluginResult()).thenReturn(Result.UNSTABLE);
 
         return failureResult;
     }
 
-    @SuppressWarnings("rawtypes")
     private AnnotationContainer createSuccessfulResult(final AbstractBuild withSuccessResult) {
         TestResultAction successAction = mockAction(withSuccessResult);
         when(withSuccessResult.getAction(TestResultAction.class)).thenReturn(successAction);
@@ -262,7 +271,7 @@ public class BuildHistoryTest {
         return container;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings("unchecked")
     private TestResultAction mockAction(final AbstractBuild build) {
         TestResultAction action = mock(TestResultAction.class);
         when(action.getBuild()).thenReturn(build);
@@ -277,11 +286,11 @@ public class BuildHistoryTest {
      * @return the build history under test
      */
     private BuildHistory createHistory(final AbstractBuild<?, ?> baseline) {
-        return new BuildHistory(baseline, TestResultAction.class, false);
+        return new BuildHistory(baseline, TestResultAction.class, false, false);
     }
 
     private BuildHistory createStableBuildReferenceHistory(final AbstractBuild<?, ?> baseline) {
-        return new BuildHistory(baseline, TestResultAction.class, true);
+        return new BuildHistory(baseline, TestResultAction.class, false,  true);
     }
 
     /**

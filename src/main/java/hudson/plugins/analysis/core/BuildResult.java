@@ -13,8 +13,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jenkins.model.Jenkins;
-
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -26,14 +24,14 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import com.thoughtworks.xstream.XStream;
 
-import hudson.XmlFile;
+import jenkins.model.Jenkins;
 
-import hudson.model.ModelObject;
-import hudson.model.Result;
+import hudson.XmlFile;
 import hudson.model.AbstractBuild;
 import hudson.model.Api;
 import hudson.model.Hudson;
-
+import hudson.model.ModelObject;
+import hudson.model.Result;
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.HtmlPrinter;
 import hudson.plugins.analysis.util.PluginLogger;
@@ -237,6 +235,15 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      */
     public boolean useOnlyStableBuildsAsReference() {
         return history.useOnlyStableBuildsAsReference();
+    }
+
+    /**
+     * Determines whether to always use the previous build as the reference.
+     *
+     * @return <code>true</code> if the previous build should always be used.
+     */
+    public boolean usePreviousBuildAsStable() {
+        return history.usePreviousBuildAsStable();
     }
 
     /**
@@ -1134,7 +1141,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
     // CHECKSTYLE:OFF
     /**
-     * @deprecated use {@link #evaluateStatus(Thresholds, boolean, PluginLogger)}
+     * @deprecated use {@link #evaluateStatus(Thresholds, boolean, boolean, PluginLogger, String)}
      */
     @SuppressWarnings("javadoc")
     @Deprecated

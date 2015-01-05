@@ -269,6 +269,20 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         return new NullHealthDescriptor(this).isThresholdEnabled();
     }
 
+    /**
+     * Determines if the previous build should always be used as the reference build, no matter its overall result.
+     *
+     * @return <code>true</code> the previous build should always be used
+     */
+    public boolean usePreviousBuildAsReference() {
+        return getUsePreviousBuildAsReference();
+    }
+
+    /**
+     * Determines if the previous build should always be used as the reference build, no matter its overall result.
+     *
+     * @return <code>true</code> the previous build should always be used
+     */
     public boolean getUsePreviousBuildAsReference() {
         return usePreviousBuildAsReference;
     }
