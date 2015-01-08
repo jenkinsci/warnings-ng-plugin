@@ -15,10 +15,10 @@ import hudson.plugins.analysis.util.model.Priority;
 @Extension
 public class XlcCompilerParser extends RegexpLineParser {
     private static final long serialVersionUID = 5490211629355204910L;
-    private static final String XLC_WARNING_PATTERN = ANT_TASK + ".*([0-9]+-[0-9]+)* \\([USEWI]\\)\\s*(.*)$";
+    private static final String XLC_WARNING_PATTERN = ANT_TASK + ".*((?:[A-Z]+|[0-9]+-)[0-9]+)* \\([USEWI]\\)\\s*(.*)$";
 
-    private static final String XLC_WARNING_PATTERN_WITH_LINE = ANT_TASK + "\"?([^\"]*)\"?, line ([0-9]+)\\.[0-9]+:( [0-9]+-[0-9]+)? \\(([USEWI])\\)\\s*(.*)$";
-    private static final String XLC_WARNING_PATTERN_NO_LINE = ANT_TASK + "\\s*([0-9]+-[0-9]+)?:? \\(([USEWI])\\)( INFORMATION:)?\\s*(.*)$";
+    private static final String XLC_WARNING_PATTERN_WITH_LINE = ANT_TASK + "\"?([^\"]*)\"?, line ([0-9]+)\\.[0-9]+:( (?:[A-Z]+|[0-9]+-)[0-9]+)? \\(([USEWI])\\)\\s*(.*)$";
+    private static final String XLC_WARNING_PATTERN_NO_LINE = ANT_TASK + "\\s*((?:[A-Z]+|[0-9]+-)[0-9]+)?:? \\(([USEWI])\\)( INFORMATION:)?\\s*(.*)$";
     private static final Pattern PATTERN_1 = Pattern.compile(XLC_WARNING_PATTERN_WITH_LINE);
     private static final Pattern PATTERN_2 = Pattern.compile(XLC_WARNING_PATTERN_NO_LINE);
 
