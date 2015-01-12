@@ -21,6 +21,7 @@ import jenkins.model.Jenkins;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.Api;
 import hudson.plugins.analysis.graph.BuildResultGraph;
 import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
 import hudson.plugins.analysis.graph.DifferenceGraph;
@@ -92,6 +93,15 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
         this.pluginUrl = pluginUrl;
         this.iconUrl = iconUrl;
         this.resultUrl = resultUrl;
+    }
+
+    /**
+     * Gets the remote API for this action.
+     *
+     * @return the remote API
+     */
+    public Api getApi() {
+        return new Api(this);
     }
 
     @Override @Exported
