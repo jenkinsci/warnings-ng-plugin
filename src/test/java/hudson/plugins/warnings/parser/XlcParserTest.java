@@ -65,7 +65,7 @@ public class XlcParserTest extends ParserTester {
                 "1506-189",
                 Priority.HIGH);
     }
-    
+
     /**
      * Parses a string with xlC error in z/OS message format.
      *
@@ -73,7 +73,7 @@ public class XlcParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParserSevereError2() throws IOException {
+    public void testWarningsParserSevereErrorZOS() throws IOException {
         Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
                 new StringReader("\"./Testapi.cpp\", line 4000.22: CCN5217 (S) \"AEUPD_RQ_UPDT\" is not a member of \"struct AEUPD_RQ\"."));
 
@@ -88,7 +88,7 @@ public class XlcParserTest extends ParserTester {
                 TYPE,
                 "CCN5217",
                 Priority.HIGH);
-    }    
+    }
 
     /**
      * Parses a string with xlC error.
@@ -193,7 +193,7 @@ public class XlcParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParserWarning2() throws IOException {
+    public void testWarningsParserWarningZOS1() throws IOException {
         Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
                 new StringReader("\"./Testapi.cpp\", line 130.13: CCN5053 (W) The declaration of a class member within the class definition must not be qualified."));
 
@@ -217,7 +217,7 @@ public class XlcParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParserWarning3() throws IOException {
+    public void testWarningsParserWarningZOS2() throws IOException {
         Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
                 new StringReader("CCN7504(W) \"//''\" is not a valid suboption for \"SEARCH\".  The option is ignored."));
 
@@ -313,7 +313,7 @@ public class XlcParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParserInfo4() throws IOException {
+    public void testWarningsParserInfoZOS1() throws IOException {
         Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
                 new StringReader("\"./Testapi.cpp\", line 372.8: CCN6283 (I) \"Testapi::Test(long, long)\" is not a viable candidate."));
 
@@ -337,7 +337,7 @@ public class XlcParserTest extends ParserTester {
      *      if IO error happened
      */
     @Test
-    public void testWarningsParserInfo5() throws IOException {
+    public void testWarningsParserInfoZOS2() throws IOException {
         Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
                 new StringReader("CCN8151(I) The option \"TARGET(0x410D0000)\" sets \"ARCH(5)\"."));
 
