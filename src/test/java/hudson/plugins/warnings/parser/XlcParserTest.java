@@ -67,6 +67,30 @@ public class XlcParserTest extends ParserTester {
     }
 
     /**
+     * Parses a string with xlC error in z/OS message format.
+     *
+     * @throws IOException
+     *      if IO error happened
+     */
+    @Test
+    public void testWarningsParserSevereErrorZOS() throws IOException {
+        Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
+                new StringReader("\"./Testapi.cpp\", line 4000.22: CCN5217 (S) \"AEUPD_RQ_UPDT\" is not a member of \"struct AEUPD_RQ\"."));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        FileAnnotation annotation = iterator.next();
+        checkWarning(annotation,
+                4000,
+                "\"AEUPD_RQ_UPDT\" is not a member of \"struct AEUPD_RQ\".",
+                "./Testapi.cpp",
+                TYPE,
+                "CCN5217",
+                Priority.HIGH);
+    }
+
+    /**
      * Parses a string with xlC error.
      *
      * @throws IOException
@@ -163,6 +187,54 @@ public class XlcParserTest extends ParserTester {
     }
 
     /**
+     * Parses a string with xlC warning message in z/OS format.
+     *
+     * @throws IOException
+     *      if IO error happened
+     */
+    @Test
+    public void testWarningsParserWarningZOS1() throws IOException {
+        Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
+                new StringReader("\"./Testapi.cpp\", line 130.13: CCN5053 (W) The declaration of a class member within the class definition must not be qualified."));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        FileAnnotation annotation = iterator.next();
+        checkWarning(annotation,
+                130,
+                "The declaration of a class member within the class definition must not be qualified.",
+                "./Testapi.cpp",
+                TYPE,
+                "CCN5053",
+                Priority.NORMAL);
+    }
+
+    /**
+     * Parses a string with xlC warning message in z/OS format.
+     *
+     * @throws IOException
+     *      if IO error happened
+     */
+    @Test
+    public void testWarningsParserWarningZOS2() throws IOException {
+        Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
+                new StringReader("CCN7504(W) \"//''\" is not a valid suboption for \"SEARCH\".  The option is ignored."));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        FileAnnotation annotation = iterator.next();
+        checkWarning(annotation,
+                0,
+                "\"//''\" is not a valid suboption for \"SEARCH\".  The option is ignored.",
+                "",
+                TYPE,
+                "CCN7504",
+                Priority.NORMAL);
+    }
+
+    /**
      * Parses a string with xlC informational message.
      *
      * @throws IOException
@@ -234,6 +306,53 @@ public class XlcParserTest extends ParserTester {
                 Priority.LOW);
     }
 
+    /**
+     * Parses a string with xlC informational message in z/OS format.
+     *
+     * @throws IOException
+     *      if IO error happened
+     */
+    @Test
+    public void testWarningsParserInfoZOS1() throws IOException {
+        Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
+                new StringReader("\"./Testapi.cpp\", line 372.8: CCN6283 (I) \"Testapi::Test(long, long)\" is not a viable candidate."));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        FileAnnotation annotation = iterator.next();
+        checkWarning(annotation,
+                372,
+                "\"Testapi::Test(long, long)\" is not a viable candidate.",
+                "./Testapi.cpp",
+                TYPE,
+                "CCN6283",
+                Priority.LOW);
+    }
+
+    /**
+     * Parses a string with xlC informational message in z/OS format.
+     *
+     * @throws IOException
+     *      if IO error happened
+     */
+    @Test
+    public void testWarningsParserInfoZOS2() throws IOException {
+        Collection<FileAnnotation> warnings = new XlcCompilerParser().parse(
+                new StringReader("CCN8151(I) The option \"TARGET(0x410D0000)\" sets \"ARCH(5)\"."));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        FileAnnotation annotation = iterator.next();
+        checkWarning(annotation,
+                0,
+                "The option \"TARGET(0x410D0000)\" sets \"ARCH(5)\".",
+                "",
+                TYPE,
+                "CCN8151",
+                Priority.LOW);
+    }
 
     @Override
     protected String getWarningsFile() {
