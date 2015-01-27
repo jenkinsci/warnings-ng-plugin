@@ -1,7 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
@@ -10,6 +8,8 @@ import java.util.Iterator;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
@@ -17,6 +17,20 @@ import hudson.plugins.analysis.util.model.Priority;
  * Tests the class {@link MsBuildParser}.
  */
 public class MsBuildParserTest extends ParserTester {
+    /**
+     * Parses a file with a google-test failure that should not be shown as a warning.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-26441">Issue 26441</a>
+     */
+    @Test
+    public void issue26441() throws IOException {
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue26441.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, warnings.size());
+     }
+
     /**
      * Parses a file with gcc warnings that should be skipped.
      *

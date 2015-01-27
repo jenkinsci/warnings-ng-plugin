@@ -56,8 +56,12 @@ public class MsBuildParser extends RegexpLineParser {
                         matcher.group(7), matcher.group(6), matcher.group(8), determinePriority(matcher));
             }
             else {
+                String category = matcher.group(6);
+                if ("Expected".matches(category)) {
+                    return FALSE_POSITIVE;
+                }
                 warning = createWarning(fileName, getLineNumber(matcher.group(2)),
-                        matcher.group(6), matcher.group(8), determinePriority(matcher));
+                        category, matcher.group(8), determinePriority(matcher));
             }
             warning.setColumnPosition(getLineNumber(matcher.group(3)));
             return warning;
