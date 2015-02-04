@@ -1,11 +1,10 @@
 package hudson.plugins.analysis.graph;
 
-import java.awt.Color;
+import javax.annotation.CheckForNull;
+import java.awt.*;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
-
-import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
@@ -18,9 +17,8 @@ import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
-import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.core.BuildResult;
-
+import hudson.plugins.analysis.core.ResultAction;
 import hudson.util.Graph;
 
 /**
@@ -87,7 +85,9 @@ public abstract class BuildResultGraph {
      * Sets the root URL to the specified value.
      *
      * @param rootUrl the value to set
+     * @deprecated as of 1.68 relative links are created
      */
+    @Deprecated
     public void setRootUrl(final String rootUrl) {
         this.rootUrl = rootUrl;
     }

@@ -1,5 +1,6 @@
 package hudson.plugins.analysis.graph;
 
+import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,23 +8,19 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
-
-import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import com.google.common.collect.Lists;
 
-import hudson.model.ModelObject;
+import net.sf.json.JSONObject;
+
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-
+import hudson.model.ModelObject;
 import hudson.plugins.analysis.core.AbstractHealthDescriptor;
 import hudson.plugins.analysis.core.BuildHistory;
-
 import hudson.util.Graph;
 
 /**
@@ -199,7 +196,6 @@ public abstract class GraphConfigurationView implements ModelObject {
         try {
             BuildResultGraph graph = configuration.getGraph(graphId);
             if (hasMeaningfulGraph()) {
-                graph.setRootUrl(project.getAbsoluteUrl());
                 if (graph.isVisible()) {
                     return graph.getGraph(-1, configuration, null, buildHistory.getBaseline());
                 }
@@ -345,9 +341,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return the type
      */
     public BuildResultGraph getGraphType() {
-        BuildResultGraph graphType = configuration.getGraphType();
-        graphType.setRootUrl(getOwner().getAbsoluteUrl());
-        return graphType;
+        return configuration.getGraphType();
     }
 
     /**
