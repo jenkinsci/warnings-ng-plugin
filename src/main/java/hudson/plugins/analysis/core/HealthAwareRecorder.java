@@ -1,10 +1,11 @@
 package hudson.plugins.analysis.core; // NOPMD
 
 import javax.annotation.CheckForNull;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import hudson.FilePath;
@@ -15,9 +16,11 @@ import hudson.model.BuildListener;
 import hudson.model.Project;
 import hudson.model.Result;
 import hudson.plugins.analysis.util.EncodingValidator;
+import hudson.plugins.analysis.util.Files;
 import hudson.plugins.analysis.util.LoggerFactory;
 import hudson.plugins.analysis.util.PluginLogger;
-import hudson.plugins.analysis.util.model.*;
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Builder;
@@ -42,7 +45,6 @@ import hudson.tasks.Recorder;
 @SuppressWarnings("PMD.TooManyFields")
 public abstract class HealthAwareRecorder extends Recorder implements HealthDescriptor, MatrixAggregatable {
     private static final long serialVersionUID = 8892994325541840827L;
-    private static final String SLASH = "/";
 
     /** Default threshold priority limit. */
     private static final String DEFAULT_PRIORITY_THRESHOLD_LIMIT = "low";
@@ -396,83 +398,8 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     protected void copyFilesWithAnnotationsToBuildFolder(final File rootDir,
             final VirtualChannel channel, final Collection<FileAnnotation> annotations)
             throws IOException, FileNotFoundException, InterruptedException {
-        File directory = new File(rootDir, AbstractAnnotation.WORKSPACE_FILES);
-        if (!directory.exists() && !directory.mkdir()) {
-            throw new IOException(
-                    "Can't create directory for workspace files that contain annotations: "
-                            + directory.getAbsolutePath());
-        }
-        AnnotationContainer container = new DefaultAnnotationContainer(annotations);
-        for (WorkspaceFile file : container.getFiles()) {
-            File masterFile = new File(directory, file.getTempName());
-            if (!masterFile.exists()) {
-                try {
-                    FileOutputStream outputStream = new FileOutputStream(masterFile);
-
-                    new FilePath(channel, file.getName()).copyTo(outputStream);
-                }
-                catch (IOException exception) {
-                    logExceptionToFile(exception, masterFile, file.getName());
-                }
-            }
-        }
-    }
-
-    /**
-     * Logs the specified exception in the specified file.
-     *
-     * @param exception
-     *            the exception
-     * @param masterFile
-     *            the file on the master
-     * @param slaveFileName
-     *            the file name of the slave
-     */
-    private void logExceptionToFile(final IOException exception, final File masterFile,
-            final String slaveFileName) {
-        FileOutputStream outputStream = null;
-        try {
-            outputStream = new FileOutputStream(masterFile);
-            print(outputStream,
-                    "Copying the source file '%s' from the workspace to the build folder '%s' on the Jenkins master failed.%n",
-                    slaveFileName, masterFile.getAbsolutePath());
-            if (!slaveFileName.startsWith(SLASH) && !slaveFileName.contains(":")) {
-                print(outputStream,
-                        "Seems that the path is relative, however an absolute path is required when copying the sources.%n");
-                String base;
-                if (slaveFileName.contains(SLASH)) {
-                    base = StringUtils.substringAfterLast(slaveFileName, SLASH);
-                }
-                else {
-                    base = slaveFileName;
-                }
-                print(outputStream,
-                        "Is the file '%s' contained more than once in your workspace?%n", base);
-            }
-            print(outputStream, "Is the file '%s' a valid filename?%n", slaveFileName);
-            print(outputStream,
-                    "If you are building on a slave: please check if the file is accessible under '$JENKINS_HOME/[job-name]/%s'%n",
-                    slaveFileName);
-            print(outputStream,
-                    "If you are building on the master: please check if the file is accessible under '$JENKINS_HOME/[job-name]/workspace/%s'%n",
-                    slaveFileName);
-            exception.printStackTrace(new PrintStream(outputStream, false, getEncoding()));
-        }
-        catch (IOException error) {
-            // ignore
-        }
-        finally {
-            IOUtils.closeQuietly(outputStream);
-        }
-    }
-
-    private void print(final FileOutputStream outputStream, final String message,
-            final Object... arguments) throws IOException {
-        IOUtils.write(String.format(message, arguments), outputStream, getEncoding());
-    }
-
-    private String getEncoding() {
-        return EncodingValidator.getEncoding(getDefaultEncoding());
+        new Files().copyFilesWithAnnotationsToBuildFolder(channel, new FilePath(rootDir), annotations,
+                EncodingValidator.getEncoding(getDefaultEncoding()));
     }
 
     /**

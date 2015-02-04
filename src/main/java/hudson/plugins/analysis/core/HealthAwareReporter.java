@@ -10,17 +10,24 @@ import org.apache.maven.project.MavenProject;
 
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.maven.*;
+import hudson.maven.MavenAggregatedReport;
+import hudson.maven.MavenBuild;
+import hudson.maven.MavenBuildProxy;
 import hudson.maven.MavenBuildProxy.BuildCallable;
+import hudson.maven.MavenModuleSetBuild;
+import hudson.maven.MavenReporter;
+import hudson.maven.MojoInfo;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.plugins.analysis.Messages;
+import hudson.plugins.analysis.util.EncodingValidator;
+import hudson.plugins.analysis.util.Files;
 import hudson.plugins.analysis.util.LoggerFactory;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.StringPluginLogger;
-import hudson.plugins.analysis.util.model.*;
-import hudson.remoting.Channel;
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStep;
 
@@ -385,7 +392,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
             String baseUrl = getDescriptor().getPluginResultUrlName();
             buildResult.evaluateStatus(thresholds, useDeltaValues, canComputeNew(), pluginLogger, baseUrl);
         }
-        mavenBuild.getActions().add(createMavenAggregatedReport(mavenBuild, buildResult));
+        mavenBuild.addAction(createMavenAggregatedReport(mavenBuild, buildResult));
         mavenBuild.registerAsProjectAction(HealthAwareReporter.this);
         AbstractBuild<?, ?> referenceBuild = buildResult.getHistory().getReferenceBuild();
         if (referenceBuild != null) {
@@ -483,26 +490,11 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      * @throws InterruptedException
      *             if the user cancels the processing
      */
-    private void copyFilesWithAnnotationsToBuildFolder(final PluginLogger logger, final FilePath buildRoot, final Collection<FileAnnotation> annotations) throws IOException,
+    private void copyFilesWithAnnotationsToBuildFolder(final PluginLogger logger, final FilePath buildRoot,
+            final Collection<FileAnnotation> annotations) throws IOException,
             FileNotFoundException, InterruptedException {
-        FilePath directory = new FilePath(buildRoot, AbstractAnnotation.WORKSPACE_FILES);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-        AnnotationContainer container = new DefaultAnnotationContainer(annotations);
-        for (WorkspaceFile file : container.getFiles()) {
-            FilePath masterFile = new FilePath(directory, file.getTempName());
-            if (!masterFile.exists()) {
-                try {
-                    new FilePath((Channel)null, file.getName()).copyTo(masterFile);
-                }
-                catch (IOException exception) {
-                    String message = "Can't copy source file: source=" + file.getName() + ", destination=" + masterFile.getName();
-                    logger.log(message);
-                    logger.printStackTrace(exception);
-                }
-            }
-        }
+        new Files().copyFilesWithAnnotationsToBuildFolder(null, buildRoot, annotations,
+                EncodingValidator.getEncoding(getDefaultEncoding()));
     }
 
     /**
