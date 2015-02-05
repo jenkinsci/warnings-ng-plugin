@@ -6,6 +6,7 @@
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+  <j:set var="l" value="${it.container.labelProvider}"/>
   <j:if test="${it.hasAnnotations()}">
     <script type="text/javascript" src="${resURL}/plugin/analysis-core/yui/utilities.js" />
     <l:yui module="tabview" />
@@ -16,7 +17,7 @@
 
       <j:if test="${it.container.modules.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '${%Modules}',
+            label: '<div id="modules">${l.modules}</div>',
             dataSrc: 'tab.modules/',
             cacheData: true,
             active: false
@@ -24,7 +25,7 @@
       </j:if>
       <j:if test="${it.container.packages.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '${it.container.packageCategoryTitle}',
+            label: '<div id="packages">${l.packages}</div>',
             dataSrc: 'tab.packages/',
             cacheData: true,
             active: false
@@ -32,7 +33,7 @@
     </j:if>
     <j:if test="${it.container.files.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '${%Files}',
+            label: '<div id="files">${l.files}</div>',
             dataSrc: 'tab.files/',
             cacheData: true,
             active: false
@@ -40,7 +41,7 @@
     </j:if>
     <j:if test="${it.container.categories.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '${%Categories}',
+            label: '<div id="categories">${l.categories}</div>',
             dataSrc: 'tab.categories/',
             cacheData: true,
             active: false
@@ -48,7 +49,7 @@
     </j:if>
     <j:if test="${it.container.types.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '${%Types}',
+            label: '<div id="types">${l.types}</div>',
             dataSrc: 'tab.types/',
             cacheData: true,
             active: false
@@ -56,14 +57,14 @@
     </j:if>
     <j:if test="${it.container.numberOfAnnotations > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '${%Warnings}',
+            label: '<div id="warnings">${l.warnings}</div>',
             dataSrc: 'tab.table/',
             cacheData: true,
             active: false
         }), myTabs);
     </j:if>
       YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-          label: '${%Details}',
+          label: '<div id="details">${l.details}</div>',
           dataSrc: 'tab.all/',
           cacheData: true,
           active: false
@@ -71,7 +72,7 @@
 
     <j:if test="${it.newWarnings.size() > 0}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '${%New}',
+            label: '<div id="new">${l.new}</div>',
             dataSrc: 'tab.new/',
             cacheData: true,
             active: false
@@ -79,7 +80,7 @@
     </j:if>
     <j:if test="${it.fixedWarnings.size() > 0}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '${%Fixed}',
+            label: '<div id="fixed">${l.fixed}</div>',
             dataSrc: 'tab.fixed-table/',
             cacheData: true,
             active: false
@@ -87,7 +88,7 @@
     </j:if>
     <j:if test="${it.container.highAnnotations.size() > 0 and it.container.highAnnotations.size() != it.container.numberOfAnnotations}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '${%High}',
+            label: '<div id="high">${l.high}</div>',
             dataSrc: 'tab.high/',
             cacheData: true,
             active: false
@@ -95,7 +96,7 @@
     </j:if>
     <j:if test="${it.container.normalAnnotations.size() > 0 and it.container.normalAnnotations.size() != it.container.numberOfAnnotations}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '${%Normal}',
+            label: '<div id="normal">${l.normal}</div>',
             dataSrc: 'tab.normal/',
             cacheData: true,
             active: false
@@ -103,7 +104,7 @@
     </j:if>
     <j:if test="${it.container.lowAnnotations.size() > 0 and it.container.lowAnnotations.size() != it.container.numberOfAnnotations}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '${%Low}',
+            label: '<div id="low">${l.low}</div>',
             dataSrc: 'tab.low/',
             cacheData: true,
             active: false

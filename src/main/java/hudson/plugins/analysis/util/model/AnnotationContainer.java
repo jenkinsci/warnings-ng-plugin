@@ -15,6 +15,7 @@ import java.util.SortedSet;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 
@@ -30,6 +31,7 @@ import hudson.plugins.analysis.Messages;
 public abstract class AnnotationContainer implements AnnotationProvider, Serializable, Comparable<AnnotationContainer> {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = 855696821788264261L;
+
     /** The hierarchy of a container. */
     public enum Hierarchy {
         /** Project level. */
@@ -71,6 +73,9 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     @java.lang.SuppressWarnings("unused")
     private boolean handleFiles; // backward compatibility NOPMD
 
+    /** @since 1.69 */
+    private AnnotationsLabelProvider labelProvider;
+
     /** Name of this container. */
     private String name;
     /** Hierarchy level of this container. */
@@ -92,6 +97,25 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      */
     public AnnotationContainer getContainer() {
         return this;
+    }
+
+    /**
+     * Returns a label provider for the different categories of annotations in this container.
+     *
+     * @return the label provider for the tabs of the build result
+     */
+    public AnnotationsLabelProvider getLabelProvider() {
+        return Objects.firstNonNull(labelProvider,
+                new AnnotationsLabelProvider(getPackageCategoryTitle()));
+    }
+
+    /**
+     * Sets a label provider for the different categories of annotations in this container.
+     *
+     * @param labelProvider the label provider for the tabs of the build result
+     */
+    public void setLabelProvider(final AnnotationsLabelProvider labelProvider) {
+        this.labelProvider = labelProvider;
     }
 
     /**

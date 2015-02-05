@@ -14,6 +14,7 @@ import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
+import hudson.plugins.analysis.util.model.AnnotationsLabelProvider;
 import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.LineRange;
@@ -89,24 +90,36 @@ public class DetailFactory {
             final Collection<FileAnnotation> newAnnotations, final Collection<String> errors,
             final String defaultEncoding, final String displayName) {
         // CHECKSTYLE:ON
+        AnnotationContainer detail;
         if ("fixed".equals(link)) {
-            return createFixedWarningsDetail(owner, fixedAnnotations, defaultEncoding, displayName);
+            detail = createFixedWarningsDetail(owner, fixedAnnotations, defaultEncoding, displayName);
         }
         else if ("new".equals(link)) {
-            return new NewWarningsDetail(owner, this, newAnnotations, defaultEncoding, displayName);
+            detail = new NewWarningsDetail(owner, this, newAnnotations, defaultEncoding, displayName);
         }
         else if ("error".equals(link)) {
             return new ErrorDetail(owner, errors);
         }
         else if (link.startsWith("tab.new")) {
-            return createTabDetail(owner, newAnnotations, createGenericTabUrl(link), defaultEncoding);
+            detail = createTabDetail(owner, newAnnotations, createGenericTabUrl(link), defaultEncoding);
         }
         else if (link.startsWith("tab.fixed")) {
-            return createTabDetail(owner, fixedAnnotations, createGenericTabUrl(link), defaultEncoding);
+            detail = createTabDetail(owner, fixedAnnotations, createGenericTabUrl(link), defaultEncoding);
         }
         else {
             return createDetails(link, owner, container, defaultEncoding, displayName);
         }
+        attachLabelProvider(detail);
+        return detail;
+    }
+
+    /**
+     * Returns the default label provider that is used to visualize the build result (i.e., the tab labels).
+     *
+     * @return the default label probider
+     */
+    protected void attachLabelProvider(final AnnotationContainer container) {
+        container.setLabelProvider(new AnnotationsLabelProvider(container.getPackageCategoryTitle()));
     }
 
     /**
@@ -128,20 +141,21 @@ public class DetailFactory {
     public Object createDetails(final String link, final AbstractBuild<?, ?> owner, final AnnotationContainer container,
             final String defaultEncoding, final String displayName) {
         PriorityDetailFactory factory = new PriorityDetailFactory(this);
+        AnnotationContainer detail = null;
         if (factory.isPriority(link)) {
-            return factory.create(link, owner, container, defaultEncoding, displayName);
+            detail = factory.create(link, owner, container, defaultEncoding, displayName);
         }
         else if (link.startsWith("module.")) {
-            return new ModuleDetail(owner, this, container.getModule(createHashCode(link, "module.")), defaultEncoding, displayName);
+            detail = new ModuleDetail(owner, this, container.getModule(createHashCode(link, "module.")), defaultEncoding, displayName);
         }
         else if (link.startsWith("package.")) {
-            return new PackageDetail(owner, this, container.getPackage(createHashCode(link, "package.")), defaultEncoding, displayName);
+            detail = new PackageDetail(owner, this, container.getPackage(createHashCode(link, "package.")), defaultEncoding, displayName);
         }
         else if (link.startsWith("file.")) {
-            return new FileDetail(owner, this, container.getFile(createHashCode(link, "file.")), defaultEncoding, displayName);
+            detail = new FileDetail(owner, this, container.getFile(createHashCode(link, "file.")), defaultEncoding, displayName);
         }
         else if (link.startsWith("tab.")) {
-            return createTabDetail(owner, container.getAnnotations(), createGenericTabUrl(link), defaultEncoding);
+            detail = createTabDetail(owner, container.getAnnotations(), createGenericTabUrl(link), defaultEncoding);
         }
         else if (link.startsWith("source.")) {
             owner.checkPermission(Item.WORKSPACE);
@@ -157,13 +171,16 @@ public class DetailFactory {
         }
         else if (link.startsWith("category.")) {
             DefaultAnnotationContainer category = container.getCategory(createHashCode(link, "category."));
-            return createAttributeDetail(owner, category, displayName, Messages.CategoryDetail_header(), defaultEncoding);
+            detail = createAttributeDetail(owner, category, displayName, Messages.CategoryDetail_header(), defaultEncoding);
         }
         else if (link.startsWith("type.")) {
             DefaultAnnotationContainer type = container.getType(createHashCode(link, "type."));
-            return createAttributeDetail(owner, type, displayName, Messages.TypeDetail_header(), defaultEncoding);
+            detail = createAttributeDetail(owner, type, displayName, Messages.TypeDetail_header(), defaultEncoding);
         }
-        return null;
+        if (detail != null) {
+            attachLabelProvider(detail);
+        }
+        return detail;
     }
 
     /**

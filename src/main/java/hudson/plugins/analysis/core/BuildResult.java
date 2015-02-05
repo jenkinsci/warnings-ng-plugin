@@ -38,6 +38,7 @@ import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.AnnotationProvider;
 import hudson.plugins.analysis.util.model.AnnotationStream;
+import hudson.plugins.analysis.util.model.AnnotationsLabelProvider;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.JavaProject;
 import hudson.plugins.analysis.util.model.MavenModule;
@@ -923,6 +924,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             JavaProject newProject = new JavaProject();
             FileAnnotation[] annotations = (FileAnnotation[])getDataFile().read();
             newProject.addAnnotations(annotations);
+            attachLabelProvider(newProject);
 
             LOGGER.log(Level.FINE, "Loaded data file " + getDataFile() + " for build " + getOwner().getNumber());
             result = newProject;
@@ -934,6 +936,15 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         project = new WeakReference<JavaProject>(result);
 
         return result;
+    }
+
+    /**
+     * Returns the default label provider that is used to visualize the build result (i.e., the tab labels).
+     *
+     * @return the default label probider
+     */
+    protected void attachLabelProvider(final AnnotationContainer container) {
+        container.setLabelProvider(new AnnotationsLabelProvider(container.getPackageCategoryTitle()));
     }
 
     /**
