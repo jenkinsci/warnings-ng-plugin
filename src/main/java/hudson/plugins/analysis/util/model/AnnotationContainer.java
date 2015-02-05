@@ -103,6 +103,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * Returns a label provider for the different categories of annotations in this container.
      *
      * @return the label provider for the tabs of the build result
+     * @since 1.69
      */
     public AnnotationsLabelProvider getLabelProvider() {
         return Objects.firstNonNull(labelProvider,
@@ -113,6 +114,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * Sets a label provider for the different categories of annotations in this container.
      *
      * @param labelProvider the label provider for the tabs of the build result
+     * @since 1.69
      */
     public void setLabelProvider(final AnnotationsLabelProvider labelProvider) {
         this.labelProvider = labelProvider;

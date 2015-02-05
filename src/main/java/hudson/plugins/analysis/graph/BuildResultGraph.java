@@ -85,7 +85,7 @@ public abstract class BuildResultGraph {
      * Sets the root URL to the specified value.
      *
      * @param rootUrl the value to set
-     * @deprecated as of 1.68 relative links are created
+     * @deprecated as of 1.69 relative links are created
      */
     @Deprecated
     public void setRootUrl(final String rootUrl) {

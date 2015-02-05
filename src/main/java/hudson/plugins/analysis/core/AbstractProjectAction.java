@@ -99,6 +99,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * Gets the remote API for this action.
      *
      * @return the remote API
+     * @since 1.69
      */
     public Api getApi() {
         return new Api(this);

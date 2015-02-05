@@ -20,6 +20,7 @@ import hudson.remoting.VirtualChannel;
  * Provides a method to copy all files affected by warnings to the build folder.
  *
  * @author Ullrich Hafner
+ * @since 1.69
  */
 public class Files {
     private static final String SLASH = "/";
