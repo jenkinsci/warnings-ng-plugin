@@ -21,7 +21,6 @@ import de.java2html.options.JavaSourceConversionOptions;
 
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
-
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.LineRange;
@@ -153,7 +152,9 @@ public class SourceDetail implements ModelObject {
                 output.append("<tr><td style=\"background-color:");
                 appendRangeColor(output, isFirstRange);
                 output.append("\">\n");
-                output.append("<div tooltip=\"");
+                output.append("<div id=\"line");
+                output.append(range.getStart());
+                output.append("\" tooltip=\"");
                 if (range.getStart() > 0) {
                     outputEscaped(output, annotation.getMessage());
                 }
