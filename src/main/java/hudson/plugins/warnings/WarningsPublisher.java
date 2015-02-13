@@ -446,7 +446,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
                 break;
             }
         }
-        return filePattern;
+        return expanded;
     }
 
     private ParserResult annotate(final AbstractBuild<?, ?> build, final ParserResult input, final String parserName)
