@@ -61,11 +61,11 @@ ORDER BY object_type, object_name;
     When running puppet-lint, make sure you use the following log format:
   </p>
   <pre>
-    <code>%{path}:%{linenumber}:%{check}:%{KIND}:%{message}</code>
+    <code>%{path}:%{line}:%{check}:%{KIND}:%{message}</code>
   </pre>
   <p>Complete example:</p>
   <pre>
-      <code>find . -iname *.pp -exec puppet-lint --log-format "%{path}:%{linenumber}:%{check}:%{KIND}:%{message}" {} \;</code>
+      <code>find . -iname *.pp -exec puppet-lint --log-format "%{path}:%{line}:%{check}:%{KIND}:%{message}" {} \;</code>
   </pre>
   
   <h4>JSLint</h4>
