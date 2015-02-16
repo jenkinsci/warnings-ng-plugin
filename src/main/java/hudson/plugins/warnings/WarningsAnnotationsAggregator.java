@@ -1,21 +1,23 @@
 package hudson.plugins.warnings;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
-import hudson.matrix.MatrixRun;
 import hudson.matrix.MatrixBuild;
-
+import hudson.matrix.MatrixRun;
 import hudson.model.BuildListener;
-
 import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.HealthDescriptor;
 import hudson.plugins.analysis.core.ParserResult;
+import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
  * Aggregates {@link WarningsResultAction}s of {@link MatrixRun}s into
@@ -66,18 +68,45 @@ public class WarningsAnnotationsAggregator extends MatrixAggregator {
         List<WarningsResultAction> actions = run.getActions(WarningsResultAction.class);
         if (!actions.isEmpty()) {
             for (WarningsResultAction action : actions) {
-                if (!totalsPerParser.containsKey(action.getParser())) {
-                    totalsPerParser.put(action.getParser(), new ParserResult());
-                }
+                initializeParser(action.getParser());
 
                 ParserResult aggregation = totalsPerParser.get(action.getParser());
+                String configurationName = run.getParent().getName();
                 WarningsResult result = action.getResult();
-                aggregation.addAnnotations(result.getAnnotations());
-                aggregation.addModules(result.getModules());
+                addAllWarnings(aggregation, result, configurationName);
+                aggregation.addModules(appendConfigurationNameToModule(result, configurationName));
             }
             createTotalsAction();
         }
         return true;
+    }
+
+    private List<String> appendConfigurationNameToModule(final WarningsResult result, final String configurationName) {
+        List<String> modulesByConfiguration = Lists.newArrayList();
+        Collection<String> modules = result.getModules();
+        if (modules.isEmpty()) {
+            modulesByConfiguration.add(configurationName);
+        }
+        else {
+            for (String module : modules) {
+                modulesByConfiguration.add(configurationName + " - " + module);
+            }
+        }
+        return modulesByConfiguration;
+    }
+
+    private void addAllWarnings(final ParserResult aggregation, final WarningsResult result, final String configurationName) {
+        Set<FileAnnotation> annotations = result.getAnnotations();
+        for (FileAnnotation annotation : annotations) {
+            annotation.setModuleName(configurationName);
+        }
+        aggregation.addAnnotations(annotations);
+    }
+
+    private void initializeParser(final String parserName) {
+        if (!totalsPerParser.containsKey(parserName)) {
+            totalsPerParser.put(parserName, new ParserResult());
+        }
     }
 
     private void createTotalsAction() {
