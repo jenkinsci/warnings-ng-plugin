@@ -298,13 +298,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @param annotation the new annotation
      */
     private void addPackage(final FileAnnotation annotation) {
-        String packageName;
-        if (annotation.hasPackageName()) {
-            packageName = annotation.getPackageName();
-        }
-        else {
-            packageName = annotation.getPathName();
-        }
+        String packageName = annotation.getPackageName();
         if (StringUtils.isBlank(packageName)) {
             packageName = "-";
         }

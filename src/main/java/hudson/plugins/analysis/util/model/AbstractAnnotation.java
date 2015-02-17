@@ -394,7 +394,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
 
     @Override
     public final String getPackageName() {
-        return StringUtils.defaultIfEmpty(TreeString.toString(packageName), DEFAULT_PACKAGE);
+        if (hasPackageName()) {
+            return TreeString.toString(packageName);
+        }
+        else {
+            return StringUtils.defaultIfEmpty(TreeString.toString(pathName), DEFAULT_PACKAGE);
+        }
     }
 
     /**
