@@ -16,7 +16,6 @@ import com.google.common.collect.Lists;
 
 import net.sf.json.JSONObject;
 
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.ModelObject;
 import hudson.plugins.analysis.core.AbstractHealthDescriptor;
@@ -149,16 +148,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      */
     public boolean hasMeaningfulGraph() {
         if (buildHistory.hasPreviousResult()) {
-            if (configuration.isDayCountDefined()) {
-                AbstractBuild<?, ?> baseline = buildHistory.getBaseline().getBuild();
-                AbstractBuild<?, ?> previous = buildHistory.getPreviousResult().getOwner();
-
-                return BuildResultGraph.computeDayDelta(baseline.getTimestamp(), previous.getTimestamp())
-                        < configuration.getDayCount();
-            }
-            else {
-                return true;
-            }
+            return !BuildResultGraph.areResultsTooOld(configuration, buildHistory.getPreviousResult());
         }
         return false;
     }

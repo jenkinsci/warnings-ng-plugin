@@ -157,6 +157,23 @@ public abstract class BuildResultGraph {
     }
 
     /**
+     * Returns whether the specified build result is too old in order to be
+     * considered for the trend graph.
+     *
+     * @param configuration
+     *            the graph configuration
+     * @param current
+     *            the current build
+     * @return <code>true</code> if the build is too old
+     */
+    public static boolean areResultsTooOld(final GraphConfiguration configuration, final BuildResult current) {
+        Calendar today = new GregorianCalendar();
+
+        return configuration.isDayCountDefined()
+                && computeDayDelta(today, current) >= configuration.getDayCount();
+    }
+
+    /**
      * Sets properties common to all plots of this plug-in.
      *
      * @param plot
@@ -272,10 +289,7 @@ public abstract class BuildResultGraph {
      * @return <code>true</code> if the build is too old
      */
     protected boolean isBuildTooOld(final GraphConfiguration configuration, final BuildResult current) {
-        Calendar today = new GregorianCalendar();
-
-        return configuration.isDayCountDefined()
-                && computeDayDelta(today, current) >= configuration.getDayCount();
+        return areResultsTooOld(configuration, current);
     }
 }
 
