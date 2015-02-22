@@ -102,15 +102,17 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-all:1.10.8" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:2.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.findbugs:annotations:2.0.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.main:jenkins-war:war:1.554.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci.main:jenkins-core:1.554.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci.main:remoting:2.36" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.main:jenkins-war:war:1.599" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci.main:jenkins-core:1.599" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci.plugins.icon-shim:icon-set:1.0.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci.main:remoting:2.49" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:constant-pool-scanner:1.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci.main:cli:1.554.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci.main:cli:1.599" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:version-number:1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:crypto-util:1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jvnet.hudson:jtidy:4aug2000r7-dev-hudson-1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jruby.ext.posix:jna-posix:1.0.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.inject:guice:4.0-beta" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jruby.ext.posix:jna-posix:1.0.3-jenkins-1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.github.jnr:jnr-posix:3.0.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.github.jnr:jnr-ffi:1.0.7" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.github.jnr:jffi:1.2.7" level="project" />
@@ -123,39 +125,36 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.github.jnr:jnr-x86asm:1.0.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.github.jnr:jnr-constants:0.8.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke:trilead-putty-extension:1.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:trilead-ssh2:build217-jenkins-5" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke.stapler:stapler-groovy:1.223" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke.stapler:stapler-jelly:1.223" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:trilead-ssh2:build217-jenkins-8" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke.stapler:stapler-groovy:1.234" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke.stapler:stapler-jelly:1.234" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:commons-jelly:1.1-jenkins-20120928" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jvnet.hudson.dom4j:dom4j:1.6.1-hudson-3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke.stapler:stapler-jrebel:1.223" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke.stapler:stapler:1.223" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci.dom4j:dom4j:1.6.1-jenkins-4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke.stapler:stapler-jrebel:1.234" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke.stapler:stapler:1.234" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.annotation:javax.annotation-api:1.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-discovery:commons-discovery:0.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jvnet:tiger-types:1.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-fileupload:commons-fileupload:1.2.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke:windows-package-checker:1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke.stapler:stapler-adjunct-zeroclipboard:1.1.7-1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke.stapler:stapler-adjunct-zeroclipboard:1.3.5-1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke.stapler:stapler-adjunct-timeline:1.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke.stapler:stapler-adjunct-codemirror:1.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.infradna.tool:bridge-method-annotation:1.9" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.infradna.tool:bridge-method-annotation:1.13" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke.stapler:json-lib:2.4-jenkins-2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.sf.ezmorph:ezmorph:1.0.6" level="project" />
     <orderEntry type="library" name="Maven: commons-httpclient:commons-httpclient:3.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: args4j:args4j:2.0.23" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:annotation-indexer:1.7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:bytecode-compatibility-transformer:1.4" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke:asm3:3.3.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:bytecode-compatibility-transformer:1.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke:asm5:5.0.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:task-reactor:1.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jvnet.localizer:localizer:1.10" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: antlr:antlr:2.7.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jvnet.hudson:xstream:1.4.7-jenkins-1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: xmlpull:xmlpull:1.1.3.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: xpp3:xpp3_min:1.1.4c" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: jfree:jfreechart:1.0.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: jfree:jcommon:1.0.12" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.ant:ant:1.8.3" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.ant:ant-launcher:1.8.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.ant:ant:1.8.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.ant:ant-launcher:1.8.4" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.4" level="project" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-digester:commons-digester:2.1" level="project" />
@@ -187,14 +186,14 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.xml.stream:stax-api:1.0-2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: relaxngDatatype:relaxngDatatype:20020414" level="project" />
     <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.2.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jvnet.winp:winp:1.19" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:memory-monitor:1.7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jvnet.winp:winp:1.22" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:memory-monitor:1.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.codehaus.woodstox:wstx-asl:3.2.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: stax:stax-api:1.0.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:jmdns:3.4.0-jenkins-3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.java.dev.jna:jna:3.3.0-jenkins-3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.java.dev.jna:jna:4.1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke:akuma:1.9" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke:libpam4j:1.6" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke:libpam4j:1.8" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jvnet.libzfs:libzfs:0.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sun.solaris:embedded_su4j:1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.java.sezpoz:sezpoz:1.9" level="project" />
@@ -204,21 +203,22 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jvnet.robust-http-client:robust-http-client:1.2" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.8" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke:access-modifier-annotation:1.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-fileupload:commons-fileupload:1.3.1-jenkins-1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.mindrot:jbcrypt:0.3m" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:11.0.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.jcraft:jzlib:1.1.3-kohsuke-1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.main:jenkins-test-harness:1.554.3" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.main:jenkins-war:war-for-test:1.554.3" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.modules:instance-identity:1.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.main:jenkins-test-harness:1.599" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.main:jenkins-war:war-for-test:1.599" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.modules:instance-identity:1.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.bouncycastle:bcpkix-jdk15on:1.47" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.bouncycastle:bcprov-jdk15on:1.47" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.modules:ssh-cli-auth:1.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.modules:slave-installer:1.3" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.modules:windows-slave-installer:1.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.modules:slave-installer:1.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.modules:windows-slave-installer:1.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.modules:launchd-slave-installer:1.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.modules:upstart-slave-installer:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.modules:systemd-slave-installer:1.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.slf4j:slf4j-jdk14:1.7.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.slf4j:slf4j-jdk14:1.7.7" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:subversion:1.45" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.svnkit:svnkit:1.7.6-jenkins-1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.tmatesoft.sqljet:sqljet:1.1.0" level="project" />
@@ -227,10 +227,12 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:matrix-auth:1.0.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:antisamy-markup-formatter:1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.kohsuke:owasp-html-sanitizer:r88" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:matrix-project:1.0-beta-1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:junit:1.2-beta-4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mortbay.jetty:jetty:6.1.26" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mortbay.jetty:jetty-util:6.1.26" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mortbay.jetty:servlet-api:2.5-20081211" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jvnet.hudson:test-annotations:1.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci:test-annotations:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jvnet.mock-javamail:mock-javamail:1.7" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-library:1.3" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci:htmlunit:2.6-jenkins-6" level="project" />
