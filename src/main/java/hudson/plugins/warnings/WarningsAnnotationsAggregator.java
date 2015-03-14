@@ -76,7 +76,6 @@ public class WarningsAnnotationsAggregator extends MatrixAggregator {
                 addAllWarnings(aggregation, result, configurationName);
                 aggregation.addModules(appendConfigurationNameToModule(result, configurationName));
             }
-            createTotalsAction();
         }
         return true;
     }
@@ -128,6 +127,7 @@ public class WarningsAnnotationsAggregator extends MatrixAggregator {
             WarningsResult result = new WarningsResult(build, history, totalsPerParser.get(parser), defaultEncoding, parser);
             build.addAction(new WarningsResultAction(build, healthDescriptor, result, parser));
         }
+        createTotalsAction();
 
         return true;
     }
