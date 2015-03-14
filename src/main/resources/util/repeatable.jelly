@@ -1,0 +1,22 @@
+<!--
+  Section header
+
+  <%@attribute name="field" required="true" %>
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+         xmlns:f="/lib/form">
+  <st:documentation> <![CDATA[
+    Wraps a <f:repeatableProperty> with an additional div in order to simplify UI testing.
+  ]]>
+
+    <st:attribute name="field">
+      Used for the data binding.
+    </st:attribute>
+  </st:documentation>
+
+  <div id="${field}">
+    <f:repeatableProperty field="${field}"/>
+  </div>
+
+</j:jelly>

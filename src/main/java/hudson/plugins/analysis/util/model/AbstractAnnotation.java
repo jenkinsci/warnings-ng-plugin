@@ -378,6 +378,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     }
 
     @Override
+    @Exported
     public final String getModuleName() {
         return StringUtils.defaultIfEmpty(TreeString.toString(moduleName), "Default Module");
     }
@@ -393,12 +394,14 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     }
 
     @Override
+    @Exported
     public final String getPackageName() {
         if (hasPackageName()) {
             return TreeString.toString(packageName);
         }
         else {
-            return StringUtils.defaultIfEmpty(TreeString.toString(pathName), DEFAULT_PACKAGE);
+            return StringUtils.defaultIfEmpty(TreeString.toString(pathName),
+                    StringUtils.defaultIfEmpty(TreeString.toString(packageName), DEFAULT_PACKAGE));
         }
     }
 
