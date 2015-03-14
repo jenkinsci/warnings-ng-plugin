@@ -6,11 +6,11 @@
     method="getAvailableParsers" />
 
   <f:entry title="${%Scan console log}" description="${%description.consoleLogParsers}">
-    <f:repeatableProperty field="consoleParsers" />
+    <u:repeatable field="consoleParsers" />
   </f:entry>
 
   <f:entry title="${%Scan workspace files}" description="${%description.logFilesParsers}">
-    <f:repeatableProperty field="parserConfigurations" />
+    <u:repeatable field="parserConfigurations" />
   </f:entry>
 
   <f:advanced>

@@ -21,12 +21,12 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.jvnet.hudson.plugins:analysis-core:1.69" level="project" />
+    <orderEntry type="module" module-name="analysis-core" />
     <orderEntry type="library" name="Maven: de.java2html:java2html:5.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.3.2" level="project" />
     <orderEntry type="library" name="Maven: xerces:xercesImpl:2.11.0" level="project" />
     <orderEntry type="library" name="Maven: xml-apis:xml-apis:1.4.01" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jvnet.hudson.plugins:analysis-test:1.10" level="project" />
+    <orderEntry type="module" module-name="analysis-test" scope="TEST" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:violations:0.7.11" level="project" />
     <orderEntry type="library" name="Maven: xpp3:xpp3:1.1.3.3" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.2" level="project" />

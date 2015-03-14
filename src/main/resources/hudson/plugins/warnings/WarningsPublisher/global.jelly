@@ -1,8 +1,9 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:u="/util"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   <f:section title="${%Compiler Warnings}">
     <f:entry title="${%Parsers}" description="${%title.description}">
-      <f:repeatableProperty field="parsers"/>
+      <u:repeatable field="parsers"/>
     </f:entry>
   </f:section>
 </j:jelly>
