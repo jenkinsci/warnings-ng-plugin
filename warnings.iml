@@ -21,7 +21,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="analysis-core" />
+    <orderEntry type="library" name="Maven: org.jvnet.hudson.plugins:analysis-core:1.71" level="project" />
     <orderEntry type="library" name="Maven: de.java2html:java2html:5.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.3.2" level="project" />
     <orderEntry type="library" name="Maven: xerces:xercesImpl:2.11.0" level="project" />
