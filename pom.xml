@@ -54,7 +54,7 @@
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-test</artifactId>
-      <version>1.12-SNAPSHOT</version>
+      <version>1.12</version>
       <scope>test</scope>
     </dependency>
     <dependency>
