@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
@@ -12,6 +13,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang.StringUtils;
@@ -31,8 +33,8 @@ public class EncodingValidator implements Validator {
 
     static {
         try {
-            allCharacterSets = Collections.unmodifiableSet(new HashSet<String>(Charset
-                    .availableCharsets().keySet()));
+            allCharacterSets = Collections.unmodifiableSet(new HashSet<String>(
+                    Charset.availableCharsets().keySet()));
         }
         // CHECKSTYLE:OFF
         catch (Exception exception) {
@@ -96,7 +98,7 @@ public class EncodingValidator implements Validator {
             return IOUtils.lineIterator(stream, encoding);
         }
         else {
-            return IOUtils.lineIterator(stream, Charset.defaultCharset());
+            return new LineIterator(new InputStreamReader(stream, Charsets.toCharset(Charset.defaultCharset())));
         }
     }
 

@@ -1,11 +1,12 @@
 package hudson.plugins.analysis.util;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 
@@ -31,7 +32,9 @@ public class JavaPackageDetector extends AbstractPackageDetector {
     @Override
     public String detectPackageName(final InputStream stream) {
         try {
-            LineIterator iterator = IOUtils.lineIterator(stream, Charset.defaultCharset());
+            LineIterator iterator = new LineIterator(new InputStreamReader(stream,
+                    Charsets.toCharset(Charset.defaultCharset())));
+
             while (iterator.hasNext()) {
                 String line = iterator.nextLine();
                 Matcher matcher = pattern.matcher(line);
@@ -39,9 +42,6 @@ public class JavaPackageDetector extends AbstractPackageDetector {
                     return matcher.group(1);
                 }
             }
-        }
-        catch (IOException exception) {
-            // ignore
         }
         finally {
             IOUtils.closeQuietly(stream);
