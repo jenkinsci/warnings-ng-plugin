@@ -25,22 +25,42 @@ public class ResharperInspectCodeParserTest extends ParserTester {
     public void parseWarnings() throws IOException {
         Collection<FileAnnotation> warnings = new ResharperInspectCodeParser().parse(openFile());
 
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
+        
+        //<Issue TypeId="CSharpErrors" File="ResharperDemo\Program.cs" Offset="408-416" Line="16" Message="" />
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation,
-                4,
-                "Using directive is not required by the code and can be safely removed",
-                "euler61/Program.cs",
+                16,
+                "Cannot resolve symbol 'GetError'",
+                "ResharperDemo/Program.cs",
                 "ResharperInspectCode",
-                "RedundantUsingDirective",
+                "CSharpErrors",
+                Priority.HIGH);
+                        
+        annotation = iterator.next();
+        checkWarning(annotation,
+                23,
+                "Expression is always true",
+                "ResharperDemo/Program.cs",
+                "ResharperInspectCode",
+                "ConditionIsAlwaysTrueOrFalse",
                 Priority.NORMAL);
+        
+        annotation = iterator.next();
+        checkWarning(annotation,
+                41,
+                "Convert to auto-property",
+                "ResharperDemo/Program.cs",
+                "ResharperInspectCode",
+                "ConvertToAutoProperty",
+                Priority.LOW);
     }
 
     @Override
     protected String getWarningsFile() {
-        return "ResharperInspectCode.txt";
+        return "ResharperInspectCode.xml";
     }
 }
 
