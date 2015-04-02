@@ -1,28 +1,28 @@
 package hudson.plugins.warnings.parser;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import com.google.common.collect.Lists;
+
+import hudson.Extension;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.warnings.WarningsDescriptor;
 import hudson.plugins.warnings.util.XmlElementUtil;
 import hudson.util.IOException2;
-import org.apache.commons.lang.StringEscapeUtils;
-
-import hudson.Extension;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * A parser for IntelliJ IDEA inspections.
@@ -79,10 +79,12 @@ public class IdeaInspectionParser extends AbstractWarningsParser {
 
     private Priority getPriority(String severity) {
         Priority priority = Priority.LOW;
-        if (severity.equals("WARNING"))
+        if (severity.equals("WARNING")) {
             priority = Priority.NORMAL;
-        else if (severity.equals("ERROR"))
+        }
+        else if (severity.equals("ERROR")) {
             priority = Priority.HIGH;
+        }
         return priority;
     }
 
@@ -91,7 +93,14 @@ public class IdeaInspectionParser extends AbstractWarningsParser {
     }
 
     private String getChildValue(Element element, String childTag) {
-        return XmlElementUtil.getFirstElementByTagName(element, childTag).getFirstChild().getNodeValue();
+        Element firstElement = XmlElementUtil.getFirstElementByTagName(element, childTag);
+        if (firstElement != null) {
+            Node child = firstElement.getFirstChild();
+            if (child != null) {
+                return child.getNodeValue();
+            }
+        }
+        return "-";
     }
 
     @Override
