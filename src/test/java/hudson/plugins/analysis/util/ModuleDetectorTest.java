@@ -1,9 +1,5 @@
 package hudson.plugins.analysis.util;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -12,6 +8,10 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 /**
  *  Tests the class {@link ModuleDetector}.
@@ -45,8 +45,9 @@ public class ModuleDetectorTest {
     @SuppressWarnings("OBL")
     private FileInputStreamFactory createFactoryMock(final String fileName, final String[] workspaceScanResult) throws FileNotFoundException {
         FileInputStreamFactory factory = mock(FileInputStreamFactory.class);
-        InputStream inputFile = read(fileName);
-        when(factory.create(anyString())).thenReturn(inputFile);
+        when(factory.create(anyString()))
+                .thenReturn(read(fileName))
+                .thenReturn(read(fileName));
         when(factory.find((File)anyObject(), anyString())).thenReturn(workspaceScanResult);
         return factory;
     }
@@ -63,8 +64,10 @@ public class ModuleDetectorTest {
      */
     @Test
     public void testOsgiModules() throws FileNotFoundException {
-        ModuleDetector detector = createDetectorUnderTest(MANIFEST,
-                new String[] {PATH_PREFIX_OSGI + ModuleDetector.OSGI_BUNDLE});
+        FileInputStreamFactory factory = mock(FileInputStreamFactory.class);
+        when(factory.create(anyString())).thenReturn(read(MANIFEST));
+        when(factory.find((File)anyObject(), anyString())).thenReturn(new String[]{PATH_PREFIX_OSGI + ModuleDetector.OSGI_BUNDLE});
+        ModuleDetector detector = createDetectorUnderTest(factory);
 
         verifyModuleName(detector, EXPECTED_OSGI_MODULE, PATH_PREFIX_OSGI + "/something.txt");
         verifyModuleName(detector, EXPECTED_OSGI_MODULE, PATH_PREFIX_OSGI + "/in/between/something.txt");
@@ -120,6 +123,23 @@ public class ModuleDetectorTest {
 
         verifyModuleName(detector, EXPECTED_MAVEN_MODULE, PATH_PREFIX_MAVEN + "/something.txt");
         verifyModuleName(detector, EXPECTED_MAVEN_MODULE, PATH_PREFIX_MAVEN + "/in/between/something.txt");
+        verifyModuleName(detector, StringUtils.EMPTY, "/path/to/something.txt");
+    }
+
+    /**
+     * Checks whether we could identify Maven modules using the module mapping.
+     *
+     * @throws FileNotFoundException
+     *             should never happen
+     */
+    @Test
+    public void testPomWithoutName() throws FileNotFoundException {
+        ModuleDetector detector = createDetectorUnderTest("no-name-pom.xml",
+                new String[] {PATH_PREFIX_MAVEN + ModuleDetector.MAVEN_POM});
+
+        String artifactId = "com.avaloq.adt.core";
+        verifyModuleName(detector, artifactId, PATH_PREFIX_MAVEN + "/something.txt");
+        verifyModuleName(detector, artifactId, PATH_PREFIX_MAVEN + "/in/between/something.txt");
         verifyModuleName(detector, StringUtils.EMPTY, "/path/to/something.txt");
     }
 

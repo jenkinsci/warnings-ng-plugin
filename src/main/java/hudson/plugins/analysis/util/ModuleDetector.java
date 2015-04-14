@@ -214,6 +214,11 @@ public class ModuleDetector {
      *         resolved
      */
     private String parsePom(final String pom) {
+        String name = parsePomAttribute(pom, "name");
+        return StringUtils.defaultIfBlank(name, parsePomAttribute(pom, "artifactId"));
+    }
+
+    private String parsePomAttribute(final String pom, final String tagName) {
         InputStream file = null;
         try {
             file = factory.create(pom);
@@ -222,9 +227,9 @@ public class ModuleDetector {
             digester.setClassLoader(ModuleDetector.class.getClassLoader());
 
             digester.push(new StringBuffer());
-            digester.addCallMethod("project/name", "append", 0);
+            digester.addCallMethod("project/" + tagName, "append", 0);
 
-            StringBuffer result = (StringBuffer)digester.parse(file);
+            StringBuffer result = digester.parse(file);
             return result.toString();
         }
         catch (IOException exception) {
