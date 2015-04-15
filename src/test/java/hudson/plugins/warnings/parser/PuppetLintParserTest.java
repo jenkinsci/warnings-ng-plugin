@@ -28,7 +28,7 @@ public class PuppetLintParserTest extends ParserTester {
     @Test
     public void testParse() throws IOException {
         Collection<FileAnnotation> results = createParser().parse(openFile());
-        assertEquals(3, results.size());
+        assertEquals(5, results.size());
 
         Iterator<FileAnnotation> iterator = results.iterator();
 
@@ -46,6 +46,16 @@ public class PuppetLintParserTest extends ParserTester {
         checkLintWarning(annotation,
                 10, "line has more than 80 characters",
                 "./modules/test/manifests/sub/class/morefail.pp", TYPE, "80chars", Priority.NORMAL, "::test::sub::class");
+
+        annotation = iterator.next();
+        checkLintWarning(annotation,
+                4, "tab character found",
+                "C:/ProgramData/PuppetLabs/puppet/etc/manifests/site.pp", TYPE, "hard_tabs", Priority.HIGH, "-");
+
+        annotation = iterator.next();
+        checkLintWarning(annotation,
+                15, "line has more than 80 characters",
+                "C:/CI CD/puppet/modules/jenkins/init.pp", TYPE, "80chars", Priority.NORMAL, "-");
     }
 
     /**
