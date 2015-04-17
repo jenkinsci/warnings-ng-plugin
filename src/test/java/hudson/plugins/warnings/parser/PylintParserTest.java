@@ -64,14 +64,14 @@ public class PylintParserTest extends ParserTester {
         warning = iterator.next();
         checkWarning(warning,
                 5,
-                "Unable to import \"deadbeef\"",
+                "Unable to import 'deadbeef'",
                 "trunk/src/python/tv.py",
                 WARNING_TYPE, "F0401", Priority.HIGH);
                 
         warning = iterator.next();
         checkWarning(warning,
                 39,
-                "Dangerous default value \"[]\" as argument",
+                "Dangerous default value [] as argument",
                 "trunk/src/python/tv.py",
                 WARNING_TYPE, "W0102", Priority.HIGH);
     }
