@@ -28,7 +28,7 @@ public class PylintParserTest extends ParserTester {
     public void pyLintTest() throws IOException {
         Collection<FileAnnotation> warnings = new PyLintParser().parse(openFile());
 
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 6, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation warning;
@@ -53,6 +53,27 @@ public class PylintParserTest extends ParserTester {
                 "Missing docstring",
                 "trunk/src/python/tv.py",
                 WARNING_TYPE, "C0111", Priority.NORMAL);
+                
+        warning = iterator.next();
+        checkWarning(warning,
+                39,
+                "Method should have \"self\" as first argument",
+                "trunk/src/python/tv.py",
+                WARNING_TYPE, "E0213", Priority.HIGH);
+                
+        warning = iterator.next();
+        checkWarning(warning,
+                5,
+                "Unable to import \"deadbeef\"",
+                "trunk/src/python/tv.py",
+                WARNING_TYPE, "F0401", Priority.HIGH);
+                
+        warning = iterator.next();
+        checkWarning(warning,
+                39,
+                "Dangerous default value \"[]\" as argument",
+                "trunk/src/python/tv.py",
+                WARNING_TYPE, "W0102", Priority.HIGH);
     }
 
     @Override
