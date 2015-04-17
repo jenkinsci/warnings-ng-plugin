@@ -38,7 +38,7 @@ public class PyLintParser extends RegexpLineParser {
         String category = classifyIfEmpty(matcher.group(3), message);
         //First letter of the Pylint classification is one of F/E/W/R/C. E/F/W are high priority.
         Priority priority = Priority.NORMAL;
-        if (category[0] == 'E' || category[0] == 'F' || category[0] == 'W') {
+        if (category.charAt(0) == 'E' || category.charAt(0) == 'F' || category.charAt(0) == 'W') {
             priority = Priority.HIGH;
         }
         
