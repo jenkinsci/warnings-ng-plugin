@@ -71,7 +71,7 @@ public class PylintParserTest extends ParserTester {
         warning = iterator.next();
         checkWarning(warning,
                 39,
-                "Dangerous default value [] as argument",
+                "Dangerous default value \"[]\" as argument",
                 "trunk/src/python/tv.py",
                 WARNING_TYPE, "W0102", Priority.HIGH);
     }
