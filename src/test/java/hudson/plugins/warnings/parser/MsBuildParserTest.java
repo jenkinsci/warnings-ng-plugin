@@ -29,20 +29,28 @@ public class MsBuildParserTest extends ParserTester {
      */
     @Test
     public void issue27914() throws IOException {
-        StringBuilder testData = new StringBuilder(256);
-        testData.append("E:\\workspace\\SomeSolution\\SomeProject\\File.pas(2321): Hint warning H2164: Variable 'lTaskDialog' is declared but never used in 'TDialog.ShowTaskDialog' [E:\\workspace\\SomeSolution\\CLI\\Project.dproj]");
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue27914.txt"));
 
-        Collection<FileAnnotation> warnings = new MsBuildParser().parse(new InputStreamReader(
-                IOUtils.toInputStream(testData.toString())));
-
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation,
-                2321,
-                "Variable 'lTaskDialog' is declared but never used in 'TDialog.ShowTaskDialog' [E:\\workspace\\SomeSolution\\CLI\\Project.dproj]",
-                "E:/workspace/SomeSolution/SomeProject/File.pas",
+                4522,
+                "Variable 'lTaskDialog' is declared but never used in 'TDialog.ShowTaskDialog' [E:\\workspace\\TreeSize release nightly\\CLI\\TreeSizeCLI.dproj]",
+                "E:/workspace/TreeSize release nightly/DelphiLib/Jam.UI.Dialogs.pas",
+                MsBuildParser.WARNING_TYPE, "H2164", Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                4523,
+                "Variable 'lButton' is declared but never used in 'TDialog.ShowTaskDialog' [E:\\workspace\\TreeSize release nightly\\CLI\\TreeSizeCLI.dproj]",
+                "E:/workspace/TreeSize release nightly/DelphiLib/Jam.UI.Dialogs.pas",
+                MsBuildParser.WARNING_TYPE, "H2164", Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                4524,
+                "Variable 'lIndex' is declared but never used in 'TDialog.ShowTaskDialog' [E:\\workspace\\TreeSize release nightly\\CLI\\TreeSizeCLI.dproj]",
+                "E:/workspace/TreeSize release nightly/DelphiLib/Jam.UI.Dialogs.pas",
                 MsBuildParser.WARNING_TYPE, "H2164", Priority.NORMAL);
      }
 
