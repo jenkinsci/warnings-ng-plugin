@@ -41,7 +41,7 @@ public class MsBuildParserTest extends ParserTester {
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation,
                 2321,
-                "Variable 'lTaskDialog' is declared but never used in 'TDialog.ShowTaskDialog'",
+                "Variable 'lTaskDialog' is declared but never used in 'TDialog.ShowTaskDialog' [E:\\workspace\\SomeSolution\\CLI\\Project.dproj]",
                 "E:/workspace/SomeSolution/SomeProject/File.pas",
                 MsBuildParser.WARNING_TYPE, "H2164", Priority.NORMAL);
      }
