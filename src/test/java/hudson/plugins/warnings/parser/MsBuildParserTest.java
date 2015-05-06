@@ -1,5 +1,7 @@
 package hudson.plugins.warnings.parser;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
@@ -8,8 +10,6 @@ import java.util.Iterator;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
@@ -17,6 +17,43 @@ import hudson.plugins.analysis.util.model.Priority;
  * Tests the class {@link MsBuildParser}.
  */
 public class MsBuildParserTest extends ParserTester {
+
+    /**
+     * MSBuildParser should also detect subcategories as described at
+     * <a href="http://blogs.msdn.com/b/msbuild/archive/2006/11/03/msbuild-visual-studio-aware-error-messages-and-message-formats.aspx">
+     * MSBuild / Visual Studio aware error messages and message formats</a>.
+     * @throws IOException
+     *          if the stream could not be read
+     *
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-27914">Issue 27914</a>
+     */
+    @Test
+    public void issue27914() throws IOException {
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue27914.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
+
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        FileAnnotation annotation = iterator.next();
+        checkWarning(annotation,
+                4522,
+                "Variable 'lTaskDialog' is declared but never used in 'TDialog.ShowTaskDialog' [E:\\workspace\\TreeSize release nightly\\CLI\\TreeSizeCLI.dproj]",
+                "E:/workspace/TreeSize release nightly/DelphiLib/Jam.UI.Dialogs.pas",
+                MsBuildParser.WARNING_TYPE, "H2164", Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                4523,
+                "Variable 'lButton' is declared but never used in 'TDialog.ShowTaskDialog' [E:\\workspace\\TreeSize release nightly\\CLI\\TreeSizeCLI.dproj]",
+                "E:/workspace/TreeSize release nightly/DelphiLib/Jam.UI.Dialogs.pas",
+                MsBuildParser.WARNING_TYPE, "H2164", Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                4524,
+                "Variable 'lIndex' is declared but never used in 'TDialog.ShowTaskDialog' [E:\\workspace\\TreeSize release nightly\\CLI\\TreeSizeCLI.dproj]",
+                "E:/workspace/TreeSize release nightly/DelphiLib/Jam.UI.Dialogs.pas",
+                MsBuildParser.WARNING_TYPE, "H2164", Priority.NORMAL);
+     }
+
     /**
      * Parses a file with a google-test failure that should not be shown as a warning.
      *
