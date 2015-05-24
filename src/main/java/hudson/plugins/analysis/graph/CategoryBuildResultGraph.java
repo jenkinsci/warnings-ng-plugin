@@ -208,12 +208,15 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
 
         int buildCount = 0;
         Map<AbstractBuild, List<Integer>> valuesPerBuild = Maps.newHashMap();
+        String parameterName = configuration.getParameterName();
+        String parameterValue = configuration.getParameterValue();
         while (true) {
             if (isBuildTooOld(configuration, current)) {
                 break;
             }
-
-            valuesPerBuild.put(current.getOwner(), computeSeries(current));
+            if (passesFilteringByParameter(current.getOwner(), parameterName, parameterValue)) {
+                valuesPerBuild.put(current.getOwner(), computeSeries(current));
+            }
 
             if (current.hasPreviousResult()) {
                 current = current.getPreviousResult();
@@ -234,7 +237,24 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
         }
         return valuesPerBuild;
     }
+    private boolean passesFilteringByParameter(final AbstractBuild<?, ?> build, final String parameterName, final String parameterValue) {
+        if (parameterName == null){
+            return true;
+        }
 
+        Map<String, String> vars = build.getBuildVariables();
+        if (vars == null) {
+            return false;
+        }
+
+        if(vars.containsKey(parameterName)) {
+            String pv = vars.get(parameterName);
+            if (pv != null && pv.equals(parameterValue)) {
+                return true;
+            }
+        }
+        return false;
+    }
     /**
      * Creates a data set that contains a series per build number.
      *

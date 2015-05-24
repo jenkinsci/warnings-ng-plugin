@@ -27,6 +27,14 @@
           <f:textbox name="dayCountString" value="${it.dayCountString}" />
         </f:entry>
 
+        <f:entry title="${%name.parameterName}" description="${%description.parameterName}">
+          <f:textbox name="parameterName" value="${it.parameterName}" />
+        </f:entry>
+        
+        <f:entry title="${%name.parameterValue}" description="${%description.parameterValue}">
+          <f:textbox name="parameterValue" value="${it.parameterValue}" />
+        </f:entry>
+
         <f:entry title="${%name.domain}" description="${%description.domain}">
           <f:checkbox name="useBuildDateAsDomain" checked="${instance.useBuildDateAsDomain}"/>
         </f:entry>
