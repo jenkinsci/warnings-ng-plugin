@@ -13,8 +13,8 @@
     </tr>
     <tbody>
       <tr>
-        <td class="pane">${it.numberOfAnnotations}</td>
-        <td class="pane">
+        <td class="pane" id="all">${it.numberOfAnnotations}</td>
+        <td class="pane" id="new">
           <j:if test="${it.numberOfNewWarnings == 0}">
             0
           </j:if>
@@ -22,7 +22,7 @@
             <a href="new">${it.numberOfNewWarnings}</a>
           </j:if>
         </td>
-        <td class="pane">
+        <td class="pane" id="fixed">
           <j:if test="${it.numberOfFixedWarnings == 0}">
             0
           </j:if>

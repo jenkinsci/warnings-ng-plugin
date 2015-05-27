@@ -9,7 +9,6 @@
     <tr>
       <td class="pane-header">${%File}</td>
       <td class="pane-header">${%Line}</td>
-      <td class="pane-header">${%Warning Type}</td>
       <td class="pane-header">${%Priority}</td>
       <td class="pane-header">${%Type}</td>
       <td class="pane-header">${%Category}</td>
@@ -17,8 +16,8 @@
     <tbody>
       <j:forEach var="warning" items="${annotations}">
         <tr>
-          <td class="pane">${warning.shortFileName}</td>
-          <td class="pane">
+          <td class="pane" id="file">${warning.shortFileName}</td>
+          <td class="pane" id="line">
             <j:choose>
               <j:when test="${warning.primaryLineNumber &lt; 1}">
                 -
@@ -28,10 +27,9 @@
               </j:otherwise>
             </j:choose>
           </td>
-          <td class="pane">${warning.type}</td>
-          <td class="pane">${warning.priority.localizedString} </td>
-          <td class="pane">${warning.type} </td>
-          <td class="pane">${warning.category} </td>
+          <td class="pane" id="priority">${warning.priority.localizedString} </td>
+          <td class="pane" id="type">${warning.type} </td>
+          <td class="pane" id="category">${warning.category} </td>
         </tr>
       </j:forEach>
     </tbody>
