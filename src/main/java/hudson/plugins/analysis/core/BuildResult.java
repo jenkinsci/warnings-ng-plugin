@@ -22,6 +22,7 @@ import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import com.google.common.collect.Sets;
 import com.thoughtworks.xstream.XStream;
 
 import jenkins.model.Jenkins;
@@ -279,6 +280,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
         Set<FileAnnotation> allWarnings = result.getAnnotations();
 
+        // FIXME: why is there a flag to enable computation of new warnings?
         Set<FileAnnotation> newWarnings = AnnotationDifferencer.getNewAnnotations(allWarnings, referenceResult.getAnnotations());
         numberOfNewWarnings = newWarnings.size();
         newWarningsReference = new WeakReference<Collection<FileAnnotation>>(newWarnings);
@@ -293,6 +295,11 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
         JavaProject container = new JavaProject();
         container.addAnnotations(result.getAnnotations());
+
+        for (FileAnnotation newWarning : newWarnings) {
+            newWarning.setBuild(build.getNumber());
+        }
+        // FIXME: for the old warnings we need to find the introducing build by using the context hash code
 
         project = new WeakReference<JavaProject>(container);
 
@@ -500,12 +507,22 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
-     * Returns the serialization file.
+     * Returns the serialization file for all warnings.
      *
      * @return the serialization file.
      */
     public final XmlFile getDataFile() {
         return new XmlFile(getXStream(), new File(getOwner().getRootDir(), getSerializationFileName()));
+    }
+
+    /**
+     * Returns the serialization file for the fixed warnings.
+     *
+     * @return the serialization file.
+     */
+    private XmlFile getFixedDataFile() {
+        return new XmlFile(getXStream(), new File(getOwner().getRootDir(),
+                getSerializationFileName().replace(".xml", "-fixed.xml")));
     }
 
     /**
@@ -650,8 +667,12 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      */
     protected void serializeAnnotations(final Collection<FileAnnotation> annotations) {
         try {
-            Collection<FileAnnotation> files = annotations;
-            getDataFile().write(files.toArray(new FileAnnotation[files.size()]));
+            getDataFile().write(annotations.toArray(new FileAnnotation[annotations.size()]));
+
+            Set<FileAnnotation> allAnnotations = new HashSet<FileAnnotation>();
+            allAnnotations.addAll(annotations);
+            Collection<FileAnnotation> fixedWarnings = history.getFixedWarnings(allAnnotations);
+            getFixedDataFile().write(fixedWarnings.toArray(new FileAnnotation[fixedWarnings.size()]));
         }
         catch (IOException exception) {
             LOGGER.log(Level.SEVERE, "Failed to serialize the annotations of the build.", exception);
@@ -966,17 +987,21 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
-     * Loads the results of the current and reference build, computes the new
-     * warnings and wraps them in a weak reference that might get removed by the
-     * garbage collector.
+     * Filters all warnings by the current build number and wraps them in a weak reference that might get
+     * removed by the garbage collector.
      *
      * @return the new warnings
      */
     private Collection<FileAnnotation> loadNewWarnings() {
-        Collection<FileAnnotation> difference = history.getNewWarnings(getProject().getAnnotations());
-        newWarningsReference = new WeakReference<Collection<FileAnnotation>>(difference);
+        Set<FileAnnotation> newWarnings = new HashSet<FileAnnotation>();
+        for (FileAnnotation warning : getProject().getAnnotations()) {
+            if (warning.getBuild() == getOwner().getNumber()) {
+                newWarnings.add(warning);
+            }
+        }
+        newWarningsReference = new WeakReference<Collection<FileAnnotation>>(newWarnings);
 
-        return difference;
+        return newWarnings;
     }
 
     /**
@@ -985,12 +1010,52 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the fixed warnings of this build.
      */
     public Collection<FileAnnotation> getFixedWarnings() {
+        if (getFixedDataFile().exists()) {
+            return getFixedWarningsAfterRelease72();
+        }
+        else {
+            return getFixedWarningsBeforeRelease72();
+        }
+    }
+
+    private Collection<FileAnnotation> getFixedWarningsAfterRelease72() {
+        synchronized (projectLock) {
+            if (fixedWarningsReference == null) {
+                return loadFixedWarningsAfterRelease72();
+            }
+            Collection<FileAnnotation> result = fixedWarningsReference.get();
+            if (result == null) {
+                return loadFixedWarningsAfterRelease72();
+            }
+            return result;
+        }
+    }
+
+    private Collection<FileAnnotation> loadFixedWarningsAfterRelease72() {
+        Set<FileAnnotation> fixedWarnings;
+        try {
+            FileAnnotation[] annotations = (FileAnnotation[])getFixedDataFile().read();
+            fixedWarnings = Sets.newHashSet(annotations);
+
+            LOGGER.log(Level.FINE, "Loaded data file " + getFixedDataFile() + " for build " + getOwner().getNumber());
+        }
+        catch (IOException exception) {
+            LOGGER.log(Level.WARNING, "Failed to load " + getFixedDataFile(), exception);
+            fixedWarnings = new HashSet<FileAnnotation>();
+        }
+        fixedWarningsReference = new WeakReference<Collection<FileAnnotation>>(fixedWarnings);
+
+        return fixedWarnings;
+
+    }
+
+    private Collection<FileAnnotation> getFixedWarningsBeforeRelease72() {
         if (fixedWarningsReference == null) {
-            return loadFixedWarnings();
+            return loadFixedWarningsBeforeRelease72();
         }
         Collection<FileAnnotation> result = fixedWarningsReference.get();
         if (result == null) {
-            return loadFixedWarnings();
+            return loadFixedWarningsBeforeRelease72();
         }
         return result;
     }
@@ -1002,7 +1067,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the fixed warnings
      */
-    private Collection<FileAnnotation> loadFixedWarnings() {
+    private Collection<FileAnnotation> loadFixedWarningsBeforeRelease72() {
         Collection<FileAnnotation> difference = history.getFixedWarnings(getProject().getAnnotations());
         fixedWarningsReference = new WeakReference<Collection<FileAnnotation>>(difference);
 

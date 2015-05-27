@@ -75,6 +75,8 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     private int primaryColumnStart;
     /** Column end of primary line range of warning. @since 1.38 */
     private int primaryColumnEnd;
+    /** The build number in which this annotation has been introduced. @since 1.72 */
+    private int build;
 
     /**
      * Creates a new instance of <code>AbstractAnnotation</code>.
@@ -610,5 +612,15 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     @Override
     public boolean isInConsoleLog() {
         return fileName == null || StringUtils.isBlank(fileName.toString());
+    }
+
+    @Override
+    public void setBuild(final int build) {
+        this.build = build;
+    }
+
+    @Override
+    public int getBuild() {
+        return build;
     }
 }
