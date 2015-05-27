@@ -2,6 +2,8 @@ package hudson.plugins.warnings.parser;
 
 import java.util.regex.Matcher;
 
+import hudson.plugins.analysis.util.model.Priority;
+
 import hudson.Extension;
 
 /**
@@ -34,7 +36,12 @@ public class PyLintParser extends RegexpLineParser {
     protected Warning createWarning(final Matcher matcher) {
         String message = matcher.group(4);
         String category = classifyIfEmpty(matcher.group(3), message);
-
-        return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, message);
+        //First letter of the Pylint classification is one of F/E/W/R/C. E/F/W are high priority.
+        Priority priority = Priority.NORMAL;
+        if (category.charAt(0) == 'E' || category.charAt(0) == 'F' || category.charAt(0) == 'W') {
+            priority = Priority.HIGH;
+        }
+        
+        return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, message, priority);
     }
 }
