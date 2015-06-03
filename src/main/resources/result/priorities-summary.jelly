@@ -4,7 +4,7 @@
 <j:jelly xmlns:j="jelly:core">
 
   <h2>${%Summary}</h2>
-  <table class="pane" id="analysis.summary">
+  <table class="pane" id="priority.summary">
     <tr>
       <td class="pane-header">${%Total}</td>
       <j:forEach var="priority" items="${it.priorities}">
@@ -13,7 +13,7 @@
     </tr>
     <tbody>
       <tr>
-        <td class="pane">${it.numberOfAnnotations}</td>
+        <td class="pane" id="all-priorities">${it.numberOfAnnotations}</td>
         <j:forEach var="priority" items="${it.priorities}">
           <td class="pane">
             <div id="${priority.name()}">

@@ -5,7 +5,7 @@
 
   <h2>${%Warnings Trend}</h2>
 
-  <table class="pane" id="summary">
+  <table class="pane" id="trend.summary">
     <tr>
       <td class="pane-header">${%All Warnings}</td>
       <td class="pane-header">${%New Warnings}</td>
