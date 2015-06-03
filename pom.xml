@@ -52,7 +52,7 @@
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-core</artifactId>
-      <version>1.71</version>
+      <version>1.72</version>
     </dependency>
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
