@@ -243,7 +243,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      *
      * @return <code>true</code> if the previous build should always be used.
      */
-    public boolean getUsePreviousBuildAsStable() {
+    public boolean getUsePreviousBuildAsReference() {
         return usePreviousBuildAsReference;
     }
 
@@ -252,8 +252,8 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      *
      * @return <code>true</code> if the previous build should always be used.
      */
-    public boolean usePreviousBuildAsStable() {
-        return getUsePreviousBuildAsStable();
+    public boolean usePreviousBuildAsReference() {
+        return getUsePreviousBuildAsReference();
     }
 
     /**
@@ -742,6 +742,21 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
                 failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
                 canRunOnFailed, true, pluginName);
     }
+    /**
+     * @deprecated mistyped method name from v1.72 - see {@link #getUsePreviousBuildAsReference()}
+     */
+    @Deprecated
+    public boolean getUsePreviousBuildAsStable() {
+        return getUsePreviousBuildAsReference();
+    }
+    /**
+     * @deprecated mistyped method name from v1.72 - see {@link #usePreviousBuildAsReference()}
+     */
+    @Deprecated
+    public boolean usePreviousBuildAsStable() {
+        return usePreviousBuildAsReference();
+    }
+
     // CHECKSTYLE:ON
 
     /**
