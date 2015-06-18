@@ -1,5 +1,6 @@
 package hudson.plugins.analysis.core;
 
+import javax.annotation.CheckForNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -7,8 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerProxy;
@@ -21,11 +20,9 @@ import hudson.maven.AggregatableAction;
 import hudson.maven.MavenAggregatedReport;
 import hudson.maven.MavenBuild;
 import hudson.maven.MavenModule;
-
+import hudson.model.AbstractBuild;
 import hudson.model.HealthReport;
 import hudson.model.Result;
-import hudson.model.AbstractBuild;
-
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.StringPluginLogger;
 import hudson.plugins.analysis.util.ToolTipProvider;
@@ -254,6 +251,27 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
     @Override
     public T getResult() {
         return delegate.getResult();
+    }
+
+    /**
+     * Determines whether only stable builds should be used as reference builds
+     * or not.
+     *
+     * @since 1.73
+     * @return <code>true</code> if only stable builds should be used
+     */
+    public boolean useOnlyStableBuildsAsReference() {
+        return delegate.getResult().useOnlyStableBuildsAsReference();
+    }
+
+    /**
+     * Determines whether to always use the previous build as the reference.
+     *
+     * @since 1.73
+     * @return <code>true</code> if the previous build should always be used.
+     */
+    public boolean usePreviousBuildAsStable() {
+        return delegate.getResult().usePreviousBuildAsStable();
     }
 
     /**
