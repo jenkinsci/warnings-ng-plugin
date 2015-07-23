@@ -13,7 +13,9 @@ import org.kohsuke.stapler.export.ExportedBean;
 import com.google.common.collect.ImmutableList;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.model.Item;
+
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.AbstractAnnotationParser;
 import hudson.plugins.analysis.util.PackageDetectors;
@@ -350,7 +352,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     }
 
     @Override
-    public String getTempName(final AbstractBuild<?, ?> owner) {
+    public String getTempName(final Run<?, ?> owner) {
         if (fileName != null) {
             return owner.getRootDir().getAbsolutePath()
                     + SLASH + WORKSPACE_FILES

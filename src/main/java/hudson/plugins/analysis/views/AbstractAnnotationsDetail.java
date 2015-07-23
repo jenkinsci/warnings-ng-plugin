@@ -6,7 +6,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import hudson.model.ModelObject;
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -23,7 +23,7 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
     private static final long serialVersionUID = 1750266351592937774L;
 
     /** Current build as owner of this object. */
-    private final AbstractBuild<?, ?> owner;
+    private final Run<?, ?> owner;
     /** The default encoding to be used when reading and parsing files. */
     private final String defaultEncoding;
 
@@ -46,7 +46,7 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      * @param hierarchy
      *            the hierarchy level of this detail object
      */
-    public AbstractAnnotationsDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String defaultEncoding, final String name, final Hierarchy hierarchy) {
+    public AbstractAnnotationsDetail(final Run<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String defaultEncoding, final String name, final Hierarchy hierarchy) {
         super(name, hierarchy);
         this.owner = owner;
         this.detailFactory = detailFactory;
@@ -78,7 +78,7 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      *
      * @return the owner
      */
-    public final AbstractBuild<?, ?> getOwner() {
+    public final Run<?, ?> getOwner() {
         return owner;
     }
 
@@ -88,7 +88,7 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      * @return <code>true</code> if this build is the last available build
      */
     public final boolean isCurrent() {
-        return owner.getProject().getLastBuild().number == owner.number;
+        return owner.getParent().getLastBuild().number == owner.number;
     }
 
     /**

@@ -2,7 +2,7 @@ package hudson.plugins.analysis.views;
 
 import java.util.Collection;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
@@ -33,7 +33,7 @@ public class AttributeDetail extends AbstractAnnotationsDetail {
      * @param name
      *            name of the attribute shown in the bread crumb
      */
-    public AttributeDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String defaultEncoding, final String header, final String name) {
+    public AttributeDetail(final Run<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String defaultEncoding, final String header, final String name) {
         super(owner, detailFactory, annotations, defaultEncoding, header, Hierarchy.PROJECT);
         attributeName = name;
     }

@@ -1,6 +1,6 @@
 package hudson.plugins.analysis.core;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.model.Action;
 import hudson.model.Result;
 
@@ -34,7 +34,7 @@ public interface ResultAction<T extends BuildResult> extends Action {
      *
      * @return the associated build of this action
      */
-    AbstractBuild<?, ?> getBuild();
+    Run<?, ?> getBuild();
 
     /**
      * Returns the associated tool tip provider.

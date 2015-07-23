@@ -1,6 +1,6 @@
 package hudson.plugins.analysis.views;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
 import hudson.plugins.analysis.util.model.JavaPackage;
 
@@ -29,7 +29,7 @@ public class PackageDetail extends AbstractAnnotationsDetail {
      * @param header
      *            header to be shown on detail page
      */
-    public PackageDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final JavaPackage javaPackage, final String defaultEncoding, final String header) {
+    public PackageDetail(final Run<?, ?> owner, final DetailFactory detailFactory, final JavaPackage javaPackage, final String defaultEncoding, final String header) {
         super(owner, detailFactory, javaPackage.getAnnotations(), defaultEncoding, header, Hierarchy.PACKAGE);
         this.javaPackage = javaPackage;
     }

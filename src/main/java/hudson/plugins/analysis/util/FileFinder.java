@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
+import org.jenkinsci.remoting.RoleChecker;
 
 import hudson.FilePath.FileCallable;
 import hudson.remoting.VirtualChannel;
@@ -79,5 +80,10 @@ public class FileFinder implements FileCallable<String[]> {
         catch (BuildException exception) {
             return new String[0];
         }
+    }
+
+    @Override
+    public void checkRoles(RoleChecker checker) throws SecurityException {
+        // TODO required in 1.580 (do we need to implement something here?)
     }
 }

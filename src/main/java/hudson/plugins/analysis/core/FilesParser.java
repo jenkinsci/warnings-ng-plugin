@@ -8,6 +8,7 @@ import java.util.Collection;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.jenkinsci.remoting.RoleChecker;
 
 import hudson.FilePath;
 import hudson.FilePath.FileCallable;
@@ -448,5 +449,10 @@ public class FilesParser implements FileCallable<ParserResult> {
             final AnnotationParser parser, final boolean shouldDetectModules,
             final boolean isMavenBuild) {
         this(filePattern, parser, isMavenBuild, StringUtils.EMPTY);
+    }
+
+    @Override
+    public void checkRoles(RoleChecker checker) throws SecurityException {
+        // TODO required in 1.580 (do we need to implement something here?)
     }
 }

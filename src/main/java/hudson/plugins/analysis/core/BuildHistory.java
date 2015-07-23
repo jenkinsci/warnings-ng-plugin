@@ -1,6 +1,7 @@
 package hudson.plugins.analysis.core;
 
 import javax.annotation.CheckForNull;
+
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,7 +9,9 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.model.Result;
+
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -21,7 +24,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  */
 public class BuildHistory {
     /** The build to start the history from. */
-    private final AbstractBuild<?, ?> baseline;
+    private final Run<?, ?> baseline;
     /** Type of the action that contains the build results. */
     private final Class<? extends ResultAction<? extends BuildResult>> type;
     /** Determines whether only stable builds should be used as reference builds or not. */
@@ -47,7 +50,7 @@ public class BuildHistory {
      *            reference builds or not
      * @since 1.66
      */
-    public BuildHistory(final AbstractBuild<?, ?> baseline,
+    public BuildHistory(final Run<?, ?> baseline,
             final Class<? extends ResultAction<? extends BuildResult>> type,
             final boolean usePreviousBuildAsReference,
             final boolean useStableBuildAsReference) {
@@ -130,7 +133,7 @@ public class BuildHistory {
     }
 
     private ResultAction<? extends BuildResult> getAction(final boolean isStatusRelevant, final boolean mustBeStable) {
-        for (AbstractBuild<?, ?> build = baseline.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
+        for (Run<?, ?> build = baseline.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
             ResultAction<? extends BuildResult> action = getResultAction(build);
             if (hasValidResult(build, mustBeStable, action) && isSuccessfulAction(action, isStatusRelevant)) {
                 return action;
@@ -152,7 +155,7 @@ public class BuildHistory {
      * @return the result action
      */
     @CheckForNull
-    public ResultAction<? extends BuildResult> getResultAction(final AbstractBuild<?, ?> build) {
+    public ResultAction<? extends BuildResult> getResultAction(final Run<?, ?> build) {
         return build.getAction(type);
     }
 
@@ -176,10 +179,10 @@ public class BuildHistory {
      * @see #hasReferenceBuild()
      */
     @CheckForNull
-    public AbstractBuild<?, ?> getReferenceBuild() {
+    public Run<?, ?> getReferenceBuild() {
         ResultAction<? extends BuildResult> action = getReferenceAction();
         if (action != null) {
-            AbstractBuild<?, ?> build = action.getBuild();
+            Run<?, ?> build = action.getBuild();
             if (hasValidResult(build)) {
                 return build;
             }
@@ -187,11 +190,11 @@ public class BuildHistory {
         return null;
     }
 
-    private boolean hasValidResult(final AbstractBuild<?, ?> build) {
+    private boolean hasValidResult(final Run<?, ?> build) {
         return hasValidResult(build, false, null);
     }
 
-    private boolean hasValidResult(final AbstractBuild<?, ?> build, final boolean mustBeStable, @CheckForNull final ResultAction<? extends BuildResult> action) {
+    private boolean hasValidResult(final Run<?, ?> build, final boolean mustBeStable, @CheckForNull final ResultAction<? extends BuildResult> action) {
         Result result = build.getResult();
 
         if (result == null) {
@@ -330,7 +333,7 @@ public class BuildHistory {
      * @deprecated use {@link #BuildHistory(AbstractBuild, Class, boolean, boolean)}
      */
     @Deprecated
-    public BuildHistory(final AbstractBuild<?, ?> baseline, final Class<? extends ResultAction<? extends BuildResult>> type,
+    public BuildHistory(final Run<?, ?> baseline, final Class<? extends ResultAction<? extends BuildResult>> type,
             final boolean useStableBuildAsReference) {
         this(baseline, type, false, useStableBuildAsReference);
     }

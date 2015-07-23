@@ -1,6 +1,6 @@
 package hudson.plugins.analysis.views;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.model.MavenModule;
@@ -30,7 +30,7 @@ public class ModuleDetail extends AbstractAnnotationsDetail {
      * @param header
      *            header to be shown on detail page
      */
-    public ModuleDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final MavenModule module, final String defaultEncoding, final String header) {
+    public ModuleDetail(final Run<?, ?> owner, final DetailFactory detailFactory, final MavenModule module, final String defaultEncoding, final String header) {
         super(owner, detailFactory, module.getAnnotations(), defaultEncoding, header, Hierarchy.MODULE);
         this.module = module;
     }

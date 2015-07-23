@@ -3,3 +3,5 @@ target
 .idea
 .DS_Store
 /work
+.project
+.classpath

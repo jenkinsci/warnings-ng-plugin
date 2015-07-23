@@ -28,7 +28,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
 import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.core.BuildResult;
@@ -202,12 +202,12 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return a series of values per build
      */
     @SuppressWarnings("rawtypes")
-    private Map<AbstractBuild, List<Integer>> createSeriesPerBuild(
+    private Map<Run, List<Integer>> createSeriesPerBuild(
             final GraphConfiguration configuration, final BuildResult lastBuildResult) {
         BuildResult current = lastBuildResult;
 
         int buildCount = 0;
-        Map<AbstractBuild, List<Integer>> valuesPerBuild = Maps.newHashMap();
+        Map<Run, List<Integer>> valuesPerBuild = Maps.newHashMap();
         while (true) {
             if (isBuildTooOld(configuration, current)) {
                 break;
@@ -243,11 +243,11 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return a data set
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private CategoryDataset createDatasetPerBuildNumber(final Map<AbstractBuild, List<Integer>> valuesPerBuild) {
+    private CategoryDataset createDatasetPerBuildNumber(final Map<Run, List<Integer>> valuesPerBuild) {
         DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<String, NumberOnlyBuildLabel>();
-        List<AbstractBuild> builds = Lists.newArrayList(valuesPerBuild.keySet());
+        List<Run> builds = Lists.newArrayList(valuesPerBuild.keySet());
         Collections.sort(builds);
-        for (AbstractBuild<?, ?> build : builds) {
+        for (Run<?, ?> build : builds) {
             List<Integer> series = valuesPerBuild.get(build);
             int level = 0;
             for (Integer integer : series) {
@@ -290,7 +290,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      */
     @SuppressWarnings("rawtypes")
     private Map<LocalDate, List<Integer>> averageByDate(
-            final Map<AbstractBuild, List<Integer>> valuesPerBuild) {
+            final Map<Run, List<Integer>> valuesPerBuild) {
         return createSeriesPerDay(createMultiSeriesPerDay(valuesPerBuild));
     }
 
@@ -340,9 +340,9 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     @SuppressWarnings("rawtypes")
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("WMI")
     private Multimap<LocalDate, List<Integer>> createMultiSeriesPerDay(
-            final Map<AbstractBuild, List<Integer>> valuesPerBuild) {
+            final Map<Run, List<Integer>> valuesPerBuild) {
         Multimap<LocalDate, List<Integer>> valuesPerDate = HashMultimap.create();
-        for (AbstractBuild<?, ?> build : valuesPerBuild.keySet()) {
+        for (Run<?, ?> build : valuesPerBuild.keySet()) {
             valuesPerDate.put(new LocalDate(build.getTimestamp()), valuesPerBuild.get(build));
         }
         return valuesPerDate;

@@ -17,9 +17,11 @@ import hudson.maven.MavenBuildProxy.BuildCallable;
 import hudson.maven.MavenModuleSetBuild;
 import hudson.maven.MavenReporter;
 import hudson.maven.MojoInfo;
-import hudson.model.AbstractBuild;
+
+import hudson.model.Run;
 import hudson.model.BuildListener;
 import hudson.model.Result;
+
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.Files;
@@ -28,6 +30,7 @@ import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.StringPluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
+
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStep;
 
@@ -394,7 +397,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         }
         mavenBuild.addAction(createMavenAggregatedReport(mavenBuild, buildResult));
         mavenBuild.registerAsProjectAction(HealthAwareReporter.this);
-        AbstractBuild<?, ?> referenceBuild = buildResult.getHistory().getReferenceBuild();
+        Run<?, ?> referenceBuild = buildResult.getHistory().getReferenceBuild();
         if (referenceBuild != null) {
             pluginLogger.log("Computing warning deltas based on reference build " + referenceBuild.getDisplayName());
         }

@@ -2,10 +2,13 @@ package hudson.plugins.analysis.core;
 
 import java.io.IOException;
 
+import hudson.FilePath;
 import hudson.Launcher;
+import hudson.Util;
 
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
 import hudson.plugins.analysis.util.PluginLogger;
 
@@ -127,6 +130,10 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
                 canResolveRelativePaths, pluginName);
     }
 
+    public HealthAwarePublisher(String pluginName) {
+        super(pluginName);
+    }
+
     /**
      * Callback method that is invoked after the build where this recorder can collect the results. This default
      * implementation provides a template method that updates the build status based on the results and copies all files
@@ -145,12 +152,12 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
      *             if the user canceled the build
      */
     @Override
-    protected boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final PluginLogger logger)
+    protected boolean perform(Run<?, ?> run, FilePath workspace, Launcher launcher, PluginLogger logger)
             throws IOException, InterruptedException {
         BuildResult result;
         try {
-            result = perform(build, logger);
-            AbstractBuild<?, ?> referenceBuild = result.getHistory().getReferenceBuild();
+            result = perform(run, workspace, logger);
+            Run<?, ?> referenceBuild = result.getHistory().getReferenceBuild();
 
             if (GlobalSettings.instance().getFailOnCorrupt() && result.hasError()) {
                 return false;
@@ -170,7 +177,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
             updateBuildResult(result, logger);
         }
 
-        copyFilesWithAnnotationsToBuildFolder(build.getRootDir(), launcher.getChannel(), result.getAnnotations());
+        copyFilesWithAnnotationsToBuildFolder(run.getRootDir(), launcher.getChannel(), result.getAnnotations());
 
         return true;
     }
@@ -210,8 +217,21 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
      *             a better error message, if it can do so, so that users have
      *             better understanding on why it failed.
      */
-    protected abstract BuildResult perform(AbstractBuild<?, ?> build, PluginLogger logger)
-            throws InterruptedException, IOException;
+    @Deprecated
+    protected BuildResult perform(AbstractBuild<?, ?> build, PluginLogger logger)
+            throws InterruptedException, IOException {
+        return perform((Run) build, null, logger);
+    }
+
+    protected /*abstract*/ BuildResult perform(Run<?, ?> run, FilePath workspace, PluginLogger logger) throws InterruptedException, IOException{
+        if (Util.isOverridden(HealthAwarePublisher.class, getClass(),
+                "perform", AbstractBuild.class, PluginLogger.class) && run instanceof AbstractBuild) {
+            return perform((AbstractBuild) run, logger);
+        } else {
+            // Runtime error to force overriding this method
+            throw new AbstractMethodError("you must override the new overload of perform(Run, FilePath, Launcher, PluginLogger)");
+        }
+    }
 
     // CHECKSTYLE:OFF
     @Deprecated

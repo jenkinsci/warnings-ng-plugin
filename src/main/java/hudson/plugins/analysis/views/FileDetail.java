@@ -3,7 +3,7 @@ package hudson.plugins.analysis.views;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
 import hudson.plugins.analysis.util.model.WorkspaceFile;
 
@@ -32,7 +32,7 @@ public class FileDetail extends AbstractAnnotationsDetail {
      * @param header
      *            header to be shown on detail page
      */
-    public FileDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final WorkspaceFile file, final String defaultEncoding, final String header) {
+    public FileDetail(final Run<?, ?> owner, final DetailFactory detailFactory, final WorkspaceFile file, final String defaultEncoding, final String header) {
         super(owner, detailFactory, file.getAnnotations(), defaultEncoding, header, Hierarchy.FILE);
         this.file = file;
     }

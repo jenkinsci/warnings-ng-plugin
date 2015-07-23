@@ -1,6 +1,7 @@
 package hudson.plugins.analysis.views;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.Priority;
@@ -54,7 +55,7 @@ public class PriorityDetailFactory {
      *            the default encoding to be used when reading and parsing files
      * @return the priority detail
      */
-    public PrioritiesDetail create(final String priority, final AbstractBuild<?, ?> owner, final AnnotationContainer container, final String defaultEncoding, final String header) {
+    public PrioritiesDetail create(final String priority, final Run<?, ?> owner, final AnnotationContainer container, final String defaultEncoding, final String header) {
         if (Priority.HIGH.toString().equalsIgnoreCase(priority)) {
             return createPrioritiesDetail(Priority.HIGH, owner, container, defaultEncoding, header);
         }
@@ -82,7 +83,7 @@ public class PriorityDetailFactory {
      *            header to show
      * @return the priority detail
      */
-    protected PrioritiesDetail createPrioritiesDetail(final Priority priority, final AbstractBuild<?, ?> owner, final AnnotationContainer container,
+    protected PrioritiesDetail createPrioritiesDetail(final Priority priority, final Run<?, ?> owner, final AnnotationContainer container,
             final String defaultEncoding, final String header) {
         return new PrioritiesDetail(owner, detailFactory, container.getAnnotations(priority), priority, defaultEncoding, header);
     }

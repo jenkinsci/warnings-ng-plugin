@@ -19,8 +19,9 @@ import de.java2html.javasource.JavaSource;
 import de.java2html.javasource.JavaSourceParser;
 import de.java2html.options.JavaSourceConversionOptions;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.model.ModelObject;
+
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.LineRange;
@@ -40,7 +41,7 @@ public class SourceDetail implements ModelObject {
     /** Color for all other annotation ranges. */
     private static final String OTHER_COLOR = "#FCE94F";
     /** The current build as owner of this object. */
-    private final AbstractBuild<?, ?> owner;
+    private final Run<?, ?> owner;
     /** Stripped file name of this annotation without the path prefix. */
     private final String fileName;
     /** The annotation to be shown. */
@@ -60,7 +61,7 @@ public class SourceDetail implements ModelObject {
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
      */
-    public SourceDetail(final AbstractBuild<?, ?> owner, final FileAnnotation annotation, final String defaultEncoding) {
+    public SourceDetail(final Run<?, ?> owner, final FileAnnotation annotation, final String defaultEncoding) {
         this.owner = owner;
         this.annotation = annotation;
         this.defaultEncoding = defaultEncoding;
@@ -241,7 +242,7 @@ public class SourceDetail implements ModelObject {
      *
      * @return the build
      */
-    public AbstractBuild<?, ?> getOwner() {
+    public Run<?, ?> getOwner() {
         return owner;
     }
 

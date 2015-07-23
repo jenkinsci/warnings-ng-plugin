@@ -2,7 +2,7 @@ package hudson.plugins.analysis.views;
 
 import java.util.Collection;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -30,7 +30,7 @@ public class NewWarningsDetail extends AbstractAnnotationsDetail {
      * @param header
      *            header to be shown on detail page
      */
-    public NewWarningsDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> newWarnings, final String defaultEncoding, final String header) {
+    public NewWarningsDetail(final Run<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> newWarnings, final String defaultEncoding, final String header) {
         super(owner, detailFactory, newWarnings, defaultEncoding, header, Hierarchy.PROJECT);
     }
 

@@ -212,7 +212,12 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      */
     public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
             @QueryParameter final String pattern) throws IOException {
-        return FilePath.validateFileMask(project.getSomeWorkspace(), pattern);
+        if (project != null) {
+            return FilePath.validateFileMask(project.getSomeWorkspace(), pattern);
+        } else {
+            // Workflow jobs does not have a workspace
+            return FormValidation.ok();
+        }
     }
 
     /**

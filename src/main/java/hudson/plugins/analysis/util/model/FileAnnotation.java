@@ -3,6 +3,7 @@ package hudson.plugins.analysis.util.model;
 import java.util.Collection;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
 /**
  * Annotates a collection of line ranges in a file. An annotation consists of a description and a tooltip.
@@ -74,7 +75,7 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
      * @param owner the owner that provides the root directory where the files are stored
      * @return the temporary name
      */
-    String getTempName(AbstractBuild<?, ?> owner);
+    String getTempName(Run<?, ?> owner);
 
     /**
      * Sets the file name to the specified value.

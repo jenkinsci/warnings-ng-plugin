@@ -2,7 +2,7 @@ package hudson.plugins.analysis.views;
 
 import java.util.Collection;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
@@ -31,7 +31,7 @@ public class TabDetail extends AbstractAnnotationsDetail {
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
      */
-    public TabDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String url, final String defaultEncoding) {
+    public TabDetail(final Run<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String url, final String defaultEncoding) {
         super(owner, detailFactory, annotations, defaultEncoding, "No Header", Hierarchy.PROJECT);
         this.url = url;
     }

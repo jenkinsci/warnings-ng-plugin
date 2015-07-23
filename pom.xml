@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>1.59</version>
+    <version>1.62-SNAPSHOT</version>
     <relativePath>../analysis-pom/pom.xml</relativePath>
   </parent>
 
@@ -42,6 +42,11 @@
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
       <version>2.11.0</version>
+    </dependency>
+    <dependency><!-- 2.4 is required. Avoid transitive import derived issues -->
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.4</version>
     </dependency>
   </dependencies>
 

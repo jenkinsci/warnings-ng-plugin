@@ -9,6 +9,7 @@ import com.google.common.collect.Maps;
 
 import hudson.model.Item;
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.ResultAction;
@@ -85,7 +86,7 @@ public class DetailFactory {
      * @return the dynamic result of this module detail view
      */
     // CHECKSTYLE:OFF
-    public Object createTrendDetails(final String link, final AbstractBuild<?, ?> owner,
+    public Object createTrendDetails(final String link, final Run<?, ?> owner,
             final AnnotationContainer container, final Collection<FileAnnotation> fixedAnnotations,
             final Collection<FileAnnotation> newAnnotations, final Collection<String> errors,
             final String defaultEncoding, final String displayName) {
@@ -139,7 +140,7 @@ public class DetailFactory {
      *            the name of the selected object
      * @return the dynamic result of this module detail view
      */
-    public Object createDetails(final String link, final AbstractBuild<?, ?> owner, final AnnotationContainer container,
+    public Object createDetails(final String link, final Run<?, ?> owner, final AnnotationContainer container,
             final String defaultEncoding, final String displayName) {
         PriorityDetailFactory factory = new PriorityDetailFactory(this);
         AnnotationContainer detail = null;
@@ -199,7 +200,7 @@ public class DetailFactory {
      *            the default encoding to be used when reading and parsing files
      * @return the detail view
      */
-    protected AttributeDetail createAttributeDetail(final AbstractBuild<?, ?> owner, final DefaultAnnotationContainer annotations,
+    protected AttributeDetail createAttributeDetail(final Run<?, ?> owner, final DefaultAnnotationContainer annotations,
             final String displayName, final String header, final String defaultEncoding) {
         return new AttributeDetail(owner, this, annotations.getAnnotations(), defaultEncoding, displayName, header + " " + annotations.getName());
     }
@@ -217,7 +218,7 @@ public class DetailFactory {
      *            the default encoding to be used when reading and parsing files
      * @return the detail view
      */
-    protected TabDetail createTabDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations,
+    protected TabDetail createTabDetail(final Run<?, ?> owner, final Collection<FileAnnotation> annotations,
             final String url, final String defaultEncoding) {
         return new TabDetail(owner, this, annotations, url, defaultEncoding);
     }
@@ -235,7 +236,7 @@ public class DetailFactory {
      *            the name of the view
      * @return the detail view
      */
-    protected FixedWarningsDetail createFixedWarningsDetail(final AbstractBuild<?, ?> owner,
+    protected FixedWarningsDetail createFixedWarningsDetail(final Run<?, ?> owner,
             final Collection<FileAnnotation> fixedAnnotations, final String defaultEncoding,
             final String displayName) {
         return new FixedWarningsDetail(owner, this, fixedAnnotations, defaultEncoding, displayName);

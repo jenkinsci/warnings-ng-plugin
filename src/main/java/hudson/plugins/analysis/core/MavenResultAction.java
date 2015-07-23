@@ -1,6 +1,7 @@
 package hudson.plugins.analysis.core;
 
 import javax.annotation.CheckForNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -20,9 +21,11 @@ import hudson.maven.AggregatableAction;
 import hudson.maven.MavenAggregatedReport;
 import hudson.maven.MavenBuild;
 import hudson.maven.MavenModule;
-import hudson.model.AbstractBuild;
+
+import hudson.model.Run;
 import hudson.model.HealthReport;
 import hudson.model.Result;
+
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.StringPluginLogger;
 import hudson.plugins.analysis.util.ToolTipProvider;
@@ -279,7 +282,7 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
      *
      * @return the associated build of this action
      */
-    public AbstractBuild<?, ?> getOwner() {
+    public Run<?, ?> getOwner() {
         return delegate.getOwner();
     }
 
@@ -298,7 +301,7 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
     }
 
     @Override
-    public final AbstractBuild<?, ?> getBuild() {
+    public final Run<?, ?> getBuild() {
         return delegate.getBuild();
     }
 

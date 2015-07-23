@@ -2,7 +2,7 @@ package hudson.plugins.analysis.views;
 
 import java.util.Collection;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -34,7 +34,7 @@ public class PrioritiesDetail extends AbstractAnnotationsDetail {
      * @param header
      *            header to be shown on detail page
      */
-    public PrioritiesDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final Priority priority, final String defaultEncoding, final String header) {
+    public PrioritiesDetail(final Run<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final Priority priority, final String defaultEncoding, final String header) {
         super(owner, detailFactory, annotations, defaultEncoding, header, Hierarchy.PROJECT);
         this.priority = priority;
     }
