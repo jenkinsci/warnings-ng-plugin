@@ -122,21 +122,6 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
     }
 
     @Override
-    public Publisher newInstance(final StaplerRequest req, final JSONObject formData)
-            throws hudson.model.Descriptor.FormException {
-        JSONObject converted;
-        if (formData.containsKey(CONFIGURATION_SECTION_KEY)) {
-            JSONObject old = formData.getJSONObject(CONFIGURATION_SECTION_KEY);
-            formData.put(CONFIGURATION_SECTION_KEY, convertHierarchicalFormData(old));
-            converted = formData;
-        }
-        else {
-            converted = convertHierarchicalFormData(formData);
-        }
-        return super.newInstance(req, converted);
-    }
-
-    @Override
     public final String getHelpFile() {
         return getPluginRoot() + "help.html";
     }

@@ -70,7 +70,7 @@
   </f:entry>
   <f:block>
     <table>
-      <f:optionalBlock name="canComputeNew" title="${%compute.new.title}" checked="${instance.canComputeNew}">
+      <f:optionalBlock name="canComputeNew" title="${%compute.new.title}" checked="${instance.canComputeNew}" inline="true">
         <f:entry title="${%title.status.new}" description="${%description.status.new}">
           <table>
             <thead>
