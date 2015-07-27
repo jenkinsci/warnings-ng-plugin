@@ -76,7 +76,10 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @param hierarchical
      *            the JSON object containing a sub-section
      * @return the flat structure
+     *
+     * @deprecated This transformation is no longer required. The JSON is coming as expected from the browser.
      */
+    @Deprecated
     protected static JSONObject convertHierarchicalFormData(final JSONObject hierarchical) {
         return convertHierarchicalFormData(hierarchical, COMPUTE_NEW_SECTION_KEY);
     }
@@ -91,7 +94,10 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      *            the section to flatten
      * @return the flat structure
      * @since 1.55
+     *
+     * @deprecated This transformation is no longer required. The JSON is coming as expected from the browser.
      */
+    @Deprecated
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("WMI")
     protected static JSONObject convertHierarchicalFormData(final JSONObject hierarchical, final String section) {
         if (hierarchical.containsKey(section)) {
