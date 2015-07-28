@@ -288,6 +288,24 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
         this.healthDescriptor = healthDescriptor;
     }
 
+    /**
+     * Creates a new instance of <code>AbstractResultAction</code>.
+     *
+     * @param owner
+     *            the associated build of this action
+     * @param healthDescriptor
+     *            health descriptor
+     * @param result
+     *            the result of the action
+     * @deprecated use {@link #AbstractResultAction(Run, AbstractHealthDescriptor, BuildResult)} instead
+     */
+    @Deprecated
+    public AbstractResultAction(final AbstractBuild<?, ?> owner, final AbstractHealthDescriptor healthDescriptor, final T result) {
+        this.owner = owner;
+        this.result = result;
+        this.healthDescriptor = healthDescriptor;
+    }
+
     /** Backward compatibility. @deprecated */
     @Deprecated
     @java.lang.SuppressWarnings("PMD")

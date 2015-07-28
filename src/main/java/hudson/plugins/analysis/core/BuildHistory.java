@@ -351,5 +351,33 @@ public class BuildHistory {
     public BuildHistory(final AbstractBuild<?, ?> baseline, final Class<? extends ResultAction<? extends BuildResult>> type) {
         this(baseline, type, false);
     }
+
+    /**
+     * Creates a new instance of {@link BuildHistory}.
+     *
+     * @param baseline
+     *            the build to start the history from
+     * @param type
+     *            type of the action that contains the build results
+     * @param usePreviousBuildAsReference
+     *            determines whether the previous build should always be used
+     *            as the reference build
+     * @param useStableBuildAsReference
+     *            determines whether only stable builds should be used as
+     *            reference builds or not
+     * @since 1.66
+     * 
+     * @deprecated use {@link #BuildHistory(Run, Class, boolean, boolean)}
+     */
+    @Deprecated
+    public BuildHistory(final AbstractBuild<?, ?> baseline,
+            final Class<? extends ResultAction<? extends BuildResult>> type,
+            final boolean usePreviousBuildAsReference,
+            final boolean useStableBuildAsReference) {
+        this.baseline = baseline;
+        this.type = type;
+        this.usePreviousBuildAsReference = usePreviousBuildAsReference;
+        this.useStableBuildAsReference = useStableBuildAsReference;
+    }
 }
 

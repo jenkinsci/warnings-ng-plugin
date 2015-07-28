@@ -6,6 +6,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import hudson.model.ModelObject;
+import hudson.model.AbstractBuild;
 import hudson.model.Run;
 
 import hudson.plugins.analysis.util.model.AnnotationContainer;
@@ -130,5 +131,32 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      */
     public Priority[] getPriorities() {
         return Priority.values();
+    }
+
+    /**
+     * Creates a new instance of {@link AbstractAnnotationsDetail}.
+     *
+     * @param owner
+     *            current build as owner of this object
+     * @param detailFactory
+     *            factory to create detail objects with
+     * @param annotations
+     *            the set of warnings represented by this object
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @param name
+     *            the name of this object
+     * @param hierarchy
+     *            the hierarchy level of this detail object
+     * @deprecated use {@link #AbstractAnnotationsDetail(Run, DetailFactory, Collection, String, String, Hierarchy)} instead
+     */
+    @Deprecated
+    public AbstractAnnotationsDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String defaultEncoding, final String name, final Hierarchy hierarchy) {
+        super(name, hierarchy);
+        this.owner = owner;
+        this.detailFactory = detailFactory;
+        this.defaultEncoding = defaultEncoding;
+
+        addAnnotations(annotations);
     }
 }

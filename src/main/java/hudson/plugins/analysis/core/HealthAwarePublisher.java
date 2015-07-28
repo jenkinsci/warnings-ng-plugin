@@ -103,8 +103,10 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
      * @param pluginName
      *            the name of the plug-in
      * @since 1.66
+     * @deprecated use {@link #HealthAwarePublisher(String)} and setters instead
      */
     @SuppressWarnings("PMD")
+    @Deprecated
     public HealthAwarePublisher(final String healthy, final String unHealthy,
             final String thresholdLimit, final String defaultEncoding,
             final boolean useDeltaValues, final String unstableTotalAll,
@@ -218,7 +220,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
      *             better understanding on why it failed.
      */
     @Deprecated
-    protected BuildResult perform(AbstractBuild<?, ?> build, PluginLogger logger)
+    public BuildResult perform(AbstractBuild<?, ?> build, PluginLogger logger)
             throws InterruptedException, IOException {
         return perform((Run) build, null, logger);
     }

@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import hudson.console.ConsoleNote;
 
 import hudson.model.ModelObject;
+import hudson.model.AbstractBuild;
 import hudson.model.Run;
 
 import hudson.plugins.analysis.Messages;
@@ -117,5 +118,28 @@ public class ConsoleDetail implements ModelObject {
      */
     public String getSourceCode() {
         return sourceCode;
+    }
+
+    /**
+     * Creates a new instance of this console log viewer object.
+     *
+     * @param owner
+     *            the current build as owner of this object
+     * @param from
+     *            first line in the console log
+     * @param to
+     *            last line in the console log
+     * @deprecated use {@link #ConsoleDetail(Run, int, int)} instead
+     */
+    @Deprecated
+    public ConsoleDetail(final AbstractBuild<?, ?> owner, final int from, final int to) {
+        this.owner = owner;
+        this.from = from;
+        this.to = to;
+
+        start = Math.max(0, from - 10);
+        end = to + 10;
+
+        readConsole();
     }
 }

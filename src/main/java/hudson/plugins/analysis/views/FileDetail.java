@@ -3,6 +3,7 @@ package hudson.plugins.analysis.views;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import hudson.model.AbstractBuild;
 import hudson.model.Run;
 
 import hudson.plugins.analysis.util.model.WorkspaceFile;
@@ -67,6 +68,27 @@ public class FileDetail extends AbstractAnnotationsDetail {
     @Override
     public WorkspaceFile getFile(final String name) {
         return file;
+    }
+
+    /**
+     * Creates a new instance of <code>ModuleDetail</code>.
+     *
+     * @param owner
+     *            current build as owner of this action.
+     * @param detailFactory
+     *            factory to create detail objects with
+     * @param file
+     *            the file to show the details for
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @param header
+     *            header to be shown on detail page
+     * @deprecated use {@link #FileDetail(Run, DetailFactory, WorkspaceFile, String, String)} instead
+     */
+    @Deprecated
+    public FileDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final WorkspaceFile file, final String defaultEncoding, final String header) {
+        super(owner, detailFactory, file.getAnnotations(), defaultEncoding, header, Hierarchy.FILE);
+        this.file = file;
     }
 }
 

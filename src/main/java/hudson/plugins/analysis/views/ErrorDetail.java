@@ -2,6 +2,7 @@ package hudson.plugins.analysis.views;
 
 import java.util.Collection;
 
+import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.model.ModelObject;
 
@@ -52,6 +53,21 @@ public class ErrorDetail implements ModelObject  {
      */
     public Collection<String> getErrors() {
         return errors;
+    }
+
+    /**
+     * Creates a new instance of <code>ErrorDetail</code>.
+     *
+     * @param owner
+     *            current build as owner of this action.
+     * @param errors
+     *            all modules of the project
+     * @deprecated use {@link #ErrorDetail(Run, Collection)} instead
+     */
+    @Deprecated
+    public ErrorDetail(final AbstractBuild<?, ?> owner, final Collection<String> errors) {
+        this.owner = owner;
+        this.errors = errors;
     }
 }
 

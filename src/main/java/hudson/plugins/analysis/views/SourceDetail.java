@@ -19,6 +19,7 @@ import de.java2html.javasource.JavaSource;
 import de.java2html.javasource.JavaSourceParser;
 import de.java2html.options.JavaSourceConversionOptions;
 
+import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.model.ModelObject;
 
@@ -253,6 +254,27 @@ public class SourceDetail implements ModelObject {
      */
     public String getSourceCode() {
         return sourceCode;
+    }
+
+    /**
+     * Creates a new instance of this source code object.
+     *
+     * @param owner
+     *            the current build as owner of this object
+     * @param annotation
+     *            the warning to display in the source file
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @deprecated use {@link #SourceDetail(Run, FileAnnotation, String)} instead
+     */
+    @Deprecated
+    public SourceDetail(final AbstractBuild<?, ?> owner, final FileAnnotation annotation, final String defaultEncoding) {
+        this.owner = owner;
+        this.annotation = annotation;
+        this.defaultEncoding = defaultEncoding;
+        fileName = StringUtils.substringAfterLast(annotation.getFileName(), "/");
+
+        initializeContent();
     }
 }
 
