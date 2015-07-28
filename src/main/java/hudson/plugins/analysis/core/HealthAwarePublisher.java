@@ -1,6 +1,9 @@
 package hudson.plugins.analysis.core;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
+
+import javax.annotation.Nonnull;
 
 import hudson.FilePath;
 import hudson.Launcher;
@@ -220,18 +223,30 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
      *             better understanding on why it failed.
      */
     @Deprecated
-    public BuildResult perform(AbstractBuild<?, ?> build, PluginLogger logger)
+    protected BuildResult perform(AbstractBuild<?, ?> build, PluginLogger logger)
             throws InterruptedException, IOException {
         return perform((Run) build, null, logger);
     }
 
     protected /*abstract*/ BuildResult perform(Run<?, ?> run, FilePath workspace, PluginLogger logger) throws InterruptedException, IOException{
-        if (Util.isOverridden(HealthAwarePublisher.class, getClass(),
+        if (isOverridden(HealthAwarePublisher.class, getClass(),
                 "perform", AbstractBuild.class, PluginLogger.class) && run instanceof AbstractBuild) {
             return perform((AbstractBuild) run, logger);
         } else {
             // Runtime error to force overriding this method
             throw new AbstractMethodError("you must override the new overload of perform(Run, FilePath, Launcher, PluginLogger)");
+        }
+    }
+
+    /**
+     * Util.isOverriden does not work on non-public methods, that's why this one is used here.
+     */
+    private static boolean isOverridden(@Nonnull Class base, @Nonnull Class derived, @Nonnull String methodName, @Nonnull Class... types) {
+        try {
+            return !base.getDeclaredMethod(methodName, types).equals(
+                    derived.getDeclaredMethod(methodName,types));
+        } catch (NoSuchMethodException e) {
+            throw new AssertionError(e);
         }
     }
 
