@@ -264,5 +264,45 @@ public class DetailFactory {
     private int createHashCode(final String link, final String prefix) {
         return Integer.parseInt(StringUtils.substringAfter(link, prefix));
     }
-}
 
+    /**
+     * Creates a generic detail tab with the specified link.
+     *
+     * @param owner
+     *            the build as owner of the detail page
+     * @param annotations
+     *            the annotations to display
+     * @param url
+     *            the URL for the details view
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @return the detail view
+     * @deprecated use {@link #createTabDetail(Run, Collection, String, String)} instead
+     */
+    @Deprecated
+    protected TabDetail createTabDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations,
+            final String url, final String defaultEncoding) {
+        return new TabDetail(owner, this, annotations, url, defaultEncoding);
+    }
+
+    /**
+     * Creates a generic fixed warnings detail tab with the specified link.
+     *
+     * @param owner
+     *            the build as owner of the detail page
+     * @param fixedAnnotations
+     *            the annotations to display
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @param displayName
+     *            the name of the view
+     * @return the detail view
+     * @deprecated use {@link #createFixedWarningsDetail(Run, Collection, String, String)} instead
+     */
+    @Deprecated
+    protected FixedWarningsDetail createFixedWarningsDetail(final AbstractBuild<?, ?> owner,
+            final Collection<FileAnnotation> fixedAnnotations, final String defaultEncoding,
+            final String displayName) {
+        return new FixedWarningsDetail(owner, this, fixedAnnotations, defaultEncoding, displayName);
+    }
+}
