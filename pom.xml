@@ -4,8 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>1.62-SNAPSHOT</version>
-    <relativePath>../analysis-pom/pom.xml</relativePath>
+    <version>1.62</version>
   </parent>
 
   <artifactId>analysis-core</artifactId>
