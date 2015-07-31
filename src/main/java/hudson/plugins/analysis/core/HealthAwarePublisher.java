@@ -1,13 +1,11 @@
 package hudson.plugins.analysis.core;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import javax.annotation.Nonnull;
 
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.Util;
 
 import hudson.model.Result;
 import hudson.model.AbstractBuild;

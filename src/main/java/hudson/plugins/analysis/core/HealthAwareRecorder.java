@@ -549,6 +549,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @return the 100% healthiness
      */
     @Override
+    @CheckForNull
     public String getHealthy() {
         return healthy;
     }
@@ -567,6 +568,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @return the 0% unhealthiness
      */
     @Override
+    @CheckForNull
     public String getUnHealthy() {
         return unHealthy;
     }
@@ -663,6 +665,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      *
      * @return the threshold limit
      */
+    @CheckForNull
     public String getThresholdLimit() {
         return thresholdLimit;
     }
@@ -702,6 +705,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         dontComputeNew = !canComputeNew;
     }
 
+    @CheckForNull
     public String getUnstableTotalAll() {
         return thresholds.unstableTotalHigh;
     }
@@ -711,6 +715,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.unstableTotalAll = unstableTotalAll;
     }
 
+    @CheckForNull
     public String getUnstableTotalHigh() {
         return thresholds.unstableTotalHigh;
     }
@@ -720,6 +725,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.unstableTotalHigh = unstableTotalHigh;
     }
 
+    @CheckForNull
     public String getUnstableTotalNormal() {
         return thresholds.unstableTotalNormal;
     }
@@ -729,6 +735,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.unstableTotalNormal = unstableTotalNormal;
     }
 
+    @CheckForNull
     public String getUnstableTotalLow() {
         return thresholds.unstableTotalLow;
     }
@@ -738,6 +745,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.unstableTotalLow = unstableTotalLow;
     }
 
+    @CheckForNull
     public String getUnstableNewAll() {
         return thresholds.unstableNewAll;
     }
@@ -747,6 +755,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.unstableNewAll = unstableNewAll;
     }
 
+    @CheckForNull
     public String getUnstableNewHigh() {
         return thresholds.unstableNewHigh;
     }
@@ -756,6 +765,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.unstableNewHigh = unstableNewHigh;
     }
 
+    @CheckForNull
     public String getUnstableNewNormal() {
         return thresholds.unstableNewNormal;
     }
@@ -765,6 +775,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.unstableNewNormal = unstableNewNormal;
     }
 
+    @CheckForNull
     public String getUnstableNewLow() {
         return thresholds.unstableNewLow;
     }
@@ -774,6 +785,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.unstableNewLow = unstableNewLow;
     }
 
+    @CheckForNull
     public String getFailedTotalAll() {
         return thresholds.failedTotalAll;
     }
@@ -783,6 +795,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.failedTotalAll = failedTotalAll;
     }
 
+    @CheckForNull
     public String getFailedTotalHigh() {
         return thresholds.failedTotalHigh;
     }
@@ -792,6 +805,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.failedTotalHigh = failedTotalHigh;
     }
 
+    @CheckForNull
     public String getFailedTotalNormal() {
         return thresholds.failedTotalNormal;
     }
@@ -801,6 +815,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.failedTotalNormal = failedTotalNormal;
     }
 
+    @CheckForNull
     public String getFailedTotalLow() {
         return thresholds.failedTotalNormal;
     }
@@ -810,6 +825,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.failedTotalLow = failedTotalLow;
     }
 
+    @CheckForNull
     public String getFailedNewAll() {
         return thresholds.failedNewAll;
     }
@@ -819,6 +835,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.failedNewAll = failedNewAll;
     }
 
+    @CheckForNull
     public String getFailedNewHigh() {
         return thresholds.failedNewHigh;
     }
@@ -828,6 +845,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.failedNewHigh = failedNewHigh;
     }
 
+    @CheckForNull
     public String getFailedNewNormal() {
         return thresholds.failedNewNormal;
     }
@@ -837,6 +855,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         thresholds.failedNewNormal = failedNewNormal;
     }
 
+    @CheckForNull
     public String getFailedNewLow() {
         return thresholds.failedNewLow;
     }
