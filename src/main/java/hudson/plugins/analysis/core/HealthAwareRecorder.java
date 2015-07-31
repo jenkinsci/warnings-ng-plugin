@@ -607,19 +607,33 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      */
     protected boolean isMavenBuild(final Run<?, ?> build) {
         if (build instanceof AbstractBuild) {
-            AbstractBuild aBuild = (AbstractBuild) build;
-            if (aBuild.getProject() instanceof Project) {
-                Project<?, ?> project = (Project<?, ?>) aBuild.getProject();
-                for (Builder builder : project.getBuilders()) {
-                    if (builder instanceof Maven) {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return isMavenBuild((AbstractBuild) build);
         } else {
             return false;
         }
+    }
+
+    /**
+     * Returns whether the current build uses maven.
+     *
+     * @param build
+     *            the current build
+     * @return <code>true</code> if the current build uses maven,
+     *         <code>false</code> otherwise
+     * @deprecated use {@link #isMavenBuild(Run)} instead
+     */
+    @Deprecated
+    protected boolean isMavenBuild(final AbstractBuild<?, ?> build) {
+        AbstractBuild aBuild = (AbstractBuild) build;
+        if (aBuild.getProject() instanceof Project) {
+            Project<?, ?> project = (Project<?, ?>) aBuild.getProject();
+            for (Builder builder : project.getBuilders()) {
+                if (builder instanceof Maven) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
