@@ -3,9 +3,7 @@ package hudson.plugins.analysis.core;
 import java.io.File;
 import java.io.IOException;
 
-import org.jenkinsci.remoting.RoleChecker;
-
-import hudson.FilePath.FileCallable;
+import jenkins.MasterToSlaveFileCallable;
 
 import hudson.plugins.analysis.util.ContextHashCode;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -18,7 +16,7 @@ import hudson.remoting.VirtualChannel;
  *
  * @author Ulli Hafner
  */
-public class AnnotationsClassifier implements FileCallable<ParserResult> {
+public class AnnotationsClassifier extends MasterToSlaveFileCallable<ParserResult> {
     /** Generated ID. */
     private static final long serialVersionUID = 5152042155205600031L;
     /** All annotations. */
@@ -52,10 +50,5 @@ public class AnnotationsClassifier implements FileCallable<ParserResult> {
             }
         }
         return result;
-    }
-
-    @Override
-    public void checkRoles(RoleChecker checker) throws SecurityException {
-        // TODO required in 1.580 (do we need to implement something here?)
     }
 }

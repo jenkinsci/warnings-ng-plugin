@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
+import jenkins.MasterToSlaveFileCallable;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.jenkinsci.remoting.RoleChecker;
 
 import hudson.FilePath;
-import hudson.FilePath.FileCallable;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.FileFinder;
@@ -29,7 +29,7 @@ import hudson.remoting.VirtualChannel;
  *
  * @author Ulli Hafner
  */
-public class FilesParser implements FileCallable<ParserResult> {
+public class FilesParser extends MasterToSlaveFileCallable<ParserResult> {
     private static final long serialVersionUID = -6415863872891783891L;
 
     /** Logs into a string. @since 1.20 */
@@ -449,10 +449,5 @@ public class FilesParser implements FileCallable<ParserResult> {
             final AnnotationParser parser, final boolean shouldDetectModules,
             final boolean isMavenBuild) {
         this(filePattern, parser, isMavenBuild, StringUtils.EMPTY);
-    }
-
-    @Override
-    public void checkRoles(RoleChecker checker) throws SecurityException {
-        // TODO required in 1.580 (do we need to implement something here?)
     }
 }

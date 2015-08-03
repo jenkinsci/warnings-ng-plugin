@@ -3,12 +3,12 @@ package hudson.plugins.analysis.util;
 import java.io.File;
 import java.io.IOException;
 
+import jenkins.MasterToSlaveFileCallable;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
-import org.jenkinsci.remoting.RoleChecker;
 
-import hudson.FilePath.FileCallable;
 import hudson.remoting.VirtualChannel;
 
 /**
@@ -16,7 +16,7 @@ import hudson.remoting.VirtualChannel;
  *
  * @author Ulli Hafner
  */
-public class FileFinder implements FileCallable<String[]> {
+public class FileFinder extends MasterToSlaveFileCallable<String[]> {
     /** Generated ID. */
     private static final long serialVersionUID = 2970029366847565970L;
     /** File name pattern for java files. */
@@ -80,10 +80,5 @@ public class FileFinder implements FileCallable<String[]> {
         catch (BuildException exception) {
             return new String[0];
         }
-    }
-
-    @Override
-    public void checkRoles(RoleChecker checker) throws SecurityException {
-        // TODO required in 1.580 (do we need to implement something here?)
     }
 }
