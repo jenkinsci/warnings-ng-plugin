@@ -242,7 +242,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
     /**
      * Util.isOverriden does not work on non-public methods, that's why this one is used here.
      */
-    private static boolean isOverridden(@Nonnull Class base, @Nonnull Class derived, @Nonnull String methodName, @Nonnull Class... types) {
+    /*package*/ static boolean isOverridden(@Nonnull Class base, @Nonnull Class derived, @Nonnull String methodName, @Nonnull Class... types) {
         try {
             return !getMethod(base, methodName, types).equals(getMethod(derived, methodName, types));
         } catch (NoSuchMethodException e) {
