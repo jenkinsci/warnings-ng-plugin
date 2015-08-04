@@ -247,7 +247,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
 
     // CHECKSTYLE:ON
 
-    public HealthAwareRecorder(String pluginName) {
+    protected HealthAwareRecorder(String pluginName) {
         this.pluginName = "[" + pluginName + "] ";
     }
 
