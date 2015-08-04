@@ -1,8 +1,11 @@
 package hudson.plugins.analysis.core;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import javax.annotation.Nonnull;
+
+import org.apache.commons.httpclient.methods.GetMethod;
 
 import hudson.FilePath;
 import hudson.Launcher;
@@ -241,11 +244,29 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
      */
     private static boolean isOverridden(@Nonnull Class base, @Nonnull Class derived, @Nonnull String methodName, @Nonnull Class... types) {
         try {
-            return !base.getDeclaredMethod(methodName, types).equals(
-                    derived.getDeclaredMethod(methodName,types));
+            return !getMethod(base, methodName, types).equals(getMethod(derived, methodName, types));
         } catch (NoSuchMethodException e) {
             throw new AssertionError(e);
         }
+    }
+
+    private static Method getMethod(@Nonnull Class clazz, @Nonnull String methodName, @Nonnull Class... types) throws NoSuchMethodException {
+        Method res = null;
+        try {
+            res = clazz.getDeclaredMethod(methodName, types);
+        } catch (NoSuchMethodException e) {
+            // Method not found in clazz, let's search in superclasses
+            Class superclass = clazz.getSuperclass();
+            if (superclass != null) {
+                res = getMethod(superclass, methodName, types);
+            }
+        } catch (SecurityException e) {
+            throw new AssertionError(e);
+        }
+        if (res == null) {
+            throw new NoSuchMethodException("Method " + methodName + " not found in " + clazz.getName());
+        }
+        return res;
     }
 
     // CHECKSTYLE:OFF
