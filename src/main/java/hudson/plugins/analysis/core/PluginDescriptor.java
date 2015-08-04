@@ -7,7 +7,6 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
 
 import hudson.FilePath;
 
@@ -31,7 +30,6 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
     /** Suffix of the URL of the plug-in result. */
     protected static final String RESULT_URL_SUFFIX = "Result";
     private static final String COMPUTE_NEW_SECTION_KEY = "canComputeNew";
-    private static final String CONFIGURATION_SECTION_KEY = "configuration"; // starting with 1.55
 
     /**
      * Returns the result URL for the specified plug-in.

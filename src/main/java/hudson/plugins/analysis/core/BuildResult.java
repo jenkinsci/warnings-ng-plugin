@@ -250,7 +250,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the history
      */
     protected BuildHistory createHistory(final Run<?, ?> build) {
-        return new BuildHistory(build, getResultActionType(), false);
+        return new BuildHistory(build, getResultActionType(), false, false);
     }
 
     /**

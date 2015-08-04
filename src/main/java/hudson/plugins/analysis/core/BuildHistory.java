@@ -333,7 +333,7 @@ public class BuildHistory {
      * @deprecated use {@link #BuildHistory(AbstractBuild, Class, boolean, boolean)}
      */
     @Deprecated
-    public BuildHistory(final Run<?, ?> baseline, final Class<? extends ResultAction<? extends BuildResult>> type,
+    public BuildHistory(final AbstractBuild<?, ?> baseline, final Class<? extends ResultAction<? extends BuildResult>> type,
             final boolean useStableBuildAsReference) {
         this(baseline, type, false, useStableBuildAsReference);
     }
