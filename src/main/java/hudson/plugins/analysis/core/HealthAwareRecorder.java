@@ -626,9 +626,8 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      */
     @Deprecated
     protected boolean isMavenBuild(final AbstractBuild<?, ?> build) {
-        AbstractBuild aBuild = (AbstractBuild) build;
-        if (aBuild.getProject() instanceof Project) {
-            Project<?, ?> project = (Project<?, ?>) aBuild.getProject();
+        if (build.getProject() instanceof Project) {
+            Project<?, ?> project = (Project<?, ?>)build.getProject();
             for (Builder builder : project.getBuilders()) {
                 if (builder instanceof Maven) {
                     return true;
