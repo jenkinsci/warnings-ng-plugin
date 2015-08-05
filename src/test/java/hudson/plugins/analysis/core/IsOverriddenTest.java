@@ -1,12 +1,8 @@
 package hudson.plugins.analysis.core;
 
-import java.lang.reflect.InvocationTargetException;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
-
-import hudson.plugins.analysis.core.HealthAwarePublisher;
-
-import static org.junit.Assert.*;
 
 /**
  * Test for {@link HealthAwarePublisher.isOverridden} method.

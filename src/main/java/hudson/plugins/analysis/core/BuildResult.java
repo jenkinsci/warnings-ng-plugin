@@ -369,8 +369,21 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the reference build.
      */
     @Exported
+    @WithBridgeMethods(value=AbstractBuild.class, adapterMethod="getReferenceAbstractBuild")
     public Run<?, ?> getReferenceBuild() {
         return owner.getParent().getBuildByNumber(referenceBuild);
+    }
+
+    /**
+     * Added for backward compatibility. It generates <pre>AbstractBuild getReferenceBuild()</pre> bytecode during the build
+     * process, so old implementations can use that signature.
+     * 
+     * @see {@link WithBridgeMethods}
+     */
+    @Restricted(NoExternalUse.class)
+    @Deprecated
+    public final Object getReferenceAbstractBuild(Run owner, Class targetClass) {
+      return owner instanceof AbstractBuild ? ((AbstractBuild) owner).getProject().getBuildByNumber(referenceBuild) : null;
     }
 
     private int computeDelta(final ParserResult result, final AnnotationContainer referenceResult, final Priority priority) {
