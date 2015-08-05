@@ -11,10 +11,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.StaplerProxy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 
 import hudson.FilePath;
 import hudson.maven.AggregatableAction;
@@ -22,6 +25,7 @@ import hudson.maven.MavenAggregatedReport;
 import hudson.maven.MavenBuild;
 import hudson.maven.MavenModule;
 
+import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.model.HealthReport;
 import hudson.model.Result;
@@ -282,8 +286,21 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
      *
      * @return the associated build of this action
      */
+    @WithBridgeMethods(value=AbstractBuild.class, adapterMethod="getAbstractBuild")
     public Run<?, ?> getOwner() {
         return delegate.getOwner();
+    }
+
+    /**
+     * Added for backward compatibility. It generates <pre>AbstractBuild getOwner()</pre> bytecode during the build
+     * process, so old implementations can use that signature.
+     * 
+     * @see {@link WithBridgeMethods}
+     */
+    @Restricted(NoExternalUse.class)
+    @Deprecated
+    public final Object getAbstractBuild(Run owner, Class targetClass) {
+        return delegate.getOwner() instanceof AbstractBuild ? (AbstractBuild<?, ?>) delegate.getOwner() : null;
     }
 
     /**
@@ -301,8 +318,9 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
     }
 
     @Override
+    @WithBridgeMethods(value=AbstractBuild.class, adapterMethod="getAbstractBuild")
     public final Run<?, ?> getBuild() {
-        return delegate.getBuild();
+        return delegate.getOwner();
     }
 
     @Override

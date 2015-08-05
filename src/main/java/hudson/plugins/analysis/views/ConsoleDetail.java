@@ -8,6 +8,10 @@ import java.io.InputStreamReader;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+
+import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 
 import hudson.console.ConsoleNote;
 
@@ -107,8 +111,21 @@ public class ConsoleDetail implements ModelObject {
      *
      * @return the build
      */
+    @WithBridgeMethods(value=AbstractBuild.class, adapterMethod="getAbstractBuild")
     public Run<?, ?> getOwner() {
         return owner;
+    }
+
+    /**
+     * Added for backward compatibility. It generates <pre>AbstractBuild getOwner()</pre> bytecode during the build
+     * process, so old implementations can use that signature.
+     * 
+     * @see {@link WithBridgeMethods}
+     */
+    @Restricted(NoExternalUse.class)
+    @Deprecated
+    public final Object getAbstractBuild(Run owner, Class targetClass) {
+      return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
     }
 
     /**

@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -23,6 +25,7 @@ import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import com.google.common.collect.Sets;
+import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 import com.thoughtworks.xstream.XStream;
 
 import jenkins.model.Jenkins;
@@ -591,8 +594,21 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the owner
      */
+    @WithBridgeMethods(value=AbstractBuild.class, adapterMethod="getAbstractBuild")
     public Run<?, ?> getOwner() {
         return owner;
+    }
+
+    /**
+     * Added for backward compatibility. It generates <pre>AbstractBuild getOwner()</pre> bytecode during the build
+     * process, so old implementations can use that signature.
+     * 
+     * @see {@link WithBridgeMethods}
+     */
+    @Restricted(NoExternalUse.class)
+    @Deprecated
+    public final Object getAbstractBuild(Run owner, Class targetClass) {
+      return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
     }
 
     @Override
