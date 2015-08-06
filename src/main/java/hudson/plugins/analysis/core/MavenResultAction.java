@@ -297,9 +297,8 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
      * 
      * @see {@link WithBridgeMethods}
      */
-    @Restricted(NoExternalUse.class)
     @Deprecated
-    public final Object getAbstractBuild(Run owner, Class targetClass) {
+    private final Object getAbstractBuild(Run owner, Class targetClass) {
         return delegate.getOwner() instanceof AbstractBuild ? (AbstractBuild<?, ?>) delegate.getOwner() : null;
     }
 

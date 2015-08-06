@@ -204,7 +204,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
         if (project != null) {
             return FilePath.validateFileMask(project.getSomeWorkspace(), pattern);
         } else {
-            // Workflow jobs does not have a workspace
+            // Workflow jobs have no workspace
             return FormValidation.ok();
         }
     }

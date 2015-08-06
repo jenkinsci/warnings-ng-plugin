@@ -74,8 +74,7 @@ public class PrioritiesDetail extends AbstractAnnotationsDetail {
      */
     @Deprecated
     public PrioritiesDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final Priority priority, final String defaultEncoding, final String header) {
-        super(owner, detailFactory, annotations, defaultEncoding, header, Hierarchy.PROJECT);
-        this.priority = priority;
+        this((Run<?, ?>) owner, detailFactory, annotations, priority, defaultEncoding, header);
     }
 }
 

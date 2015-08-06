@@ -95,8 +95,7 @@ public class TabDetail extends AbstractAnnotationsDetail {
      */
     @Deprecated
     public TabDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String url, final String defaultEncoding) {
-        super(owner, detailFactory, annotations, defaultEncoding, "No Header", Hierarchy.PROJECT);
-        this.url = url;
+        this((Run<?, ?>) owner, detailFactory, annotations, url, defaultEncoding);
     }
 }
 

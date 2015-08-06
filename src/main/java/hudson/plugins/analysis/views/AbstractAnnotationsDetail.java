@@ -94,9 +94,8 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      * 
      * @see {@link WithBridgeMethods}
      */
-    @Restricted(NoExternalUse.class)
     @Deprecated
-    public final Object getAbstractBuild(Run owner, Class targetClass) {
+    private final Object getAbstractBuild(Run owner, Class targetClass) {
       return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
     }
 
@@ -169,11 +168,6 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      */
     @Deprecated
     public AbstractAnnotationsDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String defaultEncoding, final String name, final Hierarchy hierarchy) {
-        super(name, hierarchy);
-        this.owner = owner;
-        this.detailFactory = detailFactory;
-        this.defaultEncoding = defaultEncoding;
-
-        addAnnotations(annotations);
+        this((Run<?, ?>) owner, detailFactory, annotations, defaultEncoding, name, hierarchy);
     }
 }

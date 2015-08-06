@@ -53,9 +53,8 @@ public class ErrorDetail implements ModelObject  {
      * 
      * @see {@link WithBridgeMethods}
      */
-    @Restricted(NoExternalUse.class)
     @Deprecated
-    public final Object getAbstractBuild(Run owner, Class targetClass) {
+    private final Object getAbstractBuild(Run owner, Class targetClass) {
       return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
     }
 

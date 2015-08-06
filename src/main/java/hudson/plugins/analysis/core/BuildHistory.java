@@ -2,6 +2,8 @@ package hudson.plugins.analysis.core;
 
 import javax.annotation.CheckForNull;
 
+import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
+
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -149,10 +151,6 @@ public class BuildHistory {
     /**
      * Returns the result action of the specified build that should be used to
      * compute the history.
-     *
-     * @param build
-     *            the build
-     * @return the result action
      */
     @CheckForNull
     public ResultAction<? extends BuildResult> getResultAction(final Run<?, ?> build) {
@@ -179,6 +177,7 @@ public class BuildHistory {
      * @see #hasReferenceBuild()
      */
     @CheckForNull
+    @WithBridgeMethods(value=AbstractBuild.class, adapterMethod="getReferenceAbstractBuild")
     public Run<?, ?> getReferenceBuild() {
         ResultAction<? extends BuildResult> action = getReferenceAction();
         if (action != null) {
@@ -188,6 +187,21 @@ public class BuildHistory {
             }
         }
         return null;
+    }
+
+    /**
+     * Added for backward compatibility. It generates <pre>AbstractBuild getReferenceBuild()</pre> bytecode during the build
+     * process, so old implementations can use that signature.
+     * 
+     * @see {@link WithBridgeMethods}
+     */
+    @Deprecated
+    private Object getReferenceAbstractBuild(Run run, Class targetClass) {
+        if (run != null && run instanceof AbstractBuild) {
+            return (AbstractBuild) run;
+        } else {
+            return null;
+        }
     }
 
     private boolean hasValidResult(final Run<?, ?> build) {
@@ -374,10 +388,22 @@ public class BuildHistory {
             final Class<? extends ResultAction<? extends BuildResult>> type,
             final boolean usePreviousBuildAsReference,
             final boolean useStableBuildAsReference) {
-        this.baseline = baseline;
-        this.type = type;
-        this.usePreviousBuildAsReference = usePreviousBuildAsReference;
-        this.useStableBuildAsReference = useStableBuildAsReference;
+        this((Run<?, ?>) baseline, type, usePreviousBuildAsReference, useStableBuildAsReference);
+    }
+
+    /**
+     * Returns the result action of the specified build that should be used to
+     * compute the history.
+     *
+     * @param build
+     *            the build
+     * @return the result action
+     * @deprecated use {@link #getResultAction(Run)} instead
+     */
+    @CheckForNull
+    @Deprecated
+    public ResultAction<? extends BuildResult> getResultAction(final AbstractBuild<?, ?> build) {
+        return getResultAction((Run<?, ?>) build);
     }
 }
 

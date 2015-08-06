@@ -282,7 +282,7 @@ public class DetailFactory {
     @Deprecated
     protected TabDetail createTabDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations,
             final String url, final String defaultEncoding) {
-        return new TabDetail(owner, this, annotations, url, defaultEncoding);
+        return createTabDetail((Run<?, ?>) owner, annotations, url, defaultEncoding);
     }
 
     /**
@@ -303,6 +303,35 @@ public class DetailFactory {
     protected FixedWarningsDetail createFixedWarningsDetail(final AbstractBuild<?, ?> owner,
             final Collection<FileAnnotation> fixedAnnotations, final String defaultEncoding,
             final String displayName) {
-        return new FixedWarningsDetail(owner, this, fixedAnnotations, defaultEncoding, displayName);
+        return createFixedWarningsDetail((Run<?, ?>) owner, fixedAnnotations, defaultEncoding, displayName);
+    }
+
+    /**
+     * @deprecated use {@link #createAttributeDetail(Run, DefaultAnnotationContainer, String, String, String)} instead
+     */
+    @Deprecated
+    protected AttributeDetail createAttributeDetail(final AbstractBuild<?, ?> owner, final DefaultAnnotationContainer annotations,
+            final String displayName, final String header, final String defaultEncoding) {
+        return createAttributeDetail((Run<?, ?>) owner, annotations, displayName, header, defaultEncoding);
+    }
+
+    /**
+     * @deprecated use {@link #createTrendDetails(String, Run, AnnotationContainer, Collection, Collection, Collection, String, String)} instead
+     */
+    @Deprecated
+    public Object createTrendDetails(final String link, final AbstractBuild<?, ?> owner,
+            final AnnotationContainer container, final Collection<FileAnnotation> fixedAnnotations,
+            final Collection<FileAnnotation> newAnnotations, final Collection<String> errors,
+            final String defaultEncoding, final String displayName) {
+        return createTrendDetails(link, (Run<?, ?>) owner, container, fixedAnnotations, newAnnotations, errors, defaultEncoding, displayName);
+    }
+
+    /**
+     * @deprecated use {@link #createDetails(String, Run, AnnotationContainer, String, String)} instead
+     */
+    @Deprecated
+    public Object createDetails(final String link, final AbstractBuild<?, ?> owner, final AnnotationContainer container,
+            final String defaultEncoding, final String displayName) {
+        return createDetails(link, (Run<?, ?>) owner, container, defaultEncoding, displayName);
     }
 }

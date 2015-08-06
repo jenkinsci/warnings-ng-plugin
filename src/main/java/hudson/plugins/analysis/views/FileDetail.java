@@ -87,8 +87,7 @@ public class FileDetail extends AbstractAnnotationsDetail {
      */
     @Deprecated
     public FileDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final WorkspaceFile file, final String defaultEncoding, final String header) {
-        super(owner, detailFactory, file.getAnnotations(), defaultEncoding, header, Hierarchy.FILE);
-        this.file = file;
+        this((Run<?, ?>)owner, detailFactory, file, defaultEncoding, header);
     }
 }
 

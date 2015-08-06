@@ -625,4 +625,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     public int getBuild() {
         return build;
     }
+
+    /**
+     * @deprecated use {@link #getTempName(Run)} instead
+     */
+    @Deprecated
+    public String getTempName(final AbstractBuild<?, ?> owner) {
+        return getTempName((Run<?, ?>) owner);
+    }
 }

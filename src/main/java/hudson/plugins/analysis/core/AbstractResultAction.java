@@ -118,7 +118,6 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
 
     @Override
     @WithBridgeMethods(value=AbstractBuild.class, adapterMethod="getAbstractBuild")
-    @Deprecated
     public final Run<?, ?> getBuild() {
         return owner;
     }

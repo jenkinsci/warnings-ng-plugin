@@ -122,9 +122,8 @@ public class ConsoleDetail implements ModelObject {
      * 
      * @see {@link WithBridgeMethods}
      */
-    @Restricted(NoExternalUse.class)
     @Deprecated
-    public final Object getAbstractBuild(Run owner, Class targetClass) {
+    private final Object getAbstractBuild(Run owner, Class targetClass) {
       return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
     }
 
@@ -150,13 +149,6 @@ public class ConsoleDetail implements ModelObject {
      */
     @Deprecated
     public ConsoleDetail(final AbstractBuild<?, ?> owner, final int from, final int to) {
-        this.owner = owner;
-        this.from = from;
-        this.to = to;
-
-        start = Math.max(0, from - 10);
-        end = to + 10;
-
-        readConsole();
+        this((Run<?, ?>) owner, from ,to);
     }
 }

@@ -67,8 +67,7 @@ public class PackageDetail extends AbstractAnnotationsDetail {
      */
     @Deprecated
     public PackageDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final JavaPackage javaPackage, final String defaultEncoding, final String header) {
-        super(owner, detailFactory, javaPackage.getAnnotations(), defaultEncoding, header, Hierarchy.PACKAGE);
-        this.javaPackage = javaPackage;
+        this((Run<?, ?>) owner, detailFactory, javaPackage, defaultEncoding, header);
     }
 }
 

@@ -63,8 +63,7 @@ public class AttributeDetail extends AbstractAnnotationsDetail {
      */
     @Deprecated
     public AttributeDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String defaultEncoding, final String header, final String name) {
-        super(owner, detailFactory, annotations, defaultEncoding, header, Hierarchy.PROJECT);
-        attributeName = name;
+        this((Run<?, ?>) owner, detailFactory, annotations, defaultEncoding, header, name);
     }
 }
 

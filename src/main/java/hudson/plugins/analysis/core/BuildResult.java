@@ -224,28 +224,6 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     }
 
     /**
-     * Creates a new instance of {@link BuildResult}. Note that the warnings are
-     * not serialized anymore automatically. You need to call
-     * {@link #serializeAnnotations(Collection)} manually in your constructor to
-     * persist them.
-     *
-     * @param build
-     *            the current build as owner of this action
-     * @param history
-     *            build history
-     * @param result
-     *            the parsed result with all annotations
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @since 1.39
-     */
-    @Deprecated
-    protected BuildResult(final AbstractBuild<?, ?> build, final BuildHistory history,
-            final ParserResult result, final String defaultEncoding) {
-        initialize(history, build, defaultEncoding, result);
-    }
-
-    /**
      * Creates a new history based on the specified build.
      *
      * @param build
@@ -382,7 +360,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      */
     @Restricted(NoExternalUse.class)
     @Deprecated
-    public final Object getReferenceAbstractBuild(Run owner, Class targetClass) {
+    private final Object getReferenceAbstractBuild(Run owner, Class targetClass) {
       return owner instanceof AbstractBuild ? ((AbstractBuild) owner).getProject().getBuildByNumber(referenceBuild) : null;
     }
 
@@ -618,9 +596,8 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * 
      * @see {@link WithBridgeMethods}
      */
-    @Restricted(NoExternalUse.class)
     @Deprecated
-    public final Object getAbstractBuild(Run owner, Class targetClass) {
+    private final Object getAbstractBuild(Run owner, Class targetClass) {
       return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
     }
 
@@ -1660,6 +1637,41 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     public BuildResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result) {
         initialize(createHistory(build), build, defaultEncoding, result);
         serializeAnnotations(result.getAnnotations());
+    }
+
+    /**
+     * Creates a new instance of {@link BuildResult}. Note that the warnings are
+     * not serialized anymore automatically. You need to call
+     * {@link #serializeAnnotations(Collection)} manually in your constructor to
+     * persist them.
+     *
+     * @param build
+     *            the current build as owner of this action
+     * @param history
+     *            build history
+     * @param result
+     *            the parsed result with all annotations
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @since 1.39
+     */
+    @Deprecated
+    protected BuildResult(final AbstractBuild<?, ?> build, final BuildHistory history,
+            final ParserResult result, final String defaultEncoding) {
+        initialize(history, build, defaultEncoding, result);
+    }
+
+    /**
+     * Creates a new history based on the specified build.
+     *
+     * @param build
+     *            the build to start with
+     * @return the history
+     * @deprecated use {@link #createHistory(Run)} instead
+     */
+    @Deprecated
+    protected BuildHistory createHistory(final AbstractBuild<?, ?> build) {
+        return createHistory((Run<?, ?>) build);
     }
 
     // Backward compatibility. Do not remove.

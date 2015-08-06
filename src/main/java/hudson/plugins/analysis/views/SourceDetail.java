@@ -258,9 +258,8 @@ public class SourceDetail implements ModelObject {
      * 
      * @see {@link WithBridgeMethods}
      */
-    @Restricted(NoExternalUse.class)
     @Deprecated
-    public final Object getAbstractBuild(Run owner, Class targetClass) {
+    private final Object getAbstractBuild(Run owner, Class targetClass) {
       return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
     }
 
@@ -286,12 +285,7 @@ public class SourceDetail implements ModelObject {
      */
     @Deprecated
     public SourceDetail(final AbstractBuild<?, ?> owner, final FileAnnotation annotation, final String defaultEncoding) {
-        this.owner = owner;
-        this.annotation = annotation;
-        this.defaultEncoding = defaultEncoding;
-        fileName = StringUtils.substringAfterLast(annotation.getFileName(), "/");
-
-        initializeContent();
+        this((Run<?, ?>) owner, annotation, defaultEncoding);
     }
 }
 

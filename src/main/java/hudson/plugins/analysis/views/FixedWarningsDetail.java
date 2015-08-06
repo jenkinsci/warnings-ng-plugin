@@ -57,7 +57,7 @@ public class FixedWarningsDetail extends AbstractAnnotationsDetail {
      */
     @Deprecated
     public FixedWarningsDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> fixedWarnings, final String defaultEncoding, final String header) {
-        super(owner, detailFactory, fixedWarnings, defaultEncoding, header, Hierarchy.PROJECT);
+        this((Run<?, ?>) owner, detailFactory, fixedWarnings, defaultEncoding, header);
     }
 }
 

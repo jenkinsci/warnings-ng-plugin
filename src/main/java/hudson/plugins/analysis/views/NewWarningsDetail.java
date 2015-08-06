@@ -57,7 +57,7 @@ public class NewWarningsDetail extends AbstractAnnotationsDetail {
      */
     @Deprecated
     public NewWarningsDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> newWarnings, final String defaultEncoding, final String header) {
-        super(owner, detailFactory, newWarnings, defaultEncoding, header, Hierarchy.PROJECT);
+        this((Run<?, ?>) owner, detailFactory, newWarnings, defaultEncoding, header);
     }
 }
 

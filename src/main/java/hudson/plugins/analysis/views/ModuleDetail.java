@@ -80,8 +80,7 @@ public class ModuleDetail extends AbstractAnnotationsDetail {
      */
     @Deprecated
     public ModuleDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final MavenModule module, final String defaultEncoding, final String header) {
-        super(owner, detailFactory, module.getAnnotations(), defaultEncoding, header, Hierarchy.MODULE);
-        this.module = module;
+        this((Run<?, ?>) owner, detailFactory, module, defaultEncoding, header);
     }
 }
 
