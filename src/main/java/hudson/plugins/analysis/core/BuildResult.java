@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -230,7 +232,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *            the build to start with
      * @return the history
      */
-    protected BuildHistory createHistory(final Run<?, ?> build) {
+    protected BuildHistory createHistory(@Nonnull final Run<?, ?> build) {
         return new BuildHistory(build, getResultActionType(), false, false);
     }
 

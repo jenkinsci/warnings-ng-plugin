@@ -1,6 +1,7 @@
 package hudson.plugins.analysis.core;
 
 import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 
@@ -153,7 +154,7 @@ public class BuildHistory {
      * compute the history.
      */
     @CheckForNull
-    public ResultAction<? extends BuildResult> getResultAction(final Run<?, ?> build) {
+    public ResultAction<? extends BuildResult> getResultAction(@Nonnull final Run<?, ?> build) {
         return build.getAction(type);
     }
 

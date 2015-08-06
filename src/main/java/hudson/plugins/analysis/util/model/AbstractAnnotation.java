@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.export.Exported;
@@ -352,7 +354,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     }
 
     @Override
-    public String getTempName(final Run<?, ?> owner) {
+    public String getTempName(@Nonnull final Run<?, ?> owner) {
         if (fileName != null) {
             return owner.getRootDir().getAbsolutePath()
                     + SLASH + WORKSPACE_FILES
