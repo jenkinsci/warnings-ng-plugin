@@ -581,7 +581,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @return <code>true</code>, if successful
      */
     @Override
-    public final boolean canDisplayFile(final AbstractBuild<?, ?> owner) {
+    public final boolean canDisplayFile(final Run<?, ?> owner) {
         if (owner.hasPermission(Item.WORKSPACE)) {
             return isInConsoleLog() || new File(getFileName()).exists() || new File(getTempName(owner)).exists();
         }

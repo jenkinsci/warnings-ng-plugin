@@ -97,7 +97,7 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
      * @param owner the owner that provides the root directory where the files are stored
      * @return <code>true</code>, if successful
      */
-    boolean canDisplayFile(AbstractBuild<?, ?> owner);
+    boolean canDisplayFile(Run<?, ?> owner);
 
     /**
      * Gets the associated file name of this bug (without path).
