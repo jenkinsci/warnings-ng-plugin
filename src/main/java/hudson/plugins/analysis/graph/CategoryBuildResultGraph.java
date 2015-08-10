@@ -22,6 +22,7 @@ import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.joda.time.LocalDate;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -221,7 +222,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
             if (current.hasPreviousResult()) {
                 current = current.getPreviousResult();
                 if (current == null) {
-                    break; // see: HUDSON-6613
+                    break; // see: JENKINS-6613
                 }
             }
             else {
@@ -237,24 +238,20 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
         }
         return valuesPerBuild;
     }
+
     private boolean passesFilteringByParameter(final AbstractBuild<?, ?> build, final String parameterName, final String parameterValue) {
-        if (parameterName == null){
+        if (parameterName == null) {
             return true;
         }
 
-        Map<String, String> vars = build.getBuildVariables();
-        if (vars == null) {
+        Map<String, String> variables = build.getBuildVariables();
+        if (variables == null) {
             return false;
         }
 
-        if(vars.containsKey(parameterName)) {
-            String pv = vars.get(parameterName);
-            if (pv != null && pv.equals(parameterValue)) {
-                return true;
-            }
-        }
-        return false;
+        return Objects.equal(variables.get(parameterName), parameterValue);
     }
+
     /**
      * Creates a data set that contains a series per build number.
      *

@@ -333,6 +333,7 @@ public abstract class GraphConfigurationView implements ModelObject {
     public String getParameterName() {
         return configuration.getParameterName();
     }
+
     /**
      * Returns the parameter value to consider.
      *
@@ -341,6 +342,7 @@ public abstract class GraphConfigurationView implements ModelObject {
     public String getParameterValue() {
         return configuration.getParameterValue();
     }
+
     /**
      * Returns the type of the graph.
      *

@@ -1,12 +1,12 @@
 package hudson.plugins.analysis.graph;
 
-import static org.junit.Assert.*;
-import net.sf.json.JSONObject;
-
 import org.junit.Test;
 import org.mortbay.util.ajax.JSON;
 
 import com.google.common.collect.Sets;
+
+import net.sf.json.JSONObject;
+import static org.junit.Assert.*;
 
 /**
  * Tests the class {@link GraphConfiguration}.
@@ -25,9 +25,9 @@ public class GraphConfigurationTest {
     /** Valid day count. */
     private static final int DAYS = 300;
     /** Valid parameter name. */
-    private static final String PARAMETER_NAME="BUILD_TYPE";
+    private static final String PARAMETER_NAME = "BUILD_TYPE";
     /** Valid parameter value. */
-    private static final String PARAMETER_VALUE="FULL";
+    private static final String PARAMETER_VALUE = "FULL";
 
     /**
      * Ensures that invalid string values are rejected.
@@ -44,8 +44,8 @@ public class GraphConfigurationTest {
         assertInvalidInitializationValue("50.1!50!12!13!FIXED");
         assertInvalidInitializationValue("50!100!200!300!FALSCH");
         assertInvalidInitializationValue("NEW!50!12!13!FIXED!BUILD_TYPE!FULL");
-        assertInvalidInitializationValue("50.1!50!12!13!FIXED!BUILD_TYPE!CI");
-        assertInvalidInitializationValue("50!100!200!300!FALSCH!!");
+        assertInvalidInitializationValue("50!100!200!300!FIXED!1!!VALUE");
+        assertInvalidInitializationValue("50!100!200!300!FIXED!1!NAME!");
     }
 
     /**
@@ -134,7 +134,7 @@ public class GraphConfigurationTest {
             final int expectedBuildCount, final int expectedDayCount, final String expectedParameterName, final String expectedParameterValue,
             final Class<? extends BuildResultGraph> expectedType, final boolean expectedUseBuildDate) {
         GraphConfiguration configuation = assertValidConfiguation(initialization, expectedWidth, expectedHeight, expectedBuildCount, expectedDayCount,
-        		expectedParameterName, expectedParameterValue, expectedType);
+                expectedParameterName, expectedParameterValue, expectedType);
         assertEquals("Wrong value for useBuildDate", expectedUseBuildDate, configuation.useBuildDateAsDomain());
     }
 
@@ -180,8 +180,7 @@ public class GraphConfigurationTest {
         assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom(initialization));
 
         verifyConfiguration(expectedWidth, expectedHeight, expectedBuildCount, expectedDayCount,
-        		expectedParameterName, expectedParameterValue,
-                expectedType, configuration);
+                expectedParameterName, expectedParameterValue, expectedType, configuration);
 
         return configuration;
     }

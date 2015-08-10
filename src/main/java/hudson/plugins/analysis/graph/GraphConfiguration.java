@@ -8,8 +8,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -17,8 +15,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import hudson.model.AbstractProject;
+import net.sf.json.JSONObject;
 
+import hudson.model.AbstractProject;
 import hudson.util.FormValidation;
 
 /**
@@ -33,6 +32,8 @@ public class GraphConfiguration  {
     private static final int DEFAULT_DAY_COUNT = 30;
     private static final int DEFAULT_WIDTH = 500;
     private static final int DEFAULT_HEIGHT = 200;
+    private static final String DEFAULT_NAME = StringUtils.EMPTY;
+    private static final String DEFAULT_VALUE = StringUtils.EMPTY;
     private static final BuildResultGraph DEFAULT_GRAPH = new PriorityGraph();
 
     /** Separator of cookie values. */
@@ -50,10 +51,8 @@ public class GraphConfiguration  {
     private int dayCount;
     /** Determines if the build date or the build number should be used as domain. */
     private boolean useBuildDate;
-    /** Used to filter builds. Build that have parameter set to value below will be included in graph*/
-    /** parameter name */
+    /** Used to filter builds. Build that have parameter set to value below will be included in graph parameter name. */
     private String parameterName;
-    /** parameter value */
     private String parameterValue;
 
     /** Maps graph ID's to graphs. */
@@ -161,8 +160,9 @@ public class GraphConfiguration  {
      */
     @SuppressWarnings("hiding")
     public boolean initializeFrom(final int width, final int height, final int dayCount) { // NOCHECKSTYLE
-        return initializeFrom(width, height, dayCount, null, null);
+        return initializeFrom(width, height, dayCount, DEFAULT_NAME, DEFAULT_VALUE);
     }
+
     /**
      * Initializes this configuration with the specified values.
      *
@@ -192,6 +192,7 @@ public class GraphConfiguration  {
 
         return resetIfInvalid(isValid(width, height, buildCount, dayCount, graphType, parameterName, parameterValue));
     }
+
     /**
      * Initializes this configuration with the specified values.
      *
@@ -206,8 +207,9 @@ public class GraphConfiguration  {
      */
     @SuppressWarnings("hiding")
     public boolean initializeFrom(final String width, final String height, final String dayCountString) { // NOCHECKSTYLE
-        return initializeFrom(width, height, dayCountString, null, null);
+        return initializeFrom(width, height, dayCountString, DEFAULT_NAME, DEFAULT_VALUE);
     }
+
     /**
      * Initializes this configuration with the specified values.
      *
@@ -272,7 +274,7 @@ public class GraphConfiguration  {
             return false;
         }
 
-        String[] values = StringUtils.split(value, SEPARATOR);
+        String[] values = StringUtils.splitByWholeSeparatorPreserveAllTokens(value, SEPARATOR);
         if (values.length < 6) {
             return false;
         }
@@ -369,17 +371,18 @@ public class GraphConfiguration  {
         graphType = graphId2Graph.get(grapyTypeString);
 
         useBuildDate = value.getBoolean("useBuildDateAsDomain");
-        if (value.has("parameterValue")) {
-            parameterValue = value.getString("parameterValue");
-        }
-        else{
-            parameterValue = null;
-        }
+
         if (value.has("parameterName")) {
             parameterName = value.getString("parameterName");
         }
-        else{
-            parameterName = null;
+        else {
+            parameterName = DEFAULT_NAME;
+        }
+        if (value.has("parameterValue")) {
+            parameterValue = value.getString("parameterValue");
+        }
+        else {
+            parameterValue = DEFAULT_VALUE;
         }
 
         boolean isLocalValid = initializeLocal(value);
@@ -497,8 +500,8 @@ public class GraphConfiguration  {
         dayCount = DEFAULT_DAY_COUNT;
         graphType = DEFAULT_GRAPH;
         useBuildDate = DEFAULT_USE_BUILD_DATE;
-        parameterName = null;
-        parameterValue = null;
+        parameterName = DEFAULT_NAME;
+        parameterValue = DEFAULT_VALUE;
     }
 
     /**
@@ -514,8 +517,8 @@ public class GraphConfiguration  {
                 + dayCount + SEPARATOR
                 + graphType.getId() + SEPARATOR
                 + serializeBoolean(useBuildDate) + SEPARATOR
-                + ((parameterName == null) ? "" : parameterName) + SEPARATOR
-                + ((parameterValue == null) ? "" : parameterValue) + SEPARATOR;
+                + parameterName + SEPARATOR
+                + parameterValue + SEPARATOR;
     }
 
     /**
@@ -563,31 +566,10 @@ public class GraphConfiguration  {
                 && newGraphType != null
                 && newDayCount >= 0
                 && isValidBuildCount(newBuildCount)
-                && !(newParameterName == null && newParameterValue!=null);
+                && !(StringUtils.isNotBlank(newParameterName) ^ StringUtils.isNotBlank(newParameterValue));
     }
     //CHECKSTYLE:ON
-    /**
-     * Returns whether the configuration parameters are valid.
-     *
-     * @param newWidth
-     *            the new width
-     * @param newHeight
-     *            the new height
-     * @param newBuildCount
-     *            the new build count
-     * @param newDayCount
-     *            the new day count
-     * @param newGraphType
-     *            the new graph type
-     * @return <code>true</code> if the configuration parameters are valid,
-     *         <code>false</code> otherwise.
-     */
-    //CHECKSTYLE:OFF
-    protected static boolean isValid(final int newWidth, final int newHeight,
-            final int newBuildCount, final int newDayCount, final BuildResultGraph newGraphType) {
-        return isValid(newWidth, newHeight, newBuildCount, newDayCount, newGraphType, null, null);
-    }
-    //CHECKSTYLE:ON
+
     /**
      * Returns if the build count is valid.
      *
@@ -696,6 +678,7 @@ public class GraphConfiguration  {
     public BuildResultGraph getGraphType() {
         return graphType;
     }
+
     /**
      * Returns the parameter name used to filter results for graph.
      *
@@ -704,6 +687,7 @@ public class GraphConfiguration  {
     public String getParameterName() {
         return parameterName;
     }
+
     /**
      * Returns the parameter value used to filter results for graph.
      *
@@ -712,6 +696,7 @@ public class GraphConfiguration  {
     public String getParameterValue() {
         return parameterValue;
     }
+
     /**
      * Returns whether this instance is initialized with its default values.
      *
@@ -725,8 +710,8 @@ public class GraphConfiguration  {
                 && buildCount == DEFAULT_BUILD_COUNT
                 && dayCount == DEFAULT_DAY_COUNT
                 && useBuildDate == DEFAULT_USE_BUILD_DATE
-                && parameterValue == null
-                && parameterName == null;
+                && parameterName == DEFAULT_NAME
+                && parameterValue == DEFAULT_VALUE;
     }
     // CHECKSTYLE:ON
 
@@ -802,8 +787,8 @@ public class GraphConfiguration  {
         result = prime * result + height;
         result = prime * result + (useBuildDate ? 1231 : 1237);
         result = prime * result + width;
-        result = prime * result + ((parameterName == null) ? 0 : parameterName.hashCode());
-        result = prime * result + ((parameterValue == null) ? 0 : parameterValue.hashCode());
+        result = prime * result + parameterName.hashCode();
+        result = prime * result + parameterValue.hashCode();
         return result;
     }
     // CHECKSTYLE:ON
@@ -849,17 +834,18 @@ public class GraphConfiguration  {
             if (other.parameterName != null) {
                 return false;
             }
-        }else{
+        }
+        else {
             if (!parameterName.equals(other.parameterName)) {
                 return false;
             }
         }
-
         if (parameterValue == null) {
             if (other.parameterValue != null) {
                 return false;
             }
-        }else{
+        }
+        else {
             if (!parameterValue.equals(other.parameterValue)) {
                 return false;
             }
