@@ -326,6 +326,22 @@ public abstract class GraphConfigurationView implements ModelObject {
     }
 
     /**
+     * Returns the parameter name to consider.
+     *
+     * @return the parameter name to consider.
+     */
+    public String getParameterName() {
+        return configuration.getParameterName();
+    }
+    /**
+     * Returns the parameter value to consider.
+     *
+     * @return the parameter value to consider.
+     */
+    public String getParameterValue() {
+        return configuration.getParameterValue();
+    }
+    /**
      * Returns the type of the graph.
      *
      * @return the type
