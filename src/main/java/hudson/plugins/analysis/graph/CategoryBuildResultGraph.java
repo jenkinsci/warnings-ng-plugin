@@ -22,6 +22,7 @@ import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.joda.time.LocalDate;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -208,17 +209,20 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
 
         int buildCount = 0;
         Map<AbstractBuild, List<Integer>> valuesPerBuild = Maps.newHashMap();
+        String parameterName = configuration.getParameterName();
+        String parameterValue = configuration.getParameterValue();
         while (true) {
             if (isBuildTooOld(configuration, current)) {
                 break;
             }
-
-            valuesPerBuild.put(current.getOwner(), computeSeries(current));
+            if (passesFilteringByParameter(current.getOwner(), parameterName, parameterValue)) {
+                valuesPerBuild.put(current.getOwner(), computeSeries(current));
+            }
 
             if (current.hasPreviousResult()) {
                 current = current.getPreviousResult();
                 if (current == null) {
-                    break; // see: HUDSON-6613
+                    break; // see: JENKINS-6613
                 }
             }
             else {
@@ -233,6 +237,19 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
             }
         }
         return valuesPerBuild;
+    }
+
+    private boolean passesFilteringByParameter(final AbstractBuild<?, ?> build, final String parameterName, final String parameterValue) {
+        if (parameterName == null) {
+            return true;
+        }
+
+        Map<String, String> variables = build.getBuildVariables();
+        if (variables == null) {
+            return false;
+        }
+
+        return Objects.equal(variables.get(parameterName), parameterValue);
     }
 
     /**
