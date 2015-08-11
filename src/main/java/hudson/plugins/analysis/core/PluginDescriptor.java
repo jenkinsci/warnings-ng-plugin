@@ -203,7 +203,8 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
             @QueryParameter final String pattern) throws IOException {
         if (project != null) {
             return FilePath.validateFileMask(project.getSomeWorkspace(), pattern);
-        } else {
+        }
+        else {
             // Workflow jobs have no workspace
             return FormValidation.ok();
         }

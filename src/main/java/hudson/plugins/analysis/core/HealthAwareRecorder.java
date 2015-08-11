@@ -610,7 +610,8 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     protected boolean isMavenBuild(final Run<?, ?> build) {
         if (build instanceof AbstractBuild) {
             return isMavenBuild((AbstractBuild) build);
-        } else {
+        }
+        else {
             return false;
         }
     }

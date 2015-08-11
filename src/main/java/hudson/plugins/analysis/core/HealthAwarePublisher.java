@@ -231,7 +231,8 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
         if (run instanceof AbstractBuild && isOverridden(HealthAwarePublisher.class, getClass(),
                 "perform", AbstractBuild.class, PluginLogger.class)) {
             return perform((AbstractBuild) run, logger);
-        } else {
+        }
+        else {
             // Runtime error to force overriding this method
             throw new AbstractMethodError("you must override the new overload of perform(Run, FilePath, Launcher, PluginLogger)");
         }
