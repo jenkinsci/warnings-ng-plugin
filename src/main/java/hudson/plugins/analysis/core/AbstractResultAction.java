@@ -128,9 +128,8 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * 
      * @see {@link WithBridgeMethods}
      */
-    @Restricted(NoExternalUse.class)
     @Deprecated
-    public final Object getAbstractBuild(Run owner, Class targetClass) {
+    private final Object getAbstractBuild(Run owner, Class targetClass) {
       return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
     }
 

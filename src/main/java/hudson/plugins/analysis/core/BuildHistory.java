@@ -198,9 +198,10 @@ public class BuildHistory {
      */
     @Deprecated
     private Object getReferenceAbstractBuild(Run run, Class targetClass) {
-        if (run != null && run instanceof AbstractBuild) {
+        if (run instanceof AbstractBuild) {
             return (AbstractBuild) run;
-        } else {
+        }
+        else {
             return null;
         }
     }

@@ -360,7 +360,6 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * 
      * @see {@link WithBridgeMethods}
      */
-    @Restricted(NoExternalUse.class)
     @Deprecated
     private final Object getReferenceAbstractBuild(Run owner, Class targetClass) {
       return owner instanceof AbstractBuild ? ((AbstractBuild) owner).getProject().getBuildByNumber(referenceBuild) : null;
