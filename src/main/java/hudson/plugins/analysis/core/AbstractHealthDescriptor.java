@@ -11,15 +11,14 @@ import hudson.plugins.analysis.util.model.AnnotationProvider;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
- * A base class for serializable health descriptors. Instances of this class are
- * immutable.
+ * A base class for serializable health descriptors.
  *
  * @author Ulli Hafner
  */
 @ExportedBean
 public abstract class AbstractHealthDescriptor implements HealthDescriptor {
-    /** Unique ID of this class. */
     private static final long serialVersionUID = -3709673381162699834L;
+
     /** The minimum priority to consider during health and stability calculation. */
     private final Priority priority;
     /** Report health as 100% when the number of warnings is less than this value. */

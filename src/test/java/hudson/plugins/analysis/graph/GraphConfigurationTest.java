@@ -1,12 +1,12 @@
 package hudson.plugins.analysis.graph;
 
-import static org.junit.Assert.*;
-import net.sf.json.JSONObject;
-
 import org.junit.Test;
 import org.mortbay.util.ajax.JSON;
 
 import com.google.common.collect.Sets;
+
+import net.sf.json.JSONObject;
+import static org.junit.Assert.*;
 
 /**
  * Tests the class {@link GraphConfiguration}.
@@ -24,6 +24,10 @@ public class GraphConfigurationTest {
     private static final int BUILDS = 200;
     /** Valid day count. */
     private static final int DAYS = 300;
+    /** Valid parameter name. */
+    private static final String PARAMETER_NAME = "BUILD_TYPE";
+    /** Valid parameter value. */
+    private static final String PARAMETER_VALUE = "FULL";
 
     /**
      * Ensures that invalid string values are rejected.
@@ -39,6 +43,9 @@ public class GraphConfigurationTest {
         assertInvalidInitializationValue("NEW!50!12!13!FIXED");
         assertInvalidInitializationValue("50.1!50!12!13!FIXED");
         assertInvalidInitializationValue("50!100!200!300!FALSCH");
+        assertInvalidInitializationValue("NEW!50!12!13!FIXED!BUILD_TYPE!FULL");
+        assertInvalidInitializationValue("50!100!200!300!FIXED!1!!VALUE");
+        assertInvalidInitializationValue("50!100!200!300!FIXED!1!NAME!");
     }
 
     /**
@@ -69,9 +76,9 @@ public class GraphConfigurationTest {
      */
     @Test
     public void testValidConfiguations() {
-        assertValidConfiguation("50!100!200!300!FIXED!1", WIDTH, HEIGHT, BUILDS, DAYS, NewVersusFixedGraph.class, true);
-        assertValidConfiguation("50!100!200!300!PRIORITY!0", WIDTH, HEIGHT, BUILDS, DAYS, PriorityGraph.class, false);
-        assertValidConfiguation("50!100!200!300!NONE!1", WIDTH, HEIGHT, BUILDS, DAYS, EmptyGraph.class, true);
+        assertValidConfiguation("50!100!200!300!FIXED!1!BUILD_TYPE!FULL", WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE, NewVersusFixedGraph.class, true);
+        assertValidConfiguation("50!100!200!300!PRIORITY!0!BUILD_TYPE!FULL", WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE,  PriorityGraph.class, false);
+        assertValidConfiguation("50!100!200!300!NONE!1!BUILD_TYPE!FULL", WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE, EmptyGraph.class, true);
 
         GraphConfiguration configuration = createDetailUnderTest();
 
@@ -89,8 +96,8 @@ public class GraphConfigurationTest {
      */
     @Test
     public void testUseBuildDate() {
-        assertValidConfiguation("50!100!200!300!FIXED!1", WIDTH, HEIGHT, BUILDS, DAYS, NewVersusFixedGraph.class, true);
-        assertValidConfiguation("50!100!200!300!PRIORITY!0", WIDTH, HEIGHT, BUILDS, DAYS, PriorityGraph.class, false);
+        assertValidConfiguation("50!100!200!300!FIXED!1!BUILD_TYPE!FULL", WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE, NewVersusFixedGraph.class, true);
+        assertValidConfiguation("50!100!200!300!PRIORITY!0!BUILD_TYPE!FULL", WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE, PriorityGraph.class, false);
 
         GraphConfiguration configuration = createDetailUnderTest();
 
@@ -114,15 +121,20 @@ public class GraphConfigurationTest {
      *            the expected number of builds
      * @param expectedDayCount
      *            the expected number of days
+     * @param expectedParameterName
+     *            the expected parameter name
+     * @param expectedParameterValue
+     *            the expected parameter value
      * @param expectedType
      *            the expected type
      * @param expectedUseBuildDate
      *            the expected use build date
      */
     private void assertValidConfiguation(final String initialization, final int expectedWidth, final int expectedHeight,
-            final int expectedBuildCount, final int expectedDayCount, final Class<? extends BuildResultGraph> expectedType,
-            final boolean expectedUseBuildDate) {
-        GraphConfiguration configuation = assertValidConfiguation(initialization, expectedWidth, expectedHeight, expectedBuildCount, expectedDayCount, expectedType);
+            final int expectedBuildCount, final int expectedDayCount, final String expectedParameterName, final String expectedParameterValue,
+            final Class<? extends BuildResultGraph> expectedType, final boolean expectedUseBuildDate) {
+        GraphConfiguration configuation = assertValidConfiguation(initialization, expectedWidth, expectedHeight, expectedBuildCount, expectedDayCount,
+                expectedParameterName, expectedParameterValue, expectedType);
         assertEquals("Wrong value for useBuildDate", expectedUseBuildDate, configuation.useBuildDateAsDomain());
     }
 
@@ -133,12 +145,14 @@ public class GraphConfigurationTest {
     public void testValidJSONConfiguations() {
         Object enabled = JSON.parse("{\"\":\"\",\"buildCountString\":\"" + BUILDS
                 + "\",\"dayCountString\":\"" + DAYS
+                + "\",\"parameterName\":\"" + PARAMETER_NAME
+                + "\",\"parameterValue\":\"" + PARAMETER_VALUE
                 + "\",\"graphType\":\"FIXED\",\"height\":\"" + HEIGHT + "\",\"width\":\"" + WIDTH + "\",\"useBuildDateAsDomain\":\"" + true + "\"}");
         JSONObject jsonObject = JSONObject.fromObject(enabled);
 
         GraphConfiguration configuration = createDetailUnderTest();
         assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom(jsonObject));
-        verifyConfiguration(WIDTH, HEIGHT, BUILDS, DAYS, NewVersusFixedGraph.class, configuration);
+        verifyConfiguration(WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE, NewVersusFixedGraph.class, configuration);
         assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.useBuildDateAsDomain());
     }
 
@@ -160,12 +174,13 @@ public class GraphConfigurationTest {
      * @return the created configuration
      */
     private GraphConfiguration assertValidConfiguation(final String initialization, final int expectedWidth, final int expectedHeight,
-            final int expectedBuildCount, final int expectedDayCount, final Class<? extends BuildResultGraph> expectedType) {
+            final int expectedBuildCount, final int expectedDayCount, final String expectedParameterName, final String expectedParameterValue,
+            final Class<? extends BuildResultGraph> expectedType) {
         GraphConfiguration configuration = createDetailUnderTest();
         assertTrue(VALID_CONFIGURATION_NOT_ACCEPTED, configuration.initializeFrom(initialization));
 
         verifyConfiguration(expectedWidth, expectedHeight, expectedBuildCount, expectedDayCount,
-                expectedType, configuration);
+                expectedParameterName, expectedParameterValue, expectedType, configuration);
 
         return configuration;
     }
@@ -188,12 +203,15 @@ public class GraphConfigurationTest {
      */
     private void verifyConfiguration(final int expectedWidth, final int expectedHeight,
             final int expectedBuildCount, final int expectedDayCount,
+            final String expectedParameterName, final String expectedParameterValue,
             final Class<? extends BuildResultGraph> expectedType, final GraphConfiguration configuration) {
         assertFalse("Valid configuration is not accepted.", configuration.isDefault());
         assertEquals("Wrong width.", expectedWidth, configuration.getWidth());
         assertEquals("Wrong height.", expectedHeight, configuration.getHeight());
         assertEquals("Wrong build counter.", expectedBuildCount, configuration.getBuildCount());
         assertEquals("Wrong day counter.", expectedDayCount, configuration.getDayCount());
+        assertEquals("Wrong parameter name.", expectedParameterName, configuration.getParameterName());
+        assertEquals("Wrong parameter value.", expectedParameterValue, configuration.getParameterValue());
         assertSame("Wrong type.", expectedType, configuration.getGraphType().getClass());
 
         if (expectedType == EmptyGraph.class) {

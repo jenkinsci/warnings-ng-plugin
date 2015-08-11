@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -22,12 +23,16 @@ import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.joda.time.LocalDate;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
+import hudson.model.AbstractBuild;
+import hudson.model.ParameterValue;
+import hudson.model.ParametersAction;
 import hudson.model.Run;
 
 import hudson.plugins.analysis.core.ResultAction;
@@ -208,17 +213,20 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
 
         int buildCount = 0;
         Map<Run, List<Integer>> valuesPerBuild = Maps.newHashMap();
+        String parameterName = configuration.getParameterName();
+        String parameterValue = configuration.getParameterValue();
         while (true) {
             if (isBuildTooOld(configuration, current)) {
                 break;
             }
-
-            valuesPerBuild.put(current.getOwner(), computeSeries(current));
+            if (passesFilteringByParameter(current.getOwner(), parameterName, parameterValue)) {
+                valuesPerBuild.put(current.getOwner(), computeSeries(current));
+            }
 
             if (current.hasPreviousResult()) {
                 current = current.getPreviousResult();
                 if (current == null) {
-                    break; // see: HUDSON-6613
+                    break; // see: JENKINS-6613
                 }
             }
             else {
@@ -233,6 +241,28 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
             }
         }
         return valuesPerBuild;
+    }
+
+    private boolean passesFilteringByParameter(final Run<?, ?> build, final String parameterName, final String parameterValue) {
+        if (parameterName == null) {
+            return true;
+        }
+
+        Map<String, String> variables;
+        if (build instanceof AbstractBuild) {
+            variables = ((AbstractBuild<?, ?>) build).getBuildVariables();
+        }
+        else {
+            // There is no comparable method for Run. This means that this feature (using parameters for
+            // result graph) will not be available for other than AbstractBuild extending classes (basically
+            // all except Workflow builds).
+            variables = null;
+        }
+        if (variables == null) {
+            return false;
+        }
+
+        return Objects.equal(variables.get(parameterName), parameterValue);
     }
 
     /**
