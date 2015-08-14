@@ -4,8 +4,10 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import hudson.plugins.analysis.util.Compatibility;
+
 /**
- * Test for {@link HealthAwarePublisher.isOverridden} method.
+ * Test for {@link Compatibility.isOverridden} method.
  */
 public class IsOverriddenTest {
 
@@ -14,9 +16,9 @@ public class IsOverriddenTest {
      */
     @Test
     public void isOverriddenTest() {
-        assertTrue(HealthAwarePublisher.isOverridden(Base.class, Derived.class, "method"));
-        assertTrue(HealthAwarePublisher.isOverridden(Base.class, Intermediate.class, "method"));
-        assertFalse(HealthAwarePublisher.isOverridden(Base.class, Base.class, "method"));
+        assertTrue(Compatibility.isOverridden(Base.class, Derived.class, "method"));
+        assertTrue(Compatibility.isOverridden(Base.class, Intermediate.class, "method"));
+        assertFalse(Compatibility.isOverridden(Base.class, Base.class, "method"));
     }
 
     /**
@@ -25,7 +27,7 @@ public class IsOverriddenTest {
      */
     @Test(expected = AssertionError.class)
     public void isOverriddenNegativeTest() {
-        HealthAwarePublisher.isOverridden(Base.class, Derived.class, "method2");
+        Compatibility.isOverridden(Base.class, Derived.class, "method2");
     }
 
     public abstract class Base {
