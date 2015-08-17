@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.XStream;
 
 import hudson.model.AbstractBuild;
 
+import hudson.model.Run;
 import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.core.ResultAction;
@@ -31,9 +32,30 @@ public class AggregatedWarningsResult extends BuildResult {
      *            the parsed result with all annotations
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
+     *
+     * @deprecated see {@link #AggregatedWarningsResult(Run, BuildHistory, ParserResult, String)}
      */
+    @Deprecated
     public AggregatedWarningsResult(final AbstractBuild<?, ?> build, final BuildHistory history, final ParserResult result,
             final String defaultEncoding) {
+        this((Run<?, ?>) build, history, result, defaultEncoding);
+
+    }
+
+    /**
+     * Creates a new instance of {@link AggregatedWarningsResult}.
+     *
+     * @param build
+     *            the current build as owner of this action
+     * @param history
+     *            build history
+     * @param result
+     *            the parsed result with all annotations
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     */
+    public AggregatedWarningsResult(final Run<?, ?> build, final BuildHistory history, final ParserResult result,
+                                    final String defaultEncoding) {
         super(build, history, result, defaultEncoding);
 
         serializeAnnotations(result.getAnnotations());

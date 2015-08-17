@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>1.59</version>
+    <version>1.63</version>
   </parent>
 
   <artifactId>warnings</artifactId>
@@ -12,9 +12,11 @@
   <name>Warnings Plug-in</name>
   <version>4.49-SNAPSHOT</version>
   <url>http://wiki.jenkins-ci.org/x/G4CGAQ</url>
-  <description>This plug-in reads the compiler warnings from the
-    console log file and generates a trend report.
-  </description>
+  <description>This plug-in reads the compiler warnings from the console log file and generates a trend report.</description>
+
+  <properties>
+    <workflow-jenkins-plugin.version>1.4</workflow-jenkins-plugin.version>
+  </properties>
 
   <licenses>
     <license>
@@ -23,27 +25,21 @@
     </license>
     <license>
       <name>LGPL</name>
-      <comments>All icons are made by Carlitus (Carles Carbonell
-        Bernado) and are under the LGPL.
-      </comments>
+      <comments>All icons are made by Carlitus (Carles Carbonell Bernado) and are under the LGPL.</comments>
     </license>
     <license>
       <name>BSD license</name>
-      <comments>All YUI source code is under the BSD license. Duke, the Java mascot also is under the BSD license.
-      </comments>
+      <comments>All YUI source code is under the BSD license. Duke, the Java mascot also is under the BSD license.</comments>
     </license>
     <license>
       <name>Scala License</name>
       <url>http://www.scala-lang.org/license.html</url>
-      <comments>Scala icons are made by converting of http://www.scala-lang.org/resources/img/smooth-spiral.png
-      </comments>
+      <comments>Scala icons are made by converting of http://www.scala-lang.org/resources/img/smooth-spiral.png</comments>
     </license>
     <license>
       <name>Creative Commons Attribution 3.0</name>
       <url>https://creativecommons.org/licenses/by/3.0</url>
-      <comments>Go mascot and logo were designed by Renée French and are covered by the Creative Commons Attribution 3.0
-        license
-      </comments>
+      <comments>Go mascot and logo were designed by Renée French and are covered by the Creative Commons Attribution 3.0 license.</comments>
     </license>
   </licenses>
 
@@ -51,13 +47,7 @@
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-core</artifactId>
-      <version>1.73-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jvnet.hudson.plugins</groupId>
-      <artifactId>analysis-test</artifactId>
-      <version>1.12</version>
-      <scope>test</scope>
+      <version>1.73-beta-SNAPSHOT</version><!-- TODO: change to 1.73 before release -->
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -74,6 +64,18 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-digester3</artifactId>
       <version>3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jvnet.hudson.plugins</groupId>
+      <artifactId>analysis-test</artifactId>
+      <version>1.12</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-aggregator</artifactId>
+      <version>${workflow-jenkins-plugin.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
