@@ -94,10 +94,10 @@ public class DetailFactory {
             final Collection<FileAnnotation> newAnnotations, final Collection<String> errors,
             final String defaultEncoding, final String displayName) {
         // CHECKSTYLE:ON
-        if (owner instanceof AbstractBuild && Compatibility.isOverridden(DetailFactory.class, getClass(), "createTrendDetails", 
+        if (owner instanceof AbstractBuild && Compatibility.isOverridden(DetailFactory.class, getClass(), "createTrendDetails",
                 String.class, AbstractBuild.class, AnnotationContainer.class, Collection.class, Collection.class, Collection.class, String.class, String.class)) {
             return createTrendDetails(link, (AbstractBuild<?, ?>) owner, container, fixedAnnotations, newAnnotations, errors, defaultEncoding, displayName);
-        } 
+        }
         else {
             AnnotationContainer detail;
             if ("fixed".equals(link)) {
@@ -151,7 +151,7 @@ public class DetailFactory {
      */
     public Object createDetails(final String link, @Nonnull final Run<?, ?> owner, final AnnotationContainer container,
             final String defaultEncoding, final String displayName) {
-        if (owner instanceof AbstractBuild && Compatibility.isOverridden(DetailFactory.class, getClass(), "createDetails", 
+        if (owner instanceof AbstractBuild && Compatibility.isOverridden(DetailFactory.class, getClass(), "createDetails",
                 String.class, AbstractBuild.class, AnnotationContainer.class, String.class, String.class)) {
             return createDetails(link, (AbstractBuild<?, ?>) owner, container, defaultEncoding, displayName);
         }
@@ -175,7 +175,7 @@ public class DetailFactory {
             }
             else if (link.startsWith("source.")) {
                 owner.checkPermission(Item.WORKSPACE);
-    
+
                 FileAnnotation annotation = container.getAnnotation(StringUtils.substringAfter(link, "source."));
                 if (annotation.isInConsoleLog()) {
                     LineRange lines = annotation.getLineRanges().iterator().next();
@@ -217,10 +217,10 @@ public class DetailFactory {
      */
     protected AttributeDetail createAttributeDetail(@Nonnull final Run<?, ?> owner, final DefaultAnnotationContainer annotations,
             final String displayName, final String header, final String defaultEncoding) {
-        if (owner instanceof AbstractBuild && Compatibility.isOverridden(DetailFactory.class, getClass(), 
+        if (owner instanceof AbstractBuild && Compatibility.isOverridden(DetailFactory.class, getClass(),
                 "createAttributeDetail", AbstractBuild.class, DefaultAnnotationContainer.class, String.class, String.class, String.class, String.class)) {
             return createAttributeDetail((AbstractBuild<?, ?>) owner, annotations, displayName, header, defaultEncoding);
-        } 
+        }
         else {
             return new AttributeDetail(owner, this, annotations.getAnnotations(), defaultEncoding, displayName, header + " " + annotations.getName());
         }
@@ -241,10 +241,10 @@ public class DetailFactory {
      */
     protected TabDetail createTabDetail(@Nonnull final Run<?, ?> owner, final Collection<FileAnnotation> annotations,
             final String url, final String defaultEncoding) {
-        if (owner instanceof AbstractBuild && Compatibility.isOverridden(DetailFactory.class, getClass(), "createTabDetail", AbstractBuild.class, 
+        if (owner instanceof AbstractBuild && Compatibility.isOverridden(DetailFactory.class, getClass(), "createTabDetail", AbstractBuild.class,
                 Collection.class, String.class, String.class)) {
             return createTabDetail((AbstractBuild<?, ?>) owner, annotations, url, defaultEncoding);
-        } 
+        }
         else {
             return new TabDetail(owner, this, annotations, url, defaultEncoding);
         }
@@ -269,7 +269,7 @@ public class DetailFactory {
         if (owner instanceof AbstractBuild && Compatibility.isOverridden(DetailFactory.class, getClass(),
                 "createFixedWarningsDetail", AbstractBuild.class, Collection.class, String.class, String.class)) {
             return createFixedWarningsDetail((AbstractBuild<?, ?>) owner, fixedAnnotations, defaultEncoding, displayName);
-        } 
+        }
         else {
             return new FixedWarningsDetail(owner, this, fixedAnnotations, defaultEncoding, displayName);
         }
@@ -315,7 +315,7 @@ public class DetailFactory {
     @Deprecated
     protected TabDetail createTabDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations,
             final String url, final String defaultEncoding) {
-        return createTabDetail((Run<?, ?>) owner, annotations, url, defaultEncoding);
+        return new TabDetail(owner, this, annotations, url, defaultEncoding);
     }
 
     /**
@@ -336,7 +336,7 @@ public class DetailFactory {
     protected FixedWarningsDetail createFixedWarningsDetail(final AbstractBuild<?, ?> owner,
             final Collection<FileAnnotation> fixedAnnotations, final String defaultEncoding,
             final String displayName) {
-        return createFixedWarningsDetail((Run<?, ?>) owner, fixedAnnotations, defaultEncoding, displayName);
+        return new FixedWarningsDetail(owner, this, fixedAnnotations, defaultEncoding, displayName);
     }
 
     /**
@@ -345,7 +345,7 @@ public class DetailFactory {
     @Deprecated
     protected AttributeDetail createAttributeDetail(final AbstractBuild<?, ?> owner, final DefaultAnnotationContainer annotations,
             final String displayName, final String header, final String defaultEncoding) {
-        return createAttributeDetail((Run<?, ?>) owner, annotations, displayName, header, defaultEncoding);
+        return new AttributeDetail(owner, this, annotations.getAnnotations(), defaultEncoding, displayName, header + " " + annotations.getName());
     }
 
     /**
@@ -356,7 +356,27 @@ public class DetailFactory {
             final AnnotationContainer container, final Collection<FileAnnotation> fixedAnnotations,
             final Collection<FileAnnotation> newAnnotations, final Collection<String> errors,
             final String defaultEncoding, final String displayName) {
-        return createTrendDetails(link, (Run<?, ?>) owner, container, fixedAnnotations, newAnnotations, errors, defaultEncoding, displayName);
+        AnnotationContainer detail;
+        if ("fixed".equals(link)) {
+            detail = createFixedWarningsDetail(owner, fixedAnnotations, defaultEncoding, displayName);
+        }
+        else if ("new".equals(link)) {
+            detail = new NewWarningsDetail(owner, this, newAnnotations, defaultEncoding, displayName);
+        }
+        else if ("error".equals(link)) {
+            return new ErrorDetail(owner, errors);
+        }
+        else if (link.startsWith("tab.new")) {
+            detail = createTabDetail(owner, newAnnotations, createGenericTabUrl(link), defaultEncoding);
+        }
+        else if (link.startsWith("tab.fixed")) {
+            detail = createTabDetail(owner, fixedAnnotations, createGenericTabUrl(link), defaultEncoding);
+        }
+        else {
+            return createDetails(link, owner, container, defaultEncoding, displayName);
+        }
+        attachLabelProvider(detail);
+        return detail;
     }
 
     /**
@@ -365,6 +385,46 @@ public class DetailFactory {
     @Deprecated
     public Object createDetails(final String link, final AbstractBuild<?, ?> owner, final AnnotationContainer container,
             final String defaultEncoding, final String displayName) {
-        return createDetails(link, (Run<?, ?>) owner, container, defaultEncoding, displayName);
+        PriorityDetailFactory factory = new PriorityDetailFactory(this);
+        AnnotationContainer detail = null;
+        if (factory.isPriority(link)) {
+            detail = factory.create(link, owner, container, defaultEncoding, displayName);
+        }
+        else if (link.startsWith("module.")) {
+            detail = new ModuleDetail(owner, this, container.getModule(createHashCode(link, "module.")), defaultEncoding, displayName);
+        }
+        else if (link.startsWith("package.")) {
+            detail = new PackageDetail(owner, this, container.getPackage(createHashCode(link, "package.")), defaultEncoding, displayName);
+        }
+        else if (link.startsWith("file.")) {
+            detail = new FileDetail(owner, this, container.getFile(createHashCode(link, "file.")), defaultEncoding, displayName);
+        }
+        else if (link.startsWith("tab.")) {
+            detail = createTabDetail(owner, container.getAnnotations(), createGenericTabUrl(link), defaultEncoding);
+        }
+        else if (link.startsWith("source.")) {
+            owner.checkPermission(Item.WORKSPACE);
+
+            FileAnnotation annotation = container.getAnnotation(StringUtils.substringAfter(link, "source."));
+            if (annotation.isInConsoleLog()) {
+                LineRange lines = annotation.getLineRanges().iterator().next();
+                return new ConsoleDetail(owner, lines.getStart(), lines.getEnd());
+            }
+            else {
+                return new SourceDetail(owner, annotation, defaultEncoding);
+            }
+        }
+        else if (link.startsWith("category.")) {
+            DefaultAnnotationContainer category = container.getCategory(createHashCode(link, "category."));
+            detail = createAttributeDetail(owner, category, displayName, Messages.CategoryDetail_header(), defaultEncoding);
+        }
+        else if (link.startsWith("type.")) {
+            DefaultAnnotationContainer type = container.getType(createHashCode(link, "type."));
+            detail = createAttributeDetail(owner, type, displayName, Messages.TypeDetail_header(), defaultEncoding);
+        }
+        if (detail != null) {
+            attachLabelProvider(detail);
+        }
+        return detail;
     }
 }
