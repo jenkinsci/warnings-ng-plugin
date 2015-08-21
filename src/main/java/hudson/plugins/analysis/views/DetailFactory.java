@@ -218,7 +218,7 @@ public class DetailFactory {
     protected AttributeDetail createAttributeDetail(@Nonnull final Run<?, ?> owner, final DefaultAnnotationContainer annotations,
             final String displayName, final String header, final String defaultEncoding) {
         if (owner instanceof AbstractBuild && Compatibility.isOverridden(DetailFactory.class, getClass(),
-                "createAttributeDetail", AbstractBuild.class, DefaultAnnotationContainer.class, String.class, String.class, String.class, String.class)) {
+                "createAttributeDetail", AbstractBuild.class, DefaultAnnotationContainer.class, String.class, String.class, String.class)) {
             return createAttributeDetail((AbstractBuild<?, ?>) owner, annotations, displayName, header, defaultEncoding);
         }
         else {
