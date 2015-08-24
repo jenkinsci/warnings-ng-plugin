@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +30,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import hudson.model.AbstractBuild;
-import hudson.model.ParameterValue;
-import hudson.model.ParametersAction;
 import hudson.model.Run;
 
 import hudson.plugins.analysis.core.ResultAction;

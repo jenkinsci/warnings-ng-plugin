@@ -11,8 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.StaplerProxy;
 
 import com.google.common.collect.Lists;
@@ -298,7 +296,7 @@ public abstract class MavenResultAction<T extends BuildResult> implements Staple
      * @see {@link WithBridgeMethods}
      */
     @Deprecated
-    private final Object getAbstractBuild(Run owner, Class targetClass) {
+    private Object getAbstractBuild(final Run owner, final Class targetClass) {
         return delegate.getOwner() instanceof AbstractBuild ? (AbstractBuild<?, ?>) delegate.getOwner() : null;
     }
 

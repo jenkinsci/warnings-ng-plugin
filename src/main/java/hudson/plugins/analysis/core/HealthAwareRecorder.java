@@ -123,130 +123,13 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      */
     private boolean doNotResolveRelativePaths;
 
-    /**
-     * Creates a new instance of {@link HealthAwareRecorder}.
-     *
-     * @param healthy
-     *            Report health as 100% when the number of open tasks is less
-     *            than this value
-     * @param unHealthy
-     *            Report health as 0% when the number of open tasks is greater
-     *            than this value
-     * @param thresholdLimit
-     *            determines which warning priorities should be considered when
-     *            evaluating the build stability and health
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param useDeltaValues
-     *            determines whether the absolute annotations delta or the
-     *            actual annotations set difference should be used to evaluate
-     *            the build stability
-     * @param unstableTotalAll
-     *            annotation threshold
-     * @param unstableTotalHigh
-     *            annotation threshold
-     * @param unstableTotalNormal
-     *            annotation threshold
-     * @param unstableTotalLow
-     *            annotation threshold
-     * @param unstableNewAll
-     *            annotation threshold
-     * @param unstableNewHigh
-     *            annotation threshold
-     * @param unstableNewNormal
-     *            annotation threshold
-     * @param unstableNewLow
-     *            annotation threshold
-     * @param failedTotalAll
-     *            annotation threshold
-     * @param failedTotalHigh
-     *            annotation threshold
-     * @param failedTotalNormal
-     *            annotation threshold
-     * @param failedTotalLow
-     *            annotation threshold
-     * @param failedNewAll
-     *            annotation threshold
-     * @param failedNewHigh
-     *            annotation threshold
-     * @param failedNewNormal
-     *            annotation threshold
-     * @param failedNewLow
-     *            annotation threshold
-     * @param canRunOnFailed
-     *            determines whether the plug-in can run for failed builds, too
-     * @param usePreviousBuildAsReference
-     *            determine if the previous build should always be used as the
-     *            reference build, no matter its overall result.
-     * @param useStableBuildAsReference
-     *            determines whether only stable builds should be used as
-     *            reference builds or not
-     * @param shouldDetectModules
-     *            determines whether module names should be derived from Maven
-     *            POM or Ant build files
-     * @param canComputeNew
-     *            determines whether new warnings should be computed (with
-     *            respect to baseline)
-     * @param canResolveRelativePaths
-     *            determines whether relative paths in warnings should be
-     *            resolved using a time expensive operation that scans the whole
-     *            workspace for matching files.
-     * @param pluginName
-     *            the name of the plug-in
-     * @deprecated use setters instead
-     */
-    // CHECKSTYLE:OFF
-    @SuppressWarnings("PMD")
-    @Deprecated
-    public HealthAwareRecorder(final String healthy, final String unHealthy,
-            final String thresholdLimit, final String defaultEncoding,
-            final boolean useDeltaValues, final String unstableTotalAll,
-            final String unstableTotalHigh, final String unstableTotalNormal,
-            final String unstableTotalLow, final String unstableNewAll,
-            final String unstableNewHigh, final String unstableNewNormal,
-            final String unstableNewLow, final String failedTotalAll, final String failedTotalHigh,
-            final String failedTotalNormal, final String failedTotalLow, final String failedNewAll,
-            final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
-            final boolean canRunOnFailed, final boolean usePreviousBuildAsReference,
-            final boolean useStableBuildAsReference,
-            final boolean shouldDetectModules, final boolean canComputeNew,
-            final boolean canResolveRelativePaths, final String pluginName) {
-        super();
-        this.healthy = healthy;
-        this.unHealthy = unHealthy;
-        this.thresholdLimit = StringUtils.defaultIfEmpty(thresholdLimit, DEFAULT_PRIORITY_THRESHOLD_LIMIT);
-        this.defaultEncoding = defaultEncoding;
-        this.useDeltaValues = useDeltaValues;
-
-        doNotResolveRelativePaths = !canResolveRelativePaths;
-        dontComputeNew = !canComputeNew;
-
-        thresholds.unstableTotalAll = unstableTotalAll;
-        thresholds.unstableTotalHigh = unstableTotalHigh;
-        thresholds.unstableTotalNormal = unstableTotalNormal;
-        thresholds.unstableTotalLow = unstableTotalLow;
-        thresholds.unstableNewAll = unstableNewAll;
-        thresholds.unstableNewHigh = unstableNewHigh;
-        thresholds.unstableNewNormal = unstableNewNormal;
-        thresholds.unstableNewLow = unstableNewLow;
-        thresholds.failedTotalAll = failedTotalAll;
-        thresholds.failedTotalHigh = failedTotalHigh;
-        thresholds.failedTotalNormal = failedTotalNormal;
-        thresholds.failedTotalLow = failedTotalLow;
-        thresholds.failedNewAll = failedNewAll;
-        thresholds.failedNewHigh = failedNewHigh;
-        thresholds.failedNewNormal = failedNewNormal;
-        thresholds.failedNewLow = failedNewLow;
-
-        this.canRunOnFailed = canRunOnFailed;
-        this.usePreviousBuildAsReference = usePreviousBuildAsReference;
-        this.useStableBuildAsReference = useStableBuildAsReference;
-        this.shouldDetectModules = shouldDetectModules;
-        this.pluginName = "[" + pluginName + "] ";
-    }
-
     // CHECKSTYLE:ON
-
+    /**
+     * Constructor using only required field/s.
+     * Use setters to initialize the object if needed.
+     *
+     * @param pluginName the plugin name
+     */
     protected HealthAwareRecorder(String pluginName) {
         this.pluginName = "[" + pluginName + "] ";
     }
@@ -307,7 +190,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @see {@link #getUsePreviousBuildAsReference}
      */
     @DataBoundSetter
-    public void setUsePreviousBuildAsReference(boolean usePreviousBuildAsReference) {
+    public void setUsePreviousBuildAsReference(final boolean usePreviousBuildAsReference) {
         this.usePreviousBuildAsReference = usePreviousBuildAsReference;
     }
 
@@ -325,7 +208,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @see {@link #getUseStableBuildAsReference}
      */
     @DataBoundSetter
-    public void setUseStableBuildAsReference(boolean useStableBuildAsReference) {
+    public void setUseStableBuildAsReference(final boolean useStableBuildAsReference) {
         this.useStableBuildAsReference = useStableBuildAsReference;
     }
 
@@ -372,7 +255,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     @Override
-    public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener)
+    public final void perform(final Run<?, ?> run, final FilePath workspace, final Launcher launcher, final TaskListener listener)
             throws InterruptedException, IOException {
         PluginLogger logger = new LoggerFactory().createLogger(listener.getLogger(), pluginName);
         if (canContinue(run.getResult())) {
@@ -387,8 +270,10 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * Callback method that is invoked after the build where this recorder can
      * collect the results.
      *
-     * @param build
+     * @param run
      *            current build
+     * @param workspace
+     *            the workspace for this build
      * @param launcher
      *            the launcher for this build
      * @param logger
@@ -467,7 +352,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @see {@link #getCanRunOnFailed()}
      */
     @DataBoundSetter
-    public void setCanRunOnFailed(boolean canRunOnFailed) {
+    public void setCanRunOnFailed(final boolean canRunOnFailed) {
         this.canRunOnFailed = canRunOnFailed;
     }
 
@@ -485,7 +370,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @see {@link #getShouldDetectModules()}
      */
     @DataBoundSetter
-    public void setShouldDetectModules(boolean shouldDetectModules) {
+    public void setShouldDetectModules(final boolean shouldDetectModules) {
         this.shouldDetectModules = shouldDetectModules;
     }
 
@@ -539,7 +424,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @see {@link #getUseDeltaValues()}
      */
     @DataBoundSetter
-    public void setUseDeltaValues(boolean useDeltaValues) {
+    public void setUseDeltaValues(final boolean useDeltaValues) {
         this.useDeltaValues = useDeltaValues;
     }
 
@@ -558,7 +443,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @see {@link #getHealthy()}
      */
     @DataBoundSetter
-    public void setHealthy(String healthy) {
+    public void setHealthy(final String healthy) {
         this.healthy = healthy;
     }
 
@@ -577,7 +462,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @see {@link #getUnHealthy()}
      */
     @DataBoundSetter
-    public void setUnHealthy(String unHealthy) {
+    public void setUnHealthy(final String unHealthy) {
         this.unHealthy = unHealthy;
     }
 
@@ -595,7 +480,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @see {@link #getDefaultEncoding()}
      */
     @DataBoundSetter
-    public void setDefaultEncoding(String defaultEncoding) {
+    public void setDefaultEncoding(final String defaultEncoding) {
         this.defaultEncoding = defaultEncoding;
     }
 
@@ -674,7 +559,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @see {@link #getThresholdLimit()}
      */
     @DataBoundSetter
-    public void setThresholdLimit(String thresholdLimit) {
+    public void setThresholdLimit(final String thresholdLimit) {
         this.thresholdLimit = StringUtils.defaultIfEmpty(thresholdLimit, DEFAULT_PRIORITY_THRESHOLD_LIMIT);
     }
 
@@ -690,7 +575,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      *  Useful when defining the groovy script in workflow jobs.
      */
     @DataBoundSetter
-    public void setCanResolveRelativePaths(boolean canResolveRelativePaths) {
+    public void setCanResolveRelativePaths(final boolean canResolveRelativePaths) {
         doNotResolveRelativePaths = !canResolveRelativePaths;
     }
 
@@ -701,17 +586,17 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      *  Useful when defining the groovy script in workflow jobs.
      */
     @DataBoundSetter
-    public void setCanComputeNew(boolean canComputeNew) {
+    public void setCanComputeNew(final boolean canComputeNew) {
         dontComputeNew = !canComputeNew;
     }
 
     @CheckForNull
     public String getUnstableTotalAll() {
-        return thresholds.unstableTotalHigh;
+        return thresholds.unstableTotalAll;
     }
 
     @DataBoundSetter
-    public void setUnstableTotalAll(String unstableTotalAll) {
+    public void setUnstableTotalAll(final String unstableTotalAll) {
         thresholds.unstableTotalAll = unstableTotalAll;
     }
 
@@ -721,7 +606,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     @DataBoundSetter
-    public void setUnstableTotalHigh(String unstableTotalHigh) {
+    public void setUnstableTotalHigh(final String unstableTotalHigh) {
         thresholds.unstableTotalHigh = unstableTotalHigh;
     }
 
@@ -731,7 +616,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     @DataBoundSetter
-    public void setUnstableTotalNormal(String unstableTotalNormal) {
+    public void setUnstableTotalNormal(final String unstableTotalNormal) {
         thresholds.unstableTotalNormal = unstableTotalNormal;
     }
 
@@ -741,7 +626,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     @DataBoundSetter
-    public void setUnstableTotalLow(String unstableTotalLow) {
+    public void setUnstableTotalLow(final String unstableTotalLow) {
         thresholds.unstableTotalLow = unstableTotalLow;
     }
 
@@ -751,7 +636,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     @DataBoundSetter
-    public void setUnstableNewAll(String unstableNewAll) {
+    public void setUnstableNewAll(final String unstableNewAll) {
         thresholds.unstableNewAll = unstableNewAll;
     }
 
@@ -761,7 +646,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     @DataBoundSetter
-    public void setUnstableNewHigh(String unstableNewHigh) {
+    public void setUnstableNewHigh(final String unstableNewHigh) {
         thresholds.unstableNewHigh = unstableNewHigh;
     }
 
@@ -771,7 +656,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     @DataBoundSetter
-    public void setUnstableNewNormal(String unstableNewNormal) {
+    public void setUnstableNewNormal(final String unstableNewNormal) {
         thresholds.unstableNewNormal = unstableNewNormal;
     }
 
@@ -781,7 +666,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     @DataBoundSetter
-    public void setUnstableNewLow(String unstableNewLow) {
+    public void setUnstableNewLow(final String unstableNewLow) {
         thresholds.unstableNewLow = unstableNewLow;
     }
 
@@ -791,7 +676,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     @DataBoundSetter
-    public void setFailedTotalAll(String failedTotalAll) {
+    public void setFailedTotalAll(final String failedTotalAll) {
         thresholds.failedTotalAll = failedTotalAll;
     }
 
@@ -801,7 +686,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     @DataBoundSetter
-    public void setFailedTotalHigh(String failedTotalHigh) {
+    public void setFailedTotalHigh(final String failedTotalHigh) {
         thresholds.failedTotalHigh = failedTotalHigh;
     }
 
@@ -811,17 +696,17 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     @DataBoundSetter
-    public void setFailedTotalNormal(String failedTotalNormal) {
+    public void setFailedTotalNormal(final String failedTotalNormal) {
         thresholds.failedTotalNormal = failedTotalNormal;
     }
 
     @CheckForNull
     public String getFailedTotalLow() {
-        return thresholds.failedTotalNormal;
+        return thresholds.failedTotalLow;
     }
 
     @DataBoundSetter
-    public void setFailedTotalLow(String failedTotalLow) {
+    public void setFailedTotalLow(final String failedTotalLow) {
         thresholds.failedTotalLow = failedTotalLow;
     }
 
@@ -831,7 +716,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     @DataBoundSetter
-    public void setFailedNewAll(String failedNewAll) {
+    public void setFailedNewAll(final String failedNewAll) {
         thresholds.failedNewAll = failedNewAll;
     }
 
@@ -841,7 +726,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     @DataBoundSetter
-    public void setFailedNewHigh(String failedNewHigh) {
+    public void setFailedNewHigh(final String failedNewHigh) {
         thresholds.failedNewHigh = failedNewHigh;
     }
 
@@ -851,7 +736,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     @DataBoundSetter
-    public void setFailedNewNormal(String failedNewNormal) {
+    public void setFailedNewNormal(final String failedNewNormal) {
         thresholds.failedNewNormal = failedNewNormal;
     }
 
@@ -861,7 +746,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     @DataBoundSetter
-    public void setFailedNewLow(String failedNewLow) {
+    public void setFailedNewLow(final String failedNewLow) {
         thresholds.failedNewLow = failedNewLow;
     }
 
@@ -983,5 +868,126 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
                 failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
                 canRunOnFailed, false, shouldDetectModules, canComputeNew, canResolveRelativePaths, pluginName);
     }
+
+    /**
+     * Creates a new instance of {@link HealthAwareRecorder}.
+     *
+     * @param healthy
+     *            Report health as 100% when the number of open tasks is less
+     *            than this value
+     * @param unHealthy
+     *            Report health as 0% when the number of open tasks is greater
+     *            than this value
+     * @param thresholdLimit
+     *            determines which warning priorities should be considered when
+     *            evaluating the build stability and health
+     * @param defaultEncoding
+     *            the default encoding to be used when reading and parsing files
+     * @param useDeltaValues
+     *            determines whether the absolute annotations delta or the
+     *            actual annotations set difference should be used to evaluate
+     *            the build stability
+     * @param unstableTotalAll
+     *            annotation threshold
+     * @param unstableTotalHigh
+     *            annotation threshold
+     * @param unstableTotalNormal
+     *            annotation threshold
+     * @param unstableTotalLow
+     *            annotation threshold
+     * @param unstableNewAll
+     *            annotation threshold
+     * @param unstableNewHigh
+     *            annotation threshold
+     * @param unstableNewNormal
+     *            annotation threshold
+     * @param unstableNewLow
+     *            annotation threshold
+     * @param failedTotalAll
+     *            annotation threshold
+     * @param failedTotalHigh
+     *            annotation threshold
+     * @param failedTotalNormal
+     *            annotation threshold
+     * @param failedTotalLow
+     *            annotation threshold
+     * @param failedNewAll
+     *            annotation threshold
+     * @param failedNewHigh
+     *            annotation threshold
+     * @param failedNewNormal
+     *            annotation threshold
+     * @param failedNewLow
+     *            annotation threshold
+     * @param canRunOnFailed
+     *            determines whether the plug-in can run for failed builds, too
+     * @param usePreviousBuildAsReference
+     *            determine if the previous build should always be used as the
+     *            reference build, no matter its overall result.
+     * @param useStableBuildAsReference
+     *            determines whether only stable builds should be used as
+     *            reference builds or not
+     * @param shouldDetectModules
+     *            determines whether module names should be derived from Maven
+     *            POM or Ant build files
+     * @param canComputeNew
+     *            determines whether new warnings should be computed (with
+     *            respect to baseline)
+     * @param canResolveRelativePaths
+     *            determines whether relative paths in warnings should be
+     *            resolved using a time expensive operation that scans the whole
+     *            workspace for matching files.
+     * @param pluginName
+     *            the name of the plug-in
+     * @deprecated use setters instead
+     */
     // CHECKSTYLE:OFF
+    @SuppressWarnings("PMD")
+    @Deprecated
+    public HealthAwareRecorder(final String healthy, final String unHealthy,
+            final String thresholdLimit, final String defaultEncoding,
+            final boolean useDeltaValues, final String unstableTotalAll,
+            final String unstableTotalHigh, final String unstableTotalNormal,
+            final String unstableTotalLow, final String unstableNewAll,
+            final String unstableNewHigh, final String unstableNewNormal,
+            final String unstableNewLow, final String failedTotalAll, final String failedTotalHigh,
+            final String failedTotalNormal, final String failedTotalLow, final String failedNewAll,
+            final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
+            final boolean canRunOnFailed, final boolean usePreviousBuildAsReference,
+            final boolean useStableBuildAsReference,
+            final boolean shouldDetectModules, final boolean canComputeNew,
+            final boolean canResolveRelativePaths, final String pluginName) {
+        super();
+        this.healthy = healthy;
+        this.unHealthy = unHealthy;
+        this.thresholdLimit = StringUtils.defaultIfEmpty(thresholdLimit, DEFAULT_PRIORITY_THRESHOLD_LIMIT);
+        this.defaultEncoding = defaultEncoding;
+        this.useDeltaValues = useDeltaValues;
+
+        doNotResolveRelativePaths = !canResolveRelativePaths;
+        dontComputeNew = !canComputeNew;
+
+        thresholds.unstableTotalAll = unstableTotalAll;
+        thresholds.unstableTotalHigh = unstableTotalHigh;
+        thresholds.unstableTotalNormal = unstableTotalNormal;
+        thresholds.unstableTotalLow = unstableTotalLow;
+        thresholds.unstableNewAll = unstableNewAll;
+        thresholds.unstableNewHigh = unstableNewHigh;
+        thresholds.unstableNewNormal = unstableNewNormal;
+        thresholds.unstableNewLow = unstableNewLow;
+        thresholds.failedTotalAll = failedTotalAll;
+        thresholds.failedTotalHigh = failedTotalHigh;
+        thresholds.failedTotalNormal = failedTotalNormal;
+        thresholds.failedTotalLow = failedTotalLow;
+        thresholds.failedNewAll = failedNewAll;
+        thresholds.failedNewHigh = failedNewHigh;
+        thresholds.failedNewNormal = failedNewNormal;
+        thresholds.failedNewLow = failedNewLow;
+
+        this.canRunOnFailed = canRunOnFailed;
+        this.usePreviousBuildAsReference = usePreviousBuildAsReference;
+        this.useStableBuildAsReference = useStableBuildAsReference;
+        this.shouldDetectModules = shouldDetectModules;
+        this.pluginName = "[" + pluginName + "] ";
+    }
 }

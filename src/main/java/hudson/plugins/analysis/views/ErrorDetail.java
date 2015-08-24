@@ -2,9 +2,6 @@ package hudson.plugins.analysis.views;
 
 import java.util.Collection;
 
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
-
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 
 import hudson.model.AbstractBuild;

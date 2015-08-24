@@ -6,8 +6,6 @@ import java.util.Map;
 import jenkins.model.Jenkins;
 
 import org.apache.commons.lang.StringUtils;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
@@ -129,7 +127,7 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
      * @see {@link WithBridgeMethods}
      */
     @Deprecated
-    private final Object getAbstractBuild(Run owner, Class targetClass) {
+    private Object getAbstractBuild(final Run owner, final Class targetClass) {
       return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
     }
 

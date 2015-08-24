@@ -51,7 +51,7 @@ public class BuildHistory {
      * @param useStableBuildAsReference
      *            determines whether only stable builds should be used as
      *            reference builds or not
-     * @since 1.66
+     * @since 1.73
      */
     public BuildHistory(final Run<?, ?> baseline,
             final Class<? extends ResultAction<? extends BuildResult>> type,
@@ -174,7 +174,7 @@ public class BuildHistory {
      * build.
      *
      * @return the reference build
-     * @since 1.20
+     * @since 1.73
      * @see #hasReferenceBuild()
      */
     @CheckForNull
@@ -197,13 +197,8 @@ public class BuildHistory {
      * @see {@link WithBridgeMethods}
      */
     @Deprecated
-    private Object getReferenceAbstractBuild(Run run, Class targetClass) {
-        if (run instanceof AbstractBuild) {
-            return (AbstractBuild) run;
-        }
-        else {
-            return null;
-        }
+    private Object getReferenceAbstractBuild(final Run run, final Class targetClass) {
+        return run instanceof AbstractBuild ? (AbstractBuild) run : null;
     }
 
     private boolean hasValidResult(final Run<?, ?> build) {

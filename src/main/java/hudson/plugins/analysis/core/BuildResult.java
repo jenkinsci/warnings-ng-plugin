@@ -218,7 +218,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *            the parsed result with all annotations
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
-     * @since 1.39
+     * @since 1.73
      */
     protected BuildResult(final Run<?, ?> build, final BuildHistory history,
             final ParserResult result, final String defaultEncoding) {
@@ -598,7 +598,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @see {@link WithBridgeMethods}
      */
     @Deprecated
-    private final Object getAbstractBuild(Run owner, Class targetClass) {
+    private Object getAbstractBuild(final Run owner, final Class targetClass) {
       return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
     }
 
