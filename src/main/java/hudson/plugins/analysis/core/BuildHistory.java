@@ -152,6 +152,10 @@ public class BuildHistory {
     /**
      * Returns the result action of the specified build that should be used to
      * compute the history.
+     *
+     * @param build
+     *            the build
+     * @return the result action
      */
     @CheckForNull
     public ResultAction<? extends BuildResult> getResultAction(@Nonnull final Run<?, ?> build) {

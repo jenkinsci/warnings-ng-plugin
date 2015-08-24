@@ -253,7 +253,8 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
             // There is no comparable method for Run. This means that this feature (using parameters for
             // result graph) will not be available for other than AbstractBuild extending classes (basically
             // all except Workflow builds).
-            variables = null;
+            // So workflow jobs will be never filtered, just show them all.
+            return true;
         }
         if (variables == null) {
             return false;
