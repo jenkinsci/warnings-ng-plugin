@@ -5,6 +5,7 @@
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
     <version>1.63</version>
+    <relativePath>../analysis-pom</relativePath>
   </parent>
 
   <artifactId>warnings</artifactId>
@@ -68,7 +69,7 @@
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-test</artifactId>
-      <version>1.12</version>
+      <version>1.13-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
