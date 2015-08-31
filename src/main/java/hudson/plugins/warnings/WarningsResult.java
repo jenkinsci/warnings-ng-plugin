@@ -4,13 +4,11 @@ import java.io.File;
 
 import com.thoughtworks.xstream.XStream;
 
-import hudson.model.AbstractBuild;
-
 import hudson.model.Run;
 import hudson.plugins.analysis.core.BuildHistory;
+import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.core.ResultAction;
-import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.plugins.warnings.parser.Warning;
 
@@ -42,39 +40,10 @@ public class WarningsResult extends BuildResult {
      *            the default encoding to be used when reading and parsing files
      * @param group
      *            the parser group this result belongs to
-     *
-     * @deprecated use {@link #WarningsResult(Run, BuildHistory, ParserResult, String, String)}
-     */
-    @Deprecated
-    public WarningsResult(final AbstractBuild<?, ?> build, final BuildHistory history,
-            final ParserResult result, final String defaultEncoding, final String group) {
-        this((Run<?, ?>) build, history, result, defaultEncoding, group, group == null ? false : true);
-    }
-
-    /**
-     * Creates a new instance of {@link WarningsResult}.
-     *
-     * @param build
-     *            the current build as owner of this action
-     * @param history
-     *            the build history
-     * @param result
-     *            the parsed result with all annotations
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param group
-     *            the parser group this result belongs to
      */
     public WarningsResult(final Run<?, ?> build, final BuildHistory history,
                           final ParserResult result, final String defaultEncoding, final String group) {
         this(build, history, result, defaultEncoding, group, group == null ? false : true);
-    }
-
-    @Deprecated
-    WarningsResult(final AbstractBuild<?, ?> build, final BuildHistory history,
-            final ParserResult result, final String defaultEncoding,
-            final String group, final boolean canSerialize) {
-        this((Run<?, ?>) build, history, result, defaultEncoding, group, canSerialize);
     }
 
     WarningsResult(final Run<?, ?> build, final BuildHistory history,
@@ -86,12 +55,6 @@ public class WarningsResult extends BuildResult {
         if (canSerialize) {
             serializeAnnotations(result.getAnnotations());
         }
-    }
-
-    @Deprecated
-    @Override
-    protected BuildHistory createHistory(final AbstractBuild<?, ?> build) {
-        return new WarningsBuildHistory((Run<?, ?>) build, group, false, false);
     }
 
     @Override

@@ -8,22 +8,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import hudson.FilePath;
-import hudson.model.Action;
-import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
-import hudson.model.Run;
-import hudson.model.TaskListener;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
+import hudson.model.AbstractProject;
+import hudson.model.Action;
+import hudson.model.BuildListener;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.plugins.analysis.core.AnnotationsClassifier;
 import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.BuildResult;
@@ -63,114 +63,16 @@ public class WarningsPublisher extends HealthAwarePublisher {
     private List<ConsoleParser> consoleParsers = Lists.newArrayList();
 
     /**
-     * Creates a new instance of <code>WarningPublisher</code>.
+     * Creates a new instance of {@link WarningsPublisher}.
      *
-     * @param healthy
-     *            Report health as 100% when the number of annotations is less
-     *            than this value
-     * @param unHealthy
-     *            Report health as 0% when the number of annotations is greater
-     *            than this value
-     * @param thresholdLimit
-     *            determines which warning priorities should be considered when
-     *            evaluating the build stability and health
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param useDeltaValues
-     *            determines whether the absolute annotations delta or the
-     *            actual annotations set difference should be used to evaluate
-     *            the build stability
-     * @param unstableTotalAll
-     *            annotation threshold
-     * @param unstableTotalHigh
-     *            annotation threshold
-     * @param unstableTotalNormal
-     *            annotation threshold
-     * @param unstableTotalLow
-     *            annotation threshold
-     * @param unstableNewAll
-     *            annotation threshold
-     * @param unstableNewHigh
-     *            annotation threshold
-     * @param unstableNewNormal
-     *            annotation threshold
-     * @param unstableNewLow
-     *            annotation threshold
-     * @param failedTotalAll
-     *            annotation threshold
-     * @param failedTotalHigh
-     *            annotation threshold
-     * @param failedTotalNormal
-     *            annotation threshold
-     * @param failedTotalLow
-     *            annotation threshold
-     * @param failedNewAll
-     *            annotation threshold
-     * @param failedNewHigh
-     *            annotation threshold
-     * @param failedNewNormal
-     *            annotation threshold
-     * @param failedNewLow
-     *            annotation threshold
-     * @param canRunOnFailed
-     *            determines whether the plug-in can run for failed builds, too
-     * @param usePreviousBuildAsReference
-     *            determines whether to always use the previous build as the reference build
-     * @param useStableBuildAsReference
-     *            determines whether only stable builds should be used as reference builds or not
-     * @param canComputeNew
-     *            determines whether new warnings should be computed (with
-     *            respect to baseline)
-     * @param shouldDetectModules
-     *            determines whether module names should be derived from Maven
-     *            POM or Ant build files
-     * @param includePattern
-     *            Ant file-set pattern of files to include in report
-     * @param excludePattern
-     *            Ant file-set pattern of files to exclude from report
-     * @param canResolveRelativePaths
-     *            determines whether relative paths in warnings should be
-     *            resolved using a time expensive operation that scans the whole
-     *            workspace for matching files.
      * @param parserConfigurations
      *            the parser configurations to scan files
      * @param consoleParsers
      *            the parsers to scan the console
-     *
-     * @deprecated use {@link #WarningsPublisher(List, List)}}
      */
-    // CHECKSTYLE:OFF
-    @SuppressWarnings("PMD.ExcessiveParameterList")
-    @Deprecated
-    public WarningsPublisher(final String healthy, final String unHealthy, final String thresholdLimit,
-            final String defaultEncoding, final boolean useDeltaValues,
-            final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
-            final String unstableNewAll, final String unstableNewHigh, final String unstableNewNormal, final String unstableNewLow,
-            final String failedTotalAll, final String failedTotalHigh, final String failedTotalNormal, final String failedTotalLow,
-            final String failedNewAll, final String failedNewHigh, final String failedNewNormal, final String failedNewLow,
-            final boolean canRunOnFailed, final boolean usePreviousBuildAsReference, final boolean useStableBuildAsReference,
-            final boolean shouldDetectModules, final boolean canComputeNew, final String includePattern, final String excludePattern,
-            final boolean canResolveRelativePaths, final List<ParserConfiguration> parserConfigurations, final List<ConsoleParser> consoleParsers) {
-        super(healthy, unHealthy, thresholdLimit, defaultEncoding, useDeltaValues,
-                unstableTotalAll, unstableTotalHigh, unstableTotalNormal, unstableTotalLow,
-                unstableNewAll, unstableNewHigh, unstableNewNormal, unstableNewLow,
-                failedTotalAll, failedTotalHigh, failedTotalNormal, failedTotalLow,
-                failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
-                canRunOnFailed, usePreviousBuildAsReference, useStableBuildAsReference,
-                shouldDetectModules, canComputeNew, canResolveRelativePaths, PLUGIN_NAME);
-        this.includePattern = StringUtils.stripToNull(includePattern);
-        this.excludePattern = StringUtils.stripToNull(excludePattern);
-        if (consoleParsers != null) {
-            this.consoleParsers.addAll(consoleParsers);
-        }
-        if (parserConfigurations != null) {
-            this.parserConfigurations.addAll(parserConfigurations);
-        }
-    }
-    // CHECKSTYLE:ON
-
     @DataBoundConstructor
-    public WarningsPublisher(final List<ConsoleParser> consoleParsers, final List<ParserConfiguration> parserConfigurations) {
+    public WarningsPublisher(final List<ParserConfiguration> parserConfigurations,
+            final List<ConsoleParser> consoleParsers) {
         super(PLUGIN_NAME);
 
         if (consoleParsers != null) {
@@ -398,7 +300,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
             Collection<FileAnnotation> warnings = new ParserRegistry(ParserRegistry.getParsers(parserName),
                     getDefaultEncoding()).parse(build.getLogFile());
             if (!workspace.isRemote()) {
-                guessModuleNames(build, workspace, warnings);
+                guessModuleNames(workspace, warnings);
             }
             ParserResult project = new ParserResult(workspace, canResolveRelativePaths());
             project.addAnnotations(warnings);
@@ -418,7 +320,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
         return project;
     }
 
-    private void guessModuleNames(final Run<?, ?> build, final FilePath workspace, final Collection<FileAnnotation> warnings) {
+    private void guessModuleNames(final FilePath workspace, final Collection<FileAnnotation> warnings) {
         ModuleDetector detector = createModuleDetector(workspace.getRemote());
         for (FileAnnotation annotation : warnings) {
             String module = detector.guessModuleName(annotation.getFileName());

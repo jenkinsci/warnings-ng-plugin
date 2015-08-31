@@ -1,10 +1,8 @@
 package hudson.plugins.warnings;
 
-import hudson.model.AbstractBuild;
-
 import hudson.model.Run;
-import hudson.plugins.analysis.core.NullHealthDescriptor;
 import hudson.plugins.analysis.core.AbstractResultAction;
+import hudson.plugins.analysis.core.NullHealthDescriptor;
 import hudson.plugins.analysis.core.PluginDescriptor;
 
 /**
@@ -16,21 +14,6 @@ import hudson.plugins.analysis.core.PluginDescriptor;
  */
 public class AggregatedWarningsResultAction extends AbstractResultAction<AggregatedWarningsResult> {
     private static final NullHealthDescriptor NULL_HEALTH_DESCRIPTOR = new NullHealthDescriptor();
-
-    /**
-     * Creates a new instance of <code>WarningsResultAction</code>.
-     *
-     * @param owner
-     *            the associated build of this action
-     * @param result
-     *            the result in this build
-     *
-     * @deprecated see {@link #AggregatedWarningsResultAction(Run, AggregatedWarningsResult)}
-     */
-    @Deprecated
-    public AggregatedWarningsResultAction(final AbstractBuild<?, ?> owner, final AggregatedWarningsResult result) {
-        this((Run<? ,?>) owner, result);
-    }
 
     /**
      * Creates a new instance of <code>WarningsResultAction</code>.

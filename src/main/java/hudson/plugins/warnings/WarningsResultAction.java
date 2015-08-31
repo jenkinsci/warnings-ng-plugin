@@ -1,12 +1,10 @@
 package hudson.plugins.warnings;
 
-import hudson.model.Run;
 import org.jvnet.localizer.Localizable;
 
-import hudson.model.AbstractBuild;
-
-import hudson.plugins.analysis.core.HealthDescriptor;
+import hudson.model.Run;
 import hudson.plugins.analysis.core.AbstractResultAction;
+import hudson.plugins.analysis.core.HealthDescriptor;
 import hudson.plugins.analysis.core.PluginDescriptor;
 import hudson.plugins.warnings.parser.ParserRegistry;
 
@@ -23,24 +21,6 @@ import hudson.plugins.warnings.parser.ParserRegistry;
  */
 public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
     private final String parserName;
-
-    /**
-     * Creates a new instance of <code>WarningsResultAction</code>.
-     *
-     * @param owner
-     *            the associated build of this action
-     * @param healthDescriptor
-     *            health descriptor to use
-     * @param result
-     *            the result in this build
-     * @param parserName the name of the parser
-     *
-     * @deprecated use {@link #WarningsResultAction(Run, HealthDescriptor, WarningsResult, String)}
-     */
-    @Deprecated
-    public WarningsResultAction(final AbstractBuild<?, ?> owner, final HealthDescriptor healthDescriptor, final WarningsResult result, final String parserName) {
-        this((Run<?, ?>) owner, new WarningsHealthDescriptor(healthDescriptor, ParserRegistry.getParser(parserName).getParserName()), result, parserName);
-    }
 
     /**
      * Creates a new instance of <code>WarningsResultAction</code>.

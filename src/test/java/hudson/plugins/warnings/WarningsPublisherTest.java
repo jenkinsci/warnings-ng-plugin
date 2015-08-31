@@ -77,16 +77,12 @@ public class WarningsPublisherTest {
     }
 
     private void checkFileOrder(final List<ParserConfiguration> fileParsers, final List<String> expected) {
-        WarningsPublisher publisher = new WarningsPublisher(null, null, null, null, false, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null, false, false, false, false, false, null, null, false,
-                fileParsers, null);
+        WarningsPublisher publisher = new WarningsPublisher(fileParsers, null);
         checkOrder(expected, publisher);
     }
 
     private void checkConsoleOrder(final List<ConsoleParser> consoleParsers, final List<String> expected) {
-        WarningsPublisher publisher = new WarningsPublisher(null, null, null, null, false, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null, false, false, false, false, false, null, null, false,
-                null, consoleParsers);
+        WarningsPublisher publisher = new WarningsPublisher(null, consoleParsers);
         checkOrder(expected, publisher);
     }
 
