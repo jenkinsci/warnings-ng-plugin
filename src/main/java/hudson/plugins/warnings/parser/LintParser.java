@@ -1,18 +1,16 @@
 package hudson.plugins.warnings.parser;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.apache.tools.ant.util.ReaderInputStream;
 import org.jvnet.localizer.Localizable;
-import org.kohsuke.stapler.framework.io.IOException2;
 import org.xml.sax.SAXException;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -51,10 +49,10 @@ public abstract class LintParser extends AbstractWarningsParser {
             return warnings;
         }
         catch (SAXException exception) {
-            throw new IOException2(exception);
+            throw new IOException(exception);
         }
         catch (ParserConfigurationException exception) {
-            throw new IOException2(exception);
+            throw new IOException(exception);
         }
     }
 }

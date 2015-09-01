@@ -18,7 +18,7 @@ public class FileWarningsParser implements AnnotationParser {
     private static final long serialVersionUID = -262047528431480332L;
 
     /** The parsers to scan the files with. */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Se")
     private final List<AbstractWarningsParser> parsers;
     /** The default encoding to be used when reading and parsing files. */
     private final String defaultEncoding;

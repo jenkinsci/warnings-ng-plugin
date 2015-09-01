@@ -154,6 +154,7 @@ public abstract class RegexpLineParser extends RegexpParser {
      * @deprecated use
      *             {@link #RegexpLineParser(Localizable, Localizable, Localizable, String, boolean)}
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     public RegexpLineParser(final String warningPattern, final String name) {
         this(warningPattern, name, false);

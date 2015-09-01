@@ -1,13 +1,12 @@
 package hudson.plugins.warnings.parser;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
@@ -19,12 +18,9 @@ import org.xml.sax.SAXException;
 import com.google.common.collect.Lists;
 
 import hudson.Extension;
-
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.warnings.util.XmlElementUtil;
-
-import hudson.util.IOException2;
 
 /**
  * Parses a StyleCop (http://code.msdn.microsoft.com/sourceanalysis/) xml report file.
@@ -64,10 +60,10 @@ public class StyleCopParser extends AbstractWarningsParser {
             return parseViolations(XmlElementUtil.getNamedChildElements(rootElement, "Violation"));
         }
         catch (ParserConfigurationException exception) {
-            throw new IOException2(exception);
+            throw new IOException(exception);
         }
         catch (SAXException exception) {
-            throw new IOException2(exception);
+            throw new IOException(exception);
         }
     }
 

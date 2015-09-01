@@ -1,7 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -10,14 +8,14 @@ import java.util.List;
 
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.warnings.parser.jcreport.File;
 import hudson.plugins.warnings.parser.jcreport.Item;
 import hudson.plugins.warnings.parser.jcreport.JcReportParser;
 import hudson.plugins.warnings.parser.jcreport.Report;
-
-import hudson.util.IOException2;
 
 /**
  * Tests the JcReportParser-Class.
@@ -119,7 +117,7 @@ public class JcReportParserTest {
      * @Coverage The missing coverage is a known issue with ECLEMMA. For further Information:
      *           http://www.eclemma.org/faq.html#trouble05
      */
-    @Test(expected = IOException2.class)
+    @Test(expected = IOException.class)
     public void testSAXEception() throws ParsingCanceledException, IOException {
         new JcReportParser().parse(getReader("testCorrupt.xml"));
     }

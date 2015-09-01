@@ -76,6 +76,6 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
     /** Backward compatibility. @deprecated */
     @Deprecated
     @SuppressWarnings("PMD")
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("")
     private transient Localizable actionName;
 }

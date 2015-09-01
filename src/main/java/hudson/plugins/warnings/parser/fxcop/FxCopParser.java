@@ -1,13 +1,12 @@
 package hudson.plugins.warnings.parser.fxcop;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -18,7 +17,6 @@ import org.xml.sax.SAXException;
 import com.google.common.collect.Lists;
 
 import hudson.Extension;
-
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.warnings.parser.AbstractWarningsParser;
@@ -26,8 +24,6 @@ import hudson.plugins.warnings.parser.Messages;
 import hudson.plugins.warnings.parser.ParsingCanceledException;
 import hudson.plugins.warnings.parser.Warning;
 import hudson.plugins.warnings.util.XmlElementUtil;
-
-import hudson.util.IOException2;
 
 /**
  * Parses a fxcop xml report file. This does not uses the XML Pull parser as it
@@ -43,7 +39,7 @@ public class FxCopParser extends AbstractWarningsParser {
     private static final long serialVersionUID = -7208558002331355408L;
 
     private transient FxCopRuleSet ruleSet;
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
     private transient List<FileAnnotation> warnings;
 
     /**
@@ -78,10 +74,10 @@ public class FxCopParser extends AbstractWarningsParser {
             return warnings;
         }
         catch (ParserConfigurationException exception) {
-            throw new IOException2(exception);
+            throw new IOException(exception);
         }
         catch (SAXException exception) {
-            throw new IOException2(exception);
+            throw new IOException(exception);
         }
     }
 

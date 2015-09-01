@@ -1,5 +1,8 @@
 package hudson.plugins.warnings.parser.gendarme;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.MalformedURLException;
@@ -12,10 +15,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -24,15 +23,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import hudson.Extension;
-
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.violations.types.fxcop.XmlElementUtil;
 import hudson.plugins.warnings.parser.AbstractWarningsParser;
 import hudson.plugins.warnings.parser.Messages;
 import hudson.plugins.warnings.parser.ParsingCanceledException;
-
-import hudson.util.IOException2;
 
 /**
  * Parses Gendarme violations.
@@ -71,10 +67,10 @@ public class GendarmeParser extends AbstractWarningsParser {
             return parseViolations(XmlElementUtil.getNamedChildElements(resultsElement, "rule"), rules);
         }
         catch (ParserConfigurationException pce) {
-            throw new IOException2(pce);
+            throw new IOException(pce);
         }
         catch (SAXException se) {
-            throw new IOException2(se);
+            throw new IOException(se);
         }
     }
 

@@ -13,15 +13,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import hudson.Extension;
-
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.warnings.parser.AbstractWarningsParser;
 import hudson.plugins.warnings.parser.Messages;
 import hudson.plugins.warnings.parser.ParsingCanceledException;
 import hudson.plugins.warnings.parser.Warning;
-
-import hudson.util.IOException2;
 
 /**
  * JcReportParser-Class. This class parses from the jcReport.xml and creates warnings from its content.
@@ -122,9 +119,8 @@ public class JcReportParser extends AbstractWarningsParser {
             Digester digester = digesterLoader.newDigester();
             return digester.parse(new InputSource(source));
         }
-
         catch (SAXException exception) {
-            throw new IOException2(exception);
+            throw new IOException(exception);
         }
     }
 }

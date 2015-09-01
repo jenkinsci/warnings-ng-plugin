@@ -56,10 +56,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
     private String excludePattern;
 
     /** File pattern and parser configurations. @since 3.19 */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
     private List<ParserConfiguration> parserConfigurations = Lists.newArrayList();
     /** Parser configurations of the console. @since 4.6 */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
     private List<ConsoleParser> consoleParsers = Lists.newArrayList();
 
     /**

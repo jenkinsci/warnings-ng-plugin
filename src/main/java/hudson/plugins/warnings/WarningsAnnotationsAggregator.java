@@ -14,6 +14,7 @@ import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixRun;
 import hudson.model.BuildListener;
+import hudson.model.Run;
 import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.HealthDescriptor;
 import hudson.plugins.analysis.core.ParserResult;
@@ -113,7 +114,7 @@ public class WarningsAnnotationsAggregator extends MatrixAggregator {
         for (ParserResult result : totalsPerParser.values()) {
             totals.addProject(result);
         }
-        BuildHistory history = new BuildHistory(build, AggregatedWarningsResultAction.class,
+        BuildHistory history = new BuildHistory((Run<?, ?>)build, AggregatedWarningsResultAction.class,
                 usePreviousBuildAsReference, useStableBuildAsReference);
         AggregatedWarningsResult result = new AggregatedWarningsResult(build, history, totals, defaultEncoding);
         build.addAction(new AggregatedWarningsResultAction(build, result));

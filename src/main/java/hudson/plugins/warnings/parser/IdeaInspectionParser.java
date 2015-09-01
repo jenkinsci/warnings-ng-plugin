@@ -22,7 +22,6 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.warnings.WarningsDescriptor;
 import hudson.plugins.warnings.util.XmlElementUtil;
-import hudson.util.IOException2;
 
 /**
  * A parser for IntelliJ IDEA inspections.
@@ -56,10 +55,10 @@ public class IdeaInspectionParser extends AbstractWarningsParser {
             return parseProblems(XmlElementUtil.getNamedChildElements(rootElement, "problem"));
         }
         catch (ParserConfigurationException exception) {
-            throw new IOException2(exception);
+            throw new IOException(exception);
         }
         catch (SAXException exception) {
-            throw new IOException2(exception);
+            throw new IOException(exception);
         }
     }
 

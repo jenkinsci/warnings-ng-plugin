@@ -218,7 +218,7 @@ public class ParserRegistryIntegrationTest {
      *            the parsers to use
      * @return the registry
      */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SIC")
     private ParserRegistry createRegistryUnderTest(final String fileName, final String group) {
         ParserRegistry parserRegistry = new ParserRegistry(ParserRegistry.getParsers(group), "") {
                     @Override
