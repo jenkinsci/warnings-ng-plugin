@@ -23,7 +23,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  */
 // CHECKSTYLE:OFF
 @SuppressWarnings("all")
-@edu.umd.cs.findbugs.annotations.SuppressWarnings("")
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("")
 public final class TreeString implements Serializable {
     private static final long serialVersionUID = 3621959682117480904L;
 

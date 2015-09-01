@@ -14,7 +14,7 @@ import hudson.plugins.analysis.core.HealthReportBuilder;
 /**
  * Tests the class {@link HealthReportBuilder}.
  */
-@edu.umd.cs.findbugs.annotations.SuppressWarnings("SIC")
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SIC")
 public class HealthGraphTest {
     /** Number of elements in a series with failure threshold. */
     private static final int THRESHOLD_SERIES_SIZE = 2;

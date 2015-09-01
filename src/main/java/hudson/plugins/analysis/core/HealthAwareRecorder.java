@@ -1,34 +1,30 @@
 package hudson.plugins.analysis.core; // NOPMD
 
 import javax.annotation.CheckForNull;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 
-import jenkins.tasks.SimpleBuildStep;
-
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundSetter;
+
+import jenkins.tasks.SimpleBuildStep;
 
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregatable;
-
-import hudson.model.TaskListener;
 import hudson.model.AbstractBuild;
 import hudson.model.Project;
-import hudson.model.Run;
 import hudson.model.Result;
-
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.Files;
 import hudson.plugins.analysis.util.LoggerFactory;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
-
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Builder;
@@ -227,6 +223,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      *
      * @return the object
      */
+    @SuppressWarnings("deprecation")
     protected Object readResolve() {
         if (thresholdLimit == null) {
             thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
@@ -492,6 +489,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @return <code>true</code> if the current build uses maven,
      *         <code>false</code> otherwise
      */
+    @SuppressWarnings("deprecation")
     protected boolean isMavenBuild(final Run<?, ?> build) {
         if (build instanceof AbstractBuild) {
             return isMavenBuild((AbstractBuild) build);
@@ -792,7 +790,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @deprecated
      */
     @Deprecated
-    @SuppressWarnings("PMD")
+    @SuppressWarnings({"PMD", "deprecation"})
     public HealthAwareRecorder(final String healthy, final String unHealthy,
             final String thresholdLimit, final String defaultEncoding,
             final boolean useDeltaValues, final String unstableTotalAll,
@@ -847,7 +845,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     }
 
     /** Backward compatibility. @deprecated */
-    @SuppressWarnings({"PMD","javadoc"})
+    @SuppressWarnings({"PMD", "javadoc", "deprecation"})
     @Deprecated
     public HealthAwareRecorder(final String healthy, final String unHealthy,
             final String thresholdLimit, final String defaultEncoding,

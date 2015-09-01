@@ -1,21 +1,19 @@
 package hudson.plugins.analysis.views;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Maps;
 
-import hudson.model.Item;
 import hudson.model.AbstractBuild;
+import hudson.model.Item;
 import hudson.model.Run;
-
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.core.BuildResult;
+import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.util.Compatibility;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.AnnotationsLabelProvider;
@@ -28,6 +26,7 @@ import hudson.plugins.analysis.util.model.LineRange;
  *
  * @author Ulli Hafner
  */
+@SuppressWarnings("deprecation")
 public class DetailFactory {
     /** Default detail builder class. */
     private static final DetailFactory DEFAULT_DETAIL_BUILDER = new DetailFactory();
@@ -89,6 +88,7 @@ public class DetailFactory {
      * @return the dynamic result of this module detail view
      */
     // CHECKSTYLE:OFF
+    @SuppressWarnings("deprecation")
     public Object createTrendDetails(final String link, @Nonnull final Run<?, ?> owner,
             final AnnotationContainer container, final Collection<FileAnnotation> fixedAnnotations,
             final Collection<FileAnnotation> newAnnotations, final Collection<String> errors,

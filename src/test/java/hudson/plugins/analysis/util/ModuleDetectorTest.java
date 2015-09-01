@@ -7,7 +7,7 @@ import java.io.InputStream;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;

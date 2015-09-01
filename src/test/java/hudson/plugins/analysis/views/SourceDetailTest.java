@@ -1,7 +1,5 @@
 package hudson.plugins.analysis.views;
 
-import static org.easymock.EasyMock.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -14,8 +12,10 @@ import org.apache.commons.io.LineIterator;
 import org.junit.Assert;
 import org.junit.Test;
 
-import hudson.model.AbstractBuild;
+import static org.easymock.EasyMock.*;
 
+import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.LineRange;
 
@@ -43,7 +43,7 @@ public class SourceDetailTest {
 
         replay(annotation);
 
-        SourceDetail source = new SourceDetail(null, annotation, null);
+        SourceDetail source = createSourceDetail(annotation);
 
         InputStream stream = SourceDetailTest.class.getResourceAsStream("AbortException.txt");
         String highlighted;
@@ -68,6 +68,10 @@ public class SourceDetailTest {
         Assert.assertEquals("Wrong offset during source highlighting.", 12, offset);
 
         verify(annotation);
+    }
+
+    private SourceDetail createSourceDetail(final FileAnnotation annotation) {
+        return new SourceDetail((Run<?, ?>)null, annotation, null);
     }
 
     /**
@@ -132,7 +136,7 @@ public class SourceDetailTest {
 
         replay(annotation);
 
-        SourceDetail source = new SourceDetail(null, annotation, null);
+        SourceDetail source = createSourceDetail(annotation);
 
         String highlighted;
         try {

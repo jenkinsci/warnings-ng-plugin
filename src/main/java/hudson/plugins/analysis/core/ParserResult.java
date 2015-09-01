@@ -15,7 +15,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.FilePath;
 import hudson.plugins.analysis.Messages;

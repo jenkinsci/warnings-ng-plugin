@@ -288,7 +288,8 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      *
      * @return the object
      */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
+    @SuppressWarnings("deprecation")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Se")
     private Object readResolve() {
         if (thresholdLimit == null) {
             thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;
@@ -712,7 +713,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
             useStableBuildAsReference, canComputeNew, pluginName);
     }
     /** Backward compatibility. @deprecated */
-    @SuppressWarnings({"PMD.ExcessiveParameterList","javadoc"})
+    @SuppressWarnings({"PMD.ExcessiveParameterList", "javadoc", "deprecation"})
     @Deprecated
     public HealthAwareReporter(final String healthy, final String unHealthy, final String thresholdLimit, final boolean useDeltaValues,
             final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
@@ -730,7 +731,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
                 pluginName);
     }
     /** Backward compatibility. @deprecated */
-    @SuppressWarnings({"PMD.ExcessiveParameterList","javadoc"})
+    @SuppressWarnings({"PMD.ExcessiveParameterList", "javadoc", "deprecation"})
     @Deprecated
     public HealthAwareReporter(final String healthy, final String unHealthy, final String thresholdLimit, final boolean useDeltaValues,
             final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,

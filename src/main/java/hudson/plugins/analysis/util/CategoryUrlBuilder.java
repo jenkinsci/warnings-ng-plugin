@@ -39,7 +39,7 @@ public class CategoryUrlBuilder implements SerializableUrlGenerator {
 
     @Override
     public String generateURL(final CategoryDataset dataset, final int row, final int column) {
-        String prefix = rootUrl + getLabel(dataset, column).build.getNumber();
+        String prefix = rootUrl + getLabel(dataset, column).getRun().getNumber();
         if (isBlank(pluginName)) {
             return prefix;
         }

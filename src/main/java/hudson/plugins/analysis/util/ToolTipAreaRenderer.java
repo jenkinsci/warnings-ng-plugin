@@ -11,7 +11,7 @@ import hudson.util.StackedAreaRenderer2;
  *
  * @author Ulli Hafner
  */
-@edu.umd.cs.findbugs.annotations.SuppressWarnings("Eq")
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Eq")
 public class ToolTipAreaRenderer extends StackedAreaRenderer2 {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -7373322043128362094L;

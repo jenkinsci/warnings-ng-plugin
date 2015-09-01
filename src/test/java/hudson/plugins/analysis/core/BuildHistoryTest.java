@@ -7,8 +7,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import hudson.model.AbstractBuild;
 import hudson.model.Result;
+import hudson.model.Run;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 
 /**
@@ -42,9 +42,9 @@ public class BuildHistoryTest {
      */
     @Test
     public void testHasPreviousResult() {
-        AbstractBuild withResult = mockBuild();
-        AbstractBuild noResult = mockBuild();
-        AbstractBuild baseline = mockBuild();
+        Run withResult = mockBuild();
+        Run noResult = mockBuild();
+        Run baseline = mockBuild();
 
         when(baseline.getPreviousBuild()).thenReturn(noResult);
         when(noResult.getPreviousBuild()).thenReturn(withResult);
@@ -78,9 +78,9 @@ public class BuildHistoryTest {
     }
 
     private void verifyHasResult(final boolean expectedResult, final Result pluginResult) {
-        AbstractBuild withResult = mockBuild(Result.ABORTED);
-        AbstractBuild noResult = mockBuild();
-        AbstractBuild baseline = mockBuild();
+        Run withResult = mockBuild(Result.ABORTED);
+        Run noResult = mockBuild();
+        Run baseline = mockBuild();
 
         when(baseline.getPreviousBuild()).thenReturn(noResult);
         when(noResult.getPreviousBuild()).thenReturn(withResult);
@@ -97,12 +97,12 @@ public class BuildHistoryTest {
         assertEquals("Build has previous result", expectedResult, history.hasPreviousResult());
     }
 
-    private AbstractBuild mockBuild() {
+    private Run mockBuild() {
         return mockBuild(Result.SUCCESS);
     }
 
-    private AbstractBuild mockBuild(final Result result) {
-        AbstractBuild build = mock(AbstractBuild.class);
+    private Run mockBuild(final Result result) {
+        Run build = mock(Run.class);
         when(build.getResult()).thenReturn(result);
         return build;
     }
@@ -119,11 +119,11 @@ public class BuildHistoryTest {
      */
     @Test
     public void testHasReferenceResult() {
-        AbstractBuild withSuccessResult = mockBuild();
-        AbstractBuild noResult2 = mockBuild();
-        AbstractBuild withFailureResult = mockBuild();
-        AbstractBuild noResult1 = mockBuild();
-        AbstractBuild baseline = mockBuild();
+        Run withSuccessResult = mockBuild();
+        Run noResult2 = mockBuild();
+        Run withFailureResult = mockBuild();
+        Run noResult1 = mockBuild();
+        Run baseline = mockBuild();
 
         when(baseline.getPreviousBuild()).thenReturn(noResult1);
         when(noResult1.getPreviousBuild()).thenReturn(withFailureResult);
@@ -155,12 +155,12 @@ public class BuildHistoryTest {
      */
     @Test
     public void testHasNoReferenceResult() {
-        AbstractBuild withSuccessResultAndSuccessfulBuild = mockBuild();
-        AbstractBuild withSuccessResult = mockBuild(Result.ABORTED);
-        AbstractBuild noResult2 = mockBuild();
-        AbstractBuild withFailureResult = mockBuild();
-        AbstractBuild noResult1 = mockBuild();
-        AbstractBuild baseline = mockBuild();
+        Run withSuccessResultAndSuccessfulBuild = mockBuild();
+        Run withSuccessResult = mockBuild(Result.ABORTED);
+        Run noResult2 = mockBuild();
+        Run withFailureResult = mockBuild();
+        Run noResult1 = mockBuild();
+        Run baseline = mockBuild();
 
         when(baseline.getPreviousBuild()).thenReturn(noResult1);
         when(noResult1.getPreviousBuild()).thenReturn(withFailureResult);
@@ -188,9 +188,9 @@ public class BuildHistoryTest {
      */
     @Test
     public void testUsesUnstableBuildAsReferenceBuildWhenConfigured() {
-        AbstractBuild unstableBuild = mockBuild(Result.UNSTABLE);
-        AbstractBuild stableBuild = mockBuild(Result.SUCCESS);
-        AbstractBuild baseline = mockBuild();
+        Run unstableBuild = mockBuild(Result.UNSTABLE);
+        Run stableBuild = mockBuild(Result.SUCCESS);
+        Run baseline = mockBuild();
 
         when(baseline.getPreviousBuild()).thenReturn(unstableBuild);
         when(unstableBuild.getPreviousBuild()).thenReturn(stableBuild);
@@ -209,9 +209,9 @@ public class BuildHistoryTest {
      */
     @Test
     public void testUsesStableBuildAsReferenceBuildWhenConfigured() {
-        AbstractBuild unstableBuild = mockBuild(Result.UNSTABLE);
-        AbstractBuild stableBuild = mockBuild(Result.SUCCESS);
-        AbstractBuild baseline = mockBuild();
+        Run unstableBuild = mockBuild(Result.UNSTABLE);
+        Run stableBuild = mockBuild(Result.SUCCESS);
+        Run baseline = mockBuild();
 
         when(baseline.getPreviousBuild()).thenReturn(unstableBuild);
         when(unstableBuild.getPreviousBuild()).thenReturn(stableBuild);
@@ -232,9 +232,9 @@ public class BuildHistoryTest {
      */
     @Test
     public void testUsesPreviousBuildAsReferenceBuildWhenConfigured() {
-        AbstractBuild referenceBuild = mockBuild();
-        AbstractBuild previous = mockBuild();
-        AbstractBuild baseline = mockBuild();
+        Run referenceBuild = mockBuild();
+        Run previous = mockBuild();
+        Run baseline = mockBuild();
 
         when(baseline.getPreviousBuild()).thenReturn(previous);
         when(previous.getPreviousBuild()).thenReturn(referenceBuild);
@@ -248,7 +248,7 @@ public class BuildHistoryTest {
         assertSame("Previous build is not reference build", previous, previousHistory.getReferenceBuild());
     }
 
-    private BuildResult createFailureResult(final AbstractBuild withFailureResult) {
+    private BuildResult createFailureResult(final Run withFailureResult) {
         TestResultAction failureAction = mockAction(withFailureResult);
         when(withFailureResult.getAction(TestResultAction.class)).thenReturn(failureAction);
         when(failureAction.isSuccessful()).thenReturn(false);
@@ -259,7 +259,7 @@ public class BuildHistoryTest {
         return failureResult;
     }
 
-    private AnnotationContainer createSuccessfulResult(final AbstractBuild withSuccessResult) {
+    private AnnotationContainer createSuccessfulResult(final Run withSuccessResult) {
         TestResultAction successAction = mockAction(withSuccessResult);
         when(withSuccessResult.getAction(TestResultAction.class)).thenReturn(successAction);
         when(successAction.isSuccessful()).thenReturn(true);
@@ -272,7 +272,7 @@ public class BuildHistoryTest {
     }
 
     @SuppressWarnings("unchecked")
-    private TestResultAction mockAction(final AbstractBuild build) {
+    private TestResultAction mockAction(final Run build) {
         TestResultAction action = mock(TestResultAction.class);
         when(action.getBuild()).thenReturn(build);
         return action;
@@ -285,11 +285,11 @@ public class BuildHistoryTest {
      *            the build to start with
      * @return the build history under test
      */
-    private BuildHistory createHistory(final AbstractBuild<?, ?> baseline) {
+    private BuildHistory createHistory(final Run<?, ?> baseline) {
         return new BuildHistory(baseline, TestResultAction.class, false, false);
     }
 
-    private BuildHistory createStableBuildReferenceHistory(final AbstractBuild<?, ?> baseline) {
+    private BuildHistory createStableBuildReferenceHistory(final Run<?, ?> baseline) {
         return new BuildHistory(baseline, TestResultAction.class, false,  true);
     }
 

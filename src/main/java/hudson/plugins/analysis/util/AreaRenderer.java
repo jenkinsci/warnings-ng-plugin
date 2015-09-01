@@ -9,7 +9,7 @@ import org.jfree.data.category.CategoryDataset;
  *
  * @author Ulli Hafner
  */
-@edu.umd.cs.findbugs.annotations.SuppressWarnings("Eq")
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Eq")
 public class AreaRenderer extends ToolTipAreaRenderer {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -6802385549191651555L;

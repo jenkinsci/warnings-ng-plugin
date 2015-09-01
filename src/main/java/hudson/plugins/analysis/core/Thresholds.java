@@ -14,7 +14,7 @@ import static hudson.plugins.analysis.util.ThresholdValidator.*;
  * @author Ulli Hafner
  */
 // CHECKSTYLE:OFF
-@edu.umd.cs.findbugs.annotations.SuppressWarnings("")
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("")
 @SuppressWarnings("all")
 @ExportedBean
 public class Thresholds implements Serializable {

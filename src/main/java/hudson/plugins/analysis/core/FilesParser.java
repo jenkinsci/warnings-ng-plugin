@@ -33,7 +33,7 @@ public class FilesParser extends MasterToSlaveFileCallable<ParserResult> {
     private static final long serialVersionUID = -6415863872891783891L;
 
     /** Logs into a string. @since 1.20 */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Se")
     private transient StringPluginLogger stringLogger;
 
     /** Ant file-set pattern to scan for. */

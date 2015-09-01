@@ -8,17 +8,17 @@ import java.util.Collection;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.project.MavenProject;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import hudson.FilePath;
+import hudson.maven.MavenBuild;
 import hudson.maven.MavenBuildProxy;
 import hudson.maven.MavenBuildProxy.BuildCallable;
 import hudson.maven.MavenReporter;
 import hudson.maven.MojoInfo;
-import hudson.maven.MavenBuild;
-
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
-
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.LoggerFactory;
 import hudson.plugins.analysis.util.PluginLogger;
@@ -28,7 +28,6 @@ import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.analysis.util.model.WorkspaceFile;
-
 import hudson.remoting.Channel;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStep;
@@ -49,7 +48,7 @@ import hudson.tasks.BuildStep;
  * @deprecated use {@link HealthAwareReporter}
  */
 // CHECKSTYLE:COUPLING-OFF
-@SuppressWarnings("PMD.TooManyFields")
+@SuppressWarnings({"PMD.TooManyFields", "deprecation"})
 @Deprecated
 public abstract class HealthAwareMavenReporter extends MavenReporter implements HealthDescriptor {
     /** Default threshold priority limit. */
@@ -193,6 +192,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      * @deprecated replaced by {@link HealthAwareMavenReporter#HealthAwareMavenReporter(String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, boolean, String)}
      */
     // CHECKSTYLE:OFF
+    @SuppressWarnings("deprecation")
     @Deprecated
     public HealthAwareMavenReporter(final String threshold, final String newThreshold,
             final String failureThreshold, final String newFailureThreshold,
@@ -259,7 +259,8 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      *
      * @return the object
      */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
+    @SuppressWarnings("deprecation")
+    @SuppressFBWarnings("Se")
     private Object readResolve() {
         if (thresholdLimit == null) {
             thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;

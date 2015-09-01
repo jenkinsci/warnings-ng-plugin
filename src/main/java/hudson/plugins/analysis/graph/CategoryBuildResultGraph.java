@@ -82,7 +82,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return the graph
      */
     @Override
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("WMI")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("WMI")
     public JFreeChart createAggregation(final GraphConfiguration configuration,
             final Collection<ResultAction<? extends BuildResult>> resultActions, final String pluginName) {
         Set<LocalDate> availableDates = Sets.newHashSet();
@@ -366,7 +366,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return the multi map with the values per day
      */
     @SuppressWarnings("rawtypes")
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("WMI")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("WMI")
     private Multimap<LocalDate, List<Integer>> createMultiSeriesPerDay(
             final Map<Run, List<Integer>> valuesPerBuild) {
         Multimap<LocalDate, List<Integer>> valuesPerDate = HashMultimap.create();

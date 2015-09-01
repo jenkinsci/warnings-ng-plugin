@@ -96,7 +96,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @param type
      *            the type of the annotation
      */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("ST")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("ST")
     public AbstractAnnotation(final String message, final int start, final int end, final String category, final String type) {
         this.message = TreeString.of(StringUtils.strip(message));
         this.category = StringUtils.defaultString(category);
@@ -139,7 +139,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @param copy
      *            the annotation to copy the values from
      */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("ST")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("ST")
     public AbstractAnnotation(final FileAnnotation copy) {
         key = currentKey++;
 
@@ -167,7 +167,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      *
      * @return this
      */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SE")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
     private Object readResolve() {
         if (origin != null) {
             origin = origin.intern();

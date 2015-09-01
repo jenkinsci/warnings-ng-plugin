@@ -8,7 +8,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildResult;
@@ -55,8 +55,8 @@ public class PriorityGraph extends CategoryBuildResultGraph {
     }
 
     // CHECKSTYLE:OFF
-    @java.lang.SuppressWarnings("serial")
-    @SuppressWarnings("SIC")
+    @SuppressWarnings("serial")
+    @SuppressFBWarnings("SIC")
     @Override
     protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName, final ToolTipProvider toolTipProvider) {
         CategoryUrlBuilder url = new UrlBuilder(getRootUrl(), pluginName);

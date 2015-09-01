@@ -15,13 +15,14 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import com.google.common.collect.Lists;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jenkins.model.Jenkins;
 
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Api;
+import hudson.model.Run;
 import hudson.plugins.analysis.graph.BuildResultGraph;
 import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
 import hudson.plugins.analysis.graph.DifferenceGraph;
@@ -292,7 +293,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
             return new NullBuildHistory();
         }
         else {
-            return new BuildHistory(lastFinishedBuild, resultActionType, false);
+            return new BuildHistory((Run<?, ?>) lastFinishedBuild, resultActionType, false, false);
         }
     }
 

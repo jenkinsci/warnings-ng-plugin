@@ -8,6 +8,7 @@ import java.util.Set;
 
 import hudson.model.AbstractBuild;
 
+import hudson.model.Run;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -22,7 +23,7 @@ public class NullBuildHistory extends BuildHistory {
      * Creates a new instance of {@link NullBuildHistory}.
      */
     public NullBuildHistory() {
-        super(null, null, false);
+        super((Run<?, ?>)null, null, false, false);
     }
 
     @Override

@@ -14,6 +14,7 @@ import hudson.plugins.analysis.util.model.Priority;
  *
  * @author Ulli Hafner
  */
+@SuppressWarnings("deprecation")
 public class PriorityDetailFactory {
     /** The detail factory to use. */
     private final DetailFactory detailFactory;

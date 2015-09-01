@@ -19,7 +19,7 @@ import java.util.Map;
  *
  * @author Kohsuke Kawaguchi
  */
-@edu.umd.cs.findbugs.annotations.SuppressWarnings("")
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("")
 @SuppressWarnings({"PMD", "all"})
 //CHECKSTYLE:OFF
 public class TreeStringBuilder {

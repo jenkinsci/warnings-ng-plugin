@@ -10,7 +10,7 @@ import org.jfree.data.category.CategoryDataset;
  *
  * @author Ulli Hafner
  */
-@edu.umd.cs.findbugs.annotations.SuppressWarnings("Eq")
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Eq")
 public class ToolTipBoxRenderer extends StackedBarRenderer implements CategoryToolTipGenerator {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = 3270603409987078410L;

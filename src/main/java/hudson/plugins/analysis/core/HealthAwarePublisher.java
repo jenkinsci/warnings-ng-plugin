@@ -132,6 +132,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
         return perform((Run) build, null, logger);
     }
 
+    @SuppressWarnings("deprecation")
     protected /*abstract*/ BuildResult perform(Run<?, ?> run, FilePath workspace, PluginLogger logger) throws InterruptedException, IOException{
         if (run instanceof AbstractBuild && Compatibility.isOverridden(HealthAwarePublisher.class, getClass(),
                 "perform", AbstractBuild.class, PluginLogger.class)) {
@@ -145,7 +146,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
 
     // CHECKSTYLE:OFF
     @Deprecated
-    @SuppressWarnings({"PMD.ExcessiveParameterList","javadoc"})
+    @SuppressWarnings({"PMD.ExcessiveParameterList", "javadoc", "deprecation"})
     public HealthAwarePublisher(final String healthy, final String unHealthy,
             final String thresholdLimit, final String defaultEncoding,
             final boolean useDeltaValues, final String unstableTotalAll,
@@ -165,7 +166,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
     }
 
     @Deprecated
-    @SuppressWarnings({"PMD.ExcessiveParameterList","javadoc"})
+    @SuppressWarnings({"PMD.ExcessiveParameterList", "javadoc", "deprecation"})
     public HealthAwarePublisher(final String healthy, final String unHealthy,
             final String thresholdLimit, final String defaultEncoding,
             final boolean useDeltaValues, final String unstableTotalAll,
@@ -196,6 +197,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
     /** Backwards compatibility.
      * @deprecated
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     public HealthAwarePublisher(final String healthy, final String unHealthy,
             final String thresholdLimit, final String defaultEncoding,
@@ -222,7 +224,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
                 pluginName);
     }
 
-    @SuppressWarnings({"PMD","javadoc"})
+    @SuppressWarnings({"PMD", "javadoc", "deprecation"})
     @Deprecated
     public HealthAwarePublisher(final String healthy, final String unHealthy,
             final String thresholdLimit, final String defaultEncoding,
@@ -244,7 +246,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
                 canResolveRelativePaths, pluginName);
     }
 
-    @SuppressWarnings({"PMD","javadoc"})
+    @SuppressWarnings({"PMD", "javadoc", "deprecation"})
     @Deprecated
     public HealthAwarePublisher(final String healthy, final String unHealthy,
             final String thresholdLimit, final String defaultEncoding,
@@ -338,7 +340,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
      * @since 1.66
      * @deprecated use {@link #HealthAwarePublisher(String)} and setters instead
      */
-    @SuppressWarnings("PMD")
+    @SuppressWarnings({"PMD", "deprecation"})
     @Deprecated
     public HealthAwarePublisher(final String healthy, final String unHealthy,
             final String thresholdLimit, final String defaultEncoding,

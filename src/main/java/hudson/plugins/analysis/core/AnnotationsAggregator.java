@@ -1,14 +1,12 @@
 package hudson.plugins.analysis.core;
 
-import java.io.IOException;
-
 import javax.annotation.Nonnull;
+import java.io.IOException;
 
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
-import hudson.matrix.MatrixRun;
 import hudson.matrix.MatrixBuild;
-
+import hudson.matrix.MatrixRun;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 
@@ -167,8 +165,7 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
      */
     @Deprecated
     public AnnotationsAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener,
-            final HealthDescriptor healthDescriptor, final String defaultEncoding, final boolean useStableBuildAsReference)
-    {
+            final HealthDescriptor healthDescriptor, final String defaultEncoding, final boolean useStableBuildAsReference) {
         this(build, launcher, listener, healthDescriptor, defaultEncoding, false, useStableBuildAsReference);
     }
     /**
@@ -186,6 +183,7 @@ public abstract class AnnotationsAggregator extends MatrixAggregator {
      *            the default encoding to be used when reading and parsing files
      *            @deprecated use {@link #AnnotationsAggregator(MatrixBuild, Launcher, BuildListener, HealthDescriptor, String, boolean)}
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     public AnnotationsAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener,
             final HealthDescriptor healthDescriptor, final String defaultEncoding) {

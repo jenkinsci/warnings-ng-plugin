@@ -1,5 +1,6 @@
 package hudson.plugins.analysis.core; // NOPMD
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -13,13 +14,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -31,15 +28,13 @@ import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 import com.thoughtworks.xstream.XStream;
 
 import jenkins.model.Jenkins;
-import hudson.XmlFile;
 
+import hudson.XmlFile;
 import hudson.model.AbstractBuild;
 import hudson.model.Api;
-import hudson.model.Hudson;
-import hudson.model.Run;
 import hudson.model.ModelObject;
 import hudson.model.Result;
-
+import hudson.model.Run;
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.HtmlPrinter;
 import hudson.plugins.analysis.util.PluginLogger;
@@ -95,13 +90,13 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     private String defaultEncoding;
 
     /** The project containing the annotations. */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Se")
     private transient WeakReference<JavaProject> project;
     /** All new warnings in the current build. */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Se")
     private transient WeakReference<Collection<FileAnnotation>> newWarningsReference;
     /** All fixed warnings in the current build. */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Se")
     private transient WeakReference<Collection<FileAnnotation>> fixedWarningsReference;
     /** The build history for the results of this plug-in. */
     private transient BuildHistory history;
@@ -140,7 +135,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     /** Determines the number of msec still to go before a new high score is reached. */
     private long highScoreGap;
     /** Error messages. */
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("Se")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Se")
     private List<String> errors;
 
     /**
@@ -324,7 +319,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         return history;
     }
 
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("NP")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("NP")
     private void defineReferenceBuild(final BuildHistory buildHistory) {
         if (buildHistory.hasReferenceBuild()) {
             referenceBuild = buildHistory.getReferenceBuild().getNumber();
@@ -440,7 +435,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *
      * @return the created object
      */
-    @SuppressWarnings("PMD")
+    @SuppressWarnings({"PMD", "deprecation"})
     protected Object readResolve() {
         projectLock = new Object();
         if (pluginResult == null) {
@@ -1504,7 +1499,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             printer.append("(");
             printer.append(Messages.ReferenceBuild());
             printer.append(": ");
-            printer.append(printer.link(Hudson.getInstance().getRootUrl() + "/" + build.getUrl(),
+            printer.append(printer.link(Jenkins.getInstance().getRootUrl() + "/" + build.getUrl(),
                     build.getDisplayName()));
             printer.append(")");
         }
@@ -1634,7 +1629,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *             you need to save them manually
      */
     @Deprecated
-    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
+    @SuppressWarnings({"PMD.ConstructorCallsOverridableMethod", "deprecation"})
     public BuildResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result) {
         initialize(createHistory(build), build, defaultEncoding, result);
         serializeAnnotations(result.getAnnotations());

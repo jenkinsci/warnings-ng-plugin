@@ -2,21 +2,18 @@ package hudson.plugins.analysis.core;
 
 import java.io.IOException;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 
+import jenkins.model.Jenkins;
+import net.sf.json.JSONObject;
+
 import hudson.FilePath;
-
 import hudson.model.AbstractProject;
-import hudson.model.Hudson;
-
 import hudson.plugins.analysis.graph.GraphConfiguration;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.ThresholdValidator;
-
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
@@ -50,7 +47,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @return <code>true</code> if the specified plug-in is installed, <code>false</code> if not.
      */
     public static boolean isPluginInstalled(final String shortName) {
-        Hudson instance = Hudson.getInstance();
+        Jenkins instance = Jenkins.getInstance();
         if (instance != null) {
             return instance.getPlugin(shortName) != null;
         }
@@ -77,6 +74,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      *
      * @deprecated This transformation is no longer required. The JSON is coming as expected from the browser.
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     protected static JSONObject convertHierarchicalFormData(final JSONObject hierarchical) {
         return convertHierarchicalFormData(hierarchical, COMPUTE_NEW_SECTION_KEY);
@@ -96,7 +94,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @deprecated This transformation is no longer required. The JSON is coming as expected from the browser.
      */
     @Deprecated
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("WMI")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("WMI")
     protected static JSONObject convertHierarchicalFormData(final JSONObject hierarchical, final String section) {
         if (hierarchical.containsKey(section)) {
             JSONObject newSection = hierarchical.getJSONObject(section);

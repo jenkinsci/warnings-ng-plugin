@@ -10,7 +10,7 @@ import java.io.UnsupportedEncodingException;
  *
  * @author Ulli Hafner
  */
-@edu.umd.cs.findbugs.annotations.SuppressWarnings("DM")
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("DM")
 public class StringPluginLogger extends PluginLogger {
     private static final String ENCODING = "UTF-8";
     private final ByteArrayOutputStream stream = new ByteArrayOutputStream();

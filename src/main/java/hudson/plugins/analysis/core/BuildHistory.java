@@ -2,19 +2,17 @@ package hudson.plugins.analysis.core;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-
-import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
-
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import hudson.model.AbstractBuild;
-import hudson.model.Run;
-import hudson.model.Result;
+import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 
+import hudson.model.AbstractBuild;
+import hudson.model.Result;
+import hudson.model.Run;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -347,6 +345,7 @@ public class BuildHistory {
      * @since 1.47
      * @deprecated use {@link #BuildHistory(AbstractBuild, Class, boolean, boolean)}
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     public BuildHistory(final AbstractBuild<?, ?> baseline, final Class<? extends ResultAction<? extends BuildResult>> type,
             final boolean useStableBuildAsReference) {
@@ -362,6 +361,7 @@ public class BuildHistory {
      *            type of the action that contains the build results
      * @deprecated use {@link #BuildHistory(AbstractBuild, Class, boolean, boolean)}
      */
+    @SuppressWarnings("deprecation")
     @Deprecated
     public BuildHistory(final AbstractBuild<?, ?> baseline, final Class<? extends ResultAction<? extends BuildResult>> type) {
         this(baseline, type, false);

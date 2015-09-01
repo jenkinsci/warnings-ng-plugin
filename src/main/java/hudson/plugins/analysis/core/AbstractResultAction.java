@@ -3,8 +3,6 @@ package hudson.plugins.analysis.core;
 import java.util.List;
 import java.util.Map;
 
-import jenkins.model.Jenkins;
-
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.export.Exported;
@@ -12,15 +10,15 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import jenkins.model.Jenkins;
+
 import hudson.maven.MavenBuild;
 import hudson.maven.MavenModule;
-
+import hudson.model.AbstractBuild;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
-import hudson.model.AbstractBuild;
 import hudson.model.Run;
-
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
@@ -325,6 +323,6 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     /** Backward compatibility. @deprecated */
     @Deprecated
     @java.lang.SuppressWarnings("PMD")
-    @SuppressWarnings("UuF")
+    @SuppressFBWarnings("UuF")
     private transient HealthReportBuilder healthReportBuilder; // NOPMD
 }

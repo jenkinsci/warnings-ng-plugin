@@ -8,7 +8,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.AbstractHealthDescriptor;
@@ -116,7 +116,7 @@ public class HealthGraph extends CategoryBuildResultGraph {
 
     // CHECKSTYLE:OFF
     @java.lang.SuppressWarnings("serial")
-    @SuppressWarnings("SIC")
+    @SuppressFBWarnings("SIC")
     @Override
     protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName, final ToolTipProvider toolTipProvider) {
         SerializableUrlGenerator urlGenerator = new CategoryUrlBuilder(getRootUrl(), pluginName);

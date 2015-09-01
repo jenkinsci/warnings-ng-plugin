@@ -167,6 +167,7 @@ public abstract class AbstractHealthDescriptor implements HealthDescriptor {
      *
      * @return the object
      */
+    @SuppressWarnings("deprecation")
     protected Object readResolve() {
         if (thresholds == null) {
             thresholds = new Thresholds();
