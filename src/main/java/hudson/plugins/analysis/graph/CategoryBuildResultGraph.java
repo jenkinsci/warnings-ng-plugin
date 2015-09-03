@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
@@ -241,7 +242,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     }
 
     private boolean passesFilteringByParameter(final Run<?, ?> build, final String parameterName, final String parameterValue) {
-        if (parameterName == null) {
+        if (StringUtils.isBlank(parameterName)) {
             return true;
         }
 
