@@ -38,21 +38,21 @@ public class PylintParserTest extends ParserTester {
                 3,
                 "Line too long (85/80)",
                 "trunk/src/python/cachedhttp.py",
-                WARNING_TYPE, "C", Priority.NORMAL);
+                WARNING_TYPE, "C", Priority.LOW);
 
         warning = iterator.next();
         checkWarning(warning,
                 28,
                 "Invalid name \"seasonCount\" (should match [a-z_][a-z0-9_]{2,30}$)",
                 "trunk/src/python/tv.py",
-                WARNING_TYPE, "C0103", Priority.NORMAL);
+                WARNING_TYPE, "C0103", Priority.LOW);
 
         warning = iterator.next();
         checkWarning(warning,
                 35,
                 "Missing docstring",
                 "trunk/src/python/tv.py",
-                WARNING_TYPE, "C0111", Priority.NORMAL);
+                WARNING_TYPE, "C0111", Priority.LOW);
                 
         warning = iterator.next();
         checkWarning(warning,
@@ -73,7 +73,7 @@ public class PylintParserTest extends ParserTester {
                 39,
                 "Dangerous default value \"[]\" as argument",
                 "trunk/src/python/tv.py",
-                WARNING_TYPE, "W0102", Priority.HIGH);
+                WARNING_TYPE, "W0102", Priority.NORMAL);
     }
 
     @Override
