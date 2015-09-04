@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -35,6 +35,7 @@ public abstract class GraphConfigurationView implements ModelObject {
     private final BuildHistory buildHistory;
     private final AbstractHealthDescriptor healthDescriptor; // NOPMD
     private final GraphConfiguration configuration;
+    private String urlPrefix;
 
     /**
      * Creates a new instance of {@link GraphConfigurationView}.
@@ -349,7 +350,9 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return the type
      */
     public BuildResultGraph getGraphType() {
-        return configuration.getGraphType();
+        BuildResultGraph graphType = configuration.getGraphType();
+        graphType.setRootUrl(StringUtils.defaultString(urlPrefix));
+        return graphType;
     }
 
     /**
@@ -382,5 +385,16 @@ public abstract class GraphConfigurationView implements ModelObject {
      */
     public AbstractHealthDescriptor getHealthDescriptor() {
         return healthDescriptor;
+    }
+
+    /**
+     * Sets the prefix of the URLs in the trend graph. Depending on the sub page this trend is shown a different
+     * prefix can be set for the relative URL.
+     *
+     * @param urlPrefix prefix, might be empty
+     * @since 1.73
+     */
+    public void setUrlPrefix(final String urlPrefix) {
+        this.urlPrefix = urlPrefix;
     }
 }

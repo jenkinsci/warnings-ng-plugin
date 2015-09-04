@@ -15,7 +15,6 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import com.google.common.collect.Lists;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jenkins.model.Jenkins;
 
 import hudson.model.AbstractBuild;
@@ -182,7 +181,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return the details
      */
     public Object getTrendDetails(final StaplerRequest request, final StaplerResponse response) {
-        return new TrendDetails(getProject(), getTrendGraph(request, response));
+        return new TrendDetails(getProject(), getTrendGraph(request, response, "../../"));
     }
 
     /**
@@ -204,8 +203,13 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return the trend graph
      */
     public Graph getTrendGraph(final StaplerRequest request, final StaplerResponse response) {
+        return getTrendGraph(request, response, "");
+    }
+
+    private Graph getTrendGraph(final StaplerRequest request, final StaplerResponse response, final String urlPrefix) {
         GraphConfigurationView configuration = createUserConfiguration(request);
         if (configuration.hasMeaningfulGraph()) {
+            configuration.setUrlPrefix(urlPrefix);
             return configuration.getGraphRenderer(getUrlName());
         }
         else {
