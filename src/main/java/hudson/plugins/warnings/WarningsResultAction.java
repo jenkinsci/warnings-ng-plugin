@@ -1,6 +1,7 @@
 package hudson.plugins.warnings;
 
 import org.jvnet.localizer.Localizable;
+import org.kohsuke.stapler.export.Exported;
 
 import hudson.model.Run;
 import hudson.plugins.analysis.core.AbstractResultAction;
@@ -39,8 +40,7 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
         this.parserName = parserName;
     }
 
-    @Exported
-    @Override
+    @Override @Exported
     public String getUrlName() {
         return WarningsDescriptor.getResultUrl(parserName);
     }
