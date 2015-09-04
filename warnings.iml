@@ -33,7 +33,7 @@
     <orderEntry type="library" name="Maven: asm:asm:3.3.1" level="project" />
     <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.8.3" level="project" />
     <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
-    <orderEntry type="module" module-name="analysis-test" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jvnet.hudson.plugins:analysis-test:1.13" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-job:1.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-cps:1.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.cloudbees:groovy-cps:1.2" level="project" />
