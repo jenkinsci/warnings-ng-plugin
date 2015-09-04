@@ -65,7 +65,7 @@
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-test</artifactId>
-      <version>1.14</version>
+      <version>1.17</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
