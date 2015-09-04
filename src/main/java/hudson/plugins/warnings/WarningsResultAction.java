@@ -39,6 +39,7 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
         this.parserName = parserName;
     }
 
+    @Exported
     @Override
     public String getUrlName() {
         return WarningsDescriptor.getResultUrl(parserName);
@@ -49,6 +50,7 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
      *
      * @return the parser group
      */
+    @Exported
     public String getParser() {
         return parserName;
     }
