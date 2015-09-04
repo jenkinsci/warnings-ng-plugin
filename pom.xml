@@ -15,10 +15,6 @@
   <url>http://wiki.jenkins-ci.org/x/G4CGAQ</url>
   <description>This plug-in reads the compiler warnings from the console log file and generates a trend report.</description>
 
-  <properties>
-    <workflow-jenkins-plugin.version>1.4</workflow-jenkins-plugin.version>
-  </properties>
-
   <licenses>
     <license>
       <name>MIT license</name>
@@ -69,13 +65,7 @@
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-test</artifactId>
-      <version>1.13</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-aggregator</artifactId>
-      <version>${workflow-jenkins-plugin.version}</version>
+      <version>1.14</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
