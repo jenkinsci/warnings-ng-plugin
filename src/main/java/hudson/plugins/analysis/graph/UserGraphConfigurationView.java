@@ -36,7 +36,7 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
             final String projectActionUrl, final String globalFileName, final Cookie[] cookies, final BuildHistory buildHistory) {
         super(configuration, project, projectActionUrl, buildHistory);
 
-        if (!configuration.initializeFrom(createCookieHandler(projectActionUrl).getValue(cookies))) {
+        if (!configuration.initializeFrom(createCookieHandler(globalFileName).getValue(cookies))) {
             configuration.initializeFromFile(createDefaultsFile(project, globalFileName));
         }
     }
