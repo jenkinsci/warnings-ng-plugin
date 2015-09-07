@@ -77,12 +77,14 @@ public class WarningsPublisherTest {
     }
 
     private void checkFileOrder(final List<ParserConfiguration> fileParsers, final List<String> expected) {
-        WarningsPublisher publisher = new WarningsPublisher(fileParsers, null);
+        WarningsPublisher publisher = new WarningsPublisher();
+        publisher.setParserConfigurations(fileParsers.toArray(new ParserConfiguration[fileParsers.size()]));
         checkOrder(expected, publisher);
     }
 
     private void checkConsoleOrder(final List<ConsoleParser> consoleParsers, final List<String> expected) {
-        WarningsPublisher publisher = new WarningsPublisher(null, consoleParsers);
+        WarningsPublisher publisher = new WarningsPublisher();
+        publisher.setConsoleParsers(consoleParsers.toArray(new ConsoleParser[consoleParsers.size()]));
         checkOrder(expected, publisher);
     }
 

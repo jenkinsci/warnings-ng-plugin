@@ -3,6 +3,7 @@ package hudson.plugins.warnings; // NOPMD
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -68,23 +69,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
     /**
      * Creates a new instance of {@link WarningsPublisher}.
-     *
-     * @param parserConfigurations
-     *            the parser configurations to scan files
-     * @param consoleParsers
-     *            the parsers to scan the console
      */
     @DataBoundConstructor
-    public WarningsPublisher(final List<ParserConfiguration> parserConfigurations,
-            final List<ConsoleParser> consoleParsers) {
+    public WarningsPublisher() {
         super(PLUGIN_NAME);
-
-        if (consoleParsers != null) {
-            this.consoleParsers.addAll(consoleParsers);
-        }
-        if (parserConfigurations != null) {
-            this.parserConfigurations.addAll(parserConfigurations);
-        }
     }
 
     /**
@@ -97,12 +85,38 @@ public class WarningsPublisher extends HealthAwarePublisher {
     }
 
     /**
+     * Sets the Ant file-set pattern of files to include in report.
+     *
+     * @param consoleParsers
+     *            the parsers to scan the console
+     */
+    @DataBoundSetter
+    public void setConsoleParsers(final ConsoleParser[] consoleParsers) {
+        if (consoleParsers != null) {
+            this.consoleParsers.addAll(Arrays.asList(consoleParsers));
+        }
+    }
+
+    /**
      * Returns the parserConfigurations.
      *
      * @return the parserConfigurations
      */
     public ParserConfiguration[] getParserConfigurations() {
         return ParserConfiguration.filterExisting(parserConfigurations);
+    }
+
+    /**
+     * Sets the Ant file-set pattern of files to include in report.
+     *
+     * @param parserConfigurations
+     *            the parser configurations to scan files
+     */
+    @DataBoundSetter
+    public void setParserConfigurations(final ParserConfiguration[] parserConfigurations) {
+        if (parserConfigurations != null) {
+            this.parserConfigurations.addAll(Arrays.asList(parserConfigurations));
+        }
     }
 
     /**
