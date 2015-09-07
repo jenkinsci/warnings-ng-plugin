@@ -10,9 +10,12 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.FilePath;
 import hudson.Launcher;
@@ -47,8 +50,9 @@ import hudson.plugins.warnings.parser.WarningsFilter;
  */
 // CHECKSTYLE:COUPLING-OFF
 public class WarningsPublisher extends HealthAwarePublisher {
-    private static final String PLUGIN_NAME = "WARNINGS";
     private static final long serialVersionUID = -5936973521277401764L;
+
+    private static final String PLUGIN_NAME = "WARNINGS";
 
     /** Ant file-set pattern of files to include to report. */
     private String includePattern;
@@ -56,10 +60,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
     private String excludePattern;
 
     /** File pattern and parser configurations. @since 3.19 */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
+    @SuppressFBWarnings("SE")
     private List<ParserConfiguration> parserConfigurations = Lists.newArrayList();
     /** Parser configurations of the console. @since 4.6 */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
+    @SuppressFBWarnings("SE")
     private List<ConsoleParser> consoleParsers = Lists.newArrayList();
 
     /**
@@ -99,6 +103,44 @@ public class WarningsPublisher extends HealthAwarePublisher {
      */
     public ParserConfiguration[] getParserConfigurations() {
         return ParserConfiguration.filterExisting(parserConfigurations);
+    }
+
+    /**
+     * Returns the Ant file-set pattern of files to include in report.
+     *
+     * @return Ant file-set pattern of files to include in report
+     */
+    public String getIncludePattern() {
+        return includePattern;
+    }
+
+    /**
+     * Sets the Ant file-set pattern of files to include in report.
+     *
+     * @param pattern the pattern to include
+     */
+    @DataBoundSetter
+    public void setIncludePattern(final String pattern) {
+        includePattern = pattern;
+    }
+
+    /**
+     * Returns the Ant file-set pattern of files to exclude from report.
+     *
+     * @return Ant file-set pattern of files to exclude from report
+     */
+    public String getExcludePattern() {
+        return excludePattern;
+    }
+
+    /**
+     * Sets the Ant file-set pattern of files to exclude from report.
+     *
+     * @param pattern the pattern to include
+     */
+    @DataBoundSetter
+    public void setExcludePattern(final String pattern) {
+        excludePattern = pattern;
     }
 
     /**
@@ -184,24 +226,6 @@ public class WarningsPublisher extends HealthAwarePublisher {
                 parserConfigurations.add(new ParserConfiguration(pattern, parser));
             }
         }
-    }
-
-    /**
-     * Returns the Ant file-set pattern of files to include in report.
-     *
-     * @return Ant file-set pattern of files to include in report
-     */
-    public String getIncludePattern() {
-        return includePattern;
-    }
-
-    /**
-     * Returns the Ant file-set pattern of files to exclude from report.
-     *
-     * @return Ant file-set pattern of files to exclude from report
-     */
-    public String getExcludePattern() {
-        return excludePattern;
     }
 
     @Override
