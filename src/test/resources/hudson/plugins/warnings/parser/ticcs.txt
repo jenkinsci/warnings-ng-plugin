@@ -22,3 +22,4 @@ error: errors encountered during linking; "../../bin/Debug/lrxyz.out" not
   1 fatal error detected in the compilation of "i2cDisplay12x2.c".
   No Assembly Errors, 1 Assembly Warning
   
+Problems running dot: exit code=-1, command='dot', arguments='"D:/jenkins/jobs/myjob/WORKSP~1/BUILDT~1/somefolder/doxydoc/html/d6/d52/structt_something_collgraph.dot" -Tpng -o "D:/jenkins/jobs/myjob/WORKSP~1/BUILDT~1/somefolder/doxydoc/html/d6/d52/structt_somethingcoll_graph.png"'
