@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import static hudson.plugins.analysis.util.ThresholdValidator.*;
 
 /**
@@ -14,7 +15,7 @@ import static hudson.plugins.analysis.util.ThresholdValidator.*;
  * @author Ulli Hafner
  */
 // CHECKSTYLE:OFF
-@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("")
+@SuppressFBWarnings("")
 @SuppressWarnings("all")
 @ExportedBean
 public class Thresholds implements Serializable {

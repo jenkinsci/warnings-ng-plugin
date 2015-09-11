@@ -12,6 +12,8 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * {@link TreeString} is an alternative string representation that saves the
  * memory when you have a large number of strings that share common prefixes
@@ -23,7 +25,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  */
 // CHECKSTYLE:OFF
 @SuppressWarnings("all")
-@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("")
+@SuppressFBWarnings("")
 public final class TreeString implements Serializable {
     private static final long serialVersionUID = 3621959682117480904L;
 

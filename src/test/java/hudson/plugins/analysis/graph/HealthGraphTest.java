@@ -1,11 +1,12 @@
 package hudson.plugins.analysis.graph;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 import java.util.List;
 
 import org.junit.Test;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import hudson.plugins.analysis.core.AbstractHealthDescriptor;
 import hudson.plugins.analysis.core.BuildResult;
@@ -14,7 +15,7 @@ import hudson.plugins.analysis.core.HealthReportBuilder;
 /**
  * Tests the class {@link HealthReportBuilder}.
  */
-@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SIC")
+@SuppressFBWarnings("SIC")
 public class HealthGraphTest {
     /** Number of elements in a series with failure threshold. */
     private static final int THRESHOLD_SERIES_SIZE = 2;

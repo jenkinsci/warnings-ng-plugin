@@ -8,6 +8,8 @@ import java.util.Collection;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.project.MavenProject;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.maven.MavenAggregatedReport;
@@ -17,11 +19,9 @@ import hudson.maven.MavenBuildProxy.BuildCallable;
 import hudson.maven.MavenModuleSetBuild;
 import hudson.maven.MavenReporter;
 import hudson.maven.MojoInfo;
-
-import hudson.model.Run;
 import hudson.model.BuildListener;
 import hudson.model.Result;
-
+import hudson.model.Run;
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.Files;
@@ -30,7 +30,6 @@ import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.StringPluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
-
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStep;
 
@@ -289,7 +288,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      * @return the object
      */
     @SuppressWarnings("deprecation")
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Se")
+    @SuppressFBWarnings("Se")
     private Object readResolve() {
         if (thresholdLimit == null) {
             thresholdLimit = DEFAULT_PRIORITY_THRESHOLD_LIMIT;

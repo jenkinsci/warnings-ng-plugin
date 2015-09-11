@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Builds {@link TreeString}s that share common prefixes. Call
  * {@link #intern(String)} and you get the {@link TreeString} that represents
@@ -19,7 +21,7 @@ import java.util.Map;
  *
  * @author Kohsuke Kawaguchi
  */
-@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("")
+@SuppressFBWarnings("")
 @SuppressWarnings({"PMD", "all"})
 //CHECKSTYLE:OFF
 public class TreeStringBuilder {

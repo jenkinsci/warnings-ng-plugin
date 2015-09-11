@@ -4,13 +4,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * A logger that prints to a string buffer. The logged message are available
  * using the {@link #toString()} method.
  *
  * @author Ulli Hafner
  */
-@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("DM")
+@SuppressFBWarnings("DM")
 public class StringPluginLogger extends PluginLogger {
     private static final String ENCODING = "UTF-8";
     private final ByteArrayOutputStream stream = new ByteArrayOutputStream();

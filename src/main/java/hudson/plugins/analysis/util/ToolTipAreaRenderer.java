@@ -3,6 +3,8 @@ package hudson.plugins.analysis.util;
 import org.jfree.chart.renderer.category.StackedAreaRenderer;
 import org.jfree.data.category.CategoryDataset;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import hudson.util.StackedAreaRenderer2;
 
 /**
@@ -11,7 +13,7 @@ import hudson.util.StackedAreaRenderer2;
  *
  * @author Ulli Hafner
  */
-@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Eq")
+@SuppressFBWarnings("Eq")
 public class ToolTipAreaRenderer extends StackedAreaRenderer2 {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -7373322043128362094L;

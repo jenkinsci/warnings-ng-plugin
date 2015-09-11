@@ -1,5 +1,7 @@
 package hudson.plugins.analysis.views;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import hudson.model.Job;
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.AbstractProjectAction;
@@ -71,7 +73,7 @@ public abstract class WarningsCountColumn<T extends AbstractProjectAction<?>> ex
         return project.getAction(getProjectAction());
     }
 
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("NP")
+    @SuppressFBWarnings("NP")
     private BuildResult getResult(final T action) {
         return action.getLastAction().getResult();
     }

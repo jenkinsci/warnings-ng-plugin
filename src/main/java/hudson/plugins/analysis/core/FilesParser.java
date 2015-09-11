@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
-import jenkins.MasterToSlaveFileCallable;
-
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
-import hudson.FilePath;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import jenkins.MasterToSlaveFileCallable;
 
+import hudson.FilePath;
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.FileFinder;
 import hudson.plugins.analysis.util.ModuleDetector;
@@ -20,7 +20,6 @@ import hudson.plugins.analysis.util.NullModuleDetector;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.StringPluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
-
 import hudson.remoting.VirtualChannel;
 
 /**
@@ -33,7 +32,7 @@ public class FilesParser extends MasterToSlaveFileCallable<ParserResult> {
     private static final long serialVersionUID = -6415863872891783891L;
 
     /** Logs into a string. @since 1.20 */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Se")
+    @SuppressFBWarnings("Se")
     private transient StringPluginLogger stringLogger;
 
     /** Ant file-set pattern to scan for. */

@@ -1,8 +1,6 @@
 package hudson.plugins.analysis.graph;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -30,13 +28,13 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
-
-import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.core.BuildResult;
+import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.util.ToolTipProvider;
-
 import hudson.util.ChartUtil.NumberOnlyBuildLabel;
 import hudson.util.DataSetBuilder;
 import hudson.util.ShiftedCategoryAxis;
@@ -83,7 +81,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return the graph
      */
     @Override
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("WMI")
+    @SuppressFBWarnings("WMI")
     public JFreeChart createAggregation(final GraphConfiguration configuration,
             final Collection<ResultAction<? extends BuildResult>> resultActions, final String pluginName) {
         Set<LocalDate> availableDates = Sets.newHashSet();
@@ -367,7 +365,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return the multi map with the values per day
      */
     @SuppressWarnings("rawtypes")
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("WMI")
+    @SuppressFBWarnings("WMI")
     private Multimap<LocalDate, List<Integer>> createMultiSeriesPerDay(
             final Map<Run, List<Integer>> valuesPerBuild) {
         Multimap<LocalDate, List<Integer>> valuesPerDate = HashMultimap.create();

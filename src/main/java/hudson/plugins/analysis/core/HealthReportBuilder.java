@@ -2,8 +2,9 @@ package hudson.plugins.analysis.core;
 
 import java.io.Serializable;
 
-import hudson.model.HealthReport;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import hudson.model.HealthReport;
 import hudson.plugins.analysis.util.model.AnnotationProvider;
 import hudson.plugins.analysis.util.model.Priority;
 
@@ -84,47 +85,47 @@ public class HealthReportBuilder implements Serializable {
     // CHECKSTYLE:CONSTANTS-ON
 
     /** Backward compatibility. @deprecated */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
+    @SuppressFBWarnings("SE")
     @SuppressWarnings("PMD")
     @Deprecated
     private transient int healthy;
     /** Backward compatibility. @deprecated */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
+    @SuppressFBWarnings("SE")
     @SuppressWarnings("PMD")
     @Deprecated
     private transient int unHealthy;
     /** Backward compatibility. @deprecated */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
+    @SuppressFBWarnings("SE")
     @SuppressWarnings("PMD")
     @Deprecated
     private transient boolean isHealthEnabled;
     /** Backward compatibility. @deprecated */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
+    @SuppressFBWarnings("SE")
     @SuppressWarnings("PMD")
     @Deprecated
     private transient boolean isThresholdEnabled;
     /** Backward compatibility. @deprecated */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
+    @SuppressFBWarnings("SE")
     @SuppressWarnings("PMD")
     @Deprecated
     private transient int threshold;
     /** Backward compatibility. @deprecated */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
+    @SuppressFBWarnings("SE")
     @SuppressWarnings("PMD")
     @Deprecated
     private transient String reportName;
     /** Backward compatibility. @deprecated */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
+    @SuppressFBWarnings("SE")
     @SuppressWarnings("PMD")
     @Deprecated
     private transient String itemName;
     /** Backward compatibility. @deprecated */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
+    @SuppressFBWarnings("SE")
     @SuppressWarnings("PMD")
     @Deprecated
     private transient String reportSingleCount;
     /** Backward compatibility. @deprecated */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
+    @SuppressFBWarnings("SE")
     @SuppressWarnings("PMD")
     @Deprecated
     private transient String reportMultipleCount;

@@ -2,6 +2,8 @@ package hudson.plugins.analysis.util.model;
 
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 
 /**
  * A serializable Java Bean class representing a maven module.
@@ -14,7 +16,7 @@ public class MavenModule extends AnnotationContainer {
     /** Name of this module. */
     private String name; // NOPMD: backward compatibility
     /** All Java packages in this maven module (mapped by their name). */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Se")
+    @SuppressFBWarnings("Se")
     private Map<String, JavaPackage> packageMapping; // NOPMD: backward compatibility
     /** The error message that denotes that the creation of the module has been failed. */
     private String error;

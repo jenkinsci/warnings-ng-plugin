@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
@@ -94,7 +95,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @deprecated This transformation is no longer required. The JSON is coming as expected from the browser.
      */
     @Deprecated
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("WMI")
+    @SuppressFBWarnings("WMI")
     protected static JSONObject convertHierarchicalFormData(final JSONObject hierarchical, final String section) {
         if (hierarchical.containsKey(section)) {
             JSONObject newSection = hierarchical.getJSONObject(section);

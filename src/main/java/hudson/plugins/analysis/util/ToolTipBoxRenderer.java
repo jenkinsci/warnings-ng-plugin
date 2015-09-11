@@ -4,13 +4,15 @@ import org.jfree.chart.labels.CategoryToolTipGenerator;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.data.category.CategoryDataset;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * {@link StackedBarRenderer} that delegates tooltip and URL generation to
  * separate objects.
  *
  * @author Ulli Hafner
  */
-@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Eq")
+@SuppressFBWarnings("Eq")
 public class ToolTipBoxRenderer extends StackedBarRenderer implements CategoryToolTipGenerator {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = 3270603409987078410L;

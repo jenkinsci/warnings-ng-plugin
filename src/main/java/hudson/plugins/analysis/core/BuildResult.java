@@ -27,6 +27,7 @@ import com.google.common.collect.Sets;
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 import com.thoughtworks.xstream.XStream;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jenkins.model.Jenkins;
 
 import hudson.XmlFile;
@@ -90,13 +91,13 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     private String defaultEncoding;
 
     /** The project containing the annotations. */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Se")
+    @SuppressFBWarnings("Se")
     private transient WeakReference<JavaProject> project;
     /** All new warnings in the current build. */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Se")
+    @SuppressFBWarnings("Se")
     private transient WeakReference<Collection<FileAnnotation>> newWarningsReference;
     /** All fixed warnings in the current build. */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Se")
+    @SuppressFBWarnings("Se")
     private transient WeakReference<Collection<FileAnnotation>> fixedWarningsReference;
     /** The build history for the results of this plug-in. */
     private transient BuildHistory history;
@@ -135,7 +136,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     /** Determines the number of msec still to go before a new high score is reached. */
     private long highScoreGap;
     /** Error messages. */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Se")
+    @SuppressFBWarnings("Se")
     private List<String> errors;
 
     /**
@@ -319,7 +320,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         return history;
     }
 
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("NP")
+    @SuppressFBWarnings("NP")
     private void defineReferenceBuild(final BuildHistory buildHistory) {
         if (buildHistory.hasReferenceBuild()) {
             referenceBuild = buildHistory.getReferenceBuild().getNumber();

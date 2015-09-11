@@ -19,8 +19,6 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import hudson.plugins.analysis.Messages;
 
 /**

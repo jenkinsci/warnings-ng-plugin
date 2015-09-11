@@ -3,13 +3,15 @@ package hudson.plugins.analysis.util;
 import org.jfree.chart.renderer.category.StackedAreaRenderer;
 import org.jfree.data.category.CategoryDataset;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * {@link StackedAreaRenderer} that delegates tooltip and URL generation to
  * separate objects.
  *
  * @author Ulli Hafner
  */
-@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("Eq")
+@SuppressFBWarnings("Eq")
 public class AreaRenderer extends ToolTipAreaRenderer {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -6802385549191651555L;
