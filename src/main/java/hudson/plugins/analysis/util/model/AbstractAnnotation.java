@@ -1,11 +1,11 @@
 package hudson.plugins.analysis.util.model;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
-
-import javax.annotation.Nonnull;
+import java.util.Random;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,10 +14,11 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import com.google.common.collect.ImmutableList;
 
-import hudson.model.AbstractBuild;
-import hudson.model.Run;
-import hudson.model.Item;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import hudson.model.AbstractBuild;
+import hudson.model.Item;
+import hudson.model.Run;
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.AbstractAnnotationParser;
 import hudson.plugins.analysis.util.PackageDetectors;
@@ -25,7 +26,7 @@ import hudson.plugins.analysis.util.TreeString;
 import hudson.plugins.analysis.util.TreeStringBuilder;
 
 /**
- *  A base class for annotations.
+ * A base class for annotations.
  *
  * @author Ulli Hafner
  */
@@ -40,7 +41,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -1092014926477547148L;
     /** Current key of this annotation. */
-    private static long currentKey;
+    private static long currentKey = new Random().nextLong();
 
     /** The message of this annotation. */
     private /*almost final*/ TreeString message;
@@ -96,7 +97,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @param type
      *            the type of the annotation
      */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("ST")
+    @SuppressFBWarnings("ST")
     public AbstractAnnotation(final String message, final int start, final int end, final String category, final String type) {
         this.message = TreeString.of(StringUtils.strip(message));
         this.category = StringUtils.defaultString(category);
@@ -139,7 +140,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @param copy
      *            the annotation to copy the values from
      */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("ST")
+    @SuppressFBWarnings("ST")
     public AbstractAnnotation(final FileAnnotation copy) {
         key = currentKey++;
 
@@ -167,7 +168,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      *
      * @return this
      */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
+    @SuppressFBWarnings("SE")
     private Object readResolve() {
         if (origin != null) {
             origin = origin.intern();
