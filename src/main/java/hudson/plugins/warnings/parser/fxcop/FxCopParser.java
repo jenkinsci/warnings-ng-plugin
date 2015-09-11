@@ -16,6 +16,8 @@ import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import hudson.Extension;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -39,7 +41,7 @@ public class FxCopParser extends AbstractWarningsParser {
     private static final long serialVersionUID = -7208558002331355408L;
 
     private transient FxCopRuleSet ruleSet;
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SE")
+    @SuppressFBWarnings("SE")
     private transient List<FileAnnotation> warnings;
 
     /**

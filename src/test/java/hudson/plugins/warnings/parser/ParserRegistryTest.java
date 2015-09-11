@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.core.ParserResult;
@@ -228,7 +229,7 @@ public class ParserRegistryTest {
      *            the parsers to use
      * @return the registry
      */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SIC")
+    @SuppressFBWarnings("SIC")
     private ParserRegistry createRegistryUnderTest(final String fileName,
                                                    final List<? extends AbstractWarningsParser> parsers) {
         ParserRegistry parserRegistry = new ParserRegistry(parsers, StringUtils.EMPTY) {

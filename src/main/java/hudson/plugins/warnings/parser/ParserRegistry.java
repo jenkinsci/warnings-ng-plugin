@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jenkins.model.Jenkins;
 
 import hudson.plugins.analysis.core.PluginDescriptor;
@@ -319,7 +320,7 @@ public class ParserRegistry {
      * @return the reader
      * @throws FileNotFoundException if the file does not exist
      */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("OBL")
+    @SuppressFBWarnings("OBL")
     protected Reader createReader(final File file) throws FileNotFoundException {
         return createReader(new FileInputStream(file));
     }

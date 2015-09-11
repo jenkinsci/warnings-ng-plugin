@@ -3,6 +3,8 @@ package hudson.plugins.warnings;
 import org.jvnet.localizer.Localizable;
 import org.kohsuke.stapler.export.Exported;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import hudson.model.Run;
 import hudson.plugins.analysis.core.AbstractResultAction;
 import hudson.plugins.analysis.core.HealthDescriptor;
@@ -78,6 +80,6 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
     /** Backward compatibility. @deprecated */
     @Deprecated
     @SuppressWarnings("PMD")
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("")
+    @SuppressFBWarnings("")
     private transient Localizable actionName;
 }

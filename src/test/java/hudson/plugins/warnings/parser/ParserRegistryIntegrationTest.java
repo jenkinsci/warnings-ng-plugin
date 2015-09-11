@@ -20,6 +20,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.TestExtension;
 import org.jvnet.localizer.Localizable;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.core.PluginDescriptor;
@@ -218,7 +219,7 @@ public class ParserRegistryIntegrationTest {
      *            the parsers to use
      * @return the registry
      */
-    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SIC")
+    @SuppressFBWarnings("SIC")
     private ParserRegistry createRegistryUnderTest(final String fileName, final String group) {
         ParserRegistry parserRegistry = new ParserRegistry(ParserRegistry.getParsers(group), "") {
                     @Override
