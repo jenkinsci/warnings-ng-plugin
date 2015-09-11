@@ -45,14 +45,19 @@ public class WarningsFilter {
      * @param excludePattern
      *            regexp pattern of files to exclude from report,
      *            <code>null</code> or an empty string do not filter the output
+	 * @param messagePattern
+	 *            regexp pattern of warning messages to exclude from report,
+	 *            <code>null</code> or an empty string do not filter the output
      * @return the filtered annotations if there is a filter defined
      */
     public Collection<FileAnnotation> apply(final Collection<FileAnnotation> allAnnotations,
                                      final @CheckForNull String includePattern,
                                      final @CheckForNull String excludePattern,
+									 final @CheckForNull String messagesPattern,
                                      final PluginLogger logger) {
         Collection<Pattern> includePatterns = addPatterns(includePattern);
         Collection<Pattern> excludePatterns = addPatterns(excludePattern);
+		Collection<Pattern> messagesPatterns = addPatterns(messagesPattern);
 
         Collection<FileAnnotation> includedAnnotations;
         if (includePatterns.isEmpty()) {
@@ -68,7 +73,7 @@ public class WarningsFilter {
                 }
             }
         }
-        if (excludePatterns.isEmpty()) {
+        if (excludePatterns.isEmpty() && messagesPatterns.isEmpty()) {
             return includedAnnotations;
         }
         else {
@@ -79,13 +84,18 @@ public class WarningsFilter {
                         excludedAnnotations.remove(annotation);
                     }
                 }
+				for (Pattern exclude : messagesPatterns) {
+                    if(exclude.matcher(annotation.getMessage()).matches()) {
+                        excludedAnnotations.remove(annotation);
+                    }
+                }
             }
             logger.log(String.format("Found %d warnings after exclusion.", excludedAnnotations.size()));
             return excludedAnnotations;
         }
     }
 
-    public boolean isActive(final String includePattern, final String excludePattern) {
-        return StringUtils.isNotBlank(includePattern) || StringUtils.isNotBlank(excludePattern);
+    public boolean isActive(final String includePattern, final String excludePattern, final String messagesPattern) {
+        return StringUtils.isNotBlank(includePattern) || StringUtils.isNotBlank(excludePattern) || StringUtils.isNotBlank(messagesPattern);
     }
 }

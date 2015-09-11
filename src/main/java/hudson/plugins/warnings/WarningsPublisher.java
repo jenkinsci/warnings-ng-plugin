@@ -59,7 +59,9 @@ public class WarningsPublisher extends HealthAwarePublisher {
     private String includePattern;
     /** Ant file-set pattern of files to exclude from report. */
     private String excludePattern;
-
+	/** warning messages to exclude from report */
+    private String messagesPattern;
+	
     /** File pattern and parser configurations. @since 3.19 */
     @SuppressFBWarnings("SE")
     private List<ParserConfiguration> parserConfigurations = Lists.newArrayList();
@@ -155,6 +157,25 @@ public class WarningsPublisher extends HealthAwarePublisher {
     @DataBoundSetter
     public void setExcludePattern(final String pattern) {
         excludePattern = pattern;
+    }
+	
+	/**
+     * Returns the Java regex pattern of warning messages to exclude from report.
+     *
+     * @return Java regex pattern of warning messages to exclude from report
+     */
+    public String getMessagesPattern() {
+        return messagesPattern;
+    }
+
+    /**
+     * Sets the Ant file-set pattern of files to include in report.
+     *
+     * @param pattern the pattern to include
+     */
+    @DataBoundSetter
+    public void setMessagesPattern(final String pattern) {
+        messagesPattern = pattern;
     }
 
     /**
@@ -350,9 +371,9 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
     private ParserResult filterWarnings(final ParserResult project, final PluginLogger logger) {
         WarningsFilter filter = new WarningsFilter();
-        if (filter.isActive(getIncludePattern(), getExcludePattern())) {
+        if (filter.isActive(getIncludePattern(), getExcludePattern(), getMessagesPattern())) {
             Collection<FileAnnotation> filtered = filter.apply(project.getAnnotations(),
-                    getIncludePattern(), getExcludePattern(), logger);
+                    getIncludePattern(), getExcludePattern(), getMessagesPattern(), logger);
             return new ParserResult(filtered);
         }
         return project;
