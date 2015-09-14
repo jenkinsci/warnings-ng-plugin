@@ -59,7 +59,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
     private String includePattern;
     /** Ant file-set pattern of files to exclude from report. */
     private String excludePattern;
-	/** warning messages to exclude from report */
+    /** warning messages to exclude from report */
     private String messagesPattern;
 	
     /** File pattern and parser configurations. @since 3.19 */
@@ -159,10 +159,10 @@ public class WarningsPublisher extends HealthAwarePublisher {
         excludePattern = pattern;
     }
 	
-	/**
+    /**
      * Returns the Java regex pattern of warning messages to exclude from report.
      *
-     * @return Java regex pattern of warning messages to exclude from report
+     * @return the Java regex pattern of warning messages to exclude from report
      */
     public String getMessagesPattern() {
         return messagesPattern;
