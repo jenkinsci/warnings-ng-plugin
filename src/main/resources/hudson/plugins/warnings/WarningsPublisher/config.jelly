@@ -20,6 +20,9 @@
     <f:entry title="${%Warnings to ignore}" field="excludePattern" description="${%description.excludePattern}">
       <f:textbox />
     </f:entry>
+    <f:entry title="${%Messages to ignore}" field="messagesPattern" description="${%description.messagesPattern}">
+      <f:textbox />
+    </f:entry>
 
     <u:failed />
 
