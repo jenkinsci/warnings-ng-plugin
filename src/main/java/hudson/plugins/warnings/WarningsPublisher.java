@@ -152,7 +152,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
     /**
      * Sets the Ant file-set pattern of files to exclude from report.
      *
-     * @param pattern the pattern to include
+     * @param pattern the pattern to exclude
      */
     @DataBoundSetter
     public void setExcludePattern(final String pattern) {
@@ -169,9 +169,9 @@ public class WarningsPublisher extends HealthAwarePublisher {
     }
 
     /**
-     * Sets the Ant file-set pattern of files to include in report.
+     * Sets the Java regex pattern of warning messages to exclude from report.
      *
-     * @param pattern the pattern to include
+     * @param pattern the pattern to exclude
      */
     @DataBoundSetter
     public void setMessagesPattern(final String pattern) {
