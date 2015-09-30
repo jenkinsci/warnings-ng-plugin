@@ -9,13 +9,18 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
 
 /**
  * Speed test of the parsers in the {@link ParserRegistry}.
  */
 public class ParserSpeed {
     private static final String TEST = "test";
+
+    @Rule
+    public JenkinsRule jenkins = new JenkinsRule();
 
     /**
      * Runs all parsers and logs the results to the console.
@@ -24,15 +29,19 @@ public class ParserSpeed {
      */
     @Test
     public void testAllParsersOnOneFile() throws IOException {
-        for (ParserDescription parser : ParserRegistry.getAvailableParsers()) {
+        List<ParserDescription> availableParsers = ParserRegistry.getAvailableParsers();
+        for (ParserDescription parser : availableParsers) {
             List<AbstractWarningsParser> parsers = ParserRegistry.getParsers(parser.getGroup());
-            if (!(parsers.get(0) instanceof ViolationsAdapter)) {
-                ParserRegistry parserRegistry = createRegistry(parsers);
+            ParserRegistry parserRegistry = createRegistry(parsers);
 
-                long start = System.currentTimeMillis();
+            long start = System.currentTimeMillis();
+            try {
                 parserRegistry.parse(new File(""));
                 long end = System.currentTimeMillis();
-                System.out.println(parser.getName() + ": " + (end-start) + "ms"); // NOCHECKSTYLE NOPMD
+                System.out.println(parser.getName() + ": " + (end - start) + "ms"); // NOCHECKSTYLE NOPMD
+            }
+            catch (Exception exception) {
+                System.out.println(parser.getName() + ": Exception"); // NOCHECKSTYLE NOPMD
             }
         }
     }
