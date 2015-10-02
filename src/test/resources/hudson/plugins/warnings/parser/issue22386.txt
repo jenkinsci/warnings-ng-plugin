@@ -1,0 +1,9 @@
+Microsoft (R) Build Engine version 4.0.30319.17929
+[Microsoft .NET Framework, version 4.0.30319.18052]
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+src\main.cpp(97): warning C4996: '_splitpath': This function or variable may be unsafe. Consider using _splitpath_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [c:\solutiondir\projectdir\projectname.vcxproj]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdlib.h(854): Siehe Deklaration von '_splitpath'
+src\main.cpp(99): warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strdup. See online help for details. [c:\solutiondir\projectdir\projectname.vcxproj]
+          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\string.h(245): Siehe Deklaration von 'strdup'
+

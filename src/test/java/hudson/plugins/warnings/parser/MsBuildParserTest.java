@@ -19,6 +19,34 @@ import hudson.plugins.analysis.util.model.Priority;
 public class MsBuildParserTest extends ParserTester {
 
     /**
+     * MSBuildParser should make relative paths absolute, based on the project name listed in the message.
+     * @throws IOException
+     *          if the stream could not be read
+     *
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-22386">Issue 22386</a>
+     */
+    @Test
+    public void issue22386() throws IOException {
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue22386.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
+
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        FileAnnotation annotation = iterator.next();
+        checkWarning(annotation,
+                97,
+                "'_splitpath': This function or variable may be unsafe. Consider using _splitpath_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.",
+                "c:/solutiondir/projectdir/src/main.cpp",
+                MsBuildParser.WARNING_TYPE, "C4996", Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                99,
+                "'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strdup. See online help for details.",
+                "c:/solutiondir/projectdir/src/main.cpp",
+                MsBuildParser.WARNING_TYPE, "C4996", Priority.NORMAL);
+     }
+
+    /**
      * MSBuildParser should also detect subcategories as described at
      * <a href="http://blogs.msdn.com/b/msbuild/archive/2006/11/03/msbuild-visual-studio-aware-error-messages-and-message-formats.aspx">
      * MSBuild / Visual Studio aware error messages and message formats</a>.
@@ -37,19 +65,19 @@ public class MsBuildParserTest extends ParserTester {
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation,
                 4522,
-                "Variable 'lTaskDialog' is declared but never used in 'TDialog.ShowTaskDialog' [E:\\workspace\\TreeSize release nightly\\CLI\\TreeSizeCLI.dproj]",
+                "Variable 'lTaskDialog' is declared but never used in 'TDialog.ShowTaskDialog'",
                 "E:/workspace/TreeSize release nightly/DelphiLib/Jam.UI.Dialogs.pas",
                 MsBuildParser.WARNING_TYPE, "H2164", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 4523,
-                "Variable 'lButton' is declared but never used in 'TDialog.ShowTaskDialog' [E:\\workspace\\TreeSize release nightly\\CLI\\TreeSizeCLI.dproj]",
+                "Variable 'lButton' is declared but never used in 'TDialog.ShowTaskDialog'",
                 "E:/workspace/TreeSize release nightly/DelphiLib/Jam.UI.Dialogs.pas",
                 MsBuildParser.WARNING_TYPE, "H2164", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 4524,
-                "Variable 'lIndex' is declared but never used in 'TDialog.ShowTaskDialog' [E:\\workspace\\TreeSize release nightly\\CLI\\TreeSizeCLI.dproj]",
+                "Variable 'lIndex' is declared but never used in 'TDialog.ShowTaskDialog'",
                 "E:/workspace/TreeSize release nightly/DelphiLib/Jam.UI.Dialogs.pas",
                 MsBuildParser.WARNING_TYPE, "H2164", Priority.NORMAL);
      }
@@ -98,11 +126,11 @@ public class MsBuildParserTest extends ParserTester {
         FileAnnotation annotation;
         annotation = iterator.next();
         checkWarning(annotation,
-                0, "Sign 'SampleCodeAnalysis.exe' with a strong name key. [I:\\devel\\projects\\SampleCodeAnalysis\\SampleCodeAnalysis\\SampleCodeAnalysis.csproj]",
+                0, "Sign 'SampleCodeAnalysis.exe' with a strong name key.",
                 "MSBUILD", "Microsoft.Design", "CA2210", Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
-                12, "Parameter 'args' of 'Program.Main(string[])' is never used. Remove the parameter or use it in the method body. [I:\\devel\\projects\\SampleCodeAnalysis\\SampleCodeAnalysis\\SampleCodeAnalysis.csproj]",
+                12, "Parameter 'args' of 'Program.Main(string[])' is never used. Remove the parameter or use it in the method body.",
                 "i:/devel/projects/SampleCodeAnalysis/SampleCodeAnalysis/Program.cs", "Microsoft.Usage", "CA1801", Priority.NORMAL);
      }
 
@@ -167,8 +195,9 @@ public class MsBuildParserTest extends ParserTester {
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 5, warnings.size());
         FileAnnotation annotation = warnings.iterator().next();
-        checkWarning(annotation, 2, "Using directives must be sorted alphabetically by the namespaces. [C:\\hudsonSlave\\workspace\\MyProject\\Source\\Common.Tests.Stubs.csproj]",
-                "MoqExtensions.cs", MsBuildParser.WARNING_TYPE, "SA1210", Priority.NORMAL);
+        checkWarning(annotation, 2, "Using directives must be sorted alphabetically by the namespaces.",
+                "C:/hudsonSlave/workspace/MyProject/Source/MoqExtensions.cs",
+                MsBuildParser.WARNING_TYPE, "SA1210", Priority.NORMAL);
     }
 
     /**
@@ -249,7 +278,7 @@ public class MsBuildParserTest extends ParserTester {
         FileAnnotation annotation = iterator.next();
         checkWarning(annotation,
                 0,
-                "The Project Item \"StructureLibrary\" is included in the following Features: TypesAndLists, StructureBrowser [c:\\playpens\\Catalyst\\Platform\\src\\Ptc.Platform.Web\\Ptc.Platform.Web.csproj]",
+                "The Project Item \"StructureLibrary\" is included in the following Features: TypesAndLists, StructureBrowser",
                 "c:/playpens/Catalyst/Platform/src/Ptc.Platform.Web/Package/Package.package",
                 MsBuildParser.WARNING_TYPE, "SPT6", Priority.NORMAL);
         annotation = iterator.next();
@@ -261,8 +290,8 @@ public class MsBuildParserTest extends ParserTester {
         annotation = iterator.next();
         checkWarning(annotation,
                 29,
-                "'Ptc.Ppm.PpmInstaller.PpmInstaller.InitializeComponent()' hides inherited member 'Ptc.Platform.Forms.Wizard.WizardControl.InitializeComponent()'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword. [c:\\playpens\\Catalyst\\PPM\\tools\\Ptc.Ppm.Configurator\\src\\Ptc.Ppm.PpmInstaller\\Ptc.Ppm.PpmInstaller.csproj]",
-                "PpmInstaller.Designer.cs",
+                "'Ptc.Ppm.PpmInstaller.PpmInstaller.InitializeComponent()' hides inherited member 'Ptc.Platform.Forms.Wizard.WizardControl.InitializeComponent()'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword.",
+                "c:/playpens/Catalyst/PPM/tools/Ptc.Ppm.Configurator/src/Ptc.Ppm.PpmInstaller/PpmInstaller.Designer.cs",
                 MsBuildParser.WARNING_TYPE, "CS0114", Priority.NORMAL);
     }
 
