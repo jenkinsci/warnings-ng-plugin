@@ -100,13 +100,13 @@ public class DiabCParserTest extends ParserTester {
                 443,
                 "external/internal linkage conflict with previous declaration",
                 "test.cpp",
-                TYPE, "4172", Priority.NORMAL);
+                TYPE, "4172", Priority.LOW);
         annotation = iterator.next();
         checkWarning(annotation,
                 293,
                 "access control not specified (\"private\" by default)",
                 "test.h",
-                TYPE, "4261", Priority.NORMAL);
+                TYPE, "4261", Priority.LOW);
     }
 
     @Override

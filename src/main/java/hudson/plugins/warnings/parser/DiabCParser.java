@@ -30,7 +30,10 @@ public class DiabCParser extends RegexpLineParser {
     @Override
     protected Warning createWarning(final Matcher matcher) {
         Priority priority;
-        if (("warning".equalsIgnoreCase(matcher.group(3))) || ("info".equalsIgnoreCase(matcher.group(3)))) {
+        if ("info".equalsIgnoreCase(matcher.group(3))) {
+            priority = Priority.LOW;
+        }
+        else if ("warning".equalsIgnoreCase(matcher.group(3))) {
             priority = Priority.NORMAL;
         }
         else {
