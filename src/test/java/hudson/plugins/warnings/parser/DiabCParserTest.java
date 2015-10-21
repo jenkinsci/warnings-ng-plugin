@@ -26,7 +26,7 @@ public class DiabCParserTest extends ParserTester {
     public void parseDiabCpp() throws IOException {
         Collection<FileAnnotation> warnings = new DiabCParser().parse(openFile());
 
-        assertEquals("Wrong number of warnings detected.", 8, warnings.size());
+        assertEquals("Wrong number of warnings detected.", 13, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -77,6 +77,36 @@ public class DiabCParserTest extends ParserTester {
                 "division by zero",
                 "main.c",
                 TYPE, "1025", Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                976,
+                "function \"testing\" was declared but never referenced",
+                "test.cpp",
+                TYPE, "4177", Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                427,
+                "pointless comparison of unsigned integer with zero",
+                "test.cpp",
+                TYPE, "4186", Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                38,
+                "expected a \";\"",
+                "test.cpp",
+                TYPE, "4065", Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                443,
+                "external/internal linkage conflict with previous declaration",
+                "test.cpp",
+                TYPE, "4172", Priority.LOW);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                293,
+                "access control not specified (\"private\" by default)",
+                "test.h",
+                TYPE, "4261", Priority.LOW);
     }
 
     @Override

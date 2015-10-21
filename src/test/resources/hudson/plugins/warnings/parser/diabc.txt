@@ -6,3 +6,8 @@
 "main.c", line 5: warning (dcc:1025): division by zero
 "main.c", line 5: error (dcc:1025): division by zero
 "main.c", line 5: fatal error (dcc:1025): division by zero
+"test.cpp", line 976: warning (etoa:4177): function "testing" was declared but never referenced
+"test.cpp", line 427: warning (etoa:4186): pointless comparison of unsigned integer with zero
+"test.cpp", line 38: error (etoa:4065): expected a ";"
+"test.cpp", line 443: info (etoa:4172): external/internal linkage conflict with previous declaration
+"test.h", line 293: info (etoa:4261): access control not specified ("private" by default)

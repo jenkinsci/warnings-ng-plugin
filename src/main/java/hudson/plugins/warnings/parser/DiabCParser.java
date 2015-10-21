@@ -15,7 +15,7 @@ import hudson.plugins.analysis.util.model.Priority;
 public class DiabCParser extends RegexpLineParser {
     private static final long serialVersionUID = -1251248150596418456L;
 
-    private static final String DIAB_CPP_WARNING_PATTERN = "^\\s*\"(.*)\"\\s*,\\s*line\\s*(\\d+)\\s*:\\s*(warning|error|fatal\\serror)\\s*\\(dcc:(\\d+)\\)\\s*:\\s*(.*)$";
+    private static final String DIAB_CPP_WARNING_PATTERN = "^\\s*\"(.*)\"\\s*,\\s*line\\s*(\\d+)\\s*:\\s*(info|warning|error|fatal\\serror)\\s*\\((?:dcc|etoa):(\\d+)\\)\\s*:\\s*(.*)$";
 
     /**
      * Creates a new instance of <code>HpiCompileParser</code>.
@@ -30,7 +30,10 @@ public class DiabCParser extends RegexpLineParser {
     @Override
     protected Warning createWarning(final Matcher matcher) {
         Priority priority;
-        if ("warning".equalsIgnoreCase(matcher.group(3))) {
+        if ("info".equalsIgnoreCase(matcher.group(3))) {
+            priority = Priority.LOW;
+        }
+        else if ("warning".equalsIgnoreCase(matcher.group(3))) {
             priority = Priority.NORMAL;
         }
         else {
