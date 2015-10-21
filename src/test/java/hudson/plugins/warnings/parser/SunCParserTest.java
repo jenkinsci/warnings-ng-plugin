@@ -20,7 +20,7 @@ public class SunCParserTest extends ParserTester {
     private static final String CATEGORY = "badargtypel2w";
 
     /**
-     * Parses a file with 5 warnings.
+     * Parses a file with 7 warnings.
      *
      * @throws IOException
      *      if the file could not be read
@@ -29,7 +29,7 @@ public class SunCParserTest extends ParserTester {
     public void parseSunCpp() throws IOException {
         Collection<FileAnnotation> warnings = new SunCParser().parse(openFile());
 
-        assertEquals("Wrong number of warnings detected.", 5, warnings.size());
+        assertEquals("Wrong number of warnings detected.", 7, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -62,6 +62,18 @@ public class SunCParserTest extends ParserTester {
                 MESSAGE,
                 "ServerList.cpp",
                 TYPE, CATEGORY, Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                19,
+                "Child::operator== hides the function Parent::operator==(Parent&) const.",
+                "warner.cpp",
+                TYPE, "hidef", Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                30,
+                "Assigning void(*)(int) to extern \"C\" void(*)(int).",
+                "warner.cpp",
+                TYPE, "wbadlkgasg", Priority.NORMAL);
     }
 
     @Override
