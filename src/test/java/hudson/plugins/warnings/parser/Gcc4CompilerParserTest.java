@@ -80,7 +80,7 @@ public class Gcc4CompilerParserTest extends ParserTester {
     public void testWarningsParser() throws IOException {
         Collection<FileAnnotation> warnings = new Gcc4CompilerParser().parse(openFile());
 
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 13, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 14, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         checkWarning(iterator.next(),
@@ -148,6 +148,11 @@ public class Gcc4CompilerParserTest extends ParserTester {
                 "expected ';' before 'return'",
                 "fo:oo.cpp",
                 WARNING_TYPE, ERROR_CATEGORY, Priority.HIGH);
+	checkWarning(iterator.next(),
+                23,
+		"unused variable 'j' [-Wunused-variable]",
+		"warner.cpp",
+		WARNING_TYPE, "Warning:unused-variable", Priority.NORMAL);
     }
 
     /**

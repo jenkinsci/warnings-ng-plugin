@@ -7,3 +7,4 @@
 
 "warner.cpp", line 19: Warning, hidef: Child::operator== hides the function Parent::operator==(Parent&) const.
 "warner.cpp", line 30: Warning (Anachronism), wbadlkgasg: Assigning void(*)(int) to extern "C" void(*)(int).
+"warner.cpp", line 32: Warning: statement is unreachable.
