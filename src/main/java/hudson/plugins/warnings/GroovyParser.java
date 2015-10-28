@@ -30,8 +30,6 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
     private final String name;
     private final String regexp;
     private final String script;
-    /** Example. @since 3.18 */
-    private final String example;
     /** ProjectAction name. @since 4.0 */
     private String linkName;
     /** Trend report name. @since 4.0 */
@@ -56,17 +54,22 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
      *            the name of the trend report
      */
     @DataBoundConstructor
-    public GroovyParser(final String name, final String regexp, final String script, final String example,
+    public GroovyParser(final String name, final String regexp, final String script,
             final String linkName, final String trendName) {
         super();
 
         this.name = name;
         this.regexp = regexp;
         this.script = script;
-        this.example = example;
         this.linkName = linkName;
         this.trendName = trendName;
         parser = createParser();
+    }
+
+    @Deprecated
+    public GroovyParser(final String name, final String regexp, final String script, final String example,
+            final String linkName, final String trendName) {
+        this(name, regexp, script, linkName, trendName);
     }
 
     /**
@@ -80,7 +83,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
      *            the script to map the expression to a warning
      */
     public GroovyParser(final String name, final String regexp, final String script) {
-        this(name, regexp, script, StringUtils.EMPTY, name, name);
+        this(name, regexp, script, name, name);
     }
 
     /**
@@ -159,16 +162,6 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
      */
     public String getScript() {
         return script;
-    }
-
-    /**
-     * Returns the example to verify the parser.
-     *
-     * @return the example
-     * @since 3.18
-     */
-    public String getExample() {
-        return StringUtils.defaultString(example);
     }
 
     /**
