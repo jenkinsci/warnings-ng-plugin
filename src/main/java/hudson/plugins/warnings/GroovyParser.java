@@ -1,6 +1,7 @@
 package hudson.plugins.warnings;
 
 import javax.annotation.CheckForNull;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,9 +28,14 @@ import hudson.util.FormValidation.Kind;
  * @author Ulli Hafner
  */
 public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
+
+    private static final int MAX_EXAMPLE_SIZE = 4096;
+
     private final String name;
     private final String regexp;
     private final String script;
+    /** Example. @since 3.18 */
+    private final String example;
     /** ProjectAction name. @since 4.0 */
     private String linkName;
     /** Trend report name. @since 4.0 */
@@ -54,22 +60,17 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
      *            the name of the trend report
      */
     @DataBoundConstructor
-    public GroovyParser(final String name, final String regexp, final String script,
+    public GroovyParser(final String name, final String regexp, final String script, final String example,
             final String linkName, final String trendName) {
         super();
 
         this.name = name;
         this.regexp = regexp;
         this.script = script;
+        this.example = example.length() > MAX_EXAMPLE_SIZE ? example.substring(0, MAX_EXAMPLE_SIZE) : example;
         this.linkName = linkName;
         this.trendName = trendName;
         parser = createParser();
-    }
-
-    @Deprecated
-    public GroovyParser(final String name, final String regexp, final String script, final String example,
-            final String linkName, final String trendName) {
-        this(name, regexp, script, linkName, trendName);
     }
 
     /**
@@ -83,7 +84,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
      *            the script to map the expression to a warning
      */
     public GroovyParser(final String name, final String regexp, final String script) {
-        this(name, regexp, script, name, name);
+        this(name, regexp, script, StringUtils.EMPTY, name, name);
     }
 
     /**
@@ -162,6 +163,16 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
      */
     public String getScript() {
         return script;
+    }
+
+    /**
+     * Returns the example to verify the parser.
+     *
+     * @return the example
+     * @since 3.18
+     */
+    public String getExample() {
+        return StringUtils.defaultString(example);
     }
 
     /**
@@ -311,7 +322,11 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         public FormValidation doCheckExample(@QueryParameter final String example,
                 @QueryParameter final String regexp, @QueryParameter final String script) {
             if (StringUtils.isNotBlank(example) && StringUtils.isNotBlank(regexp) && StringUtils.isNotBlank(script)) {
-                return parseExample(script, example, regexp, containsNewline(regexp));
+                FormValidation response = parseExample(script, example, regexp, containsNewline(regexp));
+                if (example.length() <= MAX_EXAMPLE_SIZE) {
+                    return response;
+                }
+                return FormValidation.aggregate(Arrays.asList(FormValidation.warning("Long examples will be truncated"), response));
             }
             else {
                 return FormValidation.ok();
