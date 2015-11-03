@@ -326,7 +326,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
                 if (example.length() <= MAX_EXAMPLE_SIZE) {
                     return response;
                 }
-                return FormValidation.aggregate(Arrays.asList(FormValidation.warning("Long examples will be truncated"), response));
+                return FormValidation.aggregate(Arrays.asList(FormValidation.warning(Messages.GroovyParser_long_examples_will_be_truncated()), response));
             }
             else {
                 return FormValidation.ok();
