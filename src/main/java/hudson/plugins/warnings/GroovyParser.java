@@ -1,6 +1,7 @@
 package hudson.plugins.warnings;
 
 import javax.annotation.CheckForNull;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,6 +28,9 @@ import hudson.util.FormValidation.Kind;
  * @author Ulli Hafner
  */
 public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
+
+    private static final int MAX_EXAMPLE_SIZE = 4096;
+
     private final String name;
     private final String regexp;
     private final String script;
@@ -63,7 +67,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         this.name = name;
         this.regexp = regexp;
         this.script = script;
-        this.example = example;
+        this.example = example.length() > MAX_EXAMPLE_SIZE ? example.substring(0, MAX_EXAMPLE_SIZE) : example;
         this.linkName = linkName;
         this.trendName = trendName;
         parser = createParser();
@@ -318,7 +322,11 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         public FormValidation doCheckExample(@QueryParameter final String example,
                 @QueryParameter final String regexp, @QueryParameter final String script) {
             if (StringUtils.isNotBlank(example) && StringUtils.isNotBlank(regexp) && StringUtils.isNotBlank(script)) {
-                return parseExample(script, example, regexp, containsNewline(regexp));
+                FormValidation response = parseExample(script, example, regexp, containsNewline(regexp));
+                if (example.length() <= MAX_EXAMPLE_SIZE) {
+                    return response;
+                }
+                return FormValidation.aggregate(Arrays.asList(FormValidation.warning(Messages.GroovyParser_long_examples_will_be_truncated()), response));
             }
             else {
                 return FormValidation.ok();
