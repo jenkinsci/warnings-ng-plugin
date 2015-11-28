@@ -25,6 +25,23 @@ public class PhpParserTest extends ParserTester {
     private static final String NOTICE_CATEGORY = "PHP Notice";
 
     /**
+     * Verifies that FATAL errors are reported.
+     *
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-27681">Issue 27681</a>
+     */
+    @Test
+    public void issue27681() throws IOException {
+        Collection<FileAnnotation> warnings = new PhpParser().parse(openFile("issue27681.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        FileAnnotation annotation = warnings.iterator().next();
+
+        checkWarning(annotation,
+                0, "SOAP-ERROR: Parsing WSDL: Couldn't load from '...' : failed to load external entity \"...\"",
+                "-", TYPE, FATAL_ERROR_CATEGORY, Priority.HIGH);
+    }
+
+    /**
      * Tests the PHP parsing.
      *
      * @throws IOException Signals that an I/O exception has occurred.

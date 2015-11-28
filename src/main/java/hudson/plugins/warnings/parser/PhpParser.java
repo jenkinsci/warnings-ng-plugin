@@ -15,7 +15,7 @@ import hudson.plugins.analysis.util.model.Priority;
 public class PhpParser extends RegexpLineParser {
     private static final long serialVersionUID = -5154327854315791181L;
 
-    private static final String PHP_WARNING_PATTERN = "^.*(PHP Warning|PHP Notice|PHP Fatal error|PHP Parse error):\\s+(.+ in (.+) on line (\\d+))$";
+    private static final String PHP_WARNING_PATTERN = "^.*(PHP Warning|PHP Notice|PHP Fatal error|PHP Parse error):\\s+(?:(.+ in (.+) on line (\\d+))|(SOAP-ERROR:\\s+.*))$";
 
     /**
      * Creates a new instance of {@link PhpParser}.
@@ -40,9 +40,6 @@ public class PhpParser extends RegexpLineParser {
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String category = matcher.group(1);
-        String message = matcher.group(2);
-        String fileName = matcher.group(3);
-        String start = matcher.group(4);
 
         Priority priority = Priority.NORMAL;
 
@@ -50,6 +47,14 @@ public class PhpParser extends RegexpLineParser {
             priority = Priority.HIGH;
         }
 
-        return createWarning(fileName, Integer.parseInt(start), category, message, priority);
+        if (matcher.group(5) != null) {
+            return createWarning("-", 0, category, matcher.group(5), priority);
+        }
+        else {
+            String message = matcher.group(2);
+            String fileName = matcher.group(3);
+            String start = matcher.group(4);
+            return createWarning(fileName, Integer.parseInt(start), category, message, priority);
+        }
     }
 }
