@@ -42,3 +42,7 @@ fo:oo.cpp: In function 'int main()':
 fo:oo.cpp:8: error: 'bar' was not declared in this scope
 fo:oo.cpp:12: error: expected ';' before 'return'
 foo bar.hello*world:12:
+
+=============== Check with a category - -fdiagnostics-show-option
+warner.cpp: In function 'void dispatcher(int)':
+warner.cpp:23: warning: unused variable 'j' [-Wunused-variable]

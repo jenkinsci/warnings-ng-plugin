@@ -20,7 +20,7 @@ public class SunCParserTest extends ParserTester {
     private static final String CATEGORY = "badargtypel2w";
 
     /**
-     * Parses a file with 7 warnings.
+     * Parses a file with 8 warnings.
      *
      * @throws IOException
      *      if the file could not be read
@@ -29,7 +29,7 @@ public class SunCParserTest extends ParserTester {
     public void parseSunCpp() throws IOException {
         Collection<FileAnnotation> warnings = new SunCParser().parse(openFile());
 
-        assertEquals("Wrong number of warnings detected.", 7, warnings.size());
+        assertEquals("Wrong number of warnings detected.", 8, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -74,6 +74,13 @@ public class SunCParserTest extends ParserTester {
                 "Assigning void(*)(int) to extern \"C\" void(*)(int).",
                 "warner.cpp",
                 TYPE, "wbadlkgasg", Priority.NORMAL);
+        annotation = iterator.next();
+	// test warning where -errtags=yes was not used
+        checkWarning(annotation,
+                32,
+                "statement is unreachable.",
+                "warner.cpp",
+                TYPE, "", Priority.NORMAL);
     }
 
     @Override
