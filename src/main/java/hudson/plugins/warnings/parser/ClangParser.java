@@ -28,11 +28,15 @@ public class ClangParser extends RegexpLineParser {
 
     @Override
     protected Warning createWarning(final Matcher matcher) {
+        String message = matcher.group(5);
+        if (message.matches("^-\\[.*\\].*$")) {
+            return FALSE_POSITIVE;
+        }
+
         String filename = matcher.group(1);
         int lineNumber = getLineNumber(matcher.group(2));
         int column = getLineNumber(matcher.group(3));
         String type = matcher.group(4);
-        String message = matcher.group(5);
         String category = matcher.group(6);
 
         Priority priority;

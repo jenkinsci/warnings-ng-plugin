@@ -1,13 +1,13 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -19,6 +19,24 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 public class ClangParserTest extends ParserTester {
     private static final String TYPE = new ClangParser().getGroup();
+
+    /**
+     * Parses a file with fatal error message.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-31936">Issue 31936</a>
+     */
+    @Test
+    public void issue31936() throws IOException {
+        Collection<FileAnnotation> warnings = new ClangParser().parse(openFile("issue31936.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+
+        FileAnnotation annotation = warnings.iterator().next();
+        checkWarning(annotation, 1211, 26, "implicit conversion loses integer precision: 'NSInteger' (aka 'long') to 'int'",
+                "/Volumes/workspace/MyApp/ViewController.m", "-Wshorten-64-to-32", Priority.NORMAL);
+    }
 
     /**
      * Parses a file with fatal error message.
