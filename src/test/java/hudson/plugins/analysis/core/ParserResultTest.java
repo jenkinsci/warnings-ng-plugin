@@ -28,6 +28,69 @@ public class ParserResultTest {
     private static final String FOUND_FILE_NAME = WORSPACE_ROOT + "/" + SCANNED_FILENAME;
 
     /**
+     * Verifies that the relative prefix of a path is stripped.
+     */
+    @Test
+    public void shouldStripRelativePathPrefix() {
+        ParserResult parserResult = new ParserResult();
+
+        verifyPrefix(parserResult, "file.txt");
+        verifyPrefix(parserResult, "../file.txt");
+        verifyPrefix(parserResult, "../../file.txt");
+        verifyPrefix(parserResult, "../../../file.txt");
+
+        verifyPrefix(parserResult, "./../file.txt");
+
+        assertEquals("Wrong prefix removal: ", "fi/file.txt", parserResult.stripRelativePrefix("fi/file.txt"));
+    }
+
+    private void verifyPrefix(final ParserResult parserResult, final String fileName) {
+        assertEquals("Wrong prefix removal: ", "file.txt", parserResult.stripRelativePrefix(fileName));
+    }
+
+    /**
+     * Verifies that the workspace scanning of files works with relative paths that contain references
+     * to parent directories.
+     *
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-32150">Issue 32150</a>
+     */
+    @Test
+    public void issue32150() throws Exception {
+        String[] workspaceFiles = {"directory-a/multi-file-in-subdir.txt",
+                "directory-b/multi-file-in-subdir.txt",
+                "directory-b/subdir/file2",
+                "file.txt",
+                "directory-a/subdir/file1",
+                "directory-a/file-in-subdir.txt",
+                "compile-log.txt"};
+        ParserResult result = createParserResult(workspaceFiles);
+
+        verifyWarningPath(result, "file.txt", "file.txt");
+        verifyWarningPath(result, "file-in-subdir.txt", "directory-a/file-in-subdir.txt");
+        verifyNoWarningPath(result, "multi-file-in-subdir.txt");
+
+        verifyWarningPath(result, "../file.txt", "file.txt");
+        verifyWarningPath(result, "../file-in-subdir.txt", "directory-a/file-in-subdir.txt");
+        verifyNoWarningPath(result, "../multi-file-in-subdir.txt");
+    }
+
+    private void verifyNoWarningPath(final ParserResult result, final String fileName) {
+        FileAnnotation warning = mockWarning(fileName);
+        result.addAnnotation(warning);
+        verify(warning, never()).setFileName(anyString());
+    }
+
+    private void verifyWarningPath(final ParserResult result, final String fileName, final String workspacePath) {
+        verifyWarning(result, fileName, WORSPACE_ROOT + "/" + workspacePath);
+    }
+
+    private void verifyWarning(final ParserResult result, final String fileName, final String foundFileName) {
+        FileAnnotation warning = mockWarning(fileName);
+        result.addAnnotation(warning);
+        verify(warning).setFileName(foundFileName);
+    }
+
+    /**
      * Verifies that the number of annotations is correctly returned.
      *
      * @throws Exception
@@ -68,10 +131,7 @@ public class ParserResultTest {
         String[] workspaceFiles = {SCANNED_FILENAME};
         ParserResult result = createParserResult(workspaceFiles);
 
-        FileAnnotation warning = mockWarning("file.txt");
-        result.addAnnotation(warning);
-
-        verify(warning).setFileName(FOUND_FILE_NAME);
+        verifyWarning(result, "file.txt", FOUND_FILE_NAME);
     }
 
     /**
@@ -85,10 +145,7 @@ public class ParserResultTest {
         String[] workspaceFiles = {SCANNED_FILENAME};
         ParserResult result = createParserResult(workspaceFiles);
 
-        FileAnnotation warning = mockWarning("to/file.txt");
-        result.addAnnotation(warning);
-
-        verify(warning).setFileName(FOUND_FILE_NAME);
+        verifyWarning(result, "to/file.txt", FOUND_FILE_NAME);
     }
 
     /**
@@ -102,10 +159,7 @@ public class ParserResultTest {
         String[] workspaceFiles = {SCANNED_FILENAME_WINDOWS};
         ParserResult result = createParserResult(workspaceFiles);
 
-        FileAnnotation warning = mockWarning("to/file.txt");
-        result.addAnnotation(warning);
-
-        verify(warning).setFileName(FOUND_FILE_NAME);
+        verifyWarning(result, "to/file.txt", FOUND_FILE_NAME);
     }
 
     /**
@@ -141,10 +195,7 @@ public class ParserResultTest {
     public void testUniquePrefixDuplicate() throws Exception {
         ParserResult result = createParserResult(new String[] {SCANNED_FILENAME, OTHER_SCANNED_FILE});
 
-        FileAnnotation warning = mockWarning("path/to/file.txt");
-        result.addAnnotation(warning);
-
-        verify(warning).setFileName(FOUND_FILE_NAME);
+        verifyWarning(result, "path/to/file.txt", FOUND_FILE_NAME);
     }
 
     private FileAnnotation mockWarning(final String fileName) {

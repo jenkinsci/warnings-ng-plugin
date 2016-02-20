@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
@@ -30,8 +30,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
- * Stores the collection of parsed annotations and associated error messages.
- * This class is not thread safe.
+ * Stores the collection of parsed annotations and associated error messages. This class is not thread safe.
  *
  * @author Ulli Hafner
  */
@@ -62,9 +61,8 @@ public class ParserResult implements Serializable {
     /** Total number of modules. @since 1.31 **/
     private int numberOfModules;
     /**
-     * Determines whether relative paths in warnings should be
-     * resolved using a time expensive operation that scans the whole
-     * workspace for matching files.
+     * Determines whether relative paths in warnings should be resolved using a time expensive operation that scans the
+     * whole workspace for matching files.
      *
      * @since 1.55
      */
@@ -80,8 +78,7 @@ public class ParserResult implements Serializable {
     /**
      * Creates a new instance of {@link ParserResult}.
      *
-     * @param workspace
-     *            the workspace to find the files in
+     * @param workspace the workspace to find the files in
      */
     public ParserResult(final FilePath workspace) {
         this(asWorkspace(workspace));
@@ -90,8 +87,7 @@ public class ParserResult implements Serializable {
     /**
      * Creates a new instance of {@link ParserResult}.
      *
-     * @param workspace
-     *            the workspace to find the files in
+     * @param workspace the workspace to find the files in
      */
     public ParserResult(final Workspace workspace) {
         this(workspace, false);
@@ -100,12 +96,9 @@ public class ParserResult implements Serializable {
     /**
      * Creates a new instance of {@link ParserResult}.
      *
-     * @param workspace
-     *            the workspace to find the files in
-     * @param canResolveRelativePaths
-     *            determines whether relative paths in warnings should be
-     *            resolved using a time expensive operation that scans the whole
-     *            workspace for matching files
+     * @param workspace               the workspace to find the files in
+     * @param canResolveRelativePaths determines whether relative paths in warnings should be resolved using a time
+     *                                expensive operation that scans the whole workspace for matching files
      */
     public ParserResult(final FilePath workspace, boolean canResolveRelativePaths) {
         this(asWorkspace(workspace), canResolveRelativePaths);
@@ -114,12 +107,9 @@ public class ParserResult implements Serializable {
     /**
      * Creates a new instance of {@link ParserResult}.
      *
-     * @param workspace
-     *            the workspace to find the files in
-     * @param canResolveRelativePaths
-     *            determines whether relative paths in warnings should be
-     *            resolved using a time expensive operation that scans the whole
-     *            workspace for matching files
+     * @param workspace               the workspace to find the files in
+     * @param canResolveRelativePaths determines whether relative paths in warnings should be resolved using a time
+     *                                expensive operation that scans the whole workspace for matching files
      */
     public ParserResult(final Workspace workspace, final boolean canResolveRelativePaths) {
         this.workspace = workspace;
@@ -137,8 +127,7 @@ public class ParserResult implements Serializable {
     /**
      * Creates a new instance of {@link ParserResult}.
      *
-     * @param annotations
-     *            the annotations to add
+     * @param annotations the annotations to add
      */
     public ParserResult(final Collection<? extends FileAnnotation> annotations) {
         this(new NullWorkspace());
@@ -185,27 +174,25 @@ public class ParserResult implements Serializable {
     }
 
     /**
-     * Returns the file name from the cache of all workspace files. The cache will
-     * be built only once.
+     * Returns the file name from the cache of all workspace files. The cache will be built only once.
      *
-     * @param annotation
-     *            the annotation to get the filename for
-     * @throws IOException
-     *             signals that an I/O exception has occurred.
-     * @throws InterruptedException
-     *             If the user cancels this action
+     * @param annotation the annotation to get the filename for
+     * @throws IOException          signals that an I/O exception has occurred.
+     * @throws InterruptedException If the user cancels this action
      */
     private void findFileByScanningAllWorkspaceFiles(final FileAnnotation annotation) throws IOException, InterruptedException {
         if (fileNameCache.isEmpty()) {
             populateFileNameCache();
         }
 
-        String fileName = FilenameUtils.getName(annotation.getFileName());
-        if (fileNameCache.containsKey(fileName)) {
+        String baseName = FilenameUtils.getName(annotation.getFileName());
+        if (fileNameCache.containsKey(baseName)) {
             int matchesCount = 0;
             String absoluteFileName = null;
-            for (String match : fileNameCache.get(fileName)) {
-                if (match.contains(annotation.getFileName())) {
+            for (String match : fileNameCache.get(baseName)) {
+                String annotationFileName = annotation.getFileName();
+                String strippedFileName = stripRelativePrefix(annotationFileName);
+                if (match.contains(strippedFileName)) {
                     absoluteFileName = workspace.getPath() + SLASH + match;
                     matchesCount++;
                 }
@@ -216,7 +203,7 @@ public class ParserResult implements Serializable {
             else {
                 LOGGER.log(Level.FINE, String.format(
                         "Absolute filename could not be resolved for: %s. Found multiple matches: %s. ",
-                        annotation.getFileName(), fileNameCache.get(fileName)));
+                        annotation.getFileName(), fileNameCache.get(baseName)));
             }
         }
         else {
@@ -226,13 +213,15 @@ public class ParserResult implements Serializable {
         }
     }
 
+    String stripRelativePrefix(final String annotationFileName) {
+        return StringUtils.removePattern(annotationFileName, "(\\.\\.?/)*");
+    }
+
     /**
      * Builds a cache of file names in the remote file system.
      *
-     * @throws IOException
-     *             if the file could not be read
-     * @throws InterruptedException
-     *             if the user cancels the search
+     * @throws IOException          if the file could not be read
+     * @throws InterruptedException if the user cancels the search
      */
     // TODO: Maybe the file pattern should be exposed on the UI in order to speed up the scanning, see HUDSON-2927
     private void populateFileNameCache() throws IOException, InterruptedException {
@@ -247,8 +236,7 @@ public class ParserResult implements Serializable {
     /**
      * Returns whether the annotation references a relative filename.
      *
-     * @param annotation
-     *            the annotation
+     * @param annotation the annotation
      * @return <code>true</code> if the filename is relative
      */
     private boolean hasRelativeFileName(final FileAnnotation annotation) {
@@ -263,7 +251,7 @@ public class ParserResult implements Serializable {
      * @param annotation the annotation to add
      * @return the number of added annotations
      */
-    @WithBridgeMethods(value=void.class) // JENKINS-25405
+    @WithBridgeMethods(value = void.class) // JENKINS-25405
     public final int addAnnotation(final FileAnnotation annotation) {
         expandRelativePaths(annotation);
         if (annotations.add(annotation)) {
@@ -280,7 +268,7 @@ public class ParserResult implements Serializable {
      * @param newAnnotations the annotations to add
      * @return the number of added annotations
      */
-    @WithBridgeMethods(value=void.class) // JENKINS-25405
+    @WithBridgeMethods(value = void.class) // JENKINS-25405
     public final int addAnnotations(final Collection<? extends FileAnnotation> newAnnotations) {
         int count = 0;
         for (FileAnnotation annotation : newAnnotations) {
@@ -301,10 +289,8 @@ public class ParserResult implements Serializable {
     /**
      * Adds an error message for the specified module name.
      *
-     * @param module
-     *            the current module
-     * @param message
-     *            the error message
+     * @param module  the current module
+     * @param message the error message
      */
     public void addErrorMessage(final String module, final String message) {
         errorMessages.add(Messages.Result_Error_ModuleErrorMessage(module, message));
@@ -313,8 +299,7 @@ public class ParserResult implements Serializable {
     /**
      * Adds an error message.
      *
-     * @param message
-     *            the error message
+     * @param message the error message
      */
     public void addErrorMessage(final String message) {
         errorMessages.add(message);
@@ -357,13 +342,10 @@ public class ParserResult implements Serializable {
     }
 
     /**
-     * Returns the total number of annotations of the specified priority for
-     * this object.
+     * Returns the total number of annotations of the specified priority for this object.
      *
-     * @param priority
-     *            the priority
-     * @return total number of annotations of the specified priority for this
-     *         object
+     * @param priority the priority
+     * @return total number of annotations of the specified priority for this object
      */
     public int getNumberOfAnnotations(final Priority priority) {
         return annotationCountByPriority.get(priority);
@@ -381,8 +363,7 @@ public class ParserResult implements Serializable {
     /**
      * Returns whether this objects has annotations with the specified priority.
      *
-     * @param priority
-     *            the priority
+     * @param priority the priority
      * @return <code>true</code> if this objects has annotations.
      */
     public boolean hasAnnotations(final Priority priority) {
@@ -401,8 +382,7 @@ public class ParserResult implements Serializable {
     /**
      * Returns whether this objects has no annotations with the specified priority.
      *
-     * @param priority
-     *            the priority
+     * @param priority the priority
      * @return <code>true</code> if this objects has no annotations.
      */
     public boolean hasNoAnnotations(final Priority priority) {
@@ -430,8 +410,7 @@ public class ParserResult implements Serializable {
     /**
      * Adds a new parsed module.
      *
-     * @param moduleName
-     *            the name of the parsed module
+     * @param moduleName the name of the parsed module
      */
     public void addModule(final String moduleName) {
         modules.add(moduleName);
@@ -442,8 +421,7 @@ public class ParserResult implements Serializable {
     /**
      * Adds the specified parsed modules.
      *
-     * @param additionalModules
-     *            the name of the parsed modules
+     * @param additionalModules the name of the parsed modules
      */
     public void addModules(final Collection<String> additionalModules) {
         modules.addAll(additionalModules);
@@ -498,29 +476,28 @@ public class ParserResult implements Serializable {
         /**
          * Creates a new instance of {@link FilePathAdapter}.
          *
-         * @param workspace
-         *            the {@link FilePath} to wrap
+         * @param workspace the {@link FilePath} to wrap
          */
         FilePathAdapter(final FilePath workspace) {
             wrapped = workspace;
         }
 
-            @Override
+        @Override
         public Workspace child(final String fileName) {
             return asWorkspace(wrapped.child(fileName));
         }
 
-            @Override
+        @Override
         public boolean exists() throws IOException, InterruptedException {
             return wrapped.exists();
         }
 
-            @Override
+        @Override
         public String getPath() {
             return wrapped.getRemote();
         }
 
-            @Override
+        @Override
         public String[] findFiles(final String pattern) throws IOException, InterruptedException {
             return wrapped.act(new FileFinder(pattern));
         }
@@ -532,22 +509,22 @@ public class ParserResult implements Serializable {
     private static class NullWorkspace implements Workspace {
         private static final long serialVersionUID = 2307259492760554066L;
 
-            @Override
+        @Override
         public Workspace child(final String fileName) {
             return this;
         }
 
-            @Override
+        @Override
         public boolean exists() throws IOException, InterruptedException {
             return false;
         }
 
-            @Override
+        @Override
         public String getPath() {
             return StringUtils.EMPTY;
         }
 
-            @Override
+        @Override
         public String[] findFiles(final String pattern) throws IOException, InterruptedException {
             return new String[0];
         }
