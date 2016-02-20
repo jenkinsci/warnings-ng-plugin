@@ -200,9 +200,14 @@ public class ParserResult implements Serializable {
             if (matchesCount == 1) {
                 annotation.setFileName(absoluteFileName);
             }
+            else if (matchesCount == 0) {
+                LOGGER.log(Level.FINE, String.format(
+                        "Absolute filename could not be resolved for: %s. Found no matches in cache: %s. ",
+                        annotation.getFileName(), fileNameCache.get(baseName)));
+            }
             else {
                 LOGGER.log(Level.FINE, String.format(
-                        "Absolute filename could not be resolved for: %s. Found multiple matches: %s. ",
+                        "Absolute filename could not be resolved for: %s. Found multiple matches in cache: %s. ",
                         annotation.getFileName(), fileNameCache.get(baseName)));
             }
         }
