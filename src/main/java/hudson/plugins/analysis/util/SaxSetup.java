@@ -4,7 +4,10 @@ import org.apache.xerces.parsers.SAXParser;
 
 /**
  * Registers the correct SAX driver if the environment variable is set.
+ *
+ * @Deprecated The usage of this class is discouraged, see JENKINS-27548
  */
+@Deprecated
 public class SaxSetup {
     /** Property of SAX parser factory. */
     public static final String SAX_DRIVER_PROPERTY = "org.xml.sax.driver";
