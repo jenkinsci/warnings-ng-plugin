@@ -188,5 +188,20 @@ public class EclipseParserTest extends AbstractEclipseParserTest {
             number++;
         }
     }
+
+    /**
+     * Parses a warning log which doesn't contain any Eclipse warnings, but
+     * shows some pretty bad performance when matching the regular expression.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-27664">Issue 27664</a>
+     */
+    @Test(timeout = 10000)
+    public void issue27664() throws IOException {
+        Collection<FileAnnotation> warnings = createParser().parse(openFile("issue27664.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, warnings.size());
+    }
 }
 
