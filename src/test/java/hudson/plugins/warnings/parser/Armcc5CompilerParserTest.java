@@ -35,17 +35,17 @@ public class Armcc5CompilerParserTest extends ParserTester {
         checkWarning(iterator.next(),
                 197,
                 "18 - expected a \")\"",
-                "..\\..\\wnArch\\wnDrv\\wnDrv_Usbhw.c",
+                "../../wnArch/wnDrv/wnDrv_Usbhw.c",
                 WARNING_TYPE, WARNING_CATEGORY, Priority.HIGH);
         checkWarning(iterator.next(),
                 211,
                 "12-D - parsing restarts here after previous syntax error",
-                "..\\..\\wnArch\\wnDrv\\wnDrv_Usbhw.c",
+                "../../wnArch/wnDrv/wnDrv_Usbhw.c",
                 WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
         checkWarning(iterator.next(),
                 211,
                 "940-D - missing return statement at end of non-void function \"wnDrv_Usbhw_GetEPCmdStatusPtr\"",
-                "..\\..\\wnArch\\wnDrv\\wnDrv_Usbhw.c",
+                "../../wnArch/wnDrv/wnDrv_Usbhw.c",
                 WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
     }
 
