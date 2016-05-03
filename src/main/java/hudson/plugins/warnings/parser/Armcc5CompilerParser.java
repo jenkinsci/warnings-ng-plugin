@@ -26,10 +26,10 @@ public class Armcc5CompilerParser extends RegexpLineParser {
                 Messages._Warnings_Armcc5_TrendName(),
             ARMCC5_WARNING_PATTERN);
     }
-
+    
     @Override
-    protected String getId() {
-        return "Armcc5";
+    protected boolean isLineInteresting(final String line) {
+        return line.contains("#");
     }
 
     @Override
