@@ -21,9 +21,9 @@ public class Armcc5CompilerParser extends RegexpLineParser {
      * Creates a new instance of {@link Armcc5CompilerParser}.
      */
     public Armcc5CompilerParser() {
-        super(Messages._Warnings_Armcc5_ParserName(),
-                Messages._Warnings_Armcc5_LinkName(),
-                Messages._Warnings_Armcc5_TrendName(),
+        super(Messages._Warnings_Armcc_ParserName(),
+                Messages._Warnings_Armcc_LinkName(),
+                Messages._Warnings_Armcc_TrendName(),
             ARMCC5_WARNING_PATTERN);
     }
     
