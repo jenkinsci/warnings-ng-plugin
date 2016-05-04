@@ -1,0 +1,7 @@
+compiling wnDrv_Usbhw.c...
+..\..\wnArch\wnDrv\wnDrv_Usbhw.c(197): error:  #18: expected a ")"
+      {   
+..\..\wnArch\wnDrv\wnDrv_Usbhw.c(211): warning:  #12-D: parsing restarts here after previous syntax error
+  }
+..\..\wnArch\wnDrv\wnDrv_Usbhw.c(211): warning:  #940-D: missing return statement at end of non-void function "wnDrv_Usbhw_GetEPCmdStatusPtr"
+  }
