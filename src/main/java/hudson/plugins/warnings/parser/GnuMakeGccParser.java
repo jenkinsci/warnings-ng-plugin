@@ -25,7 +25,7 @@ public class GnuMakeGccParser extends RegexpLineParser {
             + "(?:.*\\[.*\\])?\\s*" // ANT_TASK
             + "(.*\\.[chpimxsola0-9]+):(\\d+):(?:\\d+:)? (warning|error): (.*)$" // GCC 4 warning
             + ")|("
-            + "(^g?make\\[.*\\]: Entering directory)\\s*(\\`((.*))\\')" // handle make entering directory
+            + "(^g?make\\[.*\\]: Entering directory)\\s*(['`]((.*))\\')" // handle make entering directory
             + ")";
     private String directory = "";
 
