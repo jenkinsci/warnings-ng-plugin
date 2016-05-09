@@ -181,7 +181,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return the details
      */
     public Object getTrendDetails(final StaplerRequest request, final StaplerResponse response) {
-        return new TrendDetails(getProject(), getTrendGraph(request, response, "../../"));
+        return new TrendDetails(getProject(), getTrendGraph(request, response, "../../"), getTrendGraphId());
     }
 
     /**

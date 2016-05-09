@@ -3,7 +3,6 @@ package hudson.plugins.analysis.graph;
 import org.kohsuke.stapler.StaplerRequest;
 
 import hudson.model.AbstractProject;
-
 import hudson.util.Graph;
 
 /**
@@ -14,6 +13,7 @@ import hudson.util.Graph;
 public class TrendDetails {
     /** The graph to display. */
     private final Graph trendGraph;
+    private final String id;
     /** The project of the graph. */
     private final AbstractProject<?, ?> project;
 
@@ -24,10 +24,14 @@ public class TrendDetails {
      *            the project of the graph
      * @param trendGraph
      *            the graph
+     * @param id
+     *            the ID of the trend graph
      */
-    public TrendDetails(final AbstractProject<?, ?> project, final Graph trendGraph) {
+    public TrendDetails(final AbstractProject<?, ?> project, final Graph trendGraph,
+            final String id) {
         this.project = project;
         this.trendGraph = trendGraph;
+        this.id = id;
     }
 
     /**
@@ -39,6 +43,15 @@ public class TrendDetails {
      */
     public Graph getTrendGraph(final StaplerRequest request) {
         return trendGraph;
+    }
+
+    /**
+     * Returns the ID of the selected trend graph.
+     *
+     * @return ID of the selected trend graph
+     */
+    public String getTrendGraphId() {
+        return id;
     }
 
     /**
