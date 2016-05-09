@@ -7,7 +7,9 @@
         ${from.trendName}
       </div>
       <div>
-        <img src="${from.urlName}/trendGraph/png" lazymap="${from.urlName}/trendGraph/map" />
+        <!-- Note that the parameter ?url=${from.trendGraphId} is not used by the graph: it
+             has been added to provide different URLs so that the images are not cached by the browser. -->
+        <img src="${from.urlName}/trendGraph/png?url=${from.trendGraphId}" lazymap="${from.urlName}/trendGraph/map?url=${from.trendGraphId}" />
       </div>
       <div>
         <a href="${from.urlName}/trendDetails">${%Enlarge}</a>

@@ -239,6 +239,17 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     }
 
     /**
+     * Returns the ID of the selected trend graph.
+     *
+     * @return ID of the selected trend graph
+     */
+    public String getTrendGraphId() {
+        GraphConfigurationView configuration = createUserConfiguration(Stapler.getCurrentRequest());
+
+        return configuration.getGraphType().getId();
+    }
+
+    /**
      * Returns whether the trend graph is deactivated.
      *
      * @param request
