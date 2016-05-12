@@ -38,7 +38,7 @@ import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.util.ChartUtil.NumberOnlyBuildLabel;
 import hudson.util.DataSetBuilder;
 import hudson.util.ShiftedCategoryAxis;
-
+import hudson.plugins.analysis.Messages;
 /**
  * A build result graph using a {@link CategoryPlot}. Uses a template method to
  * create a graph based on a series of build results.
@@ -47,6 +47,7 @@ import hudson.util.ShiftedCategoryAxis;
  */
 public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     private static final Font LEGEND_FONT = new Font("SansSerif", Font.PLAIN, 10); // NOCHECKSTYLE
+    private static final String Y_AXIS_LABEL = Messages.Trend_yAxisLabel();
 
     /**
      * Creates a PNG image trend graph with clickable map.
@@ -473,10 +474,23 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return the created graph
      */
     public JFreeChart createAreaChart(final CategoryDataset dataset) {
+        return createAreaChart(dataset, "count");
+    }
+
+    /**
+     * Creates a stacked area graph from the specified data set.
+     *
+     * @param dataset
+     *            the values to display
+     * @param yAxisLabel
+     *            label of the range axis, i.e. y axis
+     * @return the created graph
+     */
+    public JFreeChart createAreaChart(final CategoryDataset dataset, final String yAxisLabel) {
         JFreeChart chart = ChartFactory.createStackedAreaChart(
             null,                      // chart title
             null,                      // unused
-            "count",                   // range axis label
+            yAxisLabel,                // range axis label
             dataset,                   // data
             PlotOrientation.VERTICAL,  // orientation
             false,                     // include legend
@@ -498,10 +512,23 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return the created graph
      */
     public JFreeChart createBlockChart(final CategoryDataset dataset) {
+        return createBlockChart(dataset, "count");
+    }
+
+    /**
+     * Creates a stacked block graph from the specified data set.
+     *
+     * @param dataset
+     *            the values to display
+     * @param yAxisLabel
+     *            label of the range axis, i.e. y axis
+     * @return the created graph
+     */
+    public JFreeChart createBlockChart(final CategoryDataset dataset, final String yAxisLabel) {
         JFreeChart chart = ChartFactory.createStackedBarChart(
                 null,                      // chart title
                 null,                      // unused
-                "count",                   // range axis label
+                yAxisLabel,                   // range axis label
                 dataset,                   // data
                 PlotOrientation.VERTICAL,  // orientation
                 false,                     // include legend
@@ -536,7 +563,22 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return the graph
      */
     protected JFreeChart createLineGraph(final CategoryDataset dataSet, final boolean hasLegend) {
-        NumberAxis numberAxis = new NumberAxis("count");
+        return createLineGraph(dataSet, hasLegend, Y_AXIS_LABEL);
+    }
+
+    /**
+     * Creates a line graph for the specified data set.
+     *
+     * @param dataSet
+     *            the data to plot
+     * @param hasLegend
+     *            determines whether to show a legend
+     * @param yAxisLabel
+     *            label of the range axis, i.e. y axis
+     * @return the graph
+     */
+    protected JFreeChart createLineGraph(final CategoryDataset dataSet, final boolean hasLegend, final String yAxisLabel) {
+        NumberAxis numberAxis = new NumberAxis(yAxisLabel);
         numberAxis.setAutoRange(true);
         numberAxis.setAutoRangeIncludesZero(false);
 
