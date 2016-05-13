@@ -1,0 +1,5 @@
+E:\work\PATH\PATH\PATH\PATH\Test1.c(570): WARNING C4448: Warning-directive found: EEPROM_QUEUE_BUFFER_SIZE instead of MONITOR_ERROR_DATA_LENGTH is used here. This must be fixed sooner or later  
+E:\work\PATH\PATH\PATH\Test2.c(305): WARNING C2705: Possible loss of data
+E:\work\PATH\PATH\Test3.c(1501): ERROR C1815: bla not declared (or typename)
+E:\work\PATH\Test4.c(1502): ERROR C2801: ';' missing
+E:\work\PATH\PATH\PATH\PATH\PATH\PATH\PATH\Test5.c(480): INFORMATION C4301: Inline expansion done for function call
