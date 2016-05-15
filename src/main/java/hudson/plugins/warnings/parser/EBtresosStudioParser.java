@@ -46,11 +46,6 @@ public class EBtresosStudioParser extends RegexpLineParser {
     }
 
     @Override
-    protected String getId() {
-        return "EB tresos Studio";
-    }
-
-    @Override
     protected Warning createWarning(final Matcher matcher) {
         String fileName = "*.xdm";
         int lineNumber  = 0;
@@ -66,8 +61,8 @@ public class EBtresosStudioParser extends RegexpLineParser {
         if (type.equals("INFO")) {
             priority = Priority.NORMAL;
 
-            for (int index = 0; index < TRESOS_INFO_MSGS_IGNORE.length; index++) {
-              if (category.equals(TRESOS_INFO_MSGS_IGNORE[index])) {
+            for (String tresosMsgCategory : TRESOS_INFO_MSGS_IGNORE) {
+              if (tresosMsgCategory.equals(category)) {
                 //type = "";
                 priority = Priority.LOW;
                 message = "really unimportant tresos message";
@@ -77,11 +72,10 @@ public class EBtresosStudioParser extends RegexpLineParser {
               }
             }
         }
-		else {
+        else {
             priority = Priority.HIGH;
         }
-        Warning warning = createWarning(fileName, lineNumber, category, message, priority);
-        return warning;
+        return createWarning(fileName, lineNumber, category, message, priority);
     }
 }
 
