@@ -2,8 +2,6 @@ package hudson.plugins.warnings;
 
 import java.io.IOException;
 
-import net.sf.json.JSONObject;
-
 import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
@@ -11,17 +9,15 @@ import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
+import net.sf.json.JSONObject;
+
 import hudson.Extension;
-import hudson.FilePath;
-
 import hudson.model.AbstractProject;
-
 import hudson.plugins.analysis.core.NullBuildHistory;
 import hudson.plugins.analysis.core.PluginDescriptor;
 import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
 import hudson.plugins.analysis.graph.GraphConfiguration;
 import hudson.plugins.warnings.parser.ParserRegistry;
-
 import hudson.util.CopyOnWriteList;
 import hudson.util.FormValidation;
 
@@ -169,7 +165,7 @@ public final class WarningsDescriptor extends PluginDescriptor implements Staple
             @QueryParameter final String pattern) throws IOException {
         FormValidation required = FormValidation.validateRequired(pattern);
         if (required.kind == FormValidation.Kind.OK) {
-            return FilePath.validateFileMask(project.getSomeWorkspace(), pattern);
+            return super.doCheckPattern(project, pattern);
         }
         else {
             return required;
