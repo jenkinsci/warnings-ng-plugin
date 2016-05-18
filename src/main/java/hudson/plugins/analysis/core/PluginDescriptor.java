@@ -188,7 +188,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
     }
 
     /**
-     * Performs on-the-fly validation on the file name pattern.
+     * Performs on-the-fly validation on the ant pattern for input files.
      *
      * @param project
      *            the project
@@ -200,13 +200,23 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      */
     public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
             @QueryParameter final String pattern) throws IOException {
-        if (project != null) {
-            return FilePath.validateFileMask(project.getSomeWorkspace(), pattern);
+        if (project != null) { // Workflow jobs have no workspace
+            try {
+                FilePath workspace = project.getSomeWorkspace();
+                if (workspace != null) {
+                    String result = workspace.validateAntFileMask(pattern,
+                            FilePath.VALIDATE_ANT_FILE_MASK_BOUND);
+                    if (result != null) {
+                        return FormValidation.error(result);
+                    }
+                }
+            }
+            catch (InterruptedException e) {
+                // ignore and return ok
+            }
         }
-        else {
-            // Workflow jobs have no workspace
-            return FormValidation.ok();
-        }
+
+        return FormValidation.ok();
     }
 
     /**
