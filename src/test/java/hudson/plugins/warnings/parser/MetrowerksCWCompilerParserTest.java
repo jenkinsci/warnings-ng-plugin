@@ -15,8 +15,7 @@ import hudson.plugins.analysis.util.model.Priority;
  * Tests the class {@link MetrowerksCWCompilerParser}.
  */
 public class MetrowerksCWCompilerParserTest extends ParserTester {
-    /** Error message. */
-    private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
+
     /** An info. */
     private static final String INFO_CATEGORY = "Info";
     /** A warning. */
@@ -26,7 +25,7 @@ public class MetrowerksCWCompilerParserTest extends ParserTester {
     private static final String WARNING_TYPE = new MetrowerksCWCompilerParser().getGroup();
 
     /**
-     * Parses a file with two GCC warnings.
+     * Parses a file with CodeWarrior warnings.
      *
      * @throws IOException
      *      if the file could not be read

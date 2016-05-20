@@ -28,31 +28,26 @@ public class MetrowerksCWLinkerParser extends RegexpLineParser {
     }
 
     @Override
-    protected String getId() {
-        return "Metrowerks Codewarrior Linker";
-    }
-
-    @Override
     protected Warning createWarning(final Matcher matcher) {
         /* String fileName = matcher.group(3); */
         String message = matcher.group(2);
+        String message_category = matcher.group(1);
         Priority priority;
 
-        StringBuilder category = new StringBuilder();
-        if (matcher.group(1).equalsIgnoreCase("error")) {
+        String category;
+        if ("error".equalsIgnoreCase(message_category)) {
             priority = Priority.HIGH;
-            category.append("ERROR");
+            category = "ERROR";
         }
-        else if (matcher.group(1).equalsIgnoreCase("information")) {
-            priority = Priority.LOW;			
-            category.append("Info");
+        else if ("information".equalsIgnoreCase(message_category)) {
+            priority = Priority.LOW;
+            category = "Info";
         }
-		else {			
+        else {
             priority = Priority.NORMAL;
-            category.append("Warning");
+            category = "Warning";
         }
-        Warning warning = createWarning("See Warning message", 0, category.toString(), message, priority);
-        return warning;
+        return createWarning("See Warning message", 0, category, message, priority);
     }
 }
 

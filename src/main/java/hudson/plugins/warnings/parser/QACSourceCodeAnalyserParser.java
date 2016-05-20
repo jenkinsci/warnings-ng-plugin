@@ -28,28 +28,22 @@ public class QACSourceCodeAnalyserParser extends RegexpLineParser {
     }
 
     @Override
-    protected String getId() {
-        return "QA-C Sourcecode Analyser";
-    }
-
-    @Override
     protected Warning createWarning(final Matcher matcher) {
         String fileName = matcher.group(1);
         int lineNumber = getLineNumber(matcher.group(2));
         String message = matcher.group(7);
         Priority priority;
 
-        StringBuilder category = new StringBuilder();
-        if (matcher.group(4).equalsIgnoreCase("err")) {
+        String category;
+        if ("err".equalsIgnoreCase(matcher.group(4))) {
             priority = Priority.HIGH;
-            category.append("ERROR");
+            category = "ERROR";
         }
-		else {			
+        else {
             priority = Priority.NORMAL;
-            category.append("Warning");
+            category = "Warning";
         }
-        Warning warning = createWarning(fileName, lineNumber, category.toString(), message, priority);
-        return warning;
+        return createWarning(fileName, lineNumber, category, message, priority);
     }
 }
 

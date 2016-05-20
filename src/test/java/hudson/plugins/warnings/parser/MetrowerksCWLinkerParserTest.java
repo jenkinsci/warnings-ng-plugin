@@ -15,8 +15,6 @@ import hudson.plugins.analysis.util.model.Priority;
  * Tests the class {@link MetrowerksCWLinkerParser}.
  */
 public class MetrowerksCWLinkerParserTest extends ParserTester {
-    /** Error message. */
-    private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
     /** An information. */
     private static final String INFO_CATEGORY = "Info";
     /** A warning. */
