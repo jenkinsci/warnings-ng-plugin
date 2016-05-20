@@ -16,11 +16,8 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 public class MetrowerksCWCompilerParserTest extends ParserTester {
 
-    /** An info. */
     private static final String INFO_CATEGORY = "Info";
-    /** A warning. */
     private static final String WARNING_CATEGORY = "Warning";
-    /** An error. */
     private static final String ERROR_CATEGORY = "ERROR";
     private static final String WARNING_TYPE = new MetrowerksCWCompilerParser().getGroup();
 

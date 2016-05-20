@@ -15,9 +15,7 @@ import hudson.plugins.analysis.util.model.Priority;
  * Tests the class {@link QACSourceCodeAnalyserParser}.
  */
 public class QACSourceCodeAnalyserParserTest extends ParserTester {
-    /** A warning. */
     private static final String WARNING_CATEGORY = "Warning";
-    /** An error. */
     private static final String ERROR_CATEGORY = "ERROR";
     private static final String TYPE = new QACSourceCodeAnalyserParser().getGroup();
 
