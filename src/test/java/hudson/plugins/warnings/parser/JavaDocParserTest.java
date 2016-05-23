@@ -1,13 +1,13 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -19,7 +19,64 @@ public class JavaDocParserTest extends ParserTester {
     private static final String TYPE = new JavaDocParser().getGroup();
 
     /**
-     * Parses a file with two deprecation warnings.
+     * Parses a warning log with JavaDoc 1.8 warnings.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-32298">Issue 32298</a>
+     */
+    @Test
+    public void issue32298() throws IOException {
+        Collection<FileAnnotation> warnings = new JavaDocParser().parse(openFile("issue32298.txt"));
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 7, warnings.size());
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        FileAnnotation annotation = iterator.next();
+        checkWarning(annotation,
+                683,
+                "no description for @param",
+                "/var/lib/jenkins/jobs/Development/jobs/JavaDoc check/workspace/java/src/apps/Apps.java",
+                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                85,
+                "no description for @param",
+                "/var/lib/jenkins/jobs/Development/jobs/JavaDoc check/workspace/java/src/apps/AppsLaunchFrame.java",
+                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                86,
+                "no description for @param",
+                "/var/lib/jenkins/jobs/Development/jobs/JavaDoc check/workspace/java/src/apps/AppsLaunchFrame.java",
+                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                190,
+                "no description for @param",
+                "/var/lib/jenkins/jobs/Development/jobs/JavaDoc check/workspace/java/src/apps/AppsLaunchFrame.java",
+                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+
+        annotation = iterator.next();
+        checkWarning(annotation,
+                25,
+                "bad use of '>'",
+                "/var/lib/jenkins/jobs/Development/jobs/JavaDoc check/workspace/java/src/jmri/jmrit/withrottle/MultiThrottle.java",
+                TYPE, StringUtils.EMPTY, Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                26,
+                "malformed HTML",
+                "/var/lib/jenkins/jobs/Development/jobs/JavaDoc check/workspace/java/src/jmri/jmrit/withrottle/MultiThrottleController.java",
+                TYPE, StringUtils.EMPTY, Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                26,
+                "bad use of '>'",
+                "/var/lib/jenkins/jobs/Development/jobs/JavaDoc check/workspace/java/src/jmri/jmrit/withrottle/MultiThrottleController.java",
+                TYPE, StringUtils.EMPTY, Priority.HIGH);
+    }
+
+    /**
+     * Parses a file with 6 warnings.
      *
      * @throws IOException
      *      if the file could not be read
