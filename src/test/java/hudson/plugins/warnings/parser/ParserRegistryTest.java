@@ -79,18 +79,18 @@ public class ParserRegistryTest {
     public void testTwoParsers() throws IOException {
         List<AbstractWarningsParser> parsers = new ArrayList<AbstractWarningsParser>();
         parsers.add(new InvalidsParser());
-        parsers.add(new JavaDocParser());
+        parsers.add(new PhpParser());
         ParserRegistry parserRegistry = createRegistryUnderTest(FILE_NAME, parsers);
 
         Collection<FileAnnotation> annotations = parserRegistry.parse(DUMMY_FILE);
-        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 10, annotations.size());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 6, annotations.size());
 
         ParserResult result = new ParserResult();
         result.addAnnotations(annotations);
-        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 10, result.getNumberOfAnnotations());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 6, result.getNumberOfAnnotations());
 
         result.addAnnotations(annotations);
-        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 10, result.getNumberOfAnnotations());
+        assertEquals(WRONG_NUMBER_OF_ANNOTATIONS_PARSED, 6, result.getNumberOfAnnotations());
     }
 
     /**
