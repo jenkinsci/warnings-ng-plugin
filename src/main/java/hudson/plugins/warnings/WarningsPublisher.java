@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,7 +19,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.Util;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
 import hudson.model.AbstractProject;
@@ -391,7 +389,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
             throws IOException, InterruptedException {
         List<ParserResult> results = Lists.newArrayList();
         for (ParserConfiguration configuration : getParserConfigurations()) {
-            String filePattern = expandFilePattern(build, configuration.getPattern());
+            String filePattern = expandFilePattern(configuration.getPattern(), build.getEnvironment(TaskListener.NULL));
             String parserName = configuration.getParserName();
 
             logger.log("Parsing warnings in files '" + filePattern + "' with parser " + parserName);
@@ -406,23 +404,6 @@ public class WarningsPublisher extends HealthAwarePublisher {
             results.add(annotate(build, workspace, filterWarnings(project, logger), configuration.getParserName()));
         }
         return results;
-    }
-
-    /**
-     * Resolve build parameters in the file pattern up to resolveDepth times.
-     */
-    private String expandFilePattern(final Run<?, ?> build, final String filePattern) throws IOException, InterruptedException {
-        String expanded = filePattern;
-        int resolveDepth = 10;
-        Map<String, String> buildParameterMap = build.getEnvironment(TaskListener.NULL);
-        for (int i = 0; i < resolveDepth; i++) {
-            String old = expanded;
-            expanded = Util.replaceMacro(expanded, buildParameterMap);
-            if (old.equals(expanded)) {
-                break;
-            }
-        }
-        return expanded;
     }
 
     private ParserResult annotate(final Run<?, ?> build, final FilePath workspace, final ParserResult input, final String parserName)
