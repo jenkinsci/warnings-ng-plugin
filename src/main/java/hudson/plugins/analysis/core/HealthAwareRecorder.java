@@ -11,8 +11,10 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import jenkins.tasks.SimpleBuildStep;
 
+import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.matrix.MatrixAggregatable;
 import hudson.model.AbstractBuild;
 import hudson.model.Project;
@@ -52,6 +54,9 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
 
     /** Default threshold priority limit. */
     private static final String DEFAULT_PRIORITY_THRESHOLD_LIMIT = "low";
+    /** Maximum number of times that the environment expansion is executed. */
+    private static final int RESOLVE_VARIABLES_DEPTH = 10;
+
     /** Report health as 100% when the number of warnings is less than this value. */
     private String healthy;
     /** Report health as 0% when the number of warnings is greater than this value. */
@@ -69,7 +74,8 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      * @since 1.6
      */
     private boolean canRunOnFailed;
-    /** Determines whether the previous build should always be used as the
+    /**
+     * Determines whether the previous build should always be used as the
      * reference build.
      * @since 1.66
      */
@@ -128,6 +134,21 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      */
     protected HealthAwareRecorder(String pluginName) {
         this.pluginName = "[" + pluginName + "] ";
+    }
+
+    /**
+     * Resolve build parameters in the file pattern up to {@link #RESOLVE_VARIABLES_DEPTH} times.
+     */
+    protected String expandFilePattern(final String filePattern, final EnvVars envVars) {
+        String expanded = filePattern;
+        for (int i = 0; i < RESOLVE_VARIABLES_DEPTH && StringUtils.isNotBlank(expanded); i++) {
+            String old = expanded;
+            expanded = Util.replaceMacro(expanded, envVars);
+            if (old.equals(expanded)) {
+                break;
+            }
+        }
+        return expanded;
     }
 
     /**
