@@ -1,0 +1,3 @@
+ERROR L1822: Symbol TestFunction in file e:/work/PATH/PATH/PATH/PATH/appl_src.lib is undefined
+WARNING L1916: Section name TEST_SECTION is too long. Name is cut to 90 characters length
+INFORMATION L2: Message overflow, skipping WARNING messages
