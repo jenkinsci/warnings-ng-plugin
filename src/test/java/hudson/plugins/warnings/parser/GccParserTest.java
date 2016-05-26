@@ -20,6 +20,18 @@ public class GccParserTest extends ParserTester {
     private static final String GCC_WARNING = "GCC warning";
 
     /**
+     * Checks that a false positive is not reported anymore.
+     *
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-34141">Issue 34141</a>
+     */
+    @Test
+    public void issue34141() throws IOException {
+        Collection<FileAnnotation> warnings = new GccParser().parse(openFile("issue34141.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, warnings.size());
+    }
+
+    /**
      * Verifies that the message contains escaped XML characters.
      *
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-17309">Issue 17309</a>

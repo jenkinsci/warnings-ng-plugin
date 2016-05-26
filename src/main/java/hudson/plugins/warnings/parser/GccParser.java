@@ -17,7 +17,7 @@ public class GccParser extends RegexpLineParser {
     private static final long serialVersionUID = 2020182274225690532L;
     static final String GCC_ERROR = "GCC error";
     static final String LINKER_ERROR = "Linker error";
-    private static final String GCC_WARNING_PATTERN = "^(?:\\s*(?:\\[.*\\]\\s*)?(.*\\.[chpimxsola0-9]+):(?:(\\d*):(?:\\d*:)*\\s*(?:(warning|error|note)\\s*:|\\s*(.*))|\\s*(undefined reference to.*))(.*)|.*ld:\\s*(.*-l(.*)))$";
+    private static final String GCC_WARNING_PATTERN = "^(?:\\s*(?:\\[.*\\]\\s*)?([^ ]*\\.[chpimxsola0-9]+):(?:(\\d*):(?:\\d*:)*\\s*(?:(warning|error|note)\\s*:|\\s*(.*))|\\s*(undefined reference to.*))(.*)|.*ld:\\s*(.*-l(.*)))$";
 
     /**
      * Creates a new instance of {@link GccParser}.
