@@ -43,10 +43,7 @@ public class Pep8Parser extends RegexpLineParser {
     }
 
     private Priority mapPriority(final String priority) {
-        if (priority.contains("F") || priority.contains("E") || priority.contains("W")) {
-            return Priority.HIGH;
-        }
-        else if (priority.contains("R")) {
+        if (priority.contains("E")) {
             return Priority.NORMAL;
         }
         else {
