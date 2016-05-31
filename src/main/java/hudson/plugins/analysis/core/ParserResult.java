@@ -219,7 +219,7 @@ public class ParserResult implements Serializable {
     }
 
     String stripRelativePrefix(final String annotationFileName) {
-        return StringUtils.removePattern(annotationFileName, "(\\.\\.?/)*");
+        return StringUtils.removePattern(annotationFileName, ".*(\\.\\.?/)+");
     }
 
     /**
@@ -228,7 +228,7 @@ public class ParserResult implements Serializable {
      * @throws IOException          if the file could not be read
      * @throws InterruptedException if the user cancels the search
      */
-    // TODO: Maybe the file pattern should be exposed on the UI in order to speed up the scanning, see HUDSON-2927
+    // TODO: Maybe the file pattern should be exposed on the UI in order to speed up the scanning, see JENKINS-2927
     private void populateFileNameCache() throws IOException, InterruptedException {
         LOGGER.log(Level.FINE, "Building cache of all workspace files to obtain absolute filenames for all warnings: " + workspace.getPath());
 

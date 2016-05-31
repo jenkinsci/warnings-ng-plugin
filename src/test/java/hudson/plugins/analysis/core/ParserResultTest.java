@@ -41,6 +41,8 @@ public class ParserResultTest {
 
         verifyPrefix(parserResult, "./../file.txt");
 
+        verifyPrefix(parserResult, "../bla/../file.txt");
+
         assertEquals("Wrong prefix removal: ", "fi/file.txt", parserResult.stripRelativePrefix("fi/file.txt"));
     }
 
@@ -72,6 +74,9 @@ public class ParserResultTest {
         verifyWarningPath(result, "../file.txt", "file.txt");
         verifyWarningPath(result, "../file-in-subdir.txt", "directory-a/file-in-subdir.txt");
         verifyNoWarningPath(result, "../multi-file-in-subdir.txt");
+
+        verifyWarningPath(result, "../directory-a/../directory-a/../directory-a/file-in-subdir.txt", "directory-a/file-in-subdir.txt");
+        verifyWarningPath(result, "directory-a/../directory-a/../directory-a/file-in-subdir.txt", "directory-a/file-in-subdir.txt");
     }
 
     private void verifyNoWarningPath(final ParserResult result, final String fileName) {
