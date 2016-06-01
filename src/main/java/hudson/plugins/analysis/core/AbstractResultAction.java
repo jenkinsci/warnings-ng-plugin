@@ -1,5 +1,7 @@
 package hudson.plugins.analysis.core;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -12,10 +14,12 @@ import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jenkins.model.Jenkins;
+import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
 import hudson.maven.MavenBuild;
 import hudson.maven.MavenModule;
 import hudson.model.AbstractBuild;
+import hudson.model.Action;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
 import hudson.model.Run;
@@ -36,8 +40,8 @@ import hudson.plugins.analysis.util.ToolTipProvider;
  */
 //CHECKSTYLE:COUPLING-OFF
 @ExportedBean
-public abstract class AbstractResultAction<T extends BuildResult> implements StaplerProxy, HealthReportingAction, ToolTipProvider, ResultAction<T> {
-    /** The associated build of this action. */
+public abstract class AbstractResultAction<T extends BuildResult> implements StaplerProxy, HealthReportingAction, ToolTipProvider, ResultAction<T>, LastBuildAction {
+    /** The associated run of this action. */
     private final Run<?, ?> owner;
     /** Parameters for the health report. */
     private final AbstractHealthDescriptor healthDescriptor;
@@ -116,6 +120,17 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     @WithBridgeMethods(value=AbstractBuild.class, adapterMethod="getAbstractBuild")
     public final Run<?, ?> getBuild() {
         return owner;
+    }
+
+    /**
+     * Returns the project actions if this action is used in a pipeline.
+     *
+     * @return default implementation returns empty collection, plug-in must override if they want to contribute to the UI
+     */
+    // FIXME: See JENKINS-31202. Currently the whole graphing is based around AbstractBuild (large refactoring required)
+    @Override
+    public Collection<? extends Action> getProjectActions() {
+        return Collections.emptyList();
     }
 
     /**
