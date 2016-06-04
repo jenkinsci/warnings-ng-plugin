@@ -24,7 +24,12 @@ public class JavaDocParser extends RegexpLineParser {
         super(Messages._Warnings_JavaDoc_ParserName(),
                 Messages._Warnings_JavaDoc_LinkName(),
                 Messages._Warnings_JavaDoc_TrendName(),
-                JAVA_DOC_WARNING_PATTERN);
+                JAVA_DOC_WARNING_PATTERN, true);
+    }
+
+    @Override
+    protected boolean isLineInteresting(final String line) {
+        return line.contains("javadoc") || line.contains("@");
     }
 
     @Override
