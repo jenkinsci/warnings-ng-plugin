@@ -34,7 +34,10 @@ public class GraphConfiguration  {
     private static final int DEFAULT_HEIGHT = 200;
     private static final String DEFAULT_NAME = StringUtils.EMPTY;
     private static final String DEFAULT_VALUE = StringUtils.EMPTY;
-    private static final BuildResultGraph DEFAULT_GRAPH = new PriorityGraph();
+
+    private static PriorityGraph createDefaultGraph() {
+        return new PriorityGraph();
+    }
 
     /** Separator of cookie values. */
     protected static final String SEPARATOR = "!";
@@ -75,7 +78,7 @@ public class GraphConfiguration  {
      * @return a default configuration
      */
     public static GraphConfiguration createDefault() {
-        return new GraphConfiguration(DEFAULT_GRAPH);
+        return new GraphConfiguration(createDefaultGraph());
     }
 
     /**
@@ -367,8 +370,8 @@ public class GraphConfiguration  {
         if (StringUtils.isNotBlank(dayCountString)) {
             dayCount = value.getInt("dayCountString");
         }
-        String grapyTypeString = value.getString("graphType");
-        graphType = graphId2Graph.get(grapyTypeString);
+        String graphTypeString = value.getString("graphType");
+        graphType = graphId2Graph.get(graphTypeString);
 
         useBuildDate = value.getBoolean("useBuildDateAsDomain");
 
@@ -498,7 +501,7 @@ public class GraphConfiguration  {
         width  = DEFAULT_WIDTH;
         buildCount = DEFAULT_BUILD_COUNT;
         dayCount = DEFAULT_DAY_COUNT;
-        graphType = DEFAULT_GRAPH;
+        graphType = createDefaultGraph();
         useBuildDate = DEFAULT_USE_BUILD_DATE;
         parameterName = DEFAULT_NAME;
         parameterValue = DEFAULT_VALUE;
@@ -706,7 +709,7 @@ public class GraphConfiguration  {
     public boolean isDefault() {
         return width == DEFAULT_WIDTH
                 && height == DEFAULT_HEIGHT
-                && graphType == DEFAULT_GRAPH // NOPMD
+                && graphType.getId() == createDefaultGraph().getId() // NOPMD
                 && buildCount == DEFAULT_BUILD_COUNT
                 && dayCount == DEFAULT_DAY_COUNT
                 && useBuildDate == DEFAULT_USE_BUILD_DATE
@@ -753,7 +756,7 @@ public class GraphConfiguration  {
             return graphId2Graph.get(graphId);
         }
         else {
-            return DEFAULT_GRAPH;
+            return createDefaultGraph();
         }
     }
 
