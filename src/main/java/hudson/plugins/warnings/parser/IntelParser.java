@@ -38,7 +38,7 @@ public class IntelParser extends RegexpLineParser {
      *            name of the trend graph
      */
     public IntelParser(final Localizable parserName, final Localizable linkName, final Localizable trendName) {
-        super(parserName, linkName, trendName, INTEL_PATTERN);
+        super(parserName, linkName, trendName, INTEL_PATTERN, true);
     }
 
     @Override

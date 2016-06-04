@@ -24,7 +24,7 @@ public class Armcc5CompilerParser extends RegexpLineParser {
         super(Messages._Warnings_Armcc_ParserName(),
                 Messages._Warnings_Armcc_LinkName(),
                 Messages._Warnings_Armcc_TrendName(),
-            ARMCC5_WARNING_PATTERN);
+            ARMCC5_WARNING_PATTERN, true);
     }
     
     @Override
