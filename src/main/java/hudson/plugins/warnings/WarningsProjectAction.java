@@ -55,10 +55,23 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
     }
 
     @Override
+    public boolean isTrendVisible(final StaplerRequest request) {
+        GraphConfigurationView configuration = createUserConfiguration(request);
+
+        boolean canShow = configuration.isVisible() && configuration.hasMeaningfulGraph();
+
+        return !createUserConfiguration(request, WarningsDescriptor.PLUGIN_ID).isDeactivated() && canShow;
+    }
+
+    @Override
     protected GraphConfigurationView createUserConfiguration(final StaplerRequest request) {
+        return createUserConfiguration(request, WarningsDescriptor.getProjectUrl(parser));
+    }
+
+    private UserGraphConfigurationView createUserConfiguration(final StaplerRequest request, final String urlName) {
         return new UserGraphConfigurationView(
                 createConfiguration(getAvailableGraphs()), getProject(),
-                WarningsDescriptor.getProjectUrl(parser), WarningsDescriptor.getProjectUrl(null),
+                urlName, WarningsDescriptor.getProjectUrl(null),
                 request.getCookies(), createBuildHistory());
     }
 
