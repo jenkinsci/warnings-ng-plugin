@@ -1,15 +1,15 @@
 package hudson.plugins.warnings;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+import org.jvnet.hudson.test.Issue;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.warnings.GroovyParser.DescriptorImpl;
-
 import hudson.util.FormValidation;
 import hudson.util.FormValidation.Kind;
 
@@ -48,6 +48,47 @@ public class GroovyParserTest {
     @SuppressWarnings("javadoc")
     public static final String SINGLE_LINE_REGEXP = "^\\s*(.*):(\\d+):(.*):\\s*(.*)$";
     // CHECKSTYLE:ON
+
+    /**
+     * Tries to expose JENKINS-35262: multiline regular expression parser.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-35262">Issue 35262</a>
+     */
+    @Test @Issue("35262")
+    public void issue35262() throws IOException {
+        String multiLineRegexp = "(## start(?:(?!start)[\\s\\S])*?## end   step: headerruler.*\\n)\n";
+        String textToMatch = "start step: at 06/01/2016-12:05:42\n" +
+                "end step: jsruler at 06/01/2016-12:05:42\n" +
+                "start step: at 06/01/2016-12:05:42\n" +
+                "some details here\n" +
+                "on several lines\n" +
+                "end step: runtimedata at 06/01/2016-12:05:42\n" +
+                "start step: at 06/01/2016-12:05:42\n" +
+                "end step: dummynls at 06/01/2016-12:05:42";
+        String script = "import hudson.plugins.warnings.parser.Warning\n" +
+                "import hudson.plugins.analysis.util.model.Priority\n" +
+                "String type = \"TEST\"\n" +
+                "String category = \"runtimedata\"\n" +
+                "String errors = matcher.group(1)\n" +
+                "return new Warning(\"\", 0, type, category, errors, Priority.HIGH);";
+
+        GroovyParser parser = new GroovyParser("name", multiLineRegexp, script);
+
+        assertTrue("Wrong multi line support guess", parser.hasMultiLineSupport());
+
+        // FIXME: setup in JENKINS-35262 correct?
+        /*
+        DescriptorImpl descriptor = createDescriptor();
+        assertOk(descriptor.doCheckExample(textToMatch, multiLineRegexp, script));
+
+        AbstractWarningsParser instance = parser.getParser();
+        Collection<FileAnnotation> warnings = instance.parse(new StringReader(textToMatch));
+
+        assertEquals("No warning found.", 1, warnings.size());
+        */
+    }
 
     /**
      * Verifies that multi line expressions are correctly detected.
