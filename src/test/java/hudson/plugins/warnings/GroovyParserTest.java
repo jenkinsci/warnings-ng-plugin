@@ -1,6 +1,8 @@
 package hudson.plugins.warnings;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.util.Collection;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -9,7 +11,9 @@ import org.jvnet.hudson.test.Issue;
 
 import static org.junit.Assert.*;
 
+import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.warnings.GroovyParser.DescriptorImpl;
+import hudson.plugins.warnings.parser.AbstractWarningsParser;
 import hudson.util.FormValidation;
 import hudson.util.FormValidation.Kind;
 
@@ -58,28 +62,29 @@ public class GroovyParserTest {
      */
     @Test @Issue("35262")
     public void issue35262() throws IOException {
-        String multiLineRegexp = "(## start(?:(?!start)[\\s\\S])*?## end   step: headerruler.*\\n)\n";
-        String textToMatch = "start step: at 06/01/2016-12:05:42\n" +
-                "end step: jsruler at 06/01/2016-12:05:42\n" +
-                "start step: at 06/01/2016-12:05:42\n" +
-                "some details here\n" +
-                "on several lines\n" +
-                "end step: runtimedata at 06/01/2016-12:05:42\n" +
-                "start step: at 06/01/2016-12:05:42\n" +
-                "end step: dummynls at 06/01/2016-12:05:42";
+        String multiLineRegexp = "(make(?:(?!make)[\\s\\S])*?make-error:.*\\n)";
+        String textToMatch = "start build\n" +
+                "make: thisFile.js\n" +
+                "everything okay\n" +
+                "make: thisOtherFile.js\n" +
+                "error detail1: wrong character\n" +
+                "error detail2: ecnoding issue\n" +
+                "make-error: thisOtherFile.js: wrong encoding detected\n" +
+                "make: anotherFile.js\n" +
+                "make: yetAnotherFile.js\n" +
+                "end build";
         String script = "import hudson.plugins.warnings.parser.Warning\n" +
                 "import hudson.plugins.analysis.util.model.Priority\n" +
+                "String fileName = \"\"\n" +
                 "String type = \"TEST\"\n" +
-                "String category = \"runtimedata\"\n" +
+                "String category = \"make-error\"\n" +
                 "String errors = matcher.group(1)\n" +
-                "return new Warning(\"\", 0, type, category, errors, Priority.HIGH);";
+                "return new Warning(fileName, 0, type, category, errors, Priority.HIGH);\n";
 
         GroovyParser parser = new GroovyParser("name", multiLineRegexp, script);
 
         assertTrue("Wrong multi line support guess", parser.hasMultiLineSupport());
 
-        // FIXME: setup in JENKINS-35262 correct?
-        /*
         DescriptorImpl descriptor = createDescriptor();
         assertOk(descriptor.doCheckExample(textToMatch, multiLineRegexp, script));
 
@@ -87,7 +92,6 @@ public class GroovyParserTest {
         Collection<FileAnnotation> warnings = instance.parse(new StringReader(textToMatch));
 
         assertEquals("No warning found.", 1, warnings.size());
-        */
     }
 
     /**
