@@ -1,0 +1,37 @@
+Dr. Memory version 1.10.1 build 3 built on Jan 10 2010 10:10:10
+Dr. Memory results for pid 5759: "test_open_address_hash"
+Recorded 3 suppression(s) from default /Applications/DrMemory/bin/suppress-default.txt
+
+Error #1: LEAK 150 direct bytes 0x005a2540-0x005a25d6 + 0 indirect bytes
+# 0 replace_malloc                                     [/drmemory_package/common/alloc_replace.c:2576]
+# 1 test_open_address_hashmap_initialize               [/open_address_hash/test_open_address_hash.c:84]
+# 2 main                                               [/open_address_hash/run_open_address_hash.c:7]
+
+Error #2: POSSIBLE LEAK 150 direct bytes 0x005a25f8-0x005a268e + 0 indirect bytes
+# 0 replace_malloc                                              [/drmemory_package/common/alloc_replace.c:2576]
+# 1 test_open_address_hashmap_compute_simple_hash               [/open_address_hash/test_open_address_hash.c:107]
+# 2 main                                                        [/open_address_hash/run_open_address_hash.c:7]
+
+Error #3: LEAK 150 direct bytes 0x005a25f8-0x005a268e + 0 indirect bytes
+# 0 replace_malloc
+# 1 test_open_address_hashmap_compute_complex_hash
+# 2 main
+
+===========================================================================
+FINAL SUMMARY:
+
+DUPLICATE ERROR COUNTS:
+
+SUPPRESSIONS USED:
+
+ERRORS FOUND:
+      0 unique,     0 total unaddressable access(es)
+      0 unique,     0 total uninitialized access(es)
+      0 unique,     0 total invalid heap argument(s)
+      0 unique,     0 total warning(s)
+      2 unique,     2 total,    300 byte(s) of leak(s)
+      1 unique,     1 total,    150 byte(s) of possible leak(s)
+ERRORS IGNORED:
+      1 unique,     1 total,   4096 byte(s) of still-reachable allocation(s)
+         (re-run with "-show_reachable" for details)
+Details: /Applications/DrMemory/drmemory/logs/DrMemory-test_open_address_hash.5759.000/results.txt
