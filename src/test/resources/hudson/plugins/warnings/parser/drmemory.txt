@@ -17,6 +17,23 @@ Error #3: LEAK 150 direct bytes 0x005a25f8-0x005a268e + 0 indirect bytes
 # 1 test_open_address_hashmap_compute_complex_hash
 # 2 main
 
+Error #4: UNINITIALIZED READ: reading 0xb741b004-0xb741b012 14 byte(s) within 0xb741b000-0xb741b012
+# 0 system call write parameter #1
+# 1 libc.so.6!__GI___libc_write                    [../sysdeps/unix/syscall-template.S:81]
+# 2 libc.so.6!_IO_new_file_write                   [/build/eglibc-X4bnBz/eglibc-2.19/libio/fileops.c:1261]
+# 3 libc.so.6!new_do_write                         [/build/eglibc-X4bnBz/eglibc-2.19/libio/fileops.c:538]
+# 4 libc.so.6!_IO_new_do_write                     [/build/eglibc-X4bnBz/eglibc-2.19/libio/fileops.c:511]
+# 5 libc.so.6!__GI__IO_file_sync                   [/build/eglibc-X4bnBz/eglibc-2.19/libio/fileops.c:892]
+# 6 libc.so.6!__GI__IO_fflush                      [/build/eglibc-X4bnBz/eglibc-2.19/libio/iofflush.c:41]
+# 7 fll_write_node                                 [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/run_linear_hash.c:16]
+# 8 fll_create                                     [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/run_linear_hash.c:16]
+# 9 create_test_linked_list                        [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/test_file_linked_list.c:24]
+#10 test_file_linked_list_initialize               [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/test_file_linked_list.c:55]
+#11 planck_unit_run_suite                          [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/run_linear_hash.c:16]
+#12 runalltests_file_linked_list                   [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/test_file_linked_list.c:776]
+#13 main                                           [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/run_linear_hash.c:11]
+Note: @0:00:01.247 in thread 7601
+
 ===========================================================================
 FINAL SUMMARY:
 

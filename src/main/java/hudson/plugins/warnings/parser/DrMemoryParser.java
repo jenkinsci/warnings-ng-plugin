@@ -5,6 +5,7 @@ import hudson.plugins.analysis.util.model.Priority;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A parser for the Dr. Memory Errors.
@@ -21,31 +22,16 @@ public class DrMemoryParser extends RegexpDocumentParser {
     /** The index of the regexp group capturing the body of the error or warning. */
     private static final int BODY_GROUP = 2;
 
-    /** The index of the regexp group capturing the path of the file where the leak is (if the user has debug symbols). */
-    private static final int FILE_PATH_GROUP = 3;
-
-    /** The index of the regexp group capturing the the line number (if the user has debug symbols). */
-    private static final int LINE_NUMBER_GROUP = 4;
-
-    /** The regex used to capture the header group. */
-    private static final String HEADER_REGEX = "(.+)";
-
-    /** The regex used to capture the file path group. */
-    private static final String FILE_PATH_REGEX = "(.*\\/.*)";
-
-    /** The regex used to capture the line number group. */
-    private static final String LINE_NUMBER_REGEX = "(\\d+)";
-
-    /** The regex used to capture the body of the error or warning. */
-    private static final String BODY_REGEX =
-        "((?:#\\s*0.*[\\s\\S]*?\\[" + FILE_PATH_REGEX +
-        ":" + LINE_NUMBER_REGEX +
-        "\\](?:(?!\\n\\n)[\\s\\S])*)|(?:(?!\\n\\n)[\\s\\S])*)";
-
-    /** Final regex */
     private static final String DR_MEMORY_WARNING_PATTERN =
-        "Error #\\d+:[ ]*" + HEADER_REGEX +
-        "\\s*" + BODY_REGEX;
+        "Error #\\d+:[ ]*(.+)\\s*([\\s\\S]*?\\n)(?:\\n|[^#])";
+
+    /** Pattern to extract file paths from body. */
+    private static final Pattern FILE_PATHS_PATTERN =
+        Pattern.compile("#\\s*\\d+\\s*.*?\\[(.*\\/.*):(\\d+)\\]");
+
+    /** Pattern to extract jenkins path from file path. */
+    private static final Pattern JENKINS_PATH_PATTERN =
+        Pattern.compile(".*?\\/jobs\\/.*?\\/workspace\\/");
 
     /**
      * Creates a new instance of {@link DrMemoryParser}.
@@ -64,23 +50,49 @@ public class DrMemoryParser extends RegexpDocumentParser {
 
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        String message = matcher.group(HEADER_GROUP);
-        message += "\n" + matcher.group(BODY_GROUP);
+        String header = matcher.group(HEADER_GROUP);
+        String body = matcher.group(BODY_GROUP);
+        String[] body_lines = body.split("[\\n\\r]");
 
-        message = message.replace("\n", "<br>");
-
-        String file_path = null;
+        // Try to determine the file path where the error originates from within the user's code.
+        Matcher path_matcher;
+        path_matcher = FILE_PATHS_PATTERN.matcher(body_lines[body_lines.length - 1]);
+        String err_file_path = "Unknown"; // Path where the error originates from
         int line_number = 0;
 
-        try {
-            file_path = matcher.group(FILE_PATH_GROUP);
-            line_number = new Integer(matcher.group(LINE_NUMBER_GROUP));
-        }
-        catch (Exception e) {}
+        if (path_matcher.find()) {
+            String temp_path = path_matcher.group(1); // First path on the stack
+            String temp_line_num = path_matcher.group(2);
 
-        if (file_path == null) {
-            file_path = "Unknown";
+            Matcher jenkins_path_matcher = JENKINS_PATH_PATTERN.matcher(temp_path);
+            if (jenkins_path_matcher.find()) {
+                String jenkins_path = jenkins_path_matcher.group(0);
+
+                for (int i = body_lines.length - 2; i >= 0; i--) {
+                    path_matcher = FILE_PATHS_PATTERN.matcher(body_lines[i]);
+
+                    if (path_matcher.find()) {
+                        if (!path_matcher.group(1).startsWith(jenkins_path)) {
+                            break;
+                        }
+
+                        temp_path = path_matcher.group(1);
+                        temp_line_num = path_matcher.group(2);
+                    }
+                }
+            }
+
+            err_file_path = temp_path;
+
+            try {
+                line_number = new Integer(temp_line_num);
+            }
+            catch (Exception e) {}
         }
+
+        String message = header + "\n" + body;
+        message = message.trim();
+        message = message.replace("\n", "<br>");
 
         String category = "Unknown";
         Priority priority = Priority.HIGH;
@@ -117,7 +129,7 @@ public class DrMemoryParser extends RegexpDocumentParser {
             priority = Priority.NORMAL;
         }
 
-        return createWarning(file_path, line_number, category, message, priority);
+        return createWarning(err_file_path, line_number, category, message, priority);
     }
 
 }
