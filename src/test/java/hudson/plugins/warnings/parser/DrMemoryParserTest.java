@@ -26,7 +26,7 @@ public class DrMemoryParserTest extends ParserTester {
     public void testWarningsParser() throws IOException {
         Collection<FileAnnotation> warnings = new DrMemoryParser().parse(openFile());
 
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 4, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 8, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -73,9 +73,46 @@ public class DrMemoryParserTest extends ParserTester {
                         "#10 test_file_linked_list_initialize               [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/test_file_linked_list.c:55]<br>" +
                         "#11 planck_unit_run_suite                          [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/run_linear_hash.c:16]<br>" +
                         "#12 runalltests_file_linked_list                   [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/test_file_linked_list.c:776]<br>" +
-                        "#13 main                                           [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/run_linear_hash.c:11]",
+                        "#13 main                                           [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/run_linear_hash.c:11]<br>" +
+                        "Note: @0:00:01.247 in thread 7601",
                 "/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/run_linear_hash.c",
-                TYPE, "Unitialized Read", Priority.HIGH);
+                TYPE, "Uninitialized Read", Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                164,
+                "INVALID HEAP ARGUMENT: free 0x00001234<br>" +
+                        "Elapsed time = 0:00:00.180 in thread 21848<br>" +
+                        "# 0 malloc!main                                     [/var/lib/jenkins/jobs/drmemory/workspace/git/src/tests/malloc.c:164]<br>" +
+                        "# 1 libc.so.6!__libc_start_main                     [/build/buildd/eglibc-2.11.1/csu/libc-start.c:226]<br>" +
+                        "# 2 malloc!_start",
+                "/var/lib/jenkins/jobs/drmemory/workspace/git/src/tests/malloc.c",
+                TYPE, "Invalid Heap Argument", Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                139,
+                "INVALID HEAP ARGUMENT: allocated with operator new[], freed with operator delete<br>" +
+                        "# 0 test_mismatch                   [cs2::bug.cpp:122]<br>" +
+                        "# 1 main                            [cs2::bug.cpp:139]<br>" +
+                        "Note: memory was allocated here:<br>" +
+                        "Note: # 0 test_mismatch                   [cs2::bug.cpp:121]<br>" +
+                        "Note: # 1 main                            [cs2::bug.cpp:139]",
+                "cs2::bug.cpp",
+                TYPE, "Invalid Heap Argument", Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                0,
+                "UNADDRESSABLE ACCESS of freed memory: reading 0x001338a8-0x001338ac 4 byte(s)",
+                "Nil",
+                TYPE, "Unaddressable Access", Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                0,
+                "INVALID HEAP ARGUMENT: allocated with operator new[], freed with operator delete<br>" +
+                        "Note: memory was allocated here:<br>" +
+                        "Note: # 0 test_mismatch                   [test/cs2::bug.cpp:121]<br>" +
+                        "Note: # 1 main                            [test/cs2::bug.cpp:139]",
+                "Nil",
+                TYPE, "Invalid Heap Argument", Priority.HIGH);
     }
 
     @Override

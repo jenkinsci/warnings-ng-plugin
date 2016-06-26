@@ -34,6 +34,26 @@ Error #4: UNINITIALIZED READ: reading 0xb741b004-0xb741b012 14 byte(s) within 0x
 #13 main                                           [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/run_linear_hash.c:11]
 Note: @0:00:01.247 in thread 7601
 
+Error #5: INVALID HEAP ARGUMENT: free 0x00001234
+Elapsed time = 0:00:00.180 in thread 21848
+# 0 malloc!main                                     [/var/lib/jenkins/jobs/drmemory/workspace/git/src/tests/malloc.c:164]
+# 1 libc.so.6!__libc_start_main                     [/build/buildd/eglibc-2.11.1/csu/libc-start.c:226]
+# 2 malloc!_start
+
+Error #6: INVALID HEAP ARGUMENT: allocated with operator new[], freed with operator delete
+# 0 test_mismatch                   [cs2::bug.cpp:122]
+# 1 main                            [cs2::bug.cpp:139]
+Note: memory was allocated here:
+Note: # 0 test_mismatch                   [cs2::bug.cpp:121]
+Note: # 1 main                            [cs2::bug.cpp:139]
+
+Error #7: UNADDRESSABLE ACCESS of freed memory: reading 0x001338a8-0x001338ac 4 byte(s)
+
+Error #8: INVALID HEAP ARGUMENT: allocated with operator new[], freed with operator delete
+Note: memory was allocated here:
+Note: # 0 test_mismatch                   [test/cs2::bug.cpp:121]
+Note: # 1 main                            [test/cs2::bug.cpp:139]
+
 ===========================================================================
 FINAL SUMMARY:
 
@@ -42,9 +62,9 @@ DUPLICATE ERROR COUNTS:
 SUPPRESSIONS USED:
 
 ERRORS FOUND:
-      0 unique,     0 total unaddressable access(es)
-      0 unique,     0 total uninitialized access(es)
-      0 unique,     0 total invalid heap argument(s)
+      1 unique,     1 total unaddressable access(es)
+      1 unique,     1 total uninitialized access(es)
+      2 unique,     2 total invalid heap argument(s)
       0 unique,     0 total warning(s)
       2 unique,     2 total,    300 byte(s) of leak(s)
       1 unique,     1 total,    150 byte(s) of possible leak(s)

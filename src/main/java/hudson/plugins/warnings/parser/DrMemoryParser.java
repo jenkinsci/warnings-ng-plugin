@@ -2,6 +2,7 @@ package hudson.plugins.warnings.parser;
 
 import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
+
 import org.apache.commons.lang.StringUtils;
 
 import java.util.regex.Matcher;
@@ -16,22 +17,51 @@ import java.util.regex.Pattern;
 public class DrMemoryParser extends RegexpDocumentParser {
     private static final long serialVersionUID = 7195239138601238590L;
 
-    /** The index of the regexp group capturing the header of the error. */
+    /**
+     * Regex pattern for Dr. Memory errors and warnings.
+     *
+     * The pattern first tries to capture the header of the error message
+     * with the stack trace. If there happens to be no stack trace for some
+     * reason, only the header with any optional notes will be captured.
+     * This is reflected by the ( | ).
+     *
+     * The body can consist of a stack trace and a notes section. Both the
+     * stack trace and notes can consist of multiple lines. A line in the stack
+     * trace starts with "#" and a proceeding number and the lines in the notes
+     * section start with "Note: ". The first part of pattern will match the
+     * the lines that start with "#" until it can't find a line that starts with
+     * "#". If the next line starts with "Note: ", it will match the rest of the
+     * lines until there are two consecutive newlines (which indicates that the
+     * end of the error has been reached).
+     *
+     * Note: Groups can have trailing whitespace.
+     */
+    private static final String DR_MEMORY_WARNING_PATTERN =
+        "(?:Error #\\d+: ([\\s\\S]+?)\\r?\\n(# \\d+ [\\s\\S]*?\\r?\\n)(?=[^#])(Note: [\\s\\S]*?\\r?\\n\\r?\\n)?|" +
+        "Error #\\d+: ([\\s\\S]+?)\\r?\\n\\r?\\n)";
+
+    /** The index of the regexp group capturing the header of the error or warning. */
     private static final int HEADER_GROUP = 1;
 
-    /** The index of the regexp group capturing the body of the error or warning. */
-    private static final int BODY_GROUP = 2;
+    /** The index of the regexp group capturing the stack trace of the error or warning. */
+    private static final int STACK_TRACE_GROUP = 2;
 
-    private static final String DR_MEMORY_WARNING_PATTERN =
-        "Error #\\d+:[ ]*(.+)\\s*([\\s\\S]*?\\n)(?:\\n|[^#])";
+    /** The index of the regexp group capturing the notes of the error or warning. */
+    private static final int NOTES_GROUP = 3;
 
-    /** Pattern to extract file paths from body. */
-    private static final Pattern FILE_PATHS_PATTERN =
-        Pattern.compile("#\\s*\\d+\\s*.*?\\[(.*\\/.*):(\\d+)\\]");
+    /** Regex pattern to extract the file path from a line. */
+    private static final Pattern FILE_PATH_PATTERN =
+        Pattern.compile("#\\s*\\d+.*?\\[(.*\\/?.*):(\\d+)\\]");
 
-    /** Pattern to extract jenkins path from file path. */
+    /** The index of the regexp group capturing the file path of a location in the stack trace. */
+    private static final int FILE_PATH_GROUP = 1;
+
+    /** The index of the regexp group capturing the line number of a location in the stack trace. */
+    private static final int LINE_NUMBER_GROUP = 2;
+
+    /** Regex pattern to extract the jenkins path from file path. */
     private static final Pattern JENKINS_PATH_PATTERN =
-        Pattern.compile(".*?\\/jobs\\/.*?\\/workspace\\/");
+        Pattern.compile(".*?(\\/jobs\\/.*?\\/workspace\\/|workspace\\/)");
 
     /**
      * Creates a new instance of {@link DrMemoryParser}.
@@ -40,97 +70,152 @@ public class DrMemoryParser extends RegexpDocumentParser {
         super(Messages._Warnings_DrMemory_ParserName(),
                 Messages._Warnings_DrMemory_LinkName(),
                 Messages._Warnings_DrMemory_TrendName(),
-                DR_MEMORY_WARNING_PATTERN, true);
-    }
-
-    @Override
-    protected String getId() {
-        return "DrMemory";
+                DR_MEMORY_WARNING_PATTERN, false);
     }
 
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        String header = matcher.group(HEADER_GROUP);
-        String body = matcher.group(BODY_GROUP);
-        String[] body_lines = body.split("[\\n\\r]");
-
-        // Try to determine the file path where the error originates from within the user's code.
-        Matcher path_matcher;
-        path_matcher = FILE_PATHS_PATTERN.matcher(body_lines[body_lines.length - 1]);
-        String err_file_path = "Unknown"; // Path where the error originates from
-        int line_number = 0;
-
-        if (path_matcher.find()) {
-            String temp_path = path_matcher.group(1); // First path on the stack
-            String temp_line_num = path_matcher.group(2);
-
-            Matcher jenkins_path_matcher = JENKINS_PATH_PATTERN.matcher(temp_path);
-            if (jenkins_path_matcher.find()) {
-                String jenkins_path = jenkins_path_matcher.group(0);
-
-                for (int i = body_lines.length - 2; i >= 0; i--) {
-                    path_matcher = FILE_PATHS_PATTERN.matcher(body_lines[i]);
-
-                    if (path_matcher.find()) {
-                        if (!path_matcher.group(1).startsWith(jenkins_path)) {
-                            break;
-                        }
-
-                        temp_path = path_matcher.group(1);
-                        temp_line_num = path_matcher.group(2);
-                    }
-                }
-            }
-
-            err_file_path = temp_path;
-
-            try {
-                line_number = new Integer(temp_line_num);
-            }
-            catch (Exception e) {}
-        }
-
-        String message = header + "\n" + body;
-        message = message.trim();
-        message = message.replace("\n", "<br>");
-
+        String message = "";
+        String filePath = "Nil";
+        int lineNumber = 0;
         String category = "Unknown";
         Priority priority = Priority.HIGH;
 
-        if (message.startsWith("UNADDRESSABLE ACCESS")) {
-            category = "Unaddressable Access";
+        // Store this for later use when finding the category.
+        String header = "";
+
+        if (matcher.group(4) == null) {
+            String temp_header = matcher.group(HEADER_GROUP);
+
+            if (temp_header != null) {
+                header = temp_header.trim();
+                message += header;
+            }
+
+            String stackTrace = matcher.group(STACK_TRACE_GROUP);
+
+            if (stackTrace != null) {
+                SourceCodeLocation location = findOriginatingFilePath(stackTrace.trim().split("\\r?\\n"));
+                filePath = location.getFilePath();
+                lineNumber = location.getLineNumber();
+
+                stackTrace = stackTrace.trim();
+                message += "\n" + stackTrace;
+            }
+
+            String notes = matcher.group(NOTES_GROUP);
+
+            if (notes != null) {
+                notes = notes.trim();
+                message += "\n" + notes;
+            }
         }
-        else if (message.startsWith("UNINITIALIZED READ")) {
-            category = "Unitialized Read";
-        }
-        else if (message.startsWith("INVALID HEAP ARGUMENT")) {
-            category = "Invalid Heap Argument";
-        }
-        else if (message.startsWith("POSSIBLE LEAK")) {
-            category = "Possible Leak";
-            priority = Priority.NORMAL;
-        }
-        else if (message.startsWith("REACHABLE LEAK")) {
-            category = "Reachable Leak";
-        }
-        else if (message.startsWith("LEAK")) {
-            category = "Leak";
-        }
-        else if (message.startsWith("GDI Usage Error")) {
-            category = "GDI Usage Error";
-            priority = Priority.NORMAL;
-        }
-        else if (message.startsWith("HANDLE LEAK")) {
-            category = "Handle Leak";
-            priority = Priority.NORMAL;
-        }
-        else if (message.startsWith("WARNING")) {
-            category = "Warning";
-            priority = Priority.NORMAL;
+        else {
+            String temp_header = matcher.group(4);
+
+            if (temp_header != null) {
+                header = temp_header.trim();
+                message += header;
+            }
         }
 
-        return createWarning(err_file_path, line_number, category, message, priority);
+        if (message.equals("")) {
+            message = "Unknown Dr. Memory Error";
+        }
+        else {
+            message = message.replace("\n", "<br>");
+        }
+
+        header = header.toLowerCase();
+
+        if (StringUtils.isNotBlank(header)) {
+            if (header.startsWith("unaddressable access")) {
+                category = "Unaddressable Access";
+            }
+            else if (header.startsWith("uninitialized read")) {
+                category = "Uninitialized Read";
+            }
+            else if (header.startsWith("invalid heap argument")) {
+                category = "Invalid Heap Argument";
+            }
+            else if (header.startsWith("possible leak")) {
+                category = "Possible Leak";
+                priority = Priority.NORMAL;
+            }
+            else if (header.startsWith("reachable leak")) {
+                category = "Reachable Leak";
+            }
+            else if (header.startsWith("leak")) {
+                category = "Leak";
+            }
+            else if (header.startsWith("gdi usage error")) {
+                category = "GDI Usage Error";
+                priority = Priority.NORMAL;
+            }
+            else if (header.startsWith("handle leak")) {
+                category = "Handle Leak";
+                priority = Priority.NORMAL;
+            }
+            else if (header.startsWith("warning")) {
+                category = "Warning";
+                priority = Priority.NORMAL;
+            }
+        }
+
+        return createWarning(filePath, lineNumber, category, message, priority);
     }
 
+    /**
+     * Looks through each line of the stack trace to try and determine the file
+     * path and line number where the error originates from within the user's
+     * code. This assumes that the user's code is within the Jenkin's workspace
+     * folder. Otherwise, the file path and line number is obtained from the
+     * top of the stack trace.
+     *
+     * @param stackTrace Array of strings in the stack trace in the correct order.
+     * @return A SourceCodeLocation of where the error originated.
+     */
+    private SourceCodeLocation findOriginatingFilePath(String[] stackTrace) {
+        String errFilePath = "Unknown"; // Path where the error originates from
+        int lineNumber = 0; // Line number where the error originates from
+
+        for (int i = 0; i < stackTrace.length; i++) {
+            Matcher pathMatcher = FILE_PATH_PATTERN.matcher(stackTrace[i]);
+
+            if (pathMatcher.find()) {
+                errFilePath = pathMatcher.group(FILE_PATH_GROUP);
+                lineNumber = Integer.valueOf(pathMatcher.group(LINE_NUMBER_GROUP));
+
+                Matcher jenkinsPathMatcher = JENKINS_PATH_PATTERN.matcher(errFilePath);
+
+                if (jenkinsPathMatcher.find()) {
+                    break;
+                }
+            }
+        }
+
+        return new SourceCodeLocation(errFilePath, lineNumber);
+    }
+
+    /**
+     * Class that stores a file path and a line number pair.
+     */
+    private final class SourceCodeLocation {
+        private final String filePath;
+        private final int lineNumber;
+
+        public SourceCodeLocation(String filePath, int lineNumber) {
+            this.filePath = filePath;
+            this.lineNumber = lineNumber;
+        }
+
+        public String getFilePath() {
+            return filePath;
+        }
+
+        public int getLineNumber() {
+            return lineNumber;
+        }
+    }
 }
 
