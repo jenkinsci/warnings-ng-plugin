@@ -40,14 +40,17 @@ public class DrMemoryParser extends RegexpDocumentParser {
         "(?:Error #\\d+: ([\\s\\S]+?)\\r?\\n(# \\d+ [\\s\\S]*?\\r?\\n)(?=[^#])(Note: [\\s\\S]*?\\r?\\n\\r?\\n)?|" +
         "Error #\\d+: ([\\s\\S]+?)\\r?\\n\\r?\\n)";
 
-    /** The index of the regexp group capturing the header of the error or warning. */
-    private static final int HEADER_GROUP = 1;
+    /** The index of the regexp group capturing the header of the error or warning from the first part of the regex ( | ) statement. */
+    private static final int FIRST_HEADER_GROUP = 1;
 
     /** The index of the regexp group capturing the stack trace of the error or warning. */
     private static final int STACK_TRACE_GROUP = 2;
 
     /** The index of the regexp group capturing the notes of the error or warning. */
     private static final int NOTES_GROUP = 3;
+
+    /** The index of the regexp group capturing the header of the error or warning from the second part of the regex ( | ) statement. */
+    private static final int SECOND_HEADER_GROUP = 4;
 
     /** Regex pattern to extract the file path from a line. */
     private static final Pattern FILE_PATH_PATTERN =
@@ -75,7 +78,7 @@ public class DrMemoryParser extends RegexpDocumentParser {
 
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        String message = "";
+        StringBuilder messageBuilder = new StringBuilder();
         String filePath = "Nil";
         int lineNumber = 0;
         String category = "Unknown";
@@ -84,46 +87,50 @@ public class DrMemoryParser extends RegexpDocumentParser {
         // Store this for later use when finding the category.
         String header = "";
 
-        if (matcher.group(4) == null) {
-            String temp_header = matcher.group(HEADER_GROUP);
+        if (matcher.group(SECOND_HEADER_GROUP) == null) {
+            String temp_header = matcher.group(FIRST_HEADER_GROUP);
 
             if (temp_header != null) {
                 header = temp_header.trim();
-                message += header;
+                messageBuilder.append(header);
             }
 
             String stackTrace = matcher.group(STACK_TRACE_GROUP);
 
             if (stackTrace != null) {
-                SourceCodeLocation location = findOriginatingFilePath(stackTrace.trim().split("\\r?\\n"));
+                SourceCodeLocation location = findOriginatingErrLocation(stackTrace.trim().split("\\r?\\n"));
                 filePath = location.getFilePath();
                 lineNumber = location.getLineNumber();
 
                 stackTrace = stackTrace.trim();
-                message += "\n" + stackTrace;
+                messageBuilder.append("\n");
+                messageBuilder.append(stackTrace);
             }
 
             String notes = matcher.group(NOTES_GROUP);
 
             if (notes != null) {
                 notes = notes.trim();
-                message += "\n" + notes;
+                messageBuilder.append("\n");
+                messageBuilder.append(notes);
             }
         }
         else {
-            String temp_header = matcher.group(4);
+            String temp_header = matcher.group(SECOND_HEADER_GROUP);
 
             if (temp_header != null) {
                 header = temp_header.trim();
-                message += header;
+                messageBuilder.append(header);
             }
         }
 
-        if (message.equals("")) {
+        String message;
+
+        if (messageBuilder.length() == 0) {
             message = "Unknown Dr. Memory Error";
         }
         else {
-            message = message.replace("\n", "<br>");
+            message = messageBuilder.toString().replace("\n", "<br>");
         }
 
         header = header.toLowerCase();
@@ -175,7 +182,7 @@ public class DrMemoryParser extends RegexpDocumentParser {
      * @param stackTrace Array of strings in the stack trace in the correct order.
      * @return A SourceCodeLocation of where the error originated.
      */
-    private SourceCodeLocation findOriginatingFilePath(String[] stackTrace) {
+    private SourceCodeLocation findOriginatingErrLocation(String[] stackTrace) {
         String errFilePath = "Unknown"; // Path where the error originates from
         int lineNumber = 0; // Line number where the error originates from
 
@@ -200,7 +207,7 @@ public class DrMemoryParser extends RegexpDocumentParser {
     /**
      * Class that stores a file path and a line number pair.
      */
-    private final class SourceCodeLocation {
+    private final static class SourceCodeLocation {
         private final String filePath;
         private final int lineNumber;
 
