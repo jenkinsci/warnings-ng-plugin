@@ -186,10 +186,8 @@ public abstract class GraphConfigurationView implements ModelObject {
     public Object getDynamic(final String graphId, final StaplerRequest request, final StaplerResponse response) {
         try {
             BuildResultGraph graph = configuration.getGraph(graphId);
-            if (hasMeaningfulGraph()) {
-                if (graph.isVisible()) {
-                    return graph.getGraph(-1, configuration, null, buildHistory.getBaseline());
-                }
+            if (hasMeaningfulGraph() && graph.isVisible()) {
+                return graph.getGraph(-1, configuration, null, buildHistory.getBaseline());
             }
             response.sendRedirect2(request.getContextPath() + graph.getExampleImage());
         }

@@ -177,16 +177,18 @@ public class FilesParser extends MasterToSlaveFileCallable<ParserResult> {
      *            the message in singular or plural form depending on the count,
      *            or an empty string if the count is 0 and no format is specified
      */
-    protected String plural(final int count, String message) {
+    protected String plural(final int count, final String message) {
         if (count == 0 && !message.contains("%")) {
             return "";
         }
 
+        String messageFormat = message;
+
         if (count != 1) {
-            message += "s";
+            messageFormat += "s";
         }
 
-        return String.format(message, count);
+        return String.format(messageFormat, count);
     }
 
     @Override
