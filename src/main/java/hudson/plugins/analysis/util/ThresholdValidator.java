@@ -17,7 +17,7 @@ public class ThresholdValidator implements Validator {
     public FormValidation check(final String value) throws FormValidation {
         if (!StringUtils.isEmpty(value)) {
             try {
-                int integer = Integer.valueOf(value);
+                int integer = Integer.parseInt(value);
                 if (integer < 0) {
                     throw FormValidation.error(Messages.FieldValidator_Error_Threshold());
                 }

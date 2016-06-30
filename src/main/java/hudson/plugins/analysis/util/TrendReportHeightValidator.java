@@ -41,7 +41,7 @@ public class TrendReportHeightValidator implements Validator {
     public FormValidation check(final String value) throws FormValidation {
         if (!StringUtils.isEmpty(value)) {
             try {
-                int integer = Integer.valueOf(value);
+                int integer = Integer.parseInt(value);
                 if (integer < MINIMUM_HEIGHT) {
                     throw FormValidation.error(Messages.FieldValidator_Error_TrendHeight(MINIMUM_HEIGHT));
                 }
