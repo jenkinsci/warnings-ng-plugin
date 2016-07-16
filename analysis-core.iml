@@ -34,7 +34,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-io:commons-io:2.4" level="project" />
     <orderEntry type="library" name="Maven: com.infradna.tool:bridge-method-annotation:1.14" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci:annotation-indexer:1.4" level="project" />
-    <orderEntry type="library" name="Maven: joda-time:joda-time:2.1" level="project" />
+    <orderEntry type="library" name="Maven: joda-time:joda-time:1.6" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.main:maven-plugin:2.9" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:javadoc:1.0" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:mailer:1.7" level="project" />
