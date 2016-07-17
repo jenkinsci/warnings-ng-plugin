@@ -17,11 +17,14 @@ import com.google.common.collect.Sets;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import jenkins.tasks.SimpleBuildStep;
+
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
 import hudson.model.AbstractProject;
+import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Run;
@@ -48,7 +51,7 @@ import hudson.plugins.warnings.parser.WarningsFilter;
  * @author Ulli Hafner
  */
 // CHECKSTYLE:COUPLING-OFF
-public class WarningsPublisher extends HealthAwarePublisher {
+public class WarningsPublisher extends HealthAwarePublisher implements SimpleBuildStep {
     private static final long serialVersionUID = -5936973521277401764L;
 
     private static final String PLUGIN_NAME = "WARNINGS";
@@ -287,40 +290,41 @@ public class WarningsPublisher extends HealthAwarePublisher {
         return parsers;
     }
 
+
     @Override
-    protected BuildResult perform(final Run<?, ?> build, final FilePath workspace, final PluginLogger logger)
+    protected BuildResult perform(final Run<?, ?> run, final FilePath workspace, final PluginLogger logger)
             throws InterruptedException, IOException {
         try {
             if (!hasConsoleParsers() && !hasFileParsers()) {
                 throw new IOException("Error: No warning parsers defined in the job configuration.");
             }
 
-            List<ParserResult> fileResults = parseFiles(build, workspace, logger);
-            List<ParserResult> consoleResults = parseConsoleLog(build, workspace, logger);
+            List<ParserResult> fileResults = parseFiles(run, workspace, logger);
+            List<ParserResult> consoleResults = parseConsoleLog(run, workspace, logger);
 
             ParserResult totals = new ParserResult();
             add(totals, consoleResults);
             add(totals, fileResults);
 
-            BuildHistory history = new BuildHistory(build, AggregatedWarningsResultAction.class,
+            BuildHistory history = new BuildHistory(run, AggregatedWarningsResultAction.class,
                     usePreviousBuildAsReference(), useOnlyStableBuildsAsReference());
-            AggregatedWarningsResult result = new AggregatedWarningsResult(build, history, totals, getDefaultEncoding());
-            build.addAction(new AggregatedWarningsResultAction(build, result));
+            AggregatedWarningsResult result = new AggregatedWarningsResult(run, history, totals, getDefaultEncoding());
+            run.addAction(new AggregatedWarningsResultAction(run, result));
 
             return result;
         }
         catch (ParsingCanceledException exception) {
-            return emptyBuildResult(build, logger, exception);
+            return emptyBuildResult(run, logger, exception);
         }
         catch (InterruptedException exception) {
-            return emptyBuildResult(build, logger, exception);
+            return emptyBuildResult(run, logger, exception);
         }
     }
 
-    private BuildResult emptyBuildResult(final Run<?, ?> build, final PluginLogger logger, final Exception exception) {
+    private BuildResult emptyBuildResult(final Run<?, ?> run, final PluginLogger logger, final Exception exception) {
         logger.log(exception.getMessage());
 
-        return new AggregatedWarningsResult(build, new NullBuildHistory(), new ParserResult(), getDefaultEncoding());
+        return new AggregatedWarningsResult(run, new NullBuildHistory(), new ParserResult(), getDefaultEncoding());
     }
 
     private boolean hasFileParsers() {
@@ -347,7 +351,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
         }
     }
 
-    private List<ParserResult> parseConsoleLog(final Run<?, ?> build, final FilePath workspace, final PluginLogger logger)
+    private List<ParserResult> parseConsoleLog(final Run<?, ?> run, final FilePath workspace, final PluginLogger logger)
             throws IOException, InterruptedException {
         List<ParserResult> results = Lists.newArrayList();
         for (ConsoleParser parser : getConsoleParsers()) {
@@ -355,14 +359,14 @@ public class WarningsPublisher extends HealthAwarePublisher {
             logger.log("Parsing warnings in console log with parser " + parserName);
 
             Collection<FileAnnotation> warnings = new ParserRegistry(ParserRegistry.getParsers(parserName),
-                    getDefaultEncoding()).parse(build.getLogFile());
+                    getDefaultEncoding()).parse(run.getLogFile());
             if (!workspace.isRemote()) {
                 guessModuleNames(workspace, warnings);
             }
             ParserResult project = new ParserResult(workspace, canResolveRelativePaths());
             project.addAnnotations(warnings);
 
-            results.add(annotate(build, workspace, filterWarnings(project, logger), parserName));
+            results.add(annotate(run, workspace, filterWarnings(project, logger), parserName));
         }
         return results;
     }
@@ -385,37 +389,37 @@ public class WarningsPublisher extends HealthAwarePublisher {
         }
     }
 
-    private List<ParserResult> parseFiles(final Run<?, ?> build, final FilePath workspace, final PluginLogger logger)
+    private List<ParserResult> parseFiles(final Run<?, ?> run, final FilePath workspace, final PluginLogger logger)
             throws IOException, InterruptedException {
         List<ParserResult> results = Lists.newArrayList();
         for (ParserConfiguration configuration : getParserConfigurations()) {
-            String filePattern = expandFilePattern(configuration.getPattern(), build.getEnvironment(TaskListener.NULL));
+            String filePattern = expandFilePattern(configuration.getPattern(), run.getEnvironment(TaskListener.NULL));
             String parserName = configuration.getParserName();
 
             logger.log("Parsing warnings in files '" + filePattern + "' with parser " + parserName);
 
             FilesParser parser = new FilesParser(PLUGIN_NAME, filePattern,
                     new FileWarningsParser(ParserRegistry.getParsers(parserName), getDefaultEncoding()),
-                    shouldDetectModules(), isMavenBuild(build), canResolveRelativePaths());
+                    shouldDetectModules(), isMavenBuild(run), canResolveRelativePaths());
             ParserResult project = workspace.act(parser);
             logger.logLines(project.getLogMessages());
 
             returnIfCanceled();
-            results.add(annotate(build, workspace, filterWarnings(project, logger), configuration.getParserName()));
+            results.add(annotate(run, workspace, filterWarnings(project, logger), configuration.getParserName()));
         }
         return results;
     }
 
-    private ParserResult annotate(final Run<?, ?> build, final FilePath workspace, final ParserResult input, final String parserName)
+    private ParserResult annotate(final Run<?, ?> run, final FilePath workspace, final ParserResult input, final String parserName)
             throws IOException, InterruptedException {
         ParserResult output = workspace.act(new AnnotationsClassifier(input, getDefaultEncoding()));
         for (FileAnnotation annotation : output.getAnnotations()) {
             annotation.setPathName(workspace.getRemote());
         }
-        WarningsBuildHistory history = new WarningsBuildHistory(build, parserName,
+        WarningsBuildHistory history = new WarningsBuildHistory(run, parserName,
                 usePreviousBuildAsReference(), useOnlyStableBuildsAsReference());
-        WarningsResult result = new WarningsResult(build, history, output, getDefaultEncoding(), parserName);
-        build.addAction(new WarningsResultAction(build, this, result, parserName));
+        WarningsResult result = new WarningsResult(run, history, output, getDefaultEncoding(), parserName);
+        run.addAction(new WarningsResultAction(run, this, result, parserName));
 
         return output;
     }
@@ -435,8 +439,8 @@ public class WarningsPublisher extends HealthAwarePublisher {
     }
 
     @Override
-    public MatrixAggregator createAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener) {
-        return new WarningsAnnotationsAggregator(build, launcher, listener, this, getDefaultEncoding(),
+    public MatrixAggregator createAggregator(final MatrixBuild run, final Launcher launcher, final BuildListener listener) {
+        return new WarningsAnnotationsAggregator(run, launcher, listener, this, getDefaultEncoding(),
                 usePreviousBuildAsReference(), useOnlyStableBuildsAsReference());
     }
 

@@ -1,10 +1,15 @@
 package hudson.plugins.warnings;
 
 import org.jvnet.localizer.Localizable;
+
 import org.kohsuke.stapler.export.Exported;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import java.util.Collection;
+import java.util.Collections;
+
+import hudson.model.Action;
 import hudson.model.Run;
 import hudson.plugins.analysis.core.AbstractResultAction;
 import hudson.plugins.analysis.core.HealthDescriptor;
@@ -40,6 +45,17 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
         super(owner, new WarningsHealthDescriptor(healthDescriptor, ParserRegistry.getParser(parserName).getParserName()), result);
 
         this.parserName = parserName;
+    }
+    
+    /**
+     * Returns the project actions if this action is used in a pipeline.
+     *
+     * @return default implementation returns empty collection, plug-in must override if they want to contribute to the UI
+     */
+    // FIXME: See JENKINS-31202. Currently the whole graphing is based around AbstractBuild (large refactoring required)
+    @Override
+    public Collection<? extends Action> getProjectActions() {
+        return Collections.<Action>singleton(new WarningsProjectAction(this.getOwner().getParent(), parserName));
     }
 
     @Override @Exported
