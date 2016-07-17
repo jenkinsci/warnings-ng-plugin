@@ -16,7 +16,7 @@ import com.google.common.collect.Lists;
 
 import net.sf.json.JSONObject;
 
-import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.model.ModelObject;
 import hudson.plugins.analysis.core.AbstractHealthDescriptor;
 import hudson.plugins.analysis.core.BuildHistory;
@@ -28,8 +28,8 @@ import hudson.util.Graph;
 public abstract class GraphConfigurationView implements ModelObject {
     private static final Logger LOGGER = Logger.getLogger(GraphConfigurationView.class.getName());
 
-    /** The owning project to configure the graphs for. */
-    private final AbstractProject<?, ?> project;
+    /** The owning job to configure the graphs for. */
+    private final Job<?, ?> job;
 
     private final String key;
     private final BuildHistory buildHistory;
@@ -42,16 +42,16 @@ public abstract class GraphConfigurationView implements ModelObject {
      *
      * @param configuration
      *            the graph configuration
-     * @param project
-     *            the owning project to configure the graphs for
+     * @param job
+     *            the owning job to configure the graphs for
      * @param key
      *            unique key of this graph
      * @param buildHistory
-     *            the build history for this project
+     *            the build history for this job
      */
-    public GraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project, final String key, final BuildHistory buildHistory) {
+    public GraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job, final String key, final BuildHistory buildHistory) {
         this.configuration = configuration;
-        this.project = project;
+        this.job = job;
         this.key = key;
         this.buildHistory = buildHistory;
         healthDescriptor = buildHistory.getHealthDescriptor();
@@ -60,14 +60,14 @@ public abstract class GraphConfigurationView implements ModelObject {
     /**
      * Creates a file with for the default values.
      *
-     * @param project
-     *            the project used as directory for the file
+     * @param job
+     *            the job used as directory for the file
      * @param pluginName
      *            the name of the plug-in
      * @return the created file
      */
-    protected static File createDefaultsFile(final AbstractProject<?, ?> project, final String pluginName) {
-        return new File(project.getRootDir(), pluginName + ".txt");
+    protected static File createDefaultsFile(final Job<?, ?> job, final String pluginName) {
+        return new File(job.getRootDir(), pluginName + ".txt");
     }
 
     /**
@@ -86,12 +86,12 @@ public abstract class GraphConfigurationView implements ModelObject {
     }
 
     /**
-     * Returns the project.
+     * Returns the job.
      *
-     * @return the project
+     * @return the job
      */
-    public AbstractProject<?, ?> getOwner() {
-        return project;
+    public Job<?, ?> getOwner() {
+        return job;
     }
 
     /**
@@ -134,7 +134,7 @@ public abstract class GraphConfigurationView implements ModelObject {
         }
         finally {
             try {
-                response.sendRedirect(project.getAbsoluteUrl());
+                response.sendRedirect(job.getAbsoluteUrl());
             }
             catch (IOException exception) {
                 LOGGER.log(Level.SEVERE, "Can't redirect", exception);

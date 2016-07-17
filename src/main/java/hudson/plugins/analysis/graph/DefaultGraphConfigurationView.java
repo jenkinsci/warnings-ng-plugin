@@ -8,7 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import hudson.model.AbstractProject;
+import hudson.model.Job;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildHistory;
@@ -24,21 +24,21 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
      *
      * @param configuration
      *            the graph configuration
-     * @param project
-     *            the owning project to configure the graphs for
+     * @param job
+     *            the owning job to configure the graphs for
      * @param pluginName
-     *            The URL of the project action (there might be a one to many mapping to this defaults view)
+     *            The URL of the job action (there might be a one to many mapping to this defaults view)
      * @param buildHistory
-     *            the build history for this project
+     *            the build history for this job
      * @param url
      *            The URL of this view
      */
-    public DefaultGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
+    public DefaultGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
             final String pluginName, final BuildHistory buildHistory, final String url) {
-        super(configuration, project, pluginName, buildHistory);
+        super(configuration, job, pluginName, buildHistory);
         this.url = url;
 
-        configuration.initializeFromFile(createDefaultsFile(project, pluginName));
+        configuration.initializeFromFile(createDefaultsFile(job, pluginName));
     }
 
     /**
@@ -46,17 +46,17 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
      *
      * @param configuration
      *            the graph configuration
-     * @param project
-     *            the owning project to configure the graphs for
+     * @param job
+     *            the owning job to configure the graphs for
      * @param pluginName
      *            The name of the plug-in.
      * @param buildHistory
-     *            the build history for this project
+     *            the build history for this job
      */
-    public DefaultGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
+    public DefaultGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
             final String pluginName, final BuildHistory buildHistory) {
-        this(configuration, project, pluginName, buildHistory,
-                project.getAbsoluteUrl() + pluginName + "/configureDefaults");
+        this(configuration, job, pluginName, buildHistory,
+                job.getAbsoluteUrl() + pluginName + "/configureDefaults");
     }
 
     @Override

@@ -5,7 +5,7 @@ import javax.servlet.http.Cookie;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import hudson.model.AbstractProject;
+import hudson.model.Job;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildHistory;
@@ -21,23 +21,23 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      *
      * @param configuration
      *            the graph configuration
-     * @param project
-     *            the owning project to configure the graphs for
-     * @param projectActionUrl
-     *            The URL of the project action (used as cookie ID)
+     * @param job
+     *            the owning job to configure the graphs for
+     * @param jobActionUrl
+     *            The URL of the job action (used as cookie ID)
      * @param globalFileName
      *            The file name of the global configuration
      * @param cookies
      *            the cookies containing the graph configuration
      * @param buildHistory
-     *            the build history for this project
+     *            the build history for this job
      */
-    public UserGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
-            final String projectActionUrl, final String globalFileName, final Cookie[] cookies, final BuildHistory buildHistory) {
-        super(configuration, project, projectActionUrl, buildHistory);
+    public UserGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
+            final String jobActionUrl, final String globalFileName, final Cookie[] cookies, final BuildHistory buildHistory) {
+        super(configuration, job, jobActionUrl, buildHistory);
 
-        if (!configuration.initializeFrom(createCookieHandler(projectActionUrl).getValue(cookies))) {
-            configuration.initializeFromFile(createDefaultsFile(project, globalFileName));
+        if (!configuration.initializeFrom(createCookieHandler(jobActionUrl).getValue(cookies))) {
+            configuration.initializeFromFile(createDefaultsFile(job, globalFileName));
         }
     }
 
@@ -46,18 +46,18 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      *
      * @param configuration
      *            the graph configuration
-     * @param project
-     *            the owning project to configure the graphs for
-     * @param projectActionUrl
-     *            The URL of the project action
+     * @param job
+     *            the owning job to configure the graphs for
+     * @param jobActionUrl
+     *            The URL of the job action
      * @param cookies
      *            the cookies containing the graph configuration
      * @param buildHistory
-     *            the build history for this project
+     *            the build history for this job
      */
-    public UserGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
-            final String projectActionUrl, final Cookie[] cookies, final BuildHistory buildHistory) {
-        this(configuration, project, projectActionUrl, projectActionUrl, cookies, buildHistory);
+    public UserGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
+            final String jobActionUrl, final Cookie[] cookies, final BuildHistory buildHistory) {
+        this(configuration, job, jobActionUrl, jobActionUrl, cookies, buildHistory);
     }
 
     /**

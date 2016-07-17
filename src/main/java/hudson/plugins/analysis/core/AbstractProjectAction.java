@@ -17,11 +17,11 @@ import com.google.common.collect.Lists;
 
 import jenkins.model.Jenkins;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.model.Action;
 import hudson.model.Api;
-import hudson.model.Run;
 import hudson.plugins.analysis.graph.BuildResultGraph;
 import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
 import hudson.plugins.analysis.graph.DifferenceGraph;
@@ -38,7 +38,7 @@ import hudson.plugins.analysis.graph.UserGraphConfigurationView;
 import hudson.util.Graph;
 
 /**
- * A project action displays a link on the side panel of a project. This action
+ * A job action displays a link on the side panel of a job. This action
  * also is responsible to render the historical trend via its associated
  * 'floatingBox.jelly' view.
  *
@@ -52,7 +52,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     private static final Logger LOGGER = Logger.getLogger(AbstractProjectAction.class.getName());
 
     /** Project that owns this action. */
-    private final AbstractProject<?, ?> project;
+    private final Job<?, ?> job;
     /** The type of the result action.  */
     private final Class<? extends T> resultActionType;
     /** The icon URL of this action: it will be shown as soon as a result is available. */
@@ -66,6 +66,35 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     /** Human readable title of the trend graph. */
     private final Localizable trendName;
 
+    /**
+     * Creates a new instance of {@link AbstractProjectAction}.
+     *
+     * @param job
+     *            the job that owns this action
+     * @param resultActionType
+     *            the type of the result action
+     * @param name
+     *            the human readable name of this action
+     * @param trendName
+     *            the human readable name of the trend graph
+     * @param pluginUrl
+     *            the URL of the associated plug-in
+     * @param iconUrl
+     *            the icon to show
+     * @param resultUrl
+     *            the URL of the associated build results
+     */
+    public AbstractProjectAction(final Job<?, ?> job, final Class<? extends T> resultActionType,
+            final Localizable name, final Localizable trendName, final String pluginUrl, final String iconUrl, final String resultUrl) {
+        this.job = job;
+        this.resultActionType = resultActionType;
+        this.name = name;
+        this.trendName = trendName;
+        this.pluginUrl = pluginUrl;
+        this.iconUrl = iconUrl;
+        this.resultUrl = resultUrl;
+    }
+    
     /**
      * Creates a new instance of {@link AbstractProjectAction}.
      *
@@ -86,13 +115,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      */
     public AbstractProjectAction(final AbstractProject<?, ?> project, final Class<? extends T> resultActionType,
             final Localizable name, final Localizable trendName, final String pluginUrl, final String iconUrl, final String resultUrl) {
-        this.project = project;
-        this.resultActionType = resultActionType;
-        this.name = name;
-        this.trendName = trendName;
-        this.pluginUrl = pluginUrl;
-        this.iconUrl = iconUrl;
-        this.resultUrl = resultUrl;
+        this((Job<?, ?>) project, resultActionType, name, trendName, pluginUrl, iconUrl, resultUrl);
     }
 
     /**
@@ -129,16 +152,16 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     }
 
     /**
-     * Returns the project this action belongs to.
+     * Returns the job this action belongs to.
      *
-     * @return the project
+     * @return the job
      */
-    public final AbstractProject<?, ?> getProject() {
-        return project;
+    public final Job<?, ?> getProject() {
+        return job;
     }
 
     /**
-     * Returns the graph configuration view for this project. If the requested
+     * Returns the graph configuration view for this job. If the requested
      * link is neither the user graph configuration nor the default
      * configuration then <code>null</code> is returned.
      *
@@ -303,7 +326,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return build history
      */
     protected BuildHistory createBuildHistory() {
-        AbstractBuild<?, ?> lastFinishedBuild = getLastFinishedBuild();
+        Run<?, ?> lastFinishedBuild = getLastFinishedBuild();
         if (lastFinishedBuild == null) {
             return new NullBuildHistory();
         }
@@ -358,10 +381,10 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     }
 
     /**
-     * Returns the icon URL for the side-panel in the project screen. If there
+     * Returns the icon URL for the side-panel in the job screen. If there
      * is no valid result yet, then <code>null</code> is returned.
      *
-     * @return the icon URL for the side-panel in the project screen
+     * @return the icon URL for the side-panel in the job screen
      */
     @Override
     public String getIconFileName() {
@@ -378,7 +401,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
     }
 
     /**
-     * Returns whether this project has a valid result action attached.
+     * Returns whether this job has a valid result action attached.
      *
      * @return <code>true</code> if the results are valid
      */
@@ -394,7 +417,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      */
     @CheckForNull
     public ResultAction<?> getLastAction() {
-        AbstractBuild<?, ?> lastBuild = getLastFinishedBuild();
+        Run<?, ?> lastBuild = getLastFinishedBuild();
         if (lastBuild == null) {
             return null;
         }
@@ -411,7 +434,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      * @return the action or <code>null</code> if there is no such action
      */
     @CheckForNull
-    protected T getResultAction(final AbstractBuild<?, ?> lastBuild) {
+    protected T getResultAction(final Run<?, ?> lastBuild) {
         return lastBuild.getAction(resultActionType);
     }
 
@@ -422,11 +445,11 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *         such build
      */
     @CheckForNull @Exported
-    public AbstractBuild<?, ?> getLastFinishedBuild() {
-        if (project == null) {
+    public Run<?, ?> getLastFinishedBuild() {
+        if (job == null) {
             return null;
         }
-        AbstractBuild<?, ?> lastBuild = project.getLastBuild();
+        Run<?, ?> lastBuild = job.getLastBuild();
         while (lastBuild != null && (lastBuild.isBuilding() || getResultAction(lastBuild) == null)) {
             lastBuild = lastBuild.getPreviousBuild();
         }
@@ -444,7 +467,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      *             in case of an error
      */
     public void doIndex(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        AbstractBuild<?, ?> build = getLastFinishedBuild();
+        Run<?, ?> build = getLastFinishedBuild();
         if (build != null) {
             response.sendRedirect2(String.format("../%d/%s", build.getNumber(), resultUrl));
         }
@@ -464,6 +487,6 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      */
     @Deprecated
     public AbstractProjectAction(final AbstractProject<?, ?> project, final Class<? extends T> resultActionType, final PluginDescriptor plugin) {
-        this(project, resultActionType, null, null, plugin.getPluginName(), plugin.getIconUrl(), plugin.getPluginResultUrlName());
+        this((Job<?, ?>) project, resultActionType, null, null, plugin.getPluginName(), plugin.getIconUrl(), plugin.getPluginResultUrlName());
     }
 }
