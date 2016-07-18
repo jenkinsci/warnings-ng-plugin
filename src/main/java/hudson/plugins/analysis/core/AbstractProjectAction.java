@@ -174,7 +174,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      */
     @Deprecated
     public final AbstractProject<?, ?> getProject() {
-        return (AbstractProject<?, ?>) getOwner();
+        return owner instanceof AbstractProject ? (AbstractProject<?, ?>) owner : null;
     }
 
     /**

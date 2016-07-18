@@ -92,7 +92,7 @@ public class TrendDetails {
      */
     @Deprecated
     public AbstractProject<?, ?> getProject() {
-        return (AbstractProject<?, ?>) owner;
+        return owner instanceof AbstractProject ? (AbstractProject<?, ?>) owner : null;
     }
 }
 
