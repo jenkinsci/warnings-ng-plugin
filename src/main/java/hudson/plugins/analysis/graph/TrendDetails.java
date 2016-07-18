@@ -3,6 +3,7 @@ package hudson.plugins.analysis.graph;
 import org.kohsuke.stapler.StaplerRequest;
 
 import hudson.model.Job;
+import hudson.model.AbstractProject;
 import hudson.util.Graph;
 
 /**
@@ -14,8 +15,8 @@ public class TrendDetails {
     /** The graph to display. */
     private final Graph trendGraph;
     private final String id;
-    /** The job of the graph. */
-    private final Job<?, ?> job;
+    /** The owner of the graph. */
+    private final Job<?, ?> owner;
 
     /**
      * Creates a new instance of {@link TrendDetails}.
@@ -29,11 +30,29 @@ public class TrendDetails {
      */
     public TrendDetails(final Job<?, ?> job, final Graph trendGraph,
             final String id) {
-        this.job = job;
+        this.owner = job;
         this.trendGraph = trendGraph;
         this.id = id;
     }
 
+    /**
+     * Creates a new instance of {@link TrendDetails}.
+     *
+     * @param project
+     *            the project of the graph
+     * @param trendGraph
+     *            the graph
+     * @param id
+     *            the ID of the trend graph
+     * @deprecated use
+     *             {@link #TrendDetails(Job, Graph, String)}
+     */
+    @Deprecated
+    public TrendDetails(final AbstractProject<?, ?> project, final Graph trendGraph,
+            final String id) {
+        this((Job<?, ?>) project, trendGraph, id);
+    }
+    
     /**
      * Returns the trend graph.
      *
@@ -55,12 +74,25 @@ public class TrendDetails {
     }
 
     /**
+     * Returns the owner.
+     *
+     * @return the owner
+     */
+    public Job<?, ?> getOwner() {
+        return owner;
+    }
+    
+    /**
      * Returns the abstractProject.
      *
      * @return the abstractProject
+     *
+     * @deprecated use
+     *             {@link #getOwner()}
      */
-    public Job<?, ?> getJob() {
-        return job;
+    @Deprecated
+    public AbstractProject<?, ?> getProject() {
+        return (AbstractProject<?, ?>) owner;
     }
 }
 

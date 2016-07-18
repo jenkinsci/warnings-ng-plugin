@@ -6,6 +6,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import hudson.model.Job;
+import hudson.model.AbstractProject;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildHistory;
@@ -46,6 +47,30 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      *
      * @param configuration
      *            the graph configuration
+     * @param project
+     *            the owning project to configure the graphs for
+     * @param projectActionUrl
+     *            The URL of the project action (used as cookie ID)
+     * @param globalFileName
+     *            The file name of the global configuration
+     * @param cookies
+     *            the cookies containing the graph configuration
+     * @param buildHistory
+     *            the build history for this project
+     * @deprecated use
+     *             {@link #UserGraphConfigurationView(GraphConfiguration, Job, String, String, Cookie, BuildHistory)}
+     */
+    @Deprecated
+    public UserGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
+            final String projectActionUrl, final String globalFileName, final Cookie[] cookies, final BuildHistory buildHistory) {
+        this(configuration, (Job<?, ?>) project, projectActionUrl, globalFileName, cookies, buildHistory);
+    }
+    
+    /**
+     * Creates a new instance of {@link UserGraphConfigurationView}.
+     *
+     * @param configuration
+     *            the graph configuration
      * @param job
      *            the owning job to configure the graphs for
      * @param jobActionUrl
@@ -58,6 +83,28 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
     public UserGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
             final String jobActionUrl, final Cookie[] cookies, final BuildHistory buildHistory) {
         this(configuration, job, jobActionUrl, jobActionUrl, cookies, buildHistory);
+    }
+    
+    /**
+     * Creates a new instance of {@link UserGraphConfigurationView}.
+     *
+     * @param configuration
+     *            the graph configuration
+     * @param project
+     *            the owning project to configure the graphs for
+     * @param projectActionUrl
+     *            The URL of the project action
+     * @param cookies
+     *            the cookies containing the graph configuration
+     * @param buildHistory
+     *            the build history for this project
+     * @deprecated use
+     *             {@link #UserGraphConfigurationView(GraphConfiguration, Job, String, Cookie, BuildHistory)}
+     */
+    @Deprecated
+    public UserGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
+            final String projectActionUrl, final Cookie[] cookies, final BuildHistory buildHistory) {
+        this(configuration, (Job<?, ?>) project, projectActionUrl, projectActionUrl, cookies, buildHistory);
     }
 
     /**

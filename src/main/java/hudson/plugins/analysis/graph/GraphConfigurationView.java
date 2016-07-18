@@ -12,11 +12,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
+import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
+
 import com.google.common.collect.Lists;
 
 import net.sf.json.JSONObject;
 
 import hudson.model.Job;
+import hudson.model.AbstractProject;
 import hudson.model.ModelObject;
 import hudson.plugins.analysis.core.AbstractHealthDescriptor;
 import hudson.plugins.analysis.core.BuildHistory;
@@ -29,7 +32,7 @@ public abstract class GraphConfigurationView implements ModelObject {
     private static final Logger LOGGER = Logger.getLogger(GraphConfigurationView.class.getName());
 
     /** The owning job to configure the graphs for. */
-    private final Job<?, ?> job;
+    private final Job<?, ?> owner;
 
     private final String key;
     private final BuildHistory buildHistory;
@@ -51,12 +54,31 @@ public abstract class GraphConfigurationView implements ModelObject {
      */
     public GraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job, final String key, final BuildHistory buildHistory) {
         this.configuration = configuration;
-        this.job = job;
+        this.owner = job;
         this.key = key;
         this.buildHistory = buildHistory;
         healthDescriptor = buildHistory.getHealthDescriptor();
     }
 
+    /**
+     * Creates a new instance of {@link GraphConfigurationView}.
+     *
+     * @param configuration
+     *            the graph configuration
+     * @param project
+     *            the owning project to configure the graphs for
+     * @param key
+     *            unique key of this graph
+     * @param buildHistory
+     *            the build history for this project
+     * @deprecated use
+     *             {@link #GraphConfigurationView(GraphConfiguration, Job, String, BuildHistory)}
+     */
+    @Deprecated
+    public GraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project, final String key, final BuildHistory buildHistory) {
+        this(configuration, (Job<?, ?>) project, key, buildHistory);
+    }
+    
     /**
      * Creates a file with for the default values.
      *
@@ -68,6 +90,23 @@ public abstract class GraphConfigurationView implements ModelObject {
      */
     protected static File createDefaultsFile(final Job<?, ?> job, final String pluginName) {
         return new File(job.getRootDir(), pluginName + ".txt");
+    }
+    
+    /**
+     * Creates a file with for the default values.
+     *
+     * @param project
+     *            the project used as directory for the file
+     * @param pluginName
+     *            the name of the plug-in
+     * @return the created file
+     *
+     * @deprecated use
+     *             {@link #createDefaultsFile(Job, String)}
+     */
+    @Deprecated
+    protected static File createDefaultsFile(final AbstractProject<?, ?> project, final String pluginName) {
+        return createDefaultsFile((Job<?, ?>) project, pluginName);
     }
 
     /**
@@ -86,12 +125,24 @@ public abstract class GraphConfigurationView implements ModelObject {
     }
 
     /**
-     * Returns the job.
+     * Returns the owner.
      *
-     * @return the job
+     * @return the owner
      */
+    @WithBridgeMethods(value=AbstractProject.class, adapterMethod="getAbstractProject")
     public Job<?, ?> getOwner() {
-        return job;
+        return owner;
+    }
+
+   /**
+     * Added for backward compatibility. It generates <pre>AbstractProject getOwner()</pre> bytecode during the build
+     * process, so old implementations can use that signature.
+     * 
+     * @see {@link WithBridgeMethods}
+     */
+    @Deprecated
+    private Object getAbstractProject(final Job owner, final Class targetClass) {
+        return owner instanceof AbstractProject ? (AbstractProject) owner : null;
     }
 
     /**
@@ -134,7 +185,7 @@ public abstract class GraphConfigurationView implements ModelObject {
         }
         finally {
             try {
-                response.sendRedirect(job.getAbsoluteUrl());
+                response.sendRedirect(owner.getAbsoluteUrl());
             }
             catch (IOException exception) {
                 LOGGER.log(Level.SEVERE, "Can't redirect", exception);
