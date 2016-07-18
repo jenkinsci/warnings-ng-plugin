@@ -69,7 +69,7 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
 
     private UserGraphConfigurationView createUserConfiguration(final StaplerRequest request, final String urlName) {
         return new UserGraphConfigurationView(
-                createConfiguration(getAvailableGraphs()), getProject(),
+                createConfiguration(getAvailableGraphs()), getOwner(),
                 urlName, WarningsDescriptor.getProjectUrl(null),
                 request.getCookies(), createBuildHistory());
     }
@@ -77,7 +77,7 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
     @Override
     protected GraphConfigurationView createDefaultConfiguration() {
         return new DefaultGraphConfigurationView(
-                createConfiguration(getAvailableGraphs()), getProject(),
+                createConfiguration(getAvailableGraphs()), getOwner(),
                 WarningsDescriptor.getProjectUrl(parser),
                 createBuildHistory(), WarningsDescriptor.getProjectUrl(null));
     }
@@ -106,7 +106,7 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
      */
     @Override
     protected BuildHistory createBuildHistory() {
-        Run<?, ?> lastFinishedBuild = getLastFinishedBuild();
+        Run<?, ?> lastFinishedBuild = getLastFinishedRun();
         if (lastFinishedBuild == null) {
             return new NullBuildHistory();
         }
