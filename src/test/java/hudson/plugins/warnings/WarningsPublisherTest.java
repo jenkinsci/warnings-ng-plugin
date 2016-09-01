@@ -2,7 +2,6 @@ package hudson.plugins.warnings;
 
 import java.util.Collections;
 import java.util.List;
-import com.google.common.collect.Lists;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -13,9 +12,12 @@ import jenkins.plugins.git.GitSampleRepoRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
-import hudson.model.Action;
+
+import com.google.common.collect.Lists;
 
 import static org.junit.Assert.*;
+
+import hudson.model.Action;
 
 /**
  * Tests the class {@link WarningsPublisher}.
@@ -24,20 +26,21 @@ import static org.junit.Assert.*;
  */
 public class WarningsPublisherTest {
     private static final String SUFFIX_NAME = " Warnings";
+    private static final String SECOND = "PyLint";
     private static final String FIRST = "Maven";
-    private static final String SECOND = "JSLint";
     private static final String PATTERN = "Pattern";
     
-    @Rule public JenkinsRule jenkinsRule = new JenkinsRule();
+    @Rule 
+    public JenkinsRule jenkinsRule = new JenkinsRule();
 
-   /**
+    /**
      * Verifies that the order of warnings is preserved.
      *
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-14615">Issue 14615</a>
      */
     @Test 
     public void testIssue14615Console() throws Exception {
-	String flow = "node {\n"
+        String flow = "node {\n"
 	            + "  step([$class: 'WarningsPublisher', consoleParsers: [[parserName: '" + FIRST  + "']]])\n"
 	            + "  step([$class: 'WarningsPublisher', consoleParsers: [[parserName: '" + SECOND + "']]])\n"
                     + "}\n";
@@ -51,7 +54,7 @@ public class WarningsPublisherTest {
 	checkOrder(expected, ordered);
     }
 
-   /**
+    /**
      * Verifies that the order of warnings is preserved.
      *
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-14615">Issue 14615</a>
@@ -75,7 +78,7 @@ public class WarningsPublisherTest {
     private List<Action> getListOfActions(String flow) throws Exception {
 	WorkflowJob job = jenkinsRule.jenkins.createProject(WorkflowJob.class, "p");
         job.setDefinition(new CpsFlowDefinition(flow));
-	jenkinsRule.assertBuildStatusSuccess(job.scheduleBuild2(0));
+	job.scheduleBuild2(0);
         jenkinsRule.waitUntilNoActivity();
 
         return Lists.newArrayList(job.getLastBuild().getAllActions());
@@ -88,38 +91,21 @@ public class WarningsPublisherTest {
         return expected;
     }
 
-    /* 
-     * INFO ordered looks like this:
-     * - Cause
-     * - null
-     * - Git Build Data
-     * - No Tags
-     * - null
-     * - Maven Warnings
-     * - Compiler Warnings
-     * - JSLint Warnings
-     * - Compiler Warnings
-     * - Replay
-     * - null
-     * - Pipeline Steps
-     * - null
-     */
     private void checkOrder(final List<String> expected, final List<Action> ordered) {
-        int numberOfActions = (expected.size() * 2) + 4;
-	assertEquals("Wrong number of actions.", numberOfActions, ordered.size());
-
         for (int position = 0; position < ordered.size(); position++) {
-           System.out.println(ordered.get(position).getDisplayName());
+            System.out.println(ordered.get(position).getDisplayName());
         }
+	
+	assertEquals("Wrong number of actions.", 8, ordered.size());
 
         for (int position = 0; position < expected.size(); position++) {
-           assertPosition(ordered, expected, position);
+            assertPosition(ordered, expected, position);
         }
     }
 
     private void assertPosition(final List<Action> ordered, final List<String> expected, final int position) {
-        int orderedPosition = (position * 2) + 5;  // 0 => 5, 1 => 7, 2 => 9, ...
-	assertEquals("Wrong action at position " + position, expected.get(position), ordered.get(orderedPosition).getDisplayName());
+         int orderedPosition = (position * 2) + 5;
+	 assertEquals("Wrong action at position " + position, expected.get(position), ordered.get(orderedPosition).getDisplayName());
     }
 }
 
