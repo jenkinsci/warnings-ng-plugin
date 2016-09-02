@@ -14,10 +14,6 @@
   <version>4.57-SNAPSHOT</version>
   <url>http://wiki.jenkins-ci.org/x/G4CGAQ</url>
   <description>This plug-in reads the compiler warnings from the console log file and generates a trend report.</description>
-   
-  <properties>
-      <jenkins.version>1.642.3</jenkins.version>
-  </properties>
 
   <licenses>
     <license>
@@ -71,24 +67,6 @@
       <artifactId>workflow-scm-step</artifactId>
       <version>2.2</version>
       <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>scm-api</artifactId>
-      <scope>test</scope>
-      <version>1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>branch-api</artifactId>
-      <version>1.11-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>cloudbees-folder</artifactId>
-      <version>5.12</version>
       <scope>test</scope>
     </dependency>
     <dependency>

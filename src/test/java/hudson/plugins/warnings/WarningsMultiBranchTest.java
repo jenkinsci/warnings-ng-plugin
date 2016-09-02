@@ -1,13 +1,8 @@
 package hudson.plugins.warnings;
 
-import java.util.Collections;
-import java.util.List;
-import com.google.common.collect.Lists;
-import jenkins.scm.api.SCMHead;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.WebAssert;
 import org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject;
 import com.cloudbees.hudson.plugins.folder.computed.FolderComputation;
+import jenkins.scm.api.SCMHead;
 import javax.annotation.Nonnull;
 import jenkins.branch.BranchProperty;
 import jenkins.branch.BranchSource;
@@ -19,8 +14,9 @@ import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
-import hudson.model.Action;
 
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.WebAssert;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -38,23 +34,23 @@ public class WarningsMultiBranchTest {
     @Rule public GitSampleRepoRule sampleRepo = new GitSampleRepoRule();
 
    /**
-     * Verifies that the order of warnings is preserved.
+     * Verifies that the graph is shown in multibranch job.
      *
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-31202">Issue 31202</a>
      */
     @Test 
     public void testIssue31202() throws Exception {
         sampleRepo.init();
-	sampleRepo.write("Jenkinsfile", "" 
-	               + "node {\n"
-	               + "  checkout scm\n"
-	               + "  step([$class: 'WarningsPublisher', parserConfigurations: [[parserName: '" + PARSER + "', pattern: '" + PATTERN + "']]])\n"
-		       + "}\n"
-	);
+        sampleRepo.write("Jenkinsfile", "" 
+                       + "node {\n"
+                       + "  checkout scm\n"
+                       + "  step([$class: 'WarningsPublisher', parserConfigurations: [[parserName: '" + PARSER + "', pattern: '" + PATTERN + "']]])\n"
+                       + "}\n"
+                        );
         sampleRepo.git("add", "Jenkinsfile"); 
-	sampleRepo.git("commit", "--all", "--message=flow1");
+        sampleRepo.git("commit", "--all", "--message=flow1");
 	
-	WorkflowMultiBranchProject mp = jenkinsRule.jenkins.createProject(WorkflowMultiBranchProject.class, "p");
+        WorkflowMultiBranchProject mp = jenkinsRule.jenkins.createProject(WorkflowMultiBranchProject.class, "p");
         mp.getSourcesList().add(new BranchSource(new GitSCMSource(null, sampleRepo.toString(), "", "*", "", false), new DefaultBranchPropertyStrategy(new BranchProperty[0])));
         WorkflowJob p = scheduleAndFindBranchProject(mp, "master");
         assertEquals(new SCMHead("master"), SCMHead.HeadByItem.findHead(p));
@@ -62,19 +58,19 @@ public class WarningsMultiBranchTest {
         jenkinsRule.waitUntilNoActivity();
         WorkflowRun b1 = p.getLastBuild();
         assertEquals(1, b1.getNumber());
-	sampleRepo.write("new", "empty");
+        sampleRepo.write("new", "empty");
         sampleRepo.git("add", "new"); 
-	sampleRepo.git("commit", "--all", "--message=flow2");
+        sampleRepo.git("commit", "--all", "--message=flow2");
         p = scheduleAndFindBranchProject(mp, "master");
-	jenkinsRule.waitUntilNoActivity();
+        jenkinsRule.waitUntilNoActivity();
         b1 = p.getLastBuild();
         assertEquals(2, b1.getNumber());
-	
-	HtmlPage page = jenkinsRule.createWebClient().getPage(p,"");
-	WebAssert.assertTextPresent(page, "Pipeline master");
-	WebAssert.assertTextPresent(page, PARSER);
-	WebAssert.assertTextPresent(page, "Enlarge");
-	WebAssert.assertTextPresent(page, "Configure");
+
+        HtmlPage page = jenkinsRule.createWebClient().getPage(p,"");
+        WebAssert.assertTextPresent(page, "Pipeline master");
+        WebAssert.assertTextPresent(page, PARSER + SUFFIX_NAME + " Trend");
+        WebAssert.assertTextPresent(page, "Enlarge");
+        WebAssert.assertTextPresent(page, "Configure");
     }
 
     public static @Nonnull WorkflowJob scheduleAndFindBranchProject(@Nonnull WorkflowMultiBranchProject mp, @Nonnull String name) throws Exception {

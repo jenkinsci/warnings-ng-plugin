@@ -29,8 +29,8 @@ public class WarningsPublisherTest {
     private static final String SECOND = "PyLint";
     private static final String FIRST = "Maven";
     private static final String PATTERN = "Pattern";
-    
-    @Rule 
+
+    @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
 
     /**
@@ -41,17 +41,17 @@ public class WarningsPublisherTest {
     @Test 
     public void testIssue14615Console() throws Exception {
         String flow = "node {\n"
-	            + "  step([$class: 'WarningsPublisher', consoleParsers: [[parserName: '" + FIRST  + "']]])\n"
-	            + "  step([$class: 'WarningsPublisher', consoleParsers: [[parserName: '" + SECOND + "']]])\n"
+                    + "  step([$class: 'WarningsPublisher', consoleParsers: [[parserName: '" + FIRST  + "']]])\n"
+                    + "  step([$class: 'WarningsPublisher', consoleParsers: [[parserName: '" + SECOND + "']]])\n"
                     + "}\n";
 	
-	List<Action> ordered = getListOfActions(flow);
+        List<Action> ordered = getListOfActions(flow);
         List<String> expected = createExpectedResult();
 
         Collections.reverse(ordered);
-	Collections.reverse(expected);
+        Collections.reverse(expected);
 
-	checkOrder(expected, ordered);
+        checkOrder(expected, ordered);
     }
 
     /**
@@ -61,24 +61,24 @@ public class WarningsPublisherTest {
      */
     @Test
     public void testIssue14615File() throws Exception {
-	String flow = "node {\n"
-	            + "  step([$class: 'WarningsPublisher', parserConfigurations: [[parserName: '" + FIRST  + "', pattern: '" + PATTERN + "']]])\n"
-	            + "  step([$class: 'WarningsPublisher', parserConfigurations: [[parserName: '" + SECOND + "', pattern: '" + PATTERN + "']]])\n"
+        String flow = "node {\n"
+                    + "  step([$class: 'WarningsPublisher', parserConfigurations: [[parserName: '" + FIRST  + "', pattern: '" + PATTERN + "']]])\n"
+                    + "  step([$class: 'WarningsPublisher', parserConfigurations: [[parserName: '" + SECOND + "', pattern: '" + PATTERN + "']]])\n"
                     + "}\n";
 	
-	List<Action> ordered = getListOfActions(flow);
+        List<Action> ordered = getListOfActions(flow);
         List<String> expected = createExpectedResult();
 
         Collections.reverse(ordered);
-	Collections.reverse(expected);
+        Collections.reverse(expected);
 
-	checkOrder(expected, ordered);
+        checkOrder(expected, ordered);
     }
     
     private List<Action> getListOfActions(String flow) throws Exception {
-	WorkflowJob job = jenkinsRule.jenkins.createProject(WorkflowJob.class, "p");
+        WorkflowJob job = jenkinsRule.jenkins.createProject(WorkflowJob.class, "p");
         job.setDefinition(new CpsFlowDefinition(flow));
-	job.scheduleBuild2(0);
+        job.scheduleBuild2(0);
         jenkinsRule.waitUntilNoActivity();
 
         return Lists.newArrayList(job.getLastBuild().getAllActions());
@@ -96,7 +96,7 @@ public class WarningsPublisherTest {
             System.out.println(ordered.get(position).getDisplayName());
         }
 	
-	assertEquals("Wrong number of actions.", 8, ordered.size());
+        assertEquals("Wrong number of actions.", 8, ordered.size());
 
         for (int position = 0; position < expected.size(); position++) {
             assertPosition(ordered, expected, position);
@@ -104,8 +104,8 @@ public class WarningsPublisherTest {
     }
 
     private void assertPosition(final List<Action> ordered, final List<String> expected, final int position) {
-         int orderedPosition = (position * 2) + 5;
-	 assertEquals("Wrong action at position " + position, expected.get(position), ordered.get(orderedPosition).getDisplayName());
+        int orderedPosition = (position * 2) + 5;
+        assertEquals("Wrong action at position " + position, expected.get(position), ordered.get(orderedPosition).getDisplayName());
     }
 }
 
