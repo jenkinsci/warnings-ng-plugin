@@ -20,6 +20,7 @@ import hudson.plugins.analysis.graph.GraphConfiguration;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.util.CopyOnWriteList;
 import hudson.util.FormValidation;
+import java.util.List;
 
 /**
  * Descriptor for the class {@link WarningsPublisher}. Used as a singleton. The
@@ -151,14 +152,27 @@ public final class WarningsDescriptor extends PluginDescriptor implements Staple
         return groovyParsers.toArray(new GroovyParser[groovyParsers.size()]);
     }
 
-    @Override
-    public boolean configure(final StaplerRequest req, final JSONObject formData) {
-        groovyParsers.replaceBy(req.bindJSONToList(GroovyParser.class, formData.get("parsers")));
+    /**
+     * Replaces the list of given groovy Parsers
+     *
+     * @return the Boolean value after replacing the given groovy Parsers.
+     */
+
+    public boolean replaceGroovyParsers(List<GroovyParser> groovyParserList) {
+        groovyParsers.replaceBy(groovyParserList);
 
         save();
 
         return true;
     }
+
+    @Override
+    public boolean configure(final StaplerRequest req, final JSONObject formData) {
+        replaceGroovyParsers(req.bindJSONToList(GroovyParser.class, formData.get("parsers")));
+
+        return true;
+    }
+
 
     @Override
     public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
