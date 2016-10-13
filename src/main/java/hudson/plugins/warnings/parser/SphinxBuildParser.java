@@ -28,11 +28,6 @@ public class SphinxBuildParser extends RegexpLineParser {
     }
 
     @Override
-    protected String getId() {
-        return "Sphinx-build";
-    }
-
-    @Override
     protected Warning createWarning(final Matcher matcher) {
         String message = matcher.group(4);
         String category = classifyIfEmpty(matcher.group(3), message);
