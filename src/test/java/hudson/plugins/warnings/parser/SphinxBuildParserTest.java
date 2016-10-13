@@ -22,7 +22,7 @@ public class SphinxBuildParserTest extends ParserTester {
 
 
     /**
-     * Parses a file with two SphinxBuild warnings.
+     * Parses a file with six SphinxBuild warnings.
      *
      * @throws IOException
      *      if the file could not be read
