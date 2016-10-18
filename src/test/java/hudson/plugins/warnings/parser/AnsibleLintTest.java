@@ -3,7 +3,6 @@ package hudson.plugins.warnings.parser;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
@@ -20,7 +19,7 @@ public class AnsibleLintTest extends ParserTester {
     private static final String WARNING_TYPE = Messages._Warnings_AnsibleLint_ParserName().toString(Locale.ENGLISH);
 
     /**
-     * Parses a string with ansible-lint warning
+     * Parses a file with 4 ansible-lint warnings
      *
      * @throws IOException
      *             if the string could not be read
@@ -28,31 +27,43 @@ public class AnsibleLintTest extends ParserTester {
 
     @Test
     public void testWarningParserError() throws IOException {
-        shouldParseWarning(
-                "/workspace/roles/roll_forward_target/tasks/main.yml:12: [EANSIBLE0013] Use shell only when shell functionality is required",
-                12, "Use shell only when shell functionality is required","/workspace/roles/roll_forward_target/tasks/main.yml",WARNING_TYPE,"ANSIBLE0013",Priority.NORMAL);
-    }
+        Collection<FileAnnotation> warnings = new AnsibleLintParser().parse(openFile());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED,4,warnings.size());
 
-    private void shouldParseWarning(final String log, final int lineNumber, final String message, final String fileName,
-            final String type, final String category, final Priority priority) {
-        try {
-            Collection<FileAnnotation> warnings = new AnsibleLintParser().parse(new StringReader(log));
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        FileAnnotation annotation = iterator.next();
+        checkWarning(annotation,
+                2,
+                "Trailing whitespace",
+                "/workspace/roles/backup/tasks/main.yml",
+                WARNING_TYPE, "ANSIBLE0002", Priority.NORMAL);
 
-            assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        annotation = iterator.next();
+        checkWarning(annotation,
+                1,
+                "Commands should not change things if nothing needs doing",
+                "/workspace/roles/upgrade/tasks/main.yml",
+                WARNING_TYPE,"ANSIBLE0012",Priority.NORMAL);
 
-            Iterator<FileAnnotation> iterator = warnings.iterator();
-            FileAnnotation annotation = iterator.next();
-            checkWarning(annotation, lineNumber, message, fileName, type, category, priority);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                12,
+                "All tasks should be named",
+                "/workspace/roles/upgrade/tasks/main.yml",
+                WARNING_TYPE,"ANSIBLE0011",Priority.NORMAL);
 
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        annotation = iterator.next();
+        checkWarning(annotation,
+                12,
+                "Use shell only when shell functionality is required",
+                "/workspace/roles/roll_forward_target/tasks/main.yml",
+                WARNING_TYPE,"ANSIBLE0013",Priority.NORMAL);
+
     }
 
     @Override
     protected String getWarningsFile() {
-        return null; // StringReader used in all tests
+        return "ansibleLint.txt";
     }
 
 }
