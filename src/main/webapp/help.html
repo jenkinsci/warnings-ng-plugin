@@ -67,6 +67,16 @@ ORDER BY object_type, object_name;
   <pre>
       <code>find . -iname *.pp -exec puppet-lint --log-format "%{path}:%{line}:%{check}:%{KIND}:%{message}" {} \;</code>
   </pre>
+
+  <h4>Ansible Lint</h4>
+  <p>
+    To be able to grab ansible lint output, you will need to add
+    the <code>-p flag</code>.<br/>
+  </p>
+  <p>Example:</p>
+  <pre>
+      <code>ansible-lint -p example_file.yml</code>
+  </pre>
   
   <h4>JSLint</h4>
   <p>
