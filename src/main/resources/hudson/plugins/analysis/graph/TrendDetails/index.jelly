@@ -3,7 +3,7 @@
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
   xmlns:i="jelly:fmt" xmlns:u="/util">
   <l:layout norefresh="true">
-    <st:include it="${it.project}" page="sidepanel.jelly" />
+    <st:include it="${it.owner}" page="sidepanel.jelly" />
     <l:main-panel>
       <!-- Note that the parameter url=${trendGraphId} is not used by the graph: it
            has been added to provide different URLs so that the images are not cached by the browser. -->

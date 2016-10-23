@@ -5,6 +5,7 @@ import javax.servlet.http.Cookie;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
+import hudson.model.Job;
 import hudson.model.AbstractProject;
 
 import hudson.plugins.analysis.Messages;
@@ -21,6 +22,31 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      *
      * @param configuration
      *            the graph configuration
+     * @param job
+     *            the owning job to configure the graphs for
+     * @param jobActionUrl
+     *            The URL of the job action (used as cookie ID)
+     * @param globalFileName
+     *            The file name of the global configuration
+     * @param cookies
+     *            the cookies containing the graph configuration
+     * @param buildHistory
+     *            the build history for this job
+     */
+    public UserGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
+            final String jobActionUrl, final String globalFileName, final Cookie[] cookies, final BuildHistory buildHistory) {
+        super(configuration, job, jobActionUrl, buildHistory);
+
+        if (!configuration.initializeFrom(createCookieHandler(jobActionUrl).getValue(cookies))) {
+            configuration.initializeFromFile(createDefaultsFile(job, globalFileName));
+        }
+    }
+
+    /**
+     * Creates a new instance of {@link UserGraphConfigurationView}.
+     *
+     * @param configuration
+     *            the graph configuration
      * @param project
      *            the owning project to configure the graphs for
      * @param projectActionUrl
@@ -31,16 +57,34 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      *            the cookies containing the graph configuration
      * @param buildHistory
      *            the build history for this project
+     * @deprecated use
+     *             {@link #UserGraphConfigurationView(GraphConfiguration, Job, String, String, Cookie, BuildHistory)}
      */
+    @Deprecated
     public UserGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
             final String projectActionUrl, final String globalFileName, final Cookie[] cookies, final BuildHistory buildHistory) {
-        super(configuration, project, projectActionUrl, buildHistory);
-
-        if (!configuration.initializeFrom(createCookieHandler(projectActionUrl).getValue(cookies))) {
-            configuration.initializeFromFile(createDefaultsFile(project, globalFileName));
-        }
+        this(configuration, (Job<?, ?>) project, projectActionUrl, globalFileName, cookies, buildHistory);
     }
-
+    
+    /**
+     * Creates a new instance of {@link UserGraphConfigurationView}.
+     *
+     * @param configuration
+     *            the graph configuration
+     * @param job
+     *            the owning job to configure the graphs for
+     * @param jobActionUrl
+     *            The URL of the job action
+     * @param cookies
+     *            the cookies containing the graph configuration
+     * @param buildHistory
+     *            the build history for this job
+     */
+    public UserGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
+            final String jobActionUrl, final Cookie[] cookies, final BuildHistory buildHistory) {
+        this(configuration, job, jobActionUrl, jobActionUrl, cookies, buildHistory);
+    }
+    
     /**
      * Creates a new instance of {@link UserGraphConfigurationView}.
      *
@@ -54,10 +98,13 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      *            the cookies containing the graph configuration
      * @param buildHistory
      *            the build history for this project
+     * @deprecated use
+     *             {@link #UserGraphConfigurationView(GraphConfiguration, Job, String, Cookie, BuildHistory)}
      */
+    @Deprecated
     public UserGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
             final String projectActionUrl, final Cookie[] cookies, final BuildHistory buildHistory) {
-        this(configuration, project, projectActionUrl, projectActionUrl, cookies, buildHistory);
+        this(configuration, (Job<?, ?>) project, projectActionUrl, projectActionUrl, cookies, buildHistory);
     }
 
     /**
