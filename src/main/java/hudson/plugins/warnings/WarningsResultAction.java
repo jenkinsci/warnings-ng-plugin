@@ -1,12 +1,12 @@
 package hudson.plugins.warnings;
 
+import java.util.Collection;
+
 import org.jvnet.localizer.Localizable;
 import org.kohsuke.stapler.export.Exported;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import java.util.Collection;
-import java.util.Collections;
 import hudson.model.Action;
 import hudson.model.Run;
 import hudson.plugins.analysis.core.AbstractResultAction;
@@ -46,13 +46,13 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
     }
     
     /**
-     * Returns the project actions if this action is used in a pipeline.
+     * Returns the associated project action for this result.
      *
-     * @return default implementation returns empty collection, plug-in must override if they want to contribute to the UI
+     * @return the project action for this result
      */
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return Collections.<Action>singleton(new WarningsProjectAction(this.getOwner().getParent(), parserName));
+        return asSet(new WarningsProjectAction(getJob(), parserName));
     }
 
     @Override @Exported

@@ -1,5 +1,8 @@
 package hudson.plugins.warnings;
 
+import java.util.Collection;
+
+import hudson.model.Action;
 import hudson.model.Run;
 import hudson.plugins.analysis.core.AbstractResultAction;
 import hudson.plugins.analysis.core.NullHealthDescriptor;
@@ -25,6 +28,16 @@ public class AggregatedWarningsResultAction extends AbstractResultAction<Aggrega
      */
     public AggregatedWarningsResultAction(final Run<?, ?> owner, final AggregatedWarningsResult result) {
         super(owner, NULL_HEALTH_DESCRIPTOR, result);
+    }
+
+    /**
+     * Returns the associated project action for this result.
+     *
+     * @return the project action for this result
+     */
+    @Override
+    public Collection<? extends Action> getProjectActions() {
+        return asSet(new AggregatedWarningsProjectAction(getJob()));
     }
 
     @Override

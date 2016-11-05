@@ -14,11 +14,8 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import java.util.Collection;
-import java.util.Collections;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import jenkins.tasks.SimpleBuildStep;
 
 import hudson.FilePath;
@@ -26,7 +23,6 @@ import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
 import hudson.model.AbstractProject;
-import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Run;
@@ -269,11 +265,6 @@ public class WarningsPublisher extends HealthAwarePublisher implements SimpleBui
     @Override
     public Action getProjectAction(final AbstractProject<?, ?> project) {
         throw new IllegalStateException("Not available since release 4.0.");
-    }
-
-    @Override
-    public Collection<? extends Action> getProjectActions(final AbstractProject<?, ?> project) {
-        return Collections.emptyList();
     }
 
     private List<String> getParsers() {
