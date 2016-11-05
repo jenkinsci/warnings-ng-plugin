@@ -6,8 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.model.Run;
 import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.analysis.core.BuildHistory;
@@ -19,7 +18,7 @@ import hudson.plugins.analysis.graph.UserGraphConfigurationView;
 import hudson.plugins.warnings.parser.ParserRegistry;
 
 /**
- * Entry point to visualize the warnings trend graph in the project screen.
+ * Entry point to visualize the warnings trend graph in the job screen.
  * Drawing of the graph is delegated to the associated
  * {@link WarningsResultAction}.
  *
@@ -40,13 +39,13 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
     /**
      * Creates a new instance of {@link WarningsProjectAction}.
      *
-     * @param project
-     *            the project that owns this action
+     * @param job
+     *            the job that owns this action
      * @param group
      *            the group of the parsers that share this action
      */
-    public WarningsProjectAction(final AbstractProject<?, ?> project, final String group) {
-        super(project, WarningsResultAction.class,
+    public WarningsProjectAction(final Job<?, ?> job, final String group) {
+        super(job, WarningsResultAction.class,
                 ParserRegistry.getParser(group).getLinkName(), ParserRegistry.getParser(group).getTrendName(),
                 WarningsDescriptor.getProjectUrl(group),
                 ParserRegistry.getParser(group).getSmallImage(),
@@ -70,7 +69,7 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
 
     private UserGraphConfigurationView createUserConfiguration(final StaplerRequest request, final String urlName) {
         return new UserGraphConfigurationView(
-                createConfiguration(getAvailableGraphs()), getProject(),
+                createConfiguration(getAvailableGraphs()), getOwner(),
                 urlName, WarningsDescriptor.getProjectUrl(null),
                 request.getCookies(), createBuildHistory());
     }
@@ -78,7 +77,7 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
     @Override
     protected GraphConfigurationView createDefaultConfiguration() {
         return new DefaultGraphConfigurationView(
-                createConfiguration(getAvailableGraphs()), getProject(),
+                createConfiguration(getAvailableGraphs()), getOwner(),
                 WarningsDescriptor.getProjectUrl(parser),
                 createBuildHistory(), WarningsDescriptor.getProjectUrl(null));
     }
@@ -96,7 +95,7 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
     }
 
     @Override
-    protected WarningsResultAction getResultAction(final AbstractBuild<?, ?> lastBuild) {
+    protected WarningsResultAction getResultAction(final Run<?, ?> lastBuild) {
         return createHistory(lastBuild).getResultAction((Run<?, ?>) lastBuild);
     }
 
@@ -107,7 +106,7 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
      */
     @Override
     protected BuildHistory createBuildHistory() {
-        AbstractBuild<?, ?> lastFinishedBuild = getLastFinishedBuild();
+        Run<?, ?> lastFinishedBuild = getLastFinishedRun();
         if (lastFinishedBuild == null) {
             return new NullBuildHistory();
         }
@@ -116,7 +115,7 @@ public class WarningsProjectAction extends AbstractProjectAction<WarningsResultA
         }
     }
 
-    private WarningsBuildHistory createHistory(final AbstractBuild<?, ?> build) {
+    private WarningsBuildHistory createHistory(final Run<?, ?> build) {
         return new WarningsBuildHistory(build, parser, false, false);
     }
 }

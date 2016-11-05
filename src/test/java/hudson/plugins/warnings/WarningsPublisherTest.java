@@ -3,6 +3,12 @@ package hudson.plugins.warnings;
 import java.util.Collections;
 import java.util.List;
 
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import com.cloudbees.hudson.plugins.folder.computed.FolderComputation;
+import javax.annotation.Nonnull;
+import jenkins.plugins.git.GitSCMSource;
+import jenkins.plugins.git.GitSampleRepoRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -20,32 +26,32 @@ import hudson.model.Action;
  */
 public class WarningsPublisherTest {
     private static final String SUFFIX_NAME = " Warnings";
-    private static final String SECOND = "JSLint";
+    private static final String SECOND = "PyLint";
     private static final String FIRST = "Maven";
     private static final String PATTERN = "Pattern";
 
     @Rule
-    public JenkinsRule jenkins = new JenkinsRule();
+    public JenkinsRule jenkinsRule = new JenkinsRule();
 
     /**
      * Verifies that the order of warnings is preserved.
      *
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-14615">Issue 14615</a>
      */
-    @Test
-    public void testIssue14615Console() {
-        List<ConsoleParser> consoleParsers = Lists.newArrayList();
-        consoleParsers.add(new ConsoleParser(FIRST));
-        consoleParsers.add(new ConsoleParser(SECOND));
-
+    @Test 
+    public void testIssue14615Console() throws Exception {
+        String flow = "node {\n"
+                    + "  step([$class: 'WarningsPublisher', consoleParsers: [[parserName: '" + FIRST  + "']]])\n"
+                    + "  step([$class: 'WarningsPublisher', consoleParsers: [[parserName: '" + SECOND + "']]])\n"
+                    + "}\n";
+	
+        List<Action> ordered = getListOfActions(flow);
         List<String> expected = createExpectedResult();
 
-        checkConsoleOrder(consoleParsers, expected);
-
-        Collections.reverse(consoleParsers);
+        Collections.reverse(ordered);
         Collections.reverse(expected);
 
-        checkConsoleOrder(consoleParsers, expected);
+        checkOrder(expected, ordered);
     }
 
     /**
@@ -54,19 +60,28 @@ public class WarningsPublisherTest {
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-14615">Issue 14615</a>
      */
     @Test
-    public void testIssue14615File() {
-        List<ParserConfiguration> fileParsers = Lists.newArrayList();
-        fileParsers.add(new ParserConfiguration(PATTERN, FIRST));
-        fileParsers.add(new ParserConfiguration(PATTERN, SECOND));
-
+    public void testIssue14615File() throws Exception {
+        String flow = "node {\n"
+                    + "  step([$class: 'WarningsPublisher', parserConfigurations: [[parserName: '" + FIRST  + "', pattern: '" + PATTERN + "']]])\n"
+                    + "  step([$class: 'WarningsPublisher', parserConfigurations: [[parserName: '" + SECOND + "', pattern: '" + PATTERN + "']]])\n"
+                    + "}\n";
+	
+        List<Action> ordered = getListOfActions(flow);
         List<String> expected = createExpectedResult();
 
-        checkFileOrder(fileParsers, expected);
-
-        Collections.reverse(fileParsers);
+        Collections.reverse(ordered);
         Collections.reverse(expected);
 
-        checkFileOrder(fileParsers, expected);
+        checkOrder(expected, ordered);
+    }
+    
+    private List<Action> getListOfActions(String flow) throws Exception {
+        WorkflowJob job = jenkinsRule.jenkins.createProject(WorkflowJob.class, "p");
+        job.setDefinition(new CpsFlowDefinition(flow));
+        job.scheduleBuild2(0);
+        jenkinsRule.waitUntilNoActivity();
+
+        return Lists.newArrayList(job.getLastBuild().getAllActions());
     }
 
     private List<String> createExpectedResult() {
@@ -76,22 +91,12 @@ public class WarningsPublisherTest {
         return expected;
     }
 
-    private void checkFileOrder(final List<ParserConfiguration> fileParsers, final List<String> expected) {
-        WarningsPublisher publisher = new WarningsPublisher();
-        publisher.setParserConfigurations(fileParsers.toArray(new ParserConfiguration[fileParsers.size()]));
-        checkOrder(expected, publisher);
-    }
-
-    private void checkConsoleOrder(final List<ConsoleParser> consoleParsers, final List<String> expected) {
-        WarningsPublisher publisher = new WarningsPublisher();
-        publisher.setConsoleParsers(consoleParsers.toArray(new ConsoleParser[consoleParsers.size()]));
-        checkOrder(expected, publisher);
-    }
-
-    private void checkOrder(final List<String> expected, final WarningsPublisher publisher) {
-        List<Action> ordered = Lists.newArrayList(publisher.getProjectActions(null));
-
-        assertEquals("Wrong number of actions.", 3, ordered.size());
+    private void checkOrder(final List<String> expected, final List<Action> ordered) {
+        for (int position = 0; position < ordered.size(); position++) {
+            System.out.println(ordered.get(position).getDisplayName());
+        }
+	
+        assertEquals("Wrong number of actions.", 8, ordered.size());
 
         for (int position = 0; position < expected.size(); position++) {
             assertPosition(ordered, expected, position);
@@ -99,7 +104,8 @@ public class WarningsPublisherTest {
     }
 
     private void assertPosition(final List<Action> ordered, final List<String> expected, final int position) {
-        assertEquals("Wrong action at position " + position, expected.get(position), ordered.get(position).getDisplayName());
+        int orderedPosition = (position * 2) + 5;
+        assertEquals("Wrong action at position " + position, expected.get(position), ordered.get(orderedPosition).getDisplayName());
     }
 }
 

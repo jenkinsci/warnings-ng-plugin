@@ -1,10 +1,13 @@
 package hudson.plugins.warnings;
 
+import java.util.Collection;
+
 import org.jvnet.localizer.Localizable;
 import org.kohsuke.stapler.export.Exported;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import hudson.model.Action;
 import hudson.model.Run;
 import hudson.plugins.analysis.core.AbstractResultAction;
 import hudson.plugins.analysis.core.HealthDescriptor;
@@ -40,6 +43,16 @@ public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
         super(owner, new WarningsHealthDescriptor(healthDescriptor, ParserRegistry.getParser(parserName).getParserName()), result);
 
         this.parserName = parserName;
+    }
+    
+    /**
+     * Returns the associated project action for this result.
+     *
+     * @return the project action for this result
+     */
+    @Override
+    public Collection<? extends Action> getProjectActions() {
+        return asSet(new WarningsProjectAction(getJob(), parserName));
     }
 
     @Override @Exported
