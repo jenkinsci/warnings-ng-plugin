@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -17,6 +18,8 @@ import hudson.Launcher;
 import hudson.Util;
 import hudson.matrix.MatrixAggregatable;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.Action;
 import hudson.model.Project;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -134,6 +137,18 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      */
     protected HealthAwareRecorder(String pluginName) {
         this.pluginName = "[" + pluginName + "] ";
+    }
+
+    /**
+     * Returns the project actions for this recorder. Starting with analysis-core 1.80 this collection must be empty.
+     * Project actions are now defined in the result action class.
+     *
+     * @return returns empty collection, should not be changed anymore
+     * FIXME: make this final in 2.0
+     */
+    @Override
+    public Collection<? extends Action> getProjectActions(final AbstractProject<?, ?> project) {
+        return Collections.emptyList();
     }
 
     /**

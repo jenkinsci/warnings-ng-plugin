@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerProxy;
@@ -22,6 +23,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
+import hudson.model.Job;
 import hudson.model.Run;
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.ToolTipProvider;
@@ -65,6 +67,16 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     }
 
     /**
+     * Wraps the specified action into a set.
+     *
+     * @param action the action to add to the set
+     * @return a set containing the action
+     */
+    protected Set<Action> asSet(final Action action) {
+        return Collections.singleton(action);
+    }
+
+    /**
      * Returns the healthDescriptor.
      *
      * @return the healthDescriptor
@@ -89,6 +101,10 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     @Exported
     public String getName() {
         return getDescriptor().getPluginName();
+    }
+
+    protected Job<?, ?> getJob() {
+        return getBuild().getParent();
     }
 
     @Override
@@ -123,11 +139,11 @@ public abstract class AbstractResultAction<T extends BuildResult> implements Sta
     }
 
     /**
-     * Returns the project actions if this action is used in a pipeline.
+     * Returns the project actions for this result action.
      *
-     * @return default implementation returns empty collection, plug-in must override if they want to contribute to the UI
+     * @return default implementation returns empty collection, plug-in must override if they want to contribute to the UI.
+     * FIXME: Make it abstract in 2.0
      */
-    // FIXME: See JENKINS-31202. Currently the whole graphing is based around AbstractBuild (large refactoring required)
     @Override
     public Collection<? extends Action> getProjectActions() {
         return Collections.emptyList();
