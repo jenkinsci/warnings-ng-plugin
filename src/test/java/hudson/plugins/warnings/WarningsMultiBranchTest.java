@@ -1,24 +1,25 @@
 package hudson.plugins.warnings;
 
-import org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject;
-import com.cloudbees.hudson.plugins.folder.computed.FolderComputation;
-import jenkins.scm.api.SCMHead;
 import javax.annotation.Nonnull;
+
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.jenkinsci.plugins.workflow.job.WorkflowRun;
+import org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject;
+import org.junit.Rule;
+import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
+
+import com.cloudbees.hudson.plugins.folder.computed.FolderComputation;
+import com.gargoylesoftware.htmlunit.WebAssert;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+
 import jenkins.branch.BranchProperty;
 import jenkins.branch.BranchSource;
 import jenkins.branch.DefaultBranchPropertyStrategy;
 import jenkins.plugins.git.GitSCMSource;
 import jenkins.plugins.git.GitSampleRepoRule;
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-import org.jenkinsci.plugins.workflow.job.WorkflowRun;
-import org.junit.Rule;
-import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule;
-
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.WebAssert;
+import jenkins.scm.api.SCMHead;
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.containsString;
 
 /**
  * Tests the class {@link WarningsPublisher}.
