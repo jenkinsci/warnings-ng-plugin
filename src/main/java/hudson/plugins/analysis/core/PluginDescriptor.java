@@ -200,7 +200,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      */
     public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
             @QueryParameter final String pattern) throws IOException {
-        if (project != null) { // Workflow jobs have no workspace
+        if (project != null) { // there is no workspace in pipelines
             try {
                 FilePath workspace = project.getSomeWorkspace();
                 if (workspace != null) {
