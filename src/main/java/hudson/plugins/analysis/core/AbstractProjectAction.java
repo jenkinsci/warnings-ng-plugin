@@ -483,7 +483,8 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
      */
     @Deprecated @CheckForNull @Exported
     public AbstractBuild<?, ?> getLastFinishedBuild() {
-        return (AbstractBuild<?, ?>) getLastFinishedRun();
+        Run<?, ?> lastFinishedRun = getLastFinishedRun();
+        return lastFinishedRun instanceof AbstractBuild ? (AbstractBuild<?, ?>) lastFinishedRun : null;
     }
 
     /**
