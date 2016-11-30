@@ -124,6 +124,9 @@ public class ParserConfiguration extends AbstractDescribableImpl<ParserConfigura
                 @QueryParameter final String pattern) throws IOException {
             FormValidation required = FormValidation.validateRequired(pattern);
             if (required.kind == FormValidation.Kind.OK) {
+                if (project == null) { // there is no workspace in pipelines
+                    return required;
+                }
                 return FilePath.validateFileMask(project.getSomeWorkspace(), pattern);
             }
             else {
