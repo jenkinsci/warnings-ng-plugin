@@ -31,10 +31,23 @@ public class JavaDocParserTest extends ParserTester {
     }
 
     /**
-     * Parses a warning log with JavaDoc 1.8 warnings.
+     * Parses a warning log with JavaDoc 1.8 errors.
      *
      * @throws IOException
      *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-37975">Issue 37975</a>
+     */
+    @Test
+    public void issue37975() throws IOException {
+        Collection<FileAnnotation> warnings = new JavaDocParser().parse(openFile("issue37975.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
+    }
+
+    /**
+     * Parses a warning log with JavaDoc 1.8 warnings.
+     *
+     * @throws IOException if the file could not be read
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-32298">Issue 32298</a>
      */
     @Test

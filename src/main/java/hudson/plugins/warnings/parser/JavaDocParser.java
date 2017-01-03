@@ -15,7 +15,7 @@ import hudson.plugins.analysis.util.model.Priority;
 @Extension
 public class JavaDocParser extends RegexpLineParser {
     private static final long serialVersionUID = 7127568148333474921L;
-    private static final String JAVA_DOC_WARNING_PATTERN = "(?:\\s*\\[(?:javadoc|WARNING)\\]\\s*)?(?:(?:(.*):(\\d+))|(?:\\s*javadoc\\s*)):\\s*(warning|error)\\s*[-:]\\s*(.*)";
+    private static final String JAVA_DOC_WARNING_PATTERN = "(?:\\s*\\[(?:javadoc|WARNING|ERROR)\\]\\s*)?(?:(?:(.*):(\\d+))|(?:\\s*javadoc\\s*)):\\s*(warning|error)\\s*[-:]\\s*(.*)";
 
     /**
      * Creates a new instance of {@link JavaDocParser}.
@@ -29,7 +29,7 @@ public class JavaDocParser extends RegexpLineParser {
 
     @Override
     protected boolean isLineInteresting(final String line) {
-        return line.contains("javadoc") || line.contains("@");
+        return line.contains("javadoc") || line.contains("@") || (line.contains("error") && line.contains("ERROR"));
     }
 
     @Override

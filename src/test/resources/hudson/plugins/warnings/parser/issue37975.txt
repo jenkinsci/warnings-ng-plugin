@@ -1,0 +1,17 @@
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 20.451 s
+[INFO] Finished at: 2016-09-06T09:36:28+02:00
+[INFO] Final Memory: 37M/534M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-javadoc-plugin:2.10.4:jar (attach-javadocs) on project cache2k-api: MavenReportException: Error while generating Javadoc:
+[ERROR] Exit code: 1 - /home/jeans/ideaWork/cache2k-internal/cache2k/api/src/main/java/org/cache2k/processor/MutableCacheEntry.java:79: error: malformed HTML
+[ERROR] * @see <a href="https://github.com/jsr107/jsr107tck/issues/84>JSR107 TCK issue 84</a>
+[ERROR] ^
+[ERROR] /home/jeans/ideaWork/cache2k-internal/cache2k/api/src/main/java/org/cache2k/processor/MutableCacheEntry.java:79: error: bad use of '>'
+[ERROR] * @see <a href="https://github.com/jsr107/jsr107tck/issues/84>JSR107 TCK issue 84</a>
+[ERROR] ^
+[ERROR] /home/jeans/ideaWork/cache2k-internal/cache2k/api/src/main/java/org/cache2k/processor/MutableCacheEntry.java:79: error: unexpected end tag: </a>
+[ERROR] * @see <a href="https://github.com/jsr107/jsr107tck/issues/84>JSR107 TCK issue 84</a>
+[ERROR] ^
