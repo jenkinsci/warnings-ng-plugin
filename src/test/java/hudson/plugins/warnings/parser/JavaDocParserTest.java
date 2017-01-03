@@ -42,6 +42,27 @@ public class JavaDocParserTest extends ParserTester {
         Collection<FileAnnotation> warnings = new JavaDocParser().parse(openFile("issue37975.txt"));
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
+
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        FileAnnotation annotation = iterator.next();
+        checkWarning(annotation,
+                79,
+                "malformed HTML",
+                "/home/jeans/ideaWork/cache2k-internal/cache2k/api/src/main/java/org/cache2k/processor/MutableCacheEntry.java",
+                TYPE, StringUtils.EMPTY, Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                79,
+                "bad use of '>'",
+                "/home/jeans/ideaWork/cache2k-internal/cache2k/api/src/main/java/org/cache2k/processor/MutableCacheEntry.java",
+                TYPE, StringUtils.EMPTY, Priority.HIGH);
+        annotation = iterator.next();
+        checkWarning(annotation,
+                79,
+                "unexpected end tag: </a>",
+                "/home/jeans/ideaWork/cache2k-internal/cache2k/api/src/main/java/org/cache2k/processor/MutableCacheEntry.java",
+                TYPE, StringUtils.EMPTY, Priority.HIGH);
+
     }
 
     /**
