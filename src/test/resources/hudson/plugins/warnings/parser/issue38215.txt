@@ -1,0 +1,2 @@
+19:30:15     11>cl : Command line warning D9002: ignoring unknown option '-std=c++11' [C:\J\workspace\ci_windows\ws\build\rmw\test\test_error_handling.vcxproj]
+

@@ -1,7 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
@@ -10,6 +8,8 @@ import java.util.Iterator;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
@@ -17,6 +17,26 @@ import hudson.plugins.analysis.util.model.Priority;
  * Tests the class {@link MsBuildParser}.
  */
 public class MsBuildParserTest extends ParserTester {
+    /**
+     * MSBuildParser should make relative paths absolute, based on the project name listed in the message.
+     * @throws IOException
+     *          if the stream could not be read
+     *
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-38215">Issue 38215</a>
+     */
+    @Test
+    public void issue38215() throws IOException {
+        Collection<FileAnnotation> warnings = new MsBuildParser().parse(openFile("issue38215.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        FileAnnotation annotation = iterator.next();
+        checkWarning(annotation,
+                0,
+                "ignoring unknown option '-std=c++11'",
+                "C:/J/workspace/ci_windows/ws/build/rmw/test/test_error_handling.vcxproj",
+                MsBuildParser.WARNING_TYPE, "D9002", Priority.NORMAL);
+    }
 
     /**
      * MSBuildParser should make relative paths absolute, based on the project name listed in the message.
