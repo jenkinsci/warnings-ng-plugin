@@ -40,6 +40,8 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     public static final String WORKSPACE_FILES = "workspace-files";
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -1092014926477547148L;
+    public static final String DEFAULT_CATEGORY = "-";
+
     /** Current key of this annotation. */
     private static long currentKey = new Random().nextLong();
 
@@ -100,8 +102,8 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     @SuppressFBWarnings("ST")
     public AbstractAnnotation(final String message, final int start, final int end, final String category, final String type) {
         this.message = TreeString.of(StringUtils.strip(message));
-        this.category = StringUtils.defaultString(category);
-        this.type = StringUtils.defaultString(type);
+        this.category = defaultString(category);
+        this.type = defaultString(type);
 
         key = currentKey++;
 
@@ -110,6 +112,10 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         primaryLineNumber = start;
 
         contextHashCode = currentKey;
+    }
+
+    private static String defaultString(final String value) {
+        return StringUtils.defaultIfBlank(value, DEFAULT_CATEGORY);
     }
 
     /**
