@@ -14,7 +14,13 @@
       <j:forEach var="container" items="${it.container.types}">
         <tr>
           <td class="pane">
-            <a href="type.${container.name.hashCode()}/">${container.name}</a>
+            <j:set var="name" value="${container.name}" />
+            <j:if test="${name == '-'}">
+              <j:set var="name" value="${%undefined}" />
+            </j:if>
+            <a href="category.${container.name.hashCode()}/">
+              ${name}
+            </a>
           </td>
           <td class="pane">${container.numberOfAnnotations}
           </td>
