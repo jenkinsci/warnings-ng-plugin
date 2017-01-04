@@ -18,9 +18,9 @@ import hudson.plugins.analysis.util.model.Priority;
 public class MsBuildParser extends RegexpLineParser {
     private static final long serialVersionUID = -2141974437420906595L;
     static final String WARNING_TYPE = "MSBuild";
-    private static final String MS_BUILD_WARNING_PATTERN = ANT_TASK + "(?:\\s*\\d+>)?(?:(?:(?:(.*)\\((\\d*)(?:,(\\d+))?.*\\)|.*LINK)\\s*:|(.*):)\\s*([A-z-_]*\\s?(?:[Nn]ote|[Ii]nfo|[Ww]arning|(?:fatal\\s*)?[Ee]rror))\\s*:?\\s*([A-Za-z0-9]+)\\s*:\\s(?:\\s*([A-Za-z0-9.]+)\\s*:)?\\s*(.*?)(?: \\[([^\\]]*)[/\\\\][^\\]\\\\]+\\])?"
-            + "|(.*)\\s*:.*error\\s*(LNK[0-9]+):\\s*(.*))"
-            + "|(?:.*)Command line warning ([A-Za-z0-9]+):\\s*(.*)\\s*\\[(.*)\\]" + "$";
+    private static final String MS_BUILD_WARNING_PATTERN = "(?:(?:.*)Command line warning ([A-Za-z0-9]+):\\s*(.*)\\s*\\[(.*)\\])|"
+            + ANT_TASK + "(?:(?:\\s*\\d+>)?(?:(?:(?:(.*)\\((\\d*)(?:,(\\d+))?.*\\)|.*LINK)\\s*:|(.*):)\\s*([A-z-_]*\\s?(?:[Nn]ote|[Ii]nfo|[Ww]arning|(?:fatal\\s*)?[Ee]rror))\\s*:?\\s*([A-Za-z0-9]+)\\s*:\\s(?:\\s*([A-Za-z0-9.]+)\\s*:)?\\s*(.*?)(?: \\[([^\\]]*)[/\\\\][^\\]\\\\]+\\])?"
+            + "|(.*)\\s*:.*error\\s*(LNK[0-9]+):\\s*(.*)))$";
 
     /**
      * Creates a new instance of {@link MsBuildParser}.
@@ -48,27 +48,27 @@ public class MsBuildParser extends RegexpLineParser {
     @Override
     protected Warning createWarning(final Matcher matcher) {
         String fileName = determineFileName(matcher);
-        if (StringUtils.isNotBlank(matcher.group(13))) {
-            return createWarning(fileName, 0, matcher.group(13), matcher.group(14), Priority.NORMAL);
+        if (StringUtils.isNotBlank(matcher.group(2))) {
+            return createWarning(fileName, 0, matcher.group(1), matcher.group(2), Priority.NORMAL);
         }
-        else if (StringUtils.isNotBlank(matcher.group(10))) {
-            return createWarning(fileName, 0, matcher.group(11), matcher.group(12), Priority.HIGH);
+        else if (StringUtils.isNotBlank(matcher.group(13))) {
+            return createWarning(fileName, 0, matcher.group(14), matcher.group(15), Priority.HIGH);
         }
         else {
             Warning warning;
-            if (StringUtils.isNotEmpty(matcher.group(7))) {
-                warning = createWarning(fileName, getLineNumber(matcher.group(2)),
-                        matcher.group(7), matcher.group(6), matcher.group(8), determinePriority(matcher));
+            if (StringUtils.isNotEmpty(matcher.group(10))) {
+                warning = createWarning(fileName, getLineNumber(matcher.group(5)),
+                        matcher.group(10), matcher.group(9), matcher.group(11), determinePriority(matcher));
             }
             else {
-                String category = matcher.group(6);
+                String category = matcher.group(9);
                 if ("Expected".matches(category)) {
                     return FALSE_POSITIVE;
                 }
-                warning = createWarning(fileName, getLineNumber(matcher.group(2)),
-                        category, matcher.group(8), determinePriority(matcher));
+                warning = createWarning(fileName, getLineNumber(matcher.group(5)),
+                        category, matcher.group(11), determinePriority(matcher));
             }
-            warning.setColumnPosition(getLineNumber(matcher.group(3)));
+            warning.setColumnPosition(getLineNumber(matcher.group(6)));
             return warning;
         }
     }
@@ -82,26 +82,26 @@ public class MsBuildParser extends RegexpLineParser {
      */
     private String determineFileName(final Matcher matcher) {
         String fileName;
-        if (StringUtils.isNotBlank(matcher.group(15))) {
-            fileName = matcher.group(15);
+        if (StringUtils.isNotBlank(matcher.group(3))) {
+            fileName = matcher.group(3);
         }
-        else if (StringUtils.isNotBlank(matcher.group(4))) {
-            fileName = matcher.group(4);
+        else if (StringUtils.isNotBlank(matcher.group(7))) {
+            fileName = matcher.group(7);
         }
-        else if (StringUtils.isNotBlank(matcher.group(10))) {
-            fileName = matcher.group(10);
+        else if (StringUtils.isNotBlank(matcher.group(13))) {
+            fileName = matcher.group(13);
         }
         else {
-            fileName = matcher.group(1);
+            fileName = matcher.group(4);
         }
         if (StringUtils.isBlank(fileName)) {
-            fileName = StringUtils.substringBetween(matcher.group(8), "'");
+            fileName = StringUtils.substringBetween(matcher.group(11), "'");
         }
         if (StringUtils.isBlank(fileName)) {
             fileName = "unknown.file";
         }
 
-        final String projectDir = matcher.group(9);
+        final String projectDir = matcher.group(12);
         if (StringUtils.isNotBlank(projectDir)
             && FilenameUtils.getPrefixLength(fileName) == 0
             && !fileName.trim().equals("MSBUILD")) {
@@ -138,7 +138,7 @@ public class MsBuildParser extends RegexpLineParser {
      * @return <code>true</code> if the warning type is of the specified type
      */
     private boolean isOfType(final Matcher matcher, final String type) {
-        return StringUtils.containsIgnoreCase(matcher.group(5), type);
+        return StringUtils.containsIgnoreCase(matcher.group(8), type);
     }
 }
 
