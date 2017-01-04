@@ -1,13 +1,13 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;

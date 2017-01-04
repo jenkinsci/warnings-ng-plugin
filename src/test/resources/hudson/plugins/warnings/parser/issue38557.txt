@@ -1,0 +1,22 @@
+/opt/jenkins/jobs/trunk-compile/workspace/my-module/src/java/com/acme/script/impl/itemtype/ItemTypeUtils.java:25: warning: no comment
+    private static final Predicate<MimeType> activeMimeTypePredicate = mimeType -> {
+                                                                       ^
+/opt/jenkins/jobs/trunk-compile/workspace/my-module/src/java/com/acme/script/impl/itemtype/ItemTypeUtils.java:26: warning: no comment
+        for (SupportedLevelInfo supportLevel : mimeType.getSupportLevel())
+                                ^
+/opt/jenkins/jobs/trunk-compile/workspace/my-module/src/java/com/acme/script/impl/processor/DefaultProcessor.java:332: warning: [deprecation] exists(Path,LinkOption...) in FileUtils has been deprecated
+            if (com.acme.common.io.FileUtils.exists(persistentDir))
+                                            ^
+/opt/jenkins/jobs/trunk-compile/workspace/my-module/src/java/com/acme/script/impl/processor/DefaultProcessor.java:591: warning: [unchecked] unchecked cast
+        container.setCustomMetadata((Map<String, String>) normalisedMap.get("customMetadata"));
+                                                                           ^
+  required: Map<String,String>
+  found:    Object
+/opt/jenkins/jobs/trunk-compile/workspace/my-module/src/java/com/acme/script/impl/processor/DefaultProcessor.java:631: warning: [deprecation] incorrectCollator() in Collators has been deprecated
+            if (Collators.incorrectCollator().compare(existingContainer.getName(), evidenceContainer.getName()) == 0)
+                         ^
+/opt/jenkins/jobs/trunk-compile/workspace/my-module/src/java/com/acme/script/impl/processor/DefaultProcessor.java:646: warning: [deprecation] incorrectCollator() in Collators has been deprecated
+            if (Collators.incorrectCollator().compare(container.getName(), evidenceContainer.getName()) == 0)
+                         ^
+/opt/jenkins/jobs/trunk-compile/workspace/my-module/src/java/com/acme/script/impl/processor/DefaultProcessor.java:835: warning: [rawtypes] found raw type: SyncDifference
+            public void changeDetected(SyncDifference syncDifference)

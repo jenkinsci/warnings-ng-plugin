@@ -1,12 +1,12 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -33,11 +33,11 @@ public class GoVetParserTest extends ParserTester {
         FileAnnotation annotation = iterator.next();
 
 
-        checkWarning(annotation, 46, "missing argument for Fatalf(\"%#v\"): format reads arg 2, have only 1 args", "ui_colored_test.go", "",
+        checkWarning(annotation, 46, "missing argument for Fatalf(\"%#v\"): format reads arg 2, have only 1 args", "ui_colored_test.go", DEFAULT_CATEGORY,
                 Priority.NORMAL);
         annotation = iterator.next();
 
-        checkWarning(annotation, 59, "missing argument for Fatalf(\"%#v\"): format reads arg 2, have only 1 args", "ui_colored_test.go", "",
+        checkWarning(annotation, 59, "missing argument for Fatalf(\"%#v\"): format reads arg 2, have only 1 args", "ui_colored_test.go", DEFAULT_CATEGORY,
                 Priority.NORMAL);
 
     }

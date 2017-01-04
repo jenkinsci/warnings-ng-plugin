@@ -1,13 +1,14 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
+import hudson.plugins.analysis.util.model.AbstractAnnotation;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
@@ -49,7 +50,7 @@ public class SunCParserTest extends ParserTester {
                 8,
                 MESSAGE,
                 "ServerList.cpp",
-                TYPE, "", Priority.HIGH);
+                TYPE, DEFAULT_CATEGORY, Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 44,
@@ -80,7 +81,7 @@ public class SunCParserTest extends ParserTester {
                 32,
                 "statement is unreachable.",
                 "warner.cpp",
-                TYPE, "", Priority.NORMAL);
+                TYPE, DEFAULT_CATEGORY, Priority.NORMAL);
     }
 
     @Override

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -52,7 +51,7 @@ public class ClangParserTest extends ParserTester {
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
         FileAnnotation annotation = warnings.iterator().next();
         checkWarning(annotation, 10, 10, "'test.h' file not found",
-                "./test.h", StringUtils.EMPTY, Priority.HIGH);
+                "./test.h", DEFAULT_CATEGORY, Priority.HIGH);
     }
 
     /**
@@ -69,7 +68,7 @@ public class ClangParserTest extends ParserTester {
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 1, warnings.size());
         FileAnnotation annotation = warnings.iterator().next();
         checkWarning(annotation, 1518, 28, "Array access (via field 'yy_buffer_stack') results in a null pointer dereference",
-                "scanner.cpp", StringUtils.EMPTY, Priority.NORMAL);
+                "scanner.cpp", DEFAULT_CATEGORY, Priority.NORMAL);
     }
 
     /**
@@ -108,7 +107,7 @@ public class ClangParserTest extends ParserTester {
                 28,
                 "extra tokens at end of #endif directive",
                 "test.c",
-                TYPE, "", Priority.NORMAL);
+                TYPE, DEFAULT_CATEGORY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 3, 11,
@@ -133,7 +132,7 @@ public class ClangParserTest extends ParserTester {
                 47, 15,
                 "invalid operands to binary expression ('int *' and '_Complex float')",
                 "exprs.c",
-                TYPE, "", Priority.NORMAL);
+                TYPE, DEFAULT_CATEGORY, Priority.NORMAL);
      }
 
     @Override

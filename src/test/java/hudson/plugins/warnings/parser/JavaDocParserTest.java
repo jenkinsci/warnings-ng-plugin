@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -17,6 +16,7 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 public class JavaDocParserTest extends ParserTester {
     private static final String TYPE = new JavaDocParser().getGroup();
+    private static final String CATEGORY = DEFAULT_CATEGORY;
 
     /**
      * Parses a warning log with JavaDoc 1.8 warnings.
@@ -49,19 +49,19 @@ public class JavaDocParserTest extends ParserTester {
                 79,
                 "malformed HTML",
                 "/home/jeans/ideaWork/cache2k-internal/cache2k/api/src/main/java/org/cache2k/processor/MutableCacheEntry.java",
-                TYPE, StringUtils.EMPTY, Priority.HIGH);
+                TYPE, CATEGORY, Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 79,
                 "bad use of '>'",
                 "/home/jeans/ideaWork/cache2k-internal/cache2k/api/src/main/java/org/cache2k/processor/MutableCacheEntry.java",
-                TYPE, StringUtils.EMPTY, Priority.HIGH);
+                TYPE, CATEGORY, Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 79,
                 "unexpected end tag: </a>",
                 "/home/jeans/ideaWork/cache2k-internal/cache2k/api/src/main/java/org/cache2k/processor/MutableCacheEntry.java",
-                TYPE, StringUtils.EMPTY, Priority.HIGH);
+                TYPE, CATEGORY, Priority.HIGH);
 
     }
 
@@ -81,44 +81,44 @@ public class JavaDocParserTest extends ParserTester {
                 683,
                 "no description for @param",
                 "/var/lib/jenkins/jobs/Development/jobs/JavaDoc check/workspace/java/src/apps/Apps.java",
-                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 85,
                 "no description for @param",
                 "/var/lib/jenkins/jobs/Development/jobs/JavaDoc check/workspace/java/src/apps/AppsLaunchFrame.java",
-                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 86,
                 "no description for @param",
                 "/var/lib/jenkins/jobs/Development/jobs/JavaDoc check/workspace/java/src/apps/AppsLaunchFrame.java",
-                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 190,
                 "no description for @param",
                 "/var/lib/jenkins/jobs/Development/jobs/JavaDoc check/workspace/java/src/apps/AppsLaunchFrame.java",
-                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
 
         annotation = iterator.next();
         checkWarning(annotation,
                 25,
                 "bad use of '>'",
                 "/var/lib/jenkins/jobs/Development/jobs/JavaDoc check/workspace/java/src/jmri/jmrit/withrottle/MultiThrottle.java",
-                TYPE, StringUtils.EMPTY, Priority.HIGH);
+                TYPE, CATEGORY, Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 26,
                 "malformed HTML",
                 "/var/lib/jenkins/jobs/Development/jobs/JavaDoc check/workspace/java/src/jmri/jmrit/withrottle/MultiThrottleController.java",
-                TYPE, StringUtils.EMPTY, Priority.HIGH);
+                TYPE, CATEGORY, Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 26,
                 "bad use of '>'",
                 "/var/lib/jenkins/jobs/Development/jobs/JavaDoc check/workspace/java/src/jmri/jmrit/withrottle/MultiThrottleController.java",
-                TYPE, StringUtils.EMPTY, Priority.HIGH);
+                TYPE, CATEGORY, Priority.HIGH);
     }
 
     /**
@@ -139,7 +139,7 @@ public class JavaDocParserTest extends ParserTester {
                 116,
                 "Tag @link: can't find removeSpecChangeListener(ChangeListener, String) in chenomx.ccma.common.graph.module.GraphListenerRegistry",
                 "/home/builder/hudson/workspace/Homer/oddjob/src/chenomx/ccma/common/graph/module/GraphListenerRegistry.java",
-                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
     }
 
     /**
@@ -159,12 +159,12 @@ public class JavaDocParserTest extends ParserTester {
                 0,
                 "Multiple sources of package comments found for package \"org.hamcrest\"",
                 "-",
-                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
         checkWarning(iterator.next(),
                 94,
                 "@param argument \"<code>CoreAccountNumberTO</code>\" is not a parameter",
                 "/home/hudson-farm/.hudson/jobs/farm-toplevel/workspace/farm-toplevel/service-module/src/main/java/com/rackspace/farm/service/service/CoreAccountServiceImpl.java",
-                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
     }
 
     /**
@@ -198,12 +198,12 @@ public class JavaDocParserTest extends ParserTester {
                 0,
                 "Text of tag @sys.prop in class ch.post.pf.mw.service.common.alarm.AlarmingService is too long!",
                 "-",
-                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
         checkWarning(iterator.next(),
                 57,
                 "@(#) is an unknown tag.",
                 "/u01/src/KinePolygon.java",
-                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
     }
 
     @Override

@@ -1,12 +1,12 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -58,6 +58,6 @@ public abstract class AbstractEclipseParserTest extends ParserTester {
                 3,
                 "The serializable class AttributeException does not declare a static final serialVersionUID field of type long",
                 "C:/Desenvolvimento/Java/jfg/src/jfg/AttributeException.java",
-                getType(), "", Priority.NORMAL);
+                getType(), DEFAULT_CATEGORY, Priority.NORMAL);
     }
 }

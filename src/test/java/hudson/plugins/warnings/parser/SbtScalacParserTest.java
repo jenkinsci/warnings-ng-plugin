@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -23,9 +23,9 @@ public class SbtScalacParserTest extends ParserTester {
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
         Iterator<FileAnnotation> iter = warnings.iterator();
         checkWarning(iter.next(), 111, "method stop in class Thread is deprecated: see corresponding Javadoc for more information.",
-                "/home/user/.jenkins/jobs/job/workspace/path/SomeFile.scala", StringUtils.EMPTY, Priority.NORMAL);
+                "/home/user/.jenkins/jobs/job/workspace/path/SomeFile.scala", DEFAULT_CATEGORY, Priority.NORMAL);
         checkWarning(iter.next(), 9, "';' expected but identifier found.",
-                "/home/user/.jenkins/jobs/job/workspace/another/path/SomeFile.scala", StringUtils.EMPTY, Priority.HIGH);
+                "/home/user/.jenkins/jobs/job/workspace/another/path/SomeFile.scala", DEFAULT_CATEGORY, Priority.HIGH);
     }
 
     @Override

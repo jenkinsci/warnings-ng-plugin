@@ -1,12 +1,12 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -16,6 +16,7 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 public class TiCcsParserTest extends ParserTester {
     private static final String TYPE = new TiCcsParser().getGroup();
+    private static final String CATEGORY = DEFAULT_CATEGORY;
 
 
     /**
@@ -48,49 +49,49 @@ public class TiCcsParserTest extends ParserTester {
                 0,
                 "symbol 'memset' redeclared with incompatible type",
                 "unknown.file",
-                TYPE, "", Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 12,
                 "variable \"h\" was declared but never referenced",
                 "i2cDisplay12x2.c",
-                TYPE, "", Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 2578,
                 "variable",
                 "c:/DOCUME~1/JLINNE~1/LOCALS~1/Temp/0360811",
-                TYPE, "", Priority.NORMAL);
+                TYPE, CATEGORY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 11,
                 "expected a \";\"",
                 "i2cDisplay12x2.c",
-                TYPE, "", Priority.HIGH);
+                TYPE, CATEGORY, Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 0,
                 "unresolved symbols remain",
                 "unknown.file",
-                TYPE, "", Priority.HIGH);
+                TYPE, CATEGORY, Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 0,
                 "errors encountered during linking; \"../../bin/Debug/lrxyz.out\" not",
                 "unknown.file",
-                TYPE, "", Priority.HIGH);
+                TYPE, CATEGORY, Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 3,
                 "could not open source file \"i2cDisplay12x12.h\"",
                 "i2cDisplay12x2.c",
-                TYPE, "", Priority.HIGH);
+                TYPE, CATEGORY, Priority.HIGH);
         annotation = iterator.next();
         checkWarning(annotation,
                 5,
                 "[E0002] Illegal mnemonic specified",
                 "foo.asm",
-                TYPE, "", Priority.HIGH);
+                TYPE, CATEGORY, Priority.HIGH);
     }
 
 

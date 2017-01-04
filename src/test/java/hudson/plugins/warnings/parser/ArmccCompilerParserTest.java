@@ -1,13 +1,12 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -16,7 +15,7 @@ import hudson.plugins.analysis.util.model.Priority;
  * Tests the class {@link ArmccCompilerParser}.
  */
 public class ArmccCompilerParserTest extends ParserTester {
-    private static final String WARNING_CATEGORY = StringUtils.EMPTY;
+    private static final String WARNING_CATEGORY = DEFAULT_CATEGORY;
     private static final String WARNING_TYPE = new ArmccCompilerParser().getGroup();
 
     /**

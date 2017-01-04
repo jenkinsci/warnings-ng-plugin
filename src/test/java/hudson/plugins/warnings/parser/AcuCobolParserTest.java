@@ -1,13 +1,12 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -36,25 +35,25 @@ public class AcuCobolParserTest extends ParserTester {
                 39,
                 "Imperative statement required",
                 "COPY/zzz.CPY",
-                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, DEFAULT_CATEGORY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 111,
                 "Don't run with knives",
                 "C:/Documents and Settings/xxxx/COB/bbb.COB",
-                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, DEFAULT_CATEGORY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 115,
                 "Don't run with knives",
                 "C:/Documents and Settings/xxxx/COB/bbb.COB",
-                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, DEFAULT_CATEGORY, Priority.NORMAL);
         annotation = iterator.next();
         checkWarning(annotation,
                 123,
                 "I'm a green banana",
                 "C:/Documents and Settings/xxxx/COB/ccc.COB",
-                TYPE, StringUtils.EMPTY, Priority.NORMAL);
+                TYPE, DEFAULT_CATEGORY, Priority.NORMAL);
     }
 
     @Override

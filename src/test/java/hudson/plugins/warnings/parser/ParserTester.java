@@ -8,6 +8,7 @@ import org.apache.commons.io.input.BOMInputStream;
 
 import static org.junit.Assert.*;
 
+import hudson.plugins.analysis.util.model.AbstractAnnotation;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
@@ -16,6 +17,7 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 public abstract class ParserTester {
     static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected: ";
+    static final String DEFAULT_CATEGORY = AbstractAnnotation.DEFAULT_CATEGORY;
 
     /**
      * Checks the properties of the specified warning.

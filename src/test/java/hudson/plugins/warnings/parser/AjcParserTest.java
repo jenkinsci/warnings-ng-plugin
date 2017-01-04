@@ -1,16 +1,16 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * Tests the class {@link hudson.plugins.warnings.parser.AjcParser}.
@@ -41,7 +41,7 @@ public class AjcParserTest extends ParserTester {
                 0,
                 "incorrect classpath: /home/hudson/.m2/repository/org/apache/cxf/cxf/2.6.1/cxf-2.6.1.pom",
                 "<unknown source file>",
-                WARNING_TYPE, "", Priority.NORMAL);
+                WARNING_TYPE, DEFAULT_CATEGORY, Priority.NORMAL);
 
         annotation = iterator.next();
         checkWarning(annotation,

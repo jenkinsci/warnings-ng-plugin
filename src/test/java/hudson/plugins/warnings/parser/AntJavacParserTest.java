@@ -95,7 +95,7 @@ public class AntJavacParserTest extends ParserTester {
                 86,
                 "non-varargs call of varargs method with inexact argument type for last parameter;",
                 "/home/hudson/hudson/data/jobs/Mockito/workspace/trunk/test/org/mockitousage/misuse/DescriptiveMessagesOnMisuseTest.java",
-                WARNING_TYPE, "", Priority.NORMAL);
+                WARNING_TYPE, DEFAULT_CATEGORY, Priority.NORMAL);
         checkWarning(iterator.next(),
                 51,
                 "<T>stubVoid(T) in org.mockito.Mockito has been deprecated",

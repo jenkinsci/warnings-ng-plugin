@@ -9,7 +9,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 
 import org.apache.commons.io.IOUtils;
@@ -24,6 +23,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.core.PluginDescriptor;
+import hudson.plugins.analysis.util.model.AnnotationContainer;
+import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
@@ -45,6 +46,38 @@ public class ParserRegistryIntegrationTest {
     public JenkinsRule jenkins = new JenkinsRule();
 
     /**
+     * Parses a warning log with 7 warnings, 2 have no category.
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-38557">Issue 38557</a>
+     */
+    @Test
+    public void issue38557() throws IOException {
+        Collection<FileAnnotation> warnings = parse("issue38557.txt");
+
+        verifyNumberOfWarnings(warnings, 7);
+
+        DefaultAnnotationContainer container = new DefaultAnnotationContainer();
+        container.addAnnotations(warnings);
+        verifyNumberOfWarnings(container.getAnnotations(), 7);
+
+        int count = 0;
+        for (AnnotationContainer category : container.getCategories()) {
+            count += category.getNumberOfAnnotations();
+        }
+        verifyNumberOfWarnings(7, count);
+    }
+
+    private void verifyNumberOfWarnings(final Collection<FileAnnotation> warnings, final int expected) {
+        verifyNumberOfWarnings(expected, warnings.size());
+    }
+
+    private void verifyNumberOfWarnings(final int expected, final int actual) {
+        assertEquals(String.format("There should be %d warnings", expected), expected, actual);
+    }
+
+    /**
      * Parses a warning log with two warnings.
      *
      * @throws IOException
@@ -53,12 +86,16 @@ public class ParserRegistryIntegrationTest {
      */
     @Test
     public void testIssue24611() throws IOException {
-        InputStream file = ParserRegistryIntegrationTest.class.getResourceAsStream("issue24611.txt");
+        Collection<FileAnnotation> warnings = parse("issue24611.txt");
+
+        verifyNumberOfWarnings(warnings, 2);
+    }
+
+    private Collection<FileAnnotation> parse(final String fileName) throws IOException {
+        InputStream file = ParserRegistryIntegrationTest.class.getResourceAsStream(fileName);
         ParserRegistry registry = new ParserRegistry(ParserRegistry.getParsers("Java Compiler (javac)"), null);
         String text = IOUtils.toString(file);
-        Set<FileAnnotation> warnings = registry.parse(new ReaderInputStream(new StringReader(text)));
-
-        assertEquals("There should be 2 warnings", 2, warnings.size());
+        return registry.parse(new ReaderInputStream(new StringReader(text)));
     }
 
     /**

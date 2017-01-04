@@ -1,7 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,6 +10,8 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import static org.junit.Assert.*;
+
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -20,6 +20,8 @@ import hudson.plugins.analysis.util.model.Priority;
  * Tests the class {@link EclipseParser}.
  */
 public class EclipseParserTest extends AbstractEclipseParserTest {
+    private static final String CATEGORY = DEFAULT_CATEGORY;
+
     /**
      * Parses a warning log with previously undetected warnings.
      *
@@ -41,7 +43,7 @@ public class EclipseParserTest extends AbstractEclipseParserTest {
                 13,
                 "The method getOldValue() from the type SomeType is deprecated",
                 "/path/to/job/job-name/module/src/main/java/com/example/Example.java",
-                getType(), "", Priority.NORMAL);
+                getType(), CATEGORY, Priority.NORMAL);
     }
 
     /**
@@ -65,17 +67,17 @@ public class EclipseParserTest extends AbstractEclipseParserTest {
                 369,
                 "The method compare(List<String>, List<String>) from the type PmModelImporter is never used locally",
                 "/media/ssd/multi-x-processor/workspace/msgPM_Access/com.faktorzehn.pa2msgpm.core/src/com/faktorzehn/pa2msgpm/core/loader/PmModelImporter.java",
-                getType(), "", Priority.NORMAL);
+                getType(), CATEGORY, Priority.NORMAL);
         checkWarning(iterator.next(),
                 391,
                 "The method getTableValues(PropertyRestrictionType) from the type PmModelImporter is never used locally",
                 "/media/ssd/multi-x-processor/workspace/msgPM_Access/com.faktorzehn.pa2msgpm.core/src/com/faktorzehn/pa2msgpm/core/loader/PmModelImporter.java",
-                getType(), "", Priority.NORMAL);
+                getType(), CATEGORY, Priority.NORMAL);
         checkWarning(iterator.next(),
                 56,
                 "The value of the field PropertyImporterTest.ERROR_RESPONSE is not used",
                 "/media/ssd/multi-x-processor/workspace/msgPM_Access/com.faktorzehn.pa2msgpm.core.test/src/com/faktorzehn/pa2msgpm/core/importer/PropertyImporterTest.java",
-                getType(), "", Priority.NORMAL);
+                getType(), CATEGORY, Priority.NORMAL);
     }
 
     /**
@@ -136,7 +138,7 @@ public class EclipseParserTest extends AbstractEclipseParserTest {
                 10,
                 "The import com.bombardier.oldinfra.export.dataAccess.InfrastructureDiagramAPI is never used",
                 "/srv/hudson/workspace/Ebitool Trunk/build/plugins/com.bombardier.oldInfra.export.jet/jet2java/org/eclipse/jet/compiled/_jet_infraSoe.java",
-                getType(), "", Priority.NORMAL);
+                getType(), CATEGORY, Priority.NORMAL);
     }
 
     /**
@@ -158,12 +160,12 @@ public class EclipseParserTest extends AbstractEclipseParserTest {
                 90,
                 "Type safety: The method setBoHandler(BoHandler) belongs to the raw type BoQuickSearchControl.Builder. References to generic type BoQuickSearchControl<S>.Builder<T> should be parameterized",
                 "/ige/hudson/work/jobs/esvclient__development/workspace/target/rcp-build/plugins/ch.ipi.esv.client.customer/src/main/java/ch/ipi/esv/client/customer/search/CustomerQuickSearch.java",
-                getType(), "", Priority.NORMAL);
+                getType(), CATEGORY, Priority.NORMAL);
         checkWarning(sorted.get(1),
                 90,
                 "Type safety: The expression of type BoQuickSearchControl needs unchecked conversion to conform to BoQuickSearchControl<CustomerBO>",
                 "/ige/hudson/work/jobs/esvclient__development/workspace/target/rcp-build/plugins/ch.ipi.esv.client.customer/src/main/java/ch/ipi/esv/client/customer/search/CustomerQuickSearch.java",
-                getType(), "", Priority.NORMAL);
+                getType(), CATEGORY, Priority.NORMAL);
     }
 
     /**
