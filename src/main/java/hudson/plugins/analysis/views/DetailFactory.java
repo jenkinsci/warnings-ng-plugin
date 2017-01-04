@@ -295,7 +295,12 @@ public class DetailFactory {
      * @return the hash code
      */
     private int createHashCode(final String link, final String prefix) {
-        return Integer.parseInt(StringUtils.substringAfter(link, prefix));
+        try {
+            return Integer.parseInt(StringUtils.substringAfter(link, prefix));
+        }
+        catch (NumberFormatException e) {
+            return -1; // non-existent ID
+        }
     }
 
     /**

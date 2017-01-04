@@ -1,18 +1,17 @@
 package hudson.plugins.analysis.views;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 
-import hudson.model.ModelObject;
 import hudson.model.AbstractBuild;
+import hudson.model.ModelObject;
 import hudson.model.Run;
-
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -137,7 +136,18 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      * @return the dynamic result of this module detail view
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
-        return detailFactory.createDetails(link, owner, getContainer(), defaultEncoding, getDisplayName());
+        try {
+            return detailFactory.createDetails(link, owner, getContainer(), defaultEncoding, getDisplayName());
+        }
+        catch (NoSuchElementException exception) {
+            try {
+                response.sendRedirect2("../");
+            }
+            catch (IOException e) {
+                // ignore
+            }
+            return this; // fallback on broken URLs
+        }
     }
 
     /**

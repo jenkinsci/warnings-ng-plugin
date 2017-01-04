@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1120,8 +1121,19 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the dynamic result of the analysis (detail page).
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
-        return DetailFactory.create(getResultActionType()).createTrendDetails(link, getOwner(), getContainer(), getFixedWarnings(),
-                getNewWarnings(), getErrors(), getDefaultEncoding(), getDisplayName());
+        try {
+            return DetailFactory.create(getResultActionType()).createTrendDetails(link, getOwner(), getContainer(), getFixedWarnings(),
+                    getNewWarnings(), getErrors(), getDefaultEncoding(), getDisplayName());
+        }
+        catch (NoSuchElementException exception) {
+            try {
+                response.sendRedirect2("../");
+            }
+            catch (IOException e) {
+                // ignore
+            }
+            return this; // fallback on broken URLs
+        }
     }
 
     /**
