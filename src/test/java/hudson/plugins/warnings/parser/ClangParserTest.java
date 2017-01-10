@@ -42,6 +42,20 @@ public class ClangParserTest extends ParserTester {
      *
      * @throws IOException
      *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-36817">Issue 36817</a>
+     */
+    @Test
+    public void issue36817() throws IOException {
+        Collection<FileAnnotation> warnings = new ClangParser().parse(openFile("issue36817.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 0, warnings.size());
+    }
+
+    /**
+     * Parses a file with fatal error message.
+     *
+     * @throws IOException
+     *      if the file could not be read
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-18084">Issue 18084</a>
      */
     @Test

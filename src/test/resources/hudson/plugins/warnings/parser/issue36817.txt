@@ -1,0 +1,4 @@
+2017-01-09 23:58:38.845 TheApp[23132:1512765431] void dbErrorLogCallback(...[Line 346] SQL error: 23 misuse at line 112343 of [c78c5a7786]
+2017-01-09 23:57:56.598 TheApp[22354:151245512] void dbErrorLogCallback(...[Line 326] SQL error: 232 statement aborts at 12: [select a.id, a.zid, a.user_id
+2017-01-09 23:58:38.943 TheApp[26457:151457651] void dbErrorLogCallback(...[Line 324] SQL error: 1 no such table: main.bin_fr_st
+
