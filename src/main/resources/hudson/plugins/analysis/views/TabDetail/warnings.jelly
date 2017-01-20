@@ -16,6 +16,8 @@
       <td class="pane-header">${%Priority}</td>
       <td class="pane-header">${%Type}</td>
       <td class="pane-header">${%Category}</td>
+      <td class="pane-header">Author</td>
+      <td class="pane-header">CommitId</td>
     </tr>
     <tbody>
       <j:forEach var="warning" items="${it.container.sortedAnnotations}">
@@ -56,6 +58,47 @@
           <td class="pane">
             <div tooltip="${warning.message}"> ${warning.category} </div>
           </td>
+
+          <td class="pane">
+            <div tooltip="${warning.message}">
+              <j:choose>
+                <j:when test="${warning.authorName == null}">
+                  <j:choose>
+                    <j:when test="${warning.authorEmail == null}">
+                      -
+                    </j:when>
+                    <j:otherwise>
+                      ${warning.authorEmail}
+                    </j:otherwise>
+                  </j:choose>
+                </j:when>
+                <j:otherwise>
+                  ${warning.authorName}
+                </j:otherwise>
+              </j:choose>
+            </div>
+          </td>
+          <td class="pane">
+              <div tooltip="${warning.message}">
+                <j:choose>
+                  <j:when test="${warning.authorCommitId == null}">
+                    -
+                  </j:when>
+                  <j:otherwise>
+                    <j:choose>
+                      <j:when test="${it.container.urlForCommitId(warning.authorCommitId) == null}">
+                        ${warning.authorCommitId}
+                      </j:when>
+                      <j:otherwise>
+                        <a href="${it.container.urlForCommitId(warning.authorCommitId)}">${warning.authorCommitId}</a>
+                      </j:otherwise>
+                    </j:choose>
+                  </j:otherwise>
+                </j:choose>
+              </div>
+            </td>
+
+
         </tr>
       </j:forEach>
     </tbody>

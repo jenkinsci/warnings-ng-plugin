@@ -23,6 +23,7 @@ import hudson.model.Job;
 import hudson.model.Action;
 import hudson.model.Api;
 import hudson.model.Run;
+import hudson.plugins.analysis.graph.AnnotationsByUserGraph;
 import hudson.plugins.analysis.graph.BuildResultGraph;
 import hudson.plugins.analysis.graph.DefaultGraphConfigurationView;
 import hudson.plugins.analysis.graph.DifferenceGraph;
@@ -382,6 +383,7 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
         availableGraphs.add(new DifferenceGraph());
         availableGraphs.add(new EmptyGraph());
         availableGraphs.add(new NullGraph());
+        availableGraphs.add(new AnnotationsByUserGraph());
 
         return availableGraphs;
     }

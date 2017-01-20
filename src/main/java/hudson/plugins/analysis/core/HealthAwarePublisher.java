@@ -9,6 +9,7 @@ import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
 
+import hudson.plugins.analysis.util.AuthorAssigner;
 import hudson.plugins.analysis.util.Compatibility;
 import hudson.plugins.analysis.util.PluginLogger;
 
@@ -66,6 +67,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
         BuildResult result;
         try {
             result = perform(run, workspace, logger);
+            AuthorAssigner.addAuthorToAnnotation(run, workspace, result, logger);
             Run<?, ?> referenceBuild = result.getHistory().getReferenceBuild();
 
             if (GlobalSettings.instance().getFailOnCorrupt() && result.hasError()) {

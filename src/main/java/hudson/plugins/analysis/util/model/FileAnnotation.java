@@ -2,7 +2,6 @@ package hudson.plugins.analysis.util.model;
 
 import java.util.Collection;
 
-import hudson.model.AbstractBuild;
 import hudson.model.Run;
 
 /**
@@ -216,4 +215,46 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
      * @since 1.72
      */
     int getBuild();
+
+    /**
+     * Get the id of the commit that caused this annotation.
+     * @return The id of the commit that caused this annotation.
+     */
+    String getAuthorCommitId();
+
+    /**
+     * Get the person who caused this annotation.
+     *
+     * @return The person who caused this annotation.
+     */
+    String getAuthorName();
+
+    /**
+     * Get the email of the person who caused this annotation.
+     *
+     * @return The email of the person who caused this annotation.
+     */
+    String getAuthorEmail();
+
+    /**
+     * Set the person who caused this annotation.
+     *
+     * @param authorName the person who caused this annotation.
+     */
+    void setAuthorName(String authorName);
+
+    /**
+     * Set the email of the person who caused this annotation.
+     *
+     * @param authorEmail the person who caused this annotation.
+     */
+    void setAuthorEmail(String authorEmail);
+
+    /**
+     * Set the id of the commit that caused this annotation.
+     *
+     * @param commitId the commit that caused this annotation.
+     */
+    void setAuthorCommitId(String commitId);
+
 }

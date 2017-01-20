@@ -19,6 +19,8 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 import hudson.plugins.analysis.Messages;
 
 /**
@@ -39,7 +41,10 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         /** Package level. */
         PACKAGE,
         /** File level. */
-        FILE}
+        FILE,
+        /** User level. */
+        USER
+        }
 
     /** The annotations mapped by their key. */
     @SuppressWarnings("Se")
@@ -78,6 +83,12 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     private String name;
     /** Hierarchy level of this container. */
     private Hierarchy hierarchy;
+
+    /** The author annotations collections mapped by name. */
+    private transient Map<String, Author> authorsByName;
+    /** The authors that contain annotations mapped by hash code of author name. */
+    private transient Map<Integer, Author> authorsByHashCode;
+
 
     /**
      * Creates a new instance of <code>AnnotationContainer</code>.
@@ -155,6 +166,15 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     }
 
     /**
+     * Get the container hierarchy.
+     *
+     * @return the container hierarchy.
+     */
+    public Hierarchy getHierarchy() {
+        return hierarchy;
+    }
+
+    /**
      * Returns the name of this container.
      *
      * @return the name of this container
@@ -182,12 +202,18 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         }
         annotationsByCategory = new HashMap<String, Set<FileAnnotation>>();
         annotationsByType = new HashMap<String, Set<FileAnnotation>>();
+
+        authorsByName = new HashMap<String, Author>();
+
         filesByName = new HashMap<String, WorkspaceFile>();
         packagesByName = new HashMap<String, JavaPackage>();
         modulesByName = new HashMap<String, MavenModule>();
         filesByHashCode = new HashMap<Integer, WorkspaceFile>();
         packagesByHashCode = new HashMap<Integer, JavaPackage>();
         modulesByHashCode = new HashMap<Integer, MavenModule>();
+
+        authorsByHashCode = new HashMap<Integer, Author>();
+
         categoriesByHashCode = new HashMap<Integer, Set<FileAnnotation>>();
         typesByHashCode = new HashMap<Integer, Set<FileAnnotation>>();
     }
@@ -218,6 +244,8 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      *
      * @param annotation the new annotation
      */
+    @SuppressWarnings("SF_SWITCH_FALLTHROUGH")
+    @java.lang.SuppressWarnings("fallthrough")
     private void updateMappings(final FileAnnotation annotation) {
         annotationsByPriority.get(annotation.getPriority()).add(annotation);
         if (StringUtils.isNotBlank(annotation.getCategory())) {
@@ -226,8 +254,36 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         if (StringUtils.isNotBlank(annotation.getType())) {
             addType(annotation);
         }
+
+/*
+        switch (hierarchy) {
+            case USER_PROJECT:
+            case USER_MODULE:
+            case USER_PACKAGE:
+            case USER_FILE:
+                break;
+            default:
+                addAuthorName(annotation);
+        }
+        // CHECKSTYLE:OFF
+        switch(hierarchy) {
+            case PROJECT:
+            case USER_PROJECT:
+                addModule(annotation);
+            case MODULE:
+            case USER_MODULE:
+                addPackage(annotation);
+            case USER_PACKAGE:
+            case PACKAGE:
+                addFile(annotation);
+                break;
+            default:
+        }
+*/
+
         if (hierarchy == Hierarchy.PROJECT) {
             addModule(annotation);
+
         }
         if (hierarchy == Hierarchy.PROJECT || hierarchy == Hierarchy.MODULE) {
             addPackage(annotation);
@@ -235,6 +291,12 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         if (hierarchy == Hierarchy.PROJECT || hierarchy == Hierarchy.MODULE || hierarchy == Hierarchy.PACKAGE) {
             addFile(annotation);
         }
+        if (hierarchy == Hierarchy.PROJECT || hierarchy == Hierarchy.MODULE || hierarchy == Hierarchy.PACKAGE || hierarchy == Hierarchy.FILE) {
+            addAuthorName(annotation);
+        }
+
+
+
     }
 
     /**
@@ -344,6 +406,50 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         for (FileAnnotation annotation : newAnnotations) {
             addAnnotation(annotation);
         }
+    }
+
+    /**
+     * Indexes an annotation by author name.
+     *
+     * @param annotation the new annotation
+     */
+    private void addAuthorName(final FileAnnotation annotation) {
+        String authorName = annotation.getAuthorName();
+        String authorEmail = annotation.getAuthorEmail();
+        // We'll just assume that these will never be empty (but could be null).
+        if (authorName == null) {
+            authorName = "";
+        }
+        if (authorEmail == null) {
+            authorEmail = "";
+        }
+        String key = authorName + authorEmail;
+        if (!authorsByName.containsKey(key)) {
+            Hierarchy targeth = null;
+            /*
+            switch(hierarchy) {
+                case PROJECT:
+                    targeth = Hierarchy.USER_PROJECT;
+                    break;
+                case MODULE:
+                    targeth = Hierarchy.USER_MODULE;
+                    break;
+                case PACKAGE:
+                    targeth = Hierarchy.USER_PACKAGE;
+                    break;
+                case FILE:
+                    targeth = Hierarchy.USER_FILE;
+                    break;
+                default:
+                    // This should never happen.  Should we throw an error here for sanity checking?
+                    return;
+            }
+            */
+            Author container = new Author(authorName, authorEmail, Hierarchy.USER);
+            authorsByName.put(key, container);
+            authorsByHashCode.put(key.hashCode(), container);
+        }
+        authorsByName.get(key).addAnnotation(annotation);
     }
 
     /**
@@ -805,6 +911,45 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     }
 
     /**
+     * Gets the authors of this container that have annotations.
+     *
+     * @return the authors with annotations.
+     */
+    public Collection<Author> getAuthors() {
+        ArrayList<Author> authors = new ArrayList<Author>(authorsByName.values());
+        Collections.sort(authors);
+        return Collections.unmodifiableCollection(authors);
+    }
+
+    /**
+     * Gets the author with the key.
+     *
+     * @param key the full name of the author with the email of the cuprit appended to it.
+     *  Unknown author should be indicated by the empty string.
+     * @return the author with the given key.
+     */
+    public Author getAuthor(final String key) {
+        if (authorsByName.containsKey(key)) {
+            return authorsByName.get(key);
+        }
+        throw new NoSuchElementException("Author not found: " + key);
+    }
+
+    /**
+     * Get the author with the given hash code.
+     *
+     * @param hashCode the hash code of the author key (the full name of the
+     *  author with the email of the cuprit appended to it).  Unknown authors should be indicated by 0.
+     * @return the author with the given hashCode.
+     */
+    public Author getAuthor(final int hashCode) {
+        if (authorsByHashCode.containsKey(hashCode)) {
+            return authorsByHashCode.get(hashCode);
+        }
+        throw new NoSuchElementException("Author hashcode not found: " + hashCode);
+    }
+
+    /**
      * Gets the types of this container that have annotations.
      *
      * @return the types with annotations
@@ -857,6 +1002,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         }
         throw new NoSuchElementException("Type by hashcode not found: " + hashCode);
     }
+
 
     /**
      * Returns {@link Priority#HIGH}.

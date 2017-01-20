@@ -14,6 +14,15 @@
 
     <script type="text/javascript">
       var myTabs = new YAHOO.widget.TabView("statistics");
+        <j:if test="${it.container.authors.size() > 1}">
+                YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+                    label: 'People',
+                    dataSrc: 'tab.authors/',
+                    cacheData: true,
+                    active: false
+                }), myTabs);
+            </j:if>
+
 
       <j:if test="${it.container.modules.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
