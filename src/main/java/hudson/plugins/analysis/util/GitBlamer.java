@@ -41,7 +41,7 @@ public class GitBlamer extends AbstractBlamer {
         scm = (GitSCM) aProject.getScm();
     }
 
-    private HashMap<String, BlameResult> loadBlameResultsForFiles(HashMap<String, String> pathsByFileName, SCM scm) throws InterruptedException, IOException {
+    private HashMap<String, BlameResult> loadBlameResultsForFiles(HashMap<String, String> pathsByFileName) throws InterruptedException, IOException {
         TaskListener listener = TaskListener.NULL;
 
         if (!(run instanceof AbstractBuild)) {
@@ -49,12 +49,9 @@ public class GitBlamer extends AbstractBlamer {
             return null;
         }
         AbstractBuild aBuild = (AbstractBuild) run;
-
         final EnvVars environment = run.getEnvironment(listener);
         final String gitCommit = environment.get("GIT_COMMIT");
-        GitSCM gscm = (GitSCM) scm;
-
-        final String gitExe = gscm.getGitExe(aBuild.getBuiltOn(), listener);
+        final String gitExe = scm.getGitExe(aBuild.getBuiltOn(), listener);
 
         GitClient git = Git.with(listener, environment)
                 .in(workspace)
@@ -153,7 +150,7 @@ public class GitBlamer extends AbstractBlamer {
         }
         try {
             HashMap<String, String> filePathsByName = getFilePathsFromAnnotations(annotations);
-            HashMap<String, BlameResult> blameResults = loadBlameResultsForFiles(filePathsByName, scm);
+            HashMap<String, BlameResult> blameResults = loadBlameResultsForFiles(filePathsByName);
             blame(annotations, filePathsByName, blameResults);
         } catch (IOException e) {
             e.printStackTrace();
