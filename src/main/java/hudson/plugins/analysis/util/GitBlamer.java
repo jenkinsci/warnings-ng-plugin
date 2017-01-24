@@ -2,10 +2,7 @@ package hudson.plugins.analysis.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 import org.eclipse.jgit.api.BlameCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -19,8 +16,6 @@ import org.jenkinsci.plugins.gitclient.GitClient;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.plugins.analysis.core.BuildResult;
-import hudson.plugins.analysis.core.ParserResult;
-import hudson.plugins.analysis.util.PluginLogger;
 
 import hudson.EnvVars;
 import hudson.model.AbstractBuild;
@@ -30,37 +25,35 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.git.GitSCM;
 import hudson.scm.SCM;
 
-public class AuthorAssigner {
-    private static final String BAD_PATH = "/";
+/**
+ * A Class that is able to assign git blames to a build result.
+ * Based on the solution by John Gibson.
+ *
+ * @author Lukas Krose
+ */
+public class GitBlamer extends AbstractBlamer {
 
-    public static void addAuthorToAnnotation(final Run<?, ?> build, final FilePath workspace, BuildResult project, final PluginLogger logger)
-            throws IOException, InterruptedException
-    {
-        if (project.getAnnotations().isEmpty()) {
-            return;
-        }
-        logger.log("Adding authors to annotations");
-        if(!(build.getParent() instanceof AbstractProject)) {
-            return;
-        }
-        AbstractProject aProject = (AbstractProject) build.getParent();
-        SCM scm = aProject.getScm();
+    private final GitSCM scm;
+
+    public GitBlamer(Run<?, ?> run, FilePath workspace, PluginLogger logger) {
+        super(run, workspace, logger);
+        AbstractProject aProject = (AbstractProject) run.getParent();
+        scm = (GitSCM) aProject.getScm();
+    }
+
+    private HashMap<String, BlameResult> loadBlameResultsForFiles(HashMap<String, String> pathsByFileName, SCM scm) throws InterruptedException, IOException {
         TaskListener listener = TaskListener.NULL;
 
-        if (!(scm instanceof GitSCM)) {
-            logger.log("Only git supported: " + scm);
-            return;
+        if (!(run instanceof AbstractBuild)) {
+            logger.log("Could not get parent git client.");
+            return null;
         }
+        AbstractBuild aBuild = (AbstractBuild) run;
 
-        final EnvVars environment = build.getEnvironment(listener);
+        final EnvVars environment = run.getEnvironment(listener);
         final String gitCommit = environment.get("GIT_COMMIT");
         GitSCM gscm = (GitSCM) scm;
 
-        if (!(build instanceof AbstractBuild)) {
-            logger.log("Could not get parent git client.");
-            return;
-        }
-        AbstractBuild aBuild = (AbstractBuild) build;
         final String gitExe = gscm.getGitExe(aBuild.getBuiltOn(), listener);
 
         GitClient git = Git.with(listener, environment)
@@ -79,34 +72,11 @@ public class AuthorAssigner {
 
         if (headCommit == null) {
             logger.log("Could not retrieve HEAD commit.");
-            return;
-        }
-
-        File workspaceFile = new File(workspace.toURI());
-        final String absoluteWorkspace = workspaceFile.getAbsolutePath();
-        HashMap<String, String> nameMap = new HashMap<String, String>();
-        for (final FileAnnotation annot : project.getAnnotations()) {
-            if (nameMap.containsKey(annot.getFileName())) {
-                continue;
-            }
-            if (annot.getPrimaryLineNumber() <= 0) {
-                continue;
-            }
-            String filename = annot.getFileName().replace("/", "\\");
-            if (!filename.startsWith(absoluteWorkspace)) {
-                logger.log("Saw a file outside of the workspace? " + annot.getFileName());
-                nameMap.put(annot.getFileName(), BAD_PATH);
-                continue;
-            }
-            String child = annot.getFileName().substring(absoluteWorkspace.length());
-            if (child.startsWith("/") || child.startsWith("\\")) {
-                child = child.substring(1);
-            }
-            nameMap.put(annot.getFileName(), child);
+            return null;
         }
 
         HashMap<String, BlameResult> blameResults = new HashMap<String, BlameResult>();
-        for (final String child : nameMap.values()) {
+        for (final String child : pathsByFileName.values()) {
             if (BAD_PATH.equals(child)) {
                 continue;
             }
@@ -130,12 +100,17 @@ public class AuthorAssigner {
             }
         }
 
+        return blameResults;
+    }
+
+    private void blame(Set<FileAnnotation> annotations, HashMap<String, String> pathsByFileName, HashMap<String, BlameResult> blameResults)
+    {
         HashSet<String> missingBlame = new HashSet<String>();
-        for (final FileAnnotation annot : project.getAnnotations()) {
+        for (final FileAnnotation annot : annotations) {
             if (annot.getPrimaryLineNumber() <= 0) {
                 continue;
             }
-            String child = nameMap.get(annot.getFileName());
+            String child = pathsByFileName.get(annot.getFileName());
             if (BAD_PATH.equals(child)) {
                 continue;
             }
@@ -168,5 +143,24 @@ public class AuthorAssigner {
                 logger.log("Blame details were incomplete for file: " + child);
             }
         }
+    }
+
+    @Override
+    public void blame(Set<FileAnnotation> annotations) {
+        logger.log("Adding authors to annotations");
+        if (annotations.isEmpty()) {
+            return;
+        }
+        try {
+            HashMap<String, String> filePathsByName = getFilePathsFromAnnotations(annotations);
+            HashMap<String, BlameResult> blameResults = loadBlameResultsForFiles(filePathsByName, scm);
+            blame(annotations, filePathsByName, blameResults);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
     }
 }

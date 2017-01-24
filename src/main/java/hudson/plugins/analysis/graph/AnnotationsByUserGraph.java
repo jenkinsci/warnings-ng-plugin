@@ -21,9 +21,9 @@ import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
- * Builds a new versus fixed warnings graph for a specified result action.
+ * Builds a warnings graph that shows the total annotations by user.
  *
- * @author Ulli Hafner
+ * @author Lukas Krose
  */
 public class AnnotationsByUserGraph extends UserBuildResultGraph {
     @Override

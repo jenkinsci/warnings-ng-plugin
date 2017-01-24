@@ -20,6 +20,11 @@ import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.util.DataSetBuilder;
 
+/**
+ * A build result graph that can create a graph based on authors of annotations.
+ *
+ * @author Lukas Krose
+ */
 public abstract class UserBuildResultGraph extends BuildResultGraph {
     @Override
     public JFreeChart create(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> resultAction, @CheckForNull final String pluginName) {
