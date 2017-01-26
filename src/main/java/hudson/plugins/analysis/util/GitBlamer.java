@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import hudson.remoting.VirtualChannel;
 import org.eclipse.jgit.api.BlameCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.blame.BlameResult;
@@ -24,6 +25,7 @@ import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.git.GitSCM;
 import hudson.scm.SCM;
+import org.jenkinsci.remoting.RoleChecker;
 
 /**
  * A Class that is able to assign git blames to a build result.
@@ -100,64 +102,30 @@ public class GitBlamer extends AbstractBlamer {
         return blameResults;
     }
 
-    private void blame(Set<FileAnnotation> annotations, HashMap<String, String> pathsByFileName, HashMap<String, BlameResult> blameResults)
-    {
-        HashSet<String> missingBlame = new HashSet<String>();
-        for (final FileAnnotation annot : annotations) {
-            if (annot.getPrimaryLineNumber() <= 0) {
-                continue;
-            }
-            String child = pathsByFileName.get(annot.getFileName());
-            if (BAD_PATH.equals(child)) {
-                continue;
-            }
-            BlameResult blame = blameResults.get(child);
-            if (blame == null) {
-                continue;
-            }
-            int zeroline = annot.getPrimaryLineNumber() - 1;
-            try {
-                PersonIdent who = blame.getSourceAuthor(zeroline);
-                RevCommit commit = blame.getSourceCommit(zeroline);
-                if (who == null) {
-                    missingBlame.add(child);
-                }
-                else {
-                    annot.setAuthorName(who.getName());
-                    annot.setAuthorEmail(who.getEmailAddress());
-                }
-                annot.setAuthorCommitId(commit == null ? null : commit.getName());
-            }
-            catch (ArrayIndexOutOfBoundsException e) {
-                logger.log("Blame details were out of bounds for line number " + annot.getPrimaryLineNumber() + " in file " + child);
-            }
-        }
-
-        if (!missingBlame.isEmpty()) {
-            ArrayList<String> l = new ArrayList<String>(missingBlame);
-            Collections.sort(l);
-            for (final String child : l) {
-                logger.log("Blame details were incomplete for file: " + child);
-            }
-        }
-    }
-
     @Override
-    public void blame(Set<FileAnnotation> annotations) {
+    public void blame(final Set<FileAnnotation> annotations) {
         logger.log("Adding authors to annotations");
         if (annotations.isEmpty()) {
             return;
         }
         try {
-            HashMap<String, String> filePathsByName = getFilePathsFromAnnotations(annotations);
-            HashMap<String, BlameResult> blameResults = loadBlameResultsForFiles(filePathsByName);
-            blame(annotations, filePathsByName, blameResults);
+            final HashMap<String, String> filePathsByName = getFilePathsFromAnnotations(annotations);
+            final HashMap<String, BlameResult> blameResults = loadBlameResultsForFiles(filePathsByName);
+            workspace.act(new FilePath.FileCallable<Void>() {
+                @Override
+                public void checkRoles(RoleChecker roleChecker) throws SecurityException {
+                    assignBlameResults(annotations, filePathsByName, blameResults);
+                }
+
+                public Void invoke(File f, VirtualChannel channel) throws IOException, InterruptedException {
+
+                    return null;
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-
     }
 }
