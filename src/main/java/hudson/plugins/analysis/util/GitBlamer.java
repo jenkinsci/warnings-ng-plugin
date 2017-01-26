@@ -114,11 +114,10 @@ public class GitBlamer extends AbstractBlamer {
             workspace.act(new FilePath.FileCallable<Void>() {
                 @Override
                 public void checkRoles(RoleChecker roleChecker) throws SecurityException {
-                    assignBlameResults(annotations, filePathsByName, blameResults);
                 }
 
                 public Void invoke(File f, VirtualChannel channel) throws IOException, InterruptedException {
-
+                    assignBlameResults(annotations, filePathsByName, blameResults);
                     return null;
                 }
             });
