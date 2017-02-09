@@ -71,53 +71,6 @@ public abstract class AbstractBlamer implements BlameInterface{
     }
 
 
-    /**
-     * Assigns the BlameResults to the annotations.
-     *
-     * @param annotations The annotations that should be blamed
-     * @param pathsByFileName the annotations by filename
-     * @param blameResults the results of the blaming
-     */
-    protected void assignBlameResults(final Set<FileAnnotation> annotations,final HashMap<String, String> pathsByFileName, final HashMap<String, BlameResult> blameResults)
-    {
-        HashSet<String> missingBlame = new HashSet<String>();
-        for (final FileAnnotation annot : annotations) {
-            if (annot.getPrimaryLineNumber() <= 0) {
-                continue;
-            }
-            String child = pathsByFileName.get(annot.getFileName());
-            if (BAD_PATH.equals(child)) {
-                continue;
-            }
-            BlameResult blame = blameResults.get(child);
-            if (blame == null) {
-                continue;
-            }
-            int zeroline = annot.getPrimaryLineNumber() - 1;
-            try {
-                PersonIdent who = blame.getSourceAuthor(zeroline);
-                RevCommit commit = blame.getSourceCommit(zeroline);
-                if (who == null) {
-                    missingBlame.add(child);
-                }
-                else {
-                    annot.setAuthorName(who.getName());
-                    annot.setAuthorEmail(who.getEmailAddress());
-                }
-                annot.setAuthorCommitId(commit == null ? null : commit.getName());
-            }
-            catch (ArrayIndexOutOfBoundsException e) {
-                logger.log("Blame details were out of bounds for line number " + annot.getPrimaryLineNumber() + " in file " + child);
-            }
-        }
 
-        if (!missingBlame.isEmpty()) {
-            ArrayList<String> l = new ArrayList<String>(missingBlame);
-            Collections.sort(l);
-            for (final String child : l) {
-                logger.log("Blame details were incomplete for file: " + child);
-            }
-        }
-    }
 
 }
