@@ -12,7 +12,6 @@ import org.codehaus.groovy.control.CompilationFailedException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
-import groovy.lang.GroovyShell;
 import jenkins.model.Jenkins;
 
 import hudson.Extension;
@@ -307,8 +306,8 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
                     return FormValidation.error(Messages.Warnings_GroovyParser_Error_Script_isEmpty());
                 }
 
-                GroovyShell groovyShell = new GroovyShell(WarningsDescriptor.class.getClassLoader());
-                groovyShell.parse(script);
+                GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(script, null);
+                matcher.compile();
 
                 return FormValidation.ok();
             }

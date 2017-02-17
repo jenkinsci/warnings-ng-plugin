@@ -1,11 +1,15 @@
 package hudson.plugins.warnings.parser;
 
 import java.io.Serializable;
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.RejectedAccessException;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.Whitelist;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.GroovySandbox;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -26,7 +30,6 @@ public class GroovyExpressionMatcher implements Serializable {
 
     private transient Script compiled;
 
-
     /**
      * Creates a new instance of {@link GroovyExpressionMatcher}.
      *
@@ -43,17 +46,28 @@ public class GroovyExpressionMatcher implements Serializable {
     private void compileScriptIfNotYetDone() {
         synchronized (script) {
              if (compiled == null) {
-                 GroovyShell shell = new GroovyShell(WarningsDescriptor.class.getClassLoader());
                  try {
-                     compiled = shell.parse(script);
+                     compiled = compile();
                  }
                  catch (CompilationFailedException exception) {
                      LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during compiling: ", exception);
                  }
-
-                 compiled.getBinding().setVariable("falsePositive", falsePositive);
             }
         }
+    }
+
+    /**
+     * Compiles the script.
+     *
+     * @return the compiled script
+     * @throws CompilationFailedException if the script contains compile errors
+     */
+    public Script compile() throws CompilationFailedException {
+        ClassLoader loader = GroovySandbox.createSecureClassLoader(WarningsDescriptor.class.getClassLoader());
+        Binding binding = new Binding();
+        binding.setVariable("falsePositive", falsePositive);
+        GroovyShell shell = new GroovyShell(loader, binding, GroovySandbox.createSecureCompilerConfiguration());
+        return shell.parse(script);
     }
 
     /**
@@ -72,8 +86,11 @@ public class GroovyExpressionMatcher implements Serializable {
                 return (Warning)result;
             }
         }
+        catch (RejectedAccessException exception) {
+            throw exception; // needs to be presented to the user
+        }
         catch (Exception exception) { // NOPMD NOCHECKSTYLE: catch all exceptions of the Groovy script
-            LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during parsing: ", exception);
+            LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during execution: ", exception);
         }
         return falsePositive;
     }
@@ -94,7 +111,20 @@ public class GroovyExpressionMatcher implements Serializable {
         binding.setVariable("matcher", matcher);
         binding.setVariable("lineNumber", lineNumber);
 
-        return compiled.run();
+        try {
+            return GroovySandbox.runInSandbox(new Callable<Object>() {
+                @Override public Object call() throws Exception {
+                    return compiled.run();
+                }
+            }, Whitelist.all());
+        }
+        catch (RejectedAccessException exception) {
+            throw exception; // needs to be presented to the user
+        }
+        catch (Exception exception) {
+            LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during execution: ", exception);
+            return falsePositive;
+        }
     }
 
     /**
