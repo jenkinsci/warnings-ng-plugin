@@ -1,0 +1,8 @@
+# MatchResult methods
+method java.util.regex.MatchResult group int
+
+# String methods
+method java.lang.String equalsIgnoreCase java.lang.String
+
+# Integer methods
+staticMethod java.lang.Integer parseInt java.lang.String
