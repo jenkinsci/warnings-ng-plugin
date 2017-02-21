@@ -10,6 +10,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.RejectedAccessException;
+import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext;
+import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
@@ -302,11 +304,6 @@ public class WarningsPublisher extends HealthAwarePublisher implements SimpleBui
 
             return result;
         }
-        catch (RejectedAccessException exception) {
-            logger.log("Groovy parser script has been rejected by the Groovy Runtime");
-
-            return emptyBuildResult(run, logger, exception);
-        }
         catch (ParsingCanceledException exception) {
             return emptyBuildResult(run, logger, exception);
         }
@@ -374,6 +371,7 @@ public class WarningsPublisher extends HealthAwarePublisher implements SimpleBui
     private void handleRejectedException(final PluginLogger logger, final String parserName, final RejectedAccessException exception) {
         logger.log(String.format("Groovy sandbox rejected the parsing script for parser %s: %s",
                 parserName, exception.getMessage()));
+        ScriptApproval.get().accessRejected(exception, ApprovalContext.create());
     }
 
     private ParserResult filterWarnings(final ParserResult project, final PluginLogger logger) {
