@@ -153,23 +153,32 @@ public final class WarningsDescriptor extends PluginDescriptor implements Staple
     }
 
     /**
-     * Replaces the list of given groovy Parsers
-     *
-     * @return the Boolean value after replacing the given groovy Parsers.
+     * Adds the given Groovy parser to the configured Groovy parsers
      */
-
-    public boolean replaceGroovyParsers(List<GroovyParser> groovyParserList) {
-        groovyParsers.replaceBy(groovyParserList);
-
+    public void addGroovyParser(GroovyParser parser) {
+        groovyParsers.add(parser);
         save();
+    }
 
-        return true;
+    /**
+     * Adds the given list of Groovy parsers to the configured Groovy parsers
+     */
+    public void addGroovyParsers(List<GroovyParser> parsers) {
+        groovyParsers.addAll(parsers);
+        save();
+    }
+
+    /**
+     * Replaces the configured Groovy parsers with the given list.
+     */
+    public void replaceGroovyParsers(List<GroovyParser> parsers) {
+        groovyParsers.replaceBy(parsers);
+        save();
     }
 
     @Override
     public boolean configure(final StaplerRequest req, final JSONObject formData) {
         replaceGroovyParsers(req.bindJSONToList(GroovyParser.class, formData.get("parsers")));
-
         return true;
     }
 
