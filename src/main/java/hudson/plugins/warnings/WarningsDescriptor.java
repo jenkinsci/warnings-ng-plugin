@@ -1,6 +1,7 @@
 package hudson.plugins.warnings;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.AncestorInPath;
@@ -20,7 +21,6 @@ import hudson.plugins.analysis.graph.GraphConfiguration;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.util.CopyOnWriteList;
 import hudson.util.FormValidation;
-import java.util.List;
 
 /**
  * Descriptor for the class {@link WarningsPublisher}. Used as a singleton. The
@@ -155,23 +155,23 @@ public final class WarningsDescriptor extends PluginDescriptor implements Staple
     /**
      * Adds the given Groovy parser to the configured Groovy parsers
      */
-    public void addGroovyParser(GroovyParser parser) {
+    public void addGroovyParser(final GroovyParser parser) {
         groovyParsers.add(parser);
         save();
     }
 
     /**
-     * Adds the given list of Groovy parsers to the configured Groovy parsers
+     * Adds the given collection of Groovy parsers to the configured Groovy parsers
      */
-    public void addGroovyParsers(List<GroovyParser> parsers) {
+    public void addGroovyParsers(final Collection<GroovyParser> parsers) {
         groovyParsers.addAll(parsers);
         save();
     }
 
     /**
-     * Replaces the configured Groovy parsers with the given list.
+     * Replaces the configured Groovy parsers with the given collection.
      */
-    public void replaceGroovyParsers(List<GroovyParser> parsers) {
+    public void replaceGroovyParsers(final Collection<GroovyParser> parsers) {
         groovyParsers.replaceBy(parsers);
         save();
     }
@@ -181,7 +181,6 @@ public final class WarningsDescriptor extends PluginDescriptor implements Staple
         replaceGroovyParsers(req.bindJSONToList(GroovyParser.class, formData.get("parsers")));
         return true;
     }
-
 
     @Override
     public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
