@@ -1,6 +1,7 @@
 package hudson.plugins.warnings;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.AncestorInPath;
@@ -151,12 +152,33 @@ public final class WarningsDescriptor extends PluginDescriptor implements Staple
         return groovyParsers.toArray(new GroovyParser[groovyParsers.size()]);
     }
 
+    /**
+     * Adds the given Groovy parser to the configured Groovy parsers
+     */
+    public void addGroovyParser(final GroovyParser parser) {
+        groovyParsers.add(parser);
+        save();
+    }
+
+    /**
+     * Adds the given collection of Groovy parsers to the configured Groovy parsers
+     */
+    public void addGroovyParsers(final Collection<GroovyParser> parsers) {
+        groovyParsers.addAll(parsers);
+        save();
+    }
+
+    /**
+     * Replaces the configured Groovy parsers with the given collection.
+     */
+    public void replaceGroovyParsers(final Collection<GroovyParser> parsers) {
+        groovyParsers.replaceBy(parsers);
+        save();
+    }
+
     @Override
     public boolean configure(final StaplerRequest req, final JSONObject formData) {
-        groovyParsers.replaceBy(req.bindJSONToList(GroovyParser.class, formData.get("parsers")));
-
-        save();
-
+        replaceGroovyParsers(req.bindJSONToList(GroovyParser.class, formData.get("parsers")));
         return true;
     }
 
