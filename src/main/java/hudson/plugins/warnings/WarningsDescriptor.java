@@ -153,7 +153,9 @@ public final class WarningsDescriptor extends PluginDescriptor implements Staple
     }
 
     /**
-     * Adds the given Groovy parser to the configured Groovy parsers
+     * Adds the given Groovy parser to the configured Groovy parsers.
+     *
+     * @param parser the new parser
      */
     public void addGroovyParser(final GroovyParser parser) {
         groovyParsers.add(parser);
@@ -161,7 +163,9 @@ public final class WarningsDescriptor extends PluginDescriptor implements Staple
     }
 
     /**
-     * Adds the given collection of Groovy parsers to the configured Groovy parsers
+     * Adds the given collection of Groovy parsers to the configured Groovy parsers.
+     *
+     * @param parsers the new parsers
      */
     public void addGroovyParsers(final Collection<GroovyParser> parsers) {
         groovyParsers.addAll(parsers);
@@ -170,6 +174,8 @@ public final class WarningsDescriptor extends PluginDescriptor implements Staple
 
     /**
      * Replaces the configured Groovy parsers with the given collection.
+     *
+     * @param parsers the new parsers
      */
     public void replaceGroovyParsers(final Collection<GroovyParser> parsers) {
         groovyParsers.replaceBy(parsers);
