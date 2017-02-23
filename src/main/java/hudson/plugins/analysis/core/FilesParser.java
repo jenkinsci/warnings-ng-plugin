@@ -218,14 +218,12 @@ public class FilesParser extends MasterToSlaveFileCallable<ParserResult> {
     }
 
     private void parserCollectionOfFiles(final File workspace, final ParserResult result) throws InterruptedException {
-        log("Finding all files that match the pattern " + filePattern);
+        log("Searching for all files in " + workspace.getAbsolutePath() + " that match the pattern " + filePattern);
         String[] fileNames = new FileFinder(filePattern).find(workspace);
 
         if (fileNames.length == 0) {
-            if (isMavenBuild) {
-                log("No files found in " + workspace.getAbsolutePath() + " for pattern: " + filePattern);
-            }
-            else {
+            log("No files found. Configuration error?");
+            if (!isMavenBuild) {
                 result.addErrorMessage(Messages.FilesParser_Error_NoFiles());
             }
         }
