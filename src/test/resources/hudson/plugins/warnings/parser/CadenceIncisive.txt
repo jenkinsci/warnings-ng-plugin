@@ -1,3 +1,4 @@
 make[2]: Entering directory '/tmp/build-dir'
 ncelab: *W,CUSRCH: Resolved design unit 'shittyram' at 'u_shittyrams' to 'shittysoc.shittyram:v' through a global search of all libraries.
 ncelab: *W,CUVWSP (../verilog/shit.v,313|24): 10 output ports were not connected
+ncelab: *W,CUNOTB: component instance is not fully bound (some.long:shit:blah:r1) [File:freaking_gbit_astral.vhd, Line:310].

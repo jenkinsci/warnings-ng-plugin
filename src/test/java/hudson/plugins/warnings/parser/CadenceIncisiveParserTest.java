@@ -29,7 +29,7 @@ public class CadenceIncisiveParserTest extends ParserTester {
     public void testCreateWarning() throws IOException {
         Collection<FileAnnotation> warnings = new CadenceIncisiveParser().parse(openFile());
 
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         checkWarning(iterator.next(),
@@ -43,6 +43,12 @@ public class CadenceIncisiveParserTest extends ParserTester {
                 "10 output ports were not connected",
                 "/tmp/build-dir/../verilog/shit.v",
                 WARNING_TYPE, "Warning (ncelab): CUVWSP", Priority.LOW);
+
+        checkWarning(iterator.next(),
+                310,
+                "component instance is not fully bound (some.long:shit:blah:r1)",
+                "/tmp/build-dir/freaking_gbit_astral.vhd",
+                WARNING_TYPE, "Warning (ncelab): CUNOTB", Priority.LOW);
 
     }
 
