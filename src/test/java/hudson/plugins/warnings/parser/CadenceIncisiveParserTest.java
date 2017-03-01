@@ -42,13 +42,13 @@ public class CadenceIncisiveParserTest extends ParserTester {
                 313,
                 "10 output ports were not connected",
                 "/tmp/build-dir/../verilog/shit.v",
-                WARNING_TYPE, "Warning (ncelab): CUVWSP", Priority.LOW);
+                WARNING_TYPE, "Warning (ncelab): CUVWSP", Priority.NORMAL);
 
         checkWarning(iterator.next(),
                 310,
                 "component instance is not fully bound (some.long:shit:blah:r1)",
                 "/tmp/build-dir/freaking_gbit_astral.vhd",
-                WARNING_TYPE, "Warning (ncelab): CUNOTB", Priority.LOW);
+                WARNING_TYPE, "Warning (ncelab): CUNOTB", Priority.NORMAL);
 
     }
 

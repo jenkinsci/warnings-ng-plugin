@@ -76,6 +76,7 @@ public class CadenceIncisiveParser extends RegexpLineParser {
             fileName = matcher.group(6);
             lineNumber = getLineNumber(matcher.group(7));
             message = matcher.group(5);            
+            priority = Priority.NORMAL;
         } else if (matcher.group(16) != null)
         {
             /* Set current directory */
@@ -103,7 +104,6 @@ public class CadenceIncisiveParser extends RegexpLineParser {
             priority = Priority.HIGH;
             category = "Error (" + tool + "): " + category;
         } else {
-            priority = Priority.LOW;
             category = "Warning (" + tool + "): " + category;
         }
 
