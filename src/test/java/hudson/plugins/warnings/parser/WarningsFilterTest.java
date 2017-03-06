@@ -50,7 +50,7 @@ public class WarningsFilterTest {
 
         WarningsFilter filter = new WarningsFilter();
         // exclude warnings with this warning message from the report
-        final String excludeCategory = ".*pragma-messages.*";
+        final String excludeCategory = "-W#pragma-messages";
         warnings = filter.apply(warnings, null, null, null, excludeCategory, new NullLogger());
 
         assertFalse(warnings.contains(w1));

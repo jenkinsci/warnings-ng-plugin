@@ -24,7 +24,7 @@ public class WarningsFilter {
     private Set<Pattern> addFilePatterns(final @CheckForNull String pattern) {
         Set<Pattern> patterns = Sets.newHashSet();
         if (StringUtils.isNotBlank(pattern)) {
-            String[] split = StringUtils.split(pattern, '\n');
+            String[] split = StringUtils.split(pattern, ',');
             for (String singlePattern : split) {
                 String trimmed = StringUtils.trim(singlePattern);
                 String directoriesReplaced = StringUtils.replace(trimmed, "**", "*"); // NOCHECKSTYLE
@@ -104,7 +104,7 @@ public class WarningsFilter {
                     }
                 }
                 for (Pattern exclude : categoriesPatterns) {
-                    if (exclude.matcher(annotation.getMessage()).matches()) {
+                    if (exclude.matcher(annotation.getCategory()).matches()) {
                         excludedAnnotations.remove(annotation);
                     }
                 }
