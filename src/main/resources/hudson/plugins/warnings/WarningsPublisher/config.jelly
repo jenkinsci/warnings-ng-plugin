@@ -15,13 +15,16 @@
 
   <f:advanced>
     <f:entry title="${%Warnings to include}" field="includePattern" description="${%description.includePattern}">
-      <f:textbox />
+      <f:expandableTextbox />
     </f:entry>
     <f:entry title="${%Warnings to ignore}" field="excludePattern" description="${%description.excludePattern}">
-      <f:textbox />
+      <f:expandableTextbox />
     </f:entry>
     <f:entry title="${%Messages to ignore}" field="messagesPattern" description="${%description.messagesPattern}">
-      <f:textbox />
+      <f:expandableTextbox />
+    </f:entry>
+    <f:entry title="${%Categories to ignore}" field="categoriesPattern" description="${%description.categoriesPattern}">
+      <f:expandableTextbox />
     </f:entry>
 
     <u:failed />
