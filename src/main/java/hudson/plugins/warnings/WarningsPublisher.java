@@ -60,6 +60,8 @@ public class WarningsPublisher extends HealthAwarePublisher implements SimpleBui
     private String excludePattern;
     /** warning messages to exclude from report */
     private String messagesPattern;
+    /** warning categories to exclude from report */
+    private String categoriesPattern;
 	
     /** File pattern and parser configurations. @since 3.19 */
     @SuppressFBWarnings("SE")
@@ -168,6 +170,15 @@ public class WarningsPublisher extends HealthAwarePublisher implements SimpleBui
     }
 
     /**
+     * Returns the Java regex pattern of warning categories to exclude from report.
+     *
+     * @return the Java regex pattern of warning categories to exclude from report
+     */
+    public String getCategoriesPattern() {
+        return categoriesPattern;
+    }
+
+    /**
      * Sets the Java regex pattern of warning messages to exclude from report.
      *
      * @param pattern the pattern to exclude
@@ -175,6 +186,16 @@ public class WarningsPublisher extends HealthAwarePublisher implements SimpleBui
     @DataBoundSetter
     public void setMessagesPattern(final String pattern) {
         messagesPattern = pattern;
+    }
+
+    /**
+     * Sets the Java regex pattern of warning categories to exclude from report.
+     *
+     * @param pattern the pattern to exclude
+     */
+    @DataBoundSetter
+    public void setCategoriesPattern(final String pattern) {
+        categoriesPattern = pattern;
     }
 
     /**
@@ -361,9 +382,9 @@ public class WarningsPublisher extends HealthAwarePublisher implements SimpleBui
 
     private ParserResult filterWarnings(final ParserResult project, final PluginLogger logger) {
         WarningsFilter filter = new WarningsFilter();
-        if (filter.isActive(getIncludePattern(), getExcludePattern(), getMessagesPattern())) {
+        if (filter.isActive(getIncludePattern(), getExcludePattern(), getMessagesPattern(), getCategoriesPattern())) {
             Collection<FileAnnotation> filtered = filter.apply(project.getAnnotations(),
-                    getIncludePattern(), getExcludePattern(), getMessagesPattern(), logger);
+                    getIncludePattern(), getExcludePattern(), getMessagesPattern(), getCategoriesPattern(), logger);
             return new ParserResult(filtered);
         }
         return project;
