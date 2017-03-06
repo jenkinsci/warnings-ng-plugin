@@ -41,7 +41,7 @@ public class WarningsFilterTest {
      * Tests the exclusion of certain warning messages from the report (based on category).
      */
     @Test
-    public void testMessagesPattern() {
+    public void testCategoriesPattern() {
         Warning w1 = new Warning("dummyFile.java", 0, "warningType", "-W#pragma-messages", "Warning. But ok.", Priority.LOW);
         Warning w2 = new Warning("dummyFile.java", 0, "warningType", "-WWhatever", "Warning. Not ok!", Priority.LOW);
         Collection<FileAnnotation> warnings = new LinkedList<FileAnnotation>();
