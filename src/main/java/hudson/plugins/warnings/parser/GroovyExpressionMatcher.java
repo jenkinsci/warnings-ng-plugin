@@ -78,8 +78,9 @@ public class GroovyExpressionMatcher implements Serializable {
      * @param lineNumber
      *            the current line number
      * @return a new annotation for the specified pattern
+     * @throws RejectedAccessException if the Groovy sandbox rejected the parsing script
      */
-    public Warning createWarning(final Matcher matcher, final int lineNumber) {
+    public Warning createWarning(final Matcher matcher, final int lineNumber) throws RejectedAccessException {
         try {
             Object result = run(matcher, lineNumber);
             if (result instanceof Warning) {
@@ -87,7 +88,7 @@ public class GroovyExpressionMatcher implements Serializable {
             }
         }
         catch (RejectedAccessException exception) {
-            throw exception; // needs to be presented to the user
+            throw exception; // Groovy sandbox rejected the parsing script: needs to be presented to the user
         }
         catch (Exception exception) { // NOPMD NOCHECKSTYLE: catch all exceptions of the Groovy script
             LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during execution: ", exception);
@@ -103,8 +104,9 @@ public class GroovyExpressionMatcher implements Serializable {
      * @param lineNumber
      *            the current line number
      * @return unchecked result of the script
+     * @throws RejectedAccessException if the Groovy sandbox rejected the parsing script
      */
-    public Object run(final Matcher matcher, final int lineNumber) {
+    public Object run(final Matcher matcher, final int lineNumber) throws RejectedAccessException {
         compileScriptIfNotYetDone();
 
         Binding binding = compiled.getBinding();
@@ -119,7 +121,7 @@ public class GroovyExpressionMatcher implements Serializable {
             }, Whitelist.all());
         }
         catch (RejectedAccessException exception) {
-            throw exception; // needs to be presented to the user
+            throw exception; // Groovy sandbox rejected the parsing script: needs to be presented to the user
         }
         catch (Exception exception) {
             LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during execution: ", exception);

@@ -362,15 +362,13 @@ public class WarningsPublisher extends HealthAwarePublisher implements SimpleBui
             }
             catch (RejectedAccessException exception) {
                 handleRejectedException(logger, parserName, exception);
-                return results; // Do not handle other files
             }
         }
         return results;
     }
 
     private void handleRejectedException(final PluginLogger logger, final String parserName, final RejectedAccessException exception) {
-        logger.log(String.format("Groovy sandbox rejected the parsing script for parser %s: %s",
-                parserName, exception.getMessage()));
+        logger.log(Messages.Warnings_GroovyParser_Warning_Rejected(parserName, exception.getMessage()));
         ScriptApproval.get().accessRejected(exception, ApprovalContext.create());
     }
 
@@ -414,7 +412,6 @@ public class WarningsPublisher extends HealthAwarePublisher implements SimpleBui
             }
             catch (RejectedAccessException exception) {
                 handleRejectedException(logger, parserName, exception);
-                return results; // Do not handle other files
             }
         }
         return results;
