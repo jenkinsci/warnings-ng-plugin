@@ -18,7 +18,7 @@
             <j:if test="${name == '-'}">
               <j:set var="name" value="${%undefined}" />
             </j:if>
-            <a href="category.${container.name.hashCode()}/">
+            <a href="type.${container.name.hashCode()}/">
               ${name}
             </a>
           </td>
