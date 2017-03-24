@@ -32,7 +32,6 @@ import hudson.util.FormValidation.Kind;
  * @author Ulli Hafner
  */
 public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
-
     private static final int MAX_EXAMPLE_SIZE = 4096;
 
     private final String name;
@@ -317,8 +316,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         }
 
         private boolean canRunScripts() {
-            Jenkins instance = Jenkins.getInstance();
-            return instance == null || instance.getACL().hasPermission(Jenkins.RUN_SCRIPTS);
+            return Jenkins.getInstance().getACL().hasPermission(Jenkins.RUN_SCRIPTS);
         }
 
         /**

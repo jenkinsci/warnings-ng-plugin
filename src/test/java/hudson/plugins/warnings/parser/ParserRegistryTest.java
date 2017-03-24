@@ -20,8 +20,6 @@ import static org.junit.Assert.*;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.NullLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.warnings.GroovyParser;
-import hudson.plugins.warnings.GroovyParserTest;
 
 /**
  * Tests the class {@link ParserRegistry}.
@@ -240,32 +238,6 @@ public class ParserRegistryTest {
             }
         };
         return parserRegistry;
-    }
-
-    /**
-     * Tests the construction of dynamic parsers.
-     */
-    @Test
-    public void testDynamicParsers() {
-        GroovyParser multi = new GroovyParser("name", GroovyParserTest.MULTI_LINE_REGEXP, "empty");
-        GroovyParser single = new GroovyParser("name", GroovyParserTest.SINGLE_LINE_REGEXP, "empty");
-
-        List<AbstractWarningsParser> allParsers = ParserRegistry.getDynamicParsers(Lists.newArrayList(single, multi));
-
-        int multiNumber = 0;
-        int singleNumber = 0;
-
-        for (AbstractWarningsParser parser : allParsers) {
-            if (parser.getClass() == DynamicParser.class) {
-                singleNumber++;
-            }
-            else if (parser.getClass() == DynamicDocumentParser.class) {
-                multiNumber++;
-            }
-        }
-
-        assertEquals("Wrong number of single line parsers" , 1, singleNumber);
-        assertEquals("Wrong number of multi line parsers" , 1, multiNumber);
     }
 }
 
