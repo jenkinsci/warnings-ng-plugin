@@ -28,7 +28,7 @@ import hudson.util.FormValidation;
  *
  * @author Ulli Hafner
  */
-@Extension(ordinal = 100) // NOCHECKSTYLE
+@Extension(ordinal = 100) @Symbol("warnings")
 public final class WarningsDescriptor extends PluginDescriptor implements StaplerProxy {
     /** The ID of this plug-in is used as URL. */
     static final String PLUGIN_ID = "warnings";

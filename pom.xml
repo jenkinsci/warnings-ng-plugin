@@ -44,7 +44,7 @@
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-core</artifactId>
-      <version>1.82</version>
+      <version>1.84</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
