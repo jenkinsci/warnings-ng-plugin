@@ -1,0 +1,12 @@
+**************************************************
++ rules/InvalidTestPattern.robot
+rules/InvalidTestPattern.robot:11 [E]: test case 'Invalid Test Case Pattern' (0) (AcmTestCasePattern)
+**************************************************
++ rules/GetProfile.txt
+rules/GetProfile.txt:65 [W]: Line is too long (exceeds 100 characters) (100) (LineTooLong)
+**************************************************
++ CancelDebit/CancelDebit.txt
+CancelDebit/CancelDebit.txt:28 [I]: Too many steps (32) in test case (0) (TooManyTestSteps)
+**************************************************
++ Login.robot
+Login.robot:278 [K]: No keyword documentation (0) (RequireKeywordDocumentation)

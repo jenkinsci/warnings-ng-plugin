@@ -9,11 +9,9 @@
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/localizer" isTestSource="false" generated="true" />
-      <excludeFolder url="file://$MODULE_DIR$/target/checkout" />
       <excludeFolder url="file://$MODULE_DIR$/target/classes" />
       <excludeFolder url="file://$MODULE_DIR$/target/generated-sources/groovy-stubs" />
       <excludeFolder url="file://$MODULE_DIR$/target/jenkins-for-test" />
-      <excludeFolder url="file://$MODULE_DIR$/target/jenkins-for-testx" />
       <excludeFolder url="file://$MODULE_DIR$/target/maven-status" />
       <excludeFolder url="file://$MODULE_DIR$/target/surefire-reports" />
       <excludeFolder url="file://$MODULE_DIR$/target/test-classes" />
@@ -21,14 +19,14 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.jvnet.hudson.plugins:analysis-core:1.82" level="project" />
-    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:script-security:1.17" level="project" />
-    <orderEntry type="library" name="Maven: org.jvnet.hudson.plugins:analysis-core:1.82" level="project" />
+    <orderEntry type="library" name="Maven: org.jvnet.hudson.plugins:analysis-core:1.84" level="project" />
     <orderEntry type="library" name="Maven: de.java2html:java2html:5.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.3.2" level="project" />
     <orderEntry type="library" name="Maven: xerces:xercesImpl:2.11.0" level="project" />
     <orderEntry type="library" name="Maven: xml-apis:xml-apis:1.4.01" level="project" />
     <orderEntry type="library" name="Maven: joda-time:joda-time:1.6" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:structs:1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci:symbol-annotation:1.2" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:violations:0.7.11" level="project" />
     <orderEntry type="library" name="Maven: xpp3:xpp3:1.1.3.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-digester3:3.2" level="project" />
@@ -208,7 +206,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.sf.ezmorph:ezmorph:1.0.6" level="project" />
     <orderEntry type="library" name="Maven: commons-httpclient:commons-httpclient:3.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: args4j:args4j:2.0.31" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:annotation-indexer:1.7" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci:annotation-indexer:1.7" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:bytecode-compatibility-transformer:1.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.kohsuke:asm5:5.0.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:task-reactor:1.4" level="project" />
