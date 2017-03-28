@@ -11,7 +11,7 @@ import java.util.regex.Matcher;
 @Extension
 public class RFLintParser extends RegexpLineParser {
 
-    private static final String RFLINT_ERROR_PATTERN = "(.*):(\\d+) \\[([WEI])\\]: (.*) \\((\\d+)\\) \\((.*)\\)";
+    private static final String RFLINT_ERROR_PATTERN = "(.*): ([W|E|I]): (\\d+), (\\d+): (.*) \\((.*)\\)";
 
     public RFLintParser(){
         super(Messages._Warnings_RFLint_ParserName(),
@@ -22,25 +22,28 @@ public class RFLintParser extends RegexpLineParser {
 
     @Override
     protected boolean isLineInteresting(String line) {
-        return line.contains("[");
+        return line.contains("W") || line.contains("E") || line.contains("I");
     }
 
     @Override
     protected Warning createWarning(Matcher matcher) {
-        String message = matcher.group(4);
-        String category = classifyIfEmpty(matcher.group(3), message);
+        String message = matcher.group(5);
+        String category = classifyIfEmpty(matcher.group(2), message);
         Priority priority = Priority.LOW;
         switch (category.charAt(0)){
             case 'E':
                 priority = Priority.HIGH;
+                category = "ERROR";
                 break;
             case 'W':
                 priority = Priority.NORMAL;
+                category = "WARNING";
                 break;
             case 'I':
                 priority = Priority.LOW;
+                category = "IGNORE";
                 break;
         }
-        return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), category, message, priority);
+        return createWarning(matcher.group(1), getLineNumber(matcher.group(3)), category, message, priority);
     }
 }

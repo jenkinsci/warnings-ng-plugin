@@ -33,24 +33,27 @@ public class RFLintParserTest extends ParserTester {
 
         warning = iterator.next();
         checkWarning(warning,
-                11,
-                "test case 'Invalid Test Case Pattern'",
-                "rules/InvalidTestPattern.robot",
-                WARNING_TYPE, "E", Priority.HIGH);
+                187,
+                "Found invalid variable name 'login_tmx_account_not_tmnId', " +
+                        "please name your variable using snake_case: 'login_tmx_account_not_tmn_id'",
+                "Login/Login.robot",
+                WARNING_TYPE, "WARNING", Priority.NORMAL);
 
         warning = iterator.next();
         checkWarning(warning,
-                65,
-                "Line is too long (exceeds 100 characters)",
-                "rules/GetProfile.txt",
-                WARNING_TYPE, "W", Priority.NORMAL);
+                188,
+                "Found invalid variable name 'login_tmx_password_not_tmnId', " +
+                        "please name your variable using snake_case: 'login_tmx_password_not_tmn_id'",
+                "Login/Login.robot",
+                WARNING_TYPE, "ERROR", Priority.HIGH);
 
         warning = iterator.next();
         checkWarning(warning,
-                28,
-                "Too many steps (32) in test case",
-                "CancelDebit/CancelDebit.txt",
-                WARNING_TYPE, "I", Priority.LOW);
+                262,
+                "Found invalid variable name 'last9Digit', " +
+                        "please name your variable using snake_case: 'last9_digit'",
+                "Login/Login.robot",
+                WARNING_TYPE, "IGNORE", Priority.LOW);
     }
 
     @Override
