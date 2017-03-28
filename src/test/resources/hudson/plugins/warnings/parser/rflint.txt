@@ -1,12 +1,5 @@
-**************************************************
-+ rules/InvalidTestPattern.robot
-rules/InvalidTestPattern.robot:11 [E]: test case 'Invalid Test Case Pattern' (0) (AcmTestCasePattern)
-**************************************************
-+ rules/GetProfile.txt
-rules/GetProfile.txt:65 [W]: Line is too long (exceeds 100 characters) (100) (LineTooLong)
-**************************************************
-+ CancelDebit/CancelDebit.txt
-CancelDebit/CancelDebit.txt:28 [I]: Too many steps (32) in test case (0) (TooManyTestSteps)
-**************************************************
-+ Login.robot
-Login.robot:278 [K]: No keyword documentation (0) (RequireKeywordDocumentation)
++ Login/Login.robot
+Login/Login.robot: W: 187, 0: Found invalid variable name 'login_tmx_account_not_tmnId', please name your variable using snake_case: 'login_tmx_account_not_tmn_id' (AcmSnakeCaseVariables)
+Login/Login.robot: E: 188, 0: Found invalid variable name 'login_tmx_password_not_tmnId', please name your variable using snake_case: 'login_tmx_password_not_tmn_id' (AcmSnakeCaseVariables)
+Login/Login.robot: I: 262, 0: Found invalid variable name 'last9Digit', please name your variable using snake_case: 'last9_digit' (AcmSnakeCaseVariables)
+Login/Login.robot: K: 265, 0: Found invalid variable name 'loginSecret', please name your variable using snake_case: 'login_secret' (AcmSnakeCaseVariables)
