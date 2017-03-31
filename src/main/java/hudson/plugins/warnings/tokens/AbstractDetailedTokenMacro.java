@@ -109,14 +109,23 @@ public abstract class AbstractDetailedTokenMacro extends AbstractTokenMacro {
     }
 
     private String createMessage(FileAnnotation annotation) {
-        String message = (indent > 0) ? StringUtils.repeat(" ", indent) : "";
-        
+        String ind = (indent > 0) ? StringUtils.repeat(" ", indent) : "";
+        String message = ind;
+
         if (annotation.getPrimaryLineNumber() > 0) {
             message += annotation.getFileName().replaceAll("^.*workspace/", "");
             message += ":" + annotation.getPrimaryLineNumber() + " ";
         }
 
-        message += annotation.getMessage() + "\n";
+        message += annotation.getMessage().replace("<br>", "\n" + ind) + "\n";
+
+        String toolTip;
+        toolTip = annotation.getToolTip().replace("<br>", "\n");
+
+        if (toolTip != null) {
+            toolTip = ind + toolTip.replace("\n", "\n" + ind).trim();
+            message += toolTip + "\n";
+        }
 
         return message;
     }
