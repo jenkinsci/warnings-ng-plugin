@@ -22,6 +22,6 @@ public class DetailedFixedWarningsTokenMacro extends AbstractDetailedTokenMacro 
 
     @Override
     protected String evaluate(final BuildResult result) {
-        return evalWarnings(result, result.getFixedWarnings());
+        return evalWarnings(result, result.getFixedWarnings()).replace("<br>", "\n");
     }
 }

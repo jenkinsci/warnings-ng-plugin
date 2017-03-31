@@ -22,6 +22,6 @@ public class DetailedWarningsTokenMacro extends AbstractDetailedTokenMacro {
 
     @Override
     protected String evaluate(final BuildResult result) {
-        return evalWarnings(result, result.getAnnotations());
+        return evalWarnings(result, result.getAnnotations()).replace("<br>", "\n");
     }
 }
