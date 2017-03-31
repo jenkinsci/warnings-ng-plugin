@@ -4,6 +4,7 @@ import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.tokens.AbstractTokenMacro;
 import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +24,9 @@ public abstract class AbstractDetailedTokenMacro extends AbstractTokenMacro {
 
     private final List<String> modules = new ArrayList<String>();
     private boolean verbose = false;
+    private boolean showLow = true;
+    private boolean showNormal = true;
+    private boolean showHigh = true;
     private String linechar = "-";
 
     @Parameter
@@ -36,6 +40,21 @@ public abstract class AbstractDetailedTokenMacro extends AbstractTokenMacro {
     @Parameter(alias="verbose")
     public void setVerbosity(boolean verbosity) {
         verbose = verbosity;
+    }
+
+    @Parameter(alias="low")
+    public void setLow(boolean show) {
+        showLow = show;
+    }
+
+    @Parameter(alias="normal")
+    public void setNormal(boolean show) {
+        showNormal = show;
+    }
+
+    @Parameter(alias="high")
+    public void setHigh(boolean show) {
+        showHigh = show;
     }
 
     @Parameter(alias="linechar")
@@ -55,6 +74,16 @@ public abstract class AbstractDetailedTokenMacro extends AbstractTokenMacro {
             String tmp = "";
 
             for (FileAnnotation annotation : warnings) {
+                Priority prio = annotation.getPriority();
+                if (prio == Priority.LOW && !showLow)
+                    continue;
+
+                if (prio == Priority.NORMAL && !showNormal)
+                    continue;
+
+                if (prio == Priority.HIGH && !showHigh)
+                    continue;
+
                 if (allWarn || annotation.getType().equals(module)) {
                     if (allWarn && verbose)
                         tmp += annotation.getType() + ": ";
