@@ -12,13 +12,14 @@ import java.util.Locale;
 import static org.junit.Assert.assertEquals;
 
 /**
+ * Tests the class {@link RFLintParser}.
  * Created by traitanit on 3/27/2017 AD.
  */
 public class RFLintParserTest extends ParserTester {
     private static final String WARNING_TYPE = Messages._Warnings_RFLint_ParserName().toString(Locale.ENGLISH);
 
     /**
-     * Parses a txt file, containing 3 warnings.
+     * Parses a txt file, containing 6 warnings.
      *
      * @throws IOException
      *      if the file could not be read
@@ -27,33 +28,47 @@ public class RFLintParserTest extends ParserTester {
     public void rfLintTest() throws IOException {
         Collection<FileAnnotation> warnings = new RFLintParser().parse(openFile());
 
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 3, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 6, warnings.size());
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation warning;
 
         warning = iterator.next();
         checkWarning(warning,
-                187,
-                "Found invalid variable name 'login_tmx_account_not_tmnId', " +
-                        "please name your variable using snake_case: 'login_tmx_account_not_tmn_id'",
-                "Login/Login.robot",
+                25,
+                "Line is too long (exceeds 100 characters)",
+                "./Login_to_web.robot",
                 WARNING_TYPE, "WARNING", Priority.NORMAL);
-
         warning = iterator.next();
         checkWarning(warning,
-                188,
-                "Found invalid variable name 'login_tmx_password_not_tmnId', " +
-                        "please name your variable using snake_case: 'login_tmx_password_not_tmn_id'",
-                "Login/Login.robot",
+                40,
+                "No keyword documentation",
+                "./Login_to_web.robot",
                 WARNING_TYPE, "ERROR", Priority.HIGH);
-
         warning = iterator.next();
         checkWarning(warning,
-                262,
-                "Found invalid variable name 'last9Digit', " +
-                        "please name your variable using snake_case: 'last9_digit'",
-                "Login/Login.robot",
+                24,
+                "Line is too long (exceeds 100 characters)",
+                "./Merchant_Signup.robot",
+                WARNING_TYPE, "WARNING", Priority.NORMAL);
+        warning = iterator.next();
+        checkWarning(warning,
+                378,
+                "No keyword documentation",
+                "./Merchant_Signup.robot",
+                WARNING_TYPE, "ERROR", Priority.HIGH);
+        warning = iterator.next();
+        checkWarning(warning,
+                73,
+                "Too few steps (1) in keyword",
+                "./merchant_common_keyword.txt",
+                WARNING_TYPE, "WARNING", Priority.NORMAL);
+        warning = iterator.next();
+        checkWarning(warning,
+                123,
+                "Ignore Error",
+                "./merchant_common_keyword.txt",
                 WARNING_TYPE, "IGNORE", Priority.LOW);
+
     }
 
     @Override

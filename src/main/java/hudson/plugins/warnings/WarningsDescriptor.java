@@ -3,7 +3,6 @@ package hudson.plugins.warnings;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
