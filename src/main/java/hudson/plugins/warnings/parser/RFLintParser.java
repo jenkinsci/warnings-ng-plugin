@@ -1,8 +1,17 @@
 package hudson.plugins.warnings.parser;
 
 import hudson.Extension;
+import hudson.console.ConsoleNote;
+import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,20 +34,30 @@ public class RFLintParser extends RegexpLineParser {
         super(Messages._Warnings_RFLint_ParserName(),
                 Messages._Warnings_RFLint_LinkName(),
                 Messages._Warnings_RFLint_TrendName(),
-                RFLINT_ERROR_PATTERN, true);
+                RFLINT_ERROR_PATTERN);
     }
 
     @Override
-    protected boolean isLineInteresting(String line) {
+    public Collection<FileAnnotation> parse(Reader file) throws IOException {
+        List<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
+        LineIterator iterator = IOUtils.lineIterator(file);
         Pattern filePattern = Pattern.compile(RFLINT_FILE_PATTERN);
-        Matcher matcher = filePattern.matcher(line);
-        if (matcher.find()) {
-            fileName = matcher.group(1);
-            return false;
+        try {
+            while (iterator.hasNext()) {
+                String line = ConsoleNote.removeNotes(iterator.nextLine());
+                // check if line contains file name.
+                Matcher matcher = filePattern.matcher(line);
+                if (matcher.find()) {
+                    fileName = matcher.group(1);
+                }
+                findAnnotations(line, warnings);
+            }
         }
-        return Pattern.matches(RFLINT_ERROR_PATTERN, line);
+        finally {
+            iterator.close();
+        }
+        return warnings;
     }
-
 
     @Override
     protected Warning createWarning(Matcher matcher) {
