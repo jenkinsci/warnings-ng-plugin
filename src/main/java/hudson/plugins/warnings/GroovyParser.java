@@ -12,12 +12,16 @@ import org.codehaus.groovy.control.CompilationFailedException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
-import groovy.lang.GroovyShell;
+import jenkins.model.Jenkins;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
-import hudson.plugins.warnings.parser.*;
+import hudson.plugins.warnings.parser.AbstractWarningsParser;
+import hudson.plugins.warnings.parser.DynamicDocumentParser;
+import hudson.plugins.warnings.parser.DynamicParser;
+import hudson.plugins.warnings.parser.GroovyExpressionMatcher;
+import hudson.plugins.warnings.parser.Warning;
 import hudson.util.FormValidation;
 import hudson.util.FormValidation.Kind;
 
@@ -28,7 +32,6 @@ import hudson.util.FormValidation.Kind;
  * @author Ulli Hafner
  */
 public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
-
     private static final int MAX_EXAMPLE_SIZE = 4096;
 
     private final String name;
@@ -223,6 +226,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
     public static class DescriptorImpl extends Descriptor<GroovyParser> {
         private static final String NEWLINE = "\n";
         private static final int MAX_MESSAGE_LENGTH = 60;
+        private static final FormValidation NO_RUN_SCRIPT_PERMISSION_WARNING = FormValidation.warning(Messages.Warnings_GroovyParser_Warning_NoRunScriptPermission());
 
         private FormValidation validate(final String name, final String message) {
             if (StringUtils.isBlank(name)) {
@@ -293,19 +297,26 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
          * @return the validation result
          */
         public FormValidation doCheckScript(@QueryParameter(required = true) final String script) {
+            if (!canRunScripts()) {
+                return NO_RUN_SCRIPT_PERMISSION_WARNING;
+            }
             try {
                 if (StringUtils.isBlank(script)) {
                     return FormValidation.error(Messages.Warnings_GroovyParser_Error_Script_isEmpty());
                 }
 
-                GroovyShell groovyShell = new GroovyShell(WarningsDescriptor.class.getClassLoader());
-                groovyShell.parse(script);
+                GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(script, null);
+                matcher.compile();
 
                 return FormValidation.ok();
             }
             catch (CompilationFailedException exception) {
                 return FormValidation.error(Messages.Warnings_GroovyParser_Error_Script_invalid(exception.getLocalizedMessage()));
             }
+        }
+
+        private boolean canRunScripts() {
+            return Jenkins.getInstance().getACL().hasPermission(Jenkins.RUN_SCRIPTS);
         }
 
         /**
@@ -321,6 +332,9 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
          */
         public FormValidation doCheckExample(@QueryParameter final String example,
                 @QueryParameter final String regexp, @QueryParameter final String script) {
+            if (!canRunScripts()) {
+                return NO_RUN_SCRIPT_PERMISSION_WARNING;
+            }
             if (StringUtils.isNotBlank(example) && StringUtils.isNotBlank(regexp) && StringUtils.isNotBlank(script)) {
                 FormValidation response = parseExample(script, example, regexp, containsNewline(regexp));
                 if (example.length() <= MAX_EXAMPLE_SIZE) {

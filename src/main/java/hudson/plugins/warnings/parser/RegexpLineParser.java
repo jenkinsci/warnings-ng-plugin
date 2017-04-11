@@ -8,10 +8,10 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import org.jvnet.localizer.Localizable;
 
 import hudson.console.ConsoleNote;
-
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
@@ -119,6 +119,7 @@ public abstract class RegexpLineParser extends RegexpParser {
      *
      * @return the current line
      */
+    @Whitelisted
     public int getCurrentLine() {
         return currentLine;
     }
