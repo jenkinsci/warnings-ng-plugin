@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.basic.AbstractSingleValueConverter;
@@ -17,10 +18,13 @@ import hudson.plugins.analysis.Messages;
  */
 public enum Priority {
     /** High priority. */
+    @Whitelisted
     HIGH,
     /** Normal priority. */
+    @Whitelisted
     NORMAL,
     /** Low priority. */
+    @Whitelisted
     LOW;
 
     /**

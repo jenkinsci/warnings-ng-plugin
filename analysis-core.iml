@@ -13,6 +13,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:script-security:1.25" level="project" />
+    <orderEntry type="library" name="Maven: org.kohsuke:groovy-sandbox:1.10" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:ant:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:matrix-project:1.4" level="project" />
     <orderEntry type="library" name="Maven: de.java2html:java2html:5.0" level="project" />
