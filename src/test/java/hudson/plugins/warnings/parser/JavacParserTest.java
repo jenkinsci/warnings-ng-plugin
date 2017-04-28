@@ -91,6 +91,18 @@ public class JavacParserTest extends ParserTester {
                 WARNING_TYPE, "Deprecation", Priority.NORMAL);
     }
 
+    /**
+     * Parses parallel pipeline output based on 'javac.txt'
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    @Test
+    public void parseParallelPipelineOutput() throws IOException {
+        Collection<FileAnnotation> warnings = parse("javac-parallel-pipeline.txt");
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
+    }
+
     private Collection<FileAnnotation> parse(final String fileName) throws IOException {
         return new JavacParser().parse(openFile(fileName));
     }

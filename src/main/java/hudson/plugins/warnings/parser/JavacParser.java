@@ -17,7 +17,7 @@ public class JavacParser extends RegexpLineParser {
     static final String JAVA_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-48x48.png";
 
     private static final long serialVersionUID = 7199325311690082782L;
-    private static final String JAVAC_WARNING_PATTERN = "^(?:\\[WARNING\\]\\s+)?([^\\[]*):\\[(\\d+)[.,;]*(\\d+)?\\]\\s*(?:\\[(\\w+)\\])?\\s*(.*)$";
+    private static final String JAVAC_WARNING_PATTERN = "^(?:\\[\\p{Alnum}*\\]\\s+)?(?:\\[WARNING\\]\\s+)?([^\\[]*):\\[(\\d+)[.,;]*(\\d+)?\\]\\s*(?:\\[(\\w+)\\])?\\s*(.*)$";
 
     /**
      * Creates a new instance of {@link JavacParser}.
