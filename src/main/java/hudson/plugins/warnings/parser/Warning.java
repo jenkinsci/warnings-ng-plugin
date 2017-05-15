@@ -1,6 +1,7 @@
 package hudson.plugins.warnings.parser;
 
 import org.apache.commons.lang.StringUtils;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -38,6 +39,7 @@ public class Warning extends AbstractAnnotation {
      * @param message
      *            the message of the warning
      */
+    @Whitelisted
     public Warning(final String fileName, final int start, final String type, final String category, final String message) {
         this(fileName, start, type, category, message, Priority.NORMAL);
     }
@@ -58,6 +60,7 @@ public class Warning extends AbstractAnnotation {
      * @param priority
      *            the priority of the warning
      */
+    @Whitelisted
     public Warning(final String fileName, final int start, final String type, final String category, final String message, final Priority priority) {
         super(priority, message, start, start, category, type);
 
@@ -77,6 +80,7 @@ public class Warning extends AbstractAnnotation {
      * @param currentLine
      *            the current line
      */
+    @Whitelisted
     public Warning(final FileAnnotation copy, final String additionalMessage, final int currentLine) {
         super(copy.getPriority(), copy.getMessage() + "\n" + additionalMessage,
                 copy.getPrimaryLineNumber(), currentLine, copy.getCategory(), copy.getType());

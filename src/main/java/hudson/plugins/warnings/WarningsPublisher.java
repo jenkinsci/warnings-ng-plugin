@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.RejectedAccessException;
+import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext;
+import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
@@ -367,17 +370,27 @@ public class WarningsPublisher extends HealthAwarePublisher implements SimpleBui
             String parserName = parser.getParserName();
             logger.log("Parsing warnings in console log with parser " + parserName);
 
-            Collection<FileAnnotation> warnings = new ParserRegistry(ParserRegistry.getParsers(parserName),
-                    getDefaultEncoding()).parse(run.getLogFile());
-            if (!workspace.isRemote()) {
-                guessModuleNames(workspace, warnings);
-            }
-            ParserResult project = new ParserResult(workspace, canResolveRelativePaths());
-            project.addAnnotations(warnings);
+            try {
+                Collection<FileAnnotation> warnings = new ParserRegistry(ParserRegistry.getParsers(parserName),
+                        getDefaultEncoding()).parse(run.getLogFile());
+                if (!workspace.isRemote()) {
+                    guessModuleNames(workspace, warnings);
+                }
+                ParserResult project = new ParserResult(workspace, canResolveRelativePaths());
+                project.addAnnotations(warnings);
 
-            results.add(annotate(run, workspace, filterWarnings(project, logger), parserName));
+                results.add(annotate(run, workspace, filterWarnings(project, logger), parserName));
+            }
+            catch (RejectedAccessException exception) {
+                handleRejectedException(logger, parserName, exception);
+            }
         }
         return results;
+    }
+
+    private void handleRejectedException(final PluginLogger logger, final String parserName, final RejectedAccessException exception) {
+        logger.log(Messages.Warnings_GroovyParser_Warning_Rejected(parserName, exception.getMessage()));
+        ScriptApproval.get().accessRejected(exception, ApprovalContext.create());
     }
 
     private ParserResult filterWarnings(final ParserResult project, final PluginLogger logger) {
@@ -410,11 +423,17 @@ public class WarningsPublisher extends HealthAwarePublisher implements SimpleBui
             FilesParser parser = new FilesParser(PLUGIN_NAME, filePattern,
                     new FileWarningsParser(ParserRegistry.getParsers(parserName), getDefaultEncoding()),
                     shouldDetectModules(), isMavenBuild(run), canResolveRelativePaths());
-            ParserResult project = workspace.act(parser);
-            logger.logLines(project.getLogMessages());
+            ParserResult project = null;
+            try {
+                project = workspace.act(parser);
+                logger.logLines(project.getLogMessages());
 
-            returnIfCanceled();
-            results.add(annotate(run, workspace, filterWarnings(project, logger), configuration.getParserName()));
+                returnIfCanceled();
+                results.add(annotate(run, workspace, filterWarnings(project, logger), configuration.getParserName()));
+            }
+            catch (RejectedAccessException exception) {
+                handleRejectedException(logger, parserName, exception);
+            }
         }
         return results;
     }

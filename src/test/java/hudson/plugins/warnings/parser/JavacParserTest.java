@@ -1,6 +1,7 @@
 package hudson.plugins.warnings.parser;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
@@ -89,6 +90,31 @@ public class JavacParserTest extends ParserTester {
                 "loadAvailable(java.lang.String,int,int,java.lang.String[]) in my.OtherClass has been deprecated",
                 "D:/path/to/my/Class.java",
                 WARNING_TYPE, "Deprecation", Priority.NORMAL);
+    }
+
+    /**
+     * Parses parallel pipeline output based on 'javac.txt'
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    @Test
+    public void parseParallelPipelineOutput() throws IOException {
+        Collection<FileAnnotation> warnings = parse("javac-parallel-pipeline.txt");
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
+
+        String fileName = "C:/Build/Results/jobs/ADT-Base/workspace/com.avaloq.adt.ui/src/main/java/com/avaloq/adt/ui/elements/AvaloqDialog.java";
+        Iterator<Warning> expectedWarnings = Arrays.asList(
+                new Warning(fileName, 12, WARNING_TYPE, "Deprecation", "org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated"),
+                new Warning(fileName, 40, WARNING_TYPE, "Deprecation", "org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated")
+                ).iterator();
+
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        while (iterator.hasNext()) {
+            assertTrue(WRONG_NUMBER_OF_WARNINGS_DETECTED, expectedWarnings.hasNext());
+            Warning expectedWarning = expectedWarnings.next();
+            checkWarning(iterator.next(), expectedWarning.getPrimaryLineNumber(), expectedWarning.getMessage(), expectedWarning.getFileName(), expectedWarning.getType(), expectedWarning.getCategory(), expectedWarning.getPriority());
+        }
     }
 
     private Collection<FileAnnotation> parse(final String fileName) throws IOException {

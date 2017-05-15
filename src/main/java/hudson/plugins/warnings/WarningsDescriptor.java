@@ -3,6 +3,7 @@ package hudson.plugins.warnings;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
@@ -28,7 +29,7 @@ import hudson.util.FormValidation;
  *
  * @author Ulli Hafner
  */
-@Extension(ordinal = 100) // NOCHECKSTYLE
+@Extension(ordinal = 100) @Symbol("warnings")
 public final class WarningsDescriptor extends PluginDescriptor implements StaplerProxy {
     /** The ID of this plug-in is used as URL. */
     static final String PLUGIN_ID = "warnings";

@@ -8,10 +8,10 @@ import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import org.jvnet.localizer.Localizable;
 
 import hudson.ExtensionPoint;
-
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.warnings.Messages;
@@ -189,6 +189,7 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
      *            the message of the warning
      * @return the warning
      */
+    @Whitelisted
     public Warning createWarning(final String fileName, final int start, final String category, final String message) {
         return new Warning(fileName, start, getGroup(), category, message);
     }
@@ -205,6 +206,7 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
      *            the message of the warning
      * @return the warning
      */
+    @Whitelisted
     public Warning createWarning(final String fileName, final int start, final String message) {
         return createWarning(fileName, start, StringUtils.EMPTY, message);
     }
@@ -224,6 +226,7 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
      *            the priority of the warning
      * @return the warning
      */
+    @Whitelisted
     public Warning createWarning(final String fileName, final int start, final String category, final String message, final Priority priority) {
         return new Warning(fileName, start, getGroup(), category, message, priority);
     }
@@ -246,6 +249,7 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
      * @return the warning
      * @since 4.24
      */
+    @Whitelisted
     public Warning createWarning(final String fileName, final int start, final String type, final String category, final String message, final Priority priority) {
         return new Warning(fileName, start, type, category, message, priority);
     }
@@ -264,6 +268,7 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
      *            the priority of the warning
      * @return the warning
      */
+    @Whitelisted
     public Warning createWarning(final String fileName, final int start, final String message, final Priority priority) {
         return createWarning(fileName, start, StringUtils.EMPTY, message, priority);
     }
@@ -295,6 +300,7 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
      *            the line number (as a string)
      * @return the line number
      */
+    @Whitelisted
     protected final int getLineNumber(final String lineNumber) {
         return convertLineNumber(lineNumber);
     }
@@ -309,6 +315,7 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
      * @return the line number
      * @since 4.37
      */
+    @Whitelisted
     public static int convertLineNumber(final String lineNumber) {
         if (StringUtils.isNotBlank(lineNumber)) {
             try {
@@ -328,6 +335,7 @@ public abstract class AbstractWarningsParser implements ExtensionPoint, Serializ
      * @return the escaped text
      * @see StringEscapeUtils#escapeXml11
      */
+    @Whitelisted
     protected String escapeXml(final String text) {
         return StringEscapeUtils.escapeXml10(text);
     }

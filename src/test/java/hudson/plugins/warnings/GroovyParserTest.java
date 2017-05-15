@@ -6,8 +6,10 @@ import java.util.Collection;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
+import org.jvnet.hudson.test.JenkinsRule;
 
 import static org.junit.Assert.*;
 
@@ -23,6 +25,9 @@ import hudson.util.FormValidation.Kind;
  * @author Ulli Hafner
  */
 public class GroovyParserTest {
+    @ClassRule
+    public static JenkinsRule jenkins = new JenkinsRule();
+
     // CHECKSTYLE:OFF
     private static final String SINGLE_LINE_EXAMPLE = "file/name/relative/unix:42:evil: this is a warning message";
     private static final String MULTI_LINE_EXAMPLE = "    [javac] 1. WARNING in C:\\Desenvolvimento\\Java\\jfg\\src\\jfg\\AttributeException.java (at line 3)\n"
