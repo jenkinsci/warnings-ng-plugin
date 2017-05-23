@@ -1,9 +1,9 @@
 package hudson.plugins.warnings.parser;
 
 import java.util.regex.Matcher;
+import java.util.*;
 
 import hudson.Extension;
-
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
@@ -14,14 +14,17 @@ import hudson.plugins.analysis.util.model.Priority;
  *
  * @author Claus Klein
  * @author Ulli Hafner
+ * @author Kay van der Zander
  */
 @Extension
 public class IarParser extends RegexpLineParser {
     private static final long serialVersionUID = 7695540852439013425L;
-
-    private static final String IAR_WARNING_PATTERN =
-    "^(?:\\[.*\\]\\s*)?\\\"?(.*?)\\\"?(?:,|\\()(\\d+)(?:\\s*|\\)\\s*:\\s*)(Error|Remark|Warning|Fatal error)\\[(\\w+)\\]: (.*)$";
-
+    private static int GROUP_NUMBER = 5;
+    
+    // search for: Fatal Error[Pe1696]: cannot open source file "c:\filename.c"
+    // search for: c:\filename.h(17) : Fatal Error[Pe1696]: cannot open source file "System/ProcDef_LPC17xx.h"
+    private static final String IAR_WARNING_PATTERN = 
+"((\\[exec\\] )?(.*)\\((\\d+)\\)?.*)?(Fatal [Ee]rror|Remark|Warning)\\[(\\w+)\\]: (.*(\\\".*(c|h)\\\")|.*)";
     /**
      * Creates a new instance of {@link IarParser}.
      */
@@ -29,12 +32,12 @@ public class IarParser extends RegexpLineParser {
         super(Messages._Warnings_iar_ParserName(),
                 Messages._Warnings_iar_LinkName(),
                 Messages._Warnings_iar_TrendName(),
-                IAR_WARNING_PATTERN, true);
+                IAR_WARNING_PATTERN);
     }
 
     @Override
     protected boolean isLineInteresting(final String line) {
-        return line.contains("Warning") || line.contains("rror") || line.contains("Remark");
+        return line.contains("Warning") || line.contains("rror") || line.contains("Remark") || line.contains("[");
     }
 
     @Override
@@ -45,26 +48,30 @@ public class IarParser extends RegexpLineParser {
     @Override
     protected Warning createWarning(final Matcher matcher) {
         Priority priority;
-        if ("Remark".equals(matcher.group(3))) {
-            priority = Priority.LOW;
-        }
-        else if ("Warning".equals(matcher.group(3))) {
-            priority = Priority.NORMAL;
-        }
-        else if ("Error".equals(matcher.group(3))) {
-            priority = Priority.HIGH;
-        }
-        else if ("Fatal error".equals(matcher.group(3))) {
-            priority = Priority.HIGH;
-        }
-        else {
-            return FALSE_POSITIVE;
-        }
-        String message = normalizeWhitespaceInMessage(matcher.group(5));
-        return createWarning(matcher.group(1), getLineNumber(matcher.group(2)), matcher.group(4), message, priority);
+           
+        priority = determinePriority(matcher.group(GROUP_NUMBER));
+        return composeWarning(matcher, priority);
     }
-
-    private String normalizeWhitespaceInMessage(final String message) {
-        return message.replaceAll("\\s+", " ");
+           
+    private Warning composeWarning(final Matcher matcher, final Priority priority) {
+        String message = matcher.group(7);
+        
+        if( matcher.group(3) == null ) {
+            // createWarning( filename, line number, error number (Pe177), message, priority )
+            return createWarning(matcher.group(8), 0, matcher.group(6), message, priority);
+        }
+        // createWarning( filename, line number, error number (Pe177), message, priority )
+        return createWarning(matcher.group(3), getLineNumber(matcher.group(4)), matcher.group(6), message, priority);
+    }
+          
+    private Priority determinePriority(final String message) {
+        // for "Fatal error", "Fatal Error", "Error" and "error" and "warning"
+        if (message.toLowerCase().contains("error")) {
+            return Priority.HIGH;
+        } else if (message.toLowerCase().contains("warning")) {
+            return Priority.NORMAL;
+        } else {
+            return Priority.LOW;
+        }
     }
 }
