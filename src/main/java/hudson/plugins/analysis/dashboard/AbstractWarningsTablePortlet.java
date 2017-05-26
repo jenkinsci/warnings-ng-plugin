@@ -1,19 +1,17 @@
 package hudson.plugins.analysis.dashboard;
 
+import javax.annotation.CheckForNull;
 import java.util.Collection;
 import java.util.List;
-
-import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Lists;
 
 import hudson.model.Job;
-
-import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.analysis.core.BuildResult;
+import hudson.plugins.analysis.core.ResultAction;
 
 /**
  * A portlet that shows a table with the number of warnings in the selected jobs.
@@ -192,7 +190,9 @@ public abstract class AbstractWarningsTablePortlet extends AbstractPortlet {
                 int numberOfAnnotations = result.getNumberOfAnnotations();
                 String value;
                 if (numberOfAnnotations > 0) {
-                    value = String.format("<a href=\"%s%s\">%d</a>", job.getShortUrl(), action.getUrlName(), numberOfAnnotations);
+                    String prefix = getDashboard().getUrl();
+                    String jobUrl = job.getUrl().replaceFirst(prefix, StringUtils.EMPTY);
+                    value = String.format("<a href=\"%s%s\">%d</a>", jobUrl, action.getUrlName(), numberOfAnnotations);
                 }
                 else {
                     value = String.valueOf(numberOfAnnotations);
