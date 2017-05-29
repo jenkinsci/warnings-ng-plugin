@@ -129,8 +129,7 @@ public class IarParserTest extends ParserTester {
         return "iar-nowrap.log";
     }
 
-    protected FileAnnotation getErrorNumber( final int number)
-    {
+    protected FileAnnotation getErrorNumber( final int number) throws IOException {
         Collection<FileAnnotation> warnings = new IarParser().parse(openFile("issue8823.txt"));
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
