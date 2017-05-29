@@ -32,7 +32,7 @@ public class IarParser extends RegexpLineParser {
         super(Messages._Warnings_iar_ParserName(),
                 Messages._Warnings_iar_LinkName(),
                 Messages._Warnings_iar_TrendName(),
-                IAR_WARNING_PATTERN);
+                IAR_WARNING_PATTERN, true);
     }
 
     @Override
@@ -57,10 +57,8 @@ public class IarParser extends RegexpLineParser {
         String message = matcher.group(7);
         
         if( matcher.group(3) == null ) {
-            // createWarning( filename, line number, error number (Pe177), message, priority )
             return createWarning(matcher.group(8), 0, matcher.group(6), message, priority);
         }
-        // createWarning( filename, line number, error number (Pe177), message, priority )
         return createWarning(matcher.group(3), getLineNumber(matcher.group(4)), matcher.group(6), message, priority);
     }
           
