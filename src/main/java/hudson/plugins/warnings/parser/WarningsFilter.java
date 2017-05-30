@@ -21,7 +21,7 @@ public class WarningsFilter {
     private final Set<Pattern> includePatterns = Sets.newHashSet();
     private final Set<Pattern> excludePatterns = Sets.newHashSet();
 
-    private Set<Pattern> addPatterns(final @CheckForNull String pattern) {
+    private Set<Pattern> addFilePatterns(final @CheckForNull String pattern) {
         Set<Pattern> patterns = Sets.newHashSet();
         if (StringUtils.isNotBlank(pattern)) {
             String[] split = StringUtils.split(pattern, ',');
@@ -29,6 +29,18 @@ public class WarningsFilter {
                 String trimmed = StringUtils.trim(singlePattern);
                 String directoriesReplaced = StringUtils.replace(trimmed, "**", "*"); // NOCHECKSTYLE
                 patterns.add(Pattern.compile(StringUtils.replace(directoriesReplaced, "*", ".*"))); // NOCHECKSTYLE
+            }
+        }
+        return patterns;
+    }
+
+    private Set<Pattern> addStringPatterns(final @CheckForNull String pattern) {
+        Set<Pattern> patterns = Sets.newHashSet();
+        if (StringUtils.isNotBlank(pattern)) {
+            String[] split = StringUtils.split(pattern, '\n');
+            for (String singlePattern : split) {
+                String trimmed = StringUtils.trim(singlePattern);
+                patterns.add(Pattern.compile(trimmed)); // NOCHECKSTYLE
             }
         }
         return patterns;
@@ -54,10 +66,12 @@ public class WarningsFilter {
                                      final @CheckForNull String includePattern,
                                      final @CheckForNull String excludePattern,
                                      final @CheckForNull String messagesPattern,
+                                     final @CheckForNull String categoriesPattern,
                                      final PluginLogger logger) {
-        Collection<Pattern> includePatterns = addPatterns(includePattern);
-        Collection<Pattern> excludePatterns = addPatterns(excludePattern);
-        Collection<Pattern> messagesPatterns = addPatterns(messagesPattern);
+        Collection<Pattern> includePatterns = addFilePatterns(includePattern);
+        Collection<Pattern> excludePatterns = addFilePatterns(excludePattern);
+        Collection<Pattern> messagesPatterns = addStringPatterns(messagesPattern);
+        Collection<Pattern> categoriesPatterns = addStringPatterns(categoriesPattern);
 
         Collection<FileAnnotation> includedAnnotations;
         if (includePatterns.isEmpty()) {
@@ -73,7 +87,7 @@ public class WarningsFilter {
                 }
             }
         }
-        if (excludePatterns.isEmpty() && messagesPatterns.isEmpty()) {
+        if (excludePatterns.isEmpty() && messagesPatterns.isEmpty() && categoriesPatterns.isEmpty()) {
             return includedAnnotations;
         }
         else {
@@ -89,13 +103,18 @@ public class WarningsFilter {
                         excludedAnnotations.remove(annotation);
                     }
                 }
+                for (Pattern exclude : categoriesPatterns) {
+                    if (exclude.matcher(annotation.getCategory()).matches()) {
+                        excludedAnnotations.remove(annotation);
+                    }
+                }
             }
             logger.log(String.format("Found %d warnings after exclusion.", excludedAnnotations.size()));
             return excludedAnnotations;
         }
     }
 
-    public boolean isActive(final String includePattern, final String excludePattern, final String messagesPattern) {
-        return StringUtils.isNotBlank(includePattern) || StringUtils.isNotBlank(excludePattern) || StringUtils.isNotBlank(messagesPattern);
+    public boolean isActive(final String includePattern, final String excludePattern, final String messagesPattern, final String categoriesPattern) {
+        return StringUtils.isNotBlank(includePattern) || StringUtils.isNotBlank(excludePattern) || StringUtils.isNotBlank(messagesPattern) || StringUtils.isNotBlank(categoriesPattern);
     }
 }

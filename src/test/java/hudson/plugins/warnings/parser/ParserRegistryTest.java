@@ -113,7 +113,8 @@ public class ParserRegistryTest {
                                                       final String includePattern, final String excludePattern) throws IOException {
         Collection<FileAnnotation> annotations = parserRegistry.parse(file);
         final String messagesPattern = null;
-        return new WarningsFilter().apply(annotations, includePattern, excludePattern, messagesPattern, new NullLogger());
+        final String categoriesPattern = null;
+        return new WarningsFilter().apply(annotations, includePattern, excludePattern, messagesPattern, categoriesPattern, new NullLogger());
     }
 
     /**

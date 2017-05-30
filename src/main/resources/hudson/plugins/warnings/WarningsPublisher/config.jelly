@@ -21,7 +21,10 @@
       <f:textbox />
     </f:entry>
     <f:entry title="${%Messages to ignore}" field="messagesPattern" description="${%description.messagesPattern}">
-      <f:textbox />
+      <f:expandableTextbox />
+    </f:entry>
+    <f:entry title="${%Categories to ignore}" field="categoriesPattern" description="${%description.categoriesPattern}">
+      <f:expandableTextbox />
     </f:entry>
 
     <u:failed />
