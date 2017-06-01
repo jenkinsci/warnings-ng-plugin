@@ -1,6 +1,7 @@
 package hudson.plugins.analysis.core;
 
 import java.io.IOException;
+import java.util.Set;
 
 import hudson.FilePath;
 import hudson.Launcher;
@@ -11,6 +12,7 @@ import hudson.model.Run;
 
 import hudson.plugins.analysis.util.*;
 
+import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.tasks.BuildStep;
 
 /**
@@ -65,8 +67,6 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
         BuildResult result;
         try {
             result = perform(run, workspace, logger);
-            AbstractBlamer blamer = BlameFactory.createBlamer(run, workspace, logger);
-            blamer.blame(result.getAnnotations());
 
             Run<?, ?> referenceBuild = result.getHistory().getReferenceBuild();
 
@@ -91,6 +91,11 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
         copyFilesWithAnnotationsToBuildFolder(run.getRootDir(), launcher.getChannel(), result.getAnnotations());
 
         return true;
+    }
+
+    protected void blame(final Set<FileAnnotation> annotations, final Run<?, ?> run, final FilePath workspace, final PluginLogger logger) {
+        BlameInterface blamer = BlameFactory.createBlamer(run, workspace, logger);
+        blamer.blame(annotations);
     }
 
     /**
