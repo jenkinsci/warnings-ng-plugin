@@ -1,17 +1,13 @@
 package hudson.plugins.analysis.util;
 
-import hudson.FilePath;
-import hudson.model.Run;
-import hudson.plugins.analysis.core.BuildResult;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.scm.SCM;
-import org.eclipse.jgit.blame.BlameResult;
-import org.eclipse.jgit.lib.PersonIdent;
-import org.eclipse.jgit.revwalk.RevCommit;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Set;
+
+import hudson.FilePath;
+import hudson.model.Run;
+import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
  * A base class for blame functionality.
@@ -55,7 +51,7 @@ public abstract class AbstractBlamer implements BlameInterface{
             if (annot.getPrimaryLineNumber() <= 0) {
                 continue;
             }
-            String filename = annot.getFileName().replace("/", "\\");
+            String filename = annot.getFileName();
             if (!filename.startsWith(absoluteWorkspace)) {
                 logger.log("Saw a file outside of the workspace? " + annot.getFileName());
                 pathsByFileName.put(annot.getFileName(), BAD_PATH);
