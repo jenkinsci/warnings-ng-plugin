@@ -9,7 +9,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  *
  * @author Ullrich Hafner
  */
-public class NullBlamer implements BlameInterface {
+public class NullBlamer implements Blamer {
     @Override
     public void blame(final Set<FileAnnotation> annotations) {
         // nothing to do

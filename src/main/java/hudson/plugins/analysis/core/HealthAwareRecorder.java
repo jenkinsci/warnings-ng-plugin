@@ -128,6 +128,8 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      */
     private boolean doNotResolveRelativePaths;
 
+    private transient TaskListener listener;
+
     // CHECKSTYLE:ON
     /**
      * Constructor using only required field/s.
@@ -290,6 +292,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     @Override
     public final void perform(final Run<?, ?> run, final FilePath workspace, final Launcher launcher, final TaskListener listener)
             throws InterruptedException, IOException {
+        setListener(listener);
         PluginLogger logger = new LoggerFactory().createLogger(listener.getLogger(), pluginName);
         if (canContinue(run.getResult())) {
             perform(run, workspace, launcher, logger);
@@ -782,6 +785,23 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     @DataBoundSetter
     public void setFailedNewLow(final String failedNewLow) {
         thresholds.failedNewLow = failedNewLow;
+    }
+
+
+    private void setListener(final TaskListener listener) {
+        this.listener = listener;
+    }
+
+    /**
+     * Returns the listener for the build.
+     *
+     * @return the task listener
+     */
+    protected TaskListener getListener() {
+        if (listener == null) {
+            return TaskListener.NULL;
+        }
+        return listener;
     }
 
     // CHECKSTYLE:OFF

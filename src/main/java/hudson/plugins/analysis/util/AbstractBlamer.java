@@ -14,7 +14,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  *
  * @author Lukas Krose
  */
-public abstract class AbstractBlamer implements BlameInterface {
+public abstract class AbstractBlamer implements Blamer {
     /** Indicator for a bad Path */
     protected static final String BAD_PATH = "/";
     /** The current run */
@@ -65,8 +65,4 @@ public abstract class AbstractBlamer implements BlameInterface {
         }
         return pathsByFileName;
     }
-
-
-
-
 }

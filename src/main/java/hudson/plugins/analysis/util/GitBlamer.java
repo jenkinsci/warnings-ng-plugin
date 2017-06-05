@@ -2,9 +2,12 @@ package hudson.plugins.analysis.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
-import hudson.remoting.VirtualChannel;
 import org.eclipse.jgit.api.BlameCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.blame.BlameResult;
@@ -13,19 +16,17 @@ import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.jenkinsci.plugins.gitclient.Git;
 import org.jenkinsci.plugins.gitclient.GitClient;
-
-import hudson.FilePath;
-import hudson.model.Run;
-import hudson.plugins.analysis.core.BuildResult;
+import org.jenkinsci.remoting.RoleChecker;
 
 import hudson.EnvVars;
+import hudson.FilePath;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.git.GitSCM;
-import hudson.scm.SCM;
-import org.jenkinsci.remoting.RoleChecker;
+import hudson.remoting.VirtualChannel;
 
 /**
  * A Class that is able to assign git blames to a build result.
@@ -34,18 +35,18 @@ import org.jenkinsci.remoting.RoleChecker;
  * @author Lukas Krose
  */
 public class GitBlamer extends AbstractBlamer {
-
     private final GitSCM scm;
+    private final TaskListener listener;
 
-    public GitBlamer(Run<?, ?> run, FilePath workspace, PluginLogger logger) {
+    public GitBlamer(Run<?, ?> run, FilePath workspace, PluginLogger logger, final TaskListener listener) {
         super(run, workspace, logger);
+
+        this.listener = listener;
         AbstractProject aProject = (AbstractProject) run.getParent();
         scm = (GitSCM) aProject.getScm();
     }
 
     private HashMap<String, BlameResult> loadBlameResultsForFiles(HashMap<String, String> pathsByFileName) throws InterruptedException, IOException {
-        TaskListener listener = TaskListener.NULL;
-
         if (!(run instanceof AbstractBuild)) {
             logger.log("Could not get parent git client.");
             return null;
@@ -55,10 +56,7 @@ public class GitBlamer extends AbstractBlamer {
         final String gitCommit = environment.get("GIT_COMMIT");
         final String gitExe = scm.getGitExe(aBuild.getBuiltOn(), listener);
 
-        GitClient git = Git.with(listener, environment)
-                .in(workspace)
-                .using(gitExe)
-                .getClient();
+        GitClient git = Git.with(listener, environment).in(workspace).using(gitExe).getClient();
 
         ObjectId headCommit;
         if ((gitCommit == null) || "".equals(gitCommit)) {
@@ -93,9 +91,7 @@ public class GitBlamer extends AbstractBlamer {
                 }
             }
             catch (GitAPIException e) {
-                final IOException e2 = new IOException("Error running git blame on " + child + " with revision: " + headCommit); // NOPMD: false positive, the exception is used as the cause of the reported error
-                e2.initCause(e);
-                throw e2;  // NOPMD: false positive
+                throw new IOException("Error running git blame on " + child + " with revision: " + headCommit, e);
             }
         }
 
@@ -105,12 +101,11 @@ public class GitBlamer extends AbstractBlamer {
     /**
      * Assigns the BlameResults to the annotations.
      *
-     * @param annotations The annotations that should be blamed
+     * @param annotations     The annotations that should be blamed
      * @param pathsByFileName the annotations by filename
-     * @param blameResults the results of the blaming
+     * @param blameResults    the results of the blaming
      */
-    private void assignBlameResults(final Set<FileAnnotation> annotations,final HashMap<String, String> pathsByFileName, final HashMap<String, BlameResult> blameResults)
-    {
+    private void assignBlameResults(final Set<FileAnnotation> annotations, final HashMap<String, String> pathsByFileName, final HashMap<String, BlameResult> blameResults) {
         HashSet<String> missingBlame = new HashSet<String>();
         for (final FileAnnotation annot : annotations) {
             if (annot.getPrimaryLineNumber() <= 0) {
@@ -165,15 +160,18 @@ public class GitBlamer extends AbstractBlamer {
                 public void checkRoles(RoleChecker roleChecker) throws SecurityException {
                 }
 
+                // FIXME: does not work on slaves, required is a serialization back
                 public Void invoke(File f, VirtualChannel channel) throws IOException, InterruptedException {
                     HashMap<String, BlameResult> blameResults = loadBlameResultsForFiles(filePathsByName);
                     assignBlameResults(annotations, filePathsByName, blameResults);
                     return null;
                 }
             });
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
