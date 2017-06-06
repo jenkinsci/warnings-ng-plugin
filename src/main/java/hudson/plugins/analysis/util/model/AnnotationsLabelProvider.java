@@ -26,6 +26,10 @@ public class AnnotationsLabelProvider implements Serializable {
         return Messages.BuildResult_Tab_Modules();
     }
 
+    public String getAuthors() {
+        return Messages.BuildResult_Tab_Authors();
+    }
+
     public String getWarnings() {
         return Messages.BuildResult_Tab_Warnings();
     }

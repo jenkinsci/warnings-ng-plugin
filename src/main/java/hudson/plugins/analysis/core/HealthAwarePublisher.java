@@ -94,7 +94,10 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
     }
 
     protected void blame(final Set<FileAnnotation> annotations, final Run<?, ?> run, final FilePath workspace, final PluginLogger logger) {
-        BlameInterface blamer = BlameFactory.createBlamer(run, workspace, logger);
+        if (GlobalSettings.instance().getNoAuthors()) {
+            return;
+        }
+        Blamer blamer = BlameFactory.createBlamer(run, workspace, logger, getListener());
         blamer.blame(annotations);
     }
 

@@ -14,16 +14,6 @@
 
     <script type="text/javascript">
       var myTabs = new YAHOO.widget.TabView("statistics");
-        <j:if test="${it.container.authors.size() > 1}">
-                YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-                    label: 'People',
-                    dataSrc: 'tab.authors/',
-                    cacheData: true,
-                    active: false
-                }), myTabs);
-            </j:if>
-
-
       <j:if test="${it.container.modules.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '<div id="modules">${l.modules}</div>',
@@ -39,24 +29,32 @@
             cacheData: true,
             active: false
         }), myTabs);
-    </j:if>
-    <j:if test="${it.container.files.size() > 1}">
+      </j:if>
+      <j:if test="${it.container.files.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '<div id="files">${l.files}</div>',
             dataSrc: 'tab.files/',
             cacheData: true,
             active: false
         }), myTabs);
-    </j:if>
-    <j:if test="${it.container.categories.size() > 1}">
+      </j:if>
+      <j:if test="${it.container.authors.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '<div id="categories">${l.categories}</div>',
-            dataSrc: 'tab.categories/',
+            label: '<div id="authors">${l.authors}</div>',
+            dataSrc: 'tab.authors/',
             cacheData: true,
             active: false
         }), myTabs);
-    </j:if>
-    <j:if test="${it.container.types.size() > 1}">
+      </j:if>
+      <j:if test="${it.container.categories.size() > 1}">
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+        label: '<div id="categories">${l.categories}</div>',
+        dataSrc: 'tab.categories/',
+        cacheData: true,
+        active: false
+        }), myTabs);
+      </j:if>
+      <j:if test="${it.container.types.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '<div id="types">${l.types}</div>',
             dataSrc: 'tab.types/',
@@ -78,7 +76,6 @@
           cacheData: true,
           active: false
       }), myTabs);
-
     <j:if test="${it.newWarnings.size() > 0}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
             label: '<div id="new">${l.new}</div>',

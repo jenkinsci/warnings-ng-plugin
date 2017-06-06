@@ -12,6 +12,7 @@ import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
 import hudson.model.Run;
+import hudson.plugins.analysis.core.GlobalSettings;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -157,6 +158,10 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      */
     public Priority[] getPriorities() {
         return Priority.values();
+    }
+
+    public boolean showAuthors() {
+    return !GlobalSettings.instance().getNoAuthors();
     }
 
     /**
