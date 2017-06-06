@@ -1,8 +1,7 @@
 package hudson.plugins.analysis.util;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import hudson.FilePath;
@@ -15,54 +14,69 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  * @author Lukas Krose
  */
 public abstract class AbstractBlamer implements Blamer {
-    /** Indicator for a bad Path */
-    protected static final String BAD_PATH = "/";
     /** The current run */
-    protected final Run <?, ?> run;
+    private final Run<?, ?> run;
     /** the current workspace */
-    protected final FilePath workspace;
+    private final FilePath workspace;
     /** The PluginLogger to log ,essages */
-    protected final PluginLogger logger;
+    private final PluginLogger logger;
 
-    public AbstractBlamer(final Run<?, ?> run, final FilePath workspace, final PluginLogger logger)
-    {
+    /**
+     * Creates a new {@link AbstractBlamer}.
+     *
+     * @param run       the run
+     * @param workspace the workspace of the run
+     * @param logger    the plugin logger
+     */
+    public AbstractBlamer(final Run<?, ?> run, final FilePath workspace, final PluginLogger logger) {
         this.run = run;
         this.workspace = workspace;
         this.logger = logger;
     }
 
     /**
-     * Sorts the annotations by FileName and Path to make sure every file is only blamed once.
-     * Also applies a bad path when the file is outside of the working directory.
+     * Extracts the relative file names of the files that contain annotations
+     * to make sure every file is blamed only once.
      *
-     * @param annotations The Set of annotations
-     * @return A map of <Filename, FilePath>
-     * @throws IOException
-     * @throws InterruptedException
+     * @param annotations the annotations to extract the file names from
+     * @return a set of relative file names
      */
-    protected HashMap<String, String> getFilePathsFromAnnotations(Set<FileAnnotation> annotations) throws IOException, InterruptedException {
-        File workspaceFile = new File(workspace.toURI());
-        final String absoluteWorkspace = workspaceFile.getAbsolutePath();
-        HashMap<String, String> pathsByFileName = new HashMap<String, String>();
-        for (final FileAnnotation annot : annotations) {
-            if (pathsByFileName.containsKey(annot.getFileName())) {
-                continue;
+    protected Map<String, String> getFilePathsFromAnnotations(final Set<FileAnnotation> annotations) {
+        String workspacePath = workspace.getRemote().replace('\\', '/');
+        Map<String, String> pathsByFileName = new HashMap<String, String>();
+
+        for (FileAnnotation annotation : annotations) {
+            String absoluteFileName = annotation.getFileName();
+            if (!pathsByFileName.containsKey(absoluteFileName) && annotation.getPrimaryLineNumber() > 0) {
+                if (absoluteFileName.startsWith(workspacePath)) {
+                    String relativeFileName = annotation.getFileName().substring(workspacePath.length());
+                    if (relativeFileName.startsWith("/") || relativeFileName.startsWith("\\")) {
+                        relativeFileName = relativeFileName.substring(1);
+                    }
+                    pathsByFileName.put(absoluteFileName, relativeFileName);
+                }
+                else {
+                    log("Skipping non-workspace file " + annotation.getFileName());
+                }
             }
-            if (annot.getPrimaryLineNumber() <= 0) {
-                continue;
-            }
-            String filename = annot.getFileName();
-            if (!filename.startsWith(absoluteWorkspace)) {
-                logger.log("Saw a file outside of the workspace? " + annot.getFileName());
-                pathsByFileName.put(annot.getFileName(), BAD_PATH);
-                continue;
-            }
-            String child = annot.getFileName().substring(absoluteWorkspace.length());
-            if (child.startsWith("/") || child.startsWith("\\")) {
-                child = child.substring(1);
-            }
-            pathsByFileName.put(annot.getFileName(), child);
         }
         return pathsByFileName;
+    }
+
+    /**
+     * Logs the specified message.
+     *
+     * @param message the message
+     */
+    protected void log(final String message) {
+        logger.log(message);
+    }
+
+    protected FilePath getWorkspace() {
+        return workspace;
+    }
+
+    public Run<?, ?> getRun() {
+        return run;
     }
 }

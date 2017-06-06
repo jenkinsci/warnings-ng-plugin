@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jgit.api.BlameCommand;
@@ -46,21 +47,21 @@ public class GitBlamer extends AbstractBlamer {
         scm = (GitSCM) aProject.getScm();
     }
 
-    private HashMap<String, BlameResult> loadBlameResultsForFiles(HashMap<String, String> pathsByFileName) throws InterruptedException, IOException {
-        if (!(run instanceof AbstractBuild)) {
-            logger.log("Could not get parent git client.");
+    private Map<String, BlameResult> loadBlameResultsForFiles(Map<String, String> pathsByFileName) throws InterruptedException, IOException {
+        if (!(getRun() instanceof AbstractBuild)) {
+            log("Could not get parent git client.");
             return null;
         }
-        AbstractBuild aBuild = (AbstractBuild) run;
-        final EnvVars environment = run.getEnvironment(listener);
+        AbstractBuild aBuild = (AbstractBuild) getRun();
+        final EnvVars environment = getRun().getEnvironment(listener);
         final String gitCommit = environment.get("GIT_COMMIT");
         final String gitExe = scm.getGitExe(aBuild.getBuiltOn(), listener);
 
-        GitClient git = Git.with(listener, environment).in(workspace).using(gitExe).getClient();
+        GitClient git = Git.with(listener, environment).in(getWorkspace()).using(gitExe).getClient();
 
         ObjectId headCommit;
         if ((gitCommit == null) || "".equals(gitCommit)) {
-            logger.log("No GIT_COMMIT environment variable found, using HEAD.");
+            log("No GIT_COMMIT environment variable found, using HEAD.");
             headCommit = git.revParse("HEAD");
         }
         else {
@@ -68,30 +69,27 @@ public class GitBlamer extends AbstractBlamer {
         }
 
         if (headCommit == null) {
-            logger.log("Could not retrieve HEAD commit.");
+            log("Could not retrieve HEAD commit.");
             return null;
         }
 
         HashMap<String, BlameResult> blameResults = new HashMap<String, BlameResult>();
-        for (final String child : pathsByFileName.values()) {
-            if (BAD_PATH.equals(child)) {
-                continue;
-            }
+        for (final String fileName : pathsByFileName.values()) {
             BlameCommand blame = new BlameCommand(git.getRepository());
-            blame.setFilePath(child);
+            blame.setFilePath(fileName);
             blame.setStartCommit(headCommit);
             try {
                 BlameResult result = blame.call();
                 if (result == null) {
-                    logger.log("No blame results for file: " + child);
+                    log("No blame results for file: " + fileName);
                 }
-                blameResults.put(child, result);
+                blameResults.put(fileName, result);
                 if (Thread.interrupted()) {
                     throw new InterruptedException("Thread was interrupted while computing blame information.");
                 }
             }
             catch (GitAPIException e) {
-                throw new IOException("Error running git blame on " + child + " with revision: " + headCommit, e);
+                throw new IOException("Error running git blame on " + fileName + " with revision: " + headCommit, e);
             }
         }
 
@@ -101,20 +99,18 @@ public class GitBlamer extends AbstractBlamer {
     /**
      * Assigns the BlameResults to the annotations.
      *
-     * @param annotations     The annotations that should be blamed
-     * @param pathsByFileName the annotations by filename
-     * @param blameResults    the results of the blaming
+     * @param annotations  The annotations that should be blamed
+     * @param pathsByFileName        the filenames of the conflicting files
+     * @param blameResults the results of the blaming
      */
-    private void assignBlameResults(final Set<FileAnnotation> annotations, final HashMap<String, String> pathsByFileName, final HashMap<String, BlameResult> blameResults) {
+    private void assignBlameResults(final Set<FileAnnotation> annotations,
+            final Map<String, String> pathsByFileName, final Map<String, BlameResult> blameResults) {
         HashSet<String> missingBlame = new HashSet<String>();
         for (final FileAnnotation annot : annotations) {
             if (annot.getPrimaryLineNumber() <= 0) {
                 continue;
             }
             String child = pathsByFileName.get(annot.getFileName());
-            if (BAD_PATH.equals(child)) {
-                continue;
-            }
             BlameResult blame = blameResults.get(child);
             if (blame == null) {
                 continue;
@@ -133,7 +129,7 @@ public class GitBlamer extends AbstractBlamer {
                 annot.setAuthorCommitId(commit == null ? null : commit.getName());
             }
             catch (ArrayIndexOutOfBoundsException e) {
-                logger.log("Blame details were out of bounds for line number " + annot.getPrimaryLineNumber() + " in file " + child);
+                log("Blame details were out of bounds for line number " + annot.getPrimaryLineNumber() + " in file " + child);
             }
         }
 
@@ -141,29 +137,30 @@ public class GitBlamer extends AbstractBlamer {
             ArrayList<String> l = new ArrayList<String>(missingBlame);
             Collections.sort(l);
             for (final String child : l) {
-                logger.log("Blame details were incomplete for file: " + child);
+                log("Blame details were incomplete for file: " + child);
             }
         }
     }
 
     @Override
     public void blame(final Set<FileAnnotation> annotations) {
-        logger.log("Adding authors to annotations");
+        log("Mapping annotations to Git commits IDs and authors");
         if (annotations.isEmpty()) {
             return;
         }
-        try {
-            final HashMap<String, String> filePathsByName = getFilePathsFromAnnotations(annotations);
 
-            workspace.act(new FilePath.FileCallable<Void>() {
+        try {
+            final Map<String, String> files = getFilePathsFromAnnotations(annotations);
+
+            getWorkspace().act(new FilePath.FileCallable<Void>() {
                 @Override
                 public void checkRoles(RoleChecker roleChecker) throws SecurityException {
                 }
 
                 // FIXME: does not work on slaves, required is a serialization back
                 public Void invoke(File f, VirtualChannel channel) throws IOException, InterruptedException {
-                    HashMap<String, BlameResult> blameResults = loadBlameResultsForFiles(filePathsByName);
-                    assignBlameResults(annotations, filePathsByName, blameResults);
+                    Map<String, BlameResult> blameResults = loadBlameResultsForFiles(files);
+                    assignBlameResults(annotations, files, blameResults);
                     return null;
                 }
             });
