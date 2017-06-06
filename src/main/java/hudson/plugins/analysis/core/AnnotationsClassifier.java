@@ -41,13 +41,8 @@ public class AnnotationsClassifier extends MasterToSlaveFileCallable<ParserResul
     public ParserResult invoke(final File workspace, final VirtualChannel channel) throws IOException {
         ContextHashCode contextHashCode = new ContextHashCode();
         for (FileAnnotation annotation : result.getAnnotations()) {
-            try {
-                annotation.setContextHashCode(contextHashCode.create(
-                        annotation.getFileName(), annotation.getPrimaryLineNumber(), defaultEncoding));
-            }
-            catch (IOException exception) {
-                // ignore and continue
-            }
+            annotation.setContextHashCode(contextHashCode.compute(
+                    annotation.getFileName(), annotation.getPrimaryLineNumber(), defaultEncoding));
         }
         return result;
     }

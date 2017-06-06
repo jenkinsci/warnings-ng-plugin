@@ -101,7 +101,7 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
      */
     @Deprecated
     protected int createContextHashCode(final String fileName, final int line) throws IOException {
-        return new ContextHashCode().create(fileName, line, defaultEncoding);
+        return new ContextHashCode().compute(fileName, line, defaultEncoding);
     }
 
     /**
@@ -119,12 +119,7 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
      */
     protected int createContextHashCode(final String fileName, final int line, final String warningType) {
         HashCodeBuilder builder = new HashCodeBuilder();
-        try {
-            builder.append(new ContextHashCode().create(fileName, line, defaultEncoding));
-        }
-        catch (IOException exception) {
-            builder.append(fileName).append(line);
-        }
+        builder.append(new ContextHashCode().compute(fileName, line, defaultEncoding));
         builder.append(warningType);
         return builder.toHashCode();
     }
