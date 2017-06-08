@@ -13,19 +13,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:git:3.1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:git-client:2.3.0" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jgit:org.eclipse.jgit:4.5.0.201609210915-r" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jgit:org.eclipse.jgit.http.server:4.5.0.201609210915-r" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jgit:org.eclipse.jgit.http.apache:4.5.0.201609210915-r" level="project" />
-    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:credentials:2.1.8" level="project" />
-    <orderEntry type="library" name="Maven: org.antlr:antlr4-runtime:4.5" level="project" />
-    <orderEntry type="library" name="Maven: org.abego.treelayout:org.abego.treelayout.core:1.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:ssh-credentials:1.12" level="project" />
-    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:scm-api:2.0.8" level="project" />
-    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins.workflow:workflow-step-api:1.14.2" level="project" />
-    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:mailer:1.18" level="project" />
-    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:display-url-api:0.2" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:script-security:1.25" level="project" />
     <orderEntry type="library" name="Maven: org.kohsuke:groovy-sandbox:1.10" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:ant:1.1" level="project" />

@@ -480,7 +480,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     }
 
     /** {@inheritDoc} */
-    public void setAuthorCommitId(final String commitId) {
+    public void setCommitId(final String commitId) {
         this.authorCommitId = commitId;
     }
 

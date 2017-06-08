@@ -1,8 +1,8 @@
 package hudson.plugins.analysis.util;
 
 import hudson.FilePath;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.git.GitSCM;
@@ -24,13 +24,12 @@ public class BlameFactory {
      * @return the blamer
      */
     public static Blamer createBlamer(Run<?, ?> run, FilePath workspace, PluginLogger logger, final TaskListener listener) {
-        Job<?, ?> job = run.getParent();
-        if (job instanceof AbstractProject) { // pipelines do not have an SCM link
-            AbstractProject project = (AbstractProject) job;
+        if (run instanceof AbstractBuild) { // pipelines do not have an SCM link
+            AbstractBuild build = (AbstractBuild) run;
+            AbstractProject project = build.getProject();
             SCM scm = project.getScm();
             if (scm instanceof GitSCM) {
-                logger.log("Using GitBlamer to create author and commit information for all warnings");
-                return new GitBlamer(run, workspace, logger, listener);
+                return new GitBlamer(build, (GitSCM) scm, workspace, logger, listener);
             }
         }
         return new NullBlamer();

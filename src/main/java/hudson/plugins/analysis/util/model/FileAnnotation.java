@@ -255,6 +255,6 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
      *
      * @param commitId the commit that caused this annotation.
      */
-    void setAuthorCommitId(String commitId);
+    void setCommitId(String commitId);
 
 }
