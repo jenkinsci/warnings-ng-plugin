@@ -2,23 +2,18 @@ package hudson.plugins.analysis.graph;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
 
-import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.BoxRenderer;
 import hudson.plugins.analysis.util.CategoryUrlBuilder;
 import hudson.plugins.analysis.util.ToolTipBoxRenderer;
 import hudson.plugins.analysis.util.ToolTipBuilder;
 import hudson.plugins.analysis.util.ToolTipProvider;
-import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
  * Builds a warnings graph that shows the total annotations by user.
@@ -28,7 +23,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 public class AnnotationsByUserGraph extends UserBuildResultGraph {
     @Override
     public String getId() {
-        return "ANNOTATIONS";
+        return "USERS";
     }
 
     @Override

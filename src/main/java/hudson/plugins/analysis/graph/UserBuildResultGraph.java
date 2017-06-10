@@ -27,9 +27,9 @@ import hudson.util.DataSetBuilder;
  */
 public abstract class UserBuildResultGraph extends BuildResultGraph {
     @Override
-    public JFreeChart create(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> resultAction, @CheckForNull final String pluginName) {
-        CategoryDataset dataSet;
-        dataSet = createDataSetPerAuthorName(configuration, resultAction);
+    public JFreeChart create(final GraphConfiguration configuration,
+            final ResultAction<? extends BuildResult> resultAction, @CheckForNull final String pluginName) {
+        CategoryDataset dataSet = createDataSetPerAuthorName(configuration, resultAction);
         return createChart(dataSet);
     }
 
@@ -53,12 +53,10 @@ public abstract class UserBuildResultGraph extends BuildResultGraph {
             }
             if (passesFilteringByParameter(current.getOwner(), parameterName, parameterValue)) {
                 Collection<FileAnnotation> annotations = current.getAnnotations();
-                //Collection<FileAnnotation> annotations = current.getNewWarnings();
-                Map<String, List<FileAnnotation>>annotationsByUser = new HashMap<String, List<FileAnnotation>>();
-                for (FileAnnotation annotation : annotations)
-                {
+                Map<String, List<FileAnnotation>> annotationsByUser = new HashMap<String, List<FileAnnotation>>();
+                for (FileAnnotation annotation : annotations) {
                     String name = annotation.getAuthorName();
-                    if(name == null) continue;
+                    if (name == null) continue;
                     if (annotationsByUser.get(name) == null)annotationsByUser.put(name, new ArrayList<FileAnnotation>());
                     annotationsByUser.get(name).add(annotation);
                 }
@@ -94,14 +92,11 @@ public abstract class UserBuildResultGraph extends BuildResultGraph {
             String userName= entry.getKey();
             List<Integer> annotations = entry.getValue();
             int level = 0;
-            for(int numAnnotPerBuild : annotations)
-            {
+            for(int numAnnotPerBuild : annotations) {
                 builder.add(numAnnotPerBuild,Integer.toString(level),userName);
             }
             level++;
         }
-
-
 
         return builder.build();
     }

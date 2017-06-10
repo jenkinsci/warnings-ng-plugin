@@ -28,10 +28,10 @@ import hudson.plugins.git.GitSCM;
 import hudson.remoting.VirtualChannel;
 
 /**
- * Assigns git blames to warnings.
- * Based on the solution by John Gibson.
+ * Assigns git blames to warnings. Based on the solution by John Gibson, see JENKINS-6748.
  *
  * @author Lukas Krose
+ * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-6748">Issue 6748</a>
  */
 public class GitBlamer extends AbstractBlamer {
     private final GitSCM scm;
@@ -167,4 +167,171 @@ public class GitBlamer extends AbstractBlamer {
         }
         return linesOfConflictingFiles;
     }
+
+//    /**
+//     * Get a repository browser link for the specified commit.
+//     *
+//     * @param commitId the id of the commit to be linked.
+//     * @return The link or {@code null} if one is not available.
+//     */
+//
+//    public URL urlForCommitId(final String commitId) {
+//        if (commitUrlsAttempted) {
+//            return commitUrls == null ? null : commitUrls.get(commitId);
+//        }
+//        commitUrlsAttempted = true;
+//
+//        Run<?, ?> run = getOwner();
+//        if (run.getParent() instanceof AbstractProject) {
+//            AbstractProject aProject = (AbstractProject) run.getParent();
+//            SCM scm = aProject.getScm();
+//            //SCM scm = getOwner().getParent().getScm();
+//            if ((scm == null) || (scm instanceof NullSCM)) {
+//                scm = aProject.getRootProject().getScm();
+//            }
+//
+//            final HashSet<String> commitIds = new HashSet<String>(getAnnotations().size());
+//            for (final FileAnnotation annot : getAnnotations()) {
+//                commitIds.add(annot.getCommitId());
+//            }
+//            commitIds.remove(null);
+//            try {
+//                commitUrls = computeUrlsForCommitIds(scm, commitIds);
+//                if (commitUrls != null) {
+//                    return commitUrls.get(commitId);
+//                }
+//            }
+//            catch (NoClassDefFoundError e) {
+//                // Git wasn't installed, ignore
+//            }
+//        }
+//        return null;
+//    }
+//
+//    /**
+//     * Creates links for the specified commitIds using the repository browser.
+//     *
+//     * @param scm the {@code SCM} of the owning project.
+//     * @param commitIds the commit ids in question.
+//     * @return a mapping of the links or {@code null} if the {@code SCM} isn't a
+//     *  {@code GitSCM} or if a repository browser isn't set or if it isn't a
+//     *  {@code GitRepositoryBrowser}.
+//     */
+//
+//    @SuppressWarnings("REC_CATCH_EXCEPTION")
+//    public static Map<String, URL> computeUrlsForCommitIds(final SCM scm, final Set<String> commitIds) {
+//        if (!(scm instanceof GitSCM)) {
+//            return null;
+//        }
+//        if (commitIds.isEmpty()) {
+//            return null;
+//        }
+//
+//        GitSCM gscm = (GitSCM) scm;
+//        GitRepositoryBrowser browser = gscm.getBrowser();
+//        if (browser == null) {
+//            RepositoryBrowser<?> ebrowser = gscm.getEffectiveBrowser();
+//            if (ebrowser instanceof GitRepositoryBrowser) {
+//                browser = (GitRepositoryBrowser) ebrowser;
+//            }
+//            else {
+//                return null;
+//            }
+//        }
+//
+//        // This is a dirty hack because the only way to create changesets is to do it by parsing git log messages
+//        // Because what we're doing is fairly dangerous (creating minimal commit messages) just give up if there is an error
+//        try {
+//            HashMap<String, URL> result = new HashMap<String, URL>((int) (commitIds.size() * 1.5f));
+//            for (final String commitId : commitIds) {
+//                GitChangeSet cs = new GitChangeSet(Collections.singletonList("commit " + commitId), true);
+//                if (cs.getId() != null) {
+//                    result.put(commitId, browser.getChangeSetLink(cs));
+//                }
+//            }
+//
+//            return result;
+//        }
+//        // CHECKSTYLE:OFF
+//        catch (Exception e) {
+//            // CHECKSTYLE:ON
+//            // TODO: log?
+//            return null;
+//        }
+//    }
+//
+//    /**
+//     * Get a {@code User} that corresponds to this author.
+//     *
+//     * @return a {@code User} or {@code null} if one can't be created.
+//     */
+//    public User getUser() {
+//        if (userAttempted) {
+//            return user;
+//        }
+//        userAttempted = true;
+//        if ("".equals(authorName)) {
+//            return null;
+//        }
+//        Run<?, ?> run = getOwner();
+//        if (run.getParent() instanceof AbstractProject) {
+//            AbstractProject aProject = (AbstractProject) run.getParent();
+//            SCM scm = aProject.getScm();
+//
+//
+//            if ((scm == null) || (scm instanceof NullSCM)) {
+//                scm = aProject.getRootProject().getScm();
+//            }
+//            try {
+//                user = findOrCreateUser(authorName, authorEmail, scm);
+//            }
+//            catch (NoClassDefFoundError e) {
+//                // Git wasn't installed, ignore
+//            }
+//        }
+//        return user;
+//    }
+//
+//
+//    /**
+//     * Returns user of the change set.  Stolen from hudson.plugins.git.GitChangeSet.
+//     *
+//     * @param fullName user name.
+//     * @param email user email.
+//     * @param scm the SCM of the owning project.
+//     * @return {@link User} or {@code null} if the {@Code SCM} isn't a {@code GitSCM}.
+//     */
+//    public static User findOrCreateUser(final String fullName, final String email, final SCM scm) {
+//        if (!(scm instanceof GitSCM)) {
+//            return null;
+//        }
+//
+//        GitSCM gscm = (GitSCM) scm;
+//        boolean createAccountBasedOnEmail = gscm.isCreateAccountBasedOnEmail();
+//
+//        User user;
+//        if (createAccountBasedOnEmail) {
+//            user = User.get(email, false);
+//
+//            if (user == null) {
+//                try {
+//                    user = User.get(email, true);
+//                    user.setFullName(fullName);
+//                    user.addProperty(new Mailer.UserProperty(email));
+//                    user.save();
+//                }
+//                catch (IOException e) {
+//                    // add logging statement?
+//                }
+//            }
+//        }
+//        else {
+//            user = User.get(fullName, false);
+//
+//            if (user == null) {
+//                user = User.get(email.split("@")[0], true);
+//            }
+//        }
+//        return user;
+//    }
 }

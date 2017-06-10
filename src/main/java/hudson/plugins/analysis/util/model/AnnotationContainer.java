@@ -61,6 +61,9 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     private transient Map<String, JavaPackage> packagesByName;
     /** The modules that contain annotations mapped by module name. */
     private transient Map<String, MavenModule> modulesByName;
+    /** The author annotations collections mapped by name. */
+    private transient Map<String, Author> authorsByName;
+
     /** The files that contain annotations mapped by hash code of file name. */
     private transient Map<Integer, WorkspaceFile> filesByHashCode;
     /** The packages that contain annotations mapped by hash code of package name. */
@@ -71,6 +74,8 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     private transient Map<Integer, Set<FileAnnotation>> categoriesByHashCode;
     /** The modules that contain annotations mapped by hash code of type name. */
     private transient Map<Integer, Set<FileAnnotation>> typesByHashCode;
+    /** The authors that contain annotations mapped by hash code of author name. */
+    private transient Map<Integer, Author> authorsByHashCode;
 
     /** Determines whether to build up a set of {@link WorkspaceFile}s. */
     @java.lang.SuppressWarnings("unused")
@@ -78,17 +83,11 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
 
     /** @since 1.69 */
     private AnnotationsLabelProvider labelProvider;
-
     /** Name of this container. */
     private String name;
+
     /** Hierarchy level of this container. */
     private Hierarchy hierarchy;
-
-    /** The author annotations collections mapped by name. */
-    private transient Map<String, Author> authorsByName;
-    /** The authors that contain annotations mapped by hash code of author name. */
-    private transient Map<Integer, Author> authorsByHashCode;
-
 
     /**
      * Creates a new instance of <code>AnnotationContainer</code>.
@@ -204,16 +203,14 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         annotationsByType = new HashMap<String, Set<FileAnnotation>>();
 
         authorsByName = new HashMap<String, Author>();
-
         filesByName = new HashMap<String, WorkspaceFile>();
         packagesByName = new HashMap<String, JavaPackage>();
         modulesByName = new HashMap<String, MavenModule>();
+
         filesByHashCode = new HashMap<Integer, WorkspaceFile>();
         packagesByHashCode = new HashMap<Integer, JavaPackage>();
         modulesByHashCode = new HashMap<Integer, MavenModule>();
-
         authorsByHashCode = new HashMap<Integer, Author>();
-
         categoriesByHashCode = new HashMap<Integer, Set<FileAnnotation>>();
         typesByHashCode = new HashMap<Integer, Set<FileAnnotation>>();
     }
@@ -254,49 +251,20 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
         if (StringUtils.isNotBlank(annotation.getType())) {
             addType(annotation);
         }
-
-/*
-        switch (hierarchy) {
-            case USER_PROJECT:
-            case USER_MODULE:
-            case USER_PACKAGE:
-            case USER_FILE:
-                break;
-            default:
-                addAuthorName(annotation);
-        }
-        // CHECKSTYLE:OFF
-        switch(hierarchy) {
-            case PROJECT:
-            case USER_PROJECT:
-                addModule(annotation);
-            case MODULE:
-            case USER_MODULE:
-                addPackage(annotation);
-            case USER_PACKAGE:
-            case PACKAGE:
-                addFile(annotation);
-                break;
-            default:
-        }
-*/
-
         if (hierarchy == Hierarchy.PROJECT) {
             addModule(annotation);
-
         }
         if (hierarchy == Hierarchy.PROJECT || hierarchy == Hierarchy.MODULE) {
             addPackage(annotation);
         }
-        if (hierarchy == Hierarchy.PROJECT || hierarchy == Hierarchy.MODULE || hierarchy == Hierarchy.PACKAGE) {
+        if (hierarchy == Hierarchy.PROJECT || hierarchy == Hierarchy.MODULE
+                || hierarchy == Hierarchy.PACKAGE) {
             addFile(annotation);
         }
-        if (hierarchy == Hierarchy.PROJECT || hierarchy == Hierarchy.MODULE || hierarchy == Hierarchy.PACKAGE || hierarchy == Hierarchy.FILE) {
+        if (hierarchy == Hierarchy.PROJECT || hierarchy == Hierarchy.MODULE
+                || hierarchy == Hierarchy.PACKAGE || hierarchy == Hierarchy.FILE) {
             addAuthorName(annotation);
         }
-
-
-
     }
 
     /**

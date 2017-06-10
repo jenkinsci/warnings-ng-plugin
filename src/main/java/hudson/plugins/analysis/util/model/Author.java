@@ -1,9 +1,13 @@
 package hudson.plugins.analysis.util.model;
 
+import org.apache.commons.lang3.StringUtils;
+
+import hudson.plugins.analysis.Messages;
+
 /**
  * A container for author annotations.
  *
- * @author jgibson
+ * @author John Gibson
  */
 public class Author extends AnnotationContainer {
     private static final long serialVersionUID = 5504146567211894175L;
@@ -14,13 +18,13 @@ public class Author extends AnnotationContainer {
     /**
      * Creates a new instance of {@link Author}.
      *
-     * @param authorName the full name of the author for this container.
+     * @param authorName  the full name of the author for this container.
      * @param authorEmail the email of the author for this container.
-     * @param hierarchy the scope of this author container.  Should be one of
-     *  the {@code USER_} values.
+     * @param hierarchy   the scope of this author container.  Should be one of the {@code USER_} values.
      */
     public Author(final String authorName, final String authorEmail, final Hierarchy hierarchy) {
         super(authorName + authorEmail, hierarchy);
+
         this.fullName = authorName;
         this.email = authorEmail;
     }
@@ -49,6 +53,6 @@ public class Author extends AnnotationContainer {
      * @return a readable name for this container.
      */
     public String getDisplayName() {
-        return "".equals(getFullName()) ? "Unknown users" : getFullName();
+        return StringUtils.defaultString(getFullName(), Messages.Author_NoResult());
     }
 }

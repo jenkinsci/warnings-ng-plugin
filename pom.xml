@@ -79,6 +79,7 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>git</artifactId>
       <version>3.1.0</version>
+      <optional>true</optional>
     </dependency>
   </dependencies>
 

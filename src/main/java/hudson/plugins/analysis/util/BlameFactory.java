@@ -1,11 +1,12 @@
 package hudson.plugins.analysis.util;
 
+import jenkins.model.Jenkins;
+
 import hudson.FilePath;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.plugins.git.GitSCM;
 import hudson.scm.SCM;
 
 /**
@@ -28,8 +29,15 @@ public class BlameFactory {
             AbstractBuild build = (AbstractBuild) run;
             AbstractProject project = build.getProject();
             SCM scm = project.getScm();
-            if (scm instanceof GitSCM) {
-                return new GitBlamer(build, (GitSCM) scm, workspace, logger, listener);
+            if (scm == null) {
+                scm = project.getRootProject().getScm();
+            }
+            Jenkins instance = Jenkins.getInstance();
+            if (instance.getPlugin("git") != null) {
+                GitChecker gitChecker = new GitChecker();
+                if (gitChecker.isGit(scm)) {
+                    return gitChecker.createBlamer(build, scm, workspace, logger, listener);
+                }
             }
         }
         return new NullBlamer();

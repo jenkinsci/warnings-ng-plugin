@@ -220,7 +220,7 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
      * Get the id of the commit that caused this annotation.
      * @return The id of the commit that caused this annotation.
      */
-    String getAuthorCommitId();
+    String getCommitId();
 
     /**
      * Get the person who caused this annotation.
@@ -256,5 +256,4 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
      * @param commitId the commit that caused this annotation.
      */
     void setCommitId(String commitId);
-
 }
