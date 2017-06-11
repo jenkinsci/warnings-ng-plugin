@@ -383,7 +383,9 @@ public abstract class AbstractProjectAction<T extends ResultAction<?>> implement
         availableGraphs.add(new DifferenceGraph());
         availableGraphs.add(new EmptyGraph());
         availableGraphs.add(new NullGraph());
-        availableGraphs.add(new AnnotationsByUserGraph());
+        if (!GlobalSettings.instance().getNoAuthors()) {
+            availableGraphs.add(new AnnotationsByUserGraph());
+        }
 
         return availableGraphs;
     }

@@ -55,4 +55,13 @@ public class Author extends AnnotationContainer {
     public String getDisplayName() {
         return StringUtils.defaultString(getFullName(), Messages.Author_NoResult());
     }
+
+    /**
+     * Returns a dummy object for unknown authors.
+     *
+     * @return unknown author dummy
+     */
+    public static Author unknown() {
+        return new Author(AbstractAnnotation.DEFAULT_CATEGORY, AbstractAnnotation.DEFAULT_CATEGORY, Hierarchy.USER);
+    }
 }

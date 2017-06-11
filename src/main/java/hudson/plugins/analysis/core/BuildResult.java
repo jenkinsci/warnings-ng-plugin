@@ -222,6 +222,10 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         initialize(history, build, defaultEncoding, result);
     }
 
+    public boolean useAuthors() {
+        return !GlobalSettings.instance().getNoAuthors();
+    }
+
     /**
      * Creates a new history based on the specified build.
      *

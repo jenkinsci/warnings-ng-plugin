@@ -8,6 +8,7 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
+import hudson.plugins.analysis.core.GlobalSettings;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
@@ -50,6 +51,10 @@ public class TabDetail extends AbstractAnnotationsDetail {
     @Override
     public String getDisplayName() {
         return "NOT USED";
+    }
+
+    public boolean useAuthors() {
+        return !GlobalSettings.instance().getNoAuthors();
     }
 
     /**

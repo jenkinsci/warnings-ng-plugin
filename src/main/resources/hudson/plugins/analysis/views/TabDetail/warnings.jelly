@@ -16,8 +16,10 @@
       <td class="pane-header">${%Priority}</td>
       <td class="pane-header">${%Type}</td>
       <td class="pane-header">${%Category}</td>
-      <td class="pane-header">Author</td>
-      <td class="pane-header">CommitId</td>
+      <j:if test="${it.useAuthors()}">
+        <td class="pane-header">${%Author}</td>
+        <td class="pane-header">${%commit-id}</td>
+      </j:if>
     </tr>
     <tbody>
       <j:forEach var="warning" items="${it.container.sortedAnnotations}">
@@ -59,6 +61,7 @@
             <div tooltip="${warning.message}"> ${warning.category} </div>
           </td>
 
+          <j:if test="${it.useAuthors()}">
           <td class="pane">
             <div tooltip="${warning.message}">
               <j:choose>
@@ -97,7 +100,7 @@
                 </j:choose>
               </div>
             </td>
-
+          </j:if>
 
         </tr>
       </j:forEach>

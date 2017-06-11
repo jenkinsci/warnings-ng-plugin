@@ -384,35 +384,8 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     private void addAuthorName(final FileAnnotation annotation) {
         String authorName = annotation.getAuthorName();
         String authorEmail = annotation.getAuthorEmail();
-        // We'll just assume that these will never be empty (but could be null).
-        if (authorName == null) {
-            authorName = "";
-        }
-        if (authorEmail == null) {
-            authorEmail = "";
-        }
         String key = authorName + authorEmail;
         if (!authorsByName.containsKey(key)) {
-            Hierarchy targeth = null;
-            /*
-            switch(hierarchy) {
-                case PROJECT:
-                    targeth = Hierarchy.USER_PROJECT;
-                    break;
-                case MODULE:
-                    targeth = Hierarchy.USER_MODULE;
-                    break;
-                case PACKAGE:
-                    targeth = Hierarchy.USER_PACKAGE;
-                    break;
-                case FILE:
-                    targeth = Hierarchy.USER_FILE;
-                    break;
-                default:
-                    // This should never happen.  Should we throw an error here for sanity checking?
-                    return;
-            }
-            */
             Author container = new Author(authorName, authorEmail, Hierarchy.USER);
             authorsByName.put(key, container);
             authorsByHashCode.put(key.hashCode(), container);
@@ -884,6 +857,11 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @return the authors with annotations.
      */
     public Collection<Author> getAuthors() {
+        /*
+        if (GlobalSettings.instance().getNoAuthors()) { // TODO: this code should not be part of the model
+            return Collections.singleton(Author.unknown());
+        }
+        */
         ArrayList<Author> authors = new ArrayList<Author>(authorsByName.values());
         Collections.sort(authors);
         return Collections.unmodifiableCollection(authors);

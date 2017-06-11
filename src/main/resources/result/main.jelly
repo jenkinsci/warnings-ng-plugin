@@ -38,13 +38,15 @@
             active: false
         }), myTabs);
       </j:if>
-      <j:if test="${it.container.authors.size() > 1}">
-        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '<div id="authors">${l.authors}</div>',
-            dataSrc: 'tab.authors/',
-            cacheData: true,
-            active: false
-        }), myTabs);
+      <j:if test="${it.useAuthors()}">
+        <j:if test="${it.container.authors.size() > 1}">
+          YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+              label: '<div id="authors">${l.authors}</div>',
+              dataSrc: 'tab.authors/',
+              cacheData: true,
+              active: false
+          }), myTabs);
+        </j:if>
       </j:if>
       <j:if test="${it.container.categories.size() > 1}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
