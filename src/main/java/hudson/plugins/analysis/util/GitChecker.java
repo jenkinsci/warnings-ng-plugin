@@ -19,13 +19,16 @@ import hudson.scm.SCM;
  *
  * @author Ullrich Hafner
  */
+// First Release
+// TODO: ATH in docker container to make sure master slave works
+// TODO: Authors: match by name only (not email)
+// TODO: check why build number is 0 (in first build it is 1)
+// TODO: Tooltip im Graph?
+// TODO: Lange Namen im Graph?
+// Second Release
 // TODO: Make trend graph clickable per user
-// TODO: Hide trend on global settings
-// TODO: Check width of warnings table
-// TODO: No author in table if global settings
 // TODO: Commit tab?
 // TODO: Links in commits?
-// TODO: ATH in docker container to make sure master slave works
 // TODO: Check if we should also create new Jenkins users
 public class GitChecker {
     /**
@@ -39,15 +42,15 @@ public class GitChecker {
     }
 
     /**
-     * Returns whether new users can be created automatically based on the blame information.
+     * Returns a Git blamer for the specified build and SCM instance.
      *
-     * @param scm the SCM
+     * @param scm       the SCM instance
+     * @param build     the current build
+     * @param listener  task listener
+     * @param logger    plugin logger
+     * @param workspace current workspace
      * @return {@code true} new users can be created automatically, {@code false} otherwise
      */
-    public boolean canCreateUsers(final SCM scm) {
-        return asGit(scm).isCreateAccountBasedOnEmail();
-    }
-
     public Blamer createBlamer(final AbstractBuild build, final SCM scm, final FilePath workspace,
             final PluginLogger logger, final TaskListener listener) {
         return new GitBlamer(build, asGit(scm), workspace, logger, listener);

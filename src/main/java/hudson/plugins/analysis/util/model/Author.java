@@ -18,12 +18,13 @@ public class Author extends AnnotationContainer {
     /**
      * Creates a new instance of {@link Author}.
      *
-     * @param authorName  the full name of the author for this container.
-     * @param authorEmail the email of the author for this container.
-     * @param hierarchy   the scope of this author container.  Should be one of the {@code USER_} values.
+     * @param displayName  the display name of this container
+     * @param authorName  the full name of the author for this container
+     * @param authorEmail the email of the author for this container
+     * @param hierarchy   the scope of this author container. Should be one of the {@code USER_} values.
      */
-    public Author(final String authorName, final String authorEmail, final Hierarchy hierarchy) {
-        super(authorName + authorEmail, hierarchy);
+    public Author(final String displayName, final String authorName, final String authorEmail, final Hierarchy hierarchy) {
+        super(displayName, hierarchy);
 
         this.fullName = authorName;
         this.email = authorEmail;
@@ -62,6 +63,7 @@ public class Author extends AnnotationContainer {
      * @return unknown author dummy
      */
     public static Author unknown() {
-        return new Author(AbstractAnnotation.DEFAULT_CATEGORY, AbstractAnnotation.DEFAULT_CATEGORY, Hierarchy.USER);
+        return new Author(AbstractAnnotation.DEFAULT_CATEGORY, AbstractAnnotation.DEFAULT_CATEGORY,
+                AbstractAnnotation.DEFAULT_CATEGORY, Hierarchy.USER);
     }
 }

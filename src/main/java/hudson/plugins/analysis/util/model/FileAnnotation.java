@@ -217,41 +217,64 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
     int getBuild();
 
     /**
-     * Get the id of the commit that caused this annotation.
-     * @return The id of the commit that caused this annotation.
+     * Returns the ID of the commit that caused this annotation.
+     *
+     * @return The ID of the commit that caused this annotation.
      */
     String getCommitId();
 
     /**
-     * Get the person who caused this annotation.
+     * Returns a readable name for the commit that caused this annotation.
+     *
+     * @return The ID of the commit that caused this annotation.
+     */
+    String getCommitDetails();
+
+    /**
+     * Returns the person who caused this annotation. It either returns the author name, the author email or the
+     * default string.
+     *
+     * @return the person who caused this annotation.
+     */
+    String getAuthor();
+
+    /**
+     * Returns a readable name for the author of this warning.
+     *
+     * @return a readable name for the author
+     */
+    String getAuthorDetails();
+
+    /**
+     * Returns the person who caused this annotation.
      *
      * @return The person who caused this annotation.
      */
     String getAuthorName();
 
     /**
-     * Get the email of the person who caused this annotation.
+     * Returns the email of the person who caused this annotation.
      *
      * @return The email of the person who caused this annotation.
      */
     String getAuthorEmail();
 
     /**
-     * Set the person who caused this annotation.
+     * Sets the person who caused this annotation.
      *
      * @param authorName the person who caused this annotation.
      */
     void setAuthorName(String authorName);
 
     /**
-     * Set the email of the person who caused this annotation.
+     * Sets the email of the person who caused this annotation.
      *
      * @param authorEmail the person who caused this annotation.
      */
     void setAuthorEmail(String authorEmail);
 
     /**
-     * Set the id of the commit that caused this annotation.
+     * Sets the id of the commit that caused this annotation.
      *
      * @param commitId the commit that caused this annotation.
      */

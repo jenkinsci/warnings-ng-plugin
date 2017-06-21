@@ -72,6 +72,14 @@
             active: false
         }), myTabs);
     </j:if>
+    <j:if test="${it.useAuthors()}">
+        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+        label: '<div id="origin">${l.origin}</div>',
+        dataSrc: 'tab.origin/',
+        cacheData: true,
+        active: false
+        }), myTabs);
+    </j:if>
       YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
           label: '<div id="details">${l.details}</div>',
           dataSrc: 'tab.all/',

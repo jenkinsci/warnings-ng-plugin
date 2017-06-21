@@ -34,6 +34,10 @@ public class AnnotationsLabelProvider implements Serializable {
         return Messages.BuildResult_Tab_Warnings();
     }
 
+    public String getOrigin() {
+        return Messages.BuildResult_Tab_Origin();
+    }
+
     public String getPackages() { return packageLabel; }
 
     public String getFiles() {

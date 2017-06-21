@@ -382,11 +382,9 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @param annotation the new annotation
      */
     private void addAuthorName(final FileAnnotation annotation) {
-        String authorName = annotation.getAuthorName();
-        String authorEmail = annotation.getAuthorEmail();
-        String key = authorName + authorEmail;
+        String key = annotation.getAuthor();
         if (!authorsByName.containsKey(key)) {
-            Author container = new Author(authorName, authorEmail, Hierarchy.USER);
+            Author container = new Author(annotation.getAuthorDetails(), annotation.getAuthorName(), annotation.getAuthorEmail(), Hierarchy.USER);
             authorsByName.put(key, container);
             authorsByHashCode.put(key.hashCode(), container);
         }
@@ -857,11 +855,6 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @return the authors with annotations.
      */
     public Collection<Author> getAuthors() {
-        /*
-        if (GlobalSettings.instance().getNoAuthors()) { // TODO: this code should not be part of the model
-            return Collections.singleton(Author.unknown());
-        }
-        */
         ArrayList<Author> authors = new ArrayList<Author>(authorsByName.values());
         Collections.sort(authors);
         return Collections.unmodifiableCollection(authors);
@@ -870,7 +863,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     /**
      * Gets the author with the key.
      *
-     * @param key the full name of the author with the email of the cuprit appended to it.
+     * @param key the full name of the author with the email of the culprit appended to it.
      *  Unknown author should be indicated by the empty string.
      * @return the author with the given key.
      */

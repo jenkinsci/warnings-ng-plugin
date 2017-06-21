@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Random;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import org.kohsuke.stapler.export.Exported;
@@ -454,34 +455,59 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         return Collections.unmodifiableCollection(lineRanges);
     }
 
-    /** {@inheritDoc} */
+    @Override
+    public String getAuthor() {
+        return StringUtils.defaultString(getAuthorName(), getAuthorEmail());
+    }
+
+    @Exported
+    @Override
+    public String getAuthorDetails() {
+        if (StringUtils.isBlank(authorName) && StringUtils.isBlank(authorEmail)) {
+            return Messages.Author_NoResult();
+        }
+        else if (StringUtils.isBlank(authorName)) {
+            return authorEmail;
+        }
+        else if (StringUtils.isBlank(authorEmail)) {
+            return authorName;
+        }
+        return StringEscapeUtils.escapeHtml4(String.format("%s <%s>", authorName, authorEmail));
+    }
+
+    @Override
     public String getAuthorName() {
-        return authorName;
+        return defaultString(authorName);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void setAuthorName(final String authorName) {
-        this.authorName = defaultString(authorName);
+        this.authorName = authorName;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getAuthorEmail() {
-        return authorEmail;
+        return defaultString(authorEmail);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void setAuthorEmail(final String authorEmail) {
-        this.authorEmail = defaultString(authorEmail);
+        this.authorEmail = authorEmail;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String getCommitId() {
-        return commitId;
+        return defaultString(commitId);
     }
 
-    /** {@inheritDoc} */
+    @Override
+    public String getCommitDetails() {
+        return StringUtils.substring(defaultString(commitId), 0, 6);
+    }
+
+    @Override
     public void setCommitId(final String commitId) {
-        this.commitId = defaultString(commitId);
+        this.commitId = commitId;
     }
 
     @Override
