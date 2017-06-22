@@ -13,7 +13,7 @@
         <td class="pane-header">${it.container.packageCategoryName}</td>
       </j:if>
       <td class="pane-header">${%Priority}</td>
-      <td class="pane-header">${%Build}</td>
+      <td class="pane-header">${%Age}</td>
       <td class="pane-header">${%Author}</td>
       <td class="pane-header">${%commit-id}</td>
     </tr>
@@ -39,7 +39,14 @@
             <div tooltip="${warning.message}"> ${warning.priority.localizedString} </div>
           </td>
           <td class="pane">
-            <div tooltip="${warning.message}"> ${warning.build} </div>
+            <j:choose>
+              <j:when test="${warning.build != 0}">
+                <a href="${it.getBuildUrl(warning.build)}" class="model-link inside">${it.getAge(warning.build)}</a>
+              </j:when>
+              <j:otherwise>
+                ${%N/A}
+              </j:otherwise>
+            </j:choose>
           </td>
           <td class="pane">
             <div tooltip="${warning.authorDetails}"> <a href="author.${warning.author.hashCode()}/">${warning.author}</a> </div>

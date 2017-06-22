@@ -430,6 +430,9 @@ public class DetailFactory {
             DefaultAnnotationContainer type = container.getType(createHashCode(link, "type."));
             detail = createAttributeDetail(owner, type, displayName, Messages.TypeDetail_header(), defaultEncoding);
         }
+        else if (link.startsWith("author.")) {
+            detail = new AuthorDetail(owner, this, container.getAuthor(createHashCode(link, "author.")), defaultEncoding, displayName);
+        }
         if (detail != null) {
             attachLabelProvider(detail);
         }

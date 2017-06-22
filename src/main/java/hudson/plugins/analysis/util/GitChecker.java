@@ -21,7 +21,6 @@ import hudson.scm.SCM;
  */
 // First Release
 // TODO: ATH in docker container to make sure master slave works
-// TODO: Authors: match by name only (not email)
 // TODO: check why build number is 0 (in first build it is 1)
 // TODO: Tooltip im Graph?
 // TODO: Lange Namen im Graph?

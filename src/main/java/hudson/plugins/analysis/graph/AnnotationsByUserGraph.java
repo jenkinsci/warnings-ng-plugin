@@ -8,6 +8,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
 
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.BoxRenderer;
 import hudson.plugins.analysis.util.CategoryUrlBuilder;
@@ -28,7 +29,7 @@ public class AnnotationsByUserGraph extends UserBuildResultGraph {
 
     @Override
     public String getLabel() {
-        return "Annotations by user";
+        return Messages.Trend_type_authors();
     }
 
     @Override
@@ -39,10 +40,8 @@ public class AnnotationsByUserGraph extends UserBuildResultGraph {
         return series;
     }
 
-
     @Override
     protected JFreeChart createChart(final CategoryDataset dataSet) {
-
         return createBlockChart(dataSet);
     }
 

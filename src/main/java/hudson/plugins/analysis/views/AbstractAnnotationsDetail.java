@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -58,6 +59,19 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
         this.defaultEncoding = defaultEncoding;
 
         addAnnotations(annotations);
+    }
+
+    public boolean useAuthors() {
+        return !GlobalSettings.instance().getNoAuthors();
+    }
+
+    public String getBuildUrl(final int buildNumber) {
+        int backward = StringUtils.countMatches(getUrl(), "/");
+        return StringUtils.repeat("../", backward + 2) + buildNumber;
+    }
+
+    public int getAge(final int buildNumber) {
+        return getOwner().getNumber() - buildNumber + 1;
     }
 
     /**
@@ -184,5 +198,9 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
     @Deprecated
     public AbstractAnnotationsDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String defaultEncoding, final String name, final Hierarchy hierarchy) {
         this((Run<?, ?>) owner, detailFactory, annotations, defaultEncoding, name, hierarchy);
+    }
+
+    public String getUrl() {
+        return StringUtils.EMPTY;
     }
 }
