@@ -29,6 +29,7 @@ import hudson.scm.SCM;
 // TODO: Commit tab?
 // TODO: Links in commits?
 // TODO: Check if we should also create new Jenkins users
+// TODO: Blame needs only run for new warnings
 public class GitChecker {
     /**
      * Returns whether the specified SCM is git.

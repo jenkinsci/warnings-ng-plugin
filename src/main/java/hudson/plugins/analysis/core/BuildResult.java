@@ -289,11 +289,13 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         Set<FileAnnotation> allWarnings = result.getAnnotations();
 
         // FIXME: why is there a flag to enable computation of new warnings?
-        Set<FileAnnotation> newWarnings = AnnotationDifferencer.getNewAnnotations(allWarnings, referenceResult.getAnnotations());
+
+        IssueDifference difference = new IssueDifference(allWarnings, referenceResult.getAnnotations());
+        Set<FileAnnotation> newWarnings = difference.getNewIssues();
         numberOfNewWarnings = newWarnings.size();
         newWarningsReference = new WeakReference<Collection<FileAnnotation>>(newWarnings);
 
-        Set<FileAnnotation> fixedWarnings = AnnotationDifferencer.getFixedAnnotations(allWarnings, referenceResult.getAnnotations());
+        Set<FileAnnotation> fixedWarnings = difference.getFixedIssues();
         numberOfFixedWarnings = fixedWarnings.size();
         fixedWarningsReference = new WeakReference<Collection<FileAnnotation>>(fixedWarnings);
 
@@ -304,16 +306,19 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         JavaProject container = new JavaProject();
         container.addAnnotations(result.getAnnotations());
 
+        setBuildForOldWarnings(allWarnings, referenceResult.getAnnotations());
         for (FileAnnotation newWarning : newWarnings) {
             newWarning.setBuild(build.getNumber());
         }
-        // FIXME: for the old warnings we need to find the introducing build by using the context hash code
 
         project = new WeakReference<JavaProject>(container);
 
         computeZeroWarningsHighScore(build, result);
 
         defineReferenceBuild(history);
+    }
+
+    private void setBuildForOldWarnings(final Set<FileAnnotation> allWarnings, final Set<FileAnnotation> annotations) {
     }
 
     /**
