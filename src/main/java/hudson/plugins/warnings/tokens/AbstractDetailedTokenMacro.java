@@ -23,41 +23,44 @@ public abstract class AbstractDetailedTokenMacro extends AbstractTokenMacro {
     }
 
     private final List<String> modules = new ArrayList<String>();
-    private boolean verbose = false;
+    private boolean verbose;
     private boolean showLow = true;
     private boolean showNormal = true;
     private boolean showHigh = true;
     private String linechar = "-";
+    private int indent;
 
-    @Parameter
-    public int indent = 0;
+    @Parameter(alias = "indent")
+    public void setIndent(int indentation) {
+        indent = indentation;
+    }
 
-    @Parameter(alias="modules")
+    @Parameter(alias = "modules")
     public void setModules(String module) {
         modules.add(module);
     }
 
-    @Parameter(alias="verbose")
+    @Parameter(alias = "verbose")
     public void setVerbosity(boolean verbosity) {
         verbose = verbosity;
     }
 
-    @Parameter(alias="low")
+    @Parameter(alias = "low")
     public void setLow(boolean show) {
         showLow = show;
     }
 
-    @Parameter(alias="normal")
+    @Parameter(alias = "normal")
     public void setNormal(boolean show) {
         showNormal = show;
     }
 
-    @Parameter(alias="high")
+    @Parameter(alias = "high")
     public void setHigh(boolean show) {
         showHigh = show;
     }
 
-    @Parameter(alias="linechar")
+    @Parameter(alias = "linechar")
     public void setLineChar(String c) {
         linechar = c.substring(0, 1);
     }
@@ -65,28 +68,33 @@ public abstract class AbstractDetailedTokenMacro extends AbstractTokenMacro {
     protected String evalWarnings(final BuildResult result, Collection<FileAnnotation> warnings) {
         String messages = "";
 
-        if (modules.isEmpty())
+        if (modules.isEmpty()) {
             modules.add("all");
+        }
 
         for (String module : modules) {
-            boolean allWarn = module.equals("all");
+            boolean allWarn = "all".equals(module);
             String heading = module + " annotations:";
             String tmp = "";
 
             for (FileAnnotation annotation : warnings) {
                 Priority prio = annotation.getPriority();
-                if (prio == Priority.LOW && !showLow)
+                if (prio == Priority.LOW && !showLow) {
                     continue;
+                }
 
-                if (prio == Priority.NORMAL && !showNormal)
+                if (prio == Priority.NORMAL && !showNormal) {
                     continue;
+                }
 
-                if (prio == Priority.HIGH && !showHigh)
+                if (prio == Priority.HIGH && !showHigh) {
                     continue;
+                }
 
                 if (allWarn || annotation.getType().equals(module)) {
-                    if (allWarn && verbose)
+                    if (allWarn && verbose) {
                         tmp += annotation.getType() + ": ";
+                    }
                     tmp += createMessage(annotation);
                 }
             }
