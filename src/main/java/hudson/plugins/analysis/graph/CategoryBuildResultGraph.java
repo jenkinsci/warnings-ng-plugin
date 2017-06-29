@@ -1,22 +1,16 @@
 package hudson.plugins.analysis.graph;
 
 import java.awt.*;
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
@@ -25,7 +19,6 @@ import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.joda.time.LocalDate;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -33,18 +26,14 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import static jcifs.util.LogStream.level;
 
-import hudson.model.AbstractBuild;
 import hudson.model.Run;
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.util.ToolTipProvider;
-import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.util.ChartUtil.NumberOnlyBuildLabel;
 import hudson.util.DataSetBuilder;
-import hudson.util.ShiftedCategoryAxis;
-import hudson.plugins.analysis.Messages;
 /**
  * A build result graph using a {@link CategoryPlot}. Uses a template method to
  * create a graph based on a series of build results.
@@ -409,25 +398,6 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return the colors
      */
     protected abstract Color[] getColors();
-
-    /**
-     * Sets the series colors for the specified chart.
-     *
-     * @param chart
-     *            the chart
-     * @param colors
-     *            the colors to set
-     */
-    public void setColors(final JFreeChart chart, final Color[] colors) {
-        CategoryPlot plot = chart.getCategoryPlot();
-        CategoryItemRenderer renderer = plot.getRenderer();
-
-        int series = 0;
-        for (Color color : colors) {
-            renderer.setSeriesPaint(series, color);
-            series++;
-        }
-    }
 
     /**
      * Creates a stacked area graph from the specified data set.

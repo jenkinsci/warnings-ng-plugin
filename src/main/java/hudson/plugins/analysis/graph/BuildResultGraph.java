@@ -17,6 +17,7 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.xy.XYDataset;
@@ -380,6 +381,25 @@ public abstract class BuildResultGraph {
         }
 
         return Objects.equal(variables.get(parameterName), parameterValue);
+    }
+
+    /**
+     * Sets the series colors for the specified chart.
+     *
+     * @param chart
+     *            the chart
+     * @param colors
+     *            the colors to set
+     */
+    public void setColors(final JFreeChart chart, final Color[] colors) {
+        CategoryPlot plot = chart.getCategoryPlot();
+        CategoryItemRenderer renderer = plot.getRenderer();
+
+        int series = 0;
+        for (Color color : colors) {
+            renderer.setSeriesPaint(series, color);
+            series++;
+        }
     }
 }
 
