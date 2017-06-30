@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
@@ -26,15 +27,37 @@ import hudson.util.DataSetBuilder;
  *
  * @author Lukas Krose
  */
+// TODO: Refactor so that duplicate methods with CategoryBuildResultGraphs are part of BuildResultGraph
+// TODO: For each graph, different properties could be set, e.g. show "-" author
 public class AnnotationsByUserGraph extends BuildResultGraph {
     @Override
     public JFreeChart create(final GraphConfiguration configuration,
             final ResultAction<? extends BuildResult> resultAction, @CheckForNull final String pluginName) {
-        JFreeChart chart = createChart(createDataSetPerAuthorName(configuration, resultAction));
+        Map<String, Integer[]> annotationCountByUser = new HashMap<String, Integer[]>();
 
-        attachRenderers(configuration, pluginName, chart, resultAction.getToolTipProvider());
+        mergeResults(resultAction.getResult(), annotationCountByUser);
+
+        return createGraphFromUserMapping(configuration, pluginName, annotationCountByUser, resultAction.getToolTipProvider());
+    }
+
+    private JFreeChart createGraphFromUserMapping(final GraphConfiguration configuration, final @CheckForNull String pluginName, final Map<String, Integer[]> annotationCountByUser, final ToolTipProvider toolTipProvider) {
+        JFreeChart chart = createBlockChart(buildDataSet(annotationCountByUser));
+
+        attachRenderers(configuration, pluginName, chart, toolTipProvider);
 
         return chart;
+    }
+
+    @Override
+    public JFreeChart createAggregation(final GraphConfiguration configuration, final Collection<ResultAction<? extends BuildResult>> resultActions, final String pluginName) {
+        Map<String, Integer[]> annotationCountByUser = new HashMap<String, Integer[]>();
+
+        for (ResultAction<? extends BuildResult> resultAction : resultActions) {
+            mergeResults(resultAction.getResult(), annotationCountByUser);
+        }
+
+        return createGraphFromUserMapping(configuration, pluginName, annotationCountByUser,
+                resultActions.iterator().next().getToolTipProvider());
     }
 
     /**
@@ -50,34 +73,14 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
      */
     private void attachRenderers(final GraphConfiguration configuration, final String pluginName, final JFreeChart chart,
             final ToolTipProvider toolTipProvider) {
-        CategoryItemRenderer renderer = createRenderer(configuration, pluginName, toolTipProvider);
+        CategoryItemRenderer renderer = new StackedBarRenderer();
         CategoryPlot plot = chart.getCategoryPlot();
         plot.setRenderer(renderer);
-        setColors(chart, getColors());
+        setColors(chart, new Color[]{ColorPalette.BLUE, ColorPalette.YELLOW, ColorPalette.RED});
     }
 
-    @Override
-    public JFreeChart createAggregation(final GraphConfiguration configuration, final Collection<ResultAction<? extends BuildResult>> resultActions, final String pluginName) {
-        ResultAction<? extends BuildResult> resultAction = resultActions.iterator().next();
-        return create(configuration, resultAction, pluginName);
-    }
-
-    private CategoryDataset createDataSetPerAuthorName(final GraphConfiguration configuration, final ResultAction<? extends BuildResult> action) {
+    private CategoryDataset buildDataSet(final Map<String, Integer[]> annotationCountByUser) {
         DataSetBuilder<String, String> builder = new DataSetBuilder<String, String>();
-        BuildResult current = action.getResult();
-        Map<String, Integer[]> annotationCountByUser = new HashMap<String, Integer[]>();
-
-        Collection<FileAnnotation> annotations = current.getAnnotations();
-        for (FileAnnotation annotation : annotations) {
-            String author = annotation.getAuthor();
-            if (annotationCountByUser.get(author) == null) {
-                annotationCountByUser.put(author, new Integer[] {0, 0, 0});
-            }
-            Integer[] priorities = annotationCountByUser.get(author);
-            int index = annotation.getPriority().ordinal();
-            priorities[index]++;
-        }
-
         for (Entry<String, Integer[]> entry : annotationCountByUser.entrySet()) {
             String userName= entry.getKey();
             Integer[] countsPerPriority = entry.getValue();
@@ -87,6 +90,21 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
         }
 
         return builder.build();
+    }
+
+    private void mergeResults(final BuildResult current, final Map<String, Integer[]> annotationCountByUser) {
+        Collection<FileAnnotation> annotations = current.getAnnotations();
+        for (FileAnnotation annotation : annotations) {
+            String author = annotation.getAuthor();
+            if (StringUtils.isNotBlank(author) && !"-".equals(author)) {
+                if (annotationCountByUser.get(author) == null) {
+                    annotationCountByUser.put(author, new Integer[]{0, 0, 0});
+                }
+                Integer[] priorities = annotationCountByUser.get(author);
+                int index = annotation.getPriority().ordinal();
+                priorities[index]++;
+            }
+        }
     }
 
     @Override
@@ -99,16 +117,4 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
         return Messages.Trend_type_authors();
     }
 
-    protected JFreeChart createChart(final CategoryDataset dataSet) {
-        return createBlockChart(dataSet);
-    }
-
-    protected Color[] getColors() {
-        return new Color[]{ColorPalette.BLUE, ColorPalette.YELLOW, ColorPalette.RED};
-    }
-
-    protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration,
-            final String pluginName, final ToolTipProvider toolTipProvider) {
-        return new StackedBarRenderer();
-    }
 }
