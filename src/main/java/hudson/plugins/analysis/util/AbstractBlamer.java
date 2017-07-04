@@ -1,5 +1,7 @@
 package hudson.plugins.analysis.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +22,7 @@ public abstract class AbstractBlamer implements Blamer {
     /** the current workspace */
     private final FilePath workspace;
     private TaskListener listener;
-    /** The PluginLogger to log ,essages */
+    /** The PluginLogger to log messages */
     private final PluginLogger logger;
 
     /**
@@ -28,7 +30,7 @@ public abstract class AbstractBlamer implements Blamer {
      *
      * @param build     the build
      * @param workspace the workspace of the build
-     * @param listener
+     * @param listener  task listener to print git logging statements to
      * @param logger    the plugin logger
      */
     public AbstractBlamer(final AbstractBuild<?, ?> build, final FilePath workspace, final TaskListener listener, final PluginLogger logger) {
@@ -46,12 +48,12 @@ public abstract class AbstractBlamer implements Blamer {
      * @return a mapping of absolute to relative file names of the conflicting files
      */
     protected Map<String, BlameRequest> extractConflictingFiles(final Set<FileAnnotation> annotations) {
-        String workspacePath = workspace.getRemote().replace('\\', '/');
         Map<String, BlameRequest> pathsByFileName = new HashMap<String, BlameRequest>();
 
+        String workspacePath = getWorkspacePath();
         for (FileAnnotation annotation : annotations) {
             if (annotation.getPrimaryLineNumber() > 0) {
-                String absoluteFileName = annotation.getFileName();
+                String absoluteFileName = getCanonicalPath(annotation.getFileName());
                 if (pathsByFileName.containsKey(absoluteFileName)) {
                     BlameRequest blame = pathsByFileName.get(absoluteFileName);
                     blame.addLineNumber(annotation.getPrimaryLineNumber());
@@ -65,12 +67,26 @@ public abstract class AbstractBlamer implements Blamer {
                         pathsByFileName.put(absoluteFileName, new BlameRequest(relativeFileName, annotation.getPrimaryLineNumber()));
                     }
                     else {
-                        log("Skipping non-workspace file " + annotation.getFileName());
+                        log("Skipping non-workspace file %s (workspace = %s, absolute = %s)",
+                                annotation.getFileName(), workspacePath, absoluteFileName);
                     }
                 }
             }
         }
         return pathsByFileName;
+    }
+
+    private String getWorkspacePath() {
+        return getCanonicalPath(workspace.getRemote().replace('\\', '/'));
+    }
+
+    private String getCanonicalPath(final String path) {
+        try {
+            return new File(path).getCanonicalPath();
+        }
+        catch (IOException e) {
+            return path;
+        }
     }
 
     /**
