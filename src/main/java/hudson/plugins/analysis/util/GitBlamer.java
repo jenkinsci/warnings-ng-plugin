@@ -73,11 +73,13 @@ public class GitBlamer extends AbstractBlamer {
         });
 
         for (FileAnnotation annotation : annotations) {
-            BlameRequest blame = blamesOfConflictingFiles.get(annotation.getFileName());
-            int line = annotation.getPrimaryLineNumber();
-            annotation.setAuthorName(blame.getName(line));
-            annotation.setAuthorEmail(blame.getEmail(line));
-            annotation.setCommitId(blame.getCommit(line));
+            if (blamesOfConflictingFiles.containsKey(annotation.getFileName())) {
+                BlameRequest blame = blamesOfConflictingFiles.get(annotation.getFileName());
+                int line = annotation.getPrimaryLineNumber();
+                annotation.setAuthorName(blame.getName(line));
+                annotation.setAuthorEmail(blame.getEmail(line));
+                annotation.setCommitId(blame.getCommit(line));
+            }
         }
     }
 
