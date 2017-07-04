@@ -49,7 +49,7 @@
             </j:choose>
           </td>
           <td class="pane">
-            <div tooltip="${warning.authorDetails}"> <a href="author.${warning.author.hashCode()}/">${warning.author}</a> </div>
+            <div tooltip="${it.container.escape(warning.authorDetails)}"> <a href="author.${warning.author.hashCode()}/">${warning.author}</a> </div>
           </td>
           <td class="pane">
             <div tooltip="${warning.commitId}"> ${warning.commitDetails} </div>

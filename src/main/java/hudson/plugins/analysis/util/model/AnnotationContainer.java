@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -384,7 +385,8 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     private void addAuthorName(final FileAnnotation annotation) {
         String key = annotation.getAuthor();
         if (!authorsByName.containsKey(key)) {
-            Author container = new Author(annotation.getAuthorDetails(), annotation.getAuthorName(), annotation.getAuthorEmail(), Hierarchy.USER);
+            Author container = new Author(key, annotation.getAuthorDetails(), annotation.getAuthorName(),
+                    annotation.getAuthorEmail(), Hierarchy.USER);
             authorsByName.put(key, container);
             authorsByHashCode.put(key.hashCode(), container);
         }
@@ -1004,6 +1006,10 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
             return false;
         }
         return true;
+    }
+
+    public String escape(final String text) {
+        return StringEscapeUtils.escapeHtml4(text);
     }
 
     @Override

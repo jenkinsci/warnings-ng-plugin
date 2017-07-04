@@ -21,7 +21,6 @@ import hudson.scm.SCM;
  */
 // First Release
 // TODO: ATH in docker container to make sure master slave works
-// TODO: ATH: links do not work in people tab
 // Second Release
 // TODO: Whom should we blame if the whole file is marked? Or if a range is marked and multiple authors are in the range
 // TODO: Tooltip and URL in graph: need a hack in JFreeGraph tooltip generation as done in StackedAreaRenderer2
