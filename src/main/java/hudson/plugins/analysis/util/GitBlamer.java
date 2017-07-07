@@ -1,13 +1,10 @@
 package hudson.plugins.analysis.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.jgit.api.BlameCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.blame.BlameResult;
@@ -17,13 +14,9 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.jenkinsci.plugins.gitclient.Git;
 import org.jenkinsci.plugins.gitclient.GitClient;
 
-import jenkins.MasterToSlaveFileCallable;
-
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.model.TaskListener;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.remoting.VirtualChannel;
 
 /**
  * Assigns git blames to warnings. Based on the solution by John Gibson, see JENKINS-6748.
@@ -51,47 +44,8 @@ public class GitBlamer extends AbstractBlamer {
     }
 
     @Override
-    public void blame(final Set<FileAnnotation> annotations) {
-        try {
-            if (annotations.isEmpty()) {
-                return;
-            }
-
-            computeBlamesOnSlave(annotations);
-        }
-        catch (IOException e) {
-            error("Mapping annotations to Git commits IDs and authors failed with an exception:%n%s%n%s",
-                    e.getMessage(), ExceptionUtils.getStackTrace(e));
-        }
-        catch (InterruptedException e) {
-            // nothing to do, already logged
-        }
-    }
-
-    private void computeBlamesOnSlave(final Set<FileAnnotation> annotations) throws IOException, InterruptedException {
-        final Map<String, BlameRequest> linesOfConflictingFiles = extractConflictingFiles(annotations);
-
-        Map<String, BlameRequest> blamesOfConflictingFiles = getWorkspace().act(new MasterToSlaveFileCallable<Map<String, BlameRequest>>() {
-            @Override
-            public Map<String, BlameRequest> invoke(final File workspace, final VirtualChannel channel) throws IOException, InterruptedException {
-                // FIXME: pull up and make this method part of Git class
-                Map<String, BlameResult> blameResults = loadBlameResultsForFiles(linesOfConflictingFiles);
-                return fillBlameResults(linesOfConflictingFiles, blameResults);
-            }
-        });
-
-        for (FileAnnotation annotation : annotations) {
-            if (blamesOfConflictingFiles.containsKey(annotation.getFileName())) {
-                BlameRequest blame = blamesOfConflictingFiles.get(annotation.getFileName());
-                int line = annotation.getPrimaryLineNumber();
-                annotation.setAuthorName(blame.getName(line));
-                annotation.setAuthorEmail(blame.getEmail(line));
-                annotation.setCommitId(blame.getCommit(line));
-            }
-            else {
-                log("Skipping file %s, no result found.%n", annotation.getFileName());
-            }
-        }
+    protected Map<String, BlameRequest> blame(final Map<String, BlameRequest> linesOfConflictingFiles) throws InterruptedException, IOException {
+        return fillBlameResults(linesOfConflictingFiles, loadBlameResultsForFiles(linesOfConflictingFiles));
     }
 
     private Map<String, BlameResult> loadBlameResultsForFiles(final Map<String, BlameRequest> linesOfConflictingFiles)
