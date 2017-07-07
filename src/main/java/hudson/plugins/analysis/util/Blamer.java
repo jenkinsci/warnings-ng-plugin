@@ -1,5 +1,6 @@
 package hudson.plugins.analysis.util;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -9,7 +10,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  *
  * @author Lukas Krose
  */
-public interface Blamer {
+public interface Blamer extends Serializable {
     /**
      * Adds the authors to the given annotations.
      *

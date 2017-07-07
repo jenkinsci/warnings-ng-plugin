@@ -1,5 +1,8 @@
 package hudson.plugins.analysis.util;
 
+import java.io.IOException;
+
+import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.model.AbstractBuild;
 import hudson.model.TaskListener;
@@ -19,9 +22,7 @@ import hudson.scm.SCM;
  *
  * @author Ullrich Hafner
  */
-// First Release
-// TODO: ATH in docker container to make sure master slave works
-// Second Release
+// Next Release
 // TODO: Whom should we blame if the whole file is marked? Or if a range is marked and multiple authors are in the range
 // TODO: Tooltip and URL in graph: need a hack in JFreeGraph tooltip generation as done in StackedAreaRenderer2
 // TODO: Commit tab?
@@ -42,16 +43,32 @@ public class GitChecker {
     /**
      * Returns a Git blamer for the specified build and SCM instance.
      *
+     * @param build     the build to get the results for
      * @param scm       the SCM instance
-     * @param build     the current build
-     * @param listener  task listener
-     * @param logger    plugin logger
      * @param workspace current workspace
+     * @param logger    plugin logger
+     * @param listener  task listener
      * @return {@code true} new users can be created automatically, {@code false} otherwise
      */
     public Blamer createBlamer(final AbstractBuild build, final SCM scm, final FilePath workspace,
             final PluginLogger logger, final TaskListener listener) {
-        return new GitBlamer(build, asGit(scm), workspace, logger, listener);
+        GitSCM git = asGit(scm);
+        String gitExe = git.getGitExe(build.getBuiltOn(), listener);
+
+        return new GitBlamer(gitExe, getEnvironment(build, listener), workspace, listener);
+    }
+
+    private EnvVars getEnvironment(final AbstractBuild build, final TaskListener listener) {
+        try {
+            return build.getEnvironment(listener);
+        }
+        catch (IOException e) {
+            // ignore
+        }
+        catch (InterruptedException e) {
+            // ignore
+        }
+        return new EnvVars();
     }
 
     private GitSCM asGit(final SCM scm) {

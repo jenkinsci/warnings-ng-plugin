@@ -21,10 +21,8 @@ import jenkins.MasterToSlaveFileCallable;
 
 import hudson.EnvVars;
 import hudson.FilePath;
-import hudson.model.AbstractBuild;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.git.GitSCM;
 import hudson.remoting.VirtualChannel;
 
 /**
@@ -34,13 +32,22 @@ import hudson.remoting.VirtualChannel;
  * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-6748">Issue 6748</a>
  */
 public class GitBlamer extends AbstractBlamer {
-    private final GitSCM scm;
+    private final String pathToGit;
 
-    public GitBlamer(AbstractBuild<?, ?> build, final GitSCM scm, FilePath workspace, PluginLogger logger, final TaskListener listener) {
-        super(build, workspace, listener, logger);
-        this.scm = scm;
+    /**
+     * Creates a new blamer for Git.
+     *
+     * @param pathToGit   path to git binary
+     * @param environment {@link EnvVars environment} of the build
+     * @param workspace   workspace of the build
+     * @param listener    task listener to print logging statements to
+     */
+    public GitBlamer(final String pathToGit, final EnvVars environment, FilePath workspace, final TaskListener listener) {
+        super(environment, workspace, listener);
+        this.pathToGit = pathToGit;
 
-        log("Using GitBlamer to create author and commit information for all warnings");
+        log("Using GitBlamer to create author and commit information for all warnings.%n");
+        log("Getting blame results for all files in %s.%n", workspace);
     }
 
     @Override
@@ -53,7 +60,7 @@ public class GitBlamer extends AbstractBlamer {
             computeBlamesOnSlave(annotations);
         }
         catch (IOException e) {
-            log("Mapping annotations to Git commits IDs and authors failed with an exception:%n%s%n%s",
+            error("Mapping annotations to Git commits IDs and authors failed with an exception:%n%s%n%s",
                     e.getMessage(), ExceptionUtils.getStackTrace(e));
         }
         catch (InterruptedException e) {
@@ -67,6 +74,7 @@ public class GitBlamer extends AbstractBlamer {
         Map<String, BlameRequest> blamesOfConflictingFiles = getWorkspace().act(new MasterToSlaveFileCallable<Map<String, BlameRequest>>() {
             @Override
             public Map<String, BlameRequest> invoke(final File workspace, final VirtualChannel channel) throws IOException, InterruptedException {
+                // FIXME: pull up and make this method part of Git class
                 Map<String, BlameResult> blameResults = loadBlameResultsForFiles(linesOfConflictingFiles);
                 return fillBlameResults(linesOfConflictingFiles, blameResults);
             }
@@ -80,30 +88,21 @@ public class GitBlamer extends AbstractBlamer {
                 annotation.setAuthorEmail(blame.getEmail(line));
                 annotation.setCommitId(blame.getCommit(line));
             }
+            else {
+                log("Skipping file %s, no result found.%n", annotation.getFileName());
+            }
         }
     }
 
     private Map<String, BlameResult> loadBlameResultsForFiles(final Map<String, BlameRequest> linesOfConflictingFiles)
             throws InterruptedException, IOException {
-        EnvVars environment = getBuild().getEnvironment(getListener());
-        String gitCommit = environment.get("GIT_COMMIT");
-        String gitExe = scm.getGitExe(getBuild().getBuiltOn(), getListener());
+        GitClient git = Git.with(getListener(), getEnvironment()).in(getWorkspace()).using(pathToGit).getClient();
 
-        GitClient git = Git.with(getListener(), environment).in(getWorkspace()).using(gitExe).getClient();
-
-        ObjectId headCommit;
-        if (StringUtils.isBlank(gitCommit)) {
-            log("No GIT_COMMIT environment variable found, using HEAD.");
-
-            headCommit = git.revParse("HEAD");
-        }
-        else {
-            headCommit = git.revParse(gitCommit);
-        }
+        ObjectId headCommit = getHead(git);
 
         Map<String, BlameResult> blameResults = new HashMap<String, BlameResult>();
         if (headCommit == null) {
-            log("Could not retrieve HEAD commit, aborting.");
+            error("Could not retrieve HEAD commit, aborting.");
 
             return blameResults;
         }
@@ -116,7 +115,7 @@ public class GitBlamer extends AbstractBlamer {
             try {
                 BlameResult result = blame.call();
                 if (result == null) {
-                    log("No blame results for file: " + request);
+                    log("No blame results for request <%s>.%n", request);
                 }
                 else {
                     blameResults.put(fileName, result);
@@ -129,11 +128,25 @@ public class GitBlamer extends AbstractBlamer {
             }
             catch (GitAPIException e) {
                 String message = "Error running git blame on " + fileName + " with revision: " + headCommit;
-                log(message);
+                error(message);
             }
         }
 
         return blameResults;
+    }
+
+    private ObjectId getHead(final GitClient git) throws InterruptedException {
+        String gitCommit = getEnvironment().get("GIT_COMMIT");
+        ObjectId headCommit;
+        if (StringUtils.isBlank(gitCommit)) {
+            log("No GIT_COMMIT environment variable found, using HEAD.%n");
+
+            headCommit = git.revParse("HEAD");
+        }
+        else {
+            headCommit = git.revParse(gitCommit);
+        }
+        return headCommit;
     }
 
     private Map<String, BlameRequest> fillBlameResults(final Map<String, BlameRequest> linesOfConflictingFiles,
@@ -142,7 +155,7 @@ public class GitBlamer extends AbstractBlamer {
             BlameRequest request = linesOfConflictingFiles.get(fileName);
             BlameResult blame = blameResults.get(request.getFileName());
             if (blame == null) {
-                log("No blame details found for " + fileName);
+                log("No blame details found for %s.%n", fileName);
             }
             else {
                 for (int line : request) {
@@ -150,7 +163,7 @@ public class GitBlamer extends AbstractBlamer {
                     if (lineIndex < blame.getResultContents().size()) {
                         PersonIdent who = blame.getSourceAuthor(lineIndex);
                         if (who == null) {
-                            log("No author information found for line %d in file %s.", lineIndex, fileName);
+                            log("No author information found for line %d in file %s.%n", lineIndex, fileName);
                         }
                         else {
                             request.setName(line, who.getName());
@@ -158,7 +171,7 @@ public class GitBlamer extends AbstractBlamer {
                         }
                         RevCommit commit = blame.getSourceCommit(lineIndex);
                         if (commit == null) {
-                            log("No commit ID found for line %d in file %s.", lineIndex, fileName);
+                            log("No commit ID found for line %d in file %s.%n", lineIndex, fileName);
                         }
                         else {
                             request.setCommit(line, commit.getName());

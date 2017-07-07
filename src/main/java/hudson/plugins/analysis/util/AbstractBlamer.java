@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import hudson.EnvVars;
 import hudson.FilePath;
-import hudson.model.AbstractBuild;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
@@ -17,27 +17,21 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  * @author Lukas Krose
  */
 public abstract class AbstractBlamer implements Blamer {
-    /** The current run */
-    private final AbstractBuild<?, ?> build;
-    /** the current workspace */
+    private final EnvVars environment;
     private final FilePath workspace;
     private TaskListener listener;
-    /** The PluginLogger to log messages */
-    private final PluginLogger logger;
 
     /**
-     * Creates a new {@link AbstractBlamer}.
+     * Creates a new blamer.
      *
-     * @param build     the build
-     * @param workspace the workspace of the build
-     * @param listener  task listener to print git logging statements to
-     * @param logger    the plugin logger
+     * @param environment {@link EnvVars environment} of the build
+     * @param workspace   workspace of the build
+     * @param listener    task listener to print logging statements to
      */
-    public AbstractBlamer(final AbstractBuild<?, ?> build, final FilePath workspace, final TaskListener listener, final PluginLogger logger) {
-        this.build = build;
+    public AbstractBlamer(final EnvVars environment, final FilePath workspace, final TaskListener listener) {
+        this.environment = environment;
         this.workspace = workspace;
         this.listener = listener;
-        this.logger = logger;
     }
 
     /**
@@ -53,22 +47,25 @@ public abstract class AbstractBlamer implements Blamer {
         String workspacePath = getWorkspacePath();
         for (FileAnnotation annotation : annotations) {
             if (annotation.getPrimaryLineNumber() > 0) {
-                String absoluteFileName = getCanonicalPath(annotation.getFileName());
-                if (pathsByFileName.containsKey(absoluteFileName)) {
-                    BlameRequest blame = pathsByFileName.get(absoluteFileName);
+                String storedFileName = annotation.getFileName();
+                if (pathsByFileName.containsKey(storedFileName)) {
+                    BlameRequest blame = pathsByFileName.get(storedFileName);
                     blame.addLineNumber(annotation.getPrimaryLineNumber());
                 }
                 else {
+                    String absoluteFileName = getCanonicalPath(storedFileName);
                     if (absoluteFileName.startsWith(workspacePath)) {
-                        String relativeFileName = annotation.getFileName().substring(workspacePath.length());
+                        String relativeFileName = absoluteFileName.substring(workspacePath.length());
                         if (relativeFileName.startsWith("/") || relativeFileName.startsWith("\\")) {
                             relativeFileName = relativeFileName.substring(1);
                         }
-                        pathsByFileName.put(absoluteFileName, new BlameRequest(relativeFileName, annotation.getPrimaryLineNumber()));
+                        pathsByFileName.put(storedFileName, new BlameRequest(relativeFileName, annotation.getPrimaryLineNumber()));
+                        log("Preparing blame for %s (workspace = %s, absolute = %s.%n",
+                                storedFileName, workspacePath, absoluteFileName);
                     }
                     else {
-                        log("Skipping non-workspace file %s (workspace = %s, absolute = %s)",
-                                annotation.getFileName(), workspacePath, absoluteFileName);
+                        log("Skipping non-workspace file %s (workspace = %s, absolute = %s.%n",
+                                storedFileName, workspacePath, absoluteFileName);
                     }
                 }
             }
@@ -96,18 +93,28 @@ public abstract class AbstractBlamer implements Blamer {
      * @param args    the arguments for the message format
      */
     protected final void log(final String message, final Object... args) {
-        logger.log("<Git Blamer> " + String.format(message, args));
+        listener.getLogger().append("<Git Blamer> " + String.format(message, args));
+    }
+
+    /**
+     * Prints the specified error message.
+     *
+     * @param message the message (format string)
+     * @param args    the arguments for the message format
+     */
+    protected final void error(final String message, final Object... args) {
+        listener.error("<Git Blamer> " + String.format(message, args));
     }
 
     protected FilePath getWorkspace() {
         return workspace;
     }
 
-    protected AbstractBuild<?, ?> getBuild() {
-        return build;
-    }
-
     protected TaskListener getListener() {
         return listener;
+    }
+
+    protected EnvVars getEnvironment() {
+        return environment;
     }
 }
