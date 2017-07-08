@@ -306,7 +306,6 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         JavaProject container = new JavaProject();
         container.addAnnotations(result.getAnnotations());
 
-        setBuildForOldWarnings(allWarnings, referenceResult.getAnnotations());
         for (FileAnnotation newWarning : newWarnings) {
             newWarning.setBuild(build.getNumber());
         }
@@ -316,9 +315,6 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         computeZeroWarningsHighScore(build, result);
 
         defineReferenceBuild(history);
-    }
-
-    private void setBuildForOldWarnings(final Set<FileAnnotation> allWarnings, final Set<FileAnnotation> annotations) {
     }
 
     /**

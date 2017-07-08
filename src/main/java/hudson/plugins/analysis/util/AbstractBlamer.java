@@ -24,7 +24,7 @@ import hudson.remoting.VirtualChannel;
 public abstract class AbstractBlamer implements Blamer {
     private final EnvVars environment;
     private final FilePath workspace;
-    private TaskListener listener;
+    private final TaskListener listener;
 
     /**
      * Creates a new blamer.

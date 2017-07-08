@@ -20,11 +20,10 @@ public class BlameFactory {
      *
      * @param run       the run to get the SCM from
      * @param workspace the path to the workspace
-     * @param logger    the plugin logger
      * @param listener  task listener
      * @return the blamer
      */
-    public static Blamer createBlamer(Run<?, ?> run, FilePath workspace, PluginLogger logger, final TaskListener listener) {
+    public static Blamer createBlamer(Run<?, ?> run, FilePath workspace, final TaskListener listener) {
         if (run instanceof AbstractBuild) { // pipelines do not have an SCM link
             AbstractBuild build = (AbstractBuild) run;
             AbstractProject project = build.getProject();
@@ -36,7 +35,7 @@ public class BlameFactory {
             if (instance.getPlugin("git") != null) {
                 GitChecker gitChecker = new GitChecker();
                 if (gitChecker.isGit(scm)) {
-                    return gitChecker.createBlamer(build, scm, workspace, logger, listener);
+                    return gitChecker.createBlamer(build, scm, workspace, listener);
                 }
             }
         }

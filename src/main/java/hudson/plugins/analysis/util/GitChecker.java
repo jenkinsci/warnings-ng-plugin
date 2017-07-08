@@ -46,12 +46,11 @@ public class GitChecker {
      * @param build     the build to get the results for
      * @param scm       the SCM instance
      * @param workspace current workspace
-     * @param logger    plugin logger
      * @param listener  task listener
      * @return {@code true} new users can be created automatically, {@code false} otherwise
      */
     public Blamer createBlamer(final AbstractBuild build, final SCM scm, final FilePath workspace,
-            final PluginLogger logger, final TaskListener listener) {
+            final TaskListener listener) {
         GitSCM git = asGit(scm);
         String gitExe = git.getGitExe(build.getBuiltOn(), listener);
 

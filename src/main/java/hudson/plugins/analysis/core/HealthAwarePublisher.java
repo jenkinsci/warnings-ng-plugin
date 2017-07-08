@@ -93,11 +93,19 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
         return true;
     }
 
-    protected void blame(final Set<FileAnnotation> annotations, final Run<?, ?> run, final FilePath workspace, final PluginLogger logger) {
+    /**
+     * Tries to detect authors and commits of warnings. Delegates to SCM specific implementations.
+     *
+     * @param annotations the warnings to analyse
+     * @param run         the run that produced the warnings
+     * @param workspace   workspace with the conflicting files
+     */
+    // FIXME: In 2.0 this method should be automatically invoked *before* the build result is stored
+    protected void blame(final Set<FileAnnotation> annotations, final Run<?, ?> run, final FilePath workspace) {
         if (GlobalSettings.instance().getNoAuthors()) {
             return;
         }
-        Blamer blamer = BlameFactory.createBlamer(run, workspace, logger, getListener());
+        Blamer blamer = BlameFactory.createBlamer(run, workspace, getListener());
         blamer.blame(annotations);
     }
 

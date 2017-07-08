@@ -797,6 +797,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      *
      * @return the task listener
      */
+    // FIXME: in 2.0 the listener should be part of the template method
     protected TaskListener getListener() {
         if (listener == null) {
             return TaskListener.NULL;
