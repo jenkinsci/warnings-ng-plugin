@@ -32,9 +32,23 @@
     <orderEntry type="library" name="Maven: joda-time:joda-time:1.6" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:structs:1.2" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci:symbol-annotation:1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:git:3.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:git-client:2.3.0" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jgit:org.eclipse.jgit:4.5.0.201609210915-r" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.javaewah:JavaEWAH:0.7.9" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jgit:org.eclipse.jgit.http.server:4.5.0.201609210915-r" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jgit:org.eclipse.jgit.http.apache:4.5.0.201609210915-r" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:credentials:2.1.8" level="project" />
+    <orderEntry type="library" name="Maven: org.antlr:antlr4-runtime:4.5" level="project" />
+    <orderEntry type="library" name="Maven: org.abego.treelayout:org.abego.treelayout.core:1.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:ssh-credentials:1.12" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:scm-api:2.0.8" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins.workflow:workflow-scm-step:1.14.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins.workflow:workflow-step-api:1.14.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:mailer:1.18" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:display-url-api:0.2" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.main:maven-plugin:2.9" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:javadoc:1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:mailer:1.7" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.main.maven:maven-agent:1.6" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.main.maven:maven-interceptor:1.6" level="project" />
     <orderEntry type="library" name="Maven: org.jvnet.hudson:maven2.1-interceptor:1.2" level="project" />
@@ -228,7 +242,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:matrix-auth:1.0.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:antisamy-markup-formatter:1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.kohsuke:owasp-html-sanitizer:r88" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:junit:1.2-beta-4" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:junit:1.2-beta-4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mortbay.jetty:jetty:6.1.26" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mortbay.jetty:jetty-util:6.1.26" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mortbay.jetty:servlet-api:2.5-20081211" level="project" />

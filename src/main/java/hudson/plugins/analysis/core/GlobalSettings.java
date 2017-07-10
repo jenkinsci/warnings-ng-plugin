@@ -1,13 +1,12 @@
 package hudson.plugins.analysis.core;
 
-import jenkins.model.Jenkins;
-import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 
-import hudson.Extension;
+import jenkins.model.Jenkins;
+import net.sf.json.JSONObject;
 
+import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.Run;
@@ -28,7 +27,7 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
     }
 
     private static DescriptorImpl findDescriptor() {
-        return (DescriptorImpl)Jenkins.getInstance().getDescriptorOrDie(GlobalSettings.class);
+        return (DescriptorImpl) Jenkins.getInstance().getDescriptorOrDie(GlobalSettings.class);
     }
 
     /**
@@ -49,6 +48,8 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
     public static class DescriptorImpl extends Descriptor<GlobalSettings> implements Settings {
         private Boolean isQuiet;
         private Boolean failOnCorrupt;
+        /** @Since 1.88 */
+        private Boolean noAuthors;
 
         @Override
         public String getDisplayName() {
@@ -72,7 +73,7 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
             return true;
         }
 
-            @Override
+        @Override
         public Boolean getQuietMode() {
             return getValidBoolean(isQuiet);
         }
@@ -80,14 +81,13 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
         /**
          * Sets the value of the quiet boolean property.
          *
-         * @param value
-         *            the value to set
+         * @param value the value to set
          */
         public void setQuietMode(final Boolean value) {
             isQuiet = value;
         }
 
-            @Override
+        @Override
         public Boolean getFailOnCorrupt() {
             return getValidBoolean(failOnCorrupt);
         }
@@ -95,11 +95,24 @@ public class GlobalSettings extends RunListener<Run<?, ?>> implements Describabl
         /**
          * Sets the value of the failOnCorrupt boolean property.
          *
-         * @param value
-         *            the value to set
+         * @param value the value to set
          */
         public void setFailOnCorrupt(final Boolean value) {
             failOnCorrupt = value;
+        }
+
+        @Override
+        public Boolean getNoAuthors() {
+            return getValidBoolean(noAuthors);
+        }
+
+        /**
+         * Sets the value of the no authors boolean property.
+         *
+         * @param value the value to set
+         */
+        public void setNoAuthors(final Boolean value) {
+            noAuthors = value;
         }
 
         private Boolean getValidBoolean(final Boolean value) {

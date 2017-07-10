@@ -8,11 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
@@ -21,7 +19,6 @@ import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.joda.time.LocalDate;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -30,15 +27,13 @@ import com.google.common.collect.Sets;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import hudson.model.AbstractBuild;
 import hudson.model.Run;
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.util.ChartUtil.NumberOnlyBuildLabel;
 import hudson.util.DataSetBuilder;
-import hudson.util.ShiftedCategoryAxis;
-import hudson.plugins.analysis.Messages;
 /**
  * A build result graph using a {@link CategoryPlot}. Uses a template method to
  * create a graph based on a series of build results.
@@ -240,29 +235,6 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
         return valuesPerBuild;
     }
 
-    private boolean passesFilteringByParameter(final Run<?, ?> build, final String parameterName, final String parameterValue) {
-        if (StringUtils.isBlank(parameterName)) {
-            return true;
-        }
-
-        Map<String, String> variables;
-        if (build instanceof AbstractBuild) {
-            variables = ((AbstractBuild<?, ?>) build).getBuildVariables();
-        }
-        else {
-            // There is no comparable method for Run. This means that this feature (using parameters for
-            // result graph) will not be available for other than AbstractBuild extending classes (basically
-            // all except Workflow builds).
-            // So workflow jobs will be never filtered, just show them all.
-            return true;
-        }
-        if (variables == null) {
-            return false;
-        }
-
-        return Objects.equal(variables.get(parameterName), parameterValue);
-    }
-
     /**
      * Creates a data set that contains a series per build number.
      *
@@ -285,6 +257,8 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
         }
         return builder.build();
     }
+
+
 
     /**
      * Creates a data set that contains one series of values per day.
@@ -426,47 +400,6 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     protected abstract Color[] getColors();
 
     /**
-     * Sets the series colors for the specified chart.
-     *
-     * @param chart
-     *            the chart
-     * @param colors
-     *            the colors to set
-     */
-    public void setColors(final JFreeChart chart, final Color[] colors) {
-        CategoryPlot plot = chart.getCategoryPlot();
-        CategoryItemRenderer renderer = plot.getRenderer();
-
-        int series = 0;
-        for (Color color : colors) {
-            renderer.setSeriesPaint(series, color);
-            series++;
-        }
-    }
-
-    /**
-     * Sets properties common to all category graphs of this plug-in.
-     *
-     * @param plot
-     *            the chart to set the properties for
-     */
-    protected void setCategoryPlotProperties(final CategoryPlot plot) {
-        plot.setRangeGridlinesVisible(true);
-        plot.setRangeGridlinePaint(Color.black);
-
-        CategoryAxis domainAxis = new ShiftedCategoryAxis(null);
-        plot.setDomainAxis(domainAxis);
-        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
-        domainAxis.setLowerMargin(0.0);
-        domainAxis.setUpperMargin(0.0);
-
-        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
-        setPlotProperties(plot);
-    }
-
-    /**
      * Creates a stacked area graph from the specified data set.
      *
      * @param dataset
@@ -500,43 +433,6 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
         chart.setBackgroundPaint(Color.white);
         setCategoryPlotProperties(chart.getCategoryPlot());
         chart.getCategoryPlot().getDomainAxis().setCategoryMargin(0.0);
-
-        return chart;
-    }
-
-    /**
-     * Creates a stacked block graph from the specified data set.
-     *
-     * @param dataset
-     *            the values to display
-     * @return the created graph
-     */
-    public JFreeChart createBlockChart(final CategoryDataset dataset) {
-        return createBlockChart(dataset, "count");
-    }
-
-    /**
-     * Creates a stacked block graph from the specified data set.
-     *
-     * @param dataset
-     *            the values to display
-     * @param yAxisLabel
-     *            label of the range axis, i.e. y axis
-     * @return the created graph
-     */
-    public JFreeChart createBlockChart(final CategoryDataset dataset, final String yAxisLabel) {
-        JFreeChart chart = ChartFactory.createStackedBarChart(
-                null,                      // chart title
-                null,                      // unused
-                yAxisLabel,                   // range axis label
-                dataset,                   // data
-                PlotOrientation.VERTICAL,  // orientation
-                false,                     // include legend
-                true,                      // tooltips
-                false                      // urls
-        );
-        chart.setBackgroundPaint(Color.white);
-        setCategoryPlotProperties(chart.getCategoryPlot());
 
         return chart;
     }

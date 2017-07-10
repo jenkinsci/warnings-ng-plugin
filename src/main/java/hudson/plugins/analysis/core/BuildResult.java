@@ -222,6 +222,10 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         initialize(history, build, defaultEncoding, result);
     }
 
+    public boolean useAuthors() {
+        return !GlobalSettings.instance().getNoAuthors();
+    }
+
     /**
      * Creates a new history based on the specified build.
      *
@@ -285,11 +289,13 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         Set<FileAnnotation> allWarnings = result.getAnnotations();
 
         // FIXME: why is there a flag to enable computation of new warnings?
-        Set<FileAnnotation> newWarnings = AnnotationDifferencer.getNewAnnotations(allWarnings, referenceResult.getAnnotations());
+
+        IssueDifference difference = new IssueDifference(allWarnings, referenceResult.getAnnotations());
+        Set<FileAnnotation> newWarnings = difference.getNewIssues();
         numberOfNewWarnings = newWarnings.size();
         newWarningsReference = new WeakReference<Collection<FileAnnotation>>(newWarnings);
 
-        Set<FileAnnotation> fixedWarnings = AnnotationDifferencer.getFixedAnnotations(allWarnings, referenceResult.getAnnotations());
+        Set<FileAnnotation> fixedWarnings = difference.getFixedIssues();
         numberOfFixedWarnings = fixedWarnings.size();
         fixedWarningsReference = new WeakReference<Collection<FileAnnotation>>(fixedWarnings);
 
@@ -303,7 +309,6 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         for (FileAnnotation newWarning : newWarnings) {
             newWarning.setBuild(build.getNumber());
         }
-        // FIXME: for the old warnings we need to find the introducing build by using the context hash code
 
         project = new WeakReference<JavaProject>(container);
 

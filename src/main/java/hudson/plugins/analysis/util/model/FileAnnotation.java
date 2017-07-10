@@ -2,7 +2,6 @@ package hudson.plugins.analysis.util.model;
 
 import java.util.Collection;
 
-import hudson.model.AbstractBuild;
 import hudson.model.Run;
 
 /**
@@ -216,4 +215,68 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
      * @since 1.72
      */
     int getBuild();
+
+    /**
+     * Returns the ID of the commit that caused this annotation.
+     *
+     * @return The ID of the commit that caused this annotation.
+     */
+    String getCommitId();
+
+    /**
+     * Returns a readable name for the commit that caused this annotation.
+     *
+     * @return The ID of the commit that caused this annotation.
+     */
+    String getCommitDetails();
+
+    /**
+     * Returns the person who caused this annotation. It either returns the author name, the author email or the
+     * default string.
+     *
+     * @return the person who caused this annotation.
+     */
+    String getAuthor();
+
+    /**
+     * Returns a readable name for the author of this warning.
+     *
+     * @return a readable name for the author
+     */
+    String getAuthorDetails();
+
+    /**
+     * Returns the person who caused this annotation.
+     *
+     * @return The person who caused this annotation.
+     */
+    String getAuthorName();
+
+    /**
+     * Returns the email of the person who caused this annotation.
+     *
+     * @return The email of the person who caused this annotation.
+     */
+    String getAuthorEmail();
+
+    /**
+     * Sets the person who caused this annotation.
+     *
+     * @param authorName the person who caused this annotation.
+     */
+    void setAuthorName(String authorName);
+
+    /**
+     * Sets the email of the person who caused this annotation.
+     *
+     * @param authorEmail the person who caused this annotation.
+     */
+    void setAuthorEmail(String authorEmail);
+
+    /**
+     * Sets the id of the commit that caused this annotation.
+     *
+     * @param commitId the commit that caused this annotation.
+     */
+    void setCommitId(String commitId);
 }

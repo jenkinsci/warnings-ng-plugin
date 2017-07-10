@@ -86,6 +86,13 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     /** The build number in which this annotation has been introduced. @since 1.72 */
     private int build;
 
+    /** Who caused this annotation. */
+    private String authorName;
+    /** Who caused this annotation. */
+    private String authorEmail;
+    /** Which commit caused this annotation. */
+    private String commitId;
+
     /**
      * Creates a new instance of <code>AbstractAnnotation</code>.
      *
@@ -163,6 +170,9 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         type = copy.getType();
         moduleName = TreeString.of(copy.getModuleName());
         packageName = TreeString.of(copy.getPackageName());
+        authorName = copy.getAuthorName();
+        authorEmail = copy.getAuthorEmail();
+        commitId = copy.getCommitId();
     }
 
     /**
@@ -185,6 +195,15 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         }
         if (type != null) {
             type = type.intern();
+        }
+        if (authorName != null) {
+            authorName = authorName.intern();
+        }
+        if (authorEmail != null) {
+            authorEmail = authorEmail.intern();
+        }
+        if (commitId != null) {
+            commitId = commitId.intern();
         }
         return this;
     }
@@ -436,6 +455,61 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     }
 
     @Override
+    public String getAuthor() {
+        return StringUtils.defaultString(getAuthorName(), getAuthorEmail());
+    }
+
+    @Exported
+    @Override
+    public String getAuthorDetails() {
+        if (StringUtils.isBlank(authorName) && StringUtils.isBlank(authorEmail)) {
+            return Messages.Author_NoResult();
+        }
+        else if (StringUtils.isBlank(authorName)) {
+            return authorEmail;
+        }
+        else if (StringUtils.isBlank(authorEmail)) {
+            return authorName;
+        }
+        return String.format("%s <%s>", authorName, authorEmail);
+    }
+
+    @Override
+    public String getAuthorName() {
+        return defaultString(authorName);
+    }
+
+    @Override
+    public void setAuthorName(final String authorName) {
+        this.authorName = authorName;
+    }
+
+    @Override
+    public String getAuthorEmail() {
+        return defaultString(authorEmail);
+    }
+
+    @Override
+    public void setAuthorEmail(final String authorEmail) {
+        this.authorEmail = authorEmail;
+    }
+
+    @Override
+    public String getCommitId() {
+        return defaultString(commitId);
+    }
+
+    @Override
+    public String getCommitDetails() {
+        return StringUtils.substring(defaultString(commitId), 0, 6);
+    }
+
+    @Override
+    public void setCommitId(final String commitId) {
+        this.commitId = commitId;
+    }
+
+    @Override
     @Exported
     public final int getPrimaryLineNumber() {
         return primaryLineNumber;
@@ -475,102 +549,90 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     // CHECKSTYLE:OFF
 
     @Override
-    @SuppressWarnings("PMD")
-    public int hashCode() {
-        int prime = 31;
-        int result = 1;
-        result = prime * result + ((category == null) ? 0 : category.hashCode());
-        result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
-        result = prime * result + ((lineRanges == null) ? 0 : lineRanges.hashCode());
-        result = prime * result + ((message == null) ? 0 : message.hashCode());
-        result = prime * result + ((moduleName == null) ? 0 : moduleName.hashCode());
-        result = prime * result + ((packageName == null) ? 0 : packageName.hashCode());
-        result = prime * result + primaryLineNumber;
-        result = prime * result + primaryColumnStart;
-        result = prime * result + primaryColumnEnd;
-        result = prime * result + ((priority == null) ? 0 : priority.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        return result;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        AbstractAnnotation that = (AbstractAnnotation) o;
+
+        if (primaryLineNumber != that.primaryLineNumber) {
+            return false;
+        }
+        if (primaryColumnStart != that.primaryColumnStart) {
+            return false;
+        }
+        if (primaryColumnEnd != that.primaryColumnEnd) {
+            return false;
+        }
+        if (build != that.build) {
+            return false;
+        }
+        if (message != null ? !message.equals(that.message) : that.message != null) {
+            return false;
+        }
+        if (priority != that.priority) {
+            return false;
+        }
+        if (lineRanges != null ? !lineRanges.equals(that.lineRanges) : that.lineRanges != null) {
+            return false;
+        }
+        if (fileName != null ? !fileName.equals(that.fileName) : that.fileName != null) {
+            return false;
+        }
+        if (moduleName != null ? !moduleName.equals(that.moduleName) : that.moduleName != null) {
+            return false;
+        }
+        if (packageName != null ? !packageName.equals(that.packageName) : that.packageName != null) {
+            return false;
+        }
+        if (category != null ? !category.equals(that.category) : that.category != null) {
+            return false;
+        }
+        if (type != null ? !type.equals(that.type) : that.type != null) {
+            return false;
+        }
+        if (origin != null ? !origin.equals(that.origin) : that.origin != null) {
+            return false;
+        }
+        if (pathName != null ? !pathName.equals(that.pathName) : that.pathName != null) {
+            return false;
+        }
+        if (authorName != null ? !authorName.equals(that.authorName) : that.authorName != null) {
+            return false;
+        }
+        if (authorEmail != null ? !authorEmail.equals(that.authorEmail) : that.authorEmail != null) {
+            return false;
+        }
+        return commitId != null ? commitId.equals(that.commitId) : that.commitId == null;
     }
 
     @Override
-    @SuppressWarnings("PMD")
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AbstractAnnotation other = (AbstractAnnotation)obj;
-        if (category == null) {
-            if (other.category != null) {
-                return false;
-            }
-        }
-        else if (!category.equals(other.category)) {
-            return false;
-        }
-        if (fileName == null) {
-            if (other.fileName != null) {
-                return false;
-            }
-        }
-        else if (!fileName.toString().equals(other.fileName.toString())) {
-            return false;
-        }
-        if (lineRanges == null) {
-            if (other.lineRanges != null) {
-                return false;
-            }
-        }
-        else if (!lineRanges.equals(other.lineRanges)) {
-            return false;
-        }
-        if (message == null) {
-            if (other.message != null) {
-                return false;
-            }
-        }
-        else if (!message.toString().equals(other.message.toString())) {
-            return false;
-        }
-        if (!getModuleName().equals(other.getModuleName())) {
-            return false;
-        }
-        if (!getPackageName().equals(other.getPackageName())) {
-            return false;
-        }
-        if (primaryLineNumber != other.primaryLineNumber) {
-            return false;
-        }
-        if (primaryColumnStart != other.primaryColumnStart) {
-            return false;
-        }
-        if (primaryColumnEnd != other.primaryColumnEnd) {
-            return false;
-        }
-        if (priority == null) {
-            if (other.priority != null) {
-                return false;
-            }
-        }
-        else if (!priority.equals(other.priority)) {
-            return false;
-        }
-        if (type == null) {
-            if (other.type != null) {
-                return false;
-            }
-        }
-        else if (!type.equals(other.type)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        int result = message != null ? message.hashCode() : 0;
+        result = 31 * result + (priority != null ? priority.hashCode() : 0);
+        result = 31 * result + (lineRanges != null ? lineRanges.hashCode() : 0);
+        result = 31 * result + primaryLineNumber;
+        result = 31 * result + (fileName != null ? fileName.hashCode() : 0);
+        result = 31 * result + (moduleName != null ? moduleName.hashCode() : 0);
+        result = 31 * result + (packageName != null ? packageName.hashCode() : 0);
+        result = 31 * result + (category != null ? category.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (origin != null ? origin.hashCode() : 0);
+        result = 31 * result + (pathName != null ? pathName.hashCode() : 0);
+        result = 31 * result + primaryColumnStart;
+        result = 31 * result + primaryColumnEnd;
+        result = 31 * result + build;
+        result = 31 * result + (authorName != null ? authorName.hashCode() : 0);
+        result = 31 * result + (authorEmail != null ? authorEmail.hashCode() : 0);
+        result = 31 * result + (commitId != null ? commitId.hashCode() : 0);
+        return result;
     }
+
+    // CHECKSTYLE:ON
 
     /**
      * Gets the associated file name of this bug (without path).
