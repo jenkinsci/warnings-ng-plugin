@@ -12,6 +12,8 @@ public class SerializableSettings implements Settings, Serializable {
 
     private final boolean failOnCorrupt;
     private final boolean quietMode;
+    /** @Since 1.88 */
+    private final Boolean noAuthors;
 
     /**
      * Creates a new instance of {@link SerializableSettings}.
@@ -22,6 +24,7 @@ public class SerializableSettings implements Settings, Serializable {
     public SerializableSettings(final Settings original) {
         failOnCorrupt = original.getFailOnCorrupt();
         quietMode = original.getQuietMode();
+        noAuthors = original.getNoAuthors();
     }
 
     @Override
@@ -32,6 +35,11 @@ public class SerializableSettings implements Settings, Serializable {
     @Override
     public Boolean getFailOnCorrupt() {
         return failOnCorrupt;
+    }
+
+    @Override
+    public Boolean getNoAuthors() {
+        return noAuthors;
     }
 }
 

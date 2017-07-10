@@ -20,4 +20,12 @@ public interface Settings {
      * @return on <code>true</code> the build will be failed, on <code>false</code> an error message is reported
      */
     Boolean getFailOnCorrupt();
+
+    /**
+     * Returns whether author and commit information should be omitted.
+     *
+     * @return on <code>true</code> the SCM will not be called to obtain author and commit information,
+     * on <code>false</code> author and commit information are created
+     */
+    Boolean getNoAuthors();
 }

@@ -1,10 +1,13 @@
 package hudson.plugins.analysis.views;
 
+import java.net.URL;
 import java.util.Collection;
+import java.util.Map;
+
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
-
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
@@ -17,6 +20,13 @@ public class TabDetail extends AbstractAnnotationsDetail {
     private static final long serialVersionUID = -1854984151887397361L;
     /** URL of the content to load. */
     private final String url;
+
+    /** Whether or not we've tried to generate the commit URLs. */
+    @SuppressWarnings("Se")
+    private transient boolean commitUrlsAttempted;
+    /** A cache of URLs for commit ids. */
+    @SuppressWarnings("Se")
+    private transient Map<String, URL> commitUrls;
 
     /**
      * Creates a new instance of {@link TabDetail}.

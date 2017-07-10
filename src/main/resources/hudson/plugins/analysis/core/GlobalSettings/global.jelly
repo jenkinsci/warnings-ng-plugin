@@ -9,5 +9,9 @@
     <f:entry field="failOnCorrupt" title="${%failOnCorrupt.title}" description="${%failOnCorrupt.description}">
       <f:checkbox />
     </f:entry>
+
+    <f:entry field="noAuthors" title="${%noAuthors.title}" description="${%noAuthors.description}">
+      <f:checkbox/>
+    </f:entry>
   </f:section>
 </j:jelly>

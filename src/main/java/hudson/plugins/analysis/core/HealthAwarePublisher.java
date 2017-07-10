@@ -1,6 +1,7 @@
 package hudson.plugins.analysis.core;
 
 import java.io.IOException;
+import java.util.Set;
 
 import hudson.FilePath;
 import hudson.Launcher;
@@ -9,9 +10,9 @@ import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
 
-import hudson.plugins.analysis.util.Compatibility;
-import hudson.plugins.analysis.util.PluginLogger;
+import hudson.plugins.analysis.util.*;
 
+import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.tasks.BuildStep;
 
 /**
@@ -66,6 +67,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
         BuildResult result;
         try {
             result = perform(run, workspace, logger);
+
             Run<?, ?> referenceBuild = result.getHistory().getReferenceBuild();
 
             if (GlobalSettings.instance().getFailOnCorrupt() && result.hasError()) {
@@ -89,6 +91,22 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
         copyFilesWithAnnotationsToBuildFolder(run.getRootDir(), launcher.getChannel(), result.getAnnotations());
 
         return true;
+    }
+
+    /**
+     * Tries to detect authors and commits of warnings. Delegates to SCM specific implementations.
+     *
+     * @param annotations the warnings to analyse
+     * @param run         the run that produced the warnings
+     * @param workspace   workspace with the conflicting files
+     */
+    // FIXME: In 2.0 this method should be automatically invoked *before* the build result is stored
+    protected void blame(final Set<FileAnnotation> annotations, final Run<?, ?> run, final FilePath workspace) {
+        if (GlobalSettings.instance().getNoAuthors()) {
+            return;
+        }
+        Blamer blamer = BlameFactory.createBlamer(run, workspace, getListener());
+        blamer.blame(annotations);
     }
 
     /**
