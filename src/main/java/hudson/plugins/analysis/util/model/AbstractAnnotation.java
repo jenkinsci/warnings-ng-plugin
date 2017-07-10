@@ -568,11 +568,18 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         if (primaryColumnEnd != that.primaryColumnEnd) {
             return false;
         }
-        if (build != that.build) {
-            return false;
+        if (message != null) {
+            if (that.message == null) {
+                return false;
+            }
+            if (!message.toString().equals(that.message.toString())) {
+                return false;
+            }
         }
-        if (message != null ? !message.equals(that.message) : that.message != null) {
-            return false;
+        else {
+            if (that.message != null) {
+                return false;
+            }
         }
         if (priority != that.priority) {
             return false;
@@ -580,14 +587,44 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         if (lineRanges != null ? !lineRanges.equals(that.lineRanges) : that.lineRanges != null) {
             return false;
         }
-        if (fileName != null ? !fileName.equals(that.fileName) : that.fileName != null) {
-            return false;
+        if (fileName != null) {
+            if (that.fileName == null) {
+                return false;
+            }
+            if (!fileName.toString().equals(that.fileName.toString())) {
+                return false;
+            }
         }
-        if (moduleName != null ? !moduleName.equals(that.moduleName) : that.moduleName != null) {
-            return false;
+        else {
+            if (that.fileName != null) {
+                return false;
+            }
         }
-        if (packageName != null ? !packageName.equals(that.packageName) : that.packageName != null) {
-            return false;
+        if (moduleName != null) {
+            if (that.moduleName == null) {
+                return false;
+            }
+            if (!moduleName.toString().equals(that.moduleName.toString())) {
+                return false;
+            }
+        }
+        else {
+            if (that.moduleName != null) {
+                return false;
+            }
+        }
+        if (packageName != null) {
+            if (that.packageName == null) {
+                return false;
+            }
+            if (!packageName.toString().equals(that.packageName.toString())) {
+                return false;
+            }
+        }
+        else {
+            if (that.packageName != null) {
+                return false;
+            }
         }
         if (category != null ? !category.equals(that.category) : that.category != null) {
             return false;
@@ -601,13 +638,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         if (pathName != null ? !pathName.equals(that.pathName) : that.pathName != null) {
             return false;
         }
-        if (authorName != null ? !authorName.equals(that.authorName) : that.authorName != null) {
-            return false;
-        }
-        if (authorEmail != null ? !authorEmail.equals(that.authorEmail) : that.authorEmail != null) {
-            return false;
-        }
-        return commitId != null ? commitId.equals(that.commitId) : that.commitId == null;
+        return true;
     }
 
     @Override
@@ -625,10 +656,6 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         result = 31 * result + (pathName != null ? pathName.hashCode() : 0);
         result = 31 * result + primaryColumnStart;
         result = 31 * result + primaryColumnEnd;
-        result = 31 * result + build;
-        result = 31 * result + (authorName != null ? authorName.hashCode() : 0);
-        result = 31 * result + (authorEmail != null ? authorEmail.hashCode() : 0);
-        result = 31 * result + (commitId != null ? commitId.hashCode() : 0);
         return result;
     }
 
