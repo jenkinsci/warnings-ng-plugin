@@ -1,0 +1,10 @@
+[INFO] --- kotlin-maven-plugin:1.1.2-4:compile (compile) @ functional-test ---
+[INFO] Kotlin Compiler version 1.1.2-4
+[INFO] Compiling Kotlin sources from [/home/fedora/jenkins/workspace/zanata/server/functional-test/src/main/java]
+[INFO] Module name is functional-test
+[INFO] Applied plugin: 'all-open'
+[INFO] Applied plugin: 'no-arg'
+[WARNING] /home/fedora/jenkins/workspace/zanata/server/functional-test/src/main/java/org/zanata/page/AbstractPage.kt: (214, 35) Unchecked cast: Any! to List<WebElement>
+[WARNING] /home/fedora/jenkins/workspace/zanata/server/functional-test/src/main/java/org/zanata/page/AbstractPage.kt: (424, 29) Unchecked cast: Any! to List<WebElement>
+[WARNING] /home/fedora/jenkins/workspace/zanata/server/functional-test/src/main/java/org/zanata/page/AbstractPage.kt: (440, 28) Unchecked cast: Any! to List<WebElement>
+[WARNING] /home/fedora/jenkins/workspace/zanata/server/functional-test/src/main/java/org/zanata/page/AbstractPage.kt: (458, 33) Unchecked cast: Any! to List<WebElement>

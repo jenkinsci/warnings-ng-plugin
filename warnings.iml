@@ -13,7 +13,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.jvnet.hudson.plugins:analysis-core:1.86" level="project" />
+    <orderEntry type="module" module-name="analysis-core" />
     <orderEntry type="library" name="Maven: de.java2html:java2html:5.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.3.2" level="project" />
     <orderEntry type="library" name="Maven: xerces:xercesImpl:2.11.0" level="project" />
@@ -77,7 +77,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: com.cloudbees:diff4j:1.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:branch-api:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:cloudbees-folder:5.2.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jvnet.hudson.plugins:analysis-test:1.18" level="project" />
+    <orderEntry type="module" module-name="analysis-test" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-basic-steps:1.5" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-step-api:tests:1.5" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-durable-task-step:1.5" level="project" />
