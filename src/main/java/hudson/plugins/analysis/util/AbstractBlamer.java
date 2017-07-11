@@ -123,8 +123,6 @@ public abstract class AbstractBlamer implements Blamer {
                             relativeFileName = relativeFileName.substring(1);
                         }
                         pathsByFileName.put(storedFileName, new BlameRequest(relativeFileName, annotation.getPrimaryLineNumber()));
-                        log("Preparing blame for %s (workspace = %s, absolute = %s.%n",
-                                storedFileName, workspacePath, absoluteFileName);
                     }
                     else {
                         log("Skipping non-workspace file %s (workspace = %s, absolute = %s.%n",
