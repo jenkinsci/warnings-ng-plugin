@@ -446,6 +446,9 @@ public class WarningsPublisher extends HealthAwarePublisher implements SimpleBui
         }
         WarningsBuildHistory history = new WarningsBuildHistory(run, parserName,
                 usePreviousBuildAsReference(), useOnlyStableBuildsAsReference());
+
+        blame(output.getAnnotations(), run, workspace);
+
         WarningsResult result = new WarningsResult(run, history, output, getDefaultEncoding(), parserName);
         run.addAction(new WarningsResultAction(run, this, result, parserName));
 
