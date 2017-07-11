@@ -5,9 +5,10 @@ import java.io.IOException;
 import org.jenkinsci.plugins.tokenmacro.DataBoundTokenMacro;
 import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
 
-import hudson.model.TaskListener;
+import hudson.FilePath;
 import hudson.model.AbstractBuild;
-
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ResultAction;
 
@@ -39,6 +40,16 @@ public abstract class AbstractTokenMacro extends DataBoundTokenMacro {
     @Override
     public String evaluate(final AbstractBuild<?, ?> context, final TaskListener listener, final String macroName)
             throws MacroEvaluationException, IOException, InterruptedException {
+        return evaluate(context);
+    }
+
+    @Override
+    public String evaluate(final Run<?, ?> context, FilePath workspace, final TaskListener listener, final String macroName)
+            throws MacroEvaluationException, IOException, InterruptedException {
+        return evaluate(context);
+    }
+
+    private String evaluate(final Run<?, ?> context) {
         for (Class<? extends ResultAction<? extends BuildResult>> resultActionType : resultActions) {
             ResultAction<? extends BuildResult> action = context.getAction(resultActionType);
             if (action != null) {
