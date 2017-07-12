@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableSet;
 
 import static org.junit.Assert.*;
 
-import hudson.plugins.analysis.core.AnnotationDifferencer;
+import hudson.plugins.analysis.core.IssueDifference;
 import hudson.plugins.analysis.test.AnnotationDifferencerTest;
 import hudson.plugins.analysis.util.TreeString;
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
@@ -22,7 +22,7 @@ import hudson.plugins.warnings.parser.Gcc4CompilerParser;
 import hudson.plugins.warnings.parser.Warning;
 
 /**
- * Tests the {@link AnnotationDifferencer} for warnings.
+ * Tests the {@link IssueDifference} for warnings.
  */
 public class WarningsDifferencerTest extends AnnotationDifferencerTest {
     @Override
@@ -47,9 +47,9 @@ public class WarningsDifferencerTest extends AnnotationDifferencerTest {
 
         AbstractAnnotation.intern(first);
 
-        Set<FileAnnotation> newAnnotations = AnnotationDifferencer.getNewAnnotations(ImmutableSet.copyOf(first), ImmutableSet.copyOf(second));
+        Set<FileAnnotation> newAnnotations = new IssueDifference(ImmutableSet.copyOf(first), ImmutableSet.copyOf(second)).getNewIssues();
         assertEquals("Wrong number of new warnings", 0, newAnnotations.size());
-        Set<FileAnnotation> fixedAnnotations = AnnotationDifferencer.getFixedAnnotations(ImmutableSet.copyOf(first), ImmutableSet.copyOf(second));
+        Set<FileAnnotation> fixedAnnotations = new IssueDifference(ImmutableSet.copyOf(first), ImmutableSet.copyOf(second)).getFixedIssues();
         assertEquals("Wrong number of fixed warnings", 0, fixedAnnotations.size());
     }
 

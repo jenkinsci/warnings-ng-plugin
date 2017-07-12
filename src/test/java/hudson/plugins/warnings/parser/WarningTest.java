@@ -1,13 +1,13 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
 
-import hudson.plugins.analysis.core.AnnotationDifferencer;
+import static org.junit.Assert.*;
+
+import hudson.plugins.analysis.core.IssueDifference;
 import hudson.plugins.analysis.util.TreeString;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
@@ -38,7 +38,7 @@ public class WarningTest {
         Set<FileAnnotation> reference = new HashSet<FileAnnotation>();
         reference.add(actual);
 
-        Set<FileAnnotation> annotations = AnnotationDifferencer.getNewAnnotations(current, reference);
+        Set<FileAnnotation> annotations = new IssueDifference(current, reference).getNewIssues();
         assertTrue("There are new warnings", annotations.isEmpty());
     }
 
