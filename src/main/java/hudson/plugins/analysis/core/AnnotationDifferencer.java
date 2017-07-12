@@ -11,7 +11,9 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  * Provides several utility methods based on sets of annotations.
  *
  * @author Ulli Hafner
+ * @deprecated replaced by {@link IssueDifference}
  */
+@Deprecated
 public final class AnnotationDifferencer {
     /**
      * Returns the new annotations, i.e., the annotations that are in the current build

@@ -299,7 +299,7 @@ public class BuildHistory {
      */
     public Collection<FileAnnotation> getNewWarnings(final Set<FileAnnotation> annotations) {
         if (hasReferenceResult()) {
-            return AnnotationDifferencer.getNewAnnotations(annotations, getReferenceAnnotations().getAnnotations());
+            return new IssueDifference(annotations, getReferenceAnnotations().getAnnotations()).getNewIssues();
         }
         else {
             return annotations;
@@ -316,7 +316,7 @@ public class BuildHistory {
      */
     public Collection<FileAnnotation> getFixedWarnings(final Set<FileAnnotation> annotations) {
         if (hasReferenceResult()) {
-            return AnnotationDifferencer.getFixedAnnotations(annotations, getReferenceAnnotations().getAnnotations());
+            return new IssueDifference(annotations, getReferenceAnnotations().getAnnotations()).getFixedIssues();
         }
         else {
             return Collections.emptyList();
