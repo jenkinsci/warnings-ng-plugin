@@ -9,7 +9,6 @@ import java.util.Random;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
@@ -262,7 +261,6 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @param column
      *            the column of this warning
      */
-    @Whitelisted
     public void setColumnPosition(final int column) {
         setColumnPosition(column, column);
     }
@@ -275,7 +273,6 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @param columnEnd
      *            ending column
      */
-    @Whitelisted
     public void setColumnPosition(final int columnStart, final int columnEnd) {
         primaryColumnStart = columnStart;
         primaryColumnEnd = columnEnd;
