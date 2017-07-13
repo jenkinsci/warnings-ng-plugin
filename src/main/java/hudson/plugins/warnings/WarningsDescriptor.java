@@ -11,6 +11,7 @@ import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
 import hudson.Extension;
@@ -199,6 +200,16 @@ public final class WarningsDescriptor extends PluginDescriptor implements Staple
         else {
             return required;
         }
+    }
+
+    /**
+     * Returns whether the current user has the permission to edit the available
+     * Groovy parsers.
+     *
+     * @return {@code true} if the user has the right, {@code false} otherwise
+     */
+    public boolean canEditParsers() {
+        return Jenkins.getInstance().getACL().hasPermission(Jenkins.RUN_SCRIPTS);
     }
 
     @Override
