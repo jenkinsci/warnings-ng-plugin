@@ -6,7 +6,6 @@ import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.jenkinsci.plugins.scriptsecurity.sandbox.RejectedAccessException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -46,43 +45,6 @@ public class DynamicParserTest extends PhpParserTest {
               + "        }\n"
               + "        return new Warning(fileName, Integer.parseInt(start), \"PHP Runtime\", category, message, priority);\n",
               TYPE, TYPE);
-    }
-
-    /**
-     * Checks that a dynamic parser with only methods from the whitelist correctly detects some warnings.
-     *
-     * @throws IOException
-     *      if the file could not be read
-     */
-    @Test
-    public void shouldBeAcceptedBySandbox() throws IOException {
-        String legalScript = "import hudson.plugins.warnings.parser.Warning\n"
-                + "import hudson.plugins.analysis.util.model.Priority;\n"
-                + "String all = matcher.group(1);\n"
-                + "Priority test = Priority.NORMAL;\n"
-                + "return new Warning(all, 42, all, all, all);";
-
-        DynamicParser sandboxOk = new DynamicParser("sandbox", "(.*)", legalScript, TYPE, TYPE);
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 8,
-                sandboxOk.parse(openFile("issue11926.txt")).size());
-    }
-
-    /**
-     * Checks that a dynamic parser with a blacklisted method throws an exception.
-     *
-     * @throws IOException
-     *      if the file could not be read
-     */
-    @Test(expected = RejectedAccessException.class)
-    public void shouldBeRefusedBySandbox() throws IOException {
-        String illegalScript = "import hudson.plugins.warnings.parser.Warning\n"
-                + "import hudson.plugins.analysis.util.model.Priority;\n"
-                + "String all = matcher.group(1);\n"
-                + "Priority test = Priority.fromString('NORMAL');\n" // not on whitelist!!
-                + "return new Warning(all, 42, all, all, all);";
-
-        DynamicParser sandboxRejected = new DynamicParser("sandbox", "(.*)", illegalScript, TYPE, TYPE);
-        sandboxRejected.parse(openFile("issue11926.txt"));
     }
 
     /**

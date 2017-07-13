@@ -5,7 +5,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import org.jvnet.localizer.Localizable;
 
 import hudson.plugins.analysis.util.PackageDetectors;
@@ -127,7 +126,6 @@ public abstract class RegexpParser extends AbstractWarningsParser implements War
      *            the message to check
      * @return warning category, empty string if unknown
      */
-    @Whitelisted
     protected String classifyWarning(final String message) {
         if (StringUtils.contains(message, "proprietary")) {
             return PROPRIETARY_API;
@@ -149,7 +147,6 @@ public abstract class RegexpParser extends AbstractWarningsParser implements War
      *
      * @return the actual category
      */
-    @Whitelisted
     protected String classifyIfEmpty(final String group, final String message) {
         String category = StringUtils.capitalize(group);
         if (StringUtils.isEmpty(category)) {
