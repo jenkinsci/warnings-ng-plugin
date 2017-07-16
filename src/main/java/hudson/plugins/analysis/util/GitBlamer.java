@@ -1,6 +1,7 @@
 package hudson.plugins.analysis.util;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,13 +11,16 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.blame.BlameResult;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.jenkinsci.plugins.gitclient.Git;
 import org.jenkinsci.plugins.gitclient.GitClient;
+import org.jenkinsci.plugins.gitclient.RepositoryCallback;
 
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.model.TaskListener;
+import hudson.remoting.VirtualChannel;
 
 /**
  * Assigns git blames to warnings. Based on the solution by John Gibson, see JENKINS-6748.
@@ -51,42 +55,7 @@ public class GitBlamer extends AbstractBlamer {
     private Map<String, BlameResult> loadBlameResultsForFiles(final Map<String, BlameRequest> linesOfConflictingFiles)
             throws InterruptedException, IOException {
         GitClient git = Git.with(getListener(), getEnvironment()).in(getWorkspace()).using(pathToGit).getClient();
-
-        ObjectId headCommit = getHead(git);
-
-        Map<String, BlameResult> blameResults = new HashMap<String, BlameResult>();
-        if (headCommit == null) {
-            error("Could not retrieve HEAD commit, aborting.");
-
-            return blameResults;
-        }
-
-        for (BlameRequest request : linesOfConflictingFiles.values()) {
-            BlameCommand blame = new BlameCommand(git.getRepository());
-            String fileName = request.getFileName();
-            blame.setFilePath(fileName);
-            blame.setStartCommit(headCommit);
-            try {
-                BlameResult result = blame.call();
-                if (result == null) {
-                    log("No blame results for request <%s>.%n", request);
-                }
-                else {
-                    blameResults.put(fileName, result);
-                }
-                if (Thread.interrupted()) {
-                    String message = "Thread was interrupted while computing blame information.";
-                    log(message);
-                    throw new InterruptedException(message);
-                }
-            }
-            catch (GitAPIException e) {
-                String message = "Error running git blame on " + fileName + " with revision: " + headCommit;
-                error(message);
-            }
-        }
-
-        return blameResults;
+        return git.withRepository(new BlameCallback(this, getHead(git), linesOfConflictingFiles.values()));
     }
 
     private ObjectId getHead(final GitClient git) throws InterruptedException {
@@ -135,6 +104,55 @@ public class GitBlamer extends AbstractBlamer {
             }
         }
         return linesOfConflictingFiles;
+    }
+
+    private static class BlameCallback implements RepositoryCallback<Map<String, BlameResult>> {
+        private GitBlamer gitBlamer;
+        private ObjectId headCommit;
+        private Collection<BlameRequest> requests;
+
+        public BlameCallback(final GitBlamer gitBlamer, final ObjectId headCommit, final Collection<BlameRequest> requests) {
+            this.gitBlamer = gitBlamer;
+            this.headCommit = headCommit;
+            this.requests = requests;
+        }
+
+        @Override
+        public Map<String, BlameResult> invoke(final Repository repo, final VirtualChannel channel) throws IOException, InterruptedException {
+            Map<String, BlameResult> blameResults = new HashMap<String, BlameResult>();
+            if (headCommit == null) {
+                gitBlamer.error("Could not retrieve HEAD commit, aborting.");
+
+                return blameResults;
+            }
+
+            for (BlameRequest request : requests) {
+                BlameCommand blame = new BlameCommand(repo);
+                String fileName = request.getFileName();
+                blame.setFilePath(fileName);
+                blame.setStartCommit(headCommit);
+                try {
+                    BlameResult result = blame.call();
+                    if (result == null) {
+                        gitBlamer.log("No blame results for request <%s>.%n", request);
+                    }
+                    else {
+                        blameResults.put(fileName, result);
+                    }
+                    if (Thread.interrupted()) {
+                        String message = "Thread was interrupted while computing blame information.";
+                        gitBlamer.log(message);
+                        throw new InterruptedException(message);
+                    }
+                }
+                catch (GitAPIException e) {
+                    String message = "Error running git blame on " + fileName + " with revision: " + headCommit;
+                    gitBlamer.error(message);
+                }
+            }
+
+            return blameResults;
+        }
     }
 
 //    /**
