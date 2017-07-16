@@ -61,15 +61,33 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
         addAnnotations(annotations);
     }
 
+    /**
+     * Returns whether author and commit information should be shown or not.
+     *
+     * @return on <code>true</code> the SCM will be called to obtain author and commit information,
+     * on <code>false</code> author and commit information are omitted
+     */
     public boolean useAuthors() {
         return !GlobalSettings.instance().getNoAuthors();
     }
 
+    /**
+     * Return the relative URL to navigate to the specified build from this detail view.
+     *
+     * @param buildNumber the build number
+     * @return the relative URL
+     */
     public String getBuildUrl(final int buildNumber) {
         int backward = StringUtils.countMatches(getUrl(), "/");
         return StringUtils.repeat("../", backward + 2) + buildNumber;
     }
 
+    /**
+     * Return the age of a warning given as number of builds since the first occurence.
+     *
+     * @param buildNumber the build number
+     * @return the age
+     */
     public int getAge(final int buildNumber) {
         return getOwner().getNumber() - buildNumber + 1;
     }
@@ -172,10 +190,6 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      */
     public Priority[] getPriorities() {
         return Priority.values();
-    }
-
-    public boolean showAuthors() {
-    return !GlobalSettings.instance().getNoAuthors();
     }
 
     /**
