@@ -1,7 +1,9 @@
 package hudson.plugins.analysis.util;
 
+import javax.annotation.CheckForNull;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +22,7 @@ import org.jenkinsci.plugins.gitclient.RepositoryCallback;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.model.TaskListener;
+import hudson.plugins.git.GitException;
 import hudson.remoting.VirtualChannel;
 
 /**
@@ -55,21 +58,32 @@ public class GitBlamer extends AbstractBlamer {
     private Map<String, BlameResult> loadBlameResultsForFiles(final Map<String, BlameRequest> linesOfConflictingFiles)
             throws InterruptedException, IOException {
         GitClient git = Git.with(getListener(), getEnvironment()).in(getWorkspace()).using(pathToGit).getClient();
-        return git.withRepository(new BlameCallback(this, getHead(git), linesOfConflictingFiles.values()));
+        ObjectId headCommit = getHead(git);
+        if (headCommit == null) {
+            return Collections.emptyMap();
+        }
+        return git.withRepository(new BlameCallback(this, headCommit, linesOfConflictingFiles.values()));
     }
 
+    @CheckForNull
     private ObjectId getHead(final GitClient git) throws InterruptedException {
-        String gitCommit = getEnvironment().get("GIT_COMMIT");
-        ObjectId headCommit;
-        if (StringUtils.isBlank(gitCommit)) {
-            log("No GIT_COMMIT environment variable found, using HEAD.%n");
+        try {
+            String gitCommit = getEnvironment().get("GIT_COMMIT");
+            ObjectId headCommit;
+            if (StringUtils.isBlank(gitCommit)) {
+                log("No GIT_COMMIT environment variable found, using HEAD.%n");
 
-            headCommit = git.revParse("HEAD");
+                headCommit = git.revParse("HEAD");
+            }
+            else {
+                headCommit = git.revParse(gitCommit);
+            }
+            return headCommit;
         }
-        else {
-            headCommit = git.revParse(gitCommit);
+        catch (GitException exception) {
+            log("Can't determine head commit using 'git rev-parse'. Skipping blame. %n%s%n", exception.getMessage());
+            return null;
         }
-        return headCommit;
     }
 
     private Map<String, BlameRequest> fillBlameResults(final Map<String, BlameRequest> linesOfConflictingFiles,
