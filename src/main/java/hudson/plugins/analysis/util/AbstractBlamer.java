@@ -10,7 +10,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import jenkins.MasterToSlaveFileCallable;
 
-import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -22,19 +21,16 @@ import hudson.remoting.VirtualChannel;
  * @author Lukas Krose
  */
 public abstract class AbstractBlamer implements Blamer {
-    private final EnvVars environment;
     private final FilePath workspace;
     private final TaskListener listener;
 
     /**
      * Creates a new blamer.
      *
-     * @param environment {@link EnvVars environment} of the build
-     * @param workspace   workspace of the build
-     * @param listener    task listener to print logging statements to
+     * @param workspace workspace of the repository
+     * @param listener  task listener to print logging statements to
      */
-    public AbstractBlamer(final EnvVars environment, final FilePath workspace, final TaskListener listener) {
-        this.environment = environment;
+    public AbstractBlamer(final FilePath workspace, final TaskListener listener) {
         this.workspace = workspace;
         this.listener = listener;
     }
@@ -183,14 +179,5 @@ public abstract class AbstractBlamer implements Blamer {
      */
     protected TaskListener getListener() {
         return listener;
-    }
-
-    /**
-     * Returns the environment on the agent.
-     *
-     * @return the environment
-     */
-    protected EnvVars getEnvironment() {
-        return environment;
     }
 }

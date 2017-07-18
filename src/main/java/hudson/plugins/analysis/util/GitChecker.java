@@ -2,6 +2,8 @@ package hudson.plugins.analysis.util;
 
 import java.io.IOException;
 
+import org.jenkinsci.plugins.gitclient.GitClient;
+
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.model.AbstractBuild;
@@ -53,10 +55,19 @@ public class GitChecker {
      */
     public Blamer createBlamer(final AbstractBuild build, final SCM scm, final FilePath workspace,
             final TaskListener listener) {
-        GitSCM git = asGit(scm);
-        String gitExe = git.getGitExe(build.getBuiltOn(), listener);
+        try {
+            GitClient gitClient = asGit(scm).createClient(listener, getEnvironment(build, listener), build, workspace);
+            String gitCommit = getEnvironment(build, listener).get("GIT_COMMIT");
 
-        return new GitBlamer(gitExe, getEnvironment(build, listener), workspace, listener);
+            return new GitBlamer(gitClient, gitCommit, listener);
+        }
+        catch (IOException e) {
+            return new NullBlamer();
+        }
+        catch (InterruptedException e) {
+            return new NullBlamer();
+        }
+
     }
 
     private EnvVars getEnvironment(final AbstractBuild build, final TaskListener listener) {

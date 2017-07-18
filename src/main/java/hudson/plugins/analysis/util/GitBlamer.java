@@ -15,12 +15,9 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.jenkinsci.plugins.gitclient.Git;
 import org.jenkinsci.plugins.gitclient.GitClient;
 import org.jenkinsci.plugins.gitclient.RepositoryCallback;
 
-import hudson.EnvVars;
-import hudson.FilePath;
 import hudson.model.TaskListener;
 import hudson.plugins.git.GitException;
 import hudson.remoting.VirtualChannel;
@@ -32,22 +29,24 @@ import hudson.remoting.VirtualChannel;
  * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-6748">Issue 6748</a>
  */
 public class GitBlamer extends AbstractBlamer {
-    private final String pathToGit;
+    private final GitClient git;
+    private final String gitCommit;
 
     /**
      * Creates a new blamer for Git.
      *
-     * @param pathToGit   path to git binary
-     * @param environment {@link EnvVars environment} of the build
-     * @param workspace   workspace of the build
-     * @param listener    task listener to print logging statements to
+     * @param git       git client
+     * @param gitCommit content of environment variable GIT_COMMIT
+     * @param listener  task listener to print logging statements to
      */
-    public GitBlamer(final String pathToGit, final EnvVars environment, FilePath workspace, final TaskListener listener) {
-        super(environment, workspace, listener);
-        this.pathToGit = pathToGit;
+    public GitBlamer(final GitClient git, @CheckForNull final String gitCommit, final TaskListener listener) {
+        super(git.getWorkTree(), listener);
+
+        this.git = git;
+        this.gitCommit = StringUtils.defaultString(gitCommit, "HEAD");
 
         log("Using GitBlamer to create author and commit information for all warnings.%n");
-        log("Getting blame results for all files in %s.%n", workspace);
+        log("GIT_COMMIT=%s, workspace=%s%n", gitCommit, git.getWorkTree());
     }
 
     @Override
@@ -57,32 +56,14 @@ public class GitBlamer extends AbstractBlamer {
 
     private Map<String, BlameResult> loadBlameResultsForFiles(final Map<String, BlameRequest> linesOfConflictingFiles)
             throws InterruptedException, IOException {
-        GitClient git = Git.with(getListener(), getEnvironment()).in(getWorkspace()).using(pathToGit).getClient();
-        ObjectId headCommit = getHead(git);
-        if (headCommit == null) {
-            return Collections.emptyMap();
-        }
-        return git.withRepository(new BlameCallback(this, headCommit, linesOfConflictingFiles.values()));
-    }
-
-    @CheckForNull
-    private ObjectId getHead(final GitClient git) throws InterruptedException {
         try {
-            String gitCommit = getEnvironment().get("GIT_COMMIT");
-            ObjectId headCommit;
-            if (StringUtils.isBlank(gitCommit)) {
-                log("No GIT_COMMIT environment variable found, using HEAD.%n");
-
-                headCommit = git.revParse("HEAD");
-            }
-            else {
-                headCommit = git.revParse(gitCommit);
-            }
-            return headCommit;
+            ObjectId headCommit = git.revParse(gitCommit);
+            return git.withRepository(new BlameCallback(this, headCommit, linesOfConflictingFiles.values()));
         }
         catch (GitException exception) {
             log("Can't determine head commit using 'git rev-parse'. Skipping blame. %n%s%n", exception.getMessage());
-            return null;
+
+            return Collections.emptyMap();
         }
     }
 
