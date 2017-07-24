@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
   xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
   <j:if test="${from.isTrendVisible(request)}">
-    <div align="right">
+    <div align="right" style="position:relative; z-index:1">
       <div class="test-trend-caption">
         ${from.trendName}
       </div>
