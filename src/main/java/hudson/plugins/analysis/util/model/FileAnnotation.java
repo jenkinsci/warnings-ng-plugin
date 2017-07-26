@@ -127,11 +127,39 @@ public interface FileAnnotation extends Comparable<FileAnnotation> {
     String getPackageName();
 
     /**
+     * Returns the category name for package if set.
+     *
+     * @return the name of the package category that contains this annotation
+     */
+    String getOverridePackageCategoryName();
+
+    /**
+     * Returns the category title for package if set.
+     *
+     * @return the title of the package category that contains this annotation
+     */
+    String getOverridePackageCategoryTitle();
+
+    /**
      * Returns whether a package name is defined for this annotation.
      *
      * @return <code>true</code> if this annotation has a package or namespace name, <code>false</code> otherwise
      */
     boolean hasPackageName();
+
+    /**
+     * Returns whether a override package category name is defined for this annotation.
+     *
+     * @return <code>true</code> if this annotation has a override package category name, <code>false</code> otherwise
+     */
+    boolean hasOverridePackageCategoryName();
+
+    /**
+     * Returns whether a override package category title is defined for this annotation.
+     *
+     * @return <code>true</code> if this annotation has a override package category title set, <code>false</code> otherwise
+     */
+    boolean hasOverridePackageCategoryTitle();
 
     /**
      * Returns the path name of this annotation (relative path to the affected file).

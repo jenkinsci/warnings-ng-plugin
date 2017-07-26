@@ -613,6 +613,9 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
                 return Messages.NamespaceDetail_header();
             }
             if (annotation.hasPackageName()) {
+                if (annotation.hasOverridePackageCategoryName()) {
+                    return annotation.getOverridePackageCategoryName();
+                }
                 return Messages.PackageDetail_header();
             }
             else {
@@ -635,6 +638,9 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
                 return Messages.NamespaceDetail_title();
             }
             if (annotation.hasPackageName()) {
+                if (annotation.hasOverridePackageCategoryTitle()) {
+                    return annotation.getOverridePackageCategoryTitle();
+                }
                 return Messages.PackageDetail_title();
             }
             else {
