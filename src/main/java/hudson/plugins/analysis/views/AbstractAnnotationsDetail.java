@@ -10,6 +10,8 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 
+import hudson.markup.MarkupFormatter;
+import hudson.markup.RawHtmlMarkupFormatter;
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
 import hudson.model.Run;
@@ -35,6 +37,9 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
 
     /** The factory to create detail objects with. */
     private final DetailFactory detailFactory;
+
+    /** Sanitizes HTML elements in warning messages and tooltips. Use this formatter if raw HTML should be shown. */
+    private final MarkupFormatter sanitizer = new RawHtmlMarkupFormatter(true);
 
     /**
      * Creates a new instance of {@link AbstractAnnotationsDetail}.
@@ -69,6 +74,21 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      */
     public boolean useAuthors() {
         return !GlobalSettings.instance().getNoAuthors();
+    }
+
+    /**
+     * Sanitizes HTML elements in the specified HTML page so that the result contains only safe HTML tags.
+     *
+     * @param html the HTML page
+     * @return the sanitized HTML page
+     */
+    public String sanitize(final String html) {
+        try {
+            return sanitizer.translate(html);
+        }
+        catch (IOException e) {
+            return StringUtils.EMPTY;
+        }
     }
 
     /**

@@ -30,6 +30,8 @@
     <orderEntry type="library" name="Maven: joda-time:joda-time:1.6" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:structs:1.2" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci:symbol-annotation:1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:antisamy-markup-formatter:1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.kohsuke:owasp-html-sanitizer:r88" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:git:3.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:git-client:2.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jgit:org.eclipse.jgit:4.5.0.201609210915-r" level="project" />
@@ -240,8 +242,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.antlr:antlr-runtime:3.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: de.regnis.q.sequence:sequence-library:1.0.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:matrix-auth:1.0.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:antisamy-markup-formatter:1.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.kohsuke:owasp-html-sanitizer:r88" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:junit:1.2-beta-4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mortbay.jetty:jetty:6.1.26" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mortbay.jetty:jetty-util:6.1.26" level="project" />
