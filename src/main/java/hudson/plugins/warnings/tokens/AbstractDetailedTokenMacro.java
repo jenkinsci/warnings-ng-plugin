@@ -66,7 +66,7 @@ public abstract class AbstractDetailedTokenMacro extends AbstractTokenMacro {
     }
 
     protected String evalWarnings(final BuildResult result, Collection<FileAnnotation> warnings) {
-        String messages = "";
+        StringBuilder message = new StringBuilder();
 
         if (modules.isEmpty()) {
             modules.add("all");
@@ -102,39 +102,46 @@ public abstract class AbstractDetailedTokenMacro extends AbstractTokenMacro {
             if (tmp.length() > 0) {
                 String ind = (indent > 0) ? StringUtils.repeat(" ", indent) : "";
 
-                messages += ind;
-                messages += heading + "\n";
+                message.append(ind);
+                message.append(heading);
+                message.append("\n");
 
-                messages += ind;
-                messages += StringUtils.repeat(linechar, heading.length()) + "\n";
+                message.append(ind);
+                message.append(StringUtils.repeat(linechar, heading.length()));
+                message.append("\n");
 
-                messages += tmp;
-                messages += "\n";
+                message.append(tmp);
+                message.append("\n");
             }
         }
 
-        return messages;
+        return message.toString();
     }
 
     private String createMessage(FileAnnotation annotation) {
         String ind = (indent > 0) ? StringUtils.repeat(" ", indent) : "";
-        String message = ind;
+        StringBuilder message = new StringBuilder();
+        message.append(ind);
 
         if (annotation.getPrimaryLineNumber() > 0) {
-            message += annotation.getFileName().replaceAll("^.*workspace/", "");
-            message += ":" + annotation.getPrimaryLineNumber() + " ";
+            message.append(annotation.getFileName().replaceAll("^.*workspace/", ""));
+            message.append(":");
+            message.append(annotation.getPrimaryLineNumber());
+            message.append(" ");
         }
 
-        message += annotation.getMessage().replace("<br>", "\n" + ind) + "\n";
+        message.append(annotation.getMessage().replace("<br>", "\n" + ind));
+        message.append("\n");
 
         String toolTip;
         toolTip = annotation.getToolTip().replace("<br>", "\n");
 
         if (toolTip != null) {
             toolTip = ind + toolTip.replace("\n", "\n" + ind).trim();
-            message += toolTip + "\n";
+            message.append(toolTip);
+            message.append("\n");
         }
 
-        return message;
+        return message.toString();
     }
 }
