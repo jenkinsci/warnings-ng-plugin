@@ -12,14 +12,14 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Tests the class {@link LinuxKernelOutputParser}.
+ * @author Benedikt Spranger
+ *
  */
 public class LinuxKernelOutputParserTest extends ParserTester {
     private static final String TYPE = new LinuxKernelOutputParser().getGroup();
 
     /**
      * Parse a kernel log file.
-     *
-     * @author Benedikt Spranger
      *
      * @throws IOException
      *      if the file could not be read
