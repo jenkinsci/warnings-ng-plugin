@@ -34,7 +34,7 @@ warnings.cc:14:   instantiated from here
 warnings.cc:6: warning: passing 'Test' chooses 'int' over 'unsigned int'
 warnings.cc:6: warning:   in call to 'std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(int) [with _CharT = char, _Traits = std::char_traits<char>]'
 
-make[2]: Entering directory '/dir1/dir2/dir3'
+make: Entering directory '/dir1/dir2/dir3'
 =============== Issue 5605
 In file included from /usr/include/c++/4.3/backward/hash_set:64,
                  from /usr/include/boost/graph/adjacency_list.hpp:25,
@@ -46,6 +46,6 @@ fo:oo.cpp: In function 'int main()':
 fo:oo.cpp:8: error: 'bar' was not declared in this scope
 fo:oo.cpp:12: error: expected ';' before 'return'
 foo bar.hello*world:12:
-make[2]: Leaving directory '/dir1/dir2/dir3'
+make: Leaving directory '/dir1/dir2/dir3'
 make[1]: Leaving directory `/dir1/dir2'
 make[0]: Leaving directory `/dir1'

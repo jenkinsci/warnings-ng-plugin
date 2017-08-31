@@ -25,7 +25,7 @@ public class GnuMakeGccParser extends RegexpLineParser {
             + "(?:.*\\[.*\\])?\\s*" // ANT_TASK
             + "(.*\\.[chpimxsola0-9]+):(\\d+):(?:\\d+:)? (warning|error): (.*)$" // GCC 4 warning
             + ")|("
-            + "(^g?make\\[.*\\]: Entering directory)\\s*(['`]((.*))\\')" // handle make entering directory
+            + "(^g?make(\\[.*\\])?: Entering directory)\\s*(['`]((.*))\\')" // handle make entering directory
             + ")";
     private String directory = "";
 
@@ -77,7 +77,7 @@ public class GnuMakeGccParser extends RegexpLineParser {
     }
 
     private Warning handleDirectory(final Matcher matcher) {
-        directory = matcher.group(9) + SLASH;
+        directory = matcher.group(10) + SLASH;
 
         return FALSE_POSITIVE;
     }
