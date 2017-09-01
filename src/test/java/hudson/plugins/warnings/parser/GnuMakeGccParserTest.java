@@ -22,14 +22,48 @@ public class GnuMakeGccParserTest extends ParserTester {
     private static final String WARNING_TYPE = new GnuMakeGccParser().getGroup();
 
     /**
-     * Test of createWarning method, of class {@link GnuMakeGccParser}.
+     * Test of createWarning methodof class {@link GnuMakeGccParser}, on non-windows OS
      *
      * @throws IOException
      *             in case of an error
      */
     @Test
-    public void testCreateWarning() throws IOException {
-        Collection<FileAnnotation> warnings = new GnuMakeGccParser().parse(openFile());
+    public void testCreateWarning_NonWindows() throws IOException {
+        testForOneOs("Ubuntu", "/c", false);
+    }
+
+    /**
+     * Test of createWarning method of class {@link GnuMakeGccParser} for windows
+     *
+     * @throws IOException
+     *             in case of an error
+     */
+    @Test
+    public void testCreateWarning_Windows() throws IOException {
+        testForOneOs("Windows", "c:", false);
+    }
+
+    /**
+     * Make sure it works also with the default constructor, which autodetects the OS
+     *
+     * @throws IOException
+     *             in case of an error
+     */
+    @Test
+    public void testCreateWarning_AutoDetectOS() throws IOException {
+        testForOneOs("", "", true);
+    }
+
+    private void testForOneOs(String os, String rootDir, boolean autoDetect) throws IOException {
+        Collection<FileAnnotation> warnings;
+        if (autoDetect)
+        {
+             warnings = new GnuMakeGccParser().parse(openFile());
+        }
+        else
+        {
+            warnings = new GnuMakeGccParser(os).parse(openFile());   
+        }
 
         assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 13, warnings.size());
 
@@ -69,21 +103,31 @@ public class GnuMakeGccParserTest extends ParserTester {
                 "large integer implicitly truncated to unsigned type",
                 "/dir1/src/test_simple_sgs_message.cxx",
                 WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
-        checkWarning(iterator.next(),
-                352,
-                "'s2.mepSector2::lubrications' may be used uninitialized in this function",
-                "/dir1/dir2/main/mep.cpp",
-                WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
-        checkWarning(iterator.next(),
-                6,
-                "passing 'Test' chooses 'int' over 'unsigned int'",
-                "/dir1/dir2/warnings.cc",
-                WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
-        checkWarning(iterator.next(),
-                6,
-                "in call to 'std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(int) [with _CharT = char, _Traits = std::char_traits<char>]'",
-                "/dir1/dir2/warnings.cc",
-                WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
+        //Different things can happen here depending on OS, so we cant know what happens if we're autodetecting
+        if (autoDetect)
+        {
+            iterator.next();
+            iterator.next();
+            iterator.next();
+        }
+        else
+        {
+            checkWarning(iterator.next(),
+                    352,
+                    "'s2.mepSector2::lubrications' may be used uninitialized in this function",
+                    rootDir + "/dir2/main/mep.cpp",
+                    WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
+            checkWarning(iterator.next(),
+                    6,
+                    "passing 'Test' chooses 'int' over 'unsigned int'",
+                    rootDir + "/dir2/warnings.cc",
+                    WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
+            checkWarning(iterator.next(),
+                    6,
+                    "in call to 'std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(int) [with _CharT = char, _Traits = std::char_traits<char>]'",
+                    rootDir + "/dir2/warnings.cc",
+                    WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
+        }
         checkWarning(iterator.next(),
                 33,
                 "#warning This file includes at least one deprecated or antiquated header which may be removed without further notice at a future date. Please use a non-deprecated interface with equivalent functionality instead. For a listing of replacement headers and interfaces, consult the file backward_warning.h. To disable this warning use -Wno-deprecated.",

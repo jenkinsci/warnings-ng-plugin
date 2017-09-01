@@ -14,7 +14,7 @@ foo.so: undefined reference to 'missing_symbol'
 
 src/test_simple_sgs_message.cxx:52: warning: large integer implicitly truncated to unsigned type
 
-make[1]: Entering directory `/dir1/dir2'
+make[1]: Entering directory `/c/dir2'
 
 ================ Issue 3897 (not valid gcc4 errors -> should be undetected)
 /dir1/dir2/file.c:12:15: file.h: No such file or directory

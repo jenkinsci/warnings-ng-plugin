@@ -29,14 +29,25 @@ public class GnuMakeGccParser extends RegexpLineParser {
             + ")";
     private String directory = "";
 
+    private boolean isWindows;
+
     /**
      * Creates a new instance of {@link GnuMakeGccParser}.
      */
     public GnuMakeGccParser() {
+        this(System.getProperty("os.name"));
+    }
+
+    /**
+     * Creates a new instance of {@link GnuMakeGccParser} assuming the operating system given in os
+     * @param os A string representing the operating system - mainly used for faking
+     */
+    public GnuMakeGccParser(final String os) {
         super(Messages._Warnings_GnuMakeGcc_ParserName(),
                 Messages._Warnings_GnuMakeGcc_LinkName(),
                 Messages._Warnings_GnuMakeGcc_TrendName(),
                 GNUMAKEGCC_WARNING_PATTERN);
+        isWindows = os.toLowerCase().contains("windows");
     }
 
     @Override
@@ -76,8 +87,20 @@ public class GnuMakeGccParser extends RegexpLineParser {
         }
     }
 
+    private String fixMsysTypeDirectory(String directory)
+    {
+        if (isWindows && directory.matches("/[a-z]/.*"))
+        {
+            //MSYS make on Windows replaces the drive letter and colon (C:) with unix-type absolute paths (/c/)
+            //Reverse this operation here
+            directory = directory.substring(1, 2) + ":" + directory.substring(2);
+        }
+        return directory;
+    }
+
     private Warning handleDirectory(final Matcher matcher) {
         directory = matcher.group(10) + SLASH;
+        directory = fixMsysTypeDirectory(directory);
 
         return FALSE_POSITIVE;
     }
