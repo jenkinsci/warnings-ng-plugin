@@ -40,6 +40,7 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Builder;
 import hudson.tasks.Maven;
 import hudson.tasks.Recorder;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -1060,11 +1061,17 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         public MatrixAggregator createAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
             final List<MatrixAggregator> impls = new ArrayList<MatrixAggregator>();
             for (HealthAwareRecorder r : build.getParent().getPublishersList().getAll(HealthAwareRecorder.class)) {
-                if (r instanceof MatrixAggregatable) {
-                    MatrixAggregator impl = ((MatrixAggregatable) r).createAggregator(build, launcher, listener);
+                try {
+                    MatrixAggregator impl = (MatrixAggregator) r.getClass().getMethod("createAggregator", MatrixBuild.class, Launcher.class, BuildListener.class).invoke(r, build, launcher, listener);
                     if (impl != null) {
                         impls.add(impl);
                     }
+                } catch (NoSuchMethodException x) {
+                    // does not implement it, fine
+                } catch (IllegalAccessException x) {
+                    assert false : x;
+                } catch (InvocationTargetException x) {
+                    assert false : x;
                 }
             }
             if (impls.isEmpty()) {
