@@ -121,7 +121,7 @@ public class GnuMakeGccParserTest extends ParserTester {
      */
     @Test
     public void checkCorrectPath_NonWindows() throws IOException {
-        testOsSpecificPath("Ubuntu", "/c");
+        checkOsSpecificPath("Ubuntu", "/c");
     }
 
     /**
@@ -133,7 +133,7 @@ public class GnuMakeGccParserTest extends ParserTester {
      */
     @Test
     public void checkCorrectPath_Windows() throws IOException {
-        testOsSpecificPath("Windows NT", "c:");
+        checkOsSpecificPath("Windows NT", "c:");
     }
 
     /** 
