@@ -20,54 +20,24 @@ public class GnuMakeGccParserTest extends ParserTester {
     private static final String WARNING_CATEGORY = "Warning";
     private static final String ERROR_CATEGORY = "Error";
     private static final String WARNING_TYPE = new GnuMakeGccParser().getGroup();
+    private static final int NUMBER_OF_TESTS = 15;
+
 
     /**
-     * Test of createWarning methodof class {@link GnuMakeGccParser}, on non-windows OS
+     * Test of createWarning method of class {@link GnuMakeHexParser}
+     * No specifc OS is assumed
      *
      * @throws IOException
      *             in case of an error
      */
     @Test
-    public void testCreateWarning_NonWindows() throws IOException {
-        testForOneOs("Ubuntu", "/c", false);
-    }
+    public void testCreateWarning() throws IOException {
+        Collection<FileAnnotation> warnings = new GnuMakeGccParser().parse(openFile());
 
-    /**
-     * Test of createWarning method of class {@link GnuMakeGccParser} for windows
-     *
-     * @throws IOException
-     *             in case of an error
-     */
-    @Test
-    public void testCreateWarning_Windows() throws IOException {
-        testForOneOs("Windows", "c:", false);
-    }
-
-    /**
-     * Make sure it works also with the default constructor, which autodetects the OS
-     *
-     * @throws IOException
-     *             in case of an error
-     */
-    @Test
-    public void testCreateWarning_AutoDetectOS() throws IOException {
-        testForOneOs("", "", true);
-    }
-
-    private void testForOneOs(String os, String rootDir, boolean autoDetect) throws IOException {
-        Collection<FileAnnotation> warnings;
-        if (autoDetect)
-        {
-             warnings = new GnuMakeGccParser().parse(openFile());
-        }
-        else
-        {
-            warnings = new GnuMakeGccParser(os).parse(openFile());   
-        }
-
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 13, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, NUMBER_OF_TESTS, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
+
         checkWarning(iterator.next(),
                 451,
                 "'void yyunput(int, char*)' defined but not used",
@@ -103,31 +73,21 @@ public class GnuMakeGccParserTest extends ParserTester {
                 "large integer implicitly truncated to unsigned type",
                 "/dir1/src/test_simple_sgs_message.cxx",
                 WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
-        //Different things can happen here depending on OS, so we cant know what happens if we're autodetecting
-        if (autoDetect)
-        {
-            iterator.next();
-            iterator.next();
-            iterator.next();
-        }
-        else
-        {
-            checkWarning(iterator.next(),
-                    352,
-                    "'s2.mepSector2::lubrications' may be used uninitialized in this function",
-                    rootDir + "/dir2/main/mep.cpp",
-                    WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
-            checkWarning(iterator.next(),
-                    6,
-                    "passing 'Test' chooses 'int' over 'unsigned int'",
-                    rootDir + "/dir2/warnings.cc",
-                    WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
-            checkWarning(iterator.next(),
-                    6,
-                    "in call to 'std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(int) [with _CharT = char, _Traits = std::char_traits<char>]'",
-                    rootDir + "/dir2/warnings.cc",
-                    WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
-        }
+        checkWarning(iterator.next(),
+                352,
+                "'s2.mepSector2::lubrications' may be used uninitialized in this function",
+                "/dir1/dir2/main/mep.cpp",
+                WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
+        checkWarning(iterator.next(),
+                6,
+                "passing 'Test' chooses 'int' over 'unsigned int'",
+                "/dir1/dir2/warnings.cc",
+                WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
+        checkWarning(iterator.next(),
+                6,
+                "in call to 'std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(int) [with _CharT = char, _Traits = std::char_traits<char>]'",
+                "/dir1/dir2/warnings.cc",
+                WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
         checkWarning(iterator.next(),
                 33,
                 "#warning This file includes at least one deprecated or antiquated header which may be removed without further notice at a future date. Please use a non-deprecated interface with equivalent functionality instead. For a listing of replacement headers and interfaces, consult the file backward_warning.h. To disable this warning use -Wno-deprecated.",
@@ -143,7 +103,59 @@ public class GnuMakeGccParserTest extends ParserTester {
                 "expected ';' before 'return'",
                 "/dir1/dir2/dir3/fo:oo.cpp",
                 WARNING_TYPE, ERROR_CATEGORY, Priority.HIGH);
+        checkWarning(iterator.next(),
+                5,
+                "Your code is bad, and you should feel bad!",
+                "/dir4/zoidberg.c",
+                WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
+        //Next test is OS-specific, so just skip it
+        iterator.next();
+        //Place new tests after this line
     }
+
+    /**
+     * Checks that the root of the path is not changed on non-windows systems
+     *
+     * @throws IOException
+     *             in case of an error
+     */
+    @Test
+    public void checkCorrectPath_NonWindows() throws IOException {
+        testOsSpecificPath("Ubuntu", "/c");
+    }
+
+    /**
+     * Checks that the root of the path is fixed if it is unix-type while
+     * running on windows.
+     *
+     * @throws IOException
+     *             in case of an error
+     */
+    @Test
+    public void checkCorrectPath_Windows() throws IOException {
+        testOsSpecificPath("Windows NT", "c:");
+    }
+
+    /** 
+    * Checks that paths of the type "/c/anything" are changed to "c:/anything" on windows but no other OS
+    */
+    private void checkOsSpecificPath(String os, String rootDir) throws IOException {
+
+        Collection<FileAnnotation> warnings = new GnuMakeGccParser(os).parse(openFile());
+        Iterator<FileAnnotation> iterator = warnings.iterator();
+        for (int i = 0; i < 14; i++) //Skip the first 14 warnings, we are only interested in the 15th one
+        {
+            iterator.next(); 
+        }
+
+        checkWarning(iterator.next(),
+                20,
+                "I'm warning you! He's got huge, sharp... er... He can leap about.",
+                rootDir + "/dir5/grail.cpp",
+                WARNING_TYPE, WARNING_CATEGORY, Priority.NORMAL);
+
+    }
+
 
     @Override
     protected String getWarningsFile() {
