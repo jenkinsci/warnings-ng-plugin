@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -39,7 +40,7 @@ public class WarningsMultiBranchTest {
      *
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-31202">Issue 31202</a>
      */
-    @Test 
+    @Test @Ignore("Does not run on CI job")
     public void testIssue31202() throws Exception {
         sampleRepo.init();
         sampleRepo.write("Jenkinsfile", "" 
@@ -74,12 +75,12 @@ public class WarningsMultiBranchTest {
         WebAssert.assertTextPresent(page, "Configure");
     }
 
-    public static @Nonnull WorkflowJob scheduleAndFindBranchProject(@Nonnull WorkflowMultiBranchProject mp, @Nonnull String name) throws Exception {
+    private static @Nonnull WorkflowJob scheduleAndFindBranchProject(@Nonnull WorkflowMultiBranchProject mp, @Nonnull String name) throws Exception {
         mp.scheduleBuild2(0).getFuture().get();
         return findBranchProject(mp, name);
     }
 
-    public static @Nonnull WorkflowJob findBranchProject(@Nonnull WorkflowMultiBranchProject mp, @Nonnull String name) throws Exception {
+    private static @Nonnull WorkflowJob findBranchProject(@Nonnull WorkflowMultiBranchProject mp, @Nonnull String name) throws Exception {
         WorkflowJob p = mp.getItem(name);
         showIndexing(mp);
         if (p == null) {
@@ -88,7 +89,7 @@ public class WarningsMultiBranchTest {
         return p;
     }
 
-    static void showIndexing(@Nonnull WorkflowMultiBranchProject mp) throws Exception {
+    private static void showIndexing(@Nonnull WorkflowMultiBranchProject mp) throws Exception {
         FolderComputation<?> indexing = mp.getIndexing();
         System.out.println("---%<--- " + indexing.getUrl());
         indexing.writeWholeLogTo(System.out);
