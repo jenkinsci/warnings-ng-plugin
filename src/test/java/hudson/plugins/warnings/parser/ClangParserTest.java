@@ -95,7 +95,7 @@ public class ClangParserTest extends ParserTester {
     public void testWarningsParser() throws IOException {
         Collection<FileAnnotation> warnings = new ClangParser().parse(openFile());
 
-        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 8, warnings.size());
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 9, warnings.size());
 
         Iterator<FileAnnotation> iterator = warnings.iterator();
         FileAnnotation annotation = iterator.next();
@@ -147,6 +147,13 @@ public class ClangParserTest extends ParserTester {
                 "invalid operands to binary expression ('int *' and '_Complex float')",
                 "exprs.c",
                 TYPE, DEFAULT_CATEGORY, Priority.NORMAL);
+
+        annotation = iterator.next();
+        checkWarning(annotation,
+                103, 55,
+                "passing 'uint8_t [11]' to parameter of type 'const char *' converts between pointers to integer types with different sign",
+                "t.c",
+                TYPE, "-Wpointer-sign", Priority.NORMAL);
      }
 
     @Override
