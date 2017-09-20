@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>1.67-20170902.033418-2</version> <!-- TODO: https://github.com/jenkinsci/analysis-pom-plugin/pull/6 -->
+    <version>1.67</version>
     <relativePath>../analysis-pom</relativePath>
   </parent>
 
