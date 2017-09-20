@@ -49,3 +49,16 @@ foo bar.hello*world:12:
 make[2]: Leaving directory '/dir1/dir2/dir3'
 make[1]: Leaving directory `/dir1/dir2'
 make[0]: Leaving directory `/dir1'
+
+============== Checking "entering directory" without recursion level ==========
+make: Entering directory `/dir4'
+zoidberg.c:5:70: warning: Your code is bad, and you should feel bad!
+make: Leaving directory `/dir4'
+
+
+============== Check for MSYS-type paths on windows =================
+
+This should be converted to c:/dir5, but only on windows
+make[1]: Entering directory `/c/dir5'
+grail.cpp:20: warning: I'm warning you! He's got huge, sharp... er... He can leap about.
+make[1]: Leaving directory `/c/dir5'
