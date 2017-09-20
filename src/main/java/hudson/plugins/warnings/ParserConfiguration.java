@@ -127,11 +127,17 @@ public class ParserConfiguration extends AbstractDescribableImpl<ParserConfigura
                 if (project == null) { // there is no workspace in pipelines
                     return required;
                 }
-                return FilePath.validateFileMask(project.getSomeWorkspace(), pattern);
+                try {
+                    FilePath workspace = project.getSomeWorkspace();
+                    if (workspace != null && workspace.exists()) {
+                        return FilePath.validateFileMask(workspace, pattern);
+                    }
+                }
+                catch (InterruptedException e) {
+                    // ignore
+                }
             }
-            else {
-                return required;
-            }
+            return required;
         }
     }
 }
