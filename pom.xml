@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>1.65</version>
+    <version>1.68-SNAPSHOT</version>
     <relativePath>../analysis-pom</relativePath>
   </parent>
 
@@ -44,7 +44,7 @@
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-core</artifactId>
-      <version>1.88</version>
+      <version>1.93-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -65,27 +65,15 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>script-security</artifactId>
-      <version>1.25</version>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-multibranch</artifactId>
+      <version>1.14.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>git</artifactId>
       <version>2.5.2</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.httpcomponents</groupId>
-          <artifactId>httpclient</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>subversion</artifactId>
-      <version>2.6</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -94,23 +82,11 @@
       <version>2.5.2</version>
       <classifier>tests</classifier>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.httpcomponents</groupId>
-          <artifactId>httpclient</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-multibranch</artifactId>
-      <version>1.14</version>
-      <scope>test</scope>
-    </dependency> 
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-test</artifactId>
-      <version>1.19</version>
+      <version>1.20-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -119,7 +95,43 @@
       <version>1.6</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>parameterized-trigger</artifactId>
+      <version>2.33</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>promoted-builds</artifactId>
+      <version>2.25</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <configuration>
+          <rules>
+            <requireUpperBoundDeps>
+              <excludes combine.children="append">
+                <exclude>org.jenkins-ci.plugins:scm-api</exclude>
+                <exclude>org.jenkins-ci.modules:sshd</exclude>
+                <exclude>org.jenkins-ci.plugins.icon-shim:icon-set</exclude>
+                <exclude>org.jenkins-ci.plugins:script-security</exclude>
+                <exclude>org.jenkins-ci.plugins:durable-task</exclude>
+                <!-- Remove if violations dependency is not required anymore -->
+                <exclude>xpp3:xpp3</exclude>
+              </excludes>
+            </requireUpperBoundDeps>
+          </rules>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <scm>
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
