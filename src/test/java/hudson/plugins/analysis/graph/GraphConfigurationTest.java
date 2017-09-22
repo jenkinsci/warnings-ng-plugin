@@ -1,7 +1,6 @@
 package hudson.plugins.analysis.graph;
 
 import org.junit.Test;
-import org.mortbay.util.ajax.JSON;
 
 import com.google.common.collect.Sets;
 
@@ -143,11 +142,11 @@ public class GraphConfigurationTest {
      */
     @Test
     public void testValidJSONConfiguations() {
-        Object enabled = JSON.parse("{\"\":\"\",\"buildCountString\":\"" + BUILDS
+        String enabled = "{\"\":\"\",\"buildCountString\":\"" + BUILDS
                 + "\",\"dayCountString\":\"" + DAYS
                 + "\",\"parameterName\":\"" + PARAMETER_NAME
                 + "\",\"parameterValue\":\"" + PARAMETER_VALUE
-                + "\",\"graphType\":\"FIXED\",\"height\":\"" + HEIGHT + "\",\"width\":\"" + WIDTH + "\",\"useBuildDateAsDomain\":\"" + true + "\"}");
+                + "\",\"graphType\":\"FIXED\",\"height\":\"" + HEIGHT + "\",\"width\":\"" + WIDTH + "\",\"useBuildDateAsDomain\":\"" + true + "\"}";
         JSONObject jsonObject = JSONObject.fromObject(enabled);
 
         GraphConfiguration configuration = createDetailUnderTest();
@@ -227,5 +226,3 @@ public class GraphConfigurationTest {
         assertEquals("Serialize did not work.", other, configuration);
     }
 }
-
-

@@ -203,7 +203,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
         if (project != null) { // there is no workspace in pipelines
             try {
                 FilePath workspace = project.getSomeWorkspace();
-                if (workspace != null) {
+                if (workspace != null && workspace.exists()) {
                     String result = workspace.validateAntFileMask(pattern,
                             FilePath.VALIDATE_ANT_FILE_MASK_BOUND);
                     if (result != null) {
