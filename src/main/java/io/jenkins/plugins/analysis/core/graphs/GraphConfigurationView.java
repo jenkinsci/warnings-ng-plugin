@@ -149,7 +149,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      */
     public boolean hasMeaningfulGraph() {
         if (buildHistory.hasPreviousResult()) {
-            return !BuildResultGraph.areResultsTooOld(configuration, buildHistory.getPreviousResult());
+            return !SeriesBuilder.areResultsTooOld(configuration, buildHistory.getPreviousResult());
         }
         return false;
     }

@@ -122,7 +122,7 @@ public class DifferenceGraph extends BuildResultGraph {
                                final List<Pair<Integer, Integer>> fixedWarnings, final List<Pair<Integer, Integer>> newWarnings) {
         int buildCount = 0;
         for (BuildResult current : history) {
-            if (isBuildTooOld(configuration, current)) {
+            if (SeriesBuilder.isBuildTooOld(configuration, current)) {
                 break;
             }
 
