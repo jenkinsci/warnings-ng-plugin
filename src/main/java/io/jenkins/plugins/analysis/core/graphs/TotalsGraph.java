@@ -1,14 +1,10 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
-
-import io.jenkins.plugins.analysis.core.steps.BuildResult;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.ToolTipProvider;
@@ -31,10 +27,8 @@ public class TotalsGraph extends CategoryBuildResultGraph {
     }
 
     @Override
-    protected List<Integer> computeSeries(final BuildResult current) {
-        List<Integer> series = new ArrayList<Integer>();
-        series.add(current.getNumberOfWarnings());
-        return series;
+    protected SeriesBuilder createSeriesBuilder() {
+        return new TotalsSeriesBuilder();
     }
 
     @Override

@@ -2,11 +2,8 @@ package io.jenkins.plugins.analysis.core.graphs;
 
 import javax.annotation.CheckForNull;
 import java.awt.Color;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
@@ -24,13 +21,8 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
-import com.google.common.base.Objects;
-
 import io.jenkins.plugins.analysis.core.HistoryProvider;
-import io.jenkins.plugins.analysis.core.steps.BuildResult;
 
-import hudson.model.AbstractBuild;
-import hudson.model.Run;
 import hudson.util.Graph;
 import hudson.util.ShiftedCategoryAxis;
 
@@ -40,7 +32,6 @@ import hudson.util.ShiftedCategoryAxis;
  * @author Ulli Hafner
  */
 public abstract class BuildResultGraph {
-    private static final int A_DAY_IN_MSEC = 24 * 3600 * 1000;
 
     private String rootUrl = StringUtils.EMPTY;
 
@@ -141,48 +132,6 @@ public abstract class BuildResultGraph {
     public abstract JFreeChart createAggregation(final GraphConfiguration configuration,
                                                  final Collection<HistoryProvider> resultActions, final String pluginName);
 
-    /**
-     * Computes the delta between two dates in days.
-     *
-     * @param first
-     *            the first date
-     * @param second
-     *            the second date
-     * @return the delta between two dates in days
-     */
-    public static long computeDayDelta(final Calendar first, final Calendar second) {
-        return Math.abs((first.getTimeInMillis() - second.getTimeInMillis()) / A_DAY_IN_MSEC);
-    }
-
-    /**
-     * Computes the delta between two dates in days.
-     *
-     * @param first
-     *            the first date
-     * @param second
-     *            the second date (given by the build result)
-     * @return the delta between two dates in days
-     */
-    public static long computeDayDelta(final Calendar first, final BuildResult second) {
-        return computeDayDelta(first, second.getOwner().getTimestamp());
-    }
-
-    /**
-     * Returns whether the specified build result is too old in order to be
-     * considered for the trend graph.
-     *
-     * @param configuration
-     *            the graph configuration
-     * @param current
-     *            the current build
-     * @return <code>true</code> if the build is too old
-     */
-    public static boolean areResultsTooOld(final GraphConfiguration configuration, final BuildResult current) {
-        Calendar today = new GregorianCalendar();
-
-        return configuration.isDayCountDefined()
-                && computeDayDelta(today, current) >= configuration.getDayCount();
-    }
 
     /**
      * Sets properties common to all plots of this plug-in.
@@ -290,20 +239,6 @@ public abstract class BuildResultGraph {
     }
 
     /**
-     * Returns whether the specified build result is too old in order to be
-     * considered for the trend graph.
-     *
-     * @param configuration
-     *            the graph configuration
-     * @param current
-     *            the current build
-     * @return <code>true</code> if the build is too old
-     */
-    protected boolean isBuildTooOld(final GraphConfiguration configuration, final BuildResult current) {
-        return areResultsTooOld(configuration, current);
-    }
-
-    /**
      * Sets properties common to all category graphs of this plug-in.
      *
      * @param plot
@@ -360,29 +295,6 @@ public abstract class BuildResultGraph {
         setCategoryPlotProperties(chart.getCategoryPlot());
 
         return chart;
-    }
-
-    protected boolean passesFilteringByParameter(final Run<?, ?> build, final String parameterName, final String parameterValue) {
-        if (StringUtils.isBlank(parameterName)) {
-            return true;
-        }
-
-        Map<String, String> variables;
-        if (build instanceof AbstractBuild) {
-            variables = ((AbstractBuild<?, ?>) build).getBuildVariables();
-        }
-        else {
-            // There is no comparable method for Run. This means that this feature (using parameters for
-            // result graph) will not be available for other than AbstractBuild extending classes (basically
-            // all except Workflow builds).
-            // So workflow jobs will be never filtered, just show them all.
-            return true;
-        }
-        if (variables == null) {
-            return false;
-        }
-
-        return Objects.equal(variables.get(parameterName), parameterValue);
     }
 
     /**
