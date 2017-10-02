@@ -1,0 +1,16 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:u="/util">
+
+  <f:entry title="${%title.usePreviousBuildAsReference}" description="${%description.usePreviousBuildAsReference}"
+     field="usePreviousBuildAsReference">
+    <f:checkbox/>
+  </f:entry>
+  <f:entry title="${%title.onlyUseStableBuildsAsReference}" description="${%description.onlyUseStableBuildsAsReference}"
+      field="useStableBuildAsReference">
+    <f:checkbox/>
+  </f:entry>
+  <u:health id="${id}"/>
+  <u:defaultEncoding id="warnings"/>
+
+</j:jelly>

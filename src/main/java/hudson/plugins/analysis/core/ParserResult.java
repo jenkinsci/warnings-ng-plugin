@@ -67,6 +67,7 @@ public class ParserResult implements Serializable {
      * @since 1.55
      */
     private final boolean canResolveRelativePaths;
+    private String id;
 
     /**
      * Creates a new instance of {@link ParserResult}.
@@ -455,6 +456,14 @@ public class ParserResult implements Serializable {
      */
     public String getLogMessages() {
         return StringUtils.defaultString(logMessage);
+    }
+
+    public void setId(final String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 
     /**
