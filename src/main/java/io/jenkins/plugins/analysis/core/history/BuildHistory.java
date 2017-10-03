@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.history;
 
 import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -38,7 +37,7 @@ public class BuildHistory implements RunResultHistory {
 
     @Override
     public BuildResult getBaseline() {
-        return getResultAction(baseline).getResult();
+        return selector.get(baseline).getResult();
     }
 
     /**
@@ -57,7 +56,7 @@ public class BuildHistory implements RunResultHistory {
             final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
         Run<?, ?> run = getPreviousRun(this.baseline, ignoreAnalysisResult, overallResultMustBeSuccess);
         if (run != null) {
-            return getResultAction(run);
+            return selector.get(run);
         }
 
         return null;
@@ -66,7 +65,7 @@ public class BuildHistory implements RunResultHistory {
     private Run<?, ?> getPreviousRun(final Run<?, ?> start,
             final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
         for (Run<?, ?> run = start.getPreviousBuild(); run != null; run = run.getPreviousBuild()) {
-            PipelineResultAction action = getResultAction(run);
+            PipelineResultAction action = selector.get(run);
             if (hasValidResult(run, action, overallResultMustBeSuccess)
                     && hasSuccessfulAnalysisResult(action, ignoreAnalysisResult)) {
                 return run;
@@ -77,23 +76,6 @@ public class BuildHistory implements RunResultHistory {
 
     private boolean hasSuccessfulAnalysisResult(final PipelineResultAction action, final boolean ignoreAnalysisResult) {
         return action != null && (action.isSuccessful() || ignoreAnalysisResult);
-    }
-
-    @CheckForNull
-    private PipelineResultAction getResultAction(@Nonnull final Run<?, ?> run) {
-        return selector.get(run);
-    }
-
-    /**
-     * Returns the action of the previous build.
-     *
-     *
-     * @return the action of the previous build, or <code>null</code> if no
-     *         such build exists
-     */
-    @CheckForNull
-    protected PipelineResultAction getPreviousAction() {
-        return getPreviousAction(false, false);
     }
 
     protected boolean hasValidResult(final Run<?, ?> run, @CheckForNull final PipelineResultAction action,
@@ -121,7 +103,7 @@ public class BuildHistory implements RunResultHistory {
     // TODO: why don't we return the action?
     @Override
     public Optional<BuildResult> getPreviousResult() {
-        PipelineResultAction action = getPreviousAction();
+        PipelineResultAction action = getPreviousAction(false, false);
         if (action != null) {
             return Optional.of(action.getResult());
         }
@@ -147,7 +129,7 @@ public class BuildHistory implements RunResultHistory {
 
         @Override
         public BuildResult next() {
-            PipelineResultAction resultAction = getResultAction(baseline);
+            PipelineResultAction resultAction = selector.get(baseline);
 
             baseline = getPreviousRun(baseline, false, false);
 

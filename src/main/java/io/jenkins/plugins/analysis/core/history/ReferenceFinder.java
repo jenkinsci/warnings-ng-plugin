@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.history;
 
-import javax.annotation.CheckForNull;
-
 import io.jenkins.plugins.analysis.core.steps.PipelineResultAction;
 
 import hudson.model.Result;
@@ -17,6 +15,7 @@ import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
  * @see ResultSelector
  */
 public abstract class ReferenceFinder extends BuildHistory implements ReferenceProvider {
+
     /**
      * Creates a {@link ReferenceProvider} instance based on the specified properties.
      *
@@ -62,18 +61,12 @@ public abstract class ReferenceFinder extends BuildHistory implements ReferenceP
     protected abstract PipelineResultAction getReferenceAction();
 
     @Override
-    @CheckForNull
-    public Run<?, ?> getReference() {
-        PipelineResultAction action = getReferenceAction();
-        if (action != null) {
-            return action.getRun();
+    public int getNumber() {
+        PipelineResultAction referenceAction = getReferenceAction();
+        if (referenceAction != null) {
+            return referenceAction.getRun().getNumber();
         }
-        return null;
-    }
-
-    @Override
-    public boolean hasReference() {
-        return getReference() != null;
+        return NO_REFERENCE_FOUND;
     }
 
     /**
