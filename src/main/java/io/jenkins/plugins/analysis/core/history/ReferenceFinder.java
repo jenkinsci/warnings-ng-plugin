@@ -4,57 +4,65 @@ import javax.annotation.CheckForNull;
 
 import io.jenkins.plugins.analysis.core.steps.PipelineResultAction;
 
+import hudson.model.Result;
 import hudson.model.Run;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 
 /**
- * FIXME: write comment.
+ * Finds a previous result of an analysis run for the same software artifact. Selection of the previous result is
+ * delegated to a provided strategy.
  *
- * @since 2.0
  * @author Ullrich Hafner
+ * @see ResultSelector
  */
 public abstract class ReferenceFinder extends BuildHistory implements ReferenceProvider {
+    /**
+     * Creates a {@link ReferenceProvider} instance based on the specified properties.
+     *
+     * @param run
+     *         the run to use as baseline when searching for a reference
+     * @param selector
+     *         selects the type of the result (to get a result for the same type of static analysis)
+     * @param ignoreAnalysisResult
+     *         if {@code true} then the result of the previous analysis run is ignored when searching for the reference,
+     *         otherwise the result of the static analysis reference must be {@link Result#SUCCESS}.
+     * @param overallResultMustBeSuccess
+     *         if  {@code true} then only runs with an overall result of {@link Result#SUCCESS} are considered as a
+     *         reference, otherwise every run that contains results of the same static analysis configuration is
+     *         considered
+     */
     public static ReferenceProvider create(final Run<?, ?> run, final ResultSelector selector,
-            final boolean usePreviousBuildAsReference, final boolean useStableBuildAsReference) {
-        if (usePreviousBuildAsReference) {
-            return new PreviousBuildReference(run, selector, useStableBuildAsReference);
+            final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
+        if (ignoreAnalysisResult) {
+            return new PreviousRunReference(run, selector, overallResultMustBeSuccess);
         }
         else {
-            return new StablePluginReference(run, selector, useStableBuildAsReference);
+            return new StablePluginReference(run, selector, overallResultMustBeSuccess);
         }
     }
 
     /**
-     * Creates a new instance of {@link BuildHistory}.
+     * Creates a new instance of {@link ReferenceFinder}.
      *
      * @param baseline
-     *            the build to start the history from
+     *         the run to start the history from
      * @param selector
-     *            selects the associated action from a build
+     *         selects the type of the result (to get a result for the same type of static analysis)
      */
-    public ReferenceFinder(final Run<?, ?> baseline, final ResultSelector selector) {
+    protected ReferenceFinder(final Run<?, ?> baseline, final ResultSelector selector) {
         super(baseline, selector);
     }
 
     /**
      * Returns the action of the reference build.
      *
-     * @return the action of the reference build, or {@code null} if no
-     *         such build exists
+     * @return the action of the reference build, or {@code null} if no such build exists
      */
     protected abstract PipelineResultAction getReferenceAction();
 
-    /**
-     * Returns whether a reference build result exists.
-     *
-     * @return <code>true</code> if a reference build result exists.
-     */
-    private boolean hasReferenceAction() {
-        return getReferenceAction() != null;
-    }
-
-    @Override @CheckForNull
+    @Override
+    @CheckForNull
     public Run<?, ?> getReference() {
         PipelineResultAction action = getReferenceAction();
         if (action != null) {

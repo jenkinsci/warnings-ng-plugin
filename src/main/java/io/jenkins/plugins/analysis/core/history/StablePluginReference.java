@@ -2,31 +2,38 @@ package io.jenkins.plugins.analysis.core.history;
 
 import io.jenkins.plugins.analysis.core.steps.PipelineResultAction;
 
+import hudson.model.Result;
 import hudson.model.Run;
 
 /**
- * FIXME: write comment.
+ * Find the last available analysis run with a result {@link Result#SUCCESS} for the specified analysis configuration.
+ * You can also specify if the overall result of the run has a result of {@link Result#SUCCESS}.
  *
  * @author Ullrich Hafner
  */
 public class StablePluginReference extends ReferenceFinder {
-    private boolean mustBeStable;
+    private boolean overallResultMustBeSuccess;
 
     /**
-     * Creates a new instance of {@link PreviousBuildReference}.
+     * Creates a new instance of {@link StablePluginReference}.
      *
-     * @param baseline     the build to start the history from
-     * @param selector     type of the action that contains the build results
-     * @param mustBeStable builds must be of overall status stable
+     * @param baseline
+     *         the build to start the history from
+     * @param selector
+     *         type of the action that contains the build results
+     * @param overallResultMustBeSuccess
+     *         builds must be of overall status stable
      */
-    public StablePluginReference(final Run<?, ?> baseline, final ResultSelector selector, final boolean mustBeStable) {
+    public StablePluginReference(final Run<?, ?> baseline, final ResultSelector selector,
+            final boolean overallResultMustBeSuccess) {
         super(baseline, selector);
-        this.mustBeStable = mustBeStable;
+
+        this.overallResultMustBeSuccess = overallResultMustBeSuccess;
     }
 
     @Override
     protected PipelineResultAction getReferenceAction() {
-        PipelineResultAction action = getAction(true, mustBeStable);
+        PipelineResultAction action = getAction(true, overallResultMustBeSuccess);
         if (action == null) {
             return getPreviousAction(); // fallback, use action of previous build regardless of result
         }
@@ -34,5 +41,4 @@ public class StablePluginReference extends ReferenceFinder {
             return action;
         }
     }
-
 }

@@ -5,19 +5,18 @@ import java.util.GregorianCalendar;
 
 import io.jenkins.plugins.analysis.core.steps.BuildResult;
 
-import hudson.model.Run;
-
 /**
  * Empty build history.
  *
  * @author Ulli Hafner
  */
+// FIXME: still required?
 public class NullBuildHistory extends BuildHistory {
     /**
      * Creates a new instance of {@link NullBuildHistory}.
      */
     public NullBuildHistory() {
-        super((Run<?, ?>)null, null);
+        super(null, null);
     }
 
     @Override
