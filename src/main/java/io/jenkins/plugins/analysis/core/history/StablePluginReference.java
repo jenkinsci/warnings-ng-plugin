@@ -33,12 +33,6 @@ public class StablePluginReference extends ReferenceFinder {
 
     @Override
     protected PipelineResultAction getReferenceAction() {
-        PipelineResultAction action = getAction(true, overallResultMustBeSuccess);
-        if (action == null) {
-            return getPreviousAction(); // fallback, use action of previous build regardless of result
-        }
-        else {
-            return action;
-        }
+        return getPreviousAction(false, overallResultMustBeSuccess);
     }
 }

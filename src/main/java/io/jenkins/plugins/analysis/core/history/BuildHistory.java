@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.core.history;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -24,7 +23,7 @@ public class BuildHistory implements RunResultHistory {
     private final ResultSelector selector;
 
     /**
-     * Creates a new instance of {@link hudson.plugins.analysis.core.BuildHistory}.
+     * Creates a new instance of {@link BuildHistory}.
      *
      * @param baseline
      *            the build to start the history from
@@ -42,24 +41,20 @@ public class BuildHistory implements RunResultHistory {
     }
 
     /**
-     * Returns the time of the baseline build.
+     * Returns the previous action.
      *
-     * @return the time
+     * @param ignoreAnalysisResult
+     *         if {@code true} then the result of the previous analysis run is ignored when searching for the reference,
+     *         otherwise the result of the static analysis reference must be {@link Result#SUCCESS}.
+     * @param overallResultMustBeSuccess
+     *         if  {@code true} then only runs with an overall result of {@link Result#SUCCESS} are considered as a
+     *         reference, otherwise every run that contains results of the same static analysis configuration is
+     *         considered
+     * @return the previous action
      */
-    public Calendar getTimestamp() {
-        return baseline.getTimestamp();
-    }
-
-    private PipelineResultAction getAction(final boolean isStatusRelevant) {
-        return getAction(isStatusRelevant, false);
-    }
-
-    protected PipelineResultAction getAction(final boolean isStatusRelevant, final boolean mustBeStable) {
-        return getAction(isStatusRelevant, mustBeStable, this.baseline);
-    }
-
-    private PipelineResultAction getAction(final boolean isStatusRelevant, final boolean mustBeStable, final Run<?, ?> firstBuild) {
-        Run<?, ?> run = getPreviousRun(isStatusRelevant, mustBeStable, firstBuild);
+    protected PipelineResultAction getPreviousAction(
+            final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
+        Run<?, ?> run = getPreviousRun(this.baseline, ignoreAnalysisResult, overallResultMustBeSuccess);
         if (run != null) {
             return getResultAction(run);
         }
@@ -67,34 +62,25 @@ public class BuildHistory implements RunResultHistory {
         return null;
     }
 
-    private Run<?, ?> getPreviousRun(final boolean isStatusRelevant, final boolean mustBeStable, final Run<?, ?> firstBuild) {
-        for (Run<?, ?> build = firstBuild.getPreviousBuild(); build != null; build = build.getPreviousBuild()) {
-            PipelineResultAction action = getResultAction(build);
-            if (hasValidResult(build, mustBeStable, action) && isSuccessfulAction(action, isStatusRelevant)) {
-                return build;
+    private Run<?, ?> getPreviousRun(final Run<?, ?> start,
+            final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
+        for (Run<?, ?> run = start.getPreviousBuild(); run != null; run = run.getPreviousBuild()) {
+            PipelineResultAction action = getResultAction(run);
+            if (hasValidResult(run, action, overallResultMustBeSuccess)
+                    && hasSuccessfulAnalysisResult(action, ignoreAnalysisResult)) {
+                return run;
             }
         }
         return null;
     }
 
-    private boolean isSuccessfulAction(final PipelineResultAction action, final boolean isStatusRelevant) {
-        return action != null && (action.isSuccessful() || !isStatusRelevant);
+    private boolean hasSuccessfulAnalysisResult(final PipelineResultAction action, final boolean ignoreAnalysisResult) {
+        return action != null && (action.isSuccessful() || ignoreAnalysisResult);
     }
 
     @CheckForNull
-    public PipelineResultAction getResultAction(@Nonnull final Run<?, ?> build) {
-        return selector.get(build);
-    }
-
-    /**
-     * Returns the action of the previous build.
-     *
-     * @return the action of the previous build, or <code>null</code> if no
-     *         such build exists
-     */
-    @CheckForNull
-    protected PipelineResultAction getPreviousAction(final boolean mustBeStable) {
-        return getAction(mustBeStable);
+    private PipelineResultAction getResultAction(@Nonnull final Run<?, ?> run) {
+        return selector.get(run);
     }
 
     /**
@@ -106,20 +92,17 @@ public class BuildHistory implements RunResultHistory {
      */
     @CheckForNull
     protected PipelineResultAction getPreviousAction() {
-        return getAction(false);
+        return getPreviousAction(false, false);
     }
 
-    protected boolean hasValidResult(final Run<?, ?> build) {
-        return hasValidResult(build, false, null);
-    }
-
-    protected boolean hasValidResult(final Run<?, ?> build, final boolean mustBeStable, @CheckForNull final PipelineResultAction action) {
-        Result result = build.getResult();
+    protected boolean hasValidResult(final Run<?, ?> run, @CheckForNull final PipelineResultAction action,
+            final boolean overallResultMustBeSuccess) {
+        Result result = run.getResult();
 
         if (result == null) {
             return false;
         }
-        if (mustBeStable) {
+        if (overallResultMustBeSuccess) {
             return result == Result.SUCCESS;
         }
         return result.isBetterThan(Result.FAILURE) || isPluginCauseForFailure(action);
@@ -167,12 +150,12 @@ public class BuildHistory implements RunResultHistory {
 
         @Override
         public boolean hasNext() {
-            return getPreviousRun(false, false, baseline) != null;
+            return getPreviousRun(baseline, false, false) != null;
         }
 
         @Override
         public BuildResult next() {
-            baseline = getPreviousRun(false, false, baseline);
+            baseline = getPreviousRun(baseline, false, false);
             return getResultAction(baseline).getResult();
         }
 

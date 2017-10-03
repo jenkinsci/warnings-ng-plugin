@@ -30,6 +30,6 @@ public class PreviousRunReference extends ReferenceFinder {
 
     @Override
     protected PipelineResultAction getReferenceAction() {
-        return getPreviousAction(overallResultMustBeSuccess);
+        return getPreviousAction(true, overallResultMustBeSuccess);
     }
 }

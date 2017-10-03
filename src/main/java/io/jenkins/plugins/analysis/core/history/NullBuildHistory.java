@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.core.history;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 import io.jenkins.plugins.analysis.core.steps.BuildResult;
 
 /**
@@ -17,11 +14,6 @@ public class NullBuildHistory extends BuildHistory {
      */
     public NullBuildHistory() {
         super(null, null);
-    }
-
-    @Override
-    public Calendar getTimestamp() {
-        return new GregorianCalendar();
     }
 
     @Override

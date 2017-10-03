@@ -66,10 +66,7 @@ public abstract class ReferenceFinder extends BuildHistory implements ReferenceP
     public Run<?, ?> getReference() {
         PipelineResultAction action = getReferenceAction();
         if (action != null) {
-            Run<?, ?> build = action.getRun();
-            if (hasValidResult(build)) {
-                return build;
-            }
+            return action.getRun();
         }
         return null;
     }
