@@ -17,6 +17,7 @@ import hudson.model.Run;
  *
  * @author Ulli Hafner
  */
+// TODO: actually the baseline has not yet a result attached
 public class BuildHistory implements RunResultHistory {
     /** The build to start the history from. */
     private final Run<?, ?> baseline;
@@ -150,13 +151,16 @@ public class BuildHistory implements RunResultHistory {
 
         @Override
         public boolean hasNext() {
-            return getPreviousRun(baseline, false, false) != null;
+            return baseline != null;
         }
 
         @Override
         public BuildResult next() {
+            PipelineResultAction resultAction = getResultAction(baseline);
+
             baseline = getPreviousRun(baseline, false, false);
-            return getResultAction(baseline).getResult();
+
+            return resultAction.getResult();
         }
 
         @Override
