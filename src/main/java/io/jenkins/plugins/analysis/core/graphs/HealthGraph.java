@@ -11,7 +11,6 @@ import io.jenkins.plugins.analysis.core.HealthDescriptor;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.AreaRenderer;
-import hudson.plugins.analysis.util.CategoryUrlBuilder;
 import hudson.plugins.analysis.util.SerializableToolTipGenerator;
 import hudson.plugins.analysis.util.SerializableUrlGenerator;
 import hudson.plugins.analysis.util.ToolTipAreaRenderer;

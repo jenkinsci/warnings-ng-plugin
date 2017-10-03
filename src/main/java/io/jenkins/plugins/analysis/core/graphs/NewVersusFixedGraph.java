@@ -8,7 +8,6 @@ import org.jfree.data.category.CategoryDataset;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.BoxRenderer;
-import hudson.plugins.analysis.util.CategoryUrlBuilder;
 import hudson.plugins.analysis.util.ToolTipBoxRenderer;
 import hudson.plugins.analysis.util.ToolTipBuilder;
 import hudson.plugins.analysis.util.ToolTipProvider;
