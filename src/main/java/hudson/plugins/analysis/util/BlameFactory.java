@@ -46,13 +46,13 @@ public class BlameFactory {
             }
         }
         else {
-            log(listener, "Skipping warnings blame since pipelines do not have an SCM link.%n");
+            log(listener, "Skipping warnings blame since pipelines do not have an SCM link.\n");
         }
         return new NullBlamer();
     }
 
     private static void logOnlyGitSupported(final TaskListener listener) {
-        log(listener, "Skipping warnings blame since Git is the only supported SCM up to now.%n");
+        log(listener, "Skipping warnings blame since Git is the only supported SCM up to now.\n");
     }
 
     private static void log(final TaskListener listener, final String message) {

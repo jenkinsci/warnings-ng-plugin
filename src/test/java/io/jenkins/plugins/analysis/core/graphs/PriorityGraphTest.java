@@ -40,7 +40,7 @@ class PriorityGraphTest {
     void shouldHaveThreeValuesForSingleBuild() {
         PrioritySeriesBuilder builder = new PrioritySeriesBuilder();
 
-        BuildResult singleResult = createBuildResult(1, 2, 3);
+        BuildResult singleResult = createBuildResult(1, 1, 2, 3);
         List<BuildResult> results = Lists.newArrayList(singleResult);
         CategoryDataset dataSet = builder.createDataSet(createConfiguration(), results);
 
@@ -54,7 +54,7 @@ class PriorityGraphTest {
         assertThat(dataSet.getValue(2, 0)).isEqualTo(1);
     }
 
-    private BuildResult createBuildResult(final int numberOfHighPriorityIssues,
+    private BuildResult createBuildResult(final int buildNumber, final int numberOfHighPriorityIssues,
                                           final int numberOfNormalPriorityIssues, final int numberOfLowPriorityIssues) {
         BuildResult buildResult = mock(BuildResult.class);
 
@@ -62,16 +62,16 @@ class PriorityGraphTest {
         when(buildResult.getNumberOfAnnotations(Priority.NORMAL)).thenReturn(numberOfNormalPriorityIssues);
         when(buildResult.getNumberOfAnnotations(Priority.LOW)).thenReturn(numberOfLowPriorityIssues);
 
-        Run run = createRun();
+        Run run = createRun(buildNumber);
         when(buildResult.getOwner()).thenReturn(run);
 
         return buildResult;
     }
 
-    private Run<?, ?> createRun() {
+    private Run<?, ?> createRun(final int number) {
         Run run = mock(Run.class);
-        when(run.getNumber()).thenReturn(1);
-        when(run.getDisplayName()).thenReturn("#1");
+        when(run.getNumber()).thenReturn(number);
+        when(run.getDisplayName()).thenReturn("#" + number);
         return run;
     }
 }
