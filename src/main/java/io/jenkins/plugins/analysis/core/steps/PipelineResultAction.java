@@ -86,7 +86,7 @@ public class PipelineResultAction implements StaplerProxy, HealthReportingAction
     }
 
     @Exported
-    public final AnalysisResult getResult() {
+    public AnalysisResult getResult() {
         return result;
     }
 
