@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core;
+package io.jenkins.plugins.analysis.core.history;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -26,7 +26,7 @@ public class NullBuildHistory extends BuildHistory {
     }
 
     @Override
-    public boolean hasPreviousResult() {
+    public boolean hasPrevious() {
         return false;
     }
 
@@ -36,7 +36,7 @@ public class NullBuildHistory extends BuildHistory {
     }
 
     @Override
-    public BuildResult getPreviousResult() {
+    public BuildResult getPrevious() {
         return null;
     }
 }

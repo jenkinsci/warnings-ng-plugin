@@ -27,8 +27,8 @@ import com.google.common.collect.Sets;
 import com.thoughtworks.xstream.XStream;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.jenkins.plugins.analysis.core.HistoryProvider;
-import io.jenkins.plugins.analysis.core.ReferenceProvider;
+import io.jenkins.plugins.analysis.core.history.RunResultHistory;
+import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import jenkins.model.Jenkins;
 
 import hudson.XmlFile;
@@ -118,7 +118,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     @SuppressFBWarnings("Se")
     private transient WeakReference<Collection<FileAnnotation>> fixedWarningsReference;
     private transient ReferenceProvider history;
-    private transient HistoryProvider buildHistory;
+    private transient RunResultHistory buildHistory;
 
     /** The number of warnings in this build. */
     private int numberOfWarnings;
@@ -232,7 +232,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *            the default encoding to be used when reading and parsing
      * @since 1.73
      */
-    protected BuildResult(final Run<?, ?> build, final ReferenceProvider referenceProvider, final HistoryProvider buildHistory,
+    protected BuildResult(final Run<?, ?> build, final ReferenceProvider referenceProvider, final RunResultHistory buildHistory,
             final ParserResult result, final String defaultEncoding) {
         this(build, referenceProvider, buildHistory, result, defaultEncoding, false);
     }
@@ -251,7 +251,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @param canSerialize
      *            determines if the issues should be serialized or not
      */
-    protected BuildResult(final Run<?, ?> build, final ReferenceProvider referenceProvider, final HistoryProvider buildHistory,
+    protected BuildResult(final Run<?, ?> build, final ReferenceProvider referenceProvider, final RunResultHistory buildHistory,
             final ParserResult result, final String defaultEncoding, final boolean canSerialize) {
         this.history = referenceProvider;
         this.buildHistory = buildHistory;
@@ -353,8 +353,8 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *            the current result
      */
     private void computeZeroWarningsHighScore(final Run<?, ?> build, final ParserResult currentResult) {
-        if (buildHistory.hasPreviousResult()) {
-            BuildResult previous = buildHistory.getPreviousResult();
+        if (buildHistory.hasPrevious()) {
+            BuildResult previous = buildHistory.getPrevious();
             if (currentResult.hasNoAnnotations()) {
                 if (previous.hasNoAnnotations()) {
                     zeroWarningsSinceBuild = previous.getZeroWarningsSinceBuild();
@@ -1196,8 +1196,8 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         pluginResult = result;
         owner.setResult(result);
 
-        if (buildHistory.hasPreviousResult()) {
-            BuildResult previous = buildHistory.getPreviousResult();
+        if (buildHistory.hasPrevious()) {
+            BuildResult previous = buildHistory.getPrevious();
             if (isSuccessful()) {
                 if (previous.isSuccessful() && previous.isSuccessfulTouched()) {
                     successfulSinceBuild = previous.getSuccessfulSinceBuild();

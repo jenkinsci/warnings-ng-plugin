@@ -17,11 +17,11 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import com.google.common.collect.Sets;
 
-import io.jenkins.plugins.analysis.core.BuildHistory;
-import io.jenkins.plugins.analysis.core.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.ReferenceFinder;
-import io.jenkins.plugins.analysis.core.ReferenceProvider;
-import io.jenkins.plugins.analysis.core.ResultSelector;
+import io.jenkins.plugins.analysis.core.history.BuildHistory;
+import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.history.ReferenceFinder;
+import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
+import io.jenkins.plugins.analysis.core.history.ResultSelector;
 
 import hudson.Extension;
 import hudson.model.Run;

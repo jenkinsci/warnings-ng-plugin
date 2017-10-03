@@ -2,9 +2,9 @@ package io.jenkins.plugins.analysis.core.graphs;
 
 import org.junit.jupiter.api.Test;
 
-import io.jenkins.plugins.analysis.core.QualityGate;
-import io.jenkins.plugins.analysis.core.QualityGateEnforcer;
-import io.jenkins.plugins.analysis.core.StaticAnalysisRun;
+import io.jenkins.plugins.analysis.core.quality.QualityGate;
+import io.jenkins.plugins.analysis.core.quality.QualityGateEnforcer;
+import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 

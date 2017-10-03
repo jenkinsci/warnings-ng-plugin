@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core;
+package io.jenkins.plugins.analysis.core.quality;
 
 /**
  * Describes the results of a static analysis run.

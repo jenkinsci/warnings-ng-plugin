@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.core.graphs;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.jenkins.plugins.analysis.core.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.steps.BuildResult;
 
 /**

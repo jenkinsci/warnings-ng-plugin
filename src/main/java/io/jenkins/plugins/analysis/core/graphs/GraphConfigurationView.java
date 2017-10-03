@@ -14,8 +14,8 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import com.google.common.collect.Lists;
 
-import io.jenkins.plugins.analysis.core.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.HistoryProvider;
+import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.history.RunResultHistory;
 import net.sf.json.JSONObject;
 
 import hudson.model.Job;
@@ -32,7 +32,7 @@ public abstract class GraphConfigurationView implements ModelObject {
     private final Job<?, ?> owner;
 
     private final String key;
-    private final HistoryProvider buildHistory;
+    private final RunResultHistory buildHistory;
     private final HealthDescriptor healthDescriptor; // NOPMD
     private final GraphConfiguration configuration;
     private String urlPrefix;
@@ -49,7 +49,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @param buildHistory
      *            the build history for this job
      */
-    public GraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job, final String key, final HistoryProvider buildHistory) {
+    public GraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job, final String key, final RunResultHistory buildHistory) {
         this.configuration = configuration;
         this.owner = job;
         this.key = key;
@@ -148,8 +148,8 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return <code>true</code>, if there is such a graph
      */
     public boolean hasMeaningfulGraph() {
-        if (buildHistory.hasPreviousResult()) {
-            return !SeriesBuilder.areResultsTooOld(configuration, buildHistory.getPreviousResult());
+        if (buildHistory.hasPrevious()) {
+            return !SeriesBuilder.areResultsTooOld(configuration, buildHistory.getPrevious());
         }
         return false;
     }

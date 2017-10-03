@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core;
+package io.jenkins.plugins.analysis.core.quality;
 
 import java.io.Serializable;
 
@@ -6,7 +6,6 @@ import org.jvnet.localizer.Localizable;
 
 import hudson.model.HealthReport;
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.util.ThresholdValidator;
 import hudson.plugins.analysis.util.model.AnnotationProvider;
 import hudson.plugins.analysis.util.model.Priority;
 

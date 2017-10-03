@@ -8,7 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import io.jenkins.plugins.analysis.core.HistoryProvider;
+import io.jenkins.plugins.analysis.core.history.RunResultHistory;
 
 import hudson.model.Job;
 import hudson.plugins.analysis.Messages;
@@ -34,7 +34,7 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
      *            The URL of this view
      */
     public DefaultGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
-                                         final String pluginName, final HistoryProvider buildHistory, final String url) {
+                                         final String pluginName, final RunResultHistory buildHistory, final String url) {
         super(configuration, job, pluginName, buildHistory);
         this.url = url;
 
@@ -54,7 +54,7 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
      *            the build history for this job
      */
     public DefaultGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
-                                         final String pluginName, final HistoryProvider buildHistory) {
+                                         final String pluginName, final RunResultHistory buildHistory) {
         this(configuration, job, pluginName, buildHistory,
                 job.getAbsoluteUrl() + pluginName + "/configureDefaults");
     }

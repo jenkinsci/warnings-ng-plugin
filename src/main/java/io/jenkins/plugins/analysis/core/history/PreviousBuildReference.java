@@ -1,10 +1,8 @@
-package io.jenkins.plugins.analysis.core;
+package io.jenkins.plugins.analysis.core.history;
 
 import io.jenkins.plugins.analysis.core.steps.PipelineResultAction;
 
 import hudson.model.Run;
-import hudson.plugins.analysis.core.BuildResult;
-import hudson.plugins.analysis.core.ResultAction;
 
 /**
  * FIXME: write comment.

@@ -16,7 +16,7 @@ import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.jenkins.plugins.analysis.core.HistoryProvider;
+import io.jenkins.plugins.analysis.core.history.RunResultHistory;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.ToolTipProvider;
@@ -43,10 +43,10 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return the graph
      */
     @Override
-    public JFreeChart create(final GraphConfiguration configuration, final HistoryProvider history, final String pluginName) {
+    public JFreeChart create(final GraphConfiguration configuration, final RunResultHistory history, final String pluginName) {
         JFreeChart chart = createChart(configuration, history);
 
-        attachRenderers(configuration, pluginName, chart, history.getBaseline().getResult().getToolTipProvider());
+        attachRenderers(configuration, pluginName, chart, history.getBaseline().getToolTipProvider());
 
         return chart;
     }
@@ -65,12 +65,12 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     @Override
     @SuppressFBWarnings("WMI")
     public JFreeChart createAggregation(final GraphConfiguration configuration,
-                                        final Collection<HistoryProvider> resultActions, final String pluginName) {
+                                        final Collection<RunResultHistory> resultActions, final String pluginName) {
         CategoryDataset dataset = createSeriesBuilder().createAggregation(configuration, resultActions);
 
         JFreeChart chart = createChart(dataset);
 
-        attachRenderers(configuration, pluginName, chart, resultActions.iterator().next().getBaseline().getResult().getToolTipProvider());
+        attachRenderers(configuration, pluginName, chart, resultActions.iterator().next().getBaseline().getToolTipProvider());
 
         return chart;
     }
@@ -105,7 +105,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *            the action to start with
      * @return the created chart
      */
-    protected JFreeChart createChart(final GraphConfiguration configuration, final HistoryProvider history) {
+    protected JFreeChart createChart(final GraphConfiguration configuration, final RunResultHistory history) {
         CategoryDataset dataSet = createSeriesBuilder().createDataSet(configuration, history);
         return createChart(dataSet);
     }

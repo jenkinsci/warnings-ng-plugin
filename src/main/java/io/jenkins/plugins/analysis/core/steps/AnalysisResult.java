@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import io.jenkins.plugins.analysis.core.HistoryProvider;
-import io.jenkins.plugins.analysis.core.ReferenceProvider;
+import io.jenkins.plugins.analysis.core.history.RunResultHistory;
+import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 
 import hudson.model.Run;
 import hudson.plugins.analysis.core.ParserResult;
@@ -30,7 +30,7 @@ public class AnalysisResult extends BuildResult {
      */
     // FIXME: move issues to end with vararg
     public AnalysisResult(final Run build, final String defaultEncoding, final ParserResult[] issues,
-            final ReferenceProvider referenceProvider, final HistoryProvider buildHistory, final String id) {
+            final ReferenceProvider referenceProvider, final RunResultHistory buildHistory, final String id) {
         super(build, referenceProvider, buildHistory, merge(issues), defaultEncoding);
 
         this.id = id;

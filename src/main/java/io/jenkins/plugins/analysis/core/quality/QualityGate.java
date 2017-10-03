@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core;
+package io.jenkins.plugins.analysis.core.quality;
 
 /**
  * Defines quality gates for a static analysis run.

@@ -16,7 +16,7 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import io.jenkins.plugins.analysis.core.HistoryProvider;
+import io.jenkins.plugins.analysis.core.history.RunResultHistory;
 import io.jenkins.plugins.analysis.core.steps.BuildResult;
 
 import hudson.plugins.analysis.Messages;
@@ -41,7 +41,7 @@ public class DifferenceGraph extends BuildResultGraph {
 
     @Override
     public JFreeChart create(final GraphConfiguration configuration,
-                             final HistoryProvider history, final String pluginName) {
+                             final RunResultHistory history, final String pluginName) {
         ArrayList<Pair<Integer, Integer>> fixedWarnings = new ArrayList<Pair<Integer, Integer>>();
         ArrayList<Pair<Integer, Integer>> newWarnings = new ArrayList<Pair<Integer, Integer>>();
 
@@ -66,7 +66,7 @@ public class DifferenceGraph extends BuildResultGraph {
 
     @Override
     public JFreeChart createAggregation(final GraphConfiguration configuration,
-                                        final Collection<HistoryProvider> resultActions, final String pluginName) {
+                                        final Collection<RunResultHistory> resultActions, final String pluginName) {
         return create(configuration, resultActions.iterator().next(), pluginName);
     }
 
@@ -117,7 +117,7 @@ public class DifferenceGraph extends BuildResultGraph {
      * @param newWarnings
      *            list of pairs with the points for the new warnings
      */
-    private void extractPoints(final GraphConfiguration configuration, final HistoryProvider history,
+    private void extractPoints(final GraphConfiguration configuration, final RunResultHistory history,
                                final List<Pair<Integer, Integer>> fixedWarnings, final List<Pair<Integer, Integer>> newWarnings) {
         int buildCount = 0;
         for (BuildResult current : history) {
