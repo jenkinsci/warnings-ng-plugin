@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
@@ -353,8 +354,9 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      *            the current result
      */
     private void computeZeroWarningsHighScore(final Run<?, ?> build, final ParserResult currentResult) {
-        if (buildHistory.hasPrevious()) {
-            BuildResult previous = buildHistory.getPrevious();
+        Optional<BuildResult> result = buildHistory.getPreviousResult();
+        if (result.isPresent()) {
+            BuildResult previous = result.get();
             if (currentResult.hasNoAnnotations()) {
                 if (previous.hasNoAnnotations()) {
                     zeroWarningsSinceBuild = previous.getZeroWarningsSinceBuild();
@@ -1172,7 +1174,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         BuildResultEvaluator resultEvaluator = new BuildResultEvaluator(url);
         Result buildResult;
         StringBuilder messages = new StringBuilder();
-        if (buildHistory.isEmpty() || !canComputeNew) {
+        if (!buildHistory.getPreviousResult().isPresent() || !canComputeNew) {
             logger.log("Ignore new warnings since this is the first valid build");
             buildResult = resultEvaluator.evaluateBuildResult(messages, thresholds, getAnnotations());
         }
@@ -1191,13 +1193,14 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         logger.log(String.format("%s %s - %s", Messages.ResultAction_Status(), buildResult.color.getDescription(), getReason()));
     }
 
-    private void saveResult(final Result result) {
+    private void saveResult(final Result pluginResult) {
         isSuccessfulStateTouched = true;
-        pluginResult = result;
-        owner.setResult(result);
+        this.pluginResult = pluginResult;
+        owner.setResult(pluginResult);
 
-        if (buildHistory.hasPrevious()) {
-            BuildResult previous = buildHistory.getPrevious();
+        Optional<BuildResult> result = buildHistory.getPreviousResult();
+        if (result.isPresent()) {
+            BuildResult previous = result.get();
             if (isSuccessful()) {
                 if (previous.isSuccessful() && previous.isSuccessfulTouched()) {
                     successfulSinceBuild = previous.getSuccessfulSinceBuild();

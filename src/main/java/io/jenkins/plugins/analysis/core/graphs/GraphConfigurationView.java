@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,6 +17,7 @@ import com.google.common.collect.Lists;
 
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.history.RunResultHistory;
+import io.jenkins.plugins.analysis.core.steps.BuildResult;
 import net.sf.json.JSONObject;
 
 import hudson.model.Job;
@@ -148,8 +150,9 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return <code>true</code>, if there is such a graph
      */
     public boolean hasMeaningfulGraph() {
-        if (buildHistory.hasPrevious()) {
-            return !SeriesBuilder.areResultsTooOld(configuration, buildHistory.getPrevious());
+        Optional<BuildResult> previousResult = buildHistory.getPreviousResult();
+        if (previousResult.isPresent()) {
+            return !SeriesBuilder.areResultsTooOld(configuration, previousResult.get());
         }
         return false;
     }

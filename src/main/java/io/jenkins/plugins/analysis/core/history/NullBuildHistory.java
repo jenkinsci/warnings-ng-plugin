@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.core.history;
 
+import java.util.Optional;
+
 import io.jenkins.plugins.analysis.core.steps.BuildResult;
 
 /**
@@ -17,18 +19,8 @@ public class NullBuildHistory extends BuildHistory {
     }
 
     @Override
-    public boolean hasPrevious() {
-        return false;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return true;
-    }
-
-    @Override
-    public BuildResult getPrevious() {
-        return null;
+    public Optional<BuildResult> getPreviousResult() {
+        return Optional.empty();
     }
 }
 
