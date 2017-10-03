@@ -5,7 +5,7 @@ import javax.servlet.http.Cookie;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import io.jenkins.plugins.analysis.core.HistoryProvider;
+import io.jenkins.plugins.analysis.core.history.RunResultHistory;
 
 import hudson.model.Job;
 import hudson.plugins.analysis.Messages;
@@ -33,7 +33,7 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      *            the build history for this job
      */
     public UserGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
-                                      final String jobActionUrl, final String globalFileName, final Cookie[] cookies, final HistoryProvider buildHistory) {
+                                      final String jobActionUrl, final String globalFileName, final Cookie[] cookies, final RunResultHistory buildHistory) {
         super(configuration, job, jobActionUrl, buildHistory);
 
         if (!configuration.initializeFrom(createCookieHandler(jobActionUrl).getValue(cookies))) {
@@ -56,7 +56,7 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      *            the build history for this job
      */
     public UserGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
-                                      final String jobActionUrl, final Cookie[] cookies, final HistoryProvider buildHistory) {
+                                      final String jobActionUrl, final Cookie[] cookies, final RunResultHistory buildHistory) {
         this(configuration, job, jobActionUrl, jobActionUrl, cookies, buildHistory);
     }
     

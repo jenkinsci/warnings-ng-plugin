@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.core.graphs;
 
 
 import javax.annotation.CheckForNull;
-import java.awt.Color;
+import java.awt.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,8 +15,7 @@ import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.data.category.CategoryDataset;
 
-import io.jenkins.plugins.analysis.core.HistoryProvider;
-import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
+import io.jenkins.plugins.analysis.core.history.RunResultHistory;
 import io.jenkins.plugins.analysis.core.steps.BuildResult;
 
 import hudson.plugins.analysis.Messages;
@@ -34,10 +33,10 @@ import hudson.util.DataSetBuilder;
 public class AnnotationsByUserGraph extends BuildResultGraph {
     @Override
     public JFreeChart create(final GraphConfiguration configuration,
-                             final HistoryProvider history, @CheckForNull final String pluginName) {
+                             final RunResultHistory history, @CheckForNull final String pluginName) {
         Map<String, Integer[]> annotationCountByUser = new HashMap<String, Integer[]>();
 
-        AnalysisResult result = history.getBaseline().getResult();
+        BuildResult result = history.getBaseline();
         mergeResults(result, annotationCountByUser);
 
         return createGraphFromUserMapping(configuration, pluginName, annotationCountByUser, result.getToolTipProvider());
@@ -52,16 +51,16 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
     }
 
     @Override
-    public JFreeChart createAggregation(final GraphConfiguration configuration, final Collection<HistoryProvider> resultActions, final String pluginName) {
+    public JFreeChart createAggregation(final GraphConfiguration configuration, final Collection<RunResultHistory> resultActions, final String pluginName) {
         Map<String, Integer[]> annotationCountByUser = new HashMap<String, Integer[]>();
 
-        for (HistoryProvider history : resultActions) {
-            AnalysisResult result = history.getBaseline().getResult();
+        for (RunResultHistory history : resultActions) {
+            BuildResult result = history.getBaseline();
             mergeResults(result, annotationCountByUser);
         }
 
         return createGraphFromUserMapping(configuration, pluginName, annotationCountByUser,
-                resultActions.iterator().next().getBaseline().getResult().getToolTipProvider());
+                resultActions.iterator().next().getBaseline().getToolTipProvider());
     }
 
     /**

@@ -17,7 +17,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import com.google.common.collect.Sets;
 
-import io.jenkins.plugins.analysis.core.FilesParser;
+import io.jenkins.plugins.analysis.core.util.FilesParser;
 import io.jenkins.plugins.analysis.core.steps.IssueParser.IssueParserDescriptor;
 import jenkins.model.Jenkins;
 

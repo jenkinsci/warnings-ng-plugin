@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core;
+package io.jenkins.plugins.analysis.core.history;
 
 import io.jenkins.plugins.analysis.core.steps.PipelineResultAction;
 

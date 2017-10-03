@@ -8,8 +8,8 @@ import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import io.jenkins.plugins.analysis.core.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.HealthReportBuilder;
+import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
 import hudson.model.Action;

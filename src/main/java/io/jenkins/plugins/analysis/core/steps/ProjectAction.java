@@ -14,10 +14,10 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import com.google.common.collect.Lists;
 
-import io.jenkins.plugins.analysis.core.BuildHistory;
-import io.jenkins.plugins.analysis.core.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.HistoryProvider;
-import io.jenkins.plugins.analysis.core.NullBuildHistory;
+import io.jenkins.plugins.analysis.core.history.BuildHistory;
+import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.history.RunResultHistory;
+import io.jenkins.plugins.analysis.core.history.NullBuildHistory;
 import io.jenkins.plugins.analysis.core.graphs.AnnotationsByUserGraph;
 import io.jenkins.plugins.analysis.core.graphs.BuildResultGraph;
 import io.jenkins.plugins.analysis.core.graphs.DefaultGraphConfigurationView;
@@ -266,7 +266,7 @@ public class ProjectAction implements Action {
                 getUrlName(), createBuildHistory());
     }
 
-    private HistoryProvider createBuildHistory() {
+    private RunResultHistory createBuildHistory() {
         Run<?, ?> lastFinishedRun = getLastFinishedRun();
         if (lastFinishedRun == null) {
             return new NullBuildHistory();

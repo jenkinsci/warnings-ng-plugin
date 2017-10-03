@@ -7,7 +7,7 @@ import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.jenkins.plugins.analysis.core.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.AreaRenderer;

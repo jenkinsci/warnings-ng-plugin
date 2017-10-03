@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core;
+package io.jenkins.plugins.analysis.core.util;
 
 import java.io.File;
 import java.io.IOException;

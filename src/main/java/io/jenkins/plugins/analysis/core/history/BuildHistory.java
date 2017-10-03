@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core;
+package io.jenkins.plugins.analysis.core.history;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -18,7 +18,7 @@ import hudson.model.Run;
  *
  * @author Ulli Hafner
  */
-public class BuildHistory implements HistoryProvider {
+public class BuildHistory implements RunResultHistory {
     /** The build to start the history from. */
     private final Run<?, ?> baseline;
     private final ResultSelector selector;
@@ -37,8 +37,8 @@ public class BuildHistory implements HistoryProvider {
     }
 
     @Override
-    public PipelineResultAction getBaseline() {
-        return getResultAction(baseline);
+    public BuildResult getBaseline() {
+        return getResultAction(baseline).getResult();
     }
 
     /**
@@ -135,17 +135,17 @@ public class BuildHistory implements HistoryProvider {
     }
 
     @Override
-    public boolean hasPreviousResult() {
+    public boolean hasPrevious() {
         return getPreviousAction() != null;
     }
 
     @Override
     public boolean isEmpty() {
-        return !hasPreviousResult();
+        return !hasPrevious();
     }
 
     @Override
-    public BuildResult getPreviousResult() {
+    public BuildResult getPrevious() {
         PipelineResultAction action = getPreviousAction();
         if (action != null) {
             return action.getResult();

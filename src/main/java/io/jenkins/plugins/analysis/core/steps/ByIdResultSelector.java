@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.core.steps;
 import javax.annotation.CheckForNull;
 import java.util.List;
 
-import io.jenkins.plugins.analysis.core.ResultSelector;
+import io.jenkins.plugins.analysis.core.history.ResultSelector;
 
 import hudson.model.Run;
 
