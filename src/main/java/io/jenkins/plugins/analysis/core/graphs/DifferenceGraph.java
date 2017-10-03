@@ -20,7 +20,6 @@ import io.jenkins.plugins.analysis.core.HistoryProvider;
 import io.jenkins.plugins.analysis.core.steps.BuildResult;
 
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.util.CategoryUrlBuilder;
 import hudson.plugins.analysis.util.Pair;
 
 /**

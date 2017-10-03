@@ -10,7 +10,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.AreaRenderer;
-import hudson.plugins.analysis.util.CategoryUrlBuilder;
 import hudson.plugins.analysis.util.ToolTipAreaRenderer;
 import hudson.plugins.analysis.util.ToolTipBuilder;
 import hudson.plugins.analysis.util.ToolTipProvider;

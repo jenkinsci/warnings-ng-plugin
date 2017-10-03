@@ -18,7 +18,6 @@
 
     <properties>
         <junit.version>5.0.0</junit.version>
-        <mockito.version>2.9.0</mockito.version>
         <assertj.version>3.8.0</assertj.version>
     </properties>
 
@@ -98,12 +97,6 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

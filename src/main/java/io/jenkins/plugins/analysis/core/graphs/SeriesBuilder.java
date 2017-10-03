@@ -358,7 +358,4 @@ public abstract class SeriesBuilder {
     public static long computeDayDelta(final Calendar first, final Calendar second) {
         return Math.abs((first.getTimeInMillis() - second.getTimeInMillis()) / A_DAY_IN_MSEC);
     }
-
-
-
 }
