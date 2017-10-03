@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.history;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import io.jenkins.plugins.analysis.core.steps.BuildResult;
 
@@ -11,31 +12,13 @@ import io.jenkins.plugins.analysis.core.steps.BuildResult;
  */
 public interface RunResultHistory extends Iterable<BuildResult> {
     /**
-     * Returns whether a previous result exists.
-     *
-     * @return {@code true} if a previous result exists.
-     * @see #isEmpty()
-     */
-    boolean hasPrevious();
-
-    /**
-     * Returns whether there is no history available, i.e. the baseline is
-     * the only valid one.
-     *
-     * @return {@code true}  if there is no previous result available
-     * @see #hasPrevious()
-     */
-    boolean isEmpty();
-
-    /**
      * Returns the previous result.
      *
      * @return the previous result
-     * @see #hasPrevious()
      * @throws NoSuchElementException
      *             if there is no previous result
      */
-    BuildResult getPrevious();
+    Optional<BuildResult> getPreviousResult();
 
     /**
      * Returns the baseline result.

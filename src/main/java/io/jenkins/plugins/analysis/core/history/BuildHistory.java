@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.core.history;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import io.jenkins.plugins.analysis.core.steps.BuildResult;
 import io.jenkins.plugins.analysis.core.steps.PipelineResultAction;
@@ -118,23 +118,14 @@ public class BuildHistory implements RunResultHistory {
         }
     }
 
+    // TODO: why don't we return the action?
     @Override
-    public boolean hasPrevious() {
-        return getPreviousAction() != null;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return !hasPrevious();
-    }
-
-    @Override
-    public BuildResult getPrevious() {
+    public Optional<BuildResult> getPreviousResult() {
         PipelineResultAction action = getPreviousAction();
         if (action != null) {
-            return action.getResult();
+            return Optional.of(action.getResult());
         }
-        throw new NoSuchElementException("No previous result available");
+        return Optional.empty();
     }
 
     @Override
