@@ -299,7 +299,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
         computeZeroWarningsHighScore(build, result);
 
-        defineReferenceBuild(referenceProvider);
+        referenceBuild = referenceProvider.getNumber();
 
         if (canSerialize) {
             serializeAnnotations(allWarnings, fixedWarnings);
@@ -308,16 +308,6 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
     public boolean useAuthors() {
         return !GlobalSettings.instance().getNoAuthors();
-    }
-
-    @SuppressFBWarnings("NP")
-    private void defineReferenceBuild(final ReferenceProvider buildHistory) {
-        if (buildHistory.hasReference()) {
-            referenceBuild = buildHistory.getReference().getNumber();
-        }
-        else {
-            referenceBuild = -1;
-        }
     }
 
     /**
