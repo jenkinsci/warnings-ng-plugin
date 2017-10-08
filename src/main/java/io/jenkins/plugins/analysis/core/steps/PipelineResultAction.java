@@ -10,6 +10,7 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
+import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
 import hudson.model.Action;
@@ -20,32 +21,35 @@ import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
 /**
- * Controls the live cycle of the results in a job. This action persists the results
- * of a build and displays them on the build page. The actual visualization of
- * the results is defined in the matching <code>summary.jelly</code> file.
- * <p>
- * Moreover, this class renders the results trend.
- * </p>
+ * Controls the live cycle of the results in a job. This action persists the results of a build and displays them on the
+ * build page. The actual visualization of the results is defined in the matching {@code summary.jelly} file. <p>
+ * Moreover, this class renders the results trend. </p>
  *
  * @author Ulli Hafner
  */
 //CHECKSTYLE:COUPLING-OFF
 @ExportedBean
-public class PipelineResultAction implements StaplerProxy, HealthReportingAction, ToolTipProvider, LastBuildAction, Action {
-    private final Run<?, ?> run;
-    private AnalysisResult result;
-    private String id;
-    private HealthDescriptor healthDescriptor;
+public class PipelineResultAction implements StaplerProxy, HealthReportingAction, ToolTipProvider, LastBuildAction, RunAction2 {
+    private transient Run<?, ?> run;
+
+    private final AnalysisResult result;
+    private final String id;
+    private final HealthDescriptor healthDescriptor;
 
     /**
      * Creates a new instance of <code>AbstractResultAction</code>.
-     *  @param run
-     *            the associated build of this action
+     *
+     * @param run
+     *         the associated build of this action
+     * @param id
+     *         the ID of the parser
      * @param result
+     *         the result of the static analysis run
      * @param healthDescriptor
+     *         defines the health for the current result
      */
-    public PipelineResultAction(final Run<?, ?> run, final AnalysisResult result, final String id,
-                                final HealthDescriptor healthDescriptor) {
+    public PipelineResultAction(final Run<?, ?> run, final String id, final AnalysisResult result,
+            final HealthDescriptor healthDescriptor) {
         this.run = run;
         this.result = result;
         this.id = id;
@@ -56,11 +60,23 @@ public class PipelineResultAction implements StaplerProxy, HealthReportingAction
         return run;
     }
 
+    @Override
+    public void onAttached(final Run<?, ?> r) {
+        run = r;
+        result.setRun(r);
+    }
+
+    @Override
+    public void onLoad(final Run<?, ?> r) {
+        onAttached(r);
+    }
+
     public String getId() {
         return id;
     }
 
-    @Override @Exported
+    @Override
+    @Exported
     public String getDisplayName() {
         return getIssueParser().getLinkName();
     }
@@ -70,8 +86,9 @@ public class PipelineResultAction implements StaplerProxy, HealthReportingAction
         return getIssueParser().getResultUrl();
     }
 
-    @Override @Exported
-    public final HealthReport getBuildHealth() {
+    @Override
+    @Exported
+    public HealthReport getBuildHealth() {
         return new HealthReportBuilder(healthDescriptor).computeHealth(getResult());
     }
 
@@ -101,9 +118,8 @@ public class PipelineResultAction implements StaplerProxy, HealthReportingAction
     /**
      * Returns whether a large image is defined.
      *
-     * @return <code>true</code> if a large image is defined, <code>false</code>
-     *         otherwise. If no large image is defined, then the attribute
-     *         {@code icon} must to be provided in jelly tag {@code summary}.
+     * @return <code>true</code> if a large image is defined, <code>false</code> otherwise. If no large image is
+     *         defined, then the attribute {@code icon} must to be provided in jelly tag {@code summary}.
      * @since 1.41
      */
     public boolean hasLargeImage() {
@@ -154,7 +170,8 @@ public class PipelineResultAction implements StaplerProxy, HealthReportingAction
      * Returns the tooltip for several items.
      *
      * @param numberOfItems
-     *            the number of items to display the tooltip for
+     *         the number of items to display the tooltip for
+     *
      * @return the tooltip for several items
      */
     protected String getMultipleItemsTooltip(final int numberOfItems) {
@@ -175,7 +192,7 @@ public class PipelineResultAction implements StaplerProxy, HealthReportingAction
         return getResult().isSuccessful();
     }
 
-    public IssueParser getIssueParser() {
+    private IssueParser getIssueParser() {
         return IssueParser.find(id);
     }
 }
