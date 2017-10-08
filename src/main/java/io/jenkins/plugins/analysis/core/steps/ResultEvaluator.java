@@ -11,7 +11,7 @@ import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
- * FIXME: write comment.
+ * Evaluates the build result using the defined thresholds.
  *
  * @author Ullrich Hafner
  */
@@ -32,6 +32,15 @@ public class ResultEvaluator extends BuildResultEvaluator {
         this.id = id;
         this.thresholds = thresholds;
         this.logger = logger;
+    }
+
+    /**
+     * Returns whether at least one of the thresholds is set.
+     *
+     * @return {@code true}  if at least one of the thresholds is set, {@code false} if no threshold is set
+     */
+    public boolean isEnabled() {
+        return thresholds.isValid();
     }
 
     // FIXME: i18n of reason

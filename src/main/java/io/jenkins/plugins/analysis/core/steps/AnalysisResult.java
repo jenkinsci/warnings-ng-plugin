@@ -279,50 +279,56 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      * changed.
      */
     private void evaluateStatus(final ResultEvaluator resultEvaluator, final Optional<AnalysisResult> previousResult) {
-        Evaluation result = resultEvaluator.evaluate(previousResult, getAnnotations(), getNewWarnings());
+        if (resultEvaluator.isEnabled()) {
+            Evaluation result = resultEvaluator.evaluate(previousResult, getAnnotations(), getNewWarnings());
 
-        reasonForPluginResult = result.reason;
-        isSuccessfulStateTouched = true;
-        pluginResult = result.result;
+            reasonForPluginResult = result.reason;
+            isSuccessfulStateTouched = true;
+            pluginResult = result.result;
 
-        run.setResult(pluginResult);
+            run.setResult(pluginResult);
 
-        if (previousResult.isPresent()) {
-            AnalysisResult previous = previousResult.get();
-            // FIXME: same code to compute zero warnings
-            if (isSuccessful()) {
-                if (previous.isSuccessful() && previous.isSuccessfulTouched()) {
-                    successfulSinceBuild = previous.getSuccessfulSinceBuild();
-                    successfulSinceDate = previous.getSuccessfulSinceDate();
+            if (previousResult.isPresent()) {
+                AnalysisResult previous = previousResult.get();
+                // FIXME: same code to compute zero warnings
+                if (isSuccessful()) {
+                    if (previous.isSuccessful() && previous.isSuccessfulTouched()) {
+                        successfulSinceBuild = previous.getSuccessfulSinceBuild();
+                        successfulSinceDate = previous.getSuccessfulSinceDate();
+                    }
+                    else {
+                        successfulSinceBuild = run.getNumber();
+                        successfulSinceDate = run.getTimestamp().getTimeInMillis();
+                    }
+                    successfulHighScore = Math.max(previous.getSuccessfulHighScore(),
+                            run.getTimestamp().getTimeInMillis() - successfulSinceDate);
+                    if (previous.getSuccessfulHighScore() == 0) {
+                        isSuccessfulHighScore = true;
+                    }
+                    else {
+                        isSuccessfulHighScore = successfulHighScore != previous.getSuccessfulHighScore();
+
+                    }
+                    if (!isSuccessfulHighScore) {
+                        successfulHighScoreGap = previous.getSuccessfulHighScore()
+                                - (run.getTimestamp().getTimeInMillis() - successfulSinceDate);
+                    }
                 }
                 else {
-                    successfulSinceBuild = run.getNumber();
-                    successfulSinceDate = run.getTimestamp().getTimeInMillis();
-                }
-                successfulHighScore = Math.max(previous.getSuccessfulHighScore(),
-                        run.getTimestamp().getTimeInMillis() - successfulSinceDate);
-                if (previous.getSuccessfulHighScore() == 0) {
-                    isSuccessfulHighScore = true;
-                }
-                else {
-                    isSuccessfulHighScore = successfulHighScore != previous.getSuccessfulHighScore();
-
-                }
-                if (!isSuccessfulHighScore) {
-                    successfulHighScoreGap = previous.getSuccessfulHighScore()
-                            - (run.getTimestamp().getTimeInMillis() - successfulSinceDate);
+                    successfulHighScore = previous.getSuccessfulHighScore();
                 }
             }
             else {
-                successfulHighScore = previous.getSuccessfulHighScore();
+                if (isSuccessful()) {
+                    resetSuccessfulState();
+                }
             }
         }
         else {
-            if (isSuccessful()) {
-                resetSuccessfulState();
-            }
+            pluginResult = Result.SUCCESS;
+            reasonForPluginResult = "No threshold set"; // FIXME: i18n
+            isSuccessfulStateTouched = false;
         }
-
     }
 
     /**
