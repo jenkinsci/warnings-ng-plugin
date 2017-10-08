@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import io.jenkins.plugins.analysis.core.steps.IssueParser;
+import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 
 import hudson.Extension;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -23,7 +23,7 @@ import hudson.plugins.warnings.parser.ParserRegistry;
  * @author Ullrich Hafner
  */
 @Extension
-public class Java extends IssueParser {
+public class Java extends StaticAnalysisTool {
     private static final String JAVA_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-24x24.png";
     private static final String JAVA_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-48x48.png";
 
