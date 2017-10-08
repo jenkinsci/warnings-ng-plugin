@@ -15,3 +15,4 @@ Maintainer: Dr. Ullrich Hafner
 - Different properties for warnings in downstream plugins?
 - SCM link for blame information
 - Parser: ID, Publish: ID: same class or different?
+- Highscore starts for #1 on yesterday

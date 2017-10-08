@@ -17,7 +17,6 @@ import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
  * @see ResultSelector
  */
 public abstract class ReferenceFinder extends BuildHistory implements ReferenceProvider {
-
     /**
      * Creates a {@link ReferenceProvider} instance based on the specified properties.
      *
@@ -33,6 +32,7 @@ public abstract class ReferenceFinder extends BuildHistory implements ReferenceP
      *         reference, otherwise every run that contains results of the same static analysis configuration is
      *         considered
      */
+    @SuppressWarnings("BooleanParameter")
     public static ReferenceProvider create(final Run<?, ?> run, final ResultSelector selector,
             final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
         if (ignoreAnalysisResult) {
@@ -64,11 +64,8 @@ public abstract class ReferenceFinder extends BuildHistory implements ReferenceP
 
     @Override
     public int getNumber() {
-        Optional<PipelineResultAction> referenceAction = getReferenceAction();
-        if (referenceAction.isPresent()) {
-            return referenceAction.get().getRun().getNumber();
-        }
-        return NO_REFERENCE_FOUND;
+        return getReferenceAction().map(pipelineResultAction -> pipelineResultAction.getRun().getNumber())
+                .orElse(NO_REFERENCE_FOUND);
     }
 
     /**

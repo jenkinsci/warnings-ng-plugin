@@ -24,8 +24,11 @@ public class StablePluginReference extends ReferenceFinder {
      * @param selector
      *         type of the action that contains the build results
      * @param overallResultMustBeSuccess
-     *         builds must be of overall status stable
+     *         if  {@code true} then only runs with an overall result of {@link Result#SUCCESS} are considered as a
+     *         reference, otherwise every run that contains results of the same static analysis configuration is
+     *         considered
      */
+    @SuppressWarnings("BooleanParameter")
     public StablePluginReference(final Run<?, ?> baseline, final ResultSelector selector,
             final boolean overallResultMustBeSuccess) {
         super(baseline, selector);

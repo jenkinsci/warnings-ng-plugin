@@ -15,8 +15,6 @@ public interface RunResultHistory extends Iterable<AnalysisResult> {
      * Returns the previous result.
      *
      * @return the previous result
-     * @throws NoSuchElementException
-     *             if there is no previous result
      */
     Optional<AnalysisResult> getPreviousResult();
 
