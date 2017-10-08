@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
-import io.jenkins.plugins.analysis.core.steps.BuildResult;
+import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -40,8 +40,8 @@ class PriorityGraphTest {
     void shouldHaveThreeValuesForSingleBuild() {
         PrioritySeriesBuilder builder = new PrioritySeriesBuilder();
 
-        BuildResult singleResult = createBuildResult(1, 1, 2, 3);
-        List<BuildResult> results = Lists.newArrayList(singleResult);
+        AnalysisResult singleResult = createBuildResult(1, 1, 2, 3);
+        List<AnalysisResult> results = Lists.newArrayList(singleResult);
         CategoryDataset dataSet = builder.createDataSet(createConfiguration(), results);
 
         assertThat(dataSet.getColumnCount()).isEqualTo(1);
@@ -54,16 +54,16 @@ class PriorityGraphTest {
         assertThat(dataSet.getValue(2, 0)).isEqualTo(1);
     }
 
-    private BuildResult createBuildResult(final int buildNumber, final int numberOfHighPriorityIssues,
+    private AnalysisResult createBuildResult(final int buildNumber, final int numberOfHighPriorityIssues,
                                           final int numberOfNormalPriorityIssues, final int numberOfLowPriorityIssues) {
-        BuildResult buildResult = mock(BuildResult.class);
+        AnalysisResult buildResult = mock(AnalysisResult.class);
 
         when(buildResult.getNumberOfAnnotations(Priority.HIGH)).thenReturn(numberOfHighPriorityIssues);
         when(buildResult.getNumberOfAnnotations(Priority.NORMAL)).thenReturn(numberOfNormalPriorityIssues);
         when(buildResult.getNumberOfAnnotations(Priority.LOW)).thenReturn(numberOfLowPriorityIssues);
 
         Run run = createRun(buildNumber);
-        when(buildResult.getOwner()).thenReturn(run);
+        when(buildResult.getRun()).thenReturn(run);
 
         return buildResult;
     }

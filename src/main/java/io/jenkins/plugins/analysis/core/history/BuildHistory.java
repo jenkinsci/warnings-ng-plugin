@@ -4,7 +4,7 @@ import javax.annotation.CheckForNull;
 import java.util.Iterator;
 import java.util.Optional;
 
-import io.jenkins.plugins.analysis.core.steps.BuildResult;
+import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.PipelineResultAction;
 
 import hudson.model.Result;
@@ -36,7 +36,7 @@ public class BuildHistory implements RunResultHistory {
     }
 
     @Override
-    public BuildResult getBaseline() {
+    public AnalysisResult getBaseline() {
         return selector.get(baseline).getResult();
     }
 
@@ -54,7 +54,7 @@ public class BuildHistory implements RunResultHistory {
      */
     protected PipelineResultAction getPreviousAction(
             final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
-        Run<?, ?> run = getPreviousRun(this.baseline, ignoreAnalysisResult, overallResultMustBeSuccess);
+        Run<?, ?> run = getPreviousRun(baseline, ignoreAnalysisResult, overallResultMustBeSuccess);
         if (run != null) {
             return selector.get(run);
         }
@@ -78,7 +78,7 @@ public class BuildHistory implements RunResultHistory {
         return action != null && (action.isSuccessful() || ignoreAnalysisResult);
     }
 
-    protected boolean hasValidResult(final Run<?, ?> run, @CheckForNull final PipelineResultAction action,
+    private boolean hasValidResult(final Run<?, ?> run, @CheckForNull final PipelineResultAction action,
             final boolean overallResultMustBeSuccess) {
         Result result = run.getResult();
 
@@ -102,7 +102,7 @@ public class BuildHistory implements RunResultHistory {
 
     // TODO: why don't we return the action?
     @Override
-    public Optional<BuildResult> getPreviousResult() {
+    public Optional<AnalysisResult> getPreviousResult() {
         PipelineResultAction action = getPreviousAction(false, false);
         if (action != null) {
             return Optional.of(action.getResult());
@@ -111,11 +111,11 @@ public class BuildHistory implements RunResultHistory {
     }
 
     @Override
-    public Iterator<BuildResult> iterator() {
+    public Iterator<AnalysisResult> iterator() {
         return new BuildResultIterator(baseline);
     }
 
-    private class BuildResultIterator implements Iterator<BuildResult> {
+    private class BuildResultIterator implements Iterator<AnalysisResult> {
         private Run<?, ?> baseline;
 
         public BuildResultIterator(final Run<?, ?> baseline) {
@@ -128,7 +128,7 @@ public class BuildHistory implements RunResultHistory {
         }
 
         @Override
-        public BuildResult next() {
+        public AnalysisResult next() {
             PipelineResultAction resultAction = selector.get(baseline);
 
             baseline = getPreviousRun(baseline, false, false);

@@ -5,7 +5,7 @@ import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.util.HtmlPrinter;
 
 /**
- * FIXME: write comment.
+ * Creates a default summary message for the build result.
  *
  * @author Ullrich Hafner
  */

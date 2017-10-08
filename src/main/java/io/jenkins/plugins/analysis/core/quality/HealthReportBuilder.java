@@ -24,7 +24,8 @@ public class HealthReportBuilder implements Serializable {
     /**
      * Creates a new instance of {@link HealthReportBuilder}.
      *
-     * @param healthDescriptor health descriptor
+     * @param healthDescriptor
+     *         health descriptor
      */
     public HealthReportBuilder(final HealthDescriptor healthDescriptor) {
         this.healthDescriptor = healthDescriptor;
@@ -32,10 +33,13 @@ public class HealthReportBuilder implements Serializable {
 
     /**
      * Computes the healthiness of a build based on the specified results. Reports a health of 100% when the specified
-     * counter is less than {@link #healthy}. Reports a health of 0% when the specified counter is greater than {@link
-     * #unHealthy}. The computation takes only annotations of the specified severity into account.
+     * counter is less than {@link HealthDescriptor#getHealthy()}. Reports a health of 0% when the specified counter is
+     * greater than {@link HealthDescriptor#getUnHealthy()}. The computation takes only annotations of the specified
+     * severity into account.
      *
-     * @param result annotations of the current build
+     * @param result
+     *         annotations of the current build
+     *
      * @return the healthiness of a build
      */
     public HealthReport computeHealth(final AnnotationProvider result) {
@@ -44,33 +48,19 @@ public class HealthReportBuilder implements Serializable {
             numberOfAnnotations += result.getNumberOfAnnotations(priority);
         }
 
-        return computeHealth(numberOfAnnotations, result);
-    }
-
-
-    /**
-     * Computes the healthiness of a build based on the specified counter. Reports a health of 100% when the specified
-     * counter is less than {@link #healthy}. Reports a health of 0% when the specified counter is greater than {@link
-     * #unHealthy}.
-     *
-     * @param counter the number of items in a build that should be considered for health computation
-     * @param result  annotations of the current build
-     * @return the healthiness of a build
-     */
-    protected HealthReport computeHealth(final int counter, final AnnotationProvider result) {
         if (healthDescriptor.isEnabled()) {
             int percentage;
             int healthy = healthDescriptor.getHealthy();
-            if (counter < healthy) {
+            if (numberOfAnnotations < healthy) {
                 percentage = 100;
             }
             else {
                 int unHealthy = healthDescriptor.getUnHealthy();
-                if (counter > unHealthy) {
+                if (numberOfAnnotations > unHealthy) {
                     percentage = 0;
                 }
                 else {
-                    percentage = 100 - ((counter - healthy) * 100 / (unHealthy - healthy));
+                    percentage = 100 - ((numberOfAnnotations - healthy) * 100 / (unHealthy - healthy));
                 }
             }
 
@@ -78,6 +68,7 @@ public class HealthReportBuilder implements Serializable {
         }
         return null;
     }
+
 
     private Localizable getDescription(final AnnotationProvider result) {
         String name = "Static Analysis"; // FIXME: extract from IssueParser.find(id)

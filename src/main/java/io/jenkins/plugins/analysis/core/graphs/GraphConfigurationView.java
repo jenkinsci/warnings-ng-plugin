@@ -17,7 +17,7 @@ import com.google.common.collect.Lists;
 
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.history.RunResultHistory;
-import io.jenkins.plugins.analysis.core.steps.BuildResult;
+import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 import net.sf.json.JSONObject;
 
 import hudson.model.Job;
@@ -150,7 +150,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return <code>true</code>, if there is such a graph
      */
     public boolean hasMeaningfulGraph() {
-        Optional<BuildResult> previousResult = buildHistory.getPreviousResult();
+        Optional<AnalysisResult> previousResult = buildHistory.getPreviousResult();
         if (previousResult.isPresent()) {
             return !SeriesBuilder.areResultsTooOld(configuration, previousResult.get());
         }

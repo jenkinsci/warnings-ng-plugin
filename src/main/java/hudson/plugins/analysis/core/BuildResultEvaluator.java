@@ -28,6 +28,10 @@ public class BuildResultEvaluator {
         this.url = url;
     }
 
+    protected String getUrl() {
+        return url;
+    }
+
     /**
      * Evaluates the build result. The build is marked as unstable or failed if
      * one of the thresholds has been exceeded.

@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.core.history;
 
 import java.util.Optional;
 
-import io.jenkins.plugins.analysis.core.steps.BuildResult;
+import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 
 /**
  * Empty build history.
@@ -19,7 +19,7 @@ public class NullBuildHistory extends BuildHistory {
     }
 
     @Override
-    public Optional<BuildResult> getPreviousResult() {
+    public Optional<AnalysisResult> getPreviousResult() {
         return Optional.empty();
     }
 }

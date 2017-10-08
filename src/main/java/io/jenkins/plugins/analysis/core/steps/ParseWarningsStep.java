@@ -17,8 +17,8 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import com.google.common.collect.Sets;
 
-import io.jenkins.plugins.analysis.core.util.FilesParser;
 import io.jenkins.plugins.analysis.core.steps.IssueParser.IssueParserDescriptor;
+import io.jenkins.plugins.analysis.core.util.FilesParser;
 import jenkins.model.Jenkins;
 
 import hudson.EnvVars;
@@ -190,12 +190,12 @@ public class ParseWarningsStep extends Step {
 
         @Override
         public String getFunctionName() {
-            return "parseCoreWarnings";
+            return "scanForIssues";
         }
 
         @Override
         public String getDisplayName() {
-            return "Parse warnings in files or in the console log";
+            return "Scan files or the console log for issues";
         }
 
         public Collection<? extends IssueParserDescriptor> getAvailableParsers() {

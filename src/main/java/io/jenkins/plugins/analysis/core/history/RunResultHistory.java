@@ -3,14 +3,14 @@ package io.jenkins.plugins.analysis.core.history;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import io.jenkins.plugins.analysis.core.steps.BuildResult;
+import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 
 /**
  * Provides access to the same static analysis results in previous builds.
  *
  * @author Ullrich Hafner
  */
-public interface RunResultHistory extends Iterable<BuildResult> {
+public interface RunResultHistory extends Iterable<AnalysisResult> {
     /**
      * Returns the previous result.
      *
@@ -18,12 +18,12 @@ public interface RunResultHistory extends Iterable<BuildResult> {
      * @throws NoSuchElementException
      *             if there is no previous result
      */
-    Optional<BuildResult> getPreviousResult();
+    Optional<AnalysisResult> getPreviousResult();
 
     /**
      * Returns the baseline result.
      *
      * @return the baseline result
      */
-    BuildResult getBaseline();
+    AnalysisResult getBaseline();
 }
