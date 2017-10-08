@@ -1,11 +1,8 @@
-package io.jenkins.plugins.analysis.core.graphs;
+package io.jenkins.plugins.analysis.core.quality;
 
 import org.junit.jupiter.api.Test;
 
-import io.jenkins.plugins.analysis.core.quality.QualityGate;
-import io.jenkins.plugins.analysis.core.quality.QualityGateEnforcer;
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import hudson.model.Result;

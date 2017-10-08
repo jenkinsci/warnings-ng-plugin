@@ -24,9 +24,10 @@ public class ByIdResultSelector implements ResultSelector {
         this.id = id;
     }
 
+    // FIXME: Optional?
     @Override @CheckForNull
-    public PipelineResultAction get(final Run<?, ?> build) {
-        List<PipelineResultAction> actions = build.getActions(PipelineResultAction.class);
+    public PipelineResultAction get(final Run<?, ?> run) {
+        List<PipelineResultAction> actions = run.getActions(PipelineResultAction.class);
         for (PipelineResultAction action : actions) {
             if (id.equals(action.getId())) {
                 return action;

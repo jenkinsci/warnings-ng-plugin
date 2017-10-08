@@ -11,10 +11,12 @@ import jenkins.model.Jenkins;
 import hudson.ExtensionPoint;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.AnnotationParser;
+import hudson.plugins.analysis.util.HtmlPrinter;
 
 /**
- * FIXME: write comment.
+ * FIXME: split into describale part and default part
  *
  * @author Ullrich Hafner
  */
@@ -93,6 +95,46 @@ public abstract class IssueParser extends AbstractDescribableImpl<IssueParser> i
     public String getSummary(final int numberOfIssues, final int numberOfModules) {
         return getName() + ": " + new ResultSummaryPrinter().createDefaultSummary(getResultUrl(),
                 numberOfIssues, numberOfModules);
+    }
+
+    /**
+     * Creates a default delta message for the build result.
+     *
+     * @param newSize
+     *            number of new issues
+     * @param fixedSize
+     *            number of fixed issues
+     * @return the summary message
+     */
+    public String getDeltaMessage(final int newSize, final int fixedSize) {
+        HtmlPrinter summary = new HtmlPrinter();
+        if (newSize > 0) {
+            summary.append(summary.item(
+                    summary.link(getResultUrl() + "/new", createNewWarningsLinkName(newSize))));
+        }
+        if (fixedSize > 0) {
+            summary.append(summary.item(
+                    summary.link(getResultUrl() + "/fixed", createFixedWarningsLinkName(fixedSize))));
+        }
+        return summary.toString();
+    }
+
+    private static String createNewWarningsLinkName(final int newWarnings) {
+        if (newWarnings == 1) {
+            return Messages.ResultAction_OneNewWarning();
+        }
+        else {
+            return Messages.ResultAction_MultipleNewWarnings(newWarnings);
+        }
+    }
+
+    private static String createFixedWarningsLinkName(final int fixedWarnings) {
+        if (fixedWarnings == 1) {
+            return Messages.ResultAction_OneFixedWarning();
+        }
+        else {
+            return Messages.ResultAction_MultipleFixedWarnings(fixedWarnings);
+        }
     }
 
     public static class IssueParserDescriptor extends Descriptor<IssueParser> {

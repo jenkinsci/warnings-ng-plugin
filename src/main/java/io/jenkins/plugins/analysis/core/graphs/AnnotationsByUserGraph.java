@@ -16,7 +16,7 @@ import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.data.category.CategoryDataset;
 
 import io.jenkins.plugins.analysis.core.history.RunResultHistory;
-import io.jenkins.plugins.analysis.core.steps.BuildResult;
+import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.ToolTipProvider;
@@ -36,7 +36,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
                              final RunResultHistory history, @CheckForNull final String pluginName) {
         Map<String, Integer[]> annotationCountByUser = new HashMap<String, Integer[]>();
 
-        BuildResult result = history.getBaseline();
+        AnalysisResult result = history.getBaseline();
         mergeResults(result, annotationCountByUser);
 
         return createGraphFromUserMapping(configuration, pluginName, annotationCountByUser, result.getToolTipProvider());
@@ -55,7 +55,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
         Map<String, Integer[]> annotationCountByUser = new HashMap<String, Integer[]>();
 
         for (RunResultHistory history : resultActions) {
-            BuildResult result = history.getBaseline();
+            AnalysisResult result = history.getBaseline();
             mergeResults(result, annotationCountByUser);
         }
 
@@ -95,7 +95,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
         return builder.build();
     }
 
-    private void mergeResults(final BuildResult current, final Map<String, Integer[]> annotationCountByUser) {
+    private void mergeResults(final AnalysisResult current, final Map<String, Integer[]> annotationCountByUser) {
         Collection<FileAnnotation> annotations = current.getAnnotations();
         for (FileAnnotation annotation : annotations) {
             String author = annotation.getAuthor();

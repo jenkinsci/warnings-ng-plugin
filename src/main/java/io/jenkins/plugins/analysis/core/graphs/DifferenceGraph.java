@@ -17,7 +17,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import io.jenkins.plugins.analysis.core.history.RunResultHistory;
-import io.jenkins.plugins.analysis.core.steps.BuildResult;
+import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.Pair;
@@ -120,12 +120,12 @@ public class DifferenceGraph extends BuildResultGraph {
     private void extractPoints(final GraphConfiguration configuration, final RunResultHistory history,
                                final List<Pair<Integer, Integer>> fixedWarnings, final List<Pair<Integer, Integer>> newWarnings) {
         int buildCount = 0;
-        for (BuildResult current : history) {
+        for (AnalysisResult current : history) {
             if (SeriesBuilder.isBuildTooOld(configuration, current)) {
                 break;
             }
 
-            int build = current.getOwner().getNumber();
+            int build = current.getRun().getNumber();
             fixedWarnings.add(new Pair<>(build, current.getNumberOfFixedWarnings()));
             newWarnings.add(new Pair<>(build, current.getNumberOfNewWarnings()));
 

@@ -22,7 +22,7 @@ import com.google.common.collect.Sets;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.RunResultHistory;
-import io.jenkins.plugins.analysis.core.steps.BuildResult;
+import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
@@ -35,7 +35,7 @@ import hudson.model.Run;
 public abstract class SeriesBuilder {
     private static final int A_DAY_IN_MSEC = 24 * 3600 * 1000;
 
-    public CategoryDataset createDataSet(final GraphConfiguration configuration, final Iterable<BuildResult> history) {
+    public CategoryDataset createDataSet(final GraphConfiguration configuration, final Iterable<AnalysisResult> history) {
         CategoryDataset dataSet;
         if (configuration.useBuildDateAsDomain()) {
             Map<LocalDate, List<Integer>> averagePerDay = averageByDate(createSeriesPerBuild(configuration, history));
@@ -58,18 +58,18 @@ public abstract class SeriesBuilder {
      */
     @SuppressWarnings("rawtypes")
     private Map<Run, List<Integer>> createSeriesPerBuild(
-            final GraphConfiguration configuration, final Iterable<BuildResult> history) {
+            final GraphConfiguration configuration, final Iterable<AnalysisResult> history) {
         int buildCount = 0;
         Map<Run, List<Integer>> valuesPerBuild = Maps.newHashMap();
         String parameterName = configuration.getParameterName();
         String parameterValue = configuration.getParameterValue();
 
-        for (BuildResult current : history) {
+        for (AnalysisResult current : history) {
             if (isBuildTooOld(configuration, current)) {
                 break;
             }
-            if (passesFilteringByParameter(current.getOwner(), parameterName, parameterValue)) {
-                valuesPerBuild.put(current.getOwner(), computeSeries(current));
+            if (passesFilteringByParameter(current.getRun(), parameterName, parameterValue)) {
+                valuesPerBuild.put(current.getRun(), computeSeries(current));
             }
 
             if (configuration.isBuildCountDefined()) {
@@ -111,7 +111,7 @@ public abstract class SeriesBuilder {
      * @param current the current build result
      * @return the series to plot
      */
-    protected abstract List<Integer> computeSeries(BuildResult current);
+    protected abstract List<Integer> computeSeries(AnalysisResult current);
 
     /**
      * Creates a data set that contains a series per build number.
@@ -122,7 +122,7 @@ public abstract class SeriesBuilder {
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     private CategoryDataset createDatasetPerBuildNumber(final Map<Run, List<Integer>> valuesPerBuild) {
-        hudson.util.DataSetBuilder<String, NumberOnlyBuildLabel> builder = new hudson.util.DataSetBuilder<String, NumberOnlyBuildLabel>();
+        hudson.util.DataSetBuilder<String, NumberOnlyBuildLabel> builder = new hudson.util.DataSetBuilder<>();
         List<Run> builds = Lists.newArrayList(valuesPerBuild.keySet());
         Collections.sort(builds);
         for (Run<?, ?> build : builds) {
@@ -148,7 +148,7 @@ public abstract class SeriesBuilder {
         List<LocalDate> buildDates = Lists.newArrayList(averagePerDay.keySet());
         Collections.sort(buildDates);
 
-        hudson.util.DataSetBuilder<String, LocalDateLabel> builder = new hudson.util.DataSetBuilder<String, LocalDateLabel>();
+        hudson.util.DataSetBuilder<String, LocalDateLabel> builder = new hudson.util.DataSetBuilder<>();
         for (LocalDate date : buildDates) {
             int level = 0;
             for (Integer average : averagePerDay.get(date)) {
@@ -313,7 +313,7 @@ public abstract class SeriesBuilder {
      *            the current build
      * @return <code>true</code> if the build is too old
      */
-    public static boolean isBuildTooOld(final GraphConfiguration configuration, final BuildResult current) {
+    public static boolean isBuildTooOld(final GraphConfiguration configuration, final AnalysisResult current) {
         return areResultsTooOld(configuration, current);
     }
     /**
@@ -325,8 +325,8 @@ public abstract class SeriesBuilder {
      *            the second date (given by the build result)
      * @return the delta between two dates in days
      */
-    public static long computeDayDelta(final Calendar first, final BuildResult second) {
-        return computeDayDelta(first, second.getOwner().getTimestamp());
+    public static long computeDayDelta(final Calendar first, final AnalysisResult second) {
+        return computeDayDelta(first, second.getRun().getTimestamp());
     }
 
     /**
@@ -339,7 +339,7 @@ public abstract class SeriesBuilder {
      *            the current build
      * @return <code>true</code> if the build is too old
      */
-    public static boolean areResultsTooOld(final GraphConfiguration configuration, final BuildResult current) {
+    public static boolean areResultsTooOld(final GraphConfiguration configuration, final AnalysisResult current) {
         Calendar today = new GregorianCalendar();
 
         return configuration.isDayCountDefined()

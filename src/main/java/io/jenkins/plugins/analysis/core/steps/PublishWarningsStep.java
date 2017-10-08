@@ -18,14 +18,20 @@ import org.kohsuke.stapler.DataBoundSetter;
 import com.google.common.collect.Sets;
 
 import io.jenkins.plugins.analysis.core.history.BuildHistory;
-import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.history.ReferenceFinder;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.history.ResultSelector;
+import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 
 import hudson.Extension;
+import hudson.model.Action;
+import hudson.model.Job;
+import hudson.model.Result;
 import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.plugins.analysis.core.ParserResult;
+import hudson.plugins.analysis.core.Thresholds;
+import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.Priority;
 
 /*
@@ -35,31 +41,34 @@ import hudson.plugins.analysis.util.model.Priority;
 public class PublishWarningsStep extends Step {
     private static final String DEFAULT_MINIMUM_PRIORITY = "low";
 
-    private ParserResult[] warnings;
+    private ParserResult[] issues;
 
     private boolean usePreviousBuildAsReference;
     private boolean useStableBuildAsReference;
 
     private String defaultEncoding;
 
-    /** Report health as 100% when the number of warnings is less than this value. */
     private String healthy;
-    /** Report health as 0% when the number of warnings is greater than this value. */
     private String unHealthy;
-    /** Determines which warning priorities should be considered when evaluating the build health. */
     private String minimumPriority = DEFAULT_MINIMUM_PRIORITY;
+    private Thresholds thresholds = new Thresholds();
 
+    /**
+     * Creates a new instance of {@link PublishWarningsStep}.
+     *
+     * @param issues the issues to publish as {@link Action} in the {@link Job}.
+     */
     @DataBoundConstructor
-    public PublishWarningsStep(final ParserResult... warnings) {
-        this.warnings = warnings;
+    public PublishWarningsStep(final ParserResult... issues) {
+        this.issues = issues;
 
-        if (warnings == null || warnings.length == 0) {
-            throw new IllegalArgumentException("No warnings provided");
+        if (issues == null || issues.length == 0) {
+            throw new IllegalArgumentException("No issues provided");
         }
     }
 
-    public ParserResult[] getWarnings() {
-        return warnings;
+    public ParserResult[] getIssues() {
+        return issues;
     }
 
     public boolean getUsePreviousBuildAsReference() {
@@ -67,7 +76,7 @@ public class PublishWarningsStep extends Step {
     }
 
     /**
-     * Determines if the previous build should always be used as the reference build, no matter its overall result.
+     * Determines if the previous build should always be used as the reference build, no matter of its overall result.
      *
      * @param usePreviousBuildAsReference if {@code true} then the previous build is always used
      */
@@ -151,6 +160,22 @@ public class PublishWarningsStep extends Step {
         this.minimumPriority = StringUtils.defaultIfEmpty(minimumPriority, DEFAULT_MINIMUM_PRIORITY);
     }
 
+    @CheckForNull
+    public Thresholds getThresholds() {
+        return thresholds;
+    }
+
+    /**
+     * Sets the result threshold, i.e. the number of issues when to set the build result to {@link Result#SUCCESS},
+     * {@link Result#UNSTABLE}, or {@link Result#FAILURE}.
+     *
+     * @param thresholds the number of issues required to change the build status
+     */
+    @DataBoundSetter
+    public void setThresholds(final Thresholds thresholds) {
+        this.thresholds = thresholds;
+    }
+
     @Override
     public StepExecution start(final StepContext stepContext) throws Exception {
         return new Execution(stepContext, this);
@@ -158,6 +183,7 @@ public class PublishWarningsStep extends Step {
 
     public static class Execution extends SynchronousNonBlockingStepExecution<PipelineResultAction> {
         private final HealthDescriptor healthDescriptor;
+        private final Thresholds thresholds;
         private boolean useStableBuildAsReference;
         private boolean usePreviousBuildAsReference;
         private String defaultEncoding;
@@ -170,10 +196,11 @@ public class PublishWarningsStep extends Step {
             useStableBuildAsReference = step.useStableBuildAsReference;
             defaultEncoding = step.defaultEncoding;
             healthDescriptor = new HealthDescriptor(step.healthy, step.unHealthy, getMinimumPriority(step.minimumPriority));
+            thresholds = step.thresholds;
 
-            warnings = step.warnings;
+            warnings = step.issues;
             if (warnings == null) {
-                throw new NullPointerException("No warnings provided.");
+                throw new NullPointerException("No warnings provided to step " + step);
             }
         }
 
@@ -183,7 +210,7 @@ public class PublishWarningsStep extends Step {
 
         @Override
         protected PipelineResultAction run() throws Exception {
-            Set<String> ids = new HashSet<String>();
+            Set<String> ids = new HashSet<>();
             for (ParserResult result : warnings) {
                 ids.add(result.getId());
             }
@@ -216,11 +243,16 @@ public class PublishWarningsStep extends Step {
             return getContext().get(Run.class);
         }
 
-        private PipelineResultAction publishResult(final String id, final Run run, final ResultSelector selector) {
+        private PipelineResultAction publishResult(final String id, final Run run, final ResultSelector selector) throws IOException, InterruptedException {
             ReferenceProvider referenceProvider = ReferenceFinder.create(run,
                     selector, usePreviousBuildAsReference, useStableBuildAsReference);
             BuildHistory buildHistory = new BuildHistory(run, selector);
-            AnalysisResult result = new AnalysisResult(run, defaultEncoding, warnings, referenceProvider, buildHistory, id);
+
+            TaskListener logger = getContext().get(TaskListener.class);
+            ResultEvaluator resultEvaluator = new ResultEvaluator(id, thresholds, new PluginLogger(logger.getLogger(), id));
+
+            AnalysisResult result = new AnalysisResult(id, run, referenceProvider, buildHistory.getPreviousResult(),
+                    resultEvaluator, defaultEncoding, warnings);
 
             PipelineResultAction action = new PipelineResultAction(run, result, id, healthDescriptor);
             run.addAction(action);
@@ -233,17 +265,17 @@ public class PublishWarningsStep extends Step {
     public static class Descriptor extends StepDescriptor {
         @Override
         public Set<? extends Class<?>> getRequiredContext() {
-            return Sets.newHashSet(Run.class);
+            return Sets.newHashSet(Run.class, TaskListener.class);
         }
 
         @Override
         public String getFunctionName() {
-            return "publishCoreWarnings";
+            return "publishIssues";
         }
 
         @Override
         public String getDisplayName() {
-            return "Publish warnings created by core parser facade.";
+            return "Publish issues created by a static analysis run.";
         }
     }
 }

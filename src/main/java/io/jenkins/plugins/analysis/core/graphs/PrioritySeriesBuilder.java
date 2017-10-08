@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.core.graphs;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.jenkins.plugins.analysis.core.steps.BuildResult;
+import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 
 import hudson.plugins.analysis.util.model.Priority;
 
@@ -14,7 +14,7 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 public class PrioritySeriesBuilder extends SeriesBuilder {
     @Override
-    protected List<Integer> computeSeries(final BuildResult current) {
+    protected List<Integer> computeSeries(final AnalysisResult current) {
         List<Integer> series = new ArrayList<Integer>();
         series.add(current.getNumberOfAnnotations(Priority.LOW));
         series.add(current.getNumberOfAnnotations(Priority.NORMAL));
