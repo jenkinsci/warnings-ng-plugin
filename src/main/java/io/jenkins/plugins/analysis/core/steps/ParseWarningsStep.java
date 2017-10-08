@@ -17,7 +17,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import com.google.common.collect.Sets;
 
-import io.jenkins.plugins.analysis.core.steps.IssueParser.IssueParserDescriptor;
+import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool.IssueParserDescriptor;
 import io.jenkins.plugins.analysis.core.util.FilesParser;
 import jenkins.model.Jenkins;
 
@@ -33,12 +33,11 @@ import hudson.plugins.analysis.core.ParserResult;
  TODO:
 
  - remove isMavenBuild from FilesParser
- - do we need the getters?
  */
 public class ParseWarningsStep extends Step {
     private String defaultEncoding;
     private boolean shouldDetectModules;
-    private IssueParser parser;
+    private StaticAnalysisTool parser;
     private String pattern;
 
     @DataBoundConstructor
@@ -62,7 +61,7 @@ public class ParseWarningsStep extends Step {
     }
 
     @CheckForNull
-    public IssueParser getParser() {
+    public StaticAnalysisTool getParser() {
         return parser;
     }
 
@@ -72,7 +71,7 @@ public class ParseWarningsStep extends Step {
      * @param parser the parser to use
      */
     @DataBoundSetter
-    public void setParser(final IssueParser parser) {
+    public void setParser(final StaticAnalysisTool parser) {
         this.parser = parser;
     }
 
@@ -114,7 +113,7 @@ public class ParseWarningsStep extends Step {
     public static class Execution extends SynchronousNonBlockingStepExecution<ParserResult> {
         private final String defaultEncoding;
         private final boolean shouldDetectModules;
-        private final IssueParser parser;
+        private final StaticAnalysisTool parser;
         private final String pattern;
 
         protected Execution(@Nonnull final StepContext context, final ParseWarningsStep step) {
@@ -199,7 +198,7 @@ public class ParseWarningsStep extends Step {
         }
 
         public Collection<? extends IssueParserDescriptor> getAvailableParsers() {
-            return Jenkins.getInstance().getDescriptorList(IssueParser.class);
+            return Jenkins.getInstance().getDescriptorList(StaticAnalysisTool.class);
         }
     }
 }

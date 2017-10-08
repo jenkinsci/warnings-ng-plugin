@@ -17,7 +17,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  */
 public class ResultEvaluator extends BuildResultEvaluator {
     private final String id;
-    private Thresholds thresholds;
+    private final Thresholds thresholds;
     private final PluginLogger logger;
 
     /**
@@ -27,7 +27,7 @@ public class ResultEvaluator extends BuildResultEvaluator {
      *         the ID of the result
      */
     public ResultEvaluator(final String id, final Thresholds thresholds, final PluginLogger logger) {
-        super(IssueParser.find(id).getResultUrl());
+        super(StaticAnalysisTool.find(id).getResultUrl());
 
         this.id = id;
         this.thresholds = thresholds;

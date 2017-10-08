@@ -14,7 +14,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  * @author Ullrich Hafner
  */
 @Extension
-public class StaticAnalysis extends IssueParser {
+public class StaticAnalysis extends StaticAnalysisTool {
     public StaticAnalysis() {
         super("staticAnalysis");
     }

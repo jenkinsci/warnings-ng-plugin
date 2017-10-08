@@ -14,10 +14,6 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import com.google.common.collect.Lists;
 
-import io.jenkins.plugins.analysis.core.history.BuildHistory;
-import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.history.RunResultHistory;
-import io.jenkins.plugins.analysis.core.history.NullBuildHistory;
 import io.jenkins.plugins.analysis.core.graphs.AnnotationsByUserGraph;
 import io.jenkins.plugins.analysis.core.graphs.BuildResultGraph;
 import io.jenkins.plugins.analysis.core.graphs.DefaultGraphConfigurationView;
@@ -32,6 +28,10 @@ import io.jenkins.plugins.analysis.core.graphs.PriorityGraph;
 import io.jenkins.plugins.analysis.core.graphs.TotalsGraph;
 import io.jenkins.plugins.analysis.core.graphs.TrendDetails;
 import io.jenkins.plugins.analysis.core.graphs.UserGraphConfigurationView;
+import io.jenkins.plugins.analysis.core.history.BuildHistory;
+import io.jenkins.plugins.analysis.core.history.NullBuildHistory;
+import io.jenkins.plugins.analysis.core.history.RunResultHistory;
+import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import jenkins.model.Jenkins;
 
 import hudson.model.Action;
@@ -83,8 +83,8 @@ public class ProjectAction implements Action {
         return getIssueParser().getLinkName();
     }
 
-    private IssueParser getIssueParser() {
-        return IssueParser.find(id);
+    private StaticAnalysisTool getIssueParser() {
+        return StaticAnalysisTool.find(id);
     }
 
     /**
