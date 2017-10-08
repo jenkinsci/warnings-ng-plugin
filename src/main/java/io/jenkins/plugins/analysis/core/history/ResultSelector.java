@@ -1,24 +1,22 @@
 package io.jenkins.plugins.analysis.core.history;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
+import java.util.Optional;
 
 import io.jenkins.plugins.analysis.core.steps.PipelineResultAction;
 
 import hudson.model.Run;
 
 /**
- * FIXME: write comment.
+ * Selects a {@link PipelineResultAction} from all registered actions in a given job.
  *
  * @author Ullrich Hafner
  */
 public interface ResultSelector {
     /**
-     * Returns the result action of the specified build that should be used to compute the history.
+     * Tries to find a result action of the specified run that should be used to compute the history.
      *
-     * @param build the build
-     * @return the result action
+     * @param run the run
+     * @return the result action, if there is one attached to the job
      */
-    @CheckForNull
-    PipelineResultAction get(@Nonnull Run<?, ?> build);
+    Optional<PipelineResultAction> get(Run<?, ?> run);
 }

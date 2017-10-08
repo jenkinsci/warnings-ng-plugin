@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import javax.annotation.CheckForNull;
 import java.util.List;
+import java.util.Optional;
 
 import io.jenkins.plugins.analysis.core.history.ResultSelector;
 
@@ -24,16 +24,20 @@ public class ByIdResultSelector implements ResultSelector {
         this.id = id;
     }
 
-    // FIXME: Optional?
-    @Override @CheckForNull
-    public PipelineResultAction get(final Run<?, ?> run) {
+    @Override
+    public Optional<PipelineResultAction> get(final Run<?, ?> run) {
         List<PipelineResultAction> actions = run.getActions(PipelineResultAction.class);
         for (PipelineResultAction action : actions) {
             if (id.equals(action.getId())) {
-                return action;
+                return Optional.of(action);
             }
         }
-        return null;
+        return Optional.empty();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s with ID %s", PipelineResultAction.class.getName(), id);
     }
 }
 

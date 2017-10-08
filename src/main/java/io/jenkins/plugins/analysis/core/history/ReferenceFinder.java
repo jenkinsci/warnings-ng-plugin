@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.core.history;
 
+import java.util.Optional;
+
 import io.jenkins.plugins.analysis.core.steps.PipelineResultAction;
 
 import hudson.model.Result;
@@ -58,13 +60,13 @@ public abstract class ReferenceFinder extends BuildHistory implements ReferenceP
      *
      * @return the action of the reference build, or {@code null} if no such build exists
      */
-    protected abstract PipelineResultAction getReferenceAction();
+    protected abstract Optional<PipelineResultAction> getReferenceAction();
 
     @Override
     public int getNumber() {
-        PipelineResultAction referenceAction = getReferenceAction();
-        if (referenceAction != null) {
-            return referenceAction.getRun().getNumber();
+        Optional<PipelineResultAction> referenceAction = getReferenceAction();
+        if (referenceAction.isPresent()) {
+            return referenceAction.get().getRun().getNumber();
         }
         return NO_REFERENCE_FOUND;
     }
@@ -76,9 +78,9 @@ public abstract class ReferenceFinder extends BuildHistory implements ReferenceP
      */
     @Override
     public AnnotationContainer getIssues() {
-        PipelineResultAction action = getReferenceAction();
-        if (action != null) {
-            return action.getResult().getContainer();
+        Optional<PipelineResultAction> action = getReferenceAction();
+        if (action.isPresent()) {
+            return action.get().getResult().getContainer();
         }
         return new DefaultAnnotationContainer();
     }
