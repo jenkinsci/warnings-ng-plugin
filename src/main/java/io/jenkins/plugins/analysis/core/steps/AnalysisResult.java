@@ -60,23 +60,11 @@ import hudson.plugins.analysis.views.DetailFactory;
 public class AnalysisResult implements ModelObject, Serializable, AnnotationProvider, StaticAnalysisRun2 {
     private static final long serialVersionUID = 1110545450292087475L;
     private static final Logger LOGGER = Logger.getLogger(AnalysisResult.class.getName());
-    protected final String id;
+
+    private final String id;
 
     private transient ReentrantLock lock = new ReentrantLock();
-
-    /**
-     * Initializes members that were not present in previous versions of the associated plug-in.
-     *
-     * @return the created object
-     */
-    protected Object readResolve() {
-        lock = new ReentrantLock(); // FIXME: should this be done when Jenkins load it?
-
-        return this;
-    }
-
-    /** Current build as owner of this action. */
-    private Run<?, ?> run;
+    private transient Run<?, ?> run;
 
     /** The project containing the annotations. */
     @SuppressFBWarnings("Se")
@@ -89,42 +77,33 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
     private transient WeakReference<Collection<FileAnnotation>> fixedWarningsReference;
 
     /** All parsed modules. */
-    private ImmutableSet<String> modules;
+    private final ImmutableSet<String> modules;
     /** The total number of parsed modules (regardless if there are annotations). */
-    private int numberOfModules;
+    private final int numberOfModules;
 
     /** The default encoding to be used when reading and parsing files. */
-    private String defaultEncoding;
+    private final String defaultEncoding;
 
     /** The number of warnings in this build. */
-    private int numberOfWarnings;
+    private final int numberOfWarnings;
     /** The number of new warnings in this build. */
-    private int numberOfNewWarnings;
+    private final int numberOfNewWarnings;
     /** The number of fixed warnings in this build. */
-    private int numberOfFixedWarnings;
+    private final int numberOfFixedWarnings;
 
     /** The number of low priority warnings in this build. */
-    private int lowWarnings;
+    private final int lowWarnings;
     /** The number of normal priority warnings in this build. */
-    private int normalWarnings;
+    private final int normalWarnings;
     /** The number of high priority warnings in this build. */
-    private int highWarnings;
+    private final int highWarnings;
 
     /** The number of low priority warnings in this build. */
-    private int lowNewWarnings;
+    private final int lowNewWarnings;
     /** The number of normal priority warnings in this build. */
-    private int normalNewWarnings;
+    private final int normalNewWarnings;
     /** The number of high priority warnings in this build. */
-    private int highNewWarnings;
-
-    /** Difference between this and the previous build. */
-    private int delta;
-    /** Difference between this and the previous build (Priority low). */
-    private int lowDelta;
-    /** Difference between this and the previous build (Priority normal). */
-    private int normalDelta;
-    /** Difference between this and the previous build (Priority high). */
-    private int highDelta;
+    private final int highNewWarnings;
 
     /** Determines since which build we have zero warnings. */
     private int zeroWarningsSinceBuild;
@@ -139,7 +118,7 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
 
     /** Error messages. */
     @SuppressFBWarnings("Se")
-    private ImmutableList<String> errors;
+    private final ImmutableList<String> errors;
 
     /**
      * The build result of the associated plug-in. This result is an additional state that denotes if this plug-in has
@@ -162,7 +141,7 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
     private boolean isSuccessfulStateTouched;
 
     /** Reference build number. If not defined then 0 or -1 could be used. */
-    private int referenceBuild;
+    private final int referenceBuild;
 
     /**
      * Creates a new instance of {@link AnalysisResult}.
@@ -215,11 +194,6 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
         referenceBuild = referenceProvider.getNumber();
         AnnotationContainer referenceResult = referenceProvider.getIssues();
 
-        delta = result.getNumberOfAnnotations() - referenceResult.getNumberOfAnnotations();
-        lowDelta = computeDelta(result, referenceResult, Priority.LOW);
-        normalDelta = computeDelta(result, referenceResult, Priority.NORMAL);
-        highDelta = computeDelta(result, referenceResult, Priority.HIGH);
-
         Set<FileAnnotation> allWarnings = result.getAnnotations();
         JavaProject container = new JavaProject();
         container.addAnnotations(allWarnings);
@@ -249,10 +223,6 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
         if (canSerialize) {
             serializeAnnotations(allWarnings, fixedWarnings);
         }
-    }
-
-    private int computeDelta(final ParserResult result, final AnnotationContainer referenceResult, final Priority priority) {
-        return result.getNumberOfAnnotations(priority) - referenceResult.getNumberOfAnnotations(priority);
     }
 
     /**
@@ -353,6 +323,17 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
             }
         }
 
+    }
+
+    /**
+     * Sets the run for this result after Jenkins read its data from disk.
+     *
+     * @param run
+     *         the initialized run
+     */
+    public void setRun(final Run<?, ?> run) {
+        this.run = run;
+        lock = new ReentrantLock();
     }
 
     /**
@@ -683,52 +664,6 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
     @Exported
     public int getNumberOfNewWarnings() {
         return numberOfNewWarnings;
-    }
-
-    /**
-     * Returns the delta.
-     *
-     * @return the delta
-     */
-    public int getDelta() {
-        return delta;
-    }
-
-    /**
-     * Returns the high delta.
-     *
-     * @return the delta
-     */
-    public int getHighDelta() {
-        return highDelta;
-    }
-
-    /**
-     * Returns the normal delta.
-     *
-     * @return the delta
-     */
-    public int getNormalDelta() {
-        return normalDelta;
-    }
-
-    /**
-     * Returns the low delta.
-     *
-     * @return the delta
-     */
-    public int getLowDelta() {
-        return lowDelta;
-    }
-
-    /**
-     * Returns the delta between two builds.
-     *
-     * @return the delta
-     */
-    @Exported
-    public int getWarningsDelta() {
-        return delta;
     }
 
     /**
@@ -1100,4 +1035,5 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
     public int getNewLowPrioritySize() {
         return lowNewWarnings;
     }
+
 }
