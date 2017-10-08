@@ -23,7 +23,12 @@ public class PreviousRunReference extends ReferenceFinder {
      *         the build to start the history from
      * @param selector
      *         type of the action that contains the build results
+     * @param overallResultMustBeSuccess
+     *         if  {@code true} then only runs with an overall result of {@link Result#SUCCESS} are considered as a
+     *         reference, otherwise every run that contains results of the same static analysis configuration is
+     *         considered
      */
+    @SuppressWarnings("BooleanParameter")
     public PreviousRunReference(final Run<?, ?> baseline, final ResultSelector selector, final boolean overallResultMustBeSuccess) {
         super(baseline, selector);
 

@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.history;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -26,9 +27,9 @@ public class BuildHistory implements RunResultHistory {
      * Creates a new instance of {@link BuildHistory}.
      *
      * @param baseline
-     *            the build to start the history from
+     *         the build to start the history from
      * @param selector
-     *            selects the associated action from a build
+     *         selects the associated action from a build
      */
     public BuildHistory(final Run<?, ?> baseline, final ResultSelector selector) {
         this.baseline = baseline;
@@ -41,7 +42,7 @@ public class BuildHistory implements RunResultHistory {
         if (!resultAction.isPresent()) {
             throw new NoSuchElementException(
                     String.format("Selector '%s' does not find action for baseline '%s'",
-                    selector, baseline));
+                            selector, baseline));
         }
 
         return resultAction.get().getResult();
@@ -57,37 +58,38 @@ public class BuildHistory implements RunResultHistory {
      *         if  {@code true} then only runs with an overall result of {@link Result#SUCCESS} are considered as a
      *         reference, otherwise every run that contains results of the same static analysis configuration is
      *         considered
+     *
      * @return the previous action
      */
     protected Optional<PipelineResultAction> getPreviousAction(
             final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
-        Run<?, ?> run = getPreviousRun(baseline, ignoreAnalysisResult, overallResultMustBeSuccess);
-        if (run != null) {
-            return selector.get(run);
+        Optional<Run<?, ?>> run = getPreviousRun(baseline, selector, ignoreAnalysisResult, overallResultMustBeSuccess);
+        if (run.isPresent()) {
+            return selector.get(run.get());
         }
         return Optional.empty();
     }
 
-    private Run<?, ?> getPreviousRun(final Run<?, ?> start,
-            final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
+    private static Optional<Run<?, ?>> getPreviousRun(final Run<?, ?> start,
+            final ResultSelector selector, final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
         for (Run<?, ?> run = start.getPreviousBuild(); run != null; run = run.getPreviousBuild()) {
             Optional<PipelineResultAction> action = selector.get(run);
             if (action.isPresent()) {
                 PipelineResultAction resultAction = action.get();
                 if (hasValidResult(run, resultAction, overallResultMustBeSuccess)
                         && hasSuccessfulAnalysisResult(resultAction, ignoreAnalysisResult)) {
-                    return run;
+                    return Optional.of(run);
                 }
             }
         }
-        return null;
+        return Optional.empty();
     }
 
-    private boolean hasSuccessfulAnalysisResult(final PipelineResultAction action, final boolean ignoreAnalysisResult) {
+    private static boolean hasSuccessfulAnalysisResult(final PipelineResultAction action, final boolean ignoreAnalysisResult) {
         return action.isSuccessful() || ignoreAnalysisResult;
     }
 
-    private boolean hasValidResult(final Run<?, ?> run, final PipelineResultAction action,
+    private static boolean hasValidResult(final Run<?, ?> run, final PipelineResultAction action,
             final boolean overallResultMustBeSuccess) {
         Result result = run.getResult();
 
@@ -100,7 +102,7 @@ public class BuildHistory implements RunResultHistory {
         return result.isBetterThan(Result.FAILURE) || isPluginCauseForFailure(action);
     }
 
-    private boolean isPluginCauseForFailure(final PipelineResultAction action) {
+    private static boolean isPluginCauseForFailure(final PipelineResultAction action) {
         return action.getResult().getPluginResult().isWorseOrEqualTo(Result.FAILURE);
     }
 
@@ -115,34 +117,54 @@ public class BuildHistory implements RunResultHistory {
     }
 
     @Override
+    @Nonnull
     public Iterator<AnalysisResult> iterator() {
-        return new BuildResultIterator(baseline);
+        return new BuildResultIterator(baseline, selector);
     }
 
-    private class BuildResultIterator implements Iterator<AnalysisResult> {
-        private Run<?, ?> baseline;
+    /**
+     * Provides an iterator of analysis results starting from a baseline and going back in history.
+     */
+    private static class BuildResultIterator implements Iterator<AnalysisResult> {
+        @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+        private Optional<Run<?, ?>> cursor;
+        private final ResultSelector selector;
 
-        public BuildResultIterator(final Run<?, ?> baseline) {
-            this.baseline = baseline;
+        /**
+         * Creates a new iterator starting from the baseline.
+         *
+         * @param baseline
+         *         the run to start from
+         * @param selector
+         *         selects the associated action from a build
+         */
+        private BuildResultIterator(final Run<?, ?> baseline, final ResultSelector selector) {
+            cursor = Optional.of(baseline);
+            this.selector = selector;
         }
 
         @Override
         public boolean hasNext() {
-            return baseline != null;
+            return cursor.isPresent();
         }
 
         @Override
         public AnalysisResult next() {
-            Optional<PipelineResultAction> resultAction = selector.get(baseline);
+            if (cursor.isPresent()) {
+                Run<?, ?> run = cursor.get();
+                Optional<PipelineResultAction> resultAction = selector.get(run);
+                if (!resultAction.isPresent()) {
+                    throw new NoSuchElementException(String.format("No action %s available for run %s",
+                            PipelineResultAction.class.getName(), run));
+                }
 
-            baseline = getPreviousRun(baseline, false, false);
+                cursor = getPreviousRun(run, selector, false, false);
 
-            return resultAction.get().getResult();
-        }
-
-        @Override
-        public void remove() {
-            // NOP
+                return resultAction.get().getResult();
+            }
+            else {
+                throw new NoSuchElementException("No more runs available.");
+            }
         }
     }
 }
