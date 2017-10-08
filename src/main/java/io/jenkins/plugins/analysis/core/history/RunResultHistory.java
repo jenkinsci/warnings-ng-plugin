@@ -24,6 +24,7 @@ public interface RunResultHistory extends Iterable<AnalysisResult> {
      * Returns the baseline result.
      *
      * @return the baseline result
+     * @throws NoSuchElementException if the baseline does not contain a result
      */
     AnalysisResult getBaseline();
 }

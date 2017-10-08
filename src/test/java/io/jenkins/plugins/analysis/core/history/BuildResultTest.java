@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.core.history;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 
 import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
@@ -26,7 +28,7 @@ class BuildResultTest {
         ResultSelector selector = mock(ResultSelector.class);
 
         Run run = mock(Run.class);
-        when(selector.get(run)).thenReturn(action);
+        when(selector.get(run)).thenReturn(Optional.of(action));
 
         BuildHistory history = new BuildHistory(run, selector);
 

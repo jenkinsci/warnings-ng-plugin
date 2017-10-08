@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.core.history;
 
+import java.util.Optional;
+
 import io.jenkins.plugins.analysis.core.steps.PipelineResultAction;
 
 import hudson.model.Result;
@@ -29,7 +31,7 @@ public class PreviousRunReference extends ReferenceFinder {
     }
 
     @Override
-    protected PipelineResultAction getReferenceAction() {
+    protected Optional<PipelineResultAction> getReferenceAction() {
         return getPreviousAction(true, overallResultMustBeSuccess);
     }
 }

@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.history;
 
-import javax.annotation.CheckForNull;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
@@ -37,7 +37,14 @@ public class BuildHistory implements RunResultHistory {
 
     @Override
     public AnalysisResult getBaseline() {
-        return selector.get(baseline).getResult();
+        Optional<PipelineResultAction> resultAction = selector.get(baseline);
+        if (!resultAction.isPresent()) {
+            throw new NoSuchElementException(
+                    String.format("Selector '%s' does not find action for baseline '%s'",
+                    selector, baseline));
+        }
+
+        return resultAction.get().getResult();
     }
 
     /**
@@ -52,33 +59,35 @@ public class BuildHistory implements RunResultHistory {
      *         considered
      * @return the previous action
      */
-    protected PipelineResultAction getPreviousAction(
+    protected Optional<PipelineResultAction> getPreviousAction(
             final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
         Run<?, ?> run = getPreviousRun(baseline, ignoreAnalysisResult, overallResultMustBeSuccess);
         if (run != null) {
             return selector.get(run);
         }
-
-        return null;
+        return Optional.empty();
     }
 
     private Run<?, ?> getPreviousRun(final Run<?, ?> start,
             final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
         for (Run<?, ?> run = start.getPreviousBuild(); run != null; run = run.getPreviousBuild()) {
-            PipelineResultAction action = selector.get(run);
-            if (hasValidResult(run, action, overallResultMustBeSuccess)
-                    && hasSuccessfulAnalysisResult(action, ignoreAnalysisResult)) {
-                return run;
+            Optional<PipelineResultAction> action = selector.get(run);
+            if (action.isPresent()) {
+                PipelineResultAction resultAction = action.get();
+                if (hasValidResult(run, resultAction, overallResultMustBeSuccess)
+                        && hasSuccessfulAnalysisResult(resultAction, ignoreAnalysisResult)) {
+                    return run;
+                }
             }
         }
         return null;
     }
 
     private boolean hasSuccessfulAnalysisResult(final PipelineResultAction action, final boolean ignoreAnalysisResult) {
-        return action != null && (action.isSuccessful() || ignoreAnalysisResult);
+        return action.isSuccessful() || ignoreAnalysisResult;
     }
 
-    private boolean hasValidResult(final Run<?, ?> run, @CheckForNull final PipelineResultAction action,
+    private boolean hasValidResult(final Run<?, ?> run, final PipelineResultAction action,
             final boolean overallResultMustBeSuccess) {
         Result result = run.getResult();
 
@@ -91,21 +100,16 @@ public class BuildHistory implements RunResultHistory {
         return result.isBetterThan(Result.FAILURE) || isPluginCauseForFailure(action);
     }
 
-    private boolean isPluginCauseForFailure(@CheckForNull final PipelineResultAction action) {
-        if (action == null) {
-            return false;
-        }
-        else {
-            return action.getResult().getPluginResult().isWorseOrEqualTo(Result.FAILURE);
-        }
+    private boolean isPluginCauseForFailure(final PipelineResultAction action) {
+        return action.getResult().getPluginResult().isWorseOrEqualTo(Result.FAILURE);
     }
 
     // TODO: why don't we return the action?
     @Override
     public Optional<AnalysisResult> getPreviousResult() {
-        PipelineResultAction action = getPreviousAction(false, false);
-        if (action != null) {
-            return Optional.of(action.getResult());
+        Optional<PipelineResultAction> action = getPreviousAction(false, false);
+        if (action.isPresent()) {
+            return Optional.of(action.get().getResult());
         }
         return Optional.empty();
     }
@@ -129,11 +133,11 @@ public class BuildHistory implements RunResultHistory {
 
         @Override
         public AnalysisResult next() {
-            PipelineResultAction resultAction = selector.get(baseline);
+            Optional<PipelineResultAction> resultAction = selector.get(baseline);
 
             baseline = getPreviousRun(baseline, false, false);
 
-            return resultAction.getResult();
+            return resultAction.get().getResult();
         }
 
         @Override
