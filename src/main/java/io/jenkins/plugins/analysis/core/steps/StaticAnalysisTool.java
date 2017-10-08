@@ -20,13 +20,13 @@ import hudson.plugins.analysis.util.HtmlPrinter;
  *
  * @author Ullrich Hafner
  */
-public abstract class IssueParser extends AbstractDescribableImpl<IssueParser> implements AnnotationParser, ExtensionPoint {
+public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticAnalysisTool> implements AnnotationParser, ExtensionPoint {
     private static final String ICONS_PREFIX = "/plugin/analysis-core/icons/";
     private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
     private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
 
-    private String id;
-    private String defaultPattern;
+    private final String id;
+    private final String defaultPattern;
     private String defaultEncoding;
 
     @CheckForNull
@@ -44,11 +44,11 @@ public abstract class IssueParser extends AbstractDescribableImpl<IssueParser> i
         this.defaultEncoding = defaultEncoding;
     }
 
-    public IssueParser(final String id) {
+    public StaticAnalysisTool(final String id) {
         this(id, "**/*");
     }
 
-    public IssueParser(final String id, final String defaultPattern) {
+    public StaticAnalysisTool(final String id, final String defaultPattern) {
         this.id = id;
         this.defaultPattern = defaultPattern;
     }
@@ -137,8 +137,8 @@ public abstract class IssueParser extends AbstractDescribableImpl<IssueParser> i
         }
     }
 
-    public static class IssueParserDescriptor extends Descriptor<IssueParser> {
-        public IssueParserDescriptor(final Class<? extends IssueParser> clazz) {
+    public static class IssueParserDescriptor extends Descriptor<StaticAnalysisTool> {
+        public IssueParserDescriptor(final Class<? extends StaticAnalysisTool> clazz) {
             super(clazz);
         }
 
@@ -148,12 +148,12 @@ public abstract class IssueParser extends AbstractDescribableImpl<IssueParser> i
         }
     }
 
-    public static Collection<? extends IssueParser> all() {
-        return Jenkins.getInstance().getExtensionList(IssueParser.class);
+    public static Collection<? extends StaticAnalysisTool> all() {
+        return Jenkins.getInstance().getExtensionList(StaticAnalysisTool.class);
     }
 
-    public static IssueParser find(final String id) {
-        for (IssueParser parser : all()) {
+    public static StaticAnalysisTool find(final String id) {
+        for (StaticAnalysisTool parser : all()) {
             if (parser.getId().equals(id)) {
                 return parser;
             }

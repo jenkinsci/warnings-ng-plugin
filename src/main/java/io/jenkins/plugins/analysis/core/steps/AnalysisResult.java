@@ -972,8 +972,8 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
         };
     }
 
-    private IssueParser getIssueParser() {
-        return IssueParser.find(id);
+    private StaticAnalysisTool getIssueParser() {
+        return StaticAnalysisTool.find(id);
     }
 
     @Override

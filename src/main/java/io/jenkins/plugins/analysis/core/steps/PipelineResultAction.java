@@ -192,7 +192,7 @@ public class PipelineResultAction implements StaplerProxy, HealthReportingAction
         return getResult().isSuccessful();
     }
 
-    private IssueParser getIssueParser() {
-        return IssueParser.find(id);
+    private StaticAnalysisTool getIssueParser() {
+        return StaticAnalysisTool.find(id);
     }
 }
