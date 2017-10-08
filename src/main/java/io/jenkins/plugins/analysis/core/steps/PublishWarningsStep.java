@@ -41,7 +41,7 @@ import hudson.plugins.analysis.util.model.Priority;
 public class PublishWarningsStep extends Step {
     private static final String DEFAULT_MINIMUM_PRIORITY = "low";
 
-    private ParserResult[] issues;
+    private final ParserResult[] issues;
 
     private boolean usePreviousBuildAsReference;
     private boolean useStableBuildAsReference;
@@ -184,10 +184,10 @@ public class PublishWarningsStep extends Step {
     public static class Execution extends SynchronousNonBlockingStepExecution<PipelineResultAction> {
         private final HealthDescriptor healthDescriptor;
         private final Thresholds thresholds;
-        private boolean useStableBuildAsReference;
-        private boolean usePreviousBuildAsReference;
-        private String defaultEncoding;
-        private ParserResult[] warnings;
+        private final boolean useStableBuildAsReference;
+        private final boolean usePreviousBuildAsReference;
+        private final String defaultEncoding;
+        private final ParserResult[] warnings;
 
         protected Execution(@Nonnull final StepContext context, final PublishWarningsStep step) {
             super(context);
@@ -254,7 +254,7 @@ public class PublishWarningsStep extends Step {
             AnalysisResult result = new AnalysisResult(id, run, referenceProvider, buildHistory.getPreviousResult(),
                     resultEvaluator, defaultEncoding, warnings);
 
-            PipelineResultAction action = new PipelineResultAction(run, result, id, healthDescriptor);
+            PipelineResultAction action = new PipelineResultAction(run, id, result, healthDescriptor);
             run.addAction(action);
 
             return action;

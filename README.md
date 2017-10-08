@@ -12,4 +12,5 @@ Maintainer: Dr. Ullrich Hafner
 - hierarchy? Actions and Graphs
 - Quality gate full implementation (as well as Result Evaluation)
 - Different views possible for downstream plugins?
-
+- Different properties for warnings in downstream plugins?
+- SCM link for blame information
