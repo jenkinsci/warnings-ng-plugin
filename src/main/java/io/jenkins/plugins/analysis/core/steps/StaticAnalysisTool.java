@@ -165,6 +165,11 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
         }
     }
 
+    @Override
+    public String toString() {
+        return getId();
+    }
+
     public static class StaticAnalysisToolDescriptor extends Descriptor<StaticAnalysisTool> {
         public StaticAnalysisToolDescriptor(final Class<? extends StaticAnalysisTool> clazz) {
             super(clazz);
