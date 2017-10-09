@@ -4,15 +4,12 @@
   <%@attribute name="id" required="true" %>
 -->
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:u="/util">
+<j:jelly xmlns:j="jelly:core"
+         xmlns:u="/util">
 
     <u:failed/>
 
-    <f:entry title="${%Detect modules}" description="${%description.detectModules}">
-      <f:checkbox name="shouldDetectModules" checked="${instance.shouldDetectModules}"/>
-    </f:entry>
-
+    <u:detectModules />
     <u:health id="${id}"/>
     <u:thresholds id="${id}"/>
     <u:defaultEncoding id="${id}"/>

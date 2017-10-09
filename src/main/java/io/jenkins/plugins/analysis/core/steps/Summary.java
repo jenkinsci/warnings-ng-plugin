@@ -11,7 +11,7 @@ import hudson.plugins.analysis.util.HtmlPrinter;
 
 /**
  * Summary message of a static analysis run. This message is shown as part of the 'summary.jelly' information of the
- * associated {@link PipelineResultAction}.
+ * associated {@link ResultAction}.
  *
  * @author Ullrich Hafner
  */

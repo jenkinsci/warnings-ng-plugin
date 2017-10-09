@@ -29,7 +29,7 @@ import hudson.plugins.analysis.util.ToolTipProvider;
  */
 //CHECKSTYLE:COUPLING-OFF
 @ExportedBean
-public class PipelineResultAction implements StaplerProxy, HealthReportingAction, ToolTipProvider, LastBuildAction, RunAction2 {
+public class ResultAction implements StaplerProxy, HealthReportingAction, ToolTipProvider, LastBuildAction, RunAction2 {
     private transient Run<?, ?> run;
 
     private final AnalysisResult result;
@@ -48,7 +48,7 @@ public class PipelineResultAction implements StaplerProxy, HealthReportingAction
      * @param healthDescriptor
      *         defines the health for the current result
      */
-    public PipelineResultAction(final Run<?, ?> run, final String id, final AnalysisResult result,
+    public ResultAction(final Run<?, ?> run, final String id, final AnalysisResult result,
             final HealthDescriptor healthDescriptor) {
         this.run = run;
         this.result = result;
@@ -94,7 +94,7 @@ public class PipelineResultAction implements StaplerProxy, HealthReportingAction
 
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return Collections.singleton(new ProjectAction(run.getParent(), id));
+        return Collections.singleton(new JobAction(run.getParent(), id));
     }
 
     @Override

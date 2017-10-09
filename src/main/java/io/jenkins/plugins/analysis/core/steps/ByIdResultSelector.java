@@ -25,9 +25,9 @@ public class ByIdResultSelector implements ResultSelector {
     }
 
     @Override
-    public Optional<PipelineResultAction> get(final Run<?, ?> run) {
-        List<PipelineResultAction> actions = run.getActions(PipelineResultAction.class);
-        for (PipelineResultAction action : actions) {
+    public Optional<ResultAction> get(final Run<?, ?> run) {
+        List<ResultAction> actions = run.getActions(ResultAction.class);
+        for (ResultAction action : actions) {
             if (id.equals(action.getId())) {
                 return Optional.of(action);
             }
@@ -37,7 +37,7 @@ public class ByIdResultSelector implements ResultSelector {
 
     @Override
     public String toString() {
-        return String.format("%s with ID %s", PipelineResultAction.class.getName(), id);
+        return String.format("%s with ID %s", ResultAction.class.getName(), id);
     }
 }
 
