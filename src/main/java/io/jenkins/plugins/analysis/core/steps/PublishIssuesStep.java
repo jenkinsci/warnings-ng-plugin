@@ -34,11 +34,11 @@ import hudson.plugins.analysis.core.Thresholds;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.Priority;
 
-/*
- TODO:
-
+/**
+ * Publish issues created by a static analysis run. The recorded issues are stored as a {@link ResultAction} in
+ * the associated run.
  */
-public class PublishWarningsStep extends Step {
+public class PublishIssuesStep extends Step {
     private static final String DEFAULT_MINIMUM_PRIORITY = "low";
 
     private final ParserResult[] issues;
@@ -54,12 +54,13 @@ public class PublishWarningsStep extends Step {
     private Thresholds thresholds = new Thresholds();
 
     /**
-     * Creates a new instance of {@link PublishWarningsStep}.
+     * Creates a new instance of {@link PublishIssuesStep}.
      *
-     * @param issues the issues to publish as {@link Action} in the {@link Job}.
+     * @param issues
+     *         the issues to publish as {@link Action} in the {@link Job}.
      */
     @DataBoundConstructor
-    public PublishWarningsStep(final ParserResult... issues) {
+    public PublishIssuesStep(final ParserResult... issues) {
         this.issues = issues;
 
         if (issues == null || issues.length == 0) {
@@ -75,10 +76,12 @@ public class PublishWarningsStep extends Step {
         return usePreviousBuildAsReference;
     }
 
+    // TODO: use same naming as in BuildHistory?
     /**
      * Determines if the previous build should always be used as the reference build, no matter of its overall result.
      *
-     * @param usePreviousBuildAsReference if {@code true} then the previous build is always used
+     * @param usePreviousBuildAsReference
+     *         if {@code true} then the previous build is always used
      */
     @DataBoundSetter
     public void setUsePreviousBuildAsReference(final boolean usePreviousBuildAsReference) {
@@ -92,7 +95,8 @@ public class PublishWarningsStep extends Step {
     /**
      * Determines whether only stable builds should be used as reference builds or not.
      *
-     * @param useStableBuildAsReference if {@code true} then a stable build is used as reference
+     * @param useStableBuildAsReference
+     *         if {@code true} then a stable build is used as reference
      */
     @DataBoundSetter
     public void setUseStableBuildAsReference(final boolean useStableBuildAsReference) {
@@ -107,7 +111,8 @@ public class PublishWarningsStep extends Step {
     /**
      * Sets the default encoding used to read files (warnings, source code, etc.).
      *
-     * @param defaultEncoding the encoding, e.g. "ISO-8859-1"
+     * @param defaultEncoding
+     *         the encoding, e.g. "ISO-8859-1"
      */
     @DataBoundSetter
     public void setDefaultEncoding(final String defaultEncoding) {
@@ -122,7 +127,8 @@ public class PublishWarningsStep extends Step {
     /**
      * Sets the healthy threshold, i.e. the number of issues when health is reported as 100%.
      *
-     * @param healthy the number of issues when health is reported as 100%
+     * @param healthy
+     *         the number of issues when health is reported as 100%
      */
     @DataBoundSetter
     public void setHealthy(final String healthy) {
@@ -137,7 +143,8 @@ public class PublishWarningsStep extends Step {
     /**
      * Sets the healthy threshold, i.e. the number of issues when health is reported as 0%.
      *
-     * @param unHealthy the number of issues when health is reported as 0%
+     * @param unHealthy
+     *         the number of issues when health is reported as 0%
      */
     @DataBoundSetter
     public void setUnHealthy(final String unHealthy) {
@@ -153,7 +160,8 @@ public class PublishWarningsStep extends Step {
      * Sets the minimum priority to consider when computing the health report. Issues with a priority less than this
      * value will be ignored.
      *
-     * @param minimumPriority the priority to consider
+     * @param minimumPriority
+     *         the priority to consider
      */
     @DataBoundSetter
     public void setMinimumPriority(final String minimumPriority) {
@@ -169,7 +177,8 @@ public class PublishWarningsStep extends Step {
      * Sets the result threshold, i.e. the number of issues when to set the build result to {@link Result#SUCCESS},
      * {@link Result#UNSTABLE}, or {@link Result#FAILURE}.
      *
-     * @param thresholds the number of issues required to change the build status
+     * @param thresholds
+     *         the number of issues required to change the build status
      */
     @DataBoundSetter
     public void setThresholds(final Thresholds thresholds) {
@@ -181,7 +190,7 @@ public class PublishWarningsStep extends Step {
         return new Execution(stepContext, this);
     }
 
-    public static class Execution extends SynchronousNonBlockingStepExecution<PipelineResultAction> {
+    public static class Execution extends SynchronousNonBlockingStepExecution<ResultAction> {
         private final HealthDescriptor healthDescriptor;
         private final Thresholds thresholds;
         private final boolean useStableBuildAsReference;
@@ -189,7 +198,7 @@ public class PublishWarningsStep extends Step {
         private final String defaultEncoding;
         private final ParserResult[] warnings;
 
-        protected Execution(@Nonnull final StepContext context, final PublishWarningsStep step) {
+        protected Execution(@Nonnull final StepContext context, final PublishIssuesStep step) {
             super(context);
 
             usePreviousBuildAsReference = step.usePreviousBuildAsReference;
@@ -209,7 +218,7 @@ public class PublishWarningsStep extends Step {
         }
 
         @Override
-        protected PipelineResultAction run() throws Exception {
+        protected ResultAction run() throws Exception {
             Set<String> ids = new HashSet<>();
             for (ParserResult result : warnings) {
                 ids.add(result.getId());
@@ -223,7 +232,7 @@ public class PublishWarningsStep extends Step {
             }
         }
 
-        private PipelineResultAction publishMultipleParserResults() throws IOException, InterruptedException {
+        private ResultAction publishMultipleParserResults() throws IOException, InterruptedException {
             String id = "staticAnalysis";
             ResultSelector selector = new ByIdResultSelector(id);
             Run run = getRun();
@@ -235,7 +244,7 @@ public class PublishWarningsStep extends Step {
             return publishResult(id, run, selector);
         }
 
-        private PipelineResultAction publishSingleParserResult(final String id) throws IOException, InterruptedException {
+        private ResultAction publishSingleParserResult(final String id) throws IOException, InterruptedException {
             return publishResult(id, getRun(), new ByIdResultSelector(id));
         }
 
@@ -243,7 +252,7 @@ public class PublishWarningsStep extends Step {
             return getContext().get(Run.class);
         }
 
-        private PipelineResultAction publishResult(final String id, final Run run, final ResultSelector selector) throws IOException, InterruptedException {
+        private ResultAction publishResult(final String id, final Run run, final ResultSelector selector) throws IOException, InterruptedException {
             ReferenceProvider referenceProvider = ReferenceFinder.create(run,
                     selector, usePreviousBuildAsReference, useStableBuildAsReference);
             BuildHistory buildHistory = new BuildHistory(run, selector);
@@ -254,13 +263,14 @@ public class PublishWarningsStep extends Step {
             AnalysisResult result = new AnalysisResult(id, run, referenceProvider, buildHistory.getPreviousResult(),
                     resultEvaluator, defaultEncoding, warnings);
 
-            PipelineResultAction action = new PipelineResultAction(run, id, result, healthDescriptor);
+            ResultAction action = new ResultAction(run, id, result, healthDescriptor);
             run.addAction(action);
 
             return action;
         }
     }
 
+    // TODO: i18n
     @Extension
     public static class Descriptor extends StepDescriptor {
         @Override
@@ -275,7 +285,7 @@ public class PublishWarningsStep extends Step {
 
         @Override
         public String getDisplayName() {
-            return "Publish issues created by a static analysis run.";
+            return "Publish issues created by a static analysis run";
         }
     }
 }

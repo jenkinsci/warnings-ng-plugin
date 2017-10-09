@@ -50,21 +50,21 @@ import hudson.util.Graph;
  */
 // CHECKSTYLE:COUPLING-OFF
 @ExportedBean
-public class ProjectAction implements Action {
-    private static final Logger LOGGER = Logger.getLogger(ProjectAction.class.getName());
+public class JobAction implements Action {
+    private static final Logger LOGGER = Logger.getLogger(JobAction.class.getName());
 
     private final Job<?, ?> job; // FIXME: make transient
     private final String id;
 
     /**
-     * Creates a new instance of {@link ProjectAction}.
+     * Creates a new instance of {@link JobAction}.
      *
      * @param job
      *            the job that owns this action
      * @param id
      *            the ID of the parser
      */
-    public ProjectAction(final Job<?, ?> job, final String id) {
+    public JobAction(final Job<?, ?> job, final String id) {
         this.job = job;
         this.id = id;
     }
@@ -332,7 +332,7 @@ public class ProjectAction implements Action {
      */
     @Override
     public String getIconFileName() {
-        PipelineResultAction lastAction = getLastAction();
+        ResultAction lastAction = getLastAction();
         if (lastAction != null && lastAction.getResult().hasAnnotations()) {
             return Jenkins.RESOURCE_PATH + getIssueParser().getSmallIconUrl();
         }
@@ -360,7 +360,7 @@ public class ProjectAction implements Action {
      *         action is found
      */
     @CheckForNull
-    public PipelineResultAction getLastAction() {
+    public ResultAction getLastAction() {
         Run<?, ?> lastRun = getLastFinishedRun();
         if (lastRun == null) {
             return null;
@@ -378,8 +378,8 @@ public class ProjectAction implements Action {
      * @return the action or <code>null</code> if there is no such action
      */
     @CheckForNull
-    protected PipelineResultAction getResultAction(final Run<?, ?> lastRun) {
-        return lastRun.getAction(PipelineResultAction.class);
+    protected ResultAction getResultAction(final Run<?, ?> lastRun) {
+        return lastRun.getAction(ResultAction.class);
     }
 
     /**

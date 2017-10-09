@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.core.history;
 
 import java.util.Optional;
 
-import io.jenkins.plugins.analysis.core.steps.PipelineResultAction;
+import io.jenkins.plugins.analysis.core.steps.ResultAction;
 
 import hudson.model.Result;
 import hudson.model.Run;
@@ -37,7 +37,7 @@ public class StablePluginReference extends ReferenceFinder {
     }
 
     @Override
-    protected Optional<PipelineResultAction> getReferenceAction() {
+    protected Optional<ResultAction> getReferenceAction() {
         return getPreviousAction(false, overallResultMustBeSuccess);
     }
 }

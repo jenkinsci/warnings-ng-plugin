@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
-import io.jenkins.plugins.analysis.core.steps.PipelineResultAction;
+import io.jenkins.plugins.analysis.core.steps.ResultAction;
 
 import hudson.model.Result;
 import hudson.model.Run;
@@ -38,7 +38,7 @@ public class BuildHistory implements RunResultHistory {
 
     @Override
     public AnalysisResult getBaseline() {
-        Optional<PipelineResultAction> resultAction = selector.get(baseline);
+        Optional<ResultAction> resultAction = selector.get(baseline);
         if (!resultAction.isPresent()) {
             throw new NoSuchElementException(
                     String.format("Selector '%s' does not find action for baseline '%s'",
@@ -61,7 +61,7 @@ public class BuildHistory implements RunResultHistory {
      *
      * @return the previous action
      */
-    protected Optional<PipelineResultAction> getPreviousAction(
+    protected Optional<ResultAction> getPreviousAction(
             final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
         Optional<Run<?, ?>> run = getPreviousRun(baseline, selector, ignoreAnalysisResult, overallResultMustBeSuccess);
         if (run.isPresent()) {
@@ -73,9 +73,9 @@ public class BuildHistory implements RunResultHistory {
     private static Optional<Run<?, ?>> getPreviousRun(final Run<?, ?> start,
             final ResultSelector selector, final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
         for (Run<?, ?> run = start.getPreviousBuild(); run != null; run = run.getPreviousBuild()) {
-            Optional<PipelineResultAction> action = selector.get(run);
+            Optional<ResultAction> action = selector.get(run);
             if (action.isPresent()) {
-                PipelineResultAction resultAction = action.get();
+                ResultAction resultAction = action.get();
                 if (hasValidResult(run, resultAction, overallResultMustBeSuccess)
                         && hasSuccessfulAnalysisResult(resultAction, ignoreAnalysisResult)) {
                     return Optional.of(run);
@@ -85,11 +85,11 @@ public class BuildHistory implements RunResultHistory {
         return Optional.empty();
     }
 
-    private static boolean hasSuccessfulAnalysisResult(final PipelineResultAction action, final boolean ignoreAnalysisResult) {
+    private static boolean hasSuccessfulAnalysisResult(final ResultAction action, final boolean ignoreAnalysisResult) {
         return action.isSuccessful() || ignoreAnalysisResult;
     }
 
-    private static boolean hasValidResult(final Run<?, ?> run, final PipelineResultAction action,
+    private static boolean hasValidResult(final Run<?, ?> run, final ResultAction action,
             final boolean overallResultMustBeSuccess) {
         Result result = run.getResult();
 
@@ -102,14 +102,14 @@ public class BuildHistory implements RunResultHistory {
         return result.isBetterThan(Result.FAILURE) || isPluginCauseForFailure(action);
     }
 
-    private static boolean isPluginCauseForFailure(final PipelineResultAction action) {
+    private static boolean isPluginCauseForFailure(final ResultAction action) {
         return action.getResult().getPluginResult().isWorseOrEqualTo(Result.FAILURE);
     }
 
     // TODO: why don't we return the action?
     @Override
     public Optional<AnalysisResult> getPreviousResult() {
-        Optional<PipelineResultAction> action = getPreviousAction(false, false);
+        Optional<ResultAction> action = getPreviousAction(false, false);
         if (action.isPresent()) {
             return Optional.of(action.get().getResult());
         }
@@ -152,10 +152,10 @@ public class BuildHistory implements RunResultHistory {
         public AnalysisResult next() {
             if (cursor.isPresent()) {
                 Run<?, ?> run = cursor.get();
-                Optional<PipelineResultAction> resultAction = selector.get(run);
+                Optional<ResultAction> resultAction = selector.get(run);
                 if (!resultAction.isPresent()) {
                     throw new NoSuchElementException(String.format("No action %s available for run %s",
-                            PipelineResultAction.class.getName(), run));
+                            ResultAction.class.getName(), run));
                 }
 
                 cursor = getPreviousRun(run, selector, false, false);

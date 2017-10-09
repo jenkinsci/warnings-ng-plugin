@@ -15,4 +15,11 @@ Maintainer: Dr. Ullrich Hafner
 - Different properties for warnings in downstream plugins?
 - SCM link for blame information
 - Parser: ID, Publish: ID: same class or different?
-- Highscore starts for #1 on yesterday
+- High score starts for #1 on yesterday
+- Integrate all warnings parsers
+- Provide option for console parsing
+- Add support for remaining plugins
+- Add tooltips from plugins
+- Add filter, e.g. for packages
+
+- ScanForIssues: pattern not in UI

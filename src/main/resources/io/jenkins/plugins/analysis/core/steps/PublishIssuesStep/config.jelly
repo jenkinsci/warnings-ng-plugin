@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:u="/util">
+<j:jelly xmlns:j="jelly:core"
+         xmlns:f="/lib/form" xmlns:u="/util">
 
   <f:entry title="${%title.usePreviousBuildAsReference}" description="${%description.usePreviousBuildAsReference}"
      field="usePreviousBuildAsReference">
@@ -11,6 +11,14 @@
     <f:checkbox/>
   </f:entry>
   <u:health id="${id}"/>
-  <u:defaultEncoding id="warnings"/>
+
+  <f:entry title="${%title.status.total}" description="${%description.status.total}">
+    <u:thresholds-total/>
+  </f:entry>
+  <f:entry title="${%title.status.new}" description="${%description.status.new}">
+    <u:thresholds-new/>
+  </f:entry>
+
+  <u:defaultEncoding id="${id}"/>
 
 </j:jelly>

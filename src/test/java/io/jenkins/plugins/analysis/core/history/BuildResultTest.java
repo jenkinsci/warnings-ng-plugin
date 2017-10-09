@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
-import io.jenkins.plugins.analysis.core.steps.PipelineResultAction;
+import io.jenkins.plugins.analysis.core.steps.ResultAction;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -20,7 +20,7 @@ class BuildResultTest {
     /** Verifies that the iterator for a single run without previous runs contains just a single element. */
     @Test
     void shouldHaveOneElementForOneTotalRun() {
-        PipelineResultAction action = mock(PipelineResultAction.class);
+        ResultAction action = mock(ResultAction.class);
 
         AnalysisResult buildResult = mock(AnalysisResult.class);
         when(action.getResult()).thenReturn(buildResult);

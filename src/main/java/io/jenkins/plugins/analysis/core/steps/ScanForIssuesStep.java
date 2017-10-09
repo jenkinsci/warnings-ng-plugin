@@ -17,7 +17,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import com.google.common.collect.Sets;
 
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool.IssueParserDescriptor;
+import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool.StaticAnalysisToolDescriptor;
 import io.jenkins.plugins.analysis.core.util.FilesParser;
 import jenkins.model.Jenkins;
 
@@ -29,19 +29,18 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.core.ParserResult;
 
-/*
- TODO:
-
- - remove isMavenBuild from FilesParser
+/**
+ * Scan files or the console log for issues.
  */
-public class ParseWarningsStep extends Step {
+@SuppressWarnings("InstanceVariableMayNotBeInitialized")
+public class ScanForIssuesStep extends Step {
     private String defaultEncoding;
     private boolean shouldDetectModules;
-    private StaticAnalysisTool parser;
+    private StaticAnalysisTool tool;
     private String pattern;
 
     @DataBoundConstructor
-    public ParseWarningsStep() {
+    public ScanForIssuesStep() {
         // empty constructor required for Stapler
     }
 
@@ -53,7 +52,8 @@ public class ParseWarningsStep extends Step {
     /**
      * Sets the Ant file-set pattern of files to work with.
      *
-     * @param pattern the pattern to use
+     * @param pattern
+     *         the pattern to use
      */
     @DataBoundSetter
     public void setPattern(final String pattern) {
@@ -61,18 +61,19 @@ public class ParseWarningsStep extends Step {
     }
 
     @CheckForNull
-    public StaticAnalysisTool getParser() {
-        return parser;
+    public StaticAnalysisTool getTool() {
+        return tool;
     }
 
     /**
      * Sets the parsers to use.
      *
-     * @param parser the parser to use
+     * @param tool
+     *         the parser to use
      */
     @DataBoundSetter
-    public void setParser(final StaticAnalysisTool parser) {
-        this.parser = parser;
+    public void setTool(final StaticAnalysisTool tool) {
+        this.tool = tool;
     }
 
     public boolean getShouldDetectModules() {
@@ -80,10 +81,11 @@ public class ParseWarningsStep extends Step {
     }
 
     /**
-     * Enables or disables module scanning. If {@code shouldDetectModules} is set, then the module
-     * name is derived by parsing Maven POM or Ant build files.
+     * Enables or disables module scanning. If {@code shouldDetectModules} is set, then the module name is derived by
+     * parsing Maven POM or Ant build files.
      *
-     * @return shouldDetectModules if set to {@code true} then modules are scanned.
+     * @param shouldDetectModules
+     *         if set to {@code true} then modules are scanned.
      */
     @DataBoundSetter
     public void setShouldDetectModules(final boolean shouldDetectModules) {
@@ -98,7 +100,8 @@ public class ParseWarningsStep extends Step {
     /**
      * Sets the default encoding used to read files (warnings, source code, etc.).
      *
-     * @param defaultEncoding the encoding, e.g. "ISO-8859-1"
+     * @param defaultEncoding
+     *         the encoding, e.g. "ISO-8859-1"
      */
     @DataBoundSetter
     public void setDefaultEncoding(final String defaultEncoding) {
@@ -106,7 +109,7 @@ public class ParseWarningsStep extends Step {
     }
 
     @Override
-    public StepExecution start(final StepContext stepContext) throws Exception {
+    public StepExecution start(final StepContext stepContext) {
         return new Execution(stepContext, this);
     }
 
@@ -116,12 +119,12 @@ public class ParseWarningsStep extends Step {
         private final StaticAnalysisTool parser;
         private final String pattern;
 
-        protected Execution(@Nonnull final StepContext context, final ParseWarningsStep step) {
+        protected Execution(@Nonnull final StepContext context, final ScanForIssuesStep step) {
             super(context);
 
             defaultEncoding = step.getDefaultEncoding();
             shouldDetectModules = step.getShouldDetectModules();
-            parser = step.getParser();
+            parser = step.getTool();
             pattern = step.getPattern();
         }
 
@@ -154,7 +157,8 @@ public class ParseWarningsStep extends Step {
         /**
          * Resolve build parameters in the file pattern up to {@link #RESOLVE_VARIABLES_DEPTH} times.
          *
-         * @param unexpanded the pattern to expand
+         * @param unexpanded
+         *         the pattern to expand
          */
         private String expandEnvironmentVariables(final String unexpanded) {
             String expanded = unexpanded;
@@ -182,6 +186,7 @@ public class ParseWarningsStep extends Step {
 
     @Extension
     public static class Descriptor extends StepDescriptor {
+        @SuppressWarnings("unchecked")
         @Override
         public Set<? extends Class<?>> getRequiredContext() {
             return Sets.newHashSet(FilePath.class, EnvVars.class, TaskListener.class, Run.class);
@@ -192,12 +197,13 @@ public class ParseWarningsStep extends Step {
             return "scanForIssues";
         }
 
+        @Nonnull
         @Override
         public String getDisplayName() {
             return "Scan files or the console log for issues";
         }
 
-        public Collection<? extends IssueParserDescriptor> getAvailableParsers() {
+        public Collection<? extends StaticAnalysisToolDescriptor> getAvailableTools() {
             return Jenkins.getInstance().getDescriptorList(StaticAnalysisTool.class);
         }
     }

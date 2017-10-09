@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.core.history;
 
 import java.util.Optional;
 
-import io.jenkins.plugins.analysis.core.steps.PipelineResultAction;
+import io.jenkins.plugins.analysis.core.steps.ResultAction;
 
 import hudson.model.Result;
 import hudson.model.Run;
@@ -60,7 +60,7 @@ public abstract class ReferenceFinder extends BuildHistory implements ReferenceP
      *
      * @return the action of the reference build, or {@code null} if no such build exists
      */
-    protected abstract Optional<PipelineResultAction> getReferenceAction();
+    protected abstract Optional<ResultAction> getReferenceAction();
 
     @Override
     public int getNumber() {
@@ -75,7 +75,7 @@ public abstract class ReferenceFinder extends BuildHistory implements ReferenceP
      */
     @Override
     public AnnotationContainer getIssues() {
-        Optional<PipelineResultAction> action = getReferenceAction();
+        Optional<ResultAction> action = getReferenceAction();
         if (action.isPresent()) {
             return action.get().getResult().getContainer();
         }
