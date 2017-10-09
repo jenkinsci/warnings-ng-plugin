@@ -158,19 +158,19 @@ public class ScanForIssuesStep extends Step {
 
         private ParserResult scanConsoleLog(final FilePath workspace) throws IOException, InterruptedException, InvocationTargetException {
             PluginLogger logger = createPluginLogger(tool.getId());
-            logger.format("Scanning issues in console log (encoding = '%s', detectModules = '%b', workspace '%s')%n",
-                    tool, defaultEncoding, shouldDetectModules, workspace);
+            logger.format("Scanning for '%s' issues in console log (workspace '%s')", tool, workspace);
 
             ParserResult result = new ParserResult(workspace);
             result.setId(tool.getId());
             result.addAnnotations(tool.parse(getRun().getLogFile(), StringUtils.EMPTY));
+            logger.format("Found %d issues in %d modules", result.getNumberOfAnnotations(), result.getModules().size());
+
             return result;
         }
 
         private ParserResult scanFiles(final FilePath workspace) throws IOException, InterruptedException {
             PluginLogger logger = createPluginLogger(tool.getId());
-            logger.format("Scanning issues from '%s' (encoding = '%s', detectModules = '%b') in workspace '%s'%n",
-                    tool, defaultEncoding, shouldDetectModules, workspace);
+            logger.format("Scanning for '%s' issues in files '%' in workspace '%s'", tool, pattern, workspace);
 
             ParserResult result = workspace.act(
                     new FilesParser(tool.getId(), getPattern(), tool, shouldDetectModules));
