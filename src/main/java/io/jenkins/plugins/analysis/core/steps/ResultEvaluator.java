@@ -49,7 +49,7 @@ public class ResultEvaluator extends BuildResultEvaluator {
         StringBuilder messages = new StringBuilder();
         Result result;
         if (!previousResult.isPresent()) {
-            logger.log("Ignore new warnings since this is the first valid build");
+            logger.log("Ignoring new issues since this is the first valid build");
             result = evaluateBuildResult(messages, thresholds, issues);
         }
         else {

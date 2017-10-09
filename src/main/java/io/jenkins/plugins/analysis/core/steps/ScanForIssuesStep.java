@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.steps;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Set;
 
@@ -28,6 +29,7 @@ import hudson.Util;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.core.ParserResult;
+import hudson.plugins.analysis.util.PluginLogger;
 
 /**
  * Scan files or the console log for issues.
@@ -50,7 +52,7 @@ public class ScanForIssuesStep extends Step {
     }
 
     /**
-     * Sets the Ant file-set pattern of files to work with.
+     * Sets the Ant file-set pattern of files to work with. If the pattern is undefined then the console log is scanned.
      *
      * @param pattern
      *         the pattern to use
@@ -66,10 +68,10 @@ public class ScanForIssuesStep extends Step {
     }
 
     /**
-     * Sets the parsers to use.
+     * Sets the static analysis tool that produced the issues.
      *
      * @param tool
-     *         the parser to use
+     *         the static analysis tool
      */
     @DataBoundSetter
     public void setTool(final StaticAnalysisTool tool) {
@@ -116,7 +118,7 @@ public class ScanForIssuesStep extends Step {
     public static class Execution extends SynchronousNonBlockingStepExecution<ParserResult> {
         private final String defaultEncoding;
         private final boolean shouldDetectModules;
-        private final StaticAnalysisTool parser;
+        private final StaticAnalysisTool tool;
         private final String pattern;
 
         protected Execution(@Nonnull final StepContext context, final ScanForIssuesStep step) {
@@ -124,34 +126,63 @@ public class ScanForIssuesStep extends Step {
 
             defaultEncoding = step.getDefaultEncoding();
             shouldDetectModules = step.getShouldDetectModules();
-            parser = step.getTool();
+            tool = step.getTool();
             pattern = step.getPattern();
+        }
+
+        private PluginLogger createPluginLogger(final String id) throws IOException, InterruptedException {
+            TaskListener logger = getContext().get(TaskListener.class);
+            return new PluginLogger(logger.getLogger(), id.toLowerCase());
+        }
+
+        private Run getRun() throws IOException, InterruptedException {
+            return getContext().get(Run.class);
         }
 
         @Override
         protected ParserResult run() throws Exception {
             FilePath workspace = getContext().get(FilePath.class);
-            TaskListener logger = getContext().get(TaskListener.class);
 
-            logger.getLogger().append("Starting parser " + parser + " (encoding = " + defaultEncoding
-                    + ", detectModules = " + shouldDetectModules + ") in workspace " + workspace + "\n");
-
-            if (workspace != null) {
-                ParserResult result = workspace.act(
-                        new FilesParser(parser.getId(), getPattern(), parser, shouldDetectModules));
-                logger.getLogger().append(result.getLogMessages());
-                return result;
+            if (workspace == null) {
+                throw new IllegalStateException("No workspace set for step " + this);
             }
             else {
-                return new ParserResult();
+                if (StringUtils.isNotBlank(pattern)) {
+                    return scanFiles(workspace);
+                }
+                else {
+                    return scanConsoleLog(workspace);
+                }
             }
+        }
+
+        private ParserResult scanConsoleLog(final FilePath workspace) throws IOException, InterruptedException, InvocationTargetException {
+            PluginLogger logger = createPluginLogger(tool.getId());
+            logger.format("Scanning issues in console log (encoding = '%s', detectModules = '%b', workspace '%s')%n",
+                    tool, defaultEncoding, shouldDetectModules, workspace);
+
+            ParserResult result = new ParserResult(workspace);
+            result.setId(tool.getId());
+            result.addAnnotations(tool.parse(getRun().getLogFile(), StringUtils.EMPTY));
+            return result;
+        }
+
+        private ParserResult scanFiles(final FilePath workspace) throws IOException, InterruptedException {
+            PluginLogger logger = createPluginLogger(tool.getId());
+            logger.format("Scanning issues from '%s' (encoding = '%s', detectModules = '%b') in workspace '%s'%n",
+                    tool, defaultEncoding, shouldDetectModules, workspace);
+
+            ParserResult result = workspace.act(
+                    new FilesParser(tool.getId(), getPattern(), tool, shouldDetectModules));
+            logger.logLines(result.getLogMessages());
+            return result;
         }
 
         /** Maximum number of times that the environment expansion is executed. */
         private static final int RESOLVE_VARIABLES_DEPTH = 10;
 
         protected String getPattern() {
-            return expandEnvironmentVariables(StringUtils.defaultIfBlank(pattern, parser.getDefaultPattern()));
+            return expandEnvironmentVariables(StringUtils.defaultIfBlank(pattern, tool.getDefaultPattern()));
         }
 
         /**

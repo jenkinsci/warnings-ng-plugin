@@ -17,7 +17,6 @@ Maintainer: Dr. Ullrich Hafner
 - Parser: ID, Publish: ID: same class or different?
 - High score starts for #1 on yesterday
 - Integrate all warnings parsers
-- Provide option for console parsing
 - Add support for remaining plugins
 - Add tooltips from plugins
 - Add filter, e.g. for packages

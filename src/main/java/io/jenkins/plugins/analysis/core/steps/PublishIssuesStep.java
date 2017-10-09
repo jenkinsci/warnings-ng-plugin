@@ -4,6 +4,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -26,7 +27,6 @@ import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import hudson.Extension;
 import hudson.model.Action;
 import hudson.model.Job;
-import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.core.ParserResult;
@@ -35,9 +35,10 @@ import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
- * Publish issues created by a static analysis run. The recorded issues are stored as a {@link ResultAction} in
- * the associated run.
+ * Publish issues created by a static analysis run. The recorded issues are stored as a {@link ResultAction} in the
+ * associated run.
  */
+@SuppressWarnings("InstanceVariableMayNotBeInitialized")
 public class PublishIssuesStep extends Step {
     private static final String DEFAULT_MINIMUM_PRIORITY = "low";
 
@@ -51,7 +52,8 @@ public class PublishIssuesStep extends Step {
     private String healthy;
     private String unHealthy;
     private String minimumPriority = DEFAULT_MINIMUM_PRIORITY;
-    private Thresholds thresholds = new Thresholds();
+
+    private final Thresholds thresholds = new Thresholds();
 
     /**
      * Creates a new instance of {@link PublishIssuesStep}.
@@ -62,10 +64,6 @@ public class PublishIssuesStep extends Step {
     @DataBoundConstructor
     public PublishIssuesStep(final ParserResult... issues) {
         this.issues = issues;
-
-        if (issues == null || issues.length == 0) {
-            throw new IllegalArgumentException("No issues provided");
-        }
     }
 
     public ParserResult[] getIssues() {
@@ -77,6 +75,7 @@ public class PublishIssuesStep extends Step {
     }
 
     // TODO: use same naming as in BuildHistory?
+
     /**
      * Determines if the previous build should always be used as the reference build, no matter of its overall result.
      *
@@ -169,20 +168,163 @@ public class PublishIssuesStep extends Step {
     }
 
     @CheckForNull
-    public Thresholds getThresholds() {
-        return thresholds;
+    public String getUnstableTotalAll() {
+        return thresholds.unstableTotalAll;
     }
 
-    /**
-     * Sets the result threshold, i.e. the number of issues when to set the build result to {@link Result#SUCCESS},
-     * {@link Result#UNSTABLE}, or {@link Result#FAILURE}.
-     *
-     * @param thresholds
-     *         the number of issues required to change the build status
-     */
     @DataBoundSetter
-    public void setThresholds(final Thresholds thresholds) {
-        this.thresholds = thresholds;
+    public void setUnstableTotalAll(final String unstableTotalAll) {
+        thresholds.unstableTotalAll = unstableTotalAll;
+    }
+
+    @CheckForNull
+    public String getUnstableTotalHigh() {
+        return thresholds.unstableTotalHigh;
+    }
+
+    @DataBoundSetter
+    public void setUnstableTotalHigh(final String unstableTotalHigh) {
+        thresholds.unstableTotalHigh = unstableTotalHigh;
+    }
+
+    @CheckForNull
+    public String getUnstableTotalNormal() {
+        return thresholds.unstableTotalNormal;
+    }
+
+    @DataBoundSetter
+    public void setUnstableTotalNormal(final String unstableTotalNormal) {
+        thresholds.unstableTotalNormal = unstableTotalNormal;
+    }
+
+    @CheckForNull
+    public String getUnstableTotalLow() {
+        return thresholds.unstableTotalLow;
+    }
+
+    @DataBoundSetter
+    public void setUnstableTotalLow(final String unstableTotalLow) {
+        thresholds.unstableTotalLow = unstableTotalLow;
+    }
+
+    @CheckForNull
+    public String getUnstableNewAll() {
+        return thresholds.unstableNewAll;
+    }
+
+    @DataBoundSetter
+    public void setUnstableNewAll(final String unstableNewAll) {
+        thresholds.unstableNewAll = unstableNewAll;
+    }
+
+    @CheckForNull
+    public String getUnstableNewHigh() {
+        return thresholds.unstableNewHigh;
+    }
+
+    @DataBoundSetter
+    public void setUnstableNewHigh(final String unstableNewHigh) {
+        thresholds.unstableNewHigh = unstableNewHigh;
+    }
+
+    @CheckForNull
+    public String getUnstableNewNormal() {
+        return thresholds.unstableNewNormal;
+    }
+
+    @DataBoundSetter
+    public void setUnstableNewNormal(final String unstableNewNormal) {
+        thresholds.unstableNewNormal = unstableNewNormal;
+    }
+
+    @CheckForNull
+    public String getUnstableNewLow() {
+        return thresholds.unstableNewLow;
+    }
+
+    @DataBoundSetter
+    public void setUnstableNewLow(final String unstableNewLow) {
+        thresholds.unstableNewLow = unstableNewLow;
+    }
+
+    @CheckForNull
+    public String getFailedTotalAll() {
+        return thresholds.failedTotalAll;
+    }
+
+    @DataBoundSetter
+    public void setFailedTotalAll(final String failedTotalAll) {
+        thresholds.failedTotalAll = failedTotalAll;
+    }
+
+    @CheckForNull
+    public String getFailedTotalHigh() {
+        return thresholds.failedTotalHigh;
+    }
+
+    @DataBoundSetter
+    public void setFailedTotalHigh(final String failedTotalHigh) {
+        thresholds.failedTotalHigh = failedTotalHigh;
+    }
+
+    @CheckForNull
+    public String getFailedTotalNormal() {
+        return thresholds.failedTotalNormal;
+    }
+
+    @DataBoundSetter
+    public void setFailedTotalNormal(final String failedTotalNormal) {
+        thresholds.failedTotalNormal = failedTotalNormal;
+    }
+
+    @CheckForNull
+    public String getFailedTotalLow() {
+        return thresholds.failedTotalLow;
+    }
+
+    @DataBoundSetter
+    public void setFailedTotalLow(final String failedTotalLow) {
+        thresholds.failedTotalLow = failedTotalLow;
+    }
+
+    @CheckForNull
+    public String getFailedNewAll() {
+        return thresholds.failedNewAll;
+    }
+
+    @DataBoundSetter
+    public void setFailedNewAll(final String failedNewAll) {
+        thresholds.failedNewAll = failedNewAll;
+    }
+
+    @CheckForNull
+    public String getFailedNewHigh() {
+        return thresholds.failedNewHigh;
+    }
+
+    @DataBoundSetter
+    public void setFailedNewHigh(final String failedNewHigh) {
+        thresholds.failedNewHigh = failedNewHigh;
+    }
+
+    @CheckForNull
+    public String getFailedNewNormal() {
+        return thresholds.failedNewNormal;
+    }
+
+    @DataBoundSetter
+    public void setFailedNewNormal(final String failedNewNormal) {
+        thresholds.failedNewNormal = failedNewNormal;
+    }
+
+    @CheckForNull
+    public String getFailedNewLow() {
+        return thresholds.failedNewLow;
+    }
+
+    @DataBoundSetter
+    public void setFailedNewLow(final String failedNewLow) {
+        thresholds.failedNewLow = failedNewLow;
     }
 
     @Override
@@ -196,7 +338,7 @@ public class PublishIssuesStep extends Step {
         private final boolean useStableBuildAsReference;
         private final boolean usePreviousBuildAsReference;
         private final String defaultEncoding;
-        private final ParserResult[] warnings;
+        private final ParserResult[] issues;
 
         protected Execution(@Nonnull final StepContext context, final PublishIssuesStep step) {
             super(context);
@@ -207,9 +349,9 @@ public class PublishIssuesStep extends Step {
             healthDescriptor = new HealthDescriptor(step.healthy, step.unHealthy, getMinimumPriority(step.minimumPriority));
             thresholds = step.thresholds;
 
-            warnings = step.issues;
-            if (warnings == null) {
-                throw new NullPointerException("No warnings provided to step " + step);
+            issues = step.issues;
+            if (issues == null || issues.length == 0) {
+                throw new NullPointerException("No issues to publish in step " + step);
             }
         }
 
@@ -220,7 +362,7 @@ public class PublishIssuesStep extends Step {
         @Override
         protected ResultAction run() throws Exception {
             Set<String> ids = new HashSet<>();
-            for (ParserResult result : warnings) {
+            for (ParserResult result : issues) {
                 ids.add(result.getId());
             }
 
@@ -232,15 +374,23 @@ public class PublishIssuesStep extends Step {
             }
         }
 
+        private PluginLogger createPluginLogger(final String id) throws IOException, InterruptedException {
+            TaskListener logger = getContext().get(TaskListener.class);
+            return new PluginLogger(logger.getLogger(), id.toLowerCase());
+        }
+
+        private Run getRun() throws IOException, InterruptedException {
+            return getContext().get(Run.class);
+        }
+
         private ResultAction publishMultipleParserResults() throws IOException, InterruptedException {
             String id = "staticAnalysis";
             ResultSelector selector = new ByIdResultSelector(id);
             Run run = getRun();
-            // FIXME: enable check again
-            // ResultAction<? extends BuildResult> other = selector.get(run);
-            // if (other != null) {
-            //    throw new IllegalStateException("There is already an action registered with ID " + id);
-            // }
+            Optional<ResultAction> other = selector.get(run);
+            if (other.isPresent()) {
+                throw new IllegalStateException(String.format("ID %s is already used by another action: %s%n", id, other.get()));
+            }
             return publishResult(id, run, selector);
         }
 
@@ -248,26 +398,25 @@ public class PublishIssuesStep extends Step {
             return publishResult(id, getRun(), new ByIdResultSelector(id));
         }
 
-        private Run getRun() throws IOException, InterruptedException {
-            return getContext().get(Run.class);
-        }
-
-        private ResultAction publishResult(final String id, final Run run, final ResultSelector selector) throws IOException, InterruptedException {
-            ReferenceProvider referenceProvider = ReferenceFinder.create(run,
-                    selector, usePreviousBuildAsReference, useStableBuildAsReference);
-            BuildHistory buildHistory = new BuildHistory(run, selector);
-
-            TaskListener logger = getContext().get(TaskListener.class);
-            ResultEvaluator resultEvaluator = new ResultEvaluator(id, thresholds, new PluginLogger(logger.getLogger(), id));
-
-            AnalysisResult result = new AnalysisResult(id, run, referenceProvider, buildHistory.getPreviousResult(),
-                    resultEvaluator, defaultEncoding, warnings);
-
+        private ResultAction publishResult(final String id, final Run run, final ResultSelector selector)
+                throws IOException, InterruptedException {
+            AnalysisResult result = createAnalysisResult(id, run, selector);
             ResultAction action = new ResultAction(run, id, result, healthDescriptor);
             run.addAction(action);
 
             return action;
         }
+
+        private AnalysisResult createAnalysisResult(final String id, final Run run, final ResultSelector selector)
+                throws IOException, InterruptedException {
+            ReferenceProvider referenceProvider = ReferenceFinder.create(run,
+                    selector, usePreviousBuildAsReference, useStableBuildAsReference);
+            BuildHistory buildHistory = new BuildHistory(run, selector);
+            ResultEvaluator resultEvaluator = new ResultEvaluator(id, thresholds, createPluginLogger(id));
+            return new AnalysisResult(id, run, referenceProvider, buildHistory.getPreviousResult(),
+                    resultEvaluator, defaultEncoding, issues);
+        }
+
     }
 
     // TODO: i18n
