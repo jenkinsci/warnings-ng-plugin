@@ -18,7 +18,7 @@ import hudson.plugins.warnings.parser.Messages;
 import hudson.plugins.warnings.parser.ParserRegistry;
 
 /**
- * FIXME: write comment.
+ * Provides customized messages for the Java parser.
  *
  * @author Ullrich Hafner
  */
@@ -65,5 +65,5 @@ public class Java extends StaticAnalysisTool {
     }
 
     @Extension
-    public static final IssueParserDescriptor D = new IssueParserDescriptor(Java.class);
+    public static final StaticAnalysisToolDescriptor D = new StaticAnalysisToolDescriptor(Java.class);
 }
