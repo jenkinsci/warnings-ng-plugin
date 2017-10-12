@@ -29,6 +29,7 @@ import hudson.Util;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.core.ParserResult;
+import hudson.plugins.analysis.util.NullLogger;
 import hudson.plugins.analysis.util.PluginLogger;
 
 /**
@@ -52,7 +53,8 @@ public class ScanForIssuesStep extends Step {
     }
 
     /**
-     * Sets the Ant file-set pattern of files to work with. If the pattern is undefined then the console log is scanned.
+     * Sets the Ant file-set pattern of files to work with. If the pattern is undefined then the console log is
+     * scanned.
      *
      * @param pattern
      *         the pattern to use
@@ -130,12 +132,17 @@ public class ScanForIssuesStep extends Step {
             pattern = step.getPattern();
         }
 
-        private PluginLogger createPluginLogger(final String id) throws IOException, InterruptedException {
+        private PluginLogger createPluginLogger() throws IOException, InterruptedException {
             TaskListener logger = getContext().get(TaskListener.class);
-            return new PluginLogger(logger.getLogger(), tool.getName());
+            if (logger == null) {
+                return new NullLogger();
+            }
+            else {
+                return new PluginLogger(logger.getLogger(), tool.getName());
+            }
         }
 
-        private Run getRun() throws IOException, InterruptedException {
+        private Run<?, ?> getRun() throws IOException, InterruptedException {
             return getContext().get(Run.class);
         }
 
@@ -157,7 +164,7 @@ public class ScanForIssuesStep extends Step {
         }
 
         private ParserResult scanConsoleLog(final FilePath workspace) throws IOException, InterruptedException, InvocationTargetException {
-            PluginLogger logger = createPluginLogger(tool.getId());
+            PluginLogger logger = createPluginLogger();
             logger.format("Scanning for '%s' issues in console log (workspace '%s')", tool, workspace);
 
             ParserResult result = new ParserResult(workspace);
@@ -169,7 +176,7 @@ public class ScanForIssuesStep extends Step {
         }
 
         private ParserResult scanFiles(final FilePath workspace) throws IOException, InterruptedException {
-            PluginLogger logger = createPluginLogger(tool.getId());
+            PluginLogger logger = createPluginLogger();
             logger.format("Scanning for '%s' issues in files '%s' in workspace '%s'", tool, pattern, workspace);
 
             FilesParser parser = new FilesParser(tool.getName(), expandEnvironmentVariables(pattern), tool, shouldDetectModules);
@@ -202,10 +209,7 @@ public class ScanForIssuesStep extends Step {
                     }
                 }
             }
-            catch (IOException e) {
-                // ignore
-            }
-            catch (InterruptedException e) {
+            catch (IOException | InterruptedException e) {
                 // ignore
             }
             return expanded;
