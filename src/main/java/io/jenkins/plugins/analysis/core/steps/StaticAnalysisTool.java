@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import jenkins.model.Jenkins;
@@ -12,7 +13,6 @@ import jenkins.model.Jenkins;
 import hudson.ExtensionPoint;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
-import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.AnnotationParser;
 import hudson.plugins.analysis.util.HtmlPrinter;
 
@@ -50,7 +50,7 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
     }
 
     private final String id;
-    private final String defaultPattern;
+
     private String defaultEncoding;
 
     @CheckForNull
@@ -69,33 +69,40 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
         this.defaultEncoding = defaultEncoding;
     }
 
+    /**
+     * Creates a new static analysis tool with the specified ID.
+     *
+     * @param id
+     *         the ID
+     */
+    // TODO: check that no duplicate IDs are requested
     public StaticAnalysisTool(final String id) {
-        this(id, "**/*");
-    }
-
-    public StaticAnalysisTool(final String id, final String defaultPattern) {
         this.id = id;
-        this.defaultPattern = defaultPattern;
     }
 
+    /**
+     * Returns the ID of the tool.
+     *
+     * @return the ID
+     */
     public String getId() {
         return id;
     }
 
-    public String getDefaultPattern() {
-        return defaultPattern;
+    protected String getSuffix() {
+        return String.format(" (%s)", WordUtils.capitalize(getId()));
     }
 
     protected String getName() {
-        return "Static Analysis";
+        return Messages.Tool_Name(getSuffix());
     }
 
     public String getLinkName() {
-        return "Static Analysis Issues";
+        return Messages.Tool_Link_Name(getSuffix());
     }
 
     public String getTrendName() {
-        return "Static Analysis Trend";
+        return Messages.Tool_Trend_Name(getSuffix());
     }
 
     public String getSmallIconUrl() {
@@ -113,11 +120,12 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
     /**
      * Returns a summary message for the summary.jelly file.
      *
-     * @param url
-     *         the url of the results
+     * @param numberOfIssues
+     *         the number of issues in the report
+     * @param numberOfModules
+     *         the number of modules in the report
      *
      * @return the summary message
-     * @since 2.0
      */
     public String getSummary(final int numberOfIssues, final int numberOfModules) {
         return getName() + ": " + new ResultSummaryPrinter().createDefaultSummary(getResultUrl(),

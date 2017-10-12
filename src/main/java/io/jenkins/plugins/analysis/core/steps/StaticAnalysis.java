@@ -4,6 +4,8 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
+import org.apache.commons.lang.StringUtils;
+
 import hudson.Extension;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
@@ -21,5 +23,10 @@ public class StaticAnalysis extends StaticAnalysisTool {
     @Override
     public Collection<FileAnnotation> parse(final File file, final String moduleName) throws InvocationTargetException {
         throw new UnsupportedOperationException("Static analysis generic tool does not support parsing");
+    }
+
+    @Override
+    protected String getSuffix() {
+        return StringUtils.EMPTY;
     }
 }

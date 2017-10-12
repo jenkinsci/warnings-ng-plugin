@@ -132,7 +132,7 @@ public class ScanForIssuesStep extends Step {
 
         private PluginLogger createPluginLogger(final String id) throws IOException, InterruptedException {
             TaskListener logger = getContext().get(TaskListener.class);
-            return new PluginLogger(logger.getLogger(), id.toLowerCase());
+            return new PluginLogger(logger.getLogger(), tool.getName());
         }
 
         private Run getRun() throws IOException, InterruptedException {
@@ -170,20 +170,17 @@ public class ScanForIssuesStep extends Step {
 
         private ParserResult scanFiles(final FilePath workspace) throws IOException, InterruptedException {
             PluginLogger logger = createPluginLogger(tool.getId());
-            logger.format("Scanning for '%s' issues in files '%' in workspace '%s'", tool, pattern, workspace);
+            logger.format("Scanning for '%s' issues in files '%s' in workspace '%s'", tool, pattern, workspace);
 
-            ParserResult result = workspace.act(
-                    new FilesParser(tool.getId(), getPattern(), tool, shouldDetectModules));
+            FilesParser parser = new FilesParser(tool.getName(), expandEnvironmentVariables(pattern), tool, shouldDetectModules);
+            ParserResult result = workspace.act(parser);
+            result.setId(tool.getId()); // FIXME: only at one place
             logger.logLines(result.getLogMessages());
             return result;
         }
 
         /** Maximum number of times that the environment expansion is executed. */
         private static final int RESOLVE_VARIABLES_DEPTH = 10;
-
-        protected String getPattern() {
-            return expandEnvironmentVariables(StringUtils.defaultIfBlank(pattern, tool.getDefaultPattern()));
-        }
 
         /**
          * Resolve build parameters in the file pattern up to {@link #RESOLVE_VARIABLES_DEPTH} times.

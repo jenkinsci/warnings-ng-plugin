@@ -25,14 +25,20 @@ import io.jenkins.plugins.analysis.core.history.ResultSelector;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.model.Action;
+import hudson.model.Computer;
 import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.core.Thresholds;
+import hudson.plugins.analysis.util.EncodingValidator;
+import hudson.plugins.analysis.util.Files;
 import hudson.plugins.analysis.util.PluginLogger;
+import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.Priority;
+import hudson.remoting.VirtualChannel;
 
 /**
  * Publish issues created by a static analysis run. The recorded issues are stored as a {@link ResultAction} in the
@@ -54,6 +60,7 @@ public class PublishIssuesStep extends Step {
     private String minimumPriority = DEFAULT_MINIMUM_PRIORITY;
 
     private final Thresholds thresholds = new Thresholds();
+    private String id;
 
     /**
      * Creates a new instance of {@link PublishIssuesStep}.
@@ -68,6 +75,22 @@ public class PublishIssuesStep extends Step {
 
     public ParserResult[] getIssues() {
         return issues;
+    }
+
+    /**
+     * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If
+     * no ID is given, then the ID of the associated result object is used.
+     *
+     * @param id
+     *         the ID of the results
+     */
+    @DataBoundSetter
+    public void setId(final String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public boolean getUsePreviousBuildAsReference() {
@@ -376,11 +399,15 @@ public class PublishIssuesStep extends Step {
 
         private PluginLogger createPluginLogger(final String id) throws IOException, InterruptedException {
             TaskListener logger = getContext().get(TaskListener.class);
-            return new PluginLogger(logger.getLogger(), id.toLowerCase());
+            return new PluginLogger(logger.getLogger(), StaticAnalysisTool.find(id).getName());
         }
 
         private Run getRun() throws IOException, InterruptedException {
             return getContext().get(Run.class);
+        }
+
+        private VirtualChannel getChannel() throws IOException, InterruptedException {
+            return getContext().get(Computer.class).getChannel();
         }
 
         private ResultAction publishMultipleParserResults() throws IOException, InterruptedException {
@@ -400,7 +427,19 @@ public class PublishIssuesStep extends Step {
 
         private ResultAction publishResult(final String id, final Run run, final ResultSelector selector)
                 throws IOException, InterruptedException {
+            PluginLogger logger = createPluginLogger(id);
+
+            logger.format("Creating analysis result for %d issues.", getTotalNumberOfIssues());
             AnalysisResult result = createAnalysisResult(id, run, selector);
+
+            FilePath workspace = getContext().get(FilePath.class);
+            AnnotationContainer container = result.getContainer();
+            logger.format("Copying %d affected files from '%s' to build folder", container.getFiles().size(), workspace);
+
+            new Files().copyFilesWithAnnotationsToBuildFolder(getChannel(), workspace,
+                    container.getAnnotations(), EncodingValidator.getEncoding(defaultEncoding));
+
+            logger.format("Attaching ResultAction with ID '%s' to run '%s'.", id, run);
             ResultAction action = new ResultAction(run, id, result, healthDescriptor);
             run.addAction(action);
 
@@ -417,6 +456,13 @@ public class PublishIssuesStep extends Step {
                     resultEvaluator, defaultEncoding, issues);
         }
 
+        public int getTotalNumberOfIssues() {
+            int sum = 0;
+            for (ParserResult result : issues) {
+                sum += result.getNumberOfAnnotations();
+            }
+            return sum;
+        }
     }
 
     // TODO: i18n
@@ -424,7 +470,7 @@ public class PublishIssuesStep extends Step {
     public static class Descriptor extends StepDescriptor {
         @Override
         public Set<? extends Class<?>> getRequiredContext() {
-            return Sets.newHashSet(Run.class, TaskListener.class);
+            return Sets.newHashSet(Run.class, TaskListener.class, Computer.class);
         }
 
         @Override
