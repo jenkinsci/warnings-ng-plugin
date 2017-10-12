@@ -2,11 +2,11 @@ package hudson.plugins.analysis.util;
 
 import java.io.PrintStream;
 
-import hudson.plugins.analysis.core.Settings;
 import hudson.plugins.analysis.core.GlobalSettings;
+import hudson.plugins.analysis.core.Settings;
 
 /**
- * Provides a Mechanism to create a PluginLogger which depends on the QuietMode. QuietMode can be set in GlobalSettings.
+ * Provides a mechanism to create a PluginLogger which depends on the QuietMode. QuietMode can be set in GlobalSettings.
  *
  * @author Sebastian Seidl
  */

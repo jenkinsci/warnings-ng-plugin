@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,6 +23,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
+
+import static java.util.stream.Collectors.*;
 
 import hudson.FilePath;
 import hudson.plugins.analysis.Messages;
@@ -41,16 +44,16 @@ public class ParserResult implements Serializable {
 
     /** The parsed annotations. */
     @SuppressWarnings("Se")
-    private final Set<FileAnnotation> annotations = new HashSet<FileAnnotation>();
+    private final Set<FileAnnotation> annotations = new HashSet<>();
     /** The collection of error messages. */
     @SuppressWarnings("Se")
-    private final List<String> errorMessages = new ArrayList<String>();
+    private final List<String> errorMessages = new ArrayList<>();
     /** Number of annotations by priority. */
     @SuppressWarnings("Se")
-    private final Map<Priority, Integer> annotationCountByPriority = new HashMap<Priority, Integer>();
+    private final Map<Priority, Integer> annotationCountByPriority = new HashMap<>();
     /** The set of modules. */
     @SuppressWarnings("Se")
-    private final Set<String> modules = new HashSet<String>();
+    private final Set<String> modules = new HashSet<>();
     /** The workspace. */
     private final Workspace workspace;
     /** A mapping of relative file names to absolute file names. */
@@ -136,6 +139,21 @@ public class ParserResult implements Serializable {
         addAnnotations(annotations);
     }
 
+    /**
+     * Returns a filtered parser result that contains only issues that match the specified criterion.
+     *
+     * @param criterion the filter criterion
+     * @return the found issues
+     */
+    public ParserResult filter(final Predicate<? super FileAnnotation> criterion) {
+        List<FileAnnotation> warnings = annotations.stream().filter(criterion).collect(toList());
+        ParserResult result = new ParserResult(warnings);
+        result.id = id;
+        result.numberOfModules = numberOfModules;
+        result.modules.addAll(modules);
+        result.errorMessages.addAll(errorMessages);
+        return result;
+    }
 
     /**
      * Adds the warnings of the specified project to this project.

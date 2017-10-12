@@ -8,8 +8,10 @@ Maintainer: Dr. Ullrich Hafner
 
 ### TODOs for pipelines
 
-- self defined ID and texts for published result
+- Issue(s) benötigen ID des Parsers als origin
 - hierarchy? Actions and Graphs
+- graph that shows warnings for different tools (analysis collector)
+- support for dashboard view
 - Quality gate full implementation (as well as Result Evaluation)
 - Different views possible for downstream plugins?
 - Different properties for warnings in downstream plugins?

@@ -27,6 +27,18 @@ public class ParserResultTest {
     private static final String WORSPACE_ROOT = "ws";
     private static final String FOUND_FILE_NAME = WORSPACE_ROOT + "/" + SCANNED_FILENAME;
 
+
+    /**
+     * FIXME: write comment.
+     */
+    @Test
+    public void shouldFilterIssues() {
+        ParserResult result = new ParserResult();
+        ParserResult filter = result.filter(warnings -> warnings.getPackageName().startsWith("io.jenkins"));
+
+        assertEquals(0, filter.getNumberOfAnnotations());
+    }
+
     /**
      * Verifies that the relative prefix of a path is stripped.
      */
