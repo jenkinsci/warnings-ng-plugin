@@ -34,7 +34,7 @@ public class JavaDoc extends Java {
 
     @Override
     protected String getName() {
-        return "Java Compiler";
+        return Messages.Warnings_JavaDoc_ParserName();
     }
 
     @Override

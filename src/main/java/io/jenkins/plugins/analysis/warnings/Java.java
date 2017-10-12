@@ -45,7 +45,7 @@ public class Java extends StaticAnalysisTool {
 
     @Override
     protected String getName() {
-        return "Java Compiler";
+        return Messages.Warnings_JavaParser_ParserName();
     }
 
     @Override
