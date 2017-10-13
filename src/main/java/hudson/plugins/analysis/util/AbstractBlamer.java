@@ -101,7 +101,7 @@ public abstract class AbstractBlamer implements Blamer {
      * @return a mapping of absolute to relative file names of the conflicting files
      */
     protected Map<String, BlameRequest> extractConflictingFiles(final Set<FileAnnotation> annotations) {
-        Map<String, BlameRequest> pathsByFileName = new HashMap<String, BlameRequest>();
+        Map<String, BlameRequest> pathsByFileName = new HashMap<>();
 
         String workspacePath = getWorkspacePath();
         for (FileAnnotation annotation : annotations) {

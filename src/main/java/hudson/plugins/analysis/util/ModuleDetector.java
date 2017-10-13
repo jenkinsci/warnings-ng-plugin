@@ -55,8 +55,8 @@ public class ModuleDetector {
      * Creates a new instance of {@link ModuleDetector}.
      */
     protected ModuleDetector() {
-        fileNameToModuleName = new HashMap<String, String>();
-        prefixes = new ArrayList<String>();
+        fileNameToModuleName = new HashMap<>();
+        prefixes = new ArrayList<>();
     }
 
     /**
@@ -80,7 +80,7 @@ public class ModuleDetector {
     ModuleDetector(final File workspace, final FileInputStreamFactory fileInputStreamFactory) {
         factory = fileInputStreamFactory;
         fileNameToModuleName = createFilesToModuleMapping(workspace);
-        prefixes = new ArrayList<String>(fileNameToModuleName.keySet());
+        prefixes = new ArrayList<>(fileNameToModuleName.keySet());
         Collections.sort(prefixes);
     }
 
@@ -92,7 +92,7 @@ public class ModuleDetector {
      * @return the mapping of path prefixes to module names
      */
     private Map<String, String> createFilesToModuleMapping(final File workspace) {
-        Map<String, String> mapping = new HashMap<String, String>();
+        Map<String, String> mapping = new HashMap<>();
 
         String[] projects = find(workspace);
         for (String fileName : projects) {
@@ -190,10 +190,7 @@ public class ModuleDetector {
             StringBuffer result = (StringBuffer)digester.parse(file);
             return result.toString();
         }
-        catch (IOException exception) {
-            // ignore
-        }
-        catch (SAXException exception) {
+        catch (IOException | SAXException exception) {
             // ignore
         }
         finally {
@@ -227,10 +224,7 @@ public class ModuleDetector {
             StringBuffer result = digester.parse(file);
             return result.toString();
         }
-        catch (IOException exception) {
-            // ignore
-        }
-        catch (SAXException exception) {
+        catch (IOException | SAXException exception) {
             // ignore
         }
         finally {

@@ -361,12 +361,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
     private void registerResultsOnMaster(final MavenBuildProxy build, final ParserResult result, final PluginLogger logger)
             throws IOException, InterruptedException {
         @SuppressWarnings("serial")
-        String resultLog = build.execute(new BuildCallable<String, IOException>() {
-            @Override
-            public String call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
-                return registerResults(result, mavenBuild);
-            }
-        });
+        String resultLog = build.execute((BuildCallable<String, IOException>) mavenBuild -> registerResults(result, mavenBuild));
         logger.logLines(resultLog);
     }
 
@@ -380,11 +375,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
 
     @SuppressWarnings("serial")
     private Settings receiveSettingsFromMaster(final MavenBuildProxy build) throws IOException, InterruptedException {
-        return build.execute(new BuildCallable<Settings, IOException>() {
-            @Override
-            public Settings call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
-                return new SerializableSettings(GlobalSettings.instance());
-            }});
+        return build.execute((BuildCallable<Settings, IOException>) mavenBuild -> new SerializableSettings(GlobalSettings.instance()));
     }
 
     private String registerResults(final ParserResult result, final MavenBuild mavenBuild) {
@@ -584,12 +575,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      */
     @SuppressWarnings("serial")
     private Boolean hasResultAction(final MavenBuildProxy build) throws IOException, InterruptedException {
-        return build.execute(new BuildCallable<Boolean, IOException>() {
-            @Override
-            public Boolean call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
-                return mavenBuild.getAction(getResultActionClass()) != null;
-            }
-        });
+        return build.execute((BuildCallable<Boolean, IOException>) mavenBuild -> mavenBuild.getAction(getResultActionClass()) != null);
     }
 
     /**

@@ -970,12 +970,7 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
 
     // FIXME: How is this implemented in freestyle build?
     public ToolTipProvider getToolTipProvider() {
-        return new ToolTipProvider() {
-            @Override
-            public String getTooltip(final int numberOfItems) {
-                return "FIXME";
-            }
-        };
+        return numberOfItems -> "FIXME";
     }
 
     private StaticAnalysisTool getIssueParser() {

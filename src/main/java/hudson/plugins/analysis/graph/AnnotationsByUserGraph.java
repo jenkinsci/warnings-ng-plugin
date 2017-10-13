@@ -33,7 +33,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
     @Override
     public JFreeChart create(final GraphConfiguration configuration,
             final ResultAction<? extends BuildResult> resultAction, @CheckForNull final String pluginName) {
-        Map<String, Integer[]> annotationCountByUser = new HashMap<String, Integer[]>();
+        Map<String, Integer[]> annotationCountByUser = new HashMap<>();
 
         mergeResults(resultAction.getResult(), annotationCountByUser);
 
@@ -50,7 +50,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
 
     @Override
     public JFreeChart createAggregation(final GraphConfiguration configuration, final Collection<ResultAction<? extends BuildResult>> resultActions, final String pluginName) {
-        Map<String, Integer[]> annotationCountByUser = new HashMap<String, Integer[]>();
+        Map<String, Integer[]> annotationCountByUser = new HashMap<>();
 
         for (ResultAction<? extends BuildResult> resultAction : resultActions) {
             mergeResults(resultAction.getResult(), annotationCountByUser);
@@ -80,7 +80,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
     }
 
     private CategoryDataset buildDataSet(final Map<String, Integer[]> annotationCountByUser) {
-        DataSetBuilder<String, String> builder = new DataSetBuilder<String, String>();
+        DataSetBuilder<String, String> builder = new DataSetBuilder<>();
         for (Entry<String, Integer[]> entry : annotationCountByUser.entrySet()) {
             String userName= entry.getKey();
             Integer[] countsPerPriority = entry.getValue();
@@ -97,9 +97,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
         for (FileAnnotation annotation : annotations) {
             String author = annotation.getAuthor();
             if (StringUtils.isNotBlank(author) && !"-".equals(author)) {
-                if (annotationCountByUser.get(author) == null) {
-                    annotationCountByUser.put(author, new Integer[]{0, 0, 0});
-                }
+                annotationCountByUser.computeIfAbsent(author, k -> new Integer[]{0, 0, 0});
                 Integer[] priorities = annotationCountByUser.get(author);
                 int index = annotation.getPriority().ordinal();
                 priorities[index]++;

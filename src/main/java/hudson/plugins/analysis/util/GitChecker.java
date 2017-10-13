@@ -61,10 +61,7 @@ public class GitChecker {
 
             return new GitBlamer(gitClient, gitCommit, listener);
         }
-        catch (IOException e) {
-            return new NullBlamer();
-        }
-        catch (InterruptedException e) {
+        catch (IOException | InterruptedException e) {
             return new NullBlamer();
         }
 
@@ -74,10 +71,7 @@ public class GitChecker {
         try {
             return build.getEnvironment(listener);
         }
-        catch (IOException e) {
-            // ignore
-        }
-        catch (InterruptedException e) {
+        catch (IOException | InterruptedException e) {
             // ignore
         }
         return new EnvVars();

@@ -89,7 +89,7 @@ public enum Priority {
      * @return the priorities starting from the specified priority
      */
     public static Collection<Priority> collectPrioritiesFrom(final Priority minimumPriority) {
-        ArrayList<Priority> priorities = new ArrayList<Priority>();
+        ArrayList<Priority> priorities = new ArrayList<>();
         priorities.add(Priority.HIGH);
         if (minimumPriority == Priority.NORMAL) {
             priorities.add(Priority.NORMAL);

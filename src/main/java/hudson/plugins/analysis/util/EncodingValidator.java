@@ -33,7 +33,7 @@ public class EncodingValidator implements Validator {
 
     static {
         try {
-            allCharacterSets = Collections.unmodifiableSet(new HashSet<String>(
+            allCharacterSets = Collections.unmodifiableSet(new HashSet<>(
                     Charset.availableCharsets().keySet()));
         }
         // CHECKSTYLE:OFF
@@ -67,10 +67,7 @@ public class EncodingValidator implements Validator {
                 return Charset.forName(defaultEncoding);
             }
         }
-        catch (UnsupportedCharsetException exception) {
-            // ignore and return default
-        }
-        catch (IllegalCharsetNameException exception) {
+        catch (UnsupportedCharsetException | IllegalCharsetNameException exception) {
             // ignore and return default
         }
         return Charset.defaultCharset();
@@ -119,10 +116,7 @@ public class EncodingValidator implements Validator {
                 return FormValidation.ok();
             }
         }
-        catch (IllegalCharsetNameException exception) {
-            // throw a FormValidation error
-        }
-        catch (UnsupportedCharsetException exception) {
+        catch (IllegalCharsetNameException | UnsupportedCharsetException exception) {
             // throw a FormValidation error
         }
         throw FormValidation.error(Messages.FieldValidator_Error_DefaultEncoding());

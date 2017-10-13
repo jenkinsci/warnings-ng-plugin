@@ -42,8 +42,8 @@ public class DifferenceGraph extends BuildResultGraph {
     @Override
     public JFreeChart create(final GraphConfiguration configuration,
                              final RunResultHistory history, final String pluginName) {
-        ArrayList<Pair<Integer, Integer>> fixedWarnings = new ArrayList<Pair<Integer, Integer>>();
-        ArrayList<Pair<Integer, Integer>> newWarnings = new ArrayList<Pair<Integer, Integer>>();
+        ArrayList<Pair<Integer, Integer>> fixedWarnings = new ArrayList<>();
+        ArrayList<Pair<Integer, Integer>> newWarnings = new ArrayList<>();
 
         extractPoints(configuration, history, fixedWarnings, newWarnings);
         XYSeriesCollection xySeriesCollection = computeDifferenceSeries(fixedWarnings, newWarnings);

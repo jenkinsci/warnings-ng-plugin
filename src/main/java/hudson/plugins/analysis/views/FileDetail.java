@@ -55,7 +55,7 @@ public class FileDetail extends AbstractAnnotationsDetail {
 
     @Override
     public Collection<WorkspaceFile> getFiles() {
-        ArrayList<WorkspaceFile> files = new ArrayList<WorkspaceFile>();
+        ArrayList<WorkspaceFile> files = new ArrayList<>();
         files.add(file);
         return files;
     }

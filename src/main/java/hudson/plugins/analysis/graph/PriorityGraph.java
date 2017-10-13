@@ -37,7 +37,7 @@ public class PriorityGraph extends CategoryBuildResultGraph {
 
     @Override
     protected List<Integer> computeSeries(final BuildResult current) {
-        List<Integer> series = new ArrayList<Integer>();
+        List<Integer> series = new ArrayList<>();
         series.add(current.getNumberOfAnnotations(Priority.LOW));
         series.add(current.getNumberOfAnnotations(Priority.NORMAL));
         series.add(current.getNumberOfAnnotations(Priority.HIGH));
