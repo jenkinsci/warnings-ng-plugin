@@ -302,9 +302,6 @@ public class GraphConfiguration  {
                 parameterValue = values[7];
             }
         }
-        catch (NumberFormatException exception) {
-            return false;
-        }
         catch (IllegalArgumentException exception) {
             return false;
         }

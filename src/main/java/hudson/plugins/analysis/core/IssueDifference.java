@@ -16,10 +16,10 @@ public class IssueDifference {
     private final Set<FileAnnotation> fixedIssues;
 
     public IssueDifference(final Set<FileAnnotation> currentIssues, final Set<FileAnnotation> referenceIssues) {
-        newIssues = new HashSet<FileAnnotation>(currentIssues);
-        fixedIssues = new HashSet<FileAnnotation>(referenceIssues);
+        newIssues = new HashSet<>(currentIssues);
+        fixedIssues = new HashSet<>(referenceIssues);
         
-        Set<FileAnnotation> oldIssues = new HashSet<FileAnnotation>(); // TODO: do we need old issues?
+        Set<FileAnnotation> oldIssues = new HashSet<>(); // TODO: do we need old issues?
 
         for (FileAnnotation current : currentIssues) {
             FileAnnotation referenceToRemove = findReferenceByEquals(current);

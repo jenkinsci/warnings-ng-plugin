@@ -275,9 +275,9 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         owner = build;
         this.defaultEncoding = defaultEncoding;
 
-        modules = new HashSet<String>(result.getModules());
+        modules = new HashSet<>(result.getModules());
         numberOfModules = modules.size();
-        errors = new ArrayList<String>(result.getErrorMessages());
+        errors = new ArrayList<>(result.getErrorMessages());
         numberOfWarnings = result.getNumberOfAnnotations();
         AnnotationContainer referenceResult = history.getReferenceAnnotations();
 
@@ -293,11 +293,11 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         IssueDifference difference = new IssueDifference(allWarnings, referenceResult.getAnnotations());
         Set<FileAnnotation> newWarnings = difference.getNewIssues();
         numberOfNewWarnings = newWarnings.size();
-        newWarningsReference = new WeakReference<Collection<FileAnnotation>>(newWarnings);
+        newWarningsReference = new WeakReference<>(newWarnings);
 
         Set<FileAnnotation> fixedWarnings = difference.getFixedIssues();
         numberOfFixedWarnings = fixedWarnings.size();
-        fixedWarningsReference = new WeakReference<Collection<FileAnnotation>>(fixedWarnings);
+        fixedWarningsReference = new WeakReference<>(fixedWarnings);
 
         highWarnings = result.getNumberOfAnnotations(Priority.HIGH);
         normalWarnings = result.getNumberOfAnnotations(Priority.NORMAL);
@@ -310,7 +310,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             newWarning.setBuild(build.getNumber());
         }
 
-        project = new WeakReference<JavaProject>(container);
+        project = new WeakReference<>(container);
 
         computeZeroWarningsHighScore(build, result);
 
@@ -456,10 +456,10 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             history = createHistory(owner);
         }
         if (modules == null) {
-            modules = new HashSet<String>();
+            modules = new HashSet<>();
         }
         if (errors == null) {
-            errors = new ArrayList<String>();
+            errors = new ArrayList<>();
         }
         try {
             if (low != null) {
@@ -702,7 +702,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         try {
             getDataFile().write(annotations.toArray(new FileAnnotation[annotations.size()]));
 
-            Set<FileAnnotation> allAnnotations = new HashSet<FileAnnotation>();
+            Set<FileAnnotation> allAnnotations = new HashSet<>();
             allAnnotations.addAll(annotations);
             Collection<FileAnnotation> fixedWarnings = history.getFixedWarnings(allAnnotations);
             getFixedDataFile().write(fixedWarnings.toArray(new FileAnnotation[fixedWarnings.size()]));
@@ -987,7 +987,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
             LOGGER.log(Level.WARNING, "Failed to load " + getDataFile(), exception);
             result = new JavaProject();
         }
-        project = new WeakReference<JavaProject>(result);
+        project = new WeakReference<>(result);
 
         return result;
     }
@@ -1026,13 +1026,13 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @return the new warnings
      */
     private Collection<FileAnnotation> loadNewWarnings() {
-        Set<FileAnnotation> newWarnings = new HashSet<FileAnnotation>();
+        Set<FileAnnotation> newWarnings = new HashSet<>();
         for (FileAnnotation warning : getProject().getAnnotations()) {
             if (warning.getBuild() == getOwner().getNumber()) {
                 newWarnings.add(warning);
             }
         }
-        newWarningsReference = new WeakReference<Collection<FileAnnotation>>(newWarnings);
+        newWarningsReference = new WeakReference<>(newWarnings);
 
         return newWarnings;
     }
@@ -1074,9 +1074,9 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
         }
         catch (IOException exception) {
             LOGGER.log(Level.WARNING, "Failed to load " + getFixedDataFile(), exception);
-            fixedWarnings = new HashSet<FileAnnotation>();
+            fixedWarnings = new HashSet<>();
         }
-        fixedWarningsReference = new WeakReference<Collection<FileAnnotation>>(fixedWarnings);
+        fixedWarningsReference = new WeakReference<>(fixedWarnings);
 
         return fixedWarnings;
 
@@ -1102,7 +1102,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      */
     private Collection<FileAnnotation> loadFixedWarningsBeforeRelease72() {
         Collection<FileAnnotation> difference = history.getFixedWarnings(getProject().getAnnotations());
-        fixedWarningsReference = new WeakReference<Collection<FileAnnotation>>(difference);
+        fixedWarningsReference = new WeakReference<>(difference);
 
         return difference;
     }

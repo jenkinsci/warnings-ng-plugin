@@ -165,24 +165,31 @@ public class ScanForIssuesStep extends Step {
 
         private ParserResult scanConsoleLog(final FilePath workspace) throws IOException, InterruptedException, InvocationTargetException {
             PluginLogger logger = createPluginLogger();
-            logger.format("Scanning for '%s' issues in console log (workspace '%s')", tool, workspace);
+            logger.format("Parsing console log (in workspace '%s')", workspace);
 
             ParserResult result = new ParserResult(workspace);
             result.setId(tool.getId());
             result.addAnnotations(tool.parse(getRun().getLogFile(), StringUtils.EMPTY));
-            logger.format("Found %d issues in %d modules", result.getNumberOfAnnotations(), result.getModules().size());
+            int modulesSize = result.getModules().size();
+            if (modulesSize > 0) {
+                logger.format("Successfully parsed console log: found %d issues in %d modules",
+                        result.getNumberOfAnnotations(), modulesSize);
+            }
+            else {
+                logger.format("Successfully parsed console log: found %d issues", result.getNumberOfAnnotations());
+            }
 
             return result;
         }
 
         private ParserResult scanFiles(final FilePath workspace) throws IOException, InterruptedException {
-            PluginLogger logger = createPluginLogger();
-            logger.format("Scanning for '%s' issues in files '%s' in workspace '%s'", tool, pattern, workspace);
-
             FilesParser parser = new FilesParser(tool.getName(), expandEnvironmentVariables(pattern), tool, shouldDetectModules);
             ParserResult result = workspace.act(parser);
             result.setId(tool.getId()); // FIXME: only at one place
+
+            PluginLogger logger = createPluginLogger();
             logger.logLines(result.getLogMessages());
+
             return result;
         }
 
@@ -204,12 +211,12 @@ public class ScanForIssuesStep extends Step {
                         String old = expanded;
                         expanded = Util.replaceMacro(expanded, environment);
                         if (old.equals(expanded)) {
-                            break;
+                            return expanded;
                         }
                     }
                 }
             }
-            catch (IOException | InterruptedException e) {
+            catch (IOException | InterruptedException ignored) {
                 // ignore
             }
             return expanded;

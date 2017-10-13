@@ -184,10 +184,7 @@ public class ParserResult implements Serializable {
                 }
             }
         }
-        catch (IOException exception) {
-            // ignore
-        }
-        catch (InterruptedException exception) {
+        catch (IOException | InterruptedException exception) {
             // ignore
         }
     }

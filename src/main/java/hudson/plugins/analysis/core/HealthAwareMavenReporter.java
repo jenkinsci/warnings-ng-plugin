@@ -315,13 +315,10 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
             result.addErrorMessage(pom.getName(), Messages.Reporter_Error_NoEncoding(Charset.defaultCharset().displayName()));
         }
 
-        build.execute(new BuildCallable<Void, IOException>() {
-            @Override
-            public Void call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
-                persistResult(result, mavenBuild);
+        build.execute((BuildCallable<Void, IOException>) mavenBuild -> {
+            persistResult(result, mavenBuild);
 
-                return null;
-            }
+            return null;
         });
 
         copyFilesWithAnnotationsToBuildFolder(logger, build.getRootDir(), result.getAnnotations());
@@ -483,12 +480,7 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      */
     @SuppressWarnings("serial")
     private Boolean hasResultAction(final MavenBuildProxy build) throws IOException, InterruptedException {
-        return build.execute(new BuildCallable<Boolean, IOException>() {
-            @Override
-            public Boolean call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
-                return mavenBuild.getAction(getResultActionClass()) != null;
-            }
-        });
+        return build.execute((BuildCallable<Boolean, IOException>) mavenBuild -> mavenBuild.getAction(getResultActionClass()) != null);
     }
 
     /**

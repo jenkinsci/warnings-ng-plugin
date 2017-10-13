@@ -8,6 +8,7 @@ Maintainer: Dr. Ullrich Hafner
 
 ### TODOs for pipelines
 
+- Bug falls Previous Project kein Result hat (im Graph)
 - Issue(s) benötigen ID des Parsers als origin
 - hierarchy? Actions and Graphs
 - graph that shows warnings for different tools (analysis collector)

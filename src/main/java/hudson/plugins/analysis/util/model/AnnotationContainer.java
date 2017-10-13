@@ -49,7 +49,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
 
     /** The annotations mapped by their key. */
     @SuppressWarnings("Se")
-    private final Map<Long, FileAnnotation> annotations = new HashMap<Long, FileAnnotation>();
+    private final Map<Long, FileAnnotation> annotations = new HashMap<>();
     /** The annotations mapped by priority. */
     private transient Map<Priority, Set<FileAnnotation>> annotationsByPriority;
     /** The annotations mapped by category. */
@@ -196,24 +196,24 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * Initializes the transient mappings.
      */
     private void initialize() {
-        annotationsByPriority = new EnumMap<Priority, Set<FileAnnotation>>(Priority.class);
+        annotationsByPriority = new EnumMap<>(Priority.class);
         for (Priority priority : Priority.values()) {
-            annotationsByPriority.put(priority, new HashSet<FileAnnotation>());
+            annotationsByPriority.put(priority, new HashSet<>());
         }
-        annotationsByCategory = new HashMap<String, Set<FileAnnotation>>();
-        annotationsByType = new HashMap<String, Set<FileAnnotation>>();
+        annotationsByCategory = new HashMap<>();
+        annotationsByType = new HashMap<>();
 
-        authorsByName = new HashMap<String, Author>();
-        filesByName = new HashMap<String, WorkspaceFile>();
-        packagesByName = new HashMap<String, JavaPackage>();
-        modulesByName = new HashMap<String, MavenModule>();
+        authorsByName = new HashMap<>();
+        filesByName = new HashMap<>();
+        packagesByName = new HashMap<>();
+        modulesByName = new HashMap<>();
 
-        filesByHashCode = new HashMap<Integer, WorkspaceFile>();
-        packagesByHashCode = new HashMap<Integer, JavaPackage>();
-        modulesByHashCode = new HashMap<Integer, MavenModule>();
-        authorsByHashCode = new HashMap<Integer, Author>();
-        categoriesByHashCode = new HashMap<Integer, Set<FileAnnotation>>();
-        typesByHashCode = new HashMap<Integer, Set<FileAnnotation>>();
+        filesByHashCode = new HashMap<>();
+        packagesByHashCode = new HashMap<>();
+        modulesByHashCode = new HashMap<>();
+        authorsByHashCode = new HashMap<>();
+        categoriesByHashCode = new HashMap<>();
+        typesByHashCode = new HashMap<>();
     }
 
     /**
@@ -278,7 +278,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     private void addCategory(final FileAnnotation annotation) {
         String category = annotation.getCategory();
         if (!annotationsByCategory.containsKey(category)) {
-            HashSet<FileAnnotation> container = new HashSet<FileAnnotation>();
+            HashSet<FileAnnotation> container = new HashSet<>();
             annotationsByCategory.put(category, container);
             categoriesByHashCode.put(category.hashCode(), container);
         }
@@ -295,7 +295,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
     private void addType(final FileAnnotation annotation) {
         String type = annotation.getType();
         if (!annotationsByType.containsKey(type)) {
-            HashSet<FileAnnotation> container = new HashSet<FileAnnotation>();
+            HashSet<FileAnnotation> container = new HashSet<>();
             annotationsByType.put(type, container);
             typesByHashCode.put(type.hashCode(), container);
         }
@@ -656,7 +656,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @return the modules with annotations
      */
     public Collection<MavenModule> getModules() {
-        ArrayList<MavenModule> modules = new ArrayList<MavenModule>(modulesByName.values());
+        ArrayList<MavenModule> modules = new ArrayList<>(modulesByName.values());
         Collections.sort(modules);
         return Collections.unmodifiableCollection(modules);
     }
@@ -707,7 +707,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @return the packages with annotations
      */
     public Collection<JavaPackage> getPackages() {
-        ArrayList<JavaPackage> packages = new ArrayList<JavaPackage>(packagesByName.values());
+        ArrayList<JavaPackage> packages = new ArrayList<>(packagesByName.values());
         Collections.sort(packages);
         return Collections.unmodifiableCollection(packages);
     }
@@ -758,7 +758,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @return the files with annotations
      */
     public Collection<WorkspaceFile> getFiles() {
-        ArrayList<WorkspaceFile> files = new ArrayList<WorkspaceFile>(filesByName.values());
+        ArrayList<WorkspaceFile> files = new ArrayList<>(filesByName.values());
         Collections.sort(files);
         return Collections.unmodifiableCollection(files);
     }
@@ -809,7 +809,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @return the categories with annotations
      */
     public Collection<AnnotationContainer> getCategories() {
-        ArrayList<AnnotationContainer> categories = new ArrayList<AnnotationContainer>();
+        ArrayList<AnnotationContainer> categories = new ArrayList<>();
         for (String category : annotationsByCategory.keySet()) {
             categories.add(getCategory(category));
         }
@@ -863,7 +863,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @return the authors with annotations.
      */
     public Collection<Author> getAuthors() {
-        ArrayList<Author> authors = new ArrayList<Author>(authorsByName.values());
+        ArrayList<Author> authors = new ArrayList<>(authorsByName.values());
         Collections.sort(authors);
         return Collections.unmodifiableCollection(authors);
     }
@@ -902,7 +902,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @return the types with annotations
      */
     public Collection<AnnotationContainer> getTypes() {
-        ArrayList<AnnotationContainer> types = new ArrayList<AnnotationContainer>();
+        ArrayList<AnnotationContainer> types = new ArrayList<>();
         for (String type : annotationsByType.keySet()) {
             types.add(getType(type));
         }

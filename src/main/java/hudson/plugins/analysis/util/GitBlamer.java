@@ -114,7 +114,7 @@ public class GitBlamer extends AbstractBlamer {
 
         @Override
         public Map<String, BlameResult> invoke(final Repository repo, final VirtualChannel channel) throws IOException, InterruptedException {
-            Map<String, BlameResult> blameResults = new HashMap<String, BlameResult>();
+            Map<String, BlameResult> blameResults = new HashMap<>();
             if (headCommit == null) {
                 gitBlamer.error("Could not retrieve HEAD commit, aborting.");
 

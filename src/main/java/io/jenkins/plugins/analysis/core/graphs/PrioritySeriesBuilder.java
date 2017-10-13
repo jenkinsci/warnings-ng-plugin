@@ -15,7 +15,7 @@ import hudson.plugins.analysis.util.model.Priority;
 public class PrioritySeriesBuilder extends SeriesBuilder {
     @Override
     protected List<Integer> computeSeries(final AnalysisResult current) {
-        List<Integer> series = new ArrayList<Integer>();
+        List<Integer> series = new ArrayList<>();
         series.add(current.getNumberOfAnnotations(Priority.LOW));
         series.add(current.getNumberOfAnnotations(Priority.NORMAL));
         series.add(current.getNumberOfAnnotations(Priority.HIGH));

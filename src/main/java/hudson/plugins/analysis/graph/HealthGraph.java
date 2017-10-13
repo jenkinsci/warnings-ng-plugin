@@ -58,7 +58,7 @@ public class HealthGraph extends CategoryBuildResultGraph {
 
     @Override
     protected List<Integer> computeSeries(final BuildResult current) {
-        List<Integer> series = new ArrayList<Integer>();
+        List<Integer> series = new ArrayList<>();
         int remainder = current.getNumberOfAnnotations();
 
         if (healthDescriptor.isHealthyReportEnabled()) {
@@ -120,19 +120,16 @@ public class HealthGraph extends CategoryBuildResultGraph {
     @Override
     protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName, final ToolTipProvider toolTipProvider) {
         SerializableUrlGenerator urlGenerator = new CategoryUrlBuilder(getRootUrl(), pluginName);
-        SerializableToolTipGenerator toolTipGenerator = new SerializableToolTipGenerator() {
-                    @Override
-            public String generateToolTip(final CategoryDataset dataset, final int row, final int column) {
-                int number = 0;
-                for (int index = 0; index < dataset.getRowCount(); index++) {
-                    Number value = dataset.getValue(index, column);
-                    if (value != null) {
-                        number += value.intValue();
-                    }
-                }
-                return toolTipProvider.getTooltip(number);
-            }
-        };
+        SerializableToolTipGenerator toolTipGenerator = (SerializableToolTipGenerator) (dataset, row, column) -> {
+    int number = 0;
+    for (int index = 0; index < dataset.getRowCount(); index++) {
+        Number value = dataset.getValue(index, column);
+        if (value != null) {
+            number += value.intValue();
+        }
+    }
+    return toolTipProvider.getTooltip(number);
+};
         if (configuration.useBuildDateAsDomain()) {
             return new ToolTipAreaRenderer(toolTipGenerator);
         }

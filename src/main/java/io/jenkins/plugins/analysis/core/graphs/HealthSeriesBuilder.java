@@ -20,7 +20,7 @@ public class HealthSeriesBuilder extends SeriesBuilder {
 
     @Override
     protected List<Integer> computeSeries(final AnalysisResult current) {
-        List<Integer> series = new ArrayList<Integer>();
+        List<Integer> series = new ArrayList<>();
         int remainder = current.getNumberOfAnnotations();
 
         if (healthDescriptor.isEnabled()) {

@@ -13,7 +13,7 @@ import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 public class NewVersusFixedSeriesBuilder extends SeriesBuilder {
     @Override
     protected List<Integer> computeSeries(final AnalysisResult current) {
-        List<Integer> series = new ArrayList<Integer>();
+        List<Integer> series = new ArrayList<>();
         series.add(current.getNumberOfNewWarnings());
         series.add(current.getNumberOfFixedWarnings());
         return series;

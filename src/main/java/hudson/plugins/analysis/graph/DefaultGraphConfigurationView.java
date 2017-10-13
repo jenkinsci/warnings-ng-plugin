@@ -8,9 +8,8 @@ import org.apache.commons.io.IOUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import hudson.model.Job;
 import hudson.model.AbstractProject;
-
+import hudson.model.Job;
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildHistory;
 
@@ -124,12 +123,8 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
 
     @Override
     protected void persistValue(final String value, final String pluginName, final StaplerRequest request, final StaplerResponse response) throws FileNotFoundException, IOException {
-        FileOutputStream output = new FileOutputStream(createDefaultsFile(getOwner(), pluginName));
-        try {
+        try (FileOutputStream output = new FileOutputStream(createDefaultsFile(getOwner(), pluginName))) {
             IOUtils.write(value, output);
-        }
-        finally {
-            output.close();
         }
     }
 }

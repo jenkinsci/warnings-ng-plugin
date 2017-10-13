@@ -244,7 +244,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     private CategoryDataset createDatasetPerBuildNumber(final Map<Run, List<Integer>> valuesPerBuild) {
-        DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<String, NumberOnlyBuildLabel>();
+        DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<>();
         List<Run> builds = Lists.newArrayList(valuesPerBuild.keySet());
         Collections.sort(builds);
         for (Run<?, ?> build : builds) {
@@ -272,7 +272,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
         List<LocalDate> buildDates = Lists.newArrayList(averagePerDay.keySet());
         Collections.sort(buildDates);
 
-        DataSetBuilder<String, LocalDateLabel> builder = new DataSetBuilder<String, LocalDateLabel>();
+        DataSetBuilder<String, LocalDateLabel> builder = new DataSetBuilder<>();
         for (LocalDate date : buildDates) {
             int level = 0;
             for (Integer average : averagePerDay.get(date)) {

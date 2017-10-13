@@ -19,7 +19,7 @@ public class JavaProject extends AnnotationContainer {
     private String error;
     /** The error messages of the modules. */
     @SuppressWarnings("Se")
-    private final List<String> moduleErrors = new ArrayList<String>();
+    private final List<String> moduleErrors = new ArrayList<>();
 
     /**
      * Creates a new instance of {@link JavaProject}.
@@ -105,7 +105,7 @@ public class JavaProject extends AnnotationContainer {
      * @return the error messages recorded during creation of the project
      */
     public List<String> getErrors() {
-        ArrayList<String> allErrors = new ArrayList<String>();
+        ArrayList<String> allErrors = new ArrayList<>();
         if (error != null) {
             allErrors.add(error);
         }

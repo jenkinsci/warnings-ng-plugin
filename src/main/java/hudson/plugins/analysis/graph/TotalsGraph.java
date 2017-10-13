@@ -31,7 +31,7 @@ public class TotalsGraph extends CategoryBuildResultGraph {
 
     @Override
     protected List<Integer> computeSeries(final BuildResult current) {
-        List<Integer> series = new ArrayList<Integer>();
+        List<Integer> series = new ArrayList<>();
         series.add(current.getNumberOfWarnings());
         return series;
     }
