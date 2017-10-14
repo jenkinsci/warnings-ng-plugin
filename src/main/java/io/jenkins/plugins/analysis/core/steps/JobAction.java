@@ -80,10 +80,10 @@ public class JobAction implements Action {
 
     @Override @Exported
     public String getDisplayName() {
-        return getIssueParser().getLinkName();
+        return getTool().getLinkName();
     }
 
-    private StaticAnalysisTool getIssueParser() {
+    private StaticAnalysisTool getTool() {
         return StaticAnalysisTool.find(id);
     }
 
@@ -93,7 +93,7 @@ public class JobAction implements Action {
      * @return the title of the trend graph.
      */
     public String getTrendName() {
-        return getIssueParser().getTrendName();
+        return getTool().getTrendName();
     }
 
     /**
@@ -253,7 +253,7 @@ public class JobAction implements Action {
      */
     protected GraphConfigurationView createUserConfiguration(final StaplerRequest request) {
         return new UserGraphConfigurationView(createConfiguration(), getJob(),
-                getUrlName(), request.getCookies(), createBuildHistory());
+                getUrlName(), request.getCookies(), createBuildHistory(), getTool());
     }
 
     /**
@@ -263,7 +263,7 @@ public class JobAction implements Action {
      */
     protected GraphConfigurationView createDefaultConfiguration() {
         return new DefaultGraphConfigurationView(createConfiguration(), getJob(),
-                getUrlName(), createBuildHistory());
+                getUrlName(), createBuildHistory(), getTool());
     }
 
     private RunResultHistory createBuildHistory() {
@@ -334,7 +334,7 @@ public class JobAction implements Action {
     public String getIconFileName() {
         ResultAction lastAction = getLastAction();
         if (lastAction != null && lastAction.getResult().hasAnnotations()) {
-            return Jenkins.RESOURCE_PATH + getIssueParser().getSmallIconUrl();
+            return Jenkins.RESOURCE_PATH + getTool().getSmallIconUrl();
         }
         return null;
     }
@@ -390,7 +390,7 @@ public class JobAction implements Action {
      */
     @CheckForNull @Exported
     public Run<?, ?> getLastFinishedRun() {
-        if (job == null) {
+        if (job == null) { // FIXME: can't be null
             return null;
         }
         Run<?, ?> lastRun = job.getLastBuild();

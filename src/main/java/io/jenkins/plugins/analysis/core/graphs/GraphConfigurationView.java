@@ -15,8 +15,8 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import com.google.common.collect.Lists;
 
-import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.history.RunResultHistory;
+import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 import net.sf.json.JSONObject;
 
@@ -35,25 +35,24 @@ public abstract class GraphConfigurationView implements ModelObject {
 
     private final String key;
     private final RunResultHistory buildHistory;
-    private final HealthDescriptor healthDescriptor; // NOPMD
+    private final HealthDescriptor healthDescriptor;
     private final GraphConfiguration configuration;
     private String urlPrefix;
 
     /**
      * Creates a new instance of {@link hudson.plugins.analysis.graph.GraphConfigurationView}.
-     *
-     * @param configuration
+     *  @param configuration
      *            the graph configuration
      * @param job
      *            the owning job to configure the graphs for
      * @param key
-     *            unique key of this graph
+ *            unique key of this graph
      * @param buildHistory
-     *            the build history for this job
      */
-    public GraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job, final String key, final RunResultHistory buildHistory) {
+    public GraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job, final String key,
+            final RunResultHistory buildHistory) {
         this.configuration = configuration;
-        this.owner = job;
+        owner = job;
         this.key = key;
         this.buildHistory = buildHistory;
         healthDescriptor = new HealthDescriptor();

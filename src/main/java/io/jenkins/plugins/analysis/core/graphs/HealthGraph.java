@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import java.awt.Color;
+import java.awt.*;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
@@ -14,7 +14,6 @@ import hudson.plugins.analysis.util.AreaRenderer;
 import hudson.plugins.analysis.util.SerializableToolTipGenerator;
 import hudson.plugins.analysis.util.SerializableUrlGenerator;
 import hudson.plugins.analysis.util.ToolTipAreaRenderer;
-import hudson.plugins.analysis.util.ToolTipProvider;
 
 /**
  * Builds a graph showing all warnings by health descriptor.
@@ -29,7 +28,7 @@ public class HealthGraph extends CategoryBuildResultGraph {
      * Creates a new instance of {@link HealthGraph}.
      *
      * @param healthDescriptor
-     *            the health descriptor
+     *         the health descriptor
      */
     public HealthGraph(final HealthDescriptor healthDescriptor) {
         super();
@@ -65,8 +64,8 @@ public class HealthGraph extends CategoryBuildResultGraph {
     /**
      * Returns whether to use three or two colors for the graph.
      *
-     * @return <code>true</code> if the graph should use three colors,
-     *         <code>false</code> if the graph should use two colors.
+     * @return <code>true</code> if the graph should use three colors, <code>false</code> if the graph should use two
+     *         colors.
      */
     private boolean useThreeColors() {
         return healthDescriptor.isEnabled();
@@ -76,18 +75,18 @@ public class HealthGraph extends CategoryBuildResultGraph {
     @SuppressWarnings("serial")
     @SuppressFBWarnings("SIC")
     @Override
-    protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName, final ToolTipProvider toolTipProvider) {
+    protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName) {
         SerializableUrlGenerator urlGenerator = new CategoryUrlBuilder(getRootUrl(), pluginName);
         SerializableToolTipGenerator toolTipGenerator = (SerializableToolTipGenerator) (dataset, row, column) -> {
-    int number = 0;
-    for (int index = 0; index < dataset.getRowCount(); index++) {
-        Number value = dataset.getValue(index, column);
-        if (value != null) {
-            number += value.intValue();
-        }
-    }
-    return toolTipProvider.getTooltip(number);
-};
+            int number = 0;
+            for (int index = 0; index < dataset.getRowCount(); index++) {
+                Number value = dataset.getValue(index, column);
+                if (value != null) {
+                    number += value.intValue();
+                }
+            }
+            return configuration.getToolTipProvider().getTooltip(number);
+        };
         if (configuration.useBuildDateAsDomain()) {
             return new ToolTipAreaRenderer(toolTipGenerator);
         }
@@ -100,10 +99,10 @@ public class HealthGraph extends CategoryBuildResultGraph {
     @Override
     protected Color[] getColors() {
         if (useThreeColors()) {
-            return new Color[] {ColorPalette.BLUE, ColorPalette.YELLOW, ColorPalette.RED};
+            return new Color[]{ColorPalette.BLUE, ColorPalette.YELLOW, ColorPalette.RED};
         }
         else {
-            return new Color[] {ColorPalette.BLUE, ColorPalette.RED};
+            return new Color[]{ColorPalette.BLUE, ColorPalette.RED};
         }
     }
 }

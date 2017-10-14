@@ -19,7 +19,6 @@ import io.jenkins.plugins.analysis.core.history.RunResultHistory;
 import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.util.DataSetBuilder;
 
@@ -33,19 +32,20 @@ import hudson.util.DataSetBuilder;
 public class AnnotationsByUserGraph extends BuildResultGraph {
     @Override
     public JFreeChart create(final GraphConfiguration configuration,
-                             final RunResultHistory history, @CheckForNull final String pluginName) {
+            final RunResultHistory history, @CheckForNull final String pluginName) {
         Map<String, Integer[]> annotationCountByUser = new HashMap<>();
 
         AnalysisResult result = history.getBaseline();
         mergeResults(result, annotationCountByUser);
 
-        return createGraphFromUserMapping(configuration, pluginName, annotationCountByUser, result.getToolTipProvider());
+        return createGraphFromUserMapping(configuration, pluginName, annotationCountByUser);
     }
 
-    private JFreeChart createGraphFromUserMapping(final GraphConfiguration configuration, final @CheckForNull String pluginName, final Map<String, Integer[]> annotationCountByUser, final ToolTipProvider toolTipProvider) {
+    private JFreeChart createGraphFromUserMapping(final GraphConfiguration configuration,
+            final @CheckForNull String pluginName, final Map<String, Integer[]> annotationCountByUser) {
         JFreeChart chart = createBlockChart(buildDataSet(annotationCountByUser));
 
-        attachRenderers(configuration, pluginName, chart, toolTipProvider);
+        attachRenderer(configuration, pluginName, chart);
 
         return chart;
     }
@@ -59,23 +59,20 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
             mergeResults(result, annotationCountByUser);
         }
 
-        return createGraphFromUserMapping(configuration, pluginName, annotationCountByUser,
-                resultActions.iterator().next().getBaseline().getToolTipProvider());
+        return createGraphFromUserMapping(configuration, pluginName, annotationCountByUser);
     }
 
     /**
      * Attach the renderers to the created graph.
      *
      * @param configuration
-     *            the configuration parameters
+     *         the configuration parameters
      * @param pluginName
-     *            the name of the plug-in
+     *         the name of the plug-in
      * @param chart
-     *            the graph to attach the renderer to
-     * @param toolTipProvider the tooltip provider for the graph
+     *         the graph to attach the renderer to
      */
-    private void attachRenderers(final GraphConfiguration configuration, final String pluginName, final JFreeChart chart,
-                                 final ToolTipProvider toolTipProvider) {
+    private void attachRenderer(final GraphConfiguration configuration, final String pluginName, final JFreeChart chart) {
         CategoryItemRenderer renderer = new StackedBarRenderer();
         CategoryPlot plot = chart.getCategoryPlot();
         plot.setRenderer(renderer);
@@ -85,7 +82,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
     private CategoryDataset buildDataSet(final Map<String, Integer[]> annotationCountByUser) {
         DataSetBuilder<String, String> builder = new DataSetBuilder<>();
         for (Entry<String, Integer[]> entry : annotationCountByUser.entrySet()) {
-            String userName= entry.getKey();
+            String userName = entry.getKey();
             Integer[] countsPerPriority = entry.getValue();
             for (int i = 0; i < countsPerPriority.length; i++) {
                 builder.add(countsPerPriority[i], Integer.toString(i), userName);

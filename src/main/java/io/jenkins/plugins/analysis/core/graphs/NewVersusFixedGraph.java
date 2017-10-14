@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import java.awt.Color;
+import java.awt.*;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
@@ -44,9 +44,9 @@ public class NewVersusFixedGraph extends CategoryBuildResultGraph {
     }
 
     @Override
-    protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName, final ToolTipProvider toolTipProvider) {
+    protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName) {
         CategoryUrlBuilder url = new UrlBuilder(getRootUrl(), pluginName);
-        ToolTipBuilder toolTip = new DescriptionBuilder(toolTipProvider);
+        ToolTipBuilder toolTip = new DescriptionBuilder(configuration.getToolTipProvider());
         if (configuration.useBuildDateAsDomain()) {
             return new ToolTipBoxRenderer(toolTip);
         }

@@ -1,8 +1,6 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.util.Collection;
 
 import org.jfree.chart.ChartFactory;
@@ -19,7 +17,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.RunResultHistory;
 
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.util.ToolTipProvider;
 
 /**
  * A build result graph using a {@link CategoryPlot}. Uses a template method to
@@ -46,7 +43,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     public JFreeChart create(final GraphConfiguration configuration, final RunResultHistory history, final String pluginName) {
         JFreeChart chart = createChart(configuration, history);
 
-        attachRenderers(configuration, pluginName, chart, history.getBaseline().getToolTipProvider());
+        attachRenderer(configuration, pluginName, chart);
 
         return chart;
     }
@@ -70,7 +67,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
 
         JFreeChart chart = createChart(dataset);
 
-        attachRenderers(configuration, pluginName, chart, resultActions.iterator().next().getBaseline().getToolTipProvider());
+        attachRenderer(configuration, pluginName, chart);
 
         return chart;
     }
@@ -78,7 +75,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     protected abstract SeriesBuilder createSeriesBuilder();
 
     /**
-     * Attach the renderers to the created graph.
+     * Attach the renderer to the created graph.
      *
      * @param configuration
      *            the configuration parameters
@@ -86,11 +83,9 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *            the name of the plug-in
      * @param chart
      *            the graph to attach the renderer to
-     * @param toolTipProvider the tooltip provider for the graph
      */
-    private void attachRenderers(final GraphConfiguration configuration, final String pluginName, final JFreeChart chart,
-                                 final ToolTipProvider toolTipProvider) {
-        CategoryItemRenderer renderer = createRenderer(configuration, pluginName, toolTipProvider);
+    private void attachRenderer(final GraphConfiguration configuration, final String pluginName, final JFreeChart chart) {
+        CategoryItemRenderer renderer = createRenderer(configuration, pluginName);
         CategoryPlot plot = chart.getCategoryPlot();
         plot.setRenderer(renderer);
         setColors(chart, getColors());
@@ -126,11 +121,9 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *            the graph configuration
      * @param pluginName
      *            the name of the plug-in
-     * @param toolTipProvider
-     *            the tooltip provider
      * @return the renderer
      */
-    protected abstract CategoryItemRenderer createRenderer(GraphConfiguration configuration, final String pluginName, final ToolTipProvider toolTipProvider);
+    protected abstract CategoryItemRenderer createRenderer(GraphConfiguration configuration, final String pluginName);
 
     /**
      * Returns the colors for this graph. The first color is used for the first

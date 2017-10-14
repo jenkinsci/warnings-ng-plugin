@@ -37,7 +37,6 @@ import hudson.plugins.analysis.core.GlobalSettings;
 import hudson.plugins.analysis.core.HealthDescriptor;
 import hudson.plugins.analysis.core.IssueDifference;
 import hudson.plugins.analysis.core.ParserResult;
-import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.AnnotationProvider;
 import hudson.plugins.analysis.util.model.AnnotationStream;
@@ -966,11 +965,6 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
     @Override
     public String toString() {
         return getDisplayName() + " : " + getNumberOfAnnotations() + " annotations";
-    }
-
-    // FIXME: How is this implemented in freestyle build?
-    public ToolTipProvider getToolTipProvider() {
-        return numberOfItems -> "FIXME";
     }
 
     private StaticAnalysisTool getIssueParser() {

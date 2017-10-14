@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import java.awt.Color;
+import java.awt.*;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
@@ -12,7 +12,6 @@ import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.AreaRenderer;
 import hudson.plugins.analysis.util.ToolTipAreaRenderer;
 import hudson.plugins.analysis.util.ToolTipBuilder;
-import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
@@ -50,9 +49,9 @@ public class PriorityGraph extends CategoryBuildResultGraph {
     @SuppressWarnings("serial")
     @SuppressFBWarnings("SIC")
     @Override
-    protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName, final ToolTipProvider toolTipProvider) {
+    protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName) {
         CategoryUrlBuilder url = new UrlBuilder(getRootUrl(), pluginName);
-        ToolTipBuilder toolTip = new ToolTipBuilder(toolTipProvider) {
+        ToolTipBuilder toolTip = new ToolTipBuilder(configuration.getToolTipProvider()) {
                     @Override
             protected String getShortDescription(final int row) {
                 if (row == 0) {

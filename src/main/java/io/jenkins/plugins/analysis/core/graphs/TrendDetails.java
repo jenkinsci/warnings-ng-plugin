@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.core.graphs;
 
 import org.kohsuke.stapler.StaplerRequest;
 
-import hudson.model.AbstractProject;
 import hudson.model.Job;
 import hudson.util.Graph;
 
@@ -12,14 +11,12 @@ import hudson.util.Graph;
  * @author Ulli Hafner
  */
 public class TrendDetails {
-    /** The graph to display. */
     private final Graph trendGraph;
     private final String id;
-    /** The owner of the graph. */
     private final Job<?, ?> owner;
 
     /**
-     * Creates a new instance of {@link hudson.plugins.analysis.graph.TrendDetails}.
+     * Creates a new instance of {@link TrendDetails}.
      *
      * @param job
      *            the job of the graph
@@ -28,31 +25,12 @@ public class TrendDetails {
      * @param id
      *            the ID of the trend graph
      */
-    public TrendDetails(final Job<?, ?> job, final Graph trendGraph,
-            final String id) {
-        this.owner = job;
+    public TrendDetails(final Job<?, ?> job, final Graph trendGraph, final String id) {
+        owner = job;
         this.trendGraph = trendGraph;
         this.id = id;
     }
 
-    /**
-     * Creates a new instance of {@link hudson.plugins.analysis.graph.TrendDetails}.
-     *
-     * @param project
-     *            the project of the graph
-     * @param trendGraph
-     *            the graph
-     * @param id
-     *            the ID of the trend graph
-     * @deprecated use
-     *             {@link #TrendDetails(Job, Graph, String)}
-     */
-    @Deprecated
-    public TrendDetails(final AbstractProject<?, ?> project, final Graph trendGraph,
-            final String id) {
-        this((Job<?, ?>) project, trendGraph, id);
-    }
-    
     /**
      * Returns the trend graph.
      *
@@ -80,19 +58,6 @@ public class TrendDetails {
      */
     public Job<?, ?> getOwner() {
         return owner;
-    }
-    
-    /**
-     * Returns the abstractProject.
-     *
-     * @return the abstractProject
-     *
-     * @deprecated use
-     *             {@link #getOwner()}
-     */
-    @Deprecated
-    public AbstractProject<?, ?> getProject() {
-        return owner instanceof AbstractProject ? (AbstractProject<?, ?>) owner : null;
     }
 }
 
