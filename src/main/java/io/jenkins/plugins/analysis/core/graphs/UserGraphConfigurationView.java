@@ -10,62 +10,43 @@ import io.jenkins.plugins.analysis.core.history.RunResultHistory;
 import hudson.model.Job;
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.CookieHandler;
+import hudson.plugins.analysis.util.ToolTipProvider;
 
 /**
- * Configures the trend graph of this plug-in for the current user and job using
- * a cookie.
+ * Configures the trend graph of this plug-in for the current user and job using a cookie.
  */
 public class UserGraphConfigurationView extends GraphConfigurationView {
     /**
      * Creates a new instance of {@link hudson.plugins.analysis.graph.UserGraphConfigurationView}.
      *
      * @param configuration
-     *            the graph configuration
+     *         the graph configuration
      * @param job
-     *            the owning job to configure the graphs for
+     *         the owning job to configure the graphs for
      * @param jobActionUrl
-     *            The URL of the job action (used as cookie ID)
-     * @param globalFileName
-     *            The file name of the global configuration
+     *         The URL of the job action (used as cookie ID)
      * @param cookies
-     *            the cookies containing the graph configuration
+     *         the cookies containing the graph configuration
      * @param buildHistory
-     *            the build history for this job
+     *         the build history for this job
      */
     public UserGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
-                                      final String jobActionUrl, final String globalFileName, final Cookie[] cookies, final RunResultHistory buildHistory) {
+            final String jobActionUrl, final Cookie[] cookies,
+            final RunResultHistory buildHistory, final ToolTipProvider toolTipProvider) {
         super(configuration, job, jobActionUrl, buildHistory);
 
         if (!configuration.initializeFrom(createCookieHandler(jobActionUrl).getValue(cookies))) {
-            configuration.initializeFromFile(createDefaultsFile(job, globalFileName));
+            configuration.initializeFromFile(createDefaultsFile(job, jobActionUrl));
         }
+        configuration.setToolTipProvider(toolTipProvider);
     }
 
     /**
-     * Creates a new instance of {@link hudson.plugins.analysis.graph.UserGraphConfigurationView}.
-     *
-     * @param configuration
-     *            the graph configuration
-     * @param job
-     *            the owning job to configure the graphs for
-     * @param jobActionUrl
-     *            The URL of the job action
-     * @param cookies
-     *            the cookies containing the graph configuration
-     * @param buildHistory
-     *            the build history for this job
-     */
-    public UserGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
-                                      final String jobActionUrl, final Cookie[] cookies, final RunResultHistory buildHistory) {
-        this(configuration, job, jobActionUrl, jobActionUrl, cookies, buildHistory);
-    }
-    
-   /**
      * Creates a new cookie handler to convert the cookie to a string value.
      *
      * @param cookieName
-     *            the suffix of the cookie name that is used to persist the
-     *            configuration per user
+     *         the suffix of the cookie name that is used to persist the configuration per user
+     *
      * @return the new cookie handler
      */
     protected static CookieHandler createCookieHandler(final String cookieName) {

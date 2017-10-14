@@ -15,13 +15,14 @@ import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.plugins.analysis.core.AnnotationParser;
 import hudson.plugins.analysis.util.HtmlPrinter;
+import hudson.plugins.analysis.util.ToolTipProvider;
 
 /**
  * Describes a static analysis tool that reports issues.
  *
  * @author Ullrich Hafner
  */
-public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticAnalysisTool> implements AnnotationParser, ExtensionPoint {
+public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticAnalysisTool> implements AnnotationParser, ExtensionPoint, ToolTipProvider {
     private static final String ICONS_PREFIX = "/plugin/analysis-core/icons/";
     private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
     private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
@@ -115,6 +116,37 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
 
     public String getResultUrl() {
         return getId() + "Result";
+    }
+
+    @Override
+    public String getTooltip(final int numberOfItems) {
+        if (numberOfItems == 1) {
+            return getSingleItemTooltip();
+        }
+        else {
+            return getMultipleItemsTooltip(numberOfItems);
+        }
+    }
+
+    /**
+     * Returns the tooltip for several items.
+     *
+     * @param numberOfItems
+     *         the number of items to display the tooltip for
+     *
+     * @return the tooltip for several items
+     */
+    protected String getMultipleItemsTooltip(final int numberOfItems) {
+        return hudson.plugins.analysis.Messages.ResultAction_MultipleWarnings(numberOfItems);
+    }
+
+    /**
+     * Returns the tooltip for exactly one item.
+     *
+     * @return the tooltip for exactly one item
+     */
+    protected String getSingleItemTooltip() {
+        return hudson.plugins.analysis.Messages.ResultAction_OneWarning();
     }
 
     /**

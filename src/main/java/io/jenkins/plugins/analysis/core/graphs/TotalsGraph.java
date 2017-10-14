@@ -1,13 +1,12 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import java.awt.Color;
+import java.awt.*;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
 
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.util.ToolTipProvider;
 
 /**
  * Builds a graph showing the total of warnings in a scaled line graph.
@@ -42,7 +41,7 @@ public class TotalsGraph extends CategoryBuildResultGraph {
     }
 
     @Override
-    protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName, final ToolTipProvider toolTipProvider) {
+    protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName) {
         return createLineRenderer();
     }
 }

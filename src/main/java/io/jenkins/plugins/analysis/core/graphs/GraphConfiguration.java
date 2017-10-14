@@ -18,6 +18,7 @@ import com.google.common.collect.Maps;
 import net.sf.json.JSONObject;
 
 import hudson.model.AbstractProject;
+import hudson.plugins.analysis.util.ToolTipProvider;
 import hudson.util.FormValidation;
 
 /**
@@ -34,6 +35,7 @@ public class GraphConfiguration  {
     private static final int DEFAULT_HEIGHT = 200;
     private static final String DEFAULT_NAME = StringUtils.EMPTY;
     private static final String DEFAULT_VALUE = StringUtils.EMPTY;
+    private ToolTipProvider toolTipProvider;
 
     private static PriorityGraph createDefaultGraph() {
         return new PriorityGraph();
@@ -822,6 +824,14 @@ public class GraphConfiguration  {
         result = 31 * result + (parameterName != null ? parameterName.hashCode() : 0);
         result = 31 * result + (parameterValue != null ? parameterValue.hashCode() : 0);
         return result;
+    }
+
+    public void setToolTipProvider(final ToolTipProvider toolTipProvider) {
+        this.toolTipProvider = toolTipProvider;
+    }
+
+    public ToolTipProvider getToolTipProvider() {
+        return toolTipProvider;
     }
 }
 

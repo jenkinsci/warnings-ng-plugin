@@ -17,8 +17,6 @@ import hudson.model.Action;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
 import hudson.model.Run;
-import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.util.ToolTipProvider;
 
 /**
  * Controls the live cycle of the results in a job. This action persists the results of a build and displays them on the
@@ -29,7 +27,7 @@ import hudson.plugins.analysis.util.ToolTipProvider;
  */
 //CHECKSTYLE:COUPLING-OFF
 @ExportedBean
-public class ResultAction implements StaplerProxy, HealthReportingAction, ToolTipProvider, LastBuildAction, RunAction2 {
+public class ResultAction implements StaplerProxy, HealthReportingAction, LastBuildAction, RunAction2 {
     private transient Run<?, ?> run;
 
     private final AnalysisResult result;
@@ -153,38 +151,6 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, ToolTi
      */
     protected String getSmallImage() {
         return getIssueParser().getSmallIconUrl();
-    }
-
-    // FIXME: should be handled by IssuesParser
-    @Override
-    public String getTooltip(final int numberOfItems) {
-        if (numberOfItems == 1) {
-            return getSingleItemTooltip();
-        }
-        else {
-            return getMultipleItemsTooltip(numberOfItems);
-        }
-    }
-
-    /**
-     * Returns the tooltip for several items.
-     *
-     * @param numberOfItems
-     *         the number of items to display the tooltip for
-     *
-     * @return the tooltip for several items
-     */
-    protected String getMultipleItemsTooltip(final int numberOfItems) {
-        return Messages.ResultAction_MultipleWarnings(numberOfItems);
-    }
-
-    /**
-     * Returns the tooltip for exactly one item.
-     *
-     * @return the tooltip for exactly one item
-     */
-    protected String getSingleItemTooltip() {
-        return Messages.ResultAction_OneWarning();
     }
 
     @Exported
