@@ -18,7 +18,7 @@ import hudson.model.Run;
  * @author Ulli Hafner
  */
 // TODO: actually the baseline has not yet a result attached
-public class BuildHistory implements RunResultHistory {
+public class BuildHistory implements ResultHistory {
     /** The build to start the history from. */
     private final Run<?, ?> baseline;
     private final ResultSelector selector;
@@ -37,15 +37,8 @@ public class BuildHistory implements RunResultHistory {
     }
 
     @Override
-    public AnalysisResult getBaseline() {
-        Optional<ResultAction> resultAction = selector.get(baseline);
-        if (!resultAction.isPresent()) {
-            throw new NoSuchElementException(
-                    String.format("Selector '%s' does not find action for baseline '%s'",
-                            selector, baseline));
-        }
-
-        return resultAction.get().getResult();
+    public Optional<AnalysisResult> getBaseline() {
+        return selector.get(baseline).map(ResultAction::getResult);
     }
 
     /**
@@ -72,7 +65,12 @@ public class BuildHistory implements RunResultHistory {
 
     private static Optional<Run<?, ?>> getPreviousRun(final Run<?, ?> start,
             final ResultSelector selector, final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
-        for (Run<?, ?> run = start.getPreviousBuild(); run != null; run = run.getPreviousBuild()) {
+        return getRunWithResult(start.getPreviousBuild(), selector, ignoreAnalysisResult, overallResultMustBeSuccess);
+    }
+
+    private static Optional<Run<?, ?>> getRunWithResult(final Run<?, ?> start, final ResultSelector selector,
+            final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
+        for (Run<?, ?> run = start; run != null; run = run.getPreviousBuild()) {
             Optional<ResultAction> action = selector.get(run);
             if (action.isPresent()) {
                 ResultAction resultAction = action.get();
@@ -106,7 +104,7 @@ public class BuildHistory implements RunResultHistory {
         return action.getResult().getPluginResult().isWorseOrEqualTo(Result.FAILURE);
     }
 
-    // TODO: why don't we return the action?
+    // FIXME: should we ignore the result?
     @Override
     public Optional<AnalysisResult> getPreviousResult() {
         Optional<ResultAction> action = getPreviousAction(false, false);
@@ -116,8 +114,7 @@ public class BuildHistory implements RunResultHistory {
         return Optional.empty();
     }
 
-    @Override
-    @Nonnull
+    @Override @Nonnull
     public Iterator<AnalysisResult> iterator() {
         return new BuildResultIterator(baseline, selector);
     }
@@ -125,6 +122,7 @@ public class BuildHistory implements RunResultHistory {
     /**
      * Provides an iterator of analysis results starting from a baseline and going back in history.
      */
+    // FIXME: should we ignore the result?
     private static class BuildResultIterator implements Iterator<AnalysisResult> {
         @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
         private Optional<Run<?, ?>> cursor;
@@ -139,7 +137,7 @@ public class BuildHistory implements RunResultHistory {
          *         selects the associated action from a build
          */
         private BuildResultIterator(final Run<?, ?> baseline, final ResultSelector selector) {
-            cursor = Optional.of(baseline);
+            cursor = getRunWithResult(baseline, selector,true, false);
             this.selector = selector;
         }
 
@@ -153,12 +151,8 @@ public class BuildHistory implements RunResultHistory {
             if (cursor.isPresent()) {
                 Run<?, ?> run = cursor.get();
                 Optional<ResultAction> resultAction = selector.get(run);
-                if (!resultAction.isPresent()) {
-                    throw new NoSuchElementException(String.format("No action %s available for run %s",
-                            ResultAction.class.getName(), run));
-                }
 
-                cursor = getPreviousRun(run, selector, false, false);
+                cursor = getPreviousRun(run, selector,true, false);
 
                 return resultAction.get().getResult();
             }

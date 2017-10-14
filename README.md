@@ -8,7 +8,9 @@ Maintainer: Dr. Ullrich Hafner
 
 ### TODOs for pipelines
 
-- Bug falls Previous Project kein Result hat (im Graph)
+- Serialization Bug, Build 28
+- Bug falls previous Project kein Result hat (im Graph): BuildHistory hat evtl. kein Resultat. 
+  Sollte Build History Baseling das erste Ergebnis mit Result sein?
 - Issue(s) benötigen ID des Parsers als origin
 - hierarchy? Actions and Graphs
 - graph that shows warnings for different tools (analysis collector)
