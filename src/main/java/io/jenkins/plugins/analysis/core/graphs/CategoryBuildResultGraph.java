@@ -14,7 +14,7 @@ import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.jenkins.plugins.analysis.core.history.RunResultHistory;
+import io.jenkins.plugins.analysis.core.history.ResultHistory;
 
 import hudson.plugins.analysis.Messages;
 
@@ -40,7 +40,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return the graph
      */
     @Override
-    public JFreeChart create(final GraphConfiguration configuration, final RunResultHistory history, final String pluginName) {
+    public JFreeChart create(final GraphConfiguration configuration, final ResultHistory history, final String pluginName) {
         JFreeChart chart = createChart(configuration, history);
 
         attachRenderer(configuration, pluginName, chart);
@@ -62,7 +62,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     @Override
     @SuppressFBWarnings("WMI")
     public JFreeChart createAggregation(final GraphConfiguration configuration,
-                                        final Collection<RunResultHistory> resultActions, final String pluginName) {
+                                        final Collection<ResultHistory> resultActions, final String pluginName) {
         CategoryDataset dataset = createSeriesBuilder().createAggregation(configuration, resultActions);
 
         JFreeChart chart = createChart(dataset);
@@ -100,7 +100,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *            the action to start with
      * @return the created chart
      */
-    protected JFreeChart createChart(final GraphConfiguration configuration, final RunResultHistory history) {
+    protected JFreeChart createChart(final GraphConfiguration configuration, final ResultHistory history) {
         CategoryDataset dataSet = createSeriesBuilder().createDataSet(configuration, history);
         return createChart(dataSet);
     }

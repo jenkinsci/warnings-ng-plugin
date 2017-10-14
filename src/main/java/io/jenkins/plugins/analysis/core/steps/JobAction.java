@@ -30,7 +30,7 @@ import io.jenkins.plugins.analysis.core.graphs.TrendDetails;
 import io.jenkins.plugins.analysis.core.graphs.UserGraphConfigurationView;
 import io.jenkins.plugins.analysis.core.history.BuildHistory;
 import io.jenkins.plugins.analysis.core.history.NullBuildHistory;
-import io.jenkins.plugins.analysis.core.history.RunResultHistory;
+import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import jenkins.model.Jenkins;
 
@@ -266,7 +266,7 @@ public class JobAction implements Action {
                 getUrlName(), createBuildHistory(), getTool());
     }
 
-    private RunResultHistory createBuildHistory() {
+    private ResultHistory createBuildHistory() {
         Run<?, ?> lastFinishedRun = getLastFinishedRun();
         if (lastFinishedRun == null) {
             return new NullBuildHistory();

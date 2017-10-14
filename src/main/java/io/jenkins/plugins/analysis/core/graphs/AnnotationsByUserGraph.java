@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jfree.chart.JFreeChart;
@@ -15,7 +16,7 @@ import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.data.category.CategoryDataset;
 
-import io.jenkins.plugins.analysis.core.history.RunResultHistory;
+import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 
 import hudson.plugins.analysis.Messages;
@@ -32,11 +33,10 @@ import hudson.util.DataSetBuilder;
 public class AnnotationsByUserGraph extends BuildResultGraph {
     @Override
     public JFreeChart create(final GraphConfiguration configuration,
-            final RunResultHistory history, @CheckForNull final String pluginName) {
+            final ResultHistory history, @CheckForNull final String pluginName) {
         Map<String, Integer[]> annotationCountByUser = new HashMap<>();
 
-        AnalysisResult result = history.getBaseline();
-        mergeResults(result, annotationCountByUser);
+        mergeResults(history.getBaseline(), annotationCountByUser);
 
         return createGraphFromUserMapping(configuration, pluginName, annotationCountByUser);
     }
@@ -51,12 +51,11 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
     }
 
     @Override
-    public JFreeChart createAggregation(final GraphConfiguration configuration, final Collection<RunResultHistory> resultActions, final String pluginName) {
+    public JFreeChart createAggregation(final GraphConfiguration configuration, final Collection<ResultHistory> resultActions, final String pluginName) {
         Map<String, Integer[]> annotationCountByUser = new HashMap<>();
 
-        for (RunResultHistory history : resultActions) {
-            AnalysisResult result = history.getBaseline();
-            mergeResults(result, annotationCountByUser);
+        for (ResultHistory history : resultActions) {
+            mergeResults(history.getBaseline(), annotationCountByUser);
         }
 
         return createGraphFromUserMapping(configuration, pluginName, annotationCountByUser);
@@ -92,17 +91,19 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
         return builder.build();
     }
 
-    private void mergeResults(final AnalysisResult current, final Map<String, Integer[]> annotationCountByUser) {
-        Collection<FileAnnotation> annotations = current.getAnnotations();
-        for (FileAnnotation annotation : annotations) {
-            String author = annotation.getAuthor();
-            if (StringUtils.isNotBlank(author) && !"-".equals(author)) {
-                annotationCountByUser.computeIfAbsent(author, k -> new Integer[]{0, 0, 0});
-                Integer[] priorities = annotationCountByUser.get(author);
-                int index = annotation.getPriority().ordinal();
-                priorities[index]++;
+    private void mergeResults(final Optional<AnalysisResult> current, final Map<String, Integer[]> annotationCountByUser) {
+        current.ifPresent(analysisResult -> {
+            Collection<FileAnnotation> annotations = analysisResult.getAnnotations();
+            for (FileAnnotation annotation : annotations) {
+                String author = annotation.getAuthor();
+                if (StringUtils.isNotBlank(author) && !"-".equals(author)) {
+                    annotationCountByUser.computeIfAbsent(author, k -> new Integer[]{0, 0, 0});
+                    Integer[] priorities = annotationCountByUser.get(author);
+                    int index = annotation.getPriority().ordinal();
+                    priorities[index]++;
+                }
             }
-        }
+        });
     }
 
     @Override

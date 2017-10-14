@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
 import javax.annotation.CheckForNull;
-import java.awt.Color;
+import java.awt.*;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,7 +21,7 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
-import io.jenkins.plugins.analysis.core.history.RunResultHistory;
+import io.jenkins.plugins.analysis.core.history.ResultHistory;
 
 import hudson.util.Graph;
 import hudson.util.ShiftedCategoryAxis;
@@ -116,7 +116,7 @@ public abstract class BuildResultGraph {
      * @return the graph
      */
     public abstract JFreeChart create(final GraphConfiguration configuration,
-                                      final RunResultHistory history, @CheckForNull final String pluginName);
+                                      final ResultHistory history, @CheckForNull final String pluginName);
 
     /**
      * Creates a PNG image trend graph with clickable map.
@@ -130,7 +130,7 @@ public abstract class BuildResultGraph {
      * @return the graph
      */
     public abstract JFreeChart createAggregation(final GraphConfiguration configuration,
-                                                 final Collection<RunResultHistory> resultActions, final String pluginName);
+                                                 final Collection<ResultHistory> resultActions, final String pluginName);
 
 
     /**
@@ -195,7 +195,7 @@ public abstract class BuildResultGraph {
      *            the last valid action for this project
      * @return the graph to render
      */
-    public Graph getGraph(final long timestamp, final GraphConfiguration configuration, final String pluginName, final RunResultHistory history) {
+    public Graph getGraph(final long timestamp, final GraphConfiguration configuration, final String pluginName, final ResultHistory history) {
         return new Graph(timestamp, configuration.getWidth(), configuration.getHeight()) {
             @Override
             protected JFreeChart createGraph() {
@@ -218,7 +218,7 @@ public abstract class BuildResultGraph {
      *            the actions to get the summary graph for
      * @return the graph to render
      */
-    public Graph getGraph(final long timestamp, final GraphConfiguration configuration, final String pluginName, final List<RunResultHistory> actions) {
+    public Graph getGraph(final long timestamp, final GraphConfiguration configuration, final String pluginName, final List<ResultHistory> actions) {
         return new Graph(timestamp, configuration.getWidth(), configuration.getHeight()) {
             @Override
             protected JFreeChart createGraph() {

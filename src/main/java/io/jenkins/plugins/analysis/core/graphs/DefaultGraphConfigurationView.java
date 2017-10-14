@@ -7,7 +7,7 @@ import org.apache.commons.io.IOUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import io.jenkins.plugins.analysis.core.history.RunResultHistory;
+import io.jenkins.plugins.analysis.core.history.ResultHistory;
 
 import hudson.model.Job;
 import hudson.plugins.analysis.Messages;
@@ -32,7 +32,7 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
      *         the build history for this job
      */
     public DefaultGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
-            final String pluginName, final RunResultHistory buildHistory,
+            final String pluginName, final ResultHistory buildHistory,
             final ToolTipProvider toolTipProvider) {
         super(configuration, job, pluginName, buildHistory);
 

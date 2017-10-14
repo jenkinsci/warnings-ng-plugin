@@ -172,6 +172,7 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      * @param referenceProvider
      *         build referenceProvider
      */
+    // FIXME: should we ignore the result in previousResult?
     protected AnalysisResult(final String id, final Run<?, ?> build, final ReferenceProvider referenceProvider,
             final Optional<AnalysisResult> previousResult, final ResultEvaluator resultEvaluator, final String defaultEncoding,
             final ParserResult result, final boolean canSerialize) {

@@ -21,7 +21,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.jenkins.plugins.analysis.core.history.RunResultHistory;
+import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 
 import hudson.model.AbstractBuild;
@@ -237,10 +237,10 @@ public abstract class SeriesBuilder {
         return String.valueOf(level);
     }
 
-    public CategoryDataset createAggregation(final GraphConfiguration configuration, final Collection<RunResultHistory> resultActions) {
+    public CategoryDataset createAggregation(final GraphConfiguration configuration, final Collection<ResultHistory> resultActions) {
         Set<LocalDate> availableDates = Sets.newHashSet();
-        Map<RunResultHistory, Map<LocalDate, List<Integer>>> averagesPerJob = Maps.newHashMap();
-        for (RunResultHistory resultAction : resultActions) {
+        Map<ResultHistory, Map<LocalDate, List<Integer>>> averagesPerJob = Maps.newHashMap();
+        for (ResultHistory resultAction : resultActions) {
             Map<LocalDate, List<Integer>> averageByDate = averageByDate(
                     createSeriesPerBuild(configuration, resultAction));
             averagesPerJob.put(resultAction, averageByDate);
@@ -264,14 +264,14 @@ public abstract class SeriesBuilder {
      */
     @SuppressWarnings("unchecked")
     private Map<LocalDate, List<Integer>> createTotalsForAllAvailableDates(
-            final Collection<RunResultHistory> jobs,
+            final Collection<ResultHistory> jobs,
             final Set<LocalDate> availableDates,
-            final Map<RunResultHistory, Map<LocalDate, List<Integer>>> averagesPerJob) {
+            final Map<ResultHistory, Map<LocalDate, List<Integer>>> averagesPerJob) {
         List<LocalDate> sortedDates = Lists.newArrayList(availableDates);
         Collections.sort(sortedDates);
 
         Map<LocalDate, List<Integer>> totals = Maps.newHashMap();
-        for (RunResultHistory jobResult : jobs) {
+        for (ResultHistory jobResult : jobs) {
             Map<LocalDate, List<Integer>> availableResults = averagesPerJob.get(jobResult);
             List<Integer> lastResult = Collections.emptyList();
             for (LocalDate buildDate : sortedDates) {
