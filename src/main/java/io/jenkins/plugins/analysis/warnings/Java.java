@@ -22,7 +22,6 @@ import hudson.plugins.warnings.parser.ParserRegistry;
  *
  * @author Ullrich Hafner
  */
-@Extension
 public class Java extends StaticAnalysisTool {
     private static final String JAVA_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-24x24.png";
     private static final String JAVA_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-48x48.png";
