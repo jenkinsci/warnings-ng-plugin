@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -47,6 +48,17 @@ public class JavaDoc extends Java {
         return Messages.Warnings_JavaDoc_TrendName();
     }
 
+    /** Descriptor for JavaDoc. */
     @Extension
-    public static final StaticAnalysisToolDescriptor D = new StaticAnalysisToolDescriptor(JavaDoc.class);
+    public static final class Descriptor extends StaticAnalysisToolDescriptor {
+        public Descriptor() {
+            super(JavaDoc.class);
+        }
+
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return Messages.Warnings_JavaDoc_ParserName();
+        }
+    }
 }

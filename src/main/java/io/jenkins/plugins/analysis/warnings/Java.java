@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -67,6 +68,17 @@ public class Java extends StaticAnalysisTool {
         return JAVA_LARGE_ICON;
     }
 
+    /** Descriptor for Java. */
     @Extension
-    public static final StaticAnalysisToolDescriptor D = new StaticAnalysisToolDescriptor(Java.class);
+    public static final class Descriptor extends StaticAnalysisToolDescriptor {
+        public Descriptor() {
+            super(Java.class);
+        }
+
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return Messages.Warnings_JavaParser_ParserName();
+        }
+    }
 }
