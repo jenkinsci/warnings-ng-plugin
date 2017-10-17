@@ -14,9 +14,9 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 
@@ -115,7 +115,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * @since 1.69
      */
     public AnnotationsLabelProvider getLabelProvider() {
-        return Objects.firstNonNull(labelProvider,
+        return ObjectUtils.firstNonNull(labelProvider,
                 new AnnotationsLabelProvider(getPackageCategoryTitle()));
     }
 
