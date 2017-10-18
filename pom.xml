@@ -122,6 +122,7 @@
                 <exclude>org.jenkins-ci.plugins.icon-shim:icon-set</exclude>
                 <exclude>org.jenkins-ci.plugins:script-security</exclude>
                 <exclude>org.jenkins-ci.plugins:durable-task</exclude>
+                <exclude>com.google.code.findbugs:annotations</exclude>
                 <!-- Remove if violations dependency is not required anymore -->
                 <exclude>xpp3:xpp3</exclude>
               </excludes>
