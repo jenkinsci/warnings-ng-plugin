@@ -8,7 +8,8 @@ Maintainer: Dr. Ullrich Hafner
 
 ### TODOs for pipelines
 
-- FindBugs: Additional Parameter rank vs. priority
+- Graph hat keine Links
+- Project Action fehlt links im Sidepanel
 - Serialization Bug, Build 28
 - Hierarchy? Actions and Graphs
 - Graph that shows warnings for different tools (analysis collector)

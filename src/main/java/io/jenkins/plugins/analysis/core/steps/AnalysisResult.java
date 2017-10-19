@@ -968,7 +968,7 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
         return getDisplayName() + " : " + getNumberOfAnnotations() + " annotations";
     }
 
-    private StaticAnalysisTool getIssueParser() {
+    private StaticAnalysisLabelProvider getIssueParser() {
         return StaticAnalysisTool.find(id);
     }
 

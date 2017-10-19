@@ -1,5 +1,6 @@
 target
-*.eml
+*.iml
+.classpath
+.project
+.settings
 .idea
-.DS_Store
-/work

@@ -1,21 +1,18 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.NoSuchElementException;
 
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import edu.hm.hafner.util.NoSuchElementException;
 import jenkins.model.Jenkins;
 
+import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.plugins.analysis.core.AnnotationParser;
-import hudson.plugins.analysis.util.HtmlPrinter;
-import hudson.plugins.analysis.util.ToolTipProvider;
 
 /**
  * Describes a static analysis tool that reports issues.
@@ -23,10 +20,7 @@ import hudson.plugins.analysis.util.ToolTipProvider;
  * @author Ullrich Hafner
  */
 public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticAnalysisTool>
-        implements AnnotationParser, ExtensionPoint, ToolTipProvider {
-    private static final String ICONS_PREFIX = "/plugin/analysis-core/icons/";
-    private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
-    private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
+        implements AnnotationParser, ExtensionPoint {
 
     /**
      * Finds the static analysis tool with the specified ID.
@@ -38,20 +32,21 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
      * @throws NoSuchElementException
      *         if the tool could not be found
      */
-    public static StaticAnalysisTool find(final String id) {
-        for (StaticAnalysisTool parser : all()) {
-            if (parser.getId().equals(id)) {
-                return parser;
+    public static StaticAnalysisLabelProvider find(final String id) {
+        if (DefaultLabelProvider.STATIC_ANALYSIS_ID.equals(id)) {
+            return new DefaultLabelProvider();
+        }
+        for (StaticAnalysisToolDescriptor toolDescriptor : all()) {
+            if (toolDescriptor.getId().equals(id)) {
+                return toolDescriptor.getLabelProvider();
             }
         }
-        throw new NoSuchElementException("IssueParser not found: " + id);
+        throw new NoSuchElementException("No static analysis tool found with ID %s.", id);
     }
 
-    private static Collection<? extends StaticAnalysisTool> all() {
-        return Jenkins.getInstance().getExtensionList(StaticAnalysisTool.class);
+    private static DescriptorExtensionList<StaticAnalysisTool, StaticAnalysisToolDescriptor> all() {
+        return Jenkins.getInstance().getDescriptorList(StaticAnalysisTool.class);
     }
-
-    private final String id;
 
     private String defaultEncoding;
 
@@ -71,155 +66,102 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
         this.defaultEncoding = defaultEncoding;
     }
 
-    /**
-     * Creates a new static analysis tool with the specified ID.
-     *
-     * @param id
-     *         the ID
-     */
-    // TODO: check that no duplicate IDs are requested
-    public StaticAnalysisTool(final String id) {
-        this.id = id;
-    }
-
-    /**
-     * Returns the ID of the tool.
-     *
-     * @return the ID
-     */
-    public String getId() {
-        return id;
-    }
-
-    protected String getSuffix() {
-        return String.format(" (%s)", WordUtils.capitalize(getId()));
-    }
-
-    protected String getName() {
-        return Messages.Tool_Name(getSuffix());
-    }
-
-    public String getLinkName() {
-        return Messages.Tool_Link_Name(getSuffix());
-    }
-
-    public String getTrendName() {
-        return Messages.Tool_Trend_Name(getSuffix());
-    }
-
-    public String getSmallIconUrl() {
-        return SMALL_ICON_URL;
-    }
-
-    public String getLargeIconUrl() {
-        return LARGE_ICON_URL;
-    }
-
-    public String getResultUrl() {
-        return getId() + "Result";
-    }
-
-    @Override
-    public String getTooltip(final int numberOfItems) {
-        if (numberOfItems == 1) {
-            return getSingleItemTooltip();
-        }
-        else {
-            return getMultipleItemsTooltip(numberOfItems);
-        }
-    }
-
-    /**
-     * Returns the tooltip for several items.
-     *
-     * @param numberOfItems
-     *         the number of items to display the tooltip for
-     *
-     * @return the tooltip for several items
-     */
-    protected String getMultipleItemsTooltip(final int numberOfItems) {
-        return hudson.plugins.analysis.Messages.ResultAction_MultipleWarnings(numberOfItems);
-    }
-
-    /**
-     * Returns the tooltip for exactly one item.
-     *
-     * @return the tooltip for exactly one item
-     */
-    protected String getSingleItemTooltip() {
-        return hudson.plugins.analysis.Messages.ResultAction_OneWarning();
-    }
-
-    /**
-     * Returns a summary message for the summary.jelly file.
-     *
-     * @param numberOfIssues
-     *         the number of issues in the report
-     * @param numberOfModules
-     *         the number of modules in the report
-     *
-     * @return the summary message
-     */
-    public String getSummary(final int numberOfIssues, final int numberOfModules) {
-        return getName() + ": " + new ResultSummaryPrinter().createDefaultSummary(getResultUrl(),
-                numberOfIssues, numberOfModules);
-    }
-
-    /**
-     * Creates a default delta message for the build result.
-     *
-     * @param newSize
-     *         number of new issues
-     * @param fixedSize
-     *         number of fixed issues
-     *
-     * @return the summary message
-     */
-    public String getDeltaMessage(final int newSize, final int fixedSize) {
-        HtmlPrinter summary = new HtmlPrinter();
-        if (newSize > 0) {
-            summary.append(summary.item(
-                    summary.link(getResultUrl() + "/new", createNewWarningsLinkName(newSize))));
-        }
-        if (fixedSize > 0) {
-            summary.append(summary.item(
-                    summary.link(getResultUrl() + "/fixed", createFixedWarningsLinkName(fixedSize))));
-        }
-        return summary.toString();
-    }
-
-    private static String createNewWarningsLinkName(final int newWarnings) {
-        if (newWarnings == 1) {
-            return Messages.ResultAction_OneNewWarning();
-        }
-        else {
-            return Messages.ResultAction_MultipleNewWarnings(newWarnings);
-        }
-    }
-
-    private static String createFixedWarningsLinkName(final int fixedWarnings) {
-        if (fixedWarnings == 1) {
-            return Messages.ResultAction_OneFixedWarning();
-        }
-        else {
-            return Messages.ResultAction_MultipleFixedWarnings(fixedWarnings);
-        }
-    }
-
     @Override
     public String toString() {
-        return getId();
+        return String.format("[%s] Encoding: %s" , getName(), defaultEncoding);
     }
 
-    public static class StaticAnalysisToolDescriptor extends Descriptor<StaticAnalysisTool> {
-        public StaticAnalysisToolDescriptor(final Class<? extends StaticAnalysisTool> clazz) {
-            super(clazz);
+    /**
+     * Returns the name of this tool.
+     *
+     * @return the nae of this tool
+     */
+    public String getName() {
+        return getDescriptor().getDisplayName();
+    }
+
+    public String getId() {
+        return getDescriptor().getId();
+    }
+
+    /** Descriptor for {@link StaticAnalysisTool}. **/
+    public static abstract class StaticAnalysisToolDescriptor extends Descriptor<StaticAnalysisTool>
+            implements StaticAnalysisLabelProvider {
+        private final DefaultLabelProvider defaultLabelProvider = new DefaultLabelProvider();
+
+        private final String id;
+
+        /**
+         * Creates a new {@link StaticAnalysisToolDescriptor} with the specified ID.
+         *
+         * @param id
+         *         the ID
+         */
+        protected StaticAnalysisToolDescriptor(final String id) {
+            this.id = id;
         }
 
         @Override
-        @Nonnull
-        public String getDisplayName() {
-            return clazz.getSimpleName();
+        public String getId() {
+            return id;
+        }
+
+        /**
+         * Returns the associated label provider for this tool.
+         *
+         * @return the label provider
+         */
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return defaultLabelProvider.getName();
+        }
+
+        public String getSuffix() {
+            return String.format(" (%s)", WordUtils.capitalize(getId()));
+        }
+
+        @Override
+        public String getLinkName() {
+            return defaultLabelProvider.getLinkName();
+        }
+
+        @Override
+        public String getTrendName() {
+            return defaultLabelProvider.getTrendName();
+        }
+
+        @Override
+        public String getSmallIconUrl() {
+            return defaultLabelProvider.getSmallIconUrl();
+        }
+
+        @Override
+        public String getLargeIconUrl() {
+            return defaultLabelProvider.getLargeIconUrl();
+        }
+
+        @Override
+        public String getResultUrl() {
+            return defaultLabelProvider.getResultUrl();
+        }
+
+        @Override
+        public String getTooltip(final int numberOfItems) {
+            return defaultLabelProvider.getTooltip(numberOfItems);
+        }
+
+        @Override
+        public String getSummary(final int numberOfIssues, final int numberOfModules) {
+            return defaultLabelProvider.getSummary(numberOfIssues, numberOfModules);
+        }
+
+        @Override
+        public String getDeltaMessage(final int newSize, final int fixedSize) {
+            return defaultLabelProvider.getDeltaMessage(newSize, fixedSize);
         }
     }
 }
