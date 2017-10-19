@@ -158,7 +158,7 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, LastBu
         return getResult().isSuccessful();
     }
 
-    private StaticAnalysisTool getIssueParser() {
+    private StaticAnalysisLabelProvider getIssueParser() {
         return StaticAnalysisTool.find(id);
     }
 }

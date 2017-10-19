@@ -83,7 +83,7 @@ public class JobAction implements Action {
         return getTool().getLinkName();
     }
 
-    private StaticAnalysisTool getTool() {
+    private StaticAnalysisLabelProvider getTool() {
         return StaticAnalysisTool.find(id);
     }
 
