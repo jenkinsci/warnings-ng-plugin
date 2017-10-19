@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -23,7 +22,7 @@ import hudson.plugins.warnings.parser.ParserRegistry;
 public class JavaDoc extends Java {
     @DataBoundConstructor
     public JavaDoc() {
-        super("javadoc");
+        // empty constructor required for stapler
     }
 
     @Override
@@ -33,32 +32,27 @@ public class JavaDoc extends Java {
         return new FileWarningsParser(parsers, getDefaultEncoding()).parse(file, moduleName);
     }
 
-    @Override
-    protected String getName() {
-        return Messages.Warnings_JavaDoc_ParserName();
-    }
-
-    @Override
-    public String getLinkName() {
-        return Messages.Warnings_JavaDoc_LinkName();
-    }
-
-    @Override
-    public String getTrendName() {
-        return Messages.Warnings_JavaDoc_TrendName();
-    }
-
-    /** Descriptor for JavaDoc. */
+    /** Registers this tool as extension point implementation. */
     @Extension
-    public static final class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends JavaDescriptor {
         public Descriptor() {
-            super(JavaDoc.class);
+            super("javadoc");
         }
 
-        @Nonnull
         @Override
-        public String getDisplayName() {
+        public String getName() {
             return Messages.Warnings_JavaDoc_ParserName();
         }
+
+        @Override
+        public String getLinkName() {
+            return Messages.Warnings_JavaDoc_LinkName();
+        }
+
+        @Override
+        public String getTrendName() {
+            return Messages.Warnings_JavaDoc_TrendName();
+        }
+
     }
 }

@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -19,7 +18,7 @@ import hudson.plugins.warnings.parser.Messages;
 import hudson.plugins.warnings.parser.ParserRegistry;
 
 /**
- * Provides customized messages for the Java parser.
+ * Provides a parser and customized messages for the Java compiler.
  *
  * @author Ullrich Hafner
  */
@@ -29,11 +28,7 @@ public class Java extends StaticAnalysisTool {
 
     @DataBoundConstructor
     public Java() {
-        this("java");
-    }
-
-    protected Java(final String id) {
-        super(id);
+        // empty constructor required for stapler
     }
 
     @Override
@@ -43,42 +38,40 @@ public class Java extends StaticAnalysisTool {
         return new FileWarningsParser(parsers, getDefaultEncoding()).parse(file, moduleName);
     }
 
-    @Override
-    protected String getName() {
-        return Messages.Warnings_JavaParser_ParserName();
-    }
-
-    @Override
-    public String getLinkName() {
-        return Messages.Warnings_JavaParser_LinkName();
-    }
-
-    @Override
-    public String getTrendName() {
-        return Messages.Warnings_JavaParser_TrendName();
-    }
-
-    @Override
-    public String getSmallIconUrl() {
-        return JAVA_SMALL_ICON;
-    }
-
-    @Override
-    public String getLargeIconUrl() {
-        return JAVA_LARGE_ICON;
-    }
-
-    /** Descriptor for Java. */
+    /** Registers this tool as extension point implementation. */
     @Extension
-    public static final class Descriptor extends StaticAnalysisToolDescriptor {
-        public Descriptor() {
-            super(Java.class);
+    public static class JavaDescriptor extends StaticAnalysisToolDescriptor {
+        public JavaDescriptor() {
+            super("java");
         }
 
-        @Nonnull
+        protected JavaDescriptor(final String id) {
+            super(id);
+        }
+
         @Override
-        public String getDisplayName() {
+        public String getName() {
             return Messages.Warnings_JavaParser_ParserName();
+        }
+
+        @Override
+        public String getLinkName() {
+            return Messages.Warnings_JavaParser_LinkName();
+        }
+
+        @Override
+        public String getTrendName() {
+            return Messages.Warnings_JavaParser_TrendName();
+        }
+
+        @Override
+        public String getSmallIconUrl() {
+            return JAVA_SMALL_ICON;
+        }
+
+        @Override
+        public String getLargeIconUrl() {
+            return JAVA_LARGE_ICON;
         }
     }
 }
