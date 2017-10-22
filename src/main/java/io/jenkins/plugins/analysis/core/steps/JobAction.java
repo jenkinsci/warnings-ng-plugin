@@ -413,7 +413,8 @@ public class JobAction implements Action {
     public void doIndex(final StaplerRequest request, final StaplerResponse response) throws IOException {
         Run<?, ?> lastRun = getLastFinishedRun();
         if (lastRun != null) {
-            response.sendRedirect2(String.format("../%d/%s", lastRun.getNumber(), id));
+            response.sendRedirect2(String.format("../%d/%s", lastRun.getNumber(),
+                    getTool().getResultUrl()));
         }
     }
 }

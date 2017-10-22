@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import javax.annotation.CheckForNull;
 
-import org.apache.commons.text.WordUtils;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import edu.hm.hafner.util.NoSuchElementException;
@@ -85,25 +84,22 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
     }
 
     /** Descriptor for {@link StaticAnalysisTool}. **/
-    public static abstract class StaticAnalysisToolDescriptor extends Descriptor<StaticAnalysisTool>
-            implements StaticAnalysisLabelProvider {
-        private final DefaultLabelProvider defaultLabelProvider = new DefaultLabelProvider();
-
-        private final String id;
+    public abstract static class StaticAnalysisToolDescriptor extends Descriptor<StaticAnalysisTool> {
+        private final StaticAnalysisLabelProvider labelProvider;
 
         /**
-         * Creates a new {@link StaticAnalysisToolDescriptor} with the specified ID.
+         * Creates a new {@link StaticAnalysisToolDescriptor} with the specified label provider.
          *
-         * @param id
-         *         the ID
+         * @param labelProvider
+         *         the label provider to use
          */
-        protected StaticAnalysisToolDescriptor(final String id) {
-            this.id = id;
+        protected StaticAnalysisToolDescriptor(final StaticAnalysisLabelProvider labelProvider) {
+            this.labelProvider = labelProvider;
         }
 
         @Override
         public String getId() {
-            return id;
+            return labelProvider.getId();
         }
 
         /**
@@ -112,56 +108,7 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
          * @return the label provider
          */
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return defaultLabelProvider.getName();
-        }
-
-        public String getSuffix() {
-            return String.format(" (%s)", WordUtils.capitalize(getId()));
-        }
-
-        @Override
-        public String getLinkName() {
-            return defaultLabelProvider.getLinkName();
-        }
-
-        @Override
-        public String getTrendName() {
-            return defaultLabelProvider.getTrendName();
-        }
-
-        @Override
-        public String getSmallIconUrl() {
-            return defaultLabelProvider.getSmallIconUrl();
-        }
-
-        @Override
-        public String getLargeIconUrl() {
-            return defaultLabelProvider.getLargeIconUrl();
-        }
-
-        @Override
-        public String getResultUrl() {
-            return defaultLabelProvider.getResultUrl();
-        }
-
-        @Override
-        public String getTooltip(final int numberOfItems) {
-            return defaultLabelProvider.getTooltip(numberOfItems);
-        }
-
-        @Override
-        public String getSummary(final int numberOfIssues, final int numberOfModules) {
-            return defaultLabelProvider.getSummary(numberOfIssues, numberOfModules);
-        }
-
-        @Override
-        public String getDeltaMessage(final int newSize, final int fixedSize) {
-            return defaultLabelProvider.getDeltaMessage(newSize, fixedSize);
+            return labelProvider;
         }
     }
 }
