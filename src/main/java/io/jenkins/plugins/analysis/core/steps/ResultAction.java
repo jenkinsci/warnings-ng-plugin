@@ -76,12 +76,12 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, LastBu
     @Override
     @Exported
     public String getDisplayName() {
-        return getIssueParser().getLinkName();
+        return getTool().getLinkName();
     }
 
     @Override
     public String getUrlName() {
-        return getIssueParser().getResultUrl();
+        return getTool().getResultUrl();
     }
 
     @Override
@@ -131,7 +131,7 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, LastBu
      * @since 1.41
      */
     public String getLargeImageName() {
-        return getIssueParser().getLargeIconUrl();
+        return getTool().getLargeIconUrl();
     }
 
     /**
@@ -150,7 +150,7 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, LastBu
      * @return the URL of the image
      */
     protected String getSmallImage() {
-        return getIssueParser().getSmallIconUrl();
+        return getTool().getSmallIconUrl();
     }
 
     @Exported
@@ -158,7 +158,12 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, LastBu
         return getResult().isSuccessful();
     }
 
-    private StaticAnalysisLabelProvider getIssueParser() {
+    @Override
+    public String toString() {
+        return String.format("%s for %s", getClass().getName(), getTool().getName());
+    }
+
+    private StaticAnalysisLabelProvider getTool() {
         return StaticAnalysisTool.find(id);
     }
 }

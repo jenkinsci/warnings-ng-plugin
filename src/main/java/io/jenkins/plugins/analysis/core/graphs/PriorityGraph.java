@@ -42,7 +42,7 @@ public class PriorityGraph extends CategoryBuildResultGraph {
 
     @Override
     protected Color[] getColors() {
-        return new Color[] {ColorPalette.BLUE, ColorPalette.YELLOW, ColorPalette.RED};
+        return new Color[]{ColorPalette.BLUE, ColorPalette.YELLOW, ColorPalette.RED};
     }
 
     // CHECKSTYLE:OFF
@@ -52,7 +52,7 @@ public class PriorityGraph extends CategoryBuildResultGraph {
     protected CategoryItemRenderer createRenderer(final GraphConfiguration configuration, final String pluginName) {
         CategoryUrlBuilder url = new UrlBuilder(getRootUrl(), pluginName);
         ToolTipBuilder toolTip = new ToolTipBuilder(configuration.getToolTipProvider()) {
-                    @Override
+            @Override
             protected String getShortDescription(final int row) {
                 if (row == 0) {
                     return Messages.Trend_PriorityLow();

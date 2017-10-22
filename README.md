@@ -8,8 +8,6 @@ Maintainer: Dr. Ullrich Hafner
 
 ### TODOs for pipelines
 
-- Graph hat keine Links
-- Project Action fehlt links im Sidepanel
 - Serialization Bug, Build 28
 - Hierarchy? Actions and Graphs
 - Graph that shows warnings for different tools (analysis collector)
@@ -18,11 +16,7 @@ Maintainer: Dr. Ullrich Hafner
 - Different views possible for downstream plugins?
 - Different properties for warnings in downstream plugins?
 - SCM link for blame information
-- Parser: ID, Publish: ID: same class or different?
 - High score starts for #1 on yesterday
 - Integrate all warnings parsers
 - Add support for remaining plugins
-- Add tooltips from plugins
 - Add filter, e.g. for packages
-
-- ScanForIssues: pattern not in UI

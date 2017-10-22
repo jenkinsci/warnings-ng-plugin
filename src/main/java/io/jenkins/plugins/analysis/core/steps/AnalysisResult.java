@@ -13,7 +13,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
@@ -942,7 +941,7 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
     }
 
     public String getSummary() {
-        return getIssueParser().getSummary(getNumberOfAnnotations(), getNumberOfModules());
+        return getTool().getSummary(getNumberOfAnnotations(), getNumberOfModules());
     }
 
     /**
@@ -960,7 +959,7 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      * @return the header for the build result page
      */
     public String getHeader() {
-        return StringUtils.EMPTY;
+        return getTool().getLinkName();
     }
 
     @Override
@@ -968,13 +967,13 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
         return getDisplayName() + " : " + getNumberOfAnnotations() + " annotations";
     }
 
-    private StaticAnalysisLabelProvider getIssueParser() {
+    private StaticAnalysisLabelProvider getTool() {
         return StaticAnalysisTool.find(id);
     }
 
     @Override
     public String getDisplayName() {
-        return getIssueParser().getLinkName();
+        return getTool().getLinkName();
     }
 
     @Override

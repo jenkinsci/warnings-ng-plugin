@@ -46,4 +46,6 @@ public interface StaticAnalysisLabelProvider extends ToolTipProvider {
      * @return the summary message
      */
     String getDeltaMessage(int newSize, int fixedSize);
+
+    String getId();
 }

@@ -19,11 +19,11 @@ public class Summary {
     private static final String UNSTABLE = "yellow.png";
     private static final String FAILED = "red.png";
     private static final String SUCCESS = "blue.png";
-    private final StaticAnalysisLabelProvider staticAnalysisLabelProvider;
+    private final StaticAnalysisLabelProvider tool;
     private final StaticAnalysisRun2 result;
 
     public Summary(final String id, StaticAnalysisRun2 result) {
-        staticAnalysisLabelProvider = StaticAnalysisTool.find(id);
+        tool = StaticAnalysisTool.find(id);
         this.result = result;
     }
 
@@ -106,7 +106,7 @@ public class Summary {
     }
 
     private String createDeltaMessage() {
-        return staticAnalysisLabelProvider.getDeltaMessage(result.getNewSize(), result.getFixedSize());
+        return tool.getDeltaMessage(result.getNewSize(), result.getFixedSize());
     }
 
     private long getDays(final long ms) {
