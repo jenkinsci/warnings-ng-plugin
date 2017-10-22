@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 
 import hudson.Extension;
@@ -42,13 +44,18 @@ public class Java extends StaticAnalysisTool {
     @Extension
     public static class JavaDescriptor extends StaticAnalysisToolDescriptor {
         public JavaDescriptor() {
+            super(new JavaLabelProvider());
+        }
+
+        public JavaDescriptor(final StaticAnalysisLabelProvider labelProvider) {
+            super(labelProvider);
+        }
+    }
+
+    public static class JavaLabelProvider extends DefaultLabelProvider {
+        public JavaLabelProvider() {
             super("java");
         }
-
-        protected JavaDescriptor(final String id) {
-            super(id);
-        }
-
         @Override
         public String getName() {
             return Messages.Warnings_JavaParser_ParserName();

@@ -36,9 +36,11 @@ public class JavaDoc extends Java {
     @Extension
     public static class Descriptor extends JavaDescriptor {
         public Descriptor() {
-            super("javadoc");
+            super(new JavaDocLabelProvider());
         }
+    }
 
+    public static class JavaDocLabelProvider extends JavaLabelProvider {
         @Override
         public String getName() {
             return Messages.Warnings_JavaDoc_ParserName();
@@ -53,6 +55,5 @@ public class JavaDoc extends Java {
         public String getTrendName() {
             return Messages.Warnings_JavaDoc_TrendName();
         }
-
     }
 }
