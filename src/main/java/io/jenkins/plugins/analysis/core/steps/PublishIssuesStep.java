@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
@@ -61,6 +61,7 @@ public class PublishIssuesStep extends Step {
 
     private final Thresholds thresholds = new Thresholds();
     private String id;
+    private String name;
 
     /**
      * Creates a new instance of {@link PublishIssuesStep}.
@@ -91,6 +92,22 @@ public class PublishIssuesStep extends Step {
 
     public String getId() {
         return id;
+    }
+
+    /**
+     * Defines the name of the results. The name is used for all labels in the UI. If
+     * no name is given, then the name of the associated {@link StaticAnalysisLabelProvider} is used.
+     *
+     * @param name
+     *         the name of the results
+     */
+    @DataBoundSetter
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public boolean getUsePreviousBuildAsReference() {
@@ -188,6 +205,10 @@ public class PublishIssuesStep extends Step {
     @DataBoundSetter
     public void setMinimumPriority(final String minimumPriority) {
         this.minimumPriority = StringUtils.defaultIfEmpty(minimumPriority, DEFAULT_MINIMUM_PRIORITY);
+    }
+
+    Thresholds getThresholds() {
+        return thresholds;
     }
 
     @CheckForNull
@@ -362,47 +383,73 @@ public class PublishIssuesStep extends Step {
         private final boolean usePreviousBuildAsReference;
         private final String defaultEncoding;
         private final ParserResult[] issues;
+        private final String id;
+        private String name;
 
         protected Execution(@Nonnull final StepContext context, final PublishIssuesStep step) {
             super(context);
 
-            usePreviousBuildAsReference = step.usePreviousBuildAsReference;
-            useStableBuildAsReference = step.useStableBuildAsReference;
-            defaultEncoding = step.defaultEncoding;
-            healthDescriptor = new HealthDescriptor(step.healthy, step.unHealthy, getMinimumPriority(step.minimumPriority));
-            thresholds = step.thresholds;
-
-            issues = step.issues;
+            usePreviousBuildAsReference = step.getUsePreviousBuildAsReference();
+            useStableBuildAsReference = step.getUseStableBuildAsReference();
+            defaultEncoding = step.getDefaultEncoding();
+            healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnHealthy(),
+                    asPriority(step.getMinimumPriority()));
+            thresholds = step.getThresholds();
+            id = step.getId();
+            name = StringUtils.defaultString(step.getName());
+            issues = step.getIssues();
             if (issues == null || issues.length == 0) {
                 throw new NullPointerException("No issues to publish in step " + step);
             }
         }
 
-        private Priority getMinimumPriority(final String minimumPriority) {
-            return Priority.valueOf(StringUtils.upperCase(minimumPriority));
+        private Priority asPriority(final String priority) {
+            return Priority.valueOf(StringUtils.upperCase(priority));
         }
 
         @Override
-        protected ResultAction run() throws Exception {
+        protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
+            String actualId = createUniqueId();
+
+            ResultSelector selector = new ByIdResultSelector(actualId);
+            Run<?, ?> run = getRun();
+            Optional<ResultAction> other = selector.get(run);
+            if (other.isPresent()) {
+                throw new IllegalStateException(String.format("ID %s is already used by another action: %s%n", id, other.get()));
+            }
+
+            return publishResult(actualId, run, selector);
+        }
+
+        private String createUniqueId() {
             Set<String> ids = new HashSet<>();
             for (ParserResult result : issues) {
                 ids.add(result.getId());
             }
 
+            String defaultId;
             if (ids.size() == 1) {
-                return publishSingleParserResult(ids.iterator().next());
+                defaultId = ids.iterator().next();
             }
             else {
-                return publishMultipleParserResults();
+                defaultId = "staticAnalysis";
+                if (StringUtils.isBlank(name)) {
+                    name = Messages.Default_Name();
+                }
             }
+            return StringUtils.defaultIfBlank(id, defaultId);
         }
 
         private PluginLogger createPluginLogger(final String id) throws IOException, InterruptedException {
             TaskListener logger = getContext().get(TaskListener.class);
-            return new PluginLogger(logger.getLogger(), StaticAnalysisTool.find(id).getName());
+            return new PluginLogger(logger.getLogger(), getTool(id).getName());
         }
 
-        private Run getRun() throws IOException, InterruptedException {
+        private StaticAnalysisLabelProvider getTool(final String id) {
+            return StaticAnalysisTool.find(id, name);
+        }
+
+        private Run<?, ?> getRun() throws IOException, InterruptedException {
             return getContext().get(Run.class);
         }
 
@@ -410,27 +457,12 @@ public class PublishIssuesStep extends Step {
             return getContext().get(Computer.class).getChannel();
         }
 
-        private ResultAction publishMultipleParserResults() throws IOException, InterruptedException {
-            String id = "staticAnalysis";
-            ResultSelector selector = new ByIdResultSelector(id);
-            Run run = getRun();
-            Optional<ResultAction> other = selector.get(run);
-            if (other.isPresent()) {
-                throw new IllegalStateException(String.format("ID %s is already used by another action: %s%n", id, other.get()));
-            }
-            return publishResult(id, run, selector);
-        }
-
-        private ResultAction publishSingleParserResult(final String id) throws IOException, InterruptedException {
-            return publishResult(id, getRun(), new ByIdResultSelector(id));
-        }
-
-        private ResultAction publishResult(final String id, final Run run, final ResultSelector selector)
+        private ResultAction publishResult(final String actualId, final Run<?, ?> run, final ResultSelector selector)
                 throws IOException, InterruptedException {
-            PluginLogger logger = createPluginLogger(id);
+            PluginLogger logger = createPluginLogger(actualId);
 
             logger.format("Creating analysis result for %d issues.", getTotalNumberOfIssues());
-            AnalysisResult result = createAnalysisResult(id, run, selector);
+            AnalysisResult result = createAnalysisResult(actualId, run, selector);
 
             FilePath workspace = getContext().get(FilePath.class);
             AnnotationContainer container = result.getContainer();
@@ -439,8 +471,8 @@ public class PublishIssuesStep extends Step {
             new Files().copyFilesWithAnnotationsToBuildFolder(getChannel(), workspace,
                     container.getAnnotations(), EncodingValidator.getEncoding(defaultEncoding));
 
-            logger.format("Attaching ResultAction with ID '%s' to run '%s'.", id, run);
-            ResultAction action = new ResultAction(run, id, result, healthDescriptor);
+            logger.format("Attaching ResultAction with ID '%s' to run '%s'.", actualId, run);
+            ResultAction action = new ResultAction(run, result, healthDescriptor, actualId, name);
             run.addAction(action);
 
             return action;
@@ -451,8 +483,8 @@ public class PublishIssuesStep extends Step {
             ReferenceProvider referenceProvider = ReferenceFinder.create(run,
                     selector, usePreviousBuildAsReference, useStableBuildAsReference);
             BuildHistory buildHistory = new BuildHistory(run, selector);
-            ResultEvaluator resultEvaluator = new ResultEvaluator(id, thresholds, createPluginLogger(id));
-            return new AnalysisResult(id, run, referenceProvider, buildHistory.getPreviousResult(),
+            ResultEvaluator resultEvaluator = new ResultEvaluator(id, name, thresholds, createPluginLogger(id));
+            return new AnalysisResult(id, name, run, referenceProvider, buildHistory.getPreviousResult(),
                     resultEvaluator, defaultEncoding, issues);
         }
 

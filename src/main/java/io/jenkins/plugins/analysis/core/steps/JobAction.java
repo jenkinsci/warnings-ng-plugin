@@ -55,18 +55,19 @@ public class JobAction implements Action {
 
     private final Job<?, ?> job; // FIXME: make transient
     private final String id;
+    private final String name;
 
     /**
      * Creates a new instance of {@link JobAction}.
-     *
-     * @param job
+     *  @param job
      *            the job that owns this action
      * @param id
-     *            the ID of the parser
+     * @param name
      */
-    public JobAction(final Job<?, ?> job, final String id) {
+    public JobAction(final Job<?, ?> job, final String id, final String name) {
         this.job = job;
         this.id = id;
+        this.name = name;
     }
 
     /**
@@ -84,7 +85,7 @@ public class JobAction implements Action {
     }
 
     private StaticAnalysisLabelProvider getTool() {
-        return StaticAnalysisTool.find(id);
+        return StaticAnalysisTool.find(id, name);
     }
 
     /**

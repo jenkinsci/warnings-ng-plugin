@@ -22,8 +22,8 @@ public class Summary {
     private final StaticAnalysisLabelProvider tool;
     private final StaticAnalysisRun2 result;
 
-    public Summary(final String id, StaticAnalysisRun2 result) {
-        tool = StaticAnalysisTool.find(id);
+    public Summary(final String id, final String name, StaticAnalysisRun2 result) {
+        tool = StaticAnalysisTool.find(id, name);
         this.result = result;
     }
 

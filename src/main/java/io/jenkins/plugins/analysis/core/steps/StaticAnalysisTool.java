@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import javax.annotation.CheckForNull;
 
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import edu.hm.hafner.util.NoSuchElementException;
@@ -31,7 +32,7 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
      * @throws NoSuchElementException
      *         if the tool could not be found
      */
-    public static StaticAnalysisLabelProvider find(final String id) {
+    private static StaticAnalysisLabelProvider find(final String id) {
         if (DefaultLabelProvider.STATIC_ANALYSIS_ID.equals(id)) {
             return new DefaultLabelProvider();
         }
@@ -41,6 +42,27 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
             }
         }
         throw new NoSuchElementException("No static analysis tool found with ID %s.", id);
+    }
+
+    /**
+     * Finds the static analysis tool with the specified ID.
+     *
+     * @param id
+     *         the ID of the tool to find
+     * @param name
+     *         the name of the tool (might be empty or null)
+     *
+     * @return the static analysis tool
+     * @throws NoSuchElementException
+     *         if the tool could not be found
+     */
+    public static StaticAnalysisLabelProvider find(final String id, @CheckForNull final String name) {
+        if (StringUtils.isBlank(name)) {
+            return find(id);
+        }
+        else {
+            return new DefaultLabelProvider(id, name);
+        }
     }
 
     private static DescriptorExtensionList<StaticAnalysisTool, StaticAnalysisToolDescriptor> all() {
@@ -67,7 +89,7 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
 
     @Override
     public String toString() {
-        return String.format("[%s] Encoding: %s" , getName(), defaultEncoding);
+        return String.format("[%s] Encoding: %s", getName(), defaultEncoding);
     }
 
     /**
