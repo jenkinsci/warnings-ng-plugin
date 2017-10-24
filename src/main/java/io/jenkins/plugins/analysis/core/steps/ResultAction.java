@@ -33,25 +33,29 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, LastBu
     private final AnalysisResult result;
     private final String id;
     private final HealthDescriptor healthDescriptor;
+    private final String name;
 
     /**
-     * Creates a new instance of <code>AbstractResultAction</code>.
+     * Creates a new instance of {@link ResultAction}.
      *
      * @param run
      *         the associated build of this action
-     * @param id
-     *         the ID of the parser
      * @param result
      *         the result of the static analysis run
      * @param healthDescriptor
      *         defines the health for the current result
+     * @param id
+     *         the ID of the static analysis tool
+     * @param name
+     *         The name of the tool. If empty the name is resolved using the ID.
      */
-    public ResultAction(final Run<?, ?> run, final String id, final AnalysisResult result,
-            final HealthDescriptor healthDescriptor) {
+    public ResultAction(final Run<?, ?> run, final AnalysisResult result, final HealthDescriptor healthDescriptor,
+            final String id, final String name) {
         this.run = run;
         this.result = result;
         this.id = id;
         this.healthDescriptor = healthDescriptor;
+        this.name = name;
     }
 
     public Run<?, ?> getRun() {
@@ -76,12 +80,12 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, LastBu
     @Override
     @Exported
     public String getDisplayName() {
-        return getTool().getLinkName();
+        return getLabelProvider().getLinkName();
     }
 
     @Override
     public String getUrlName() {
-        return getTool().getResultUrl();
+        return getLabelProvider().getResultUrl();
     }
 
     @Override
@@ -92,7 +96,7 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, LastBu
 
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return Collections.singleton(new JobAction(run.getParent(), id));
+        return Collections.singleton(new JobAction(run.getParent(), id, name));
     }
 
     @Override
@@ -131,7 +135,7 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, LastBu
      * @since 1.41
      */
     public String getLargeImageName() {
-        return getTool().getLargeIconUrl();
+        return getLabelProvider().getLargeIconUrl();
     }
 
     /**
@@ -150,7 +154,7 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, LastBu
      * @return the URL of the image
      */
     protected String getSmallImage() {
-        return getTool().getSmallIconUrl();
+        return getLabelProvider().getSmallIconUrl();
     }
 
     @Exported
@@ -160,10 +164,10 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, LastBu
 
     @Override
     public String toString() {
-        return String.format("%s for %s", getClass().getName(), getTool().getName());
+        return String.format("%s for %s", getClass().getName(), getLabelProvider().getName());
     }
 
-    private StaticAnalysisLabelProvider getTool() {
-        return StaticAnalysisTool.find(id);
+    private StaticAnalysisLabelProvider getLabelProvider() {
+        return StaticAnalysisTool.find(id, name);
     }
 }

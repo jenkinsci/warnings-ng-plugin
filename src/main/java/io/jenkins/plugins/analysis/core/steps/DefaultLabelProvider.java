@@ -17,6 +17,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
     static final String STATIC_ANALYSIS_ID = "staticAnalysis";
 
     private final String id;
+    private final String name;
 
     /**
      * Creates a new {@link DefaultLabelProvider} with the specified ID.
@@ -25,7 +26,20 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
      *         the ID
      */
     protected DefaultLabelProvider(final String id) {
+        this(id, StringUtils.EMPTY);
+    }
+
+    /**
+     * Creates a new {@link DefaultLabelProvider} with the specified ID.
+     *
+     * @param id
+     *         the ID
+     * @param name
+     *         the name of the static analysis tool
+     */
+    protected DefaultLabelProvider(final String id, final String name) {
         this.id = id;
+        this.name = name;
     }
 
     /**
@@ -40,27 +54,24 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
      *
      * @return the ID
      */
+    @Override
     public String getId() {
         return id;
     }
 
     @Override
     public String getName() {
-        return Messages.Tool_Name(getSuffix());
-    }
-
-    protected String getSuffix() {
-        return StringUtils.EMPTY;
+        return name;
     }
 
     @Override
     public String getLinkName() {
-        return Messages.Tool_Link_Name(getSuffix());
+        return Messages.Tool_Link_Name(name);
     }
 
     @Override
     public String getTrendName() {
-        return Messages.Tool_Trend_Name(getSuffix());
+        return Messages.Tool_Trend_Name(name);
     }
 
     @Override

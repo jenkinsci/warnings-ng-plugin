@@ -24,10 +24,12 @@ public class ResultEvaluator extends BuildResultEvaluator {
      * Creates a new instance of {@link ResultEvaluator}.
      *
      * @param id
-     *         the ID of the result
+     *         the ID of the static analysis tool
+     * @param name
+     *         the name of the static analysis tool
      */
-    public ResultEvaluator(final String id, final Thresholds thresholds, final PluginLogger logger) {
-        super(StaticAnalysisTool.find(id).getResultUrl());
+    public ResultEvaluator(final String id, final String name, final Thresholds thresholds, final PluginLogger logger) {
+        super(StaticAnalysisTool.find(id, name).getResultUrl());
 
         this.id = id;
         this.thresholds = thresholds;

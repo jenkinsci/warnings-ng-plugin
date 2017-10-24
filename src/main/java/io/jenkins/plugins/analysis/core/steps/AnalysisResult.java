@@ -62,6 +62,7 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
     private final String id;
 
     private transient ReentrantLock lock = new ReentrantLock();
+    private final String name;
     private transient Run<?, ?> run;
 
     /** The project containing the annotations. */
@@ -149,10 +150,10 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      * @param referenceProvider
      *         the run history
      */
-    public AnalysisResult(final String id, final Run run, final ReferenceProvider referenceProvider,
+    public AnalysisResult(final String id, final String name, final Run run, final ReferenceProvider referenceProvider,
             final Optional<AnalysisResult> previousResult, final ResultEvaluator resultEvaluator, final String defaultEncoding,
             final ParserResult... issues) {
-        this(id, run, referenceProvider, previousResult, resultEvaluator, defaultEncoding, merge(issues), true);
+        this(id, name, run, referenceProvider, previousResult, resultEvaluator, defaultEncoding, merge(issues), true);
     }
 
     private static ParserResult merge(final ParserResult... issues) {
@@ -172,10 +173,11 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      *         build referenceProvider
      */
     // FIXME: should we ignore the result in previousResult?
-    protected AnalysisResult(final String id, final Run<?, ?> build, final ReferenceProvider referenceProvider,
+    protected AnalysisResult(final String id, final String name, final Run<?, ?> build, final ReferenceProvider referenceProvider,
             final Optional<AnalysisResult> previousResult, final ResultEvaluator resultEvaluator, final String defaultEncoding,
             final ParserResult result, final boolean canSerialize) {
         this.id = id;
+        this.name = name;
         run = build;
         this.defaultEncoding = defaultEncoding;
 
@@ -950,7 +952,7 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      * @return the summary message
      */
     public String getDetails() {
-        return new Summary(id, this).toString();
+        return new Summary(id, name, this).toString();
     }
 
     /**
@@ -968,7 +970,7 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
     }
 
     private StaticAnalysisLabelProvider getTool() {
-        return StaticAnalysisTool.find(id);
+        return StaticAnalysisTool.find(id, name);
     }
 
     @Override
