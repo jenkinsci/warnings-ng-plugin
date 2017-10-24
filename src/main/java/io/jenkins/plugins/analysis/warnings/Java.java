@@ -56,6 +56,11 @@ public class Java extends StaticAnalysisTool {
         public JavaLabelProvider() {
             super("java");
         }
+
+        public JavaLabelProvider(final String id) {
+            super(id);
+        }
+
         @Override
         public String getName() {
             return Messages.Warnings_JavaParser_ParserName();

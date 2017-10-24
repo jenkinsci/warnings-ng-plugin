@@ -1,3 +1,5 @@
+#!/bin/sh
+
 rm -rf $JENKINS_HOME/plugins/warnings*
 
 mvn install || { echo "Build failed"; exit 1; }

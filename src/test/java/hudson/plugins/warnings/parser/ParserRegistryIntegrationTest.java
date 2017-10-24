@@ -146,6 +146,19 @@ public class ParserRegistryIntegrationTest {
     }
 
     /**
+     * Verifies the current number of parsers.
+     */
+    @Test
+    public void testParserNumbers() {
+        List<ParserDescription> groups = ParserRegistry.getAvailableParsers();
+
+        for (ParserDescription group : groups) {
+            List<AbstractWarningsParser> parsers = ParserRegistry.getParsers(group.getGroup());
+            System.out.printf("%s: %d%n", group.getGroup(), parsers.size());
+        }
+    }
+
+    /**
      * Verifies that the registry detects old and new API extensions and maps them correctly.
      */
     @Test
