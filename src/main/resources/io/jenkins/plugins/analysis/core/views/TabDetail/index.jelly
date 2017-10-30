@@ -1,0 +1,39 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+         xmlns:result="/result">
+  <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+
+  <table class="pane sortable" id="files">
+    <tr>
+      <td class="pane-header">${%File}</td>
+      <td class="pane-header" style="width:2em">${%Total}</td>
+      <td class="pane-header" style="width:60%">${%Distribution}</td>
+    </tr>
+    <tbody>
+      <j:set var="max" value="${it.max}" />
+      <j:forEach var="key" items="${it.keys}">
+        <j:set var="count" value="${it.getCount(key)}" />
+        <tr>
+          <td class="pane">
+            <a href="file.${key.hashCode()}/">${it.getDisplayName(key)}</a>
+          </td>
+          <td class="pane">${count}</td>
+          <td class="pane">
+            <result:priority-graph />
+          </td>
+        </tr>
+      </j:forEach>
+      <tr class="sortbottom">
+        <td class="pane-header">${%Total}</td>
+        <td class="pane-header">${size(it.issues)}</td>
+        <td class="pane-header"/>
+      </tr>
+    </tbody>
+  </table>
+
+  <script type="text/javascript">
+    Behaviour.applySubtree(document.getElementById('statistics'));
+  </script>
+
+</j:jelly>
+

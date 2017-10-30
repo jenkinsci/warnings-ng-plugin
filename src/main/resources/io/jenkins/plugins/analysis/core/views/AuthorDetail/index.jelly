@@ -1,0 +1,29 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+         xmlns:l="/lib/layout"
+         xmlns:result="/result">
+  <l:layout title="${it.displayName}" norefresh="true">
+
+    <st:include it="${it.owner}" page="sidepanel.jelly" />
+
+    <l:main-panel>
+
+      <h1>
+        <j:choose>
+          <j:when test="${it.user == null}">
+            ${it.header}
+          </j:when>
+          <j:otherwise>
+            ${it.name} - <a href="${it.user.absoluteUrl}">${it.displayName}</a>
+          </j:otherwise>
+        </j:choose>
+      </h1>
+
+      <result:priorities-summary />
+
+      <result:main />
+
+    </l:main-panel>
+
+  </l:layout>
+</j:jelly>

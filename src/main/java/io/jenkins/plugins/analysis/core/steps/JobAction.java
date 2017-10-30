@@ -53,7 +53,7 @@ import hudson.util.Graph;
 public class JobAction implements Action {
     private static final Logger LOGGER = Logger.getLogger(JobAction.class.getName());
 
-    private final Job<?, ?> job; // FIXME: make transient
+    private final Job<?, ?> job;
     private final String id;
     private final String name;
 
@@ -334,7 +334,7 @@ public class JobAction implements Action {
     @Override
     public String getIconFileName() {
         ResultAction lastAction = getLastAction();
-        if (lastAction != null && lastAction.getResult().hasAnnotations()) {
+        if (lastAction != null && lastAction.getResult().getNumberOfWarnings() > 0) {
             return Jenkins.RESOURCE_PATH + getTool().getSmallIconUrl();
         }
         return null;
@@ -414,8 +414,12 @@ public class JobAction implements Action {
     public void doIndex(final StaplerRequest request, final StaplerResponse response) throws IOException {
         Run<?, ?> lastRun = getLastFinishedRun();
         if (lastRun != null) {
-            response.sendRedirect2(String.format("../%d/%s", lastRun.getNumber(),
-                    getTool().getResultUrl()));
+            response.sendRedirect2(String.format("../%d/%s", lastRun.getNumber(), getTool().getResultUrl()));
         }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s(%s)", getClass().getName(), id);
     }
 }

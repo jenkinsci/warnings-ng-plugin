@@ -12,7 +12,6 @@ import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
-import hudson.plugins.analysis.core.AnnotationParser;
 
 /**
  * Describes a static analysis tool that reports issues.
@@ -20,7 +19,7 @@ import hudson.plugins.analysis.core.AnnotationParser;
  * @author Ullrich Hafner
  */
 public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticAnalysisTool>
-        implements AnnotationParser, ExtensionPoint {
+        implements IssueParser, ExtensionPoint {
 
     /**
      * Finds the static analysis tool with the specified ID.

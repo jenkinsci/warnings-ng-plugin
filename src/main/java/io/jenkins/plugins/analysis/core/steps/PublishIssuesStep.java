@@ -18,11 +18,13 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import com.google.common.collect.Sets;
 
+import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.history.BuildHistory;
 import io.jenkins.plugins.analysis.core.history.ReferenceFinder;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.history.ResultSelector;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 
 import hudson.Extension;
 import hudson.FilePath;
@@ -31,12 +33,9 @@ import hudson.model.Computer;
 import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.core.Thresholds;
 import hudson.plugins.analysis.util.EncodingValidator;
-import hudson.plugins.analysis.util.Files;
 import hudson.plugins.analysis.util.PluginLogger;
-import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.remoting.VirtualChannel;
 
@@ -48,7 +47,7 @@ import hudson.remoting.VirtualChannel;
 public class PublishIssuesStep extends Step {
     private static final String DEFAULT_MINIMUM_PRIORITY = "low";
 
-    private final ParserResult[] issues;
+    private final Issues[] issues;
 
     private boolean usePreviousBuildAsReference;
     private boolean useStableBuildAsReference;
@@ -70,11 +69,11 @@ public class PublishIssuesStep extends Step {
      *         the issues to publish as {@link Action} in the {@link Job}.
      */
     @DataBoundConstructor
-    public PublishIssuesStep(final ParserResult... issues) {
+    public PublishIssuesStep(final Issues... issues) {
         this.issues = issues;
     }
 
-    public ParserResult[] getIssues() {
+    public Issues[] getIssues() {
         return issues;
     }
 
@@ -382,7 +381,7 @@ public class PublishIssuesStep extends Step {
         private final boolean useStableBuildAsReference;
         private final boolean usePreviousBuildAsReference;
         private final String defaultEncoding;
-        private final ParserResult[] issues;
+        private final Issues[] issues;
         private final String id;
         private String name;
 
@@ -422,14 +421,14 @@ public class PublishIssuesStep extends Step {
         }
 
         private String createUniqueId() {
-            Set<String> ids = new HashSet<>();
-            for (ParserResult result : issues) {
-                ids.add(result.getId());
+            Set<String> origins = new HashSet<>();
+            for (Issues result : issues) {
+                origins.addAll(result.getToolNames());
             }
 
             String defaultId;
-            if (ids.size() == 1) {
-                defaultId = ids.iterator().next();
+            if (origins.size() == 1) {
+                defaultId = origins.iterator().next();
             }
             else {
                 defaultId = "staticAnalysis";
@@ -465,17 +464,21 @@ public class PublishIssuesStep extends Step {
             AnalysisResult result = createAnalysisResult(actualId, run, selector);
 
             FilePath workspace = getContext().get(FilePath.class);
-            AnnotationContainer container = result.getContainer();
+            Issues container = result.getProject();
             logger.format("Copying %d affected files from '%s' to build folder", container.getFiles().size(), workspace);
 
-            new Files().copyFilesWithAnnotationsToBuildFolder(getChannel(), workspace,
-                    container.getAnnotations(), EncodingValidator.getEncoding(defaultEncoding));
+            new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(getChannel(),
+                    getBuildFolder(), container, EncodingValidator.getEncoding(defaultEncoding));
 
             logger.format("Attaching ResultAction with ID '%s' to run '%s'.", actualId, run);
             ResultAction action = new ResultAction(run, result, healthDescriptor, actualId, name);
             run.addAction(action);
 
             return action;
+        }
+
+        private FilePath getBuildFolder() throws IOException, InterruptedException {
+            return new FilePath(getRun().getRootDir());
         }
 
         private AnalysisResult createAnalysisResult(final String id, final Run run, final ResultSelector selector)
@@ -490,8 +493,8 @@ public class PublishIssuesStep extends Step {
 
         public int getTotalNumberOfIssues() {
             int sum = 0;
-            for (ParserResult result : issues) {
-                sum += result.getNumberOfAnnotations();
+            for (Issues result : issues) {
+                sum += result.getSize();
             }
             return sum;
         }

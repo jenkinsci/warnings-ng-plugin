@@ -8,15 +8,17 @@ Maintainer: Dr. Ullrich Hafner
 
 ### TODOs for pipelines
 
-- Serialization Bug, Build 28
+- run immer als owner benennen
 - Hierarchy? Actions and Graphs
 - Graph that shows warnings for different tools (analysis collector)
 - Support for dashboard view
 - Quality gate full implementation (as well as Result Evaluation)
 - Different views possible for downstream plugins?
-- Different properties for warnings in downstream plugins?
-- SCM link for blame information
-- High score starts for #1 on yesterday
 - Integrate all warnings parsers
 - Add support for remaining plugins
 - Add filter, e.g. for packages
+- SCM link for blame information
+
+## Possible Bugs
+- Serialization Bug, Build 28
+- High score starts for #1 on yesterday

@@ -2,12 +2,11 @@ package io.jenkins.plugins.analysis.core.history;
 
 import java.util.Optional;
 
+import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.steps.ResultAction;
 
 import hudson.model.Result;
 import hudson.model.Run;
-import hudson.plugins.analysis.util.model.AnnotationContainer;
-import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 
 /**
  * Finds a previous result of an analysis run for the same software artifact. Selection of the previous result is
@@ -69,16 +68,14 @@ public abstract class ReferenceFinder extends BuildHistory implements ReferenceP
     }
 
     /**
-     * Returns the annotations of the reference build.
+     * Returns the issues of the reference build.
      *
-     * @return the annotations of the reference build
+     * @return the issues of the reference build
      */
     @Override
-    public AnnotationContainer getIssues() {
-        Optional<ResultAction> action = getReferenceAction();
-        if (action.isPresent()) {
-            return action.get().getResult().getContainer();
-        }
-        return new DefaultAnnotationContainer();
+    public Issues getIssues() {
+        return getReferenceAction()
+                .map(resultAction -> resultAction.getResult().getContainer())
+                .orElseGet(Issues::new);
     }
 }

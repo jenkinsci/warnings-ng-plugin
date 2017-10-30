@@ -1,8 +1,9 @@
 package io.jenkins.plugins.analysis.core.history;
 
+import edu.hm.hafner.analysis.Issues;
+
 import hudson.model.Run;
 import hudson.plugins.analysis.core.IssueDifference;
-import hudson.plugins.analysis.util.model.AnnotationContainer;
 
 /**
  * Provides the reference result for a new static analysis run. When old, new, and fixed issues are computed (see {@link
@@ -19,7 +20,7 @@ public interface ReferenceProvider {
      *
      * @return the issues of the reference build
      */
-    AnnotationContainer getIssues();
+    Issues getIssues();
 
     /**
      * Returns the number of the reference run.

@@ -1,15 +1,21 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.NoSuchElementException;
 
 import org.apache.commons.lang.StringUtils;
-import org.kohsuke.stapler.StaplerProxy;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
+import io.jenkins.plugins.analysis.core.views.DetailFactory;
+import io.jenkins.plugins.analysis.core.views.TabLabelProvider;
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
@@ -27,7 +33,7 @@ import hudson.model.Run;
  */
 //CHECKSTYLE:COUPLING-OFF
 @ExportedBean
-public class ResultAction implements StaplerProxy, HealthReportingAction, LastBuildAction, RunAction2 {
+public class ResultAction implements HealthReportingAction, LastBuildAction, RunAction2 {
     private transient Run<?, ?> run;
 
     private final AnalysisResult result;
@@ -99,11 +105,6 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, LastBu
         return Collections.singleton(new JobAction(run.getParent(), id, name));
     }
 
-    @Override
-    public final Object getTarget() {
-        return getResult();
-    }
-
     @Exported
     public AnalysisResult getResult() {
         return result;
@@ -115,6 +116,18 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, LastBu
             return getSmallImage();
         }
         return null;
+    }
+
+    public Issues getIssues() {
+        return getResult().getProject();
+    }
+
+    public Issues getNewIssues() {
+        return getResult().getNewWarnings();
+    }
+
+    public Issues getFixedIssues() {
+        return getResult().getFixedWarnings();
     }
 
     /**
@@ -162,6 +175,38 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, LastBu
         return getResult().isSuccessful();
     }
 
+    /**
+     * Returns a new view, that shows the selected issues.
+     *
+     * @param link
+     *            the link to identify the sub page to show
+     * @param request
+     *            Stapler request
+     * @param response
+     *            Stapler response
+     * @return the dynamic result of the analysis (detail page).
+     */
+    public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
+        try {
+            return new DetailFactory().createTrendDetails(link, run, getIssues(), getFixedIssues(), getNewIssues(),
+                    getResult().getErrors(), getResult().getDefaultEncoding(), this);
+        }
+        catch (NoSuchElementException ignored) {
+            redirectToProject(response);
+
+            return this; // fallback on broken URLs
+        }
+    }
+
+    private void redirectToProject(final StaplerResponse response) {
+        try {
+            response.sendRedirect2("../");
+        }
+        catch (IOException ignored) {
+            // ignore
+        }
+    }
+
     @Override
     public String toString() {
         return String.format("%s for %s", getClass().getName(), getLabelProvider().getName());
@@ -169,5 +214,9 @@ public class ResultAction implements StaplerProxy, HealthReportingAction, LastBu
 
     private StaticAnalysisLabelProvider getLabelProvider() {
         return StaticAnalysisTool.find(id, name);
+    }
+
+    public TabLabelProvider getTabLabelProvider() {
+        return new TabLabelProvider(getIssues());
     }
 }

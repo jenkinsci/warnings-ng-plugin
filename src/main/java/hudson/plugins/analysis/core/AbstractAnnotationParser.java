@@ -11,6 +11,11 @@ import java.util.Collection;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
+
 import hudson.plugins.analysis.util.ContextHashCode;
 import hudson.plugins.analysis.util.model.AbstractAnnotation;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -61,6 +66,20 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
         }
     }
 
+    public Issues parseIssues(final File file, final String moduleName) throws InvocationTargetException {
+        FileInputStream input = null;
+        try {
+            input = new FileInputStream(file);
+            return toIssues(parse(input, moduleName));
+        }
+        catch (FileNotFoundException exception) {
+            throw new InvocationTargetException(exception);
+        }
+        finally {
+            IOUtils.closeQuietly(input);
+        }
+    }
+
     /**
      * Let {@link FileAnnotation}s share some of their internal data structure
      * to reduce memory footprint.
@@ -72,6 +91,25 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
      */
     protected Collection<FileAnnotation> intern(final Collection<FileAnnotation> annotations) {
         return AbstractAnnotation.intern(annotations);
+    }
+
+    public static Issues toIssues(final Collection<FileAnnotation> annotations) {
+        Issues issues = new Issues();
+        for (FileAnnotation annotation : annotations) {
+            Issue issue = new IssueBuilder()
+                    .setFileName(annotation.getFileName())
+                    .setMessage(annotation.getMessage())
+                    .setCategory(annotation.getCategory())
+                    .setType(annotation.getType())
+                    .setLineStart(annotation.getPrimaryLineNumber())
+                    .setLineEnd(annotation.getLineRanges().iterator().next().getEnd())
+                    .setColumnStart(annotation.getColumnStart())
+                    .setPriority(Priority.fromString(annotation.getPriority().toString()))
+                    .setModuleName(annotation.getModuleName())
+                    .setPackageName(annotation.getPackageName()).build();
+            issues.add(issue);
+        }
+        return issues;
     }
 
     /**

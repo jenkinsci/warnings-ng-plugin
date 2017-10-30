@@ -3,278 +3,81 @@ package io.jenkins.plugins.analysis.core.util;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import edu.hm.hafner.analysis.Issues;
+import io.jenkins.plugins.analysis.core.steps.IssueParser;
 import jenkins.MasterToSlaveFileCallable;
 
-import hudson.FilePath;
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.core.AnnotationParser;
-import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.FileFinder;
 import hudson.plugins.analysis.util.ModuleDetector;
 import hudson.plugins.analysis.util.NullModuleDetector;
-import hudson.plugins.analysis.util.PluginLogger;
-import hudson.plugins.analysis.util.StringPluginLogger;
-import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.remoting.VirtualChannel;
 
 /**
- * Parses files that match the specified pattern and creates a corresponding
- * {@link ParserResult} with a collection of annotations.
+ * Parses all files that match a specified pattern for {@link Issues issues}.
  *
  * @author Ulli Hafner
  */
-public class FilesParser extends MasterToSlaveFileCallable<ParserResult> {
-    private static final long serialVersionUID = -6415863872891783891L;
-
-    /** Logs into a string. @since 1.20 */
-    @SuppressFBWarnings("Se")
-    private transient StringPluginLogger stringLogger;
-
+public class FilesParser extends MasterToSlaveFileCallable<Issues> {
     /** Ant file-set pattern to scan for. */
     private final String filePattern;
-    /** Parser to be used to process the workspace files. */
-    private final AnnotationParser parser;
-    /** Determines whether this build uses maven. */
-    private final boolean isMavenBuild;
-    /** The predefined module name, might be empty. */
-    private final String moduleName;
-    /** Determines whether module names should be derived from Maven or Ant. */
-    private boolean shouldDetectModules = true;
+    private final IssueParser parser;
+    /** Determines whether module names should be derived from Maven pom.xml or Ant build.xml files. */
+    private final boolean shouldDetectModules;
 
-    private final String pluginId;
-
-    private final boolean canResolveRelativePaths;
-
-    private FilesParser(final String filePattern, final AnnotationParser parser,
-                        final boolean isMavenBuild, final String moduleName) {
+    /**
+     * Creates a new instance of {@link FilesParser}.
+     *
+     * @param filePattern
+     *         ant file-set pattern to scan for files to parse
+     * @param parser
+     *         the parser to scan the found files for issues
+     * @param shouldDetectModules
+     *         determines whether modules should be detected from pom.xml or build.xml files
+     */
+    public FilesParser(final String filePattern,
+            final IssueParser parser, final boolean shouldDetectModules) {
         this.filePattern = filePattern;
         this.parser = parser;
-        this.isMavenBuild = isMavenBuild;
-        this.moduleName = moduleName;
-        pluginId = "[ANALYSIS] ";
-        canResolveRelativePaths = true;
-    }
-
-    private FilesParser(final String pluginId, final String filePattern,
-                        final AnnotationParser parser, final boolean shouldDetectModules,
-                        final boolean isMavenBuild, final String moduleName,
-                        final boolean canResolveRelativePaths) {
-        this.pluginId = pluginId;
-        this.filePattern = filePattern;
-        this.parser = parser;
-        this.isMavenBuild = isMavenBuild;
-        this.moduleName = moduleName;
         this.shouldDetectModules = shouldDetectModules;
-        this.canResolveRelativePaths = canResolveRelativePaths;
-    }
-
-    /**
-     * Creates a new instance of {@link hudson.plugins.analysis.core.FilesParser}. Since no file pattern is
-     * given, this parser assumes that it is invoked on a file rather than on a
-     * directory.
-     *
-     * @param pluginId
-     *            the ID of the plug-in that uses this parser
-     * @param parser
-     *            the parser to apply on the found files
-     * @param moduleName
-     *            the name of the module to use for all files
-     */
-    public FilesParser(final String pluginId, final AnnotationParser parser, final String moduleName) {
-        this(pluginId, "", parser, true, true, moduleName, true);
-    }
-
-    /**
-     * Creates a new instance of {@link hudson.plugins.analysis.core.FilesParser}.
-     *
-     * @param pluginId
-     *            the ID of the plug-in that uses this parser
-     * @param filePattern
-     *            ant file-set pattern to scan for files to parse
-     * @param parser
-     *            the parser to apply on the found files
-     * @param moduleName
-     *            the name of the module to use for all files
-     */
-    public FilesParser(final String pluginId, final String filePattern,
-                       final AnnotationParser parser, final String moduleName) {
-        this(pluginId, filePattern, parser, true, true, moduleName, true);
-    }
-
-    /**
-     * Creates a new instance of {@link hudson.plugins.analysis.core.FilesParser}.
-     *
-     * @param pluginId
-     *            the ID of the plug-in that uses this parser
-     * @param filePattern
-     *            ant file-set pattern to scan for files to parse
-     * @param parser
-     *            the parser to apply on the found files
-     * @param shouldDetectModules
-     *            determines whether modules should be detected from pom.xml or
-     *            build.xml files
-     */
-    public FilesParser(final String pluginId, final String filePattern,
-                       final AnnotationParser parser, final boolean shouldDetectModules) {
-        this(pluginId, filePattern, parser, shouldDetectModules, false);
-    }
-
-    /**
-     * Creates a new instance of {@link hudson.plugins.analysis.core.FilesParser}.
-     *
-     * @param pluginId
-     *            the ID of the plug-in that uses this parser
-     * @param filePattern
-     *            ant file-set pattern to scan for files to parse
-     * @param parser
-     *            the parser to apply on the found files
-     * @param shouldDetectModules
-     *            determines whether modules should be detected from pom.xml or
-     *            build.xml files
-     * @param isMavenBuild
-     *            determines whether this build uses maven
-     */
-    public FilesParser(final String pluginId, final String filePattern,
-                       final AnnotationParser parser, final boolean shouldDetectModules,
-                       final boolean isMavenBuild) {
-        this(pluginId, filePattern, parser, shouldDetectModules, isMavenBuild, true);
-    }
-
-    /**
-     * Creates a new instance of {@link hudson.plugins.analysis.core.FilesParser}.
-     *
-     * @param pluginId
-     *            the ID of the plug-in that uses this parser
-     * @param filePattern
-     *            ant file-set pattern to scan for files to parse
-     * @param parser
-     *            the parser to apply on the found files
-     * @param shouldDetectModules
-     *            determines whether modules should be detected from pom.xml or
-     *            build.xml files
-     * @param isMavenBuild
-     *            determines whether this build uses maven
-     * @param canResolveRelativePaths
-     *            determines whether relative paths in warnings should be
-     *            resolved using a time expensive operation that scans the whole
-     *            workspace for matching files.
-     */
-    public FilesParser(final String pluginId, final String filePattern,
-                       final AnnotationParser parser, final boolean shouldDetectModules,
-                       final boolean isMavenBuild, final boolean canResolveRelativePaths) {
-        this(pluginId, filePattern, parser, shouldDetectModules, isMavenBuild, StringUtils.EMPTY,
-                canResolveRelativePaths);
-    }
-
-    /**
-     * Logs the specified message.
-     *
-     * @param message
-     *            the message
-     */
-    protected void log(final String message) {
-        if (stringLogger == null) {
-            stringLogger = new StringPluginLogger(pluginId);
-        }
-        stringLogger.log(message);
-    }
-
-    /**
-     * Creates a formatted message in singular or plural form.
-     *
-     * @param count
-     *            the number of occurrences
-     * @param message
-     *            the message containing the format in singular form
-     * @return
-     *            the message in singular or plural form depending on the count,
-     *            or an empty string if the count is 0 and no format is specified
-     */
-    protected String plural(final int count, final String message) {
-        if (count == 0 && !message.contains("%")) {
-            return "";
-        }
-
-        String messageFormat = message;
-
-        if (count != 1) {
-            messageFormat += "s";
-        }
-
-        return String.format(messageFormat, count);
     }
 
     @Override
-    public ParserResult invoke(final File workspace, final VirtualChannel channel)
-            throws IOException {
-        ParserResult result = new ParserResult(new FilePath(workspace), canResolveRelativePaths);
-        result.setId(pluginId);
-        try {
-            if (StringUtils.isBlank(filePattern)) {
-                parseSingleFile(workspace, result);
-            }
-            else {
-                parserCollectionOfFiles(workspace, result);
-            }
-        }
-        catch (InterruptedException exception) {
-            log("Parsing has been canceled.");
-        }
+    public Issues invoke(final File workspace, final VirtualChannel channel) throws IOException {
+        Issues issues = new Issues();
+        issues.log("Searching for all files in '%s' that match the pattern '%s'.",
+                workspace.getAbsolutePath(), filePattern);
 
-        if (stringLogger != null) {
-            result.setLog(stringLogger.toString());
-        }
-
-        for (FileAnnotation annotation : result.getAnnotations()) {
-            annotation.setPathName(workspace.getAbsolutePath());
-        }
-        return result;
-    }
-
-    private void parserCollectionOfFiles(final File workspace, final ParserResult result) throws InterruptedException {
-        log("Searching for all files in " + workspace.getAbsolutePath() + " that match the pattern " + filePattern);
         String[] fileNames = new FileFinder(filePattern).find(workspace);
-
         if (fileNames.length == 0) {
-            log("No files found. Configuration error?");
-            if (!isMavenBuild) {
-                result.addErrorMessage(Messages.FilesParser_Error_NoFiles());
-            }
+            issues.log("No files found. Configuration error?");
         }
         else {
-            log("Parsing " + plural(fileNames.length, "%d file") + " in " + workspace.getAbsolutePath());
-            parseFiles(workspace, fileNames, result);
+            issues.log("Parsing " + plural(fileNames.length, "%d file") + " in " + workspace.getAbsolutePath());
+            parseFiles(workspace, fileNames, issues);
         }
-    }
 
-    private void parseSingleFile(final File workspace, final ParserResult result) throws InterruptedException {
-        String[] fileNames = new String[] {workspace.getAbsolutePath()};
-        log("Parsing file " + workspace.getAbsolutePath());
-        parseFiles(workspace, fileNames, result);
+        issues.setPath(workspace.getAbsolutePath());
+
+        return issues;
     }
 
     /**
-     * Parses the specified collection of files and appends the results to the
-     * provided container.
+     * Parses the specified collection of files and appends the results to the provided container.
      *
      * @param workspace
-     *            the workspace root
+     *         the workspace root
      * @param fileNames
-     *            the names of the file to parse
-     * @param result
-     *            the result of the parsing
-     * @throws InterruptedException
-     *             if the user cancels the parsing
+     *         the names of the file to parse
+     * @param issues
+     *         the issues of the parsing
      */
-    private void parseFiles(final File workspace, final String[] fileNames,
-            final ParserResult result) throws InterruptedException {
+    private void parseFiles(final File workspace, final String[] fileNames, final Issues issues) {
         ModuleDetector detector = createModuleDetector(workspace);
 
         for (String fileName : fileNames) {
@@ -284,24 +87,17 @@ public class FilesParser extends MasterToSlaveFileCallable<ParserResult> {
                 file = new File(workspace, fileName);
             }
 
-            String module = getModuleName(detector, file);
+            String module = detector.guessModuleName(file.getAbsolutePath());
 
             if (!file.canRead()) {
-                String message = Messages.FilesParser_Error_NoPermission(module, file);
-                log(message);
-                result.addErrorMessage(module, message);
-                continue;
+                issues.log(Messages.FilesParser_Error_NoPermission(module, file));
             }
-            if (file.length() <= 0) {
-                String message = Messages.FilesParser_Error_EmptyFile(module, file);
-                log(message);
-                result.addErrorMessage(module, message);
-                continue;
+            else if (file.length() <= 0) {
+                issues.log(Messages.FilesParser_Error_EmptyFile(module, file));
             }
-
-            parseFile(file, module, result);
-
-            result.addModule(module);
+            else {
+                parseFile(file, module, issues);
+            }
         }
     }
 
@@ -314,160 +110,57 @@ public class FilesParser extends MasterToSlaveFileCallable<ParserResult> {
         }
     }
 
-    private String getModuleName(final ModuleDetector detector, final File file) {
-        String module;
-        if (StringUtils.isBlank(moduleName)) {
-            module = detector.guessModuleName(file.getAbsolutePath());
+    /**
+     * Creates a formatted message in singular or plural form.
+     *
+     * @param count
+     *         the number of occurrences
+     * @param message
+     *         the message containing the format in singular form
+     *
+     * @return the message in singular or plural form depending on the count, or an empty string if the count is 0 and
+     *         no format is specified
+     */
+    private String plural(final int count, final String message) {
+        if (count == 0 && !message.contains("%")) {
+            return "";
         }
-        else {
-            module = moduleName;
+
+        String messageFormat = message;
+        if (count != 1) {
+            messageFormat += "s";
         }
-        return module;
+
+        return String.format(messageFormat, count);
     }
 
     /**
-     * Parses the specified file and stores all found annotations. If the file
-     * could not be parsed then an error message is appended to the result.
+     * Parses the specified file and stores all found annotations. If the file could not be parsed then an error message
+     * is appended to the issues.
      *
      * @param file
-     *            the file to parse
+     *         the file to parse
      * @param module
-     *            the associated module
-     * @param result
-     *            the result of the parser
-     * @throws InterruptedException
-     *             if the user cancels the parsing
+     *         the associated module
+     * @param issues
+     *         the issues of the parser
      */
-    private void parseFile(final File file, final String module, final ParserResult result)
-            throws InterruptedException {
+    private void parseFile(final File file, final String module, final Issues issues) {
         try {
-            Collection<FileAnnotation> annotations = parser.parse(file, module);
-            int duplicateCount = annotations.size() - result.addAnnotations(annotations);
+            Issues annotations = parser.parse(file, module);
+
+            int duplicateCount = annotations.getSize() - issues.addAll(annotations.all()).size();
             int moduleCount = StringUtils.isBlank(module) ? 0 : 1;
 
-            log("Successfully parsed file " + file + plural(moduleCount, " of module " + module) + " with "
-                    + plural(result.getNumberOfAnnotations(), "%d unique warning")
+            issues.log("Successfully parsed file " + file + plural(moduleCount, " of module " + module)
+                    + " with " + plural(issues.getSize(), "%d unique warning")
                     + plural(duplicateCount, " and %d duplicate") + ".");
         }
         catch (InvocationTargetException exception) {
-            String errorMessage = Messages.FilesParser_Error_Exception(file)
-                    + "\n\n"
-                    + ExceptionUtils.getStackTrace((Throwable)ObjectUtils.defaultIfNull(
-                            exception.getCause(), exception));
-            result.addErrorMessage(module, errorMessage);
-
-            log(errorMessage);
+            issues.log(Messages.FilesParser_Error_Exception(file) + "\n\n"
+                    + ExceptionUtils.getStackTrace((Throwable) ObjectUtils.defaultIfNull(
+                    exception.getCause(), exception)));
         }
     }
 
-    /**
-     * Creates a new instance of {@link hudson.plugins.analysis.core.FilesParser}.
-     *
-     * @param logger
-     *            the logger
-     * @param filePattern
-     *            ant file-set pattern to scan for files to parse
-     * @param parser
-     *            the parser to apply on the found files
-     * @param isMavenBuild
-     *            determines whether this build uses maven
-     * @deprecated Use
-     *             {@link #FilesParser(String, String, AnnotationParser, boolean, boolean)}
-     */
-    @Deprecated
-    @SuppressWarnings("PMD")
-    public FilesParser(final PluginLogger logger, final String filePattern,
-                       final AnnotationParser parser, final boolean isMavenBuild) {
-        this(filePattern, parser, isMavenBuild, StringUtils.EMPTY);
-    }
-
-    /**
-     * Creates a new instance of {@link hudson.plugins.analysis.core.FilesParser}. Assumes that this is a
-     * Maven build with the specified module name.
-     *
-     * @param logger
-     *            the logger
-     * @param filePattern
-     *            ant file-set pattern to scan for files to parse
-     * @param parser
-     *            the parser to apply on the found files
-     * @param moduleName
-     *            the name of the module to use for all files
-     * @deprecated Use
-     *             {@link #FilesParser(String, String, AnnotationParser, boolean, boolean)}
-     */
-    @Deprecated
-    @SuppressWarnings("PMD")
-    public FilesParser(final PluginLogger logger, final String filePattern,
-                       final AnnotationParser parser, final String moduleName) {
-        this(filePattern, parser, true, moduleName);
-    }
-
-    /**
-     * Creates a new instance of {@link hudson.plugins.analysis.core.FilesParser}. Assumes that this is a
-     * Maven build with the specified module name.
-     *
-     * @param logger
-     *            the logger
-     * @param filePattern
-     *            ant file-set pattern to scan for files to parse
-     * @param parser
-     *            the parser to apply on the found files
-     * @deprecated Use
-     *             {@link #FilesParser(String, String, AnnotationParser, boolean, boolean)}
-     */
-    @Deprecated
-    @SuppressWarnings("PMD")
-    public FilesParser(final PluginLogger logger, final String filePattern,
-                       final AnnotationParser parser) {
-        this(filePattern, parser, true, StringUtils.EMPTY);
-
-        shouldDetectModules = false;
-    }
-
-    /**
-     * Creates a new instance of {@link hudson.plugins.analysis.core.FilesParser}.
-     *
-     * @param logger
-     *            the logger
-     * @param filePattern
-     *            ant file-set pattern to scan for files to parse
-     * @param parser
-     *            the parser to apply on the found files
-     * @param moduleName
-     *            the name of the module to use for all files
-     * @deprecated Use
-     *             {@link #FilesParser(String, String, AnnotationParser, boolean, boolean)}
-     */
-    @Deprecated
-    @SuppressWarnings("PMD")
-    public FilesParser(final StringPluginLogger logger, final String filePattern,
-                       final AnnotationParser parser, final String moduleName) {
-        this(filePattern, parser, true, moduleName);
-    }
-
-    /**
-     * Creates a new instance of {@link hudson.plugins.analysis.core.FilesParser}.
-     *
-     * @param logger
-     *            the logger
-     * @param filePattern
-     *            ant file-set pattern to scan for files to parse
-     * @param parser
-     *            the parser to apply on the found files
-     * @param shouldDetectModules
-     *            determines whether modules should be detected from pom.xml or
-     *            build.xml files
-     * @param isMavenBuild
-     *            determines whether this build uses maven
-     * @deprecated Use
-     *             {@link #FilesParser(String, String, AnnotationParser, boolean, boolean)}
-     */
-    @Deprecated
-    @SuppressWarnings("PMD")
-    public FilesParser(final StringPluginLogger logger, final String filePattern,
-                       final AnnotationParser parser, final boolean shouldDetectModules,
-                       final boolean isMavenBuild) {
-        this(filePattern, parser, isMavenBuild, StringUtils.EMPTY);
-    }
 }
