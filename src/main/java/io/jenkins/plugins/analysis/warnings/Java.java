@@ -2,17 +2,16 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.List;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 
 import hudson.Extension;
-import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.warnings.WarningsDescriptor;
 import hudson.plugins.warnings.parser.AbstractWarningsParser;
 import hudson.plugins.warnings.parser.FileWarningsParser;
@@ -27,6 +26,7 @@ import hudson.plugins.warnings.parser.ParserRegistry;
 public class Java extends StaticAnalysisTool {
     private static final String JAVA_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-24x24.png";
     private static final String JAVA_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-48x48.png";
+    private static final String ID = "java";
 
     @DataBoundConstructor
     public Java() {
@@ -34,10 +34,12 @@ public class Java extends StaticAnalysisTool {
     }
 
     @Override
-    public Collection<FileAnnotation> parse(final File file, final String moduleName) throws InvocationTargetException {
+    public Issues parse(final File file, final String moduleName) throws InvocationTargetException {
         List<AbstractWarningsParser> parsers = ParserRegistry.getParsers("Java Compiler");
 
-        return new FileWarningsParser(parsers, getDefaultEncoding()).parse(file, moduleName);
+        // FIXME: use new parsers from model!
+        Issues issues = new FileWarningsParser(parsers, getDefaultEncoding()).parseIssues(file, moduleName);
+        return issues.withOrigin(ID);
     }
 
     /** Registers this tool as extension point implementation. */
@@ -54,7 +56,7 @@ public class Java extends StaticAnalysisTool {
 
     public static class JavaLabelProvider extends DefaultLabelProvider {
         public JavaLabelProvider() {
-            super("java");
+            super(ID);
         }
 
         public JavaLabelProvider(final String id) {

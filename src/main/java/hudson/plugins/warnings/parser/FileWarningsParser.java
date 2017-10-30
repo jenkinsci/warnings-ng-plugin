@@ -6,8 +6,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 
+import edu.hm.hafner.analysis.Issues;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import hudson.plugins.analysis.core.AbstractAnnotationParser;
 import hudson.plugins.analysis.core.AnnotationParser;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 
@@ -36,6 +38,10 @@ public class FileWarningsParser implements AnnotationParser {
     public FileWarningsParser(final List<AbstractWarningsParser> parsers, final String defaultEncoding) {
         this.parsers = parsers;
         this.defaultEncoding = defaultEncoding;
+    }
+
+    public Issues parseIssues(final File file, final String moduleName) throws InvocationTargetException {
+        return AbstractAnnotationParser.toIssues(parse(file, moduleName));
     }
 
     @Override

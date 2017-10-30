@@ -2,13 +2,13 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.List;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.Issues;
+
 import hudson.Extension;
-import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.warnings.parser.AbstractWarningsParser;
 import hudson.plugins.warnings.parser.FileWarningsParser;
 import hudson.plugins.warnings.parser.Messages;
@@ -20,16 +20,19 @@ import hudson.plugins.warnings.parser.ParserRegistry;
  * @author Ullrich Hafner
  */
 public class JavaDoc extends Java {
+    private static final String ID = "javadoc";
+
     @DataBoundConstructor
     public JavaDoc() {
         // empty constructor required for stapler
     }
 
     @Override
-    public Collection<FileAnnotation> parse(final File file, final String moduleName) throws InvocationTargetException {
+    public Issues parse(final File file, final String moduleName) throws InvocationTargetException {
         List<AbstractWarningsParser> parsers = ParserRegistry.getParsers("JavaDoc");
 
-        return new FileWarningsParser(parsers, getDefaultEncoding()).parse(file, moduleName);
+        Issues issues = new FileWarningsParser(parsers, getDefaultEncoding()).parseIssues(file, moduleName);
+        return issues.withOrigin(ID);
     }
 
     /** Registers this tool as extension point implementation. */
@@ -42,7 +45,7 @@ public class JavaDoc extends Java {
 
     public static class JavaDocLabelProvider extends JavaLabelProvider {
         public JavaDocLabelProvider() {
-            super("javadoc");
+            super(ID);
         }
 
         @Override
