@@ -1,0 +1,61 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:u="/util"
+  xmlns:i="jelly:fmt" xmlns:local="local">
+  <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+  <table class="pane sortable" id="warnings">
+    <tr>
+      <td class="pane-header">${%File}</td>
+      <j:if test="${it.container.modules.size() > 1}">
+        <td class="pane-header">${%Module}</td>
+      </j:if>
+      <j:if test="${it.container.packages.size() > 1}">
+        <td class="pane-header">${it.container.packageCategoryName}</td>
+      </j:if>
+      <td class="pane-header">${%Priority}</td>
+      <td class="pane-header">${%Age}</td>
+      <td class="pane-header">${%Author}</td>
+      <td class="pane-header">${%commit-id}</td>
+    </tr>
+    <tbody>
+      <j:forEach var="warning" items="${it.container.sortedAnnotations}">
+        <tr>
+          <td class="pane">
+            <div tooltip="${warning.message}">
+              <u:sourceLink it="${it}" warning="${warning}"/>
+            </div>
+          </td>
+          <j:if test="${it.container.modules.size() > 1}">
+            <td class="pane">
+              <div tooltip="${warning.message}"> <a href="module.${warning.moduleName.hashCode()}/">${warning.moduleName}</a> </div>
+            </td>
+          </j:if>
+          <j:if test="${it.container.packages.size() > 1}">
+            <td class="pane">
+              <div tooltip="${warning.message}"> <a href="package.${warning.packageName.hashCode()}/">${warning.packageName}</a> </div>
+            </td>
+          </j:if>
+          <td class="pane">
+            <div tooltip="${warning.message}"> ${warning.priority.localizedString} </div>
+          </td>
+          <td class="pane">
+            <j:choose>
+              <j:when test="${warning.build != 0}">
+                <a href="${it.getBuildUrl(warning.build)}" class="model-link inside">${it.getAge(warning.build)}</a>
+              </j:when>
+              <j:otherwise>
+                ${%N/A}
+              </j:otherwise>
+            </j:choose>
+          </td>
+          <td class="pane">
+            <div tooltip="${it.container.escape(warning.authorDetails)}"> <a href="author.${warning.author.hashCode()}/">${warning.author}</a> </div>
+          </td>
+          <td class="pane">
+            <div tooltip="${warning.commitId}"> ${warning.commitDetails} </div>
+          </td>
+        </tr>
+      </j:forEach>
+    </tbody>
+  </table>
+</j:jelly>

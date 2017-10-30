@@ -1,0 +1,28 @@
+<?jelly escape-by-default='true'?>
+<!-- Section header -->
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues">
+
+  <h2>${%Warnings Trend}</h2>
+
+  <table class="pane" id="trend.summary">
+    <tr>
+      <td class="pane-header">${%All Issues}</td>
+      <td class="pane-header">${%New Issues}</td>
+      <td class="pane-header">${%Fixed Issues}</td>
+    </tr>
+    <tbody>
+      <tr>
+        <td class="pane" id="all">
+          ${size(it.issues)}
+        </td>
+        <td class="pane" id="new">
+          <i:numberLink url="new" value="${size(it.newIssues)}"/>
+        </td>
+        <td class="pane" id="fixed">
+          <i:numberLink url="fixed" value="${size(it.fixedIssues)}"/>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</j:jelly>

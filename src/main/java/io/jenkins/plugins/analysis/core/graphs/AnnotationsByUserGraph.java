@@ -16,11 +16,12 @@ import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.data.category.CategoryDataset;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.util.DataSetBuilder;
 
 /**
@@ -93,9 +94,10 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
 
     private void mergeResults(final Optional<AnalysisResult> current, final Map<String, Integer[]> annotationCountByUser) {
         current.ifPresent(analysisResult -> {
-            Collection<FileAnnotation> annotations = analysisResult.getAnnotations();
-            for (FileAnnotation annotation : annotations) {
-                String author = annotation.getAuthor();
+            Issues issues = analysisResult.getProject();
+            for (Issue annotation : issues) {
+//                String author = annotation.getAuthor(); FIXME: no author anymore
+                String author = "FIXME";
                 if (StringUtils.isNotBlank(author) && !"-".equals(author)) {
                     annotationCountByUser.computeIfAbsent(author, k -> new Integer[]{0, 0, 0});
                     Integer[] priorities = annotationCountByUser.get(author);

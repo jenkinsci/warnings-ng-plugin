@@ -4,9 +4,10 @@ import java.io.Serializable;
 
 import org.jvnet.localizer.Localizable;
 
+import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
+
 import hudson.model.HealthReport;
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.util.model.AnnotationProvider;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
@@ -42,7 +43,7 @@ public class HealthReportBuilder implements Serializable {
      *
      * @return the healthiness of a build
      */
-    public HealthReport computeHealth(final AnnotationProvider result) {
+    public HealthReport computeHealth(final AnalysisResult result) {
         int numberOfAnnotations = 0;
         for (Priority priority : Priority.collectPrioritiesFrom(healthDescriptor.getMinimumPriority())) {
             numberOfAnnotations += result.getNumberOfAnnotations(priority);
@@ -70,7 +71,7 @@ public class HealthReportBuilder implements Serializable {
     }
 
 
-    private Localizable getDescription(final AnnotationProvider result) {
+    private Localizable getDescription(final AnalysisResult result) {
         String name = "Static Analysis"; // FIXME: extract from IssueParser.find(id)
         if (result.getNumberOfAnnotations() == 0) {
             return Messages._ResultAction_HealthReportNoItem(name);

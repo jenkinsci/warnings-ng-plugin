@@ -18,6 +18,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import com.google.common.collect.Sets;
 
+import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool.StaticAnalysisToolDescriptor;
 import io.jenkins.plugins.analysis.core.util.FilesParser;
 import jenkins.model.Jenkins;
@@ -28,7 +29,6 @@ import hudson.FilePath;
 import hudson.Util;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.NullLogger;
 import hudson.plugins.analysis.util.PluginLogger;
 
@@ -117,7 +117,7 @@ public class ScanForIssuesStep extends Step {
         return new Execution(stepContext, this);
     }
 
-    public static class Execution extends SynchronousNonBlockingStepExecution<ParserResult> {
+    public static class Execution extends SynchronousNonBlockingStepExecution<Issues> {
         private final String defaultEncoding;
         private final boolean shouldDetectModules;
         private final StaticAnalysisTool tool;
@@ -147,7 +147,7 @@ public class ScanForIssuesStep extends Step {
         }
 
         @Override
-        protected ParserResult run() throws Exception {
+        protected Issues run() throws IOException, InterruptedException, IllegalStateException, InvocationTargetException {
             FilePath workspace = getContext().get(FilePath.class);
 
             if (workspace == null) {
@@ -163,34 +163,35 @@ public class ScanForIssuesStep extends Step {
             }
         }
 
-        private ParserResult scanConsoleLog(final FilePath workspace) throws IOException, InterruptedException, InvocationTargetException {
+        private Issues scanConsoleLog(final FilePath workspace) throws IOException, InterruptedException, InvocationTargetException {
             PluginLogger logger = createPluginLogger();
             logger.format("Parsing console log (in workspace '%s')", workspace);
 
-            ParserResult result = new ParserResult(workspace);
-            result.setId(tool.getId());
-            result.addAnnotations(tool.parse(getRun().getLogFile(), StringUtils.EMPTY));
-            int modulesSize = result.getModules().size();
+            Issues issues = new Issues(workspace.getName()); // TODO: Mix of FilePath and File
+            // issues.setId(tool.getId()); TODO value of issue?
+            issues.addAll(tool.parse(getRun().getLogFile(), StringUtils.EMPTY));
+
+            int modulesSize = issues.getProperties(issue -> issue.getModuleName()).size();
             if (modulesSize > 0) {
                 logger.format("Successfully parsed console log: found %d issues in %d modules",
-                        result.getNumberOfAnnotations(), modulesSize);
+                        issues.getSize(), modulesSize);
             }
             else {
-                logger.format("Successfully parsed console log: found %d issues", result.getNumberOfAnnotations());
+                logger.format("Successfully parsed console log: found %d issues", issues.getSize());
             }
 
-            return result;
+            return issues;
         }
 
-        private ParserResult scanFiles(final FilePath workspace) throws IOException, InterruptedException {
-            FilesParser parser = new FilesParser(tool.getName(), expandEnvironmentVariables(pattern), tool, shouldDetectModules);
-            ParserResult result = workspace.act(parser);
-            result.setId(tool.getId()); // FIXME: only at one place
+        private Issues scanFiles(final FilePath workspace) throws IOException, InterruptedException {
+            FilesParser parser = new FilesParser(expandEnvironmentVariables(pattern), tool, shouldDetectModules);
+            Issues issues = workspace.act(parser);
 
+            // FIXME: here we have no prefix for the logger since lines are just dumped
             PluginLogger logger = createPluginLogger();
-            logger.logLines(result.getLogMessages());
+            logger.logLines(issues.getLogMessages());
 
-            return result;
+            return issues;
         }
 
         /** Maximum number of times that the environment expansion is executed. */

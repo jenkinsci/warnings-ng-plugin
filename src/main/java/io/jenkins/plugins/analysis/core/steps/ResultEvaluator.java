@@ -1,14 +1,13 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.util.Collection;
 import java.util.Optional;
+
+import edu.hm.hafner.analysis.Issues;
 
 import hudson.model.Result;
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.core.BuildResultEvaluator;
 import hudson.plugins.analysis.core.Thresholds;
 import hudson.plugins.analysis.util.PluginLogger;
-import hudson.plugins.analysis.util.model.FileAnnotation;
 
 /**
  * Evaluates the build result using the defined thresholds.
@@ -46,16 +45,15 @@ public class ResultEvaluator extends BuildResultEvaluator {
     }
 
     // FIXME: i18n of reason
-    public Evaluation evaluate(final Optional<AnalysisResult> previousResult, Collection<FileAnnotation> issues,
-            Collection<FileAnnotation> newIssues) {
+    public Evaluation evaluate(final Optional<AnalysisResult> previousResult, Issues allIssues, Issues newIssues) {
         StringBuilder messages = new StringBuilder();
         Result result;
         if (!previousResult.isPresent()) {
             logger.log("Ignoring new issues since this is the first valid build");
-            result = evaluateBuildResult(messages, thresholds, issues);
+            result = evaluateBuildResult(messages, thresholds, allIssues);
         }
         else {
-            result = evaluateBuildResult(messages, thresholds, issues, newIssues);
+            result = evaluateBuildResult(messages, thresholds, allIssues, newIssues);
         }
         String reason = messages.toString();
         logger.log(String.format("%s %s - %s", Messages.ResultAction_Status(), result.color.getDescription(), reason));
@@ -74,5 +72,4 @@ public class ResultEvaluator extends BuildResultEvaluator {
             this.reason = reason;
         }
     }
-
 }

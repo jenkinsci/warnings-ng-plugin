@@ -4,46 +4,33 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import com.thoughtworks.xstream.XStream;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueDifference;
+import edu.hm.hafner.analysis.Issues;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.steps.ResultEvaluator.Evaluation;
 
 import hudson.XmlFile;
 import hudson.model.Api;
-import hudson.model.ModelObject;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.plugins.analysis.core.GlobalSettings;
 import hudson.plugins.analysis.core.HealthDescriptor;
-import hudson.plugins.analysis.core.IssueDifference;
-import hudson.plugins.analysis.core.ParserResult;
-import hudson.plugins.analysis.util.model.AnnotationContainer;
-import hudson.plugins.analysis.util.model.AnnotationProvider;
 import hudson.plugins.analysis.util.model.AnnotationStream;
-import hudson.plugins.analysis.util.model.AnnotationsLabelProvider;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.JavaProject;
 import hudson.plugins.analysis.util.model.Priority;
-import hudson.plugins.analysis.views.DetailFactory;
 
 /**
  * A base class for build results that is capable of storing a reference to the current build. Provides support for
@@ -55,7 +42,7 @@ import hudson.plugins.analysis.views.DetailFactory;
 //CHECKSTYLE:COUPLING-OFF
 @ExportedBean
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength"})
-public class AnalysisResult implements ModelObject, Serializable, AnnotationProvider, StaticAnalysisRun2 {
+public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     private static final long serialVersionUID = 1110545450292087475L;
     private static final Logger LOGGER = Logger.getLogger(AnalysisResult.class.getName());
 
@@ -67,13 +54,13 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
 
     /** The project containing the annotations. */
     @SuppressFBWarnings("Se")
-    private transient WeakReference<JavaProject> project;
+    private transient WeakReference<Issues> project;
     /** All new warnings in the current build. */
     @SuppressFBWarnings("Se")
-    private transient WeakReference<Collection<FileAnnotation>> newWarningsReference;
+    private transient WeakReference<Issues> newWarningsReference;
     /** All fixed warnings in the current build. */
     @SuppressFBWarnings("Se")
-    private transient WeakReference<Collection<FileAnnotation>> fixedWarningsReference;
+    private transient WeakReference<Issues> fixedWarningsReference;
 
     /** All parsed modules. */
     private final ImmutableSet<String> modules;
@@ -152,16 +139,8 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      */
     public AnalysisResult(final String id, final String name, final Run run, final ReferenceProvider referenceProvider,
             final Optional<AnalysisResult> previousResult, final ResultEvaluator resultEvaluator, final String defaultEncoding,
-            final ParserResult... issues) {
-        this(id, name, run, referenceProvider, previousResult, resultEvaluator, defaultEncoding, merge(issues), true);
-    }
-
-    private static ParserResult merge(final ParserResult... issues) {
-        ParserResult merged = issues[0];
-        for (int i = 1; i < issues.length; i++) {
-            merged.addProject(issues[i]);
-        }
-        return merged;
+            final Issues... issues) {
+        this(id, name, run, referenceProvider, previousResult, resultEvaluator, defaultEncoding, Issues.merge(issues), true);
     }
 
     /**
@@ -175,46 +154,44 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
     // FIXME: should we ignore the result in previousResult?
     protected AnalysisResult(final String id, final String name, final Run<?, ?> build, final ReferenceProvider referenceProvider,
             final Optional<AnalysisResult> previousResult, final ResultEvaluator resultEvaluator, final String defaultEncoding,
-            final ParserResult result, final boolean canSerialize) {
+            final Issues result, final boolean canSerialize) {
         this.id = id;
         this.name = name;
         run = build;
         this.defaultEncoding = defaultEncoding;
 
-        modules = ImmutableSet.copyOf(result.getModules());
+        modules = ImmutableSet.copyOf(result.getProperties(issue -> issue.getModuleName()));
         numberOfModules = modules.size();
 
-        errors = ImmutableList.copyOf(result.getErrorMessages());
+        // errors = ImmutableList.copyOf(result.getLogMessages()); FIXME: errors and log?
+        errors = ImmutableList.of();
 
-        numberOfWarnings = result.getNumberOfAnnotations();
+        numberOfWarnings = result.getSize();
 
-        highWarnings = result.getNumberOfAnnotations(Priority.HIGH);
-        normalWarnings = result.getNumberOfAnnotations(Priority.NORMAL);
-        lowWarnings = result.getNumberOfAnnotations(Priority.LOW);
+        highWarnings = result.getHighPrioritySize();
+        normalWarnings = result.getNormalPrioritySize();
+        lowWarnings = result.getLowPrioritySize();
 
         referenceBuild = referenceProvider.getNumber();
-        AnnotationContainer referenceResult = referenceProvider.getIssues();
+        Issues referenceResult = referenceProvider.getIssues();
 
-        Set<FileAnnotation> allWarnings = result.getAnnotations();
-        JavaProject container = new JavaProject();
-        container.addAnnotations(allWarnings);
-        project = new WeakReference<>(container);
+        project = new WeakReference<>(result);
 
-        IssueDifference difference = new IssueDifference(allWarnings, referenceResult.getAnnotations());
-        Set<FileAnnotation> newWarnings = difference.getNewIssues();
-        for (FileAnnotation newWarning : newWarnings) {
-            newWarning.setBuild(build.getNumber());
-        }
+        IssueDifference difference = new IssueDifference(result, referenceResult);
+        Issues newWarnings = difference.getNewIssues();
+//        FIXME: build is no property of issue? Generic property or subclass.
+//        for (FileAnnotation newWarning : newWarnings) {
+//            newWarning.setBuild(build.getNumber());
+//        }
 
-        ParserResult newWarningsResult = new ParserResult(newWarnings);
-        numberOfNewWarnings = newWarnings.size();
-        highNewWarnings = newWarningsResult.getNumberOfAnnotations(Priority.HIGH);
-        normalNewWarnings = newWarningsResult.getNumberOfAnnotations(Priority.NORMAL);
-        lowNewWarnings = newWarningsResult.getNumberOfAnnotations(Priority.LOW);
+        numberOfNewWarnings = newWarnings.getSize();
+        highNewWarnings = newWarnings.getHighPrioritySize();
+        normalNewWarnings = newWarnings.getNormalPrioritySize();
+        lowNewWarnings = newWarnings.getLowPrioritySize();
         newWarningsReference = new WeakReference<>(newWarnings);
 
-        Set<FileAnnotation> fixedWarnings = difference.getFixedIssues();
-        numberOfFixedWarnings = fixedWarnings.size();
+        Issues fixedWarnings = difference.getFixedIssues();
+        numberOfFixedWarnings = fixedWarnings.getSize();
         fixedWarningsReference = new WeakReference<>(fixedWarnings);
 
         computeZeroWarningsHighScore(build, result, previousResult);
@@ -222,7 +199,7 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
         evaluateStatus(resultEvaluator, previousResult);
 
         if (canSerialize) {
-            serializeAnnotations(allWarnings, fixedWarnings);
+            serializeAnnotations(result, fixedWarnings);
         }
     }
 
@@ -233,12 +210,12 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      * @param build
      *         the current build
      */
-    private void computeZeroWarningsHighScore(final Run<?, ?> build, final ParserResult currentResult,
+    private void computeZeroWarningsHighScore(final Run<?, ?> build, final Issues currentResult,
             final Optional<AnalysisResult> previousResult) {
         if (previousResult.isPresent()) {
             AnalysisResult previous = previousResult.get();
-            if (currentResult.hasNoAnnotations()) {
-                if (previous.hasNoAnnotations()) {
+            if (currentResult.isEmpty()) {
+                if (previous.getNumberOfWarnings() == 0) {
                     zeroWarningsSinceBuild = previous.getZeroWarningsSinceBuild();
                     zeroWarningsSinceDate = previous.getZeroWarningsSinceDate();
                 }
@@ -265,7 +242,7 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
             }
         }
         else {
-            if (currentResult.hasNoAnnotations()) {
+            if (currentResult.isEmpty()) {
                 zeroWarningsSinceBuild = build.getNumber();
                 zeroWarningsSinceDate = build.getTimestamp().getTimeInMillis();
                 isZeroWarningsHighScore = true;
@@ -281,7 +258,7 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      */
     private void evaluateStatus(final ResultEvaluator resultEvaluator, final Optional<AnalysisResult> previousResult) {
         if (resultEvaluator.isEnabled()) {
-            Evaluation result = resultEvaluator.evaluate(previousResult, getAnnotations(), getNewWarnings());
+            Evaluation result = resultEvaluator.evaluate(previousResult, getProject(), getNewWarnings());
 
             reasonForPluginResult = result.reason;
             isSuccessfulStateTouched = true;
@@ -440,68 +417,18 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
         return run;
     }
 
-    @Override
-    public boolean hasAnnotations(final Priority priority) {
-        return getContainer().hasAnnotations(priority);
-    }
-
-    @Override
-    public boolean hasAnnotations(final String priority) {
-        return getContainer().hasAnnotations(priority);
-    }
-
-    @Override
-    public boolean hasAnnotations() {
-        return numberOfWarnings != 0;
-    }
-
-    @Override
-    public boolean hasNoAnnotations() {
-        return numberOfWarnings == 0;
-    }
-
-    @Override
-    public boolean hasNoAnnotations(final Priority priority) {
-        return getContainer().hasAnnotations(priority);
-    }
-
-    @Override
-    public boolean hasNoAnnotations(final String priority) {
-        return getContainer().hasAnnotations(priority);
-    }
-
-    @Override
-    @Exported(name = "issues")
-    public Set<FileAnnotation> getAnnotations() {
-        return getContainer().getAnnotations();
-    }
-
-    @Override
-    public FileAnnotation getAnnotation(final long key) {
-        return getContainer().getAnnotation(key);
-    }
-
-    @Override
-    public FileAnnotation getAnnotation(final String key) {
-        return getContainer().getAnnotation(key);
-    }
-
-    @Override
-    public Set<FileAnnotation> getAnnotations(final Priority priority) {
-        return getContainer().getAnnotations(priority);
-    }
-
-    private void serializeAnnotations(final Collection<FileAnnotation> annotations,
-            final Collection<FileAnnotation> fixedWarnings) {
+    private void serializeAnnotations(final Issues allIssues, final Issues fixedIssues) {
         try {
-            getDataFile().write(annotations.toArray(new FileAnnotation[annotations.size()]));
-
-            Set<FileAnnotation> allAnnotations = new HashSet<>();
-            allAnnotations.addAll(annotations);
-            getFixedDataFile().write(fixedWarnings.toArray(new FileAnnotation[fixedWarnings.size()]));
+            getDataFile().write(allIssues);
         }
         catch (IOException exception) {
-            LOGGER.log(Level.SEVERE, "Failed to serialize the annotations of the build.", exception);
+            LOGGER.log(Level.SEVERE, "Failed to serialize all issues of the run.", exception);
+        }
+        try {
+            getFixedDataFile().write(fixedIssues);
+        }
+        catch (IOException exception) {
+            LOGGER.log(Level.SEVERE, "Failed to serialize the fixed issues of the build.", exception);
         }
     }
 
@@ -627,7 +554,6 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      *
      * @return the number of warnings
      */
-    @Override
     public int getNumberOfAnnotations() {
         return getNumberOfWarnings();
     }
@@ -640,7 +566,6 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      *
      * @return total number of annotations of the specified priority for this object
      */
-    @Override
     public int getNumberOfAnnotations(final Priority priority) {
         if (priority == Priority.HIGH) {
             return highWarnings;
@@ -708,13 +633,13 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      *
      * @return the associated project of this result.
      */
-    public JavaProject getProject() {
+    public Issues getProject() {
         lock.lock();
         try {
             if (project == null) {
                 return loadResult();
             }
-            JavaProject result = project.get();
+            Issues result = project.get();
             if (result == null) {
                 return loadResult();
             }
@@ -730,24 +655,30 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      *
      * @return the loaded result
      */
-    private JavaProject loadResult() {
-        JavaProject result;
-        try {
-            JavaProject newProject = new JavaProject();
-            FileAnnotation[] annotations = (FileAnnotation[]) getDataFile().read();
-            newProject.addAnnotations(annotations);
-            newProject.setLabelProvider(new AnnotationsLabelProvider(newProject.getPackageCategoryTitle()));
+    private Issues loadResult() {
+        Issues result = readIssues();
 
-            LOGGER.log(Level.FINE, "Loaded data file " + getDataFile() + " for build " + getRun().getNumber());
-            result = newProject;
-        }
-        catch (IOException exception) {
-            LOGGER.log(Level.WARNING, "Failed to load " + getDataFile(), exception);
-            result = new JavaProject();
-        }
         project = new WeakReference<>(result);
 
         return result;
+    }
+
+    private Issues readIssues() {
+        try {
+            Issues result = (Issues) getDataFile().read();
+
+            // FIXME: what to do with the label provider
+            // newProject.setLabelProvider(new AnnotationsLabelProvider(newProject.getPackageCategoryTitle()));
+
+            LOGGER.log(Level.FINE, "Loaded data file " + getDataFile() + " for run " + getRun());
+
+            return result;
+        }
+        catch (IOException exception) {
+            LOGGER.log(Level.WARNING, "Failed to load " + getDataFile(), exception);
+
+            return new Issues();
+        }
     }
 
     /**
@@ -756,11 +687,11 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      * @return the new warnings of this build
      */
     @Exported
-    public Collection<FileAnnotation> getNewWarnings() {
+    public Issues getNewWarnings() {
         if (newWarningsReference == null) {
             return loadNewWarnings();
         }
-        Collection<FileAnnotation> result = newWarningsReference.get();
+        Issues result = newWarningsReference.get();
         if (result == null) {
             return loadNewWarnings();
         }
@@ -773,12 +704,13 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      *
      * @return the new warnings
      */
-    private Collection<FileAnnotation> loadNewWarnings() {
-        Set<FileAnnotation> newWarnings = new HashSet<>();
-        for (FileAnnotation warning : getProject().getAnnotations()) {
-            if (warning.getBuild() == getRun().getNumber()) {
-                newWarnings.add(warning);
-            }
+    private Issues loadNewWarnings() {
+        Issues newWarnings = new Issues();
+        for (Issue issue : getProject().all()) {
+            // FIXME: build is no property
+            // if (warning.getBuild() == getRun().getNumber()) {
+            //     newWarnings.add(warning);
+            // }
         }
         newWarningsReference = new WeakReference<>(newWarnings);
 
@@ -790,13 +722,13 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      *
      * @return the fixed warnings of this build.
      */
-    public Collection<FileAnnotation> getFixedWarnings() {
+    public Issues getFixedWarnings() {
         lock.lock();
         try {
             if (fixedWarningsReference == null) {
                 return loadFixedWarnings();
             }
-            Collection<FileAnnotation> result = fixedWarningsReference.get();
+            Issues result = fixedWarningsReference.get();
             if (result == null) {
                 return loadFixedWarnings();
             }
@@ -807,17 +739,16 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
         }
     }
 
-    private Collection<FileAnnotation> loadFixedWarnings() {
-        Set<FileAnnotation> fixedWarnings;
+    private Issues loadFixedWarnings() {
+        Issues fixedWarnings;
         try {
-            FileAnnotation[] annotations = (FileAnnotation[]) getFixedDataFile().read();
-            fixedWarnings = Sets.newHashSet(annotations);
+            fixedWarnings = (Issues) getFixedDataFile().read();
 
             LOGGER.log(Level.FINE, "Loaded data file " + getFixedDataFile() + " for build " + getRun().getNumber());
         }
         catch (IOException exception) {
             LOGGER.log(Level.WARNING, "Failed to load " + getFixedDataFile(), exception);
-            fixedWarnings = new HashSet<>();
+            fixedWarnings = new Issues();
         }
         fixedWarningsReference = new WeakReference<>(fixedWarnings);
 
@@ -825,35 +756,7 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
 
     }
 
-    /**
-     * Returns the dynamic result of the selection element.
-     *
-     * @param link
-     *         the link to identify the sub page to show
-     * @param request
-     *         Stapler request
-     * @param response
-     *         Stapler response
-     *
-     * @return the dynamic result of the analysis (detail page).
-     */
-    public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
-        try {
-            return new DetailFactory().createTrendDetails(link, getRun(), getContainer(), getFixedWarnings(),
-                    getNewWarnings(), getErrors(), getDefaultEncoding(), getDisplayName());
-        }
-        catch (NoSuchElementException exception) {
-            try {
-                response.sendRedirect2("../");
-            }
-            catch (IOException e) {
-                // ignore
-            }
-            return this; // fallback on broken URLs
-        }
-    }
-
-    /**
+   /**
      * Returns all possible priorities.
      *
      * @return all priorities
@@ -863,12 +766,10 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
     }
 
     // TODO: group all stapler/UI related methods
-    @Override
-    public Set<FileAnnotation> getAnnotations(final String priority) {
-        return getContainer().getAnnotations(priority);
+    public ImmutableList<Issue> getAnnotations(final String priority) {
+        return getContainer().findByProperty(issue -> issue.getPriority().name().equalsIgnoreCase(priority));
     }
 
-    @Override
     public int getNumberOfAnnotations(final String priority) {
         return getNumberOfAnnotations(Priority.fromString(priority));
     }
@@ -878,7 +779,7 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
      *
      * @return the container
      */
-    public AnnotationContainer getContainer() {
+    public Issues getContainer() {
         return getProject();
     }
 
@@ -973,7 +874,6 @@ public class AnalysisResult implements ModelObject, Serializable, AnnotationProv
         return StaticAnalysisTool.find(id, name);
     }
 
-    @Override
     public String getDisplayName() {
         return getTool().getLinkName();
     }
