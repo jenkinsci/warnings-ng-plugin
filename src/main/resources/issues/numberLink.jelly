@@ -1,10 +1,3 @@
-<!--
-  Section header
-
-  <%@attribute name="value" required="true" %>
-  <%@attribute name=url" required="true" %>
--->
-
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" >
   <st:documentation>
     Renders a number as link if the number if greater than zero. Otherwise a plain zero is rendered.

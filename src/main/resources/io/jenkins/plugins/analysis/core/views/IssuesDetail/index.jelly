@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout"
-         xmlns:result="/result" xmlns:issues="/issues">
+         xmlns:issues="/issues">
   <l:layout title="${it.displayName}" norefresh="true">
 
     <st:include it="${it.owner}" page="sidepanel.jelly" />
@@ -12,7 +12,7 @@
       <issues:trend-summary />
       <issues:priorities-summary />
 
-      <result:main />
+      <issues:details />
 
     </l:main-panel>
 

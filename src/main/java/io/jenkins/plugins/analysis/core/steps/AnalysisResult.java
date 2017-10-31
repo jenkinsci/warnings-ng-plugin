@@ -667,9 +667,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         try {
             Issues result = (Issues) getDataFile().read();
 
-            // FIXME: what to do with the label provider
-            // newProject.setLabelProvider(new AnnotationsLabelProvider(newProject.getPackageCategoryTitle()));
-
             LOGGER.log(Level.FINE, "Loaded data file " + getDataFile() + " for run " + getRun());
 
             return result;

@@ -1,3 +1,5 @@
+#!/bin/sh
+
 rm -rf $JENKINS_HOME/plugins/analysis-core*
 
 mvn clean install
