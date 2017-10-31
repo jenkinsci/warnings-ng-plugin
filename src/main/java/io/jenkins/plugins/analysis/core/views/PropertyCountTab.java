@@ -54,6 +54,15 @@ public class PropertyCountTab extends IssuesDetail {
         };
     }
 
+    public String getColumnHeader() {
+        try {
+            return PropertyUtils.getProperty(new TabLabelProvider(getIssues()), property).toString();
+        }
+        catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            return "Element";
+        }
+    }
+
     public String getProperty() {
         return property;
     }

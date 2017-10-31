@@ -20,10 +20,6 @@ public class TabLabelProvider {
         this.issues = issues;
     }
 
-    public String getModules() {
-        return Messages.BuildResult_Tab_Modules();
-    }
-
     public String getAuthors() {
         return Messages.BuildResult_Tab_Authors();
     }
@@ -36,16 +32,36 @@ public class TabLabelProvider {
         return Messages.BuildResult_Tab_Origin();
     }
 
+    public String getModules() {
+        return Messages.BuildResult_Tab_Modules();
+    }
+
+    public String getModuleName() {
+        return Messages.BuildResult_Tab_Module();
+    }
+
     public String getFiles() {
         return Messages.BuildResult_Tab_Files();
+    }
+
+    public String getFileName() {
+        return Messages.BuildResult_Tab_File();
     }
 
     public String getCategories() {
         return Messages.BuildResult_Tab_Categories();
     }
 
+    public String getCategory() {
+        return Messages.BuildResult_Tab_Category();
+    }
+
     public String getTypes() {
         return Messages.BuildResult_Tab_Types();
+    }
+
+    public String getType() {
+        return Messages.BuildResult_Tab_Type();
     }
 
     public String getDetails() {
@@ -77,7 +93,7 @@ public class TabLabelProvider {
      *
      * @return the package column title
      */
-    public final String getPackage() {
+    public final String getPackageName() {
         return getPackageOrNamespace(Messages.PackageDetail_header(), Messages.NamespaceDetail_header());
     }
 
