@@ -13,7 +13,7 @@ import hudson.plugins.analysis.util.ToolTipBuilder;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
 /**
- * Builds a new versus fixed warnings graph for a specified result action.
+ * Builds a new versus fixed issues graph.
  *
  * @author Ulli Hafner
  */

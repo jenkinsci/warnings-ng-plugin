@@ -6,7 +6,7 @@ import java.util.List;
 import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 
 /**
- * FIXME: write comment.
+ * Builds the series for a new versus fixed issues graph.
  *
  * @author Ullrich Hafner
  */

@@ -8,7 +8,7 @@ import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
- * FIXME: write comment.
+ * Builds the series for a graph showing all issues by priority.
  *
  * @author Ullrich Hafner
  */

@@ -15,7 +15,7 @@ import hudson.plugins.analysis.util.ToolTipBuilder;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
- * Builds a graph showing all warnings by priority.
+ * Builds a graph showing all issues by priority.
  *
  * @author Ulli Hafner
  */

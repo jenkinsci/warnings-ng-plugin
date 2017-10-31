@@ -28,7 +28,8 @@ import hudson.model.AbstractBuild;
 import hudson.model.Run;
 
 /**
- * FIXME: write comment.
+ * Provides the base algorithms to create a data set for a static analysis graph. The actual series for each
+ * result needs to be implemented by sub classes in method {@link #computeSeries}.
  *
  * @author Ullrich Hafner
  */
