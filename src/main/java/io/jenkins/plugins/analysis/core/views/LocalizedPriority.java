@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.core.views;
 
-import org.jvnet.localizer.Localizable;
-
 import edu.hm.hafner.analysis.Priority;
 
 import hudson.plugins.analysis.Messages;
 
 /**
- * FIXME: write comment.
+ * Provides localized messages for {@link Priority}.
  *
  * @author Ullrich Hafner
  */
@@ -20,44 +18,14 @@ public class LocalizedPriority {
      *
      * @return localized description of the specified priority
      */
-    public static Localizable getLocalized(final Priority priority) {
-        if (priority == Priority.HIGH) {
-            return Messages._Priority_High();
-        }
-        if (priority == Priority.LOW) {
-            return Messages._Priority_Low();
-        }
-        return Messages._Priority_Normal();
-    }
-
-    /**
-     * Returns a localized description of the specified priority.
-     *
-     * @param priority
-     *         the priority to get the text for
-     *
-     * @return localized description of the specified priority
-     */
     public static String getLocalizedString(final Priority priority) {
-        return getLocalized(priority).toString();
-    }
-
-    /**
-     * Returns a long localized description of the specified priority.
-     *
-     * @param priority
-     *         the priority to get the text for
-     *
-     * @return long localized description of the specified priority
-     */
-    public static Localizable getLongLocalized(final Priority priority) {
         if (priority == Priority.HIGH) {
-            return Messages._HighPriority();
+            return Messages.Priority_High();
         }
         if (priority == Priority.LOW) {
-            return Messages._LowPriority();
+            return Messages.Priority_Low();
         }
-        return Messages._NormalPriority();
+        return Messages.Priority_Normal();
     }
 
     /**
@@ -69,6 +37,12 @@ public class LocalizedPriority {
      * @return long localized description of the specified priority
      */
     public static String getLongLocalizedString(final Priority priority) {
-        return getLongLocalizedString(priority).toString();
+        if (priority == Priority.HIGH) {
+            return Messages.HighPriority();
+        }
+        if (priority == Priority.LOW) {
+            return Messages.LowPriority();
+        }
+        return Messages.NormalPriority();
     }
 }
