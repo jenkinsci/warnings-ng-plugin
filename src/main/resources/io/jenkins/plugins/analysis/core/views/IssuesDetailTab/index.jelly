@@ -1,0 +1,28 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:issues="/issues">
+  <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+
+  <j:forEach var="issue" items="${it.issues}">
+    <table class="pane" id="details">
+      <tr>
+        <td class="pane-header">
+          <issues:sourceLink it="${it}" issue="${issue}"/>,
+          ${issue.type}, ${%Priority}: ${it.getLocalizedPriority(issue.priority)}
+            <j:if test="${size(issue.category) > 0}">
+            , ${%Category}: ${issue.category}
+            </j:if>
+        </td>
+      </tr>
+      <tr>
+        <td style="white-space: normal">
+          <p>
+            <b><j:out value="${it.sanitize(issue.message)}"/></b>
+          </p>
+          <p>
+            <j:out value="${it.sanitize(issue.description)}"/>
+          </p>
+        </td>
+      </tr>
+    </table>
+  </j:forEach>
+</j:jelly>

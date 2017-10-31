@@ -1,12 +1,10 @@
 package io.jenkins.plugins.analysis.core.views;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
@@ -56,7 +54,8 @@ public class DetailFactory {
             return new FixedWarningsDetail(owner, fixedIssues, defaultEncoding, parent);
         }
         else if ("new".equals(link)) {
-            return new NewWarningsDetail(owner, newIssues, defaultEncoding, parent);
+            return new IssuesDetail(owner, newIssues, new Issues(), newIssues, defaultEncoding, parent,
+                    Messages._NewWarningsDetail_Name());
         }
         else if ("error".equals(link)) {
             return new ErrorDetail(owner, errors, parent);
@@ -65,127 +64,64 @@ public class DetailFactory {
             owner.checkPermission(Item.WORKSPACE);
 
             Issue issue = allIssues.findById(UUID.fromString(plainLink));
-            if (issue.getFileName().equals(ConsoleDetail.CONSOLE_LOG_FILENAME)) {
+            if (ConsoleDetail.isInConsoleLog(issue)) {
                 return new ConsoleDetail(owner, issue.getLineStart(), issue.getLineEnd());
             }
             else {
                 return new SourceDetail(owner, issue, defaultEncoding);
             }
         }
-        else if (Priority.HIGH.equalsIgnoreCase(plainLink)) {
+        else if (Priority.HIGH.equalsIgnoreCase(link)) {
             return createPrioritiesDetail(Priority.HIGH, owner, allIssues, fixedIssues, newIssues, defaultEncoding, parent);
         }
-        else if (Priority.NORMAL.equalsIgnoreCase(plainLink)) {
+        else if (Priority.NORMAL.equalsIgnoreCase(link)) {
             return createPrioritiesDetail(Priority.NORMAL, owner, allIssues, fixedIssues, newIssues, defaultEncoding, parent);
         }
-        else if (Priority.LOW.equalsIgnoreCase(plainLink)) {
+        else if (Priority.LOW.equalsIgnoreCase(link)) {
             return createPrioritiesDetail(Priority.LOW, owner, allIssues, fixedIssues, newIssues, defaultEncoding, parent);
         }
-        else if (link.startsWith("module.")) {
-            Predicate<Issue> moduleFilter = issue -> issue.getModuleName().equals(StringUtils.substringAfter(link, "module."));
+        else if (link.startsWith("moduleName.")) {
+            Predicate<Issue> moduleFilter = issue -> issue.getModuleName().equals(plainLink);
             return new IssuesDetail(owner,
                     allIssues.filter(moduleFilter), fixedIssues.filter(moduleFilter), newIssues.filter(moduleFilter),
                     defaultEncoding, parent, Messages._ModuleDetail_header());
         }
-        else if ("tab.fileName".equals(link)) {
-            return new TabDetail(owner, allIssues, createGenericTabUrl(link), defaultEncoding, parent, issue -> issue.getFileName(),
-                    string -> StringUtils.substringAfterLast(string, "/"));
+        else if (link.startsWith("packageName.")) {
+            Predicate<Issue> packageFilter = issue -> issue.getPackageName().equals(plainLink);
+            return new IssuesDetail(owner,
+                    allIssues.filter(packageFilter), fixedIssues.filter(packageFilter), newIssues.filter(packageFilter),
+                    defaultEncoding, parent, Messages._PackageDetail_header());
+        }
+        else if (link.startsWith("tab.table")) {
+            return new IssuesTableTab(owner, allIssues, defaultEncoding, parent);
+        }
+        else if (link.startsWith("tab.details")) {
+            return new IssuesDetailTab(owner, allIssues, defaultEncoding, parent);
         }
         else if (link.startsWith("tab.")) {
-            return new TabDetail(owner, allIssues, createGenericTabUrl(link), defaultEncoding, parent, getIssueStringFunction(plainLink),
-                    Function.identity());
+            Function<String, String> propertyFormatter;
+            if ("fileName".equals(plainLink)) {
+                propertyFormatter = IssuesDetail.FILE_NAME_FORMATTER;
+            }
+            else {
+                propertyFormatter = Function.identity();
+            }
+            return new PropertyCountTab(owner, allIssues, defaultEncoding, parent, plainLink, propertyFormatter);
         }
-//        else if (link.startsWith("package.")) {
-//            return new PackageDetail(owner, this, allIssues.getPackage(createHashCode(link, "package.")), defaultEncoding, parent);
-//        }
-//        else if (link.startsWith("file.")) {
-//            return new FileDetail(owner, this, allIssues.getFile(createHashCode(link, "file.")), defaultEncoding, parent);
-//        }
-//        else if (link.startsWith("category.")) {
-//            DefaultAnnotationContainer category = allIssues.getCategory(createHashCode(link, "category."));
-//            return createAttributeDetail(owner, category, parent, Messages.CategoryDetail_header(), defaultEncoding);
-//        }
-//        else if (link.startsWith("type.")) {
-//            DefaultAnnotationContainer type = allIssues.getType(createHashCode(link, "type."));
-//            return createAttributeDetail(owner, type, parent, Messages.TypeDetail_header(), defaultEncoding);
-//        }
-//        else if (link.startsWith("author.")) {
-//            return new AuthorDetail(owner, this, allIssues.getAuthor(createHashCode(link, "author.")), defaultEncoding, parent);
-//        }
         return null;
-    }
-
-    private Function<Issue, String> getIssueStringFunction(final String plainLink) {
-        return issue -> {
-            try {
-                return PropertyUtils.getProperty(issue, plainLink).toString();
-            }
-            catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ignored) {
-                return plainLink;
-            }
-        };
     }
 
     private String strip(final String link) {
         return StringUtils.substringAfter(link, ".");
     }
 
-    /**
-     * Creates a new priorities detail.
-     *
-     * @param priority
-     *         the priority to show
-     * @param owner
-     *         owner of the build
-     * @param issues
-     *         annotation issues
-     */
-    protected IssuesDetail createPrioritiesDetail(final Priority priority, final Run<?, ?> owner,
-            final Issues issues, final Issues fixedIssues, final Issues newIssues, final String defaultEncoding, final ModelObject parent) {
+    private IssuesDetail createPrioritiesDetail(final Priority priority, final Run<?, ?> owner,
+            final Issues issues, final Issues fixedIssues, final Issues newIssues,
+            final String defaultEncoding, final ModelObject parent) {
         Predicate<Issue> priorityFilter = issue -> issue.getPriority() == priority;
-        return new IssuesDetail(owner, issues.filter(priorityFilter), fixedIssues.filter(priorityFilter), newIssues.filter(priorityFilter),
+        return new IssuesDetail(owner,
+                issues.filter(priorityFilter), fixedIssues.filter(priorityFilter), newIssues.filter(priorityFilter),
                 defaultEncoding, parent, LocalizedPriority.getLongLocalized(priority));
     }
 
-    // FIXME: what to do with the label provider
-    /**
-     * Returns the default label provider that is used to visualize the build result (i.e., the tab labels).
-     *
-     * @return the default label provider
-     * @since 1.69
-     */
-//    protected void attachLabelProvider(final AnnotationContainer container) {
-//        container.setLabelProvider(new AnnotationsLabelProvider(container.getPackageCategoryTitle()));
-//    }
-
-    /**
-     * Creates the actual URL from the synthetic link.
-     *
-     * @param link
-     *         the link
-     *
-     * @return the actual URL
-     */
-    private String createGenericTabUrl(final String link) {
-        return StringUtils.substringAfter(link, "tab.") + ".jelly";
-    }
-
-    /**
-     * Extracts the hash code from the given link stripping of the given prefix.
-     *
-     * @param link
-     *         the whole link
-     * @param prefix
-     *         the prefix to remove
-     *
-     * @return the hash code
-     */
-    private int createHashCode(final String link, final String prefix) {
-        try {
-            return Integer.parseInt(StringUtils.substringAfter(link, prefix));
-        }
-        catch (NumberFormatException e) {
-            return -1; // non-existent ID
-        }
-    }
 }

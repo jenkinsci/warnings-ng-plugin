@@ -9,6 +9,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
+import edu.hm.hafner.analysis.Issue;
+
 import hudson.console.ConsoleNote;
 import hudson.model.ModelObject;
 import hudson.model.Run;
@@ -22,6 +24,11 @@ import hudson.plugins.analysis.Messages;
 public class ConsoleDetail implements ModelObject {
     /** Filename dummy if the console log is the source of the warning. */
     public static final String CONSOLE_LOG_FILENAME = "Console Log";
+
+    public static boolean isInConsoleLog(final Issue issue) {
+        return issue.getFileName().equals(ConsoleDetail.CONSOLE_LOG_FILENAME);
+    }
+
     /** The current build as owner of this object. */
     private final Run<?, ?> owner;
     /** The rendered source file. */
@@ -35,11 +42,11 @@ public class ConsoleDetail implements ModelObject {
      * Creates a new instance of this console log viewer object.
      *
      * @param owner
-     *            the current build as owner of this object
+     *         the current build as owner of this object
      * @param from
-     *            first line in the console log
+     *         first line in the console log
      * @param to
-     *            last line in the console log
+     *         last line in the console log
      */
     public ConsoleDetail(final Run<?, ?> owner, final int from, final int to) {
         this.owner = owner;

@@ -1,20 +1,25 @@
 package io.jenkins.plugins.analysis.core.views;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jvnet.localizer.Localizable;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
+import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 
 import hudson.markup.MarkupFormatter;
 import hudson.markup.RawHtmlMarkupFormatter;
+import hudson.model.Item;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.plugins.analysis.core.GlobalSettings;
@@ -25,6 +30,8 @@ import hudson.plugins.analysis.core.GlobalSettings;
  * @author Ulli Hafner
  */
 public class IssuesDetail implements ModelObject {
+    public static final Function<String, String> FILE_NAME_FORMATTER = string -> StringUtils.substringAfterLast(string, "/");
+
     private final Run<?, ?> owner;
 
     private final Issues issues;
@@ -40,27 +47,27 @@ public class IssuesDetail implements ModelObject {
     /** Sanitizes HTML elements in warning messages and tooltips. Use this formatter if raw HTML should be shown. */
     private final MarkupFormatter sanitizer = new RawHtmlMarkupFormatter(true);
 
-    /**
-     * Creates a new instance of {@link IssuesDetail}.
-     * @param owner
-     *         current run as owner of this object
-     * @param issues
-     *         the set of warnings rendered by this object
-     * @param fixedIssues
-     * @param newIssues
-     * @param defaultEncoding
-     * @param parent
-     * @param displayName
-     */
+    public IssuesDetail(final Run<?, ?> owner, final Issues issues,
+            final Issues fixedIssues, final Issues newIssues, final String defaultEncoding,
+            final Localizable displayName) {
+        this(owner, issues, fixedIssues, newIssues, defaultEncoding, Optional.empty(), displayName);
+    }
+
     public IssuesDetail(final Run<?, ?> owner, final Issues issues,
             final Issues fixedIssues, final Issues newIssues, final String defaultEncoding, final ModelObject parent,
+            final Localizable displayName) {
+        this(owner, issues, fixedIssues, newIssues, defaultEncoding, Optional.of(parent), displayName);
+    }
+
+    public IssuesDetail(final Run<?, ?> owner, final Issues issues,
+            final Issues fixedIssues, final Issues newIssues, final String defaultEncoding, final Optional<ModelObject> parent,
             final Localizable displayName) {
         this.owner = owner;
         this.issues = issues;
         this.fixedIssues = fixedIssues;
         this.newIssues = newIssues;
         this.defaultEncoding = defaultEncoding;
-        this.parent = Optional.of(parent);
+        this.parent = parent;
         this.displayName = displayName;
     }
 
@@ -86,8 +93,25 @@ public class IssuesDetail implements ModelObject {
         return !GlobalSettings.instance().getNoAuthors();
     }
 
+    public boolean canDisplayFile(final Issue issue) {
+        if (owner.hasPermission(Item.WORKSPACE)) {
+            return ConsoleDetail.isInConsoleLog(issue)
+                    || new File(issue.getFileName()).exists()
+                    || AffectedFilesResolver.getTempFile(owner, issue).exists();
+        }
+        return false;
+    }
+
     public String getDefaultEncoding() {
         return defaultEncoding;
+    }
+
+    public String getFileDisplayName(final Issue issue) {
+        return FILE_NAME_FORMATTER.apply(issue.getFileName());
+    }
+
+    public TabLabelProvider getTabLabelProvider() {
+        return new TabLabelProvider(getIssues());
     }
 
     /**
@@ -142,7 +166,11 @@ public class IssuesDetail implements ModelObject {
      * @return localized priority name
      */
     public String getLocalizedPriority(final String priorityName) {
-        return LocalizedPriority.getLocalizedString(Priority.fromString(priorityName));
+        return getLocalizedPriority(Priority.fromString(priorityName));
+    }
+
+    public String getLocalizedPriority(final Priority priority) {
+        return LocalizedPriority.getLocalizedString(priority);
     }
 
     /**

@@ -57,6 +57,7 @@ public class TabDetail extends AbstractAnnotationsDetail {
      *
      * @return the URL
      */
+    @Override
     public String getUrl() {
         return url;
     }
@@ -67,7 +68,7 @@ public class TabDetail extends AbstractAnnotationsDetail {
      * @return the name of the jelly script
      */
     public String getDetails() {
-        return "details.jelly";
+        return "index.jelly";
     }
 
     /**
@@ -76,7 +77,7 @@ public class TabDetail extends AbstractAnnotationsDetail {
      * @return the name of the jelly script
      */
     public String getWarnings() {
-        return "warnings.jelly";
+        return "index.jelly";
     }
 
     /**

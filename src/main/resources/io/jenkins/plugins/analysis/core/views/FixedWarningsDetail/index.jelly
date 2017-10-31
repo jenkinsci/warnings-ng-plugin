@@ -1,6 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout"
-         xmlns:result="/result">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
   <l:layout title="${it.displayName}" norefresh="true">
     <st:include it="${it.owner}" page="sidepanel.jelly" />
     <l:main-panel>
@@ -8,9 +7,35 @@
 
       <h2>${%Fixed Warnings}</h2>
 
-      <j:set var="annotations" value="${it.annotations}" />
-
-      <result:fixed />
+      <table class="pane sortable" id="fixed">
+        <tr>
+          <td class="pane-header">${%File}</td>
+          <td class="pane-header">${%Line}</td>
+          <td class="pane-header">${%Priority}</td>
+          <td class="pane-header">${%Type}</td>
+          <td class="pane-header">${%Category}</td>
+        </tr>
+        <tbody>
+          <j:forEach var="issue" items="${it.issues}">
+            <tr>
+              <td class="pane" id="file">${issue.fileName}</td>
+              <td class="pane" id="line">
+                <j:choose>
+                  <j:when test="${issue.lineStart &lt; 1}">
+                    -
+                  </j:when>
+                  <j:otherwise>
+                    ${issue.lineStart}
+                  </j:otherwise>
+                </j:choose>
+              </td>
+              <td class="pane" id="priority">${it.localizedPriority(issue.priority)} </td>
+              <td class="pane" id="type">${issue.type} </td>
+              <td class="pane" id="category">${issue.category} </td>
+            </tr>
+          </j:forEach>
+        </tbody>
+      </table>
 
     </l:main-panel>
   </l:layout>

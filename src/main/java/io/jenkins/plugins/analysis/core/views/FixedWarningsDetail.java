@@ -11,10 +11,7 @@ import hudson.plugins.analysis.Messages;
  *
  * @author Ulli Hafner
  */
-public class FixedWarningsDetail extends AbstractAnnotationsDetail {
-    /** Unique identifier of this class. */
-    private static final long serialVersionUID = -8601095040123486522L;
-
+public class FixedWarningsDetail extends IssuesDetail {
     /**
      * Creates a new instance of {@code FixedWarningsDetail}.
      *
@@ -22,15 +19,15 @@ public class FixedWarningsDetail extends AbstractAnnotationsDetail {
      *            the current results object as owner of this action
      * @param detailFactory
      *            factory to create detail objects with
-     * @param fixedWarnings
+     * @param fixedIssues
      *            all fixed warnings in this build
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
      * @param header
      *            header to be shown on detail page
      */
-    public FixedWarningsDetail(final Run<?, ?> owner, final Issues fixedWarnings, final String defaultEncoding, final ModelObject parent) {
-        super(owner, fixedWarnings, defaultEncoding, parent, Messages.FixedWarningsDetail_Name());
+    public FixedWarningsDetail(final Run<?, ?> owner, final Issues fixedIssues, final String defaultEncoding, final ModelObject parent) {
+        super(owner, fixedIssues, new Issues(), fixedIssues, defaultEncoding, parent, Messages._FixedWarningsDetail_Name());
     }
 }
 

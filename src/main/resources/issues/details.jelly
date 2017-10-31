@@ -67,51 +67,10 @@
     </j:if>
     YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
         label: '<div id="details">${l.details}</div>',
-        dataSrc: 'tab.all/',
+        dataSrc: 'tab.details/',
         cacheData: true,
         active: false
     }), myTabs);
-    <j:if test="${size(it.newIssues) > 0}">
-        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '<div id="new">${l.new}</div>',
-            dataSrc: 'tab.new/',
-            cacheData: true,
-            active: false
-        }), myTabs);
-    </j:if>
-    <j:if test="${size(it.fixedIssues) > 0}">
-        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '<div id="fixed">${l.fixed}</div>',
-            dataSrc: 'tab.fixed-table/',
-            cacheData: true,
-            active: false
-        }), myTabs);
-    </j:if>
-    <j:if test="${i.highPrioritySize > 0 and size(i) != i.highPrioritySize}">
-        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '<div id="high">${l.high}</div>',
-            dataSrc: 'tab.high/',
-            cacheData: true,
-            active: false
-        }), myTabs);
-    </j:if>
-    <j:if test="${i.normalPrioritySize > 0 and size(i) != i.normalPrioritySize}">
-        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '<div id="normal">${l.normal}</div>',
-            dataSrc: 'tab.normal/',
-            cacheData: true,
-            active: false
-        }), myTabs);
-    </j:if>
-    <j:if test="${i.lowPrioritySize > 0 and size(i) != i.lowPrioritySize}">
-        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '<div id="low">${l.low}</div>',
-            dataSrc: 'tab.low/',
-            cacheData: true,
-            active: false
-        }), myTabs);
-    </j:if>
-
       myTabs.set('activeIndex', 0);
 
     </script>
