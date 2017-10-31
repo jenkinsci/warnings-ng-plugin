@@ -15,7 +15,7 @@
         <j:set var="count" value="${it.getCount(key)}" />
         <tr>
           <td class="pane">
-            <a href="${property}.${key.hashCode()}/">${it.getDisplayName(key)}</a>
+            <a href="${it.property}.${key.hashCode()}/">${it.getDisplayName(key)}</a>
           </td>
           <td class="pane">${count}</td>
           <td class="pane">

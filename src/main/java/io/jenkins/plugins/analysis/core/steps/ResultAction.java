@@ -8,7 +8,6 @@ import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.views.IssuesDetail;
@@ -22,8 +21,11 @@ import hudson.model.Run;
 
 /**
  * Controls the live cycle of the results in a job. This action persists the results of a build and displays them on the
- * build page. The actual visualization of the results is defined in the matching {@code summary.jelly} file. <p>
- * Moreover, this class renders the results trend. </p>
+ * build page. The actual visualization of the results is defined in the matching {@code summary.jelly} file.
+ *
+ * <p>
+ * Moreover, this class renders the results trend.
+ * </p>
  *
  * @author Ulli Hafner
  */
@@ -60,6 +62,8 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         this.name = name;
     }
 
+    // FIXME: use owner as name
+    @Exported
     public Run<?, ?> getRun() {
         return run;
     }
@@ -86,6 +90,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     @Override
+    @Exported
     public String getUrlName() {
         return getLabelProvider().getResultUrl();
     }
@@ -112,18 +117,6 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
             return getSmallImage();
         }
         return null;
-    }
-
-    public Issues getIssues() {
-        return getResult().getProject();
-    }
-
-    public Issues getNewIssues() {
-        return getResult().getNewWarnings();
-    }
-
-    public Issues getFixedIssues() {
-        return getResult().getFixedWarnings();
     }
 
     /**
@@ -171,38 +164,6 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         return getResult().isSuccessful();
     }
 
-//    /**
-//     * Returns a new view, that shows the selected issues.
-//     *
-//     * @param link
-//     *            the link to identify the sub page to show
-//     * @param request
-//     *            Stapler request
-//     * @param response
-//     *            Stapler response
-//     * @return the dynamic result of the analysis (detail page).
-//     */
-//    public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
-//        try {
-//            return new DetailFactory().createTrendDetails(link, run, getIssues(), getFixedIssues(), getNewIssues(),
-//                    getResult().getErrors(), getResult().getDefaultEncoding(), this);
-//        }
-//        catch (NoSuchElementException ignored) {
-//            redirectToProject(response);
-//
-//            return this; // fallback on broken URLs
-//        }
-//    }
-//
-//    private void redirectToProject(final StaplerResponse response) {
-//        try {
-//            response.sendRedirect2("../");
-//        }
-//        catch (IOException ignored) {
-//            // ignore
-//        }
-//    }
-//
     @Override
     public String toString() {
         return String.format("%s for %s", getClass().getName(), getLabelProvider().getName());
@@ -212,11 +173,16 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         return StaticAnalysisTool.find(id, name);
     }
 
+    /**
+     * Returns the detail view for issues for all Stapler requests.
+     *
+     * @return the detail view for issues
+     */
     @Override
     public Object getTarget() {
         AnalysisResult result = getResult();
 
         return new IssuesDetail(run, result.getProject(), result.getFixedWarnings(), result.getNewWarnings(),
-                result.getDefaultEncoding(), Messages._Default_Name());
+                result.getDefaultEncoding(), getLabelProvider().getLinkName());
     }
 }

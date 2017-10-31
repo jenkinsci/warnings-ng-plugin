@@ -23,25 +23,24 @@ import hudson.plugins.analysis.Messages;
  */
 public class DetailFactory {
     /**
-     * Returns a detail object for the selected element of the specified annotation allIssues. The details will include
-     * the new and fixed warnings trends as well as the errors report.
+     * Returns a detail object for the selected element for the specified issues.
      *
      * @param link
      *         the link to identify the sub page to show
      * @param owner
      *         the build as owner of the detail page
      * @param allIssues
-     *         the annotation allIssues to get the details for
+     *         the issues to get the details for
      * @param fixedIssues
-     *         the annotations fixed in this build
+     *         the fixed issues to get the details for
      * @param newIssues
-     *         the annotations new in this build
+     *         the new issues to get the details for
      * @param errors
-     *         the errors in this build
+     *         the errors during scanning the static analysis results
      * @param defaultEncoding
      *         the default encoding to be used when reading and parsing files
      * @param parent
-     *         the name of the selected object
+     *         the parent of the selected object
      *
      * @return the dynamic result of this module detail view
      */
@@ -55,7 +54,7 @@ public class DetailFactory {
         }
         else if ("new".equals(link)) {
             return new IssuesDetail(owner, newIssues, new Issues(), newIssues, defaultEncoding, parent,
-                    Messages._NewWarningsDetail_Name());
+                    Messages.NewWarningsDetail_Name());
         }
         else if ("error".equals(link)) {
             return new ErrorDetail(owner, errors, parent);
@@ -80,18 +79,6 @@ public class DetailFactory {
         else if (Priority.LOW.equalsIgnoreCase(link)) {
             return createPrioritiesDetail(Priority.LOW, owner, allIssues, fixedIssues, newIssues, defaultEncoding, parent);
         }
-        else if (link.startsWith("moduleName.")) {
-            Predicate<Issue> moduleFilter = issue -> issue.getModuleName().equals(plainLink);
-            return new IssuesDetail(owner,
-                    allIssues.filter(moduleFilter), fixedIssues.filter(moduleFilter), newIssues.filter(moduleFilter),
-                    defaultEncoding, parent, Messages._ModuleDetail_header());
-        }
-        else if (link.startsWith("packageName.")) {
-            Predicate<Issue> packageFilter = issue -> issue.getPackageName().equals(plainLink);
-            return new IssuesDetail(owner,
-                    allIssues.filter(packageFilter), fixedIssues.filter(packageFilter), newIssues.filter(packageFilter),
-                    defaultEncoding, parent, Messages._PackageDetail_header());
-        }
         else if (link.startsWith("tab.table")) {
             return new IssuesTableTab(owner, allIssues, defaultEncoding, parent);
         }
@@ -108,7 +95,25 @@ public class DetailFactory {
             }
             return new PropertyCountTab(owner, allIssues, defaultEncoding, parent, plainLink, propertyFormatter);
         }
-        return null;
+        else {
+            String property = StringUtils.substringBefore(link, ".");
+            Predicate<Issue> filter = createPropertyFilter(plainLink, property);
+            Issues selectedIssues = allIssues.filter(filter);
+            return new IssuesDetail(owner,
+                    selectedIssues, fixedIssues.filter(filter), newIssues.filter(filter),
+                    defaultEncoding, parent, getDisplayNameOfDetails(property, selectedIssues));
+        }
+    }
+
+    private Predicate<Issue> createPropertyFilter(final String plainLink, final String property) {
+        return issue -> plainLink.equals(String.valueOf(
+                PropertyCountTab.getIssueStringFunction(property).apply(issue).hashCode()));
+    }
+
+    private String getDisplayNameOfDetails(final String property, final Issues selectedIssues) {
+        return PropertyCountTab.getColumnHeaderFor(selectedIssues, property)
+                + " "
+                + PropertyCountTab.getIssueStringFunction(property).apply(selectedIssues.get(0));
     }
 
     private String strip(final String link) {
@@ -121,7 +126,7 @@ public class DetailFactory {
         Predicate<Issue> priorityFilter = issue -> issue.getPriority() == priority;
         return new IssuesDetail(owner,
                 issues.filter(priorityFilter), fixedIssues.filter(priorityFilter), newIssues.filter(priorityFilter),
-                defaultEncoding, parent, LocalizedPriority.getLongLocalized(priority));
+                defaultEncoding, parent, LocalizedPriority.getLongLocalizedString(priority));
     }
 
 }

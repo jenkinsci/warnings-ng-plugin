@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jvnet.localizer.Localizable;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -42,26 +41,32 @@ public class IssuesDetail implements ModelObject {
 
     private final Optional<ModelObject> parent;
 
-    private final Localizable displayName;
+    private final String displayName;
 
     /** Sanitizes HTML elements in warning messages and tooltips. Use this formatter if raw HTML should be shown. */
     private final MarkupFormatter sanitizer = new RawHtmlMarkupFormatter(true);
 
     public IssuesDetail(final Run<?, ?> owner, final Issues issues,
             final Issues fixedIssues, final Issues newIssues, final String defaultEncoding,
-            final Localizable displayName) {
+            final String displayName) {
         this(owner, issues, fixedIssues, newIssues, defaultEncoding, Optional.empty(), displayName);
     }
 
     public IssuesDetail(final Run<?, ?> owner, final Issues issues,
+            final Issues fixedIssues, final Issues newIssues, final String defaultEncoding,
+            final ModelObject parent) {
+        this(owner, issues, fixedIssues, newIssues, defaultEncoding, parent, StringUtils.EMPTY);
+    }
+
+    public IssuesDetail(final Run<?, ?> owner, final Issues issues,
             final Issues fixedIssues, final Issues newIssues, final String defaultEncoding, final ModelObject parent,
-            final Localizable displayName) {
+            final String displayName) {
         this(owner, issues, fixedIssues, newIssues, defaultEncoding, Optional.of(parent), displayName);
     }
 
     public IssuesDetail(final Run<?, ?> owner, final Issues issues,
             final Issues fixedIssues, final Issues newIssues, final String defaultEncoding, final Optional<ModelObject> parent,
-            final Localizable displayName) {
+            final String displayName) {
         this.owner = owner;
         this.issues = issues;
         this.fixedIssues = fixedIssues;
@@ -197,7 +202,7 @@ public class IssuesDetail implements ModelObject {
 
     @Override
     public String getDisplayName() {
-        return displayName.toString();
+        return displayName;
     }
 
     /**

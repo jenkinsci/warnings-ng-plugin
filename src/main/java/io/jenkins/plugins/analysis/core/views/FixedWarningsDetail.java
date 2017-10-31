@@ -16,18 +16,16 @@ public class FixedWarningsDetail extends IssuesDetail {
      * Creates a new instance of {@code FixedWarningsDetail}.
      *
      * @param owner
-     *            the current results object as owner of this action
-     * @param detailFactory
-     *            factory to create detail objects with
+     *         the current run as owner of this action
      * @param fixedIssues
-     *            all fixed warnings in this build
+     *         the fixed issues to show in this tab
      * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param header
-     *            header to be shown on detail page
+     *         the default encoding to be used when reading and parsing files
+     * @param parent
+     *         the parent of this view
      */
     public FixedWarningsDetail(final Run<?, ?> owner, final Issues fixedIssues, final String defaultEncoding, final ModelObject parent) {
-        super(owner, fixedIssues, new Issues(), fixedIssues, defaultEncoding, parent, Messages._FixedWarningsDetail_Name());
+        super(owner, fixedIssues, new Issues(), fixedIssues, defaultEncoding, parent, Messages.FixedWarningsDetail_Name());
     }
 }
 
