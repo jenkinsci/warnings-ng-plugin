@@ -12,7 +12,6 @@ import hudson.plugins.analysis.Messages;
  * Builds a graph showing the total of warnings in a scaled line graph.
  *
  * @author Ulli Hafner
- * @since 1.23
  */
 public class TotalsGraph extends CategoryBuildResultGraph {
     @Override

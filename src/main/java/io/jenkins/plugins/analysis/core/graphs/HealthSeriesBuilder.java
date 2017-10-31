@@ -7,12 +7,12 @@ import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 
 /**
- * FIXME: write comment.
+ * Builds the series for a graph showing all warnings by health descriptor.
  *
  * @author Ullrich Hafner
  */
 public class HealthSeriesBuilder extends SeriesBuilder {
-    private HealthDescriptor healthDescriptor;
+    private final HealthDescriptor healthDescriptor;
 
     public HealthSeriesBuilder(final HealthDescriptor healthDescriptor) {
         this.healthDescriptor = healthDescriptor;
