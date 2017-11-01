@@ -6,7 +6,6 @@ import org.apache.commons.lang.StringUtils;
 
 import static hudson.plugins.analysis.util.ThresholdValidator.*;
 
-import hudson.plugins.analysis.util.ThresholdValidator;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
@@ -33,22 +32,22 @@ public class HealthDescriptor implements Serializable {
      * Returns the healthy threshold, i.e. when health is reported as 100%.
      *
      * @return the 100% healthiness
-     * @throws IllegalArgumentException if the healthy string can't be converted to an integer value greater or equal
-     *                                  zero
+     * @throws IllegalArgumentException
+     *         if the healthy string can't be converted to an integer value greater or equal zero
      */
     public int getHealthy() {
-        return ThresholdValidator.convert(healthy);
+        return convert(healthy);
     }
 
     /**
      * Returns the unhealthy threshold, i.e. when health is reported as 0%.
      *
      * @return the 0% unhealthiness
-     * @throws IllegalArgumentException if the unhealthy string can't be converted to an integer value greater or equal
-     *                                  zero
+     * @throws IllegalArgumentException
+     *         if the unhealthy string can't be converted to an integer value greater or equal zero
      */
     public int getUnHealthy() {
-        return ThresholdValidator.convert(unHealthy);
+        return convert(unHealthy);
     }
 
     /**
@@ -67,7 +66,7 @@ public class HealthDescriptor implements Serializable {
      * @return <code>true</code> if a health report should be created
      */
     public boolean isEnabled() {
-        if (ThresholdValidator.isValid(healthy) && ThresholdValidator.isValid(unHealthy)) {
+        if (isValid(healthy) && isValid(unHealthy)) {
             int healthyNumber = convert(healthy);
             int unHealthyNumber = convert(unHealthy);
 

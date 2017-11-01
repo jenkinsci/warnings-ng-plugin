@@ -25,6 +25,8 @@ import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.history.ResultSelector;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
+import io.jenkins.plugins.analysis.core.util.Logger;
+import io.jenkins.plugins.analysis.core.util.LoggerFactory;
 
 import hudson.Extension;
 import hudson.FilePath;
@@ -35,7 +37,6 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.core.Thresholds;
 import hudson.plugins.analysis.util.EncodingValidator;
-import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.remoting.VirtualChannel;
 
@@ -439,13 +440,14 @@ public class PublishIssuesStep extends Step {
             return StringUtils.defaultIfBlank(id, defaultId);
         }
 
-        private PluginLogger createPluginLogger(final String id) throws IOException, InterruptedException {
-            TaskListener logger = getContext().get(TaskListener.class);
-            return new PluginLogger(logger.getLogger(), getTool(id).getName());
+        private Logger createLogger(final String toolId) throws IOException, InterruptedException {
+            TaskListener listener = getContext().get(TaskListener.class);
+
+            return new LoggerFactory().createLogger(listener.getLogger(), getTool(toolId).getName());
         }
 
-        private StaticAnalysisLabelProvider getTool(final String id) {
-            return StaticAnalysisTool.find(id, name);
+        private StaticAnalysisLabelProvider getTool(final String toolId) {
+            return StaticAnalysisTool.find(toolId, name);
         }
 
         private Run<?, ?> getRun() throws IOException, InterruptedException {
@@ -458,19 +460,19 @@ public class PublishIssuesStep extends Step {
 
         private ResultAction publishResult(final String actualId, final Run<?, ?> run, final ResultSelector selector)
                 throws IOException, InterruptedException {
-            PluginLogger logger = createPluginLogger(actualId);
+            Logger logger = createLogger(actualId);
 
-            logger.format("Creating analysis result for %d issues.", getTotalNumberOfIssues());
+            logger.log("Creating analysis result for %d issues.", getTotalNumberOfIssues());
             AnalysisResult result = createAnalysisResult(actualId, run, selector);
 
             FilePath workspace = getContext().get(FilePath.class);
             Issues container = result.getProject();
-            logger.format("Copying %d affected files from '%s' to build folder", container.getFiles().size(), workspace);
+            logger.log("Copying %d affected files from '%s' to build folder", container.getFiles().size(), workspace);
 
             new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(getChannel(),
                     getBuildFolder(), container, EncodingValidator.getEncoding(defaultEncoding));
 
-            logger.format("Attaching ResultAction with ID '%s' to run '%s'.", actualId, run);
+            logger.log("Attaching ResultAction with ID '%s' to run '%s'.", actualId, run);
             ResultAction action = new ResultAction(run, result, healthDescriptor, actualId, name);
             run.addAction(action);
 
@@ -486,7 +488,7 @@ public class PublishIssuesStep extends Step {
             ReferenceProvider referenceProvider = ReferenceFinder.create(run,
                     selector, usePreviousBuildAsReference, useStableBuildAsReference);
             BuildHistory buildHistory = new BuildHistory(run, selector);
-            ResultEvaluator resultEvaluator = new ResultEvaluator(id, name, thresholds, createPluginLogger(id));
+            ResultEvaluator resultEvaluator = new ResultEvaluator(id, name, thresholds, createLogger(id));
             return new AnalysisResult(id, name, run, referenceProvider, buildHistory.getPreviousResult(),
                     resultEvaluator, defaultEncoding, issues);
         }
