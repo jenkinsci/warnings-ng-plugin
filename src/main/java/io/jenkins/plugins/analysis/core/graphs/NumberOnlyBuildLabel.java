@@ -1,20 +1,21 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 
 public class NumberOnlyBuildLabel implements Comparable<NumberOnlyBuildLabel> {
-    private final Run<?, ?> run;
+    private final AnalysisBuild build;
 
-    public NumberOnlyBuildLabel(Run<?, ?> run) {
-        this.run = run;
+    public NumberOnlyBuildLabel(final AnalysisBuild build) {
+        this.build = build;
     }
 
-    public Run<?, ?> getRun() {
-        return run;
+    public AnalysisBuild getBuild() {
+        return build;
     }
 
-    public int compareTo(NumberOnlyBuildLabel that) {
-        return this.run.getNumber() - that.run.getNumber();
+    @Override
+    public int compareTo(NumberOnlyBuildLabel o) {
+        return build.getNumber() - o.build.getNumber();
     }
 
     @Override
@@ -28,16 +29,16 @@ public class NumberOnlyBuildLabel implements Comparable<NumberOnlyBuildLabel> {
 
         NumberOnlyBuildLabel that = (NumberOnlyBuildLabel) o;
 
-        return run != null ? run.equals(that.run) : that.run == null;
+        return build != null ? build.equals(that.build) : that.build == null;
     }
 
     @Override
     public int hashCode() {
-        return run != null ? run.hashCode() : 0;
+        return build != null ? build.hashCode() : 0;
     }
 
     @Override
     public String toString() {
-        return run.getDisplayName();
+        return build.getDisplayName();
     }
 }

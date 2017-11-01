@@ -9,11 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.jfree.data.category.CategoryDataset;
 import org.joda.time.LocalDate;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -22,10 +20,10 @@ import com.google.common.collect.Sets;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
-import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
+import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
+import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 
-import hudson.model.AbstractBuild;
-import hudson.model.Run;
+import hudson.util.DataSetBuilder;
 
 /**
  * Provides the base algorithms to create a data set for a static analysis graph. The actual series for each
@@ -36,42 +34,29 @@ import hudson.model.Run;
 public abstract class SeriesBuilder {
     private static final int A_DAY_IN_MSEC = 24 * 3600 * 1000;
 
-    public CategoryDataset createDataSet(final GraphConfiguration configuration, final Iterable<AnalysisResult> history) {
+    public CategoryDataset createDataSet(final GraphConfiguration configuration,
+            final Iterable<? extends StaticAnalysisRun> results) {
         CategoryDataset dataSet;
         if (configuration.useBuildDateAsDomain()) {
-            Map<LocalDate, List<Integer>> averagePerDay = averageByDate(createSeriesPerBuild(configuration, history));
-            dataSet = createDatasetPerDay(averagePerDay);
+            Map<LocalDate, List<Integer>> averagePerDay = averageByDate(createSeriesPerBuild(configuration, results));
+            dataSet = createDataSetPerDay(averagePerDay);
         }
         else {
-            dataSet = createDatasetPerBuildNumber(createSeriesPerBuild(configuration, history));
+            dataSet = createDataSetPerBuildNumber(createSeriesPerBuild(configuration, results));
         }
         return dataSet;
     }
 
-    /**
-     * Creates a series of values per build.
-     *
-     * @param configuration
-     *            the configuration
-     * @param history
-     *            the build history
-     * @return a series of values per build
-     */
     @SuppressWarnings("rawtypes")
-    private Map<Run, List<Integer>> createSeriesPerBuild(
-            final GraphConfiguration configuration, final Iterable<AnalysisResult> history) {
+    private Map<AnalysisBuild, List<Integer>> createSeriesPerBuild(
+            final GraphConfiguration configuration, final Iterable<? extends StaticAnalysisRun> results) {
         int buildCount = 0;
-        Map<Run, List<Integer>> valuesPerBuild = Maps.newHashMap();
-        String parameterName = configuration.getParameterName();
-        String parameterValue = configuration.getParameterValue();
-
-        for (AnalysisResult current : history) {
+        Map<AnalysisBuild, List<Integer>> valuesPerBuildNumber = Maps.newHashMap();
+        for (StaticAnalysisRun current : results) {
             if (isBuildTooOld(configuration, current)) {
                 break;
             }
-            if (passesFilteringByParameter(current.getRun(), parameterName, parameterValue)) {
-                valuesPerBuild.put(current.getRun(), computeSeries(current));
-            }
+            valuesPerBuildNumber.put(current.getBuild(), computeSeries(current));
 
             if (configuration.isBuildCountDefined()) {
                 buildCount++;
@@ -80,30 +65,7 @@ public abstract class SeriesBuilder {
                 }
             }
         }
-        return valuesPerBuild;
-    }
-
-    protected boolean passesFilteringByParameter(final Run<?, ?> build, final String parameterName, final String parameterValue) {
-        if (StringUtils.isBlank(parameterName)) {
-            return true;
-        }
-
-        Map<String, String> variables;
-        if (build instanceof AbstractBuild) {
-            variables = ((AbstractBuild<?, ?>) build).getBuildVariables();
-        }
-        else {
-            // There is no comparable method for Run. This means that this feature (using parameters for
-            // result graph) will not be available for other than AbstractBuild extending classes (basically
-            // all except Workflow builds).
-            // So workflow jobs will be never filtered, just show them all.
-            return true;
-        }
-        if (variables == null) {
-            return false;
-        }
-
-        return Objects.equal(variables.get(parameterName), parameterValue);
+        return valuesPerBuildNumber;
     }
 
     /**
@@ -112,7 +74,7 @@ public abstract class SeriesBuilder {
      * @param current the current build result
      * @return the series to plot
      */
-    protected abstract List<Integer> computeSeries(AnalysisResult current);
+    protected abstract List<Integer> computeSeries(StaticAnalysisRun current);
 
     /**
      * Creates a data set that contains a series per build number.
@@ -121,12 +83,11 @@ public abstract class SeriesBuilder {
      *            the collected values
      * @return a data set
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private CategoryDataset createDatasetPerBuildNumber(final Map<Run, List<Integer>> valuesPerBuild) {
-        hudson.util.DataSetBuilder<String, NumberOnlyBuildLabel> builder = new hudson.util.DataSetBuilder<>();
-        List<Run> builds = Lists.newArrayList(valuesPerBuild.keySet());
+    private CategoryDataset createDataSetPerBuildNumber(final Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
+        DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<>();
+        List<AnalysisBuild> builds = Lists.newArrayList(valuesPerBuild.keySet());
         Collections.sort(builds);
-        for (Run<?, ?> build : builds) {
+        for (AnalysisBuild build : builds) {
             List<Integer> series = valuesPerBuild.get(build);
             int level = 0;
             for (Integer integer : series) {
@@ -145,11 +106,11 @@ public abstract class SeriesBuilder {
      * @return a data set
      */
     @SuppressWarnings("unchecked")
-    private CategoryDataset createDatasetPerDay(final Map<LocalDate, List<Integer>> averagePerDay) {
+    private CategoryDataset createDataSetPerDay(final Map<LocalDate, List<Integer>> averagePerDay) {
         List<LocalDate> buildDates = Lists.newArrayList(averagePerDay.keySet());
         Collections.sort(buildDates);
 
-        hudson.util.DataSetBuilder<String, LocalDateLabel> builder = new hudson.util.DataSetBuilder<>();
+        DataSetBuilder<String, LocalDateLabel> builder = new DataSetBuilder<>();
         for (LocalDate date : buildDates) {
             int level = 0;
             for (Integer average : averagePerDay.get(date)) {
@@ -195,6 +156,7 @@ public abstract class SeriesBuilder {
         }
         return seriesPerDate;
     }
+
     /**
      * Aggregates the series per build to a series per date.
      *
@@ -202,9 +164,8 @@ public abstract class SeriesBuilder {
      *            the series per build
      * @return the series per date
      */
-    @SuppressWarnings("rawtypes")
     private Map<LocalDate, List<Integer>> averageByDate(
-            final Map<Run, List<Integer>> valuesPerBuild) {
+            final Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
         return createSeriesPerDay(createMultiSeriesPerDay(valuesPerBuild));
     }
 
@@ -218,10 +179,10 @@ public abstract class SeriesBuilder {
     @SuppressWarnings("rawtypes")
     @SuppressFBWarnings("WMI")
     private Multimap<LocalDate, List<Integer>> createMultiSeriesPerDay(
-            final Map<Run, List<Integer>> valuesPerBuild) {
+            final Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
         Multimap<LocalDate, List<Integer>> valuesPerDate = HashMultimap.create();
-        for (Run<?, ?> build : valuesPerBuild.keySet()) {
-            valuesPerDate.put(new LocalDate(build.getTimestamp()), valuesPerBuild.get(build));
+        for (AnalysisBuild build : valuesPerBuild.keySet()) {
+            valuesPerDate.put(new LocalDate(build.getTimeInMillis()), valuesPerBuild.get(build));
         }
         return valuesPerDate;
     }
@@ -247,7 +208,7 @@ public abstract class SeriesBuilder {
             averagesPerJob.put(resultAction, averageByDate);
             availableDates.addAll(averageByDate.keySet());
         }
-        return createDatasetPerDay(
+        return createDataSetPerDay(
                 createTotalsForAllAvailableDates(resultActions, availableDates, averagesPerJob));
     }
 
@@ -263,7 +224,6 @@ public abstract class SeriesBuilder {
      *            the averages per day, mapped by job
      * @return the aggregated values
      */
-    @SuppressWarnings("unchecked")
     private Map<LocalDate, List<Integer>> createTotalsForAllAvailableDates(
             final Collection<ResultHistory> jobs,
             final Set<LocalDate> availableDates,
@@ -314,7 +274,7 @@ public abstract class SeriesBuilder {
      *            the current build
      * @return <code>true</code> if the build is too old
      */
-    public static boolean isBuildTooOld(final GraphConfiguration configuration, final AnalysisResult current) {
+    public static boolean isBuildTooOld(final GraphConfiguration configuration, final StaticAnalysisRun current) {
         return areResultsTooOld(configuration, current);
     }
     /**
@@ -326,8 +286,8 @@ public abstract class SeriesBuilder {
      *            the second date (given by the build result)
      * @return the delta between two dates in days
      */
-    public static long computeDayDelta(final Calendar first, final AnalysisResult second) {
-        return computeDayDelta(first, second.getRun().getTimestamp());
+    public static long computeDayDelta(final Calendar first, final StaticAnalysisRun second) {
+        return computeDayDelta(first, second.getBuild().getTimeInMillis());
     }
 
     /**
@@ -340,7 +300,7 @@ public abstract class SeriesBuilder {
      *            the current build
      * @return <code>true</code> if the build is too old
      */
-    public static boolean areResultsTooOld(final GraphConfiguration configuration, final AnalysisResult current) {
+    public static boolean areResultsTooOld(final GraphConfiguration configuration, final StaticAnalysisRun current) {
         Calendar today = new GregorianCalendar();
 
         return configuration.isDayCountDefined()
@@ -356,7 +316,7 @@ public abstract class SeriesBuilder {
      *            the second date
      * @return the delta between two dates in days
      */
-    public static long computeDayDelta(final Calendar first, final Calendar second) {
-        return Math.abs((first.getTimeInMillis() - second.getTimeInMillis()) / A_DAY_IN_MSEC);
+    public static long computeDayDelta(final Calendar first, final long second) {
+        return Math.abs((first.getTimeInMillis() - second) / A_DAY_IN_MSEC);
     }
 }

@@ -7,19 +7,17 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
-import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
+import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
+import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import hudson.model.Run;
-import hudson.plugins.analysis.util.model.Priority;
-
 /**
- * Tests the class {@link PriorityGraph}.
+ * Tests the class {@link PrioritySeriesBuilder}.
  *
  * @author Ullrich Hafner
  */
-class PriorityGraphTest {
+class PrioritySeriesBuilderTest {
     /** Verifies that an empty list of runs produces no data. */
     @Test
     void shouldHaveEmptyDataSetForEmptyIterator() {
@@ -40,8 +38,8 @@ class PriorityGraphTest {
     void shouldHaveThreeValuesForSingleBuild() {
         PrioritySeriesBuilder builder = new PrioritySeriesBuilder();
 
-        AnalysisResult singleResult = createBuildResult(1, 1, 2, 3);
-        List<AnalysisResult> results = Lists.newArrayList(singleResult);
+        StaticAnalysisRun singleResult = createBuildResult(1, 1, 2, 3);
+        List<StaticAnalysisRun> results = Lists.newArrayList(singleResult);
         CategoryDataset dataSet = builder.createDataSet(createConfiguration(), results);
 
         assertThat(dataSet.getColumnCount()).isEqualTo(1);
@@ -54,22 +52,22 @@ class PriorityGraphTest {
         assertThat(dataSet.getValue(2, 0)).isEqualTo(1);
     }
 
-    private AnalysisResult createBuildResult(final int buildNumber, final int numberOfHighPriorityIssues,
+    private StaticAnalysisRun createBuildResult(final int buildNumber, final int numberOfHighPriorityIssues,
                                           final int numberOfNormalPriorityIssues, final int numberOfLowPriorityIssues) {
-        AnalysisResult buildResult = mock(AnalysisResult.class);
+        StaticAnalysisRun buildResult = mock(StaticAnalysisRun.class);
 
-        when(buildResult.getNumberOfAnnotations(Priority.HIGH)).thenReturn(numberOfHighPriorityIssues);
-        when(buildResult.getNumberOfAnnotations(Priority.NORMAL)).thenReturn(numberOfNormalPriorityIssues);
-        when(buildResult.getNumberOfAnnotations(Priority.LOW)).thenReturn(numberOfLowPriorityIssues);
+        when(buildResult.getTotalHighPrioritySize()).thenReturn(numberOfHighPriorityIssues);
+        when(buildResult.getTotalNormalPrioritySize()).thenReturn(numberOfNormalPriorityIssues);
+        when(buildResult.getTotalLowPrioritySize()).thenReturn(numberOfLowPriorityIssues);
 
-        Run run = createRun(buildNumber);
-        when(buildResult.getRun()).thenReturn(run);
+        AnalysisBuild build = createRun(buildNumber);
+        when(buildResult.getBuild()).thenReturn(build);
 
         return buildResult;
     }
 
-    private Run<?, ?> createRun(final int number) {
-        Run run = mock(Run.class);
+    private AnalysisBuild createRun(final int number) {
+        AnalysisBuild run = mock(AnalysisBuild.class);
         when(run.getNumber()).thenReturn(number);
         when(run.getDisplayName()).thenReturn("#" + number);
         return run;

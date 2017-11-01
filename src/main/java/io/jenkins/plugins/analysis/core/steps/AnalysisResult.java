@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
@@ -21,6 +22,8 @@ import edu.hm.hafner.analysis.IssueDifference;
 import edu.hm.hafner.analysis.Issues;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
+import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
+import io.jenkins.plugins.analysis.core.quality.RunAdapter;
 import io.jenkins.plugins.analysis.core.steps.ResultEvaluator.Evaluation;
 
 import hudson.XmlFile;
@@ -888,6 +891,16 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     @Override
     public int getFixedSize() {
         return numberOfFixedWarnings;
+    }
+
+    @Override
+    public Map<String, Integer> getSizePerOrigin() {
+        return getProject().getPropertyCount(issue -> issue.getOrigin());
+    }
+
+    @Override
+    public AnalysisBuild getBuild() {
+        return new RunAdapter(run);
     }
 
     @Override
