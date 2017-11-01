@@ -19,6 +19,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import com.google.common.collect.Sets;
 
 import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
 import io.jenkins.plugins.analysis.core.history.BuildHistory;
 import io.jenkins.plugins.analysis.core.history.ReferenceFinder;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
@@ -37,7 +38,6 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.core.Thresholds;
 import hudson.plugins.analysis.util.EncodingValidator;
-import hudson.plugins.analysis.util.model.Priority;
 import hudson.remoting.VirtualChannel;
 
 /**

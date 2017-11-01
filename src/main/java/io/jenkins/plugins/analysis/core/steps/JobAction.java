@@ -334,7 +334,7 @@ public class JobAction implements Action {
     @Override
     public String getIconFileName() {
         ResultAction lastAction = getLastAction();
-        if (lastAction != null && lastAction.getResult().getNumberOfWarnings() > 0) {
+        if (lastAction != null && lastAction.getResult().getTotalSize() > 0) {
             return Jenkins.RESOURCE_PATH + getTool().getSmallIconUrl();
         }
         return null;

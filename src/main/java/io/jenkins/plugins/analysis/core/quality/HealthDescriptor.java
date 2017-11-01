@@ -4,9 +4,8 @@ import java.io.Serializable;
 
 import org.apache.commons.lang.StringUtils;
 
+import edu.hm.hafner.analysis.Priority;
 import static hudson.plugins.analysis.util.ThresholdValidator.*;
-
-import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A health descriptor defines the parameters to create the build health.
@@ -63,7 +62,7 @@ public class HealthDescriptor implements Serializable {
     /**
      * Determines whether a health report should be created.
      *
-     * @return <code>true</code> if a health report should be created
+     * @return {@code true} if a health report should be created
      */
     public boolean isEnabled() {
         if (isValid(healthy) && isValid(unHealthy)) {

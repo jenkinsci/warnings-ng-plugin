@@ -20,6 +20,7 @@ import com.thoughtworks.xstream.XStream;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueDifference;
 import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
@@ -30,10 +31,8 @@ import hudson.XmlFile;
 import hudson.model.Api;
 import hudson.model.Result;
 import hudson.model.Run;
-import hudson.plugins.analysis.core.GlobalSettings;
 import hudson.plugins.analysis.core.HealthDescriptor;
 import hudson.plugins.analysis.util.model.AnnotationStream;
-import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A base class for build results that is capable of storing a reference to the current build. Provides support for
@@ -218,7 +217,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         if (previousResult.isPresent()) {
             AnalysisResult previous = previousResult.get();
             if (currentResult.isEmpty()) {
-                if (previous.getNumberOfWarnings() == 0) {
+                if (previous.getTotalSize() == 0) {
                     zeroWarningsSinceBuild = previous.getZeroWarningsSinceBuild();
                     zeroWarningsSinceDate = previous.getZeroWarningsSinceDate();
                 }
@@ -324,44 +323,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     }
 
     /**
-     * Returns whether a module with an error is part of this result.
-     *
-     * @return <code>true</code> if at least one module has an error.
-     */
-    public boolean hasError() {
-        return !errors.isEmpty();
-    }
-
-    /**
-     * Returns the error messages associated with this result.
-     *
-     * @return the error messages
-     */
-    @Exported
-    public ImmutableList<String> getErrors() {
-        return errors;
-    }
-
-    /**
-     * Returns the modules in this result.
-     *
-     * @return the modules
-     */
-    @Exported
-    public ImmutableSet<String> getModules() {
-        return modules;
-    }
-
-    /**
-     * Returns the number of modules in this result.
-     *
-     * @return the number of modules
-     */
-    public int getNumberOfModules() {
-        return numberOfModules;
-    }
-
-    /**
      * Returns the defined default encoding.
      *
      * @return the default encoding
@@ -400,15 +361,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
 
     private String getSerializationFileName() {
         return id + "-issues.xml";
-    }
-
-    /**
-     * Returns whether author and commit information should be gathered.
-     *
-     * @return if {@code true} author and commit information are shown, otherwise this information is hidden
-     */
-    public boolean useAuthors() {
-        return !GlobalSettings.instance().getNoAuthors();
     }
 
     /**
@@ -543,95 +495,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     }
 
     /**
-     * Gets the number of warnings.
-     *
-     * @return the number of warnings
-     */
-    @Exported
-    public int getNumberOfWarnings() {
-        return numberOfWarnings;
-    }
-
-    /**
-     * Gets the number of warnings.
-     *
-     * @return the number of warnings
-     */
-    public int getNumberOfAnnotations() {
-        return getNumberOfWarnings();
-    }
-
-    /**
-     * Returns the total number of warnings of the specified priority for this object.
-     *
-     * @param priority
-     *         the priority
-     *
-     * @return total number of annotations of the specified priority for this object
-     */
-    public int getNumberOfAnnotations(final Priority priority) {
-        if (priority == Priority.HIGH) {
-            return highWarnings;
-        }
-        else if (priority == Priority.NORMAL) {
-            return normalWarnings;
-        }
-        else {
-            return lowWarnings;
-        }
-    }
-
-    /**
-     * Gets the number of fixed warnings.
-     *
-     * @return the number of fixed warnings
-     */
-    @Exported
-    public int getNumberOfFixedWarnings() {
-        return numberOfFixedWarnings;
-    }
-
-    /**
-     * Gets the number of new warnings.
-     *
-     * @return the number of new warnings
-     */
-    @Exported
-    public int getNumberOfNewWarnings() {
-        return numberOfNewWarnings;
-    }
-
-    /**
-     * Returns the number of warnings with high priority.
-     *
-     * @return the number of warnings with high priority
-     */
-    @Exported
-    public int getNumberOfHighPriorityWarnings() {
-        return highWarnings;
-    }
-
-    /**
-     * Returns the number of warnings with normal priority.
-     *
-     * @return the number of warnings with normal priority
-     */
-    @Exported
-    public int getNumberOfNormalPriorityWarnings() {
-        return normalWarnings;
-    }
-
-    /**
-     * Returns the number of warnings with low priority.
-     *
-     * @return the number of warnings with low priority
-     */
-    @Exported
-    public int getNumberOfLowPriorityWarnings() {
-        return lowWarnings;
-    }
-
-    /**
      * Returns the associated project of this result.
      *
      * @return the associated project of this result.
@@ -756,30 +619,12 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
 
     }
 
-   /**
-     * Returns all possible priorities.
-     *
-     * @return all priorities
-     */
-    public Priority[] getPriorities() {
-        return Priority.values();
-    }
-
-    // TODO: group all stapler/UI related methods
-    public ImmutableList<Issue> getAnnotations(final String priority) {
-        return getContainer().findByProperty(issue -> issue.getPriority().name().equalsIgnoreCase(priority));
-    }
-
-    public int getNumberOfAnnotations(final String priority) {
-        return getNumberOfAnnotations(Priority.fromString(priority));
-    }
-
     /**
-     * Gets the annotation container.
+     * Returns all issues of this result.
      *
-     * @return the container
+     * @return the reported issues
      */
-    public Issues getContainer() {
+    public Issues getIssues() {
         return getProject();
     }
 
@@ -843,10 +688,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         return reasonForPluginResult;
     }
 
-    public String getSummary() {
-        return getTool().getSummary(getNumberOfAnnotations(), getNumberOfModules());
-    }
-
     /**
      * Returns the detail messages for the summary.jelly file.
      *
@@ -867,7 +708,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
 
     @Override
     public String toString() {
-        return getDisplayName() + " : " + getNumberOfAnnotations() + " annotations";
+        return getDisplayName() + " : " + getTotalSize() + " issues";
     }
 
     private StaticAnalysisLabelProvider getTool() {
@@ -889,11 +730,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     }
 
     @Override
-    public int getFixedSize() {
-        return numberOfFixedWarnings;
-    }
-
-    @Override
     public Map<String, Integer> getSizePerOrigin() {
         return getProject().getPropertyCount(issue -> issue.getOrigin());
     }
@@ -906,6 +742,20 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     @Override
     public int getTotalSize() {
         return numberOfWarnings;
+    }
+
+    @Override
+    public int getTotalSize(final Priority priority) {
+        if (priority == Priority.HIGH) {
+            return getTotalHighPrioritySize();
+        }
+        else if (priority == Priority.NORMAL) {
+            return getTotalNormalPrioritySize();
+        }
+        else if (priority == Priority.LOW) {
+            return getTotalLowPrioritySize();
+        }
+        return 0;
     }
 
     @Override
@@ -943,4 +793,8 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         return lowNewWarnings;
     }
 
+    @Override
+    public int getFixedSize() {
+        return numberOfFixedWarnings;
+    }
 }
