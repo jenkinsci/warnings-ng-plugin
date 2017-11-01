@@ -181,6 +181,11 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
 
         IssueDifference difference = new IssueDifference(result, referenceResult);
         Issues newWarnings = difference.getNewIssues();
+
+//        List<BuildIssue> issues = newWarnings.all().stream()
+//                .map(issue -> new BuildIssue(issue, run.getNumber()))
+//                .collect(Collectors.toList());
+//
 //        FIXME: build is no property of issue? Generic property or subclass.
 //        for (FileAnnotation newWarning : newWarnings) {
 //            newWarning.setBuild(build.getNumber());
