@@ -4,11 +4,11 @@ import java.io.Serializable;
 
 import org.jvnet.localizer.Localizable;
 
+import edu.hm.hafner.analysis.Priority;
 import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 
 import hudson.model.HealthReport;
 import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * Creates a health report for integer values based on healthy and unhealthy thresholds.
@@ -46,7 +46,7 @@ public class HealthReportBuilder implements Serializable {
     public HealthReport computeHealth(final AnalysisResult result) {
         int numberOfAnnotations = 0;
         for (Priority priority : Priority.collectPrioritiesFrom(healthDescriptor.getMinimumPriority())) {
-            numberOfAnnotations += result.getNumberOfAnnotations(priority);
+            numberOfAnnotations += result.getTotalSize(priority);
         }
 
         if (healthDescriptor.isEnabled()) {
@@ -73,14 +73,14 @@ public class HealthReportBuilder implements Serializable {
 
     private Localizable getDescription(final AnalysisResult result) {
         String name = "Static Analysis"; // FIXME: extract from IssueParser.find(id)
-        if (result.getNumberOfAnnotations() == 0) {
+        if (result.getTotalSize() == 0) {
             return Messages._ResultAction_HealthReportNoItem(name);
         }
-        else if (result.getNumberOfAnnotations() == 1) {
+        else if (result.getTotalSize() == 1) {
             return Messages._ResultAction_HealthReportSingleItem(name);
         }
         else {
-            return Messages._ResultAction_HealthReportMultipleItem(name, result.getNumberOfAnnotations());
+            return Messages._ResultAction_HealthReportMultipleItem(name, result.getTotalSize());
         }
     }
 }

@@ -2,6 +2,8 @@ package io.jenkins.plugins.analysis.core.quality;
 
 import java.util.Map;
 
+import edu.hm.hafner.analysis.Priority;
+
 /**
  * Describes the results of a static analysis run.
  *
@@ -14,6 +16,16 @@ public interface StaticAnalysisRun {
      * @return total number of issues
      */
     int getTotalSize();
+
+    /**
+     * Returns the total number of issues in this analysis run, that have the specified {@link Priority}.
+     *
+     * @param priority
+     *         the priority of the issues to match
+     *
+     * @return total number of issues
+     */
+    int getTotalSize(Priority priority);
 
     /**
      * Returns the total number of high priority issues in this analysis run.
