@@ -3,11 +3,11 @@ package io.jenkins.plugins.analysis.core.steps;
 import java.util.Optional;
 
 import edu.hm.hafner.analysis.Issues;
+import io.jenkins.plugins.analysis.core.util.Logger;
 
 import hudson.model.Result;
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.Thresholds;
-import hudson.plugins.analysis.util.PluginLogger;
 
 /**
  * Evaluates the build result using the defined thresholds.
@@ -15,9 +15,8 @@ import hudson.plugins.analysis.util.PluginLogger;
  * @author Ullrich Hafner
  */
 public class ResultEvaluator extends BuildResultEvaluator {
-    private final String id;
     private final Thresholds thresholds;
-    private final PluginLogger logger;
+    private final Logger logger;
 
     /**
      * Creates a new instance of {@link ResultEvaluator}.
@@ -27,10 +26,9 @@ public class ResultEvaluator extends BuildResultEvaluator {
      * @param name
      *         the name of the static analysis tool
      */
-    public ResultEvaluator(final String id, final String name, final Thresholds thresholds, final PluginLogger logger) {
+    public ResultEvaluator(final String id, final String name, final Thresholds thresholds, final Logger logger) {
         super(StaticAnalysisTool.find(id, name).getResultUrl());
 
-        this.id = id;
         this.thresholds = thresholds;
         this.logger = logger;
     }
@@ -56,7 +54,7 @@ public class ResultEvaluator extends BuildResultEvaluator {
             result = evaluateBuildResult(messages, thresholds, allIssues, newIssues);
         }
         String reason = messages.toString();
-        logger.log(String.format("%s %s - %s", Messages.ResultAction_Status(), result.color.getDescription(), reason));
+        logger.log("%s %s - %s", Messages.ResultAction_Status(), result.color.getDescription(), reason);
         return new Evaluation(result, reason);
     }
 

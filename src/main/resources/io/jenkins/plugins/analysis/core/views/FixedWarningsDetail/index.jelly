@@ -18,7 +18,7 @@
         <tbody>
           <j:forEach var="issue" items="${it.issues}">
             <tr>
-              <td class="pane" id="file">${issue.fileName}</td>
+              <td class="pane" id="file">${it.getFileDisplayName(issue)}</td>
               <td class="pane" id="line">
                 <j:choose>
                   <j:when test="${issue.lineStart &lt; 1}">

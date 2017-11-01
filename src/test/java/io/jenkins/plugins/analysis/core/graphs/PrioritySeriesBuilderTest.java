@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @author Ullrich Hafner
  */
 class PrioritySeriesBuilderTest {
-    /** Verifies that an empty list of runs produces no data. */
+    /** Verifies that an empty list of builds produces no data. */
     @Test
     void shouldHaveEmptyDataSetForEmptyIterator() {
         PrioritySeriesBuilder builder = new PrioritySeriesBuilder();
@@ -33,7 +33,10 @@ class PrioritySeriesBuilderTest {
         return mock(GraphConfiguration.class);
     }
 
-    /** Verifies that a list with one run produces one column with columns containing the issues per priority. */
+    /**
+     * Verifies that a list with one build result produces one column with rows containing the correct number of issues
+     * per priority.
+     */
     @Test
     void shouldHaveThreeValuesForSingleBuild() {
         PrioritySeriesBuilder builder = new PrioritySeriesBuilder();
@@ -53,7 +56,7 @@ class PrioritySeriesBuilderTest {
     }
 
     private StaticAnalysisRun createBuildResult(final int buildNumber, final int numberOfHighPriorityIssues,
-                                          final int numberOfNormalPriorityIssues, final int numberOfLowPriorityIssues) {
+            final int numberOfNormalPriorityIssues, final int numberOfLowPriorityIssues) {
         StaticAnalysisRun buildResult = mock(StaticAnalysisRun.class);
 
         when(buildResult.getTotalHighPrioritySize()).thenReturn(numberOfHighPriorityIssues);

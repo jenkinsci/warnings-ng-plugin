@@ -13,7 +13,8 @@ public class RunAdapter implements AnalysisBuild {
     /**
      * Creates a new instance of {@link RunAdapter}.
      *
-     * @param run the run to wrap
+     * @param run
+     *         the run to wrap
      */
     public RunAdapter(final Run<?, ?> run) {
         this.run = run;

@@ -21,6 +21,8 @@ import com.google.common.collect.Sets;
 import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool.StaticAnalysisToolDescriptor;
 import io.jenkins.plugins.analysis.core.util.FilesParser;
+import io.jenkins.plugins.analysis.core.util.Logger;
+import io.jenkins.plugins.analysis.core.util.LoggerFactory;
 import jenkins.model.Jenkins;
 
 import hudson.EnvVars;
@@ -29,8 +31,6 @@ import hudson.FilePath;
 import hudson.Util;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.plugins.analysis.util.NullLogger;
-import hudson.plugins.analysis.util.PluginLogger;
 
 /**
  * Scan files or the console log for issues.
@@ -132,14 +132,10 @@ public class ScanForIssuesStep extends Step {
             pattern = step.getPattern();
         }
 
-        private PluginLogger createPluginLogger() throws IOException, InterruptedException {
-            TaskListener logger = getContext().get(TaskListener.class);
-            if (logger == null) {
-                return new NullLogger();
-            }
-            else {
-                return new PluginLogger(logger.getLogger(), tool.getName());
-            }
+        private Logger createLogger() throws IOException, InterruptedException {
+            TaskListener listener = getContext().get(TaskListener.class);
+
+            return new LoggerFactory().createLogger(listener.getLogger(), tool.getName());
         }
 
         private Run<?, ?> getRun() throws IOException, InterruptedException {
@@ -164,8 +160,8 @@ public class ScanForIssuesStep extends Step {
         }
 
         private Issues scanConsoleLog(final FilePath workspace) throws IOException, InterruptedException, InvocationTargetException {
-            PluginLogger logger = createPluginLogger();
-            logger.format("Parsing console log (in workspace '%s')", workspace);
+            Logger logger = createLogger();
+            logger.log("Parsing console log (in workspace '%s')", workspace);
 
             Issues issues = new Issues(workspace.getName()); // TODO: Mix of FilePath and File
             // issues.setId(tool.getId()); TODO value of issue?
@@ -173,11 +169,11 @@ public class ScanForIssuesStep extends Step {
 
             int modulesSize = issues.getProperties(issue -> issue.getModuleName()).size();
             if (modulesSize > 0) {
-                logger.format("Successfully parsed console log: found %d issues in %d modules",
+                logger.log("Successfully parsed console log: found %d issues in %d modules",
                         issues.getSize(), modulesSize);
             }
             else {
-                logger.format("Successfully parsed console log: found %d issues", issues.getSize());
+                logger.log("Successfully parsed console log: found %d issues", issues.getSize());
             }
 
             return issues;
@@ -188,8 +184,8 @@ public class ScanForIssuesStep extends Step {
             Issues issues = workspace.act(parser);
 
             // FIXME: here we have no prefix for the logger since lines are just dumped
-            PluginLogger logger = createPluginLogger();
-            logger.logLines(issues.getLogMessages());
+            Logger logger = createLogger();
+            logger.log(issues.getLogMessages());
 
             return issues;
         }
