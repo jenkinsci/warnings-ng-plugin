@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.workflow.steps.Step;
@@ -18,6 +19,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import com.google.common.collect.Sets;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
 import io.jenkins.plugins.analysis.core.history.BuildHistory;
@@ -62,6 +64,7 @@ public class PublishIssuesStep extends Step {
     private final Thresholds thresholds = new Thresholds();
     private String id;
     private String name;
+    private Predicate<? super Issue> criterion;
 
     /**
      * Creates a new instance of {@link PublishIssuesStep}.
@@ -92,6 +95,15 @@ public class PublishIssuesStep extends Step {
 
     public String getId() {
         return id;
+    }
+
+    @DataBoundSetter
+    public void setFilter(final Predicate<? super Issue> criterion) {
+        this.criterion = criterion;
+    }
+
+    public Predicate<? super Issue> getFilter() {
+        return criterion;
     }
 
     /**
