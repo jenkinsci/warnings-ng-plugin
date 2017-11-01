@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.core.quality;
 
+import java.util.Map;
+
 /**
  * Describes the results of a static analysis run.
  *
@@ -35,30 +37,51 @@ public interface StaticAnalysisRun {
     int getTotalLowPrioritySize();
 
     /**
-     * Returns the new number of issues in this analysis run.
+     * Returns the number of new issues in this analysis run.
      *
-     * @return new number of issues
+     * @return number of new issues
      */
     int getNewSize();
 
     /**
-     * Returns the new number of high priority issues in this analysis run.
+     * Returns the number of new high priority issues in this analysis run.
      *
-     * @return new number of high priority issues
+     * @return number of new high priority issues
      */
     int getNewHighPrioritySize();
 
     /**
-     * Returns the new number of normal priority issues in this analysis run.
+     * Returns the number of new normal priority issues in this analysis run.
      *
-     * @return new number of normal priority issues
+     * @return number of new normal priority issues
      */
     int getNewNormalPrioritySize();
 
     /**
-     * Returns the new number of low priority issues in this analysis run.
+     * Returns the number of new low priority issues in this analysis run.
      *
-     * @return new number of low priority of issues
+     * @return number of new low priority of issues
      */
     int getNewLowPrioritySize();
+
+    /**
+     * Returns the number of fixed issues in this analysis run.
+     *
+     * @return number of fixed issues
+     */
+    int getFixedSize();
+
+    /**
+     * Returns the number of issues in this analysis run, mapped by their origin.
+     *
+     * @return number of issues per origin
+     */
+    Map<String, Integer> getSizePerOrigin();
+
+    /**
+     * Returns the associated build that this run was part of.
+     *
+     * @return the associated build
+     */
+    AnalysisBuild getBuild();
 }

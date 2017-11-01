@@ -20,7 +20,7 @@ import hudson.model.Run;
  * @author Ulli Hafner
  */
 public class PropertyCountTab extends IssuesDetail {
-    private final Map<String, Long> propertyCount;
+    private final Map<String, Integer> propertyCount;
     private final Function<String, String> propertyFormatter;
     private final String property;
 

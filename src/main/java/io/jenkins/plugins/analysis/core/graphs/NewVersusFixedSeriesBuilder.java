@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.core.graphs;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
+import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 
 /**
  * Builds the series for a new versus fixed issues graph.
@@ -12,10 +12,10 @@ import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
  */
 public class NewVersusFixedSeriesBuilder extends SeriesBuilder {
     @Override
-    protected List<Integer> computeSeries(final AnalysisResult current) {
+    protected List<Integer> computeSeries(final StaticAnalysisRun current) {
         List<Integer> series = new ArrayList<>();
-        series.add(current.getNumberOfNewWarnings());
-        series.add(current.getNumberOfFixedWarnings());
+        series.add(current.getNewSize());
+        series.add(current.getFixedSize());
         return series;
     }
 
