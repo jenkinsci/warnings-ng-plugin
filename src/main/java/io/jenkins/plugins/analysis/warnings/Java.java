@@ -39,7 +39,7 @@ public class Java extends StaticAnalysisTool {
 
         // FIXME: use new parsers from model!
         Issues issues = new FileWarningsParser(parsers, getDefaultEncoding()).parseIssues(file, moduleName);
-        return issues.withOrigin(ID);
+        return withOrigin(issues, ID);
     }
 
     /** Registers this tool as extension point implementation. */

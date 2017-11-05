@@ -32,7 +32,7 @@ public class JavaDoc extends Java {
         List<AbstractWarningsParser> parsers = ParserRegistry.getParsers("JavaDoc");
 
         Issues issues = new FileWarningsParser(parsers, getDefaultEncoding()).parseIssues(file, moduleName);
-        return issues.withOrigin(ID);
+        return withOrigin(issues, ID);
     }
 
     /** Registers this tool as extension point implementation. */
