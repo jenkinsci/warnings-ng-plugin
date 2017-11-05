@@ -5,6 +5,7 @@ import java.util.SortedSet;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issues;
+import io.jenkins.plugins.analysis.core.steps.BuildIssue;
 
 import hudson.plugins.analysis.Messages;
 
@@ -14,9 +15,9 @@ import hudson.plugins.analysis.Messages;
  * @author Ullrich Hafner
  */
 public class TabLabelProvider {
-    private final Issues issues;
+    private final Issues<BuildIssue> issues;
 
-    public TabLabelProvider(final Issues issues) {
+    public TabLabelProvider(final Issues<BuildIssue> issues) {
         this.issues = issues;
     }
 

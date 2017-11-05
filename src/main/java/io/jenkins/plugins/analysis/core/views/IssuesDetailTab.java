@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.views;
 
 import edu.hm.hafner.analysis.Issues;
+import io.jenkins.plugins.analysis.core.steps.BuildIssue;
 
 import hudson.model.ModelObject;
 import hudson.model.Run;
@@ -23,8 +24,8 @@ public class IssuesDetailTab extends IssuesDetail {
      * @param parent
      *         the parent of this tab
      */
-    public IssuesDetailTab(final Run<?, ?> owner, final Issues issues, final String defaultEncoding, final ModelObject parent) {
-        super(owner, issues, new Issues(), new Issues(), defaultEncoding, parent);
+    public IssuesDetailTab(final Run<?, ?> owner, final Issues<BuildIssue> issues, final String defaultEncoding, final ModelObject parent) {
+        super(owner, issues, new Issues<>(), new Issues<>(), defaultEncoding, parent);
     }
 }
 

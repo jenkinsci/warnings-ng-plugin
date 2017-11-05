@@ -32,24 +32,6 @@ public class AffectedFilesResolver {
     /**
      * Copies all files with issues from the workspace to the build folder.
      *
-     * @param rootDir
-     *         directory to store the copied files in
-     * @param issues
-     *         issues determining the actual files to copy
-     *
-     * @throws IOException
-     *         if the files could not be written
-     * @throws InterruptedException
-     *         if the user cancels the processing
-     */
-    public void copyFilesWithAnnotationsToBuildFolder(final FilePath rootDir,
-            final Issues issues, final String defaultEncoding) throws IOException, InterruptedException {
-        copyFilesWithAnnotationsToBuildFolder(null, rootDir, issues, defaultEncoding);
-    }
-
-    /**
-     * Copies all files with issues from the workspace to the build folder.
-     *
      * @param channel
      *         channel to get the files from
      * @param jenkinsBuildRoot
@@ -63,7 +45,7 @@ public class AffectedFilesResolver {
      *         if the user cancels the processing
      */
     public void copyFilesWithAnnotationsToBuildFolder(final VirtualChannel channel, final FilePath jenkinsBuildRoot,
-            final Issues issues, final String defaultEncoding)
+            final Issues<Issue> issues, final String defaultEncoding)
             throws IOException, InterruptedException {
         FilePath directory = jenkinsBuildRoot.child(AFFECTED_FILES_FOLDER_NAME);
         if (!directory.exists()) {

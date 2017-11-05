@@ -27,7 +27,8 @@ public class PropertyCountTab extends IssuesDetail {
     /**
      * Creates a new instance of {@link PropertyCountTab}.
      *
-     * @param property the property to show the details for
+     * @param property
+     *         the property to show the details for
      * @param owner
      *         current build as owner of this action.
      * @param issues

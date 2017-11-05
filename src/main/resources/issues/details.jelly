@@ -57,20 +57,26 @@
             active: false
         }), myTabs);
       </j:if>
-    <j:if test="${size(i) > 1}">
+      YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+          label: '<div id="warnings">${l.warnings}</div>',
+          dataSrc: 'tab.table/',
+          cacheData: true,
+          active: false
+      }), myTabs);
+      <j:if test="${it.useAuthors()}">
         YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '<div id="warnings">${l.warnings}</div>',
-            dataSrc: 'tab.table/',
-            cacheData: true,
-            active: false
-        }), myTabs);
-    </j:if>
-    YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-        label: '<div id="details">${l.details}</div>',
-        dataSrc: 'tab.details/',
+        label: '<div id="origin">${l.origin}</div>',
+        dataSrc: 'tab.origin/',
         cacheData: true,
         active: false
-    }), myTabs);
+        }), myTabs);
+      </j:if>
+      YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+          label: '<div id="details">${l.details}</div>',
+          dataSrc: 'tab.details/',
+          cacheData: true,
+          active: false
+      }), myTabs);
       myTabs.set('activeIndex', 0);
 
     </script>

@@ -182,7 +182,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     public Object getTarget() {
         AnalysisResult result = getResult();
 
-        return new IssuesDetail(run, result.getProject(), result.getFixedWarnings(), result.getNewWarnings(),
+        return new IssuesDetail(run, result.getIssues(), result.getFixedIssues(), result.getNewIssues(),
                 result.getDefaultEncoding(), getLabelProvider().getLinkName());
     }
 }

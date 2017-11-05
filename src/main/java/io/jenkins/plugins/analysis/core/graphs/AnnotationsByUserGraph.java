@@ -20,6 +20,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
+import io.jenkins.plugins.analysis.core.steps.BuildIssue;
 
 import hudson.plugins.analysis.Messages;
 import hudson.util.DataSetBuilder;
@@ -94,7 +95,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
 
     private void mergeResults(final Optional<AnalysisResult> current, final Map<String, Integer[]> annotationCountByUser) {
         current.ifPresent(analysisResult -> {
-            Issues issues = analysisResult.getProject();
+            Issues<BuildIssue> issues = analysisResult.getOldIssues();
             for (Issue annotation : issues) {
 //                String author = annotation.getAuthor(); FIXME: no author anymore
                 String author = "FIXME";

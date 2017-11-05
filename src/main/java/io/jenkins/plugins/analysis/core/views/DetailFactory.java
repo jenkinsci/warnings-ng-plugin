@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
+import io.jenkins.plugins.analysis.core.steps.BuildIssue;
 
 import hudson.model.Item;
 import hudson.model.ModelObject;
@@ -17,7 +18,7 @@ import hudson.model.Run;
 import hudson.plugins.analysis.Messages;
 
 /**
- * Creates detail objects for the selected element of a annotation container.
+ * Creates detail objects for the selected link in an issues detail view.
  *
  * @author Ulli Hafner
  */
@@ -82,6 +83,9 @@ public class DetailFactory {
         else if (link.startsWith("tab.table")) {
             return new IssuesTableTab(owner, allIssues, defaultEncoding, parent);
         }
+        else if (link.startsWith("tab.origin")) {
+            return new IssuesOriginTab(owner, allIssues, defaultEncoding, parent);
+        }
         else if (link.startsWith("tab.details")) {
             return new IssuesDetailTab(owner, allIssues, defaultEncoding, parent);
         }
@@ -98,7 +102,7 @@ public class DetailFactory {
         else {
             String property = StringUtils.substringBefore(link, ".");
             Predicate<Issue> filter = createPropertyFilter(plainLink, property);
-            Issues selectedIssues = allIssues.filter(filter);
+            Issues<BuildIssue> selectedIssues = allIssues.filter(filter);
             return new IssuesDetail(owner,
                     selectedIssues, fixedIssues.filter(filter), newIssues.filter(filter),
                     defaultEncoding, parent, getDisplayNameOfDetails(property, selectedIssues));
@@ -110,7 +114,7 @@ public class DetailFactory {
                 PropertyCountTab.getIssueStringFunction(property).apply(issue).hashCode()));
     }
 
-    private String getDisplayNameOfDetails(final String property, final Issues selectedIssues) {
+    private String getDisplayNameOfDetails(final String property, final Issues<BuildIssue> selectedIssues) {
         return PropertyCountTab.getColumnHeaderFor(selectedIssues, property)
                 + " "
                 + PropertyCountTab.getIssueStringFunction(property).apply(selectedIssues.get(0));
@@ -121,7 +125,7 @@ public class DetailFactory {
     }
 
     private IssuesDetail createPrioritiesDetail(final Priority priority, final Run<?, ?> owner,
-            final Issues issues, final Issues fixedIssues, final Issues newIssues,
+            final Issues<BuildIssue> issues, final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues,
             final String defaultEncoding, final ModelObject parent) {
         Predicate<Issue> priorityFilter = issue -> issue.getPriority() == priority;
         return new IssuesDetail(owner,

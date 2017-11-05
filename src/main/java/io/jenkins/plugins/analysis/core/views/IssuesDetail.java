@@ -14,6 +14,7 @@ import org.kohsuke.stapler.StaplerResponse;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
+import io.jenkins.plugins.analysis.core.steps.BuildIssue;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 
 import hudson.markup.MarkupFormatter;
@@ -33,9 +34,9 @@ public class IssuesDetail implements ModelObject {
 
     private final Run<?, ?> owner;
 
-    private final Issues issues;
-    private final Issues fixedIssues;
-    private final Issues newIssues;
+    private final Issues<BuildIssue> issues;
+    private final Issues<BuildIssue> fixedIssues;
+    private final Issues<BuildIssue> newIssues;
 
     private final String defaultEncoding;
 
@@ -46,26 +47,26 @@ public class IssuesDetail implements ModelObject {
     /** Sanitizes HTML elements in warning messages and tooltips. Use this formatter if raw HTML should be shown. */
     private final MarkupFormatter sanitizer = new RawHtmlMarkupFormatter(true);
 
-    public IssuesDetail(final Run<?, ?> owner, final Issues issues,
-            final Issues fixedIssues, final Issues newIssues, final String defaultEncoding,
+    public IssuesDetail(final Run<?, ?> owner, final Issues<BuildIssue> issues,
+            final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues, final String defaultEncoding,
             final String displayName) {
         this(owner, issues, fixedIssues, newIssues, defaultEncoding, Optional.empty(), displayName);
     }
 
-    public IssuesDetail(final Run<?, ?> owner, final Issues issues,
-            final Issues fixedIssues, final Issues newIssues, final String defaultEncoding,
+    public IssuesDetail(final Run<?, ?> owner, final Issues<BuildIssue> issues,
+            final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues, final String defaultEncoding,
             final ModelObject parent) {
         this(owner, issues, fixedIssues, newIssues, defaultEncoding, parent, StringUtils.EMPTY);
     }
 
-    public IssuesDetail(final Run<?, ?> owner, final Issues issues,
-            final Issues fixedIssues, final Issues newIssues, final String defaultEncoding, final ModelObject parent,
+    public IssuesDetail(final Run<?, ?> owner, final Issues<BuildIssue> issues,
+            final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues, final String defaultEncoding, final ModelObject parent,
             final String displayName) {
         this(owner, issues, fixedIssues, newIssues, defaultEncoding, Optional.of(parent), displayName);
     }
 
-    public IssuesDetail(final Run<?, ?> owner, final Issues issues,
-            final Issues fixedIssues, final Issues newIssues, final String defaultEncoding, final Optional<ModelObject> parent,
+    public IssuesDetail(final Run<?, ?> owner, final Issues<BuildIssue> issues,
+            final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues, final String defaultEncoding, final Optional<ModelObject> parent,
             final String displayName) {
         this.owner = owner;
         this.issues = issues;
@@ -76,15 +77,15 @@ public class IssuesDetail implements ModelObject {
         this.displayName = displayName;
     }
 
-    public Issues getIssues() {
+    public Issues<BuildIssue> getIssues() {
         return issues;
     }
 
-    public Issues getNewIssues() {
+    public Issues<BuildIssue> getNewIssues() {
         return newIssues;
     }
 
-    public Issues getFixedIssues() {
+    public Issues<BuildIssue> getFixedIssues() {
         return fixedIssues;
     }
 

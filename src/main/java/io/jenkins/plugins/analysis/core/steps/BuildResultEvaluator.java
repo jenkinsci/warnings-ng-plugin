@@ -43,7 +43,7 @@ public class BuildResultEvaluator {
      * @return the build result
      */
     public Result evaluateBuildResult(final StringBuilder logger, final Thresholds t,
-            final Issues issues) {
+            final Issues<BuildIssue> issues) {
         if (checkAllWarningsForFailure(logger, t, issues)) {
             return Result.FAILURE;
         }

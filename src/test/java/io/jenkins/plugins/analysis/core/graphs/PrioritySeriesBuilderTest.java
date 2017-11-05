@@ -23,7 +23,8 @@ class PrioritySeriesBuilderTest {
     void shouldHaveEmptyDataSetForEmptyIterator() {
         PrioritySeriesBuilder builder = new PrioritySeriesBuilder();
 
-        CategoryDataset dataSet = builder.createDataSet(createConfiguration(), Lists.newArrayList());
+        CategoryDataset dataSet = builder.createDataSet(createConfiguration(),
+                Lists.newArrayList());
 
         assertThat(dataSet.getColumnCount()).isEqualTo(0);
         assertThat(dataSet.getRowCount()).isEqualTo(0);
