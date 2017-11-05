@@ -66,7 +66,7 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
         }
     }
 
-    public Issues parseIssues(final File file, final String moduleName) throws InvocationTargetException {
+    public Issues<Issue> parseIssues(final File file, final String moduleName) throws InvocationTargetException {
         FileInputStream input = null;
         try {
             input = new FileInputStream(file);
@@ -93,8 +93,8 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
         return AbstractAnnotation.intern(annotations);
     }
 
-    public static Issues toIssues(final Collection<FileAnnotation> annotations) {
-        Issues issues = new Issues();
+    public static Issues<Issue> toIssues(final Collection<FileAnnotation> annotations) {
+        Issues<Issue> issues = new Issues<>();
         for (FileAnnotation annotation : annotations) {
             Issue issue = new IssueBuilder()
                     .setFileName(annotation.getFileName())

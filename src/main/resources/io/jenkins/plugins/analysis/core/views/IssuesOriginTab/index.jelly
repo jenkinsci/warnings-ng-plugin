@@ -1,0 +1,61 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:issues="/issues">
+  <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+
+  <j:set var="i" value="${it.issues}" />
+  <table class="pane sortable" id="origin">
+    <tr>
+      <td class="pane-header">${%File}</td>
+      <j:if test="${size(i.modules) > 1}">
+        <td class="pane-header">${%Module}</td>
+      </j:if>
+      <j:if test="${size(i.packages) > 1}">
+        <td class="pane-header">${%Package}</td>
+      </j:if>
+      <td class="pane-header">${%Priority}</td>
+      <td class="pane-header">${%Age}</td>
+      <td class="pane-header">${%Author}</td>
+      <td class="pane-header">${%commit-id}</td>
+    </tr>
+    <tbody>
+      <j:forEach var="issue" items="${i}">
+        <tr>
+          <td class="pane">
+            <div tooltip="${issue.message}">
+              <issues:sourceLink it="${it}" issue="${issue}"/>
+            </div>
+          </td>
+          <j:if test="${size(i.modules) > 1}">
+            <td class="pane">
+              <div tooltip="${issue.message}"> <a href="moduleName.${issue.moduleName.hashCode()}/">${issue.moduleName}</a> </div>
+            </td>
+          </j:if>
+          <j:if test="${size(i.packages) > 1}">
+            <td class="pane">
+              <div tooltip="${issue.message}"> <a href="packageName.${issue.packageName.hashCode()}/">${issue.packageName}</a> </div>
+            </td>
+          </j:if>
+          <td class="pane">
+            <div tooltip="${issue.message}"> ${it.getLocalizedPriority(issue.priority)} </div>
+          </td>
+          <td class="pane">
+            <j:choose>
+              <j:when test="${issue.build != 0}">
+                <a href="${it.getBuildUrl(issue.build)}" class="model-link inside">${it.getAge(issue.build)}</a>
+              </j:when>
+              <j:otherwise>
+                ${%N/A}
+              </j:otherwise>
+            </j:choose>
+          </td>
+          <td class="pane">
+            <div tooltip="${it.escape(issue.authorDetails)}"> <a href="author.${issue.author.hashCode()}/">${issue.author}</a> </div>
+          </td>
+          <td class="pane">
+            <div tooltip="${issue.commitId}"> ${issue.commitDetails} </div>
+          </td>
+        </tr>
+      </j:forEach>
+    </tbody>
+  </table>
+</j:jelly>

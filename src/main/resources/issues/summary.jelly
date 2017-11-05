@@ -1,0 +1,17 @@
+<!-- Section header <%@attribute name="icon" required="false" %> -->
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+         xmlns:t="/lib/hudson">
+  <st:documentation>
+    Renders a number as link if the number if greater than zero. Otherwise a plain zero is rendered.
+    <st:attribute name="it" use="required" type="io.jenkins.plugins.analysis.core.steps.ResultAction">
+      The object to show the summary for.
+    </st:attribute>
+  </st:documentation>
+
+  <t:summary icon="${it.hasLargeImage() ? it.largeImageName : icon}">
+    <j:out value="${it.result.summary}" />
+    <ul>
+      <j:out value="${it.result.details}" />
+    </ul>
+  </t:summary>
+</j:jelly>

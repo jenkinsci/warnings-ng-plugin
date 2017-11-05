@@ -8,6 +8,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.steps.IssueParser;
 import jenkins.MasterToSlaveFileCallable;
@@ -23,7 +24,7 @@ import hudson.remoting.VirtualChannel;
  *
  * @author Ulli Hafner
  */
-public class FilesParser extends MasterToSlaveFileCallable<Issues> {
+public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
     /** Ant file-set pattern to scan for. */
     private final String filePattern;
     private final IssueParser parser;
@@ -48,8 +49,8 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues> {
     }
 
     @Override
-    public Issues invoke(final File workspace, final VirtualChannel channel) throws IOException {
-        Issues issues = new Issues();
+    public Issues<Issue> invoke(final File workspace, final VirtualChannel channel) throws IOException {
+        Issues<Issue> issues = new Issues<>();
         issues.log("Searching for all files in '%s' that match the pattern '%s'.",
                 workspace.getAbsolutePath(), filePattern);
 
@@ -77,7 +78,7 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues> {
      * @param issues
      *         the issues of the parsing
      */
-    private void parseFiles(final File workspace, final String[] fileNames, final Issues issues) {
+    private void parseFiles(final File workspace, final String[] fileNames, final Issues<Issue> issues) {
         ModuleDetector detector = createModuleDetector(workspace);
 
         for (String fileName : fileNames) {
@@ -145,9 +146,9 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues> {
      * @param issues
      *         the issues of the parser
      */
-    private void parseFile(final File file, final String module, final Issues issues) {
+    private void parseFile(final File file, final String module, final Issues<Issue> issues) {
         try {
-            Issues annotations = parser.parse(file, module);
+            Issues<Issue> annotations = parser.parse(file, module);
 
             int duplicateCount = annotations.getSize() - issues.addAll(annotations.all()).size();
             int moduleCount = StringUtils.isBlank(module) ? 0 : 1;

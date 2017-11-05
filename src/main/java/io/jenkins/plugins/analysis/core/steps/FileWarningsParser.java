@@ -13,6 +13,7 @@ import java.util.List;
 import org.apache.commons.io.input.BOMInputStream;
 
 import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -45,9 +46,9 @@ public class FileWarningsParser implements IssueParser {
     }
 
     @Override
-    public Issues parse(final File file, final String moduleName) throws InvocationTargetException {
+    public Issues<Issue> parse(final File file, final String moduleName) throws InvocationTargetException {
         try {
-            Issues issues = parse(file);
+            Issues<Issue> issues = parse(file);
             issues.setModuleName(moduleName); // TODO: In parser!
             return issues;
         }
@@ -66,8 +67,8 @@ public class FileWarningsParser implements IssueParser {
      * @throws IOException
      *             Signals that an I/O exception has occurred.
      */
-    public Issues parse(final File file) throws IOException {
-        Issues issues = new Issues();
+    public Issues<Issue> parse(final File file) throws IOException {
+        Issues<Issue> issues = new Issues<>();
         for (AbstractParser parser : parsers) {
             try (Reader input = createReader(file)) {
                 issues.addAll(parser.parse(input));

@@ -5,6 +5,9 @@ import javax.annotation.CheckForNull;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.util.NoSuchElementException;
 import jenkins.model.Jenkins;
 
@@ -102,6 +105,15 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
 
     public String getId() {
         return getDescriptor().getId();
+    }
+
+    protected Issues<Issue> withOrigin(final Issues<Issue> issues, final String origin) {
+        IssueBuilder builder = new IssueBuilder();
+        Issues<Issue> issuesWithOrigin = new Issues<>();
+        for (Issue noOrigin : issues.all()) {
+            issuesWithOrigin.add(builder.copy(noOrigin).setOrigin(origin).build());
+        }
+        return issuesWithOrigin;
     }
 
     /** Descriptor for {@link StaticAnalysisTool}. **/

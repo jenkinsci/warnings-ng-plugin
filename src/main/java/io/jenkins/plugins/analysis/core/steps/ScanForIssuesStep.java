@@ -18,6 +18,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import com.google.common.collect.Sets;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool.StaticAnalysisToolDescriptor;
 import io.jenkins.plugins.analysis.core.util.FilesParser;
@@ -163,7 +164,7 @@ public class ScanForIssuesStep extends Step {
             Logger logger = createLogger();
             logger.log("Parsing console log (in workspace '%s')", workspace);
 
-            Issues issues = new Issues(workspace.getName()); // TODO: Mix of FilePath and File
+            Issues<Issue> issues = new Issues(workspace.getName()); // TODO: Mix of FilePath and File
             // issues.setId(tool.getId()); TODO value of issue?
             issues.addAll(tool.parse(getRun().getLogFile(), StringUtils.EMPTY));
 
@@ -181,7 +182,7 @@ public class ScanForIssuesStep extends Step {
 
         private Issues scanFiles(final FilePath workspace) throws IOException, InterruptedException {
             FilesParser parser = new FilesParser(expandEnvironmentVariables(pattern), tool, shouldDetectModules);
-            Issues issues = workspace.act(parser);
+            Issues<Issue> issues = workspace.act(parser);
 
             // FIXME: here we have no prefix for the logger since lines are just dumped
             Logger logger = createLogger();

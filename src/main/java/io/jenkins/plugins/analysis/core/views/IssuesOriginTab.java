@@ -7,13 +7,13 @@ import hudson.model.ModelObject;
 import hudson.model.Run;
 
 /**
- * Result object to visualize the issue details as a table within a tab.
+ * Result object to visualize the issue details as a giant list of all issue details.
  *
  * @author Ulli Hafner
  */
-public class IssuesTableTab extends IssuesDetail {
+public class IssuesOriginTab extends IssuesDetail {
     /**
-     * Creates a new instance of {@code IssuesTableTab}.
+     * Creates a new instance of {@code IssuesDetailTab}.
      *
      * @param owner
      *         the current run as owner of this action
@@ -24,7 +24,7 @@ public class IssuesTableTab extends IssuesDetail {
      * @param parent
      *         the parent of this tab
      */
-    public IssuesTableTab(final Run<?, ?> owner, final Issues<BuildIssue> issues, final String defaultEncoding, final ModelObject parent) {
+    public IssuesOriginTab(final Run<?, ?> owner, final Issues<BuildIssue> issues, final String defaultEncoding, final ModelObject parent) {
         super(owner, issues, new Issues<>(), new Issues<>(), defaultEncoding, parent);
     }
 }

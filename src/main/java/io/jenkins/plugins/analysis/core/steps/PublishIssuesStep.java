@@ -478,7 +478,7 @@ public class PublishIssuesStep extends Step {
             AnalysisResult result = createAnalysisResult(actualId, run, selector);
 
             FilePath workspace = getContext().get(FilePath.class);
-            Issues container = result.getProject();
+            Issues container = result.getOldIssues();
             logger.log("Copying %d affected files from '%s' to build folder", container.getFiles().size(), workspace);
 
             new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(getChannel(),

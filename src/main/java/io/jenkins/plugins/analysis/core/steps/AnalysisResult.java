@@ -7,6 +7,8 @@ import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,11 +16,8 @@ import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.thoughtworks.xstream.XStream;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueDifference;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -47,51 +46,51 @@ import hudson.plugins.analysis.util.model.AnnotationStream;
 public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     private static final long serialVersionUID = 1110545450292087475L;
     private static final Logger LOGGER = Logger.getLogger(AnalysisResult.class.getName());
+    private static final String OLD_ISSUES_SUFFIX = "old";
 
     private final String id;
+    private final String name;
 
     private transient ReentrantLock lock = new ReentrantLock();
-    private final String name;
     private transient Run<?, ?> run;
 
-    /** The project containing the annotations. */
-    @SuppressFBWarnings("Se")
-    private transient WeakReference<Issues> project;
-    /** All new warnings in the current build. */
-    @SuppressFBWarnings("Se")
-    private transient WeakReference<Issues> newWarningsReference;
-    /** All fixed warnings in the current build. */
-    @SuppressFBWarnings("Se")
-    private transient WeakReference<Issues> fixedWarningsReference;
+    /**
+     * All old issues: i.e. all issues, that are part of the current and previous report.
+     */
+    private transient WeakReference<Issues<BuildIssue>> oldIssuesReference;
+    /**
+     * All new issues: i.e. all issues, that are part of the current report but have not been shown up in the previous
+     * report.
+     */
+    private transient WeakReference<Issues<BuildIssue>> newIssuesReference;
+    /**
+     * All fixed issues: i.e. all issues, that are part of the previous report but are not present in the current report
+     * anymore.
+     */
+    private transient WeakReference<Issues<BuildIssue>> fixedIssuesReference;
 
-    /** All parsed modules. */
-    private final ImmutableSet<String> modules;
-    /** The total number of parsed modules (regardless if there are annotations). */
-    private final int numberOfModules;
-
-    /** The default encoding to be used when reading and parsing files. */
     private final String defaultEncoding;
 
     /** The number of warnings in this build. */
-    private final int numberOfWarnings;
+    private final int size;
     /** The number of new warnings in this build. */
-    private final int numberOfNewWarnings;
+    private final int newSize;
     /** The number of fixed warnings in this build. */
     private final int numberOfFixedWarnings;
 
     /** The number of low priority warnings in this build. */
-    private final int lowWarnings;
+    private final int lowPrioritySize;
     /** The number of normal priority warnings in this build. */
-    private final int normalWarnings;
+    private final int normalPrioritySize;
     /** The number of high priority warnings in this build. */
-    private final int highWarnings;
+    private final int highPrioritySize;
 
     /** The number of low priority warnings in this build. */
-    private final int lowNewWarnings;
+    private final int newLowPrioritySize;
     /** The number of normal priority warnings in this build. */
-    private final int normalNewWarnings;
+    private final int newNormalPrioritySize;
     /** The number of high priority warnings in this build. */
-    private final int highNewWarnings;
+    private final int newHighPrioritySize;
 
     /** Determines since which build we have zero warnings. */
     private int zeroWarningsSinceBuild;
@@ -148,65 +147,53 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     /**
      * Creates a new instance of {@link AnalysisResult}.
      *
-     * @param build
-     *         the current build as owner of this action
+     * @param run
+     *         the current run as owner of this action
      * @param referenceProvider
-     *         build referenceProvider
+     *         run referenceProvider
      */
-    // FIXME: should we ignore the result in previousResult?
-    protected AnalysisResult(final String id, final String name, final Run<?, ?> build, final ReferenceProvider referenceProvider,
+    // FIXME: should we ignore the issues in previousResult?
+    protected AnalysisResult(final String id, final String name, final Run<?, ?> run, final ReferenceProvider referenceProvider,
             final Optional<AnalysisResult> previousResult, final ResultEvaluator resultEvaluator, final String defaultEncoding,
-            final Issues result, final boolean canSerialize) {
+            final Issues<Issue> issues, final boolean canSerialize) {
         this.id = id;
         this.name = name;
-        run = build;
+        this.run = run;
         this.defaultEncoding = defaultEncoding;
 
-        modules = ImmutableSet.copyOf(result.getProperties(issue -> issue.getModuleName()));
-        numberOfModules = modules.size();
-
-        // errors = ImmutableList.copyOf(result.getLogMessages()); FIXME: errors and log?
+        // errors = ImmutableList.copyOf(issues.getLogMessages()); FIXME: errors and log?
         errors = ImmutableList.of();
 
-        numberOfWarnings = result.getSize();
-
-        highWarnings = result.getHighPrioritySize();
-        normalWarnings = result.getNormalPrioritySize();
-        lowWarnings = result.getLowPrioritySize();
+        size = issues.getSize();
+        highPrioritySize = issues.getHighPrioritySize();
+        normalPrioritySize = issues.getNormalPrioritySize();
+        lowPrioritySize = issues.getLowPrioritySize();
 
         referenceBuild = referenceProvider.getNumber();
-        Issues referenceResult = referenceProvider.getIssues();
 
-        project = new WeakReference<>(result);
+        Issues<BuildIssue> referenceResult = referenceProvider.getIssues();
+        IssueDifference difference = new IssueDifference(issues, this.run.getNumber(), referenceResult);
 
-        IssueDifference difference = new IssueDifference(result, referenceResult);
-        Issues newWarnings = difference.getNewIssues();
+        Issues<BuildIssue> oldIssues = difference.getOldIssues();
+        oldIssuesReference = new WeakReference<>(oldIssues);
 
-//        List<BuildIssue> issues = newWarnings.all().stream()
-//                .map(issue -> new BuildIssue(issue, run.getNumber()))
-//                .collect(Collectors.toList());
-//
-//        FIXME: build is no property of issue? Generic property or subclass.
-//        for (FileAnnotation newWarning : newWarnings) {
-//            newWarning.setBuild(build.getNumber());
-//        }
+        Issues<BuildIssue> newIssues = difference.getNewIssues();
+        newIssuesReference = new WeakReference<>(newIssues);
+        newSize = newIssues.getSize();
+        newHighPrioritySize = newIssues.getHighPrioritySize();
+        newNormalPrioritySize = newIssues.getNormalPrioritySize();
+        newLowPrioritySize = newIssues.getLowPrioritySize();
 
-        numberOfNewWarnings = newWarnings.getSize();
-        highNewWarnings = newWarnings.getHighPrioritySize();
-        normalNewWarnings = newWarnings.getNormalPrioritySize();
-        lowNewWarnings = newWarnings.getLowPrioritySize();
-        newWarningsReference = new WeakReference<>(newWarnings);
+        Issues<BuildIssue> fixedIssues = difference.getFixedIssues();
+        fixedIssuesReference = new WeakReference<>(fixedIssues);
+        numberOfFixedWarnings = fixedIssues.size();
 
-        Issues fixedWarnings = difference.getFixedIssues();
-        numberOfFixedWarnings = fixedWarnings.getSize();
-        fixedWarningsReference = new WeakReference<>(fixedWarnings);
-
-        computeZeroWarningsHighScore(build, result, previousResult);
+        computeZeroWarningsHighScore(run, issues, previousResult, issues.isEmpty());
 
         evaluateStatus(resultEvaluator, previousResult);
 
         if (canSerialize) {
-            serializeAnnotations(result, fixedWarnings);
+            serializeAnnotations(oldIssues, newIssues, fixedIssues);
         }
     }
 
@@ -214,14 +201,15 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      * Computes the zero warnings high score based on the current build and the previous build (with results of the
      * associated plug-in).
      *
+     * @param containsIssues
      * @param build
      *         the current build
      */
-    private void computeZeroWarningsHighScore(final Run<?, ?> build, final Issues currentResult,
-            final Optional<AnalysisResult> previousResult) {
+    private void computeZeroWarningsHighScore(final Run<?, ?> build, final Issues<Issue> currentResult,
+            final Optional<AnalysisResult> previousResult, final boolean containsIssues) {
         if (previousResult.isPresent()) {
             AnalysisResult previous = previousResult.get();
-            if (currentResult.isEmpty()) {
+            if (containsIssues) {
                 if (previous.getTotalSize() == 0) {
                     zeroWarningsSinceBuild = previous.getZeroWarningsSinceBuild();
                     zeroWarningsSinceDate = previous.getZeroWarningsSinceDate();
@@ -265,7 +253,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      */
     private void evaluateStatus(final ResultEvaluator resultEvaluator, final Optional<AnalysisResult> previousResult) {
         if (resultEvaluator.isEnabled()) {
-            Evaluation result = resultEvaluator.evaluate(previousResult, getProject(), getNewWarnings());
+            Evaluation result = resultEvaluator.evaluate(previousResult, getOldIssues(), getNewIssues());
 
             reasonForPluginResult = result.reason;
             isSuccessfulStateTouched = true;
@@ -337,31 +325,16 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     }
 
     /**
-     * Returns the serialization file for all warnings.
-     *
-     * @return the serialization file.
-     */
-    private XmlFile getDataFile() {
-        return new XmlFile(getXStream(), new File(getRun().getRootDir(), getSerializationFileName()));
-    }
-
-    /**
      * Returns the serialization file for the fixed warnings.
      *
+     * @param suffix
+     *         suffix of the file
+     *
      * @return the serialization file.
      */
-    private XmlFile getFixedDataFile() {
-        return new XmlFile(getXStream(), new File(getRun().getRootDir(),
-                getSerializationFileName().replace(".xml", "-fixed.xml")));
-    }
-
-    /**
-     * Returns the {@link XStream} to use.
-     *
-     * @return the annotation stream to use
-     */
-    private XStream getXStream() {
-        return new AnnotationStream();
+    private XmlFile getDataFile(final String suffix) {
+        return new XmlFile(new AnnotationStream(), new File(getRun().getRootDir(),
+                getSerializationFileName().replace("issues.xml", suffix + "-issues.xml")));
     }
 
     private String getSerializationFileName() {
@@ -377,27 +350,119 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         return run;
     }
 
-    private void serializeAnnotations(final Issues allIssues, final Issues fixedIssues) {
+    private void serializeAnnotations(final Issues<BuildIssue> oldIssues,
+            final Issues<BuildIssue> newIssues, final Issues<BuildIssue> fixedIssues) {
+        serializeIssues(oldIssues, "old");
+        serializeIssues(newIssues, "new");
+        serializeIssues(fixedIssues, "fixed");
+    }
+
+    private void serializeIssues(final Issues<BuildIssue> issues, final String suffix) {
         try {
-            getDataFile().write(allIssues);
+            getDataFile(suffix).write(issues);
         }
         catch (IOException exception) {
-            LOGGER.log(Level.SEVERE, "Failed to serialize all issues of the run.", exception);
-        }
-        try {
-            getFixedDataFile().write(fixedIssues);
-        }
-        catch (IOException exception) {
-            LOGGER.log(Level.SEVERE, "Failed to serialize the fixed issues of the build.", exception);
+            LOGGER.log(Level.SEVERE, String.format("Failed to serialize the %s issues of the build.", suffix),
+                    exception);
         }
     }
 
-    // FIXME: issues rather than warnings
+    private WeakReference<Issues<BuildIssue>> getOldIssuesReference() {
+        return oldIssuesReference;
+    }
+
+    private void setOldIssuesReference(final WeakReference<Issues<BuildIssue>> oldIssuesReference) {
+        this.oldIssuesReference = oldIssuesReference;
+    }
+
+    public WeakReference<Issues<BuildIssue>> getNewIssuesReference() {
+        return newIssuesReference;
+    }
+
+    private void setNewIssuesReference(final WeakReference<Issues<BuildIssue>> newIssuesReference) {
+        this.newIssuesReference = newIssuesReference;
+    }
+
+    public WeakReference<Issues<BuildIssue>> getFixedIssuesReference() {
+        return fixedIssuesReference;
+    }
+
+    public void setFixedIssuesReference(final WeakReference<Issues<BuildIssue>> fixedIssuesReference) {
+        this.fixedIssuesReference = fixedIssuesReference;
+    }
+
+    public Issues<BuildIssue> getIssues() {
+        Issues<BuildIssue> merged = new Issues<>();
+        merged.addAll(getNewIssues(), getOldIssues());
+        return merged;
+    }
+
+    public Issues<BuildIssue> getOldIssues() {
+        return getIssues(AnalysisResult::getOldIssuesReference, AnalysisResult::setOldIssuesReference, "old");
+    }
+
+    public Issues<BuildIssue> getNewIssues() {
+        return getIssues(AnalysisResult::getNewIssuesReference, AnalysisResult::setNewIssuesReference, "new");
+    }
+
+    public Issues<BuildIssue> getFixedIssues() {
+        return getIssues(AnalysisResult::getFixedIssuesReference, AnalysisResult::setFixedIssuesReference, "fixed");
+    }
+
+    private Issues<BuildIssue> getIssues(final Function<AnalysisResult, WeakReference<Issues<BuildIssue>>> getter,
+            final BiConsumer<AnalysisResult, WeakReference<Issues<BuildIssue>>> setter, final String suffix) {
+        lock.lock();
+        try {
+            if (getter.apply(this) == null) {
+                return readIssues(setter, suffix);
+            }
+            Issues<BuildIssue> result = getter.apply(this).get();
+            if (result == null) {
+                return readIssues(setter, suffix);
+            }
+            return result;
+        }
+        finally {
+            lock.unlock();
+        }
+    }
+
+    private Issues<BuildIssue> readIssues(final BiConsumer<AnalysisResult, WeakReference<Issues<BuildIssue>>> setter,
+            final String suffix) {
+        Issues<BuildIssue> issues = readIssues(suffix);
+        setter.accept(this, new WeakReference<>(issues));
+        return issues;
+    }
+
+    private Issues<BuildIssue> readIssues(final String suffix) {
+        XmlFile dataFile = getDataFile(suffix);
+        try {
+            Issues<BuildIssue> result = (Issues<BuildIssue>) dataFile.read();
+
+            LOGGER.log(Level.FINE, "Loaded data file " + dataFile + " for run " + getRun());
+
+            return result;
+        }
+        catch (IOException exception) {
+            LOGGER.log(Level.WARNING, "Failed to load " + dataFile, exception);
+
+            return new Issues<>();
+        }
+    }
 
     /**
-     * Returns the build since we have zero warnings.
+     * Gets the remote API for this build result.
      *
-     * @return the build since we have zero warnings
+     * @return the remote API
+     */
+    public Api getApi() {
+        return new Api(this);
+    }
+
+    /**
+     * Returns the number of the run since we have zero warnings.
+     *
+     * @return the number of the run since we have zero warnings
      */
     @Override
     @Exported
@@ -429,7 +494,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     /**
      * Returns if the current result reached the old zero warnings high score.
      *
-     * @return <code>true</code>, if the current result reached the old zero warnings high score.
+     * @return {@code true}, if the current result reached the old zero warnings high score.
      */
     @Override
     @Exported
@@ -500,149 +565,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     }
 
     /**
-     * Returns the associated project of this result.
-     *
-     * @return the associated project of this result.
-     */
-    public Issues getProject() {
-        lock.lock();
-        try {
-            if (project == null) {
-                return loadResult();
-            }
-            Issues result = project.get();
-            if (result == null) {
-                return loadResult();
-            }
-            return result;
-        }
-        finally {
-            lock.unlock();
-        }
-    }
-
-    /**
-     * Loads the results and wraps them in a weak reference that might get removed by the garbage collector.
-     *
-     * @return the loaded result
-     */
-    private Issues loadResult() {
-        Issues result = readIssues();
-
-        project = new WeakReference<>(result);
-
-        return result;
-    }
-
-    private Issues readIssues() {
-        try {
-            Issues result = (Issues) getDataFile().read();
-
-            LOGGER.log(Level.FINE, "Loaded data file " + getDataFile() + " for run " + getRun());
-
-            return result;
-        }
-        catch (IOException exception) {
-            LOGGER.log(Level.WARNING, "Failed to load " + getDataFile(), exception);
-
-            return new Issues();
-        }
-    }
-
-    /**
-     * Returns the new warnings of this build.
-     *
-     * @return the new warnings of this build
-     */
-    @Exported
-    public Issues getNewWarnings() {
-        if (newWarningsReference == null) {
-            return loadNewWarnings();
-        }
-        Issues result = newWarningsReference.get();
-        if (result == null) {
-            return loadNewWarnings();
-        }
-        return result;
-    }
-
-    /**
-     * Filters all warnings by the current build number and wraps them in a weak reference that might get removed by the
-     * garbage collector.
-     *
-     * @return the new warnings
-     */
-    private Issues loadNewWarnings() {
-        Issues newWarnings = new Issues();
-        for (Issue issue : getProject().all()) {
-            // FIXME: build is no property
-            // if (warning.getBuild() == getRun().getNumber()) {
-            //     newWarnings.add(warning);
-            // }
-        }
-        newWarningsReference = new WeakReference<>(newWarnings);
-
-        return newWarnings;
-    }
-
-    /**
-     * Returns the fixed warnings of this build.
-     *
-     * @return the fixed warnings of this build.
-     */
-    public Issues getFixedWarnings() {
-        lock.lock();
-        try {
-            if (fixedWarningsReference == null) {
-                return loadFixedWarnings();
-            }
-            Issues result = fixedWarningsReference.get();
-            if (result == null) {
-                return loadFixedWarnings();
-            }
-            return result;
-        }
-        finally {
-            lock.unlock();
-        }
-    }
-
-    private Issues loadFixedWarnings() {
-        Issues fixedWarnings;
-        try {
-            fixedWarnings = (Issues) getFixedDataFile().read();
-
-            LOGGER.log(Level.FINE, "Loaded data file " + getFixedDataFile() + " for build " + getRun().getNumber());
-        }
-        catch (IOException exception) {
-            LOGGER.log(Level.WARNING, "Failed to load " + getFixedDataFile(), exception);
-            fixedWarnings = new Issues();
-        }
-        fixedWarningsReference = new WeakReference<>(fixedWarnings);
-
-        return fixedWarnings;
-
-    }
-
-    /**
-     * Returns all issues of this result.
-     *
-     * @return the reported issues
-     */
-    public Issues getIssues() {
-        return getProject();
-    }
-
-    /**
-     * Gets the remote API for this build result.
-     *
-     * @return the remote API
-     */
-    public Api getApi() {
-        return new Api(this);
-    }
-
-    /**
      * Returns whether this build is successful with respect to the {@link HealthDescriptor} of this result.
      *
      * @return <code>true</code> if the build is successful, <code>false</code> if the build has been set to {@link
@@ -694,6 +616,15 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     }
 
     /**
+     * Returns the summary message for the summary.jelly file.
+     *
+     * @return the summary message
+     */
+    public String getSummary() {
+        return getTool().getSummary(size, getIssues().getModules().size());
+    }
+
+    /**
      * Returns the detail messages for the summary.jelly file.
      *
      * @return the summary message
@@ -736,7 +667,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
 
     @Override
     public Map<String, Integer> getSizePerOrigin() {
-        return getProject().getPropertyCount(issue -> issue.getOrigin());
+        return getIssues().getPropertyCount(issue -> issue.getOrigin());
     }
 
     @Override
@@ -746,7 +677,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
 
     @Override
     public int getTotalSize() {
-        return numberOfWarnings;
+        return size;
     }
 
     @Override
@@ -765,37 +696,37 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
 
     @Override
     public int getTotalHighPrioritySize() {
-        return highWarnings;
+        return highPrioritySize;
     }
 
     @Override
     public int getTotalNormalPrioritySize() {
-        return normalWarnings;
+        return normalPrioritySize;
     }
 
     @Override
     public int getTotalLowPrioritySize() {
-        return lowWarnings;
+        return lowPrioritySize;
     }
 
     @Override
     public int getNewSize() {
-        return numberOfNewWarnings;
+        return newSize;
     }
 
     @Override
     public int getNewHighPrioritySize() {
-        return highNewWarnings;
+        return newHighPrioritySize;
     }
 
     @Override
     public int getNewNormalPrioritySize() {
-        return normalNewWarnings;
+        return newNormalPrioritySize;
     }
 
     @Override
     public int getNewLowPrioritySize() {
-        return lowNewWarnings;
+        return newLowPrioritySize;
     }
 
     @Override
