@@ -1,9 +1,11 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import edu.hm.hafner.analysis.Issue;
+
 import hudson.plugins.analysis.util.ToolTipProvider;
 
 /**
- * FIXME: write comment.
+ * Provides UI labels and texts for a specific static analysis tool.
  *
  * @author Ullrich Hafner
  */
@@ -20,8 +22,13 @@ public interface StaticAnalysisLabelProvider extends ToolTipProvider {
 
     String getResultUrl();
 
-    @Override
-    String getTooltip(int numberOfItems);
+    /**
+     * Returns a detailed description of the specified issue.
+     *
+     * @param issue the issue to get the description for
+     * @return the description
+     */
+    String getDescription(Issue issue);
 
     /**
      * Returns a summary message for the summary.jelly file.

@@ -3,9 +3,12 @@ package io.jenkins.plugins.analysis.core.steps;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
@@ -50,7 +53,7 @@ import hudson.remoting.VirtualChannel;
 public class PublishIssuesStep extends Step {
     private static final String DEFAULT_MINIMUM_PRIORITY = "low";
 
-    private final Issues[] issues;
+    private final Issues<Issue>[] issues;
 
     private boolean usePreviousBuildAsReference;
     private boolean useStableBuildAsReference;
@@ -72,8 +75,8 @@ public class PublishIssuesStep extends Step {
      * @param issues
      *         the issues to publish as {@link Action} in the {@link Job}.
      */
-    @DataBoundConstructor
-    public PublishIssuesStep(final Issues... issues) {
+    @DataBoundConstructor @SafeVarargs
+    public PublishIssuesStep(final Issues<Issue>... issues) {
         this.issues = issues;
     }
 
@@ -427,7 +430,8 @@ public class PublishIssuesStep extends Step {
             Run<?, ?> run = getRun();
             Optional<ResultAction> other = selector.get(run);
             if (other.isPresent()) {
-                throw new IllegalStateException(String.format("ID %s is already used by another action: %s%n", id, other.get()));
+                throw new IllegalStateException(String.format("ID %s is already used by another action: %s%n",
+                        actualId, other.get()));
             }
 
             return publishResult(actualId, run, selector);
@@ -474,15 +478,19 @@ public class PublishIssuesStep extends Step {
                 throws IOException, InterruptedException {
             Logger logger = createLogger(actualId);
 
-            logger.log("Creating analysis result for %d issues.", getTotalNumberOfIssues());
+            Instant startResult = Instant.now();
             AnalysisResult result = createAnalysisResult(actualId, run, selector);
+            logger.log("Created analysis result for %d issues (took %s).", getTotalNumberOfIssues(),
+                    Duration.between(startResult, Instant.now()));
 
             FilePath workspace = getContext().get(FilePath.class);
-            Issues container = result.getOldIssues();
-            logger.log("Copying %d affected files from '%s' to build folder", container.getFiles().size(), workspace);
+            SortedSet<String> files = result.getIssues().getFiles();
 
+            Instant startCopy = Instant.now();
             new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(getChannel(),
-                    getBuildFolder(), container, EncodingValidator.getEncoding(defaultEncoding));
+                    getBuildFolder(), EncodingValidator.getEncoding(defaultEncoding), files);
+            logger.log("Copied %d affected files from '%s' to build folder (took %s)", files.size(), workspace,
+                    Duration.between(startCopy, Instant.now()));
 
             logger.log("Attaching ResultAction with ID '%s' to run '%s'.", actualId, run);
             ResultAction action = new ResultAction(run, result, healthDescriptor, actualId, name);

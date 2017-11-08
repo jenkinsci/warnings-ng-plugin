@@ -70,6 +70,7 @@ public abstract class AbstractAnnotationParser implements AnnotationParser {
         FileInputStream input = null;
         try {
             input = new FileInputStream(file);
+
             return toIssues(parse(input, moduleName));
         }
         catch (FileNotFoundException exception) {
