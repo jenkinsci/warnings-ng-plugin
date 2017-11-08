@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.steps.IssueParser;
 import jenkins.MasterToSlaveFileCallable;
@@ -28,6 +28,7 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
     /** Ant file-set pattern to scan for. */
     private final String filePattern;
     private final IssueParser parser;
+
     /** Determines whether module names should be derived from Maven pom.xml or Ant build.xml files. */
     private final boolean shouldDetectModules;
 
@@ -63,6 +64,7 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
             parseFiles(workspace, fileNames, issues);
         }
 
+        // FIXME: when is this actually used?
         issues.setPath(workspace.getAbsolutePath());
 
         return issues;
@@ -97,7 +99,10 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
                 issues.log(Messages.FilesParser_Error_EmptyFile(module, file));
             }
             else {
-                parseFile(file, module, issues);
+                IssueBuilder builder = new IssueBuilder();
+                builder.setOrigin(parser.getId());
+                builder.setModuleName(module);
+                parseFile(file, issues, builder);
             }
         }
     }
@@ -138,29 +143,21 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
     /**
      * Parses the specified file and stores all found annotations. If the file could not be parsed then an error message
      * is appended to the issues.
-     *
-     * @param file
+     *  @param file
      *         the file to parse
-     * @param module
-     *         the associated module
      * @param issues
-     *         the issues of the parser
+     * @param builder
      */
-    private void parseFile(final File file, final String module, final Issues<Issue> issues) {
+    private void parseFile(final File file, final Issues<Issue> issues, final IssueBuilder builder) {
         try {
-            Issues<Issue> annotations = parser.parse(file, module);
+            Issues<Issue> result = parser.parse(file, builder);
 
-            int duplicateCount = annotations.getSize() - issues.addAll(annotations.all()).size();
-            int moduleCount = StringUtils.isBlank(module) ? 0 : 1;
-
-            issues.log("Successfully parsed file " + file + plural(moduleCount, " of module " + module)
-                    + " with " + plural(issues.getSize(), "%d unique warning")
-                    + plural(duplicateCount, " and %d duplicate") + ".");
+            issues.addAll(result);
+            issues.log("Successfully parsed file %s: found %d issues", file, issues.getSize());
         }
         catch (InvocationTargetException exception) {
             issues.log(Messages.FilesParser_Error_Exception(file) + "\n\n"
-                    + ExceptionUtils.getStackTrace((Throwable) ObjectUtils.defaultIfNull(
-                    exception.getCause(), exception)));
+                    + ExceptionUtils.getStackTrace((Throwable) ObjectUtils.defaultIfNull(exception.getCause(), exception)));
         }
     }
 

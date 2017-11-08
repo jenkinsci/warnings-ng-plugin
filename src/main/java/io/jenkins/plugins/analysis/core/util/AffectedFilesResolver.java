@@ -7,12 +7,12 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.SortedSet;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
 
 import hudson.FilePath;
 import hudson.model.Run;
@@ -36,16 +36,14 @@ public class AffectedFilesResolver {
      *         channel to get the files from
      * @param jenkinsBuildRoot
      *         directory to store the copied files in
-     * @param issues
-     *         issues determining the actual files to copy
-     *
+     * @param affectedFiles the affected files
      * @throws IOException
      *         if the files could not be written
      * @throws InterruptedException
      *         if the user cancels the processing
      */
     public void copyFilesWithAnnotationsToBuildFolder(final VirtualChannel channel, final FilePath jenkinsBuildRoot,
-            final Issues<Issue> issues, final String defaultEncoding)
+            final String defaultEncoding, final SortedSet<String> affectedFiles)
             throws IOException, InterruptedException {
         FilePath directory = jenkinsBuildRoot.child(AFFECTED_FILES_FOLDER_NAME);
         if (!directory.exists()) {
@@ -58,7 +56,7 @@ public class AffectedFilesResolver {
             }
         }
 
-        for (String file : issues.getFiles()) {
+        for (String file : affectedFiles) {
             Path path = Paths.get(file).toRealPath();
             if (Files.exists(path)) {
                 FilePath buildFolderCopy = directory.child(getTempName(file));

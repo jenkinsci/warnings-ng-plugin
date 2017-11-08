@@ -2,6 +2,8 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import org.apache.commons.lang.StringUtils;
 
+import edu.hm.hafner.analysis.Issue;
+
 import hudson.plugins.analysis.util.HtmlPrinter;
 
 /**
@@ -97,6 +99,11 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
         else {
             return getMultipleItemsTooltip(numberOfItems);
         }
+    }
+
+    @Override
+    public String getDescription(final Issue issue) {
+        return issue.getDescription();
     }
 
     /**

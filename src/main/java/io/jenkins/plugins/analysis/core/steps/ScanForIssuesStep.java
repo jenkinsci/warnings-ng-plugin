@@ -4,8 +4,11 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.workflow.steps.Step;
@@ -19,6 +22,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import com.google.common.collect.Sets;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool.StaticAnalysisToolDescriptor;
 import io.jenkins.plugins.analysis.core.util.FilesParser;
@@ -119,6 +123,7 @@ public class ScanForIssuesStep extends Step {
     }
 
     public static class Execution extends SynchronousNonBlockingStepExecution<Issues> {
+        private static final Pattern NEWLINE = Pattern.compile("\r?\n|\r");
         private final String defaultEncoding;
         private final boolean shouldDetectModules;
         private final StaticAnalysisTool tool;
@@ -144,51 +149,50 @@ public class ScanForIssuesStep extends Step {
         }
 
         @Override
-        protected Issues run() throws IOException, InterruptedException, IllegalStateException, InvocationTargetException {
+        protected Issues<Issue> run() throws IOException, InterruptedException, IllegalStateException, InvocationTargetException {
             FilePath workspace = getContext().get(FilePath.class);
 
             if (workspace == null) {
                 throw new IllegalStateException("No workspace set for step " + this);
             }
             else {
+                Instant start = Instant.now();
+                Issues<Issue> issues;
                 if (StringUtils.isNotBlank(pattern)) {
-                    return scanFiles(workspace);
+                    issues = scanFiles(workspace);
                 }
                 else {
-                    return scanConsoleLog(workspace);
+                    issues = scanConsoleLog(workspace);
                 }
+                Logger logger = createLogger();
+                logger.log("Parsing took %s", Duration.between(start, Instant.now()));
+                return issues;
             }
         }
 
-        private Issues scanConsoleLog(final FilePath workspace) throws IOException, InterruptedException, InvocationTargetException {
+        private Issues<Issue> scanConsoleLog(final FilePath workspace) throws IOException, InterruptedException, InvocationTargetException {
             Logger logger = createLogger();
-            logger.log("Parsing console log (in workspace '%s')", workspace);
+            logger.log("Parsing console log (workspace: '%s')", workspace);
 
-            Issues<Issue> issues = new Issues(workspace.getName()); // TODO: Mix of FilePath and File
-            // issues.setId(tool.getId()); TODO value of issue?
-            issues.addAll(tool.parse(getRun().getLogFile(), StringUtils.EMPTY));
-
-            int modulesSize = issues.getProperties(issue -> issue.getModuleName()).size();
-            if (modulesSize > 0) {
-                logger.log("Successfully parsed console log: found %d issues in %d modules",
-                        issues.getSize(), modulesSize);
-            }
-            else {
-                logger.log("Successfully parsed console log: found %d issues", issues.getSize());
-            }
-
+            Issues<Issue> issues = tool.parse(getRun().getLogFile(), new IssueBuilder().setOrigin(tool.getId()));
+            logIssuesMessages(issues);
             return issues;
         }
 
-        private Issues scanFiles(final FilePath workspace) throws IOException, InterruptedException {
+        private Issues<Issue> scanFiles(final FilePath workspace) throws IOException, InterruptedException {
             FilesParser parser = new FilesParser(expandEnvironmentVariables(pattern), tool, shouldDetectModules);
             Issues<Issue> issues = workspace.act(parser);
 
-            // FIXME: here we have no prefix for the logger since lines are just dumped
-            Logger logger = createLogger();
-            logger.log(issues.getLogMessages());
+            logIssuesMessages(issues);
 
             return issues;
+        }
+
+        private void logIssuesMessages(final Issues<Issue> issues) throws IOException, InterruptedException {
+            Logger logger = createLogger();
+            for (String line : NEWLINE.split(issues.getLogMessages())) {
+                logger.log(line);
+            }
         }
 
         /** Maximum number of times that the environment expansion is executed. */
