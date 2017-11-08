@@ -2,19 +2,17 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.parser.AcuCobolParser;
 import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 
 import hudson.Extension;
-import hudson.plugins.warnings.parser.AbstractWarningsParser;
-import hudson.plugins.warnings.parser.FileWarningsParser;
-import hudson.plugins.warnings.parser.ParserRegistry;
 
 /**
  * Provides a parser and customized messages for the AcuCobol Compiler.
@@ -30,10 +28,8 @@ public class AcuCobol extends StaticAnalysisTool {
     }
 
     @Override
-    public Issues parse(final File file, final String moduleName) throws InvocationTargetException {
-        List<AbstractWarningsParser> parsers = ParserRegistry.getParsers(PARSER_NAME);
-
-        return new FileWarningsParser(parsers, getDefaultEncoding()).parseIssues(file, moduleName);
+    public Issues<Issue> parse(final File file, final IssueBuilder builder) throws InvocationTargetException {
+        return new AcuCobolParser().parse(file, builder);
     }
 
     /** Registers this tool as extension point implementation. */
