@@ -40,7 +40,7 @@ public class FileWarningsParser implements AnnotationParser {
         this.defaultEncoding = defaultEncoding;
     }
 
-    public Issues parseIssues(final File file, final String moduleName) throws InvocationTargetException {
+    public Issues<Issue> parseIssues(final File file, final String moduleName) throws InvocationTargetException {
         return AbstractAnnotationParser.toIssues(parse(file, moduleName));
     }
 
