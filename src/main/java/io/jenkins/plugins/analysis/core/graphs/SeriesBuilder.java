@@ -9,13 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.collections.impl.multimap.list.FastListMultimap;
 import org.jfree.data.category.CategoryDataset;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -147,7 +146,7 @@ public abstract class SeriesBuilder {
      * @return the values as one series per day (average)
      */
     private Map<LocalDate, List<Integer>> createSeriesPerDay(
-            final Multimap<LocalDate, List<Integer>> multiSeriesPerDate) {
+            final FastListMultimap<LocalDate, List<Integer>> multiSeriesPerDate) {
         Map<LocalDate, List<Integer>> seriesPerDate = Maps.newHashMap();
 
         for (LocalDate date : multiSeriesPerDate.keySet()) {
@@ -197,9 +196,9 @@ public abstract class SeriesBuilder {
      */
     @SuppressWarnings("rawtypes")
     @SuppressFBWarnings("WMI")
-    private Multimap<LocalDate, List<Integer>> createMultiSeriesPerDay(
+    private FastListMultimap<LocalDate, List<Integer>> createMultiSeriesPerDay(
             final Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
-        Multimap<LocalDate, List<Integer>> valuesPerDate = HashMultimap.create();
+        FastListMultimap<LocalDate, List<Integer>> valuesPerDate = FastListMultimap.newMultimap();
         for (AnalysisBuild build : valuesPerBuild.keySet()) {
             valuesPerDate.put(new LocalDate(build.getTimeInMillis()), valuesPerBuild.get(build));
         }
