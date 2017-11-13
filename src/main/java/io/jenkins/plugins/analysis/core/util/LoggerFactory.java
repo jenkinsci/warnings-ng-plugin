@@ -5,8 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 
-import org.apache.commons.lang.StringUtils;
-
 import hudson.plugins.analysis.core.GlobalSettings;
 import hudson.plugins.analysis.core.Settings;
 
@@ -90,7 +88,7 @@ public class LoggerFactory {
         }
 
         private void print(final String line) {
-            delegate.println(StringUtils.defaultString(toolName) + line);
+            delegate.println(toolName + line);
         }
     }
     
