@@ -29,12 +29,5 @@ public interface IssueParser extends Serializable {
      */
     // FIXME: why dont use ParserException?
     Issues<Issue> parse(File file, IssueBuilder builder) throws InvocationTargetException;
-
-    /**
-     * Return the ID of this parser.
-     *
-     * @return ID of the parser
-     */
-    String getId();
 }
 
