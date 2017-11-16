@@ -43,7 +43,7 @@ public class AcuCobol extends StaticAnalysisTool {
     /** Provides the labels for the parser. */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super(new AcuCobolParser().getId(), PARSER_NAME);
+            super("acucobol", PARSER_NAME);
         }
     }
 }
