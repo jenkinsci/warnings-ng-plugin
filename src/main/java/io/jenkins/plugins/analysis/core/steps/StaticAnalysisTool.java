@@ -101,7 +101,6 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
         return getDescriptor().getDisplayName();
     }
 
-    @Override
     public String getId() {
         return getDescriptor().getId();
     }
