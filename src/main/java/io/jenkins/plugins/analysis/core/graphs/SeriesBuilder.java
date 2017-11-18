@@ -1,9 +1,7 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +29,15 @@ import hudson.util.DataSetBuilder;
  * @author Ullrich Hafner
  */
 public abstract class SeriesBuilder {
-    private static final int A_DAY_IN_MSEC = 24 * 3600 * 1000;
+    private ResultTime resultTime;
+
+    public SeriesBuilder() {
+        this(new ResultTime());
+    }
+
+    public SeriesBuilder(final ResultTime resultTime) {
+        this.resultTime = resultTime;
+    }
 
     /**
      * Creates a new data set for a category graph from the specified static analysis results. The results (provided by
@@ -65,7 +71,7 @@ public abstract class SeriesBuilder {
         int buildCount = 0;
         Map<AnalysisBuild, List<Integer>> valuesPerBuildNumber = Maps.newHashMap();
         for (StaticAnalysisRun current : results) {
-            if (isBuildTooOld(configuration, current)) {
+            if (resultTime.areResultsTooOld(configuration, current)) {
                 break;
             }
             valuesPerBuildNumber.put(current.getBuild(), computeSeries(current));
@@ -274,61 +280,5 @@ public abstract class SeriesBuilder {
         else {
             totals.put(buildDate, additionalResult);
         }
-    }
-
-    /**
-     * Returns whether the specified build result is too old in order to be
-     * considered for the trend graph.
-     *
-     * @param configuration
-     *            the graph configuration
-     * @param current
-     *            the current build
-     * @return <code>true</code> if the build is too old
-     */
-    public static boolean isBuildTooOld(final GraphConfiguration configuration, final StaticAnalysisRun current) {
-        return areResultsTooOld(configuration, current);
-    }
-    /**
-     * Computes the delta between two dates in days.
-     *
-     * @param first
-     *            the first date
-     * @param second
-     *            the second date (given by the build result)
-     * @return the delta between two dates in days
-     */
-    public static long computeDayDelta(final Calendar first, final StaticAnalysisRun second) {
-        return computeDayDelta(first, second.getBuild().getTimeInMillis());
-    }
-
-    /**
-     * Returns whether the specified build result is too old in order to be
-     * considered for the trend graph.
-     *
-     * @param configuration
-     *            the graph configuration
-     * @param current
-     *            the current build
-     * @return <code>true</code> if the build is too old
-     */
-    public static boolean areResultsTooOld(final GraphConfiguration configuration, final StaticAnalysisRun current) {
-        Calendar today = new GregorianCalendar();
-
-        return configuration.isDayCountDefined()
-                && computeDayDelta(today, current) >= configuration.getDayCount();
-    }
-
-    /**
-     * Computes the delta between two dates in days.
-     *
-     * @param first
-     *            the first date
-     * @param second
-     *            the second date
-     * @return the delta between two dates in days
-     */
-    public static long computeDayDelta(final Calendar first, final long second) {
-        return Math.abs((first.getTimeInMillis() - second) / A_DAY_IN_MSEC);
     }
 }

@@ -29,6 +29,8 @@ import hudson.plugins.analysis.util.Pair;
  * @author Ulli Hafner
  */
 public class DifferenceGraph extends BuildResultGraph {
+    private ResultTime resultTime = new ResultTime();
+
     @Override
     public String getId() {
         return "DIFFERENCE";
@@ -42,8 +44,8 @@ public class DifferenceGraph extends BuildResultGraph {
     @Override
     public JFreeChart create(final GraphConfiguration configuration,
                              final ResultHistory history, final String pluginName) {
-        ArrayList<Pair<Integer, Integer>> fixedWarnings = new ArrayList<>();
-        ArrayList<Pair<Integer, Integer>> newWarnings = new ArrayList<>();
+        List<Pair<Integer, Integer>> fixedWarnings = new ArrayList<>();
+        List<Pair<Integer, Integer>> newWarnings = new ArrayList<>();
 
         extractPoints(configuration, history, fixedWarnings, newWarnings);
         XYSeriesCollection xySeriesCollection = computeDifferenceSeries(fixedWarnings, newWarnings);
@@ -121,7 +123,7 @@ public class DifferenceGraph extends BuildResultGraph {
                                final List<Pair<Integer, Integer>> fixedWarnings, final List<Pair<Integer, Integer>> newWarnings) {
         int buildCount = 0;
         for (StaticAnalysisRun current : history) {
-            if (SeriesBuilder.isBuildTooOld(configuration, current)) {
+            if (resultTime.areResultsTooOld(configuration, current)) {
                 break;
             }
 
