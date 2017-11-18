@@ -39,6 +39,8 @@ public abstract class GraphConfigurationView implements ModelObject {
     private final GraphConfiguration configuration;
     private String urlPrefix;
 
+    private ResultTime resultTime = new ResultTime();
+
     /**
      * Creates a new instance of {@link hudson.plugins.analysis.graph.GraphConfigurationView}.
      *  @param configuration
@@ -151,7 +153,7 @@ public abstract class GraphConfigurationView implements ModelObject {
     public boolean hasMeaningfulGraph() {
         Optional<AnalysisResult> previousResult = buildHistory.getPreviousResult();
         if (previousResult.isPresent()) {
-            return !SeriesBuilder.areResultsTooOld(configuration, previousResult.get());
+            return !resultTime.areResultsTooOld(configuration, previousResult.get());
         }
         return false;
     }

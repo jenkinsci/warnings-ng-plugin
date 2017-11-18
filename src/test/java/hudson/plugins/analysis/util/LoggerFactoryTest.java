@@ -1,11 +1,11 @@
 package hudson.plugins.analysis.util;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 import java.io.PrintStream;
 
 import org.junit.Test;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import hudson.plugins.analysis.core.Settings;
 
