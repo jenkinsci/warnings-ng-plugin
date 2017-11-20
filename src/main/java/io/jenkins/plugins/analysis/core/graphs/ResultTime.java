@@ -52,7 +52,7 @@ public class ResultTime {
     }
 
     private int computeDayDelta(final StaticAnalysisRun analysisRun) {
-        return Period.between(today, toLocalDate(analysisRun.getBuild().getTimeInMillis())).getDays();
+        return Math.abs(Period.between(toLocalDate(analysisRun.getBuild().getTimeInMillis()), today).getDays());
     }
 
     private LocalDate toLocalDate(final long timeInMillis) {
