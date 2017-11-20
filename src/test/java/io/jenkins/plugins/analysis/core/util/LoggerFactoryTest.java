@@ -23,7 +23,7 @@ class LoggerFactoryTest {
     private static final String SECOND_MESSAGE = "Two";
 
     /**
-     * Verifies that all logger methods print to the print stream if the quite mode in Jenkins global configuration has
+     * Verifies that all logger methods print to the print stream if the quiet mode in Jenkins global configuration has
      * been disabled.
      */
     @Test
@@ -58,7 +58,7 @@ class LoggerFactoryTest {
     }
 
     /**
-     * Verifies that all logger methods do not print anything if the quite mode in Jenkins global configuration has been
+     * Verifies that all logger methods do not print anything if the quiet mode in Jenkins global configuration has been
      * enabled.
      */
     @Test
