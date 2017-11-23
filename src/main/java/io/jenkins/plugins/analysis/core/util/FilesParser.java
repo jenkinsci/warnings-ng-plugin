@@ -101,6 +101,7 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
             else {
                 IssueBuilder builder = new IssueBuilder();
                 builder.setModuleName(module);
+                builder.setOrigin(parser.getId());
                 parseFile(file, issues, builder);
             }
         }
