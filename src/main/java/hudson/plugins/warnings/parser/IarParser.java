@@ -1,7 +1,8 @@
 package hudson.plugins.warnings.parser;
 
 import java.util.regex.Matcher;
-import java.util.*;
+
+import org.apache.commons.lang.StringUtils;
 
 import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
@@ -19,7 +20,7 @@ import hudson.plugins.analysis.util.model.Priority;
 @Extension
 public class IarParser extends RegexpLineParser {
     private static final long serialVersionUID = 7695540852439013425L;
-    private static int GROUP_NUMBER = 5;
+    private static final int GROUP_NUMBER = 5;
     
     // search for: Fatal Error[Pe1696]: cannot open source file "c:\filename.c"
     // search for: c:\filename.h(17) : Fatal Error[Pe1696]: cannot open source file "System/ProcDef_LPC17xx.h"
@@ -57,7 +58,7 @@ public class IarParser extends RegexpLineParser {
         String message = matcher.group(7);
         
         if( matcher.group(3) == null ) {
-            return createWarning(matcher.group(8), 0, matcher.group(6), message, priority);
+            return createWarning(StringUtils.defaultString(matcher.group(8)), 0, matcher.group(6), message, priority);
         }
         return createWarning(matcher.group(3), getLineNumber(matcher.group(4)), matcher.group(6), message, priority);
     }

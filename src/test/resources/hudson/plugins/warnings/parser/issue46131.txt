@@ -1,0 +1,2 @@
+Warning[Ls016]: [stack usage analysis] the program contains at least one indirect call. Example: from "npl_txport_shutdown". A complete list of such functions is in the map file.
+Warning[Ls017]: [stack usage analysis] the program contains at least one instance of recursion for which stack usage analysis has not been able to calculate a maximum stack depth. One function involved is "print_value" in cJSON.o [2]. A complete list of all recursion nests is in the map file.

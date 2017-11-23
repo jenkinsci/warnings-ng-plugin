@@ -1,12 +1,12 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -18,6 +18,20 @@ import hudson.plugins.analysis.util.model.Priority;
  */
 public class IarParserTest extends ParserTester {
     private static final String TYPE = new IarParser().getGroup();
+
+    /**
+     * Parses a file with warnings/errors in all styles. it check the amount of error/warnings found
+     *
+     * @throws IOException
+     *      if the file could not be read
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-46131">Issue 46131</a>
+     */
+    @Test
+    public void issue46131() throws IOException {
+        Collection<FileAnnotation> warnings = new IarParser().parse(openFile("issue46131.txt"));
+
+        assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, 2, warnings.size());
+    }
 
     /**
      * Parses a file with warnings/errors in all styles. it check the amount of error/warnings found
