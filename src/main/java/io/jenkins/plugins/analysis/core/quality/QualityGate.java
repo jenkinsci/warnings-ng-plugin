@@ -1,42 +1,97 @@
 package io.jenkins.plugins.analysis.core.quality;
 
+import hudson.model.Result;
+
 /**
  * Defines quality gates for a static analysis run.
  *
  * @author Ullrich Hafner
  */
 public class QualityGate {
-    private final ThresholdSet unstableThreshold;
-    private final ThresholdSet failedThreshold;
+    private final ThresholdSet totalUnstableThreshold;
+    private final ThresholdSet totalFailedThreshold;
+    private final ThresholdSet newUnstableThreshold;
+    private final ThresholdSet newFailedThreshold;
 
-    private QualityGate(final ThresholdSet unstableThreshold, final ThresholdSet failedThreshold) {
-        this.unstableThreshold = unstableThreshold;
-        this.failedThreshold = failedThreshold;
+    private QualityGate(final ThresholdSet totalFailedThreshold, final ThresholdSet totalUnstableThreshold, final ThresholdSet newFailedThreshold, final ThresholdSet newUnstableThreshold) {
+        this.totalFailedThreshold = totalFailedThreshold;
+        this.totalUnstableThreshold = totalUnstableThreshold;
+        this.newFailedThreshold = newFailedThreshold;
+        this.newUnstableThreshold = newUnstableThreshold;
     }
 
-    public ThresholdSet getUnstableThreshold() {
-        return unstableThreshold;
+    private ThresholdSet getTotalUnstableThreshold() {
+        return totalUnstableThreshold;
     }
 
-    public ThresholdSet getFailedThreshold() {
-        return unstableThreshold;
+    private ThresholdSet getTotalFailedThreshold() {
+        return totalFailedThreshold;
     }
 
-    static class QualitiyGateBuilder {
-        private ThresholdSet unstableThreshold = new ThresholdSet(0, 0, 0, 0);
-        private ThresholdSet failedThreshold = new ThresholdSet(0, 0, 0, 0);
+    private ThresholdSet getNewUnstableThreshold() {
+        return newUnstableThreshold;
+    }
 
-        public QualityGate build() {
-            return new QualityGate(unstableThreshold, failedThreshold);
+    private ThresholdSet getNewFailedThreshold() {
+        return newFailedThreshold;
+    }
+
+    public Result evaluate(final StaticAnalysisRun run) {
+        if (getTotalFailedThreshold().isTotalThresholdReached(run.getTotalSize())
+                || getTotalFailedThreshold().isHighThresholdReached(run.getTotalHighPrioritySize())
+                || getTotalFailedThreshold().isNormalThresholdReached(run.getTotalNormalPrioritySize())
+                || getTotalFailedThreshold().isNormalThresholdReached(run.getTotalNormalPrioritySize())
+                || getTotalFailedThreshold().isLowThresholdReached(run.getTotalLowPrioritySize())
+                || getNewFailedThreshold().isTotalThresholdReached(run.getNewSize())
+                || getNewFailedThreshold().isHighThresholdReached(run.getNewHighPrioritySize())
+                || getNewFailedThreshold().isNormalThresholdReached(run.getNewNormalPrioritySize())
+                || getNewFailedThreshold().isLowThresholdReached(run.getNewLowPrioritySize())) {
+            return Result.FAILURE;
         }
 
-        public QualitiyGateBuilder setUnstableThreshold(final int totalThreshold, final int highThreshold, final int normalThreshold, final int lowThreshold) {
-            unstableThreshold = new ThresholdSet(totalThreshold, highThreshold, normalThreshold, lowThreshold);
+        if (getTotalUnstableThreshold().isTotalThresholdReached(run.getTotalSize())
+                || getTotalUnstableThreshold().isHighThresholdReached(run.getTotalHighPrioritySize())
+                || getTotalUnstableThreshold().isNormalThresholdReached(run.getTotalNormalPrioritySize())
+                || getTotalUnstableThreshold().isLowThresholdReached(run.getTotalLowPrioritySize())
+                || getNewUnstableThreshold().isTotalThresholdReached(run.getNewSize())
+                || getNewUnstableThreshold().isHighThresholdReached(run.getNewHighPrioritySize())
+                || getNewUnstableThreshold().isNormalThresholdReached(run.getNewNormalPrioritySize())
+                || getNewUnstableThreshold().isLowThresholdReached(run.getNewLowPrioritySize())) {
+            return Result.UNSTABLE;
+        }
+
+        return Result.SUCCESS;
+    }
+
+
+
+    static class QualitiyGateBuilder {
+        private ThresholdSet totalUnstableThreshold = new ThresholdSet(0, 0, 0, 0);
+        private ThresholdSet totalFailedThreshold = new ThresholdSet(0, 0, 0, 0);
+        private ThresholdSet newUnstableThreshold = new ThresholdSet(0, 0, 0, 0);
+        private ThresholdSet newFailedThreshold = new ThresholdSet(0, 0, 0, 0);
+
+        public QualityGate build() {
+            return new QualityGate(totalFailedThreshold, totalUnstableThreshold, newFailedThreshold, newUnstableThreshold);
+        }
+
+        public QualitiyGateBuilder setTotalUnstableThreshold(final ThresholdSet totalUnstableThreshold) {
+            this.totalUnstableThreshold = totalUnstableThreshold;
             return this;
         }
 
-        public QualitiyGateBuilder setFailedThreshold(final int totalThreshold, final int highThreshold, final int normalThreshold, final int lowThreshold) {
-            failedThreshold = new ThresholdSet(totalThreshold, highThreshold, normalThreshold, lowThreshold);
+        public QualitiyGateBuilder setTotalFailedThreshold(final ThresholdSet totalFailedThreshold) {
+            this.totalFailedThreshold = totalFailedThreshold;
+            return this;
+        }
+
+        public QualitiyGateBuilder setNewUnstableThreshold(final ThresholdSet newUnstableThreshold) {
+            this.newUnstableThreshold = newUnstableThreshold;
+            return this;
+        }
+
+        public QualitiyGateBuilder setNewFailedThreshold(final ThresholdSet newFailedThreshold) {
+            this.newFailedThreshold = newFailedThreshold;
             return this;
         }
     }
@@ -54,36 +109,44 @@ public class QualityGate {
             this.lowThreshold = lowThreshold;
         }
 
-        public boolean hasTotalThreshold() {
-            return totalThreshold > 0;
+        public boolean isTotalThresholdReached(int toCheck) {
+            return isThresholdReached(getTotalThreshold(), toCheck);
         }
 
-        public int getTotalThreshold() {
+        private int getTotalThreshold() {
             return totalThreshold;
         }
 
-        public boolean hasHighThreshold() {
-            return highThreshold > 0;
+        public boolean isHighThresholdReached(int toCheck) {
+            return isThresholdReached(getHighThreshold(), toCheck);
         }
 
-        public int getHighThreshold() {
+        private int getHighThreshold() {
             return highThreshold;
         }
 
-        public boolean hasNormalThreshold() {
-            return normalThreshold > 0;
+        public boolean isNormalThresholdReached(int toCheck) {
+            return isThresholdReached(getNormalThreshold(), toCheck);
         }
 
-        public int getNormalThreshold() {
+        private int getNormalThreshold() {
             return normalThreshold;
         }
 
-        public boolean hasLowThreshold() {
-            return lowThreshold > 0;
+        public boolean isLowThresholdReached(int toCheck) {
+            return isThresholdReached(getLowThreshold(), toCheck);
         }
 
-        public int getLowThreshold() {
+        private int getLowThreshold() {
             return lowThreshold;
+        }
+
+        private boolean isThresholdReached(int threshold, int toCheck) {
+            boolean result = false;
+            if(threshold > 0 && toCheck >= threshold) {
+                result = true;
+            }
+            return result;
         }
     }
 
