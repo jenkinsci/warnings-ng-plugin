@@ -37,26 +37,13 @@ public class QualityGate {
     }
 
     public Result evaluate(final StaticAnalysisRun run) {
-        if (getTotalFailedThreshold().isTotalThresholdReached(run.getTotalSize())
-                || getTotalFailedThreshold().isHighThresholdReached(run.getTotalHighPrioritySize())
-                || getTotalFailedThreshold().isNormalThresholdReached(run.getTotalNormalPrioritySize())
-                || getTotalFailedThreshold().isNormalThresholdReached(run.getTotalNormalPrioritySize())
-                || getTotalFailedThreshold().isLowThresholdReached(run.getTotalLowPrioritySize())
-                || getNewFailedThreshold().isTotalThresholdReached(run.getNewSize())
-                || getNewFailedThreshold().isHighThresholdReached(run.getNewHighPrioritySize())
-                || getNewFailedThreshold().isNormalThresholdReached(run.getNewNormalPrioritySize())
-                || getNewFailedThreshold().isLowThresholdReached(run.getNewLowPrioritySize())) {
+        if (getTotalFailedThreshold().isThresholdReached(run.getTotalSize(), run.getTotalHighPrioritySize(), run.getTotalNormalPrioritySize(), run.getTotalLowPrioritySize())
+                || getNewFailedThreshold().isThresholdReached(run.getNewSize(), run.getNewHighPrioritySize(), run.getNewNormalPrioritySize(), run.getNewLowPrioritySize())) {
             return Result.FAILURE;
         }
 
-        if (getTotalUnstableThreshold().isTotalThresholdReached(run.getTotalSize())
-                || getTotalUnstableThreshold().isHighThresholdReached(run.getTotalHighPrioritySize())
-                || getTotalUnstableThreshold().isNormalThresholdReached(run.getTotalNormalPrioritySize())
-                || getTotalUnstableThreshold().isLowThresholdReached(run.getTotalLowPrioritySize())
-                || getNewUnstableThreshold().isTotalThresholdReached(run.getNewSize())
-                || getNewUnstableThreshold().isHighThresholdReached(run.getNewHighPrioritySize())
-                || getNewUnstableThreshold().isNormalThresholdReached(run.getNewNormalPrioritySize())
-                || getNewUnstableThreshold().isLowThresholdReached(run.getNewLowPrioritySize())) {
+        if (getTotalUnstableThreshold().isThresholdReached(run.getTotalSize(), run.getTotalHighPrioritySize(), run.getTotalNormalPrioritySize(), run.getTotalLowPrioritySize())
+                || getNewUnstableThreshold().isThresholdReached(run.getNewSize(), run.getNewHighPrioritySize(), run.getNewNormalPrioritySize(), run.getNewLowPrioritySize())) {
             return Result.UNSTABLE;
         }
 
@@ -109,44 +96,51 @@ public class QualityGate {
             this.lowThreshold = lowThreshold;
         }
 
-        public boolean isTotalThresholdReached(int toCheck) {
-            return isThresholdReached(getTotalThreshold(), toCheck);
+        public boolean isTotalThresholdReached(final int toCheck) {
+            return isSingleThresholdReached(getTotalThreshold(), toCheck);
         }
 
         private int getTotalThreshold() {
             return totalThreshold;
         }
 
-        public boolean isHighThresholdReached(int toCheck) {
-            return isThresholdReached(getHighThreshold(), toCheck);
+        public boolean isHighThresholdReached(final int toCheck) {
+            return isSingleThresholdReached(getHighThreshold(), toCheck);
         }
 
         private int getHighThreshold() {
             return highThreshold;
         }
 
-        public boolean isNormalThresholdReached(int toCheck) {
-            return isThresholdReached(getNormalThreshold(), toCheck);
+        public boolean isNormalThresholdReached(final int toCheck) {
+            return isSingleThresholdReached(getNormalThreshold(), toCheck);
         }
 
         private int getNormalThreshold() {
             return normalThreshold;
         }
 
-        public boolean isLowThresholdReached(int toCheck) {
-            return isThresholdReached(getLowThreshold(), toCheck);
+        public boolean isLowThresholdReached(final int toCheck) {
+            return isSingleThresholdReached(getLowThreshold(), toCheck);
         }
 
         private int getLowThreshold() {
             return lowThreshold;
         }
 
-        private boolean isThresholdReached(int threshold, int toCheck) {
+        private boolean isSingleThresholdReached(final int threshold, final int toCheck) {
             boolean result = false;
             if(threshold > 0 && toCheck >= threshold) {
                 result = true;
             }
             return result;
+        }
+
+        public boolean isThresholdReached(final int totalToCheck, final int highToCheck, final int normalToCheck, final int lowToCheck) {
+            return isTotalThresholdReached(totalToCheck)
+                    || isHighThresholdReached(highToCheck)
+                    || isNormalThresholdReached(normalToCheck)
+                    || isLowThresholdReached(lowToCheck);
         }
     }
 

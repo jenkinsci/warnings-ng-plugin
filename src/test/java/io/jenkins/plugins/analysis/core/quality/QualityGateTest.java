@@ -16,7 +16,7 @@ import hudson.model.Result;
  *
  * @author Ullrich Hafner
  */
-class QualityGateEnforcerTest {
+class QualityGateTest {
 
     @Test
     void shouldBeSuccessWhenNoThresholdIsSet() {
