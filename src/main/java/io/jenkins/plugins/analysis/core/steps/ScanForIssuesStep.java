@@ -190,7 +190,7 @@ public class ScanForIssuesStep extends Step {
 
         private void logIssuesMessages(final Issues<Issue> issues) throws IOException, InterruptedException {
             Logger logger = createLogger();
-            for (String line : NEWLINE.split(issues.getLogMessages())) {
+            for (String line : issues.getLogMessages()) {
                 logger.log(line);
             }
         }

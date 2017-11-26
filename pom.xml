@@ -28,6 +28,7 @@
     <junit.version>5.0.0</junit.version>
     <assertj.version>3.8.0</assertj.version>
     <mockito.version>2.9.0</mockito.version>
+    <jenkins.version>2.73.3</jenkins.version>
   </properties>
 
   <dependencies>
