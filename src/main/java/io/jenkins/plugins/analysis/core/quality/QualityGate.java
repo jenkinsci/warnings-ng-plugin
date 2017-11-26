@@ -4,8 +4,9 @@ import hudson.model.Result;
 
 /**
  * Defines quality gates for a static analysis run.
+ * This class is test driven developed.
  *
- * @author Ullrich Hafner
+ * @author Michael Schmid
  */
 public class QualityGate {
     private final ThresholdSet totalUnstableThreshold;
@@ -36,6 +37,11 @@ public class QualityGate {
         return newFailedThreshold;
     }
 
+    /**
+     * Evaluate if the static analysis run follows the staid quality gate.
+     * @param run to check against the quality gate
+     * @return result of the evaluation, expressed by a build state
+     */
     public Result evaluate(final StaticAnalysisRun run) {
         if (getTotalFailedThreshold().isThresholdReached(run.getTotalSize(), run.getTotalHighPrioritySize(), run.getTotalNormalPrioritySize(), run.getTotalLowPrioritySize())
                 || getNewFailedThreshold().isThresholdReached(run.getNewSize(), run.getNewHighPrioritySize(), run.getNewNormalPrioritySize(), run.getNewLowPrioritySize())) {
@@ -50,9 +56,7 @@ public class QualityGate {
         return Result.SUCCESS;
     }
 
-
-
-    static class QualitiyGateBuilder {
+    static class QualityGateBuilder {
         private ThresholdSet totalUnstableThreshold = new ThresholdSet(0, 0, 0, 0);
         private ThresholdSet totalFailedThreshold = new ThresholdSet(0, 0, 0, 0);
         private ThresholdSet newUnstableThreshold = new ThresholdSet(0, 0, 0, 0);
@@ -62,22 +66,22 @@ public class QualityGate {
             return new QualityGate(totalFailedThreshold, totalUnstableThreshold, newFailedThreshold, newUnstableThreshold);
         }
 
-        public QualitiyGateBuilder setTotalUnstableThreshold(final ThresholdSet totalUnstableThreshold) {
+        public QualityGateBuilder setTotalUnstableThreshold(final ThresholdSet totalUnstableThreshold) {
             this.totalUnstableThreshold = totalUnstableThreshold;
             return this;
         }
 
-        public QualitiyGateBuilder setTotalFailedThreshold(final ThresholdSet totalFailedThreshold) {
+        public QualityGateBuilder setTotalFailedThreshold(final ThresholdSet totalFailedThreshold) {
             this.totalFailedThreshold = totalFailedThreshold;
             return this;
         }
 
-        public QualitiyGateBuilder setNewUnstableThreshold(final ThresholdSet newUnstableThreshold) {
+        public QualityGateBuilder setNewUnstableThreshold(final ThresholdSet newUnstableThreshold) {
             this.newUnstableThreshold = newUnstableThreshold;
             return this;
         }
 
-        public QualitiyGateBuilder setNewFailedThreshold(final ThresholdSet newFailedThreshold) {
+        public QualityGateBuilder setNewFailedThreshold(final ThresholdSet newFailedThreshold) {
             this.newFailedThreshold = newFailedThreshold;
             return this;
         }
@@ -128,6 +132,12 @@ public class QualityGate {
             return lowThreshold;
         }
 
+        /**
+         * Check if the thresholds is retched or exceeded by the count of warnings.
+         * @param threshold to check id reached or exceeded
+         * @param toCheck count of warnings which should be checked against the threshold
+         * @return true if reached or exceeded, else false
+         */
         private boolean isSingleThresholdReached(final int threshold, final int toCheck) {
             boolean result = false;
             if(threshold > 0 && toCheck >= threshold) {
@@ -136,6 +146,14 @@ public class QualityGate {
             return result;
         }
 
+        /**
+         * Check if one or more of the thresholds is retched or exceeded.
+         * @param totalToCheck total count of warnings
+         * @param highToCheck count of high prioritized warnings
+         * @param normalToCheck count of normal prioritized warnings
+         * @param lowToCheck count of low prioritized warnings
+         * @return true if one or more of the counts retched or exceeded the threshold, else false
+         */
         public boolean isThresholdReached(final int totalToCheck, final int highToCheck, final int normalToCheck, final int lowToCheck) {
             return isTotalThresholdReached(totalToCheck)
                     || isHighThresholdReached(highToCheck)
