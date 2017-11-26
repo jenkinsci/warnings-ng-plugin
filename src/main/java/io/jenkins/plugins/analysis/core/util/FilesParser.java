@@ -65,7 +65,7 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
         }
 
         // FIXME: when is this actually used?
-        issues.setPath(workspace.getAbsolutePath());
+        // issues.setPath(workspace.getAbsolutePath());
 
         return issues;
     }
