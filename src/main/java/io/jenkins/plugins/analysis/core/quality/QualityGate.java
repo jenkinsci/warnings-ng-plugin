@@ -87,7 +87,7 @@ public class QualityGate {
         }
     }
 
-    static class ThresholdSet{
+    static class ThresholdSet {
         private final int totalThreshold;
         private final int highThreshold;
         private final int normalThreshold;
@@ -134,13 +134,17 @@ public class QualityGate {
 
         /**
          * Check if the thresholds is retched or exceeded by the count of warnings.
-         * @param threshold to check id reached or exceeded
-         * @param toCheck count of warnings which should be checked against the threshold
+         *
+         * @param threshold
+         *         to check id reached or exceeded
+         * @param toCheck
+         *         count of warnings which should be checked against the threshold
+         *
          * @return true if reached or exceeded, else false
          */
         private boolean isSingleThresholdReached(final int threshold, final int toCheck) {
             boolean result = false;
-            if(threshold > 0 && toCheck >= threshold) {
+            if (threshold > 0 && toCheck >= threshold) {
                 result = true;
             }
             return result;
@@ -148,10 +152,16 @@ public class QualityGate {
 
         /**
          * Check if one or more of the thresholds is retched or exceeded.
-         * @param totalToCheck total count of warnings
-         * @param highToCheck count of high prioritized warnings
-         * @param normalToCheck count of normal prioritized warnings
-         * @param lowToCheck count of low prioritized warnings
+         *
+         * @param totalToCheck
+         *         total count of warnings
+         * @param highToCheck
+         *         count of high prioritized warnings
+         * @param normalToCheck
+         *         count of normal prioritized warnings
+         * @param lowToCheck
+         *         count of low prioritized warnings
+         *
          * @return true if one or more of the counts retched or exceeded the threshold, else false
          */
         public boolean isThresholdReached(final int totalToCheck, final int highToCheck, final int normalToCheck, final int lowToCheck) {
