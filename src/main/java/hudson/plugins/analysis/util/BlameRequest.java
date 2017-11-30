@@ -20,13 +20,7 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
     private final Map<Integer, String> emailByLine = new HashMap<Integer, String>();
 
     public BlameRequest(final String fileName, final int lineNumber) {
-        String OS = System.getProperty("os.name");
-        if (OS.startsWith("Windows")) {
-            this.fileName = fileName.replaceAll("\\\\", "/");
-        } 
-        else {
-            this.fileName = fileName;            
-        }        
+        this.fileName = fileName;
         addLineNumber(lineNumber);
     }
 
