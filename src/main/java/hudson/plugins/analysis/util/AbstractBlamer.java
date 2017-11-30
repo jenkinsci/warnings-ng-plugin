@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -132,15 +131,12 @@ public abstract class AbstractBlamer implements Blamer {
     }
 
     private String getWorkspacePath() {
-        return getCanonicalPath(workspace.getRemote().replace('\\', '/'));
+        return getCanonicalPath(workspace.getRemote());
     }
 
     private String getCanonicalPath(final String path) {
         try {
-            String filePath;
-            filePath = new File(path).getCanonicalPath();
-            filePath = StringUtils.strip(filePath).replace('\\', '/');
-            return filePath;
+            return new File(path).getCanonicalPath().replace('\\', '/');
         }
         catch (IOException e) {
             return path;
