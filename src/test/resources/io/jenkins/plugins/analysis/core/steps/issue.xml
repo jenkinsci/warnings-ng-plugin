@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<io.jenkins.plugins.analysis.core.steps.BuildIssue>
+  <fileName>C:/users/tester/file-name</fileName>
+  <category>category</category>
+  <type>type</type>
+  <priority>HIGH</priority>
+  <message>message</message>
+  <description>description</description>
+  <packageName>package-name</packageName>
+  <moduleName>module-name</moduleName>
+  <origin>origin</origin>
+  <lineStart>1</lineStart>
+  <lineEnd>2</lineEnd>
+  <columnStart>3</columnStart>
+  <columnEnd>4</columnEnd>
+  <id>cddb41c5-c063-46fc-9d1f-d0216093cd5a</id>
+  <fingerprint>fingerprint</fingerprint>
+  <build>1</build>
+</io.jenkins.plugins.analysis.core.steps.BuildIssue>

@@ -57,6 +57,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.opentest4j:opentest4j:1.0.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.platform:junit-platform-commons:1.0.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.assertj:assertj-core:3.8.0" level="project" />
+    <orderEntry type="module" module-name="analysis-model" scope="TEST" production-on-test="" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:matrix-project:1.7.1" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:junit:1.2" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:script-security:1.13" level="project" />
