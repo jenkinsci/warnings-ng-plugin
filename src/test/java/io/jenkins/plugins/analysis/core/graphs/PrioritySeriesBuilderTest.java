@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import java.util.List;
-
 import org.jfree.data.category.CategoryDataset;
 import org.junit.jupiter.api.Test;
 
@@ -43,8 +41,8 @@ class PrioritySeriesBuilderTest {
         PrioritySeriesBuilder builder = new PrioritySeriesBuilder();
 
         StaticAnalysisRun singleResult = createBuildResult(1, 1, 2, 3);
-        List<StaticAnalysisRun> results = Lists.newArrayList(singleResult);
-        CategoryDataset dataSet = builder.createDataSet(createConfiguration(), results);
+
+        CategoryDataset dataSet = builder.createDataSet(createConfiguration(), Lists.newArrayList(singleResult));
 
         assertThat(dataSet.getColumnCount()).isEqualTo(1);
         assertThat(dataSet.getRowCount()).isEqualTo(3);
