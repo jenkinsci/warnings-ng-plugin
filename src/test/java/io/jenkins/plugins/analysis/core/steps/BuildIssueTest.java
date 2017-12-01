@@ -20,6 +20,7 @@ import hudson.util.XStream2;
  * @author Ullrich Hafner
  */
 class BuildIssueTest extends IssueTest {
+    @SuppressWarnings("ParameterNumber")
     @Override
     protected Issue createIssue(final String fileName, final int lineStart, final int lineEnd, final int columnStart,
             final int columnEnd, final String category, final String type, final String packageName,
@@ -42,9 +43,7 @@ class BuildIssueTest extends IssueTest {
         assertThat(issue.getId()).isEqualTo(emptyIssue.getId());
     }
 
-    /**
-     * Ensures that an issue instance can be serialized and deserialized using XStream.
-     */
+    /** Ensures that an issue instance can be serialized and deserialized using XStream. */
     @Test
     void shouldBeSerializableWithXStream() throws IOException {
         XStream2 stream = new XStream2();
