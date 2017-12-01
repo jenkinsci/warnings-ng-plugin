@@ -4,6 +4,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
@@ -21,6 +22,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import com.google.common.collect.Sets;
 
+import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
@@ -36,6 +38,7 @@ import hudson.FilePath;
 import hudson.Util;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.plugins.analysis.util.EncodingValidator;
 
 /**
  * Scan files or the console log for issues.
@@ -141,6 +144,7 @@ public class ScanForIssuesStep extends Step {
         private Logger createLogger() throws IOException, InterruptedException {
             TaskListener listener = getContext().get(TaskListener.class);
 
+            // FIXME: new Logger
             return new LoggerFactory().createLogger(listener.getLogger(), tool.getName());
         }
 
@@ -166,8 +170,24 @@ public class ScanForIssuesStep extends Step {
                 }
                 Logger logger = createLogger();
                 logger.log("Parsing took %s", Duration.between(start, Instant.now()));
-                return issues;
+
+                return createFingerprints(issues);
             }
+        }
+
+        private Issues<Issue> createFingerprints(final Issues<Issue> issues) throws IOException, InterruptedException {
+            Instant start = Instant.now();
+            FingerprintGenerator generator = new FingerprintGenerator();
+
+            Issues<Issue> issuesWithFingerprints = generator.run(issues, new IssueBuilder(), getCharset());
+
+            Logger logger = createLogger();
+            logger.log("Extracting fingerprints took %s", Duration.between(start, Instant.now()));
+            return issuesWithFingerprints;
+        }
+
+        private Charset getCharset() {
+            return EncodingValidator.defaultCharset(defaultEncoding);
         }
 
         private Issues<Issue> scanConsoleLog(final FilePath workspace) throws IOException, InterruptedException, InvocationTargetException {
