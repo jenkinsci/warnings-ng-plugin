@@ -27,6 +27,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool.StaticAnalysisToolDescriptor;
+import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.FilesParser;
 import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.util.LoggerFactory;
@@ -144,7 +145,6 @@ public class ScanForIssuesStep extends Step {
         private Logger createLogger() throws IOException, InterruptedException {
             TaskListener listener = getContext().get(TaskListener.class);
 
-            // FIXME: new Logger
             return new LoggerFactory().createLogger(listener.getLogger(), tool.getName());
         }
 
@@ -160,56 +160,72 @@ public class ScanForIssuesStep extends Step {
                 throw new IllegalStateException("No workspace set for step " + this);
             }
             else {
+                Logger logger = createLogger();
+
                 Instant start = Instant.now();
                 Issues<Issue> issues;
                 if (StringUtils.isNotBlank(pattern)) {
-                    issues = scanFiles(workspace);
+                    issues = scanFiles(workspace, logger);
                 }
                 else {
-                    issues = scanConsoleLog(workspace);
+                    issues = scanConsoleLog(workspace, logger);
                 }
-                Logger logger = createLogger();
                 logger.log("Parsing took %s", Duration.between(start, Instant.now()));
+                issues = resolveAbsolutePaths(issues, workspace, logger);
 
-                return createFingerprints(issues);
+                return createFingerprints(issues, logger);
             }
         }
 
-        private Issues<Issue> createFingerprints(final Issues<Issue> issues) throws IOException, InterruptedException {
+        private Issues<Issue> resolveAbsolutePaths(final Issues<Issue> issues, final FilePath workspace,
+                final Logger logger) {
             Instant start = Instant.now();
+
+            AbsolutePathGenerator generator = new AbsolutePathGenerator();
+            Issues<Issue> resolved = generator.run(issues, new IssueBuilder(), workspace);
+            logIssuesMessages(resolved, logger);
+
+            logger.log("Resolving absolute file names took %s", Duration.between(start, Instant.now()));
+
+            return resolved;
+        }
+
+        private Issues<Issue> createFingerprints(final Issues<Issue> issues, final Logger logger) {
+            Instant start = Instant.now();
+
             FingerprintGenerator generator = new FingerprintGenerator();
+            Issues<Issue> fingerPrinted = generator.run(issues, new IssueBuilder(), getCharset());
 
-            Issues<Issue> issuesWithFingerprints = generator.run(issues, new IssueBuilder(), getCharset());
-
-            Logger logger = createLogger();
             logger.log("Extracting fingerprints took %s", Duration.between(start, Instant.now()));
-            return issuesWithFingerprints;
+
+            return fingerPrinted;
         }
 
         private Charset getCharset() {
             return EncodingValidator.defaultCharset(defaultEncoding);
         }
 
-        private Issues<Issue> scanConsoleLog(final FilePath workspace) throws IOException, InterruptedException, InvocationTargetException {
-            Logger logger = createLogger();
+        private Issues<Issue> scanConsoleLog(final FilePath workspace,
+                final Logger logger) throws IOException, InterruptedException, InvocationTargetException {
             logger.log("Parsing console log (workspace: '%s')", workspace);
 
-            Issues<Issue> issues = tool.parse(getRun().getLogFile(), new IssueBuilder().setOrigin(tool.getId()));
-            logIssuesMessages(issues);
+            Issues<Issue> issues = tool.parse(getRun().getLogFile(),
+                    new IssueBuilder().setOrigin(tool.getId()));
+            logIssuesMessages(issues, logger);
             return issues;
         }
 
-        private Issues<Issue> scanFiles(final FilePath workspace) throws IOException, InterruptedException {
+        private Issues<Issue> scanFiles(final FilePath workspace,
+                final Logger logger) throws IOException, InterruptedException {
             FilesParser parser = new FilesParser(expandEnvironmentVariables(pattern), tool, shouldDetectModules);
             Issues<Issue> issues = workspace.act(parser);
 
-            logIssuesMessages(issues);
+            logIssuesMessages(issues, logger);
 
             return issues;
         }
 
-        private void logIssuesMessages(final Issues<Issue> issues) throws IOException, InterruptedException {
-            Logger logger = createLogger();
+        private void logIssuesMessages(final Issues<Issue> issues, final Logger logger) {
             for (String line : issues.getLogMessages()) {
                 logger.log(line);
             }
