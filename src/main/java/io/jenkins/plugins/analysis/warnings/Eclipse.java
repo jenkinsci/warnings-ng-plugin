@@ -8,28 +8,28 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.parser.AcuCobolParser;
+import edu.hm.hafner.analysis.parser.EclipseParser;
 import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 
 import hudson.Extension;
 
 /**
- * Provides a parser and customized messages for the AcuCobol Compiler.
+ * Provides a parser and customized messages for the Eclipse Compiler.
  *
  * @author Ullrich Hafner
  */
-public class AcuCobol extends StaticAnalysisTool {
-    private static final String PARSER_NAME = Messages.Warnings_AcuCobol_ParserName();
+public class Eclipse extends StaticAnalysisTool {
+    private static final String PARSER_NAME = Messages.Warnings_EclipseParser_ParserName();
 
     @DataBoundConstructor
-    public AcuCobol() {
+    public Eclipse() {
         // empty constructor required for stapler
     }
 
     @Override
     public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder) {
-        return new AcuCobolParser().parse(file, charset, builder);
+        return new EclipseParser().parse(file, charset, builder);
     }
 
     /** Registers this tool as extension point implementation. */
@@ -43,7 +43,7 @@ public class AcuCobol extends StaticAnalysisTool {
     /** Provides the labels for the parser. */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("acucobol", PARSER_NAME);
+            super("eclipse", PARSER_NAME);
         }
     }
 }
