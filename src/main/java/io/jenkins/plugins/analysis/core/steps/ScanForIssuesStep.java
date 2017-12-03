@@ -210,14 +210,16 @@ public class ScanForIssuesStep extends Step {
             logger.log("Parsing console log (workspace: '%s')", workspace);
 
             Issues<Issue> issues = tool.parse(getRun().getLogFile(),
-                    new IssueBuilder().setOrigin(tool.getId()));
+                    getCharset(), new IssueBuilder().setOrigin(tool.getId())
+            );
             logIssuesMessages(issues, logger);
             return issues;
         }
 
         private Issues<Issue> scanFiles(final FilePath workspace,
                 final Logger logger) throws IOException, InterruptedException {
-            FilesParser parser = new FilesParser(expandEnvironmentVariables(pattern), tool, shouldDetectModules);
+            FilesParser parser = new FilesParser(expandEnvironmentVariables(pattern), tool, shouldDetectModules,
+                    defaultEncoding);
             Issues<Issue> issues = workspace.act(parser);
 
             logIssuesMessages(issues, logger);
