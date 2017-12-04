@@ -17,7 +17,10 @@ import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 import static java.util.Arrays.*;
 import static org.mockito.Mockito.*;
 
-
+/**
+ * Base class is tested with a test implementation @link{TestBuilder} to not
+ * depend on any concrete implementations.
+ */
 class SeriesBuilderTest {
 
 
@@ -312,6 +315,4 @@ class SeriesBuilderTest {
             );
         }
     }
-
-
 }
