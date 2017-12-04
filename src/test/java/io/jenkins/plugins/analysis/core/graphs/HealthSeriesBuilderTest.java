@@ -15,6 +15,9 @@ import static org.mockito.Mockito.*;
 
 class HealthSeriesBuilderTest {
 
+    private static final int HEALTH_THRESHOLD = 2;
+    private static final int UNHEALTH_THRESHOLD = 5;
+
     private static Iterable<Object> testData() {
         return asList(
                 new TestArgumentsBuilder()
@@ -25,45 +28,52 @@ class HealthSeriesBuilderTest {
                         .build(),
 
                 new TestArgumentsBuilder()
+                        .setTestName("no issues")
+                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTH_THRESHOLD))
+                        .setRun(createRunWithSize(0))
+                        .setExpectedSeries(0, 0, 0)
+                        .build(),
+
+                new TestArgumentsBuilder()
                         .setTestName("all healthy when below health threshold")
-                        .setDescriptor(createEnabledDescriptor(3, 4))
-                        .setRun(createRunWithSize(2))
-                        .setExpectedSeries(2, 0, 0)
+                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTH_THRESHOLD))
+                        .setRun(createRunWithSize(1))
+                        .setExpectedSeries(HEALTH_THRESHOLD - 1, 0, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("all healthy when at health threshold")
-                        .setDescriptor(createEnabledDescriptor(3, 4))
-                        .setRun(createRunWithSize(3))
-                        .setExpectedSeries(3, 0, 0)
+                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTH_THRESHOLD))
+                        .setRun(createRunWithSize(HEALTH_THRESHOLD))
+                        .setExpectedSeries(HEALTH_THRESHOLD, 0, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
-                        .setTestName("one medium when above health threshold and blow unhealth threshold")
-                        .setDescriptor(createEnabledDescriptor(2, 3))
-                        .setRun(createRunWithSize(3))
+                        .setTestName("one medium when above health, below unhealth threshold")
+                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTH_THRESHOLD))
+                        .setRun(createRunWithSize(HEALTH_THRESHOLD + 1))
                         .setExpectedSeries(2, 1, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
+                        .setTestName("none unhealthy when below unhealth threshold")
+                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTH_THRESHOLD))
+                        .setRun(createRunWithSize(UNHEALTH_THRESHOLD - 1))
+                        .setExpectedSeries(2, 2, 0)
+                        .build(),
+
+                new TestArgumentsBuilder()
+                        .setTestName("none unhealthy when at unhealth threshold")
+                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTH_THRESHOLD))
+                        .setRun(createRunWithSize(UNHEALTH_THRESHOLD))
+                        .setExpectedSeries(2, 3, 0)
+                        .build(),
+
+                new TestArgumentsBuilder()
                         .setTestName("one unhealthy when above unhealth threshold")
-                        .setDescriptor(createEnabledDescriptor(1, 2))
-                        .setRun(createRunWithSize(3))
-                        .setExpectedSeries(1, 1, 1)
-                        .build(),
-
-                new TestArgumentsBuilder()
-                        .setTestName("none healthy when health threshold at 0")
-                        .setDescriptor(createEnabledDescriptor(0, 1))
-                        .setRun(createRunWithSize(2))
-                        .setExpectedSeries(0, 1, 1)
-                        .build(),
-
-                new TestArgumentsBuilder()
-                        .setTestName("all medium when health threshold 0 and below unhealth threshold")
-                        .setDescriptor(createEnabledDescriptor(0, 3))
-                        .setRun(createRunWithSize(2))
-                        .setExpectedSeries(0, 2, 0)
+                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTH_THRESHOLD))
+                        .setRun(createRunWithSize(UNHEALTH_THRESHOLD + 1))
+                        .setExpectedSeries(2, 3, 1)
                         .build()
         );
     }
