@@ -13,6 +13,11 @@ import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Tests class {@link HealthSeriesBuilder}.
+ *
+ * @author Florian Pirchmoser
+ */
 class HealthSeriesBuilderTest {
 
     private static final int HEALTH_THRESHOLD = 2;
