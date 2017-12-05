@@ -3,9 +3,7 @@ package io.jenkins.plugins.analysis.core.util;
 import javax.annotation.CheckForNull;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.Collection;
 
 import hudson.plugins.analysis.core.GlobalSettings;
 import hudson.plugins.analysis.core.Settings;
@@ -85,17 +83,15 @@ public class LoggerFactory {
         }
 
         @Override
-        public void logEachLine(final List<String> lines) {
-            for (String line : lines) {
-                print(line);
-            }
+        public void logEachLine(final Collection<String> lines) {
+            lines.forEach(this::print);
         }
 
         private void print(final String line) {
-            delegate.println(StringUtils.defaultString(toolName) + line);
+            delegate.println(toolName + line);
         }
     }
-
+    
     /**
      * Null logger.
      */

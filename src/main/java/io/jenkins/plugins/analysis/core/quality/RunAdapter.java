@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.core.quality;
 import hudson.model.Run;
 
 /**
- * Wraps a Jenkins {@link Run} instance into a {@link AnalysisBuild}.
+ * Wraps a Jenkins {@link Run} instance into an {@link AnalysisBuild}.
  *
  * @author Ullrich Hafner
  */

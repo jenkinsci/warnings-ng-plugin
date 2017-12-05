@@ -21,30 +21,36 @@ class QualityGateEnforcerTest {
 
         Result success = enforcer.evaluate(run, qualityGate);
 
-        assertThat(success).as("No issues and no quality gate should always be a SUCCESS").isEqualTo(Result.SUCCESS);
+        assertThat(success)
+                .as("No issues and no quality gate should always be a SUCCESS")
+                .isEqualTo(Result.SUCCESS);
     }
 
     @Test
     void shouldBeSuccessfulWhenNoIssuesPresentAndFailureQualityGateIsSet() {
         QualityGateEnforcer enforcer = new QualityGateEnforcer();
         StaticAnalysisRun run = mock(StaticAnalysisRun.class);
-        QualityGate qualityGate = new QualityGate();
+        QualityGate qualityGate = new QualityGate(1);
 
         Result success = enforcer.evaluate(run, qualityGate);
 
-        assertThat(success).as("No issues and failure quality gate should always be a SUCCESS").isEqualTo(Result.SUCCESS);
+        assertThat(success)
+                .as("No issues and any failure quality gate should always be a SUCCESS")
+                .isEqualTo(Result.SUCCESS);
     }
 
     @Test
     void shouldFailBuildIfFailureThresholdIsSet() {
         QualityGateEnforcer enforcer = new QualityGateEnforcer();
         StaticAnalysisRun run = mock(StaticAnalysisRun.class);
-        when(run.getTotalHighPrioritySize()).thenReturn(1);
+        when(run.getTotalSize()).thenReturn(1);
 
         QualityGate qualityGate = new QualityGate(1);
 
         Result failure = enforcer.evaluate(run, qualityGate);
 
-        assertThat(failure).as("One issue should return FAILURE").isEqualTo(Result.FAILURE);
+        assertThat(failure)
+                .as("One issue should return a FAILURE")
+                .isEqualTo(Result.FAILURE);
     }
 }
