@@ -16,7 +16,7 @@ import hudson.console.ConsoleNote;
  * @author Ullrich Hafner
  */
 class EclipseTest extends AbstractParserTest {
-    public EclipseTest() {
+    EclipseTest() {
         super("issue11675.txt");
     }
 
