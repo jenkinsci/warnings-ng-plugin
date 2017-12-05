@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.graphs;
 import java.util.Arrays;
 import java.util.List;
 
-import org.assertj.core.util.Lists;
 import org.jfree.data.category.CategoryDataset;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -18,8 +17,12 @@ import static java.util.Arrays.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Base class is tested with a test implementation @link{TestBuilder} to not
+ * Tests the class for {@link SeriesBuilder}
+ *
+ * The class is tested using the dumb implementation {@link TestSeriesBuilder} for testing purposes to not
  * depend on any concrete implementations.
+ *
+ * @author Florian Pirchmoser
  */
 class SeriesBuilderTest {
 
@@ -50,7 +53,7 @@ class SeriesBuilderTest {
                         .setTestName("build count 0, 2 runs")
                         .setTime(resultTime(false))
                         .setConfig(CONFIG_BUILD_COUNT_NONE)
-                        .setRuns(RUN_SAME_DAY, RUN_DAY, RUN_NEXT_DAY)
+                        .setRuns(RUN_SAME_DAY, RUN_DAY)
                         .setExpected(FIRST_SERIES)
                         .build(),
 
@@ -58,22 +61,16 @@ class SeriesBuilderTest {
                         .setTestName("build count 1, 2 runs")
                         .setTime(resultTime(false))
                         .setConfig(CONFIG_BUILD_COUNT_ONE)
-                        .setRuns(RUN_SAME_DAY, RUN_DAY, RUN_NEXT_DAY)
+                        .setRuns(RUN_SAME_DAY, RUN_DAY)
                         .setExpected(FIRST_SERIES)
-                        .build(),
-
-                new TestArgumentsBuilder()
-                        .setTestName("build count 2, 2 runs")
-                        .setTime(resultTime(false))
-                        .setConfig(CONFIG_BUILD_COUNT_TWO)
-                        .setRuns(RUN_DAY, RUN_SAME_DAY)
-                        .setExpected(FIRST_SERIES, SECOND_SERIES)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("build count 2, 0 runs")
                         .setTime(resultTime(false))
                         .setConfig(CONFIG_BUILD_COUNT_TWO)
+                        .setRuns()
+                        .setExpected()
                         .build(),
 
                 new TestArgumentsBuilder()
@@ -96,6 +93,8 @@ class SeriesBuilderTest {
                         .setTestName("build date, never too old, 0 runs")
                         .setTime(resultTime(false))
                         .setConfig(CONFIG_BUILD_DATE)
+                        .setRuns()
+                        .setExpected()
                         .build(),
 
                 new TestArgumentsBuilder()
@@ -115,10 +114,11 @@ class SeriesBuilderTest {
                         .build(),
 
                 new TestArgumentsBuilder()
-                        .setTestName("build date, always too, 2 runs")
+                        .setTestName("build date, always true, 2 runs")
                         .setTime(resultTime(true))
                         .setConfig(CONFIG_BUILD_DATE)
                         .setRuns(RUN_PREVIOUS_DAY, RUN_DAY)
+                        .setExpected()
                         .build(),
 
                 new TestArgumentsBuilder()
@@ -132,8 +132,8 @@ class SeriesBuilderTest {
                 new TestArgumentsBuilder()
                         .setTestName("build date, never too old, average same days")
                         .setTime(resultTime(false))
-                        .setRuns(RUN_PREVIOUS_DAY, RUN_DAY, RUN_SAME_DAY, RUN_NEXT_DAY)
                         .setConfig(CONFIG_BUILD_DATE)
+                        .setRuns(RUN_PREVIOUS_DAY, RUN_DAY, RUN_SAME_DAY, RUN_NEXT_DAY)
                         .setExpected(FIRST_SERIES, AVERAGE_SECOND_AND_THIRD_SERIES, FORTH_SERIES)
                         .build()
         );
@@ -146,7 +146,7 @@ class SeriesBuilderTest {
             final ResultTime time, final GraphConfiguration config,
             final List<StaticAnalysisRun> runs, final List<List<Integer>> expected) {
 
-        SeriesBuilder sut = new TestBuilder(time);
+        SeriesBuilder sut = new TestSeriesBuilder(time);
 
         CategoryDataset result = sut.createDataSet(config, runs);
 
@@ -198,13 +198,13 @@ class SeriesBuilderTest {
 
 
     /**
-     * Dumb test implementation returning the numbers from 1 to n as series, three at a time.
+     * Dumb test implementation returning integers starting with 1 to n as series, three at a time.
      */
-    private static class TestBuilder extends SeriesBuilder {
+    private static class TestSeriesBuilder extends SeriesBuilder {
 
         private int count;
 
-        TestBuilder(final ResultTime resultTime) {
+        TestSeriesBuilder(final ResultTime resultTime) {
             super(resultTime);
         }
 
@@ -310,8 +310,8 @@ class SeriesBuilderTest {
                     testName,
                     time,
                     config,
-                    runs != null ? runs : Lists.emptyList(),
-                    series != null ? series : Lists.emptyList()
+                    runs,
+                    series
             );
         }
     }
