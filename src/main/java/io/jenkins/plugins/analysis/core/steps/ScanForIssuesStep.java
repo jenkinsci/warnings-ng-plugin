@@ -9,7 +9,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.workflow.steps.Step;
@@ -127,7 +126,6 @@ public class ScanForIssuesStep extends Step {
     }
 
     public static class Execution extends SynchronousNonBlockingStepExecution<Issues> {
-        private static final Pattern NEWLINE = Pattern.compile("\r?\n|\r");
         private final String defaultEncoding;
         private final boolean shouldDetectModules;
         private final StaticAnalysisTool tool;
@@ -206,7 +204,7 @@ public class ScanForIssuesStep extends Step {
         }
 
         private Issues<Issue> scanConsoleLog(final FilePath workspace,
-                final Logger logger) throws IOException, InterruptedException, InvocationTargetException {
+                final Logger logger) throws IOException, InterruptedException {
             logger.log("Parsing console log (workspace: '%s')", workspace);
 
             Issues<Issue> issues = tool.parse(getRun().getLogFile(),

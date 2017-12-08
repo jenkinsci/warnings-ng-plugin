@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,8 +22,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
-
-import static java.util.stream.Collectors.*;
 
 import hudson.FilePath;
 import hudson.plugins.analysis.Messages;
@@ -137,22 +134,6 @@ public class ParserResult implements Serializable {
         this(new NullWorkspace());
 
         addAnnotations(annotations);
-    }
-
-    /**
-     * Returns a filtered parser result that contains only issues that match the specified criterion.
-     *
-     * @param criterion the filter criterion
-     * @return the found issues
-     */
-    public ParserResult filter(final Predicate<? super FileAnnotation> criterion) {
-        List<FileAnnotation> warnings = annotations.stream().filter(criterion).collect(toList());
-        ParserResult result = new ParserResult(warnings);
-        result.id = id;
-        result.numberOfModules = numberOfModules;
-        result.modules.addAll(modules);
-        result.errorMessages.addAll(errorMessages);
-        return result;
     }
 
     /**

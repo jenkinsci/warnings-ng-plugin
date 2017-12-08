@@ -8,8 +8,6 @@ Maintainer: Dr. Ullrich Hafner
 
 ### TODOs for pipelines
 
-- LOGGER aus mock holen
-- duplicate warnings loggen
 - default Encoding: Display File Content, Warnings File Content
 - Fixed warning referenziert alten Build mit Source!
 - run immer als owner benennen
