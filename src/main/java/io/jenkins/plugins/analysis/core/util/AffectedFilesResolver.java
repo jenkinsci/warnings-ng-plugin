@@ -7,10 +7,10 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.SortedSet;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 
 import edu.hm.hafner.analysis.Issue;
 
@@ -36,14 +36,17 @@ public class AffectedFilesResolver {
      *         channel to get the files from
      * @param jenkinsBuildRoot
      *         directory to store the copied files in
-     * @param affectedFiles the affected files
+     * @param affectedFiles
+     *         the affected files
+     *
+     * @return message describing the result
      * @throws IOException
      *         if the files could not be written
      * @throws InterruptedException
      *         if the user cancels the processing
      */
-    public void copyFilesWithAnnotationsToBuildFolder(final VirtualChannel channel, final FilePath jenkinsBuildRoot,
-            final String defaultEncoding, final SortedSet<String> affectedFiles)
+    public String copyFilesWithAnnotationsToBuildFolder(final VirtualChannel channel, final FilePath jenkinsBuildRoot,
+            final String defaultEncoding, final ImmutableSortedSet<String> affectedFiles)
             throws IOException, InterruptedException {
         FilePath directory = jenkinsBuildRoot.child(AFFECTED_FILES_FOLDER_NAME);
         if (!directory.exists()) {
@@ -56,19 +59,28 @@ public class AffectedFilesResolver {
             }
         }
 
+        int copied = 0;
+        int notFound = 0;
+        int error = 0;
         for (String file : affectedFiles) {
-            Path path = Paths.get(file).toRealPath();
+            Path path = Paths.get(file);
             if (Files.exists(path)) {
                 FilePath buildFolderCopy = directory.child(getTempName(file));
                 FilePath sourceFileOnAgent = new FilePath(channel, path.toString());
                 try {
                     sourceFileOnAgent.copyTo(buildFolderCopy);
+                    copied++;
                 }
                 catch (IOException exception) {
                     logExceptionToFile(exception, buildFolderCopy, sourceFileOnAgent, defaultEncoding);
+                    error++;
                 }
             }
+            else {
+                notFound++;
+            }
         }
+        return String.format("(%d copied, %d not-found, %d with I/O error)", copied, notFound, error);
     }
 
     /**
@@ -91,12 +103,14 @@ public class AffectedFilesResolver {
         try {
             outputStream = masterFile.write();
             print(outputStream,
-                    defaultEncoding, "Copying the source file '%s' from the workspace to the build folder '%s' on the Jenkins master failed.%n",
+                    defaultEncoding,
+                    "Copying the source file '%s' from the workspace to the build folder '%s' on the Jenkins master failed.%n",
                     affectedFile, masterFile.getName());
             String affectedFileOnAgent = affectedFile.getName();
             if (!affectedFileOnAgent.startsWith(SLASH) && !affectedFileOnAgent.contains(":")) {
                 print(outputStream,
-                        defaultEncoding, "Seems that the path is relative, however an absolute path is required when copying the sources.%n");
+                        defaultEncoding,
+                        "Seems that the path is relative, however an absolute path is required when copying the sources.%n");
                 String base;
                 if (affectedFileOnAgent.contains(SLASH)) {
                     base = StringUtils.substringAfterLast(affectedFileOnAgent, SLASH);
@@ -109,10 +123,12 @@ public class AffectedFilesResolver {
             }
             print(outputStream, defaultEncoding, "Is the file '%s' a valid filename?%n", affectedFile);
             print(outputStream,
-                    defaultEncoding, "If you are building on a slave: please check if the file is accessible under '$JENKINS_HOME/[job-name]/%s'%n",
+                    defaultEncoding,
+                    "If you are building on a slave: please check if the file is accessible under '$JENKINS_HOME/[job-name]/%s'%n",
                     affectedFile);
             print(outputStream,
-                    defaultEncoding, "If you are building on the master: please check if the file is accessible under '$JENKINS_HOME/[job-name]/workspace/%s'%n",
+                    defaultEncoding,
+                    "If you are building on the master: please check if the file is accessible under '$JENKINS_HOME/[job-name]/workspace/%s'%n",
                     affectedFile);
             exception.printStackTrace(new PrintStream(outputStream, false, defaultEncoding));
         }

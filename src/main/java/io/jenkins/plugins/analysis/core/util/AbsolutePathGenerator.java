@@ -27,7 +27,7 @@ public class AbsolutePathGenerator {
                 .collect(Collectors.toSet());
 
         if (relativeFileNames.isEmpty()) {
-            Issues<Issue> unchanged = new Issues<>(issues.all());
+            Issues<Issue> unchanged = issues.copy();
             unchanged.log("Affected files for all issues already have absolute paths.");
 
             return unchanged;
