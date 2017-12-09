@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
@@ -29,8 +28,7 @@ public class IssueDifference {
      */
     public IssueDifference(final Issues<Issue> currentIssues, final int currentBuildNumber,
             final Issues<BuildIssue> referenceIssues) {
-        newIssues = new Issues<>(currentIssues.all().stream()
-                .map(issue -> new BuildIssue(issue, currentBuildNumber)).collect(Collectors.toList()));
+        newIssues = new Issues<>(currentIssues.stream().map(issue -> new BuildIssue(issue, currentBuildNumber)));
         fixedIssues = referenceIssues.copy();
         oldIssues = new Issues<>();
 

@@ -8,10 +8,10 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
@@ -439,8 +439,8 @@ public class PublishIssuesStep extends Step {
 
         private String createUniqueId() {
             Set<String> origins = new HashSet<>();
-            for (Issues result : issues) {
-                origins.addAll(result.getToolNames());
+            for (Issues<Issue> result : issues) {
+                origins.addAll(result.getToolNames().castToSortedSet());
             }
 
             String defaultId;
@@ -484,13 +484,14 @@ public class PublishIssuesStep extends Step {
                     Duration.between(startResult, Instant.now()));
 
             FilePath workspace = getContext().get(FilePath.class);
-            SortedSet<String> files = result.getIssues().getFiles();
+            ImmutableSortedSet<String> files = result.getIssues().getFiles();
 
             Instant startCopy = Instant.now();
-            new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(getChannel(),
+            String copyingLogMessage = new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(getChannel(),
                     getBuildFolder(), EncodingValidator.getEncoding(defaultEncoding), files);
             logger.log("Copied %d affected files from '%s' to build folder (took %s)", files.size(), workspace,
                     Duration.between(startCopy, Instant.now()));
+            logger.log(copyingLogMessage);
 
             logger.log("Attaching ResultAction with ID '%s' to run '%s'.", actualId, run);
             ResultAction action = new ResultAction(run, result, healthDescriptor, actualId, name);
