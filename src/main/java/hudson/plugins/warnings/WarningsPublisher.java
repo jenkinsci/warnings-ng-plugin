@@ -16,15 +16,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import jenkins.tasks.SimpleBuildStep;
 
 import hudson.FilePath;
-import hudson.Launcher;
-import hudson.matrix.MatrixAggregator;
-import hudson.matrix.MatrixBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.BuildListener;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.core.AnnotationsClassifier;
@@ -49,7 +44,7 @@ import hudson.plugins.warnings.parser.WarningsFilter;
  * @author Ulli Hafner
  */
 // CHECKSTYLE:COUPLING-OFF
-public class WarningsPublisher extends HealthAwarePublisher implements SimpleBuildStep {
+public class WarningsPublisher extends HealthAwarePublisher {
     private static final long serialVersionUID = -5936973521277401764L;
 
     private static final String PLUGIN_NAME = "WARNINGS";
@@ -226,7 +221,7 @@ public class WarningsPublisher extends HealthAwarePublisher implements SimpleBui
     }
 
     private void replaceConsoleParsersWithChangedName() {
-        List<ConsoleParser> updatedConsoleParsers = new ArrayList<ConsoleParser>(consoleParsers);
+        List<ConsoleParser> updatedConsoleParsers = new ArrayList<>(consoleParsers);
         for (ConsoleParser parser : consoleParsers) {
             String parserName = parser.getParserName();
             if (ParserRegistry.exists(parserName)) {
@@ -241,7 +236,7 @@ public class WarningsPublisher extends HealthAwarePublisher implements SimpleBui
     }
 
     private void replaceFileParsersWithChangedName() {
-        List<ParserConfiguration> updatedFileParsers = new ArrayList<ParserConfiguration>(parserConfigurations);
+        List<ParserConfiguration> updatedFileParsers = new ArrayList<>(parserConfigurations);
         for (ParserConfiguration parser : parserConfigurations) {
             String parserName = parser.getParserName();
             if (ParserRegistry.exists(parserName)) {
@@ -449,12 +444,6 @@ public class WarningsPublisher extends HealthAwarePublisher implements SimpleBui
     @Override
     public WarningsDescriptor getDescriptor() {
         return (WarningsDescriptor)super.getDescriptor();
-    }
-
-    @Override
-    public MatrixAggregator createAggregator(final MatrixBuild run, final Launcher launcher, final BuildListener listener) {
-        return new WarningsAnnotationsAggregator(run, launcher, listener, this, getDefaultEncoding(),
-                usePreviousBuildAsReference(), useOnlyStableBuildsAsReference());
     }
 
     /** Name of parsers to use for scanning the logs. */

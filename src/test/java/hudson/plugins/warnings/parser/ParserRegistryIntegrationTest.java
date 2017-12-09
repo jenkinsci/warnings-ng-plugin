@@ -342,19 +342,4 @@ public class ParserRegistryIntegrationTest {
             return null;
         }
     }
-    @SuppressWarnings({"javadoc", "deprecation"})
-    @TestExtension
-    public static class TestOldParser implements WarningsParser {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public Collection<FileAnnotation> parse(final Reader reader) throws IOException {
-            return null;
-        }
-
-            @Override
-        public String getName() {
-            return OLD_API;
-        }
-    }
 }

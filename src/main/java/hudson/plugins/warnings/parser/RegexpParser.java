@@ -16,7 +16,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  * @author Ulli Hafner
  */
 @SuppressWarnings("deprecation")
-public abstract class RegexpParser extends AbstractWarningsParser implements WarningsParser {
+public abstract class RegexpParser extends AbstractWarningsParser {
     private static final long serialVersionUID = -82635675595933170L;
 
     /** Used to define a false positive warnings that should be excluded after the regular expression scan. */
@@ -31,7 +31,6 @@ public abstract class RegexpParser extends AbstractWarningsParser implements War
     /** Pattern of compiler warnings. */
     private Pattern pattern;
 
-    @Override
     public String getName() {
         return getGroup();
     }

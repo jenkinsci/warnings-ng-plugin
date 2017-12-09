@@ -27,7 +27,6 @@ import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jenkins.model.Jenkins;
 
-import hudson.plugins.analysis.core.PluginDescriptor;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.NullLogger;
 import hudson.plugins.analysis.util.PluginLogger;
@@ -59,18 +58,8 @@ public class ParserRegistry {
             return Lists.newArrayList();
         }
         List<AbstractWarningsParser> parsers = Lists.newArrayList(instance.getExtensionList(AbstractWarningsParser.class));
-        addParsersWithDeprecatedApi(instance, parsers);
 
         return parsers;
-    }
-
-    @SuppressWarnings("deprecation")
-    private static void addParsersWithDeprecatedApi(final Jenkins instance, final List<AbstractWarningsParser> parsers) {
-        for (WarningsParser parser : instance.getExtensionList(WarningsParser.class)) {
-            if (!(parser instanceof AbstractWarningsParser)) {
-                parsers.add(new ParserAdapter(parser));
-            }
-        }
     }
 
     /**
@@ -164,7 +153,7 @@ public class ParserRegistry {
      * @return a list of parsers, might be modified by the receiver
      */
     public static List<AbstractWarningsParser> getParsers(final Collection<String> parserGroups) {
-        List<AbstractWarningsParser> actualParsers = new ArrayList<AbstractWarningsParser>();
+        List<AbstractWarningsParser> actualParsers = new ArrayList<>();
         for (String name : parserGroups) {
             for (AbstractWarningsParser warningsParser : getAllParsers()) {
                 if (warningsParser.isInGroup(name)) {
@@ -201,9 +190,6 @@ public class ParserRegistry {
                                     Messages._Warnings_IntelFortran_LinkName(),
                                     Messages._Warnings_IntelFortran_TrendName()));
 
-        if (PluginDescriptor.isPluginInstalled("violations")) {
-            ViolationsRegistry.addParsers(parsers);
-        }
         Iterable<GroovyParser> parserDescriptions = getDynamicParserDescriptions();
         parsers.addAll(getDynamicParsers(parserDescriptions));
         parsers.addAll(all());
@@ -242,7 +228,7 @@ public class ParserRegistry {
      */
     public ParserRegistry(final List<? extends AbstractWarningsParser> parsers, final String defaultEncoding) {
         defaultCharset = EncodingValidator.defaultCharset(defaultEncoding);
-        this.parsers = new ArrayList<AbstractWarningsParser>(parsers);
+        this.parsers = new ArrayList<>(parsers);
         if (this.parsers.isEmpty()) {
             this.parsers.addAll(getAllParsers());
         }

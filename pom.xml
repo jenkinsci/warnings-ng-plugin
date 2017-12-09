@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -13,7 +14,12 @@
   <name>Warnings Plug-in</name>
   <version>5.0-SNAPSHOT</version>
   <url>http://wiki.jenkins-ci.org/x/G4CGAQ</url>
-  <description>This plug-in reads the compiler warnings from the console log file and generates a trend report.</description>
+  <description>This plug-in reads the compiler warnings from the console log file and generates a trend report.
+  </description>
+
+  <properties>
+    <jenkins-test-harness.version>2.32</jenkins-test-harness.version>
+  </properties>
 
   <licenses>
     <license>
@@ -26,17 +32,21 @@
     </license>
     <license>
       <name>BSD license</name>
-      <comments>All YUI source code is under the BSD license. Duke, the Java mascot also is under the BSD license.</comments>
+      <comments>All YUI source code is under the BSD license. Duke, the Java mascot also is under the BSD license.
+      </comments>
     </license>
     <license>
       <name>Scala License</name>
       <url>http://www.scala-lang.org/license.html</url>
-      <comments>Scala icons are made by converting of http://www.scala-lang.org/resources/img/smooth-spiral.png</comments>
+      <comments>Scala icons are made by converting of http://www.scala-lang.org/resources/img/smooth-spiral.png
+      </comments>
     </license>
     <license>
       <name>Creative Commons Attribution 3.0</name>
       <url>https://creativecommons.org/licenses/by/3.0</url>
-      <comments>Go mascot and logo were designed by Renée French and are covered by the Creative Commons Attribution 3.0 license.</comments>
+      <comments>Go mascot and logo were designed by Renée French and are covered by the Creative Commons Attribution 3.0
+        license.
+      </comments>
     </license>
   </licenses>
 
@@ -47,64 +57,15 @@
       <version>2.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>violations</artifactId>
-      <version>0.7.11</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-digester3</artifactId>
       <version>3.2</version>
     </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-scm-step</artifactId>
-      <version>2.2</version>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-multibranch</artifactId>
-      <version>1.14.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>git</artifactId>
-      <version>2.5.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>git</artifactId>
-      <version>2.5.2</version>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
+
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-test</artifactId>
       <version>2.0-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.modules</groupId>
-      <artifactId>sshd</artifactId>
-      <version>1.6</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>parameterized-trigger</artifactId>
-      <version>2.33</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>promoted-builds</artifactId>
-      <version>2.25</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -114,6 +75,37 @@
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
+
+    <!-- Integration Test Dependencies -->
+    <!-- WorkflowJob -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-job</artifactId>
+      <version>2.16</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Groovy -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-cps</artifactId>
+      <version>2.42</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- stage -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>pipeline-stage-step</artifactId>
+      <version>2.3</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- node -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-durable-task-step</artifactId>
+      <version>2.16</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
