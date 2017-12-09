@@ -19,6 +19,7 @@
 
   <properties>
     <!-- Project Dependencies Configuration -->
+    <findbugs.annotations>3.0.0</findbugs.annotations>
     <commons.lang.version>3.6</commons.lang.version>
     <commons.io.version>2.5</commons.io.version>
     <commons.digester.version>3.2</commons.digester.version>
@@ -28,21 +29,15 @@
     <!-- Project Test Dependencies Configuration -->
     <junit.version>5.0.0</junit.version>
     <assertj.version>3.8.0</assertj.version>
-    <mockito.version>2.9.0</mockito.version>
+    <mockito.version>2.12.0</mockito.version>
 
     <!-- Maven Plug-ins Configuration -->
-    <surefire.maven.plugin>2.19.1</surefire.maven.plugin>
     <junit.surefire.provider>1.0.0</junit.surefire.provider>
     <jenkins.version>2.73.3</jenkins.version>
   </properties>
 
   <dependencies>
     <!-- Project Dependencies -->
-    <dependency>
-      <groupId>edu.hm.hafner</groupId>
-      <artifactId>analysis-model</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
     <dependency>
       <groupId>org.eclipse.collections</groupId>
       <artifactId>eclipse-collections-api</artifactId>
@@ -76,7 +71,7 @@
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
-      <version>2.9.5</version>
+      <version>1.6</version>
     </dependency>
     <dependency>
       <groupId>de.java2html</groupId>
@@ -128,6 +123,12 @@
       <artifactId>git</artifactId>
       <version>3.1.0</version>
       <optional>true</optional>
+      <exclusions>
+        <exclusion>
+          <groupId>joda-time</groupId>
+          <artifactId>joda-time</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Project Test Dependencies -->
@@ -135,25 +136,6 @@
       <groupId>org.easymock</groupId>
       <artifactId>easymock</artifactId>
       <version>2.4</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>${assertj.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>edu.hm.hafner</groupId>
-      <artifactId>analysis-model</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-      <type>test-jar</type>
       <scope>test</scope>
     </dependency>
 
@@ -215,27 +197,6 @@
       </plugin>
     </plugins>
 
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>${surefire.maven.plugin}</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.junit.platform</groupId>
-              <artifactId>junit-platform-surefire-provider</artifactId>
-              <version>${junit.surefire.provider}</version>
-            </dependency>
-            <dependency>
-              <groupId>org.junit.jupiter</groupId>
-              <artifactId>junit-jupiter-engine</artifactId>
-              <version>${junit.version}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-      </plugins>
-    </pluginManagement>
   </build>
 
 </project>
