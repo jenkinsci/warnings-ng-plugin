@@ -25,10 +25,10 @@ import org.xml.sax.SAXException;
 import hudson.Extension;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
-import hudson.plugins.violations.types.fxcop.XmlElementUtil;
 import hudson.plugins.warnings.parser.AbstractWarningsParser;
 import hudson.plugins.warnings.parser.Messages;
 import hudson.plugins.warnings.parser.ParsingCanceledException;
+import hudson.plugins.warnings.util.XmlElementUtil;
 
 /**
  * Parses Gendarme violations.
@@ -75,7 +75,7 @@ public class GendarmeParser extends AbstractWarningsParser {
     }
 
     private List<FileAnnotation> parseViolations(final List<Element> ruleElements, final Map<String, GendarmeRule> rules) {
-        List<FileAnnotation> warnings = new ArrayList<FileAnnotation>();
+        List<FileAnnotation> warnings = new ArrayList<>();
         for (Element ruleElement : ruleElements) {
             String ruleName = ruleElement.getAttribute("Name");
             String problem = ruleElement.getElementsByTagName("problem").item(0).getTextContent();
@@ -123,7 +123,7 @@ public class GendarmeParser extends AbstractWarningsParser {
     }
 
     private Map<String, GendarmeRule> parseRules(final List<Element> ruleElements) {
-        Map<String, GendarmeRule> rules = new HashMap<String, GendarmeRule>();
+        Map<String, GendarmeRule> rules = new HashMap<>();
 
         for (Element ruleElement : ruleElements) {
             GendarmeRule rule = new GendarmeRule();
