@@ -1,10 +1,10 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.collections.impl.multimap.list.FastListMultimap;
-import org.joda.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;

@@ -160,6 +160,7 @@ public class ScanForIssuesStep extends Step {
             else {
                 Logger logger = createLogger();
 
+                // FIXME: if there are no issues than the ID is not defined!
                 Instant start = Instant.now();
                 Issues<Issue> issues;
                 if (StringUtils.isNotBlank(pattern)) {

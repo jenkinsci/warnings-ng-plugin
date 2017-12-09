@@ -438,6 +438,10 @@ public class PublishIssuesStep extends Step {
         }
 
         private String createUniqueId() {
+            if (StringUtils.isNotBlank(id)) {
+                return id;
+            }
+
             Set<String> origins = new HashSet<>();
             for (Issues<Issue> result : issues) {
                 origins.addAll(result.getToolNames().castToSortedSet());
@@ -453,7 +457,7 @@ public class PublishIssuesStep extends Step {
                     name = Messages.Default_Name();
                 }
             }
-            return StringUtils.defaultIfBlank(id, defaultId);
+            return defaultId;
         }
 
         private Logger createLogger(final String toolId) throws IOException, InterruptedException {
