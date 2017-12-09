@@ -19,6 +19,8 @@
 
   <properties>
     <jenkins-test-harness.version>2.32</jenkins-test-harness.version>
+    <junit.surefire.provider>1.0.0</junit.surefire.provider>
+    <surefire.maven.plugin>2.19.1</surefire.maven.plugin>
   </properties>
 
   <licenses>
@@ -68,13 +70,6 @@
       <version>2.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>edu.hm.hafner</groupId>
-      <artifactId>analysis-model</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
 
     <!-- Integration Test Dependencies -->
     <!-- WorkflowJob -->
@@ -117,14 +112,7 @@
           <rules>
             <requireUpperBoundDeps>
               <excludes combine.children="append">
-                <exclude>org.jenkins-ci.plugins:scm-api</exclude>
-                <exclude>org.jenkins-ci.modules:sshd</exclude>
-                <exclude>org.jenkins-ci.plugins.icon-shim:icon-set</exclude>
-                <exclude>org.jenkins-ci.plugins:script-security</exclude>
-                <exclude>org.jenkins-ci.plugins:durable-task</exclude>
-                <exclude>com.google.code.findbugs:annotations</exclude>
-                <!-- Remove if violations dependency is not required anymore -->
-                <exclude>xpp3:xpp3</exclude>
+
               </excludes>
             </requireUpperBoundDeps>
           </rules>

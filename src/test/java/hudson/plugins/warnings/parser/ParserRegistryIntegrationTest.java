@@ -9,22 +9,18 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Matcher;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.TestExtension;
-import org.jvnet.localizer.Localizable;
 
 import com.google.common.collect.Lists;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import static org.junit.Assert.*;
 
-import hudson.plugins.analysis.core.PluginDescriptor;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
@@ -38,13 +34,10 @@ import hudson.plugins.warnings.GroovyParserTest;
  */
 public class ParserRegistryIntegrationTest {
     /** If you add a new parser then this value needs to be adapted. */
-    private static final int NUMBER_OF_AVAILABLE_PARSERS = 68;
+    private static final int NUMBER_OF_AVAILABLE_PARSERS = 64;
     private static final String OLD_ID_ECLIPSE_JAVA_COMPILER = "Eclipse Java Compiler";
     private static final String JAVA_WARNINGS_FILE = "deprecations.txt";
     private static final String OLD_ID_JAVA_COMPILER = "Java Compiler";
-    private static final String MIXED_API = "Both APIs";
-    private static final String NEW_API = "New Parser API";
-    private static final String OLD_API = "Old Parser API";
 
     @ClassRule
     public static JenkinsRule jenkins = new JenkinsRule();
@@ -135,14 +128,7 @@ public class ParserRegistryIntegrationTest {
     public void testParserRegistration() {
         List<ParserDescription> groups = ParserRegistry.getAvailableParsers();
 
-        int expected;
-        if (PluginDescriptor.isPluginInstalled("violations")) {
-            expected = NUMBER_OF_AVAILABLE_PARSERS;
-        }
-        else {
-            expected = NUMBER_OF_AVAILABLE_PARSERS - 1;
-        }
-        assertEquals("Wrong number of registered parsers", expected, groups.size());
+        assertEquals("Wrong number of registered parsers", NUMBER_OF_AVAILABLE_PARSERS, groups.size());
     }
 
     /**
@@ -156,16 +142,6 @@ public class ParserRegistryIntegrationTest {
             List<AbstractWarningsParser> parsers = ParserRegistry.getParsers(group.getGroup());
             System.out.printf("%s: %d%n", group.getGroup(), parsers.size());
         }
-    }
-
-    /**
-     * Verifies that the registry detects old and new API extensions and maps them correctly.
-     */
-    @Test
-    public void testRegistry() {
-        assertEquals("Wrong new API implementations", 1, ParserRegistry.getParsers(NEW_API).size());
-        assertEquals("Wrong old API implementations", 1, ParserRegistry.getParsers(OLD_API).size());
-        assertEquals("Wrong mixed API implementations", 1, ParserRegistry.getParsers(MIXED_API).size());
     }
 
     /**
@@ -308,38 +284,5 @@ public class ParserRegistryIntegrationTest {
             }
         };
         return parserRegistry;
-    }
-
-    // CHECKSTYLE:OFF Test implementations
-    @SuppressWarnings("javadoc")
-    @TestExtension
-    public static class TestBothParser extends RegexpLineParser {
-        private static final Localizable DUMMY = Messages._Warnings_NotLocalizedName(MIXED_API);
-        private static final long serialVersionUID = 1L;
-
-        public TestBothParser() {
-            super(DUMMY, DUMMY, DUMMY, MIXED_API);
-        }
-
-            @Override
-        protected Warning createWarning(final Matcher matcher) {
-            return null;
-        }
-
-    }
-    @SuppressWarnings("javadoc")
-    @TestExtension
-    public static class TestNewParser extends AbstractWarningsParser {
-        private static final long serialVersionUID = 1L;
-
-        public TestNewParser() {
-            super(NEW_API);
-        }
-
-            @Override
-        public Collection<FileAnnotation> parse(final Reader reader) throws IOException,
-                ParsingCanceledException {
-            return null;
-        }
     }
 }
