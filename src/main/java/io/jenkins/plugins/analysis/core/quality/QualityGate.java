@@ -39,7 +39,10 @@ public class QualityGate {
 
     /**
      * Evaluate if the static analysis run follows the staid quality gate.
-     * @param run to check against the quality gate
+     *
+     * @param run
+     *         to check against the quality gate
+     *
      * @return result of the evaluation, expressed by a build state
      */
     public Result evaluate(final StaticAnalysisRun run) {
@@ -86,90 +89,4 @@ public class QualityGate {
             return this;
         }
     }
-
-    static class ThresholdSet {
-        private final int totalThreshold;
-        private final int highThreshold;
-        private final int normalThreshold;
-        private final int lowThreshold;
-
-        public ThresholdSet(final int totalThreshold, final int highThreshold, final int normalThreshold, final int lowThreshold) {
-            this.totalThreshold = totalThreshold;
-            this.highThreshold = highThreshold;
-            this.normalThreshold = normalThreshold;
-            this.lowThreshold = lowThreshold;
-        }
-
-        public boolean isTotalThresholdReached(final int toCheck) {
-            return isSingleThresholdReached(getTotalThreshold(), toCheck);
-        }
-
-        private int getTotalThreshold() {
-            return totalThreshold;
-        }
-
-        public boolean isHighThresholdReached(final int toCheck) {
-            return isSingleThresholdReached(getHighThreshold(), toCheck);
-        }
-
-        private int getHighThreshold() {
-            return highThreshold;
-        }
-
-        public boolean isNormalThresholdReached(final int toCheck) {
-            return isSingleThresholdReached(getNormalThreshold(), toCheck);
-        }
-
-        private int getNormalThreshold() {
-            return normalThreshold;
-        }
-
-        public boolean isLowThresholdReached(final int toCheck) {
-            return isSingleThresholdReached(getLowThreshold(), toCheck);
-        }
-
-        private int getLowThreshold() {
-            return lowThreshold;
-        }
-
-        /**
-         * Check if the thresholds is retched or exceeded by the count of warnings.
-         *
-         * @param threshold
-         *         to check id reached or exceeded
-         * @param toCheck
-         *         count of warnings which should be checked against the threshold
-         *
-         * @return true if reached or exceeded, else false
-         */
-        private boolean isSingleThresholdReached(final int threshold, final int toCheck) {
-            boolean result = false;
-            if (threshold > 0 && toCheck >= threshold) {
-                result = true;
-            }
-            return result;
-        }
-
-        /**
-         * Check if one or more of the thresholds is retched or exceeded.
-         *
-         * @param totalToCheck
-         *         total count of warnings
-         * @param highToCheck
-         *         count of high prioritized warnings
-         * @param normalToCheck
-         *         count of normal prioritized warnings
-         * @param lowToCheck
-         *         count of low prioritized warnings
-         *
-         * @return true if one or more of the counts retched or exceeded the threshold, else false
-         */
-        public boolean isThresholdReached(final int totalToCheck, final int highToCheck, final int normalToCheck, final int lowToCheck) {
-            return isTotalThresholdReached(totalToCheck)
-                    || isHighThresholdReached(highToCheck)
-                    || isNormalThresholdReached(normalToCheck)
-                    || isLowThresholdReached(lowToCheck);
-        }
-    }
-
 }
