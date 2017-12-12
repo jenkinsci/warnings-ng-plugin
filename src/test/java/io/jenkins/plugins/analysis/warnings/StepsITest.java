@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.io.IOException;
 
+import org.apache.commons.io.FilenameUtils;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -10,8 +11,10 @@ import org.junit.Test;
 import org.junit.jupiter.api.Tag;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import edu.hm.hafner.analysis.Issues;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
+import io.jenkins.plugins.analysis.core.steps.BuildIssue;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
@@ -31,6 +34,7 @@ import hudson.model.Result;
 @SuppressWarnings({"OverlyBroadThrowsClause", "ProhibitedExceptionDeclared"})
 public class StepsITest {
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
+
     /** Starts Jenkins and provides several useful helper methods. */
     @Rule
     public final JenkinsRule j = new JenkinsRule();
@@ -76,12 +80,20 @@ public class StepsITest {
      */
     @Test
     public void shouldCombineIssuesOfSeveralFiles() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("eclipse.txt");
-        job.setDefinition(parseAndPublish(Java.class));
+        WorkflowJob job = createJobWithWorkspaceFile("eclipse.txt", "javadoc.txt", "javac.txt");
+        job.setDefinition(asStage(createScanForIssuesStep(Java.class, "java"),
+                createScanForIssuesStep(Eclipse.class, "eclipse"),
+                createScanForIssuesStep(JavaDoc.class, "javadoc"),
+                "publishIssues issues:[java, eclipse, javadoc]"));
 
         AnalysisResult result = scheduleBuild(job);
 
-        assertThat(result.getTotalSize()).isEqualTo(0);
+        Issues<BuildIssue> issues = result.getIssues();
+        assertThat(issues.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(8);
+        assertThat(issues.filter(issue -> "java".equals(issue.getOrigin()))).hasSize(2);
+        assertThat(issues.filter(issue -> "javadoc".equals(issue.getOrigin()))).hasSize(6);
+        assertThat(issues.getToolNames()).containsExactlyInAnyOrder("java", "javadoc", "eclipse");
+        assertThat(result.getIssues()).hasSize(8 + 2 + 6);
     }
 
     private CpsFlowDefinition parseAndPublish(final Class<? extends StaticAnalysisTool> parserClass) {
@@ -89,18 +101,28 @@ public class StepsITest {
     }
 
     private String createScanForIssuesStep(final Class<? extends StaticAnalysisTool> parserClass) {
-        return String.format("def issues = scanForIssues tool: [$class: '%s'], pattern:'**/issues.txt'", parserClass.getSimpleName());
+        return createScanForIssuesStep(parserClass, "issues");
     }
 
-    private WorkflowJob createJobWithWorkspaceFile(final String fileName) throws IOException, InterruptedException {
+    private String createScanForIssuesStep(final Class<? extends StaticAnalysisTool> parserClass, final String issuesName) {
+        return String.format("def %s = scanForIssues tool: [$class: '%s'], pattern:'**/*issues.txt'", issuesName, parserClass.getSimpleName());
+    }
+
+    private WorkflowJob createJobWithWorkspaceFile(final String... fileNames) throws IOException, InterruptedException {
         WorkflowJob job = createJob();
-        copyFileToWorkspace(fileName, job);
+        copyFilesToWorkspace(job, fileNames);
         return job;
     }
 
-    private void copyFileToWorkspace(final String fileName, final WorkflowJob job) throws IOException, InterruptedException {
+    private void copyFilesToWorkspace(final WorkflowJob job, final String... fileNames) throws IOException, InterruptedException {
         FilePath workspace = j.jenkins.getWorkspaceFor(job);
-        workspace.child("issues.txt").copyFrom(getClass().getResourceAsStream(fileName));
+        for (String fileName : fileNames) {
+            workspace.child(createWorkspaceFileName(fileName)).copyFrom(getClass().getResourceAsStream(fileName));
+        }
+    }
+
+    private String createWorkspaceFileName(final String fileName) {
+        return String.format("%s-issues.txt", FilenameUtils.getBaseName(fileName));
     }
 
     private WorkflowJob createJob() throws IOException {
@@ -130,6 +152,7 @@ public class StepsITest {
         script.append("node {\n");
         script.append("  stage ('Integration Test') {\n");
         for (String step : steps) {
+            script.append("    ");
             script.append(step);
             script.append('\n');
         }
