@@ -15,6 +15,7 @@ import hudson.plugins.analysis.core.Settings;
  *
  * @author Ullrich Hafner
  */
+
 class LoggerFactoryTest {
     private static final String LOG_MESSAGE = "Hello Logger!";
     private static final String TOOL_NAME = "test";
