@@ -2,14 +2,11 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.io.IOException;
 
-import org.apache.commons.io.FilenameUtils;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.Tag;
-import org.jvnet.hudson.test.JenkinsRule;
 
 import edu.hm.hafner.analysis.Issues;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
@@ -20,11 +17,10 @@ import io.jenkins.plugins.analysis.core.steps.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 
-import hudson.FilePath;
 import hudson.model.Result;
 
 /**
- * Integration tests for pipeline support in analysis-core.
+ * Integration tests for pipeline support in the warning plug-in.
  *
  * @author Ullrich Hafner
  * @see ScanForIssuesStep
@@ -32,12 +28,8 @@ import hudson.model.Result;
  */
 @Tag("IntegrationTest")
 @SuppressWarnings({"OverlyBroadThrowsClause", "ProhibitedExceptionDeclared"})
-public class StepsITest {
+public class PipelineITest extends IntegrationTest {
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
-
-    /** Starts Jenkins and provides several useful helper methods. */
-    @Rule
-    public final JenkinsRule j = new JenkinsRule();
 
     /**
      * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
@@ -114,19 +106,8 @@ public class StepsITest {
         return job;
     }
 
-    private void copyFilesToWorkspace(final WorkflowJob job, final String... fileNames) throws IOException, InterruptedException {
-        FilePath workspace = j.jenkins.getWorkspaceFor(job);
-        for (String fileName : fileNames) {
-            workspace.child(createWorkspaceFileName(fileName)).copyFrom(getClass().getResourceAsStream(fileName));
-        }
-    }
-
-    private String createWorkspaceFileName(final String fileName) {
-        return String.format("%s-issues.txt", FilenameUtils.getBaseName(fileName));
-    }
-
     private WorkflowJob createJob() throws IOException {
-        return j.jenkins.createProject(WorkflowJob.class, "scanForIssues");
+        return createJob(WorkflowJob.class);
     }
 
     /**
