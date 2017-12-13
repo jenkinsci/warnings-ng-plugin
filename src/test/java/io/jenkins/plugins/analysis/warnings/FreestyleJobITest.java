@@ -55,6 +55,23 @@ public class FreestyleJobITest extends IntegrationTest {
         assertThat(result.getNumberOfAnnotations()).isEqualTo(8);
     }
 
+    /**
+     * Sets the UNSTABLE threshold to 8 and parse a file that contains exactly 8 warnings: the build should be unstable.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldCreateUnstableResult() throws Exception {
+        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
+        enableWarnings(project, publisher -> publisher.setUnstableTotalAll("7"));
+
+        WarningsResult result = scheduleBuild(project, Result.UNSTABLE);
+
+        assertThat(result.getNumberOfAnnotations()).isEqualTo(8);
+        // FIXME: SUCCESS?? assertThat(result.getPluginResult()).isEqualTo(Result.UNSTABLE);
+    }
+
     private WarningsPublisher enableWarnings(final FreeStyleProject job) {
         WarningsPublisher publisher = new WarningsPublisher();
         publisher.setParserConfigurations(new ParserConfiguration[] {
@@ -74,23 +91,6 @@ public class FreestyleJobITest extends IntegrationTest {
         FreeStyleProject job = j.createFreeStyleProject();
         copyFilesToWorkspace(job, fileName);
         return job;
-    }
-
-    /**
-     * Sets the UNSTABLE threshold to 8 and parse a file that contains exactly 8 warnings: the build should be unstable.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldCreateUnstableResult() throws Exception {
-        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
-        enableWarnings(project, publisher -> publisher.setUnstableTotalAll("7"));
-
-        WarningsResult result = scheduleBuild(project, Result.UNSTABLE);
-
-        assertThat(result.getNumberOfAnnotations()).isEqualTo(8);
-        // FIXME: SUCCESS?? assertThat(result.getPluginResult()).isEqualTo(Result.UNSTABLE);
     }
 
     /**
