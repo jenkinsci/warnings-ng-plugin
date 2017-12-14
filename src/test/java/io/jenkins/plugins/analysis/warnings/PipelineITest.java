@@ -32,6 +32,74 @@ public class PipelineITest extends IntegrationTest {
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
 
     /**
+     * Runs the GhsMulti parser on an output file that contains several issues: the build should report 3 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllGhsMultiIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("ghsmulti.txt");
+        job.setDefinition(parseAndPublish(GhsMulti.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(3);
+        assertThat(result.getIssues()).hasSize(3);
+    }
+
+    /**
+     * Runs the Gnat parser on an output file that contains several issues: the build should report 9 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllGnatIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("gnat.txt");
+        job.setDefinition(parseAndPublish(Gnat.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(9);
+        assertThat(result.getIssues()).hasSize(9);
+    }
+
+    /**
+     * Runs the GnuFortran parser on an output file that contains several issues: the build should report 4 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllGnuFortranIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("GnuFortran.txt");
+        job.setDefinition(parseAndPublish(GnuFortran.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(4);
+        assertThat(result.getIssues()).hasSize(4);
+    }
+
+    /**
+     * Runs the GnuMakeGcc parser on an output file that contains several issues: the build should report 15 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllGnuMakeGccIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("gnuMakeGcc.txt");
+        job.setDefinition(parseAndPublish(GnuMakeGcc.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(15);
+        assertThat(result.getIssues()).hasSize(15);
+    }
+
+    /**
      * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
      *
      * @throws Exception
