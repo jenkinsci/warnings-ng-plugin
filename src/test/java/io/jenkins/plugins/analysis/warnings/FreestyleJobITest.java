@@ -10,10 +10,10 @@ import static org.assertj.core.api.Assertions.*;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import hudson.plugins.analysis.core.BuildResult;
+import hudson.plugins.warnings.AggregatedWarningsResultAction;
 import hudson.plugins.warnings.ParserConfiguration;
 import hudson.plugins.warnings.WarningsPublisher;
-import hudson.plugins.warnings.WarningsResult;
-import hudson.plugins.warnings.WarningsResultAction;
 
 /**
  * Integration tests for freestyle jobs with checkstyle plugin.
@@ -33,7 +33,7 @@ public class FreestyleJobITest extends IntegrationTest {
         FreeStyleProject project = j.createFreeStyleProject();
         enableWarnings(project);
 
-        WarningsResult result = scheduleBuild(project, Result.SUCCESS);
+        BuildResult result = scheduleBuild(project, Result.SUCCESS);
 
         assertThat(result.getNumberOfAnnotations()).isEqualTo(0);
         assertThat(result.getErrors()).isNotEmpty();
@@ -50,7 +50,7 @@ public class FreestyleJobITest extends IntegrationTest {
         FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
         enableWarnings(project);
 
-        WarningsResult result = scheduleBuild(project, Result.SUCCESS);
+        BuildResult result = scheduleBuild(project, Result.SUCCESS);
 
         assertThat(result.getNumberOfAnnotations()).isEqualTo(8);
     }
@@ -66,10 +66,10 @@ public class FreestyleJobITest extends IntegrationTest {
         FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
         enableWarnings(project, publisher -> publisher.setUnstableTotalAll("7"));
 
-        WarningsResult result = scheduleBuild(project, Result.UNSTABLE);
+        BuildResult result = scheduleBuild(project, Result.UNSTABLE);
 
         assertThat(result.getNumberOfAnnotations()).isEqualTo(8);
-        // FIXME: SUCCESS?? assertThat(result.getPluginResult()).isEqualTo(Result.UNSTABLE);
+        assertThat(result.getPluginResult()).isEqualTo(Result.UNSTABLE);
     }
 
     private WarningsPublisher enableWarnings(final FreeStyleProject job) {
@@ -94,19 +94,19 @@ public class FreestyleJobITest extends IntegrationTest {
     }
 
     /**
-     * Schedules a new build for the specified job and returns the created {@link WarningsResult} after the build has
+     * Schedules a new build for the specified job and returns the created {@link BuildResult} after the build has
      * been finished.
      *
      * @param job
      *         the job to schedule
      *
      * @param status the expected result for the build
-     * @return the created {@link WarningsResult}
+     * @return the created {@link BuildResult}
      */
-    private WarningsResult scheduleBuild(final FreeStyleProject job, final Result status) throws Exception {
+    private BuildResult scheduleBuild(final FreeStyleProject job, final Result status) throws Exception {
         FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
 
-        WarningsResultAction action = build.getAction(WarningsResultAction.class);
+        AggregatedWarningsResultAction action = build.getAction(AggregatedWarningsResultAction.class);
 
         assertThat(action).isNotNull();
 
