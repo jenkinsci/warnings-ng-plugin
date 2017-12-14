@@ -128,6 +128,7 @@ public class PipelineITest extends IntegrationTest {
         return action.getResult();
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private CpsFlowDefinition asStage(final String... steps) {
         StringBuilder script = new StringBuilder();
         script.append("node {\n");
