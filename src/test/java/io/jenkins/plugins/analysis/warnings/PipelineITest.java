@@ -32,6 +32,57 @@ public class PipelineITest extends IntegrationTest {
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
 
     /**
+     * Runs the AcuCobol parser on an output file that contains several issues: the build should report 4 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllAcuCobolIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("acu.txt");
+        job.setDefinition(parseAndPublish(AcuCobol.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(4);
+        assertThat(result.getIssues()).hasSize(4);
+    }
+
+    /**
+     * Runs the Ajc parser on an output file that contains several issues: the build should report 9 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllAjcIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("ajc.txt");
+        job.setDefinition(parseAndPublish(Ajc.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(9);
+        assertThat(result.getIssues()).hasSize(9);
+    }
+
+    /**
+     * Runs the AnsbileLint parser on an output file that contains several issues: the build should report 4 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllAnsbileLintIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("ansibleLint.txt");
+        job.setDefinition(parseAndPublish(AnsibleLint.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(4);
+        assertThat(result.getIssues()).hasSize(4);
+    }
+
+    /**
      * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
      *
      * @throws Exception
