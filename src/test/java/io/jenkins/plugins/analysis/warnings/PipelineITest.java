@@ -49,6 +49,74 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
+     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllClangIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("apple-llvm-clang.txt");
+        job.setDefinition(parseAndPublish(Clang.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(9);
+        assertThat(result.getIssues()).hasSize(9);
+    }
+
+    /**
+     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllCoolfluxChessccIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("coolfluxchesscc.txt");
+        job.setDefinition(parseAndPublish(CoolfluxChesscc.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(1);
+        assertThat(result.getIssues()).hasSize(1);
+    }
+
+    /**
+     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllCppLintIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("cpplint.txt");
+        job.setDefinition(parseAndPublish(CppLint.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(1031);
+        assertThat(result.getIssues()).hasSize(1031);
+    }
+
+    /**
+     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllCodeAnalysisIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("codeanalysis.txt");
+        job.setDefinition(parseAndPublish(CodeAnalysis.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(3);
+        assertThat(result.getIssues()).hasSize(3);
+    }
+
+    /**
      * Runs the JavaC parser on an output file of the Eclipse compiler: the build should report no issues.
      *
      * @throws Exception
