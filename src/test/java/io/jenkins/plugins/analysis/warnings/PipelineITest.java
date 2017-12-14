@@ -49,6 +49,74 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
+     * Runs the CssLint parser on an output file that contains several issues: the build should report 51 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllCssLintIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("csslint.xml");
+        job.setDefinition(parseAndPublish(CssLint.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(51);
+        assertThat(result.getIssues()).hasSize(51);
+    }
+
+    /**
+     * Runs the DiabC parser on an output file that contains several issues: the build should report 12 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllDiabCIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("diabc.txt");
+        job.setDefinition(parseAndPublish(DiabC.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(12);
+        assertThat(result.getIssues()).hasSize(12);
+    }
+
+    /**
+     * Runs the Doxygen parser on an output file that contains several issues: the build should report 21 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllDoxygenIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("doxygen.txt");
+        job.setDefinition(parseAndPublish(Doxygen.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(21);
+        assertThat(result.getIssues()).hasSize(21);
+    }
+
+    /**
+     * Runs the Dr. Memory parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllDrMemoryIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("drmemory.txt");
+        job.setDefinition(parseAndPublish(DrMemory.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(8);
+        assertThat(result.getIssues()).hasSize(8);
+    }
+
+    /**
      * Runs the JavaC parser on an output file of the Eclipse compiler: the build should report no issues.
      *
      * @throws Exception
