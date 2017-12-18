@@ -22,6 +22,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import com.google.common.collect.Sets;
 
 import edu.hm.hafner.analysis.FingerprintGenerator;
+import edu.hm.hafner.analysis.FullTextFingerprint;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
@@ -193,7 +194,8 @@ public class ScanForIssuesStep extends Step {
             Instant start = Instant.now();
 
             FingerprintGenerator generator = new FingerprintGenerator();
-            Issues<Issue> fingerPrinted = generator.run(issues, new IssueBuilder(), getCharset());
+            Issues<Issue> fingerPrinted = generator.run(new FullTextFingerprint(),
+                    issues, new IssueBuilder(), getCharset());
 
             logger.log("Extracting fingerprints took %s", Duration.between(start, Instant.now()));
 

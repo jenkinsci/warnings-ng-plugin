@@ -7,6 +7,8 @@ import org.apache.commons.lang.StringUtils;
 import edu.hm.hafner.analysis.Priority;
 import static hudson.plugins.analysis.util.ThresholdValidator.*;
 
+import hudson.plugins.analysis.util.ThresholdValidator;
+
 /**
  * A health descriptor defines the parameters to create the build health.
  *
@@ -15,16 +17,16 @@ import static hudson.plugins.analysis.util.ThresholdValidator.*;
 public class HealthDescriptor implements Serializable {
     private final String healthy;
     private final String unHealthy;
-    private final Priority minimumPriority;
+    private final String minimumPriority;
 
-    public HealthDescriptor(final String healthy, final String unHealthy, final Priority minimumPriority) {
+    public HealthDescriptor(final String healthy, final String unHealthy, final String minimumPriority) {
         this.healthy = healthy;
         this.unHealthy = unHealthy;
         this.minimumPriority = minimumPriority;
     }
 
     public HealthDescriptor() {
-        this(StringUtils.EMPTY, StringUtils.EMPTY, Priority.NORMAL);
+        this(StringUtils.EMPTY, StringUtils.EMPTY, Priority.NORMAL.toString());
     }
 
     /**
@@ -35,7 +37,7 @@ public class HealthDescriptor implements Serializable {
      *         if the healthy string can't be converted to an integer value greater or equal zero
      */
     public int getHealthy() {
-        return convert(healthy);
+        return ThresholdValidator.convert(healthy);
     }
 
     /**
@@ -46,7 +48,7 @@ public class HealthDescriptor implements Serializable {
      *         if the unhealthy string can't be converted to an integer value greater or equal zero
      */
     public int getUnHealthy() {
-        return convert(unHealthy);
+        return ThresholdValidator.convert(unHealthy);
     }
 
     /**
@@ -54,9 +56,15 @@ public class HealthDescriptor implements Serializable {
      * Priority#NORMAL} is returned, then annotations with priority {@link Priority#LOW} are ignored.
      *
      * @return the minimum priority to consider
+     * @throws IllegalArgumentException
+     *         if the priority string can't be converted to a priority instance
      */
     public Priority getMinimumPriority() {
-        return minimumPriority;
+        return convert(minimumPriority);
+    }
+
+    private Priority convert(final String priority) {
+        return Priority.valueOf(StringUtils.upperCase(priority));
     }
 
     /**
@@ -66,8 +74,8 @@ public class HealthDescriptor implements Serializable {
      */
     public boolean isEnabled() {
         if (isValid(healthy) && isValid(unHealthy)) {
-            int healthyNumber = convert(healthy);
-            int unHealthyNumber = convert(unHealthy);
+            int healthyNumber = ThresholdValidator.convert(healthy);
+            int unHealthyNumber = ThresholdValidator.convert(unHealthy);
 
             return unHealthyNumber > healthyNumber;
         }

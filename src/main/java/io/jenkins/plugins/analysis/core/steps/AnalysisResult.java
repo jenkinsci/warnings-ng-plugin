@@ -23,8 +23,8 @@ import edu.hm.hafner.analysis.Priority;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
+import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.RunAdapter;
-import io.jenkins.plugins.analysis.core.steps.ResultEvaluator.Evaluation;
 
 import hudson.XmlFile;
 import hudson.model.Api;
@@ -34,9 +34,9 @@ import hudson.plugins.analysis.core.HealthDescriptor;
 import hudson.plugins.analysis.util.model.AnnotationStream;
 
 /**
- * A base class for build results that is capable of storing a reference to the current build. Provides support for
- * persisting the results of the build and loading and saving of annotations (all, new, and fixed) and delta
- * computation.
+ * Stores the results of a static analysis run. This class is capable of storing a reference to the current build.
+ * Provides support for persisting the results of the build and loading and saving of issues (all, new, and fixed) and
+ * delta computation.
  *
  * @author Ulli Hafner
  */
@@ -69,6 +69,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      */
     private transient WeakReference<Issues<BuildIssue>> fixedIssuesReference;
 
+    private final QualityGate qualityGate;
     private final String defaultEncoding;
 
     /** The number of warnings in this build. */
@@ -112,8 +113,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      * changed the overall build result.
      */
     private Result pluginResult = Result.SUCCESS;
-    /** Describes the reason for the build result evaluation. */
-    private String reasonForPluginResult; // FIXME: i18n?
     /** Determines since which build the result is successful. */
     private int successfulSinceBuild;
     /** Determines since which time the result is successful. */
@@ -135,13 +134,13 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      *
      * @param run
      *         the current run as owner of this action
-     * @param referenceProvider
-     *         the run history
+     * @param qualityGate
+     *         enforces the quality gate for this project
      */
     public AnalysisResult(final String id, final String name, final Run run, final ReferenceProvider referenceProvider,
-            final Optional<AnalysisResult> previousResult, final ResultEvaluator resultEvaluator, final String defaultEncoding,
-            final Issues... issues) {
-        this(id, name, run, referenceProvider, previousResult, resultEvaluator, defaultEncoding, Issues.merge(issues), true);
+            final Optional<AnalysisResult> previousResult, final QualityGate qualityGate, final String defaultEncoding,
+            final Issues<Issue> issues) {
+        this(id, name, run, referenceProvider, previousResult, qualityGate, defaultEncoding, issues, true);
     }
 
     /**
@@ -149,16 +148,18 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      *
      * @param run
      *         the current run as owner of this action
-     * @param referenceProvider
-     *         run referenceProvider
+     * @param qualityGate
+     *         enforces the quality gate for this project
      */
     // FIXME: should we ignore the issues in previousResult?
-    protected AnalysisResult(final String id, final String name, final Run<?, ?> run, final ReferenceProvider referenceProvider,
-            final Optional<AnalysisResult> previousResult, final ResultEvaluator resultEvaluator, final String defaultEncoding,
+    protected AnalysisResult(final String id, final String name, final Run<?, ?> run,
+            final ReferenceProvider referenceProvider,
+            final Optional<AnalysisResult> previousResult, final QualityGate qualityGate, final String defaultEncoding,
             final Issues<Issue> issues, final boolean canSerialize) {
         this.id = id;
         this.name = name;
         this.run = run;
+        this.qualityGate = qualityGate;
         this.defaultEncoding = defaultEncoding;
 
         // errors = ImmutableList.copyOf(issues.getLogMessages()); FIXME: errors and log?
@@ -190,7 +191,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
 
         computeZeroWarningsHighScore(run, issues, previousResult, issues.isEmpty());
 
-        evaluateStatus(resultEvaluator, previousResult);
+        evaluateStatus(previousResult);
 
         if (canSerialize) {
             serializeAnnotations(oldIssues, newIssues, fixedIssues);
@@ -201,7 +202,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      * Computes the zero warnings high score based on the current build and the previous build (with results of the
      * associated plug-in).
      *
-     * @param containsIssues
      * @param build
      *         the current build
      */
@@ -251,56 +251,49 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      * Additionally, the {@link Result} of the build that owns this instance of {@link AnalysisResult} will be also
      * changed.
      */
-    private void evaluateStatus(final ResultEvaluator resultEvaluator, final Optional<AnalysisResult> previousResult) {
-        if (resultEvaluator.isEnabled()) {
-            Evaluation result = resultEvaluator.evaluate(previousResult, getOldIssues(), getNewIssues());
+    private void evaluateStatus(final Optional<AnalysisResult> previousResult) {
+        // FIXME split two parts
+        Result result = qualityGate.evaluate(this);
+        pluginResult = result;
+        run.setResult(pluginResult);
 
-            reasonForPluginResult = result.reason;
-            isSuccessfulStateTouched = true;
-            pluginResult = result.result;
+        // FIXME is this still required?
+        isSuccessfulStateTouched = true;
 
-            run.setResult(pluginResult);
-
-            if (previousResult.isPresent()) {
-                AnalysisResult previous = previousResult.get();
-                // FIXME: same code to compute zero warnings
-                if (isSuccessful()) {
-                    if (previous.isSuccessful() && previous.isSuccessfulTouched()) {
-                        successfulSinceBuild = previous.getSuccessfulSinceBuild();
-                        successfulSinceDate = previous.getSuccessfulSinceDate();
-                    }
-                    else {
-                        successfulSinceBuild = run.getNumber();
-                        successfulSinceDate = run.getTimestamp().getTimeInMillis();
-                    }
-                    successfulHighScore = Math.max(previous.getSuccessfulHighScore(),
-                            run.getTimestamp().getTimeInMillis() - successfulSinceDate);
-                    if (previous.getSuccessfulHighScore() == 0) {
-                        isSuccessfulHighScore = true;
-                    }
-                    else {
-                        isSuccessfulHighScore = successfulHighScore != previous.getSuccessfulHighScore();
-
-                    }
-                    if (!isSuccessfulHighScore) {
-                        successfulHighScoreGap = previous.getSuccessfulHighScore()
-                                - (run.getTimestamp().getTimeInMillis() - successfulSinceDate);
-                    }
+        if (previousResult.isPresent()) {
+            AnalysisResult previous = previousResult.get();
+            // FIXME: same code to compute zero warnings
+            if (isSuccessful()) {
+                if (previous.isSuccessful() && previous.isSuccessfulTouched()) {
+                    successfulSinceBuild = previous.getSuccessfulSinceBuild();
+                    successfulSinceDate = previous.getSuccessfulSinceDate();
                 }
                 else {
-                    successfulHighScore = previous.getSuccessfulHighScore();
+                    successfulSinceBuild = run.getNumber();
+                    successfulSinceDate = run.getTimestamp().getTimeInMillis();
+                }
+                successfulHighScore = Math.max(previous.getSuccessfulHighScore(),
+                        run.getTimestamp().getTimeInMillis() - successfulSinceDate);
+                if (previous.getSuccessfulHighScore() == 0) {
+                    isSuccessfulHighScore = true;
+                }
+                else {
+                    isSuccessfulHighScore = successfulHighScore != previous.getSuccessfulHighScore();
+
+                }
+                if (!isSuccessfulHighScore) {
+                    successfulHighScoreGap = previous.getSuccessfulHighScore()
+                            - (run.getTimestamp().getTimeInMillis() - successfulSinceDate);
                 }
             }
             else {
-                if (isSuccessful()) {
-                    resetSuccessfulState();
-                }
+                successfulHighScore = previous.getSuccessfulHighScore();
             }
         }
         else {
-            pluginResult = Result.SUCCESS;
-            reasonForPluginResult = "No threshold set"; // FIXME: i18n
-            isSuccessfulStateTouched = false;
+            if (isSuccessful()) {
+                resetSuccessfulState();
+            }
         }
     }
 
@@ -607,15 +600,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     }
 
     /**
-     * Returns the reason for the computed value of the build result.
-     *
-     * @return the reason
-     */
-    public String getReasonForPluginResult() {
-        return reasonForPluginResult;
-    }
-
-    /**
      * Returns the summary message for the summary.jelly file.
      *
      * @return the summary message
@@ -657,7 +641,8 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
 
     @Override
     public String getReason() {
-        return reasonForPluginResult;
+        // TODO: use this code directly?
+        return qualityGate.evaluate(this).toString();
     }
 
     @Override

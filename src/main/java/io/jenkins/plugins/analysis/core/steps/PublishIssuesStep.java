@@ -5,10 +5,8 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
@@ -24,12 +22,13 @@ import com.google.common.collect.Sets;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
 import io.jenkins.plugins.analysis.core.history.BuildHistory;
 import io.jenkins.plugins.analysis.core.history.ReferenceFinder;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.history.ResultSelector;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.quality.QualityGate;
+import io.jenkins.plugins.analysis.core.quality.Thresholds;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.util.LoggerFactory;
@@ -41,7 +40,6 @@ import hudson.model.Computer;
 import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.plugins.analysis.core.Thresholds;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.remoting.VirtualChannel;
 
@@ -53,7 +51,7 @@ import hudson.remoting.VirtualChannel;
 public class PublishIssuesStep extends Step {
     private static final String DEFAULT_MINIMUM_PRIORITY = "low";
 
-    private final Issues<Issue>[] issues;
+    private final Issues<Issue> issues;
 
     private boolean usePreviousBuildAsReference;
     private boolean useStableBuildAsReference;
@@ -67,7 +65,6 @@ public class PublishIssuesStep extends Step {
     private final Thresholds thresholds = new Thresholds();
     private String id;
     private String name;
-    private Predicate<? super Issue> criterion;
 
     /**
      * Creates a new instance of {@link PublishIssuesStep}.
@@ -77,10 +74,14 @@ public class PublishIssuesStep extends Step {
      */
     @DataBoundConstructor @SafeVarargs
     public PublishIssuesStep(final Issues<Issue>... issues) {
-        this.issues = issues;
+        if (issues == null || issues.length == 0) {
+            throw new NullPointerException("No issues to publish in step " + toString());
+        }
+
+        this.issues = Issues.merge(issues);
     }
 
-    public Issues[] getIssues() {
+    public Issues<Issue> getIssues() {
         return issues;
     }
 
@@ -98,15 +99,6 @@ public class PublishIssuesStep extends Step {
 
     public String getId() {
         return id;
-    }
-
-    @DataBoundSetter
-    public void setFilter(final Predicate<? super Issue> criterion) {
-        this.criterion = criterion;
-    }
-
-    public Predicate<? super Issue> getFilter() {
-        return criterion;
     }
 
     /**
@@ -226,164 +218,148 @@ public class PublishIssuesStep extends Step {
         return thresholds;
     }
 
-    @CheckForNull
-    public String getUnstableTotalAll() {
-        return thresholds.unstableTotalAll;
+    public int getUnstableTotalAll() {
+        return getThresholds().unstableTotalAll;
     }
 
     @DataBoundSetter
-    public void setUnstableTotalAll(final String unstableTotalAll) {
-        thresholds.unstableTotalAll = unstableTotalAll;
+    public void setUnstableTotalAll(final int unstableTotalAll) {
+        getThresholds().unstableTotalAll = unstableTotalAll;
     }
 
-    @CheckForNull
-    public String getUnstableTotalHigh() {
-        return thresholds.unstableTotalHigh;
-    }
-
-    @DataBoundSetter
-    public void setUnstableTotalHigh(final String unstableTotalHigh) {
-        thresholds.unstableTotalHigh = unstableTotalHigh;
-    }
-
-    @CheckForNull
-    public String getUnstableTotalNormal() {
-        return thresholds.unstableTotalNormal;
+    public int getUnstableTotalHigh() {
+        return getThresholds().unstableTotalHigh;
     }
 
     @DataBoundSetter
-    public void setUnstableTotalNormal(final String unstableTotalNormal) {
-        thresholds.unstableTotalNormal = unstableTotalNormal;
+    public void setUnstableTotalHigh(final int unstableTotalHigh) {
+        getThresholds().unstableTotalHigh = unstableTotalHigh;
     }
 
-    @CheckForNull
-    public String getUnstableTotalLow() {
-        return thresholds.unstableTotalLow;
-    }
-
-    @DataBoundSetter
-    public void setUnstableTotalLow(final String unstableTotalLow) {
-        thresholds.unstableTotalLow = unstableTotalLow;
-    }
-
-    @CheckForNull
-    public String getUnstableNewAll() {
-        return thresholds.unstableNewAll;
+    public int getUnstableTotalNormal() {
+        return getThresholds().unstableTotalNormal;
     }
 
     @DataBoundSetter
-    public void setUnstableNewAll(final String unstableNewAll) {
-        thresholds.unstableNewAll = unstableNewAll;
+    public void setUnstableTotalNormal(final int unstableTotalNormal) {
+        getThresholds().unstableTotalNormal = unstableTotalNormal;
     }
 
-    @CheckForNull
-    public String getUnstableNewHigh() {
-        return thresholds.unstableNewHigh;
-    }
-
-    @DataBoundSetter
-    public void setUnstableNewHigh(final String unstableNewHigh) {
-        thresholds.unstableNewHigh = unstableNewHigh;
-    }
-
-    @CheckForNull
-    public String getUnstableNewNormal() {
-        return thresholds.unstableNewNormal;
+    public int getUnstableTotalLow() {
+        return getThresholds().unstableTotalLow;
     }
 
     @DataBoundSetter
-    public void setUnstableNewNormal(final String unstableNewNormal) {
-        thresholds.unstableNewNormal = unstableNewNormal;
+    public void setUnstableTotalLow(final int unstableTotalLow) {
+        getThresholds().unstableTotalLow = unstableTotalLow;
     }
 
-    @CheckForNull
-    public String getUnstableNewLow() {
-        return thresholds.unstableNewLow;
-    }
-
-    @DataBoundSetter
-    public void setUnstableNewLow(final String unstableNewLow) {
-        thresholds.unstableNewLow = unstableNewLow;
-    }
-
-    @CheckForNull
-    public String getFailedTotalAll() {
-        return thresholds.failedTotalAll;
+    public int getUnstableNewAll() {
+        return getThresholds().unstableNewAll;
     }
 
     @DataBoundSetter
-    public void setFailedTotalAll(final String failedTotalAll) {
-        thresholds.failedTotalAll = failedTotalAll;
+    public void setUnstableNewAll(final int unstableNewAll) {
+        getThresholds().unstableNewAll = unstableNewAll;
     }
 
-    @CheckForNull
-    public String getFailedTotalHigh() {
-        return thresholds.failedTotalHigh;
-    }
-
-    @DataBoundSetter
-    public void setFailedTotalHigh(final String failedTotalHigh) {
-        thresholds.failedTotalHigh = failedTotalHigh;
-    }
-
-    @CheckForNull
-    public String getFailedTotalNormal() {
-        return thresholds.failedTotalNormal;
+    public int getUnstableNewHigh() {
+        return getThresholds().unstableNewHigh;
     }
 
     @DataBoundSetter
-    public void setFailedTotalNormal(final String failedTotalNormal) {
-        thresholds.failedTotalNormal = failedTotalNormal;
+    public void setUnstableNewHigh(final int unstableNewHigh) {
+        getThresholds().unstableNewHigh = unstableNewHigh;
     }
 
-    @CheckForNull
-    public String getFailedTotalLow() {
-        return thresholds.failedTotalLow;
-    }
-
-    @DataBoundSetter
-    public void setFailedTotalLow(final String failedTotalLow) {
-        thresholds.failedTotalLow = failedTotalLow;
-    }
-
-    @CheckForNull
-    public String getFailedNewAll() {
-        return thresholds.failedNewAll;
+    public int getUnstableNewNormal() {
+        return getThresholds().unstableNewNormal;
     }
 
     @DataBoundSetter
-    public void setFailedNewAll(final String failedNewAll) {
-        thresholds.failedNewAll = failedNewAll;
+    public void setUnstableNewNormal(final int unstableNewNormal) {
+        getThresholds().unstableNewNormal = unstableNewNormal;
     }
 
-    @CheckForNull
-    public String getFailedNewHigh() {
-        return thresholds.failedNewHigh;
-    }
-
-    @DataBoundSetter
-    public void setFailedNewHigh(final String failedNewHigh) {
-        thresholds.failedNewHigh = failedNewHigh;
-    }
-
-    @CheckForNull
-    public String getFailedNewNormal() {
-        return thresholds.failedNewNormal;
+    public int getUnstableNewLow() {
+        return getThresholds().unstableNewLow;
     }
 
     @DataBoundSetter
-    public void setFailedNewNormal(final String failedNewNormal) {
-        thresholds.failedNewNormal = failedNewNormal;
+    public void setUnstableNewLow(final int unstableNewLow) {
+        getThresholds().unstableNewLow = unstableNewLow;
     }
 
-    @CheckForNull
-    public String getFailedNewLow() {
-        return thresholds.failedNewLow;
+    public int getFailedTotalAll() {
+        return getThresholds().failedTotalAll;
     }
 
     @DataBoundSetter
-    public void setFailedNewLow(final String failedNewLow) {
-        thresholds.failedNewLow = failedNewLow;
+    public void setFailedTotalAll(final int failedTotalAll) {
+        getThresholds().failedTotalAll = failedTotalAll;
+    }
+
+    public int getFailedTotalHigh() {
+        return getThresholds().failedTotalHigh;
+    }
+
+    @DataBoundSetter
+    public void setFailedTotalHigh(final int failedTotalHigh) {
+        getThresholds().failedTotalHigh = failedTotalHigh;
+    }
+
+    public int getFailedTotalNormal() {
+        return getThresholds().failedTotalNormal;
+    }
+
+    @DataBoundSetter
+    public void setFailedTotalNormal(final int failedTotalNormal) {
+        getThresholds().failedTotalNormal = failedTotalNormal;
+    }
+
+    public int getFailedTotalLow() {
+        return getThresholds().failedTotalLow;
+    }
+
+    @DataBoundSetter
+    public void setFailedTotalLow(final int failedTotalLow) {
+        getThresholds().failedTotalLow = failedTotalLow;
+    }
+
+    public int getFailedNewAll() {
+        return getThresholds().failedNewAll;
+    }
+
+    @DataBoundSetter
+    public void setFailedNewAll(final int failedNewAll) {
+        getThresholds().failedNewAll = failedNewAll;
+    }
+
+    public int getFailedNewHigh() {
+        return getThresholds().failedNewHigh;
+    }
+
+    @DataBoundSetter
+    public void setFailedNewHigh(final int failedNewHigh) {
+        getThresholds().failedNewHigh = failedNewHigh;
+    }
+
+    public int getFailedNewNormal() {
+        return getThresholds().failedNewNormal;
+    }
+
+    @DataBoundSetter
+    public void setFailedNewNormal(final int failedNewNormal) {
+        getThresholds().failedNewNormal = failedNewNormal;
+    }
+
+    public int getFailedNewLow() {
+        return getThresholds().failedNewLow;
+    }
+
+    @DataBoundSetter
+    public void setFailedNewLow(final int failedNewLow) {
+        getThresholds().failedNewLow = failedNewLow;
     }
 
     @Override
@@ -393,12 +369,12 @@ public class PublishIssuesStep extends Step {
 
     public static class Execution extends SynchronousNonBlockingStepExecution<ResultAction> {
         private final HealthDescriptor healthDescriptor;
-        private final Thresholds thresholds;
         private final boolean useStableBuildAsReference;
         private final boolean usePreviousBuildAsReference;
         private final String defaultEncoding;
-        private final Issues[] issues;
+        private final Issues<Issue> issues;
         private final String id;
+        private final QualityGate qualityGate;
         private String name;
 
         protected Execution(@Nonnull final StepContext context, final PublishIssuesStep step) {
@@ -407,19 +383,12 @@ public class PublishIssuesStep extends Step {
             usePreviousBuildAsReference = step.getUsePreviousBuildAsReference();
             useStableBuildAsReference = step.getUseStableBuildAsReference();
             defaultEncoding = step.getDefaultEncoding();
-            healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnHealthy(),
-                    asPriority(step.getMinimumPriority()));
-            thresholds = step.getThresholds();
+            healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnHealthy(), step.getMinimumPriority());
+
+            qualityGate = new QualityGate(step.getThresholds());
             id = step.getId();
             name = StringUtils.defaultString(step.getName());
             issues = step.getIssues();
-            if (issues == null || issues.length == 0) {
-                throw new NullPointerException("No issues to publish in step " + step);
-            }
-        }
-
-        private Priority asPriority(final String priority) {
-            return Priority.valueOf(StringUtils.upperCase(priority));
         }
 
         @Override
@@ -442,14 +411,11 @@ public class PublishIssuesStep extends Step {
                 return id;
             }
 
-            Set<String> origins = new HashSet<>();
-            for (Issues<Issue> result : issues) {
-                origins.addAll(result.getToolNames().castToSortedSet());
-            }
+            ImmutableSortedSet<String> origins = issues.getToolNames();
 
             String defaultId;
             if (origins.size() == 1) {
-                defaultId = origins.iterator().next();
+                defaultId = origins.getOnly();
             }
             else {
                 defaultId = "staticAnalysis";
@@ -484,7 +450,7 @@ public class PublishIssuesStep extends Step {
 
             Instant startResult = Instant.now();
             AnalysisResult result = createAnalysisResult(actualId, run, selector);
-            logger.log("Created analysis result for %d issues (took %s).", getTotalNumberOfIssues(),
+            logger.log("Created analysis result for %d issues (took %s).", issues.size(),
                     Duration.between(startResult, Instant.now()));
 
             FilePath workspace = getContext().get(FilePath.class);
@@ -513,17 +479,8 @@ public class PublishIssuesStep extends Step {
             ReferenceProvider referenceProvider = ReferenceFinder.create(run,
                     selector, usePreviousBuildAsReference, useStableBuildAsReference);
             BuildHistory buildHistory = new BuildHistory(run, selector);
-            ResultEvaluator resultEvaluator = new ResultEvaluator(id, name, thresholds, createLogger(id));
             return new AnalysisResult(id, name, run, referenceProvider, buildHistory.getPreviousResult(),
-                    resultEvaluator, defaultEncoding, issues);
-        }
-
-        public int getTotalNumberOfIssues() {
-            int sum = 0;
-            for (Issues result : issues) {
-                sum += result.getSize();
-            }
-            return sum;
+                    qualityGate, defaultEncoding, issues);
         }
     }
 
