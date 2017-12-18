@@ -1,0 +1,44 @@
+
+
+==== Source listing for file:  C:/PATH/PATH/PATH/PATH/Test.c ====
+
+    1:	/** \brief  Test
+    5:	 ** Remarks:
+    6:	 **              MISRA Rule 22,43,45,52,54,71
+    7:	 **                         are violated: uncritical        */
+   31:	/*
+   32:	 * modification history (version, date, initials, description)
+   33:	 * -----------------------------------------------------------
+   34:	 $Log: Test.c,v $
+      	 ^
+C:\PATH\PATH\PATH\PATH\Test1.c(34,2): Msg(6:0288) [I] Source file 'C:/PATH/PATH/PATH/PATH/Test1.c' has comments containing characters which are not members of the basic source character set.
+   49:	 */
+   50:	
+   51:	/*==================[inclusions]=============================================*/
+   52:	#include "Test.h"     /* Module configuration header                 */
+      	                                                                                    ^
+C:\PATH\PATH\PATH\PATH\Test2.h(185,85): Msg(2:3429) A function-like macro is being defined.
+C:\PATH\PATH\Test3.h(20233,60): Msg(4:3453) A function could probably be used instead of this function-like macro.
+C:\PATH\Test4.h(213,59): Msg(4:3412) Macro defines an unrecognised code-fragment.
+C:\PATH\PATH\Test5.h(75,33): Msg(6:0776) [L] External identifier matches other identifier(s) (e.g. 'Test') in first 6 characters - program is non-conforming.
+C:\PATH\PATH\PATH\PATH\Test6.h(46,4): Msg(6:1006) [E] This in-line assembler construct is a language extension. The code has been ignored
+C:\PATH\PATH\PATH\PATH\Test7.h(94,72): Msg(8:0844) [C] Redefinition of 'P2FUNC' with a different body.
+C:\PATH\PATH\Test8.h(724,17): Err(9:0818) Cannot find test.h - Perhaps the appropriate search path was not given?
+C:\PATH\Test9.h(178,44): Msg(4:3410) Macro parameter not enclosed in ().
+      	                                     ^
+ 1471:	/*==================[end of file]============================================*/
+
+----------------------------------------------------
+                   Metrics Summary                    
+----------------------------------------------------
+
+Name of file:  C:/PATH/PATH/PATH/PATH/Test.c (1471 Lines)
+
+Error Level     Density      No. of Errors 
+-----------      -------      -------------
+     9           0.0007              1
+     8           0.0068             10
+     1           0.0000              0
+     0           0.0000              0
+-----------      -------      -------------
+Totals           0.5452             11
