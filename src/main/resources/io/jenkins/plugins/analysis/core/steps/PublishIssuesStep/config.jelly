@@ -19,6 +19,10 @@
     <u:thresholds-new/>
   </f:entry>
 
+  <f:entry title="${%Include Filters}" description="${%TODO}">
+    <u:repeatable field="includeFilters" />
+  </f:entry>
+
   <u:defaultEncoding id="${id}"/>
 
 </j:jelly>

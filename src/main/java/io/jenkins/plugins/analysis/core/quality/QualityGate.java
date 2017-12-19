@@ -160,6 +160,13 @@ public class QualityGate implements Serializable {
         return result;
     }
 
+    public boolean isEnabled() {
+        return totalFailedThreshold.isEnabled()
+                || totalUnstableThreshold.isEnabled()
+                || newFailedThreshold.isEnabled()
+                || newUnstableThreshold.isEnabled();
+    }
+
     public static class QualityGateBuilder {
         private ThresholdSet totalUnstableThreshold = new ThresholdSet(0, 0, 0, 0);
         private ThresholdSet totalFailedThreshold = new ThresholdSet(0, 0, 0, 0);

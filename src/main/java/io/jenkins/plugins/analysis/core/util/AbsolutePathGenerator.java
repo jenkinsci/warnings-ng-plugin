@@ -28,7 +28,7 @@ public class AbsolutePathGenerator {
 
         if (relativeFileNames.isEmpty()) {
             Issues<Issue> unchanged = issues.copy();
-            unchanged.log("Affected files for all issues already have absolute paths.");
+            unchanged.log("Affected files for all issues already have absolute paths");
 
             return unchanged;
         }
@@ -79,7 +79,7 @@ public class AbsolutePathGenerator {
                 return remoteFile.getRemote();
             }
         }
-        catch (IOException | InterruptedException exception) {
+        catch (IOException | InterruptedException ignored) {
             // ignore
         }
         return fileName;

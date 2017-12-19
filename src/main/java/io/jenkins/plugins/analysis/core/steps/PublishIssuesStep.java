@@ -5,6 +5,8 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -18,14 +20,17 @@ import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
 import io.jenkins.plugins.analysis.core.history.BuildHistory;
 import io.jenkins.plugins.analysis.core.history.ReferenceFinder;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.history.ResultSelector;
+import io.jenkins.plugins.analysis.core.model.FileNameFilter;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
@@ -38,6 +43,7 @@ import hudson.FilePath;
 import hudson.model.Action;
 import hudson.model.Computer;
 import hudson.model.Job;
+import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.EncodingValidator;
@@ -75,10 +81,11 @@ public class PublishIssuesStep extends Step {
     @DataBoundConstructor @SafeVarargs
     public PublishIssuesStep(final Issues<Issue>... issues) {
         if (issues == null || issues.length == 0) {
-            throw new NullPointerException("No issues to publish in step " + toString());
+            this.issues = new Issues<>();
         }
-
-        this.issues = Issues.merge(issues);
+        else {
+            this.issues = Issues.merge(issues);
+        }
     }
 
     public Issues<Issue> getIssues() {
@@ -362,8 +369,21 @@ public class PublishIssuesStep extends Step {
         getThresholds().failedNewLow = failedNewLow;
     }
 
+    private final List<FileNameFilter> includeFilters = Lists.newArrayList();
+
+    public FileNameFilter[] getIncludeFilters() {
+        return includeFilters.toArray(new FileNameFilter[includeFilters.size()]);
+    }
+
+    @DataBoundSetter
+    public void setIncludeFilters(final FileNameFilter[] includeFilters) {
+        if (includeFilters != null && includeFilters.length > 0) {
+            this.includeFilters.addAll(Arrays.asList(includeFilters));
+        }
+    }
+
     @Override
-    public StepExecution start(final StepContext stepContext) throws Exception {
+    public StepExecution start(final StepContext stepContext) {
         return new Execution(stepContext, this);
     }
 
@@ -375,6 +395,7 @@ public class PublishIssuesStep extends Step {
         private final Issues<Issue> issues;
         private final String id;
         private final QualityGate qualityGate;
+        private final FileNameFilter[] includeFilters;
         private String name;
 
         protected Execution(@Nonnull final StepContext context, final PublishIssuesStep step) {
@@ -389,6 +410,7 @@ public class PublishIssuesStep extends Step {
             id = step.getId();
             name = StringUtils.defaultString(step.getName());
             issues = step.getIssues();
+            includeFilters = step.getIncludeFilters();
         }
 
         @Override
@@ -449,9 +471,32 @@ public class PublishIssuesStep extends Step {
             Logger logger = createLogger(actualId);
 
             Instant startResult = Instant.now();
-            AnalysisResult result = createAnalysisResult(actualId, run, selector);
-            logger.log("Created analysis result for %d issues (took %s).", issues.size(),
-                    Duration.between(startResult, Instant.now()));
+            IssueFilterBuilder builder = issues.new IssueFilterBuilder();
+            for (FileNameFilter includeFilter : includeFilters) {
+                includeFilter.apply(builder);
+            }
+            Issues<Issue> filtered = builder.buildAndApply();
+            logger.log("Applying %d filters on the set of %d issues (%d issues have been removed)",
+                    includeFilters.length, issues.size(), issues.size() - filtered.size());
+
+            AnalysisResult result = createAnalysisResult(filtered, actualId, run, selector);
+            logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
+                    result.getTotalSize(), result.getNewSize(), result.getFixedSize());
+            logger.log("Creating analysis result took %s", getElapsedTime(startResult));
+
+            Result pluginResult = result.getPluginResult();
+
+            if (qualityGate.isEnabled()) {
+                if (pluginResult.isBetterOrEqualTo(Result.SUCCESS)) {
+                    logger.log("All quality gates have been passed");
+                }
+                else {
+                    logger.log("Some quality gates have been missed: overall result is %s", pluginResult);
+                }
+            }
+            else {
+                    logger.log("No quality gates have been set - skipping");
+            }
 
             FilePath workspace = getContext().get(FilePath.class);
             ImmutableSortedSet<String> files = result.getIssues().getFiles();
@@ -459,8 +504,8 @@ public class PublishIssuesStep extends Step {
             Instant startCopy = Instant.now();
             String copyingLogMessage = new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(getChannel(),
                     getBuildFolder(), EncodingValidator.getEncoding(defaultEncoding), files);
-            logger.log("Copied %d affected files from '%s' to build folder (took %s)", files.size(), workspace,
-                    Duration.between(startCopy, Instant.now()));
+            logger.log("Copied %d affected files from '%s' to build folder (took %s)",
+                    files.size(), workspace, getElapsedTime(startCopy));
             logger.log(copyingLogMessage);
 
             logger.log("Attaching ResultAction with ID '%s' to run '%s'.", actualId, run);
@@ -470,17 +515,22 @@ public class PublishIssuesStep extends Step {
             return action;
         }
 
+        private Duration getElapsedTime(final Instant startResult) {
+            return Duration.between(startResult, Instant.now());
+        }
+
         private FilePath getBuildFolder() throws IOException, InterruptedException {
             return new FilePath(getRun().getRootDir());
         }
 
-        private AnalysisResult createAnalysisResult(final String id, final Run run, final ResultSelector selector)
-                throws IOException, InterruptedException {
+        private AnalysisResult createAnalysisResult(
+                final Issues<Issue> filtered, final String id,
+                final Run run, final ResultSelector selector) {
             ReferenceProvider referenceProvider = ReferenceFinder.create(run,
                     selector, usePreviousBuildAsReference, useStableBuildAsReference);
             BuildHistory buildHistory = new BuildHistory(run, selector);
             return new AnalysisResult(id, name, run, referenceProvider, buildHistory.getPreviousResult(),
-                    qualityGate, defaultEncoding, issues);
+                    qualityGate, defaultEncoding, filtered);
         }
     }
 
