@@ -46,7 +46,6 @@ import hudson.plugins.analysis.util.model.AnnotationStream;
 public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     private static final long serialVersionUID = 1110545450292087475L;
     private static final Logger LOGGER = Logger.getLogger(AnalysisResult.class.getName());
-    private static final String OLD_ISSUES_SUFFIX = "old";
 
     private final String id;
     private final String name;

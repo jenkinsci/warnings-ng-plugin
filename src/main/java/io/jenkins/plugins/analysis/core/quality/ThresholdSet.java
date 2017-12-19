@@ -66,7 +66,11 @@ public class ThresholdSet implements Serializable {
      * @return true if reached or exceeded, else false
      */
     private boolean isSingleThresholdReached(final int threshold, final int toCheck) {
-        return threshold > 0 && toCheck >= threshold;
+        return isEnabled(threshold) && toCheck >= threshold;
+    }
+
+    private boolean isEnabled(final int threshold) {
+        return threshold > 0;
     }
 
     /**
@@ -121,6 +125,13 @@ public class ThresholdSet implements Serializable {
         result = 31 * result + normalThreshold;
         result = 31 * result + lowThreshold;
         return result;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled(totalThreshold)
+                || isEnabled(highThreshold)
+                || isEnabled(normalThreshold)
+                || isEnabled(lowThreshold);
     }
 
     public static class ThresholdSetBuilder {

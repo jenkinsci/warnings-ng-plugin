@@ -55,7 +55,7 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
     }
 
     @Override
-    public Issues<Issue> invoke(final File workspace, final VirtualChannel channel) throws IOException {
+    public Issues<Issue> invoke(final File workspace, final VirtualChannel channel) {
         Issues<Issue> issues = new Issues<>();
         issues.log("Searching for all files in '%s' that match the pattern '%s'.",
                 workspace.getAbsolutePath(), filePattern);
@@ -154,7 +154,8 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
             Issues<Issue> result = parser.parse(file, EncodingValidator.defaultCharset(defaultEncoding), builder);
 
             issues.addAll(result);
-            issues.log("Successfully parsed file %s: found %d issues", file, issues.getSize());
+            issues.log("Successfully parsed file %s: found %d issues (%d duplicates have been skipped)",
+                    file, issues.getSize(), issues.getDuplicatesSize());
         }
         catch (ParsingException exception) {
             issues.log(Messages.FilesParser_Error_Exception(file) + "\n\n"
