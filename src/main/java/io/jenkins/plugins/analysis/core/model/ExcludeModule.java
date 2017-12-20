@@ -12,22 +12,22 @@ import hudson.Extension;
  *
  * @author Ulli Hafner
  */
-public class IncludeCategory extends IssuesFilter {
+public class ExcludeModule extends IssuesFilter {
     /**
-     * Creates a new instance of {@link IncludeCategory}.
+     * Creates a new instance of {@link ExcludeModule}.
      */
     @DataBoundConstructor
-    public IncludeCategory() {
+    public ExcludeModule() {
         // Required for Stapler
     }
 
     @Override
     public void apply(final IssueFilterBuilder builder, final String pattern) {
-        builder.setIncludeCategoryFilter(pattern);
+        builder.setExcludeModuleNameFilter(pattern);
     }
 
     /**
-     * Dummy descriptor for {@link IncludeCategory}.
+     * Dummy descriptor for {@link ExcludeModule}.
      *
      * @author Ulli Hafner
      */

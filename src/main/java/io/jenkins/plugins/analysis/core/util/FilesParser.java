@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;

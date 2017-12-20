@@ -30,7 +30,7 @@ import io.jenkins.plugins.analysis.core.history.BuildHistory;
 import io.jenkins.plugins.analysis.core.history.ReferenceFinder;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.history.ResultSelector;
-import io.jenkins.plugins.analysis.core.model.FileNameFilter;
+import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
@@ -369,14 +369,14 @@ public class PublishIssuesStep extends Step {
         getThresholds().failedNewLow = failedNewLow;
     }
 
-    private final List<FileNameFilter> includeFilters = Lists.newArrayList();
+    private final List<RegexpFilter> includeFilters = Lists.newArrayList();
 
-    public FileNameFilter[] getIncludeFilters() {
-        return includeFilters.toArray(new FileNameFilter[includeFilters.size()]);
+    public RegexpFilter[] getIncludeFilters() {
+        return includeFilters.toArray(new RegexpFilter[includeFilters.size()]);
     }
 
     @DataBoundSetter
-    public void setIncludeFilters(final FileNameFilter[] includeFilters) {
+    public void setIncludeFilters(final RegexpFilter[] includeFilters) {
         if (includeFilters != null && includeFilters.length > 0) {
             this.includeFilters.addAll(Arrays.asList(includeFilters));
         }
@@ -395,7 +395,7 @@ public class PublishIssuesStep extends Step {
         private final Issues<Issue> issues;
         private final String id;
         private final QualityGate qualityGate;
-        private final FileNameFilter[] includeFilters;
+        private final RegexpFilter[] filters;
         private String name;
 
         protected Execution(@Nonnull final StepContext context, final PublishIssuesStep step) {
@@ -410,7 +410,7 @@ public class PublishIssuesStep extends Step {
             id = step.getId();
             name = StringUtils.defaultString(step.getName());
             issues = step.getIssues();
-            includeFilters = step.getIncludeFilters();
+            filters = step.getIncludeFilters();
         }
 
         @Override
@@ -472,12 +472,12 @@ public class PublishIssuesStep extends Step {
 
             Instant startResult = Instant.now();
             IssueFilterBuilder builder = issues.new IssueFilterBuilder();
-            for (FileNameFilter includeFilter : includeFilters) {
-                includeFilter.apply(builder);
+            for (RegexpFilter filter : filters) {
+                filter.apply(builder);
             }
             Issues<Issue> filtered = builder.buildAndApply();
             logger.log("Applying %d filters on the set of %d issues (%d issues have been removed)",
-                    includeFilters.length, issues.size(), issues.size() - filtered.size());
+                    filters.length, issues.size(), issues.size() - filtered.size());
 
             AnalysisResult result = createAnalysisResult(filtered, actualId, run, selector);
             logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
@@ -504,9 +504,9 @@ public class PublishIssuesStep extends Step {
             Instant startCopy = Instant.now();
             String copyingLogMessage = new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(getChannel(),
                     getBuildFolder(), EncodingValidator.getEncoding(defaultEncoding), files);
-            logger.log("Copied %d affected files from '%s' to build folder (took %s)",
-                    files.size(), workspace, getElapsedTime(startCopy));
-            logger.log(copyingLogMessage);
+            logger.log("Copied %d affected files from '%s' to build folder (%s)",
+                    files.size(), workspace, copyingLogMessage);
+            logger.log("Copying affected files took %s", getElapsedTime(startCopy));
 
             logger.log("Attaching ResultAction with ID '%s' to run '%s'.", actualId, run);
             ResultAction action = new ResultAction(run, result, healthDescriptor, actualId, name);

@@ -12,22 +12,22 @@ import hudson.Extension;
  *
  * @author Ulli Hafner
  */
-public class IncludeCategory extends IssuesFilter {
+public class IncludeType extends IssuesFilter {
     /**
-     * Creates a new instance of {@link IncludeCategory}.
+     * Creates a new instance of {@link IncludeType}.
      */
     @DataBoundConstructor
-    public IncludeCategory() {
+    public IncludeType() {
         // Required for Stapler
     }
 
     @Override
     public void apply(final IssueFilterBuilder builder, final String pattern) {
-        builder.setIncludeCategoryFilter(pattern);
+        builder.setIncludeTypeFilter(pattern);
     }
 
     /**
-     * Dummy descriptor for {@link IncludeCategory}.
+     * Dummy descriptor for {@link IncludeType}.
      *
      * @author Ulli Hafner
      */
