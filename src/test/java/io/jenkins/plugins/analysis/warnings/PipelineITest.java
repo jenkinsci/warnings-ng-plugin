@@ -39,10 +39,7 @@ public class PipelineITest extends IntegrationTest {
      */
     @Test
     public void shouldFindAllEclipseIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("eclipse.txt");
-        job.setDefinition(parseAndPublish(Eclipse.class));
-
-        AnalysisResult result = scheduleBuild(job);
+        AnalysisResult result = runParserInJobContext(Eclipse.class, "eclipse.txt");
 
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues()).hasSize(8);
@@ -55,11 +52,8 @@ public class PipelineITest extends IntegrationTest {
      *         in case of an error
      */
     @Test
-    public void shouldNoJavacIssuesInEclipseOutput() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("eclipse.txt");
-        job.setDefinition(parseAndPublish(Java.class));
-
-        AnalysisResult result = scheduleBuild(job);
+    public void shouldFindNoJavacIssuesInEclipseOutput() throws Exception {
+        AnalysisResult result = runParserInJobContext(Java.class, "eclipse.txt");
 
         assertThat(result.getTotalSize()).isEqualTo(0);
     }
@@ -86,6 +80,78 @@ public class PipelineITest extends IntegrationTest {
         assertThat(issues.filter(issue -> "javadoc".equals(issue.getOrigin()))).hasSize(6);
         assertThat(issues.getToolNames()).containsExactlyInAnyOrder("java", "javadoc", "eclipse");
         assertThat(result.getIssues()).hasSize(8 + 2 + 6);
+    }
+
+    /**
+     * Runs the MsBuild parser on an output file: the build should report 6 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllMsBuildIssues() throws Exception {
+        AnalysisResult result = runParserInJobContext(MsBuild.class, "msbuild.txt");
+
+        assertThat(result.getTotalSize()).isEqualTo(6);
+        assertThat(result.getIssues()).hasSize(6);
+    }
+
+    /**
+     * Runs the NagFortran parser on an output file: the build should report 10 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllNagFortranIssues() throws Exception {
+        AnalysisResult result = runParserInJobContext(NagFortran.class, "NagFortran.txt");
+
+        assertThat(result.getTotalSize()).isEqualTo(10);
+        assertThat(result.getIssues()).hasSize(10);
+    }
+
+    /**
+     * Runs the Perforce parser on an output file: the build should report 4 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllP4Issues() throws Exception {
+        AnalysisResult result = runParserInJobContext(Perforce.class, "perforce.txt");
+
+        assertThat(result.getTotalSize()).isEqualTo(4);
+        assertThat(result.getIssues()).hasSize(4);
+    }
+
+    /**
+     * Runs the Pep8 parser on an output file: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllPep8Issues() throws Exception {
+        AnalysisResult result = runParserInJobContext(Pep8.class, "pep8Test.txt");
+
+        assertThat(result.getTotalSize()).isEqualTo(8);
+        assertThat(result.getIssues()).hasSize(8);
+    }
+
+    /**
+     * Runs a specific Parser on a series of output files
+     * @param parserClass the class of the parser to use
+     * @param fileNames the output files to be parsed
+     * @return the  {@link AnalysisResult} of the output-files parsed by the parser in the jenkins-job context
+     * @throws Exception
+     *         in case of an error
+     */
+    private AnalysisResult runParserInJobContext(final Class<? extends StaticAnalysisTool> parserClass,
+                                                 final String... fileNames) throws Exception{
+        WorkflowJob job = createJobWithWorkspaceFile(fileNames);
+        job.setDefinition(parseAndPublish(parserClass));
+
+        return scheduleBuild(job);
     }
 
     private CpsFlowDefinition parseAndPublish(final Class<? extends StaticAnalysisTool> parserClass) {
