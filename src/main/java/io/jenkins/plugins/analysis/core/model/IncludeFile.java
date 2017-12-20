@@ -12,21 +12,18 @@ import hudson.Extension;
  *
  * @author Ulli Hafner
  */
-public class IncludeFile extends IncludeFilter {
+public class IncludeFile extends IssuesFilter {
     /**
      * Creates a new instance of {@link IncludeFile}.
-     *
-     * @param name
-     *            the regular expression of the filter
      */
     @DataBoundConstructor
-    public IncludeFile(final String name) {
-        super(name);
+    public IncludeFile() {
+        // Required for Stapler
     }
 
     @Override
-    public void apply(final IssueFilterBuilder builder, final String regexp) {
-        builder.setIncludeFilenameFilter(regexp);
+    public void apply(final IssueFilterBuilder builder, final String pattern) {
+        builder.setIncludeFilenameFilter(pattern);
     }
 
     /**
