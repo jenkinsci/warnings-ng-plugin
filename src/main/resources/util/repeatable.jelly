@@ -13,10 +13,14 @@
     <st:attribute name="field">
       Used for the data binding.
     </st:attribute>
+    <st:attribute name="minimum">
+      At least provide this number of copies initially.
+      minimum="1" is useful to make sure there's always at least one entry for the user to fill in.
+    </st:attribute>
   </st:documentation>
 
   <div id="${field}">
-    <f:repeatableProperty field="${field}"/>
+    <f:repeatableProperty field="${field}" />
   </div>
 
 </j:jelly>
