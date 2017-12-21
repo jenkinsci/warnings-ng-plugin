@@ -3,17 +3,14 @@ package io.jenkins.plugins.analysis.warnings;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.parser.EclipseParser;
 import hudson.Extension;
 import hudson.plugins.warnings.parser.Messages;
-import hudson.plugins.warnings.parser.RobocopyParser;
+import edu.hm.hafner.analysis.parser.RobocopyParser;
 import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
 import java.nio.charset.Charset;
 
 public class RobocopyIWrapper extends StaticAnalysisTool {
@@ -26,7 +23,7 @@ public class RobocopyIWrapper extends StaticAnalysisTool {
 
     @Override
     public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder) {
-        return new RobocopyParser().parse(new FileReader(file)); // TODO
+        return new RobocopyParser().parse(file, charset, builder); // TODO
     }
 
     /** Registers this tool as extension point implementation. */

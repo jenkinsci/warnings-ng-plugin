@@ -3,16 +3,14 @@ package io.jenkins.plugins.analysis.warnings;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.parser.EclipseParser;
+import edu.hm.hafner.analysis.parser.ScalacParser;
 import hudson.Extension;
 import hudson.plugins.warnings.parser.Messages;
-import hudson.plugins.warnings.parser.ScalacParser;
 import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
-import java.io.FileReader;
 import java.nio.charset.Charset;
 
 public class ScalacIWrapper extends StaticAnalysisTool {
@@ -25,7 +23,7 @@ public class ScalacIWrapper extends StaticAnalysisTool {
 
     @Override
     public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder) {
-        return new ScalacParser().parse(new FileReader(file)); // TODO
+        return new ScalacParser().parse(file, charset, builder);
     }
 
     /** Registers this tool as extension point implementation. */

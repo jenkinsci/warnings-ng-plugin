@@ -78,7 +78,7 @@ public class PipelineITest extends IntegrationTest {
 
         AnalysisResult result = scheduleBuild(job);
 
-        assertThat(result.getTotalSize()).isEqualTo(6)
+        assertThat(result.getTotalSize()).isEqualTo(6);
         assertThat(result.getIssues()).hasSize(6);
     }
 
@@ -89,8 +89,8 @@ public class PipelineITest extends IntegrationTest {
 
         AnalysisResult result = scheduleBuild(job);
 
-        assertThat(result.getTotalSize()).isEqualTo(3);
-        assertThat(result.getIssues()).hasSize(3);
+        assertThat(result.getTotalSize()).isEqualTo(2);
+        assertThat(result.getIssues()).hasSize(2);
     }
 
     /**
