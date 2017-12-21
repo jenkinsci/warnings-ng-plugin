@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.io.IOException;
 
+import hudson.plugins.warnings.parser.RobocopyParser;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -46,6 +47,50 @@ public class PipelineITest extends IntegrationTest {
 
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues()).hasSize(8);
+    }
+
+    @Test
+    public void shouldFindAllRoboIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("robocopy.txt");
+        job.setDefinition(parseAndPublish(RobocopyIWrapper.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(3);
+        assertThat(result.getIssues()).hasSize(3);
+    }
+
+    @Test
+    public void shouldFindAllScalacIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("scalac.txt");
+        job.setDefinition(parseAndPublish(ScalacIWrapper.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(3);
+        assertThat(result.getIssues()).hasSize(3);
+    }
+
+    @Test
+    public void shouldFindAllSphinxIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("sphinxbuild.txt");
+        job.setDefinition(parseAndPublish(SphinxBuildIWrapper.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(6)
+        assertThat(result.getIssues()).hasSize(6);
+    }
+
+    @Test
+    public void shouldFindAllsbtScalacIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("sbtScalac.txt");
+        job.setDefinition(parseAndPublish(SBTScalaC.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(3);
+        assertThat(result.getIssues()).hasSize(3);
     }
 
     /**

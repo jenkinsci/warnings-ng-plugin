@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.warnings;
 import java.io.File;
 import java.nio.charset.Charset;
 
+import hudson.plugins.warnings.parser.Messages;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.Issue;
