@@ -1,0 +1,35 @@
+-artifact.build:
+    [compc] Loading configuration file D:\workspaces\flexcompo_trunkdev_nightly\win32_x86\release\bin\tp.adobe.flex.sdk\flex_sdk\frameworks\flex-config.xml
+    [compc] D:\workspaces\flexcompo_trunkdev_nightly\src\flexcompo\uicomponents\ugv_component\src\main\com\company\flex\feed\FeedStructureHelper.as(34): col: 8 Warning: class 'FeedStructureHelper' will be scoped to the default namespace: com.company.flex.feed internal.  It will not be visible outside of this package.
+    [compc]
+    [compc] 	class FeedStructureHelper
+    [compc] 	      ^
+    [compc]
+    [compc] D:\workspaces\flexcompo_trunkdev_nightly\src\flexcompo\uicomponents\ugv_component\src\main\com\company\flex\component\chart\lasso\DefaultLassoObjectsHandler.as(122): col: 25 Warning: Duplicate variable definition.
+    [compc]
+    [compc]                     var dc:DataContext = renderer.getDataContext(rawObject, rdrCtx);
+    [compc]                         ^
+    [compc]
+    [compc] D:\workspaces\flexcompo_trunkdev_nightly\win32_x86\release\obj\flexcompo\flex\bin\ugv.swc (1553912 bytes)
+
+shared.build.flex.-public.artifact.out:
+
+-artifact.build:
+    [mxmlc] Loading configuration file D:\workspaces\flexcompo_trunkdev_nightly\win32_x86\release\bin\tp.adobe.flex.sdk\flex_sdk\frameworks\flex-config.xml
+    [mxmlc] D:\workspaces\flexcompo_trunkdev_nightly\src\flexcompo\samples\ugv_helloExtensibility_flex\src\main\extensibility\wordpress\Tag.as(115): col: 35 Warning: return value for function 'cx' has no type declaration.
+    [mxmlc]
+    [mxmlc] 		public function set cx( n:Number ){ _cx = n }
+    [mxmlc] 		                                ^
+    [mxmlc]
+    [mxmlc] D:\workspaces\flexcompo_trunkdev_nightly\src\flexcompo\samples\ugv_helloExtensibility_flex\src\main\HelloExtensibleWorld.mxml(157): Warning: var 'cacheList' will be scoped to the default namespace: HelloExtensibleWorld: internal.  It will not be visible outside of this package.
+    [mxmlc]
+    [mxmlc] 			var cacheList:Dictionary = new Dictionary();
+    [mxmlc]
+    [mxmlc] D:\workspaces\flexcompo_trunkdev_nightly\src\flexcompo\samples\ugv_helloExtensibility_flex\src\main\HelloExtensibleWorld.mxml(148): Warning: The CSS type selector 'Book' was not processed, because the type was not used in the application.
+    [mxmlc]
+    [mxmlc] 				catalog_.requestServerBooks();
+    [mxmlc]
+    [mxmlc]
+    [mxmlc] D:\workspaces\flexcompo_trunkdev_nightly\win32_x86\release\obj\flexcompo\flex\bin\HelloExtensibleWorld.swf (1445144 bytes)
+
+-artifact.out:

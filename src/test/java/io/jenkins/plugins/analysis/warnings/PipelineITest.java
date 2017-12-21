@@ -33,6 +33,16 @@ import hudson.model.Result;
 public class PipelineITest extends IntegrationTest {
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
 
+    /**
+     * testing suit.
+     * allows to write simple Integration test with a specific parser and testfile
+     * it do just verify the size of the result and the number of Issues
+     * @param filename name of the testFile with the content
+     * @param parser class which analysis the test-file
+     * @param totalSize size of scheduled Job
+     * @param issuesSize number of Issues
+     * @throws Exception from scheduleBuild and createJobWithWorkspaceFile
+     */
     private void parserIntegrationTest(final String filename, Class parser, int totalSize, int issuesSize) throws Exception {
         WorkflowJob job = createJobWithWorkspaceFile(filename);
         job.setDefinition(parseAndPublish(parser));
