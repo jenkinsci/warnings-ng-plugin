@@ -32,6 +32,26 @@ public class PipelineITest extends IntegrationTest {
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
 
     /**
+     * Runs the Eclipse parser on an output file that contains several issues. Applies an include filter that selects
+     * only one issue (in the file AttributeException.java).
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldIncludeJustOneFile() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("eclipse.txt");
+        job.setDefinition(asStage(createScanForIssuesStep(Eclipse.class),
+                "publishIssues issues:[issues],  "
+                        + "filters:[[property: [$class: 'IncludeFile'], pattern: '.*AttributeException.*']]"));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(1);
+        assertThat(result.getIssues()).hasSize(1);
+    }
+
+    /**
      * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
      *
      * @throws Exception
@@ -96,8 +116,10 @@ public class PipelineITest extends IntegrationTest {
         return createScanForIssuesStep(parserClass, "issues");
     }
 
-    private String createScanForIssuesStep(final Class<? extends StaticAnalysisTool> parserClass, final String issuesName) {
-        return String.format("def %s = scanForIssues tool: [$class: '%s'], pattern:'**/*issues.txt'", issuesName, parserClass.getSimpleName());
+    private String createScanForIssuesStep(final Class<? extends StaticAnalysisTool> parserClass,
+            final String issuesName) {
+        return String.format("def %s = scanForIssues tool: [$class: '%s'], pattern:'**/*issues.txt'", issuesName,
+                parserClass.getSimpleName());
     }
 
     private WorkflowJob createJobWithWorkspaceFile(final String... fileNames) throws IOException, InterruptedException {
@@ -140,7 +162,6 @@ public class PipelineITest extends IntegrationTest {
         }
         script.append("  }\n");
         script.append("}\n");
-
 
         System.out.println("----------------------------------------------------------------------");
         System.out.println(script);
