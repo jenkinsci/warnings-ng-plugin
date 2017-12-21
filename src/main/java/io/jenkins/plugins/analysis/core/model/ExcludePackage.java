@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import javax.annotation.Nonnull;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.Issues;
@@ -33,6 +35,10 @@ public class ExcludePackage extends IssuesFilter {
      */
    @Extension
    public static class DescriptorImpl extends IncludeFilterDescriptor {
-        // Required for Jenkins
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return Messages.Filter_Exclude_Package();
+        }
    }
 }

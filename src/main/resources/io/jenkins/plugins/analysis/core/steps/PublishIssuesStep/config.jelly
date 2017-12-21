@@ -19,8 +19,8 @@
     <u:thresholds-new/>
   </f:entry>
 
-  <f:entry title="${%Include Filters}" description="${%TODO}">
-    <u:repeatable field="includeFilters" />
+  <f:entry title="${%Issue filters}" description="${%description.filter}">
+    <u:repeatable field="filters" minimum="1"/>
   </f:entry>
 
   <u:defaultEncoding id="${id}"/>

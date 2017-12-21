@@ -369,16 +369,16 @@ public class PublishIssuesStep extends Step {
         getThresholds().failedNewLow = failedNewLow;
     }
 
-    private final List<RegexpFilter> includeFilters = Lists.newArrayList();
+    private final List<RegexpFilter> filters = Lists.newArrayList();
 
-    public RegexpFilter[] getIncludeFilters() {
-        return includeFilters.toArray(new RegexpFilter[includeFilters.size()]);
+    public RegexpFilter[] getFilters() {
+        return filters.toArray(new RegexpFilter[filters.size()]);
     }
 
     @DataBoundSetter
-    public void setIncludeFilters(final RegexpFilter[] includeFilters) {
-        if (includeFilters != null && includeFilters.length > 0) {
-            this.includeFilters.addAll(Arrays.asList(includeFilters));
+    public void setFilters(final RegexpFilter[] filters) {
+        if (filters != null && filters.length > 0) {
+            this.filters.addAll(Arrays.asList(filters));
         }
     }
 
@@ -410,7 +410,7 @@ public class PublishIssuesStep extends Step {
             id = step.getId();
             name = StringUtils.defaultString(step.getName());
             issues = step.getIssues();
-            filters = step.getIncludeFilters();
+            filters = step.getFilters();
         }
 
         @Override
@@ -471,11 +471,11 @@ public class PublishIssuesStep extends Step {
             Logger logger = createLogger(actualId);
 
             Instant startResult = Instant.now();
-            IssueFilterBuilder builder = issues.new IssueFilterBuilder();
+            IssueFilterBuilder builder = new IssueFilterBuilder();
             for (RegexpFilter filter : filters) {
                 filter.apply(builder);
             }
-            Issues<Issue> filtered = builder.buildAndApply();
+            Issues<Issue> filtered = issues.filter(builder.build());
             logger.log("Applying %d filters on the set of %d issues (%d issues have been removed)",
                     filters.length, issues.size(), issues.size() - filtered.size());
 
