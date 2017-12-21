@@ -1,23 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.IOException;
-
+import edu.hm.hafner.analysis.Issues;
+import hudson.model.Result;
+import io.jenkins.plugins.analysis.core.steps.*;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Test;
 import org.junit.jupiter.api.Tag;
 
-import edu.hm.hafner.analysis.Issues;
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
-import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
-import io.jenkins.plugins.analysis.core.steps.BuildIssue;
-import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
-import io.jenkins.plugins.analysis.core.steps.ResultAction;
-import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
+import java.io.IOException;
 
-import hudson.model.Result;
+import static edu.hm.hafner.analysis.assertj.Assertions.assertThat;
 
 /**
  * Integration tests for pipeline support in the warning plug-in.
@@ -34,8 +28,7 @@ public class PipelineITest extends IntegrationTest {
     /**
      * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
      *
-     * @throws Exception
-     *         in case of an error
+     * @throws Exception in case of an error
      */
     @Test
     public void shouldFindAllEclipseIssues() throws Exception {
@@ -51,8 +44,7 @@ public class PipelineITest extends IntegrationTest {
     /**
      * Runs the JavaC parser on an output file of the Eclipse compiler: the build should report no issues.
      *
-     * @throws Exception
-     *         in case of an error
+     * @throws Exception in case of an error
      */
     @Test
     public void shouldNoJavacIssuesInEclipseOutput() throws Exception {
@@ -65,10 +57,78 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
+     * Runs the JavaDoc parser on an output file: the build should report 6 issues.
+     *
+     * @throws Exception in case of an error
+     */
+
+    @Test
+    public void shouldFindAllJavaDocIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("javadoc.txt");
+        job.setDefinition(parseAndPublish(JavaDoc.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(6);
+        assertThat(result.getIssues()).hasSize(6);
+    }
+
+    /**
+     * Runs the JcReport parser on an output file: the build should report 5 issues.
+     *
+     * @throws Exception in case of an error
+     */
+
+    @Test
+    public void shouldFindAllJcReportIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("jcreport/testCorrect.xml");
+        job.setDefinition(parseAndPublish(JcReport.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(5);
+        assertThat(result.getIssues()).hasSize(5);
+    }
+
+    /**
+     * Runs the JSLint parser on an output file: the build should report 102 issues.
+     *
+     * @throws Exception in case of an error
+     */
+
+    @Test
+    public void shouldFindAllJsLintIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("jslint/multi.xml");
+        job.setDefinition(parseAndPublish(JSLint.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(102);
+        assertThat(result.getIssues()).hasSize(102);
+    }
+
+    /**
+     * Runs the LinuxKernelOutput parser on an output file: the build should report 26 issues.
+     *
+     * @throws Exception in case of an error
+     */
+
+    @Test
+    public void shouldFindAllLinuxKernelOutputIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("kernel.log");
+        job.setDefinition(parseAndPublish(LinuxKernelOutput.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(26);
+        assertThat(result.getIssues()).hasSize(26);
+    }
+
+
+    /**
      * Runs the all Java parsers on three output files: the build should report issues of all tools.
      *
-     * @throws Exception
-     *         in case of an error
+     * @throws Exception in case of an error
      */
     @Test
     public void shouldCombineIssuesOfSeveralFiles() throws Exception {
@@ -114,9 +174,7 @@ public class PipelineITest extends IntegrationTest {
      * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
      * been finished.
      *
-     * @param job
-     *         the job to schedule
-     *
+     * @param job the job to schedule
      * @return the created {@link AnalysisResult}
      */
     private AnalysisResult scheduleBuild(final WorkflowJob job) throws Exception {
