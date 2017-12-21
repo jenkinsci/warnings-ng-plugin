@@ -1,0 +1,13 @@
+"lint.c", line 7: warning (dcc:1521): missing return expression
+"lint.c", line 22: warning (dcc:1643): narrowing or signed-to-unsigned type conversion found: int to unsigned char
+"lint.c", line 28: warning (dcc:1243): constant out of range
+"lint.c", line 4: warning (dcc:1517): function f4 is never used
+"lint.c", line 11: error (dcc:1378): function f5 is not found
+"main.c", line 5: warning (dcc:1025): division by zero
+"main.c", line 5: error (dcc:1025): division by zero
+"main.c", line 5: fatal error (dcc:1025): division by zero
+"test.cpp", line 976: warning (etoa:4177): function "testing" was declared but never referenced
+"test.cpp", line 427: warning (etoa:4186): pointless comparison of unsigned integer with zero
+"test.cpp", line 38: error (etoa:4065): expected a ";"
+"test.cpp", line 443: info (etoa:4172): external/internal linkage conflict with previous declaration
+"test.h", line 293: info (etoa:4261): access control not specified ("private" by default)
