@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,16 +15,26 @@ import edu.hm.hafner.analysis.Issues;
 import hudson.FilePath;
 
 /**
- * Creates a fingerprint of an issue. A fingerprint is a digest of the affected source code of an issue. Using this
- * fingerprint an issue can be tracked in the source code even after some minor refactorings.
+ * Resolves absolute paths of the affected files of a set of issues.
  *
  * @author Ullrich Hafner
  */
+// TODO: if this class is called on the master then an remote call is initiated for each affected file
 public class AbsolutePathGenerator {
+    /**
+     * Resolves absolute paths of the affected files of the specified set of issues.
+     *
+     * @param issues
+     *         the issues to resolve the paths
+     * @param builder
+     *         a builder to copy issue instances
+     * @param workspace
+     *         root folder for files with relative paths
+     */
     public Issues<Issue> run(final Issues<Issue> issues, final IssueBuilder builder, final FilePath workspace) {
         Set<String> relativeFileNames = issues.getFiles()
                 .stream()
-                .filter(fileName -> !Paths.get(fileName).isAbsolute())
+                .filter(fileName -> isRelative(fileName))
                 .collect(Collectors.toSet());
 
         if (relativeFileNames.isEmpty()) {
@@ -34,6 +45,7 @@ public class AbsolutePathGenerator {
         }
 
         Map<String, String> relativeToAbsoluteMapping = resolveAbsoluteNames(relativeFileNames, workspace);
+
         Issues<Issue> resolved = new Issues<>();
         int resolvedCount = 0;
         int unchangedCount = 0;
@@ -59,6 +71,15 @@ public class AbsolutePathGenerator {
                 relativeToAbsoluteMapping.size(), resolvedCount, unresolvedCount, unchangedCount);
 
         return resolved;
+    }
+
+    private boolean isRelative(final String fileName) {
+        try {
+            return !Paths.get(fileName).isAbsolute();
+        }
+        catch (InvalidPathException ignored) {
+            return false; // do not try to resolve illegal paths
+        }
     }
 
     private Map<String, String> resolveAbsoluteNames(final Set<String> relativeFileNames, final FilePath workspace) {
