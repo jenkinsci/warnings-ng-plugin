@@ -421,4 +421,57 @@ public class PipelineITest extends IntegrationTest {
         System.out.println("----------------------------------------------------------------------");
         return new CpsFlowDefinition(script.toString(), true);
     }
+
+    /**
+     * Runs the Gcc3Compiler parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllGcc4CompilerIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("gcc4.txt");
+        job.setDefinition(parseAndPublish(Gcc4Compiler.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(14);
+        assertThat(result.getIssues()).hasSize(14);
+    }
+
+    /**
+     * Runs the Gcc3Compiler parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllGcc3CompilerIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("gcc.txt");
+        job.setDefinition(parseAndPublish(Gcc.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(8);
+        assertThat(result.getIssues()).hasSize(8);
+    }
+
+    /**
+     * Runs the Gcc4Linker parser on an output file that contains several issues: the build should report 2 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllGcc4LinkerIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("gcc4ld.txt");
+        job.setDefinition(parseAndPublish(Gcc4Linker.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(7);
+        assertThat(result.getIssues()).hasSize(7);
+    }
+
+
 }
