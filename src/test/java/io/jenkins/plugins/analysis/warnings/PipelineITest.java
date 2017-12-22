@@ -177,6 +177,73 @@ public class PipelineITest extends IntegrationTest {
      *         in case of an error
      */
     @Test
+    public void shouldFindAllPerlCriticIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("perlcritic.txt");
+        job.setDefinition(parseAndPublish(PerlCritic.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(105);
+        assertThat(result.getIssues()).hasSize(105);
+    }
+
+    /**
+     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllPhpIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("php.txt");
+        job.setDefinition(parseAndPublish(Php.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(5);
+        assertThat(result.getIssues()).hasSize(5);
+    }
+
+    /**
+     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllPREfastIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("PREfast.xml");
+        job.setDefinition(parseAndPublish(PREfast.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(11);
+        assertThat(result.getIssues()).hasSize(11);
+    }
+
+    /**
+     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllPuppetLintIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("puppet-lint.txt");
+        job.setDefinition(parseAndPublish(PuppetLint.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(5);
+        assertThat(result.getIssues()).hasSize(5);
+    }
+    /**
+     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
     public void shouldFindAllEclipseIssues() throws Exception {
         WorkflowJob job = createJobWithWorkspaceFile("eclipse.txt");
         job.setDefinition(parseAndPublish(Eclipse.class));
