@@ -42,7 +42,7 @@ public class DrMemory extends StreamBasedParser {
      */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("drmemory", PARSER_NAME);
+            super("dr-memory", PARSER_NAME);
         }
     }
 }

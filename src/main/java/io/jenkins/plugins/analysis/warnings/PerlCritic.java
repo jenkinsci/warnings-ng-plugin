@@ -34,7 +34,6 @@ public class PerlCritic extends StreamBasedParser {
         public Descriptor() {
             super(new LabelProvider());
         }
-
     }
 
     /**
@@ -44,6 +43,5 @@ public class PerlCritic extends StreamBasedParser {
         private LabelProvider() {
             super("perl-critic", PARSER_NAME);
         }
-
     }
 }

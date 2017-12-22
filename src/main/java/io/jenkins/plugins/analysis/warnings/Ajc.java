@@ -38,7 +38,7 @@ public class Ajc extends StreamBasedParser {
     /** Provides the labels for the parser. */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("ajc", PARSER_NAME);
+            super("aspectj", PARSER_NAME);
         }
     }
 }

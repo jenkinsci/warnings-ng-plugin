@@ -26,6 +26,7 @@ public class PREfast extends StreamBasedParser {
     protected AbstractParser createParser() {
         return new PREfastParser();
     }
+
     /**
      * Registers this tool as extension point implementation.
      */
@@ -34,12 +35,14 @@ public class PREfast extends StreamBasedParser {
         public Descriptor() {
             super(new LabelProvider());
         }
-
     }
+
+    /**
+     * Provides the labels for the parser.
+     */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("prefast", PARSER_NAME);
+            super("pre-fast", PARSER_NAME);
         }
-
     }
 }

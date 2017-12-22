@@ -38,7 +38,7 @@ public class AnsibleLint extends StreamBasedParser {
     /** Provides the labels for the parser. */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("ansiblelint", PARSER_NAME);
+            super("ansible-lint", PARSER_NAME);
         }
     }
 }

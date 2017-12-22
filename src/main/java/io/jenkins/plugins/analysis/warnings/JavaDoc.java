@@ -14,8 +14,6 @@ import hudson.plugins.warnings.parser.Messages;
  * @author Ullrich Hafner
  */
 public class JavaDoc extends Java {
-    private static final String ID = "javadoc";
-
     @DataBoundConstructor
     public JavaDoc() {
         // empty constructor required for stapler
@@ -36,7 +34,7 @@ public class JavaDoc extends Java {
 
     public static class JavaDocLabelProvider extends JavaLabelProvider {
         public JavaDocLabelProvider() {
-            super(ID);
+            super("javadoc");
         }
 
         @Override

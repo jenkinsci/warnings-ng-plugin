@@ -20,7 +20,6 @@ import hudson.plugins.warnings.parser.Messages;
 public class Java extends StreamBasedParser {
     private static final String JAVA_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-24x24.png";
     private static final String JAVA_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-48x48.png";
-    private static final String ID = "java";
 
     @DataBoundConstructor
     public Java() {
@@ -46,7 +45,7 @@ public class Java extends StreamBasedParser {
 
     public static class JavaLabelProvider extends DefaultLabelProvider {
         public JavaLabelProvider() {
-            super(ID);
+            super("java");
         }
 
         public JavaLabelProvider(final String id) {

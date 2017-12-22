@@ -42,7 +42,7 @@ public class CssLint extends StreamBasedParser {
      */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("csslint", PARSER_NAME);
+            super("css-lint", PARSER_NAME);
         }
     }
 }
