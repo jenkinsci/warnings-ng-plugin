@@ -184,10 +184,8 @@ public class PipelineITest extends IntegrationTest {
         return createScanForIssuesStep(parserClass, "issues");
     }
 
-    private String createScanForIssuesStep(final Class<? extends StaticAnalysisTool> parserClass,
-            final String issuesName) {
-        return String.format("def %s = scanForIssues tool: [$class: '%s'], pattern:'**/*issues.txt'", issuesName,
-                parserClass.getSimpleName());
+    private String createScanForIssuesStep(final Class<? extends StaticAnalysisTool> parserClass, final String issuesName) {
+        return String.format("def %s = scanForIssues tool: [$class: '%s'], pattern:'**/*issues.txt'", issuesName, parserClass.getSimpleName());
     }
 
     private WorkflowJob createJobWithWorkspaceFile(final String... fileNames) throws IOException, InterruptedException {
@@ -230,6 +228,7 @@ public class PipelineITest extends IntegrationTest {
         }
         script.append("  }\n");
         script.append("}\n");
+
 
         System.out.println("----------------------------------------------------------------------");
         System.out.println(script);
