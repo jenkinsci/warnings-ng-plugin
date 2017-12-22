@@ -32,6 +32,23 @@ public class PipelineITest extends IntegrationTest {
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
 
     /**
+     * Runs the Gendarme parser on an output file that contains several issues: the build should report 3 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllGendarmeIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("Gendarme.xml");
+        job.setDefinition(parseAndPublish(GhsMulti.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(3);
+        assertThat(result.getIssues()).hasSize(3);
+    }
+
+    /**
      * Runs the GhsMulti parser on an output file that contains several issues: the build should report 3 issues.
      *
      * @throws Exception
@@ -154,13 +171,13 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the AnsbileLint parser on an output file that contains several issues: the build should report 4 issues.
+     * Runs the AnsibleLint parser on an output file that contains several issues: the build should report 4 issues.
      *
      * @throws Exception
      *         in case of an error
      */
     @Test
-    public void shouldFindAllAnsbileLintIssues() throws Exception {
+    public void shouldFindAllAnsibleLintIssues() throws Exception {
         WorkflowJob job = createJobWithWorkspaceFile("ansibleLint.txt");
         job.setDefinition(parseAndPublish(AnsibleLint.class));
 
@@ -171,7 +188,7 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
+     * Runs the Perl::Critic parser on an output file that contains several issues: the build should report 105 issues.
      *
      * @throws Exception
      *         in case of an error
@@ -188,7 +205,7 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
+     * Runs the Php parser on an output file that contains several issues: the build should report 5 issues.
      *
      * @throws Exception
      *         in case of an error
@@ -205,7 +222,7 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
+     * Runs the Microsoft PREfast parser on an output file that contains several issues: the build should report 11 issues.
      *
      * @throws Exception
      *         in case of an error
@@ -222,7 +239,7 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
+     * Runs the Puppet Lint parser on an output file that contains several issues: the build should report 5 issues.
      *
      * @throws Exception
      *         in case of an error
@@ -237,6 +254,7 @@ public class PipelineITest extends IntegrationTest {
         assertThat(result.getTotalSize()).isEqualTo(5);
         assertThat(result.getIssues()).hasSize(5);
     }
+
     /**
      * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
      *
@@ -245,15 +263,17 @@ public class PipelineITest extends IntegrationTest {
      */
     @Test
     public void shouldFindAllEclipseIssues() throws Exception {
-        AnalysisResult result = runParserInJobContext(Eclipse.class, "eclipse.txt");
+        WorkflowJob job = createJobWithWorkspaceFile("eclipse.txt");
+        job.setDefinition(parseAndPublish(Eclipse.class));
+
+        AnalysisResult result = scheduleBuild(job);
 
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues()).hasSize(8);
     }
 
-
     /**
-     * Runs the Idea Inspection parser on an output file that contains several issues: the build should report 8 issues.
+     * Runs the Idea Inspection parser on an output file that contains several issues: the build should report 1 issues.
      *
      * @throws Exception
      *         in case of an error
@@ -270,7 +290,7 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the Intel parser on an output file that contains several issues: the build should report 8 issues.
+     * Runs the Intel parser on an output file that contains several issues: the build should report 7 issues.
      *
      * @throws Exception
      *         in case of an error
@@ -287,7 +307,7 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the Invalids parser on an output file that contains several issues: the build should report 8 issues.
+     * Runs the Oracle Invalids parser on an output file that contains several issues: the build should report 3 issues.
      *
      * @throws Exception
      *         in case of an error
@@ -304,15 +324,15 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the Javac parser on an output file that contains several issues: the build should report 8 issues.
+     * Runs the Java parser on an output file that contains several issues: the build should report 2 issues.
      *
      * @throws Exception
      *         in case of an error
      */
     @Test
-    public void shouldFindAllJavacIssues() throws Exception {
+    public void shouldFindAllJavaIssues() throws Exception {
         WorkflowJob job = createJobWithWorkspaceFile("javac.txt");
-        job.setDefinition(parseAndPublish(Javac.class));
+        job.setDefinition(parseAndPublish(Java.class));
 
         AnalysisResult result = scheduleBuild(job);
 
@@ -396,7 +416,10 @@ public class PipelineITest extends IntegrationTest {
      */
     @Test
     public void shouldFindNoJavacIssuesInEclipseOutput() throws Exception {
-        AnalysisResult result = runParserInJobContext(Java.class, "eclipse.txt");
+        WorkflowJob job = createJobWithWorkspaceFile("eclipse.txt");
+        job.setDefinition(parseAndPublish(Java.class));
+
+        AnalysisResult result = scheduleBuild(job);
 
         assertThat(result.getTotalSize()).isEqualTo(0);
     }
@@ -433,7 +456,10 @@ public class PipelineITest extends IntegrationTest {
      */
     @Test
     public void shouldFindAllMsBuildIssues() throws Exception {
-        AnalysisResult result = runParserInJobContext(MsBuild.class, "msbuild.txt");
+        WorkflowJob job = createJobWithWorkspaceFile("msbuild.txt");
+        job.setDefinition(parseAndPublish(MsBuild.class));
+
+        AnalysisResult result = scheduleBuild(job);
 
         assertThat(result.getTotalSize()).isEqualTo(6);
         assertThat(result.getIssues()).hasSize(6);
@@ -447,7 +473,10 @@ public class PipelineITest extends IntegrationTest {
      */
     @Test
     public void shouldFindAllNagFortranIssues() throws Exception {
-        AnalysisResult result = runParserInJobContext(NagFortran.class, "NagFortran.txt");
+        WorkflowJob job = createJobWithWorkspaceFile("NagFortran.txt");
+        job.setDefinition(parseAndPublish(NagFortran.class));
+
+        AnalysisResult result = scheduleBuild(job);
 
         assertThat(result.getTotalSize()).isEqualTo(10);
         assertThat(result.getIssues()).hasSize(10);
@@ -461,7 +490,10 @@ public class PipelineITest extends IntegrationTest {
      */
     @Test
     public void shouldFindAllP4Issues() throws Exception {
-        AnalysisResult result = runParserInJobContext(Perforce.class, "perforce.txt");
+        WorkflowJob job = createJobWithWorkspaceFile("perforce.txt");
+        job.setDefinition(parseAndPublish(Perforce.class));
+
+        AnalysisResult result = scheduleBuild(job);
 
         assertThat(result.getTotalSize()).isEqualTo(4);
         assertThat(result.getIssues()).hasSize(4);
@@ -475,26 +507,13 @@ public class PipelineITest extends IntegrationTest {
      */
     @Test
     public void shouldFindAllPep8Issues() throws Exception {
-        AnalysisResult result = runParserInJobContext(Pep8.class, "pep8Test.txt");
+        WorkflowJob job = createJobWithWorkspaceFile("pep8Test.txt");
+        job.setDefinition(parseAndPublish(Pep8.class));
+
+        AnalysisResult result = scheduleBuild(job);
 
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues()).hasSize(8);
-    }
-
-    /**
-     * Runs a specific Parser on a series of output files
-     * @param parserClass the class of the parser to use
-     * @param fileNames the output files to be parsed
-     * @return the  {@link AnalysisResult} of the output-files parsed by the parser in the jenkins-job context
-     * @throws Exception
-     *         in case of an error
-     */
-    private AnalysisResult runParserInJobContext(final Class<? extends StaticAnalysisTool> parserClass,
-                                                 final String... fileNames) throws Exception{
-        WorkflowJob job = createJobWithWorkspaceFile(fileNames);
-        job.setDefinition(parseAndPublish(parserClass));
-
-        return scheduleBuild(job);
     }
 
     private CpsFlowDefinition parseAndPublish(final Class<? extends StaticAnalysisTool> parserClass) {
