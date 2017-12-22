@@ -21,7 +21,6 @@ import hudson.model.Descriptor;
  */
 public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticAnalysisTool>
         implements IssueParser, ExtensionPoint {
-
     /**
      * Finds the static analysis tool with the specified ID.
      *
@@ -101,6 +100,7 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
         return getDescriptor().getDisplayName();
     }
 
+    @Override
     public String getId() {
         return getDescriptor().getId();
     }
