@@ -273,6 +273,74 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
+     * Runs the Robocopy parser on an output file: the build should report 3 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllRobocopyIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("robocopy.txt");
+        job.setDefinition(parseAndPublish(Robocopy.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(3);
+        assertThat(result.getIssues()).hasSize(3);
+    }
+
+    /**
+     * Runs the ScalaC parser on an output file: the build should report 3 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllScalacIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("scalac.txt");
+        job.setDefinition(parseAndPublish(Scala.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(3);
+        assertThat(result.getIssues()).hasSize(3);
+    }
+
+    /**
+     * Runs the Sphinx build parser on an output file: the build should report 6 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllSphinxIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("sphinxbuild.txt");
+        job.setDefinition(parseAndPublish(SphinxBuild.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(6);
+        assertThat(result.getIssues()).hasSize(6);
+    }
+
+    /**
+     * Runs the SBT scala parser on an output file: the build should report 2 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllSbtScalaCIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("sbtScalac.txt");
+        job.setDefinition(parseAndPublish(SBTScalaC.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(2);
+        assertThat(result.getIssues()).hasSize(2);
+    }
+
+    /**
      * Runs the Idea Inspection parser on an output file that contains several issues: the build should report 1 issues.
      *
      * @throws Exception
