@@ -1,23 +1,20 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.parser.P4Parser;
-import hudson.Extension;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.io.File;
-import java.nio.charset.Charset;
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.parser.P4Parser;
+import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
+
+import hudson.Extension;
 
 /**
  * Provides a parser and customized messages for the Perforce tool.
  *
  * @author Joscha Behrmann
  */
-public class Perforce extends StaticAnalysisTool {
+public class Perforce extends StreamBasedParser {
     private static final String PARSER_NAME = Messages.Warnings_Perforce_ParserName();
 
     @DataBoundConstructor
@@ -26,8 +23,8 @@ public class Perforce extends StaticAnalysisTool {
     }
 
     @Override
-    public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder issueBuilder) {
-        return new P4Parser().parse(file, charset, issueBuilder);
+    protected AbstractParser createParser() {
+        return new P4Parser();
     }
 
     /** Registers this tool as extension point implementation. */
@@ -41,7 +38,7 @@ public class Perforce extends StaticAnalysisTool {
     /** Provides the labels for the parser. */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("Perforce", PARSER_NAME);
+            super("perforce", PARSER_NAME);
         }
     }
 }
