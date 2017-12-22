@@ -32,6 +32,25 @@ public class PipelineITest extends IntegrationTest {
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
 
     /**
+     * testing suit.
+     * allows to write simple Integration test with a specific parser and testfile
+     * it do just verify the size of the result and the number of Issues
+     * @param filename name of the testFile with the content
+     * @param parser class which analysis the test-file
+     * @param totalSize size of scheduled Job
+     * @param issuesSize number of Issues
+     * @throws Exception from scheduleBuild and createJobWithWorkspaceFile
+     */
+    private void parserIntegrationTest(final String filename, Class parser, int totalSize, int issuesSize) throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile(filename);
+        job.setDefinition(parseAndPublish(parser));
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(totalSize);
+        assertThat(result.getIssues()).hasSize(issuesSize);
+    }
+
+    /**
      * Runs the Gendarme parser on an output file that contains several issues: the build should report 3 issues.
      *
      * @throws Exception
@@ -736,6 +755,15 @@ public class PipelineITest extends IntegrationTest {
         }
         script.append("  }\n");
         script.append("}\n");
+    @Test public void shouldFindAllErlcIssues() throws Exception {
+        parserIntegrationTest("erlc.txt",Erlc.class,2,2);
+    }
+    @Test public void shouldFindAllFlexSDKIssues() throws Exception {
+        parserIntegrationTest("flexsdk.txt",FlexSDK.class,5,5);
+    }
+    @Test public void shouldFindAllFxcopSDKIssues() throws Exception {
+        parserIntegrationTest("fxcop.xml",Fxcop.class,2,2);
+    }
 
         System.out.println("----------------------------------------------------------------------");
         System.out.println(script);
