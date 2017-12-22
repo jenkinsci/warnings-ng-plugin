@@ -40,7 +40,7 @@ public class PipelineITest extends IntegrationTest {
     @Test
     public void shouldFindAllGendarmeIssues() throws Exception {
         WorkflowJob job = createJobWithWorkspaceFile("Gendarme.xml");
-        job.setDefinition(parseAndPublish(GhsMulti.class));
+        job.setDefinition(parseAndPublish(Gendarme.class));
 
         AnalysisResult result = scheduleBuild(job);
 
@@ -525,7 +525,8 @@ public class PipelineITest extends IntegrationTest {
     }
 
     private String createScanForIssuesStep(final Class<? extends StaticAnalysisTool> parserClass, final String issuesName) {
-        return String.format("def %s = scanForIssues tool: [$class: '%s'], pattern:'**/*issues.txt'", issuesName, parserClass.getSimpleName());
+        return String.format("def %s = scanForIssues tool: [$class: '%s'], pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
+                issuesName, parserClass.getSimpleName());
     }
 
     private WorkflowJob createJobWithWorkspaceFile(final String... fileNames) throws IOException, InterruptedException {

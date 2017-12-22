@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -37,7 +38,11 @@ public class IntegrationTest {
             throws IOException, InterruptedException {
         FilePath workspace = j.jenkins.getWorkspaceFor(job);
         for (String fileName : fileNames) {
-            workspace.child(createWorkspaceFileName(fileName)).copyFrom(getClass().getResourceAsStream(fileName));
+            InputStream resourceAsStream = getClass().getResourceAsStream(fileName);
+            if (resourceAsStream == null) {
+                throw new AssertionError("No such file: " + fileName);
+            }
+            workspace.child(createWorkspaceFileName(fileName)).copyFrom(resourceAsStream);
         }
     }
 
