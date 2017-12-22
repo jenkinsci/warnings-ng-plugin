@@ -1,0 +1,26 @@
+11:02:13  [INFO] [INFO] Installing C:\Jenkins\workspace\VIGO - Compile\test\at.biac.offer.accident.test\pom.xml to C:\Dokumente und Einstellungen\Administrator\.m2\repository\at\biac\offer\at.biac.offer.accident.test\1.12.4-SNAPSHOT\at.biac.offer.accident.test-1.12.4-SNAPSHOT.pom
+11:02:13  --- maven-install-plugin:2.3.1:install (default-install) @ at.biac.offer.accident.test ---
+11:02:13  [JENKINS] Archiving C:\Jenkins\workspace\VIGO - Compile\test\at.biac.offer.accident.test\pom.xml to /home/hudson/Hudson/jobs/VIGO - Compile/modules/at.biac.offer$at.biac.offer.accident.test/builds/2012-03-27_10-48-25/archive/at.biac.offer/at.biac.offer.accident.test/1.12.4-SNAPSHOT/at.biac.offer.accident.test-1.12.4-SNAPSHOT.pom
+11:02:13  [JENKINS] Archiving C:\Jenkins\workspace\VIGO - Compile\test\at.biac.offer.accident.test\target\at.biac.offer.accident.test-1.12.4-SNAPSHOT.jar to /home/hudson/Hudson/jobs/VIGO - Compile/modules/at.biac.offer$at.biac.offer.accident.test/builds/2012-03-27_10-48-25/archive/at.biac.offer/at.biac.offer.accident.test/1.12.4-SNAPSHOT/at.biac.offer.accident.test-1.12.4-SNAPSHOT.jar
+11:02:14  [INFO] -------------------------------------------------------------
+11:02:14  [ERROR] COMPILATION ERROR : 
+11:02:14  [INFO] -------------------------------------------------------------
+11:02:14  [ERROR] \Jenkins\workspace\VIGO - Compile\at.biac.offer.ui.motor\src\at\biac\offer\ui\motor\offer\BMRatingDetails.java:[350,48] cannot find symbol
+11:02:14  symbol  : method getTotalRabate()
+11:02:14  location: interface at.biac.offer.model.motor.policy.IMotorContractComponent
+
+22:07:24  [INFO] Scanning for projects...
+22:07:27  [WARNING] 
+22:07:27  [WARNING] Some problems were encountered while building the effective model for org.jvnet.hudson.plugins.findbugs:library:jar:2.0.1-SNAPSHOT
+22:07:27  [WARNING] 'parent.relativePath' points at org.jvnet.hudson.plugins.findbugs:parent instead of org.jenkins-ci:jenkins, please verify your project structure @ line 4, column 11
+22:07:27  [WARNING] 
+22:07:27  [WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+22:07:27  [WARNING] 
+22:07:27  [WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+22:07:27  [WARNING] 
+
+22:07:29  Downloading: https://nexus.faktorzehn.de/content/groups/private/org/codehaus/groovy/maven/gmaven-plugin/1.1/gmaven-plugin-1.1.pom
+22:07:30  [WARNING] The POM for org.codehaus.groovy.maven:gmaven-plugin:jar:1.1 is missing, no dependency information available
+22:07:30  [WARNING] Failed to retrieve plugin descriptor for org.codehaus.groovy.maven:gmaven-plugin:1.1: Plugin org.codehaus.groovy.maven:gmaven-plugin:1.1 or one of its dependencies could not be resolved: Failed to read artifact descriptor for org.codehaus.groovy.maven:gmaven-plugin:jar:1.1
+22:07:30  [WARNING] The POM for org.codehaus.groovy.maven:gmaven-plugin:jar:1.1 is missing, no dependency information available
+22:07:30  [WARNING] Failed to retrieve plugin descriptor for org.codehaus.groovy.maven:gmaven-plugin:1.1: Plugin org.codehaus.groovy.maven:gmaven-plugin:1.1 or one of its dependencies could not be resolved: Failed to read artifact descriptor for org.codehaus.groovy.maven:gmaven-plugin:jar:1.1

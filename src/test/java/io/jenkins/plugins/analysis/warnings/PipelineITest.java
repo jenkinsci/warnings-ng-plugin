@@ -584,6 +584,105 @@ public class PipelineITest extends IntegrationTest {
         assertThat(result.getIssues()).hasSize(8);
     }
 
+    /**
+     * Runs the Gcc3Compiler parser on an output file that contains several issues: the build should report 14 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllGcc4CompilerIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("gcc4.txt");
+        job.setDefinition(parseAndPublish(Gcc4Compiler.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(14);
+        assertThat(result.getIssues()).hasSize(14);
+    }
+
+    /**
+     * Runs the Gcc3Compiler parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllGcc3CompilerIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("gcc.txt");
+        job.setDefinition(parseAndPublish(Gcc.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(8);
+        assertThat(result.getIssues()).hasSize(8);
+    }
+
+    /**
+     * Runs the Gcc4Linker parser on an output file that contains several issues: the build should report 7 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllGcc4LinkerIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("gcc4ld.txt");
+        job.setDefinition(parseAndPublish(Gcc4Linker.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(7);
+        assertThat(result.getIssues()).hasSize(7);
+    }
+
+    /**
+     * Runs the Maven console parser on an output file that contains several issues: the build should report 4 issues.
+     *
+     * @throws Exception in case of an error
+     */
+    @Test
+    public void shouldFindAllMavenConsoleIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("maven-console.txt");
+        job.setDefinition(parseAndPublish(MavenConsole.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(4);
+        assertThat(result.getIssues()).hasSize(4);
+    }
+
+    /**
+     * Runs the MetrowerksCWCompiler parser on an output file that contains several issues: the build should report 5 issues.
+     *
+     * @throws Exception in case of an error
+     */
+    @Test
+    public void shouldFindAllMetrowerksCWCompilerIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("MetrowerksCWCompiler.txt");
+        job.setDefinition(parseAndPublish(MetrowerksCWCompiler.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(5);
+        assertThat(result.getIssues()).hasSize(5);
+    }
+
+    /**
+     * Runs the MetrowerksCWLinker parser on an output file that contains several issues: the build should report 3 issues.
+     *
+     * @throws Exception in case of an error
+     */
+    @Test
+    public void shouldFindAllMetrowerksCWLinkerIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("MetrowerksCWLinker.txt");
+        job.setDefinition(parseAndPublish(MetrowerksCWLinker.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(3);
+        assertThat(result.getIssues()).hasSize(3);
+    }
+
     private CpsFlowDefinition parseAndPublish(final Class<? extends StaticAnalysisTool> parserClass) {
         return asStage(createScanForIssuesStep(parserClass), PUBLISH_ISSUES_STEP);
     }
@@ -638,63 +737,9 @@ public class PipelineITest extends IntegrationTest {
         script.append("  }\n");
         script.append("}\n");
 
-
         System.out.println("----------------------------------------------------------------------");
         System.out.println(script);
         System.out.println("----------------------------------------------------------------------");
         return new CpsFlowDefinition(script.toString(), true);
     }
-
-    /**
-     * Runs the Gcc3Compiler parser on an output file that contains several issues: the build should report 8 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllGcc4CompilerIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("gcc4.txt");
-        job.setDefinition(parseAndPublish(Gcc4Compiler.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(14);
-        assertThat(result.getIssues()).hasSize(14);
-    }
-
-    /**
-     * Runs the Gcc3Compiler parser on an output file that contains several issues: the build should report 8 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllGcc3CompilerIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("gcc.txt");
-        job.setDefinition(parseAndPublish(Gcc.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(8);
-        assertThat(result.getIssues()).hasSize(8);
-    }
-
-    /**
-     * Runs the Gcc4Linker parser on an output file that contains several issues: the build should report 2 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllGcc4LinkerIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("gcc4ld.txt");
-        job.setDefinition(parseAndPublish(Gcc4Linker.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(7);
-        assertThat(result.getIssues()).hasSize(7);
-    }
-
-
 }
