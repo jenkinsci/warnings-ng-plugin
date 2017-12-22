@@ -1,26 +1,30 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.*;
-import edu.hm.hafner.analysis.parser.IntelParser;
-import hudson.Extension;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.io.File;
-import java.nio.charset.Charset;
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.parser.IntelParser;
+import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
 
-public class Intel extends StaticAnalysisTool {
+import hudson.Extension;
 
+/**
+ * Provides a parser and customized messages for the Intel Compiler.
+ *
+ * @author Ullrich Hafner
+ */
+public class Intel extends StreamBasedParser {
     private static final String PARSER_NAME = Messages.Warnings_IntelC_ParserName();
 
     @DataBoundConstructor
     public Intel() {
+        // empty constructor required for stapler
     }
 
     @Override
-    public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder issueBuilder) throws ParsingException, ParsingCanceledException {
-        return new IntelParser().parse(file, charset, issueBuilder);
+    protected AbstractParser createParser() {
+        return new IntelParser();
     }
 
     /**
@@ -29,7 +33,7 @@ public class Intel extends StaticAnalysisTool {
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         public Descriptor() {
-            super(new Intel.LabelProvider());
+            super(new LabelProvider());
         }
     }
 
@@ -38,7 +42,7 @@ public class Intel extends StaticAnalysisTool {
      */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("Intel", PARSER_NAME);
+            super("intel", PARSER_NAME);
         }
     }
 }

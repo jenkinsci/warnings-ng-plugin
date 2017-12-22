@@ -1,26 +1,30 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.*;
-import edu.hm.hafner.analysis.parser.InvalidsParser;
-import hudson.Extension;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.io.File;
-import java.nio.charset.Charset;
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.parser.InvalidsParser;
+import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
 
-public class Invalids extends StaticAnalysisTool {
+import hudson.Extension;
 
+/**
+ * Provides a parser and customized messages for Oracle Invalids.
+ *
+ * @author Ullrich Hafner
+ */
+public class Invalids extends StreamBasedParser {
     private static final String PARSER_NAME = Messages.Warnings_OracleInvalids_ParserName();
 
     @DataBoundConstructor
     public Invalids() {
+        // empty constructor required for stapler
     }
 
     @Override
-    public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder issueBuilder) throws ParsingException, ParsingCanceledException {
-        return new InvalidsParser().parse(file, charset, issueBuilder);
+    protected AbstractParser createParser() {
+        return new InvalidsParser();
     }
 
     /**
@@ -29,7 +33,7 @@ public class Invalids extends StaticAnalysisTool {
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         public Descriptor() {
-            super(new Invalids.LabelProvider());
+            super(new LabelProvider());
         }
     }
 
@@ -38,7 +42,7 @@ public class Invalids extends StaticAnalysisTool {
      */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("Invalids", PARSER_NAME);
+            super("invalids", PARSER_NAME);
         }
     }
 }

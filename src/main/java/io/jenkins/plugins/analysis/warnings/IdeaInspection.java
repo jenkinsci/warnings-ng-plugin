@@ -1,26 +1,30 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.*;
-import edu.hm.hafner.analysis.parser.IdeaInspectionParser;
-import hudson.Extension;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.io.File;
-import java.nio.charset.Charset;
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.parser.IdeaInspectionParser;
+import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
 
-public class IdeaInspection extends StaticAnalysisTool {
+import hudson.Extension;
 
+/**
+ * Provides a parser and customized messages for IDEA Inspections.
+ *
+ * @author Ullrich Hafner
+ */
+public class IdeaInspection extends StreamBasedParser {
     private static final String PARSER_NAME = Messages.Warnings_IdeaInspection_ParserName();
 
     @DataBoundConstructor
     public IdeaInspection() {
+        // empty constructor required for stapler
     }
 
     @Override
-    public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder issueBuilder) throws ParsingException, ParsingCanceledException {
-        return new IdeaInspectionParser().parse(file, charset, issueBuilder);
+    protected AbstractParser createParser() {
+        return new IdeaInspectionParser();
     }
 
     /**
@@ -29,7 +33,7 @@ public class IdeaInspection extends StaticAnalysisTool {
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         public Descriptor() {
-            super(new IdeaInspection.LabelProvider());
+            super(new LabelProvider());
         }
     }
 
@@ -38,7 +42,7 @@ public class IdeaInspection extends StaticAnalysisTool {
      */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("IdeaInspection", PARSER_NAME);
+            super("idea", PARSER_NAME);
         }
     }
 }
