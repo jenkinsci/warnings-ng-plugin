@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import hudson.FilePath;
 
@@ -21,6 +22,20 @@ import hudson.FilePath;
  */
 // TODO: if this class is called on the master then an remote call is initiated for each affected file
 public class AbsolutePathGenerator {
+    private final FileSystem fileSystem;
+
+    /**
+     * Creates a new instance of {@link AbsolutePathGenerator}.
+     */
+    public AbsolutePathGenerator() {
+        this(new FileSystem());
+    }
+
+    @VisibleForTesting
+    AbsolutePathGenerator(final FileSystem fileSystem) {
+        this.fileSystem = fileSystem;
+    }
+
     /**
      * Resolves absolute paths of the affected files of the specified set of issues.
      *
@@ -85,7 +100,7 @@ public class AbsolutePathGenerator {
     private Map<String, String> resolveAbsoluteNames(final Set<String> relativeFileNames, final FilePath workspace) {
         Map<String, String> relativeToAbsoluteMapping = new HashMap<>();
         for (String fileName : relativeFileNames) {
-            String absolute = resolveFile(fileName, workspace);
+            String absolute = fileSystem.resolveFile(fileName, workspace);
             if (!absolute.equals(fileName)) {
                 relativeToAbsoluteMapping.put(fileName, absolute);
             }
@@ -93,16 +108,19 @@ public class AbsolutePathGenerator {
         return relativeToAbsoluteMapping;
     }
 
-    private String resolveFile(final String fileName, final FilePath workspace) {
-        try {
-            FilePath remoteFile = workspace.child(fileName);
-            if (remoteFile.exists()) {
-                return remoteFile.getRemote();
+    @VisibleForTesting
+    static class FileSystem {
+        String resolveFile(final String fileName, final FilePath workspace) {
+            try {
+                FilePath remoteFile = workspace.child(fileName);
+                if (remoteFile.exists()) {
+                    return remoteFile.getRemote();
+                }
             }
+            catch (IOException | InterruptedException ignored) {
+                // ignore
+            }
+            return fileName;
         }
-        catch (IOException | InterruptedException ignored) {
-            // ignore
-        }
-        return fileName;
     }
-}
+ }
