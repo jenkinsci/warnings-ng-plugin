@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
+import java.util.Collection;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 
 import edu.hm.hafner.analysis.Issue;
 
@@ -46,27 +46,16 @@ public class AffectedFilesResolver {
      *         if the user cancels the processing
      */
     public String copyFilesWithAnnotationsToBuildFolder(final VirtualChannel channel, final FilePath jenkinsBuildRoot,
-            final String defaultEncoding, final ImmutableSortedSet<String> affectedFiles)
+            final String defaultEncoding, final Collection<String> affectedFiles)
             throws IOException, InterruptedException {
-        FilePath directory = jenkinsBuildRoot.child(AFFECTED_FILES_FOLDER_NAME);
-        if (!directory.exists()) {
-            try {
-                directory.mkdirs();
-            }
-            catch (IOException exception) {
-                throw new IOException("Can't create directory for workspace files that contain issues: "
-                        + directory.getName(), exception);
-            }
-        }
-
         int copied = 0;
         int notFound = 0;
         int error = 0;
         for (String file : affectedFiles) {
-            Path path = Paths.get(file);
-            if (Files.exists(path)) {
+            if (exists(file)) {
+                FilePath directory = ensureThatBuildDirectoryExists(jenkinsBuildRoot);
                 FilePath buildFolderCopy = directory.child(getTempName(file));
-                FilePath sourceFileOnAgent = new FilePath(channel, path.toString());
+                FilePath sourceFileOnAgent = new FilePath(channel, Paths.get(file).toString());
                 try {
                     sourceFileOnAgent.copyTo(buildFolderCopy);
                     copied++;
@@ -80,7 +69,31 @@ public class AffectedFilesResolver {
                 notFound++;
             }
         }
-        return String.format("(%d copied, %d not-found, %d with I/O error)", copied, notFound, error);
+        return String.format("%d copied, %d not-found, %d with I/O error", copied, notFound, error);
+    }
+
+    private boolean exists(final String file) {
+        try {
+            return Files.exists(Paths.get(file));
+        }
+        catch (InvalidPathException ignored) {
+            return false;
+        }
+    }
+
+    private FilePath ensureThatBuildDirectoryExists(final FilePath jenkinsBuildRoot)
+            throws IOException, InterruptedException {
+        FilePath directory = jenkinsBuildRoot.child(AFFECTED_FILES_FOLDER_NAME);
+        if (!directory.exists()) {
+            try {
+                directory.mkdirs();
+            }
+            catch (IOException exception) {
+                throw new IOException("Can't create directory for workspace files that contain issues: "
+                        + directory.getName(), exception);
+            }
+        }
+        return directory;
     }
 
     /**
