@@ -1,16 +1,11 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.File;
-import java.nio.charset.Charset;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.EclipseParser;
 import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
 
 import hudson.Extension;
 
@@ -19,7 +14,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class Eclipse extends StaticAnalysisTool {
+public class Eclipse extends StreamBasedParser {
     private static final String PARSER_NAME = Messages.Warnings_EclipseParser_ParserName();
 
     @DataBoundConstructor
@@ -28,8 +23,8 @@ public class Eclipse extends StaticAnalysisTool {
     }
 
     @Override
-    public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder) {
-        return new EclipseParser().parse(file, charset, builder);
+    protected AbstractParser createParser() {
+        return new EclipseParser();
     }
 
     /** Registers this tool as extension point implementation. */

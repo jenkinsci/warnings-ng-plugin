@@ -1,17 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.File;
-import java.nio.charset.Charset;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.JavacParser;
 import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
 
 import hudson.Extension;
 import hudson.plugins.warnings.WarningsDescriptor;
@@ -22,7 +17,7 @@ import hudson.plugins.warnings.parser.Messages;
  *
  * @author Ullrich Hafner
  */
-public class Java extends StaticAnalysisTool {
+public class Java extends StreamBasedParser {
     private static final String JAVA_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-24x24.png";
     private static final String JAVA_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-48x48.png";
     private static final String ID = "java";
@@ -33,8 +28,8 @@ public class Java extends StaticAnalysisTool {
     }
 
     @Override
-    public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder) {
-        return new JavacParser().parse(file, charset, builder);
+    protected AbstractParser createParser() {
+        return new JavacParser();
     }
 
     /** Registers this tool as extension point implementation. */

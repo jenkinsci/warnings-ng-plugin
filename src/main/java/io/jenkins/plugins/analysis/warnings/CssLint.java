@@ -1,18 +1,11 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.File;
-import java.nio.charset.Charset;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.ParsingCanceledException;
-import edu.hm.hafner.analysis.ParsingException;
+import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.CssLintParser;
 import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
 
 import hudson.Extension;
 
@@ -21,7 +14,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class CssLint extends StaticAnalysisTool {
+public class CssLint extends StreamBasedParser {
     private static final String PARSER_NAME = Messages.Warnings_CssLint_ParserName();
 
     @DataBoundConstructor
@@ -30,9 +23,8 @@ public class CssLint extends StaticAnalysisTool {
     }
 
     @Override
-    public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder)
-            throws ParsingException, ParsingCanceledException {
-        return new CssLintParser().parse(file, charset, builder);
+    protected AbstractParser createParser() {
+        return new CssLintParser();
     }
 
     /**
