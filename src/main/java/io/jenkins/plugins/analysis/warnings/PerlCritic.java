@@ -1,16 +1,20 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.*;
-import edu.hm.hafner.analysis.parser.PerlCriticParser;
-import hudson.Extension;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.io.File;
-import java.nio.charset.Charset;
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.parser.PerlCriticParser;
+import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
 
-public class PerlCritic extends StaticAnalysisTool {
+import hudson.Extension;
+
+/**
+ * Provides a parser and customized messages for Perl::Critic.
+ *
+ * @author Ullrich Hafner
+ */
+public class PerlCritic extends StreamBasedParser {
     private static final String PARSER_NAME = Messages.Warnings_PerlCritic_ParserName();
 
     @DataBoundConstructor
@@ -18,6 +22,10 @@ public class PerlCritic extends StaticAnalysisTool {
         // empty constructor required for stapler
     }
 
+    @Override
+    protected AbstractParser createParser() {
+        return new PerlCriticParser();
+    }
     /**
      * Registers this tool as extension point implementation.
      */
@@ -26,6 +34,7 @@ public class PerlCritic extends StaticAnalysisTool {
         public Descriptor() {
             super(new LabelProvider());
         }
+
     }
 
     /**
@@ -33,12 +42,8 @@ public class PerlCritic extends StaticAnalysisTool {
      */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("perlcritic", PARSER_NAME);
+            super("perl-critic", PARSER_NAME);
         }
-    }
 
-    @Override
-    public Issues<Issue> parse(File file, Charset charset, IssueBuilder builder) throws ParsingException, ParsingCanceledException {
-        return new PerlCriticParser().parse(file, charset, builder);
     }
 }

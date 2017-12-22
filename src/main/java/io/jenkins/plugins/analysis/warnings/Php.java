@@ -1,21 +1,30 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.*;
-import edu.hm.hafner.analysis.parser.PhpParser;
-import hudson.Extension;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.io.File;
-import java.nio.charset.Charset;
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.parser.PhpParser;
+import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
 
-public class Php extends StaticAnalysisTool {
+import hudson.Extension;
+
+/**
+ * Provides a parser and customized messages for Php runtime errors and warnings.
+ *
+ * @author Ullrich Hafner
+ */
+public class Php extends StreamBasedParser {
     private static final String PARSER_NAME = Messages.Warnings_PHP_ParserName();
 
     @DataBoundConstructor
     public Php() {
         // empty constructor required for stapler
+    }
+
+    @Override
+    protected AbstractParser createParser() {
+        return new PhpParser();
     }
 
     /**
@@ -35,10 +44,5 @@ public class Php extends StaticAnalysisTool {
         private LabelProvider() {
             super("php", PARSER_NAME);
         }
-    }
-
-    @Override
-    public Issues<Issue> parse(File file, Charset charset, IssueBuilder builder) throws ParsingException, ParsingCanceledException {
-        return new PhpParser().parse(file, charset, builder);
     }
 }

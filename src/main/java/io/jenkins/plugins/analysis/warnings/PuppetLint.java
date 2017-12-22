@@ -1,21 +1,30 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.*;
-import edu.hm.hafner.analysis.parser.PuppetLintParser;
-import hudson.Extension;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.io.File;
-import java.nio.charset.Charset;
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.parser.PuppetLintParser;
+import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
 
-public class PuppetLint extends StaticAnalysisTool {
+import hudson.Extension;
+
+/**
+ * Provides a parser and customized messages for Puppet Lint.
+ *
+ * @author Ullrich Hafner
+ */
+public class PuppetLint extends StreamBasedParser {
     private static final String PARSER_NAME = Messages.Warnings_Puppet_ParserName();
 
     @DataBoundConstructor
     public PuppetLint() {
         // empty constructor required for stapler
+    }
+
+    @Override
+    protected AbstractParser createParser() {
+        return new PuppetLintParser();
     }
 
     /**
@@ -35,10 +44,5 @@ public class PuppetLint extends StaticAnalysisTool {
         private LabelProvider() {
             super("puppetlint", PARSER_NAME);
         }
-    }
-
-    @Override
-    public Issues<Issue> parse(File file, Charset charset, IssueBuilder builder) throws ParsingException, ParsingCanceledException {
-        return new PuppetLintParser().parse(file, charset, builder);
     }
 }
