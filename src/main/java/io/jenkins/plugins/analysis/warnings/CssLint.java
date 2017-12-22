@@ -1,17 +1,27 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.*;
-import edu.hm.hafner.analysis.parser.CssLintParser;
-import hudson.Extension;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
-import org.kohsuke.stapler.DataBoundConstructor;
-
 import java.io.File;
 import java.nio.charset.Charset;
 
-public class CssLint extends StaticAnalysisTool {
+import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.ParsingCanceledException;
+import edu.hm.hafner.analysis.ParsingException;
+import edu.hm.hafner.analysis.parser.CssLintParser;
+import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
+
+import hudson.Extension;
+
+/**
+ * Provides a parser and customized messages for CSS-Lint.
+ *
+ * @author Ullrich Hafner
+ */
+public class CssLint extends StaticAnalysisTool {
     private static final String PARSER_NAME = Messages.Warnings_CssLint_ParserName();
 
     @DataBoundConstructor
@@ -20,8 +30,9 @@ public class CssLint extends StaticAnalysisTool {
     }
 
     @Override
-    public Issues<Issue> parse(File file, Charset charset, IssueBuilder issueBuilder) throws ParsingException, ParsingCanceledException {
-        return new CssLintParser().parse(file, charset, issueBuilder);
+    public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder)
+            throws ParsingException, ParsingCanceledException {
+        return new CssLintParser().parse(file, charset, builder);
     }
 
     /**
@@ -30,7 +41,7 @@ public class CssLint extends StaticAnalysisTool {
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         public Descriptor() {
-            super(new CssLint.LabelProvider());
+            super(new LabelProvider());
         }
     }
 
