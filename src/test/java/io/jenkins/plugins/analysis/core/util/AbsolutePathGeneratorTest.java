@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.util;
 
 import java.io.File;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -20,41 +21,73 @@ import hudson.FilePath;
  * @author Ullrich Hafner
  */
 class AbsolutePathGeneratorTest {
+    private static final String WORKSPACE_PATH = "path";
+    private static final FilePath WORKSPACE = new FilePath(new File(WORKSPACE_PATH));
+    private static final IssueBuilder ISSUE_BUILDER = new IssueBuilder();
+
+    /**
+     * Ensures that illegal file names are processed without problems. Afterwards, the path name should be unchanged.
+     */
     @ParameterizedTest(name = "[{index}] Illegal filename = {0}")
     @ValueSource(strings = {"/does/not/exist", "!<>$$&%/&(", "\0 Null-Byte"})
     void shouldReturnFallbackOnError(final String fileName) {
-        AbsolutePathGenerator generator = new AbsolutePathGenerator();
-        IssueBuilder builder = new IssueBuilder();
+        Issues<Issue> issues = createIssuesSingleton(fileName, ISSUE_BUILDER);
 
+        Issues<Issue> resolved = new AbsolutePathGenerator().run(issues, ISSUE_BUILDER, WORKSPACE);
+
+        assertThat(resolved.iterator()).containsExactly(issues.get(0));
+    }
+
+    private Issues<Issue> createIssuesSingleton(final String fileName, final IssueBuilder issueBuilder) {
         Issues<Issue> issues = new Issues<>();
-        Issue issue = builder.setOrigin("Test").setFileName(fileName).build();
+        Issue issue = issueBuilder.setFileName(fileName).build();
         issues.add(issue);
-
-        Issues<Issue> resolved = generator.run(issues, builder, new FilePath(new File("path")));
-
-        assertThat(resolved.iterator()).containsExactly(issue);
+        return issues;
     }
 
     @ParameterizedTest(name = "[{index}] File name = {0}")
     @ValueSource(strings = {"relative/file.txt", "../file.txt", "file.txt"})
     void shouldResolveRelativePath(final String fileName) {
-        String prefix = "path";
-        FilePath workspace = new FilePath(new File(prefix));
-        String absolutePath = prefix + "/" + fileName;
+        String absolutePath = WORKSPACE_PATH + "/" + fileName;
 
         FileSystem fileSystem = mock(FileSystem.class);
-        when(fileSystem.resolveFile(fileName, workspace)).thenReturn(absolutePath);
+        when(fileSystem.resolveFile(fileName, WORKSPACE)).thenReturn(absolutePath);
 
-        IssueBuilder builder = new IssueBuilder();
-
-        Issues<Issue> issues = new Issues<>();
-        Issue issue = builder.setOrigin("Test").setFileName(fileName).build();
-        issues.add(issue);
+        Issues<Issue> issues = createIssuesSingleton(fileName, ISSUE_BUILDER.setOrigin("Test"));
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator(fileSystem);
+        Issues<Issue> resolved = generator.run(issues, ISSUE_BUILDER, WORKSPACE);
 
-        Issues<Issue> resolved = generator.run(issues, builder, workspace);
-
-        assertThat(resolved.iterator()).containsExactly(builder.setFileName(absolutePath).build());
+        assertThat(resolved.iterator()).containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build());
     }
+
+    @Test
+    void shouldDoNothingIfNoIssuesPresent() {
+        AbsolutePathGenerator generator = new AbsolutePathGenerator();
+        Issues<Issue> resolved = generator.run(new Issues<>(), ISSUE_BUILDER, WORKSPACE);
+        assertThat(resolved).hasSize(0);
+    }
+
+    /**
+     * Ensures that absolute paths are not changed while relative paths are resolved.
+     */
+    @Test
+    void shouldNotTouchAbsolutePath() {
+        String relative = "relative.txt";
+        String absolutePath = WORKSPACE_PATH + "/" + relative;
+
+        FileSystem fileSystem = mock(FileSystem.class);
+        when(fileSystem.resolveFile(relative, WORKSPACE)).thenReturn(absolutePath);
+
+        Issues<Issue> issues = createIssuesSingleton(relative, ISSUE_BUILDER.setOrigin("Test"));
+        Issue issueWithAbsolutePath = ISSUE_BUILDER.setFileName("/absolute/path.txt").build();
+        issues.add(issueWithAbsolutePath);
+
+        AbsolutePathGenerator generator = new AbsolutePathGenerator(fileSystem);
+        Issues<Issue> resolved = generator.run(issues, ISSUE_BUILDER, WORKSPACE);
+
+        assertThat(resolved.iterator())
+                .containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build(), issueWithAbsolutePath);
+    }
+
 }
