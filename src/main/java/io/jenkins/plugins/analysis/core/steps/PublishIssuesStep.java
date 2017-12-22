@@ -503,7 +503,7 @@ public class PublishIssuesStep extends Step {
 
             Instant startCopy = Instant.now();
             String copyingLogMessage = new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(getChannel(),
-                    getBuildFolder(), EncodingValidator.getEncoding(defaultEncoding), files);
+                    getBuildFolder(), EncodingValidator.getEncoding(defaultEncoding), files.castToCollection());
             logger.log("Copied %d affected files from '%s' to build folder (%s)",
                     files.size(), workspace, copyingLogMessage);
             logger.log("Copying affected files took %s", getElapsedTime(startCopy));
