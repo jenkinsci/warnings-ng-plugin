@@ -254,6 +254,75 @@ public class PipelineITest extends IntegrationTest {
         assertThat(result.getIssues()).hasSize(8);
     }
 
+
+    /**
+     * Runs the Idea Inspection parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllIdeaInspectionIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("IdeaInspectionExample.xml");
+        job.setDefinition(parseAndPublish(IdeaInspection.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(1);
+        assertThat(result.getIssues()).hasSize(1);
+    }
+
+    /**
+     * Runs the Intel parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllIntelIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("intelc.txt");
+        job.setDefinition(parseAndPublish(Intel.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(7);
+        assertThat(result.getIssues()).hasSize(7);
+    }
+
+    /**
+     * Runs the Invalids parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllInvalidsIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("invalids.txt");
+        job.setDefinition(parseAndPublish(Invalids.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(3);
+        assertThat(result.getIssues()).hasSize(3);
+    }
+
+    /**
+     * Runs the Javac parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllJavacIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("javac.txt");
+        job.setDefinition(parseAndPublish(Javac.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(2);
+        assertThat(result.getIssues()).hasSize(2);
+    }
+
     /**
      * Runs the CssLint parser on an output file that contains several issues: the build should report 51 issues.
      *
