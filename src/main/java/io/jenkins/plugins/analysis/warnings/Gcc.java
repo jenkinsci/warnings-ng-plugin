@@ -1,24 +1,20 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.parser.EclipseParser;
-import edu.hm.hafner.analysis.parser.GccParser;
-import hudson.Extension;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.io.File;
-import java.nio.charset.Charset;
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.parser.GccParser;
+import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
+
+import hudson.Extension;
 
 /**
  * Provides a parser and customized messages for the Gcc3 Compiler.
  *
  * @author Raphael Furch
  */
-public class Gcc extends StaticAnalysisTool {
+public class Gcc extends StreamBasedParser {
     private static final String PARSER_NAME = Messages.Warnings_gcc3_ParserName();
 
     @DataBoundConstructor
@@ -27,8 +23,8 @@ public class Gcc extends StaticAnalysisTool {
     }
 
     @Override
-    public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder) {
-        return new GccParser().parse(file, charset, builder);
+    protected AbstractParser createParser() {
+        return new GccParser();
     }
 
     /** Registers this tool as extension point implementation. */
