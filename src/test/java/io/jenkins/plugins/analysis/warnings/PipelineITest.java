@@ -18,7 +18,6 @@ import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 
 import hudson.model.Result;
-import org.junit.jupiter.api.TestTemplate;
 
 /**
  * Integration tests for pipeline support in the warning plug-in.
@@ -314,6 +313,12 @@ public class PipelineITest extends IntegrationTest {
         assertThat(result.getIssues()).hasSize(8);
     }
 
+    /**
+     * Runs the PyLint parser on an output file that contains several issues: the build should report 6 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
     @Test
     public void shouldFindAllPyLintParserIssues() throws Exception {
         WorkflowJob job = createJobWithWorkspaceFile("pyLint.txt");
@@ -325,6 +330,12 @@ public class PipelineITest extends IntegrationTest {
         assertThat(result.getIssues()).hasSize(6);
     }
 
+    /**
+     * Runs the QACSourceCodeAnalyser parser on an output file that contains several issues: the build should report 9 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
     @Test
     public void shouldFindAllQACSourceCodeAnalyserIssues() throws Exception {
         WorkflowJob job = createJobWithWorkspaceFile("QACSourceCodeAnalyser.txt");
@@ -336,6 +347,12 @@ public class PipelineITest extends IntegrationTest {
         assertThat(result.getIssues()).hasSize(9);
     }
 
+    /**
+     * Runs the Resharper parser on an output file that contains several issues: the build should report 3 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
     @Test
     public void shouldFindAllResharperInspectCodeIssues() throws Exception {
         WorkflowJob job = createJobWithWorkspaceFile("ResharperInspectCode.xml");
@@ -347,6 +364,12 @@ public class PipelineITest extends IntegrationTest {
         assertThat(result.getIssues()).hasSize(3);
     }
 
+    /**
+     * Runs the RFLint parser on an output file that contains several issues: the build should report 8 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
     @Test
     public void shouldFindAllRfLintIssues() throws Exception {
         WorkflowJob job = createJobWithWorkspaceFile("rflint.txt");

@@ -1,32 +1,37 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.*;
-import edu.hm.hafner.analysis.parser.QACSourceCodeAnalyserParser;
-import hudson.Extension;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.io.File;
-import java.nio.charset.Charset;
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.parser.QACSourceCodeAnalyserParser;
+import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
 
-public class QACSourceCodeAnalyser extends StaticAnalysisTool {
+import hudson.Extension;
 
+/**
+ * Provides a parser and customized messages for the PRQA QA-C Sourcecode Analyser.
+ *
+ * @author Ullrich Hafner
+ */
+public class QACSourceCodeAnalyser extends StreamBasedParser {
     private static final String PARSER_NAME = Messages.Warnings_QAC_ParserName();
 
     @DataBoundConstructor
-    public QACSourceCodeAnalyser() {}
+    public QACSourceCodeAnalyser() {
+        // empty constructor required for stapler
+    }
 
     @Override
-    public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder issueBuilder) throws ParsingException, ParsingCanceledException {
-        return new QACSourceCodeAnalyserParser().parse(file, charset, issueBuilder);
+    protected AbstractParser createParser() {
+        return new QACSourceCodeAnalyserParser();
     }
 
     /** Registers this tool as extension point implementation. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         public Descriptor() {
-            super(new QACSourceCodeAnalyser.LabelProvider());
+            super(new LabelProvider());
         }
     }
 
