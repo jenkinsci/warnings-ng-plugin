@@ -43,14 +43,14 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the FlexSDK parser on an output file that contains several issues: the build should report 3 issues.
+     * Runs the FlexSDK parser on an output file that contains several issues: the build should report 5 issues.
      *
      * @throws Exception
      *         in case of an error
      */
     @Test
     public void shouldFindAllFlexSDKIssues() {
-        shouldFindIssuesOfTool(FlexSDK.class, "flexsdk.txt", 3);
+        shouldFindIssuesOfTool(FlexSDK.class, "flexsdk.txt", 5);
     }
 
     /**
