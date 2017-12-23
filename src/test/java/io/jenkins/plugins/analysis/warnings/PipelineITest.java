@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -27,590 +28,274 @@ import hudson.model.Result;
  * @see PublishIssuesStep
  */
 @Tag("IntegrationTest")
-@SuppressWarnings({"OverlyBroadThrowsClause", "ProhibitedExceptionDeclared"})
 public class PipelineITest extends IntegrationTest {
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
 
-    /**
-     * Runs the Erlc parser on an output file that contains several issues: the build should report 2 issues.
-     */
+    /** Runs the Erlc parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllErlcIssues() {
         shouldFindIssuesOfTool(Erlc.class, "erlc.txt", 2);
     }
 
-    /**
-     * Runs the FlexSDK parser on an output file that contains several issues: the build should report 5 issues.
-     */
+    /** Runs the FlexSDK parser on an output file that contains 5 issues. */
     @Test
     public void shouldFindAllFlexSDKIssues() {
         shouldFindIssuesOfTool(FlexSDK.class, "flexsdk.txt", 5);
     }
 
-    /**
-     * Runs the FxCop parser on an output file that contains several issues: the build should report 2 issues.
-     */
+    /** Runs the FxCop parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllFxcopSDKIssues() {
         shouldFindIssuesOfTool(Fxcop.class, "fxcop.xml", 2);
     }
 
-    private void shouldFindIssuesOfTool(final Class<? extends StaticAnalysisTool> tool, final String filename,
-            final int expectedSizeOfIssues) {
-        try {
-            WorkflowJob job = createJobWithWorkspaceFile(filename);
-            job.setDefinition(parseAndPublish(tool));
+    /** Runs the Gendarme parser on an output file that contains 3 issues. */
+    @Test
+    public void shouldFindAllGendarmeIssues() {
+        shouldFindIssuesOfTool(Gendarme.class, "Gendarme.xml", 3);
+    }
 
-            AnalysisResult result = scheduleBuild(job);
-
-            assertThat(result.getTotalSize()).isEqualTo(expectedSizeOfIssues);
-            assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);
-        }
-        catch (Exception exception) {
-            throw new AssertionError(exception);
-        }
+    /** Runs the GhsMulti parser on an output file that contains 3 issues. */
+    @Test
+    public void shouldFindAllGhsMultiIssues() {
+        shouldFindIssuesOfTool(GhsMulti.class, "ghsmulti.txt", 3);
     }
 
     /**
-     * Runs the Gendarme parser on an output file that contains several issues: the build should report 3 issues.
-     *
-     * @throws Exception
-     *         in case of an error
+     * Runs the Gnat parser on an output file that contains 9 issues.
      */
     @Test
-    public void shouldFindAllGendarmeIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("Gendarme.xml");
-        job.setDefinition(parseAndPublish(Gendarme.class));
+    public void shouldFindAllGnatIssues() {
+        shouldFindIssuesOfTool(Gnat.class, "gnat.txt", 9);
+    }
 
-        AnalysisResult result = scheduleBuild(job);
+    /** Runs the GnuFortran parser on an output file that contains 4 issues. */
+    @Test
+    public void shouldFindAllGnuFortranIssues() {
+        shouldFindIssuesOfTool(GnuFortran.class, "GnuFortran.txt", 4);
+    }
 
-        assertThat(result.getTotalSize()).isEqualTo(3);
-        assertThat(result.getIssues()).hasSize(3);
+    /** Runs the GnuMakeGcc parser on an output file that contains 15 issues. */
+    @Test
+    public void shouldFindAllGnuMakeGccIssues() {
+        shouldFindIssuesOfTool(GnuMakeGcc.class, "gnuMakeGcc.txt", 15);
+    }
+
+    /** Runs the MsBuild parser on an output file that contains 6 issues. */
+    @Test
+    public void shouldFindAllMsBuildIssues() {
+        shouldFindIssuesOfTool(MsBuild.class, "msbuild.txt", 6);
+    }
+
+    /** Runs the NagFortran parser on an output file that contains 10 issues. */
+    @Test
+    public void shouldFindAllNagFortranIssues() {
+        shouldFindIssuesOfTool(NagFortran.class, "NagFortran.txt", 10);
+    }
+
+    /** Runs the Perforce parser on an output file that contains 4 issues. */
+    @Test
+    public void shouldFindAllP4Issues() {
+        shouldFindIssuesOfTool(Perforce.class, "perforce.txt", 4);
+    }
+
+    /** Runs the Pep8 parser on an output file: the build should report 8 issues. */
+    @Test
+    public void shouldFindAllPep8Issues() {
+        shouldFindIssuesOfTool(Pep8.class, "pep8Test.txt", 8);
+    }
+
+    /** Runs the Gcc3Compiler parser on an output file that contains 14 issues. */
+    @Test
+    public void shouldFindAllGcc4CompilerIssues() {
+        shouldFindIssuesOfTool(Gcc4Compiler.class, "gcc4.txt", 14);
+    }
+
+    /** Runs the Gcc3Compiler parser on an output file that contains 8 issues. */
+    @Test
+    public void shouldFindAllGcc3CompilerIssues() {
+        shouldFindIssuesOfTool(Gcc.class, "gcc.txt", 8);
+    }
+
+    /** Runs the Gcc4Linker parser on an output file that contains 7 issues. */
+    @Test
+    public void shouldFindAllGcc4LinkerIssues() {
+        shouldFindIssuesOfTool(Gcc4Linker.class, "gcc4ld.txt", 7);
+    }
+
+    /** Runs the Maven console parser on an output file that contains 4 issues. */
+    @Test
+    public void shouldFindAllMavenConsoleIssues() {
+        shouldFindIssuesOfTool(MavenConsole.class, "maven-console.txt", 4);
+    }
+
+    /** Runs the MetrowerksCWCompiler parser on an output file that contains 5 issues. */
+    @Test
+    public void shouldFindAllMetrowerksCWCompilerIssues() {
+        shouldFindIssuesOfTool(MetrowerksCWCompiler.class, "MetrowerksCWCompiler.txt", 5);
+    }
+
+    /** Runs the MetrowerksCWLinker parser on an output file that contains 3 issues. */
+    @Test
+    public void shouldFindAllMetrowerksCWLinkerIssues() {
+        shouldFindIssuesOfTool(MetrowerksCWLinker.class, "MetrowerksCWLinker.txt", 3);
+    }
+
+    /** Runs the AcuCobol parser on an output file that contains 4 issues. */
+    @Test
+    public void shouldFindAllAcuCobolIssues() {
+        shouldFindIssuesOfTool(AcuCobol.class, "acu.txt", 4);
+    }
+
+    /** Runs the Ajc parser on an output file that contains 9 issues. */
+    @Test
+    public void shouldFindAllAjcIssues() {
+        shouldFindIssuesOfTool(Ajc.class, "ajc.txt", 9);
+    }
+
+    /** Runs the AnsibleLint parser on an output file that contains 4 issues. */
+    @Test
+    public void shouldFindAllAnsibleLintIssues() {
+        shouldFindIssuesOfTool(AnsibleLint.class, "ansibleLint.txt", 4);
     }
 
     /**
-     * Runs the GhsMulti parser on an output file that contains several issues: the build should report 3 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+     * Runs the Perl::Critic parser on an output file that contains 105 issues. */
     @Test
-    public void shouldFindAllGhsMultiIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("ghsmulti.txt");
-        job.setDefinition(parseAndPublish(GhsMulti.class));
+    public void shouldFindAllPerlCriticIssues() {
+        shouldFindIssuesOfTool(PerlCritic.class, "perlcritic.txt", 105);
+    }
 
-        AnalysisResult result = scheduleBuild(job);
+    /** Runs the Php parser on an output file that contains 5 issues. */
+    @Test
+    public void shouldFindAllPhpIssues() {
+        shouldFindIssuesOfTool(Php.class, "php.txt", 5);
+    }
 
-        assertThat(result.getTotalSize()).isEqualTo(3);
-        assertThat(result.getIssues()).hasSize(3);
+    /** Runs the Microsoft PREfast parser on an output file that contains 11 issues. */
+    @Test
+    public void shouldFindAllPREfastIssues() {
+        shouldFindIssuesOfTool(PREfast.class, "PREfast.xml", 11);
+    }
+
+    /** Runs the Puppet Lint parser on an output file that contains 5 issues.  */
+    @Test
+    public void shouldFindAllPuppetLintIssues() {
+        shouldFindIssuesOfTool(PuppetLint.class, "puppet-lint.txt", 5);
+    }
+
+    /** Runs the Eclipse parser on an output file that contains 8 issues. */
+    @Test
+    public void shouldFindAllEclipseIssues() {
+        shouldFindIssuesOfTool(Eclipse.class, "eclipse.txt", 8);
+    }
+
+    /** Runs the PyLint parser on an output file that contains 6 issues. */
+    @Test
+    public void shouldFindAllPyLintParserIssues() {
+        shouldFindIssuesOfTool(PyLint.class, "pyLint.txt", 6);
     }
 
     /**
-     * Runs the Gnat parser on an output file that contains several issues: the build should report 9 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+     * Runs the QACSourceCodeAnalyser parser on an output file that contains 9 issues. */
     @Test
-    public void shouldFindAllGnatIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("gnat.txt");
-        job.setDefinition(parseAndPublish(Gnat.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(9);
-        assertThat(result.getIssues()).hasSize(9);
+    public void shouldFindAllQACSourceCodeAnalyserIssues() {
+        shouldFindIssuesOfTool(QACSourceCodeAnalyser.class, "QACSourceCodeAnalyser.txt", 9);
     }
 
-    /**
-     * Runs the GnuFortran parser on an output file that contains several issues: the build should report 4 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the Resharper parser on an output file that contains 3 issues. */
     @Test
-    public void shouldFindAllGnuFortranIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("GnuFortran.txt");
-        job.setDefinition(parseAndPublish(GnuFortran.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(4);
-        assertThat(result.getIssues()).hasSize(4);
+    public void shouldFindAllResharperInspectCodeIssues() {
+        shouldFindIssuesOfTool(ResharperInspectCode.class, "ResharperInspectCode.xml", 3);
     }
 
-    /**
-     * Runs the GnuMakeGcc parser on an output file that contains several issues: the build should report 15 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the RFLint parser on an output file that contains 6 issues. */
     @Test
-    public void shouldFindAllGnuMakeGccIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("gnuMakeGcc.txt");
-        job.setDefinition(parseAndPublish(GnuMakeGcc.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(15);
-        assertThat(result.getIssues()).hasSize(15);
+    public void shouldFindAllRfLintIssues() {
+        shouldFindIssuesOfTool(RFLint.class, "rflint.txt", 6);
     }
 
-    /**
-     * Runs the Eclipse parser on an output file that contains several issues. Applies an include filter that selects
-     * only one issue (in the file AttributeException.java).
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the Robocopy parser on an output file: the build should report 3 issues. */
     @Test
-    public void shouldIncludeJustOneFile() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("eclipse.txt");
-        job.setDefinition(asStage(createScanForIssuesStep(Eclipse.class),
-                "publishIssues issues:[issues],  "
-                        + "filters:[[property: [$class: 'IncludeFile'], pattern: '.*AttributeException.*']]"));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(1);
-        assertThat(result.getIssues()).hasSize(1);
+    public void shouldFindAllRobocopyIssues() {
+        shouldFindIssuesOfTool(Robocopy.class, "robocopy.txt", 3);
     }
 
-    /**
-     * Runs the AcuCobol parser on an output file that contains several issues: the build should report 4 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the ScalaC parser on an output file: the build should report 3 issues. */
     @Test
-    public void shouldFindAllAcuCobolIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("acu.txt");
-        job.setDefinition(parseAndPublish(AcuCobol.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(4);
-        assertThat(result.getIssues()).hasSize(4);
+    public void shouldFindAllScalacIssues() {
+        shouldFindIssuesOfTool(Scala.class, "scalac.txt", 3);
     }
 
-    /**
-     * Runs the Ajc parser on an output file that contains several issues: the build should report 9 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the Sphinx build parser on an output file: the build should report 6 issues. */
     @Test
-    public void shouldFindAllAjcIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("ajc.txt");
-        job.setDefinition(parseAndPublish(Ajc.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(9);
-        assertThat(result.getIssues()).hasSize(9);
+    public void shouldFindAllSphinxIssues() {
+        shouldFindIssuesOfTool(SphinxBuild.class, "sphinxbuild.txt", 6);
     }
 
-    /**
-     * Runs the AnsibleLint parser on an output file that contains several issues: the build should report 4 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the SBT scala parser on an output file: the build should report 2 issues. */
     @Test
-    public void shouldFindAllAnsibleLintIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("ansibleLint.txt");
-        job.setDefinition(parseAndPublish(AnsibleLint.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(4);
-        assertThat(result.getIssues()).hasSize(4);
+    public void shouldFindAllSbtScalaCIssues() {
+        shouldFindIssuesOfTool(SBTScalaC.class, "sbtScalac.txt", 2);
     }
 
-    /**
-     * Runs the Perl::Critic parser on an output file that contains several issues: the build should report 105 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the Idea Inspection parser on an output file that contains 1 issues. */
     @Test
-    public void shouldFindAllPerlCriticIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("perlcritic.txt");
-        job.setDefinition(parseAndPublish(PerlCritic.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(105);
-        assertThat(result.getIssues()).hasSize(105);
+    public void shouldFindAllIdeaInspectionIssues() {
+        shouldFindIssuesOfTool(IdeaInspection.class, "IdeaInspectionExample.xml", 1);
     }
 
-    /**
-     * Runs the Php parser on an output file that contains several issues: the build should report 5 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the Intel parser on an output file that contains 7 issues. */
     @Test
-    public void shouldFindAllPhpIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("php.txt");
-        job.setDefinition(parseAndPublish(Php.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(5);
-        assertThat(result.getIssues()).hasSize(5);
+    public void shouldFindAllIntelIssues() {
+        shouldFindIssuesOfTool(Intel.class, "intelc.txt", 7);
     }
 
-    /**
-     * Runs the Microsoft PREfast parser on an output file that contains several issues: the build should report 11
-     * issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the Oracle Invalids parser on an output file that contains 3 issues. */
     @Test
-    public void shouldFindAllPREfastIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("PREfast.xml");
-        job.setDefinition(parseAndPublish(PREfast.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(11);
-        assertThat(result.getIssues()).hasSize(11);
+    public void shouldFindAllInvalidsIssues() {
+        shouldFindIssuesOfTool(Invalids.class, "invalids.txt", 3);
     }
 
-    /**
-     * Runs the Puppet Lint parser on an output file that contains several issues: the build should report 5 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the Java parser on an output file that contains 2 issues. */
     @Test
-    public void shouldFindAllPuppetLintIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("puppet-lint.txt");
-        job.setDefinition(parseAndPublish(PuppetLint.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(5);
-        assertThat(result.getIssues()).hasSize(5);
+    public void shouldFindAllJavaIssues() {
+        shouldFindIssuesOfTool(Java.class, "javac.txt", 2);
     }
 
-    /**
-     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the CssLint parser on an output file that contains 51 issues. */
     @Test
-    public void shouldFindAllEclipseIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("eclipse.txt");
-        job.setDefinition(parseAndPublish(Eclipse.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(8);
-        assertThat(result.getIssues()).hasSize(8);
+    public void shouldFindAllCssLintIssues() {
+        shouldFindIssuesOfTool(CssLint.class, "csslint.xml", 51);
     }
 
-    /**
-     * Runs the PyLint parser on an output file that contains several issues: the build should report 6 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the DiabC parser on an output file that contains 12 issues. */
     @Test
-    public void shouldFindAllPyLintParserIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("pyLint.txt");
-        job.setDefinition(parseAndPublish(PyLint.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(6);
-        assertThat(result.getIssues()).hasSize(6);
+    public void shouldFindAllDiabCIssues() {
+        shouldFindIssuesOfTool(DiabC.class, "diabc.txt", 12);
     }
 
-    /**
-     * Runs the QACSourceCodeAnalyser parser on an output file that contains several issues: the build should report 9 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the Doxygen parser on an output file that contains 21 issues. */
     @Test
-    public void shouldFindAllQACSourceCodeAnalyserIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("QACSourceCodeAnalyser.txt");
-        job.setDefinition(parseAndPublish(QACSourceCodeAnalyser.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(9);
-        assertThat(result.getIssues()).hasSize(9);
+    public void shouldFindAllDoxygenIssues() {
+        shouldFindIssuesOfTool(Doxygen.class, "doxygen.txt", 21);
     }
 
-    /**
-     * Runs the Resharper parser on an output file that contains several issues: the build should report 3 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the Dr. Memory parser on an output file that contains 8 issues. */
     @Test
-    public void shouldFindAllResharperInspectCodeIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("ResharperInspectCode.xml");
-        job.setDefinition(parseAndPublish(ResharperInspectCode.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(3);
-        assertThat(result.getIssues()).hasSize(3);
+    public void shouldFindAllDrMemoryIssues() {
+        shouldFindIssuesOfTool(DrMemory.class, "drmemory.txt", 8);
     }
 
-    /**
-     * Runs the RFLint parser on an output file that contains several issues: the build should report 8 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the JavaC parser on an output file of the Eclipse compiler: the build should report no issues. */
     @Test
-    public void shouldFindAllRfLintIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("rflint.txt");
-        job.setDefinition(parseAndPublish(RFLint.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(6);
-        assertThat(result.getIssues()).hasSize(6);
+    public void shouldFindNoJavacIssuesInEclipseOutput() {
+        shouldFindIssuesOfTool(Java.class, "eclipse.txt", 0);
     }
 
-    /**
-     * Runs the Robocopy parser on an output file: the build should report 3 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
+    /** Runs the all Java parsers on three output files: the build should report issues of all tools. */
     @Test
-    public void shouldFindAllRobocopyIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("robocopy.txt");
-        job.setDefinition(parseAndPublish(Robocopy.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(3);
-        assertThat(result.getIssues()).hasSize(3);
-    }
-
-    /**
-     * Runs the ScalaC parser on an output file: the build should report 3 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllScalacIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("scalac.txt");
-        job.setDefinition(parseAndPublish(Scala.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(3);
-        assertThat(result.getIssues()).hasSize(3);
-    }
-
-    /**
-     * Runs the Sphinx build parser on an output file: the build should report 6 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllSphinxIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("sphinxbuild.txt");
-        job.setDefinition(parseAndPublish(SphinxBuild.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(6);
-        assertThat(result.getIssues()).hasSize(6);
-    }
-
-    /**
-     * Runs the SBT scala parser on an output file: the build should report 2 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllSbtScalaCIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("sbtScalac.txt");
-        job.setDefinition(parseAndPublish(SBTScalaC.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(2);
-        assertThat(result.getIssues()).hasSize(2);
-    }
-
-    /**
-     * Runs the Idea Inspection parser on an output file that contains several issues: the build should report 1
-     * issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllIdeaInspectionIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("IdeaInspectionExample.xml");
-        job.setDefinition(parseAndPublish(IdeaInspection.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(1);
-        assertThat(result.getIssues()).hasSize(1);
-    }
-
-    /**
-     * Runs the Intel parser on an output file that contains several issues: the build should report 7 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllIntelIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("intelc.txt");
-        job.setDefinition(parseAndPublish(Intel.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(7);
-        assertThat(result.getIssues()).hasSize(7);
-    }
-
-    /**
-     * Runs the Oracle Invalids parser on an output file that contains several issues: the build should report 3
-     * issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllInvalidsIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("invalids.txt");
-        job.setDefinition(parseAndPublish(Invalids.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(3);
-        assertThat(result.getIssues()).hasSize(3);
-    }
-
-    /**
-     * Runs the Java parser on an output file that contains several issues: the build should report 2 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllJavaIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("javac.txt");
-        job.setDefinition(parseAndPublish(Java.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(2);
-        assertThat(result.getIssues()).hasSize(2);
-    }
-
-    /**
-     * Runs the CssLint parser on an output file that contains several issues: the build should report 51 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllCssLintIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("csslint.xml");
-        job.setDefinition(parseAndPublish(CssLint.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(51);
-        assertThat(result.getIssues()).hasSize(51);
-    }
-
-    /**
-     * Runs the DiabC parser on an output file that contains several issues: the build should report 12 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllDiabCIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("diabc.txt");
-        job.setDefinition(parseAndPublish(DiabC.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(12);
-        assertThat(result.getIssues()).hasSize(12);
-    }
-
-    /**
-     * Runs the Doxygen parser on an output file that contains several issues: the build should report 21 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllDoxygenIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("doxygen.txt");
-        job.setDefinition(parseAndPublish(Doxygen.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(21);
-        assertThat(result.getIssues()).hasSize(21);
-    }
-
-    /**
-     * Runs the Dr. Memory parser on an output file that contains several issues: the build should report 8 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllDrMemoryIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("drmemory.txt");
-        job.setDefinition(parseAndPublish(DrMemory.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(8);
-        assertThat(result.getIssues()).hasSize(8);
-    }
-
-    /**
-     * Runs the JavaC parser on an output file of the Eclipse compiler: the build should report no issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindNoJavacIssuesInEclipseOutput() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("eclipse.txt");
-        job.setDefinition(parseAndPublish(Java.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(0);
-    }
-
-    /**
-     * Runs the all Java parsers on three output files: the build should report issues of all tools.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldCombineIssuesOfSeveralFiles() throws Exception {
+    public void shouldCombineIssuesOfSeveralFiles() {
         WorkflowJob job = createJobWithWorkspaceFile("eclipse.txt", "javadoc.txt", "javac.txt");
         job.setDefinition(asStage(createScanForIssuesStep(Java.class, "java"),
                 createScanForIssuesStep(Eclipse.class, "eclipse"),
@@ -628,175 +313,37 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the MsBuild parser on an output file: the build should report 6 issues.
-     *
-     * @throws Exception
-     *         in case of an error
+     * Runs the Eclipse parser on an output file that contains several issues. Applies an include filter that selects
+     * only one issue (in the file AttributeException.java).
      */
     @Test
-    public void shouldFindAllMsBuildIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("msbuild.txt");
-        job.setDefinition(parseAndPublish(MsBuild.class));
+    public void shouldIncludeJustOneFile() {
+        WorkflowJob job = createJobWithWorkspaceFile("eclipse.txt");
+        job.setDefinition(asStage(createScanForIssuesStep(Eclipse.class),
+                "publishIssues issues:[issues],  "
+                        + "filters:[[property: [$class: 'IncludeFile'], pattern: '.*AttributeException.*']]"));
 
         AnalysisResult result = scheduleBuild(job);
 
-        assertThat(result.getTotalSize()).isEqualTo(6);
-        assertThat(result.getIssues()).hasSize(6);
+        assertThat(result.getTotalSize()).isEqualTo(1);
+        assertThat(result.getIssues()).hasSize(1);
     }
 
-    /**
-     * Runs the NagFortran parser on an output file: the build should report 10 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllNagFortranIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("NagFortran.txt");
-        job.setDefinition(parseAndPublish(NagFortran.class));
+    @SuppressWarnings({"CheckStyle", "OverlyBroadCatchBlock"})
+    private void shouldFindIssuesOfTool(final Class<? extends StaticAnalysisTool> tool, final String filename,
+            final int expectedSizeOfIssues) {
+        try {
+            WorkflowJob job = createJobWithWorkspaceFile(filename);
+            job.setDefinition(parseAndPublish(tool));
 
-        AnalysisResult result = scheduleBuild(job);
+            AnalysisResult result = scheduleBuild(job);
 
-        assertThat(result.getTotalSize()).isEqualTo(10);
-        assertThat(result.getIssues()).hasSize(10);
-    }
-
-    /**
-     * Runs the Perforce parser on an output file: the build should report 4 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllP4Issues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("perforce.txt");
-        job.setDefinition(parseAndPublish(Perforce.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(4);
-        assertThat(result.getIssues()).hasSize(4);
-    }
-
-    /**
-     * Runs the Pep8 parser on an output file: the build should report 8 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllPep8Issues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("pep8Test.txt");
-        job.setDefinition(parseAndPublish(Pep8.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(8);
-        assertThat(result.getIssues()).hasSize(8);
-    }
-
-    /**
-     * Runs the Gcc3Compiler parser on an output file that contains several issues: the build should report 14 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllGcc4CompilerIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("gcc4.txt");
-        job.setDefinition(parseAndPublish(Gcc4Compiler.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(14);
-        assertThat(result.getIssues()).hasSize(14);
-    }
-
-    /**
-     * Runs the Gcc3Compiler parser on an output file that contains several issues: the build should report 8 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllGcc3CompilerIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("gcc.txt");
-        job.setDefinition(parseAndPublish(Gcc.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(8);
-        assertThat(result.getIssues()).hasSize(8);
-    }
-
-    /**
-     * Runs the Gcc4Linker parser on an output file that contains several issues: the build should report 7 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllGcc4LinkerIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("gcc4ld.txt");
-        job.setDefinition(parseAndPublish(Gcc4Linker.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(7);
-        assertThat(result.getIssues()).hasSize(7);
-    }
-
-    /**
-     * Runs the Maven console parser on an output file that contains several issues: the build should report 4 issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllMavenConsoleIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("maven-console.txt");
-        job.setDefinition(parseAndPublish(MavenConsole.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(4);
-        assertThat(result.getIssues()).hasSize(4);
-    }
-
-    /**
-     * Runs the MetrowerksCWCompiler parser on an output file that contains several issues: the build should report 5
-     * issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllMetrowerksCWCompilerIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("MetrowerksCWCompiler.txt");
-        job.setDefinition(parseAndPublish(MetrowerksCWCompiler.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(5);
-        assertThat(result.getIssues()).hasSize(5);
-    }
-
-    /**
-     * Runs the MetrowerksCWLinker parser on an output file that contains several issues: the build should report 3
-     * issues.
-     *
-     * @throws Exception
-     *         in case of an error
-     */
-    @Test
-    public void shouldFindAllMetrowerksCWLinkerIssues() throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile("MetrowerksCWLinker.txt");
-        job.setDefinition(parseAndPublish(MetrowerksCWLinker.class));
-
-        AnalysisResult result = scheduleBuild(job);
-
-        assertThat(result.getTotalSize()).isEqualTo(3);
-        assertThat(result.getIssues()).hasSize(3);
+            assertThat(result.getTotalSize()).isEqualTo(expectedSizeOfIssues);
+            assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);
+        }
+        catch (Exception exception) {
+            throw new AssertionError(exception);
+        }
     }
 
     private CpsFlowDefinition parseAndPublish(final Class<? extends StaticAnalysisTool> parserClass) {
@@ -814,14 +361,19 @@ public class PipelineITest extends IntegrationTest {
                 issuesName, parserClass.getSimpleName());
     }
 
-    private WorkflowJob createJobWithWorkspaceFile(final String... fileNames) throws IOException, InterruptedException {
+    private WorkflowJob createJobWithWorkspaceFile(final String... fileNames) {
         WorkflowJob job = createJob();
         copyFilesToWorkspace(job, fileNames);
         return job;
     }
 
-    private WorkflowJob createJob() throws IOException {
-        return createJob(WorkflowJob.class);
+    private WorkflowJob createJob() {
+        try {
+            return j.jenkins.createProject(WorkflowJob.class, "Integration-Test");
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
     }
 
     /**
@@ -833,13 +385,19 @@ public class PipelineITest extends IntegrationTest {
      *
      * @return the created {@link AnalysisResult}
      */
-    private AnalysisResult scheduleBuild(final WorkflowJob job) throws Exception {
-        WorkflowRun run = j.assertBuildStatus(Result.SUCCESS, job.scheduleBuild2(0));
+    @SuppressWarnings("CheckStyle")
+    private AnalysisResult scheduleBuild(final WorkflowJob job) {
+        try {
+            WorkflowRun run = j.assertBuildStatus(Result.SUCCESS, Objects.requireNonNull(job.scheduleBuild2(0)));
 
-        ResultAction action = run.getAction(ResultAction.class);
-        assertThat(action).isNotNull();
+            ResultAction action = run.getAction(ResultAction.class);
+            assertThat(action).isNotNull();
 
-        return action.getResult();
+            return action.getResult();
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")

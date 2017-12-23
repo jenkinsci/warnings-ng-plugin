@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.FilenameUtils;
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.junit.Rule;
 import org.jvnet.hudson.test.JenkinsRule;
 
@@ -28,39 +27,24 @@ public class IntegrationTest {
      *         the job to get the workspace for
      * @param fileNames
      *         the files to copy
-     *
-     * @throws IOException
-     *         on IO errors
-     * @throws InterruptedException
-     *         should never happen
      */
-    protected void copyFilesToWorkspace(final TopLevelItem job, final String... fileNames)
-            throws IOException, InterruptedException {
-        FilePath workspace = j.jenkins.getWorkspaceFor(job);
-        for (String fileName : fileNames) {
-            InputStream resourceAsStream = getClass().getResourceAsStream(fileName);
-            if (resourceAsStream == null) {
-                throw new AssertionError("No such file: " + fileName);
+    protected void copyFilesToWorkspace(final TopLevelItem job, final String... fileNames) {
+        try {
+            FilePath workspace = j.jenkins.getWorkspaceFor(job);
+            for (String fileName : fileNames) {
+                InputStream resourceAsStream = getClass().getResourceAsStream(fileName);
+                if (resourceAsStream == null) {
+                    throw new AssertionError("No such file: " + fileName);
+                }
+                workspace.child(createWorkspaceFileName(fileName)).copyFrom(resourceAsStream);
             }
-            workspace.child(createWorkspaceFileName(fileName)).copyFrom(resourceAsStream);
+        }
+        catch (IOException | InterruptedException e) {
+            throw new AssertionError(e);
         }
     }
 
     private String createWorkspaceFileName(final String fileName) {
         return String.format("%s-issues.txt", FilenameUtils.getBaseName(fileName));
-    }
-
-    /**
-     * Creates a new job.
-     *
-     * <p>
-     * This version infers the descriptor from the type of the top-level item.
-     * </p>
-     *
-     * @throws IllegalArgumentException
-     *      if the project of the given name already exists.
-     */
-    protected WorkflowJob createJob(final Class<WorkflowJob> type) throws IOException {
-        return j.jenkins.createProject(type, "Integration-Test");
     }
 }
