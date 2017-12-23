@@ -33,9 +33,6 @@ public class PipelineITest extends IntegrationTest {
 
     /**
      * Runs the Erlc parser on an output file that contains several issues: the build should report 2 issues.
-     *
-     * @throws Exception
-     *         in case of an error
      */
     @Test
     public void shouldFindAllErlcIssues() {
@@ -44,9 +41,6 @@ public class PipelineITest extends IntegrationTest {
 
     /**
      * Runs the FlexSDK parser on an output file that contains several issues: the build should report 5 issues.
-     *
-     * @throws Exception
-     *         in case of an error
      */
     @Test
     public void shouldFindAllFlexSDKIssues() {
@@ -55,9 +49,6 @@ public class PipelineITest extends IntegrationTest {
 
     /**
      * Runs the FxCop parser on an output file that contains several issues: the build should report 2 issues.
-     *
-     * @throws Exception
-     *         in case of an error
      */
     @Test
     public void shouldFindAllFxcopSDKIssues() {
