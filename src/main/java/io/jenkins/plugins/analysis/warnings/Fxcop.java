@@ -1,19 +1,20 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.parser.EclipseParser;
-import edu.hm.hafner.analysis.parser.fxcop.FxCopParser;
-import hudson.Extension;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.io.File;
-import java.nio.charset.Charset;
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.parser.fxcop.FxCopParser;
+import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
 
-public class Fxcop extends StaticAnalysisTool {
+import hudson.Extension;
+
+/**
+ * Provides a parser and customized messages for FxCop.
+ *
+ * @author Ullrich Hafner
+ */
+public class Fxcop extends StreamBasedParser {
     private static final String PARSER_NAME = Messages.Warnings_FxCop_ParserName();
 
     @DataBoundConstructor
@@ -22,15 +23,15 @@ public class Fxcop extends StaticAnalysisTool {
     }
 
     @Override
-    public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder) {
-        return new FxCopParser().parse(file, charset, builder);
+    protected AbstractParser createParser() {
+        return new FxCopParser();
     }
 
     /** Registers this tool as extension point implementation. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         public Descriptor() {
-            super(new Fxcop.LabelProvider());
+            super(new LabelProvider());
         }
     }
 

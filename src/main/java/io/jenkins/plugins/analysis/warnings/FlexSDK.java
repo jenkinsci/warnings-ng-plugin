@@ -1,18 +1,19 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.parser.FlexSDKParser;
-import hudson.Extension;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.io.File;
-import java.nio.charset.Charset;
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.parser.FlexSDKParser;
+import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
 
-public class FlexSDK extends StaticAnalysisTool{
+import hudson.Extension;
+
+/**
+ * Provides a parser and customized messages for FLEX SDK.
+ *
+ * @author Ullrich Hafner
+ */public class FlexSDK extends StreamBasedParser {
     private static final String PARSER_NAME = Messages.Warnings_Flex_ParserName();
 
     @DataBoundConstructor
@@ -21,22 +22,22 @@ public class FlexSDK extends StaticAnalysisTool{
     }
 
     @Override
-    public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder) {
-        return new FlexSDKParser().parse(file, charset, builder);
+    protected AbstractParser createParser() {
+        return new FlexSDKParser();
     }
 
     /** Registers this tool as extension point implementation. */
     @Extension
-    public static class Descriptor extends StaticAnalysisTool.StaticAnalysisToolDescriptor {
+    public static class Descriptor extends StaticAnalysisToolDescriptor {
         public Descriptor() {
-            super(new FlexSDK.LabelProvider());
+            super(new LabelProvider());
         }
     }
 
     /** Provides the labels for the parser. */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("flexSDK", PARSER_NAME);
+            super("flex-sdk", PARSER_NAME);
         }
     }
 }

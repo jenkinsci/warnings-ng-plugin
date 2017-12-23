@@ -32,22 +32,52 @@ public class PipelineITest extends IntegrationTest {
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
 
     /**
-     * testing suit.
-     * allows to write simple Integration test with a specific parser and testfile
-     * it do just verify the size of the result and the number of Issues
-     * @param filename name of the testFile with the content
-     * @param parser class which analysis the test-file
-     * @param totalSize size of scheduled Job
-     * @param issuesSize number of Issues
-     * @throws Exception from scheduleBuild and createJobWithWorkspaceFile
+     * Runs the Erlc parser on an output file that contains several issues: the build should report 2 issues.
+     *
+     * @throws Exception
+     *         in case of an error
      */
-    private void parserIntegrationTest(final String filename, Class parser, int totalSize, int issuesSize) throws Exception {
-        WorkflowJob job = createJobWithWorkspaceFile(filename);
-        job.setDefinition(parseAndPublish(parser));
-        AnalysisResult result = scheduleBuild(job);
+    @Test
+    public void shouldFindAllErlcIssues() {
+        shouldFindIssuesOfTool(Erlc.class, "erlc.txt", 2);
+    }
 
-        assertThat(result.getTotalSize()).isEqualTo(totalSize);
-        assertThat(result.getIssues()).hasSize(issuesSize);
+    /**
+     * Runs the FlexSDK parser on an output file that contains several issues: the build should report 3 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllFlexSDKIssues() {
+        shouldFindIssuesOfTool(FlexSDK.class, "flexsdk.txt", 3);
+    }
+
+    /**
+     * Runs the FxCop parser on an output file that contains several issues: the build should report 2 issues.
+     *
+     * @throws Exception
+     *         in case of an error
+     */
+    @Test
+    public void shouldFindAllFxcopSDKIssues() {
+        shouldFindIssuesOfTool(Fxcop.class, "fxcop.xml", 2);
+    }
+
+    private void shouldFindIssuesOfTool(final Class<? extends StaticAnalysisTool> tool, final String filename,
+            final int expectedSizeOfIssues) {
+        try {
+            WorkflowJob job = createJobWithWorkspaceFile(filename);
+            job.setDefinition(parseAndPublish(tool));
+
+            AnalysisResult result = scheduleBuild(job);
+
+            assertThat(result.getTotalSize()).isEqualTo(expectedSizeOfIssues);
+            assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);
+        }
+        catch (Exception exception) {
+            throw new AssertionError(exception);
+        }
     }
 
     /**
@@ -241,7 +271,8 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the Microsoft PREfast parser on an output file that contains several issues: the build should report 11 issues.
+     * Runs the Microsoft PREfast parser on an output file that contains several issues: the build should report 11
+     * issues.
      *
      * @throws Exception
      *         in case of an error
@@ -360,7 +391,8 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the Idea Inspection parser on an output file that contains several issues: the build should report 1 issues.
+     * Runs the Idea Inspection parser on an output file that contains several issues: the build should report 1
+     * issues.
      *
      * @throws Exception
      *         in case of an error
@@ -394,7 +426,8 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the Oracle Invalids parser on an output file that contains several issues: the build should report 3 issues.
+     * Runs the Oracle Invalids parser on an output file that contains several issues: the build should report 3
+     * issues.
      *
      * @throws Exception
      *         in case of an error
@@ -657,7 +690,8 @@ public class PipelineITest extends IntegrationTest {
     /**
      * Runs the Maven console parser on an output file that contains several issues: the build should report 4 issues.
      *
-     * @throws Exception in case of an error
+     * @throws Exception
+     *         in case of an error
      */
     @Test
     public void shouldFindAllMavenConsoleIssues() throws Exception {
@@ -671,9 +705,11 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the MetrowerksCWCompiler parser on an output file that contains several issues: the build should report 5 issues.
+     * Runs the MetrowerksCWCompiler parser on an output file that contains several issues: the build should report 5
+     * issues.
      *
-     * @throws Exception in case of an error
+     * @throws Exception
+     *         in case of an error
      */
     @Test
     public void shouldFindAllMetrowerksCWCompilerIssues() throws Exception {
@@ -687,9 +723,11 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the MetrowerksCWLinker parser on an output file that contains several issues: the build should report 3 issues.
+     * Runs the MetrowerksCWLinker parser on an output file that contains several issues: the build should report 3
+     * issues.
      *
-     * @throws Exception in case of an error
+     * @throws Exception
+     *         in case of an error
      */
     @Test
     public void shouldFindAllMetrowerksCWLinkerIssues() throws Exception {
@@ -710,8 +748,10 @@ public class PipelineITest extends IntegrationTest {
         return createScanForIssuesStep(parserClass, "issues");
     }
 
-    private String createScanForIssuesStep(final Class<? extends StaticAnalysisTool> parserClass, final String issuesName) {
-        return String.format("def %s = scanForIssues tool: [$class: '%s'], pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
+    private String createScanForIssuesStep(final Class<? extends StaticAnalysisTool> parserClass,
+            final String issuesName) {
+        return String.format(
+                "def %s = scanForIssues tool: [$class: '%s'], pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
                 issuesName, parserClass.getSimpleName());
     }
 
@@ -755,15 +795,6 @@ public class PipelineITest extends IntegrationTest {
         }
         script.append("  }\n");
         script.append("}\n");
-    @Test public void shouldFindAllErlcIssues() throws Exception {
-        parserIntegrationTest("erlc.txt",Erlc.class,2,2);
-    }
-    @Test public void shouldFindAllFlexSDKIssues() throws Exception {
-        parserIntegrationTest("flexsdk.txt",FlexSDK.class,5,5);
-    }
-    @Test public void shouldFindAllFxcopSDKIssues() throws Exception {
-        parserIntegrationTest("fxcop.xml",Fxcop.class,2,2);
-    }
 
         System.out.println("----------------------------------------------------------------------");
         System.out.println(script);
