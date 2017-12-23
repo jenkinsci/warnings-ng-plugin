@@ -18,6 +18,7 @@ import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 
 import hudson.model.Result;
+import org.junit.jupiter.api.TestTemplate;
 
 /**
  * Integration tests for pipeline support in the warning plug-in.
@@ -311,6 +312,50 @@ public class PipelineITest extends IntegrationTest {
 
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues()).hasSize(8);
+    }
+
+    @Test
+    public void shouldFindAllPyLintParserIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("pyLint.txt");
+        job.setDefinition(parseAndPublish(PyLint.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(6);
+        assertThat(result.getIssues()).hasSize(6);
+    }
+
+    @Test
+    public void shouldFindAllQACSourceCodeAnalyserIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("QACSourceCodeAnalyser.txt");
+        job.setDefinition(parseAndPublish(QACSourceCodeAnalyser.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(9);
+        assertThat(result.getIssues()).hasSize(9);
+    }
+
+    @Test
+    public void shouldFindAllResharperInspectCodeIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("ResharperInspectCode.xml");
+        job.setDefinition(parseAndPublish(ResharperInspectCode.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(3);
+        assertThat(result.getIssues()).hasSize(3);
+    }
+
+    @Test
+    public void shouldFindAllRfLintIssues() throws Exception {
+        WorkflowJob job = createJobWithWorkspaceFile("rflint.txt");
+        job.setDefinition(parseAndPublish(RFLint.class));
+
+        AnalysisResult result = scheduleBuild(job);
+
+        assertThat(result.getTotalSize()).isEqualTo(6);
+        assertThat(result.getIssues()).hasSize(6);
     }
 
     /**
