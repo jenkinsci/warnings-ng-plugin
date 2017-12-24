@@ -17,7 +17,10 @@ import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
+import jenkins.model.Jenkins;
 
+import hudson.DescriptorExtensionList;
+import hudson.model.Descriptor;
 import hudson.model.Result;
 
 /**
@@ -31,34 +34,47 @@ import hudson.model.Result;
 public class PipelineITest extends IntegrationTest {
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
 
+    /** Verifies that the number of parsers is 64. */
+    @Test
+    public void shouldFindAllRegisteredParsers() {
+        DescriptorExtensionList<StaticAnalysisTool, Descriptor<StaticAnalysisTool>> descriptors
+                = Jenkins.getInstance().getDescriptorList(StaticAnalysisTool.class);
+        int count = 0;
+        for (Descriptor<StaticAnalysisTool> descriptor : descriptors) {
+            if (descriptor.clazz.getPackage().equals(Eclipse.class.getPackage())) {
+                System.out.format("%s: %s\n", descriptor.getId(), descriptor.getDisplayName());
+            }
+        }
+    }
+
     /** Runs the Erlc parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllErlcIssues() {
-        shouldFindIssuesOfTool(Erlc.class, "erlc.txt", 2);
+        shouldFindIssuesOfTool(2, Erlc.class, "erlc.txt");
     }
 
     /** Runs the FlexSDK parser on an output file that contains 5 issues. */
     @Test
     public void shouldFindAllFlexSDKIssues() {
-        shouldFindIssuesOfTool(FlexSDK.class, "flexsdk.txt", 5);
+        shouldFindIssuesOfTool(5, FlexSDK.class, "flexsdk.txt");
     }
 
     /** Runs the FxCop parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllFxcopSDKIssues() {
-        shouldFindIssuesOfTool(Fxcop.class, "fxcop.xml", 2);
+        shouldFindIssuesOfTool(2, Fxcop.class, "fxcop.xml");
     }
 
     /** Runs the Gendarme parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllGendarmeIssues() {
-        shouldFindIssuesOfTool(Gendarme.class, "Gendarme.xml", 3);
+        shouldFindIssuesOfTool(3, Gendarme.class, "Gendarme.xml");
     }
 
     /** Runs the GhsMulti parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllGhsMultiIssues() {
-        shouldFindIssuesOfTool(GhsMulti.class, "ghsmulti.txt", 3);
+        shouldFindIssuesOfTool(3, GhsMulti.class, "ghsmulti.txt");
     }
 
     /**
@@ -66,237 +82,225 @@ public class PipelineITest extends IntegrationTest {
      */
     @Test
     public void shouldFindAllGnatIssues() {
-        shouldFindIssuesOfTool(Gnat.class, "gnat.txt", 9);
+        shouldFindIssuesOfTool(9, Gnat.class, "gnat.txt");
     }
 
     /** Runs the GnuFortran parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllGnuFortranIssues() {
-        shouldFindIssuesOfTool(GnuFortran.class, "GnuFortran.txt", 4);
+        shouldFindIssuesOfTool(4, GnuFortran.class, "GnuFortran.txt");
     }
 
     /** Runs the GnuMakeGcc parser on an output file that contains 15 issues. */
     @Test
     public void shouldFindAllGnuMakeGccIssues() {
-        shouldFindIssuesOfTool(GnuMakeGcc.class, "gnuMakeGcc.txt", 15);
+        shouldFindIssuesOfTool(15, GnuMakeGcc.class, "gnuMakeGcc.txt");
     }
 
     /** Runs the MsBuild parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllMsBuildIssues() {
-        shouldFindIssuesOfTool(MsBuild.class, "msbuild.txt", 6);
+        shouldFindIssuesOfTool(6, MsBuild.class, "msbuild.txt");
     }
 
     /** Runs the NagFortran parser on an output file that contains 10 issues. */
     @Test
     public void shouldFindAllNagFortranIssues() {
-        shouldFindIssuesOfTool(NagFortran.class, "NagFortran.txt", 10);
+        shouldFindIssuesOfTool(10, NagFortran.class, "NagFortran.txt");
     }
 
     /** Runs the Perforce parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllP4Issues() {
-        shouldFindIssuesOfTool(Perforce.class, "perforce.txt", 4);
+        shouldFindIssuesOfTool(4, Perforce.class, "perforce.txt");
     }
 
     /** Runs the Pep8 parser on an output file: the build should report 8 issues. */
     @Test
     public void shouldFindAllPep8Issues() {
-        shouldFindIssuesOfTool(Pep8.class, "pep8Test.txt", 8);
-    }
-
-    /** Runs the Gcc3Compiler parser on an output file that contains 14 issues. */
-    @Test
-    public void shouldFindAllGcc4CompilerIssues() {
-        shouldFindIssuesOfTool(Gcc4Compiler.class, "gcc4.txt", 14);
+        shouldFindIssuesOfTool(8, Pep8.class, "pep8Test.txt");
     }
 
     /** Runs the Gcc3Compiler parser on an output file that contains 8 issues. */
     @Test
     public void shouldFindAllGcc3CompilerIssues() {
-        shouldFindIssuesOfTool(Gcc.class, "gcc.txt", 8);
+        shouldFindIssuesOfTool(8, Gcc3.class, "gcc.txt");
     }
 
-    /** Runs the Gcc4Linker parser on an output file that contains 7 issues. */
+    /** Runs the Gcc4Compiler and Gcc4Linker parsers on separate output file that contains 14 + 7 issues. */
     @Test
-    public void shouldFindAllGcc4LinkerIssues() {
-        shouldFindIssuesOfTool(Gcc4Linker.class, "gcc4ld.txt", 7);
+    public void shouldFindAllGcc4Issues() {
+        shouldFindIssuesOfTool(14 + 7, Gcc4.class, "gcc4.txt", "gcc4ld.txt");
     }
 
     /** Runs the Maven console parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllMavenConsoleIssues() {
-        shouldFindIssuesOfTool(MavenConsole.class, "maven-console.txt", 4);
+        shouldFindIssuesOfTool(4, MavenConsole.class, "maven-console.txt");
     }
 
     /** Runs the MetrowerksCWCompiler parser on an output file that contains 5 issues. */
     @Test
     public void shouldFindAllMetrowerksCWCompilerIssues() {
-        shouldFindIssuesOfTool(MetrowerksCWCompiler.class, "MetrowerksCWCompiler.txt", 5);
+        shouldFindIssuesOfTool(5, MetrowerksCWCompiler.class, "MetrowerksCWCompiler.txt");
     }
 
     /** Runs the MetrowerksCWLinker parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllMetrowerksCWLinkerIssues() {
-        shouldFindIssuesOfTool(MetrowerksCWLinker.class, "MetrowerksCWLinker.txt", 3);
+        shouldFindIssuesOfTool(3, MetrowerksCWLinker.class, "MetrowerksCWLinker.txt");
     }
 
     /** Runs the AcuCobol parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllAcuCobolIssues() {
-        shouldFindIssuesOfTool(AcuCobol.class, "acu.txt", 4);
+        shouldFindIssuesOfTool(4, AcuCobol.class, "acu.txt");
     }
 
     /** Runs the Ajc parser on an output file that contains 9 issues. */
     @Test
     public void shouldFindAllAjcIssues() {
-        shouldFindIssuesOfTool(Ajc.class, "ajc.txt", 9);
+        shouldFindIssuesOfTool(9, Ajc.class, "ajc.txt");
     }
 
     /** Runs the AnsibleLint parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllAnsibleLintIssues() {
-        shouldFindIssuesOfTool(AnsibleLint.class, "ansibleLint.txt", 4);
+        shouldFindIssuesOfTool(4, AnsibleLint.class, "ansibleLint.txt");
     }
 
     /**
      * Runs the Perl::Critic parser on an output file that contains 105 issues. */
     @Test
     public void shouldFindAllPerlCriticIssues() {
-        shouldFindIssuesOfTool(PerlCritic.class, "perlcritic.txt", 105);
+        shouldFindIssuesOfTool(105, PerlCritic.class, "perlcritic.txt");
     }
 
     /** Runs the Php parser on an output file that contains 5 issues. */
     @Test
     public void shouldFindAllPhpIssues() {
-        shouldFindIssuesOfTool(Php.class, "php.txt", 5);
+        shouldFindIssuesOfTool(5, Php.class, "php.txt");
     }
 
     /** Runs the Microsoft PREfast parser on an output file that contains 11 issues. */
     @Test
     public void shouldFindAllPREfastIssues() {
-        shouldFindIssuesOfTool(PREfast.class, "PREfast.xml", 11);
+        shouldFindIssuesOfTool(11, PREfast.class, "PREfast.xml");
     }
 
     /** Runs the Puppet Lint parser on an output file that contains 5 issues.  */
     @Test
     public void shouldFindAllPuppetLintIssues() {
-        shouldFindIssuesOfTool(PuppetLint.class, "puppet-lint.txt", 5);
+        shouldFindIssuesOfTool(5, PuppetLint.class, "puppet-lint.txt");
     }
 
     /** Runs the Eclipse parser on an output file that contains 8 issues. */
     @Test
     public void shouldFindAllEclipseIssues() {
-        shouldFindIssuesOfTool(Eclipse.class, "eclipse.txt", 8);
+        shouldFindIssuesOfTool(8, Eclipse.class, "eclipse.txt");
     }
 
     /** Runs the PyLint parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllPyLintParserIssues() {
-        shouldFindIssuesOfTool(PyLint.class, "pyLint.txt", 6);
+        shouldFindIssuesOfTool(6, PyLint.class, "pyLint.txt");
     }
 
     /**
      * Runs the QACSourceCodeAnalyser parser on an output file that contains 9 issues. */
     @Test
     public void shouldFindAllQACSourceCodeAnalyserIssues() {
-        shouldFindIssuesOfTool(QACSourceCodeAnalyser.class, "QACSourceCodeAnalyser.txt", 9);
+        shouldFindIssuesOfTool(9, QACSourceCodeAnalyser.class, "QACSourceCodeAnalyser.txt");
     }
 
     /** Runs the Resharper parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllResharperInspectCodeIssues() {
-        shouldFindIssuesOfTool(ResharperInspectCode.class, "ResharperInspectCode.xml", 3);
+        shouldFindIssuesOfTool(3, ResharperInspectCode.class, "ResharperInspectCode.xml");
     }
 
     /** Runs the RFLint parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllRfLintIssues() {
-        shouldFindIssuesOfTool(RFLint.class, "rflint.txt", 6);
+        shouldFindIssuesOfTool(6, RFLint.class, "rflint.txt");
     }
 
     /** Runs the Robocopy parser on an output file: the build should report 3 issues. */
     @Test
     public void shouldFindAllRobocopyIssues() {
-        shouldFindIssuesOfTool(Robocopy.class, "robocopy.txt", 3);
+        shouldFindIssuesOfTool(3, Robocopy.class, "robocopy.txt");
     }
 
-    /** Runs the ScalaC parser on an output file: the build should report 3 issues. */
+    /** Runs the Scala and SbtScala parser on separate output files: the build should report 2+3 issues. */
     @Test
-    public void shouldFindAllScalacIssues() {
-        shouldFindIssuesOfTool(Scala.class, "scalac.txt", 3);
+    public void shouldFindAllScalaIssues() {
+        shouldFindIssuesOfTool(2 + 3, Scala.class, "scalac.txt", "sbtScalac.txt");
     }
 
     /** Runs the Sphinx build parser on an output file: the build should report 6 issues. */
     @Test
     public void shouldFindAllSphinxIssues() {
-        shouldFindIssuesOfTool(SphinxBuild.class, "sphinxbuild.txt", 6);
-    }
-
-    /** Runs the SBT scala parser on an output file: the build should report 2 issues. */
-    @Test
-    public void shouldFindAllSbtScalaCIssues() {
-        shouldFindIssuesOfTool(SBTScalaC.class, "sbtScalac.txt", 2);
+        shouldFindIssuesOfTool(6, SphinxBuild.class, "sphinxbuild.txt");
     }
 
     /** Runs the Idea Inspection parser on an output file that contains 1 issues. */
     @Test
     public void shouldFindAllIdeaInspectionIssues() {
-        shouldFindIssuesOfTool(IdeaInspection.class, "IdeaInspectionExample.xml", 1);
+        shouldFindIssuesOfTool(1, IdeaInspection.class, "IdeaInspectionExample.xml");
     }
 
     /** Runs the Intel parser on an output file that contains 7 issues. */
     @Test
     public void shouldFindAllIntelIssues() {
-        shouldFindIssuesOfTool(Intel.class, "intelc.txt", 7);
+        shouldFindIssuesOfTool(7, Intel.class, "intelc.txt");
     }
 
     /** Runs the Oracle Invalids parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllInvalidsIssues() {
-        shouldFindIssuesOfTool(Invalids.class, "invalids.txt", 3);
+        shouldFindIssuesOfTool(3, Invalids.class, "invalids.txt");
     }
 
     /** Runs the Java parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllJavaIssues() {
-        shouldFindIssuesOfTool(Java.class, "javac.txt", 2);
+        shouldFindIssuesOfTool(2, Java.class, "javac.txt");
     }
 
     /** Runs the CssLint parser on an output file that contains 51 issues. */
     @Test
     public void shouldFindAllCssLintIssues() {
-        shouldFindIssuesOfTool(CssLint.class, "csslint.xml", 51);
+        shouldFindIssuesOfTool(51, CssLint.class, "csslint.xml");
     }
 
     /** Runs the DiabC parser on an output file that contains 12 issues. */
     @Test
     public void shouldFindAllDiabCIssues() {
-        shouldFindIssuesOfTool(DiabC.class, "diabc.txt", 12);
+        shouldFindIssuesOfTool(12, DiabC.class, "diabc.txt");
     }
 
     /** Runs the Doxygen parser on an output file that contains 21 issues. */
     @Test
     public void shouldFindAllDoxygenIssues() {
-        shouldFindIssuesOfTool(Doxygen.class, "doxygen.txt", 21);
+        shouldFindIssuesOfTool(21, Doxygen.class, "doxygen.txt");
     }
 
     /** Runs the Dr. Memory parser on an output file that contains 8 issues. */
     @Test
     public void shouldFindAllDrMemoryIssues() {
-        shouldFindIssuesOfTool(DrMemory.class, "drmemory.txt", 8);
+        shouldFindIssuesOfTool(8, DrMemory.class, "drmemory.txt");
     }
 
     /** Runs the JavaC parser on an output file of the Eclipse compiler: the build should report no issues. */
     @Test
     public void shouldFindNoJavacIssuesInEclipseOutput() {
-        shouldFindIssuesOfTool(Java.class, "eclipse.txt", 0);
+        shouldFindIssuesOfTool(0, Java.class, "eclipse.txt");
     }
 
     /** Runs the all Java parsers on three output files: the build should report issues of all tools. */
     @Test
     public void shouldCombineIssuesOfSeveralFiles() {
-        WorkflowJob job = createJobWithWorkspaceFile("eclipse.txt", "javadoc.txt", "javac.txt");
+        WorkflowJob job = createJobWithWorkspaceFiles("eclipse.txt", "javadoc.txt", "javac.txt");
         job.setDefinition(asStage(createScanForIssuesStep(Java.class, "java"),
                 createScanForIssuesStep(Eclipse.class, "eclipse"),
                 createScanForIssuesStep(JavaDoc.class, "javadoc"),
@@ -318,7 +322,7 @@ public class PipelineITest extends IntegrationTest {
      */
     @Test
     public void shouldIncludeJustOneFile() {
-        WorkflowJob job = createJobWithWorkspaceFile("eclipse.txt");
+        WorkflowJob job = createJobWithWorkspaceFiles("eclipse.txt");
         job.setDefinition(asStage(createScanForIssuesStep(Eclipse.class),
                 "publishIssues issues:[issues],  "
                         + "filters:[[property: [$class: 'IncludeFile'], pattern: '.*AttributeException.*']]"));
@@ -330,16 +334,20 @@ public class PipelineITest extends IntegrationTest {
     }
 
     @SuppressWarnings({"CheckStyle", "OverlyBroadCatchBlock"})
-    private void shouldFindIssuesOfTool(final Class<? extends StaticAnalysisTool> tool, final String filename,
-            final int expectedSizeOfIssues) {
+    private void shouldFindIssuesOfTool(final int expectedSizeOfIssues, final Class<? extends StaticAnalysisTool> tool,
+            final String... filenames) {
         try {
-            WorkflowJob job = createJobWithWorkspaceFile(filename);
+            WorkflowJob job = createJobWithWorkspaceFiles(filenames);
             job.setDefinition(parseAndPublish(tool));
 
             AnalysisResult result = scheduleBuild(job);
 
             assertThat(result.getTotalSize()).isEqualTo(expectedSizeOfIssues);
             assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);
+
+            Issues<BuildIssue> issues = result.getIssues();
+            Descriptor<?> descriptor = Jenkins.getInstance().getDescriptor(tool);
+            assertThat(issues.filter(issue -> descriptor.getId().equals(issue.getOrigin()))).hasSize(expectedSizeOfIssues);
         }
         catch (Exception exception) {
             throw new AssertionError(exception);
@@ -361,7 +369,7 @@ public class PipelineITest extends IntegrationTest {
                 issuesName, parserClass.getSimpleName());
     }
 
-    private WorkflowJob createJobWithWorkspaceFile(final String... fileNames) {
+    private WorkflowJob createJobWithWorkspaceFiles(final String... fileNames) {
         WorkflowJob job = createJob();
         copyFilesToWorkspace(job, fileNames);
         return job;

@@ -14,11 +14,11 @@ import hudson.Extension;
  *
  * @author Raphael Furch
  */
-public class Gcc extends StreamBasedParser {
+public class Gcc3 extends StreamBasedParser {
     private static final String PARSER_NAME = Messages.Warnings_gcc3_ParserName();
 
     @DataBoundConstructor
-    public Gcc() {
+    public Gcc3() {
         // empty constructor required for stapler
     }
 
@@ -38,7 +38,7 @@ public class Gcc extends StreamBasedParser {
     /** Provides the labels for the parser. */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("gcc3-compiler", PARSER_NAME);
+            super("gcc3", PARSER_NAME);
         }
     }
 }

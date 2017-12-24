@@ -15,7 +15,7 @@ import hudson.Extension;
  * @author Michael Schmid
  */
 public class GnuMakeGcc extends StreamBasedParser {
-    private static final String PARSER_NAME = Messages.Warnings_gnat_ParserName();
+    private static final String PARSER_NAME = Messages.Warnings_GnuMakeGcc_ParserName();
 
     @DataBoundConstructor
     public GnuMakeGcc() {

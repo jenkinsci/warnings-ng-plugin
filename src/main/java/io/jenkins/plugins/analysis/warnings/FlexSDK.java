@@ -37,7 +37,7 @@ import hudson.Extension;
     /** Provides the labels for the parser. */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("flex-sdk", PARSER_NAME);
+            super("flex", PARSER_NAME);
         }
     }
 }

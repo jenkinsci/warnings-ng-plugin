@@ -1,30 +1,34 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.Collection;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.RegexpLineParser;
 import edu.hm.hafner.analysis.parser.Gcc4CompilerParser;
+import edu.hm.hafner.analysis.parser.Gcc4LinkerParser;
+import io.jenkins.plugins.analysis.core.steps.CompositeParser;
 import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
+import static java.util.Arrays.*;
 
 import hudson.Extension;
 
 /**
- * Provides a parser and customized messages for the Gcc4Compiler Compiler.
+ * Provides a parser and customized messages for the Gcc4Compiler and Gcc4Linker parsers.
  *
  * @author Raphael Furch
  */
-public class Gcc4Compiler extends StreamBasedParser {
+public class Gcc4 extends CompositeParser {
     private static final String PARSER_NAME = Messages.Warnings_gcc4_ParserName();
 
     @DataBoundConstructor
-    public Gcc4Compiler() {
+    public Gcc4() {
         // empty constructor required for stapler
     }
 
     @Override
-    protected AbstractParser createParser() {
-        return new Gcc4CompilerParser();
+    protected Collection<RegexpLineParser> createParsers() {
+        return asList(new Gcc4CompilerParser(), new Gcc4LinkerParser());
     }
 
     /** Registers this tool as extension point implementation. */
