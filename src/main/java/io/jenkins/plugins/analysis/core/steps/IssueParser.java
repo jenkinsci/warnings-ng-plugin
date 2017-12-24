@@ -40,6 +40,5 @@ public interface IssueParser extends Serializable {
      * Issue#getOrigin()} to this value.
      */
     String getId();
-
 }
 
