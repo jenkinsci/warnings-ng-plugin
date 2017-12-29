@@ -5,21 +5,21 @@
  */
 package hudson.plugins.warnings.parser;
 
-import java.util.regex.Matcher;
-import hudson.Extension;
-import hudson.plugins.analysis.util.model.Priority;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+
+import hudson.Extension;
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  *
- * A parser for Cadence Incisive Enterprise Simulator
+ * A parser for Cadence Incisive Enterprise Simulator.
  *
  * @author Andrew 'Necromant' Andrianov
  */
 @Extension
 public class CadenceIncisiveParser extends RegexpLineParser {
-
     private static final String SLASH = "/";
     private static final String CADENCE_MESSAGE_PATTERN = "("
             + "(^[a-zA-Z]+): \\*([a-zA-Z]),([a-zA-Z]+): (.*) \\[File:(.*), Line:(.*)\\]." //ncelab vhdl warning
@@ -59,7 +59,7 @@ public class CadenceIncisiveParser extends RegexpLineParser {
         int lineNumber = 0;
         int column = 0;
 
-        List<String> arr = new ArrayList<String>();
+        List<String> arr = new ArrayList<>();
         int n = matcher.groupCount();
 
         for (int i = 0; i <= n; i++) {

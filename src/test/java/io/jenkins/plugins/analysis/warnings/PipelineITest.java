@@ -47,6 +47,12 @@ public class PipelineITest extends IntegrationTest {
         }
     }
 
+    /** Runs the Cadence parser on an output file that contains 3 issues. */
+    @Test
+    public void shouldFindAllCadenceIssues() {
+        shouldFindIssuesOfTool(3, Cadence.class, "CadenceIncisive.txt");
+    }
+
     /** Runs the Erlc parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllErlcIssues() {
