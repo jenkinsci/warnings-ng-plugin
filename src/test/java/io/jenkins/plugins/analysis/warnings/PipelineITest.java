@@ -9,6 +9,7 @@ import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Test;
 import org.junit.jupiter.api.Tag;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
@@ -196,16 +197,10 @@ public class PipelineITest extends IntegrationTest {
         shouldFindIssuesOfTool(4, MavenConsole.class, "maven-console.txt");
     }
 
-    /** Runs the MetrowerksCWCompiler parser on an output file that contains 5 issues. */
+    /** Runs the MetrowerksCWCompiler parser on two output files that contains 5 + 3 issues. */
     @Test
     public void shouldFindAllMetrowerksCWCompilerIssues() {
-        shouldFindIssuesOfTool(5, MetrowerksCWCompiler.class, "MetrowerksCWCompiler.txt");
-    }
-
-    /** Runs the MetrowerksCWLinker parser on an output file that contains 3 issues. */
-    @Test
-    public void shouldFindAllMetrowerksCWLinkerIssues() {
-        shouldFindIssuesOfTool(3, MetrowerksCWLinker.class, "MetrowerksCWLinker.txt");
+        shouldFindIssuesOfTool(5 + 3, MetrowerksCodeWarrior.class, "MetrowerksCWCompiler.txt", "MetrowerksCWLinker.txt");
     }
 
     /** Runs the AcuCobol parser on an output file that contains 4 issues. */
@@ -249,6 +244,24 @@ public class PipelineITest extends IntegrationTest {
     @Test
     public void shouldFindAllPuppetLintIssues() {
         shouldFindIssuesOfTool(5, PuppetLint.class, "puppet-lint.txt");
+    }
+
+    /**
+     * Runs the Eclipse parser on an output file that contains 8 issues which are decorated with console notes.
+     *
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-11675">Issue 11675</a>
+     */
+    @Test
+    public void issue11675() {
+        Issues<BuildIssue> issues = shouldFindIssuesOfTool(8, Eclipse.class, "issue11675.txt");
+
+        for (Issue annotation : issues) {
+            assertThat(annotation.getMessage()).matches("[a-zA-Z].*");
+        }
+    }
+
+    private void assertThatMessageContainsWord(final Issue annotation) {
+        assertThat(annotation.getMessage()).matches("[a-zA-Z].*");
     }
 
     /** Runs the Eclipse parser on an output file that contains 8 issues. */
@@ -391,10 +404,10 @@ public class PipelineITest extends IntegrationTest {
     }
 
     @SuppressWarnings({"CheckStyle", "OverlyBroadCatchBlock"})
-    private void shouldFindIssuesOfTool(final int expectedSizeOfIssues, final Class<? extends StaticAnalysisTool> tool,
-            final String... filenames) {
+    private Issues<BuildIssue> shouldFindIssuesOfTool(final int expectedSizeOfIssues, final Class<? extends StaticAnalysisTool> tool,
+            final String... fileNames) {
         try {
-            WorkflowJob job = createJobWithWorkspaceFiles(filenames);
+            WorkflowJob job = createJobWithWorkspaceFiles(fileNames);
             job.setDefinition(parseAndPublish(tool));
 
             AnalysisResult result = scheduleBuild(job);
@@ -405,6 +418,8 @@ public class PipelineITest extends IntegrationTest {
             Issues<BuildIssue> issues = result.getIssues();
             Descriptor<?> descriptor = Jenkins.getInstance().getDescriptor(tool);
             assertThat(issues.filter(issue -> descriptor.getId().equals(issue.getOrigin()))).hasSize(expectedSizeOfIssues);
+
+            return issues;
         }
         catch (Exception exception) {
             throw new AssertionError(exception);

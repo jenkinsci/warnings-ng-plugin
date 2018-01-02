@@ -15,7 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Intel extends StreamBasedParser {
-    private static final String PARSER_NAME = Messages.Warnings_IntelC_ParserName();
+    private static final String PARSER_NAME = Messages.Warnings_Intel_ParserName();
 
     @DataBoundConstructor
     public Intel() {

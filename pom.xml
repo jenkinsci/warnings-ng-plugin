@@ -112,7 +112,6 @@
           <rules>
             <requireUpperBoundDeps>
               <excludes combine.children="append">
-
               </excludes>
             </requireUpperBoundDeps>
           </rules>
