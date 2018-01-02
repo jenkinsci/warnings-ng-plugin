@@ -38,8 +38,7 @@ public class ResharperInspectCode extends StreamBasedParser {
     /** Provides the labels for the parser. */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("resharperInspectCode", PARSER_NAME);
+            super("resharper", PARSER_NAME);
         }
     }
-
 }

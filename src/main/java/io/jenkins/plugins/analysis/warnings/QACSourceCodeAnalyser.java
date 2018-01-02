@@ -38,8 +38,7 @@ public class QACSourceCodeAnalyser extends StreamBasedParser {
     /** Provides the labels for the parser. */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("qacSourceCodeAnalyser", PARSER_NAME);
+            super("qac", PARSER_NAME);
         }
     }
-
 }
