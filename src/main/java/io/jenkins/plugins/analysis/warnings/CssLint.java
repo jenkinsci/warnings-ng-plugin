@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.warnings;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.AbstractParser;
-import edu.hm.hafner.analysis.parser.CssLintParser;
+import edu.hm.hafner.analysis.parser.LintParser;
 import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
 
@@ -24,7 +24,7 @@ public class CssLint extends StreamBasedParser {
 
     @Override
     protected AbstractParser createParser() {
-        return new CssLintParser();
+        return new LintParser();
     }
 
     /**
