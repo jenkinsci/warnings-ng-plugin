@@ -52,6 +52,30 @@ public class PipelineITest extends IntegrationTest {
         shouldFindIssuesOfTool(3, Cadence.class, "CadenceIncisive.txt");
     }
 
+    /** Runs the Clang parser on an output file that contains 9 issues. */
+    @Test
+    public void shouldFindAllClangIssues() {
+        shouldFindIssuesOfTool(9, Clang.class, "apple-llvm-clang.txt");
+    }
+
+    /** Runs the Coolflux parser on an output file that contains 1 issues. */
+    @Test
+    public void shouldFindAllCoolfluxIssues() {
+        shouldFindIssuesOfTool(1, Coolflux.class, "coolfluxchesscc.txt");
+    }
+
+    /** Runs the CppLint parser on an output file that contains 1031 issues. */
+    @Test
+    public void shouldFindAllCppLintIssues() {
+        shouldFindIssuesOfTool(1031, CppLint.class, "cpplint.txt");
+    }
+
+    /** Runs the CodeAnalysis parser on an output file that contains 3 issues. */
+    @Test
+    public void shouldFindAllCodeAnalysisIssues() {
+        shouldFindIssuesOfTool(3, CodeAnalysis.class, "codeanalysis.txt");
+    }
+
     /** Runs the GoLint parser on an output file that contains 7 issues. */
     @Test
     public void shouldFindAllGoLintIssues() {
