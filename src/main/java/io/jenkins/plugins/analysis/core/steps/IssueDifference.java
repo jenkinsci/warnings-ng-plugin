@@ -40,10 +40,10 @@ public class IssueDifference {
             }
 
             if (referenceToRemove.isPresent()) {
-                BuildIssue buildIssue = referenceToRemove.get();
-                oldIssues.add(buildIssue);
-                newIssues.remove(current.getId());
-                fixedIssues.remove(buildIssue.getId());
+                BuildIssue issueWithLatestProperties = newIssues.remove(current.getId());
+                BuildIssue oldIssue = referenceToRemove.get();
+                oldIssues.add(new BuildIssue(issueWithLatestProperties, oldIssue.getBuild()));
+                fixedIssues.remove(oldIssue.getId());
             }
         }
     }
