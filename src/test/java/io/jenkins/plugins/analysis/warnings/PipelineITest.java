@@ -94,6 +94,18 @@ public class PipelineITest extends IntegrationTest {
         shouldFindIssuesOfTool(8, SunC.class, "sunc.txt");
     }
 
+    /** Runs the JcReport parser on an output file that contains 5 issues. */
+    @Test
+    public void shouldFindAllJcReportIssues() {
+        shouldFindIssuesOfTool(5, JcReport.class, "jcreport.xml");
+    }
+
+    /** Runs the LinuxKernel parser on an output file that contains 26 issues. */
+    @Test
+    public void shouldFindAllLinuxKernelIssues() {
+        shouldFindIssuesOfTool(26, LinuxKernelOutput.class, "kernel.log");
+    }
+
     /** Runs the StyleCop parser on an output file that contains 5 issues. */
     @Test
     public void shouldFindAllStyleCopIssues() {
