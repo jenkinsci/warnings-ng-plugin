@@ -131,9 +131,9 @@ public class SourceDetail implements ModelObject {
         StringBuilder output = new StringBuilder(sourceFile.length());
 
         LineIterator lineIterator = IOUtils.lineIterator(new StringReader(sourceFile));
-        int lineNumber = 1;
 
         try {
+            int lineNumber = 1;
             while (lineNumber < SOURCE_GENERATOR_OFFSET) {
                 copyLine(output, lineIterator);
                 lineNumber++;
