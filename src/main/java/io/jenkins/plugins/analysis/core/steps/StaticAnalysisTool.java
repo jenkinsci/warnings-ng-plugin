@@ -26,6 +26,7 @@ import jenkins.model.Jenkins;
 
 import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
+import hudson.console.ConsoleNote;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 
@@ -141,6 +142,7 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
     public Issues<Issue> parse(final AbstractParser parser, final File file, final Charset charset, final IssueBuilder builder)
             throws ParsingException, ParsingCanceledException {
         try (Reader input = createReader(new FileInputStream(file), charset)) {
+            parser.setTransformer(line -> ConsoleNote.removeNotes(line));
             Issues<Issue> issues = parser.parse(input, builder);
             issues.log("Successfully parsed '%s': found %d issues (tool ID = %s)",
                     file.getAbsolutePath(), issues.getSize(), getId());
