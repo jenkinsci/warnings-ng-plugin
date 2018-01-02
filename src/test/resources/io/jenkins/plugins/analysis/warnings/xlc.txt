@@ -1,0 +1,2 @@
+"file.c", line 9.17: 1506-098 (E) Missing argument(s).
+ld: 0711-634 SEVERE ERROR: EXEC binder commands nested too deeply.

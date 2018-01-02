@@ -1,0 +1,25 @@
+// Remarks
+"C:\SCM\Lr\src\fxns.c", line 341: remark #880-D: parameter "params" was never referenced
+"C:\SCM\Lr\src\edge.c", line 177 (col. 42): remark #1116-D: may want to suffix float constant with an f
+
+// Warnings
+warning: symbol 'memset' redeclared with incompatible type
+"i2cDisplay12x2.c", line 12: warning: variable "h" was declared but never referenced
+"c:\DOCUME~1\JLINNE~1\LOCALS~1\Temp\0360811", WARNING! at line 2578: variable
+
+// Errors
+"i2cDisplay12x2.c", line 11: error: expected a ";"
+error: unresolved symbols remain
+error: errors encountered during linking; "../../bin/Debug/lrxyz.out" not
+"i2cDisplay12x2.c", line 3: fatal error: could not open source file "i2cDisplay12x12.h"
+"foo.asm", ERROR!   at line 5: [E0002] Illegal mnemonic specified
+
+
+// Ignore
+  0 Errors, 2 Warnings, 1225 Remarks.
+  Please view the build output for errors and warnings for any custom steps.
+  3 errors detected in the compilation of "i2cDisplay12x2.c".
+  1 fatal error detected in the compilation of "i2cDisplay12x2.c".
+  No Assembly Errors, 1 Assembly Warning
+  
+Problems running dot: exit code=-1, command='dot', arguments='"D:/jenkins/jobs/myjob/WORKSP~1/BUILDT~1/somefolder/doxydoc/html/d6/d52/structt_something_collgraph.dot" -Tpng -o "D:/jenkins/jobs/myjob/WORKSP~1/BUILDT~1/somefolder/doxydoc/html/d6/d52/structt_somethingcoll_graph.png"'

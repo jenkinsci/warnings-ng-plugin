@@ -5,8 +5,6 @@ testhist.l:451: warning: 'void yyunput(int, char*)' defined but not used
 
 foo.cc:4:39: error: foo.h: No such file or directory
 
-foo.so: undefined reference to 'missing_symbol'
-
 ../../lib/linux-i686/include/boost/test/impl/execution_monitor.ipp:678: warning: missing initializer for member sigaltstack::ss_sp
 ../../lib/linux-i686/include/boost/test/impl/execution_monitor.ipp:678: warning: missing initializer for member sigaltstack::ss_flags
 ../../lib/linux-i686/include/boost/test/impl/execution_monitor.ipp:678: warning: missing initializer for member sigaltstack::ss_size
@@ -15,7 +13,6 @@ src/test_simple_sgs_message.cxx:52: warning: large integer implicitly truncated 
 
 ================ Issue 3897 (not valid gcc4 errors -> should be undetected)
 /dir1/dir2/file.c:12:15: file.h: No such file or directory
-/dir1/dir3/file.cpp:233: undefined reference to 'MyInterface::getValue() const'
 /dir1/dir2/file.cpp:20:2: invalid preprocessing directive #include
 
 ================ Issue 4712

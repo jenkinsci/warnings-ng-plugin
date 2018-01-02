@@ -5,8 +5,8 @@ import java.util.Collection;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.RegexpLineParser;
-import edu.hm.hafner.analysis.parser.Gcc4CompilerParser;
-import edu.hm.hafner.analysis.parser.Gcc4LinkerParser;
+import edu.hm.hafner.analysis.parser.XlcCompilerParser;
+import edu.hm.hafner.analysis.parser.XlcLinkerParser;
 import io.jenkins.plugins.analysis.core.steps.CompositeParser;
 import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
 import static java.util.Arrays.*;
@@ -14,21 +14,21 @@ import static java.util.Arrays.*;
 import hudson.Extension;
 
 /**
- * Provides a parser and customized messages for the Gcc4Compiler and Gcc4Linker parsers.
+ * Provides a parser and customized messages for IBM xlC compiler and linker.
  *
- * @author Raphael Furch
+ * @author Ullrich Hafner
  */
-public class Gcc4 extends CompositeParser {
-    private static final String PARSER_NAME = Messages.Warnings_gcc4_ParserName();
+public class Xlc extends CompositeParser {
+    private static final String PARSER_NAME = Messages.Warnings_Xlc_ParserName();
 
     @DataBoundConstructor
-    public Gcc4() {
+    public Xlc() {
         // empty constructor required for stapler
     }
 
     @Override
     protected Collection<RegexpLineParser> createParsers() {
-        return asList(new Gcc4CompilerParser(), new Gcc4LinkerParser());
+        return asList(new XlcCompilerParser(), new XlcLinkerParser());
     }
 
     /** Registers this tool as extension point implementation. */
@@ -42,7 +42,7 @@ public class Gcc4 extends CompositeParser {
     /** Provides the labels for the parser. */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("gcc4", PARSER_NAME);
+                super("xlc", PARSER_NAME);
         }
     }
 }

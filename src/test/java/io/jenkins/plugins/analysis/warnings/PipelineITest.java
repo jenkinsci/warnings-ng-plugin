@@ -34,12 +34,10 @@ import hudson.model.Result;
 public class PipelineITest extends IntegrationTest {
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
 
-    /** Verifies that the number of parsers is 64. */
     @Test
     public void shouldFindAllRegisteredParsers() {
         DescriptorExtensionList<StaticAnalysisTool, Descriptor<StaticAnalysisTool>> descriptors
                 = Jenkins.getInstance().getDescriptorList(StaticAnalysisTool.class);
-        int count = 0;
         for (Descriptor<StaticAnalysisTool> descriptor : descriptors) {
             if (descriptor.clazz.getPackage().equals(Eclipse.class.getPackage())) {
                 System.out.format("%s: %s\n", descriptor.getId(), descriptor.getDisplayName());
@@ -51,6 +49,59 @@ public class PipelineITest extends IntegrationTest {
     @Test
     public void shouldFindAllCadenceIssues() {
         shouldFindIssuesOfTool(3, Cadence.class, "CadenceIncisive.txt");
+    }
+
+    /** Runs the GoLint parser on an output file that contains 7 issues. */
+    @Test
+    public void shouldFindAllGoLintIssues() {
+        shouldFindIssuesOfTool(7, GoLint.class, "golint.txt");
+    }
+
+    /** Runs the GoVet parser on an output file that contains 2 issues. */
+    @Test
+    public void shouldFindAllGoVetIssues() {
+        shouldFindIssuesOfTool(2, GoVet.class, "govet.txt");
+    }
+
+    /** Runs the SunC parser on an output file that contains 8 issues. */
+    @Test
+    public void shouldFindAllSunCIssues() {
+        shouldFindIssuesOfTool(8, SunC.class, "sunc.txt");
+    }
+
+    /** Runs the StyleCop parser on an output file that contains 5 issues. */
+    @Test
+    public void shouldFindAllStyleCopIssues() {
+        shouldFindIssuesOfTool(5, StyleCop.class, "stylecop.xml");
+    }
+
+    /** Runs the Tasking VX parser on an output file that contains 8 issues. */
+    @Test
+    public void shouldFindAllTaskingVxIssues() {
+        shouldFindIssuesOfTool(8, TaskingVx.class, "tasking-vx.txt");
+    }
+
+    /** Runs the tnsdl translator parser on an output file that contains 4 issues. */
+    @Test
+    public void shouldFindAllTnsdlIssues() {
+        shouldFindIssuesOfTool(4, Tnsdl.class, "tnsdl.txt");
+    }
+
+    /** Runs the Texas Instruments Code Composer Studio parser on an output file that contains 10 issues. */
+    @Test
+    public void shouldFindAllTiCssIssues() {
+        shouldFindIssuesOfTool(10, TiCss.class, "ticcs.txt");
+    }
+
+    /** Runs the IBM XLC compiler and linker parser on an output file that contains 1 + 1 issues. */
+    @Test
+    public void shouldFindAllXlcIssues() {
+        shouldFindIssuesOfTool(2, Xlc.class, "xlc.txt");
+    }
+    /** Runs the YIU compressor parser on an output file that contains 3 issues. */
+    @Test
+    public void shouldFindAllYuiCompressorIssues() {
+        shouldFindIssuesOfTool(3, YuiCompressor.class, "yui.txt");
     }
 
     /** Runs the Erlc parser on an output file that contains 2 issues. */
