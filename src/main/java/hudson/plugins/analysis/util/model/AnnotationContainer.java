@@ -886,7 +886,7 @@ public abstract class AnnotationContainer implements AnnotationProvider, Seriali
      * Get the author with the given hash code.
      *
      * @param hashCode the hash code of the author key (the full name of the
-     *  author with the email of the cuprit appended to it).  Unknown authors should be indicated by 0.
+     *  author with the email of the culprit appended to it).  Unknown authors should be indicated by 0.
      * @return the author with the given hashCode.
      */
     public Author getAuthor(final int hashCode) {
