@@ -131,7 +131,7 @@ public class GraphConfiguration  {
      * @see #serializeToString()
      */
     public boolean initializeFrom(final String value) {
-        return resetIfInvalid(intializeFromStringValue(value));
+        return resetIfInvalid(initializeFromStringValue(value));
     }
 
     /**
@@ -272,7 +272,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      */
     // CHECKSTYLE:CONSTANTS-OFF
-    private boolean intializeFromStringValue(final String value) {
+    private boolean initializeFromStringValue(final String value) {
         if (StringUtils.isBlank(value)) {
             return false;
         }
