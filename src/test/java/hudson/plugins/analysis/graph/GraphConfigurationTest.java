@@ -32,7 +32,7 @@ public class GraphConfigurationTest {
      * Ensures that invalid string values are rejected.
      */
     @Test
-    public void testInvalidConfiguations() {
+    public void testInvalidConfigurations() {
         assertInvalidInitializationValue("");
         assertInvalidInitializationValue("111!");
         assertInvalidInitializationValue(null);
@@ -74,10 +74,10 @@ public class GraphConfigurationTest {
      * Ensures that valid string values are correctly parsed.
      */
     @Test
-    public void testValidConfiguations() {
-        assertValidConfiguation("50!100!200!300!FIXED!1!BUILD_TYPE!FULL", WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE, NewVersusFixedGraph.class, true);
-        assertValidConfiguation("50!100!200!300!PRIORITY!0!BUILD_TYPE!FULL", WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE,  PriorityGraph.class, false);
-        assertValidConfiguation("50!100!200!300!NONE!1!BUILD_TYPE!FULL", WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE, EmptyGraph.class, true);
+    public void testValidConfigurations() {
+        assertValidConfiguration("50!100!200!300!FIXED!1!BUILD_TYPE!FULL", WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE, NewVersusFixedGraph.class, true);
+        assertValidConfiguration("50!100!200!300!PRIORITY!0!BUILD_TYPE!FULL", WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE,  PriorityGraph.class, false);
+        assertValidConfiguration("50!100!200!300!NONE!1!BUILD_TYPE!FULL", WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE, EmptyGraph.class, true);
 
         GraphConfiguration configuration = createDetailUnderTest();
 
@@ -95,8 +95,8 @@ public class GraphConfigurationTest {
      */
     @Test
     public void testUseBuildDate() {
-        assertValidConfiguation("50!100!200!300!FIXED!1!BUILD_TYPE!FULL", WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE, NewVersusFixedGraph.class, true);
-        assertValidConfiguation("50!100!200!300!PRIORITY!0!BUILD_TYPE!FULL", WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE, PriorityGraph.class, false);
+        assertValidConfiguration("50!100!200!300!FIXED!1!BUILD_TYPE!FULL", WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE, NewVersusFixedGraph.class, true);
+        assertValidConfiguration("50!100!200!300!PRIORITY!0!BUILD_TYPE!FULL", WIDTH, HEIGHT, BUILDS, DAYS, PARAMETER_NAME, PARAMETER_VALUE, PriorityGraph.class, false);
 
         GraphConfiguration configuration = createDetailUnderTest();
 
@@ -129,19 +129,19 @@ public class GraphConfigurationTest {
      * @param expectedUseBuildDate
      *            the expected use build date
      */
-    private void assertValidConfiguation(final String initialization, final int expectedWidth, final int expectedHeight,
+    private void assertValidConfiguration(final String initialization, final int expectedWidth, final int expectedHeight,
             final int expectedBuildCount, final int expectedDayCount, final String expectedParameterName, final String expectedParameterValue,
             final Class<? extends BuildResultGraph> expectedType, final boolean expectedUseBuildDate) {
-        GraphConfiguration configuation = assertValidConfiguation(initialization, expectedWidth, expectedHeight, expectedBuildCount, expectedDayCount,
+        GraphConfiguration configuration = assertValidConfiguration(initialization, expectedWidth, expectedHeight, expectedBuildCount, expectedDayCount,
                 expectedParameterName, expectedParameterValue, expectedType);
-        assertEquals("Wrong value for useBuildDate", expectedUseBuildDate, configuation.useBuildDateAsDomain());
+        assertEquals("Wrong value for useBuildDate", expectedUseBuildDate, configuration.useBuildDateAsDomain());
     }
 
     /**
      * Ensures that a valid JSON configuration is correctly parsed.
      */
     @Test
-    public void testValidJSONConfiguations() {
+    public void testValidJSONConfigurations() {
         String enabled = "{\"\":\"\",\"buildCountString\":\"" + BUILDS
                 + "\",\"dayCountString\":\"" + DAYS
                 + "\",\"parameterName\":\"" + PARAMETER_NAME
@@ -172,7 +172,7 @@ public class GraphConfigurationTest {
      *            the expected type
      * @return the created configuration
      */
-    private GraphConfiguration assertValidConfiguation(final String initialization, final int expectedWidth, final int expectedHeight,
+    private GraphConfiguration assertValidConfiguration(final String initialization, final int expectedWidth, final int expectedHeight,
             final int expectedBuildCount, final int expectedDayCount, final String expectedParameterName, final String expectedParameterValue,
             final Class<? extends BuildResultGraph> expectedType) {
         GraphConfiguration configuration = createDetailUnderTest();
