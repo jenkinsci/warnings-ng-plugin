@@ -995,7 +995,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     /**
      * Returns the default label provider that is used to visualize the build result (i.e., the tab labels).
      *
-     * @return the default label probider
+     * @return the default label provider
      * @since 1.69
      */
     protected void attachLabelProvider(final AnnotationContainer container) {
