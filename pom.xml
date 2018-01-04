@@ -121,12 +121,20 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>git</artifactId>
-      <version>3.1.0</version>
+      <version>3.7.0</version>
       <optional>true</optional>
       <exclusions>
         <exclusion>
           <groupId>joda-time</groupId>
           <artifactId>joda-time</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jenkins-ci</groupId>
+          <artifactId>annotation-indexer</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jenkins-ci.plugins</groupId>
+          <artifactId>apache-httpcomponents-client-4-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
