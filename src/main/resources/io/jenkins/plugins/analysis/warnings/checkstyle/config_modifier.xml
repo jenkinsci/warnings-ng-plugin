@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+  <head>
+    <title>Modifiers</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"/>
+    <script type="text/javascript" src="js/anchors.js"/>
+    <script type="text/javascript" src="js/google-analytics.js"/>
+    <link rel="icon" href="images/favicon.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/ico" />
+  </head>
+
+  <body>
+    <section name="Content">
+      <macro name="toc">
+        <param name="fromDepth" value="1"/>
+        <param name="toDepth" value="1"/>
+      </macro>
+    </section>
+
+    <section name="ModifierOrder">
+      <subsection name="Description">
+        <p>
+          Checks that the order of modifiers conforms to the suggestions in
+          the <a
+          href="http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html">Java
+          Language specification, sections 8.1.1, 8.3.1, 8.4.3</a> and <a
+          href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-9.html">
+          9.4</a>. The correct order is:
+        </p>
+
+        <ol>
+          <li>
+            <code>public</code>
+          </li>
+          <li>
+            <code>protected</code>
+          </li>
+          <li>
+            <code>private</code>
+          </li>
+          <li>
+            <code>abstract</code>
+          </li>
+          <li>
+            <code>default</code>
+          </li>
+          <li>
+            <code>static</code>
+          </li>
+          <li>
+            <code>final</code>
+          </li>
+          <li>
+            <code>transient</code>
+          </li>
+          <li>
+            <code>volatile</code>
+          </li>
+          <li>
+            <code>synchronized</code>
+          </li>
+          <li>
+            <code>native</code>
+          </li>
+          <li>
+            <code>strictfp</code>
+          </li>
+        </ol>
+
+        <p>
+          ATTENTION: We skip <a href="http://www.oracle.com/technetwork/articles/java/ma14-architect-annotations-2177655.html">
+          type annotations</a> from validation.
+        </p>
+
+      </subsection>
+
+      <subsection name="Examples">
+        <p> To configure the check: </p>
+        <source>
+&lt;module name=&quot;ModifierOrder&quot;/&gt;
+        </source>
+      </subsection>
+
+      <subsection name="Example of Usage">
+        <ul>
+          <li>
+            <a href="https://github.com/search?q=path%3Asrc%2Fmain%2Fresources+filename%3Agoogle_checks.xml+repo%3Acheckstyle%2Fcheckstyle+ModifierOrder">
+            Google Style</a>
+          </li>
+          <li>
+            <a href="https://github.com/search?q=path%3Asrc%2Fmain%2Fresources+filename%3Asun_checks.xml+repo%3Acheckstyle%2Fcheckstyle+ModifierOrder">
+            Sun Style</a>
+          </li>
+          <li>
+            <a href="https://github.com/search?q=path%3Aconfig+filename%3Acheckstyle_checks.xml+repo%3Acheckstyle%2Fcheckstyle+ModifierOrder">
+            Checkstyle Style</a>
+          </li>
+        </ul>
+      </subsection>
+
+      <subsection name="Error Messages">
+        <ul>
+          <li>
+            <a href="https://github.com/search?q=path%3Asrc%2Fmain%2Fresources%2Fcom%2Fpuppycrawl%2Ftools%2Fcheckstyle%2Fchecks%2Fmodifier+filename%3Amessages*.properties+repo%3Acheckstyle%2Fcheckstyle+%22annotation.order%22">
+            annotation.order</a>
+          </li>
+          <li>
+            <a href="https://github.com/search?q=path%3Asrc%2Fmain%2Fresources%2Fcom%2Fpuppycrawl%2Ftools%2Fcheckstyle%2Fchecks%2Fmodifier+filename%3Amessages*.properties+repo%3Acheckstyle%2Fcheckstyle+%22mod.order%22">
+            mod.order</a>
+          </li>
+        </ul>
+        <p>
+          All messages can be customized if the default message doesn't suite you.
+          Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
+        </p>
+      </subsection>
+
+      <subsection name="Package">
+        <p> com.puppycrawl.tools.checkstyle.checks.modifier </p>
+      </subsection>
+
+      <subsection name="Parent Module">
+        <p>
+          <a href="config.html#TreeWalker">TreeWalker</a>
+        </p>
+      </subsection>
+    </section>
+
+    <section name="RedundantModifier">
+
+      <subsection name="Description">
+        <p>
+          Checks for redundant modifiers in:
+        </p>
+        <ol>
+          <li>Interface and annotation definitions.</li>
+          <li>Final modifier on methods of final and anonymous classes.</li>
+          <li>
+            Inner <code>interface</code> declarations that are declared
+            as <code>static</code>.
+          </li>
+          <li>Class constructors.</li>
+          <li>
+            Nested <code>enum</code> definitions that are declared
+            as <code>static</code>.
+          </li>
+        </ol>
+        <p>
+          Rationale: The Java Language Specification strongly
+          discourages the usage of <code>public</code> and <code>abstract</code> for method
+          declarations in interface definitions as a matter of style.
+        </p>
+
+        <p>
+          Interfaces by definition are abstract so the <code>abstract</code>
+          modifier on the interface is redundant.
+        </p>
+
+        <p>
+          Classes inside of interfaces by definition are public and static,
+          so the <code>public</code> and <code>static</code> modifiers
+          on the inner classes are redundant. On the other hand, classes
+          inside of interfaces can be abstract or non abstract.
+          So, <code>abstract</code> modifier is allowed.
+        </p>
+
+        <p>
+          Fields in interfaces and annotations are automatically
+          public, static and final, so these modifiers are redundant as
+          well.
+        </p>
+
+        <p>
+          As annotations are a form of interface, their fields are also
+          automatically public, static and final just as their
+          annotation fields are automatically public and abstract.
+        </p>
+
+        <p>
+          Enums by definition are static implicit subclasses of java.lang.Enum&#60;E&#62;.
+          So, the <code>static</code> modifier on the enums is redundant. In addition,
+          if enum is inside of interface, <code>public</code> modifier is also redundant.
+        </p>
+
+        <p>
+          Enums can also contain abstract methods and methods which can be overridden by the declared
+          enumeration fields.
+          See the following example:
+        </p>
+
+        <source>
+          public enum EnumClass {
+             FIELD_1,
+             FIELD_2 {
+                 &#64;Override
+                 public final void method1() {} // violation expected
+             };
+
+             public void method1() {}
+             public final void method2() {} // no violation expected
+          }
+        </source>
+
+        <p>
+          Since these methods can be overridden in these situations, the final methods are not
+          marked as redundant even though they can't be extended by other classes/enums.
+        </p>
+
+        <p>
+          Nested <code>enum</code> types are always static by default.
+        </p>
+
+        <p>
+          Final classes by definition cannot be extended so the <code>final</code>
+          modifier on the method of a final class is redundant.
+        </p>
+
+        <p>
+          Public modifier for constructors in non-public non-protected classes
+          is always obsolete:
+        </p>
+
+        <source>
+          public class PublicClass {
+            public PublicClass() {} // OK
+          }
+
+          class PackagePrivateClass {
+            public PackagePrivateClass() {} // violation expected
+          }
+        </source>
+
+        <p>There is no violation in the following example,
+          because removing public modifier from ProtectedInnerClass
+          constructor will make this code not compiling:
+        </p>
+
+        <source>
+          package a;
+          public class ClassExample {
+            protected class ProtectedInnerClass {
+              public ProtectedInnerClass () {}
+            }
+          }
+
+          package b;
+          import a.ClassExample;
+          public class ClassExtending extends ClassExample {
+            ProtectedInnerClass pc = new ProtectedInnerClass();
+          }
+        </source>
+      </subsection>
+
+      <subsection name="Properties">
+        <table>
+          <tr>
+            <th>name</th>
+            <th>description</th>
+            <th>type</th>
+            <th>default value</th>
+          </tr>
+          <tr>
+            <td>tokens</td>
+            <td>tokens to check</td>
+            <td>
+              subset of tokens
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#METHOD_DEF">METHOD_DEF</a>,
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#VARIABLE_DEF">VARIABLE_DEF</a>,
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#ANNOTATION_FIELD_DEF">ANNOTATION_FIELD_DEF</a>,
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#INTERFACE_DEF">INTERFACE_DEF</a>,
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#CTOR_DEF">CTOR_DEF</a>,
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#CLASS_DEF">CLASS_DEF</a>,
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#ENUM_DEF">ENUM_DEF</a>,
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#RESOURCE">RESOURCE</a>.
+            </td>
+            <td>
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#METHOD_DEF">METHOD_DEF</a>,
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#VARIABLE_DEF">VARIABLE_DEF</a>,
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#ANNOTATION_FIELD_DEF">ANNOTATION_FIELD_DEF</a>,
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#INTERFACE_DEF">INTERFACE_DEF</a>,
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#CTOR_DEF">CTOR_DEF</a>,
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#CLASS_DEF">CLASS_DEF</a>,
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#ENUM_DEF">ENUM_DEF</a>,
+              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#RESOURCE">RESOURCE</a>.
+            </td>
+          </tr>
+        </table>
+      </subsection>
+
+      <subsection name="Examples">
+        <p> To configure the check: </p>
+        <source>
+&lt;module name=&quot;RedundantModifier&quot;/&gt;
+        </source>
+
+        <p>
+          To configure the check to check only methods and not variables:
+        </p>
+        <source>
+&lt;module name=&quot;RedundantModifier&quot;&gt;
+  &lt;property name=&quot;tokens&quot; value=&quot;METHOD_DEF&quot;/&gt;
+&lt;/module&gt;
+        </source>
+      </subsection>
+
+      <subsection name="Example of Usage">
+        <ul>
+          <li>
+            <a href="https://github.com/search?q=path%3Asrc%2Fmain%2Fresources+filename%3Asun_checks.xml+repo%3Acheckstyle%2Fcheckstyle+RedundantModifier">
+            Sun Style</a>
+          </li>
+          <li>
+            <a href="https://github.com/search?q=path%3Aconfig+filename%3Acheckstyle_checks.xml+repo%3Acheckstyle%2Fcheckstyle+RedundantModifier">
+            Checkstyle Style</a>
+          </li>
+        </ul>
+      </subsection>
+
+      <subsection name="Error Messages">
+        <ul>
+          <li>
+            <a href="https://github.com/search?q=path%3Asrc%2Fmain%2Fresources%2Fcom%2Fpuppycrawl%2Ftools%2Fcheckstyle%2Fchecks%2Fmodifier+filename%3Amessages*.properties+repo%3Acheckstyle%2Fcheckstyle+%22redundantModifier%22">
+            redundantModifier</a>
+          </li>
+        </ul>
+        <p>
+          All messages can be customized if the default message doesn't suite you.
+          Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
+        </p>
+      </subsection>
+
+      <subsection name="Package">
+        <p> com.puppycrawl.tools.checkstyle.checks.modifier </p>
+      </subsection>
+
+      <subsection name="Parent Module">
+        <p>
+          <a href="config.html#TreeWalker">TreeWalker</a>
+        </p>
+      </subsection>
+    </section>
+  </body>
+</document>

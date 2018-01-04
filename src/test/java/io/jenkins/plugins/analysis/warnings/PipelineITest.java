@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.warnings;
 import java.io.IOException;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -17,10 +18,10 @@ import io.jenkins.plugins.analysis.core.steps.BuildIssue;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
+import io.jenkins.plugins.analysis.core.steps.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
 import jenkins.model.Jenkins;
 
-import hudson.DescriptorExtensionList;
 import hudson.model.Descriptor;
 import hudson.model.Result;
 
@@ -35,21 +36,22 @@ import hudson.model.Result;
 public class PipelineITest extends IntegrationTest {
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
 
-    @Test
-    public void shouldFindAllRegisteredParsers() {
-        DescriptorExtensionList<StaticAnalysisTool, Descriptor<StaticAnalysisTool>> descriptors
-                = Jenkins.getInstance().getDescriptorList(StaticAnalysisTool.class);
-        for (Descriptor<StaticAnalysisTool> descriptor : descriptors) {
-            if (descriptor.clazz.getPackage().equals(Eclipse.class.getPackage())) {
-                System.out.format("%s: %s\n", descriptor.getId(), descriptor.getDisplayName());
-            }
-        }
-    }
-
     /** Runs the Cadence parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllCadenceIssues() {
         shouldFindIssuesOfTool(3, Cadence.class, "CadenceIncisive.txt");
+    }
+
+    /** Runs the CheckStyle parser on an output file that contains 6 issues. */
+    @Test
+    public void shouldFindAllCheckStyleIssues() {
+        Issues<BuildIssue> issues = shouldFindIssuesOfTool(6, CheckStyle.class, "checkstyle.xml");
+
+        BuildIssue issue = issues.get(2);
+
+        StaticAnalysisLabelProvider labelProvider = new CheckStyle.Descriptor().getLabelProvider();
+        assertThat(issue).hasDescription(StringUtils.EMPTY);
+        assertThat(labelProvider.getDescription(issue)).contains("finds classes that are designed for extension");
     }
 
     /** Runs the Clang parser on an output file that contains 9 issues. */
@@ -439,7 +441,7 @@ public class PipelineITest extends IntegrationTest {
         assertThat(result.getIssues()).hasSize(1);
     }
 
-    @SuppressWarnings({"CheckStyle", "OverlyBroadCatchBlock"})
+    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
     private Issues<BuildIssue> shouldFindIssuesOfTool(final int expectedSizeOfIssues, final Class<? extends StaticAnalysisTool> tool,
             final String... fileNames) {
         try {
@@ -453,7 +455,8 @@ public class PipelineITest extends IntegrationTest {
 
             Issues<BuildIssue> issues = result.getIssues();
             Descriptor<?> descriptor = Jenkins.getInstance().getDescriptor(tool);
-            assertThat(issues.filter(issue -> descriptor.getId().equals(issue.getOrigin()))).hasSize(expectedSizeOfIssues);
+            assertThat(descriptor).as("Tool '%s' not found", tool).isNotNull();
+            assertThat(issues.filter(issue -> issue.getOrigin().equals(descriptor.getId()))).hasSize(expectedSizeOfIssues);
 
             return issues;
         }
@@ -501,7 +504,7 @@ public class PipelineITest extends IntegrationTest {
      *
      * @return the created {@link AnalysisResult}
      */
-    @SuppressWarnings("CheckStyle")
+    @SuppressWarnings("illegalcatch")
     private AnalysisResult scheduleBuild(final WorkflowJob job) {
         try {
             WorkflowRun run = j.assertBuildStatus(Result.SUCCESS, Objects.requireNonNull(job.scheduleBuild2(0)));
