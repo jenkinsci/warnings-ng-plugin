@@ -131,12 +131,12 @@ public abstract class AbstractBlamer implements Blamer {
     }
 
     private String getWorkspacePath() {
-        return getCanonicalPath(workspace.getRemote().replace('\\', '/'));
+        return getCanonicalPath(workspace.getRemote());
     }
 
     private String getCanonicalPath(final String path) {
         try {
-            return new File(path).getCanonicalPath();
+            return new File(path).getCanonicalPath().replace('\\', '/');
         }
         catch (IOException e) {
             return path;

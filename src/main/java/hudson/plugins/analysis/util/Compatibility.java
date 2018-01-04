@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 public final class Compatibility {
 
     /**
-     * Util.isOverriden does not work on non-public methods, that's why this one is used here.
+     * Util.isOverridden does not work on non-public methods, that's why this one is used here.
      */
     public static boolean isOverridden(@Nonnull Class base, @Nonnull Class derived, @Nonnull String methodName, @Nonnull Class... types) {
         try {

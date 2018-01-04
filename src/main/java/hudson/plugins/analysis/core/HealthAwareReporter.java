@@ -680,7 +680,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
     /** Backwards compatibility.
      * @deprecated
      */
-    @SuppressWarnings({"PMD.ExcessiveParamaterList", "javadoc"})
+    @SuppressWarnings({"PMD.ExcessiveParameterList", "javadoc"})
     @Deprecated
     public HealthAwareReporter(final String healthy, final String unHealthy, final String thresholdLimit, final boolean useDeltaValues,
             final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
