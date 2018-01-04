@@ -23,6 +23,7 @@
 
     <section name="Regexp">
       <subsection name="Description">
+        <p>Since Checkstyle 4.0</p>
         <p>
           A check that makes sure that a specified pattern exists, exists less
           than a set number of times, or does not exist in the file.
@@ -76,12 +77,14 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>pattern</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"$^"</code> (empty)</td>
+            <td>4.0</td>
           </tr>
           <tr>
             <td>message</td>
@@ -89,12 +92,14 @@
               if empty then the default (hard-coded) message is used.</td>
             <td><a href="property_types.html#string">String</a></td>
             <td><code>&quot;&quot;</code>(empty)</td>
+            <td>4.0</td>
           </tr>
           <tr>
             <td>illegalPattern</td>
             <td>Controls whether the pattern is required or illegal.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>4.0</td>
           </tr>
           <tr>
             <td>duplicateLimit</td>
@@ -104,18 +109,21 @@
               limit is exceeded errors will be logged.</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>0</code></td>
+            <td>4.0</td>
           </tr>
           <tr>
             <td>errorLimit</td>
             <td>Controls the maximum number of errors before the check will abort.</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>100</code></td>
+            <td>4.0</td>
           </tr>
           <tr>
             <td>ignoreComments</td>
             <td>Controls whether to ignore matches found within comments.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>4.0</td>
           </tr>
         </table>
       </subsection>
@@ -462,7 +470,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -482,6 +490,7 @@
 
     <section name="RegexpMultiline">
       <subsection name="Description">
+        <p>Since Checkstyle 5.0</p>
         <p>
           A check for detecting that matches across multiple lines.
           Works with any file type.
@@ -500,12 +509,14 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>illegal pattern</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>&quot;$.&quot;</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>message</td>
@@ -513,30 +524,35 @@
             if empty then default(hard-coded) message is used.</td>
             <td><a href="property_types.html#string">String</a></td>
             <td><code>&quot;&quot;</code>(empty)</td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>ignoreCase</td>
             <td>Controls whether to ignore case when searching.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>minimum</td>
             <td>The minimum number of matches required in each file.</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>0</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>maximum</td>
             <td>The maximum number of matches required in each file.</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>0</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>fileExtensions</td>
             <td>file type extension of files to process</td>
             <td><a href="property_types.html#stringSet">String Set</a></td>
             <td><code>{}</code></td>
+            <td>5.0</td>
           </tr>
         </table>
       </subsection>
@@ -582,7 +598,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -602,6 +618,7 @@
 
     <section name="RegexpOnFilename">
       <subsection name="Description">
+        <p>Since Checkstyle 6.15</p>
         <p>
           Implementation of a check that looks for a file name and/or path match (or mis-match)
           against specified patterns. It can also be used to verify files match specific naming
@@ -612,7 +629,7 @@
           The fileExtensions property first picks only files that match any of the
           specific extensions supplied.
           Once files are matched against the fileExtensions, the match property is then
-          used in conjuction with the patterns to determine if the check is looking
+          used in conjunction with the patterns to determine if the check is looking
           for a match or mis-match on those files. If the fileNamePattern is
           supplied, the matching is only applied to the fileNamePattern and not the
           folderPattern. If no fileNamePattern is supplied, then matching is applied
@@ -649,18 +666,21 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>folderPattern</td>
             <td>Regular expression to match the folder path against.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>null</code></td>
+            <td>6.15</td>
           </tr>
           <tr>
             <td>fileNamePattern</td>
             <td>Regular expression to match the file name against.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>null</code></td>
+            <td>6.15</td>
           </tr>
           <tr>
             <td>match</td>
@@ -668,12 +688,14 @@
             fileNamePattern is supplied, otherwise it is applied on the folderPattern.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>6.15</td>
           </tr>
           <tr>
             <td>ignoreFileNameExtensions</td>
             <td>Whether to ignore the file extension for the file name match.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>6.15</td>
           </tr>
           <tr>
             <td>fileExtensions</td>
@@ -681,6 +703,7 @@
             only files that match these types are examined with the other patterns.</td>
             <td><a href="property_types.html#stringSet">String Set</a></td>
             <td><code>{}</code></td>
+            <td>6.15</td>
           </tr>
         </table>
       </subsection>
@@ -774,7 +797,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -794,6 +817,7 @@
 
     <section name="RegexpSingleline">
       <subsection name="Description">
+        <p>Since Checkstyle 5.0</p>
         <p>
           A check for detecting single lines that match a supplied
           regular expression. Works with any file type.
@@ -813,12 +837,14 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>illegal pattern</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>&quot;$.&quot;</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>message</td>
@@ -826,30 +852,35 @@
             if empty then default(hard-coded) message is used.</td>
             <td><a href="property_types.html#string">String</a></td>
             <td><code>&quot;&quot;</code>(empty)</td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>ignoreCase</td>
             <td>Controls whether to ignore case when searching.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>minimum</td>
             <td>The minimum number of matches required in each file.</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>0</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>maximum</td>
             <td>The maximum number of matches required in each file.</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>0</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>fileExtensions</td>
             <td>file type extension of files to process</td>
             <td><a href="property_types.html#stringSet">String Set</a></td>
             <td><code>{}</code></td>
+            <td>5.0</td>
           </tr>
         </table>
       </subsection>
@@ -921,7 +952,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -941,6 +972,7 @@
 
     <section name="RegexpSinglelineJava">
       <subsection name="Description">
+        <p>Since Checkstyle 6.0</p>
         <p>
           This class is variation on <a
           href="#RegexpSingleline">RegexpSingleline</a> for detecting
@@ -955,12 +987,14 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>illegal pattern</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>&quot;$.&quot;</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>message</td>
@@ -968,30 +1002,35 @@
             if empty then default(hard-coded) message is used.</td>
             <td><a href="property_types.html#string">String</a></td>
             <td><code>&quot;&quot;</code>(empty)</td>
+            <td>6.0</td>
           </tr>
           <tr>
             <td>ignoreCase</td>
             <td>Controls whether to ignore case when searching.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>minimum</td>
             <td>The minimum number of matches required in each file.</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>0</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>maximum</td>
             <td>The maximum number of matches required in each file.</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>0</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>ignoreComments</td>
             <td>Controls whether to ignore text in comments when searching.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>5.0</td>
           </tr>
         </table>
       </subsection>
@@ -1044,7 +1083,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>

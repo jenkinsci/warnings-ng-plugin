@@ -23,6 +23,7 @@
 
     <section name="AvoidStarImport">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Checks that there are no import statements that use the * notation.
         </p>
@@ -42,6 +43,7 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>excludes</td>
@@ -52,6 +54,7 @@
             </td>
             <td><a href="property_types.html#stringSet">String Set</a></td>
             <td><code>empty list</code></td>
+            <td>3.2</td>
           </tr>
           <tr>
             <td>allowClassImports</td>
@@ -61,6 +64,7 @@
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>5.3</td>
           </tr>
           <tr>
             <td>allowStaticMemberImports</td>
@@ -70,6 +74,7 @@
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>5.3</td>
           </tr>
         </table>
       </subsection>
@@ -114,7 +119,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -131,6 +136,7 @@
 
     <section name="AvoidStaticImport">
       <subsection name="Description">
+        <p>Since Checkstyle 5.0</p>
         <p>
           Checks that there are no static import statements.
         </p>
@@ -150,6 +156,7 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>excludes</td>
@@ -169,6 +176,7 @@
             </td>
             <td><a href="property_types.html#stringSet">String Set</a></td>
             <td><code>empty list</code></td>
+            <td>5.0</td>
           </tr>
         </table>
       </subsection>
@@ -204,7 +212,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -222,6 +230,7 @@
 
     <section name="CustomImportOrder">
       <subsection name="Description">
+        <p>Since Checkstyle 5.8</p>
         <p>
           Checks that the groups of import declarations appear in the order specified
           by the user. If there is an import but its group is not specified in the
@@ -328,36 +337,42 @@ import com.puppycrawl.tools.checkstyle.checks.imports.AvoidStarImportCheck;
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>customImportOrderRules</td>
             <td>List of order declaration customizing by user.</td>
             <td><a href="property_types.html#string">string</a></td>
             <td><code>null</code></td>
+            <td>5.8</td>
           </tr>
           <tr>
             <td>standardPackageRegExp</td>
             <td>RegExp for STANDARD_JAVA_PACKAGE group imports.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^(java|javax)\."</code></td>
+            <td>5.8</td>
           </tr>
           <tr>
             <td>thirdPartyPackageRegExp</td>
-            <td>RegExp for THIRDPARTY_PACKAGE group imports.</td>
+            <td>RegExp for THIRD_PARTY_PACKAGE group imports.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>".*"</code></td>
+            <td>5.8</td>
           </tr>
           <tr>
             <td>specialImportsRegExp</td>
             <td>RegExp for SPECIAL_IMPORTS group imports.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^$"</code></td>
+            <td>5.8</td>
           </tr>
           <tr>
             <td>separateLineBetweenGroups</td>
             <td>Force empty line separator between import groups.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.8</td>
           </tr>
           <tr>
             <td>sortImportsInGroupAlphabetically</td>
@@ -366,6 +381,7 @@ import com.puppycrawl.tools.checkstyle.checks.imports.AvoidStarImportCheck;
                    ASCII sort order</a>.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>5.8</td>
           </tr>
         </table>
       </subsection>
@@ -564,7 +580,7 @@ import android.*;
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -584,6 +600,7 @@ import android.*;
 
     <section name="IllegalImport">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Checks for imports from a set of illegal packages. By default, the
           check rejects all <code>sun.*</code> packages since
@@ -600,14 +617,33 @@ import android.*;
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>illegalPkgs</td>
-            <td>packages to reject</td>
+            <td>Packages to reject, if <b>regexp</b> variable is not set, checks if import is the part of package. If <b>regexp</b> variable is set, then list of packages will be
+                interpreted as regular expressions. Note, all properties for match will be used.</td>
             <td><a href="property_types.html#stringSet">String Set</a></td>
             <td><code>sun</code></td>
+            <td>3.0</td>
+          </tr>
+          <tr>
+            <td>illegalClasses</td>
+            <td>Class names to reject, if <b>regexp</b> variable is not set, checks if import equals class name. If <b>regexp</b> variable is set, then list of class name will be
+                interpreted as regular expressions. Note, all properties for match will be used.</td>
+            <td><a href="property_types.html#stringSet">String Set</a></td>
+            <td><code>{}</code></td>
+            <td>7.8</td>
+          </tr>
+          <tr>
+            <td>regexp</td>
+            <td>Whether the <b>illegalPkgs</b> and <b>illegalClasses</b> should be interpreted as regular expressions</td>
+            <td><a href="property_types.html#boolean">Boolean</a></td>
+            <td><code>false</code></td>
+            <td>7.8</td>
           </tr>
         </table>
+
       </subsection>
 
       <subsection name="Examples">
@@ -625,6 +661,162 @@ import android.*;
 &lt;module name=&quot;IllegalImport&quot;&gt;
     &lt;property name=&quot;illegalPkgs&quot; value=&quot;java.io, java.sql&quot;/&gt;
 &lt;/module&gt;
+        </source>
+        <p>
+            The following example shows class with no illegal imports
+        </p>
+        <source>
+import java.lang.ArithmeticException;
+import java.util.List;
+import java.util.Enumeration;
+import java.util.Arrays;
+import sun.applet.*;
+
+public class InputIllegalImport { }
+        </source>
+        <p>
+          The following example shows class with two illegal imports
+          <ul>
+            <li><b>java.io.*</b>, illegalPkgs property contains this package</li>
+            <li><b>java.sql.Connection</b> is inside java.sql package</li>
+          </ul>
+        </p>
+        <source>
+import java.io.*;           // violation
+import java.lang.ArithmeticException;
+import java.sql.Connection; // violation
+import java.util.List;
+import java.util.Enumeration;
+import java.util.Arrays;
+import sun.applet.*;
+
+public class InputIllegalImport { }
+        </source>
+
+        <p>
+          To configure the check so that it rejects classes <code>java.util.Date</code> and <code>java.sql.Connection</code>:
+        </p>
+        <source>
+&lt;module name=&quot;IllegalImport&quot;&gt;
+    &lt;property name=&quot;illegalClasses&quot; value=&quot;java.util.Date, java.sql.Connection&quot;/&gt;
+&lt;/module&gt;
+        </source>
+        <p>
+          The following example shows class with no illegal imports
+        </p>
+        <source>
+import java.io.*;
+import java.lang.ArithmeticException;
+import java.util.List;
+import java.util.Enumeration;
+import java.util.Arrays;
+import sun.applet.*;
+
+public class InputIllegalImport { }
+        </source>
+        <p>
+          The following example shows class with two illegal imports
+          <ul>
+            <li><b>java.sql.Connection</b>, illegalClasses property contains this class</li>
+            <li><b>java.util.Date</b>, illegalClasses property contains this class</li>
+          </ul>
+        </p>
+        <source>
+import java.io.*;
+import java.lang.ArithmeticException;
+import java.sql.Connection; // violation
+import java.util.List;
+import java.util.Enumeration;
+import java.util.Arrays;
+import java.util.Date;      // violation
+import sun.applet.*;
+
+public class InputIllegalImport { }
+        </source>
+
+        <p>
+          To configure the check so that it rejects packages not satisfying to regular expression <code>java\.util</code>:
+        </p>
+        <source>
+&lt;module name=&quot;IllegalImport&quot;&gt;
+    &lt;property name=&quot;regexp&quot; value=&quot;true&quot;/&gt;
+    &lt;property name=&quot;illegalPkgs&quot; value=&quot;java\.util&quot;/&gt;
+&lt;/module&gt;
+        </source>
+        <p>
+          The following example shows class with no illegal imports
+        </p>
+        <source>
+import java.io.*;
+import java.lang.ArithmeticException;
+import java.sql.Connection;
+import sun.applet.*;
+
+public class InputIllegalImport { }
+        </source>
+        <p>
+          The following example shows class with four illegal imports
+          <ul>
+            <li><b>java.util.List</b></li>
+            <li><b>java.util.Enumeration</b></li>
+            <li><b>java.util.Arrays</b></li>
+            <li><b>java.util.Date</b></li>
+          </ul>
+          All four imports match "java\.util" regular expression
+        </p>
+        <source>
+import java.io.*;
+import java.lang.ArithmeticException;
+import java.sql.Connection;
+import java.util.List;          // violation
+import java.util.Enumeration;   // violation
+import java.util.Arrays;        // violation
+import java.util.Date;          // violation
+import sun.applet.*;
+
+public class InputIllegalImport { }
+        </source>
+
+        <p>
+          To configure the check so that it rejects class names not satisfying to regular expression <code>^java\.util\.(List|Arrays)</code> and <code>^java\.sql\.Connection</code>:
+        </p>
+        <source>
+&lt;module name=&quot;IllegalImport&quot;&gt;
+    &lt;property name=&quot;regexp&quot; value=&quot;true&quot;/&gt;
+    &lt;property name=&quot;illegalClasses&quot; value=&quot;^java\.util\.(List|Arrays), ^java\.sql\.Connection&quot;/&gt;
+&lt;/module&gt;
+        </source>
+        <p>
+          The following example shows class with no illegal imports
+        </p>
+        <source>
+import java.io.*;
+import java.lang.ArithmeticException;
+import java.util.Enumeration;
+import java.util.Date;
+import sun.applet.*;
+
+public class InputIllegalImport { }
+        </source>
+        <p>
+          The following example shows class with three illegal imports
+          <ul>
+            <li><b>java.sql.Connection</b> matches "^java\.sql\.Connection" regular expression</li>
+            <li><b>java.util.List</b> matches "^java\.util\.(List|Arrays)" regular expression</li>
+            <li><b>java.util.Arrays</b> matches "^java\.util\.(List|Arrays)" regular expression</li>
+          </ul>
+        </p>
+        <source>
+import java.io.*;
+import java.lang.ArithmeticException;
+import java.sql.Connection;     // violation
+import java.util.List;          // violation
+import java.util.Enumeration;
+import java.util.Arrays;        // violation
+import java.util.Date;
+import sun.applet.*;
+
+public class InputIllegalImport { }
         </source>
       </subsection>
 
@@ -649,7 +841,7 @@ import android.*;
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -669,6 +861,7 @@ import android.*;
 
     <section name="ImportControl">
       <subsection name="Description">
+        <p>Since Checkstyle 4.0</p>
         <p>
           Controls what can be imported in each package. Useful for
           ensuring that application layering rules are not violated,
@@ -676,9 +869,19 @@ import android.*;
         </p>
 
         <p>
+          Short description of the behaviour:
+          <ul>
+              <li>Check starts checking from the longest matching subpackage (later 'current subpackage') described inside import control file to package defined in class file.</li>
+              <li>If there is matching allow/disallow rule inside the current subpackage then the Check returns "allowed" or "disallowed" message.</li>
+              <li>If there is no matching allow/disallow rule inside the current subpackage then it continues checking in the parent subpackage.</li>
+              <li>If there is no matching allow/disallow rule in any of the subpackages, including the root level (import-control), then the import is disallowed by default.</li>
+          </ul>
+        </p>
+
+        <p>
           The DTD for a import control XML document is at <a
-          href="http://checkstyle.sourceforge.net/dtds/import_control_1_2.dtd">
-          http://checkstyle.sourceforge.net/dtds/import_control_1_2.dtd</a>. It
+          href="http://checkstyle.sourceforge.net/dtds/import_control_1_3.dtd">
+          http://checkstyle.sourceforge.net/dtds/import_control_1_3.dtd</a>. It
           contains documentation on each of the elements and attributes.
         </p>
 
@@ -690,8 +893,8 @@ import android.*;
 
         <pre>
 &lt;!DOCTYPE import-control PUBLIC
-    &quot;-//Puppy Crawl//DTD Import Control 1.2//EN&quot;
-    &quot;http://checkstyle.sourceforge.net/dtds/import_control_1_2.dtd&quot;&gt;
+    &quot;-//Puppy Crawl//DTD Import Control 1.3//EN&quot;
+    &quot;http://checkstyle.sourceforge.net/dtds/import_control_1_3.dtd&quot;&gt;
         </pre>
       </subsection>
 
@@ -702,6 +905,7 @@ import android.*;
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>file</td>
@@ -712,29 +916,44 @@ import android.*;
             </td>
             <td><a href="property_types.html#uri">URI</a></td>
             <td><code>null</code></td>
+            <td>4.0</td>
           </tr>
           <tr>
-            <td>url</td>
+            <td>path</td>
             <td>
-              URL of the file containing the import control configuration.
-              This property is deprecated. Please use the file property to load configurations
-              from URLs.
+              Regular expression of file paths to which this check should apply. Files that
+              don't match the pattern will not be checked. The pattern will be matched against
+              the full absolute file path.
             </td>
-            <td><a href="property_types.html#uri">URI</a></td>
-            <td><code>null</code></td>
+            <td><a href="property_types.html#regexp">Regular Expression</a></td>
+            <td><code>".*"</code></td>
+            <td>7.5</td>
           </tr>
         </table>
       </subsection>
 
       <subsection name="Examples">
         <p>
-          To configure the check using a import control file called
+          To configure the check using an import control file called
           &quot;config/import-control.xml&quot;, then have the following:
         </p>
 
         <source>
 &lt;module name=&quot;ImportControl&quot;&gt;
     &lt;property name=&quot;file&quot; value=&quot;config/import-control.xml&quot;/&gt;
+&lt;/module&gt;
+        </source>
+
+        <p>
+          To configure the check to only check the &quot;src/main&quot; directory
+          using an import control file called &quot;config/import-control.xml&quot;,
+          then have the following:
+        </p>
+
+        <source>
+&lt;module name=&quot;ImportControl&quot;&gt;
+    &lt;property name=&quot;file&quot; value=&quot;config/import-control.xml&quot;/&gt;
+    &lt;property name=&quot;path&quot; value=&quot;^.*[\\/]src[\\/]main[\\/].*$&quot;/&gt;
 &lt;/module&gt;
         </source>
 
@@ -751,6 +970,7 @@ import android.*;
 
         <source>
 &lt;import-control pkg=&quot;com.puppycrawl.tools.checkstyle&quot;&gt;
+    &lt;disallow pkg=&quot;sun&quot;/&gt;
     &lt;allow pkg=&quot;com.puppycrawl.tools.checkstyle.api&quot;/&gt;
     &lt;allow pkg=&quot;com.puppycrawl.tools.checkstyle.checks&quot;/&gt;
     &lt;allow class=&quot;com.google.common.io.Files&quot;/&gt;
@@ -763,6 +983,9 @@ import android.*;
         &lt;disallow pkg=&quot;com.puppycrawl.tools.checkstyle.ant&quot;/&gt;
         &lt;disallow pkg=&quot;com.puppycrawl.tools.checkstyle.doclets&quot;/&gt;
         &lt;disallow pkg=&quot;com.puppycrawl.tools.checkstyle.gui&quot;/&gt;
+    &lt;/subpackage&gt;
+    &lt;subpackage name=&quot;dao&quot;&gt;
+        &lt;disallow pkg=&quot;javax.swing&quot; exact-match=&quot;true&quot;/&gt;
     &lt;/subpackage&gt;
 &lt;/import-control&gt;
         </source>
@@ -789,11 +1012,115 @@ import android.*;
         </source>
 
         <p>
+          In the next examples usage of <code>strategyOnMismatch</code> property is shown.
+          This property defines strategy in a case when no matching allow/disallow rule was found.
+          Property <code>strategyOnMismatch</code> is attribute of <code>import-control</code> and <code>subpackage</code> tags.
+          Property can have following values for <code>import-control</code> tag:
+          <ul>
+            <li>disallowed (default value) - if there is no matching allow/disallow rule in any of the subpackages, including the root level (import-control), then the import is disallowed.</li>
+            <li>allowed - if there is no matching allow/disallow rule in any of the subpackages, including the root level, then the import is allowed.</li>
+          </ul>
+          And following values for <code>subpackage</code> tags:
+          <ul>
+            <li>delegateToParent (default value) - if there is no matching allow/disallow rule inside the current subpackage, then it continues checking in the parent subpackage.</li>
+            <li>allowed - if there is no matching allow/disallow rule inside the current subpackage, then the import is allowed.</li>
+            <li>disallowed - if there is no matching allow/disallow rule inside the current subpackage, then the import is disallowed.</li>
+          </ul>
+        </p>
+
+        <p>
+          The following example demonstrates usage of <code>strategyOnMismatch</code> property for <code>import-control</code> tag. Here all imports are allowed except <code>java.awt.Image</code> and <code>java.io.File</code> classes.
+        </p>
+        <source>
+&lt;import-control pkg=&quot;com.puppycrawl.tools.checkstyle.checks&quot; strategyOnMismatch=&quot;allowed&quot;&gt;
+    &lt;disallow class=&quot;java.awt.Image&quot;/&gt;
+    &lt;disallow class=&quot;java.io.File&quot;/&gt;
+&lt;/import-control&gt;
+        </source>
+
+        <p>
+          In the example below, any import is disallowed inside <code>com.puppycrawl.tools.checkstyle.checks.imports</code> package except imports from package <code>javax.swing</code> and class <code>java.io.File</code>.
+          However, any import is allowed in the classes outside of <code>com.puppycrawl.tools.checkstyle.checks.imports</code> package.
+        </p>
+        <source>
+&lt;import-control pkg=&quot;com.puppycrawl.tools.checkstyle.checks&quot; strategyOnMismatch=&quot;allowed&quot;&gt;
+    &lt;subpackage name=&quot;imports&quot; strategyOnMismatch=&quot;disallowed&quot;&gt;
+        &lt;allow pkg=&quot;javax.swing&quot;/&gt;
+        &lt;allow class=&quot;java.io.File&quot;/&gt;
+    &lt;/subpackage&gt;
+&lt;/import-control&gt;
+        </source>
+
+        <p>
+          When <code>strategyOnMismatch</code> has <code>allowed</code> or <code>disallowed</code> value for <code>subpackage</code> tag, it makes <code>subpackage</code> isolated from parent rules.
+          In the next example, if no matching rule was found inside <code>com.puppycrawl.tools.checkstyle.checks.filters</code> then it continues checking in the parent subpackage, while for <code>com.puppycrawl.tools.checkstyle.checks.imports</code> import will be allowed by default.
+        </p>
+        <source>
+&lt;import-control pkg=&quot;com.puppycrawl.tools.checkstyle.checks&quot;&gt;
+    &lt;allow class=&quot;java\.awt\.Image&quot; regex=&quot;true&quot;/&gt;
+    &lt;allow class=&quot;java\..*\.File&quot; local-only=&quot;true&quot; regex=&quot;true&quot;/&gt;
+    &lt;subpackage name=&quot;imports&quot; strategyOnMismatch=&quot;allowed&quot;&gt;
+        &lt;allow pkg=&quot;javax\.swing&quot; regex=&quot;true&quot;/&gt;
+        &lt;allow pkg=&quot;java\.io&quot; exact-match=&quot;true&quot; local-only=&quot;true&quot; regex=&quot;true&quot;/&gt;
+    &lt;/subpackage&gt;
+    &lt;subpackage name=&quot;filters&quot;&gt;
+        &lt;allow class=&quot;javax.util.Date&quot;/&gt;
+    &lt;/subpackage&gt;
+&lt;/import-control&gt;
+        </source>
+
+        <p>
           For a real-life import control file look at the file called <a
           href="https://github.com/checkstyle/checkstyle/blob/master/config/import-control.xml">
           import-control.xml</a>
           which is part of the Checkstyle distribution.
         </p>
+
+        <h4 id="blacklist-example">Example of blacklist mode</h4>
+        <p>To have a <b>blacklist mode</b>, it is required to have disallows inside subpackage and to have allow rule inside parent of the current subpackage to catch classes and packages those are not in the blacklist.</p>
+        <p>In the example below any import from <code>java.util</code> (<code>java.util.List</code>, <code>java.util.Date</code>) package is allowed except <code>java.util.Map</code> inside subpackage <code>com.puppycrawl.tools.checkstyle.filters</code>.</p>
+        <source>
+&lt;import-control pkg=&quot;com.puppycrawl.tools.checkstyle&quot;&gt;
+    &lt;allow pkg=&quot;java.util&quot;/&gt;
+    &lt;subpackage name=&quot;filters&quot; &gt;
+        &lt;disallow class=&quot;java.util.Map&quot;/&gt;
+    &lt;/subpackage&gt;
+&lt;/import-control&gt;
+        </source>
+        <p>
+          In the next example imports <code>java.util.stream.Stream</code> and <code>java.util.stream.Collectors</code> are disallowed inside <code>com.puppycrawl.tools.checkstyle.checks.imports</code> package,
+          but because of <code>&lt;allow pkg=&quot;java.util.stream&quot;/&gt;</code> every import from <code>java.util.stream</code> is allowed except described ones.
+        </p>
+        <source>
+&lt;import-control pkg=&quot;com.puppycrawl.tools.checkstyle.checks&quot;&gt;
+    &lt;allow pkg=&quot;java.util.stream&quot;/&gt;
+    &lt;subpackage name=&quot;imports&quot;&gt;
+        &lt;disallow class=&quot;java.util.stream.Stream&quot;/&gt;
+        &lt;disallow class=&quot;java.util.stream.Collectors&quot;/&gt;
+    &lt;/subpackage&gt;
+&lt;/import-control&gt;
+        </source>
+
+        <source>
+package com.puppycrawl.tools.checkstyle.checks.imports;
+
+import java.util.stream.Stream;     // violation here
+import java.util.stream.Collectors; // violation here
+import java.util.stream.IntStream;
+        </source>
+        <p>
+          In the following example, all imports are allowed except the classes <code>java.util.Date</code>, <code>java.util.List</code> and package <code>sun</code>.
+        </p>
+        <source>
+&lt;import-control pkg=&quot;com.puppycrawl.tools.checkstyle.checks&quot;&gt;
+    &lt;allow pkg=&quot;.*&quot; regex=&quot;true&quot;/&gt;
+    &lt;subpackage name=&quot;imports&quot;&gt;
+        &lt;disallow class=&quot;java.util.Date&quot;/&gt;
+        &lt;disallow class=&quot;java.util.List&quot;/&gt;
+        &lt;disallow pkg=&quot;sun&quot;/&gt;
+    &lt;/subpackage&gt;
+&lt;/import-control&gt;
+        </source>
 
         <h4 id="regex-notes">Notes on regular expressions</h4>
         <p>
@@ -801,7 +1128,7 @@ import android.*;
           classes. The language rules for packages and class names can be described by the
           following complicated regular expression that takes into account that Java names may
           contain any unicode letter, numbers, underscores, and dollar signs (see section 3.8
-          in the <a href="http://docs.oracle.com/javase/specs/">Java specs</a>):
+          in the <a href="https://docs.oracle.com/javase/specs/">Java specs</a>):
         </p>
         <ul>
           <li>
@@ -840,6 +1167,29 @@ import android.*;
             you want to match only a certain package level instead.
           </li>
         </ul>
+        <h4 id="static-import-notes">Notes on static imports</h4>
+        <p>
+          Static members (including methods, constants and static inner classes) have to be
+          explicitly allowed when they are imported, they
+          are not automatically allowed along with their enclosing class.
+        </p>
+        <p>
+          For example, to allow importing both <code>java.util.Map</code> and
+          <code>java.util.Map.Entry</code> use the following configuration:
+        </p>
+        <source>
+&lt;import-control pkg=&quot;com.puppycrawl.tools.checkstyle&quot;&gt;
+    &lt;allow class=&quot;java.util.Map&quot;/&gt;
+    &lt;allow class=&quot;java.util.Map.Entry&quot;/&gt;
+&lt;/import-control&gt;
+        </source>
+        <p>It is also possible to use a regex with a wildcard:</p>
+        <source>
+&lt;import-control pkg=&quot;com.puppycrawl.tools.checkstyle&quot;&gt;
+    &lt;allow class=&quot;java.util.Map&quot;/&gt;
+    &lt;allow class=&quot;java.util.Map.*&quot; regex=&quot;true&quot; /&gt;
+&lt;/import-control&gt;
+        </source>
       </subsection>
 
       <subsection name="Example of Usage">
@@ -867,7 +1217,7 @@ import android.*;
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -887,6 +1237,7 @@ import android.*;
 
     <section name="ImportOrder">
       <subsection name="Description">
+        <p>Since Checkstyle 3.2</p>
         <p>Checks the ordering/grouping of imports. Features are:</p>
         <ul>
           <li>groups imports: ensures that groups of imports come in a
@@ -918,12 +1269,14 @@ import android.*;
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>option</td>
             <td>policy on the relative order between regular imports and static imports</td>
             <td><a href="property_types.html#importOrder">import order</a></td>
             <td><code>under</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>groups</td>
@@ -934,21 +1287,25 @@ import android.*;
             </td>
             <td><a href="property_types.html#stringSet">String Set</a></td>
             <td><code>empty list</code></td>
+            <td>3.2</td>
           </tr>
           <tr>
             <td>ordered</td>
-            <td>whether imports within group should be sorted</td>
+            <td>whether imports within group should be sorted
+              (It doesn't affect sorting for static imports.)</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td>true</td>
+            <td>3.2</td>
           </tr>
           <tr>
             <td>separated</td>
             <td>
               whether imports groups should be separated by, at least, one
-              blank line and aren't separated internally
+              blank line or comment and aren't separated internally
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td>false</td>
+            <td>3.2</td>
           </tr>
           <tr>
             <td>caseSensitive</td>
@@ -958,19 +1315,23 @@ import android.*;
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td>true</td>
+            <td>3.3</td>
           </tr>
           <tr>
             <td>sortStaticImportsAlphabetically</td>
-            <td>whether static imports grouped by <b>top</b> or <b>bottom</b> option
-            are sorted alphabetically or not</td>
+            <td>whether <b>static imports</b> grouped by <b>top</b> or <b>bottom</b> option
+                are sorted alphabetically or not.
+                Attention: It is applied to all static imports as one group.</td>>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td>false</td>
+            <td>6.5</td>
           </tr>
           <tr>
             <td>useContainerOrderingForStatic</td>
             <td>whether to use container ordering (Eclipse IDE term) for static imports or not</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td>false</td>
+            <td>7.1</td>
           </tr>
 
           <tr>
@@ -985,6 +1346,7 @@ import android.*;
             <td>
               <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#STATIC_IMPORT">STATIC_IMPORT</a>.
             </td>
+            <td>3.2</td>
           </tr>
         </table>
       </subsection>
@@ -1178,7 +1540,7 @@ public class InputEclipseStaticImportsOrder { }
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -1198,6 +1560,7 @@ public class InputEclipseStaticImportsOrder { }
 
     <section name="RedundantImport">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Checks for redundant import statements. An import statement is
           considered redundant if:
@@ -1256,7 +1619,7 @@ public class InputEclipseStaticImportsOrder { }
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -1276,6 +1639,7 @@ public class InputEclipseStaticImportsOrder { }
 
     <section name="UnusedImports">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Checks for unused import statements. Checkstyle uses a simple but
           very reliable algorithm to report on unused import statements. An
@@ -1339,12 +1703,14 @@ class FooBar {
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>processJavadoc</td>
             <td>whether to process Javadoc</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.4</td>
           </tr>
         </table>
       </subsection>
@@ -1379,7 +1745,7 @@ class FooBar {
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>

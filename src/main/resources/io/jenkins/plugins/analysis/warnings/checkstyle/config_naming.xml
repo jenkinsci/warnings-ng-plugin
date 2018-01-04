@@ -26,19 +26,31 @@
         Each of these naming modules validates identifiers for particular code
         elements. Valid identifiers for a naming module are specified by its
         <code> format</code> property. The value of <code>format</code> is a <a
-        href="http://docs.oracle.com/javase/1.5.0/docs/api/java/util/regex/Pattern.html">
+        href="https://docs.oracle.com/javase/1.5.0/docs/api/java/util/regex/Pattern.html">
         regular expression</a> for valid identifiers.
       </p>
     </section>
 
     <section name="AbbreviationAsWordInName">
       <subsection name="Description">
+        <p>Since Checkstyle 5.8</p>
         <p>
          The Check validate abbreviations(consecutive capital letters)
          length in identifier name, it also allows to enforce camel case naming. Please read more at
-         <a href="http://checkstyle.sourceforge.net/reports/google-java-style.html#s5.3-camel-case">
+         <a href="http://checkstyle.sourceforge.net/reports/google-java-style-20170228.html#s5.3-camel-case">
          Google Style Guide</a>
          to get to know how to avoid long abbreviations in names.
+        </p>
+
+        <p>
+         <i>allowedAbbreviationLength</i> specifies how many consecutive capital letters are
+         allowed in the identifier.
+         A value of <i>3</i> indicates that up to 4 consecutive capital letters are allowed,
+         one after the other, before a violation is printed. The identifier 'MyTEST' would be
+         allowed, but 'MyTESTS' would not be.
+         A value of <i>0</i> indicates that only 1 consecutive capital letter is allowed. This
+         is what should be used to enforce strict camel casing. The identifier 'MyTest' would
+         be allowed, but 'MyTEst' would not be.
         </p>
       </subsection>
 
@@ -49,13 +61,15 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>allowedAbbreviationLength</td>
-            <td>indicates on the allowed amount of capital letters in targeted identifiers
+            <td>indicates on the number of consecutive capital letters allowed in targeted identifiers
              (abbreviations in the classes, interfaces, variables and methods names, ... ).</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td>3</td>
+            <td>5.8</td>
           </tr>
           <tr>
             <td>allowedAbbreviations</td>
@@ -63,18 +77,21 @@
             Abbreviations should be separated by comma, no spaces are allowed.</td>
             <td><a href="property_types.html#stringSet">String Set</a></td>
             <td>null</td>
+            <td>5.8</td>
           </tr>
           <tr>
             <td>ignoreFinal</td>
             <td>allow to skip variables with final modifier.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td>true</td>
+            <td>5.8</td>
           </tr>
           <tr>
             <td>ignoreStatic</td>
             <td>allow to skip variables with static modifier.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td>true</td>
+            <td>5.8</td>
           </tr>
           <tr>
             <td>ignoreOverriddenMethods</td>
@@ -82,6 +99,7 @@
             (that usually mean inherited name).</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td>true</td>
+            <td>5.8</td>
           </tr>
           <tr>
             <td>tokens</td>
@@ -108,6 +126,7 @@
               <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#VARIABLE_DEF">VARIABLE_DEF</a>,
               <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#METHOD_DEF">METHOD_DEF</a>.
             </td>
+            <td>5.8</td>
           </tr>
         </table>
       </subsection>
@@ -156,7 +175,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -172,6 +191,7 @@
 
     <section name="AbstractClassName">
       <subsection name="Description">
+        <p>Since Checkstyle 3.2</p>
         <p>Validates identifiers for <code>abstract</code> classes.</p>
       </subsection>
 
@@ -182,12 +202,14 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>Specifies valid identifiers.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^Abstract.+$"</code></td>
+            <td>3.2</td>
           </tr>
           <tr>
             <td>ignoreModifier</td>
@@ -198,6 +220,7 @@
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>5.3</td>
           </tr>
           <tr>
             <td>ignoreName</td>
@@ -208,6 +231,7 @@
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>5.3</td>
           </tr>
         </table>
       </subsection>
@@ -246,7 +270,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -262,6 +286,7 @@
 
     <section name="CatchParameterName">
       <subsection name="Description">
+        <p>Since Checkstyle 6.14</p>
         <p>
           Checks that catch parameter names conform to a format specified by the format property.
           Default pattern has the following characteristic:
@@ -286,6 +311,7 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
@@ -296,6 +322,7 @@
             <td>
               <code>"^(e|t|ex|[a-z][a-z][a-zA-Z]+)$"</code>
             </td>
+            <td>6.14</td>
           </tr>
         </table>
       </subsection>
@@ -341,7 +368,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -359,6 +386,7 @@
 
     <section name="ClassTypeParameterName">
       <subsection name="Description">
+        <p>Since Checkstyle 5.0</p>
         <p>Validates identifiers for class type parameters.</p>
       </subsection>
 
@@ -369,12 +397,14 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>Specifies valid identifiers.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^[A-Z]$"</code></td>
+            <td>5.0</td>
           </tr>
         </table>
       </subsection>
@@ -409,7 +439,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -425,6 +455,7 @@
 
     <section name="ConstantName">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Validates identifiers for constants (<code>static</code>, <code>
           final</code> fields).
@@ -438,24 +469,28 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>Specifies valid identifiers.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"</code></td>
+            <td>3.0</td>
           </tr>
           <tr>
             <td>applyToPublic</td>
             <td>Controls whether to apply the check to public member.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>applyToProtected</td>
             <td>Controls whether to apply the check to protected member.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>applyToPackage</td>
@@ -464,12 +499,14 @@
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>applyToPrivate</td>
             <td>Controls whether to apply the check to private member.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.0</td>
           </tr>
         </table>
       </subsection>
@@ -511,7 +548,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -527,6 +564,7 @@
 
     <section name="InterfaceTypeParameterName">
       <subsection name="Description">
+        <p>Since Checkstyle 5.8</p>
         <p>
           Validates identifiers for interface type parameters.
         </p>
@@ -539,12 +577,14 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>Specifies valid identifiers.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^[A-Z]$"</code></td>
+            <td>5.8</td>
           </tr>
         </table>
       </subsection>
@@ -579,7 +619,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -595,9 +635,10 @@
 
     <section name="LocalFinalVariableName">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Validates identifiers for local, <code>final</code> variables, including
-          <code>catch</code> parameters.
+          <code>catch</code> parameters and resources in <code>try</code> statements.
         </p>
       </subsection>
 
@@ -608,12 +649,14 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>Specifies valid identifiers.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^[a-z][a-zA-Z0-9]*$"</code></td>
+            <td>3.0</td>
           </tr>
           <tr>
           <td>tokens</td>
@@ -621,12 +664,15 @@
           <td>
             subset of tokens
             <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#VARIABLE_DEF">VARIABLE_DEF</a>,
-            <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#PARAMETER_DEF">PARAMETER_DEF</a>.
+            <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#PARAMETER_DEF">PARAMETER_DEF</a>,
+            <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#RESOURCE">RESOURCE</a>.
           </td>
           <td>
             <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#VARIABLE_DEF">VARIABLE_DEF</a>,
-            <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#PARAMETER_DEF">PARAMETER_DEF</a>.
+            <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#PARAMETER_DEF">PARAMETER_DEF</a>,
+            <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#RESOURCE">RESOURCE</a>.
           </td>
+          <td>3.0</td>
         </tr>
         </table>
       </subsection>
@@ -661,7 +707,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -677,6 +723,7 @@
 
     <section name="LocalVariableName">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
             Checks that local, non-<code>final</code> variable names conform to a format specified
             by the format property.
@@ -690,23 +737,26 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>Specifies valid identifiers.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^[a-z][a-zA-Z0-9]*$"</code></td>
+            <td>3.0</td>
           </tr>
           <tr>
             <td>allowOneCharVarInForLoop</td>
             <td>
-            Allow one character variable name in <a href="http://docs.oracle.com/javase/tutorial/java/nutsandbolts/for.html"> initialization expressions</a> in FOR loop. For example:
+            Allow one character variable name in <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/for.html"> initialization expressions</a> in FOR loop. For example:
               <pre>
 for (int i = 1; i &lt; 10; i++) {}
               </pre>
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>5.8</td>
           </tr>
         </table>
       </subsection>
@@ -722,7 +772,7 @@ for (int i = 1; i &lt; 10; i++) {}
 
         <p>
           An example of how to configure the check to allow one character variable name in
-          <a href="http://docs.oracle.com/javase/tutorial/java/nutsandbolts/for.html">
+          <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/for.html">
           initialization expressions</a> in FOR loop:
         </p>
         <source>
@@ -757,7 +807,7 @@ for (int i = 1; i &lt; 10; i++) {}
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -773,6 +823,7 @@ for (int i = 1; i &lt; 10; i++) {}
 
     <section name="MemberName">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Validates identifiers for non-<code>static</code> fields.
         </p>
@@ -785,24 +836,28 @@ for (int i = 1; i &lt; 10; i++) {}
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>Specifies valid identifiers.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^[a-z][a-zA-Z0-9]*$"</code></td>
+            <td>3.0</td>
           </tr>
           <tr>
             <td>applyToPublic</td>
             <td>Controls whether to apply the check to public member.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>3.4</td>
           </tr>
           <tr>
             <td>applyToProtected</td>
             <td>Controls whether to apply the check to protected member.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>3.4</td>
           </tr>
           <tr>
             <td>applyToPackage</td>
@@ -811,12 +866,14 @@ for (int i = 1; i &lt; 10; i++) {}
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>3.4</td>
           </tr>
           <tr>
             <td>applyToPrivate</td>
             <td>Controls whether to apply the check to private member.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>3.4</td>
           </tr>
         </table>
       </subsection>
@@ -862,7 +919,7 @@ for (int i = 1; i &lt; 10; i++) {}
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -878,6 +935,7 @@ for (int i = 1; i &lt; 10; i++) {}
 
     <section name="MethodName">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Validates identifiers for methods.
         </p>
@@ -890,12 +948,14 @@ for (int i = 1; i &lt; 10; i++) {}
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>Specifies valid identifiers.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^[a-z][a-zA-Z0-9]*$"</code></td>
+            <td>3.0</td>
           </tr>
           <tr>
             <td>allowClassName</td>
@@ -914,18 +974,21 @@ class MyClass {
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>applyToPublic</td>
             <td>Controls whether to apply the check to public member.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.1</td>
           </tr>
           <tr>
             <td>applyToProtected</td>
             <td>Controls whether to apply the check to protected member.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.1</td>
           </tr>
           <tr>
             <td>applyToPackage</td>
@@ -934,12 +997,14 @@ class MyClass {
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.1</td>
           </tr>
           <tr>
             <td>applyToPrivate</td>
             <td>Controls whether to apply the check to private member.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.1</td>
           </tr>
         </table>
       </subsection>
@@ -982,7 +1047,7 @@ class MyClass {
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -998,6 +1063,7 @@ class MyClass {
 
     <section name="MethodTypeParameterName">
       <subsection name="Description">
+        <p>Since Checkstyle 5.0</p>
         <p>
           Validates identifiers for method type parameters.
         </p>
@@ -1010,12 +1076,14 @@ class MyClass {
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>Specifies valid identifiers.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^[A-Z]$"</code></td>
+            <td>5.0</td>
           </tr>
         </table>
       </subsection>
@@ -1050,7 +1118,7 @@ class MyClass {
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -1066,6 +1134,7 @@ class MyClass {
 
     <section name="PackageName">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Validates identifiers for packages.
         </p>
@@ -1078,12 +1147,14 @@ class MyClass {
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>Specifies valid identifiers.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^[a-z]+(\.[a-zA-Z_][a-zA-Z0-9_]*)*$"</code></td>
+            <td>3.0</td>
           </tr>
         </table>
       </subsection>
@@ -1092,7 +1163,7 @@ class MyClass {
         <p>
           The default value of <code>format</code> for module <code>PackageName</code> has been chosen to match the
           requirements in the <a
-          href="http://docs.oracle.com/javase/specs/jls/se8/html/jls-6.html#jls-6.5.3">Java
+          href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-6.html#jls-6.5.3">Java
           Language specification</a> and the Sun coding conventions. However
           both underscores and uppercase letters are rather uncommon, so most
           configurations should probably assign value <code>^[a-z]+(\.[a-z][a-z0-9]*)*$</code> to <code>format</code> for module <code>PackageName</code>, as in
@@ -1131,7 +1202,7 @@ class MyClass {
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -1147,10 +1218,11 @@ class MyClass {
 
     <section name="ParameterName">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Checks that method and <code>catch</code> parameter names conform to a format specified
-          by the format property. By using <code>scope</code> and <code>excludeScope</code> properties
-          it is possible to specify different formats for methods at different visibility levels.
+          by the format property. By using <code>accessModifiers</code> property it is possible
+          to specify different formats for methods at different visibility levels.
         </p>
       </subsection>
 
@@ -1161,12 +1233,14 @@ class MyClass {
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>Specifies valid identifiers.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^[a-z][a-zA-Z0-9]*$"</code></td>
+            <td>3.0</td>
           </tr>
           <tr>
             <td>ignoreOverridden</td>
@@ -1183,18 +1257,14 @@ public boolean equals(Object o) {
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>6.12.1</td>
           </tr>
           <tr>
-            <td>scope</td>
-            <td>Visibility scope of methods where parameters are checked.</td>
-            <td><a href="property_types.html#scope">Scope</a></td>
-            <td><code>anoninner</code></td>
-          </tr>
-          <tr>
-            <td>excludeScope</td>
-            <td>Visibility scope of methods where parameters are not checked.</td>
-            <td><a href="property_types.html#scope">Scope</a></td>
-            <td><code>null</code></td>
+            <td>accessModifiers</td>
+            <td>Access modifiers of methods where parameters are checked.</td>
+            <td><a href="property_types.html#access_modifiers">Access Modifier Set</a></td>
+            <td><code>public, protected, package, private</code></td>
+            <td>7.5</td>
           </tr>
         </table>
       </subsection>
@@ -1231,14 +1301,14 @@ public boolean equals(Object o) {
         </p>
         <source>
 &lt;module name=&quot;ParameterName&quot;&gt;
-    &lt;property name=&quot;format&quot; value=&quot;^[a-z]([a-z0-9][a-zA-Z0-9]*)?$&quot;/&gt;
-    &lt;property name=&quot;excludeScope&quot; value=&quot;public&quot;/&gt;
-    &lt;message key=&quot;name.invalidPattern&quot;
-        value=&quot;Parameter name ''{0}'' must match pattern ''{1}''.&quot;/&gt;
+  &lt;property name=&quot;format&quot; value=&quot;^[a-z]([a-z0-9][a-zA-Z0-9]*)?$&quot;/&gt;
+  &lt;property name=&quot;accessModifiers&quot; value=&quot;protected, package, private&quot;/&gt;
+  &lt;message key=&quot;name.invalidPattern&quot;
+    value=&quot;Parameter name ''{0}'' must match pattern ''{1}''&quot;/&gt;
 &lt;/module&gt;
 &lt;module name=&quot;ParameterName&quot;&gt;
 &lt;property name=&quot;format&quot; value=&quot;^[a-z][a-z0-9][a-zA-Z0-9]*$&quot;/&gt;
-    &lt;property name=&quot;scope&quot; value=&quot;public&quot;/&gt;
+    &lt;property name=&quot;accessModifiers&quot; value=&quot;public&quot;/&gt;
     &lt;message key=&quot;name.invalidPattern&quot;
         value=&quot;Parameter name ''{0}'' must match pattern ''{1}''&quot;/&gt;
 &lt;/module&gt;
@@ -1270,7 +1340,7 @@ public boolean equals(Object o) {
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -1286,6 +1356,7 @@ public boolean equals(Object o) {
 
     <section name="StaticVariableName">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Validates identifiers for <code>static</code>, non-<code>final</code> fields.
         </p>
@@ -1298,24 +1369,28 @@ public boolean equals(Object o) {
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>Specifies valid identifiers.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^[a-z][a-zA-Z0-9]*$"</code></td>
+            <td>3.0</td>
           </tr>
           <tr>
             <td>applyToPublic</td>
             <td>Controls whether to apply the check to public member.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>applyToProtected</td>
             <td>Controls whether to apply the check to protected member.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>applyToPackage</td>
@@ -1324,12 +1399,14 @@ public boolean equals(Object o) {
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>applyToPrivate</td>
             <td>Controls whether to apply the check to private member.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.0</td>
           </tr>
         </table>
       </subsection>
@@ -1364,7 +1441,7 @@ public boolean equals(Object o) {
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -1380,6 +1457,7 @@ public boolean equals(Object o) {
 
     <section name="TypeName">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Validates identifiers for classes, interfaces, enums, and annotations.
         </p>
@@ -1392,24 +1470,28 @@ public boolean equals(Object o) {
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>Specifies valid identifiers.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^[A-Z][a-zA-Z0-9]*$"</code></td>
+            <td>3.0</td>
           </tr>
           <tr>
             <td>applyToPublic</td>
             <td>Controls whether to apply the check to public member.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>applyToProtected</td>
             <td>Controls whether to apply the check to protected member.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>applyToPackage</td>
@@ -1418,12 +1500,14 @@ public boolean equals(Object o) {
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>applyToPrivate</td>
             <td>Controls whether to apply the check to private member.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>tokens</td>
@@ -1449,6 +1533,7 @@ public boolean equals(Object o) {
               <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#ANNOTATION_DEF">
                 ANNOTATION_DEF</a>.
             </td>
+            <td>3.0</td>
           </tr>
         </table>
       </subsection>
@@ -1495,7 +1580,7 @@ public boolean equals(Object o) {
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>

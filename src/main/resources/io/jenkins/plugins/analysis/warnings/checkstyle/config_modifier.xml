@@ -23,10 +23,11 @@
 
     <section name="ModifierOrder">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Checks that the order of modifiers conforms to the suggestions in
           the <a
-          href="http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html">Java
+          href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html">Java
           Language specification, sections 8.1.1, 8.3.1, 8.4.3</a> and <a
           href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-9.html">
           9.4</a>. The correct order is:
@@ -114,7 +115,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -133,6 +134,7 @@
     <section name="RedundantModifier">
 
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Checks for redundant modifiers in:
         </p>
@@ -262,6 +264,7 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>tokens</td>
@@ -287,6 +290,7 @@
               <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#ENUM_DEF">ENUM_DEF</a>,
               <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#RESOURCE">RESOURCE</a>.
             </td>
+            <td>3.0</td>
           </tr>
         </table>
       </subsection>
@@ -328,7 +332,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>

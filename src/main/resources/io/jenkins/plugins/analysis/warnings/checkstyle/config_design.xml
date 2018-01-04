@@ -23,12 +23,13 @@
 
     <section name="DesignForExtension">
       <subsection name="Description">
+        <p>Since Checkstyle 3.1</p>
         <p>
           The check finds classes that are designed for extension (subclass creation).
         </p>
         <p>
           Nothing wrong could be with founded classes.
-          This check makes sense only for library project (not an application projects)
+          This check makes sense only for library projects (not application projects)
           which care of ideal OOP-design to make sure that class works in all cases even misusage.
           Even in library projects this check most likely will find classes that are designed
           for extension by somebody. User needs to use suppressions extensively to got a benefit from
@@ -43,7 +44,7 @@
         </p>
         <p>
          ATTENTION: If the method which can be overridden in a subclass has a javadoc comment
-         (a good practise is to explain its self-use of overridable methods) the check will not
+         (a good practice is to explain its self-use of overridable methods) the check will not
          rise a violation. The violation can also be skipped if the method which can be overridden
          in a subclass has one or more annotations that are specified in ignoredAnnotations
          option. Note, that by default @Override annotation is not included in the
@@ -148,6 +149,7 @@ public abstract class Plant {
                     <th>description</th>
                     <th>type</th>
                     <th>default value</th>
+                    <th>since</th>
                 </tr>
                 <tr>
                     <td>ignoredAnnotations</td>
@@ -156,6 +158,7 @@ public abstract class Plant {
                     </td>
                     <td><a href="property_types.html#stringSet">String Set</a></td>
                     <td><code>Test, Before, After, BeforeClass, AfterClass</code></td>
+                    <td>7.2</td>
                 </tr>
             </table>
         </subsection>
@@ -235,7 +238,7 @@ public class FooTest {
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -255,6 +258,7 @@ public class FooTest {
 
     <section name="FinalClass">
       <subsection name="Description">
+        <p>Since Checkstyle 3.1</p>
         <p>
           Checks that a class which has only private constructors is declared
           as final. Doesn't check for classes nested in interfaces
@@ -292,7 +296,7 @@ public class FooTest {
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -312,6 +316,7 @@ public class FooTest {
 
     <section name="HideUtilityClassConstructor">
       <subsection name="Description">
+        <p>Since Checkstyle 3.1</p>
         <p>
           Makes sure that utility classes (classes that contain only static
           methods or fields in their API) do not have a public constructor.
@@ -375,7 +380,7 @@ public class StringUtils // not final to allow subclassing
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -395,6 +400,7 @@ public class StringUtils // not final to allow subclassing
 
     <section name="InnerTypeLast">
       <subsection name="Description">
+        <p>Since Checkstyle 5.2</p>
         <p>
           Check nested (inner) classes/interfaces are declared at the
           bottom of the class after all method and field declarations.
@@ -427,7 +433,7 @@ public class StringUtils // not final to allow subclassing
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -447,6 +453,7 @@ public class StringUtils // not final to allow subclassing
 
     <section name="InterfaceIsType">
       <subsection name="Description">
+        <p>Since Checkstyle 3.1</p>
         <p>
           Implements Joshua Bloch, Effective Java, Item 17 - Use Interfaces only to
           define types.
@@ -456,7 +463,7 @@ public class StringUtils // not final to allow subclassing
           According to Bloch, an interface should describe a <em>type</em>.
           It is therefore inappropriate to define an interface that does not
           contain any methods but only constants. The Standard class <a
-          href="http://docs.oracle.com/javase/8/docs/api/javax/swing/SwingConstants.html">javax.swing.SwingConstants</a>
+          href="https://docs.oracle.com/javase/8/docs/api/javax/swing/SwingConstants.html">javax.swing.SwingConstants</a>
           is an example of a class that would be flagged by this check.
         </p>
 
@@ -474,6 +481,7 @@ public class StringUtils // not final to allow subclassing
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>allowMarkerInterfaces</td>
@@ -483,6 +491,7 @@ public class StringUtils // not final to allow subclassing
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>3.1</td>
           </tr>
         </table>
       </subsection>
@@ -517,7 +526,7 @@ public class StringUtils // not final to allow subclassing
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -537,6 +546,7 @@ public class StringUtils // not final to allow subclassing
 
     <section name="MutableException">
       <subsection name="Description">
+        <p>Since Checkstyle 3.2</p>
         <p>
           Ensures that exception classes (classes with names conforming to some regular
           expression and explicitly extending classes with names conforming to other
@@ -568,18 +578,21 @@ public class StringUtils // not final to allow subclassing
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>pattern for exception class names</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^.*Exception$|^.*Error$|^.*Throwable$"</code></td>
+            <td>3.2</td>
           </tr>
           <tr>
             <td>extendedClassNameFormat</td>
             <td>pattern for extended class names</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^.*Exception$|^.*Error$|^.*Throwable$"</code></td>
+            <td>6.2</td>
           </tr>
         </table>
       </subsection>
@@ -610,7 +623,7 @@ public class StringUtils // not final to allow subclassing
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -630,11 +643,12 @@ public class StringUtils // not final to allow subclassing
 
     <section name="OneTopLevelClass">
       <subsection name="Description">
+        <p>Since Checkstyle 5.8</p>
         <p>
           Checks that each top-level class, interface or
           enum resides in a source file of its own.
           Official description of a 'top-level' term:<a
-          href="http://docs.oracle.com/javase/specs/jls/se7/html/jls-7.html#jls-7.6">7.6. Top Level Type Declarations</a>.
+          href="https://docs.oracle.com/javase/specs/jls/se7/html/jls-7.html#jls-7.6">7.6. Top Level Type Declarations</a>.
           If file doesn't contains public class, enum or interface,
           top-level type is the first type in file.
         </p>
@@ -705,7 +719,7 @@ public class Foo{
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -725,6 +739,7 @@ public class Foo{
 
     <section name="ThrowsCount">
       <subsection name="Description">
+        <p>Since Checkstyle 3.2</p>
         <p>
           Restricts throws statements to a specified count (4 by default).
           Methods with "Override" or "java.lang.Override" annotation are skipped
@@ -759,18 +774,21 @@ public class Foo{
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>max</td>
             <td>maximum allowed number of throws statements</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>4</code></td>
+            <td>3.2</td>
           </tr>
           <tr>
             <td>ignorePrivateMethods</td>
             <td>whether private methods must be ignored</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>6.7</td>
           </tr>
         </table>
       </subsection>
@@ -813,7 +831,7 @@ public class Foo{
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -833,6 +851,7 @@ public class Foo{
 
     <section name="VisibilityModifier">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Checks visibility of class members. Only static final, immutable or annotated
           by specified annotation members may be public; other class members must be private
@@ -906,36 +925,42 @@ public class Foo{
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>packageAllowed</td>
             <td>whether package visible members are allowed</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>3.0</td>
           </tr>
           <tr>
             <td>protectedAllowed</td>
             <td>whether protected members are allowed</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>3.0</td>
           </tr>
           <tr>
             <td>publicMemberPattern</td>
             <td>pattern for public members that should be ignored</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^serialVersionUID$"</code></td>
+            <td>3.0</td>
           </tr>
           <tr>
             <td>allowPublicFinalFields</td>
             <td>allows public final fields</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>7.0</td>
           </tr>
           <tr>
             <td>allowPublicImmutableFields</td>
             <td>allows immutable fields to be declared as public if defined in final class</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>6.4</td>
           </tr>
           <tr>
             <td>immutableClassCanonicalNames</td>
@@ -946,12 +971,14 @@ public class Foo{
             java.lang.StackTraceElement, java.math.BigInteger, java.math.BigDecimal, java.io.File,
             java.util.Locale, java.util.UUID, java.net.URL, java.net.URI,
             java.net.Inet4Address, java.net.Inet6Address, java.net.InetSocketAddress,</td>
+            <td>6.4.1</td>
           </tr>
           <tr>
             <td>ignoreAnnotationCanonicalNames</td>
             <td>ignore annotations canonical names</td>
             <td><a href="property_types.html#stringSet">String Set</a></td>
             <td>org.junit.Rule, org.junit.ClassRule, com.google.common.annotations.VisibleForTesting</td>
+            <td>6.5</td>
           </tr>
         </table>
       </subsection>
@@ -1229,7 +1256,7 @@ public class InputPublicImmutable {
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>

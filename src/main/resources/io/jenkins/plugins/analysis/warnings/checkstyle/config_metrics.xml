@@ -23,6 +23,7 @@
 
     <section name="BooleanExpressionComplexity">
       <subsection name="Description">
+        <p>Since Checkstyle 3.4</p>
         <p>
           Restrict the number of number of <code>&#x26;&#x26;</code>, <code>||</code>,
           <code>&#x26;</code>, <code>|</code>
@@ -37,7 +38,7 @@
         <p>
           Note that the operators <code>&#x26;</code> and
           <code>|</code> are not only integer bitwise operators, they are also the
-          <a href="http://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.22.2">
+          <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.22.2">
           non-shortcut versions</a> of the boolean operators.
           <code>&#x26;&#x26;</code> and <code>||</code>.
         </p>
@@ -56,6 +57,7 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>max</td>
@@ -65,6 +67,7 @@
             </td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>3</code></td>
+            <td>3.4</td>
           </tr>
           <tr>
             <td>tokens</td>
@@ -84,6 +87,7 @@
               <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#BOR">BOR</a>,
               <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#BXOR">BXOR</a>.
             </td>
+            <td>3.4</td>
           </tr>
         </table>
       </subsection>
@@ -135,7 +139,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -155,6 +159,7 @@
 
     <section name="ClassDataAbstractionCoupling">
       <subsection name="Description">
+        <p>Since Checkstyle 3.4</p>
         <p>
           This metric measures the number of instantiations of other
           classes within the given class. This type of coupling is not
@@ -163,6 +168,44 @@
           types as members or local variable that is an instantiation
           (object) of another class has data abstraction coupling (DAC).
           The higher the DAC, the more complex the structure of the class.
+        </p>
+        <p>
+          This check processes files in the following way:
+          <ol>
+            <li>
+              Iterates over the list of tokens (defined below) and counts all mentioned classes.
+              <ul>
+                <li>
+                  <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#IMPORT">PACKAGE_DEF</a>
+                </li>
+                <li>
+                  <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#IMPORT">IMPORT</a>
+                </li>
+                <li>
+                  <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#CLASS_DEF">CLASS_DEF</a>
+                </li>
+                <li>
+                  <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#INTERFACE_DEF">INTERFACE_DEF</a>
+                </li>
+                <li>
+                  <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#ENUM_DEF">ENUM_DEF</a>
+                </li>
+                <li>
+                  <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_NEW">LITERAL_NEW</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              If a class was imported with direct import (i.e. <code>import java.math.BigDecimal</code>),
+              or the class was referenced with the package name (i.e. <code>java.math.BigDecimal value</code>)
+              and the package was added to the <code>excludedPackages</code> parameter,
+              the class does not increase complexity.
+            </li>
+            <li>
+              If a class name was added to the <code>excludedClasses</code> parameter,
+              the class does not increase complexity.
+            </li>
+          </ol>
         </p>
       </subsection>
 
@@ -173,12 +216,14 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>max</td>
             <td>the maximum threshold allowed</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>7</code></td>
+            <td>3.4</td>
           </tr>
           <tr>
             <td>excludedClasses</td>
@@ -196,6 +241,21 @@
                 List, ArrayList, Deque, Queue, LinkedList,
                 Set, HashSet, SortedSet, TreeSet,
                 Map, HashMap, SortedMap, TreeMap</td>
+            <td>5.7</td>
+          </tr>
+          <tr>
+            <td>excludeClassesRegexps</td>
+            <td>User-configured regular expressions to ignore classes</td>
+            <td><a href="property_types.html#stringSet">String Set</a></td>
+            <td><code>"^$"</code></td>
+            <td>7.7</td>
+          </tr>
+          <tr>
+            <td>excludedPackages</td>
+            <td>User-configured packages to ignore</td>
+            <td><a href="property_types.html#stringSet">String Set</a></td>
+            <td>{}</td>
+            <td>7.7</td>
           </tr>
         </table>
       </subsection>
@@ -214,6 +274,153 @@
         <source>
 &lt;module name=&quot;ClassDataAbstractionCoupling&quot;&gt;
     &lt;property name=&quot;max&quot; value=&quot;5&quot;/&gt;
+&lt;/module&gt;
+        </source>
+
+        <p>
+          To configure the check with two excluded classes <code>HashMap</code> and <code>HashSet</code>:
+        </p>
+        <source>
+          &lt;module name=&quot;ClassDataAbstractionCoupling&quot;&gt;
+          &lt;property name=&quot;excludedClasses&quot; value=&quot;HashMap, HashSet&quot;/&gt;
+          &lt;/module&gt;
+        </source>
+
+        <p>
+          To configure the check with two regular expressions <code>^Array.*</code> and <code>.*Exception$</code>:
+        </p>
+        <source>
+          &lt;module name=&quot;ClassDataAbstractionCoupling&quot;&gt;
+          &lt;property name=&quot;excludeClassesRegexps&quot; value=&quot;^Array.*, .*Exception$&quot;/&gt;
+          &lt;/module&gt;
+        </source>
+
+        <p>
+          The following example demonstrates usage of <b>excludedClasses</b> and <b>excludeClassesRegexps</b> properties
+        </p>
+        <p>
+          Expected result is one class <code>Date</code>
+        </p>
+        <source>
+          &lt;module name=&quot;ClassDataAbstractionCoupling&quot;&gt;
+          &lt;property name=&quot;excludedClasses&quot; value=&quot;ArrayList&quot;/&gt;
+          &lt;property name=&quot;excludeClassesRegexps&quot; value=&quot;^Hash.*&quot;/&gt;
+          &lt;/module&gt;
+        </source>
+        <source>
+          public class InputClassCoupling {
+          public Set _set = new HashSet();
+          public Map _map = new HashMap();
+          public List&lt;String&gt; _list = new ArrayList&lt;&gt;();
+          public Date _date = new Date();
+          }
+        </source>
+
+        <p>
+          To configure the check with two excluded classes <code>HashMap</code> and <code>HashSet</code>:
+        </p>
+        <source>
+&lt;module name=&quot;ClassDataAbstractionCoupling&quot;&gt;
+    &lt;property name=&quot;excludedClasses&quot; value=&quot;HashMap, HashSet&quot;/&gt;
+&lt;/module&gt;
+        </source>
+
+        <p>
+          To configure the check with two regular expressions <code>^Array.*</code> and <code>.*Exception$</code>:
+        </p>
+        <source>
+&lt;module name=&quot;ClassDataAbstractionCoupling&quot;&gt;
+    &lt;property name=&quot;excludeClassesRegexps&quot; value=&quot;^Array.*, .*Exception$&quot;/&gt;
+&lt;/module&gt;
+        </source>
+
+        <p>
+          The following example demonstrates usage of <b>excludedClasses</b> and <b>excludeClassesRegexps</b> properties
+        </p>
+        <p>
+          Expected result is one class <code>Date</code>
+        </p>
+        <source>
+&lt;module name=&quot;ClassDataAbstractionCoupling&quot;&gt;
+    &lt;property name=&quot;excludedClasses&quot; value=&quot;ArrayList&quot;/&gt;
+    &lt;property name=&quot;excludeClassesRegexps&quot; value=&quot;^Hash.*&quot;/&gt;
+&lt;/module&gt;
+        </source>
+        <source>
+public class InputClassCoupling {
+    public Set _set = new HashSet();
+    public Map _map = new HashMap();
+    public List&lt;String&gt; _list = new ArrayList&lt;&gt;();
+    public Date _date = new Date();
+}
+        </source>
+
+        <p>
+          Override property <code>excludedPackages</code> to mark some packages as excluded.
+          Each member of <code>excludedPackages</code> should be a valid identifier:
+          <ul>
+            <li>
+              <code>java.util</code> - valid, excludes all classes inside <code>java.util</code>,
+              but not from the subpackages.
+            </li>
+            <li>
+              <code>java.util.</code> - invalid, should not end with a dot.
+            </li>
+            <li>
+              <code>java.util.*</code> - invalid, should not end with a star.
+            </li>
+          </ul>
+        </p>
+        <p>
+          Note, that checkstyle will ignore all classes from the <code>java.lang</code> package and its subpackages,
+          even if the <code>java.lang</code> was not listed in the <code>excludedPackages</code> parameter.
+        </p>
+        <p>
+          Also node, that <code>excludedPackages</code> will not exclude classes, imported via wildcard
+          (e.g. <code>import java.math.*</code>). Instead of wildcard import you should use direct import
+          (e.g. <code>import java.math.BigDecimal</code>).
+        </p>
+        <p>
+          Also note, that checkstyle will not exlude classes within the same file
+          even if it was listed in the <code>excludedPackages</code> parameter. For example, assuming the config is
+
+          <source>
+&lt;module name=&quot;ClassDataAbstractionCoupling&quot;&gt;
+    &lt;property name=&quot;excludedPackages&quot; value=&quot;a.b&quot;/&gt;
+&lt;/module&gt;
+          </source>
+
+          And the file <code>a.b.Foo.java</code> is:
+
+          <source>
+package a.b;
+
+import a.b.Bar;
+import a.b.c.Baz;
+
+public class Foo {
+    public Bar bar; // Will be ignored, located inside ignored a.b package
+    public Baz baz; // Will not be ignored, located inside a.b.c package
+    public Data data; // Will not be ignored, same file
+
+    class Data {
+        public Foo foo; // Will not be ignored, same file
+    }
+}
+          </source>
+
+          The <code>bar</code> member will not be counted,
+          since the <code>a.b</code> added to the <code>excludedPackages</code>.
+          The <code>baz</code> member will be counted,
+          since the <code>a.b.c</code> was not added to the <code>excludedPackages</code>.
+          The <code>data</code> and <code>foo</code> members will be counted, as they are inside same file.
+        </p>
+        <p>
+          Example of usage:
+        </p>
+        <source>
+&lt;module name=&quot;ClassDataAbstractionCoupling&quot;&gt;
+    &lt;property name=&quot;excludedPackages&quot; value=&quot;java.util, java.math&quot;/&gt;
 &lt;/module&gt;
         </source>
       </subsection>
@@ -235,7 +442,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -255,11 +462,63 @@
 
     <section name="ClassFanOutComplexity">
       <subsection name="Description">
+        <p>Since Checkstyle 3.4</p>
         <p>
           The number of other classes a given class relies on. Also the
           square of this has been shown to indicate the amount of
           maintenance required in functional programs (on a file basis)
           at least.
+        </p>
+        <p>
+          This check processes files in the following way:
+          <ol>
+            <li>
+              Iterates over the list of tokens (defined below) and counts all mentioned classes.
+              <ul>
+                <li>
+                  <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#PACKAGE_DEF">PACKAGE_DEF</a>
+                </li>
+                <li>
+                  <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#IMPORT">IMPORT</a>
+                </li>
+                <li>
+                  <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#CLASS_DEF">CLASS_DEF</a>
+                </li>
+                <li>
+                  <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#INTERFACE_DEF">INTERFACE_DEF</a>
+                </li>
+                <li>
+                  <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#ENUM_DEF">ENUM_DEF</a>
+                </li>
+                <li>
+                  <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#TYPE">TYPE</a>
+                </li>
+                <li>
+                  <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_NEW">LITERAL_NEW</a>
+                </li>
+                <li>
+                  <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_THROWS">
+                    LITERAL_THROWS
+                  </a>
+                </li>
+                <li>
+                  <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#ANNOTATION_DEF">
+                    ANNOTATION_DEF
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              If a class was imported with direct import (i.e. <code>import java.math.BigDecimal</code>),
+              or the class was referenced with the package name (i.e. <code>java.math.BigDecimal value</code>)
+              and the package was added to the <code>excludedPackages</code> parameter,
+              the class does not increase complexity.
+            </li>
+            <li>
+              If a class name was added to the <code>excludedClasses</code> parameter,
+              the class does not increase complexity.
+            </li>
+          </ol>
         </p>
       </subsection>
 
@@ -270,12 +529,14 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>max</td>
             <td>the maximum threshold allowed</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>20</code></td>
+            <td>3.4</td>
           </tr>
           <tr>
             <td>excludedClasses</td>
@@ -293,6 +554,21 @@
                 List, ArrayList, Deque, Queue, LinkedList,
                 Set, HashSet, SortedSet, TreeSet,
                 Map, HashMap, SortedMap, TreeMap</td>
+            <td>5.7</td>
+          </tr>
+          <tr>
+            <td>excludeClassesRegexps</td>
+            <td>User-configured regular expressions to ignore classes</td>
+            <td><a href="property_types.html#stringSet">String Set</a></td>
+            <td><code>"^$"</code></td>
+            <td>7.7</td>
+          </tr>
+          <tr>
+            <td>excludedPackages</td>
+            <td>User-configured packages to ignore</td>
+            <td><a href="property_types.html#stringSet">String Set</a></td>
+            <td>{}</td>
+            <td>7.7</td>
           </tr>
         </table>
       </subsection>
@@ -311,6 +587,75 @@
         <source>
 &lt;module name=&quot;ClassFanOutComplexity&quot;&gt;
     &lt;property name=&quot;max&quot; value=&quot;10&quot;/&gt;
+&lt;/module&gt;
+        </source>
+
+        <p>
+          Override property <code>excludedPackages</code> to mark some packages as excluded.
+          Each member of <code>excludedPackages</code> should be a valid identifier:
+          <ul>
+            <li>
+              <code>java.util</code> - valid, excludes all classes inside <code>java.util</code>,
+              but not from the subpackages.
+            </li>
+            <li>
+              <code>java.util.</code> - invalid, should not end with a dot.
+            </li>
+            <li>
+              <code>java.util.*</code> - invalid, should not end with a star.
+            </li>
+          </ul>
+        </p>
+        <p>
+          Note, that checkstyle will ignore all classes from the <code>java.lang</code> package and its subpackages,
+          even if the <code>java.lang</code> was not listed in the <code>excludedPackages</code> parameter.
+        </p>
+        <p>
+          Also node, that <code>excludedPackages</code> will not exclude classes, imported via wildcard
+          (e.g. <code>import java.math.*</code>). Instead of wildcard import you should use direct import
+          (e.g. <code>import java.math.BigDecimal</code>).
+        </p>
+        <p>
+          Also note, that checkstyle will not exlude classes within the same file
+          even if it was listed in the <code>excludedPackages</code> parameter. For example, assuming the config is
+
+          <source>
+&lt;module name=&quot;ClassDataAbstractionCoupling&quot;&gt;
+    &lt;property name=&quot;excludedPackages&quot; value=&quot;a.b&quot;/&gt;
+&lt;/module&gt;
+          </source>
+
+          And the file <code>a.b.Foo.java</code> is:
+
+          <source>
+package a.b;
+
+import a.b.Bar;
+import a.b.c.Baz;
+
+public class Foo {
+    public Bar bar; // Will be ignored, located inside ignored a.b package
+    public Baz baz; // Will not be ignored, located inside a.b.c package
+    public Data data; // Will not be ignored, same file
+
+    class Data {
+        public Foo foo; // Will not be ignored, same file
+    }
+}
+          </source>
+
+          The <code>bar</code> member will not be counted,
+          since the <code>a.b</code> added to the <code>excludedPackages</code>.
+          The <code>baz</code> member will be counted,
+          since the <code>a.b.c</code> was not added to the <code>excludedPackages</code>.
+          The <code>data</code> and <code>foo</code> members will be counted, as they are inside same file.
+        </p>
+        <p>
+          Example of usage:
+        </p>
+        <source>
+&lt;module name=&quot;ClassFanOutComplexity&quot;&gt;
+    &lt;property name=&quot;excludedPackages&quot; value=&quot;java.util, java.math&quot;/&gt;
 &lt;/module&gt;
         </source>
       </subsection>
@@ -332,7 +677,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -352,6 +697,7 @@
 
     <section name="CyclomaticComplexity">
       <subsection name="Description">
+        <p>Since Checkstyle 3.2</p>
         <p>
           Checks cyclomatic complexity against a specified limit.
             It is a measure of the minimum number of
@@ -387,18 +733,21 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>max</td>
             <td>the maximum threshold allowed</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>10</code></td>
+            <td>3.2</td>
           </tr>
           <tr>
             <td>switchBlockAsSingleDecisionPoint</td>
             <td>whether to treat the whole switch block as a single decision point</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>6.11</td>
           </tr>
 
           <tr>
@@ -431,6 +780,7 @@
               <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LAND">LAND</a>,
               <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LOR">LOR</a>.
             </td>
+            <td>3.2</td>
           </tr>
         </table>
       </subsection>
@@ -537,7 +887,7 @@ class SwitchExample {
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -557,6 +907,7 @@ class SwitchExample {
 
     <section name="JavaNCSS">
       <subsection name="Description">
+        <p>Since Checkstyle 3.5</p>
         <p>
           Determines complexity of methods, classes and files by
           counting the Non Commenting Source Statements (NCSS).  This
@@ -590,6 +941,7 @@ class SwitchExample {
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>methodMaximum</td>
@@ -599,6 +951,7 @@ class SwitchExample {
             </td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>50</code></td>
+            <td>3.5</td>
           </tr>
           <tr>
             <td>classMaximum</td>
@@ -608,6 +961,7 @@ class SwitchExample {
             </td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>1500</code></td>
+            <td>3.5</td>
           </tr>
           <tr>
             <td>fileMaximum</td>
@@ -617,6 +971,7 @@ class SwitchExample {
             </td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>2000</code></td>
+            <td>3.5</td>
           </tr>
         </table>
       </subsection>
@@ -665,7 +1020,7 @@ class SwitchExample {
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -685,17 +1040,18 @@ class SwitchExample {
 
     <section name="NPathComplexity">
       <subsection name="Description">
+        <p>Since Checkstyle 3.4</p>
         <p>
           The NPATH metric computes the number of possible execution
-          paths through a function. It takes into account the nesting of
+          paths through a function(method). It takes into account the nesting of
           conditional statements and multi-part boolean expressions
-          (e.g., A &amp;&amp; B, C || D, etc.).
+          (A &amp;&amp; B, C || D, E ? F :G and their combinations).
           <br/>
           The NPATH metric was designed base on Cyclomatic complexity to
-          avoid problem of Cyclomatic complexity metric like nesting level within a function.
+          avoid problem of Cyclomatic complexity metric like nesting level within a function(method).
         </p>
         <p>
-          Metric was described at <a href="http://dl.acm.org/citation.cfm?id=42379">"NPATH: a measure of execution pathcomplexity and its applications"</a>. If you need detaled description of algorithm, please read that article,
+          Metric was described at <a href="http://dl.acm.org/citation.cfm?id=42379">"NPATH: a measure of execution pathcomplexity and its applications"</a>. If you need detailed description of algorithm, please read that article,
           it is well written and have number of examples and details.
         </p>
 
@@ -725,26 +1081,27 @@ class SwitchExample {
 
         <table>
         <thead><tr><th>Structure</th><th> Complexity expression </th></tr></thead>
-        <tr><td>if ([expr]) { [if-range] }</td><td>NP(if-range) + NP(expr) + 1</td></tr>
-        <tr><td>if [expr] { [if-range] } esle { [else-range] }</td><td>NP(if-range) + NP(else-range) + NP(expr)</td></tr>
+        <tr><td>if ([expr]) { [if-range] }</td><td>NP(if-range) + 1 + NP(expr)</td></tr>
+        <tr><td>if ([expr]) { [if-range] } else { [else-range] }</td><td>NP(if-range) + NP(else-range) + NP(expr)</td></tr>
         <tr><td>while ([expr]) { [while-range] } </td><td>NP(while-range) + NP(expr) + 1</td></tr>
         <tr><td>do { [do-range] } while ([expr])</td><td>NP(do-range) + NP(expr) + 1</td></tr>
         <tr><td>for([expr1]; [expr2]; [expr3]) { [for-range] }</td><td>NP(for-range) + NP(expr1) + NP(expr2) + NP(expr3) + 1</td></tr>
-        <tr><td>switch ([expr]) { case : [case-range] default: [default-range] }</td><td>NP(expr) + S(i=1:i=n)NP(case-range(i)) + NP(default-range)</td></tr>
+        <tr><td>switch ([expr]) { case : [case-range] default: [default-range] }</td><td>S(i=1:i=n)NP(case-range[i]) + NP(default-range) + NP(expr)</td></tr>
         <tr><td>[expr1] ? [expr2] : [expr3]</td><td>NP(expr1) + NP(expr2) + NP(expr3) + 2</td></tr>
         <tr><td>goto label</td><td>1</td></tr>
         <tr><td>break</td><td>1</td></tr>
         <tr><td>Expressions</td><td>Number of &amp;&amp; and || operators in expression. No operators - 0</td></tr>
         <tr><td>continue</td><td>1</td></tr>
         <tr><td>return</td><td>1</td></tr>
-        <tr><td>Statement</td><td>1 (even sequential statements)</td></tr>
+        <tr><td>Statement (even sequential statements)</td><td>1</td></tr>
+        <tr><td>Empty block {}</td><td>1</td></tr>
         <tr><td>Function call</td><td>1</td></tr>
-        <tr><td>C function</td><td>P(i=1:i=N)NP(Statement(i))</td></tr>
+        <tr><td>Function(Method) declaration or Block</td><td>P(i=1:i=N)NP(Statement[i])</td></tr>
         </table>
 
         <p>
           <b>Rationale:</b> Nejmeh says that his group had an informal NPATH
-          limit of 200 on individual routines; functions that exceeded
+          limit of 200 on individual routines; functions(methods) that exceeded
           this value were candidates for further decomposition - or at
           least a closer look.
           <b>Please do not be fanatic with limit 200</b>
@@ -761,44 +1118,14 @@ class SwitchExample {
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>max</td>
             <td>the maximum threshold allowed</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td><code>200</code></td>
-          </tr>
-
-          <tr>
-            <td>tokens</td>
-            <td>tokens to check</td>
-
-            <td>
-              subset of tokens
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_WHILE">LITERAL_WHILE</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_DO">LITERAL_DO</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_FOR">LITERAL_FOR</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_IF">LITERAL_IF</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_ELSE">LITERAL_ELSE</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_SWITCH">LITERAL_SWITCH</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_CASE">LITERAL_CASE</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_TRY">LITERAL_TRY</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_CATCH">LITERAL_CATCH</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#QUESTION">QUESTION</a>.
-            </td>
-
-            <td>
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_WHILE">LITERAL_WHILE</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_DO">LITERAL_DO</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_FOR">LITERAL_FOR</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_IF">LITERAL_IF</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_ELSE">LITERAL_ELSE</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_SWITCH">LITERAL_SWITCH</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_CASE">LITERAL_CASE</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_TRY">LITERAL_TRY</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#LITERAL_CATCH">LITERAL_CATCH</a>,
-              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#QUESTION">QUESTION</a>.
-            </td>
+            <td>3.4</td>
           </tr>
         </table>
       </subsection>
@@ -838,7 +1165,7 @@ class SwitchExample {
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>

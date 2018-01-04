@@ -23,6 +23,7 @@
 
     <section name="ArrayTypeStyle">
       <subsection name="Description">
+        <p>Since Checkstyle 3.1</p>
         <p>
           Checks the style of array type definitions.  Some like Java style:
           <code>public static void main(String[] args)</code> and some like
@@ -37,6 +38,7 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>javaStyle</td>
@@ -45,6 +47,7 @@
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>true</code></td>
+            <td>3.1</td>
           </tr>
         </table>
       </subsection>
@@ -92,7 +95,7 @@
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -112,8 +115,9 @@
 
     <section name="AvoidEscapedUnicodeCharacters">
       <subsection name="Description">
+        <p>Since Checkstyle 5.8</p>
         <p>
-          Restrict using <a href = "http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.3">
+          Restrict using <a href = "https://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.3">
           Unicode escapes</a> (e.g. \u221e).
           It is possible to allow using escapes for
           <a href="https://en.wiktionary.org/wiki/Appendix:Control_characters"> non-printable(control) characters</a>.
@@ -130,30 +134,35 @@
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>allowEscapesForControlCharacters</td>
             <td>Allow use escapes for non-printable(control) characters.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td>false</td>
+            <td>5.8</td>
           </tr>
           <tr>
             <td>allowByTailComment</td>
             <td>Allow use escapes if trail comment is present.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td>false</td>
+            <td>5.8</td>
           </tr>
           <tr>
             <td>allowIfAllCharactersEscaped</td>
             <td>Allow if all characters in literal are escaped.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td>false</td>
+            <td>5.8</td>
           </tr>
           <tr>
             <td>allowNonPrintableEscapes</td>
             <td>Allow non-printable escapes.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td>false</td>
+            <td>5.8</td>
           </tr>
         </table>
       </subsection>
@@ -248,7 +257,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -268,11 +277,12 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
 
     <section name="CommentsIndentation">
       <subsection name="Description">
+        <p>Since Checkstyle 6.10</p>
         <p>
           Controls the indentation between comments and surrounding code.
           Comments are indented at the same level as the surrounding code.
           Detailed info about such convention can be found <a href=
-          "http://checkstyle.sourceforge.net/reports/google-java-style.html#s4.8.6.1-block-comment-style">
+          "http://checkstyle.sourceforge.net/reports/google-java-style-20170228.html#s4.8.6.1-block-comment-style">
           here</a>
         </p>
         <p>Please take a look at the following examples to understand how the check works:</p>
@@ -313,7 +323,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
 8
 9   public void foo8() {}
         </source>
-        <p>Example #4: Comment has destributed previous statement.</p>
+        <p>Example #4: Comment has distributed previous statement.</p>
         <source>
 1   public void foo11() {
 2       CheckUtils
@@ -376,7 +386,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
 19        // it is OK
 20  }
         </source>
-        <p>Example #7: Comment is placed within a destributed statement.</p>
+        <p>Example #7: Comment is placed within a distributed statement.</p>
         <source>
 1   String breaks = "J"
 2   // violation (comment should have the same indentation level as line 3)
@@ -388,7 +398,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
 8   ;
         </source>
         <p>
-          Examnple #8: Comment is placed within an empty case block.
+          Example #8: Comment is placed within an empty case block.
           Note, if comment is placed at the end of the empty case block, we have Checkstyle's
           limitations to clearly detect user intention of explanation target - above or below. The
           only case we can assume as a violation is when a single line comment within the empty case
@@ -431,7 +441,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
 9   public void foo43() {
 10     try {
 11        int a;
-12     // Why do we catch exception here? - violation (should have the same indenatation as line 11)
+12     // Why do we catch exception here? - violation (should have the same indentation as line 11)
 13     } catch (Exception e) { ... }
 14  }
         </source>
@@ -443,6 +453,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
             <tr>
             <td>tokens</td>
@@ -456,6 +467,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
               <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#SINGLE_LINE_COMMENT">SINGLE_LINE_COMMENT</a>,
               <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#BLOCK_COMMENT_BEGIN">BLOCK_COMMENT_BEGIN</a>.
             </td>
+            <td>6.10</td>
           </tr>
         </table>
       </subsection>
@@ -494,7 +506,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -514,6 +526,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
 
     <section name="DescendantToken">
       <subsection name="Description">
+        <p>Since Checkstyle 3.2</p>
         <p>
           Checks for restricted tokens beneath other tokens.
         </p>
@@ -535,6 +548,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>limitedTokens</td>
@@ -544,30 +558,35 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
              <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html">TokenTypes</a>
             </td>
             <td>empty set</td>
+            <td>3.2</td>
           </tr>
           <tr>
             <td>minimumDepth</td>
             <td>the minimum depth for descendant counts</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td>0</td>
+            <td>3.2</td>
           </tr>
           <tr>
             <td>maximumDepth</td>
             <td>the maximum depth for descendant counts</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td>java.lang.Integer.MAX_VALUE</td>
+            <td>3.2</td>
           </tr>
           <tr>
             <td>minimumNumber</td>
             <td>a minimum count for descendants</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td>0</td>
+            <td>3.2</td>
           </tr>
           <tr>
             <td>maximumNumber</td>
             <td>a maximum count for descendants</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td>java.lang.Integer.MAX_VALUE</td>
+            <td>3.2</td>
           </tr>
           <tr>
             <td>sumTokenCounts</td>
@@ -577,18 +596,21 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>5.0</td>
           </tr>
           <tr>
             <td>minimumMessage</td>
             <td>error message when the minimum count is not reached</td>
             <td><a href="property_types.html#string">String</a></td>
             <td>&quot;descendant.token.min&quot;</td>
+            <td>3.2</td>
           </tr>
           <tr>
             <td>maximumMessage</td>
             <td>error message when the maximum count is exceeded</td>
             <td><a href="property_types.html#string">String</a></td>
             <td>&quot;descendant.token.max&quot;</td>
+            <td>3.2</td>
           </tr>
         </table>
       </subsection>
@@ -805,7 +827,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -823,49 +845,9 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
       </subsection>
     </section>
 
-    <section name="FileContentsHolder">
-      <subsection name="Description">
-        <p>
-          Holds the current file contents for global access when configured
-          as a TreeWalker sub-module. For example,a filter can access
-          the current file contents through this module.
-        </p>
-      </subsection>
-
-      <subsection name="Examples">
-        <p>
-          This check should not be used by itself, as it does no reporting.
-          It is to be used in conjuction with other checks like
-          <a href="config_filters.html#SuppressionCommentFilter">SuppressionCommentFilter</a>
-          and
-          <a href="config_filters.html#SuppressWithNearbyCommentFilter">SuppressWithNearbyCommentFilter</a>.
-        </p>
-      </subsection>
-
-      <subsection name="Example of Usage">
-        <ul>
-          <li>
-            <a href="https://github.com/search?q=path%3Aconfig+filename%3Acheckstyle_checks.xml+repo%3Acheckstyle%2Fcheckstyle+FileContentsHolder">
-            Checkstyle Style</a>
-          </li>
-        </ul>
-      </subsection>
-
-      <subsection name="Package">
-        <p>
-          com.puppycrawl.tools.checkstyle.checks
-        </p>
-      </subsection>
-
-      <subsection name="Parent Module">
-        <p>
-          <a href="config.html#TreeWalker">TreeWalker</a>
-        </p>
-      </subsection>
-    </section>
-
     <section name="FinalParameters">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Check that parameters for methods, constructors, and catch blocks are
           final. Interface, abstract, and native methods are not checked: the final
@@ -888,12 +870,14 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>ignorePrimitiveTypes</td>
             <td>ignore primitive types as parameters</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td><code>false</code></td>
+            <td>6.2</td>
           </tr>
           <tr>
             <td>tokens</td>
@@ -909,6 +893,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
               <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#METHOD_DEF">METHOD_DEF</a>,
               <a href="apidocs/com/puppycrawl/tools/checkstyle/api/TokenTypes.html#CTOR_DEF">CTOR_DEF</a>.
             </td>
+            <td>3.0</td>
           </tr>
         </table>
       </subsection>
@@ -933,7 +918,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
         </source>
         <p>
           To configure the check to allow ignoring
-          <a href="http://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html">
+          <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html">
            primitive datatypes</a> as parameters:
         </p>
         <source>
@@ -964,7 +949,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -984,6 +969,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
 
     <section name="Indentation">
       <subsection name="Description">
+        <p>Since Checkstyle 3.1</p>
         <p>
           Checks correct indentation of Java code.
         </p>
@@ -1005,42 +991,49 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>basicOffset</td>
             <td>how far new indentation level should be indented when on the next line</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td>4</td>
+            <td>3.1</td>
           </tr>
           <tr>
             <td>braceAdjustment</td>
             <td>how far a braces should be indented when on the next line</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td>0</td>
+            <td>3.1</td>
           </tr>
           <tr>
             <td>caseIndent</td>
             <td>how far a case label should be indented when on next line</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td>4</td>
+            <td>3.1</td>
           </tr>
           <tr>
             <td>throwsIndent</td>
             <td>how far a throws clause should be indented when on next line</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td>4</td>
+            <td>5.7</td>
           </tr>
           <tr>
             <td>arrayInitIndent</td>
             <td>how far an array initialisation should be indented when on next line</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td>4</td>
+            <td>5.8</td>
           </tr>
           <tr>
             <td>lineWrappingIndentation</td>
             <td>how far continuation line should be indented when line-wrapping is present</td>
             <td><a href="property_types.html#integer">Integer</a></td>
             <td>4</td>
+            <td>5.9</td>
           </tr>
           <tr>
             <td>forceStrictCondition</td>
@@ -1048,6 +1041,7 @@ String unitAbbrev = "\u03bc\u03bc\u03bc";
                 have to be same as lineWrappingIndentation parameter. If value is false, line wrap indent could be bigger on any value user would like.</td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
             <td>false</td>
+            <td>6.3</td>
           </tr>
         </table>
       </subsection>
@@ -1127,7 +1121,7 @@ void foo(String aFooString,
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -1147,6 +1141,7 @@ void foo(String aFooString,
 
     <section name="NewlineAtEndOfFile">
       <subsection name="Description">
+        <p>Since Checkstyle 3.1</p>
         <p>
           Checks whether files end with a line separator.
         </p>
@@ -1160,9 +1155,14 @@ void foo(String aFooString,
           <img src="https://cloud.githubusercontent.com/assets/812984/13894408/afd965b8-ed24-11e5-8bfd-e9edf56a6fe6.png" alt="example of diff"/>
         </p>
         <p>
-          Old Ratinale: CVS source control management
+          Old Rationale: CVS source control management
           systems will even print a warning when it
           encounters a file that doesn't end with a line separator.
+        </p>
+        <p>
+          Attention: property fileExtensions works with files that are passed by similar property for at
+          <a href="config.html#Checker">Checker</a>.
+          Please make sure required file extensions are mentioned at Checker's fileExtensions property.
         </p>
       </subsection>
 
@@ -1173,6 +1173,7 @@ void foo(String aFooString,
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>lineSeparator</td>
@@ -1183,12 +1184,14 @@ void foo(String aFooString,
               (Mac-style), &quot;lf&quot; (Unix-style) and &quot;lf_cr_crlf&quot; (lf, cr or crlf).
             </td>
             <td>&quot;system&quot;</td>
+            <td>3.1</td>
           </tr>
           <tr>
             <td>fileExtensions</td>
             <td>file type extension of the files to check.</td>
             <td><a href="property_types.html#stringSet">String Set</a></td>
             <td>all files</td>
+            <td>3.1</td>
           </tr>
 
         </table>
@@ -1246,7 +1249,7 @@ void foo(String aFooString,
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -1266,6 +1269,7 @@ void foo(String aFooString,
 
     <section name="OuterTypeFilename">
       <subsection name="Description">
+        <p>Since Checkstyle 5.3</p>
         <p>
           Checks that the outer type name and the file name match. For example,
           the class <code>Foo</code> must be in a file named
@@ -1303,7 +1307,7 @@ void foo(String aFooString,
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -1323,6 +1327,7 @@ void foo(String aFooString,
 
     <section name="TodoComment">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           A check for <code>TODO:</code> comments. Actually
           it is a generic <a
@@ -1339,12 +1344,14 @@ void foo(String aFooString,
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>Pattern to match comments against</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"TODO:"</code></td>
+            <td>3.0</td>
           </tr>
         </table>
       </subsection>
@@ -1397,7 +1404,7 @@ void foo(String aFooString,
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -1417,6 +1424,7 @@ void foo(String aFooString,
 
     <section name="TrailingComment">
       <subsection name="Description">
+        <p>Since Checkstyle 3.4</p>
         <p>
           The check to ensure that requires that comments be the only thing on
           a line.  For the case of <code>//</code> comments that means that the only thing
@@ -1427,7 +1435,7 @@ void foo(String aFooString,
         </p>
 
         <p>
-          Rationale: Steve McConnel in <cite>Code Complete</cite> suggests that
+          Rationale: Steve McConnell in <cite>Code Complete</cite> suggests that
           endline comments are a bad practice. An end line comment would be
           one that is on the same line as actual code. For example:
         </p>
@@ -1486,12 +1494,14 @@ d = e / f;        // Another comment for this line
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>format</td>
             <td>pattern for strings allowed before the comment</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
-            <td><code>"^[\s\});]*$"</code></td>
+            <td><code>"^[\s});]*$"</code></td>
+            <td>3.4</td>
           </tr>
           <tr>
             <td>legalComment</td>
@@ -1500,6 +1510,7 @@ d = e / f;        // Another comment for this line
                 comment will be trimmed before matching.)</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>null</code></td>
+            <td>4.2</td>
           </tr>
         </table>
       </subsection>
@@ -1539,7 +1550,7 @@ d = e / f;        // Another comment for this line
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -1559,6 +1570,7 @@ d = e / f;        // Another comment for this line
 
     <section name="Translation">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           A <a href="config.html#Overview">FileSetCheck</a> that ensures
           the correct translation of code by checking property files for
@@ -1595,7 +1607,7 @@ messages.properties: Key 'ok' missing.
         <p>
           <font color="red">Attention:</font> this Check could produce false-positives if it is used with
           <a href="config.html#Checker">Checker</a> that use cache (property "cacheFile")
-          This is known design problem, will be addrerssed at
+          This is known design problem, will be addressed at
           <a href="https://github.com/checkstyle/checkstyle/issues/3539">issue</a>.
         </p>
       </subsection>
@@ -1607,6 +1619,7 @@ messages.properties: Key 'ok' missing.
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>fileExtensions</td>
@@ -1618,6 +1631,7 @@ messages.properties: Key 'ok' missing.
             </td>
             <td><a href="property_types.html#stringSet">String Set</a></td>
             <td><code>properties</code></td>
+            <td>3.0</td>
           </tr>
           <tr>
             <td>baseName</td>
@@ -1626,6 +1640,7 @@ messages.properties: Key 'ok' missing.
               the check to distinguish config and localization resources.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^messages.*$"</code></td>
+            <td>6.17</td>
           </tr>
           <tr>
             <td>requiredTranslations</td>
@@ -1643,6 +1658,7 @@ messages.properties: Key 'ok' missing.
             </td>
             <td><a href="property_types.html#stringSet">String Set</a></td>
             <td><code>empty String Set</code></td>
+            <td>6.11</td>
           </tr>
         </table>
       </subsection>
@@ -1694,7 +1710,7 @@ messages.properties: Key 'ok' missing.
         <p>
           As we can see from the configuration, the TranslationCheck was configured to check
           an existence of 'es', 'fr' and 'de' translations. Lets assume that we have the resource
-          bunbdle:
+          bundle:
         </p>
         <source>
 messages_home.properties
@@ -1732,7 +1748,7 @@ messages_home_fr_CA_UNIX.properties
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -1752,6 +1768,7 @@ messages_home_fr_CA_UNIX.properties
 
     <section name="UncommentedMain">
       <subsection name="Description">
+        <p>Since Checkstyle 3.2</p>
         <p>
           Checks for uncommented main() methods.
         </p>
@@ -1773,6 +1790,7 @@ messages_home_fr_CA_UNIX.properties
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>excludedClasses</td>
@@ -1780,6 +1798,7 @@ messages_home_fr_CA_UNIX.properties
             to have a main method.</td>
             <td><a href="property_types.html#regexp">Regular Expression</a></td>
             <td><code>"^$"</code></td>
+            <td>3.2</td>
           </tr>
         </table>
       </subsection>
@@ -1820,7 +1839,7 @@ messages_home_fr_CA_UNIX.properties
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -1840,6 +1859,7 @@ messages_home_fr_CA_UNIX.properties
 
     <section name="UniqueProperties">
       <subsection name="Description">
+        <p>Since Checkstyle 5.7</p>
         <p>
           Checks properties files for duplicated properties.
         </p>
@@ -1859,12 +1879,14 @@ messages_home_fr_CA_UNIX.properties
             <th>description</th>
             <th>type</th>
             <th>default value</th>
+            <th>since</th>
           </tr>
           <tr>
             <td>fileExtensions</td>
             <td>file type extension of the files to check.</td>
             <td><a href="property_types.html#stringSet">String Set</a></td>
             <td>properties</td>
+            <td>5.7</td>
           </tr>
         </table>
       </subsection>
@@ -1901,7 +1923,7 @@ messages_home_fr_CA_UNIX.properties
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>
@@ -1921,11 +1943,12 @@ messages_home_fr_CA_UNIX.properties
 
     <section name="UpperEll">
       <subsection name="Description">
+        <p>Since Checkstyle 3.0</p>
         <p>
           Checks that long constants are defined with an upper ell. That
           is <code>' L'</code> and not <code>'l'</code>. This is in accordance with the Java
           Language Specification, <a
-          href="http://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.1">
+          href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.1">
           Section 3.10.1</a>.
         </p>
 
@@ -1968,7 +1991,7 @@ messages_home_fr_CA_UNIX.properties
           </li>
         </ul>
         <p>
-          All messages can be customized if the default message doesn't suite you.
+          All messages can be customized if the default message doesn't suit you.
           Please <a href="config.html#Custom_messages">see the documentation</a> to learn how to.
         </p>
       </subsection>

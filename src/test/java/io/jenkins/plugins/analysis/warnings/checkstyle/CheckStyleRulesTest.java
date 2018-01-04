@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.*;
  * @author Ullrich Hafner
  */
 class CheckStyleRulesTest {
-    private static final int NUMBER_OF_AVAILABLE_CHECKSTYLE_RULES = 159;
+    private static final int NUMBER_OF_AVAILABLE_CHECKSTYLE_RULES = 161;
 
     /** Test whether we could parse the Checkstyle rule meta data. */
     @Test
@@ -20,7 +20,7 @@ class CheckStyleRulesTest {
 
         assertThat(rules.getRules()).hasSize(NUMBER_OF_AVAILABLE_CHECKSTYLE_RULES);
         assertThat(rules.getRule("EmptyBlock")).as("No rule information found").isNotNull();
-        assertThat(rules.getRule("EmptyBlock").getDescription()).as("Wrong description for EmptyBlock found.").isEqualTo("<p> Checks for empty blocks. </p>");
+        assertThat(rules.getRule("EmptyBlock").getDescription()).as("Wrong description for EmptyBlock found.").contains("Checks for empty blocks.");
         assertThat(rules.getRule("AnnotationUseStyle")).as("No rule information found").isNotNull();
         assertThat(rules.getRule("AnnotationUseStyle").getDescription()).as("Wrong description for AnnotationUseStyle found.").contains("This check controls the style with the usage of annotations.");
         assertThat(rules.getRule("Undefined").getDescription()).as("No default text available for undefined rule.").isEqualTo(Rule.UNDEFINED_DESCRIPTION);
