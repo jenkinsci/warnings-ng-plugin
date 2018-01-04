@@ -64,6 +64,34 @@
       <version>3.2</version>
     </dependency>
 
+    <!-- PMD Messages -->
+    <dependency>
+      <groupId>net.sourceforge.pmd</groupId>
+      <artifactId>pmd-core</artifactId>
+      <version>5.7.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.ibm.icu</groupId>
+          <artifactId>icu4j</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.sourceforge.saxon</groupId>
+          <artifactId>saxon</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.pmd</groupId>
+      <artifactId>pmd-java</artifactId>
+      <version>5.7.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>net.sourceforge.saxon</groupId>
+          <artifactId>saxon</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-test</artifactId>

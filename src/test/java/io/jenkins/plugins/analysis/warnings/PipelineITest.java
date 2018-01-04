@@ -42,6 +42,21 @@ public class PipelineITest extends IntegrationTest {
         shouldFindIssuesOfTool(3, Cadence.class, "CadenceIncisive.txt");
     }
 
+    /** Runs the CheckStyle parser on an output file that contains 4 issues. */
+    @Test
+    public void shouldFindAllPmdIssues() {
+        Issues<BuildIssue> issues = shouldFindIssuesOfTool(4, Pmd.class, "pmd-warnings.xml");
+
+        BuildIssue issue = issues.get(0);
+
+        StaticAnalysisLabelProvider labelProvider = new Pmd.Descriptor().getLabelProvider();
+        assertThat(issue).hasDescription(StringUtils.EMPTY);
+        assertThat(labelProvider.getDescription(issue)).isEqualTo("\n"
+                + "Sometimes two consecutive 'if' statements can be consolidated by separating their conditions with a boolean short-circuit operator.\n"
+                + "      <pre>\n  \nvoid bar() {\n\tif (x) {\t\t\t// original implementation\n\t\tif (y) {\n\t\t\t// do stuff\n\t\t}\n"
+                + "\t}\n}\n\nvoid bar() {\n\tif (x && y) {\t\t// optimized implementation\n\t\t// do stuff\n\t}\n}\n \n      </pre>");
+    }
+
     /** Runs the CheckStyle parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllCheckStyleIssues() {
