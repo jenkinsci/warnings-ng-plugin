@@ -5,6 +5,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
+import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyleRules;
@@ -18,9 +19,8 @@ import hudson.Extension;
  */
 public class CheckStyle extends StreamBasedParser {
     private static final String PARSER_NAME = Messages.Warnings_CheckStyle_ParserName();
-    private static final String ICON_URL_PREFIX = "/plugin/warnings/icons/";
-    private static final String SMALL_ICON_URL = ICON_URL_PREFIX + "checkstyle-24x24.png";
-    private static final String LARGE_ICON_URL = ICON_URL_PREFIX + "checkstyle-48x48.png";
+    private static final String SMALL_ICON_URL = IMAGE_PREFIX + "checkstyle-24x24.png";
+    private static final String LARGE_ICON_URL = IMAGE_PREFIX + "checkstyle-48x48.png";
 
     /**
      * Creates a new instance of {@link CheckStyle}.

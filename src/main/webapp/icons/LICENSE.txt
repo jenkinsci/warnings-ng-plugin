@@ -1,3 +1,5 @@
+------------------------------------------------------------------------------
+
 The Noia icons for KDE.
 Made by Carlitus (Carles Carbonell Bernado)
 mail@carlitus.net
@@ -11,6 +13,12 @@ Don't distribute these icons until you readed and understanded it.
 Thanks
 
 Carlitus
+
+------------------------------------------------------------------------------
+
+The findbugs logo is a trademark by The University of Maryland. These icons are a courtesy of the FindBugs team.
+
+------------------------------------------------------------------------------
 
 License for idea-24x24.png and idea-48x48.png generated from IntelliJ IDEA Community Edition distribution
 

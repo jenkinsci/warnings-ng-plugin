@@ -1,0 +1,1524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<BugCollection version="1.2.1" sequence="0" timestamp="1186259374191" analysisTimestamp="1186259377278" release="">
+  <Project filename="&lt;&lt;unnamed project&gt;&gt;" projectName="findbugs-native.xml">
+    <Jar>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/build/hadoop-0.13.1-dev-core.jar</Jar>
+    <Jar>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/build/hadoop-0.13.1-dev-examples.jar</Jar>
+    <Jar>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/build/hadoop-streaming.jar</Jar>
+    <AuxClasspathEntry>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/lib/commons-cli-2.0-SNAPSHOT.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/lib/commons-codec-1.3.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/lib/commons-httpclient-3.0.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/lib/commons-logging-1.0.4.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/lib/commons-logging-api-1.0.4.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/lib/jets3t-0.5.0.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/lib/jetty-5.1.4.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/lib/jetty-ext/ant.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/lib/jetty-ext/commons-el.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/lib/jetty-ext/jasper-compiler.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/lib/jetty-ext/jasper-runtime.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/lib/jetty-ext/jsp-api.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/lib/junit-3.8.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/lib/log4j-1.2.13.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/lib/servlet-api.jar</AuxClasspathEntry>
+    <SrcDir>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/src/java</SrcDir>
+    <SrcDir>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/src/examples</SrcDir>
+    <SrcDir>/home/johan/hudson/hudson-findbugs/work/jobs/Hadoop/workspace/hadoop/src/contrib/streaming/src/java</SrcDir>
+  </Project>
+  <BugInstance type="IS2_INCONSISTENT_SYNC" priority="2" abbrev="IS" category="MT_CORRECTNESS" instanceHash="4d839755cabf60eacc6438ac77ac5104" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+    <ShortMessage>Inconsistent synchronization</ShortMessage>
+    <LongMessage>Inconsistent synchronization of org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode.blocksPreviouslyUpgraded; locked 85% of time</LongMessage>
+    <Class classname="org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode">
+      <SourceLine classname="org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode" start="1245" end="1550" sourcefile="BlockCrcUpgrade.java" sourcepath="org/apache/hadoop/dfs/BlockCrcUpgrade.java">
+        <Message>At BlockCrcUpgrade.java:[lines 1245-1550]</Message>
+      </SourceLine>
+      <Message>In class org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode</Message>
+    </Class>
+    <Field classname="org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode" name="blocksPreviouslyUpgraded" signature="I" isStatic="false">
+      <SourceLine classname="org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode" sourcefile="BlockCrcUpgrade.java" sourcepath="org/apache/hadoop/dfs/BlockCrcUpgrade.java">
+        <Message>In BlockCrcUpgrade.java</Message>
+      </SourceLine>
+      <Message>Field org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode.blocksPreviouslyUpgraded</Message>
+    </Field>
+    <Int value="85" role="INT_SYNC_PERCENT">
+      <Message>Synchronized 85% of the time</Message>
+    </Int>
+    <SourceLine classname="org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode" start="1309" end="1309" startBytecode="39" endBytecode="39" sourcefile="BlockCrcUpgrade.java" sourcepath="org/apache/hadoop/dfs/BlockCrcUpgrade.java" role="SOURCE_LINE_UNSYNC_ACCESS">
+      <Message>Unsynchronized access at BlockCrcUpgrade.java:[line 1309]</Message>
+    </SourceLine>
+    <SourceLine classname="org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode" start="1436" end="1436" startBytecode="287" endBytecode="287" sourcefile="BlockCrcUpgrade.java" sourcepath="org/apache/hadoop/dfs/BlockCrcUpgrade.java" role="SOURCE_LINE_SYNC_ACCESS">
+      <Message>Synchronized access at BlockCrcUpgrade.java:[line 1436]</Message>
+    </SourceLine>
+    <SourceLine classname="org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode" start="1436" end="1436" startBytecode="292" endBytecode="292" sourcefile="BlockCrcUpgrade.java" sourcepath="org/apache/hadoop/dfs/BlockCrcUpgrade.java" role="SOURCE_LINE_SYNC_ACCESS">
+      <Message>Synchronized access at BlockCrcUpgrade.java:[line 1436]</Message>
+    </SourceLine>
+    <SourceLine classname="org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode" start="1446" end="1446" startBytecode="371" endBytecode="371" sourcefile="BlockCrcUpgrade.java" sourcepath="org/apache/hadoop/dfs/BlockCrcUpgrade.java" role="SOURCE_LINE_SYNC_ACCESS">
+      <Message>Synchronized access at BlockCrcUpgrade.java:[line 1446]</Message>
+    </SourceLine>
+    <SourceLine classname="org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode" start="1510" end="1510" startBytecode="712" endBytecode="712" sourcefile="BlockCrcUpgrade.java" sourcepath="org/apache/hadoop/dfs/BlockCrcUpgrade.java" role="SOURCE_LINE_SYNC_ACCESS">
+      <Message>Synchronized access at BlockCrcUpgrade.java:[line 1510]</Message>
+    </SourceLine>
+    <SourceLine classname="org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode" start="1510" end="1510" startBytecode="729" endBytecode="729" sourcefile="BlockCrcUpgrade.java" sourcepath="org/apache/hadoop/dfs/BlockCrcUpgrade.java" role="SOURCE_LINE_SYNC_ACCESS">
+      <Message>Synchronized access at BlockCrcUpgrade.java:[line 1510]</Message>
+    </SourceLine>
+    <SourceLine classname="org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode" start="1535" end="1535" startBytecode="83" endBytecode="83" sourcefile="BlockCrcUpgrade.java" sourcepath="org/apache/hadoop/dfs/BlockCrcUpgrade.java" role="SOURCE_LINE_SYNC_ACCESS">
+      <Message>Synchronized access at BlockCrcUpgrade.java:[line 1535]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC" priority="2" abbrev="SIC" category="PERFORMANCE" instanceHash="f32497e4bd8c80ef6228f10bd3363f52" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+    <ShortMessage>Should be a static inner class</ShortMessage>
+    <LongMessage>Should org.apache.hadoop.streaming.StreamJob$MultiPropertyOption be a _static_ inner class?</LongMessage>
+    <Class classname="org.apache.hadoop.streaming.StreamJob$MultiPropertyOption">
+      <SourceLine classname="org.apache.hadoop.streaming.StreamJob$MultiPropertyOption" start="935" end="980" sourcefile="StreamJob.java" sourcepath="org/apache/hadoop/streaming/StreamJob.java">
+        <Message>At StreamJob.java:[lines 935-980]</Message>
+      </SourceLine>
+      <Message>In class org.apache.hadoop.streaming.StreamJob$MultiPropertyOption</Message>
+    </Class>
+    <SourceLine classname="org.apache.hadoop.streaming.StreamJob$MultiPropertyOption" start="935" end="980" sourcefile="StreamJob.java" sourcepath="org/apache/hadoop/streaming/StreamJob.java" synthetic="true">
+      <Message>At StreamJob.java:[lines 935-980]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugCategory category="MALICIOUS_CODE">
+    <Description>Malicious code vulnerability</Description>
+  </BugCategory>
+  <BugCategory category="STYLE">
+    <Description>Dodgy</Description>
+  </BugCategory>
+  <BugCategory category="BAD_PRACTICE">
+    <Description>Bad practice</Description>
+  </BugCategory>
+  <BugCategory category="CORRECTNESS">
+    <Description>Correctness</Description>
+  </BugCategory>
+  <BugCategory category="PERFORMANCE">
+    <Description>Performance</Description>
+  </BugCategory>
+  <BugCategory category="MT_CORRECTNESS">
+    <Description>Multithreaded correctness</Description>
+  </BugCategory>
+  <BugPattern type="EQ_SELF_USE_OBJECT" abbrev="Eq" category="BAD_PRACTICE">
+    <ShortDescription>Covariant equals() method defined, Object.equals(Object) inherited</ShortDescription>
+    <Details><![CDATA[
+
+  <p> This class defines a covariant version of the <code>equals()</code>
+  method, but inherits the normal <code>equals(Object)</code> method
+  defined in the base <code>java.lang.Object</code> class.&nbsp;
+  The class should probably define a non-covariant version of <code>equals()</code>.&nbsp;
+  (I.e., a method with the signature <code>boolean equals(java.lang.Object)</code>.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="MWN_MISMATCHED_WAIT" abbrev="MWN" category="MT_CORRECTNESS">
+    <ShortDescription>Mismatched wait()</ShortDescription>
+    <Details><![CDATA[
+
+<p> This method calls Object.wait() without obviously holding a lock
+on the object.&nbsp;  Calling wait() without a lock held will result in
+an <code>IllegalMonitorStateException</code> being thrown.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" abbrev="ST" category="STYLE">
+    <ShortDescription>Write to static field from instance method</ShortDescription>
+    <Details><![CDATA[
+
+  <p> This instance method writes to a static field. This is tricky to get
+correct if multiple instances are being manipulated,
+and generally bad practice.
+</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="UPM_UNCALLED_PRIVATE_METHOD" abbrev="UPM" category="PERFORMANCE">
+    <ShortDescription>Private method is never called</ShortDescription>
+    <Details><![CDATA[
+
+<p> This private method is never called. Although it is
+possible that the method will be invoked through reflection,
+it is more likely that the method is never used, and should be
+removed.
+</p>
+
+]]></Details>
+  </BugPattern>
+  <BugPattern type="UUF_UNUSED_FIELD" abbrev="UuF" category="PERFORMANCE">
+    <ShortDescription>Unused field</ShortDescription>
+    <Details><![CDATA[
+
+  <p> This field is never used.&nbsp; Consider removing it from the class.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="MS_SHOULD_BE_FINAL" abbrev="MS" category="MALICIOUS_CODE">
+    <ShortDescription>Field isn't final but should be</ShortDescription>
+    <Details><![CDATA[
+
+   <p>
+ A mutable static field could be changed by malicious code or
+        by accident from another package.
+        The field could be made final to avoid
+        this vulnerability.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="BC_VACUOUS_INSTANCEOF" abbrev="BC" category="STYLE">
+    <ShortDescription>instanceof will always return true</ShortDescription>
+    <Details><![CDATA[
+
+<p>
+This instanceof test will always return true. Although this is safe, make sure it isn't
+an indication of some misunderstanding or some other logic error.
+</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="URF_UNREAD_FIELD" abbrev="UrF" category="PERFORMANCE">
+    <ShortDescription>Unread field</ShortDescription>
+    <Details><![CDATA[
+
+  <p> This field is never read.&nbsp; Consider removing it from the class.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="MS_PKGPROTECT" abbrev="MS" category="MALICIOUS_CODE">
+    <ShortDescription>Field should be package protected</ShortDescription>
+    <Details><![CDATA[
+
+  <p> A mutable static field could be changed by malicious code or
+   by accident.
+   The field could be made package protected to avoid
+   this vulnerability.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="DM_NUMBER_CTOR" abbrev="Bx" category="PERFORMANCE">
+    <ShortDescription>Method invokes inefficient Number constructor; use static valueOf instead</ShortDescription>
+    <Details><![CDATA[
+
+      <p>
+      Using <code>new Integer(int)</code> is guaranteed to always result in a new object whereas
+      <code>Integer.valueOf(int)</code> allows caching of values to be done by the compiler, class library, or JVM.
+      Using of cached values avoids object allocation and the code will be faster.
+      </p>
+      <p>
+      Values between -128 and 127 are guaranteed to have corresponding cached instances
+      and using <code>valueOf</code> is approximately 3.5 times faster than using constructor.
+      For values outside the constant range the performance of both styles is the same.
+      </p>
+      <p>
+      Unless the class must be compatible with JVMs predating Java 1.5,
+      use either autoboxing or the <code>valueOf()</code> method when creating instances of
+      <code>Long</code>, <code>Integer</code>, <code>Short</code>, <code>Character</code>, and <code>Byte</code>.
+      </p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="SIC_INNER_SHOULD_BE_STATIC" abbrev="SIC" category="PERFORMANCE">
+    <ShortDescription>Should be a static inner class</ShortDescription>
+    <Details><![CDATA[
+
+  <p> This class is an inner class, but does not use its embedded reference
+  to the object which created it.&nbsp; This reference makes the instances
+  of the class larger, and may keep the reference to the creator object
+  alive longer than necessary.&nbsp; If possible, the class should be
+   made static.
+</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE" abbrev="RCN" category="STYLE">
+    <ShortDescription>Redundant nullcheck of value known to be null</ShortDescription>
+    <Details><![CDATA[
+
+<p> This method contains a redundant check of a known null value against
+the constant null.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="DLS_DEAD_LOCAL_STORE" abbrev="DLS" category="STYLE">
+    <ShortDescription>Dead store to local variable</ShortDescription>
+    <Details><![CDATA[
+
+<p>
+This instruction assigns a value to a local variable,
+but the value is not read by any subsequent instruction.
+Often, this indicates an error, because the value computed
+is never used.
+</p>
+<p>
+Note that Sun's javac compiler often generates dead stores for
+final local variables.  Because FindBugs is a bytecode-based tool,
+there is no easy way to eliminate these false positives.
+</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="ICAST_IDIV_CAST_TO_DOUBLE" abbrev="ICAST" category="STYLE">
+    <ShortDescription>int division result cast to double or float</ShortDescription>
+    <Details><![CDATA[
+
+<p>
+This code casts the result of an integer division operation to double or
+float.
+Doing division on integers truncates the result
+to the integer value closest to zero.  The fact that the result
+was cast to double suggests that this precision should have been retained.
+What was probably meant was to cast one or both of the operands to
+double <em>before</em> performing the division.  Here is an example:
+</p>
+<blockquote>
+<pre>
+int x = 2;
+int y = 5;
+// Wrong: yields result 0.0
+double value1 =  x / y;
+
+// Right: yields result 0.4
+double value2 =  x / (double) y;
+</pre>
+</blockquote>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="STCAL_STATIC_SIMPLE_DATA_FORMAT_INSTANCE" abbrev="STCAL" category="MT_CORRECTNESS">
+    <ShortDescription>Static DateFormat</ShortDescription>
+    <Details><![CDATA[
+
+<p>As the JavaDoc states, DateFormats are inherently unsafe for multithreaded use.
+Sharing a single instance across thread boundaries without proper synchronization will result in erratic behavior of the
+application.</p>
+<p>You may also experience serialization problems.</p>
+<p>Using an instance field is recommended.</p>
+<p>For more information on this see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6231579">Sun Bug #6231579</a>
+and <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6178997">Sun Bug #6178997</a>.</p>
+
+]]></Details>
+  </BugPattern>
+  <BugPattern type="SWL_SLEEP_WITH_LOCK_HELD" abbrev="SWL" category="MT_CORRECTNESS">
+    <ShortDescription>Method calls Thread.sleep() with a lock held</ShortDescription>
+    <Details><![CDATA[
+
+      <p>
+      This method calls Thread.sleep() with a lock held.  This may result
+      in very poor performance and scalability, or a deadlock, since other threads may
+      be waiting to acquire the lock.  It is a much better idea to call
+      wait() on the lock, which releases the lock and allows other threads
+      to run.
+      </p>
+
+   ]]></Details>
+  </BugPattern>
+  <BugPattern type="IS2_INCONSISTENT_SYNC" abbrev="IS" category="MT_CORRECTNESS">
+    <ShortDescription>Inconsistent synchronization</ShortDescription>
+    <Details><![CDATA[
+
+  <p> The fields of this class appear to be accessed inconsistently with respect
+  to synchronization.&nbsp; This bug report indicates that the bug pattern detector
+  judged that
+  </p>
+  <ol>
+  <li> The class contains a mix of locked and unlocked accesses,</li>
+  <li> At least one locked access was performed by one of the class's own methods, and</li>
+  <li> The number of unsynchronized field accesses (reads and writes) was no more than
+       one third of all accesses, with writes being weighed twice as high as reads</li>
+  </ol>
+
+  <p> A typical bug matching this bug pattern is forgetting to synchronize
+  one of the methods in a class that is intended to be thread-safe.</p>
+
+  <p> You can select the nodes labeled "Unsynchronized access" to show the
+  code locations where the detector believed that a field was accessed
+  without synchronization.</p>
+
+  <p> Note that there are various sources of inaccuracy in this detector;
+  for example, the detector cannot statically detect all situations in which
+  a lock is held.&nbsp; Also, even when the detector is accurate in
+  distinguishing locked vs. unlocked accesses, the code in question may still
+  be correct.</p>
+
+  <p> This description refers to the "IS2" version of the pattern detector,
+  which has more accurate ways of detecting locked vs. unlocked accesses
+  than the older "IS" detector.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="IA_AMBIGUOUS_INVOCATION_OF_INHERITED_OR_OUTER_METHOD" abbrev="IA" category="STYLE">
+    <ShortDescription>Ambiguous invocation of either an inherited or outer method</ShortDescription>
+    <Details><![CDATA[
+
+  <p> An inner class is invoking a method that could be resolved to either a inherited method or a method defined in an outer class. By the Java semantics,
+it will be resolved to invoke the inherited method, but this may not be want
+you intend. If you really intend to invoke the inherited method,
+invoke it by invoking the method on super (e.g., invoke super.foo(17)), and
+thus it will be clear to other readers of your code and to FindBugs
+that you want to invoke the inherited method, not the method in the outer class.
+</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="BC_UNCONFIRMED_CAST" abbrev="BC" category="STYLE">
+    <ShortDescription>Unchecked/unconfirmed cast</ShortDescription>
+    <Details><![CDATA[
+
+<p>
+This cast is unchecked, and not all instances of the type casted from can be cast to
+the type it is being cast to. Ensure that your program logic ensures that this
+cast will not fail.
+</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="WMI_WRONG_MAP_ITERATOR" abbrev="WMI" category="PERFORMANCE">
+    <ShortDescription>Inefficient use of keySet iterator instead of entrySet iterator</ShortDescription>
+    <Details><![CDATA[
+
+<p> This method accesses the value of a Map entry, using a key that was retrieved from
+a keySet iterator. It is more efficient to use an iterator on the entrySet of the map, to avoid the
+Map.get(key) lookup.</p>
+
+        ]]></Details>
+  </BugPattern>
+  <BugPattern type="DE_MIGHT_IGNORE" abbrev="DE" category="BAD_PRACTICE">
+    <ShortDescription>Method might ignore exception</ShortDescription>
+    <Details><![CDATA[
+
+  <p> This method might ignore an exception.&nbsp; In general, exceptions
+  should be handled or reported in some way, or they should be thrown
+  out of the method.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="DMI_INVOKING_TOSTRING_ON_ARRAY" abbrev="DMI" category="CORRECTNESS">
+    <ShortDescription>Invocation of toString on an array</ShortDescription>
+    <Details><![CDATA[
+
+<p>
+The code invokes toString on an array, which will generate a fairly useless result
+such as [C@16f0472. Consider using Arrays.toString to convert the array into a readable
+String that gives the contents of the array. See Programming Puzzlers, chapter 3, puzzle 12.
+</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="ICAST_INTEGER_MULTIPLY_CAST_TO_LONG" abbrev="ICAST" category="STYLE">
+    <ShortDescription>Result of integer multiplication cast to long</ShortDescription>
+    <Details><![CDATA[
+
+<p>
+This code performs integer multiply and then converts the result to a long,
+as in:
+<code>
+<pre>
+	long convertDaysToMilliseconds(int days) { return 1000*3600*24*days; }
+</pre></code>
+If the multiplication is done using long arithmetic, you can avoid
+the possibility that the result will overflow. For example, you
+could fix the above code to:
+<code>
+<pre>
+	long convertDaysToMilliseconds(int days) { return 1000L*3600*24*days; }
+</pre></code>
+or
+<code>
+<pre>
+	static final long MILLISECONDS_PER_DAY = 24L*3600*1000;
+	long convertDaysToMilliseconds(int days) { return days * MILLISECONDS_PER_DAY; }
+</pre></code>
+</p>
+
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="SC_START_IN_CTOR" abbrev="SC" category="MT_CORRECTNESS">
+    <ShortDescription>Constructor invokes Thread.start()</ShortDescription>
+    <Details><![CDATA[
+
+  <p> The constructor starts a thread. This is likely to be wrong if
+   the class is ever extended/subclassed, since the thread will be started
+   before the subclass constructor is started.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="SF_SWITCH_FALLTHROUGH" abbrev="SF" category="STYLE">
+    <ShortDescription>Switch statement found where one case falls through to the next case</ShortDescription>
+    <Details><![CDATA[
+
+  <p> This method contains a switch statement where one case branch will fall through to the next case.
+  Usually you need to end this case with a break or return.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="DM_EXIT" abbrev="Dm" category="BAD_PRACTICE">
+    <ShortDescription>Method invokes System.exit(...)</ShortDescription>
+    <Details><![CDATA[
+
+  <p> Invoking System.exit shuts down the entire Java virtual machine. This
+   should only been done when it is appropriate. Such calls make it
+   hard or impossible for your code to be invoked by other code.
+   Consider throwing a RuntimeException instead.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="NN_NAKED_NOTIFY" abbrev="NN" category="MT_CORRECTNESS">
+    <ShortDescription>Naked notify</ShortDescription>
+    <Details><![CDATA[
+
+  <p> A call to <code>notify()</code> or <code>notifyAll()</code>
+  was made without any (apparent) accompanying
+  modification to mutable object state.&nbsp; In general, calling a notify
+  method on a monitor is done because some condition another thread is
+  waiting for has become true.&nbsp; However, for the condition to be meaningful,
+  it must involve a heap object that is visible to both threads.</p>
+
+  <p> This bug does not necessarily indicate an error, since the change to
+  mutable object state may have taken place in a method which then called
+  the method containing the notification.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="OS_OPEN_STREAM" abbrev="OS" category="BAD_PRACTICE">
+    <ShortDescription>Method may fail to close stream</ShortDescription>
+    <Details><![CDATA[
+
+<p> The method creates an IO stream object, does not assign it to any
+fields, pass it to other methods that might close it,
+or return it, and does not appear to close
+the stream on all paths out of the method.&nbsp; This may result in
+a file descriptor leak.&nbsp; It is generally a good
+idea to use a <code>finally</code> block to ensure that streams are
+closed.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="UWF_UNWRITTEN_FIELD" abbrev="UwF" category="CORRECTNESS">
+    <ShortDescription>Unwritten field</ShortDescription>
+    <Details><![CDATA[
+
+  <p> This field is never written.&nbsp; All reads of it will return the default
+value. Check for errors (should it have been initialized?), or remove it if it is useless.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="UL_UNRELEASED_LOCK_EXCEPTION_PATH" abbrev="UL" category="MT_CORRECTNESS">
+    <ShortDescription>Method does not release lock on all exception paths</ShortDescription>
+    <Details><![CDATA[
+
+<p> This method acquires a JSR-166 (<code>java.util.concurrent</code>) lock,
+but does not release it on all exception paths out of the method.  In general, the correct idiom
+for using a JSR-166 lock is:
+</p>
+<pre>
+    Lock l = ...;
+    l.lock();
+    try {
+        // do something
+    } finally {
+        l.unlock();
+    }
+</pre>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="SE_BAD_FIELD" abbrev="Se" category="BAD_PRACTICE">
+    <ShortDescription>Non-transient non-serializable instance field in serializable class</ShortDescription>
+    <Details><![CDATA[
+
+<p> This Serializable class defines a non-primitive instance field which is neither transient,
+Serializable, or <code>java.lang.Object</code>, and does not appear to implement
+the <code>Externalizable</code> interface or the
+<code>readObject()</code> and <code>writeObject()</code> methods.&nbsp;
+Objects of this class will not be deserialized correctly if a non-Serializable
+object is stored in this field.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE" abbrev="STCAL" category="MT_CORRECTNESS">
+    <ShortDescription>Call to static DateFormat</ShortDescription>
+    <Details><![CDATA[
+
+<p>As the JavaDoc states, DateFormats are inherently unsafe for multithreaded use.
+The detector has found a call to an instance of DateFormat that has been obtained via a static
+field. This looks suspicous.</p>
+<p>For more information on this see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6231579">Sun Bug #6231579</a>
+and <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6178997">Sun Bug #6178997</a>.</p>
+
+]]></Details>
+  </BugPattern>
+  <BugPattern type="REC_CATCH_EXCEPTION" abbrev="REC" category="STYLE">
+    <ShortDescription>Exception is caught when Exception is not thrown</ShortDescription>
+    <Details><![CDATA[
+
+  <p>
+  This method uses a try-catch block that catches Exception objects, but Exception is not
+  thrown within the try block, and RuntimeException is not explicitly caught.  It is a common bug pattern to
+  say try { ... } catch (Exception e) { something } as a shorthand for catching a number of types of exception
+  each of whose catch blocks is identical, but this construct also accidentally catches RuntimeException as well,
+  masking potential bugs.
+  </p>
+
+     ]]></Details>
+  </BugPattern>
+  <BugCode abbrev="Se">
+    <Description>Incorrect definition of Serializable class</Description>
+  </BugCode>
+  <BugCode abbrev="UPM">
+    <Description>Private method is never called</Description>
+  </BugCode>
+  <BugCode abbrev="WMI">
+    <Description>Wrong Map Iterator</Description>
+  </BugCode>
+  <BugCode abbrev="DLS">
+    <Description>Dead local store</Description>
+  </BugCode>
+  <BugCode abbrev="NN">
+    <Description>Naked notify</Description>
+  </BugCode>
+  <BugCode abbrev="UuF">
+    <Description>Unused field</Description>
+  </BugCode>
+  <BugCode abbrev="Eq">
+    <Description>Problems with equals()</Description>
+  </BugCode>
+  <BugCode abbrev="ICAST">
+    <Description>Casting from integer values</Description>
+  </BugCode>
+  <BugCode abbrev="ST">
+    <Description>Misuse of static fields</Description>
+  </BugCode>
+  <BugCode abbrev="RCN">
+    <Description>Redundant comparison to null</Description>
+  </BugCode>
+  <BugCode abbrev="BC">
+    <Description>Bad casts of object references</Description>
+  </BugCode>
+  <BugCode abbrev="UwF">
+    <Description>Unwritten field</Description>
+  </BugCode>
+  <BugCode abbrev="DE">
+    <Description>Dropped or ignored exception</Description>
+  </BugCode>
+  <BugCode abbrev="IA">
+    <Description>Ambiguous invocation</Description>
+  </BugCode>
+  <BugCode abbrev="REC">
+    <Description>RuntimeException capture</Description>
+  </BugCode>
+  <BugCode abbrev="MWN">
+    <Description>Mismatched wait() or notify()</Description>
+  </BugCode>
+  <BugCode abbrev="SWL">
+    <Description>Sleep with lock held</Description>
+  </BugCode>
+  <BugCode abbrev="SC">
+    <Description>Constructor invokes Thread.start()</Description>
+  </BugCode>
+  <BugCode abbrev="Bx">
+    <Description>Questionable Boxing of primitive value</Description>
+  </BugCode>
+  <BugCode abbrev="SF">
+    <Description>Switch case falls through</Description>
+  </BugCode>
+  <BugCode abbrev="OS">
+    <Description>Stream not closed on all paths</Description>
+  </BugCode>
+  <BugCode abbrev="IS">
+    <Description>Inconsistent synchronization</Description>
+  </BugCode>
+  <BugCode abbrev="UL">
+    <Description>Lock not released on all paths</Description>
+  </BugCode>
+  <BugCode abbrev="DMI">
+    <Description>Dubious method invocation</Description>
+  </BugCode>
+  <BugCode abbrev="MS">
+    <Description>Mutable static field</Description>
+  </BugCode>
+  <BugCode abbrev="Dm">
+    <Description>Dubious method used</Description>
+  </BugCode>
+  <BugCode abbrev="SIC">
+    <Description>Inner class could be made static</Description>
+  </BugCode>
+  <BugCode abbrev="UrF">
+    <Description>Unread field</Description>
+  </BugCode>
+  <BugCode abbrev="STCAL">
+    <Description>Static use of type Calendar or DateFormat</Description>
+  </BugCode>
+  <Errors></Errors>
+  <FindBugsSummary timestamp="Sat, 4 Aug 2007 21:29:34 +0100" total_classes="808" total_bugs="136" total_size="43881" num_packages="32" cpu_seconds="142.73" clock_seconds="144.99" peak_mbytes="300.96" gc_seconds="27.13" priority_2="120" priority_1="16">
+    <PackageStats package="org.apache.hadoop" total_bugs="0" total_types="2" total_size="7">
+      <ClassStats class="org.apache.hadoop.HadoopVersionAnnotation" sourceFile="HadoopVersionAnnotation.java" interface="true" size="6" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.package-info" sourceFile="package-info.java" interface="true" size="1" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.conf" total_bugs="0" total_types="3" total_size="364">
+      <ClassStats class="org.apache.hadoop.conf.Configurable" sourceFile="Configurable.java" interface="true" size="3" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.conf.Configuration" sourceFile="Configuration.java" interface="false" size="350" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.conf.Configured" sourceFile="Configured.java" interface="false" size="11" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.dfs" total_bugs="25" total_types="156" total_size="11494" priority_2="23" priority_1="2">
+      <ClassStats class="org.apache.hadoop.dfs.AlreadyBeingCreatedException" sourceFile="AlreadyBeingCreatedException.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.Block" sourceFile="Block.java" interface="false" size="62" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.Block$1" sourceFile="Block.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCommand" sourceFile="BlockCommand.java" interface="false" size="46" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCommand$1" sourceFile="BlockCommand.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCrcInfo" sourceFile="BlockCrcUpgrade.java" interface="false" size="56" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode" sourceFile="BlockCrcUpgrade.java" interface="false" size="126" bugs="3" priority_2="3"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCrcUpgradeObjectDatanode$UpgradeExecutor" sourceFile="BlockCrcUpgrade.java" interface="false" size="23" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCrcUpgradeObjectNamenode" sourceFile="BlockCrcUpgrade.java" interface="false" size="206" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCrcUpgradeObjectNamenode$1" sourceFile="BlockCrcUpgrade.java" interface="false" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCrcUpgradeObjectNamenode$BlockLevelStats" sourceFile="BlockCrcUpgrade.java" interface="false" size="20" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCrcUpgradeObjectNamenode$DnInfo" sourceFile="BlockCrcUpgrade.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCrcUpgradeObjectNamenode$UpgradeMonitor" sourceFile="BlockCrcUpgrade.java" interface="false" size="26" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCrcUpgradeObjectNamenode$UpgradeStatus" sourceFile="BlockCrcUpgrade.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCrcUpgradeUtils" sourceFile="BlockCrcUpgrade.java" interface="false" size="397" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCrcUpgradeUtils$1CrcBufInfo" sourceFile="BlockCrcUpgrade.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCrcUpgradeUtils$BlockCrcUpgradeStatusReport" sourceFile="BlockCrcUpgrade.java" interface="false" size="20" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCrcUpgradeUtils$CrcInfoCommand" sourceFile="BlockCrcUpgrade.java" interface="false" size="18" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCrcUpgradeUtils$CrcInfoCommandReply" sourceFile="BlockCrcUpgrade.java" interface="false" size="18" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlockCrcUpgradeUtils$DatanodeStatsCommand" sourceFile="BlockCrcUpgrade.java" interface="false" size="30" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlocksMap" sourceFile="BlocksMap.java" interface="false" size="78" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlocksMap$BlockInfo" sourceFile="BlocksMap.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.BlocksMap$NodeIterator" sourceFile="BlocksMap.java" interface="false" size="16" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.ChecksumDistributedFileSystem" sourceFile="ChecksumDistributedFileSystem.java" interface="false" size="34" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.ClientProtocol" sourceFile="ClientProtocol.java" interface="true" size="32" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DFSAdmin" sourceFile="DFSAdmin.java" interface="false" size="229" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DFSClient" sourceFile="DFSClient.java" interface="false" size="234" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DFSClient$1" sourceFile="DFSClient.java" interface="false" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DFSClient$BlockReader" sourceFile="DFSClient.java" interface="false" size="100" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DFSClient$ClientFinalizer" sourceFile="DFSClient.java" interface="false" size="18" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DFSClient$DFSDataInputStream" sourceFile="DFSClient.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DFSClient$DFSInputStream" sourceFile="DFSClient.java" interface="false" size="305" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DFSClient$DFSOutputStream" sourceFile="DFSClient.java" interface="false" size="210" bugs="3" priority_2="3"/>
+      <ClassStats class="org.apache.hadoop.dfs.DFSClient$DNAddrPair" sourceFile="DFSClient.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DFSClient$LeaseChecker" sourceFile="DFSClient.java" interface="false" size="19" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DFSFileInfo" sourceFile="DFSFileInfo.java" interface="false" size="60" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DFSFileInfo$1" sourceFile="DFSFileInfo.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DFSck" sourceFile="DFSck.java" interface="false" size="51" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DNBlockUpgradeInfo" sourceFile="BlockCrcUpgrade.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DataChecksum" sourceFile="DataChecksum.java" interface="false" size="97" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DataChecksum$ChecksumNull" sourceFile="DataChecksum.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DataNode" sourceFile="DataNode.java" interface="false" size="496" bugs="3" priority_2="2" priority_1="1"/>
+      <ClassStats class="org.apache.hadoop.dfs.DataNode$1" sourceFile="DataNode.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DataNode$Count" sourceFile="DataNode.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DataNode$DataNodeMetrics" sourceFile="DataNode.java" interface="false" size="58" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DataNode$DataTransfer" sourceFile="DataNode.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DataNode$DataXceiveServer" sourceFile="DataNode.java" interface="false" size="27" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DataNode$DataXceiver" sourceFile="DataNode.java" interface="false" size="198" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DataStorage" sourceFile="DataStorage.java" interface="false" size="228" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DataStorage$1" sourceFile="DataStorage.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DataStorage$2" sourceFile="DataStorage.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DataStorage$3" sourceFile="DataStorage.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DatanodeCommand" sourceFile="BlockCommand.java" interface="false" size="20" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DatanodeCommand$1" sourceFile="BlockCommand.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DatanodeDescriptor" sourceFile="DatanodeDescriptor.java" interface="false" size="128" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DatanodeID" sourceFile="DatanodeID.java" interface="false" size="61" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DatanodeInfo" sourceFile="DatanodeInfo.java" interface="false" size="176" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DatanodeInfo$1" sourceFile="DatanodeInfo.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DatanodeInfo$AdminStates" sourceFile="DatanodeInfo.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DatanodeProtocol" sourceFile="DatanodeProtocol.java" interface="true" size="19" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DatanodeRegistration" sourceFile="DatanodeRegistration.java" interface="false" size="39" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DatanodeRegistration$1" sourceFile="DatanodeRegistration.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DfsPath" sourceFile="DfsPath.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DisallowedDatanodeException" sourceFile="DisallowedDatanodeException.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.DistributedFileSystem" sourceFile="DistributedFileSystem.java" interface="false" size="144" bugs="3" priority_2="3"/>
+      <ClassStats class="org.apache.hadoop.dfs.DistributedFileSystem$DiskStatus" sourceFile="DistributedFileSystem.java" interface="false" size="16" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSConstants" sourceFile="FSConstants.java" interface="true" size="71" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSConstants$NodeType" sourceFile="FSConstants.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSConstants$SafeModeAction" sourceFile="FSConstants.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSConstants$StartupOption" sourceFile="FSConstants.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSConstants$UpgradeAction" sourceFile="FSConstants.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSDataset" sourceFile="FSDataset.java" interface="false" size="145" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSDataset$BlockWriteStreams" sourceFile="FSDataset.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSDataset$FSDir" sourceFile="FSDataset.java" interface="false" size="120" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSDataset$FSVolume" sourceFile="FSDataset.java" interface="false" size="76" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSDataset$FSVolumeSet" sourceFile="FSDataset.java" interface="false" size="54" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSDirectory" sourceFile="FSDirectory.java" interface="false" size="276" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSDirectory$INode" sourceFile="FSDirectory.java" interface="false" size="185" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSDirectory$INode$1" sourceFile="FSDirectory.java" interface="false" size="6" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSEditLog" sourceFile="FSEditLog.java" interface="false" size="323" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSEditLog$EditLogOutputStream" sourceFile="FSEditLog.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSImage" sourceFile="FSImage.java" interface="false" size="513" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSImage$1" sourceFile="FSImage.java" interface="false" size="6" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSImage$DatanodeImage" sourceFile="FSImage.java" interface="false" size="40" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSImage$NameNodeFile" sourceFile="FSImage.java" interface="false" size="22" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSNamesystem" sourceFile="FSNamesystem.java" interface="false" size="1381" bugs="2" priority_2="2"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSNamesystem$1" sourceFile="FSNamesystem.java" interface="false" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSNamesystem$DecommissionedMonitor" sourceFile="FSNamesystem.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSNamesystem$HeartbeatMonitor" sourceFile="FSNamesystem.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSNamesystem$Lease" sourceFile="FSNamesystem.java" interface="false" size="72" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSNamesystem$LeaseMonitor" sourceFile="FSNamesystem.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSNamesystem$NumberReplicas" sourceFile="FSNamesystem.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSNamesystem$ReplicationMonitor" sourceFile="FSNamesystem.java" interface="false" size="17" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSNamesystem$SafeModeInfo" sourceFile="FSNamesystem.java" interface="false" size="114" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FSNamesystem$SafeModeMonitor" sourceFile="FSNamesystem.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FileUnderConstruction" sourceFile="FileUnderConstruction.java" interface="false" size="37" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.FsckServlet" sourceFile="FsckServlet.java" interface="false" size="21" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.GetImageServlet" sourceFile="GetImageServlet.java" interface="false" size="25" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.Host2NodesMap" sourceFile="Host2NodesMap.java" interface="false" size="89" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.InconsistentFSStateException" sourceFile="InconsistentFSStateException.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.IncorrectVersionException" sourceFile="IncorrectVersionException.java" interface="false" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.JspHelper" sourceFile="JspHelper.java" interface="false" size="136" bugs="4" priority_2="3" priority_1="1"/>
+      <ClassStats class="org.apache.hadoop.dfs.JspHelper$1NodeComapare" sourceFile="JspHelper.java" interface="false" size="45" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.LeaseExpiredException" sourceFile="LeaseExpiredException.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.LocatedBlock" sourceFile="LocatedBlock.java" interface="false" size="49" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.LocatedBlock$1" sourceFile="LocatedBlock.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.LocatedBlocks" sourceFile="LocatedBlocks.java" interface="false" size="73" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.LocatedBlocks$1" sourceFile="LocatedBlocks.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.LocatedBlocks$2" sourceFile="LocatedBlocks.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.NameNode" sourceFile="NameNode.java" interface="false" size="335" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.NameNode$1" sourceFile="NameNode.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.NameNode$NameNodeMetrics" sourceFile="NameNode.java" interface="false" size="44" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.NamenodeFsck" sourceFile="NamenodeFsck.java" interface="false" size="265" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.NamenodeFsck$FsckResult" sourceFile="NamenodeFsck.java" interface="false" size="116" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.NamespaceInfo" sourceFile="NamespaceInfo.java" interface="false" size="33" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.NamespaceInfo$1" sourceFile="NamespaceInfo.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.NotReplicatedYetException" sourceFile="NotReplicatedYetException.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.PendingCreates" sourceFile="PendingCreates.java" interface="false" size="45" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.PendingReplicationBlocks" sourceFile="PendingReplicationBlocks.java" interface="false" size="90" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.PendingReplicationBlocks$PendingBlockInfo" sourceFile="PendingReplicationBlocks.java" interface="false" size="27" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.PendingReplicationBlocks$PendingReplicationMonitor" sourceFile="PendingReplicationBlocks.java" interface="false" size="33" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.ReplicationTargetChooser" sourceFile="ReplicationTargetChooser.java" interface="false" size="177" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.ReplicationTargetChooser$NotEnoughReplicasException" sourceFile="ReplicationTargetChooser.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.SafeModeException" sourceFile="SafeModeException.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.SecondaryNameNode" sourceFile="SecondaryNameNode.java" interface="false" size="211" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.SecondaryNameNode$GetImageServlet" sourceFile="SecondaryNameNode.java" interface="false" size="19" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.Storage" sourceFile="Storage.java" interface="false" size="91" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.Storage$1" sourceFile="Storage.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.Storage$StorageDirectory" sourceFile="Storage.java" interface="false" size="167" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.Storage$StorageState" sourceFile="Storage.java" interface="false" size="25" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.StorageInfo" sourceFile="Storage.java" interface="false" size="25" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.StreamFile" sourceFile="StreamFile.java" interface="false" size="34" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.StringBytesWritable" sourceFile="StringBytesWritable.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.TransferFsImage" sourceFile="TransferFsImage.java" interface="false" size="80" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.dfs.UnderReplicatedBlocks" sourceFile="UnderReplicatedBlocks.java" interface="false" size="65" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.UnderReplicatedBlocks$1" sourceFile="UnderReplicatedBlocks.java" interface="false" size="25" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.UnregisteredDatanodeException" sourceFile="UnregisteredDatanodeException.java" interface="false" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.UpgradeCommand" sourceFile="UpgradeCommand.java" interface="false" size="33" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.UpgradeCommand$1" sourceFile="UpgradeCommand.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.UpgradeManager" sourceFile="UpgradeManager.java" interface="false" size="38" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.UpgradeManagerDatanode" sourceFile="UpgradeManagerDatanode.java" interface="false" size="67" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.UpgradeManagerNamenode" sourceFile="UpgradeManagerNamenode.java" interface="false" size="59" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.UpgradeManagerNamenode$1" sourceFile="UpgradeManagerNamenode.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.UpgradeObject" sourceFile="UpgradeObject.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.UpgradeObjectCollection" sourceFile="UpgradeObjectCollection.java" interface="false" size="31" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.UpgradeObjectCollection$UOSignature" sourceFile="UpgradeObjectCollection.java" interface="false" size="39" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.UpgradeObjectDatanode" sourceFile="UpgradeObjectDatanode.java" interface="false" size="42" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.UpgradeObjectNamenode" sourceFile="UpgradeObjectNamenode.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.UpgradeStatusReport" sourceFile="UpgradeStatusReport.java" interface="false" size="32" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.UpgradeStatusReport$1" sourceFile="UpgradeStatusReport.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.Upgradeable" sourceFile="Upgradeable.java" interface="true" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.browseBlock_jsp" sourceFile="browseBlock_jsp.java" interface="false" size="250" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.dfs.browseDirectory_jsp" sourceFile="browseDirectory_jsp.java" interface="false" size="116" bugs="2" priority_2="2"/>
+      <ClassStats class="org.apache.hadoop.dfs.dfshealth_jsp" sourceFile="dfshealth_jsp.java" interface="false" size="151" bugs="2" priority_2="2"/>
+      <ClassStats class="org.apache.hadoop.dfs.nn_005fbrowsedfscontent_jsp" sourceFile="nn_005fbrowsedfscontent_jsp.java" interface="false" size="50" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.dfs.tail_jsp" sourceFile="tail_jsp.java" interface="false" size="99" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.examples" total_bugs="0" total_types="16" total_size="436">
+      <ClassStats class="org.apache.hadoop.examples.AggregateWordCount" sourceFile="AggregateWordCount.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.AggregateWordCount$WordCountPlugInClass" sourceFile="AggregateWordCount.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.ExampleDriver" sourceFile="ExampleDriver.java" interface="false" size="18" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.Grep" sourceFile="Grep.java" interface="false" size="33" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.PiEstimator" sourceFile="PiEstimator.java" interface="false" size="58" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.PiEstimator$PiMapper" sourceFile="PiEstimator.java" interface="false" size="28" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.PiEstimator$PiReducer" sourceFile="PiEstimator.java" interface="false" size="31" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.RandomWriter" sourceFile="RandomWriter.java" interface="false" size="45" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.RandomWriter$Counters" sourceFile="RandomWriter.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.RandomWriter$Map" sourceFile="RandomWriter.java" interface="false" size="43" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.RandomWriter$RandomInputFormat" sourceFile="RandomWriter.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.RandomWriter$RandomInputFormat$RandomRecordReader" sourceFile="RandomWriter.java" interface="false" size="22" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.Sort" sourceFile="Sort.java" interface="false" size="50" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.WordCount" sourceFile="WordCount.java" interface="false" size="37" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.WordCount$MapClass" sourceFile="WordCount.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.WordCount$Reduce" sourceFile="WordCount.java" interface="false" size="9" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.examples.dancing" total_bugs="3" total_types="21" total_size="757" priority_2="3">
+      <ClassStats class="org.apache.hadoop.examples.dancing.DancingLinks" sourceFile="DancingLinks.java" interface="false" size="197" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.DancingLinks$ColumnHeader" sourceFile="DancingLinks.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.DancingLinks$Node" sourceFile="DancingLinks.java" interface="false" size="17" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.DancingLinks$SolutionAcceptor" sourceFile="DancingLinks.java" interface="true" size="2" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.DistributedPentomino" sourceFile="DistributedPentomino.java" interface="false" size="53" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.DistributedPentomino$PentMap" sourceFile="DistributedPentomino.java" interface="false" size="38" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.DistributedPentomino$PentMap$SolutionCatcher" sourceFile="DistributedPentomino.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.OneSidedPentomino" sourceFile="OneSidedPentomino.java" interface="false" size="31" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.Pentomino" sourceFile="Pentomino.java" interface="false" size="149" bugs="3" priority_2="3"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.Pentomino$ColumnName" sourceFile="Pentomino.java" interface="true" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.Pentomino$Piece" sourceFile="Pentomino.java" interface="false" size="57" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.Pentomino$Point" sourceFile="Pentomino.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.Pentomino$SolutionCategory" sourceFile="Pentomino.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.Pentomino$SolutionPrinter" sourceFile="Pentomino.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.Sudoku" sourceFile="Sudoku.java" interface="false" size="98" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.Sudoku$CellConstraint" sourceFile="Sudoku.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.Sudoku$ColumnConstraint" sourceFile="Sudoku.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.Sudoku$ColumnName" sourceFile="Sudoku.java" interface="true" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.Sudoku$RowConstraint" sourceFile="Sudoku.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.Sudoku$SolutionPrinter" sourceFile="Sudoku.java" interface="false" size="17" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.examples.dancing.Sudoku$SquareConstraint" sourceFile="Sudoku.java" interface="false" size="12" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.filecache" total_bugs="0" total_types="2" total_size="268">
+      <ClassStats class="org.apache.hadoop.filecache.DistributedCache" sourceFile="DistributedCache.java" interface="false" size="256" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.filecache.DistributedCache$CacheStatus" sourceFile="DistributedCache.java" interface="false" size="12" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.fs" total_bugs="8" total_types="49" total_size="2954" priority_2="7" priority_1="1">
+      <ClassStats class="org.apache.hadoop.fs.BufferedFSInputStream" sourceFile="BufferedFSInputStream.java" interface="false" size="35" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.ChecksumException" sourceFile="ChecksumException.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.ChecksumFileSystem" sourceFile="ChecksumFileSystem.java" interface="false" size="119" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.fs.ChecksumFileSystem$1" sourceFile="ChecksumFileSystem.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.ChecksumFileSystem$ChecksumFSInputChecker" sourceFile="ChecksumFileSystem.java" interface="false" size="96" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.ChecksumFileSystem$ChecksumFSOutputSummer" sourceFile="ChecksumFileSystem.java" interface="false" size="27" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.Command" sourceFile="Command.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.DF" sourceFile="DF.java" interface="false" size="75" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.DU" sourceFile="DU.java" interface="false" size="46" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FSDataInputStream" sourceFile="FSDataInputStream.java" interface="false" size="21" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FSDataOutputStream" sourceFile="FSDataOutputStream.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FSDataOutputStream$PositionCache" sourceFile="FSDataOutputStream.java" interface="false" size="19" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FSError" sourceFile="FSError.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FSInputChecker" sourceFile="FSInputChecker.java" interface="false" size="151" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FSInputStream" sourceFile="FSInputStream.java" interface="false" size="28" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FSOutputSummer" sourceFile="FSOutputSummer.java" interface="false" size="51" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FileStatus" sourceFile="FileStatus.java" interface="true" size="6" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FileSystem" sourceFile="FileSystem.java" interface="false" size="236" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FileSystem$1" sourceFile="FileSystem.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FileSystem$GlobFilter" sourceFile="FileSystem.java" interface="false" size="70" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FileUtil" sourceFile="FileUtil.java" interface="false" size="215" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.fs.FileUtil$1" sourceFile="FileUtil.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FileUtil$HardLink" sourceFile="FileUtil.java" interface="false" size="32" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FileUtil$HardLink$OSType" sourceFile="FileUtil.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FilterFileSystem" sourceFile="FilterFileSystem.java" interface="false" size="70" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FsShell" sourceFile="FsShell.java" interface="false" size="674" bugs="4" priority_2="3" priority_1="1"/>
+      <ClassStats class="org.apache.hadoop.fs.FsShell$1" sourceFile="FsShell.java" interface="false" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FsShell$2" sourceFile="FsShell.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.FsShell$DelayedExceptionThrowing" sourceFile="FsShell.java" interface="false" size="16" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.InMemoryFileSystem" sourceFile="InMemoryFileSystem.java" interface="false" size="21" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.InMemoryFileSystem$RawInMemoryFileSystem" sourceFile="InMemoryFileSystem.java" interface="false" size="144" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.InMemoryFileSystem$RawInMemoryFileSystem$FileAttributes" sourceFile="InMemoryFileSystem.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.InMemoryFileSystem$RawInMemoryFileSystem$InMemoryFileStatus" sourceFile="InMemoryFileSystem.java" interface="false" size="17" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.InMemoryFileSystem$RawInMemoryFileSystem$InMemoryInputStream" sourceFile="InMemoryFileSystem.java" interface="false" size="33" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.InMemoryFileSystem$RawInMemoryFileSystem$InMemoryOutputStream" sourceFile="InMemoryFileSystem.java" interface="false" size="35" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.LocalDirAllocator" sourceFile="LocalDirAllocator.java" interface="false" size="31" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.LocalDirAllocator$AllocatorPerContext" sourceFile="LocalDirAllocator.java" interface="false" size="77" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.fs.LocalFileSystem" sourceFile="LocalFileSystem.java" interface="false" size="45" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.Path" sourceFile="Path.java" interface="false" size="151" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.PathFilter" sourceFile="PathFilter.java" interface="true" size="2" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.PositionedReadable" sourceFile="PositionedReadable.java" interface="true" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.RawLocalFileSystem" sourceFile="RawLocalFileSystem.java" interface="false" size="122" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.RawLocalFileSystem$LocalFSFileInputStream" sourceFile="RawLocalFileSystem.java" interface="false" size="35" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.RawLocalFileSystem$LocalFSFileOutputStream" sourceFile="RawLocalFileSystem.java" interface="false" size="23" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.RawLocalFileSystem$RawLocalFileStatus" sourceFile="RawLocalFileSystem.java" interface="false" size="21" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.Seekable" sourceFile="Seekable.java" interface="true" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.Trash" sourceFile="Trash.java" interface="false" size="83" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.fs.Trash$1" sourceFile="Trash.java" interface="false" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.Trash$Emptier" sourceFile="Trash.java" interface="false" size="29" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.fs.s3" total_bugs="2" total_types="16" total_size="874" priority_2="2">
+      <ClassStats class="org.apache.hadoop.fs.s3.Block" sourceFile="Block.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.s3.FileSystemStore" sourceFile="FileSystemStore.java" interface="true" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.s3.INode" sourceFile="INode.java" interface="false" size="53" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.fs.s3.INode$1" sourceFile="INode.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.s3.INode$FileType" sourceFile="INode.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.s3.Jets3tFileSystemStore" sourceFile="Jets3tFileSystemStore.java" interface="false" size="247" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.s3.MigrationTool" sourceFile="MigrationTool.java" interface="false" size="85" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.s3.MigrationTool$Store" sourceFile="MigrationTool.java" interface="true" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.s3.MigrationTool$UnversionedStore" sourceFile="MigrationTool.java" interface="false" size="51" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.s3.S3Exception" sourceFile="S3Exception.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.s3.S3FileSystem" sourceFile="S3FileSystem.java" interface="false" size="152" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.fs.s3.S3FileSystem$S3FileStatus" sourceFile="S3FileSystem.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.s3.S3FileSystemException" sourceFile="S3FileSystemException.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.s3.S3InputStream" sourceFile="S3InputStream.java" interface="false" size="89" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.s3.S3OutputStream" sourceFile="S3OutputStream.java" interface="false" size="114" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.fs.s3.VersionMismatchException" sourceFile="VersionMismatchException.java" interface="false" size="4" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.io" total_bugs="7" total_types="72" total_size="3516" priority_2="6" priority_1="1">
+      <ClassStats class="org.apache.hadoop.io.ArrayFile" sourceFile="ArrayFile.java" interface="false" size="3" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.ArrayFile$Reader" sourceFile="ArrayFile.java" interface="false" size="17" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.ArrayFile$Writer" sourceFile="ArrayFile.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.ArrayWritable" sourceFile="ArrayWritable.java" interface="false" size="53" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.BooleanWritable" sourceFile="BooleanWritable.java" interface="false" size="33" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.BooleanWritable$Comparator" sourceFile="BooleanWritable.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.BytesWritable" sourceFile="BytesWritable.java" interface="false" size="72" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.BytesWritable$Comparator" sourceFile="BytesWritable.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.Closeable" sourceFile="Closeable.java" interface="true" size="2" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.CompressedWritable" sourceFile="CompressedWritable.java" interface="false" size="31" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.DataInputBuffer" sourceFile="DataInputBuffer.java" interface="false" size="19" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.DataInputBuffer$Buffer" sourceFile="DataInputBuffer.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.DataOutputBuffer" sourceFile="DataOutputBuffer.java" interface="false" size="20" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.DataOutputBuffer$1" sourceFile="DataOutputBuffer.java" interface="false" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.DataOutputBuffer$Buffer" sourceFile="DataOutputBuffer.java" interface="false" size="19" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.FloatWritable" sourceFile="FloatWritable.java" interface="false" size="32" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.FloatWritable$Comparator" sourceFile="FloatWritable.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.GenericWritable" sourceFile="GenericWritable.java" interface="false" size="35" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.IntWritable" sourceFile="IntWritable.java" interface="false" size="32" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.IntWritable$Comparator" sourceFile="IntWritable.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.LongWritable" sourceFile="LongWritable.java" interface="false" size="32" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.LongWritable$Comparator" sourceFile="LongWritable.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.LongWritable$DecreasingComparator" sourceFile="LongWritable.java" interface="false" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.MD5Hash" sourceFile="MD5Hash.java" interface="false" size="97" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.MD5Hash$Comparator" sourceFile="MD5Hash.java" interface="false" size="6" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.MapFile" sourceFile="MapFile.java" interface="false" size="68" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.MapFile$Reader" sourceFile="MapFile.java" interface="false" size="145" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.MapFile$Writer" sourceFile="MapFile.java" interface="false" size="66" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.NullWritable" sourceFile="NullWritable.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.ObjectWritable" sourceFile="ObjectWritable.java" interface="false" size="141" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.ObjectWritable$NullInstance" sourceFile="ObjectWritable.java" interface="false" size="22" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile" sourceFile="SequenceFile.java" interface="false" size="104" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$1" sourceFile="SequenceFile.java" interface="false" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$BlockCompressWriter" sourceFile="SequenceFile.java" interface="false" size="117" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$CodecPool" sourceFile="SequenceFile.java" interface="false" size="30" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$CompressedBytes" sourceFile="SequenceFile.java" interface="false" size="40" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$CompressionType" sourceFile="SequenceFile.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$Metadata" sourceFile="SequenceFile.java" interface="false" size="71" bugs="1" priority_1="1"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$Reader" sourceFile="SequenceFile.java" interface="false" size="410" bugs="5" priority_2="5"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$RecordCompressWriter" sourceFile="SequenceFile.java" interface="false" size="64" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$Sorter" sourceFile="SequenceFile.java" interface="false" size="140" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$Sorter$LinkedSegmentsDescriptor" sourceFile="SequenceFile.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$Sorter$MergeQueue" sourceFile="SequenceFile.java" interface="false" size="130" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$Sorter$RawKeyValueIterator" sourceFile="SequenceFile.java" interface="true" size="6" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$Sorter$SegmentContainer" sourceFile="SequenceFile.java" interface="false" size="30" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$Sorter$SegmentDescriptor" sourceFile="SequenceFile.java" interface="false" size="75" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$Sorter$SortPass" sourceFile="SequenceFile.java" interface="false" size="142" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$Sorter$SortPass$SeqFileComparator" sourceFile="SequenceFile.java" interface="false" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$UncompressedBytes" sourceFile="SequenceFile.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$ValueBytes" sourceFile="SequenceFile.java" interface="true" size="3" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SequenceFile$Writer" sourceFile="SequenceFile.java" interface="false" size="147" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.io.SetFile" sourceFile="SetFile.java" interface="false" size="3" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SetFile$Reader" sourceFile="SetFile.java" interface="false" size="16" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.SetFile$Writer" sourceFile="SetFile.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.Text" sourceFile="Text.java" interface="false" size="253" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.Text$Comparator" sourceFile="Text.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.TwoDArrayWritable" sourceFile="TwoDArrayWritable.java" interface="false" size="47" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.UTF8" sourceFile="UTF8.java" interface="false" size="156" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.UTF8$Comparator" sourceFile="UTF8.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.VIntWritable" sourceFile="VIntWritable.java" interface="false" size="29" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.VLongWritable" sourceFile="VLongWritable.java" interface="false" size="29" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.VersionMismatchException" sourceFile="VersionMismatchException.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.VersionedWritable" sourceFile="VersionedWritable.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.Writable" sourceFile="Writable.java" interface="true" size="3" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.WritableComparable" sourceFile="WritableComparable.java" interface="true" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.WritableComparator" sourceFile="WritableComparator.java" interface="false" size="83" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.WritableFactories" sourceFile="WritableFactories.java" interface="false" size="21" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.WritableFactory" sourceFile="WritableFactory.java" interface="true" size="2" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.WritableName" sourceFile="WritableName.java" interface="false" size="34" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.WritableUtils" sourceFile="WritableUtils.java" interface="false" size="169" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.WritableUtils$1" sourceFile="WritableUtils.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.WritableUtils$CopyInCopyOutBuffer" sourceFile="WritableUtils.java" interface="false" size="11" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.io.compress" total_bugs="0" total_types="17" total_size="597">
+      <ClassStats class="org.apache.hadoop.io.compress.BlockCompressorStream" sourceFile="BlockCompressorStream.java" interface="false" size="40" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.BlockDecompressorStream" sourceFile="BlockDecompressorStream.java" interface="false" size="56" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.CompressionCodec" sourceFile="CompressionCodec.java" interface="true" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.CompressionCodecFactory" sourceFile="CompressionCodecFactory.java" interface="false" size="116" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.CompressionInputStream" sourceFile="CompressionInputStream.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.CompressionOutputStream" sourceFile="CompressionOutputStream.java" interface="false" size="16" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.Compressor" sourceFile="Compressor.java" interface="true" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.CompressorStream" sourceFile="CompressorStream.java" interface="false" size="58" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.Decompressor" sourceFile="Decompressor.java" interface="true" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.DecompressorStream" sourceFile="DecompressorStream.java" interface="false" size="88" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.DefaultCodec" sourceFile="DefaultCodec.java" interface="false" size="27" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.GzipCodec" sourceFile="GzipCodec.java" interface="false" size="22" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.GzipCodec$GzipInputStream" sourceFile="GzipCodec.java" interface="false" size="21" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.GzipCodec$GzipInputStream$ResetableGZIPInputStream" sourceFile="GzipCodec.java" interface="false" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.GzipCodec$GzipOutputStream" sourceFile="GzipCodec.java" interface="false" size="25" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.GzipCodec$GzipOutputStream$ResetableGZIPOutputStream" sourceFile="GzipCodec.java" interface="false" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.LzoCodec" sourceFile="LzoCodec.java" interface="false" size="75" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.io.compress.lzo" total_bugs="2" total_types="4" total_size="395" priority_2="2">
+      <ClassStats class="org.apache.hadoop.io.compress.lzo.LzoCompressor" sourceFile="LzoCompressor.java" interface="false" size="115" bugs="2" priority_2="2"/>
+      <ClassStats class="org.apache.hadoop.io.compress.lzo.LzoCompressor$CompressionStrategy" sourceFile="LzoCompressor.java" interface="false" size="99" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.lzo.LzoDecompressor" sourceFile="LzoDecompressor.java" interface="false" size="112" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.lzo.LzoDecompressor$CompressionStrategy" sourceFile="LzoDecompressor.java" interface="false" size="69" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.io.compress.zlib" total_bugs="2" total_types="9" total_size="408" priority_2="2">
+      <ClassStats class="org.apache.hadoop.io.compress.zlib.BuiltInZlibDeflater" sourceFile="BuiltInZlibDeflater.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.zlib.BuiltInZlibInflater" sourceFile="BuiltInZlibInflater.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.zlib.ZlibCompressor" sourceFile="ZlibCompressor.java" interface="false" size="140" bugs="2" priority_2="2"/>
+      <ClassStats class="org.apache.hadoop.io.compress.zlib.ZlibCompressor$CompressionHeader" sourceFile="ZlibCompressor.java" interface="false" size="19" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.zlib.ZlibCompressor$CompressionLevel" sourceFile="ZlibCompressor.java" interface="false" size="21" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.zlib.ZlibCompressor$CompressionStrategy" sourceFile="ZlibCompressor.java" interface="false" size="23" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.zlib.ZlibDecompressor" sourceFile="ZlibDecompressor.java" interface="false" size="137" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.zlib.ZlibDecompressor$CompressionHeader" sourceFile="ZlibDecompressor.java" interface="false" size="21" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.compress.zlib.ZlibFactory" sourceFile="ZlibFactory.java" interface="false" size="24" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.io.retry" total_bugs="0" total_types="14" total_size="158">
+      <ClassStats class="org.apache.hadoop.io.retry.RetryInvocationHandler" sourceFile="RetryInvocationHandler.java" interface="false" size="39" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.retry.RetryPolicies" sourceFile="RetryPolicies.java" interface="false" size="23" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.retry.RetryPolicies$ExceptionDependentRetry" sourceFile="RetryPolicies.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.retry.RetryPolicies$ExponentialBackoffRetry" sourceFile="RetryPolicies.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.retry.RetryPolicies$RemoteExceptionDependentRetry" sourceFile="RetryPolicies.java" interface="false" size="17" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.retry.RetryPolicies$RetryForever" sourceFile="RetryPolicies.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.retry.RetryPolicies$RetryLimited" sourceFile="RetryPolicies.java" interface="false" size="18" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.retry.RetryPolicies$RetryUpToMaximumCountWithFixedSleep" sourceFile="RetryPolicies.java" interface="false" size="6" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.retry.RetryPolicies$RetryUpToMaximumCountWithProportionalSleep" sourceFile="RetryPolicies.java" interface="false" size="6" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.retry.RetryPolicies$RetryUpToMaximumTimeWithFixedSleep" sourceFile="RetryPolicies.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.retry.RetryPolicies$TryOnceDontFail" sourceFile="RetryPolicies.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.retry.RetryPolicies$TryOnceThenFail" sourceFile="RetryPolicies.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.retry.RetryPolicy" sourceFile="RetryPolicy.java" interface="true" size="2" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.io.retry.RetryProxy" sourceFile="RetryProxy.java" interface="false" size="7" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.ipc" total_bugs="7" total_types="22" total_size="1039" priority_2="6" priority_1="1">
+      <ClassStats class="org.apache.hadoop.ipc.Client" sourceFile="Client.java" interface="false" size="88" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.ipc.Client$1" sourceFile="Client.java" interface="false" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.Client$Call" sourceFile="Client.java" interface="false" size="29" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.ipc.Client$Connection" sourceFile="Client.java" interface="false" size="147" bugs="3" priority_2="3"/>
+      <ClassStats class="org.apache.hadoop.ipc.Client$Connection$1" sourceFile="Client.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.Client$Connection$2" sourceFile="Client.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.Client$ConnectionCuller" sourceFile="Client.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.Client$ParallelCall" sourceFile="Client.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.Client$ParallelResults" sourceFile="Client.java" interface="false" size="19" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.RPC" sourceFile="RPC.java" interface="false" size="57" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.RPC$Invocation" sourceFile="RPC.java" interface="false" size="49" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.RPC$Invoker" sourceFile="RPC.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.RPC$Server" sourceFile="RPC.java" interface="false" size="34" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.RPC$VersionMismatch" sourceFile="RPC.java" interface="false" size="16" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.RemoteException" sourceFile="RemoteException.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.Server" sourceFile="Server.java" interface="false" size="108" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.Server$Call" sourceFile="Server.java" interface="false" size="19" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.Server$Connection" sourceFile="Server.java" interface="false" size="105" bugs="1" priority_1="1"/>
+      <ClassStats class="org.apache.hadoop.ipc.Server$Handler" sourceFile="Server.java" interface="false" size="60" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.Server$Listener" sourceFile="Server.java" interface="false" size="169" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.ipc.SocketChannelOutputStream" sourceFile="SocketChannelOutputStream.java" interface="false" size="57" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.ipc.VersionedProtocol" sourceFile="VersionedProtocol.java" interface="true" size="2" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.mapred" total_bugs="38" total_types="206" total_size="10699" priority_2="30" priority_1="8">
+      <ClassStats class="org.apache.hadoop.mapred.BasicTypeSorterBase" sourceFile="BasicTypeSorterBase.java" interface="false" size="54" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.BufferSorter" sourceFile="BufferSorter.java" interface="true" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.ClusterStatus" sourceFile="ClusterStatus.java" interface="false" size="37" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.ClusterStatus$1" sourceFile="ClusterStatus.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.Counters" sourceFile="Counters.java" interface="false" size="109" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.Counters$CounterRec" sourceFile="Counters.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.Counters$Group" sourceFile="Counters.java" interface="false" size="38" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.DefaultJobHistoryParser" sourceFile="DefaultJobHistoryParser.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.DefaultJobHistoryParser$FailedOnNodesFilter" sourceFile="DefaultJobHistoryParser.java" interface="false" size="19" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.DefaultJobHistoryParser$JobTasksParseListener" sourceFile="DefaultJobHistoryParser.java" interface="false" size="46" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.DefaultJobHistoryParser$KilledOnNodesFilter" sourceFile="DefaultJobHistoryParser.java" interface="false" size="19" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.DefaultJobHistoryParser$MasterIndex" sourceFile="DefaultJobHistoryParser.java" interface="false" size="3" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.DefaultJobHistoryParser$MasterIndexParseListener" sourceFile="DefaultJobHistoryParser.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.DisallowedTaskTrackerException" sourceFile="DisallowedTaskTrackerException.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.FileAlreadyExistsException" sourceFile="FileAlreadyExistsException.java" interface="false" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.FileInputFormat" sourceFile="FileInputFormat.java" interface="false" size="85" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.FileInputFormat$1" sourceFile="FileInputFormat.java" interface="false" size="6" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.FileSplit" sourceFile="FileSplit.java" interface="false" size="39" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.HeartbeatResponse" sourceFile="HeartbeatResponse.java" interface="false" size="47" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.InputFormat" sourceFile="InputFormat.java" interface="true" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.InputFormatBase" sourceFile="InputFormatBase.java" interface="false" size="3" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.InputSplit" sourceFile="InputSplit.java" interface="true" size="3" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.InterTrackerProtocol" sourceFile="InterTrackerProtocol.java" interface="true" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.InvalidFileTypeException" sourceFile="InvalidFileTypeException.java" interface="false" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.InvalidInputException" sourceFile="InvalidInputException.java" interface="false" size="16" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.InvalidJobConfException" sourceFile="InvalidJobConfException.java" interface="false" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.IsolationRunner" sourceFile="IsolationRunner.java" interface="false" size="67" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.IsolationRunner$1" sourceFile="IsolationRunner.java" interface="false" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.IsolationRunner$FakeUmbilical" sourceFile="IsolationRunner.java" interface="false" size="31" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobClient" sourceFile="JobClient.java" interface="false" size="303" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobClient$1" sourceFile="JobClient.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobClient$2" sourceFile="JobClient.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobClient$NetworkedJob" sourceFile="JobClient.java" interface="false" size="54" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobClient$RawSplit" sourceFile="JobClient.java" interface="false" size="37" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobClient$TaskStatusFilter" sourceFile="JobClient.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobConf" sourceFile="JobConf.java" interface="false" size="288" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobConfigurable" sourceFile="JobConfigurable.java" interface="true" size="2" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobEndNotifier" sourceFile="JobEndNotifier.java" interface="false" size="71" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobEndNotifier$1" sourceFile="JobEndNotifier.java" interface="false" size="26" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobEndNotifier$JobEndStatusInfo" sourceFile="JobEndNotifier.java" interface="false" size="44" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobHistory" sourceFile="JobHistory.java" interface="false" size="92" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobHistory$HistoryCleaner" sourceFile="JobHistory.java" interface="false" size="51" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobHistory$HistoryCleaner$1" sourceFile="JobHistory.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobHistory$JobInfo" sourceFile="JobHistory.java" interface="false" size="68" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobHistory$KeyValuePair" sourceFile="JobHistory.java" interface="false" size="29" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobHistory$Keys" sourceFile="JobHistory.java" interface="false" size="38" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobHistory$Listener" sourceFile="JobHistory.java" interface="true" size="2" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobHistory$MapAttempt" sourceFile="JobHistory.java" interface="false" size="27" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobHistory$RecordTypes" sourceFile="JobHistory.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobHistory$ReduceAttempt" sourceFile="JobHistory.java" interface="false" size="27" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobHistory$Task" sourceFile="JobHistory.java" interface="false" size="32" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobHistory$TaskAttempt" sourceFile="JobHistory.java" interface="false" size="3" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobHistory$Values" sourceFile="JobHistory.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobInProgress" sourceFile="JobInProgress.java" interface="false" size="493" bugs="2" priority_2="2"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobInProgress$Counter" sourceFile="JobInProgress.java" interface="false" size="17" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobPriority" sourceFile="JobPriority.java" interface="false" size="17" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobProfile" sourceFile="JobProfile.java" interface="false" size="46" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobProfile$1" sourceFile="JobProfile.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobStatus" sourceFile="JobStatus.java" interface="false" size="66" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobStatus$1" sourceFile="JobStatus.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobSubmissionProtocol" sourceFile="JobSubmissionProtocol.java" interface="true" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobTracker" sourceFile="JobTracker.java" interface="false" size="697" bugs="9" priority_2="4" priority_1="5"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobTracker$1" sourceFile="JobTracker.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobTracker$2" sourceFile="JobTracker.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobTracker$ExpireLaunchingTasks" sourceFile="JobTracker.java" interface="false" size="55" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobTracker$ExpireTrackers" sourceFile="JobTracker.java" interface="false" size="35" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobTracker$JobInitThread" sourceFile="JobTracker.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobTracker$JobTrackerMetrics" sourceFile="JobTracker.java" interface="false" size="62" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.JobTracker$RetireJobs" sourceFile="JobTracker.java" interface="false" size="48" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.KeyValueLineRecordReader" sourceFile="KeyValueLineRecordReader.java" interface="false" size="47" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.KeyValueTextInputFormat" sourceFile="KeyValueTextInputFormat.java" interface="false" size="6" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.KillJobAction" sourceFile="KillJobAction.java" interface="false" size="17" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.KillTaskAction" sourceFile="KillTaskAction.java" interface="false" size="17" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.LaunchTaskAction" sourceFile="LaunchTaskAction.java" interface="false" size="22" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.LineRecordReader" sourceFile="LineRecordReader.java" interface="false" size="90" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.LineRecordReader$1" sourceFile="LineRecordReader.java" interface="false" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.LineRecordReader$TextStuffer" sourceFile="LineRecordReader.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.LocalJobRunner" sourceFile="LocalJobRunner.java" interface="false" size="66" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.LocalJobRunner$Job" sourceFile="LocalJobRunner.java" interface="false" size="138" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MRConstants" sourceFile="MRConstants.java" interface="true" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MRSortResultIterator" sourceFile="BasicTypeSorterBase.java" interface="false" size="41" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MRSortResultIterator$1" sourceFile="BasicTypeSorterBase.java" interface="false" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MRSortResultIterator$InMemUncompressedBytes" sourceFile="BasicTypeSorterBase.java" interface="false" size="20" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapFileOutputFormat" sourceFile="MapFileOutputFormat.java" interface="false" size="18" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapFileOutputFormat$1" sourceFile="MapFileOutputFormat.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapOutputFile" sourceFile="MapOutputFile.java" interface="false" size="37" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapOutputLocation" sourceFile="MapOutputLocation.java" interface="false" size="123" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapOutputLocation$1" sourceFile="MapOutputLocation.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapReduceBase" sourceFile="MapReduceBase.java" interface="false" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapRunnable" sourceFile="MapRunnable.java" interface="true" size="2" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapRunner" sourceFile="MapRunner.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapTask" sourceFile="MapTask.java" interface="false" size="78" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapTask$1" sourceFile="MapTask.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapTask$DirectMapOutputCollector" sourceFile="MapTask.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapTask$MapOutputBuffer" sourceFile="MapTask.java" interface="false" size="200" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapTask$MapOutputBuffer$1" sourceFile="MapTask.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapTask$MapOutputBuffer$CombineValuesIterator" sourceFile="MapTask.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapTask$MapOutputCollector" sourceFile="MapTask.java" interface="true" size="3" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MapTaskRunner" sourceFile="MapTaskRunner.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.Mapper" sourceFile="Mapper.java" interface="true" size="2" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MergeSorter" sourceFile="MergeSorter.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MultiFileInputFormat" sourceFile="MultiFileInputFormat.java" interface="false" size="37" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.MultiFileSplit" sourceFile="MultiFileSplit.java" interface="false" size="57" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.OutputCollector" sourceFile="OutputCollector.java" interface="true" size="2" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.OutputFormat" sourceFile="OutputFormat.java" interface="true" size="3" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.OutputFormatBase" sourceFile="OutputFormatBase.java" interface="false" size="27" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.Partitioner" sourceFile="Partitioner.java" interface="true" size="2" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.PhasedFileSystem" sourceFile="PhasedFileSystem.java" interface="false" size="118" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.PhasedFileSystem$FileInfo" sourceFile="PhasedFileSystem.java" interface="false" size="32" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.RecordReader" sourceFile="RecordReader.java" interface="true" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.RecordWriter" sourceFile="RecordWriter.java" interface="true" size="3" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.ReduceTask" sourceFile="ReduceTask.java" interface="false" size="93" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.ReduceTask$1" sourceFile="ReduceTask.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.ReduceTask$2" sourceFile="ReduceTask.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.ReduceTask$ReduceCopier" sourceFile="ReduceTask.java" interface="false" size="270" bugs="2" priority_2="2"/>
+      <ClassStats class="org.apache.hadoop.mapred.ReduceTask$ReduceCopier$1" sourceFile="ReduceTask.java" interface="false" size="6" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.ReduceTask$ReduceCopier$CopyResult" sourceFile="ReduceTask.java" interface="false" size="22" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.ReduceTask$ReduceCopier$InMemFSMergeThread" sourceFile="ReduceTask.java" interface="false" size="35" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.ReduceTask$ReduceCopier$MapOutputCopier" sourceFile="ReduceTask.java" interface="false" size="94" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.ReduceTask$ReduceCopier$ShuffleClientMetrics" sourceFile="ReduceTask.java" interface="false" size="52" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.ReduceTask$ReduceValuesIterator" sourceFile="ReduceTask.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.ReduceTask$ValuesIterator" sourceFile="ReduceTask.java" interface="false" size="69" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.ReduceTaskRunner" sourceFile="ReduceTaskRunner.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.Reducer" sourceFile="Reducer.java" interface="true" size="2" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.ReinitTrackerAction" sourceFile="ReinitTrackerAction.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.Reporter" sourceFile="Reporter.java" interface="true" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.Reporter$1" sourceFile="Reporter.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.RunningJob" sourceFile="RunningJob.java" interface="true" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.SequenceFileAsTextInputFormat" sourceFile="SequenceFileAsTextInputFormat.java" interface="false" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.SequenceFileAsTextRecordReader" sourceFile="SequenceFileAsTextRecordReader.java" interface="false" size="20" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.SequenceFileInputFilter" sourceFile="SequenceFileInputFilter.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.SequenceFileInputFilter$Filter" sourceFile="SequenceFileInputFilter.java" interface="true" size="2" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.SequenceFileInputFilter$FilterBase" sourceFile="SequenceFileInputFilter.java" interface="false" size="6" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.SequenceFileInputFilter$FilterRecordReader" sourceFile="SequenceFileInputFilter.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.SequenceFileInputFilter$MD5Filter" sourceFile="SequenceFileInputFilter.java" interface="false" size="50" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.SequenceFileInputFilter$PercentFilter" sourceFile="SequenceFileInputFilter.java" interface="false" size="23" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.SequenceFileInputFilter$RegexFilter" sourceFile="SequenceFileInputFilter.java" interface="false" size="20" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.SequenceFileInputFormat" sourceFile="SequenceFileInputFormat.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.SequenceFileOutputFormat" sourceFile="SequenceFileOutputFormat.java" interface="false" size="22" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.SequenceFileOutputFormat$1" sourceFile="SequenceFileOutputFormat.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.SequenceFileRecordReader" sourceFile="SequenceFileRecordReader.java" interface="false" size="56" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.StatusHttpServer" sourceFile="StatusHttpServer.java" interface="false" size="95" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.StatusHttpServer$StackServlet" sourceFile="StatusHttpServer.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.Task" sourceFile="Task.java" interface="false" size="187" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.Task$1" sourceFile="Task.java" interface="false" size="28" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.Task$2" sourceFile="Task.java" interface="false" size="18" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.Task$Counter" sourceFile="Task.java" interface="false" size="25" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskCompletionEvent" sourceFile="TaskCompletionEvent.java" interface="false" size="67" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskCompletionEvent$Status" sourceFile="TaskCompletionEvent.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskInProgress" sourceFile="TaskInProgress.java" interface="false" size="316" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskLog" sourceFile="TaskLog.java" interface="false" size="18" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskLog$LogFilter" sourceFile="TaskLog.java" interface="false" size="19" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskLog$Reader" sourceFile="TaskLog.java" interface="false" size="134" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskLog$Reader$IndexRecord" sourceFile="TaskLog.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskLog$Writer" sourceFile="TaskLog.java" interface="false" size="101" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskLog$Writer$TaskLogsPurgeFilter" sourceFile="TaskLog.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskLogAppender" sourceFile="TaskLogAppender.java" interface="false" size="67" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskReport" sourceFile="TaskReport.java" interface="false" size="59" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskRunner" sourceFile="TaskRunner.java" interface="false" size="227" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskRunner$1" sourceFile="TaskRunner.java" interface="false" size="25" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskStatus" sourceFile="TaskStatus.java" interface="false" size="120" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskStatus$Phase" sourceFile="TaskStatus.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskStatus$State" sourceFile="TaskStatus.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTracker" sourceFile="TaskTracker.java" interface="false" size="594" bugs="3" priority_2="3"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTracker$1" sourceFile="TaskTracker.java" interface="false" size="20" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTracker$2" sourceFile="TaskTracker.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTracker$Child" sourceFile="TaskTracker.java" interface="false" size="29" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTracker$FetchStatus" sourceFile="TaskTracker.java" interface="false" size="41" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTracker$MapEventsFetcherThread" sourceFile="TaskTracker.java" interface="false" size="50" bugs="3" priority_1="3"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTracker$MapOutputServlet" sourceFile="TaskTracker.java" interface="false" size="66" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTracker$RunningJob" sourceFile="TaskTracker.java" interface="false" size="27" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTracker$ShuffleServerMetrics" sourceFile="TaskTracker.java" interface="false" size="48" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTracker$State" sourceFile="TaskTracker.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTracker$TaskInProgress" sourceFile="TaskTracker.java" interface="false" size="182" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTracker$TaskTrackerMetrics" sourceFile="TaskTracker.java" interface="false" size="30" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTrackerAction" sourceFile="TaskTrackerAction.java" interface="false" size="25" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTrackerAction$1" sourceFile="TaskTrackerAction.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTrackerAction$ActionType" sourceFile="TaskTrackerAction.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTrackerStatus" sourceFile="TaskTrackerStatus.java" interface="false" size="76" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskTrackerStatus$1" sourceFile="TaskTrackerStatus.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TaskUmbilicalProtocol" sourceFile="TaskUmbilicalProtocol.java" interface="true" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TextInputFormat" sourceFile="TextInputFormat.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TextOutputFormat" sourceFile="TextOutputFormat.java" interface="false" size="16" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.TextOutputFormat$LineRecordWriter" sourceFile="TextOutputFormat.java" interface="false" size="20" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.analysejobhistory_jsp" sourceFile="analysejobhistory_jsp.java" interface="false" size="233" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.analysejobhistory_jsp$1" sourceFile="analysejobhistory_jsp.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.analysejobhistory_jsp$2" sourceFile="analysejobhistory_jsp.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.analysejobhistory_jsp$3" sourceFile="analysejobhistory_jsp.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.analysejobhistory_jsp$4" sourceFile="analysejobhistory_jsp.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.analysejobhistory_jsp$5" sourceFile="analysejobhistory_jsp.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.jobblacklistedtrackers_jsp" sourceFile="jobblacklistedtrackers_jsp.java" interface="false" size="71" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.jobconf_jsp" sourceFile="jobconf_jsp.java" interface="false" size="61" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.jobdetails_jsp" sourceFile="jobdetails_jsp.java" interface="false" size="184" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.jobdetailshistory_jsp" sourceFile="jobdetailshistory_jsp.java" interface="false" size="244" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.jobfailures_jsp" sourceFile="jobfailures_jsp.java" interface="false" size="135" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.jobhistory_jsp" sourceFile="jobhistory_jsp.java" interface="false" size="88" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.jobtasks_jsp" sourceFile="jobtasks_jsp.java" interface="false" size="104" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.jobtaskshistory_jsp" sourceFile="jobtaskshistory_jsp.java" interface="false" size="76" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.jobtracker_jsp" sourceFile="jobtracker_jsp.java" interface="false" size="98" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.loadhistory_jsp" sourceFile="loadhistory_jsp.java" interface="false" size="56" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.machines_jsp" sourceFile="machines_jsp.java" interface="false" size="78" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.taskdetails_jsp" sourceFile="taskdetails_jsp.java" interface="false" size="92" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.taskdetailshistory_jsp" sourceFile="taskdetailshistory_jsp.java" interface="false" size="77" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.tasklog_jsp" sourceFile="tasklog_jsp.java" interface="false" size="139" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.taskstats_jsp" sourceFile="taskstats_jsp.java" interface="false" size="73" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.tasktracker_jsp" sourceFile="tasktracker_jsp.java" interface="false" size="63" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.mapred.jobcontrol" total_bugs="0" total_types="2" total_size="280">
+      <ClassStats class="org.apache.hadoop.mapred.jobcontrol.Job" sourceFile="Job.java" interface="false" size="144" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.jobcontrol.JobControl" sourceFile="JobControl.java" interface="false" size="136" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.mapred.lib" total_bugs="0" total_types="13" total_size="347">
+      <ClassStats class="org.apache.hadoop.mapred.lib.FieldSelectionMapReduce" sourceFile="FieldSelectionMapReduce.java" interface="false" size="181" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.HashPartitioner" sourceFile="HashPartitioner.java" interface="false" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.IdentityMapper" sourceFile="IdentityMapper.java" interface="false" size="6" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.IdentityReducer" sourceFile="IdentityReducer.java" interface="false" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.InverseMapper" sourceFile="InverseMapper.java" interface="false" size="6" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner" sourceFile="KeyFieldBasedPartitioner.java" interface="false" size="20" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.LongSumReducer" sourceFile="LongSumReducer.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.MultithreadedMapRunner" sourceFile="MultithreadedMapRunner.java" interface="false" size="50" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.MultithreadedMapRunner$MapperInvokeRunable" sourceFile="MultithreadedMapRunner.java" interface="false" size="22" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.NullOutputFormat" sourceFile="NullOutputFormat.java" interface="false" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.NullOutputFormat$1" sourceFile="NullOutputFormat.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.RegexMapper" sourceFile="RegexMapper.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.TokenCountMapper" sourceFile="TokenCountMapper.java" interface="false" size="9" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.mapred.lib.aggregate" total_bugs="1" total_types="18" total_size="548" priority_1="1">
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.DoubleValueSum" sourceFile="DoubleValueSum.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.LongValueMax" sourceFile="LongValueMax.java" interface="false" size="27" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.LongValueMin" sourceFile="LongValueMin.java" interface="false" size="27" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.LongValueSum" sourceFile="LongValueSum.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.StringValueMax" sourceFile="StringValueMax.java" interface="false" size="23" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.StringValueMin" sourceFile="StringValueMin.java" interface="false" size="23" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.UniqValueCount" sourceFile="UniqValueCount.java" interface="false" size="44" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.UserDefinedValueAggregatorDescriptor" sourceFile="UserDefinedValueAggregatorDescriptor.java" interface="false" size="37" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.ValueAggregator" sourceFile="ValueAggregator.java" interface="true" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.ValueAggregatorBaseDescriptor" sourceFile="ValueAggregatorBaseDescriptor.java" interface="false" size="55" bugs="1" priority_1="1"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.ValueAggregatorBaseDescriptor$MyEntry" sourceFile="ValueAggregatorBaseDescriptor.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.ValueAggregatorCombiner" sourceFile="ValueAggregatorCombiner.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.ValueAggregatorDescriptor" sourceFile="ValueAggregatorDescriptor.java" interface="true" size="7" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.ValueAggregatorJob" sourceFile="ValueAggregatorJob.java" interface="false" size="57" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.ValueAggregatorJobBase" sourceFile="ValueAggregatorJobBase.java" interface="false" size="37" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.ValueAggregatorMapper" sourceFile="ValueAggregatorMapper.java" interface="false" size="16" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.ValueAggregatorReducer" sourceFile="ValueAggregatorReducer.java" interface="false" size="17" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.lib.aggregate.ValueHistogram" sourceFile="ValueHistogram.java" interface="false" size="86" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.mapred.pipes" total_bugs="0" total_types="15" total_size="645">
+      <ClassStats class="org.apache.hadoop.mapred.pipes.Application" sourceFile="Application.java" interface="false" size="59" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.pipes.Application$OutputCopier" sourceFile="Application.java" interface="false" size="21" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.pipes.BinaryProtocol" sourceFile="BinaryProtocol.java" interface="false" size="98" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.pipes.BinaryProtocol$MessageType" sourceFile="BinaryProtocol.java" interface="false" size="40" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.pipes.BinaryProtocol$TeeOutputStream" sourceFile="BinaryProtocol.java" interface="false" size="23" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.pipes.BinaryProtocol$UplinkReaderThread" sourceFile="BinaryProtocol.java" interface="false" size="57" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.pipes.DownwardProtocol" sourceFile="DownwardProtocol.java" interface="true" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.pipes.OutputHandler" sourceFile="OutputHandler.java" interface="false" size="48" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.pipes.PipesMapRunner" sourceFile="PipesMapRunner.java" interface="false" size="29" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.pipes.PipesPartitioner" sourceFile="PipesPartitioner.java" interface="false" size="19" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.pipes.PipesReducer" sourceFile="PipesReducer.java" interface="false" size="50" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.pipes.PipesReducer$1" sourceFile="PipesReducer.java" interface="false" size="6" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.pipes.Submitter" sourceFile="Submitter.java" interface="false" size="141" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.pipes.Submitter$CommandLineParser" sourceFile="Submitter.java" interface="false" size="36" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.mapred.pipes.UpwardProtocol" sourceFile="UpwardProtocol.java" interface="true" size="7" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.metrics" total_bugs="0" total_types="6" total_size="130">
+      <ClassStats class="org.apache.hadoop.metrics.ContextFactory" sourceFile="ContextFactory.java" interface="false" size="66" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.metrics.MetricsContext" sourceFile="MetricsContext.java" interface="true" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.metrics.MetricsException" sourceFile="MetricsException.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.metrics.MetricsRecord" sourceFile="MetricsRecord.java" interface="true" size="17" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.metrics.MetricsUtil" sourceFile="MetricsUtil.java" interface="false" size="27" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.metrics.Updater" sourceFile="Updater.java" interface="true" size="2" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.metrics.file" total_bugs="0" total_types="1" total_size="62">
+      <ClassStats class="org.apache.hadoop.metrics.file.FileContext" sourceFile="FileContext.java" interface="false" size="62" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.metrics.ganglia" total_bugs="0" total_types="1" total_size="120">
+      <ClassStats class="org.apache.hadoop.metrics.ganglia.GangliaContext" sourceFile="GangliaContext.java" interface="false" size="120" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.metrics.jvm" total_bugs="0" total_types="4" total_size="155">
+      <ClassStats class="org.apache.hadoop.metrics.jvm.EventCounter" sourceFile="EventCounter.java" interface="false" size="34" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.metrics.jvm.EventCounter$1" sourceFile="EventCounter.java" interface="false" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.metrics.jvm.EventCounter$EventCounts" sourceFile="EventCounter.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.metrics.jvm.JvmMetrics" sourceFile="JvmMetrics.java" interface="false" size="107" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.metrics.spi" total_bugs="14" total_types="10" total_size="328" priority_2="14">
+      <ClassStats class="org.apache.hadoop.metrics.spi.AbstractMetricsContext" sourceFile="AbstractMetricsContext.java" interface="false" size="164" bugs="5" priority_2="5"/>
+      <ClassStats class="org.apache.hadoop.metrics.spi.AbstractMetricsContext$1" sourceFile="AbstractMetricsContext.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.metrics.spi.AbstractMetricsContext$MetricMap" sourceFile="AbstractMetricsContext.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.metrics.spi.AbstractMetricsContext$RecordMap" sourceFile="AbstractMetricsContext.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.metrics.spi.AbstractMetricsContext$TagMap" sourceFile="AbstractMetricsContext.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.metrics.spi.MetricValue" sourceFile="MetricValue.java" interface="false" size="16" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.metrics.spi.MetricsRecordImpl" sourceFile="MetricsRecordImpl.java" interface="false" size="71" bugs="9" priority_2="9"/>
+      <ClassStats class="org.apache.hadoop.metrics.spi.NullContext" sourceFile="NullContext.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.metrics.spi.OutputRecord" sourceFile="OutputRecord.java" interface="false" size="16" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.metrics.spi.Util" sourceFile="Util.java" interface="false" size="16" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.net" total_bugs="3" total_types="5" total_size="428" priority_2="2" priority_1="1">
+      <ClassStats class="org.apache.hadoop.net.DNS" sourceFile="DNS.java" interface="false" size="45" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.net.NetworkTopology" sourceFile="NetworkTopology.java" interface="false" size="183" bugs="2" priority_2="2"/>
+      <ClassStats class="org.apache.hadoop.net.NetworkTopology$InnerNode" sourceFile="NetworkTopology.java" interface="false" size="138" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.net.Node" sourceFile="Node.java" interface="true" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.net.NodeBase" sourceFile="NodeBase.java" interface="false" size="57" bugs="1" priority_1="1"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.record" total_bugs="2" total_types="22" total_size="1098" priority_2="2">
+      <ClassStats class="org.apache.hadoop.record.BinaryRecordInput" sourceFile="BinaryRecordInput.java" interface="false" size="55" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.BinaryRecordInput$1" sourceFile="BinaryRecordInput.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.BinaryRecordInput$BinaryIndex" sourceFile="BinaryRecordInput.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.BinaryRecordOutput" sourceFile="BinaryRecordOutput.java" interface="false" size="65" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.BinaryRecordOutput$1" sourceFile="BinaryRecordOutput.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.Buffer" sourceFile="Buffer.java" interface="false" size="96" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.CsvRecordInput" sourceFile="CsvRecordInput.java" interface="false" size="98" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.CsvRecordInput$1" sourceFile="CsvRecordInput.java" interface="false" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.CsvRecordInput$CsvIndex" sourceFile="CsvRecordInput.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.CsvRecordOutput" sourceFile="CsvRecordOutput.java" interface="false" size="86" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.Index" sourceFile="Index.java" interface="true" size="3" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.Record" sourceFile="Record.java" interface="false" size="27" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.RecordComparator" sourceFile="RecordComparator.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.RecordInput" sourceFile="RecordInput.java" interface="true" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.RecordOutput" sourceFile="RecordOutput.java" interface="true" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.Utils" sourceFile="Utils.java" interface="false" size="263" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.record.XmlRecordInput" sourceFile="XmlRecordInput.java" interface="false" size="89" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.XmlRecordInput$1" sourceFile="XmlRecordInput.java" interface="false" size="1" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.XmlRecordInput$Value" sourceFile="XmlRecordInput.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.XmlRecordInput$XMLParser" sourceFile="XmlRecordInput.java" interface="false" size="33" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.record.XmlRecordInput$XmlIndex" sourceFile="XmlRecordInput.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.XmlRecordOutput" sourceFile="XmlRecordOutput.java" interface="false" size="177" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.record.compiler" total_bugs="0" total_types="40" total_size="1187">
+      <ClassStats class="org.apache.hadoop.record.compiler.CGenerator" sourceFile="CGenerator.java" interface="false" size="18" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.CodeBuffer" sourceFile="CodeBuffer.java" interface="false" size="57" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.CodeGenerator" sourceFile="CodeGenerator.java" interface="false" size="16" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.CppGenerator" sourceFile="CppGenerator.java" interface="false" size="21" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JBoolean" sourceFile="JBoolean.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JBoolean$JavaBoolean" sourceFile="JBoolean.java" interface="false" size="31" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JBuffer" sourceFile="JBuffer.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JBuffer$CppBuffer" sourceFile="JBuffer.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JBuffer$JavaBuffer" sourceFile="JBuffer.java" interface="false" size="34" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JByte" sourceFile="JByte.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JByte$JavaByte" sourceFile="JByte.java" interface="false" size="25" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JCompType" sourceFile="JCompType.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JCompType$CCompType" sourceFile="JCompType.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JCompType$CppCompType" sourceFile="JCompType.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JCompType$JavaCompType" sourceFile="JCompType.java" interface="false" size="18" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JDouble" sourceFile="JDouble.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JDouble$JavaDouble" sourceFile="JDouble.java" interface="false" size="31" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JField" sourceFile="JField.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JFile" sourceFile="JFile.java" interface="false" size="20" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JFloat" sourceFile="JFloat.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JFloat$JavaFloat" sourceFile="JFloat.java" interface="false" size="30" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JInt" sourceFile="JInt.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JInt$JavaInt" sourceFile="JInt.java" interface="false" size="25" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JLong" sourceFile="JLong.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JLong$JavaLong" sourceFile="JLong.java" interface="false" size="28" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JMap" sourceFile="JMap.java" interface="false" size="28" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JMap$JavaMap" sourceFile="JMap.java" interface="false" size="92" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JRecord" sourceFile="JRecord.java" interface="false" size="26" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JRecord$CRecord" sourceFile="JRecord.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JRecord$CppRecord" sourceFile="JRecord.java" interface="false" size="107" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JRecord$JavaRecord" sourceFile="JRecord.java" interface="false" size="210" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JString" sourceFile="JString.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JString$JavaString" sourceFile="JString.java" interface="false" size="28" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JType" sourceFile="JType.java" interface="false" size="28" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JType$CType" sourceFile="JType.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JType$CppType" sourceFile="JType.java" interface="false" size="20" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JType$JavaType" sourceFile="JType.java" interface="false" size="56" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JVector" sourceFile="JVector.java" interface="false" size="26" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JVector$JavaVector" sourceFile="JVector.java" interface="false" size="74" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.JavaGenerator" sourceFile="JavaGenerator.java" interface="false" size="10" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.record.compiler.ant" total_bugs="0" total_types="1" total_size="53">
+      <ClassStats class="org.apache.hadoop.record.compiler.ant.RccTask" sourceFile="RccTask.java" interface="false" size="53" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.record.compiler.generated" total_bugs="0" total_types="7" total_size="1247">
+      <ClassStats class="org.apache.hadoop.record.compiler.generated.ParseException" sourceFile="ParseException.java" interface="false" size="78" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.generated.Rcc" sourceFile="Rcc.java" interface="false" size="343" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.generated.RccConstants" sourceFile="RccConstants.java" interface="true" size="30" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.generated.RccTokenManager" sourceFile="RccTokenManager.java" interface="false" size="486" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.generated.SimpleCharStream" sourceFile="SimpleCharStream.java" interface="false" size="247" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.generated.Token" sourceFile="Token.java" interface="false" size="16" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.record.compiler.generated.TokenMgrError" sourceFile="TokenMgrError.java" interface="false" size="47" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.streaming" total_bugs="22" total_types="23" total_size="1945" priority_2="21" priority_1="1">
+      <ClassStats class="org.apache.hadoop.streaming.Environment" sourceFile="Environment.java" interface="false" size="49" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.streaming.HadoopStreaming" sourceFile="HadoopStreaming.java" interface="false" size="8" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.streaming.JarBuilder" sourceFile="JarBuilder.java" interface="false" size="125" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.streaming.PathFinder" sourceFile="PathFinder.java" interface="false" size="65" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.streaming.PipeMapRed" sourceFile="PipeMapRed.java" interface="false" size="292" bugs="8" priority_2="8"/>
+      <ClassStats class="org.apache.hadoop.streaming.PipeMapRed$MRErrorThread" sourceFile="PipeMapRed.java" interface="false" size="26" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.streaming.PipeMapRed$MROutputThread" sourceFile="PipeMapRed.java" interface="false" size="36" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.streaming.PipeMapper" sourceFile="PipeMapper.java" interface="false" size="55" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.streaming.PipeReducer" sourceFile="PipeReducer.java" interface="false" size="54" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.streaming.StreamBaseRecordReader" sourceFile="StreamBaseRecordReader.java" interface="false" size="72" bugs="3" priority_2="3"/>
+      <ClassStats class="org.apache.hadoop.streaming.StreamInputFormat" sourceFile="StreamInputFormat.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.streaming.StreamJob" sourceFile="StreamJob.java" interface="false" size="543" bugs="2" priority_2="1" priority_1="1"/>
+      <ClassStats class="org.apache.hadoop.streaming.StreamJob$1" sourceFile="StreamJob.java" interface="false" size="15" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.streaming.StreamJob$2" sourceFile="StreamJob.java" interface="false" size="12" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.streaming.StreamJob$MultiPropertyOption" sourceFile="StreamJob.java" interface="false" size="32" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.streaming.StreamLineRecordReader" sourceFile="StreamLineRecordReader.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.streaming.StreamOutputFormat" sourceFile="StreamOutputFormat.java" interface="false" size="3" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.streaming.StreamSequenceRecordReader" sourceFile="StreamSequenceRecordReader.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.streaming.StreamUtil" sourceFile="StreamUtil.java" interface="false" size="276" bugs="1" priority_2="1"/>
+      <ClassStats class="org.apache.hadoop.streaming.StreamUtil$StreamConsumer" sourceFile="StreamUtil.java" interface="false" size="18" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.streaming.StreamUtil$TaskId" sourceFile="StreamUtil.java" interface="false" size="7" bugs="4" priority_2="4"/>
+      <ClassStats class="org.apache.hadoop.streaming.StreamXmlRecordReader" sourceFile="StreamXmlRecordReader.java" interface="false" size="177" bugs="2" priority_2="2"/>
+      <ClassStats class="org.apache.hadoop.streaming.UTF8ByteArrayUtils" sourceFile="UTF8ByteArrayUtils.java" interface="false" size="48" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.tools" total_bugs="0" total_types="3" total_size="148">
+      <ClassStats class="org.apache.hadoop.tools.Logalyzer" sourceFile="Logalyzer.java" interface="false" size="85" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.tools.Logalyzer$LogComparator" sourceFile="Logalyzer.java" interface="false" size="50" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.tools.Logalyzer$LogRegexMapper" sourceFile="Logalyzer.java" interface="false" size="13" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="org.apache.hadoop.util" total_bugs="0" total_types="28" total_size="1194">
+      <ClassStats class="org.apache.hadoop.util.CopyFiles" sourceFile="CopyFiles.java" interface="false" size="146" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.CopyFiles$CopyFilesMapper" sourceFile="CopyFiles.java" interface="false" size="40" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.CopyFiles$CopyMapperFactory" sourceFile="CopyFiles.java" interface="false" size="13" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.CopyFiles$FSCopyFilesMapper" sourceFile="CopyFiles.java" interface="false" size="150" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.CopyFiles$HTTPCopyFilesMapper" sourceFile="CopyFiles.java" interface="false" size="86" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.Daemon" sourceFile="Daemon.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.DiskChecker" sourceFile="DiskChecker.java" interface="false" size="24" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.DiskChecker$DiskErrorException" sourceFile="DiskChecker.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.DiskChecker$DiskOutOfSpaceException" sourceFile="DiskChecker.java" interface="false" size="4" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.HostsFileReader" sourceFile="HostsFileReader.java" interface="false" size="40" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.MergeSort" sourceFile="MergeSort.java" interface="false" size="41" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.NativeCodeLoader" sourceFile="NativeCodeLoader.java" interface="false" size="26" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.PlatformName" sourceFile="PlatformName.java" interface="false" size="11" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.PrintJarMainClass" sourceFile="PrintJarMainClass.java" interface="false" size="17" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.PriorityQueue" sourceFile="PriorityQueue.java" interface="false" size="76" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.ProgramDriver" sourceFile="ProgramDriver.java" interface="false" size="29" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.ProgramDriver$ProgramDescription" sourceFile="ProgramDriver.java" interface="false" size="19" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.Progress" sourceFile="Progress.java" interface="false" size="58" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.Progressable" sourceFile="Progressable.java" interface="true" size="2" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.ReflectionUtils" sourceFile="ReflectionUtils.java" interface="false" size="81" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.RunJar" sourceFile="RunJar.java" interface="false" size="80" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.RunJar$1" sourceFile="RunJar.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.StringUtils" sourceFile="StringUtils.java" interface="false" size="128" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.StringUtils$1" sourceFile="StringUtils.java" interface="false" size="9" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.Tool" sourceFile="Tool.java" interface="true" size="2" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.ToolBase" sourceFile="ToolBase.java" interface="false" size="51" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.VersionInfo" sourceFile="VersionInfo.java" interface="false" size="26" bugs="0"/>
+      <ClassStats class="org.apache.hadoop.util.XMLUtils" sourceFile="XMLUtils.java" interface="false" size="8" bugs="0"/>
+    </PackageStats>
+  </FindBugsSummary>
+  <ClassFeatures></ClassFeatures>
+  <History></History>
+</BugCollection>

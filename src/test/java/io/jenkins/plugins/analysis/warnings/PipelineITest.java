@@ -42,7 +42,7 @@ public class PipelineITest extends IntegrationTest {
         shouldFindIssuesOfTool(3, Cadence.class, "CadenceIncisive.txt");
     }
 
-    /** Runs the CheckStyle parser on an output file that contains 4 issues. */
+    /** Runs the PMD parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllPmdIssues() {
         Issues<BuildIssue> issues = shouldFindIssuesOfTool(4, Pmd.class, "pmd-warnings.xml");
@@ -67,6 +67,19 @@ public class PipelineITest extends IntegrationTest {
         StaticAnalysisLabelProvider labelProvider = new CheckStyle.Descriptor().getLabelProvider();
         assertThat(issue).hasDescription(StringUtils.EMPTY);
         assertThat(labelProvider.getDescription(issue)).contains("finds classes that are designed for extension");
+    }
+
+    /** Runs the FindBugs parser on an output file that contains 2 issues. */
+    @Test
+    public void shouldFindAllFindBugsIssues() {
+        Issues<BuildIssue> issues = shouldFindIssuesOfTool(2, FindBugs.class, "findbugs-native.xml");
+
+        BuildIssue issue = issues.get(0);
+
+        StaticAnalysisLabelProvider labelProvider = new FindBugs.Descriptor().getLabelProvider();
+        assertThat(issue).hasDescription(StringUtils.EMPTY);
+        assertThat(labelProvider.getDescription(issue))
+                .contains("The fields of this class appear to be accessed inconsistently with respect\n  to synchronization");
     }
 
     /** Runs the Clang parser on an output file that contains 9 issues. */
