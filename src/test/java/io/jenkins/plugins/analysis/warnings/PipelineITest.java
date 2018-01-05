@@ -13,13 +13,13 @@ import org.junit.jupiter.api.Tag;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
-import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
-import io.jenkins.plugins.analysis.core.steps.BuildIssue;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.BuildIssue;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
-import io.jenkins.plugins.analysis.core.steps.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.views.ResultAction;
 import jenkins.model.Jenkins;
 
 import hudson.model.Descriptor;

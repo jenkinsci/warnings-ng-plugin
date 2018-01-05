@@ -6,8 +6,8 @@ import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
 import static hudson.plugins.warnings.WarningsDescriptor.*;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
+import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StreamBasedParser;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyleRules;
 
 import hudson.Extension;

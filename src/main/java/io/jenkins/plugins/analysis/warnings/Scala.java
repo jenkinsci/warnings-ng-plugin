@@ -7,8 +7,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import edu.hm.hafner.analysis.RegexpLineParser;
 import edu.hm.hafner.analysis.parser.SbtScalacParser;
 import edu.hm.hafner.analysis.parser.ScalacParser;
-import io.jenkins.plugins.analysis.core.steps.CompositeParser;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.model.CompositeParser;
+import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import static java.util.Arrays.*;
 
 import hudson.Extension;

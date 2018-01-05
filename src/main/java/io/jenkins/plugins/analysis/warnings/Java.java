@@ -4,9 +4,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.JavacParser;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
+import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StreamBasedParser;
 
 import hudson.Extension;
 import hudson.plugins.warnings.WarningsDescriptor;

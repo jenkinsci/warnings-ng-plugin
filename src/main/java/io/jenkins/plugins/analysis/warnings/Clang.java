@@ -4,8 +4,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.ClangParser;
-import io.jenkins.plugins.analysis.core.steps.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.steps.StreamBasedParser;
+import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StreamBasedParser;
 
 import hudson.Extension;
 
@@ -33,7 +33,7 @@ public class Clang extends StreamBasedParser {
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         public Descriptor() {
-            super(new Clang.LabelProvider());
+            super(new LabelProvider());
         }
     }
 
