@@ -11,6 +11,7 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.IssueTest;
 import edu.hm.hafner.analysis.Priority;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import io.jenkins.plugins.analysis.core.model.BuildIssue;
 
 import hudson.util.XStream2;
 

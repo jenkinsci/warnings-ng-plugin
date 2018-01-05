@@ -16,8 +16,8 @@ import org.kohsuke.stapler.StaplerResponse;
 import com.google.common.collect.Lists;
 
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
 import net.sf.json.JSONObject;
 
 import hudson.model.Job;
@@ -39,7 +39,7 @@ public abstract class GraphConfigurationView implements ModelObject {
     private final GraphConfiguration configuration;
     private String urlPrefix;
 
-    private ResultTime resultTime = new ResultTime();
+    private final ResultTime resultTime = new ResultTime();
 
     /**
      * Creates a new instance of {@link hudson.plugins.analysis.graph.GraphConfigurationView}.

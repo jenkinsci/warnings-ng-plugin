@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
-import io.jenkins.plugins.analysis.core.steps.ResultAction;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.model.Result;
 import hudson.model.Run;

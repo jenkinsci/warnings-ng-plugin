@@ -1,8 +1,9 @@
-package io.jenkins.plugins.analysis.core.steps;
+package io.jenkins.plugins.analysis.core.model;
 
 import org.apache.commons.lang.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
+import io.jenkins.plugins.analysis.core.steps.Messages;
 
 import hudson.plugins.analysis.util.HtmlPrinter;
 
@@ -68,12 +69,12 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
 
     @Override
     public String getLinkName() {
-        return Messages.Tool_Link_Name(name);
+        return io.jenkins.plugins.analysis.core.steps.Messages.Tool_Link_Name(name);
     }
 
     @Override
     public String getTrendName() {
-        return Messages.Tool_Trend_Name(name);
+        return io.jenkins.plugins.analysis.core.steps.Messages.Tool_Trend_Name(name);
     }
 
     @Override
@@ -149,16 +150,16 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
 
     private static String createNewWarningsLinkName(final int newWarnings) {
         if (newWarnings == 1) {
-            return Messages.ResultAction_OneNewWarning();
+            return io.jenkins.plugins.analysis.core.steps.Messages.ResultAction_OneNewWarning();
         }
         else {
-            return Messages.ResultAction_MultipleNewWarnings(newWarnings);
+            return io.jenkins.plugins.analysis.core.steps.Messages.ResultAction_MultipleNewWarnings(newWarnings);
         }
     }
 
     private static String createFixedWarningsLinkName(final int fixedWarnings) {
         if (fixedWarnings == 1) {
-            return Messages.ResultAction_OneFixedWarning();
+            return io.jenkins.plugins.analysis.core.steps.Messages.ResultAction_OneFixedWarning();
         }
         else {
             return Messages.ResultAction_MultipleFixedWarnings(fixedWarnings);

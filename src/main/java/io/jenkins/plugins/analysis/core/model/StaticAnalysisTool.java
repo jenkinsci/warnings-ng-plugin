@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.steps;
+package io.jenkins.plugins.analysis.core.model;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;

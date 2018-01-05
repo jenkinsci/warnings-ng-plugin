@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.history;
 
 import edu.hm.hafner.analysis.Issues;
-import io.jenkins.plugins.analysis.core.steps.BuildIssue;
+import io.jenkins.plugins.analysis.core.model.BuildIssue;
 
 import hudson.model.Run;
 import hudson.plugins.analysis.core.IssueDifference;

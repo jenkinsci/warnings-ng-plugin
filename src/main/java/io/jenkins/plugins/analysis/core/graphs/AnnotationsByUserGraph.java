@@ -19,8 +19,8 @@ import org.jfree.data.category.CategoryDataset;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
-import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
-import io.jenkins.plugins.analysis.core.steps.BuildIssue;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.BuildIssue;
 
 import hudson.plugins.analysis.Messages;
 import hudson.util.DataSetBuilder;
@@ -44,7 +44,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
     }
 
     private JFreeChart createGraphFromUserMapping(final GraphConfiguration configuration,
-            final @CheckForNull String pluginName, final Map<String, Integer[]> annotationCountByUser) {
+            @CheckForNull final String pluginName, final Map<String, Integer[]> annotationCountByUser) {
         JFreeChart chart = createBlockChart(buildDataSet(annotationCountByUser));
 
         attachRenderer(configuration, pluginName, chart);

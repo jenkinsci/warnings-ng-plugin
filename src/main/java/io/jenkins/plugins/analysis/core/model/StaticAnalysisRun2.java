@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.steps;
+package io.jenkins.plugins.analysis.core.model;
 
 import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 
@@ -32,6 +32,7 @@ public interface StaticAnalysisRun2 extends StaticAnalysisRun {
 
     long getSuccessfulHighScoreGap();
 
+    @Override
     int getFixedSize();
 
     Result getPluginResult();

@@ -3,7 +3,7 @@
          xmlns:t="/lib/hudson">
   <st:documentation>
     Renders a number as link if the number if greater than zero. Otherwise a plain zero is rendered.
-    <st:attribute name="it" use="required" type="io.jenkins.plugins.analysis.core.steps.ResultAction">
+    <st:attribute name="it" use="required" type="io.jenkins.plugins.analysis.core.views.ResultAction">
       The object to show the summary for.
     </st:attribute>
   </st:documentation>

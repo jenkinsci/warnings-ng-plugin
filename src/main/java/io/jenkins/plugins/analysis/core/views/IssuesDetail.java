@@ -14,7 +14,7 @@ import org.kohsuke.stapler.StaplerResponse;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
-import io.jenkins.plugins.analysis.core.steps.BuildIssue;
+import io.jenkins.plugins.analysis.core.model.BuildIssue;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 
 import hudson.markup.MarkupFormatter;
