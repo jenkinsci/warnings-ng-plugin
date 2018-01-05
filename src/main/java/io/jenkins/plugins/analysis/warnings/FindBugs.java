@@ -10,7 +10,8 @@ import org.kohsuke.stapler.DataBoundSetter;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.parser.findbugs.FindBugsParser;
+import edu.hm.hafner.analysis.parser.FindBugsParser;
+import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
 import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
@@ -27,7 +28,6 @@ public class FindBugs extends StaticAnalysisTool {
     private static final String SMALL_ICON_URL = IMAGE_PREFIX + "findbugs-24x24.png";
     private static final String LARGE_ICON_URL = IMAGE_PREFIX + "findbugs-48x48.png";
 
-    // FIXME: enum and not boolean
     private boolean useRankAsPriority;
 
     /**
@@ -56,7 +56,7 @@ public class FindBugs extends StaticAnalysisTool {
 
     @Override
     public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder) {
-        return new FindBugsParser(useRankAsPriority).parse(file, builder);
+        return new FindBugsParser(useRankAsPriority ? RANK : CONFIDENCE).parse(file, builder);
     }
 
     /** Registers this tool as extension point implementation. */
