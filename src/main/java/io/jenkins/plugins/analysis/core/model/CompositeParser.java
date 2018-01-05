@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.steps;
+package io.jenkins.plugins.analysis.core.model;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -33,5 +33,4 @@ public abstract class CompositeParser extends StaticAnalysisTool {
      * @return the parsers
      */
     protected abstract Collection<RegexpLineParser> createParsers();
-
 }

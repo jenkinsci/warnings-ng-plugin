@@ -4,8 +4,8 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
-import io.jenkins.plugins.analysis.core.steps.ResultAction;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.views.ResultAction;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

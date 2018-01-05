@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.steps;
+package io.jenkins.plugins.analysis.core.model;
 
 import java.util.Optional;
 
@@ -93,11 +93,6 @@ public class IssueDifference {
      */
     public Issues<BuildIssue> getFixedIssues() {
         return fixedIssues;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
     }
 }
 

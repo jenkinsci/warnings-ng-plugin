@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 
 import edu.hm.hafner.analysis.Issues;
-import io.jenkins.plugins.analysis.core.steps.BuildIssue;
+import io.jenkins.plugins.analysis.core.model.BuildIssue;
 
 import hudson.plugins.analysis.Messages;
 

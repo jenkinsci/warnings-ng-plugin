@@ -10,7 +10,7 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
-import io.jenkins.plugins.analysis.core.steps.IssueParser;
+import io.jenkins.plugins.analysis.core.model.IssueParser;
 import jenkins.MasterToSlaveFileCallable;
 
 import hudson.plugins.analysis.Messages;
@@ -64,7 +64,7 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
             issues.log("No files found. Configuration error?");
         }
         else {
-            issues.log("Parsing " + plural(fileNames.length, "%d file") + " in " + workspace.getAbsolutePath());
+            issues.log("Parsing %s in %s", plural(fileNames.length, "file"), workspace.getAbsolutePath());
             parseFiles(workspace, fileNames, issues);
         }
 
@@ -117,28 +117,14 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
         }
     }
 
-    /**
-     * Creates a formatted message in singular or plural form.
-     *
-     * @param count
-     *         the number of occurrences
-     * @param message
-     *         the message containing the format in singular form
-     *
-     * @return the message in singular or plural form depending on the count, or an empty string if the count is 0 and
-     *         no format is specified
-     */
-    private String plural(final int count, final String message) {
-        if (count == 0 && !message.contains("%")) {
-            return "";
-        }
-
-        String messageFormat = message;
+    private String plural(final int count, final String itemName) {
+        StringBuilder builder = new StringBuilder(itemName);
         if (count != 1) {
-            messageFormat += "s";
+            builder.append('s');
         }
-
-        return String.format(messageFormat, count);
+        builder.insert(0, ' ');
+        builder.insert(0, count);
+        return builder.toString();
     }
 
     /**
@@ -153,8 +139,9 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
             Issues<Issue> result = parser.parse(file, EncodingValidator.defaultCharset(defaultEncoding), builder);
 
             issues.addAll(result);
-            issues.log("Successfully parsed file %s: found %d issues (%d duplicates have been skipped)",
-                    file, issues.getSize(), issues.getDuplicatesSize());
+            issues.log("Successfully parsed file %s: found %s (skipped %s)", file,
+                    plural(issues.getSize(), "issue"),
+                    plural(issues.getDuplicatesSize(), "duplicate"));
         }
         catch (ParsingException exception) {
             issues.log(Messages.FilesParser_Error_Exception(file) + "\n\n"

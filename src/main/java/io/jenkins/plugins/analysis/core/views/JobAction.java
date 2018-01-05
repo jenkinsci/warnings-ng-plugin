@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.steps;
+package io.jenkins.plugins.analysis.core.views;
 
 import javax.annotation.CheckForNull;
 import java.io.IOException;
@@ -31,6 +31,9 @@ import io.jenkins.plugins.analysis.core.graphs.UserGraphConfigurationView;
 import io.jenkins.plugins.analysis.core.history.BuildHistory;
 import io.jenkins.plugins.analysis.core.history.NullBuildHistory;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
+import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import jenkins.model.Jenkins;
 

@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.steps;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.Instant;
@@ -26,7 +25,8 @@ import edu.hm.hafner.analysis.FullTextFingerprint;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
-import io.jenkins.plugins.analysis.core.steps.StaticAnalysisTool.StaticAnalysisToolDescriptor;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool.StaticAnalysisToolDescriptor;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.FilesParser;
 import io.jenkins.plugins.analysis.core.util.Logger;
@@ -152,7 +152,7 @@ public class ScanForIssuesStep extends Step {
         }
 
         @Override
-        protected Issues<Issue> run() throws IOException, InterruptedException, IllegalStateException, InvocationTargetException {
+        protected Issues<Issue> run() throws IOException, InterruptedException, IllegalStateException {
             FilePath workspace = getContext().get(FilePath.class);
 
             if (workspace == null) {

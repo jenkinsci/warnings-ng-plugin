@@ -30,13 +30,18 @@ import io.jenkins.plugins.analysis.core.history.BuildHistory;
 import io.jenkins.plugins.analysis.core.history.ReferenceFinder;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.history.ResultSelector;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.util.LoggerFactory;
+import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.Extension;
 import hudson.FilePath;

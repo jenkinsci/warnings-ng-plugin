@@ -23,7 +23,6 @@ import hudson.remoting.VirtualChannel;
  * can be shown in the UI later on.
  *
  * @author Ullrich Hafner
- * @since 1.69
  */
 public class AffectedFilesResolver {
     private static final String SLASH = "/";

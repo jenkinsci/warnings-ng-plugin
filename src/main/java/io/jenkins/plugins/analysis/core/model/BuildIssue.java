@@ -1,11 +1,10 @@
-package io.jenkins.plugins.analysis.core.steps;
+package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.Issue;
 
 /**
  * Adds some Jenkins properties to an issue. Note that instances of this class use the {@link #equals(Object)} and
- * {@link #hashCode()} methods from the parent! I.e. an {@link Issue} equals a {@link BuildIssue} that have the same
- * properties!
+ * {@link #hashCode()} methods from the parent.
  *
  * @author Ullrich Hafner
  */

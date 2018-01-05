@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.core.history;
 import java.util.Optional;
 
 import edu.hm.hafner.analysis.Issues;
-import io.jenkins.plugins.analysis.core.steps.ResultAction;
+import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.model.Result;
 import hudson.model.Run;

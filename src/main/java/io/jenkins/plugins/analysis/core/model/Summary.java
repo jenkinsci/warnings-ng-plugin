@@ -1,8 +1,9 @@
-package io.jenkins.plugins.analysis.core.steps;
+package io.jenkins.plugins.analysis.core.model;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.kohsuke.stapler.Stapler;
 
+import io.jenkins.plugins.analysis.core.views.ResultAction;
 import jenkins.model.Jenkins;
 
 import hudson.model.Result;

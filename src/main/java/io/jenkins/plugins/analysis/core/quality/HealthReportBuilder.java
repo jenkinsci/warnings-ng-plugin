@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.jvnet.localizer.Localizable;
 
 import edu.hm.hafner.analysis.Priority;
-import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 
 import hudson.model.HealthReport;
 import hudson.plugins.analysis.Messages;

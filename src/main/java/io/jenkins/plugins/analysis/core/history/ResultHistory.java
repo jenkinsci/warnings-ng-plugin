@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.core.history;
 
 import java.util.Optional;
 
-import io.jenkins.plugins.analysis.core.steps.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 
 /**
  * Provides access to the same static analysis results in the history of runs of a job.

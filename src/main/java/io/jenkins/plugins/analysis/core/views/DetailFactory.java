@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
-import io.jenkins.plugins.analysis.core.steps.BuildIssue;
+import io.jenkins.plugins.analysis.core.model.BuildIssue;
 
 import hudson.model.Item;
 import hudson.model.ModelObject;

@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.steps; // NOPMD
+package io.jenkins.plugins.analysis.core.model; // NOPMD
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +40,6 @@ import hudson.plugins.analysis.util.model.AnnotationStream;
  *
  * @author Ulli Hafner
  */
-//CHECKSTYLE:COUPLING-OFF
 @ExportedBean
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength"})
 public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
