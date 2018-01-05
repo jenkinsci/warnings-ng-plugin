@@ -1,0 +1,35 @@
+node {
+    stage ('Checkout') {
+        git branch:'3.0', url: 'file:////Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin'
+    }
+
+    stage ('Build') {
+        def mvnHome = tool 'mvn-default'
+
+        sh "${mvnHome}/bin/mvn --batch-mode -V -U -e clean test -Dsurefire.useFile=false -Dmaven.test.failure.ignore=true"
+
+        junit testResults: '**/target/surefire-reports/TEST-*.xml'
+
+        def java = scanForIssues tool: [$class: 'Java']
+        def javadoc = scanForIssues tool: [$class: 'JavaDoc']
+
+        publishIssues issues:[java], useStableBuildAsReference: true, id:'java'
+        publishIssues issues:[javadoc], useStableBuildAsReference: true, id:'javadoc'
+    }
+
+    stage ('Analysis') {
+        def mvnHome = tool 'mvn-default'
+
+        sh "${mvnHome}/bin/mvn -batch-mode -V -U -e checkstyle:checkstyle pmd:pmd findbugs:findbugs"
+
+        def checkstyle = scanForIssues tool: [$class: 'CheckStyle'], pattern: '**/target/checkstyle-result.xml'
+        publishIssues issues:[checkstyle], useStableBuildAsReference: true, id:'checkstyle'
+
+        def pmd = scanForIssues tool: [$class: 'Pmd'], pattern: '**/target/pmd.xml'
+        publishIssues issues:[pmd], useStableBuildAsReference: true, id:'pmd'
+
+        def findbugs = scanForIssues tool: [$class: 'FindBugs'], pattern: '**/target/findbugsXml.xml'
+        publishIssues issues:[findbugs], useStableBuildAsReference: true, id:'findbugs'
+
+    }
+}
