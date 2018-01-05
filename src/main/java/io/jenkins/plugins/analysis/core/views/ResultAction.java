@@ -34,7 +34,7 @@ import hudson.model.Run;
 //CHECKSTYLE:COUPLING-OFF
 @ExportedBean
 public class ResultAction implements HealthReportingAction, LastBuildAction, RunAction2, StaplerProxy {
-    private transient Run<?, ?> run;
+    private transient Run<?, ?> owner;
 
     private final AnalysisResult result;
     private final String id;
@@ -44,7 +44,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     /**
      * Creates a new instance of {@link ResultAction}.
      *
-     * @param run
+     * @param owner
      *         the associated build of this action
      * @param result
      *         the result of the static analysis run
@@ -55,25 +55,24 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      * @param name
      *         The name of the tool. If empty the name is resolved using the ID.
      */
-    public ResultAction(final Run<?, ?> run, final AnalysisResult result, final HealthDescriptor healthDescriptor,
+    public ResultAction(final Run<?, ?> owner, final AnalysisResult result, final HealthDescriptor healthDescriptor,
             final String id, final String name) {
-        this.run = run;
+        this.owner = owner;
         this.result = result;
         this.id = id;
         this.healthDescriptor = healthDescriptor;
         this.name = name;
     }
 
-    // FIXME: use owner as name
     @Exported
-    public Run<?, ?> getRun() {
-        return run;
+    public Run<?, ?> getOwner() {
+        return owner;
     }
 
     @Override
     public void onAttached(final Run<?, ?> r) {
-        run = r;
-        result.setRun(r);
+        owner = r;
+        result.setOwner(r);
     }
 
     @Override
@@ -105,7 +104,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return Collections.singleton(new JobAction(run.getParent(), id, name));
+        return Collections.singleton(new JobAction(owner.getParent(), id, name));
     }
 
     @Exported
@@ -184,7 +183,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     public Object getTarget() {
         AnalysisResult result = getResult();
 
-        return new IssuesDetail(run, result.getIssues(), result.getFixedIssues(), result.getNewIssues(),
+        return new IssuesDetail(owner, result.getIssues(), result.getFixedIssues(), result.getNewIssues(),
                 result.getDefaultEncoding(), getLabelProvider().getLinkName());
     }
 }
