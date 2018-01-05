@@ -50,7 +50,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     private final String name;
 
     private transient ReentrantLock lock = new ReentrantLock();
-    private transient Run<?, ?> run;
+    private transient Run<?, ?> owner;
 
     /**
      * All old issues: i.e. all issues, that are part of the current and previous report.
@@ -130,33 +130,33 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     /**
      * Creates a new instance of {@link AnalysisResult}.
      *
-     * @param run
+     * @param owner
      *         the current run as owner of this action
      * @param qualityGate
      *         enforces the quality gate for this project
      */
-    public AnalysisResult(final String id, final String name, final Run run, final ReferenceProvider referenceProvider,
+    public AnalysisResult(final String id, final String name, final Run owner, final ReferenceProvider referenceProvider,
             final Optional<AnalysisResult> previousResult, final QualityGate qualityGate, final String defaultEncoding,
             final Issues<Issue> issues) {
-        this(id, name, run, referenceProvider, previousResult, qualityGate, defaultEncoding, issues, true);
+        this(id, name, owner, referenceProvider, previousResult, qualityGate, defaultEncoding, issues, true);
     }
 
     /**
      * Creates a new instance of {@link AnalysisResult}.
      *
-     * @param run
+     * @param owner
      *         the current run as owner of this action
      * @param qualityGate
      *         enforces the quality gate for this project
      */
     // FIXME: should we ignore the issues in previousResult?
-    protected AnalysisResult(final String id, final String name, final Run<?, ?> run,
+    protected AnalysisResult(final String id, final String name, final Run<?, ?> owner,
             final ReferenceProvider referenceProvider,
             final Optional<AnalysisResult> previousResult, final QualityGate qualityGate, final String defaultEncoding,
             final Issues<Issue> issues, final boolean canSerialize) {
         this.id = id;
         this.name = name;
-        this.run = run;
+        this.owner = owner;
         this.qualityGate = qualityGate;
         this.defaultEncoding = defaultEncoding;
 
@@ -171,7 +171,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         referenceBuild = referenceProvider.getNumber();
 
         Issues<BuildIssue> referenceResult = referenceProvider.getIssues();
-        IssueDifference difference = new IssueDifference(issues, this.run.getNumber(), referenceResult);
+        IssueDifference difference = new IssueDifference(issues, this.owner.getNumber(), referenceResult);
 
         Issues<BuildIssue> oldIssues = difference.getOldIssues();
         oldIssuesReference = new WeakReference<>(oldIssues);
@@ -187,7 +187,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         fixedIssuesReference = new WeakReference<>(fixedIssues);
         numberOfFixedWarnings = fixedIssues.size();
 
-        computeZeroWarningsHighScore(run, issues, previousResult, issues.isEmpty());
+        computeZeroWarningsHighScore(owner, issues, previousResult, issues.isEmpty());
 
         evaluateStatus(previousResult);
 
@@ -253,7 +253,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         // FIXME split two parts
         Result result = qualityGate.evaluate(this);
         pluginResult = result;
-        run.setResult(pluginResult);
+        owner.setResult(pluginResult);
 
         // FIXME is this still required?
         isSuccessfulStateTouched = true;
@@ -267,11 +267,11 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
                     successfulSinceDate = previous.getSuccessfulSinceDate();
                 }
                 else {
-                    successfulSinceBuild = run.getNumber();
-                    successfulSinceDate = run.getTimestamp().getTimeInMillis();
+                    successfulSinceBuild = owner.getNumber();
+                    successfulSinceDate = owner.getTimestamp().getTimeInMillis();
                 }
                 successfulHighScore = Math.max(previous.getSuccessfulHighScore(),
-                        run.getTimestamp().getTimeInMillis() - successfulSinceDate);
+                        owner.getTimestamp().getTimeInMillis() - successfulSinceDate);
                 if (previous.getSuccessfulHighScore() == 0) {
                     isSuccessfulHighScore = true;
                 }
@@ -281,7 +281,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
                 }
                 if (!isSuccessfulHighScore) {
                     successfulHighScoreGap = previous.getSuccessfulHighScore()
-                            - (run.getTimestamp().getTimeInMillis() - successfulSinceDate);
+                            - (owner.getTimestamp().getTimeInMillis() - successfulSinceDate);
                 }
             }
             else {
@@ -298,11 +298,11 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     /**
      * Sets the run for this result after Jenkins read its data from disk.
      *
-     * @param run
+     * @param owner
      *         the initialized run
      */
-    public void setRun(final Run<?, ?> run) {
-        this.run = run;
+    public void setOwner(final Run<?, ?> owner) {
+        this.owner = owner;
         lock = new ReentrantLock();
     }
 
@@ -324,7 +324,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      * @return the serialization file.
      */
     private XmlFile getDataFile(final String suffix) {
-        return new XmlFile(new AnnotationStream(), new File(getRun().getRootDir(),
+        return new XmlFile(new AnnotationStream(), new File(getOwner().getRootDir(),
                 getSerializationFileName().replace("issues.xml", suffix + "-issues.xml")));
     }
 
@@ -337,8 +337,8 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      *
      * @return the owner
      */
-    public Run<?, ?> getRun() {
-        return run;
+    public Run<?, ?> getOwner() {
+        return owner;
     }
 
     private void serializeAnnotations(final Issues<BuildIssue> oldIssues,
@@ -430,7 +430,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         try {
             Issues<BuildIssue> result = (Issues<BuildIssue>) dataFile.read();
 
-            LOGGER.log(Level.FINE, "Loaded data file " + dataFile + " for run " + getRun());
+            LOGGER.log(Level.FINE, "Loaded data file " + dataFile + " for run " + getOwner());
 
             return result;
         }
@@ -591,8 +591,8 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      * /** Resets the successful high score counters.
      */
     private void resetSuccessfulState() {
-        successfulSinceBuild = run.getNumber();
-        successfulSinceDate = run.getTimestamp().getTimeInMillis();
+        successfulSinceBuild = owner.getNumber();
+        successfulSinceDate = owner.getTimestamp().getTimeInMillis();
         isSuccessfulHighScore = true;
         successfulHighScore = 0;
     }
@@ -655,7 +655,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
 
     @Override
     public AnalysisBuild getBuild() {
-        return new RunAdapter(run);
+        return new RunAdapter(owner);
     }
 
     @Override

@@ -63,7 +63,7 @@ public abstract class ReferenceFinder extends BuildHistory implements ReferenceP
 
     @Override
     public int getNumber() {
-        return getReferenceAction().map(pipelineResultAction -> pipelineResultAction.getRun().getNumber())
+        return getReferenceAction().map(pipelineResultAction -> pipelineResultAction.getOwner().getNumber())
                 .orElse(NO_REFERENCE_FOUND);
     }
 

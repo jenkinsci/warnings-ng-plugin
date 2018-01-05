@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<io.jenkins.plugins.analysis.core.steps.BuildIssue>
+<io.jenkins.plugins.analysis.core.model.BuildIssue>
   <fileName>C:/users/tester/file-name</fileName>
   <category>category</category>
   <type>type</type>
@@ -16,4 +16,4 @@
   <id>cddb41c5-c063-46fc-9d1f-d0216093cd5a</id>
   <fingerprint>fingerprint</fingerprint>
   <build>1</build>
-</io.jenkins.plugins.analysis.core.steps.BuildIssue>
+</io.jenkins.plugins.analysis.core.model.BuildIssue>

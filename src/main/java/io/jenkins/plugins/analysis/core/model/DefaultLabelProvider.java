@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.model;
 import org.apache.commons.lang.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
-import io.jenkins.plugins.analysis.core.steps.Messages;
 
 import hudson.plugins.analysis.util.HtmlPrinter;
 
@@ -69,12 +68,12 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
 
     @Override
     public String getLinkName() {
-        return io.jenkins.plugins.analysis.core.steps.Messages.Tool_Link_Name(name);
+        return Messages.Tool_Link_Name(name);
     }
 
     @Override
     public String getTrendName() {
-        return io.jenkins.plugins.analysis.core.steps.Messages.Tool_Trend_Name(name);
+        return Messages.Tool_Trend_Name(name);
     }
 
     @Override
@@ -116,7 +115,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
      * @return the tooltip for several items
      */
     private String getMultipleItemsTooltip(final int numberOfItems) {
-        return hudson.plugins.analysis.Messages.ResultAction_MultipleWarnings(numberOfItems);
+        return Messages.Result_MultipleWarnings(numberOfItems);
     }
 
     /**
@@ -125,7 +124,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
      * @return the tooltip for exactly one item
      */
     private String getSingleItemTooltip() {
-        return hudson.plugins.analysis.Messages.ResultAction_OneWarning();
+        return Messages.Result_OneWarning();
     }
 
     @Override
@@ -150,19 +149,19 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
 
     private static String createNewWarningsLinkName(final int newWarnings) {
         if (newWarnings == 1) {
-            return io.jenkins.plugins.analysis.core.steps.Messages.ResultAction_OneNewWarning();
+            return Messages.Result_OneNewWarning();
         }
         else {
-            return io.jenkins.plugins.analysis.core.steps.Messages.ResultAction_MultipleNewWarnings(newWarnings);
+            return Messages.Result_MultipleNewWarnings(newWarnings);
         }
     }
 
     private static String createFixedWarningsLinkName(final int fixedWarnings) {
         if (fixedWarnings == 1) {
-            return io.jenkins.plugins.analysis.core.steps.Messages.ResultAction_OneFixedWarning();
+            return Messages.Result_OneFixedWarning();
         }
         else {
-            return Messages.ResultAction_MultipleFixedWarnings(fixedWarnings);
+            return Messages.Result_MultipleFixedWarnings(fixedWarnings);
         }
     }
 }
