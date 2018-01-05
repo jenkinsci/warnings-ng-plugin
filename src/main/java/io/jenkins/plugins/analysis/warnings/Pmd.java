@@ -38,7 +38,7 @@ public class Pmd extends StreamBasedParser {
     @Extension
     public static final class Descriptor extends StaticAnalysisToolDescriptor {
         public Descriptor() {
-            super(new PmdLabelProvider());
+            super(new LabelProvider());
         }
 
     }
@@ -46,10 +46,10 @@ public class Pmd extends StreamBasedParser {
     /**
      * Provides the labels for the parser.
      */
-    static class PmdLabelProvider extends DefaultLabelProvider {
+    private static class LabelProvider extends DefaultLabelProvider {
         private final PmdMessages messages;
 
-        PmdLabelProvider() {
+        LabelProvider() {
             super("pmd", PARSER_NAME);
 
             messages = new PmdMessages();

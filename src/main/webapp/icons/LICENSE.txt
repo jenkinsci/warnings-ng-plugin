@@ -20,6 +20,10 @@ The findbugs logo is a trademark by The University of Maryland. These icons are 
 
 ------------------------------------------------------------------------------
 
+SpotBugs Logos and Icons are licensed under CC BY 4.0.
+
+------------------------------------------------------------------------------
+
 License for idea-24x24.png and idea-48x48.png generated from IntelliJ IDEA Community Edition distribution
 
 ------------------------------------------------------------------------------

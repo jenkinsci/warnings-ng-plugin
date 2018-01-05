@@ -82,6 +82,19 @@ public class PipelineITest extends IntegrationTest {
                 .contains("The fields of this class appear to be accessed inconsistently with respect\n  to synchronization");
     }
 
+    /** Runs the SpotBugs parser on an output file that contains 2 issues. */
+    @Test
+    public void shouldFindAllSpotBugsIssues() {
+        Issues<BuildIssue> issues = shouldFindIssuesOfTool(2, SpotBugs.class, "spotbugsXml.xml");
+
+        BuildIssue issue = issues.get(0);
+
+        StaticAnalysisLabelProvider labelProvider = new FindBugs.Descriptor().getLabelProvider();
+        assertThat(issue).hasDescription(StringUtils.EMPTY);
+        assertThat(labelProvider.getDescription(issue))
+                .contains("This code calls a method and ignores the return value.");
+    }
+
     /** Runs the Clang parser on an output file that contains 9 issues. */
     @Test
     public void shouldFindAllClangIssues() {

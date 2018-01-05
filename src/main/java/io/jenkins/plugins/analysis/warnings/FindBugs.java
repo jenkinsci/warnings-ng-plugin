@@ -23,7 +23,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class FindBugs extends StaticAnalysisTool {
-    private static final String PARSER_NAME = Messages.Warnings_CheckStyle_ParserName();
+    private static final String PARSER_NAME = Messages.Warnings_FindBugs_ParserName();
     private static final String SMALL_ICON_URL = IMAGE_PREFIX + "findbugs-24x24.png";
     private static final String LARGE_ICON_URL = IMAGE_PREFIX + "findbugs-48x48.png";
 
@@ -70,14 +70,25 @@ public class FindBugs extends StaticAnalysisTool {
     /**
      * Provides the labels for the parser.
      */
-    private static final class FindBugsLabelProvider extends DefaultLabelProvider {
-        private final FindBugsMessages messages;
+    static class FindBugsLabelProvider extends DefaultLabelProvider {
+        private final FindBugsMessages messages = new FindBugsMessages();
 
         private FindBugsLabelProvider() {
-            super("findbugs", PARSER_NAME);
+            this("findbugs", PARSER_NAME);
 
-            messages = new FindBugsMessages();
             messages.initialize();
+        }
+
+        /**
+         * Creates a new {@link FindBugsLabelProvider} with the specified ID.
+         *
+         * @param id
+         *         the ID
+         * @param name
+         *         the name of the static analysis tool
+         */
+        protected FindBugsLabelProvider(final String id, final String name) {
+            super(id, name);
         }
 
         @Override
