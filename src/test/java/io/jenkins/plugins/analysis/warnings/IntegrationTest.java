@@ -44,7 +44,7 @@ public class IntegrationTest {
         }
     }
 
-    private String createWorkspaceFileName(final String fileName) {
+    protected String createWorkspaceFileName(final String fileName) {
         return String.format("%s-issues.txt", FilenameUtils.getBaseName(fileName));
     }
 }

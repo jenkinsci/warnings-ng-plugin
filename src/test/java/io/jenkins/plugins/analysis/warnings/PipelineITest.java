@@ -26,7 +26,7 @@ import hudson.model.Descriptor;
 import hudson.model.Result;
 
 /**
- * Integration tests for pipeline support in the warning plug-in.
+ * Integration tests of the warnings plug-in in pipelines.
  *
  * @author Ullrich Hafner
  * @see ScanForIssuesStep

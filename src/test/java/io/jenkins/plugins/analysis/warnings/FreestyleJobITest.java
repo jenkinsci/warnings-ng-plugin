@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 import org.junit.Test;
+import org.junit.jupiter.api.Tag;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -16,11 +17,11 @@ import hudson.plugins.warnings.ParserConfiguration;
 import hudson.plugins.warnings.WarningsPublisher;
 
 /**
- * Integration tests for freestyle jobs with checkstyle plugin.
+ * Integration tests of the warnings plug-in in freestyle jobs.
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"OverlyBroadThrowsClause", "ProhibitedExceptionDeclared"})
+@Tag("IntegrationTest")
 public class FreestyleJobITest extends IntegrationTest {
     /**
      * Runs the Eclipse parser on an empty workspace: the build should report 0 issues and an error message.
@@ -87,7 +88,7 @@ public class FreestyleJobITest extends IntegrationTest {
         return publisher;
     }
 
-    private FreeStyleProject createJobWithWorkspaceFile(final String fileName) throws IOException, InterruptedException {
+    private FreeStyleProject createJobWithWorkspaceFile(final String fileName) throws IOException {
         FreeStyleProject job = j.createFreeStyleProject();
         copyFilesToWorkspace(job, fileName);
         return job;
