@@ -41,6 +41,8 @@ public class MatrixJobITest extends IntegrationTest {
      * with the same parser (GCC). After the successful build the total number of warnings at the root level should be
      * set to 12 (sum of all three configurations). Moreover, for each configuration the total number of warnings is
      * also verified (4, 6, and 2 warnings).
+     *
+     * @throws Exception in case of an error
      */
     @Test
     public void shouldCreateEmptyResult() throws Exception {
