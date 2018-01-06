@@ -81,7 +81,6 @@ class BuildIssueTest extends IssueTest {
     private byte[] asBytes(final Issue issue, final XStream2 stream) throws IOException {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             stream.toXMLUTF8(issue, out);
-            System.out.println(out);
             return out.toByteArray();
         }
     }

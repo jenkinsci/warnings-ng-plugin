@@ -13,13 +13,18 @@ import org.kohsuke.stapler.DataBoundSetter;
 import jenkins.tasks.SimpleBuildStep;
 
 import hudson.EnvVars;
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.matrix.MatrixAggregatable;
+import hudson.matrix.MatrixAggregator;
+import hudson.matrix.MatrixBuild;
+import hudson.matrix.MatrixRun;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.BuildListener;
 import hudson.model.Project;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -35,6 +40,9 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Builder;
 import hudson.tasks.Maven;
 import hudson.tasks.Recorder;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A base class for publishers with the following two characteristics:
@@ -52,7 +60,7 @@ import hudson.tasks.Recorder;
  */
 // CHECKSTYLE:COUPLING-OFF
 @SuppressWarnings("PMD.TooManyFields")
-public abstract class HealthAwareRecorder extends Recorder implements HealthDescriptor, MatrixAggregatable, SimpleBuildStep {
+public abstract class HealthAwareRecorder extends Recorder implements HealthDescriptor, SimpleBuildStep {
     private static final long serialVersionUID = 8892994325541840827L;
 
     /** Default threshold priority limit. */
@@ -1045,4 +1053,74 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         this.shouldDetectModules = shouldDetectModules;
         this.pluginName = "[" + pluginName + "] ";
     }
+
+    @Extension(optional = true)
+    public static class MatrixBridge implements MatrixAggregatable {
+
+        @Override
+        public MatrixAggregator createAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
+            final List<MatrixAggregator> impls = new ArrayList<MatrixAggregator>();
+            for (HealthAwareRecorder r : build.getParent().getPublishersList().getAll(HealthAwareRecorder.class)) {
+                try {
+                    MatrixAggregator impl = (MatrixAggregator) r.getClass().getMethod("createAggregator", MatrixBuild.class, Launcher.class, BuildListener.class).invoke(r, build, launcher, listener);
+                    if (impl != null) {
+                        impls.add(impl);
+                    }
+                } catch (NoSuchMethodException x) {
+                    // does not implement it, fine
+                } catch (IllegalAccessException x) {
+                    assert false : x;
+                } catch (InvocationTargetException x) {
+                    assert false : x;
+                }
+            }
+            if (impls.isEmpty()) {
+                return null;
+            }
+            return new ProxyAggregator(build, launcher, listener, impls);
+        }
+        
+        private static class ProxyAggregator extends MatrixAggregator {
+        
+            private final List<MatrixAggregator> impls;
+            
+            ProxyAggregator(MatrixBuild build, Launcher launcher, BuildListener listener, List<MatrixAggregator> impls) {
+                super(build, launcher, listener);
+                this.impls = impls;
+            }
+
+            @Override
+            public boolean startBuild() throws InterruptedException, IOException {
+                for (MatrixAggregator impl : impls) {
+                    if (!impl.startBuild()) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            
+            @Override
+            public boolean endRun(MatrixRun run) throws InterruptedException, IOException {
+                for (MatrixAggregator impl : impls) {
+                    if (!impl.endRun(run)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            
+            @Override
+            public boolean endBuild() throws InterruptedException, IOException {
+                for (MatrixAggregator impl : impls) {
+                    if (!impl.endBuild()) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+        }
+
+    }
+
 }
