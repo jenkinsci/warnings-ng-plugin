@@ -54,7 +54,7 @@ public class MatrixJobITest extends IntegrationTest {
         axis.add(userAxis);
         project.setAxes(axis);
 
-        project.getBuildersList().add(new Shell(copyResource(resource(WARNINGS_FILE))));
+        project.getBuildersList().add(new Shell(copyResource(WARNINGS_FILE)));
         project.getBuildersList().add(new Shell("cat " + WARNINGS_FILE + "| grep $user_axis"));
 
         Map<String, Integer> warningsPerAxis = new HashMap<>();
@@ -78,7 +78,8 @@ public class MatrixJobITest extends IntegrationTest {
         assertThat(action.getResult().getNumberOfAnnotations()).isEqualTo(12);
     }
 
-    private String copyResource(final Resource resource) {
+    private String copyResource(final String fileName) {
+        Resource resource = createResource(fileName);
         try (InputStream in = resource.asInputStream()) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -100,7 +101,7 @@ public class MatrixJobITest extends IntegrationTest {
         }
     }
 
-    private Resource resource(final String path) {
+    private Resource createResource(final String path) {
         URL resource = getClass().getResource(path);
         if (resource == null) {
             throw new AssertionError("No such resource " + path + " for " + getClass().getName());
