@@ -95,7 +95,7 @@ class BuildIssueTest extends IssueTest {
      * @throws IOException
      *         if the file could not be written
      */
-    public static void main(final String... args) throws IOException {
+    public static void useIfSerializationChanges(final String... args) throws IOException {
         new BuildIssueTest().createSerializationFile();
     }
 }

@@ -4,8 +4,11 @@ import javax.annotation.CheckForNull;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -40,9 +43,6 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Builder;
 import hudson.tasks.Maven;
 import hudson.tasks.Recorder;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A base class for publishers with the following two characteristics:
@@ -355,7 +355,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
      */
     protected void copyFilesWithAnnotationsToBuildFolder(final File rootDir,
             final VirtualChannel channel, final Collection<FileAnnotation> annotations)
-            throws IOException, FileNotFoundException, InterruptedException {
+            throws IOException, InterruptedException {
         new Files().copyFilesWithAnnotationsToBuildFolder(channel, new FilePath(rootDir), annotations,
                 EncodingValidator.getEncoding(getDefaultEncoding()));
     }
@@ -902,7 +902,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         this.defaultEncoding = defaultEncoding;
         this.useDeltaValues = useDeltaValues;
         this.canRunOnFailed = canRunOnFailed;
-        this.usePreviousBuildAsReference = false;
+        usePreviousBuildAsReference = false;
         useStableBuildAsReference = false;
         dontComputeNew = false;
         shouldDetectModules = false;
@@ -1059,7 +1059,7 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
 
         @Override
         public MatrixAggregator createAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
-            final List<MatrixAggregator> impls = new ArrayList<MatrixAggregator>();
+            List<MatrixAggregator> impls = new ArrayList<>();
             for (HealthAwareRecorder r : build.getParent().getPublishersList().getAll(HealthAwareRecorder.class)) {
                 try {
                     MatrixAggregator impl = (MatrixAggregator) r.getClass().getMethod("createAggregator", MatrixBuild.class, Launcher.class, BuildListener.class).invoke(r, build, launcher, listener);
