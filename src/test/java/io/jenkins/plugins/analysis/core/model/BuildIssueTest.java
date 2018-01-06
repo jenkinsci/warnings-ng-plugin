@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.steps;
+package io.jenkins.plugins.analysis.core.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,7 +11,6 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.IssueTest;
 import edu.hm.hafner.analysis.Priority;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
-import io.jenkins.plugins.analysis.core.model.BuildIssue;
 
 import hudson.util.XStream2;
 
@@ -47,7 +46,7 @@ class BuildIssueTest extends IssueTest {
     /** Ensures that an issue instance can be serialized and deserialized using XStream. */
     @Test
     void shouldBeSerializableWithXStream() throws IOException {
-        XStream2 stream = new XStream2();
+        XStream2 stream = BuildIssue.createStream();
 
         byte[] bytes = asBytes(createFilledIssue(), stream);
 
@@ -62,7 +61,7 @@ class BuildIssueTest extends IssueTest {
     void shouldReadIssueFromOldXmlSerialization() {
         byte[] restored = readResource("issue.xml");
 
-        XStream2 stream = new XStream2();
+        XStream2 stream = BuildIssue.createStream();
 
         assertThatIssueCanBeRestoredFrom(restored, stream);
     }
@@ -82,7 +81,7 @@ class BuildIssueTest extends IssueTest {
     private byte[] asBytes(final Issue issue, final XStream2 stream) throws IOException {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             stream.toXMLUTF8(issue, out);
-
+            System.out.println(out);
             return out.toByteArray();
         }
     }
@@ -97,7 +96,7 @@ class BuildIssueTest extends IssueTest {
      * @throws IOException
      *         if the file could not be written
      */
-    public static void useIfSerializationChanges(final String... args) throws IOException {
+    public static void main(final String... args) throws IOException {
         new BuildIssueTest().createSerializationFile();
     }
 }
