@@ -122,11 +122,11 @@ public class ScanForIssuesStep extends Step {
     }
 
     @Override
-    public StepExecution start(final StepContext stepContext) {
-        return new Execution(stepContext, this);
+    public StepExecution start(final StepContext context) {
+        return new Execution(context, this);
     }
 
-    public static class Execution extends SynchronousNonBlockingStepExecution<Issues> {
+    public static class Execution extends SynchronousNonBlockingStepExecution<Issues<Issue>> {
         private final String defaultEncoding;
         private final boolean shouldDetectModules;
         private final StaticAnalysisTool tool;
@@ -143,7 +143,9 @@ public class ScanForIssuesStep extends Step {
 
         private Logger createLogger() throws IOException, InterruptedException {
             TaskListener listener = getContext().get(TaskListener.class);
-
+            if (listener == null) {
+                return new LoggerFactory().createNullLogger();
+            }
             return new LoggerFactory().createLogger(listener.getLogger(), tool.getName());
         }
 
@@ -161,7 +163,6 @@ public class ScanForIssuesStep extends Step {
             else {
                 Logger logger = createLogger();
 
-                // FIXME: if there are no issues than the ID is not defined!
                 Instant start = Instant.now();
                 Issues<Issue> issues;
                 if (StringUtils.isNotBlank(pattern)) {
@@ -170,9 +171,12 @@ public class ScanForIssuesStep extends Step {
                 else {
                     issues = scanConsoleLog(workspace, logger);
                 }
+
                 logger.log("Parsing took %s", Duration.between(start, Instant.now()));
                 issues = resolveAbsolutePaths(issues, workspace, logger);
+                issues.setId(tool.getId());
 
+                // TODO: fingerprints, modules, packages, etc. should be done in one loop in one position
                 return createFingerprints(issues, logger);
             }
         }
@@ -229,7 +233,7 @@ public class ScanForIssuesStep extends Step {
         }
 
         private void logIssuesMessages(final Issues<Issue> issues, final Logger logger) {
-            for (String line : issues.getLogMessages()) {
+            for (String line : issues.getInfoMessages()) {
                 logger.log(line);
             }
         }
@@ -262,6 +266,7 @@ public class ScanForIssuesStep extends Step {
             }
             return expanded;
         }
+
     }
 
     @Extension

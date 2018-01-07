@@ -144,13 +144,13 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
         try (Reader input = createReader(new FileInputStream(file), charset)) {
             parser.setTransformer(line -> ConsoleNote.removeNotes(line));
             Issues<Issue> issues = parser.parse(input, builder);
-            issues.log("Successfully parsed '%s': found %d issues (tool ID = %s)",
+            issues.logInfo("Successfully parsed '%s': found %d issues (tool ID = %s)",
                     file.getAbsolutePath(), issues.getSize(), getId());
             if (issues.getDuplicatesSize() == 1) {
-                issues.log("Note: one issue has been dropped since it is a duplicate");
+                issues.logInfo("Note: one issue has been dropped since it is a duplicate");
             }
             else if (issues.getDuplicatesSize() > 1) {
-                issues.log("Note: %d issues have been dropped since they are duplicates",
+                issues.logInfo("Note: %d issues have been dropped since they are duplicates",
                         issues.getDuplicatesSize());
             }
             return issues;

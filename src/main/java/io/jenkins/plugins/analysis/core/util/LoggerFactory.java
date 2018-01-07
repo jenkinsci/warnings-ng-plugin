@@ -59,6 +59,15 @@ public class LoggerFactory {
     }
 
     /**
+     * Returns a null logger that does not print anything.
+     *
+     * @return null logger
+     */
+    public Logger createNullLogger() {
+        return new NullLogger();
+    }
+
+    /**
      * A simple logger that prefixes each message with the name of the static analysis tool.
      *
      * @author Ulli Hafner

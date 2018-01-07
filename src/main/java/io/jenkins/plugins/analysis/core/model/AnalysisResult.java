@@ -160,7 +160,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         this.qualityGate = qualityGate;
         this.defaultEncoding = defaultEncoding;
 
-        // errors = ImmutableList.copyOf(issues.getLogMessages()); FIXME: errors and log?
+        // errors = ImmutableList.copyOf(issues.getLogMessages()); FIXME: copy errors
         errors = ImmutableList.of();
 
         size = issues.getSize();
