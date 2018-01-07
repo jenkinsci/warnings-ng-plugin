@@ -54,7 +54,7 @@ public class AbsolutePathGenerator {
 
         if (relativeFileNames.isEmpty()) {
             Issues<Issue> unchanged = issues.copy();
-            unchanged.log("Affected files for all issues already have absolute paths");
+            unchanged.logInfo("Affected files for all issues already have absolute paths");
 
             return unchanged;
         }
@@ -82,7 +82,7 @@ public class AbsolutePathGenerator {
             }
         }
 
-        resolved.log("Resolved absolute paths for %d files (Issues %d resolved, %d unresolved, %d already absolute)",
+        resolved.logInfo("Resolved absolute paths for %d files (Issues %d resolved, %d unresolved, %d already absolute)",
                 relativeToAbsoluteMapping.size(), resolvedCount, unresolvedCount, unchangedCount);
 
         return resolved;

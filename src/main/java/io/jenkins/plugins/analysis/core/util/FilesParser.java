@@ -56,15 +56,15 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
     @Override
     public Issues<Issue> invoke(final File workspace, final VirtualChannel channel) {
         Issues<Issue> issues = new Issues<>();
-        issues.log("Searching for all files in '%s' that match the pattern '%s'.",
+        issues.logInfo("Searching for all files in '%s' that match the pattern '%s'.",
                 workspace.getAbsolutePath(), filePattern);
 
         String[] fileNames = new FileFinder(filePattern).find(workspace);
         if (fileNames.length == 0) {
-            issues.log("No files found. Configuration error?");
+            issues.logInfo("No files found. Configuration error?");
         }
         else {
-            issues.log("Parsing %s in %s", plural(fileNames.length, "file"), workspace.getAbsolutePath());
+            issues.logInfo("Parsing %s in %s", plural(fileNames.length, "file"), workspace.getAbsolutePath());
             parseFiles(workspace, fileNames, issues);
         }
 
@@ -94,10 +94,10 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
             String module = detector.guessModuleName(file.getAbsolutePath());
 
             if (!file.canRead()) {
-                issues.log(Messages.FilesParser_Error_NoPermission(module, file));
+                issues.logInfo(Messages.FilesParser_Error_NoPermission(module, file));
             }
             else if (file.length() <= 0) {
-                issues.log(Messages.FilesParser_Error_EmptyFile(module, file));
+                issues.logInfo(Messages.FilesParser_Error_EmptyFile(module, file));
             }
             else {
                 IssueBuilder builder = new IssueBuilder();
@@ -139,16 +139,16 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
             Issues<Issue> result = parser.parse(file, EncodingValidator.defaultCharset(defaultEncoding), builder);
 
             issues.addAll(result);
-            issues.log("Successfully parsed file %s: found %s (skipped %s)", file,
+            issues.logInfo("Successfully parsed file %s: found %s (skipped %s)", file,
                     plural(issues.getSize(), "issue"),
                     plural(issues.getDuplicatesSize(), "duplicate"));
         }
         catch (ParsingException exception) {
-            issues.log(Messages.FilesParser_Error_Exception(file) + "\n\n"
+            issues.logInfo(Messages.FilesParser_Error_Exception(file) + "\n\n"
                     + ExceptionUtils.getStackTrace((Throwable) ObjectUtils.defaultIfNull(exception.getCause(), exception)));
         }
         catch (ParsingCanceledException ignored) {
-            issues.log("Parsing of file %s has been canceled", file);
+            issues.logInfo("Parsing of file %s has been canceled", file);
         }
     }
 }

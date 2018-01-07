@@ -56,7 +56,9 @@ import hudson.remoting.VirtualChannel;
 
 /**
  * Publish issues created by a static analysis run. The recorded issues are stored as a {@link ResultAction} in the
- * associated run.
+ * associated run. If the set of issues to store has a unique ID, then the created action will use this ID as well.
+ * Otherwise a default ID is used to publish the results. In any case, the computed ID can be overwritten by specifying
+ * an ID as step parameter.
  */
 @SuppressWarnings("InstanceVariableMayNotBeInitialized")
 public class PublishIssuesStep extends Step {
@@ -89,7 +91,10 @@ public class PublishIssuesStep extends Step {
             this.issues = new Issues<>();
         }
         else {
-            this.issues = Issues.merge(issues);
+            this.issues = new Issues<>();
+            for (Issues<Issue> issueSet : issues) {
+                this.issues.addAll(issueSet);
+            }
         }
     }
 
@@ -438,19 +443,15 @@ public class PublishIssuesStep extends Step {
                 return id;
             }
 
-            ImmutableSortedSet<String> origins = issues.getToolNames();
+            if (issues.hasId()) {
+                return issues.getId();
+            }
 
-            String defaultId;
-            if (origins.size() == 1) {
-                defaultId = origins.getOnly();
+            // TODO: shouldn't this be better a default instance of StaticAnalysisTool?
+            if (StringUtils.isBlank(name)) {
+                name = Messages.Default_Name();
             }
-            else {
-                defaultId = "staticAnalysis";
-                if (StringUtils.isBlank(name)) {
-                    name = Messages.Default_Name();
-                }
-            }
-            return defaultId;
+            return "staticAnalysis";
         }
 
         private Logger createLogger(final String toolId) throws IOException, InterruptedException {
