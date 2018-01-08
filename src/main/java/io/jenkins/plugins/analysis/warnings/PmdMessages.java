@@ -20,6 +20,9 @@ import net.sourceforge.pmd.RuleSetNotFoundException;
  * @author Ulli Hafner
  */
 public class PmdMessages {
+    private static final String ERROR_MESSAGE = "Installation problem: can't access PMD messages.";
+    private static final Logger LOGGER = Logger.getLogger(PmdMessages.class.getName());
+
     private final Map<String, RuleSet> rules = new HashMap<>();
 
     /**
@@ -30,14 +33,17 @@ public class PmdMessages {
     public int initialize() {
         try {
             Iterator<RuleSet> ruleSets = new RuleSetFactory().getRegisteredRuleSets();
-            for (Iterator<RuleSet> iterator = ruleSets; iterator.hasNext();) {
-                RuleSet ruleSet = iterator.next();
+            for (; ruleSets.hasNext();) {
+                RuleSet ruleSet = ruleSets.next();
                 rules.put(ruleSet.getName(), ruleSet);
+            }
+            if (rules.isEmpty()) {
+                LOGGER.log(Level.SEVERE, ERROR_MESSAGE);
             }
             return rules.size();
         }
         catch (RuleSetNotFoundException exception) {
-            Logger.getLogger(PmdMessages.class.getName()).log(Level.SEVERE, "Installation problem: can't access PMD messages.");
+            LOGGER.log(Level.SEVERE, ERROR_MESSAGE, exception);
         }
         return 0;
     }
