@@ -61,7 +61,7 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
 
         String[] fileNames = new FileFinder(filePattern).find(workspace);
         if (fileNames.length == 0) {
-            issues.logInfo("No files found. Configuration error?");
+            issues.logError("No files found. Configuration error?");
         }
         else {
             issues.logInfo("Parsing %s in %s", plural(fileNames.length, "file"), workspace.getAbsolutePath());
@@ -94,10 +94,10 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
             String module = detector.guessModuleName(file.getAbsolutePath());
 
             if (!file.canRead()) {
-                issues.logInfo(Messages.FilesParser_Error_NoPermission(module, file));
+                issues.logError(Messages.FilesParser_Error_NoPermission(module, file));
             }
             else if (file.length() <= 0) {
-                issues.logInfo(Messages.FilesParser_Error_EmptyFile(module, file));
+                issues.logError(Messages.FilesParser_Error_EmptyFile(module, file));
             }
             else {
                 IssueBuilder builder = new IssueBuilder();
@@ -144,7 +144,7 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
                     plural(issues.getDuplicatesSize(), "duplicate"));
         }
         catch (ParsingException exception) {
-            issues.logInfo(Messages.FilesParser_Error_Exception(file) + "\n\n"
+            issues.logError(Messages.FilesParser_Error_Exception(file) + "\n\n"
                     + ExceptionUtils.getStackTrace((Throwable) ObjectUtils.defaultIfNull(exception.getCause(), exception)));
         }
         catch (ParsingCanceledException ignored) {

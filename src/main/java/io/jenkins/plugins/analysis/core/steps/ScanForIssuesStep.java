@@ -18,7 +18,7 @@ import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
@@ -215,8 +215,7 @@ public class ScanForIssuesStep extends Step {
             logger.log("Parsing console log (workspace: '%s')", workspace);
 
             Issues<Issue> issues = tool.parse(getRun().getLogFile(),
-                    getCharset(), new IssueBuilder().setOrigin(tool.getId())
-            );
+                    getCharset(), new IssueBuilder().setOrigin(tool.getId()));
             logIssuesMessages(issues, logger);
             return issues;
         }
@@ -233,9 +232,7 @@ public class ScanForIssuesStep extends Step {
         }
 
         private void logIssuesMessages(final Issues<Issue> issues, final Logger logger) {
-            for (String line : issues.getInfoMessages()) {
-                logger.log(line);
-            }
+            logger.logEachLine(issues.getInfoMessages().castToList());
         }
 
         /** Maximum number of times that the environment expansion is executed. */
@@ -266,15 +263,13 @@ public class ScanForIssuesStep extends Step {
             }
             return expanded;
         }
-
     }
 
     @Extension
     public static class Descriptor extends StepDescriptor {
-        @SuppressWarnings("unchecked")
         @Override
-        public Set<? extends Class<?>> getRequiredContext() {
-            return Sets.newHashSet(FilePath.class, EnvVars.class, TaskListener.class, Run.class);
+        public Set<Class<?>> getRequiredContext() {
+            return ImmutableSet.of(FilePath.class, EnvVars.class, TaskListener.class, Run.class);
         }
 
         @Override

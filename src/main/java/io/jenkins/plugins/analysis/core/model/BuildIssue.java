@@ -34,6 +34,11 @@ public class BuildIssue extends Issue {
         return build;
     }
 
+    /**
+     * Creates a new {@link XStream2} to serialize {@link BuildIssue} instances.
+     *
+     * @return the stream
+     */
     public static XStream2 createStream() {
         XStream2 xStream2 = new XStream2();
         xStream2.registerConverter(new LineRangeListConverter(xStream2));
