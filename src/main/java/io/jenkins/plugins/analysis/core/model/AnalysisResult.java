@@ -31,7 +31,6 @@ import hudson.model.Api;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.plugins.analysis.core.HealthDescriptor;
-import hudson.plugins.analysis.util.model.AnnotationStream;
 
 /**
  * Stores the results of a static analysis run. This class is capable of storing a reference to the current build.
@@ -324,7 +323,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      * @return the serialization file.
      */
     private XmlFile getDataFile(final String suffix) {
-        return new XmlFile(new AnnotationStream(), new File(getOwner().getRootDir(),
+        return new XmlFile(BuildIssue.createStream(), new File(getOwner().getRootDir(),
                 getSerializationFileName().replace("issues.xml", suffix + "-issues.xml")));
     }
 

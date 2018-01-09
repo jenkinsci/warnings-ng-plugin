@@ -20,8 +20,8 @@ import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
@@ -530,12 +530,12 @@ public class PublishIssuesStep extends Step {
         }
 
         private AnalysisResult createAnalysisResult(
-                final Issues<Issue> filtered, final String id,
-                final Run run, final ResultSelector selector) {
+                final Issues<Issue> filtered, final String actualId,
+                final Run<?, ?> run, final ResultSelector selector) {
             ReferenceProvider referenceProvider = ReferenceFinder.create(run,
                     selector, usePreviousBuildAsReference, useStableBuildAsReference);
             BuildHistory buildHistory = new BuildHistory(run, selector);
-            return new AnalysisResult(id, name, run, referenceProvider, buildHistory.getPreviousResult(),
+            return new AnalysisResult(actualId, name, run, referenceProvider, buildHistory.getPreviousResult(),
                     qualityGate, defaultEncoding, filtered);
         }
     }
@@ -544,8 +544,8 @@ public class PublishIssuesStep extends Step {
     @Extension
     public static class Descriptor extends StepDescriptor {
         @Override
-        public Set<? extends Class<?>> getRequiredContext() {
-            return Sets.newHashSet(Run.class, TaskListener.class, Computer.class);
+        public Set<Class<?>> getRequiredContext() {
+            return ImmutableSet.of(Run.class, TaskListener.class, Computer.class);
         }
 
         @Override
@@ -553,6 +553,7 @@ public class PublishIssuesStep extends Step {
             return "publishIssues";
         }
 
+        @Nonnull
         @Override
         public String getDisplayName() {
             return "Publish issues created by a static analysis run";
