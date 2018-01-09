@@ -15,6 +15,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
 import io.jenkins.plugins.analysis.core.model.BuildIssue;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 
 import hudson.markup.MarkupFormatter;
@@ -30,51 +31,72 @@ import hudson.plugins.analysis.core.GlobalSettings;
  * @author Ulli Hafner
  */
 public class IssuesDetail implements ModelObject {
-    public static final Function<String, String> FILE_NAME_FORMATTER = string -> StringUtils.substringAfterLast(string, "/");
+    protected static final Issues<BuildIssue> NO_ISSUES = new Issues<>();
+
+    public static final Function<String, String> FILE_NAME_FORMATTER
+            = string -> StringUtils.substringAfterLast(string, "/");
 
     private final Run<?, ?> owner;
 
     private final Issues<BuildIssue> issues;
     private final Issues<BuildIssue> fixedIssues;
     private final Issues<BuildIssue> newIssues;
+    private final Issues<BuildIssue> oldIssues;
 
     private final String defaultEncoding;
 
     private final Optional<ModelObject> parent;
 
     private final String displayName;
+    private final StaticAnalysisLabelProvider labelProvider;
 
     /** Sanitizes HTML elements in warning messages and tooltips. Use this formatter if raw HTML should be shown. */
     private final MarkupFormatter sanitizer = new RawHtmlMarkupFormatter(true);
 
-    public IssuesDetail(final Run<?, ?> owner, final Issues<BuildIssue> issues,
-            final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues, final String defaultEncoding,
-            final String displayName) {
-        this(owner, issues, fixedIssues, newIssues, defaultEncoding, Optional.empty(), displayName);
+    public IssuesDetail(final Run<?, ?> owner,
+            final Issues<BuildIssue> issues, final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues,
+            final Issues<BuildIssue> oldIssues,
+            final String defaultEncoding, final String displayName, final StaticAnalysisLabelProvider labelProvider) {
+        this(owner, issues, fixedIssues, newIssues, oldIssues, defaultEncoding, Optional.empty(), displayName,
+                labelProvider);
     }
 
-    public IssuesDetail(final Run<?, ?> owner, final Issues<BuildIssue> issues,
-            final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues, final String defaultEncoding,
-            final ModelObject parent) {
-        this(owner, issues, fixedIssues, newIssues, defaultEncoding, parent, StringUtils.EMPTY);
+    public IssuesDetail(final Run<?, ?> owner,
+            final Issues<BuildIssue> issues, final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues,
+            final Issues<BuildIssue> oldIssues,
+            final String defaultEncoding, final ModelObject parent,
+            final StaticAnalysisLabelProvider labelProvider) {
+        this(owner, issues, fixedIssues, newIssues, oldIssues, defaultEncoding, parent, StringUtils.EMPTY,
+                labelProvider);
     }
 
-    public IssuesDetail(final Run<?, ?> owner, final Issues<BuildIssue> issues,
-            final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues, final String defaultEncoding, final ModelObject parent,
-            final String displayName) {
-        this(owner, issues, fixedIssues, newIssues, defaultEncoding, Optional.of(parent), displayName);
+    public IssuesDetail(final Run<?, ?> owner,
+            final Issues<BuildIssue> issues, final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues,
+            final Issues<BuildIssue> oldIssues,
+            final String defaultEncoding, final ModelObject parent, final String displayName,
+            final StaticAnalysisLabelProvider labelProvider) {
+        this(owner, issues, fixedIssues, newIssues, oldIssues, defaultEncoding, Optional.of(parent), displayName,
+                labelProvider);
     }
 
-    public IssuesDetail(final Run<?, ?> owner, final Issues<BuildIssue> issues,
-            final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues, final String defaultEncoding, final Optional<ModelObject> parent,
-            final String displayName) {
+    public IssuesDetail(final Run<?, ?> owner,
+            final Issues<BuildIssue> issues, final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues,
+            final Issues<BuildIssue> oldIssues,
+            final String defaultEncoding, final Optional<ModelObject> parent, final String displayName,
+            final StaticAnalysisLabelProvider labelProvider) {
         this.owner = owner;
         this.issues = issues;
         this.fixedIssues = fixedIssues;
         this.newIssues = newIssues;
+        this.oldIssues = oldIssues;
         this.defaultEncoding = defaultEncoding;
         this.parent = parent;
         this.displayName = displayName;
+        this.labelProvider = labelProvider;
+    }
+
+    protected StaticAnalysisLabelProvider getLabelProvider() {
+        return labelProvider;
     }
 
     public Issues<BuildIssue> getIssues() {
@@ -87,6 +109,10 @@ public class IssuesDetail implements ModelObject {
 
     public Issues<BuildIssue> getFixedIssues() {
         return fixedIssues;
+    }
+
+    public Issues<BuildIssue> getOldIssues() {
+        return oldIssues;
     }
 
     /**
@@ -132,7 +158,7 @@ public class IssuesDetail implements ModelObject {
         try {
             return sanitizer.translate(html);
         }
-        catch (IOException e) {
+        catch (IOException ignore) {
             return StringUtils.EMPTY;
         }
     }
@@ -175,8 +201,33 @@ public class IssuesDetail implements ModelObject {
         return getLocalizedPriority(Priority.fromString(priorityName));
     }
 
+    /**
+     * Returns a localized priority name.
+     *
+     * @param priority
+     *         the priority
+     *
+     * @return localized priority name
+     */
     public String getLocalizedPriority(final Priority priority) {
         return LocalizedPriority.getLocalizedString(priority);
+    }
+
+    public String getDescription(final Issue issue) {
+        return getLabelProvider().getDescription(issue);
+    }
+
+    public PropertyCountTab getDetails(final String plainLink) {
+        Function<String, String> propertyFormatter;
+        if ("fileName".equals(plainLink)) {
+            propertyFormatter = IssuesDetail.FILE_NAME_FORMATTER;
+        }
+        else {
+            propertyFormatter = Function.identity();
+        }
+        return new PropertyCountTab(owner, issues, defaultEncoding, this, plainLink, propertyFormatter,
+                labelProvider);
+
     }
 
     /**
@@ -218,7 +269,7 @@ public class IssuesDetail implements ModelObject {
     /**
      * Returns whether this build is the last available build.
      *
-     * @return <code>true</code> if this build is the last available build
+     * @return {@code true} if this build is the last available build
      */
     public final boolean isCurrent() {
         return owner.getParent().getLastBuild().number == owner.number;
@@ -240,8 +291,8 @@ public class IssuesDetail implements ModelObject {
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
         try {
-            return new DetailFactory().createTrendDetails(link, owner, issues, fixedIssues, newIssues,
-                    Collections.emptyList(), getDefaultEncoding(), this);
+            return new DetailFactory().createTrendDetails(link, owner, issues, fixedIssues, newIssues, oldIssues,
+                    Collections.emptyList(), getDefaultEncoding(), this, labelProvider);
         }
         catch (NoSuchElementException exception) {
             try {
