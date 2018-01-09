@@ -10,6 +10,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.model.ModelObject;
 import hudson.model.Run;
@@ -26,17 +27,17 @@ public class PropertyCountTab extends IssuesDetail {
 
     /**
      * Creates a new instance of {@link PropertyCountTab}.
-     *
-     * @param property
-     *         the property to show the details for
-     * @param owner
+     *  @param owner
      *         current build as owner of this action.
      * @param issues
-     *         the module to show the details for
+     * @param property
+     *         the property to show the details for
+     * @param labelProvider
      */
     public PropertyCountTab(final Run<?, ?> owner, final Issues issues, final String defaultEncoding,
-            final ModelObject parent, final String property, final Function<String, String> propertyFormatter) {
-        super(owner, issues, new Issues(), new Issues(), defaultEncoding, parent);
+            final ModelObject parent, final String property, final Function<String, String> propertyFormatter,
+            final StaticAnalysisLabelProvider labelProvider) {
+        super(owner, issues, NO_ISSUES, NO_ISSUES, NO_ISSUES, defaultEncoding, parent, labelProvider);
 
         this.property = property;
         propertyCount = getIssues().getPropertyCount(getIssueStringFunction(property));

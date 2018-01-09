@@ -19,7 +19,7 @@
             <b><j:out value="${it.sanitize(issue.message)}"/></b>
           </p>
           <p>
-            <j:out value="${it.sanitize(issue.description)}"/>
+            <j:out value="${it.sanitize(it.getDescription(issue))}"/>
           </p>
         </td>
       </tr>
