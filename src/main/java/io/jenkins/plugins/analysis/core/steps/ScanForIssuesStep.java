@@ -25,6 +25,7 @@ import edu.hm.hafner.analysis.FullTextFingerprint;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.PackageNameResolver;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool.StaticAnalysisToolDescriptor;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
@@ -126,6 +127,9 @@ public class ScanForIssuesStep extends Step {
         return new Execution(context, this);
     }
 
+    /**
+     * Actually performs the execution of the associated step.
+     */
     public static class Execution extends SynchronousNonBlockingStepExecution<Issues<Issue>> {
         private final String defaultEncoding;
         private final boolean shouldDetectModules;
@@ -163,22 +167,40 @@ public class ScanForIssuesStep extends Step {
             else {
                 Logger logger = createLogger();
 
-                Instant start = Instant.now();
-                Issues<Issue> issues;
-                if (StringUtils.isNotBlank(pattern)) {
-                    issues = scanFiles(workspace, logger);
-                }
-                else {
-                    issues = scanConsoleLog(workspace, logger);
-                }
+                Issues<Issue> issues = findIssues(workspace, logger);
+                Issues<Issue> issuesWithPath = resolveAbsolutePaths(issues, workspace, logger);
+                Issues<Issue> issuesWithPackage = resolvePackageNames(issuesWithPath, logger);
 
-                logger.log("Parsing took %s", Duration.between(start, Instant.now()));
-                issues = resolveAbsolutePaths(issues, workspace, logger);
-                issues.setId(tool.getId());
-
-                // TODO: fingerprints, modules, packages, etc. should be done in one loop in one position
-                return createFingerprints(issues, logger);
+                return createFingerprints(issuesWithPackage, logger);
             }
+        }
+
+        private Issues<Issue> findIssues(final FilePath workspace, final Logger logger)
+                throws IOException, InterruptedException {
+            Instant start = Instant.now();
+            Issues<Issue> issues;
+            if (StringUtils.isNotBlank(pattern)) {
+                issues = scanFiles(workspace, logger);
+            }
+            else {
+                issues = scanConsoleLog(workspace, logger);
+            }
+            issues.setId(tool.getId());
+
+            logger.log("Parsing took %s", Duration.between(start, Instant.now()));
+            return issues;
+        }
+
+        private Issues<Issue> resolvePackageNames(final Issues<Issue> issues, final Logger logger) {
+            Instant start = Instant.now();
+
+            PackageNameResolver resolver = new PackageNameResolver();
+            Issues<Issue> resolved = resolver.run(issues, new IssueBuilder(), getCharset());
+            logIssuesMessages(resolved, logger);
+
+            logger.log("Resolving package names took %s", Duration.between(start, Instant.now()));
+
+            return resolved;
         }
 
         private Issues<Issue> resolveAbsolutePaths(final Issues<Issue> issues, final FilePath workspace,

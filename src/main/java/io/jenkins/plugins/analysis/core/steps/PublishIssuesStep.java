@@ -397,6 +397,9 @@ public class PublishIssuesStep extends Step {
         return new Execution(stepContext, this);
     }
 
+    /**
+     * Actually performs the execution of the associated step.
+     */
     public static class Execution extends SynchronousNonBlockingStepExecution<ResultAction> {
         private final HealthDescriptor healthDescriptor;
         private final boolean useStableBuildAsReference;
