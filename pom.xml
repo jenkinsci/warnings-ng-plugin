@@ -132,12 +132,20 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>**/HealthAware*.java</exclude>
-          </excludes>
-        </configuration>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${jar.maven.plugin}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/IntegrationTest*</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
