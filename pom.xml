@@ -17,25 +17,6 @@
 
   <url>http://wiki.jenkins-ci.org/x/CwDgAQ</url>
 
-  <properties>
-    <!-- Project Dependencies Configuration -->
-    <findbugs.annotations>3.0.0</findbugs.annotations>
-    <commons.lang.version>3.6</commons.lang.version>
-    <commons.io.version>2.5</commons.io.version>
-    <commons.digester.version>3.2</commons.digester.version>
-    <commons.text.version>1.1</commons.text.version>
-    <eclipse-collections.version>9.0.0</eclipse-collections.version>
-
-    <!-- Project Test Dependencies Configuration -->
-    <junit.version>5.0.0</junit.version>
-    <assertj.version>3.8.0</assertj.version>
-    <mockito.version>2.12.0</mockito.version>
-
-    <!-- Maven Plug-ins Configuration -->
-    <junit.surefire.provider>1.0.0</junit.surefire.provider>
-    <jenkins.version>2.73.3</jenkins.version>
-  </properties>
-
   <dependencies>
     <!-- Project Dependencies -->
     <dependency>
@@ -183,12 +164,20 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>**/HealthAware*.java</exclude>
-          </excludes>
-        </configuration>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${jar.maven.plugin}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/IntegrationTest*</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>

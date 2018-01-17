@@ -38,7 +38,7 @@ import hudson.model.Descriptor;
 public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticAnalysisTool>
         implements IssueParser, ExtensionPoint {
     /**
-     * Finds the static analysis tool with the specified ID.
+     * Finds the label provider for the static analysis tool with the specified ID.
      *
      * @param id
      *         the ID of the tool to find
@@ -60,7 +60,7 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
     }
 
     /**
-     * Finds the static analysis tool with the specified ID.
+     * Finds the label provider for the static analysis tool with the specified ID.
      *
      * @param id
      *         the ID of the tool to find
