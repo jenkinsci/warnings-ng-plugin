@@ -1,0 +1,10 @@
+start build
+make: thisFile.js
+everything okay
+make: thisOtherFile.js
+error detail1: wrong character
+error detail2: encoding issue
+make-error: thisOtherFile.js: wrong encoding detected
+make: anotherFile.js
+make: yetAnotherFile.js
+end build

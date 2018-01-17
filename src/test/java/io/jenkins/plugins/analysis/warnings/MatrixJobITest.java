@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.Tag;
 
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import io.jenkins.plugins.analysis.core.IntegrationTest;
 
 import hudson.matrix.AxisList;
 import hudson.matrix.MatrixBuild;
