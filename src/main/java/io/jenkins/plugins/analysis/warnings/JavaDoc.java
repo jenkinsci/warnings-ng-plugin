@@ -1,11 +1,9 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Collection;
-
-import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.JavaDocParser;
-import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.warnings.Java.JavaLabelProvider;
 
 import hudson.Extension;
@@ -17,13 +15,13 @@ import hudson.plugins.warnings.parser.Messages;
  * @author Ullrich Hafner
  */
 @Extension
-public class JavaDoc extends AbstractParserTool {
+public class JavaDoc extends StaticAnalysisTool {
     private static final String ID = "javadoc";
 
     @Override
-    public Collection<? extends AbstractParser> getParsers() {
-        return only(new JavaDocParser());
-    }
+    public IssueParser createParser() {
+return new JavaDocParser();
+}
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {

@@ -1,12 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Collection;
-
-import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.JavacParser;
-import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
 import hudson.plugins.warnings.WarningsDescriptor;
@@ -18,15 +16,15 @@ import hudson.plugins.warnings.parser.Messages;
  * @author Ullrich Hafner
  */
 @Extension
-public class Java extends AbstractParserTool {
+public class Java extends StaticAnalysisTool {
     private static final String ID = "java";
     private static final String JAVA_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + ID + "-24x24.png";
     private static final String JAVA_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + ID + "-48x48.png";
 
     @Override
-    public Collection<? extends AbstractParser> getParsers() {
-        return only(new JavacParser());
-    }
+    public IssueParser createParser() {
+return new JavacParser();
+}
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {

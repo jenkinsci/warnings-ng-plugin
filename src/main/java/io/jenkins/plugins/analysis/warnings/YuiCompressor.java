@@ -1,12 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Collection;
-
-import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.YuiCompressorParser;
-import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
 
@@ -16,14 +14,14 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 @Extension
-public class YuiCompressor extends AbstractParserTool {
+public class YuiCompressor extends StaticAnalysisTool {
     private static final String ID = "yui";
     private static final String PARSER_NAME = Messages.Warnings_YUICompressor_ParserName();
 
     @Override
-    public Collection<? extends AbstractParser> getParsers() {
-        return only(new YuiCompressorParser());
-    }
+    public IssueParser createParser() {
+return new YuiCompressorParser();
+}
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {

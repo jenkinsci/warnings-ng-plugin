@@ -5,9 +5,9 @@ import java.util.Collection;
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.MetrowerksCWCompilerParser;
 import edu.hm.hafner.analysis.parser.MetrowerksCWLinkerParser;
-import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
 import hudson.Extension;
 
@@ -17,13 +17,13 @@ import hudson.Extension;
  * @author Aykut Yilmaz
  */
 @Extension
-public class MetrowerksCodeWarrior extends AbstractParserTool {
+public class MetrowerksCodeWarrior extends StaticAnalysisToolSuite {
     private static final String ID = "metrowerks";
     private static final String PARSER_NAME = Messages.Warnings_MetrowerksCodeWarrior_ParserName();
 
     @Override
     protected Collection<? extends AbstractParser> getParsers() {
-        return all(new MetrowerksCWCompilerParser(), new MetrowerksCWLinkerParser());
+        return asList(new MetrowerksCWCompilerParser(), new MetrowerksCWLinkerParser());
     }
 
     @Override

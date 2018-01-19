@@ -1,12 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Collection;
-
-import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.GccParser;
-import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
 
@@ -16,14 +14,14 @@ import hudson.Extension;
  * @author Raphael Furch
  */
 @Extension
-public class Gcc3 extends AbstractParserTool {
+public class Gcc3 extends StaticAnalysisTool {
     private static final String ID = "gcc3";
     private static final String PARSER_NAME = Messages.Warnings_gcc3_ParserName();
 
     @Override
-    public Collection<? extends AbstractParser> getParsers() {
-        return only(new GccParser());
-    }
+    public IssueParser createParser() {
+return new GccParser();
+}
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {

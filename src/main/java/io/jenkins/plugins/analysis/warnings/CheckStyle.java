@@ -1,14 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Collection;
-
-import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
 import static hudson.plugins.warnings.WarningsDescriptor.*;
-import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyleRules;
 
 import hudson.Extension;
@@ -19,7 +17,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 @Extension
-public class CheckStyle extends AbstractParserTool {
+public class CheckStyle extends StaticAnalysisTool {
     private static final String ID = "checkstyle";
     private static final String PARSER_NAME = Messages.Warnings_CheckStyle_ParserName();
     private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
@@ -27,9 +25,9 @@ public class CheckStyle extends AbstractParserTool {
     private static final LabelProvider LABEL_PROVIDER = new LabelProvider();
 
     @Override
-    public Collection<? extends AbstractParser> getParsers() {
-        return only(new CheckStyleParser());
-    }
+    public IssueParser createParser() {
+return new CheckStyleParser();
+}
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {

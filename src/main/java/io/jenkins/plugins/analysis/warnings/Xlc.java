@@ -5,9 +5,9 @@ import java.util.Collection;
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.XlcCompilerParser;
 import edu.hm.hafner.analysis.parser.XlcLinkerParser;
-import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
 import hudson.Extension;
 
@@ -17,13 +17,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 @Extension
-public class Xlc extends AbstractParserTool {
+public class Xlc extends StaticAnalysisToolSuite {
     private static final String ID = "xlc";
     private static final String PARSER_NAME = Messages.Warnings_Xlc_ParserName();
 
     @Override
     protected Collection<? extends AbstractParser> getParsers() {
-        return all(new XlcCompilerParser(), new XlcLinkerParser());
+        return asList(new XlcCompilerParser(), new XlcLinkerParser());
     }
 
     @Override

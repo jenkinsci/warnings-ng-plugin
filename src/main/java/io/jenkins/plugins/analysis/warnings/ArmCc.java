@@ -5,9 +5,9 @@ import java.util.Collection;
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.Armcc5CompilerParser;
 import edu.hm.hafner.analysis.parser.ArmccCompilerParser;
-import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
 import hudson.Extension;
 
@@ -17,13 +17,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 @Extension
-public class ArmCc extends AbstractParserTool {
+public class ArmCc extends StaticAnalysisToolSuite {
     private static final String ID = "armcc";
     private static final String PARSER_NAME = Messages.Warnings_Armcc_ParserName();
 
     @Override
     public Collection<? extends AbstractParser> getParsers() {
-        return all(new Armcc5CompilerParser(), new ArmccCompilerParser());
+        return asList(new Armcc5CompilerParser(), new ArmccCompilerParser());
     }
 
     @Override

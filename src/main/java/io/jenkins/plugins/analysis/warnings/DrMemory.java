@@ -1,12 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Collection;
-
-import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.DrMemoryParser;
-import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
 
@@ -16,14 +14,14 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 @Extension
-public class DrMemory extends AbstractParserTool {
+public class DrMemory extends StaticAnalysisTool {
     private static final String ID = "dr-memory";
     private static final String PARSER_NAME = Messages.Warnings_DrMemory_ParserName();
 
     @Override
-    public Collection<? extends AbstractParser> getParsers() {
-        return only(new DrMemoryParser());
-    }
+    public IssueParser createParser() {
+return new DrMemoryParser();
+}
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {

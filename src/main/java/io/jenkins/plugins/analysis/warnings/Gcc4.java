@@ -5,9 +5,9 @@ import java.util.Collection;
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.Gcc4CompilerParser;
 import edu.hm.hafner.analysis.parser.Gcc4LinkerParser;
-import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
 import hudson.Extension;
 
@@ -17,13 +17,13 @@ import hudson.Extension;
  * @author Raphael Furch
  */
 @Extension
-public class Gcc4 extends AbstractParserTool {
+public class Gcc4 extends StaticAnalysisToolSuite {
     private static final String ID = "gcc4";
     private static final String PARSER_NAME = Messages.Warnings_gcc4_ParserName();
 
     @Override
     protected Collection<? extends AbstractParser> getParsers() {
-        return all(new Gcc4CompilerParser(), new Gcc4LinkerParser());
+        return asList(new Gcc4CompilerParser(), new Gcc4LinkerParser());
     }
 
     @Override

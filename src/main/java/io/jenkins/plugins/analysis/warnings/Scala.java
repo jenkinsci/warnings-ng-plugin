@@ -5,9 +5,9 @@ import java.util.Collection;
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.SbtScalacParser;
 import edu.hm.hafner.analysis.parser.ScalacParser;
-import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
 import hudson.Extension;
 import hudson.plugins.warnings.parser.Messages;
@@ -18,13 +18,13 @@ import hudson.plugins.warnings.parser.Messages;
  * @author Ullrich Hafner
  */
 @Extension
-public class Scala extends AbstractParserTool {
+public class Scala extends StaticAnalysisToolSuite {
     private static final String ID = "scala";
     private static final String PARSER_NAME = Messages.Warnings_ScalaParser_ParserName();
 
     @Override
     protected Collection<? extends AbstractParser> getParsers() {
-        return all(new ScalacParser(), new SbtScalacParser());
+        return asList(new ScalacParser(), new SbtScalacParser());
     }
 
     @Override
