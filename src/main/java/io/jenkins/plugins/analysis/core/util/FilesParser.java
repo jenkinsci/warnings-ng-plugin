@@ -7,10 +7,10 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
-import io.jenkins.plugins.analysis.core.model.IssueParser;
 import jenkins.MasterToSlaveFileCallable;
 
 import hudson.plugins.analysis.Messages;
@@ -28,6 +28,7 @@ import hudson.remoting.VirtualChannel;
 public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
     private final String filePattern;
     private final IssueParser parser;
+    private final String id;
 
     /** Determines whether module names should be derived from Maven pom.xml or Ant build.xml files. */
     private final boolean shouldDetectModules;
@@ -40,15 +41,18 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
      *         ant file-set pattern to scan for files to parse
      * @param parser
      *         the parser to scan the found files for issues
+     * @param id
+     *         the ID of the parser
      * @param shouldDetectModules
      *         determines whether modules should be detected from pom.xml or build.xml files
      * @param defaultEncoding
      *         the default encoding used to read files (warnings, source code, etc.).
      */
-    public FilesParser(final String filePattern,
-            final IssueParser parser, final boolean shouldDetectModules, final String defaultEncoding) {
+    public FilesParser(final String filePattern, final IssueParser parser, final String id,
+            final boolean shouldDetectModules, final String defaultEncoding) {
         this.filePattern = filePattern;
         this.parser = parser;
+        this.id = id;
         this.shouldDetectModules = shouldDetectModules;
         this.defaultEncoding = defaultEncoding;
     }
@@ -102,7 +106,7 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
             else {
                 IssueBuilder builder = new IssueBuilder();
                 builder.setModuleName(module);
-                builder.setOrigin(parser.getId());
+                builder.setOrigin(id);
                 parseFile(file, issues, builder);
             }
         }

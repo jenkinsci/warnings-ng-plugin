@@ -141,7 +141,7 @@
             </goals>
             <configuration>
               <includes>
-                <include>**/IntegrationTest*</include>
+                <include>**/testutil/*</include>
               </includes>
             </configuration>
           </execution>

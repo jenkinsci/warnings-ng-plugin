@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core;
+package io.jenkins.plugins.analysis.core.testutil;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
