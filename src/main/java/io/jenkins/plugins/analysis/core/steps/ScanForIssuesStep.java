@@ -36,6 +36,7 @@ import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Util;
+import hudson.console.ConsoleNote;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.EncodingValidator;
@@ -246,7 +247,7 @@ public class ScanForIssuesStep extends Step {
             logger.log("Parsing console log (workspace: '%s')", workspace);
 
             Issues<Issue> issues = findTool().createParser().parse(getRun().getLogFile(),
-                    getCharset(), new IssueBuilder().setOrigin(tool));
+                    getCharset(), new IssueBuilder().setOrigin(tool), line -> ConsoleNote.removeNotes(line));
             logIssuesMessages(issues, logger);
             return issues;
         }

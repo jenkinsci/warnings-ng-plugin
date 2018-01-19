@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import java.io.File;
+import java.util.function.Function;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -140,7 +141,8 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
      */
     private void parseFile(final File file, final Issues<Issue> issues, final IssueBuilder builder) {
         try {
-            Issues<Issue> result = parser.parse(file, EncodingValidator.defaultCharset(defaultEncoding), builder);
+            Issues<Issue> result = parser.parse(file, EncodingValidator.defaultCharset(defaultEncoding),
+                    builder, Function.identity());
 
             issues.addAll(result);
             issues.logInfo("Successfully parsed file %s: found %s (skipped %s)", file,

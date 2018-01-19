@@ -6,14 +6,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Issues;
-
-import hudson.console.ConsoleNote;
 
 /**
  * A {@link StaticAnalysisTool} that is composed of several tools. Every parser of this suite will be called on the
@@ -24,11 +23,7 @@ import hudson.console.ConsoleNote;
 public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
     @Override
     public IssueParser createParser() {
-        Collection<? extends AbstractParser> parsers = getParsers();
-        for (AbstractParser parser : parsers) {
-            parser.setTransformer(line -> ConsoleNote.removeNotes(line));
-        }
-        return new CompositeParser(parsers);
+        return new CompositeParser(getParsers());
     }
 
     /**
@@ -72,10 +67,11 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
         }
 
         @Override
-        public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder) {
+        public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder,
+                final Function<String, String> preProcessor) {
             Issues<Issue> aggregated = new Issues<>();
             for (AbstractParser parser : parsers) {
-                aggregated.addAll(parser.parse(file, charset, builder));
+                aggregated.addAll(parser.parse(file, charset, builder, preProcessor));
             }
             return aggregated;
         }
