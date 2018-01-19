@@ -341,21 +341,33 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the Eclipse parser on an output file that contains 8 issues which are decorated with console notes.
+     * Runs the Eclipse parser on the console log that contains 8 issues which are decorated with console notes. The
+     * output file is copied to the console log using a shell cat command.
      *
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-11675">Issue 11675</a>
      */
+    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
     @Test
     public void issue11675() {
-        Issues<BuildIssue> issues = shouldFindIssuesOfTool(8, Eclipse.class, "issue11675.txt");
+        try {
+            WorkflowJob job = createJobWithWorkspaceFiles("issue11675.txt");
+            String scanStep = String.format("def %s = scanForIssues tool: 'eclipse'", "issues");
+            job.setDefinition(asStage("sh 'cat issue11675-issues.txt'", scanStep, PUBLISH_ISSUES_STEP));
 
-        for (Issue annotation : issues) {
-            assertThat(annotation.getMessage()).matches("[a-zA-Z].*");
+            AnalysisResult result = scheduleBuild(job);
+
+            assertThat(result.getTotalSize()).isEqualTo(8);
+            assertThat(result.getIssues()).hasSize(8);
+
+            Issues<BuildIssue> issues = result.getIssues();
+            assertThat(issues.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(8);
+            for (Issue annotation : issues) {
+                assertThat(annotation.getMessage()).matches("[a-zA-Z].*");
+            }
         }
-    }
-
-    private void assertThatMessageContainsWord(final Issue annotation) {
-        assertThat(annotation.getMessage()).matches("[a-zA-Z].*");
+        catch (Exception exception) {
+            throw new AssertionError(exception);
+        }
     }
 
     /** Runs the Eclipse parser on an output file that contains 8 issues. */
