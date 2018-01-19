@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.kohsuke.stapler.DataBoundConstructor;
+import java.util.Collection;
 
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.JavacParser;
+import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StreamBasedParser;
 
 import hudson.Extension;
 import hudson.plugins.warnings.WarningsDescriptor;
@@ -17,35 +17,26 @@ import hudson.plugins.warnings.parser.Messages;
  *
  * @author Ullrich Hafner
  */
-public class Java extends StreamBasedParser {
-    private static final String JAVA_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-24x24.png";
-    private static final String JAVA_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-48x48.png";
+@Extension
+public class Java extends AbstractParserTool {
+    private static final String ID = "java";
+    private static final String JAVA_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + ID + "-24x24.png";
+    private static final String JAVA_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + ID + "-48x48.png";
 
-    @DataBoundConstructor
-    public Java() {
-        // empty constructor required for stapler
+    @Override
+    public Collection<? extends AbstractParser> getParsers() {
+        return only(new JavacParser());
     }
 
     @Override
-    protected AbstractParser createParser() {
-        return new JavacParser();
+    public StaticAnalysisLabelProvider getLabelProvider() {
+        return new JavaLabelProvider();
     }
 
-    /** Registers this tool as extension point implementation. */
-    @Extension
-    public static class JavaDescriptor extends StaticAnalysisToolDescriptor {
-        public JavaDescriptor() {
-            super(new JavaLabelProvider());
-        }
-
-        public JavaDescriptor(final StaticAnalysisLabelProvider labelProvider) {
-            super(labelProvider);
-        }
-    }
-
+    /** Provides the labels for the static analysis tool. */
     public static class JavaLabelProvider extends DefaultLabelProvider {
         public JavaLabelProvider() {
-            super("java");
+            super(ID);
         }
 
         public JavaLabelProvider(final String id) {

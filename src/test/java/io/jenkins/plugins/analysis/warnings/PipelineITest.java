@@ -13,17 +13,15 @@ import org.junit.jupiter.api.Tag;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
-import io.jenkins.plugins.analysis.core.IntegrationTest;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.BuildIssue;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
-import jenkins.model.Jenkins;
 
-import hudson.model.Descriptor;
 import hudson.model.Result;
 
 /**
@@ -36,6 +34,18 @@ import hudson.model.Result;
 @Tag("IntegrationTest")
 public class PipelineITest extends IntegrationTest {
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
+
+    /** Runs the Armcc parser on output files that contains 3 + 3 issues. */
+    @Test
+    public void shouldFindAllArmccIssues() {
+        shouldFindIssuesOfTool(3 + 3, ArmCc.class, "armcc5.txt", "armcc.txt");
+    }
+
+    /** Runs the Buckminster parser on an output file that contains 3 issues. */
+    @Test
+    public void shouldFindAllBuckminsterIssues() {
+        shouldFindIssuesOfTool(3, Buckminster.class, "buckminster.txt");
+    }
 
     /** Runs the Cadence parser on an output file that contains 3 issues. */
     @Test
@@ -50,7 +60,7 @@ public class PipelineITest extends IntegrationTest {
 
         BuildIssue issue = issues.get(0);
 
-        StaticAnalysisLabelProvider labelProvider = new Pmd.Descriptor().getLabelProvider();
+        StaticAnalysisLabelProvider labelProvider = new Pmd().getLabelProvider();
         assertThat(issue).hasDescription(StringUtils.EMPTY);
         assertThat(labelProvider.getDescription(issue)).isEqualTo("\n"
                 + "Sometimes two consecutive 'if' statements can be consolidated by separating their conditions with a boolean short-circuit operator.\n"
@@ -65,7 +75,7 @@ public class PipelineITest extends IntegrationTest {
 
         BuildIssue issue = issues.get(2);
 
-        StaticAnalysisLabelProvider labelProvider = new CheckStyle.Descriptor().getLabelProvider();
+        StaticAnalysisLabelProvider labelProvider = new CheckStyle().getLabelProvider();
         assertThat(issue).hasDescription(StringUtils.EMPTY);
         assertThat(labelProvider.getDescription(issue)).contains("finds classes that are designed for extension");
     }
@@ -77,10 +87,11 @@ public class PipelineITest extends IntegrationTest {
 
         BuildIssue issue = issues.get(0);
 
-        StaticAnalysisLabelProvider labelProvider = new FindBugs.Descriptor().getLabelProvider();
+        StaticAnalysisLabelProvider labelProvider = new FindBugs().getLabelProvider();
         assertThat(issue).hasDescription(StringUtils.EMPTY);
         assertThat(labelProvider.getDescription(issue))
-                .contains("The fields of this class appear to be accessed inconsistently with respect\n  to synchronization");
+                .contains(
+                        "The fields of this class appear to be accessed inconsistently with respect\n  to synchronization");
     }
 
     /** Runs the SpotBugs parser on an output file that contains 2 issues. */
@@ -90,7 +101,7 @@ public class PipelineITest extends IntegrationTest {
 
         BuildIssue issue = issues.get(0);
 
-        StaticAnalysisLabelProvider labelProvider = new FindBugs.Descriptor().getLabelProvider();
+        StaticAnalysisLabelProvider labelProvider = new FindBugs().getLabelProvider();
         assertThat(issue).hasDescription(StringUtils.EMPTY);
         assertThat(labelProvider.getDescription(issue))
                 .contains("This code calls a method and ignores the return value.");
@@ -179,6 +190,7 @@ public class PipelineITest extends IntegrationTest {
     public void shouldFindAllXlcIssues() {
         shouldFindIssuesOfTool(2, Xlc.class, "xlc.txt");
     }
+
     /** Runs the YIU compressor parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllYuiCompressorIssues() {
@@ -280,7 +292,8 @@ public class PipelineITest extends IntegrationTest {
     /** Runs the MetrowerksCWCompiler parser on two output files that contains 5 + 3 issues. */
     @Test
     public void shouldFindAllMetrowerksCWCompilerIssues() {
-        shouldFindIssuesOfTool(5 + 3, MetrowerksCodeWarrior.class, "MetrowerksCWCompiler.txt", "MetrowerksCWLinker.txt");
+        shouldFindIssuesOfTool(5 + 3, MetrowerksCodeWarrior.class, "MetrowerksCWCompiler.txt",
+                "MetrowerksCWLinker.txt");
     }
 
     /** Runs the AcuCobol parser on an output file that contains 4 issues. */
@@ -302,7 +315,8 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the Perl::Critic parser on an output file that contains 105 issues. */
+     * Runs the Perl::Critic parser on an output file that contains 105 issues.
+     */
     @Test
     public void shouldFindAllPerlCriticIssues() {
         shouldFindIssuesOfTool(105, PerlCritic.class, "perlcritic.txt");
@@ -320,7 +334,7 @@ public class PipelineITest extends IntegrationTest {
         shouldFindIssuesOfTool(11, PREfast.class, "PREfast.xml");
     }
 
-    /** Runs the Puppet Lint parser on an output file that contains 5 issues.  */
+    /** Runs the Puppet Lint parser on an output file that contains 5 issues. */
     @Test
     public void shouldFindAllPuppetLintIssues() {
         shouldFindIssuesOfTool(5, PuppetLint.class, "puppet-lint.txt");
@@ -357,7 +371,8 @@ public class PipelineITest extends IntegrationTest {
     }
 
     /**
-     * Runs the QACSourceCodeAnalyser parser on an output file that contains 9 issues. */
+     * Runs the QACSourceCodeAnalyser parser on an output file that contains 9 issues.
+     */
     @Test
     public void shouldFindAllQACSourceCodeAnalyserIssues() {
         shouldFindIssuesOfTool(9, QACSourceCodeAnalyser.class, "QACSourceCodeAnalyser.txt");
@@ -484,7 +499,8 @@ public class PipelineITest extends IntegrationTest {
     }
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private Issues<BuildIssue> shouldFindIssuesOfTool(final int expectedSizeOfIssues, final Class<? extends StaticAnalysisTool> tool,
+    private Issues<BuildIssue> shouldFindIssuesOfTool(final int expectedSizeOfIssues,
+            final Class<? extends StaticAnalysisTool> tool,
             final String... fileNames) {
         try {
             WorkflowJob job = createJobWithWorkspaceFiles(fileNames);
@@ -496,9 +512,9 @@ public class PipelineITest extends IntegrationTest {
             assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);
 
             Issues<BuildIssue> issues = result.getIssues();
-            Descriptor<?> descriptor = Jenkins.getInstance().getDescriptor(tool);
-            assertThat(descriptor).as("Tool '%s' not found", tool).isNotNull();
-            assertThat(issues.filter(issue -> issue.getOrigin().equals(descriptor.getId()))).hasSize(expectedSizeOfIssues);
+            StaticAnalysisTool analysisTool = tool.newInstance();
+            assertThat(issues.filter(issue -> issue.getOrigin().equals(analysisTool.getId())))
+                    .hasSize(expectedSizeOfIssues);
 
             return issues;
         }
@@ -515,11 +531,16 @@ public class PipelineITest extends IntegrationTest {
         return createScanForIssuesStep(parserClass, "issues");
     }
 
-    private String createScanForIssuesStep(final Class<? extends StaticAnalysisTool> parserClass,
-            final String issuesName) {
-        return String.format(
-                "def %s = scanForIssues tool: [$class: '%s'], pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
-                issuesName, parserClass.getSimpleName());
+    private String createScanForIssuesStep(final Class<? extends StaticAnalysisTool> tool, final String issuesName) {
+        try {
+            StaticAnalysisTool analysisTool = tool.newInstance();
+            return String.format(
+                    "def %s = scanForIssues tool: '%s', pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
+                    issuesName, analysisTool.getId());
+        }
+        catch (InstantiationException | IllegalAccessException exception) {
+            throw new AssertionError(exception);
+        }
     }
 
     private WorkflowJob createJobWithWorkspaceFiles(final String... fileNames) {

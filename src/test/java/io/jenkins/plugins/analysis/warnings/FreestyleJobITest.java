@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import org.junit.Test;
 import org.junit.jupiter.api.Tag;
 
-import io.jenkins.plugins.analysis.core.IntegrationTest;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import static org.assertj.core.api.Assertions.*;
 
 import hudson.model.FreeStyleBuild;

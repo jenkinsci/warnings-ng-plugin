@@ -15,9 +15,4 @@ class DynamicDocumentParserTest extends EclipseParserTest {
     protected AbstractParser createParser() {
         return new DynamicDocumentParser(EclipseParser.ANT_ECLIPSE_WARNING_PATTERN, toString("eclipse.groovy"));
     }
-
-    @Override
-    protected Class<?> getTestResourceClass() {
-        return EclipseParserTest.class;
-    }
 }

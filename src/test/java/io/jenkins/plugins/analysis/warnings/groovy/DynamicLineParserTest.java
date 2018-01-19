@@ -13,10 +13,5 @@ class DynamicLineParserTest extends Pep8ParserTest {
     protected AbstractParser createParser() {
         return new DynamicLineParser("(.*):(\\d+):(\\d+): (\\D\\d*) (.*)", toString("pep8.groovy"));
     }
-
-    @Override
-    protected Class<?> getTestResourceClass() {
-        return Pep8ParserTest.class;
-    }
 }
 

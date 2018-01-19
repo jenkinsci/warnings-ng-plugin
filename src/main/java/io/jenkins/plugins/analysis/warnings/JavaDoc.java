@@ -1,9 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.kohsuke.stapler.DataBoundConstructor;
+import java.util.Collection;
 
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.JavaDocParser;
+import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.warnings.Java.JavaLabelProvider;
 
 import hudson.Extension;
 import hudson.plugins.warnings.parser.Messages;
@@ -13,28 +16,24 @@ import hudson.plugins.warnings.parser.Messages;
  *
  * @author Ullrich Hafner
  */
-public class JavaDoc extends Java {
-    @DataBoundConstructor
-    public JavaDoc() {
-        // empty constructor required for stapler
+@Extension
+public class JavaDoc extends AbstractParserTool {
+    private static final String ID = "javadoc";
+
+    @Override
+    public Collection<? extends AbstractParser> getParsers() {
+        return only(new JavaDocParser());
     }
 
     @Override
-    protected AbstractParser createParser() {
-        return new JavaDocParser();
+    public StaticAnalysisLabelProvider getLabelProvider() {
+        return new JavaDocLabelProvider();
     }
 
-    /** Registers this tool as extension point implementation. */
-    @Extension
-    public static class Descriptor extends JavaDescriptor {
-        public Descriptor() {
-            super(new JavaDocLabelProvider());
-        }
-    }
-
+    /** Provides the labels for the static analysis tool. */
     public static class JavaDocLabelProvider extends JavaLabelProvider {
         public JavaDocLabelProvider() {
-            super("javadoc");
+            super(ID);
         }
 
         @Override

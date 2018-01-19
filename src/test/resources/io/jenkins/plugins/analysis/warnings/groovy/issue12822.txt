@@ -1,0 +1,79 @@
+----------
+1. WARNING in /media/ssd/multi-x-processor/workspace/Product_Analyzer/org.faktorips.analysis.ui/src/org/faktorips/analysis/ui/views/qr/editingsupport/EnumEditingSupport.java (at line 23)
+	import org.faktorips.devtools.core.enums.EnumValue;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The type EnumValue is deprecated
+----------
+2. WARNING in /media/ssd/multi-x-processor/workspace/Product_Analyzer/org.faktorips.analysis.ui/src/org/faktorips/analysis/ui/views/qr/editingsupport/EnumEditingSupport.java (at line 60)
+	EnumValue[] enumValues = enumType.getValues();
+	^^^^^^^^^
+The type EnumValue is deprecated
+----------
+3. WARNING in /media/ssd/multi-x-processor/workspace/Product_Analyzer/org.faktorips.analysis.ui/src/org/faktorips/analysis/ui/views/qr/editingsupport/EnumEditingSupport.java (at line 63)
+	strValues[i] = enumValues[i].getName();
+	                             ^^^^^^^^^
+The method getName() from the type EnumValue is deprecated
+----------
+4. WARNING in /media/ssd/multi-x-processor/workspace/Product_Analyzer/org.faktorips.analysis.ui/src/org/faktorips/analysis/ui/views/qr/editingsupport/EnumEditingSupport.java (at line 68)
+	private int valueOf(EnumValue[] values, EnumValue value) {
+	                    ^^^^^^^^^
+The type EnumValue is deprecated
+----------
+5. WARNING in /media/ssd/multi-x-processor/workspace/Product_Analyzer/org.faktorips.analysis.ui/src/org/faktorips/analysis/ui/views/qr/editingsupport/EnumEditingSupport.java (at line 68)
+	private int valueOf(EnumValue[] values, EnumValue value) {
+	                                        ^^^^^^^^^
+The type EnumValue is deprecated
+----------
+6. WARNING in /media/ssd/multi-x-processor/workspace/Product_Analyzer/org.faktorips.analysis.ui/src/org/faktorips/analysis/ui/views/qr/editingsupport/EnumEditingSupport.java (at line 71)
+	if (value == null || values[i].getId().equalsIgnoreCase(value.getId())) {
+	                               ^^^^^^^
+The method getId() from the type EnumValue is deprecated
+----------
+7. WARNING in /media/ssd/multi-x-processor/workspace/Product_Analyzer/org.faktorips.analysis.ui/src/org/faktorips/analysis/ui/views/qr/editingsupport/EnumEditingSupport.java (at line 71)
+	if (value == null || values[i].getId().equalsIgnoreCase(value.getId())) {
+	                                                              ^^^^^^^
+The method getId() from the type EnumValue is deprecated
+----------
+8. WARNING in /media/ssd/multi-x-processor/workspace/Product_Analyzer/org.faktorips.analysis.ui/src/org/faktorips/analysis/ui/views/qr/editingsupport/EnumEditingSupport.java (at line 90)
+	cellEditor.setValue(valueOf(enumType.getValues(), (EnumValue)getLabelModifyer().getValue(cell.getElement())));
+	                                                   ^^^^^^^^^
+The type EnumValue is deprecated
+----------
+----------
+9. WARNING in /media/ssd/multi-x-processor/workspace/Product_Analyzer/org.faktorips.analysis.ui/src/org/faktorips/analysis/ui/views/qr/labelprovider/EnumExtPropertyLabelModifier.java (at line 19)
+	import org.faktorips.devtools.core.enums.EnumValue;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The type EnumValue is deprecated
+----------
+10. WARNING in /media/ssd/multi-x-processor/workspace/Product_Analyzer/org.faktorips.analysis.ui/src/org/faktorips/analysis/ui/views/qr/labelprovider/EnumExtPropertyLabelModifier.java (at line 45)
+	EnumValue ev = (EnumValue)ipsObject.getExtPropertyValue(getExtesionProperty().getPropertyId());
+	^^^^^^^^^
+The type EnumValue is deprecated
+----------
+11. WARNING in /media/ssd/multi-x-processor/workspace/Product_Analyzer/org.faktorips.analysis.ui/src/org/faktorips/analysis/ui/views/qr/labelprovider/EnumExtPropertyLabelModifier.java (at line 45)
+	EnumValue ev = (EnumValue)ipsObject.getExtPropertyValue(getExtesionProperty().getPropertyId());
+	                ^^^^^^^^^
+The type EnumValue is deprecated
+----------
+12. WARNING in /media/ssd/multi-x-processor/workspace/Product_Analyzer/org.faktorips.analysis.ui/src/org/faktorips/analysis/ui/views/qr/labelprovider/EnumExtPropertyLabelModifier.java (at line 47)
+	ev = (EnumValue)getExtesionProperty().getDefaultValue();
+	      ^^^^^^^^^
+The type EnumValue is deprecated
+----------
+13. WARNING in /media/ssd/multi-x-processor/workspace/Product_Analyzer/org.faktorips.analysis.ui/src/org/faktorips/analysis/ui/views/qr/labelprovider/EnumExtPropertyLabelModifier.java (at line 50)
+	text = ev.getName();
+	          ^^^^^^^^^
+The method getName() from the type EnumValue is deprecated
+----------
+----------
+14. WARNING in /media/ssd/multi-x-processor/workspace/Product_Analyzer/org.faktorips.analysis.ui/src/org/faktorips/analysis/ui/ext/ComboBoxRuleOverruledByExtensionPropertyFactory.java (at line 19)
+	import org.faktorips.devtools.core.enums.EnumValue;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The type EnumValue is deprecated
+----------
+15. WARNING in /media/ssd/multi-x-processor/workspace/Product_Analyzer/org.faktorips.analysis.ui/src/org/faktorips/analysis/ui/ext/ComboBoxRuleOverruledByExtensionPropertyFactory.java (at line 43)
+	EnumValue defaultValue = AnalysisActivator.getRuleOverruledBy().getEnumValue(0);
+	^^^^^^^^^
+The type EnumValue is deprecated
+----------
+15 problems (15 warnings)

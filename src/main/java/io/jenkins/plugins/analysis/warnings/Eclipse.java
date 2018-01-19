@@ -1,11 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.kohsuke.stapler.DataBoundConstructor;
+import java.util.Collection;
 
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.EclipseParser;
+import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StreamBasedParser;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.Extension;
 
@@ -14,31 +15,25 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class Eclipse extends StreamBasedParser {
+@Extension
+public class Eclipse extends AbstractParserTool {
+    private static final String ID = "eclipse";
     private static final String PARSER_NAME = Messages.Warnings_EclipseParser_ParserName();
 
-    @DataBoundConstructor
-    public Eclipse() {
-        // empty constructor required for stapler
+    @Override
+    public Collection<? extends AbstractParser> getParsers() {
+        return only(new EclipseParser());
     }
 
     @Override
-    protected AbstractParser createParser() {
-        return new EclipseParser();
+    public StaticAnalysisLabelProvider getLabelProvider() {
+        return new LabelProvider();
     }
 
-    /** Registers this tool as extension point implementation. */
-    @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
-        public Descriptor() {
-            super(new LabelProvider());
-        }
-    }
-
-    /** Provides the labels for the parser. */
+    /** Provides the labels for the static analysis tool. */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("eclipse", PARSER_NAME);
+            super(ID, PARSER_NAME);
         }
     }
 }

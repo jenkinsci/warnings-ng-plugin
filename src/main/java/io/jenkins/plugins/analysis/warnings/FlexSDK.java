@@ -1,11 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.kohsuke.stapler.DataBoundConstructor;
+import java.util.Collection;
 
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.FlexSDKParser;
+import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StreamBasedParser;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.Extension;
 
@@ -13,31 +14,26 @@ import hudson.Extension;
  * Provides a parser and customized messages for FLEX SDK.
  *
  * @author Ullrich Hafner
- */public class FlexSDK extends StreamBasedParser {
+ */
+@Extension
+public class FlexSDK extends AbstractParserTool {
+    private static final String ID = "flex";
     private static final String PARSER_NAME = Messages.Warnings_Flex_ParserName();
 
-    @DataBoundConstructor
-    public FlexSDK() {
-        // empty constructor required for stapler
+    @Override
+    public Collection<? extends AbstractParser> getParsers() {
+        return only(new FlexSDKParser());
     }
 
     @Override
-    protected AbstractParser createParser() {
-        return new FlexSDKParser();
+    public StaticAnalysisLabelProvider getLabelProvider() {
+        return new LabelProvider();
     }
 
-    /** Registers this tool as extension point implementation. */
-    @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
-        public Descriptor() {
-            super(new LabelProvider());
-        }
-    }
-
-    /** Provides the labels for the parser. */
+    /** Provides the labels for the static analysis tool. */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {
-            super("flex", PARSER_NAME);
+            super(ID, PARSER_NAME);
         }
     }
 }

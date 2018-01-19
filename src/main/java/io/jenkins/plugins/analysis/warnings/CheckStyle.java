@@ -1,13 +1,14 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.kohsuke.stapler.DataBoundConstructor;
+import java.util.Collection;
 
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
 import static hudson.plugins.warnings.WarningsDescriptor.*;
+import io.jenkins.plugins.analysis.core.model.AbstractParserTool;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StreamBasedParser;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyleRules;
 
 import hudson.Extension;
@@ -17,40 +18,30 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class CheckStyle extends StreamBasedParser {
+@Extension
+public class CheckStyle extends AbstractParserTool {
+    private static final String ID = "checkstyle";
     private static final String PARSER_NAME = Messages.Warnings_CheckStyle_ParserName();
-    private static final String SMALL_ICON_URL = IMAGE_PREFIX + "checkstyle-24x24.png";
-    private static final String LARGE_ICON_URL = IMAGE_PREFIX + "checkstyle-48x48.png";
+    private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
+    private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
+    private static final LabelProvider LABEL_PROVIDER = new LabelProvider();
 
-    /**
-     * Creates a new instance of {@link CheckStyle}.
-     */
-    @DataBoundConstructor
-    public CheckStyle() {
-        // empty constructor required for stapler
+    @Override
+    public Collection<? extends AbstractParser> getParsers() {
+        return only(new CheckStyleParser());
     }
 
     @Override
-    protected AbstractParser createParser() {
-        return new CheckStyleParser();
+    public StaticAnalysisLabelProvider getLabelProvider() {
+        return LABEL_PROVIDER;
     }
 
-    /** Registers this tool as extension point implementation. */
-    @Extension
-    public static final class Descriptor extends StaticAnalysisToolDescriptor {
-        public Descriptor() {
-            super(new LabelProvider());
-        }
-    }
-
-    /**
-     * Provides the labels for the parser.
-     */
+    /** Provides the labels for the static analysis tool. */
     private static class LabelProvider extends DefaultLabelProvider {
         private final CheckStyleRules rules;
 
         LabelProvider() {
-            super("checkstyle", PARSER_NAME);
+            super(ID, PARSER_NAME);
 
             rules = new CheckStyleRules();
             rules.initialize();

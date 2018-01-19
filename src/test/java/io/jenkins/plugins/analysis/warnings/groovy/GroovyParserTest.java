@@ -10,8 +10,8 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.util.ResourceTest;
-import static io.jenkins.plugins.analysis.core.Assertions.*;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser.DescriptorImpl;
 import static org.mockito.Mockito.*;
 
