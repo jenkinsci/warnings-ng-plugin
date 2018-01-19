@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core;
+package io.jenkins.plugins.analysis.core.testutil;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.assertj.core.api.AbstractAssert;

@@ -3,7 +3,9 @@ package io.jenkins.plugins.analysis.core.model;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.api.set.ImmutableSet;
+import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Sets;
 
 import edu.hm.hafner.util.Ensure;
@@ -62,6 +64,15 @@ public final class ToolRegistry {
      */
     public ImmutableSet<String> getIds() {
         return Sets.immutable.ofAll(tools.keySet());
+    }
+
+    /**
+     * Returns the IDs of the registered static analysis tools.
+     *
+     * @return the IDs
+     */
+    public ImmutableList<StaticAnalysisTool> getAll() {
+        return Lists.immutable.ofAll(tools.values());
     }
 
     /**

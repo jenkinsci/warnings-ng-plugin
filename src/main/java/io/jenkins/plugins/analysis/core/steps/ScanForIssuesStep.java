@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collection;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,12 +26,11 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.PackageNameResolver;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool.StaticAnalysisToolDescriptor;
+import io.jenkins.plugins.analysis.core.model.ToolRegistry;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.FilesParser;
 import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.util.LoggerFactory;
-import jenkins.model.Jenkins;
 
 import hudson.EnvVars;
 import hudson.Extension;
@@ -41,6 +39,7 @@ import hudson.Util;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.EncodingValidator;
+import hudson.util.ListBoxModel;
 
 /**
  * Scan files or the console log for issues.
@@ -49,7 +48,7 @@ import hudson.plugins.analysis.util.EncodingValidator;
 public class ScanForIssuesStep extends Step {
     private String defaultEncoding;
     private boolean shouldDetectModules;
-    private StaticAnalysisTool tool;
+    private String tool;
     private String pattern;
 
     @DataBoundConstructor
@@ -75,18 +74,20 @@ public class ScanForIssuesStep extends Step {
     }
 
     @CheckForNull
-    public StaticAnalysisTool getTool() {
+    public String getTool() {
         return tool;
     }
 
+    // FIXME: Should modules be scanned afterwards? Why is this optional?
+
     /**
-     * Sets the static analysis tool that produced the issues.
+     * Sets the ID of the static analysis tool that produced the issues.
      *
      * @param tool
      *         the static analysis tool
      */
     @DataBoundSetter
-    public void setTool(final StaticAnalysisTool tool) {
+    public void setTool(final String tool) {
         this.tool = tool;
     }
 
@@ -117,6 +118,7 @@ public class ScanForIssuesStep extends Step {
      * @param defaultEncoding
      *         the encoding, e.g. "ISO-8859-1"
      */
+    // FIXME: two encodings are required: log file AND source file
     @DataBoundSetter
     public void setDefaultEncoding(final String defaultEncoding) {
         this.defaultEncoding = defaultEncoding;
@@ -133,7 +135,7 @@ public class ScanForIssuesStep extends Step {
     public static class Execution extends SynchronousNonBlockingStepExecution<Issues<Issue>> {
         private final String defaultEncoding;
         private final boolean shouldDetectModules;
-        private final StaticAnalysisTool tool;
+        private final String tool;
         private final String pattern;
 
         protected Execution(@Nonnull final StepContext context, final ScanForIssuesStep step) {
@@ -150,7 +152,13 @@ public class ScanForIssuesStep extends Step {
             if (listener == null) {
                 return new LoggerFactory().createNullLogger();
             }
-            return new LoggerFactory().createLogger(listener.getLogger(), tool.getName());
+            return new LoggerFactory().createLogger(listener.getLogger(), findTool().getName());
+        }
+
+        private StaticAnalysisTool findTool() {
+            // FIXME: should be static!
+            ToolRegistry registry = new ToolRegistry();
+            return registry.find(tool);
         }
 
         private Run<?, ?> getRun() throws IOException, InterruptedException {
@@ -178,6 +186,7 @@ public class ScanForIssuesStep extends Step {
         private Issues<Issue> findIssues(final FilePath workspace, final Logger logger)
                 throws IOException, InterruptedException {
             Instant start = Instant.now();
+
             Issues<Issue> issues;
             if (StringUtils.isNotBlank(pattern)) {
                 issues = scanFiles(workspace, logger);
@@ -185,7 +194,7 @@ public class ScanForIssuesStep extends Step {
             else {
                 issues = scanConsoleLog(workspace, logger);
             }
-            issues.setId(tool.getId());
+            issues.setId(tool);
 
             logger.log("Parsing took %s", Duration.between(start, Instant.now()));
             return issues;
@@ -236,17 +245,17 @@ public class ScanForIssuesStep extends Step {
                 final Logger logger) throws IOException, InterruptedException {
             logger.log("Parsing console log (workspace: '%s')", workspace);
 
-            Issues<Issue> issues = tool.parse(getRun().getLogFile(),
-                    getCharset(), new IssueBuilder().setOrigin(tool.getId()));
+            Issues<Issue> issues = findTool().createParser().parse(getRun().getLogFile(),
+                    getCharset(), new IssueBuilder().setOrigin(tool));
             logIssuesMessages(issues, logger);
             return issues;
         }
 
         private Issues<Issue> scanFiles(final FilePath workspace,
                 final Logger logger) throws IOException, InterruptedException {
-            FilesParser parser = new FilesParser(expandEnvironmentVariables(pattern), tool, shouldDetectModules,
-                    defaultEncoding);
-            Issues<Issue> issues = workspace.act(parser);
+            FilesParser filesParser = new FilesParser(expandEnvironmentVariables(pattern), findTool().createParser(),
+                    tool, shouldDetectModules, defaultEncoding);
+            Issues<Issue> issues = workspace.act(filesParser);
 
             logIssuesMessages(issues, logger);
 
@@ -305,8 +314,19 @@ public class ScanForIssuesStep extends Step {
             return "Scan files or the console log for issues";
         }
 
-        public Collection<? extends StaticAnalysisToolDescriptor> getAvailableTools() {
-            return Jenkins.getInstance().getDescriptorList(StaticAnalysisTool.class);
+        /**
+         * Returns all registered static analysis tools. These are packed into a {@link ListBoxModel} in order to show
+         * them in the list box of the config.jelly view part.
+         *
+         * @return the model of the list box
+         */
+        public ListBoxModel doFillToolItems() {
+            ListBoxModel items = new ListBoxModel();
+            ToolRegistry registry = new ToolRegistry();
+            for (StaticAnalysisTool tool : registry.getAll()) {
+                items.add(tool.getName(), tool.getId());
+            }
+            return items;
         }
     }
 }

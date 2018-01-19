@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core;
+package io.jenkins.plugins.analysis.core.testutil;
 
 import java.io.IOException;
 

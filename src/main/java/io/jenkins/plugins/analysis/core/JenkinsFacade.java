@@ -5,7 +5,10 @@ import java.util.List;
 
 import jenkins.model.Jenkins;
 
+import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
+import hudson.model.Describable;
+import hudson.model.Descriptor;
 import hudson.security.Permission;
 
 /**
@@ -32,6 +35,9 @@ public class JenkinsFacade implements Serializable {
         return getJenkins().getExtensionList(extensionType);
     }
 
+    public <T extends Describable<T>, D extends Descriptor<T>> DescriptorExtensionList<T,D> getDescriptorsFor(Class<T> descriptorType) {
+        return getJenkins().getDescriptorList(descriptorType);
+    }
     /**
      * Checks if the current security principal has this permission.
      *

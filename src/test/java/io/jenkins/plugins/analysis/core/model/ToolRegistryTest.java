@@ -1,17 +1,11 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.File;
-import java.nio.charset.Charset;
 import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.TestExtension;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.ParsingCanceledException;
-import edu.hm.hafner.analysis.ParsingException;
+import edu.hm.hafner.analysis.IssueParser;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -77,8 +71,12 @@ class ToolRegistryTest {
         }
 
         @Override
-        public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder)
-                throws ParsingException, ParsingCanceledException {
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new DefaultLabelProvider();
+        }
+
+        @Override
+        public IssueParser createParser() {
             return null;
         }
     }
