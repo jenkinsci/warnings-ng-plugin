@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
@@ -508,11 +507,11 @@ public class PublishIssuesStep extends Step {
             }
 
             FilePath workspace = getContext().get(FilePath.class);
-            ImmutableSortedSet<String> files = result.getIssues().getFiles();
+            Set<String> files = result.getIssues().getFiles();
 
             Instant startCopy = Instant.now();
             String copyingLogMessage = new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(getChannel(),
-                    getBuildFolder(), EncodingValidator.getEncoding(defaultEncoding), files.castToCollection());
+                    getBuildFolder(), EncodingValidator.getEncoding(defaultEncoding), files);
             logger.log("Copied %d affected files from '%s' to build folder (%s)",
                     files.size(), workspace, copyingLogMessage);
             logger.log("Copying affected files took %s", getElapsedTime(startCopy));

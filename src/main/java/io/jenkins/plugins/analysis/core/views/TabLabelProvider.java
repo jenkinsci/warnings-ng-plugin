@@ -1,7 +1,8 @@
 package io.jenkins.plugins.analysis.core.views;
 
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.collections.api.set.sorted.ImmutableSortedSet;
 
 import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.model.BuildIssue;
@@ -108,7 +109,7 @@ public class TabLabelProvider {
 
     private String getPackageOrNamespace(final String packageText, final String nameSpaceText) {
         if (issues.isNotEmpty()) {
-            ImmutableSortedSet<String> fileTypes = issues.getProperties(issue -> StringUtils.substringAfterLast(issue.getFileName(), "."));
+            Set<String> fileTypes = issues.getProperties(issue -> StringUtils.substringAfterLast(issue.getFileName(), "."));
             if (fileTypes.contains("cs")) {
                 return nameSpaceText;
             }
