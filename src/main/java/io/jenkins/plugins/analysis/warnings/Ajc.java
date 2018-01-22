@@ -28,6 +28,7 @@ return new AjcParser();
         return new LabelProvider();
     }
 
+    // FIXME: remove Label provider classes
     /** Provides the labels for the static analysis tool. */
     private static class LabelProvider extends DefaultLabelProvider {
         private LabelProvider() {

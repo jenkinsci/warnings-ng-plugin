@@ -1,7 +1,7 @@
 <div>
   <p>
     Groovyスクリプトは、変数<tt>matcher</tt>としてスクリプトに渡される<a 
-    href="http://docs.oracle.com/javase/jp/1.5.0/api/java/util/regex/Matcher.html">Matcher</a>オブジェクトに対して使用します。  
+    href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Matcher.html">Matcher</a>オブジェクトに対して使用します。
     スクリプトは、<tt>hudson.plugins.warnings.parser.Warning</tt>型の値を1つ返す必要があります。
   </p>
 
@@ -13,15 +13,15 @@
  </p>
  <hr/>
  <pre>
-import hudson.plugins.warnings.parser.Warning
+import edu.hm.hafner.analysis.Priority
 
-String fileName = matcher.group(1)
-String lineNumber = matcher.group(2)
-String category = matcher.group(3)
-String message = matcher.group(4)
+builder.setFileName(matcher.group(1))
+        .setLineStart(Integer.parseInt(matcher.group(2)))
+        .setCategory(matcher.group(3))
+        .setMessage(matcher.group(4))
 
-return new Warning(fileName, Integer.parseInt(lineNumber), "Dynamic Parser", category, message);
- </pre>
+return builder.build();
+  </pre>
  <hr/>
 
 </div>

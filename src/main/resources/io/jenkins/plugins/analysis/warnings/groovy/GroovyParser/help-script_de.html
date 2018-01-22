@@ -1,28 +1,37 @@
 <div>
-  <p>
-    Das Groovy Skript arbeitet mit der
-    <a href="http://download.oracle.com/docs/cd/E17476_01/javase/1.5.0/docs/api/java/util/regex/Matcher.html">Matcher</a>
-    Instanz, die in der Variablen <tt>matcher</tt> an das Skript übergeben wird. Das Skript muss einen Rückgabewert
-    vom Typ <tt>hudson.plugins.warnings.parser.Warning</tt> haben.
-  </p>
+    <p>
+        Das Groovy Skript arbeitet mit der
+        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Matcher.html">Matcher</a>
+        Instanz, die in der Variablen <code>matcher</code> an das Skript übergeben wird.
+        Das Skript muss einen Rückgabewert vom Typ <code>edu.hm.hafner.analysis.Issue</code> haben.
+        Eine <code>Issue</code> Instanz muss mit dem <code>edu.hm.hafner.analysis.IssueBuilder</code> erstellt werden,
+        der in der Variablen <code>builder</code> an das Skript übergeben wird.  Folgende Variablen
+        stehen außerdem zur Verfügung:
+    <dl>
+        <dt>lineNumber</dt>
+        <dd>die aktuelle Zeilennummer</dd>
+        <dt>falsePositive</dt>
+        <dd>eine vordefinierte Issue Instanz, die den aktuellen Treffer als eine Falschmeldung markiert</dd>
+    </dl>
+    </p>
 
- <h4> Beispiel </h4>
+    <h4> Beispiel </h4>
 
- <p>
- 	Hier folgt ein Beispiel, das als Ausgangsbasis für das Skript verwendet werden kann. Es erzeugt eine neue Warnung für den
- 	regulären Ausdruck <tt>^\s*(.*):(\d+):(.*):\s*(.*)$</tt>.
- </p>
- <hr/>
- <pre>
-import hudson.plugins.warnings.parser.Warning
+    <p>
+        Hier folgt ein Beispiel, das als Ausgangsbasis für das Skript verwendet werden kann. Es erzeugt eine neue
+        Warnung für den regulären Ausdruck <code>^\s*(.*):(\d+):(.*):\s*(.*)$</code>.
+    </p>
+    <hr/>
+    <pre>
+import edu.hm.hafner.analysis.Priority
 
-String fileName = matcher.group(1)
-String lineNumber = matcher.group(2)
-String category = matcher.group(3)
-String message = matcher.group(4)
+builder.setFileName(matcher.group(1))
+        .setLineStart(Integer.parseInt(matcher.group(2)))
+        .setCategory(matcher.group(3))
+        .setMessage(matcher.group(4))
 
-return new Warning(fileName, Integer.parseInt(lineNumber), "Dynamic Parser", category, message);
- </pre>
- <hr/>
+return builder.build();
+  </pre>
+    <hr/>
 
 </div>

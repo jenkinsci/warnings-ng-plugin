@@ -17,12 +17,13 @@ import edu.hm.hafner.util.Ensure;
 import edu.hm.hafner.util.VisibleForTesting;
 import groovy.lang.Script;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ToolRegistry;
 import jenkins.model.Jenkins;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
-import hudson.plugins.warnings.Messages;
 import hudson.util.FormValidation;
 import hudson.util.FormValidation.Kind;
 
@@ -78,7 +79,11 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
 
         return d.doCheckScript(script).kind == Kind.OK
                 && d.doCheckRegexp(regexp).kind == Kind.OK
-                && d.validate(name, Messages.Warnings_GroovyParser_Error_Name_isEmpty()).kind == Kind.OK;
+                && d.validate(name, Messages.GroovyParser_Error_Name_isEmpty()).kind == Kind.OK;
+    }
+
+    public String getId() {
+        return id;
     }
 
     /**
@@ -148,6 +153,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         }
     }
 
+    StaticAnalysisTool toStaticAnalysisTool() {
+        return new GroovyParserToolAdapter(this);
+    }
+
     @VisibleForTesting
     void setJenkinsFacade(final JenkinsFacade jenkinsFacade) {
         this.jenkinsFacade = jenkinsFacade;
@@ -163,12 +172,13 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         private static final String NEWLINE = "\n";
         private static final int MAX_MESSAGE_LENGTH = 60;
         private static final FormValidation NO_RUN_SCRIPT_PERMISSION_WARNING
-                = FormValidation.warning(Messages.Warnings_GroovyParser_Warning_NoRunScriptPermission());
+                = FormValidation.warning(Messages.GroovyParser_Warning_NoRunScriptPermission());
         private final JenkinsFacade jenkinsFacade;
 
         /**
          * Creates a new descriptor.
          */
+        @SuppressWarnings("unused") // Called by Jenkins
         public DescriptorImpl() {
             this(new JenkinsFacade());
         }
@@ -194,7 +204,14 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
          * @return the validation result
          */
         public FormValidation doCheckId(@QueryParameter(required = true) final String id) {
-            return validate(id, Messages.Warnings_GroovyParser_Error_LinkName_isEmpty()); // TODO: check text
+            if (StringUtils.isBlank(id)) {
+                return FormValidation.error(Messages.GroovyParser_Error_Id_isEmpty());
+            }
+            ToolRegistry registry = new ToolRegistry();
+            if (registry.contains(id)) {
+                return FormValidation.error(Messages.GroovyParser_Error_Id_isNotUnique(registry.find(id).getName()));
+            }
+            return FormValidation.ok();
         }
 
         /**
@@ -207,9 +224,8 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
          */
         public FormValidation doCheckName(@QueryParameter(required = true) final String name) {
             if (StringUtils.isBlank(name)) {
-                return FormValidation.error(Messages.Warnings_GroovyParser_Error_Name_isEmpty());
+                return FormValidation.error(Messages.GroovyParser_Error_Name_isEmpty());
             }
-            // TODO
             return FormValidation.ok();
         }
 
@@ -224,7 +240,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         public FormValidation doCheckRegexp(@QueryParameter(required = true) final String regexp) {
             try {
                 if (StringUtils.isBlank(regexp)) {
-                    return FormValidation.error(Messages.Warnings_GroovyParser_Error_Regexp_isEmpty());
+                    return FormValidation.error(Messages.GroovyParser_Error_Regexp_isEmpty());
                 }
                 Pattern pattern = Pattern.compile(regexp);
                 Ensure.that(pattern).isNotNull();
@@ -233,7 +249,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
             }
             catch (PatternSyntaxException exception) {
                 return FormValidation.error(
-                        Messages.Warnings_GroovyParser_Error_Regexp_invalid(exception.getLocalizedMessage()));
+                        Messages.GroovyParser_Error_Regexp_invalid(exception.getLocalizedMessage()));
             }
         }
 
@@ -251,7 +267,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
             }
             try {
                 if (StringUtils.isBlank(script)) {
-                    return FormValidation.error(Messages.Warnings_GroovyParser_Error_Script_isEmpty());
+                    return FormValidation.error(Messages.GroovyParser_Error_Script_isEmpty());
                 }
 
                 GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(script, null);
@@ -262,7 +278,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
             }
             catch (CompilationFailedException exception) {
                 return FormValidation.error(
-                        Messages.Warnings_GroovyParser_Error_Script_invalid(exception.getLocalizedMessage()));
+                        Messages.GroovyParser_Error_Script_invalid(exception.getLocalizedMessage()));
             }
         }
 
@@ -332,26 +348,26 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
                 }
                 catch (Exception exception) { // NOCHECKSTYLE: catch all exceptions of the Groovy script
                     return FormValidation.error(
-                            Messages.Warnings_GroovyParser_Error_Example_exception(exception.getMessage()));
+                            Messages.GroovyParser_Error_Example_exception(exception.getMessage()));
                 }
                 if (result instanceof Issue) {
                     StringBuilder okMessage = new StringBuilder(
-                            Messages.Warnings_GroovyParser_Error_Example_ok_title());
+                            Messages.GroovyParser_Error_Example_ok_title());
                     Issue warning = (Issue) result;
-                    message(okMessage, Messages.Warnings_GroovyParser_Error_Example_ok_file(warning.getFileName()));
-                    message(okMessage, Messages.Warnings_GroovyParser_Error_Example_ok_line(warning.getLineStart()));
-                    message(okMessage, Messages.Warnings_GroovyParser_Error_Example_ok_priority(warning.getPriority()));
-                    message(okMessage, Messages.Warnings_GroovyParser_Error_Example_ok_category(warning.getCategory()));
-                    message(okMessage, Messages.Warnings_GroovyParser_Error_Example_ok_type(warning.getType()));
-                    message(okMessage, Messages.Warnings_GroovyParser_Error_Example_ok_message(warning.getMessage()));
+                    message(okMessage, Messages.GroovyParser_Error_Example_ok_file(warning.getFileName()));
+                    message(okMessage, Messages.GroovyParser_Error_Example_ok_line(warning.getLineStart()));
+                    message(okMessage, Messages.GroovyParser_Error_Example_ok_priority(warning.getPriority()));
+                    message(okMessage, Messages.GroovyParser_Error_Example_ok_category(warning.getCategory()));
+                    message(okMessage, Messages.GroovyParser_Error_Example_ok_type(warning.getType()));
+                    message(okMessage, Messages.GroovyParser_Error_Example_ok_message(warning.getMessage()));
                     return FormValidation.ok(okMessage.toString());
                 }
                 else {
-                    return FormValidation.error(Messages.Warnings_GroovyParser_Error_Example_wrongReturnType(result));
+                    return FormValidation.error(Messages.GroovyParser_Error_Example_wrongReturnType(result));
                 }
             }
             else {
-                return FormValidation.error(Messages.Warnings_GroovyParser_Error_Example_regexpDoesNotMatch());
+                return FormValidation.error(Messages.GroovyParser_Error_Example_regexpDoesNotMatch());
             }
         }
 
