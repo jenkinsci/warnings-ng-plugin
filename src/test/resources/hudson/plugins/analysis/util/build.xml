@@ -110,7 +110,7 @@
   </target>
 
   <!-- Conditionally will compile the grammar. Deliberately do not use the -->
-  <!-- antlr task as it requirs the ANTLR classes to be in the classpath -->
+  <!-- antlr task as it requires the ANTLR classes to be in the classpath -->
   <!-- which creates lots of problems. -->
   <target name="build.antlr" depends="-check.antlr" unless="uptodate.antlr"
           description="Conditionally compiles the grammar files">
