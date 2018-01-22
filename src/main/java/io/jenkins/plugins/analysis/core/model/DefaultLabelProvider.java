@@ -7,7 +7,10 @@ import edu.hm.hafner.analysis.Issue;
 import hudson.plugins.analysis.util.HtmlPrinter;
 
 /**
- * A generic label provider for static analysis runs.
+ * A generic label provider for static analysis runs. Creates pre-defined labels that are parameterized with a
+ * string placeholder, that will be replaced with the actual name of the static analysis tool. Moreover,
+ * such a default label provider decorates the links and summary boxes with the default icon of the warnings
+ * plug-in.
  *
  * @author Ullrich Hafner
  */
@@ -27,7 +30,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
      * @param id
      *         the ID
      */
-    protected DefaultLabelProvider(final String id) {
+    public DefaultLabelProvider(final String id) {
         this(id, StringUtils.EMPTY);
     }
 
@@ -39,7 +42,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
      * @param name
      *         the name of the static analysis tool
      */
-    protected DefaultLabelProvider(final String id, final String name) {
+    public DefaultLabelProvider(final String id, final String name) {
         this.id = id;
         this.name = name;
     }
