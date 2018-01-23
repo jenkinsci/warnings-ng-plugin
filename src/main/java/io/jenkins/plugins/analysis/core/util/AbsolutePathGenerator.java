@@ -53,15 +53,14 @@ public class AbsolutePathGenerator {
                 .collect(Collectors.toSet());
 
         if (relativeFileNames.isEmpty()) {
-            Issues<Issue> unchanged = issues.copy();
-            unchanged.logInfo("Affected files for all issues already have absolute paths");
+            issues.logInfo("Affected files for all issues already have absolute paths");
 
-            return unchanged;
+            return issues;
         }
 
         Map<String, String> relativeToAbsoluteMapping = resolveAbsoluteNames(relativeFileNames, workspace);
 
-        Issues<Issue> resolved = new Issues<>();
+        Issues<Issue> resolved = issues.copyEmptyInstance();
         int resolvedCount = 0;
         int unchangedCount = 0;
         int unresolvedCount = 0;

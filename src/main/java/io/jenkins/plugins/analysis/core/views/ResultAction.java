@@ -55,6 +55,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      * @param name
      *         The name of the tool. If empty the name is resolved using the ID.
      */
+    // TODO: use ID and name of result
     public ResultAction(final Run<?, ?> owner, final AnalysisResult result, final HealthDescriptor healthDescriptor,
             final String id, final String name) {
         this.owner = owner;

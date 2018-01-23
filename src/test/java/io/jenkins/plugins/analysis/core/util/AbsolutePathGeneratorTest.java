@@ -24,6 +24,7 @@ class AbsolutePathGeneratorTest {
     private static final String WORKSPACE_PATH = "path";
     private static final FilePath WORKSPACE = new FilePath(new File(WORKSPACE_PATH));
     private static final IssueBuilder ISSUE_BUILDER = new IssueBuilder();
+    private static final String ID = "ID";
 
     /**
      * Ensures that illegal file names are processed without problems. Afterwards, the path name should be unchanged.
@@ -36,12 +37,14 @@ class AbsolutePathGeneratorTest {
         Issues<Issue> resolved = new AbsolutePathGenerator().run(issues, ISSUE_BUILDER, WORKSPACE);
 
         assertThat(resolved.iterator()).containsExactly(issues.get(0));
+        assertThat(resolved).hasId(ID);
     }
 
     private Issues<Issue> createIssuesSingleton(final String fileName, final IssueBuilder issueBuilder) {
         Issues<Issue> issues = new Issues<>();
         Issue issue = issueBuilder.setFileName(fileName).build();
         issues.add(issue);
+        issues.setId(ID);
         return issues;
     }
 
@@ -59,13 +62,17 @@ class AbsolutePathGeneratorTest {
         Issues<Issue> resolved = generator.run(issues, ISSUE_BUILDER, WORKSPACE);
 
         assertThat(resolved.iterator()).containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build());
+        assertThat(resolved).hasId(ID);
     }
 
     @Test
     void shouldDoNothingIfNoIssuesPresent() {
         AbsolutePathGenerator generator = new AbsolutePathGenerator();
-        Issues<Issue> resolved = generator.run(new Issues<>(), ISSUE_BUILDER, WORKSPACE);
+        Issues<Issue> issues = new Issues<>();
+        issues.setId(ID);
+        Issues<Issue> resolved = generator.run(issues, ISSUE_BUILDER, WORKSPACE);
         assertThat(resolved).hasSize(0);
+        assertThat(resolved).hasId(ID);
     }
 
     /**
@@ -88,6 +95,6 @@ class AbsolutePathGeneratorTest {
 
         assertThat(resolved.iterator())
                 .containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build(), issueWithAbsolutePath);
+        assertThat(resolved).hasId(ID);
     }
-
 }

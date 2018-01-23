@@ -61,6 +61,7 @@ import hudson.remoting.VirtualChannel;
  */
 @SuppressWarnings("InstanceVariableMayNotBeInitialized")
 public class PublishIssuesStep extends Step {
+    private static final String DEFAULT_ID = "analysis";
     private static final String DEFAULT_MINIMUM_PRIORITY = "low";
 
     private final Issues<Issue> issues;
@@ -405,10 +406,9 @@ public class PublishIssuesStep extends Step {
         private final boolean usePreviousBuildAsReference;
         private final String defaultEncoding;
         private final Issues<Issue> issues;
-        private final String id;
         private final QualityGate qualityGate;
         private final RegexpFilter[] filters;
-        private String name;
+        private final String name;
 
         protected Execution(@Nonnull final StepContext context, final PublishIssuesStep step) {
             super(context);
@@ -419,47 +419,31 @@ public class PublishIssuesStep extends Step {
             healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnHealthy(), step.getMinimumPriority());
 
             qualityGate = new QualityGate(step.getThresholds());
-            id = step.getId();
             name = StringUtils.defaultString(step.getName());
             issues = step.getIssues();
+            if (StringUtils.isNotBlank(step.getId())) {
+                issues.setId(step.getId());
+            }
             filters = step.getFilters();
         }
 
         @Override
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
-            String actualId = createUniqueId();
-
-            ResultSelector selector = new ByIdResultSelector(actualId);
+            ResultSelector selector = new ByIdResultSelector(issues.getId());
             Run<?, ?> run = getRun();
             Optional<ResultAction> other = selector.get(run);
             if (other.isPresent()) {
                 throw new IllegalStateException(String.format("ID %s is already used by another action: %s%n",
-                        actualId, other.get()));
+                        issues.getId(), other.get()));
             }
 
-            return publishResult(actualId, run, selector);
+            return publishResult(run, selector);
         }
 
-        private String createUniqueId() {
-            if (StringUtils.isNotBlank(id)) {
-                return id;
-            }
-
-            if (issues.hasId()) {
-                return issues.getId();
-            }
-
-            // TODO: shouldn't this be better a default instance of StaticAnalysisTool?
-            if (StringUtils.isBlank(name)) {
-                name = Messages.Default_Name();
-            }
-            return "staticAnalysis";
-        }
-
-        private Logger createLogger(final String toolId) throws IOException, InterruptedException {
+        private Logger createLogger() throws IOException, InterruptedException {
             TaskListener listener = getContext().get(TaskListener.class);
 
-            return new LoggerFactory().createLogger(listener.getLogger(), getTool(toolId).getName());
+            return new LoggerFactory().createLogger(listener.getLogger(), getTool(issues.getId()).getName());
         }
 
         private StaticAnalysisLabelProvider getTool(final String toolId) {
@@ -474,9 +458,9 @@ public class PublishIssuesStep extends Step {
             return getContext().get(Computer.class).getChannel();
         }
 
-        private ResultAction publishResult(final String actualId, final Run<?, ?> run, final ResultSelector selector)
+        private ResultAction publishResult(final Run<?, ?> run, final ResultSelector selector)
                 throws IOException, InterruptedException {
-            Logger logger = createLogger(actualId);
+            Logger logger = createLogger();
 
             Instant startResult = Instant.now();
             IssueFilterBuilder builder = new IssueFilterBuilder();
@@ -487,7 +471,7 @@ public class PublishIssuesStep extends Step {
             logger.log("Applying %d filters on the set of %d issues (%d issues have been removed)",
                     filters.length, issues.size(), issues.size() - filtered.size());
 
-            AnalysisResult result = createAnalysisResult(filtered, actualId, run, selector);
+            AnalysisResult result = createAnalysisResult(filtered, run, selector);
             logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
                     result.getTotalSize(), result.getNewSize(), result.getFixedSize());
             logger.log("Creating analysis result took %s", getElapsedTime(startResult));
@@ -516,8 +500,9 @@ public class PublishIssuesStep extends Step {
                     files.size(), workspace, copyingLogMessage);
             logger.log("Copying affected files took %s", getElapsedTime(startCopy));
 
-            logger.log("Attaching ResultAction with ID '%s' to run '%s'.", actualId, run);
-            ResultAction action = new ResultAction(run, result, healthDescriptor, actualId, name);
+            String id = filtered.getId();
+            logger.log("Attaching ResultAction with ID '%s' to run '%s'.", id, run);
+            ResultAction action = new ResultAction(run, result, healthDescriptor, id, name);
             run.addAction(action);
 
             return action;
@@ -531,13 +516,12 @@ public class PublishIssuesStep extends Step {
             return new FilePath(getRun().getRootDir());
         }
 
-        private AnalysisResult createAnalysisResult(
-                final Issues<Issue> filtered, final String actualId,
+        private AnalysisResult createAnalysisResult(final Issues<Issue> filtered,
                 final Run<?, ?> run, final ResultSelector selector) {
             ReferenceProvider referenceProvider = ReferenceFinder.create(run,
                     selector, usePreviousBuildAsReference, useStableBuildAsReference);
             BuildHistory buildHistory = new BuildHistory(run, selector);
-            return new AnalysisResult(actualId, name, run, referenceProvider, buildHistory.getPreviousResult(),
+            return new AnalysisResult(name, run, referenceProvider, buildHistory.getPreviousResult(),
                     qualityGate, defaultEncoding, filtered);
         }
     }

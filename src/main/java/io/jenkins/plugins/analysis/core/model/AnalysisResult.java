@@ -12,15 +12,13 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.eclipse.collections.api.list.ImmutableList;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
-
-import com.google.common.collect.ImmutableList;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
@@ -102,7 +100,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     private long highScoreGap;
 
     /** Error messages. */
-    @SuppressFBWarnings("Se")
     private final ImmutableList<String> errors;
 
     /**
@@ -134,10 +131,10 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      * @param qualityGate
      *         enforces the quality gate for this project
      */
-    public AnalysisResult(final String id, final String name, final Run owner, final ReferenceProvider referenceProvider,
+    public AnalysisResult(final String name, final Run owner, final ReferenceProvider referenceProvider,
             final Optional<AnalysisResult> previousResult, final QualityGate qualityGate, final String defaultEncoding,
             final Issues<Issue> issues) {
-        this(id, name, owner, referenceProvider, previousResult, qualityGate, defaultEncoding, issues, true);
+        this(name, owner, referenceProvider, previousResult, qualityGate, defaultEncoding, issues, true);
     }
 
     /**
@@ -149,19 +146,18 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      *         enforces the quality gate for this project
      */
     // FIXME: should we ignore the issues in previousResult?
-    protected AnalysisResult(final String id, final String name, final Run<?, ?> owner,
+    protected AnalysisResult(final String name, final Run<?, ?> owner,
             final ReferenceProvider referenceProvider,
             final Optional<AnalysisResult> previousResult, final QualityGate qualityGate, final String defaultEncoding,
             final Issues<Issue> issues, final boolean canSerialize) {
-        this.id = id;
         this.name = name;
         this.owner = owner;
         this.qualityGate = qualityGate;
         this.defaultEncoding = defaultEncoding;
 
-        // errors = ImmutableList.copyOf(issues.getLogMessages()); FIXME: copy errors
-        errors = ImmutableList.of();
+        errors = issues.getErrorMessages();
 
+        id = issues.getId();
         size = issues.getSize();
         highPrioritySize = issues.getHighPrioritySize();
         normalPrioritySize = issues.getNormalPrioritySize();
@@ -667,10 +663,10 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         if (priority == Priority.HIGH) {
             return getTotalHighPrioritySize();
         }
-        else if (priority == Priority.NORMAL) {
+        if (priority == Priority.NORMAL) {
             return getTotalNormalPrioritySize();
         }
-        else if (priority == Priority.LOW) {
+        if (priority == Priority.LOW) {
             return getTotalLowPrioritySize();
         }
         return 0;
