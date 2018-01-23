@@ -193,6 +193,8 @@ public class ScanForIssuesStep extends Step {
                 issues = scanFiles(workspace, logger);
             }
             else {
+                logger.log("Sleeping for 5 seconds due to JENKINS-32191...");
+                Thread.sleep(5000);
                 issues = scanConsoleLog(workspace, logger);
             }
             issues.setId(tool);

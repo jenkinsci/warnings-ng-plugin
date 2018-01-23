@@ -7,6 +7,7 @@ import java.util.Collections;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import hudson.FilePath;
@@ -28,5 +29,6 @@ class AffectedFilesResolverTest {
     void shouldReturnFallbackOnError(final String fileName) throws IOException, InterruptedException {
         String message = new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(
                 mock(VirtualChannel.class), BUILD_ROOT, "UTF-8", Collections.singleton(fileName));
+        assertThat(message).isEqualTo("0 copied, 1 not-found, 0 with I/O error");
     }
 }
