@@ -15,7 +15,7 @@ import hudson.Extension;
  */
 @Extension
 public class IdeaInspection extends StaticAnalysisTool {
-    private static final String ID = "idea";
+    static final String ID = "idea";
     private static final String PARSER_NAME = Messages.Warnings_IdeaInspection_ParserName();
 
     @Override
@@ -25,13 +25,6 @@ return new IdeaInspectionParser();
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
-        return new LabelProvider();
-    }
-
-    /** Provides the labels for the static analysis tool. */
-    private static class LabelProvider extends DefaultLabelProvider {
-        private LabelProvider() {
-            super(ID, PARSER_NAME);
-        }
-    }
+        return new DefaultLabelProvider(ID, PARSER_NAME);
+   }
 }

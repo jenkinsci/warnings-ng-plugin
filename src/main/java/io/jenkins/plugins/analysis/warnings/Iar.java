@@ -15,7 +15,7 @@ import hudson.Extension;
  */
 @Extension
 public class Iar extends StaticAnalysisTool {
-    private static final String ID = "iar";
+    static final String ID = "iar";
     private static final String PARSER_NAME = Messages.Warnings_iar_ParserName();
 
     @Override
@@ -25,13 +25,6 @@ return new IarParser();
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
-        return new LabelProvider();
-    }
-
-    /** Provides the labels for the static analysis tool. */
-    private static class LabelProvider extends DefaultLabelProvider {
-        private LabelProvider() {
-            super(ID, PARSER_NAME);
-        }
-    }
+        return new DefaultLabelProvider(ID, PARSER_NAME);
+   }
 }

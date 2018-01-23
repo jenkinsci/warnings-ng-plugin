@@ -12,7 +12,7 @@ import hudson.Extension;
  */
 @Extension
 public class SpotBugs extends FindBugs {
-    private static final String ID = "spotbugs";
+    static final String ID = "spotbugs";
     private static final String PARSER_NAME = Messages.Warnings_SpotBugs_ParserName();
     private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
     private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";

@@ -16,7 +16,7 @@ import hudson.Extension;
 @Extension
 public class PyLint extends StaticAnalysisTool {
     private static final String PARSER_NAME = Messages.Warnings_PyLint_ParserName();
-    private static final String ID = "pylint";
+    static final String ID = "pylint";
 
     @Override
     public IssueParser createParser() {
@@ -25,13 +25,6 @@ return new PyLintParser();
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
-        return new LabelProvider();
-    }
-
-    /** Provides the labels for the static analysis tool. */
-    private static class LabelProvider extends DefaultLabelProvider {
-        private LabelProvider() {
-            super(ID, PARSER_NAME);
-        }
-    }
+        return new DefaultLabelProvider(ID, PARSER_NAME);
+   }
 }

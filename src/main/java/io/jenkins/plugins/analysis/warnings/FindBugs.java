@@ -20,7 +20,7 @@ import hudson.Extension;
  */
 @Extension
 public class FindBugs extends StaticAnalysisTool {
-    private static final String ID = "findbugs";
+    static final String ID = "findbugs";
     private static final String PARSER_NAME = Messages.Warnings_FindBugs_ParserName();
     private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
     private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";

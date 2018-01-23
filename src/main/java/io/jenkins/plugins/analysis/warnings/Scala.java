@@ -19,7 +19,7 @@ import hudson.plugins.warnings.parser.Messages;
  */
 @Extension
 public class Scala extends StaticAnalysisToolSuite {
-    private static final String ID = "scala";
+    static final String ID = "scala";
     private static final String PARSER_NAME = Messages.Warnings_ScalaParser_ParserName();
 
     @Override
@@ -29,13 +29,6 @@ public class Scala extends StaticAnalysisToolSuite {
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
-        return new LabelProvider();
-    }
-
-    /** Provides the labels for the static analysis tool. */
-    private static class LabelProvider extends DefaultLabelProvider {
-        private LabelProvider() {
-            super(ID, PARSER_NAME);
-        }
-    }
+        return new DefaultLabelProvider(ID, PARSER_NAME);
+   }
 }

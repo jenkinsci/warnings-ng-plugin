@@ -16,7 +16,7 @@ import hudson.plugins.warnings.parser.Messages;
  */
 @Extension
 public class JavaDoc extends StaticAnalysisTool {
-    private static final String ID = "javadoc";
+    static final String ID = "javadoc";
 
     @Override
     public IssueParser createParser() {

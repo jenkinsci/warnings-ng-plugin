@@ -15,7 +15,7 @@ import hudson.Extension;
  */
 @Extension
 public class Gcc3 extends StaticAnalysisTool {
-    private static final String ID = "gcc3";
+    static final String ID = "gcc3";
     private static final String PARSER_NAME = Messages.Warnings_gcc3_ParserName();
 
     @Override
@@ -25,13 +25,6 @@ return new GccParser();
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
-        return new LabelProvider();
-    }
-
-    /** Provides the labels for the static analysis tool. */
-    private static class LabelProvider extends DefaultLabelProvider {
-        private LabelProvider() {
-            super(ID, PARSER_NAME);
-        }
-    }
+        return new DefaultLabelProvider(ID, PARSER_NAME);
+   }
 }

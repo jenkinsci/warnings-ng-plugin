@@ -15,7 +15,7 @@ import hudson.Extension;
  */
 @Extension
 public class RFLint extends StaticAnalysisTool {
-    private static final String ID = "rflint";
+    static final String ID = "rflint";
     private static final String PARSER_NAME = Messages.Warnings_RFLint_ParserName();
 
     @Override
@@ -25,13 +25,6 @@ return new RFLintParser();
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
-        return new LabelProvider();
-    }
-
-    /** Provides the labels for the static analysis tool. */
-    private static class LabelProvider extends DefaultLabelProvider {
-        private LabelProvider() {
-            super(ID, PARSER_NAME);
-        }
-    }
+        return new DefaultLabelProvider(ID, PARSER_NAME);
+   }
 }

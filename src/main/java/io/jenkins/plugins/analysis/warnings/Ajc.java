@@ -15,7 +15,7 @@ import hudson.Extension;
  */
 @Extension
 public class Ajc extends StaticAnalysisTool {
-    private static final String ID = "aspectj";
+    static final String ID = "aspectj";
     private static final String PARSER_NAME = Messages.Warnings_AjcParser_ParserName();
 
     @Override

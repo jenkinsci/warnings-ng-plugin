@@ -18,7 +18,7 @@ import hudson.Extension;
  */
 @Extension
 public class CheckStyle extends StaticAnalysisTool {
-    private static final String ID = "checkstyle";
+    static final String ID = "checkstyle";
     private static final String PARSER_NAME = Messages.Warnings_CheckStyle_ParserName();
     private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
     private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
