@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Rule;
+import org.junit.jupiter.api.Tag;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
@@ -17,6 +18,7 @@ import hudson.model.TopLevelItem;
  *
  * @author Ullrich Hafner
  */
+@Tag("IntegrationTest")
 public class IntegrationTest extends ResourceTest {
     /** Starts Jenkins and provides several useful helper methods. */
     @Rule
