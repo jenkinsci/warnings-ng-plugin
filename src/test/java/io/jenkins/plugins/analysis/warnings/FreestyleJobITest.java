@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 import org.junit.Test;
-import org.junit.jupiter.api.Tag;
 
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import static org.assertj.core.api.Assertions.*;
@@ -22,7 +21,6 @@ import hudson.plugins.warnings.WarningsPublisher;
  *
  * @author Ullrich Hafner
  */
-@Tag("IntegrationTest")
 public class FreestyleJobITest extends IntegrationTest {
     /**
      * Runs the Eclipse parser on an empty workspace: the build should report 0 issues and an error message.
