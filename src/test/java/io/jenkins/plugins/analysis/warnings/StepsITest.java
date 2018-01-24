@@ -99,7 +99,7 @@ public class StepsITest extends PipelineITest {
      * @see <a href="https://jenkins.io/security/advisory/2018-01-22/">Jenkins Security Advisory 2018-01-22</a>
      */
     @Test
-    public void showPreventXxe_security656() throws Exception {
+    public void showPreventXxeSecurity656() throws Exception {
         String oobInUserContentLink = j.getURL() + "userContent/oob.xml";
         String triggerLink = j.getURL() + "triggerMe";
 
@@ -114,21 +114,26 @@ public class StepsITest extends PipelineITest {
         Files.write(new File(userContentDir, "oob.xml").toPath(), adaptedOobFileContent.getBytes());
 
         WorkflowJob job = createJob();
-        job.setDefinition(asStage("def issues = scanForIssues tool: 'checkstyle', pattern:'xxe.xml'",
-                "publishIssues issues:[issues]"));
-
         String adaptedXxeFileContent = xxeFileContent.replace("$OOB_LINK$", oobInUserContentLink);
         createFileInWorkspace(job, "xxe.xml", adaptedXxeFileContent);
 
-        scheduleBuild(job, CheckStyle.ID);
+        String[] tools = {CheckStyle.ID, Pmd.ID, FindBugs.ID, JcReport.ID};
+        for (String tool : tools) {
+            job.setDefinition(asStage(
+                    String.format("def issues = scanForIssues tool: '%s', pattern:'xxe.xml'", tool),
+                    "publishIssues issues:[issues]"));
 
-        YouCannotTriggerMe urlHandler = j.jenkins.getExtensionList(UnprotectedRootAction.class)
-                .get(YouCannotTriggerMe.class);
-        assertThat(urlHandler).isNotNull();
-        assertThat(urlHandler.triggerCount).as("XXE detected: URL has been triggered!").isEqualTo(0);
+            scheduleBuild(job, tool);
+
+            YouCannotTriggerMe urlHandler = j.jenkins.getExtensionList(UnprotectedRootAction.class).get(YouCannotTriggerMe.class);
+            assertThat(urlHandler).isNotNull();
+
+            assertThat(urlHandler.triggerCount).as("XXE detected for parser %s: URL has been triggered!", tool)
+                    .isEqualTo(0);
+        }
     }
 
-    @TestExtension("testXxe")
+    @TestExtension
     public static class YouCannotTriggerMe implements UnprotectedRootAction {
         private int triggerCount = 0;
 
