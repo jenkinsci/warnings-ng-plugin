@@ -106,6 +106,12 @@ public class PipelineITest extends IntegrationTest {
                 .contains("This code calls a method and ignores the return value.");
     }
 
+    /** Runs the Clang-Tidy parser on an output file that contains 6 issues. */
+    @Test
+    public void shouldFindAllClangTidyIssues() {
+        shouldFindIssuesOfTool(6, ClangTidy.ID, "ClangTidy.txt");
+    }
+
     /** Runs the Clang parser on an output file that contains 9 issues. */
     @Test
     public void shouldFindAllClangIssues() {
