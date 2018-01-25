@@ -71,10 +71,9 @@ public abstract class PipelineITest extends IntegrationTest {
     @SuppressWarnings("illegalcatch")
     protected AnalysisResult scheduleBuild(final WorkflowJob job, final String id) {
         try {
-            WorkflowRun run = j.assertBuildStatus(Result.SUCCESS, Objects.requireNonNull(job.scheduleBuild2(0)));
+            WorkflowRun run = runSuccessfully(job);
 
-            ResultAction action = run.getAction(ResultAction.class);
-            assertThat(action).isNotNull();
+            ResultAction action = getResultAction(run);
             assertThat(action.getId()).isEqualTo(id);
 
             return action.getResult();
@@ -124,5 +123,21 @@ public abstract class PipelineITest extends IntegrationTest {
         catch (IOException | InterruptedException e) {
             throw new AssertionError(e);
         }
+    }
+
+    @SuppressWarnings("illegalcatch")
+    protected WorkflowRun runSuccessfully(final WorkflowJob job) {
+        try {
+            return j.assertBuildStatus(Result.SUCCESS, Objects.requireNonNull(job.scheduleBuild2(0)));
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    protected ResultAction getResultAction(final WorkflowRun run) {
+        ResultAction action = run.getAction(ResultAction.class);
+        assertThat(action).isNotNull();
+        return action;
     }
 }

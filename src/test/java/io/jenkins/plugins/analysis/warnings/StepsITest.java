@@ -6,6 +6,7 @@ import java.nio.file.Files;
 
 import org.apache.commons.io.FileUtils;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Test;
 import org.jvnet.hudson.test.TestExtension;
 import org.kohsuke.stapler.HttpResponse;
@@ -17,6 +18,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.BuildIssue;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
+import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.model.UnprotectedRootAction;
 import hudson.util.HttpResponses;
@@ -62,8 +64,59 @@ public class StepsITest extends PipelineITest {
                 createScanForIssuesStep(JavaDoc.ID, "javadoc"),
                 "publishIssues issues:[java, eclipse, javadoc]"));
 
-        AnalysisResult result = scheduleBuild(job, "java");
+        WorkflowRun run = runSuccessfully(job);
 
+        ResultAction action = getResultAction(run);
+        assertThat(action.getId()).isEqualTo("java");
+        assertThat(action.getDisplayName()).isEqualTo("Java Warnings");
+
+        assertThatJavaIssuesArePublished(action.getResult());
+    }
+
+    /**
+     * Runs the all Java parsers on three output files: the build should report issues of all tools.
+     * The results should be aggregated into a new action with the specified ID. Since no name is given
+     * the default name is used.
+     */
+    @Test
+    public void shouldProvideADefaultNameIfNoOneIsGiven() {
+        WorkflowJob job = createJobWithWorkspaceFiles("eclipse.txt", "javadoc.txt", "javac.txt");
+        job.setDefinition(asStage(createScanForIssuesStep(Java.ID, "java"),
+                createScanForIssuesStep(Eclipse.ID, "eclipse"),
+                createScanForIssuesStep(JavaDoc.ID, "javadoc"),
+                "publishIssues issues:[java, eclipse, javadoc], id:'my-id'"));
+
+        WorkflowRun run = runSuccessfully(job);
+
+        ResultAction action = getResultAction(run);
+        assertThat(action.getId()).isEqualTo("my-id");
+        assertThat(action.getDisplayName()).isEqualTo("Static Analysis Warnings");
+
+        assertThatJavaIssuesArePublished(action.getResult());
+    }
+
+    /**
+     * Runs the all Java parsers on three output files: the build should report issues of all tools.
+     * The results should be aggregated into a new action with the specified ID and the specified name.
+     */
+    @Test
+    public void shouldUseSpecifiedName() {
+        WorkflowJob job = createJobWithWorkspaceFiles("eclipse.txt", "javadoc.txt", "javac.txt");
+        job.setDefinition(asStage(createScanForIssuesStep(Java.ID, "java"),
+                createScanForIssuesStep(Eclipse.ID, "eclipse"),
+                createScanForIssuesStep(JavaDoc.ID, "javadoc"),
+                "publishIssues issues:[java, eclipse, javadoc], id:'my-id', name:'my-name'"));
+
+        WorkflowRun run = runSuccessfully(job);
+
+        ResultAction action = getResultAction(run);
+        assertThat(action.getId()).isEqualTo("my-id");
+        assertThat(action.getDisplayName()).contains("my-name");
+
+        assertThatJavaIssuesArePublished(action.getResult());
+    }
+
+    private void assertThatJavaIssuesArePublished(final AnalysisResult result) {
         Issues<BuildIssue> issues = result.getIssues();
         assertThat(issues.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(8);
         assertThat(issues.filter(issue -> "java".equals(issue.getOrigin()))).hasSize(2);
