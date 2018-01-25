@@ -1,0 +1,16 @@
+package ${package};
+
+/**
+ * Entry point for assertions of different data types. Each method in this class is a static factory for the
+ * type-specific assertion objects.
+ */
+@javax.annotation.Generated(value="assertj-assertions-generator")
+public class Assertions extends edu.hm.hafner.analysis.assertj.Assertions {
+${all_assertions_entry_points}
+  /**
+   * Creates a new <code>{@link Assertions}</code>.
+   */
+  protected Assertions() {
+    // empty
+  }
+}

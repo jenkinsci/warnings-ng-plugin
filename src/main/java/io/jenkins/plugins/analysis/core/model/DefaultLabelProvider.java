@@ -1,8 +1,11 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import javax.annotation.CheckForNull;
+
 import org.apache.commons.lang.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import hudson.plugins.analysis.util.HtmlPrinter;
 
@@ -19,9 +22,8 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
     private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
     private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
 
-    static final String STATIC_ANALYSIS_ID = "staticAnalysis";
-
     private final String id;
+    @CheckForNull
     private final String name;
 
     /**
@@ -42,16 +44,14 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
      * @param name
      *         the name of the static analysis tool
      */
-    public DefaultLabelProvider(final String id, final String name) {
+    public DefaultLabelProvider(final String id, @CheckForNull final String name) {
         this.id = id;
         this.name = name;
     }
 
-    /**
-     * Creates a new {@link DefaultLabelProvider} with the ID {@link #STATIC_ANALYSIS_ID}.
-     */
-    public DefaultLabelProvider() {
-        this(STATIC_ANALYSIS_ID);
+    @VisibleForTesting
+    String getDefaultName() {
+        return Messages.Tool_Default_Name();
     }
 
     /**
@@ -66,17 +66,25 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
 
     @Override
     public String getName() {
-        return name;
+        if (StringUtils.isNotBlank(name)) {
+            return name;
+        }
+        return getDefaultName();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s: %s", getId(), getName());
     }
 
     @Override
     public String getLinkName() {
-        return Messages.Tool_Link_Name(name);
+        return Messages.Tool_Link_Name(getName());
     }
 
     @Override
     public String getTrendName() {
-        return Messages.Tool_Trend_Name(name);
+        return Messages.Tool_Trend_Name(getName());
     }
 
     @Override

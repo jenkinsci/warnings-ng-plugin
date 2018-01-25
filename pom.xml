@@ -181,6 +181,32 @@
       </plugin>
 
       <plugin>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-assertions-generator-maven-plugin</artifactId>
+        <version>2.1.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate-assertions</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <packages>
+            <param>io.jenkins.plugins.analysis.core.model</param>
+          </packages>
+          <cleanTargetDir>true</cleanTargetDir>
+          <hierarchical>false</hierarchical>
+          <generateBddAssertions>false</generateBddAssertions>
+          <generateJUnitSoftAssertions>false</generateJUnitSoftAssertions>
+          <templates>
+            <templatesDirectory>src/test/resources/templates/</templatesDirectory>
+            <assertionsEntryPointClass>analysis_core_assertions_entry_point_class_template.txt</assertionsEntryPointClass>
+          </templates>
+        </configuration>
+      </plugin>
+
+      <plugin>
         <groupId>com.infradna.tool</groupId>
         <artifactId>bridge-method-injector</artifactId>
         <version>1.17</version>

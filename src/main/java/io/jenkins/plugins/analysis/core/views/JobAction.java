@@ -32,8 +32,8 @@ import io.jenkins.plugins.analysis.core.history.BuildHistory;
 import io.jenkins.plugins.analysis.core.history.NullBuildHistory;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import jenkins.model.Jenkins;
 
@@ -88,7 +88,7 @@ public class JobAction implements Action {
     }
 
     private StaticAnalysisLabelProvider getTool() {
-        return StaticAnalysisTool.find(id, name);
+        return new LabelProviderFactory().findLabelProvider(id, name);
     }
 
     /**
