@@ -9,8 +9,8 @@ import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import jenkins.model.RunAction2;
@@ -172,7 +172,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     private StaticAnalysisLabelProvider getLabelProvider() {
-        return StaticAnalysisTool.find(id, name);
+        return new LabelProviderFactory().findLabelProvider(id, name);
     }
 
     /**

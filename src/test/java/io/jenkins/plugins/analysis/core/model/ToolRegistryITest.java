@@ -54,12 +54,6 @@ public class ToolRegistryITest extends IntegrationTest {
         assertThat(registry.find(id).getId()).isEqualTo(id);
     }
 
-    private static StaticAnalysisTool createTool(final String id) {
-        StaticAnalysisTool tool = mock(StaticAnalysisTool.class);
-        when(tool.getId()).thenReturn(id);
-        return tool;
-    }
-
     @TestExtension @SuppressWarnings("unused")
     public static class TestTool extends StaticAnalysisTool {
         @Override
@@ -69,7 +63,7 @@ public class ToolRegistryITest extends IntegrationTest {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new DefaultLabelProvider();
+            return new DefaultLabelProvider(getId(), getId());
         }
 
         @Override
@@ -84,5 +78,12 @@ public class ToolRegistryITest extends IntegrationTest {
         public List<StaticAnalysisTool> getTools() {
             return Collections.singletonList(createTool(PROVIDER_ID));
         }
+
+        private StaticAnalysisTool createTool(final String id) {
+            StaticAnalysisTool tool = mock(StaticAnalysisTool.class);
+            when(tool.getId()).thenReturn(id);
+            return tool;
+        }
+
     }
 }
