@@ -58,19 +58,9 @@ public class StepsITest extends PipelineITest {
     /** Runs the all Java parsers on three output files: the build should report issues of all tools. */
     @Test
     public void shouldCombineIssuesOfSeveralFiles() {
-        WorkflowJob job = createJobWithWorkspaceFiles("eclipse.txt", "javadoc.txt", "javac.txt");
-        job.setDefinition(asStage(createScanForIssuesStep(Java.ID, "java"),
-                createScanForIssuesStep(Eclipse.ID, "eclipse"),
-                createScanForIssuesStep(JavaDoc.ID, "javadoc"),
-                "publishIssues issues:[java, eclipse, javadoc]"));
-
-        WorkflowRun run = runSuccessfully(job);
-
-        ResultAction action = getResultAction(run);
-        assertThat(action.getId()).isEqualTo("java");
-        assertThat(action.getDisplayName()).isEqualTo("Java Warnings");
-
-        assertThatJavaIssuesArePublished(action.getResult());
+        publishResultsWithIdAndName(
+                "publishIssues issues:[java, eclipse, javadoc]",
+                "java", "Java Warnings");
     }
 
     /**
@@ -80,19 +70,9 @@ public class StepsITest extends PipelineITest {
      */
     @Test
     public void shouldProvideADefaultNameIfNoOneIsGiven() {
-        WorkflowJob job = createJobWithWorkspaceFiles("eclipse.txt", "javadoc.txt", "javac.txt");
-        job.setDefinition(asStage(createScanForIssuesStep(Java.ID, "java"),
-                createScanForIssuesStep(Eclipse.ID, "eclipse"),
-                createScanForIssuesStep(JavaDoc.ID, "javadoc"),
-                "publishIssues issues:[java, eclipse, javadoc], id:'my-id'"));
-
-        WorkflowRun run = runSuccessfully(job);
-
-        ResultAction action = getResultAction(run);
-        assertThat(action.getId()).isEqualTo("my-id");
-        assertThat(action.getDisplayName()).isEqualTo("Static Analysis Warnings");
-
-        assertThatJavaIssuesArePublished(action.getResult());
+        publishResultsWithIdAndName(
+                "publishIssues issues:[java, eclipse, javadoc], id:'my-id'",
+                "my-id", "Static Analysis Warnings");
     }
 
     /**
@@ -101,17 +81,24 @@ public class StepsITest extends PipelineITest {
      */
     @Test
     public void shouldUseSpecifiedName() {
+        publishResultsWithIdAndName(
+                "publishIssues issues:[java, eclipse, javadoc], id:'my-id', name:'my-name'",
+                "my-id", "my-name");
+    }
+
+    private void publishResultsWithIdAndName(final String publishStep, final String expectedId,
+            final String expectedName) {
         WorkflowJob job = createJobWithWorkspaceFiles("eclipse.txt", "javadoc.txt", "javac.txt");
         job.setDefinition(asStage(createScanForIssuesStep(Java.ID, "java"),
                 createScanForIssuesStep(Eclipse.ID, "eclipse"),
                 createScanForIssuesStep(JavaDoc.ID, "javadoc"),
-                "publishIssues issues:[java, eclipse, javadoc], id:'my-id', name:'my-name'"));
+                publishStep));
 
         WorkflowRun run = runSuccessfully(job);
 
         ResultAction action = getResultAction(run);
-        assertThat(action.getId()).isEqualTo("my-id");
-        assertThat(action.getDisplayName()).contains("my-name");
+        assertThat(action.getId()).isEqualTo(expectedId);
+        assertThat(action.getDisplayName()).contains(expectedName);
 
         assertThatJavaIssuesArePublished(action.getResult());
     }
@@ -125,7 +112,25 @@ public class StepsITest extends PipelineITest {
         assertThat(result.getIssues()).hasSize(8 + 2 + 6);
     }
 
-    // TODO: testcase with id, id no name, id and name
+    /**
+     * Runs the Java parser on an pep8 log file: the build should report no issues.
+     * A result should be available with the java ID and name.
+     */
+    @Test
+    public void shouldHaveActionWithIdAndNameWithEmptyResults() {
+        WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
+        job.setDefinition(asStage(createScanForIssuesStep(Java.ID, "java"),
+                "publishIssues issues:[java]"));
+
+        WorkflowRun run = runSuccessfully(job);
+
+        ResultAction action = getResultAction(run);
+        assertThat(action.getId()).isEqualTo("java");
+        assertThat(action.getDisplayName()).contains(Java.PARSER_NAME);
+
+        AnalysisResult result = action.getResult();
+        assertThat(result.getIssues()).isEmpty();
+    }
 
     /**
      * Runs the Eclipse parser on an output file that contains several issues. Applies an include filter that selects
