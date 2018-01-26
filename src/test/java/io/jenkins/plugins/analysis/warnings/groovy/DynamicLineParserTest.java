@@ -8,9 +8,9 @@ import edu.hm.hafner.analysis.parser.Pep8ParserTest;
  *
  * @author Ulli Hafner
  */
-class DynamicLineParserTest extends Pep8ParserTest {
+public class DynamicLineParserTest extends Pep8ParserTest {
     @Override
-    protected AbstractParser createParser() {
+    public AbstractParser createParser() {
         return new DynamicLineParser("(.*):(\\d+):(\\d+): (\\D\\d*) (.*)", toString("pep8.groovy"));
     }
 }

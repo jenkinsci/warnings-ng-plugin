@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.warnings;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Collections;
 
 import org.apache.commons.io.FileUtils;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -19,6 +20,8 @@ import io.jenkins.plugins.analysis.core.model.BuildIssue;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
+import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
+import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
 
 import hudson.model.UnprotectedRootAction;
 import hudson.util.HttpResponses;
@@ -130,6 +133,33 @@ public class StepsITest extends PipelineITest {
 
         AnalysisResult result = action.getResult();
         assertThat(result.getIssues()).isEmpty();
+    }
+
+    /**
+     * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and runs this parser on an
+     * error log with 8 issues.
+     */
+    @Test
+    public void shouldShowWarningsOfGroovyParser() {
+        WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
+        job.setDefinition(asStage(createScanForIssuesStep("groovy-pep8", "groovy"),
+                "publishIssues issues:[groovy]"));
+
+        ParserConfiguration configuration = ParserConfiguration.getInstance();
+        configuration.setParsers(Collections.singletonList(
+                new GroovyParser("groovy-pep8", "Groovy Pep8",
+                        "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
+                        toString("groovy/pep8.groovy"), "")));
+        WorkflowRun run = runSuccessfully(job);
+
+        ResultAction action = getResultAction(run);
+        assertThat(action.getId()).isEqualTo("groovy-pep8");
+        assertThat(action.getDisplayName()).contains("Groovy Pep8");
+
+        AnalysisResult result = action.getResult();
+        assertThat(result.getIssues()).hasSize(8);
+
+        // FIXME: issues from the action should also have an ID
     }
 
     /**

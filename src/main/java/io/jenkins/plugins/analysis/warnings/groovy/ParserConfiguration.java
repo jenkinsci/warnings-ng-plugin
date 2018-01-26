@@ -31,7 +31,7 @@ public class ParserConfiguration extends GlobalConfiguration {
      *
      * @return the singleton instance
      */
-    static ParserConfiguration getInstance() {
+    public static ParserConfiguration getInstance() {
         return GlobalConfiguration.all().get(ParserConfiguration.class);
     }
 
