@@ -22,6 +22,7 @@ import org.xml.sax.SAXException;
 // TODO: when there are more translations available we should generalize that approach into a map of maps
 public final class FindBugsMessages {
     private static final String NO_MESSAGE_FOUND = "no message found";
+    private static final Logger logger = Logger.getLogger(FindBugsMessages.class.getName());
     /** Maps a key to HTML description. */
     private final Map<String, String> messages = new HashMap<>();
     private final Map<String, String> jaMessages = new HashMap<>();
@@ -30,13 +31,11 @@ public final class FindBugsMessages {
     private final Map<String, String> jaShortMessages = new HashMap<>();
     private final Map<String, String> frShortMessages = new HashMap<>();
 
-    private static final Logger logger = Logger.getLogger(FindBugsMessages.class.getName());
-
     /**
      * Initializes the messages map.
      */
     @SuppressWarnings("all")
-    public void initialize()  {
+    public void initialize() {
         try {
             loadMessages("messages.xml", messages, shortMessages);
             loadMessages("fb-contrib-messages.xml", messages, shortMessages);
@@ -57,7 +56,8 @@ public final class FindBugsMessages {
             List<Pattern> patterns = parse(file);
             for (Pattern pattern : patterns) {
                 if (messagesCache.get(pattern.getType()) != null || shortMessagesCache.get(pattern.getType()) != null) {
-                    logger.warning("The bug pattern " + pattern.getType() + " was already loaded. It could be a duplicate.");
+                    logger.warning(
+                            "The bug pattern " + pattern.getType() + " was already loaded. It could be a duplicate.");
                 }
                 messagesCache.put(pattern.getType(), pattern.getDescription());
                 shortMessagesCache.put(pattern.getType(), pattern.getShortDescription());
@@ -166,16 +166,6 @@ public final class FindBugsMessages {
         private String shortDescription;
 
         /**
-         * Sets the type to the specified value.
-         *
-         * @param type
-         *            the value to set
-         */
-        public void setType(final String type) {
-            this.type = type;
-        }
-
-        /**
          * Returns the type.
          *
          * @return the type
@@ -185,13 +175,13 @@ public final class FindBugsMessages {
         }
 
         /**
-         * Sets the description to the specified value.
+         * Sets the type to the specified value.
          *
-         * @param description
-         *            the value to set
+         * @param type
+         *         the value to set
          */
-        public void setDescription(final String description) {
-            this.description = description;
+        public void setType(final String type) {
+            this.type = type;
         }
 
         /**
@@ -204,13 +194,13 @@ public final class FindBugsMessages {
         }
 
         /**
-         * Sets the shortDescription to the specified value.
+         * Sets the description to the specified value.
          *
-         * @param shortDescription
-         *            the value to set
+         * @param description
+         *         the value to set
          */
-        public void setShortDescription(final String shortDescription) {
-            this.shortDescription = shortDescription;
+        public void setDescription(final String description) {
+            this.description = description;
         }
 
         /**
@@ -220,6 +210,16 @@ public final class FindBugsMessages {
          */
         public String getShortDescription() {
             return shortDescription;
+        }
+
+        /**
+         * Sets the shortDescription to the specified value.
+         *
+         * @param shortDescription
+         *         the value to set
+         */
+        public void setShortDescription(final String shortDescription) {
+            this.shortDescription = shortDescription;
         }
     }
 }

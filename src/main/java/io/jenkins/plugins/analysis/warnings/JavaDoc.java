@@ -17,11 +17,12 @@ import hudson.plugins.warnings.parser.Messages;
 @Extension
 public class JavaDoc extends StaticAnalysisTool {
     static final String ID = "javadoc";
+    private static final String PARSER_NAME = Messages.Warnings_JavaDoc_ParserName();
 
     @Override
     public IssueParser createParser() {
-return new JavaDocParser();
-}
+        return new JavaDocParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
@@ -31,22 +32,7 @@ return new JavaDocParser();
     /** Provides the labels for the static analysis tool. */
     public static class JavaDocLabelProvider extends JavaLabelProvider {
         public JavaDocLabelProvider() {
-            super(ID);
-        }
-
-        @Override
-        public String getName() {
-            return Messages.Warnings_JavaDoc_ParserName();
-        }
-
-        @Override
-        public String getLinkName() {
-            return Messages.Warnings_JavaDoc_LinkName();
-        }
-
-        @Override
-        public String getTrendName() {
-            return Messages.Warnings_JavaDoc_TrendName();
+            super(ID, PARSER_NAME);
         }
     }
 }

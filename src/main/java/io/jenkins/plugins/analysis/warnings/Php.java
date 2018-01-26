@@ -20,11 +20,11 @@ public class Php extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new PhpParser();
-}
+        return new PhpParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

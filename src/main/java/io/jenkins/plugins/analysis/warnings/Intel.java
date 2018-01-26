@@ -20,12 +20,12 @@ public class Intel extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new IntelParser();
-}
+        return new IntelParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }
 

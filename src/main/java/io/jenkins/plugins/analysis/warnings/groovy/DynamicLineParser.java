@@ -7,8 +7,7 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.RegexpLineParser;
 
 /**
- * A line parser that uses a configurable regular expression and Groovy script
- * to parse warnings.
+ * A line parser that uses a configurable regular expression and Groovy script to parse warnings.
  *
  * @author Ulli Hafner
  */
@@ -21,7 +20,7 @@ public class DynamicLineParser extends RegexpLineParser {
      * Creates a new instance of {@link DynamicLineParser}.
      *
      * @param regexp
-     *            regular expression
+     *         regular expression
      */
     public DynamicLineParser(final String regexp, final String script) {
         super(regexp);

@@ -20,11 +20,11 @@ public class NagFortran extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new NagFortranParser();
-}
+        return new NagFortranParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

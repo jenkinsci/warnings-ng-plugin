@@ -20,11 +20,11 @@ public class QACSourceCodeAnalyser extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new QACSourceCodeAnalyserParser();
-}
+        return new QACSourceCodeAnalyserParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

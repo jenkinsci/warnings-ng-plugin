@@ -20,11 +20,11 @@ public class GoLint extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new GoLintParser();
-}
+        return new GoLintParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

@@ -20,11 +20,11 @@ public class Tnsdl extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new TnsdlParser();
-}
+        return new TnsdlParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

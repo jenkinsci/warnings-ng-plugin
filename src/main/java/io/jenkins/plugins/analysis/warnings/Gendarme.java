@@ -20,11 +20,11 @@ public class Gendarme extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new GendarmeParser();
-}
+        return new GendarmeParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

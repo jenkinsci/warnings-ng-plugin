@@ -26,5 +26,5 @@ public class Eclipse extends StaticAnalysisTool {
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

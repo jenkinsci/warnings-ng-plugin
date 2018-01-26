@@ -20,11 +20,11 @@ public class FlexSDK extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new FlexSDKParser();
-}
+        return new FlexSDKParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

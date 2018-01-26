@@ -20,11 +20,11 @@ public class IdeaInspection extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new IdeaInspectionParser();
-}
+        return new IdeaInspectionParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

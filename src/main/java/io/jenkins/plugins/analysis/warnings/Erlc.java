@@ -20,11 +20,11 @@ public class Erlc extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new ErlcParser();
-}
+        return new ErlcParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

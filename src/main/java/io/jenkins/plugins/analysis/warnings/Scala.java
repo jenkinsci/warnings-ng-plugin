@@ -30,5 +30,5 @@ public class Scala extends StaticAnalysisToolSuite {
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

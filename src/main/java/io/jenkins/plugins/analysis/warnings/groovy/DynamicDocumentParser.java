@@ -7,8 +7,7 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.RegexpDocumentParser;
 
 /**
- * A multi-line parser that uses a configurable regular expression and Groovy
- * script to parse warnings.
+ * A multi-line parser that uses a configurable regular expression and Groovy script to parse warnings.
  *
  * @author Ulli Hafner
  */
@@ -20,9 +19,9 @@ public class DynamicDocumentParser extends RegexpDocumentParser {
      * Creates a new instance of {@link DynamicDocumentParser}.
      *
      * @param regexp
-     *            regular expression
+     *         regular expression
      * @param script
-     *            Groovy script
+     *         Groovy script
      */
     public DynamicDocumentParser(final String regexp, final String script) {
         super(regexp, true);

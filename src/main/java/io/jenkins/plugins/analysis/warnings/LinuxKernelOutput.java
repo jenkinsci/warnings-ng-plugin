@@ -20,11 +20,11 @@ public class LinuxKernelOutput extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new LinuxKernelOutputParser();
-}
+        return new LinuxKernelOutputParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

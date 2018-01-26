@@ -69,6 +69,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         this.example = example.length() > MAX_EXAMPLE_SIZE ? example.substring(0, MAX_EXAMPLE_SIZE) : example;
     }
 
+    private static boolean containsNewline(final String expression) {
+        return StringUtils.contains(expression, "\\n");
+    }
+
     /**
      * Validates this instance.
      *
@@ -129,10 +133,6 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
      */
     public final boolean hasMultiLineSupport() {
         return containsNewline(regexp);
-    }
-
-    private static boolean containsNewline(final String expression) {
-        return StringUtils.contains(expression, "\\n");
     }
 
     /**

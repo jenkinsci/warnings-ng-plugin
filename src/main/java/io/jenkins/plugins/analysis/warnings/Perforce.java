@@ -20,11 +20,11 @@ public class Perforce extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new P4Parser();
-}
+        return new P4Parser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

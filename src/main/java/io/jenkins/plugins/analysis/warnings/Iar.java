@@ -20,11 +20,11 @@ public class Iar extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new IarParser();
-}
+        return new IarParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

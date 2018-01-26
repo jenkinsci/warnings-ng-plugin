@@ -47,7 +47,8 @@ public class ParserConfiguration extends GlobalConfiguration {
     /**
      * Sets the list of available Groovy parsers to the specified elements. Previously set parsers will be removed.
      *
-     * @param parsers the new Groovy parsers
+     * @param parsers
+     *         the new Groovy parsers
      */
     @DataBoundSetter
     public void setParsers(final List<GroovyParser> parsers) {
@@ -65,10 +66,11 @@ public class ParserConfiguration extends GlobalConfiguration {
     }
 
     /**
-     * Registers all parsers in the {@link ToolRegistry} of the analysis-core plug-in so that these parsers
-     * can be referenced in steps and publishers.
+     * Registers all parsers in the {@link ToolRegistry} of the analysis-core plug-in so that these parsers can be
+     * referenced in steps and publishers.
      */
-    @Extension @SuppressWarnings("unused") // Picked up by Jenkins Extension Scanner
+    @Extension
+    @SuppressWarnings("unused") // Picked up by Jenkins Extension Scanner
     public static class ParserFactory implements StaticAnalysisToolFactory {
         @Override
         public List<StaticAnalysisTool> getTools() {

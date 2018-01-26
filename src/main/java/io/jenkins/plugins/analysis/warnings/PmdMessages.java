@@ -33,7 +33,7 @@ public class PmdMessages {
     public int initialize() {
         try {
             Iterator<RuleSet> ruleSets = new RuleSetFactory().getRegisteredRuleSets();
-            for (; ruleSets.hasNext();) {
+            for (; ruleSets.hasNext(); ) {
                 RuleSet ruleSet = ruleSets.next();
                 rules.put(ruleSet.getName(), ruleSet);
             }
@@ -52,9 +52,10 @@ public class PmdMessages {
      * Returns the message for the specified PMD rule.
      *
      * @param ruleSetName
-     *            PMD rule set
+     *         PMD rule set
      * @param ruleName
-     *            PMD rule ID
+     *         PMD rule ID
+     *
      * @return the message
      */
     public String getMessage(final String ruleSetName, final String ruleName) {
@@ -72,7 +73,8 @@ public class PmdMessages {
      * Creates the message string to be shown for the specified rule.
      *
      * @param rule
-     *            the rule
+     *         the rule
+     *
      * @return the message string to be shown for the specified rule
      */
     private String createMessage(final Rule rule) {

@@ -23,7 +23,8 @@ public class Topic {
     /**
      * Sets the name of this topic.
      *
-     * @param name the name
+     * @param name
+     *         the name
      */
     public void setName(final String name) {
         this.name = name;
@@ -41,7 +42,8 @@ public class Topic {
     /**
      * Sets the value of this topic.
      *
-     * @param value the value
+     * @param value
+     *         the value
      */
     public void setValue(final String value) {
         this.value = value;

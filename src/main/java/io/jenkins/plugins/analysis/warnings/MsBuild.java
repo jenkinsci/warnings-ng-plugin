@@ -20,11 +20,11 @@ public class MsBuild extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new MsBuildParser();
-}
+        return new MsBuildParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

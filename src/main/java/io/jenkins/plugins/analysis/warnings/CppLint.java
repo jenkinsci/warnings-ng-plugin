@@ -20,11 +20,11 @@ public class CppLint extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new CppLintParser();
-}
+        return new CppLintParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

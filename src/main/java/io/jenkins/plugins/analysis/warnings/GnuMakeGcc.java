@@ -20,11 +20,11 @@ public class GnuMakeGcc extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new GnuMakeGccParser();
-}
+        return new GnuMakeGccParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

@@ -20,11 +20,11 @@ public class GnuFortran extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new GnuFortranParser();
-}
+        return new GnuFortranParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

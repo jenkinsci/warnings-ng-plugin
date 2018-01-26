@@ -22,10 +22,9 @@ import hudson.plugins.warnings.WarningsDescriptor;
  */
 public class GroovyExpressionMatcher implements Serializable {
     private static final long serialVersionUID = -2218299240520838315L;
-
+    private static final Logger LOGGER = Logger.getLogger(GroovyExpressionMatcher.class.getName());
     private final Issue falsePositive;
     private final String script;
-
     private transient Script compiled;
 
     /**
@@ -132,7 +131,5 @@ public class GroovyExpressionMatcher implements Serializable {
     public Issue createIssue(final Matcher matcher, final IssueBuilder builder) {
         return createIssue(matcher, builder, 0);
     }
-
-    private static final Logger LOGGER = Logger.getLogger(GroovyExpressionMatcher.class.getName());
 }
 

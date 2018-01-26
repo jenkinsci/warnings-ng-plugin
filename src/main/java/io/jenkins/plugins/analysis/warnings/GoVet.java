@@ -20,11 +20,11 @@ public class GoVet extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new GoVetParser();
-}
+        return new GoVetParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

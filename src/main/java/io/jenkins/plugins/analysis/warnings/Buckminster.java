@@ -20,11 +20,11 @@ public class Buckminster extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new BuckminsterParser();
-}
+        return new BuckminsterParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

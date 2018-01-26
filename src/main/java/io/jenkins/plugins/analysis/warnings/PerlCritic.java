@@ -20,11 +20,11 @@ public class PerlCritic extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new PerlCriticParser();
-}
+        return new PerlCriticParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

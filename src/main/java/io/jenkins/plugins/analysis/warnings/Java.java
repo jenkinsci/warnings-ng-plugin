@@ -18,13 +18,14 @@ import hudson.plugins.warnings.parser.Messages;
 @Extension
 public class Java extends StaticAnalysisTool {
     static final String ID = "java";
+    static final String PARSER_NAME = Messages.Warnings_JavaParser_ParserName();
     private static final String JAVA_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + ID + "-24x24.png";
     private static final String JAVA_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + ID + "-48x48.png";
 
     @Override
     public IssueParser createParser() {
-return new JavacParser();
-}
+        return new JavacParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
@@ -33,27 +34,20 @@ return new JavacParser();
 
     /** Provides the labels for the static analysis tool. */
     public static class JavaLabelProvider extends DefaultLabelProvider {
-        public JavaLabelProvider() {
-            super(ID);
+        JavaLabelProvider() {
+            this(ID, PARSER_NAME);
         }
 
-        public JavaLabelProvider(final String id) {
-            super(id);
-        }
-
-        @Override
-        public String getName() {
-            return Messages.Warnings_JavaParser_ParserName();
-        }
-
-        @Override
-        public String getLinkName() {
-            return Messages.Warnings_JavaParser_LinkName();
-        }
-
-        @Override
-        public String getTrendName() {
-            return Messages.Warnings_JavaParser_TrendName();
+        /**
+         * Creates a new {@link JavaLabelProvider} with the specified ID and name.
+         *
+         * @param id
+         *         the ID
+         * @param name
+         *         the name of the static analysis tool
+         */
+        protected JavaLabelProvider(final String id, final String name) {
+            super(id, name);
         }
 
         @Override

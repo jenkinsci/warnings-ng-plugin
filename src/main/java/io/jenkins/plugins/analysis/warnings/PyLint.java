@@ -15,16 +15,16 @@ import hudson.Extension;
  */
 @Extension
 public class PyLint extends StaticAnalysisTool {
-    private static final String PARSER_NAME = Messages.Warnings_PyLint_ParserName();
     static final String ID = "pylint";
+    private static final String PARSER_NAME = Messages.Warnings_PyLint_ParserName();
 
     @Override
     public IssueParser createParser() {
-return new PyLintParser();
-}
+        return new PyLintParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

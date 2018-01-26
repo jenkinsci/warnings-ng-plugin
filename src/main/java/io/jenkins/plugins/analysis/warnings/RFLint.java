@@ -20,11 +20,11 @@ public class RFLint extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new RFLintParser();
-}
+        return new RFLintParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

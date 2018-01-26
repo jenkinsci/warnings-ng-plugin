@@ -20,11 +20,11 @@ public class Coolflux extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new CoolfluxChessccParser();
-}
+        return new CoolfluxChessccParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

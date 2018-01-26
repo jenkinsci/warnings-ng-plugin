@@ -20,11 +20,11 @@ public class TaskingVx extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new TaskingVXCompilerParser();
-}
+        return new TaskingVXCompilerParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

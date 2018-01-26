@@ -20,11 +20,11 @@ public class Cadence extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new CadenceIncisiveParser();
-}
+        return new CadenceIncisiveParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

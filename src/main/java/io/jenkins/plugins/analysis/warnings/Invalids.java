@@ -20,11 +20,11 @@ public class Invalids extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new InvalidsParser();
-}
+        return new InvalidsParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

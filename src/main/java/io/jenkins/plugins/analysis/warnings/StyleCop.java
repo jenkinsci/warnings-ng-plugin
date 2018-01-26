@@ -20,11 +20,11 @@ public class StyleCop extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new StyleCopParser();
-}
+        return new StyleCopParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

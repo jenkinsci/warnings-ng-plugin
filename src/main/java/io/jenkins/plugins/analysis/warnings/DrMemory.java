@@ -20,11 +20,11 @@ public class DrMemory extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new DrMemoryParser();
-}
+        return new DrMemoryParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

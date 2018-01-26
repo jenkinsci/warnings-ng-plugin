@@ -20,11 +20,11 @@ public class PuppetLint extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new PuppetLintParser();
-}
+        return new PuppetLintParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

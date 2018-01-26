@@ -26,8 +26,8 @@ public class CheckStyle extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new CheckStyleParser();
-}
+        return new CheckStyleParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {

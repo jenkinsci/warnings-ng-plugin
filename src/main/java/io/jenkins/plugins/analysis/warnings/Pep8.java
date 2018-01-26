@@ -20,11 +20,11 @@ public class Pep8 extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new Pep8Parser();
-}
+        return new Pep8Parser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

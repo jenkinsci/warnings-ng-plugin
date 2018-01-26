@@ -29,6 +29,6 @@ public class MetrowerksCodeWarrior extends StaticAnalysisToolSuite {
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }
 

@@ -20,11 +20,11 @@ public class DiabC extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new DiabCParser();
-}
+        return new DiabCParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

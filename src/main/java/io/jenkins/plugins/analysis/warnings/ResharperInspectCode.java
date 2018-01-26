@@ -20,11 +20,11 @@ public class ResharperInspectCode extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new ResharperInspectCodeParser();
-}
+        return new ResharperInspectCodeParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

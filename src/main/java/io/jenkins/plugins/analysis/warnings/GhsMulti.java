@@ -20,11 +20,11 @@ public class GhsMulti extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new GhsMultiParser();
-}
+        return new GhsMultiParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

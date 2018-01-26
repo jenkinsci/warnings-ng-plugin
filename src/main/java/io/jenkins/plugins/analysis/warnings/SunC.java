@@ -20,11 +20,11 @@ public class SunC extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new SunCParser();
-}
+        return new SunCParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

@@ -20,11 +20,11 @@ public class TiCss extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new TiCcsParser();
-}
+        return new TiCcsParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

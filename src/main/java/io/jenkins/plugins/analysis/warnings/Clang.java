@@ -20,11 +20,11 @@ public class Clang extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new ClangParser();
-}
+        return new ClangParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

@@ -20,11 +20,11 @@ public class Doxygen extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new DoxygenParser();
-}
+        return new DoxygenParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

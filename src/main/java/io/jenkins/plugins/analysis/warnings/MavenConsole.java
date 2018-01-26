@@ -20,11 +20,11 @@ public class MavenConsole extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new MavenConsoleParser();
-}
+        return new MavenConsoleParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

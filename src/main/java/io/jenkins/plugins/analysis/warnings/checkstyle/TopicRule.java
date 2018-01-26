@@ -16,8 +16,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
- * Digester rule to parse the actual content of a DocBook subsection node. Does
- * not interpret XML elements that are children of a subsection.
+ * Digester rule to parse the actual content of a DocBook subsection node. Does not interpret XML elements that are
+ * children of a subsection.
  *
  * @author Ulli Hafner
  */
@@ -26,7 +26,7 @@ public class TopicRule extends NodeCreateRule {
      * Instantiates a new topic rule.
      *
      * @throws ParserConfigurationException
-     *             the parser configuration exception
+     *         the parser configuration exception
      */
     public TopicRule() throws ParserConfigurationException {
         super(Node.ELEMENT_NODE);
@@ -42,16 +42,16 @@ public class TopicRule extends NodeCreateRule {
     }
 
     /**
-     * Extracts the node content. Basically returns every character in the
-     * subsection element.
+     * Extracts the node content. Basically returns every character in the subsection element.
      *
      * @param subsection
-     *            the subsection of a rule
+     *         the subsection of a rule
+     *
      * @return the node content
      * @throws ParserConfigurationException
-     *             in case of an error
+     *         in case of an error
      * @throws IOException
-     *             in case of an error
+     *         in case of an error
      */
     protected String extractNoteContent(final Element subsection) throws ParserConfigurationException,
             IOException {

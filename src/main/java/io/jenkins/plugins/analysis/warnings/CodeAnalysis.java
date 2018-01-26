@@ -20,11 +20,11 @@ public class CodeAnalysis extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new CodeAnalysisParser();
-}
+        return new CodeAnalysisParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

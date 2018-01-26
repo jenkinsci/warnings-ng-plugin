@@ -20,11 +20,11 @@ public class Gnat extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new GnatParser();
-}
+        return new GnatParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

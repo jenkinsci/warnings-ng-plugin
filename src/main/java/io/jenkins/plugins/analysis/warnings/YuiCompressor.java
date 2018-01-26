@@ -20,11 +20,11 @@ public class YuiCompressor extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new YuiCompressorParser();
-}
+        return new YuiCompressorParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

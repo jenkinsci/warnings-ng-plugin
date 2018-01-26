@@ -21,11 +21,11 @@ public class Robocopy extends StaticAnalysisTool {
 
     @Override
     public IssueParser createParser() {
-return new RobocopyParser();
-}
+        return new RobocopyParser();
+    }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new DefaultLabelProvider(ID, PARSER_NAME);
-   }
+    }
 }

@@ -27,7 +27,8 @@ public class Rule {
     /**
      * Instantiates a new rule.
      *
-     * @param name the name of the rule
+     * @param name
+     *         the name of the rule
      */
     public Rule(final String name) {
         this.name = name;
@@ -46,7 +47,8 @@ public class Rule {
     /**
      * Sets the name of this rule.
      *
-     * @param name the name
+     * @param name
+     *         the name
      */
     public void setName(final String name) {
         this.name = name;
@@ -62,11 +64,10 @@ public class Rule {
     }
 
     /**
-     * Sets the description of this rule. The description is only set if the
-     * topic is a description.
+     * Sets the description of this rule. The description is only set if the topic is a description.
      *
      * @param topic
-     *            the topic that might contain the description
+     *         the topic that might contain the description
      */
     public void setDescription(final Topic topic) {
         if (DESCRIPTION_SUBSECTION_NAME.equalsIgnoreCase(topic.getName())) {
