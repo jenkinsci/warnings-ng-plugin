@@ -1,23 +1,39 @@
-<!--
-  Section header
--->
-<j:jelly xmlns:j="jelly:core" xmlns:i="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
 
-  <h2>${%Summary}</h2>
-  <table class="pane" id="priority.summary">
-    <tr>
-      <td class="pane-header">${%Total}</td>
-      <td class="pane-header">${%High Priority}</td>
-      <td class="pane-header">${%Normal Priority}</td>
-      <td class="pane-header">${%Low Priority}</td>
-    </tr>
-    <tbody>
-      <tr>
-        <td class="pane" id="all-priorities">${size(it.issues)}</td>
-        <td class="pane" id="high"> <i:numberLink url="high" value="${it.issues.highPrioritySize}"/> </td>
-        <td class="pane" id="normal"> <i:numberLink url="normal" value="${it.issues.normalPrioritySize}"/> </td>
-        <td class="pane" id="low"> <i:numberLink url="low" value="${it.issues.lowPrioritySize}"/> </td>
-      </tr>
-    </tbody>
-  </table>
+  <st:documentation>
+    Renders a doughnut graph showing the issues per priority.
+  </st:documentation>
+
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">${%Priorities}
+          <i class="fa fa fa-bell-o icon-right fa-2x" aria-hidden="true"/>
+        </h5>
+
+        <div style="display: none">
+          <div id="high">
+            <j:if test="${it.issues.highPrioritySize != 0}">
+              <span id="HIGH">${it.issues.highPrioritySize}</span>
+            </j:if>
+          </div>
+          <div id="normal">
+            <j:if test="${it.issues.normalPrioritySize != 0}">
+              <span id="NORMAL">${it.issues.normalPrioritySize}</span>
+            </j:if>
+          </div>
+          <div id="low">
+            <j:if test="${it.issues.lowPrioritySize != 0}">
+              <span id="LOW">${it.issues.lowPrioritySize}</span>
+            </j:if>
+          </div>
+        </div>
+
+        <div class="graph-size">
+          <canvas id="doughnut-priorities-summary" class="graph-cursor-pointer" width="100" height="100"/>
+        </div>
+
+      </div>
+    </div>
+  </div>
 </j:jelly>
