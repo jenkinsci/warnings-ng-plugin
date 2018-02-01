@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.pmd.PmdParser;
 import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
@@ -29,7 +28,7 @@ public class Pmd extends StaticAnalysisTool {
     }
 
     @Override
-    public IssueParser createParser() {
+    public PmdParser createParser() {
         return new PmdParser();
     }
 

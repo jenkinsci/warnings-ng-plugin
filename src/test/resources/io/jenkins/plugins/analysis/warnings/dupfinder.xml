@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DuplicatesReport ToolsVersion="8.0">
+  <Statistics>
+    <CodebaseCost>2219</CodebaseCost>
+    <TotalDuplicatesCost>108</TotalDuplicatesCost>
+    <TotalFragmentsCost>216</TotalFragmentsCost>
+  </Statistics>
+  <Duplicates>
+    <Duplicate cost="108">
+      <Fragment>
+        <FileName>test\Publisher.cs</FileName>
+        <OffsetRange Start="279" End="653" />
+        <LineRange Start="12" End="23" />
+        <Text>if (items == null) throw new ArgumentNullException("items");</Text>
+      </Fragment>
+      <Fragment>
+        <FileName>test\Reporter.cs</FileName>
+        <OffsetRange Start="758" End="1132" />
+        <LineRange Start="26" End="37" />
+        <Text>if (items == null) throw new ArgumentNullException("items");</Text>
+      </Fragment>
+    </Duplicate>
+  </Duplicates>
+</DuplicatesReport>

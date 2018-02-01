@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.gendarme.GendarmeParser;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -19,7 +18,7 @@ public class Gendarme extends StaticAnalysisTool {
     private static final String PARSER_NAME = Messages.Warnings_Gendarme_ParserName();
 
     @Override
-    public IssueParser createParser() {
+    public GendarmeParser createParser() {
         return new GendarmeParser();
     }
 

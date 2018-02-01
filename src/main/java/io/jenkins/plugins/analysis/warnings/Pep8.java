@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.Pep8Parser;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -19,7 +18,7 @@ public class Pep8 extends StaticAnalysisTool {
     private static final String PARSER_NAME = Messages.Warnings_Pep8_ParserName();
 
     @Override
-    public IssueParser createParser() {
+    public Pep8Parser createParser() {
         return new Pep8Parser();
     }
 

@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.warnings;
 import java.util.Collection;
 
 import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.XlcCompilerParser;
 import edu.hm.hafner.analysis.parser.XlcLinkerParser;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
@@ -22,7 +23,7 @@ public class Xlc extends StaticAnalysisToolSuite {
     private static final String PARSER_NAME = Messages.Warnings_Xlc_ParserName();
 
     @Override
-    protected Collection<? extends AbstractParser> getParsers() {
+    protected Collection<? extends AbstractParser<Issue>> getParsers() {
         return asList(new XlcCompilerParser(), new XlcLinkerParser());
     }
 

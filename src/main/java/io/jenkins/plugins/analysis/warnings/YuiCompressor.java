@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.YuiCompressorParser;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -19,7 +18,7 @@ public class YuiCompressor extends StaticAnalysisTool {
     private static final String PARSER_NAME = Messages.Warnings_YUICompressor_ParserName();
 
     @Override
-    public IssueParser createParser() {
+    public YuiCompressorParser createParser() {
         return new YuiCompressorParser();
     }
 

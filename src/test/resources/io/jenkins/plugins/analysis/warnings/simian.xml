@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="simian.xsl" type="text/xsl"?>
+<simian version="2.2.24">
+    <check failOnDuplication="true" ignoreCharacterCase="true" ignoreCurlyBraces="true" ignoreIdentifierCase="true" ignoreModifiers="true" ignoreStringCase="true" threshold="6">
+        <set lineCount="16">
+            <block sourceFile="c:\java\hudson\maven\MavenBuild.java" startLineNumber="92" endLineNumber="97"/>
+            <block sourceFile="c:\java\hudson\matrix\MatrixRun.java" startLineNumber="61" endLineNumber="66"/>
+        </set>
+        <set lineCount="6">
+            <block sourceFile="c:\java\hudson\maven\MavenBuild.java" startLineNumber="93" endLineNumber="98"/>
+            <block sourceFile="c:\java\hudson\maven\MavenBuild.java" startLineNumber="76" endLineNumber="81"/>
+        </set>
+        <summary duplicateFileCount="42" duplicateLineCount="552" duplicateBlockCount="69" totalFileCount="466" totalRawLineCount="69068" totalSignificantLineCount="27052" processingTime="78062"/>
+    </check>
+</simian>

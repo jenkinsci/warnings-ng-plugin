@@ -17,6 +17,71 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  * @author Ullrich Hafner
  */
 public class ParsersITest extends PipelineITest {
+    private static final String CODE_FRAGMENT = "#\n"
+            + "\n"
+            + "    ERROR HANDLING: N/A\n"
+            + "    #\n"
+            + "    REMARKS: N/A\n"
+            + "    #\n"
+            + "    ****************************** END HEADER *************************************\n"
+            + "    #\n"
+            + "\n"
+            + "    ***************************** BEGIN PDL ***************************************\n"
+            + "    #\n"
+            + "    ****************************** END PDL ****************************************\n"
+            + "    #\n"
+            + "\n"
+            + "    ***************************** BEGIN CODE **************************************\n"
+            + "    **\n"
+            + "    *******************************************************************************\n"
+            + "\n"
+            + "    *******************************************************************************\n"
+            + "    *******************************************************************************\n"
+            + "\n"
+            + "if [ $# -lt 3 ]\n"
+            + "then\n"
+            + "exit 1\n"
+            + "fi\n"
+            + "\n"
+            + "    *******************************************************************************\n"
+            + "    initialize local variables\n"
+            + "    shift input parameter (twice) to leave only files to copy\n"
+            + "    *******************************************************************************\n"
+            + "\n"
+            + "files=\"\"\n"
+            + "shift\n"
+            + "shift\n"
+            + "\n"
+            + "    *******************************************************************************\n"
+            + "    *******************************************************************************\n"
+            + "\n"
+            + "for i in $*\n"
+            + "do\n"
+            + "files=\"$files $directory/$i\"\n"
+            + "done";
+
+    /** Runs the CPD parser on output files that contains 2 issues. */
+    @Test
+    public void shouldFindAllCpdIssues() {
+        Issues<BuildIssue> issues = shouldFindIssuesOfTool(2, Cpd.ID, "cpd.xml");
+
+        assertThat(issues.get(0)).hasDescription(CODE_FRAGMENT);
+    }
+
+    /** Runs the Simian parser on output files that contains 4 issues. */
+    @Test
+    public void shouldFindAllSimianIssues() {
+        shouldFindIssuesOfTool(4, Simian.ID, "simian.xml");
+    }
+
+    /** Runs the DupFinder parser on output files that contains 2 issues. */
+    @Test
+    public void shouldFindAllDupFinderIssues() {
+        Issues<BuildIssue> issues = shouldFindIssuesOfTool(2, DupFinder.ID, "dupfinder.xml");
+
+        assertThat(issues.get(0)).hasDescription("if (items == null) throw new ArgumentNullException(\"items\");");
+    }
+
     /** Runs the Armcc parser on output files that contains 3 + 3 issues. */
     @Test
     public void shouldFindAllArmccIssues() {

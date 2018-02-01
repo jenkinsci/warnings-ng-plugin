@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.ClangTidyParser;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -19,7 +18,7 @@ public class ClangTidy extends StaticAnalysisTool {
     private static final String PARSER_NAME = Messages.Warnings_ClangTidy_ParserName();
 
     @Override
-    public IssueParser createParser() {
+    public ClangTidyParser createParser() {
         return new ClangTidyParser();
     }
 

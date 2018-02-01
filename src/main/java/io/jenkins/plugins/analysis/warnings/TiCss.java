@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.TiCcsParser;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -19,7 +18,7 @@ public class TiCss extends StaticAnalysisTool {
     private static final String PARSER_NAME = Messages.Warnings_TexasI_ParserName();
 
     @Override
-    public IssueParser createParser() {
+    public TiCcsParser createParser() {
         return new TiCcsParser();
     }
 

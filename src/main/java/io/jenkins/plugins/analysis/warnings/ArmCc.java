@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.warnings;
 import java.util.Collection;
 
 import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.Armcc5CompilerParser;
 import edu.hm.hafner.analysis.parser.ArmccCompilerParser;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
@@ -22,7 +23,7 @@ public class ArmCc extends StaticAnalysisToolSuite {
     private static final String PARSER_NAME = Messages.Warnings_Armcc_ParserName();
 
     @Override
-    public Collection<? extends AbstractParser> getParsers() {
+    public Collection<? extends AbstractParser<Issue>> getParsers() {
         return asList(new Armcc5CompilerParser(), new ArmccCompilerParser());
     }
 

@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.jcreport.JcReportParser;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -20,7 +19,7 @@ public class JcReport extends StaticAnalysisTool {
     private static final String PARSER_NAME = Messages.Warnings_JCReport_ParserName();
 
     @Override
-    public IssueParser createParser() {
+    public JcReportParser createParser() {
         return new JcReportParser();
     }
 

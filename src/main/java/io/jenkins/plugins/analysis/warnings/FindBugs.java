@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.warnings;
 import org.jvnet.localizer.LocaleProvider;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.FindBugsParser;
 import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
 import static hudson.plugins.warnings.WarningsDescriptor.*;
@@ -32,7 +31,7 @@ public class FindBugs extends StaticAnalysisTool {
     }
 
     @Override
-    public IssueParser createParser() {
+    public FindBugsParser createParser() {
         return new FindBugsParser(RANK);
     }
 
