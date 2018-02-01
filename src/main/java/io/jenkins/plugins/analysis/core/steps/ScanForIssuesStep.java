@@ -24,6 +24,7 @@ import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.PackageNameResolver;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
@@ -251,7 +252,8 @@ public class ScanForIssuesStep extends Step {
 
         private Issues<Issue> scanFiles(final FilePath workspace,
                 final Logger logger) throws IOException, InterruptedException {
-            FilesParser filesParser = new FilesParser(expandEnvironmentVariables(pattern), findTool().createParser(),
+            IssueParser<?> parser = findTool().createParser();
+            FilesParser filesParser = new FilesParser(expandEnvironmentVariables(pattern), parser,
                     tool, shouldDetectModules, defaultEncoding);
             Issues<Issue> issues = workspace.act(filesParser);
 
@@ -263,7 +265,7 @@ public class ScanForIssuesStep extends Step {
         private void logIssuesMessages(final Issues<?> issues, final Logger logger) {
             ImmutableList<String> infoMessages = issues.getInfoMessages();
             if (logPosition < infoMessages.size()) {
-                logger.logEachLine(infoMessages.subList(logPosition, infoMessages.size() - 1).castToList());
+                logger.logEachLine(infoMessages.subList(logPosition, infoMessages.size()).castToList());
                 logPosition = infoMessages.size();
             }
         }
