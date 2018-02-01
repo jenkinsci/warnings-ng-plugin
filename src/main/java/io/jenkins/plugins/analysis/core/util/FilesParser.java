@@ -61,7 +61,7 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
     @Override
     public Issues<Issue> invoke(final File workspace, final VirtualChannel channel) {
         Issues<Issue> issues = new Issues<>();
-        issues.logInfo("Searching for all files in '%s' that match the pattern '%s'.",
+        issues.logInfo("Searching for all files in '%s' that match the pattern '%s'",
                 workspace.getAbsolutePath(), filePattern);
 
         String[] fileNames = new FileFinder(filePattern).find(workspace);
@@ -69,7 +69,7 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
             issues.logError("No files found. Configuration error?");
         }
         else {
-            issues.logInfo("Parsing %s in %s", plural(fileNames.length, "file"), workspace.getAbsolutePath());
+            issues.logInfo("--> found %s", plural(fileNames.length, "file"));
             parseFiles(workspace, fileNames, issues);
         }
 
