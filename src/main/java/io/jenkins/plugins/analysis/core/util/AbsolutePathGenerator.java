@@ -44,9 +44,9 @@ public class AbsolutePathGenerator {
      * @param builder
      *         a builder to copy issue instances
      * @param workspace
-     *         root folder for files with relative paths
+     *         the workspace containing the affected files
      */
-    public Issues<Issue> run(final Issues<Issue> issues, final IssueBuilder builder, final FilePath workspace) {
+    public void run(final Issues<?> issues, final IssueBuilder builder, final FilePath workspace) {
         Set<String> relativeFileNames = issues.getFiles()
                 .stream()
                 .filter(fileName -> isRelative(fileName))
@@ -55,19 +55,18 @@ public class AbsolutePathGenerator {
         if (relativeFileNames.isEmpty()) {
             issues.logInfo("Affected files for all issues already have absolute paths");
 
-            return issues;
+            return;
         }
 
         Map<String, String> relativeToAbsoluteMapping = resolveAbsoluteNames(relativeFileNames, workspace);
 
-        Issues<Issue> resolved = issues.copyEmptyInstance();
         int resolvedCount = 0;
         int unchangedCount = 0;
         int unresolvedCount = 0;
         for (Issue issue : issues) {
             if (relativeToAbsoluteMapping.containsKey(issue.getFileName())) {
                 String absoluteFileName = relativeToAbsoluteMapping.get(issue.getFileName());
-                resolved.add(builder.copy(issue).setFileName(absoluteFileName).build());
+                issue.setFileName(absoluteFileName);
                 resolvedCount++;
             }
             else {
@@ -77,14 +76,12 @@ public class AbsolutePathGenerator {
                 else {
                     unchangedCount++;
                 }
-                resolved.add(issue);
             }
         }
 
-        resolved.logInfo("Resolved absolute paths for %d files (Issues %d resolved, %d unresolved, %d already absolute)",
+        issues.logInfo(
+                "Resolved absolute paths for %d files (Issues %d resolved, %d unresolved, %d already absolute)",
                 relativeToAbsoluteMapping.size(), resolvedCount, unresolvedCount, unchangedCount);
-
-        return resolved;
     }
 
     private boolean isRelative(final String fileName) {
@@ -122,4 +119,4 @@ public class AbsolutePathGenerator {
             return fileName;
         }
     }
- }
+}
