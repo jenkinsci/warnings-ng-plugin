@@ -40,6 +40,6 @@ public abstract class StaticAnalysisTool implements ExtensionPoint {
      *
      * @return the parser to use
      */
-    public abstract IssueParser createParser();
+    public abstract IssueParser<?> createParser();
 
 }

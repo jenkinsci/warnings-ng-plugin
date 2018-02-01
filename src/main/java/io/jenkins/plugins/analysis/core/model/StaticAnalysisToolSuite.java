@@ -22,7 +22,7 @@ import edu.hm.hafner.analysis.Issues;
  */
 public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
     @Override
-    public IssueParser createParser() {
+    public IssueParser<Issue> createParser() {
         return new CompositeParser(getParsers());
     }
 
@@ -31,7 +31,7 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
      *
      * @return the parsers to use
      */
-    protected abstract Collection<? extends AbstractParser> getParsers();
+    protected abstract Collection<? extends AbstractParser<Issue>> getParsers();
 
     /**
      * Wraps all parsers into a collection.
@@ -41,8 +41,9 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
      *
      * @return a singleton collection
      */
-    protected Collection<? extends AbstractParser> asList(final AbstractParser... parser) {
-        List<AbstractParser> parsers = new ArrayList<>();
+    @SafeVarargs
+    protected final Collection<? extends AbstractParser<Issue>> asList(final AbstractParser<Issue>... parser) {
+        List<AbstractParser<Issue>> parsers = new ArrayList<>();
         Collections.addAll(parsers, parser);
         return parsers;
     }
@@ -53,8 +54,8 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
      *
      * @author Ullrich Hafner
      */
-    private static class CompositeParser extends IssueParser {
-        private final List<AbstractParser> parsers = new ArrayList<>();
+    private static class CompositeParser extends IssueParser<Issue> {
+        private final List<AbstractParser<Issue>> parsers = new ArrayList<>();
 
         /**
          * Creates a new instance of {@link CompositeParser}.
@@ -62,7 +63,7 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
          * @param parsers
          *         the parsers to use to scan the input files
          */
-        CompositeParser(final Collection<? extends AbstractParser> parsers) {
+        CompositeParser(final Collection<? extends AbstractParser<Issue>> parsers) {
             this.parsers.addAll(parsers);
         }
 
@@ -70,7 +71,7 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
         public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder,
                 final Function<String, String> preProcessor) {
             Issues<Issue> aggregated = new Issues<>();
-            for (AbstractParser parser : parsers) {
+            for (AbstractParser<Issue> parser : parsers) {
                 aggregated.addAll(parser.parse(file, charset, builder, preProcessor));
             }
             return aggregated;

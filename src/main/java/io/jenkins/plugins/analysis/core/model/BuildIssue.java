@@ -21,11 +21,12 @@ import hudson.util.XStream2;
  *
  * @author Ullrich Hafner
  */
+// FIXME: destroys CodeDuplications, should have a reference
 public class BuildIssue extends Issue {
     private final int build;
 
     public BuildIssue(final Issue issue, final int build) {
-        super(issue, issue.getId());
+        super(issue);
 
         this.build = build;
     }
