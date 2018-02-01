@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.dry.simian.SimianParser;
 import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
@@ -20,11 +19,10 @@ public class Simian extends StaticAnalysisTool {
     private static final String PARSER_NAME = Messages.Warnings_Simian_ParserName();
     private static final String SMALL_ICON_URL = IMAGE_PREFIX + "dry-24x24.png";
     private static final String LARGE_ICON_URL = IMAGE_PREFIX + "dry-48x48.png";
-    private static final LabelProvider LABEL_PROVIDER = new LabelProvider();
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
-        return LABEL_PROVIDER;
+        return new LabelProvider();
     }
 
     @Override
@@ -36,11 +34,6 @@ public class Simian extends StaticAnalysisTool {
     private static class LabelProvider extends DefaultLabelProvider {
         LabelProvider() {
             super(ID, PARSER_NAME);
-        }
-
-        @Override
-        public String getDescription(final Issue issue) {
-            return issue.getDescription();
         }
 
         @Override
