@@ -1,0 +1,37 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:i="/issues">
+  <st:documentation>
+    Renders issues in a list.
+    <st:attribute name="issues" use="required" type="edu.hm.hafner.analysis.Issues">
+      The issues to show.
+    </st:attribute>
+  </st:documentation>
+
+  <div role="tabpanel" id="warningsDetails" class="tab-pane">
+    <j:forEach var="i" items="${issues}">
+      <table class="table table-hover table-striped" id="details">
+        <thead>
+          <tr>
+            <th>
+              <i:sourceLink it="${it}" issue="${i}"/>,
+              ${i.type}, ${%Priority}: ${it.getLocalizedPriority(i.priority)}
+              <j:if test="${h.size2(i.category) > 0}">
+                , ${%Category}: ${i.category}
+              </j:if>
+            </th>
+          </tr>
+        </thead>
+        <tr>
+          <td style="white-space: normal">
+            <p>
+              <b><j:out value="${it.sanitize(i.message)}"/></b>
+            </p>
+            <p>
+              <j:out value="${it.sanitize(it.getDescription(i))}"/>
+            </p>
+          </td>
+        </tr>
+      </table>
+    </j:forEach>
+  </div>
+
+</j:jelly>

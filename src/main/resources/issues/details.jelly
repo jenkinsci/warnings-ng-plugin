@@ -2,189 +2,61 @@
   Section header
 -->
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
-         xmlns:l="/lib/layout">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:issues="/issues">
 
-  <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
   <j:set var="l" value="${it.tabLabelProvider}"/>
 
-  <j:if test="${it.issues.isNotEmpty()}">
-    <j:set var="i" value="${it.issues}"/>
+  <j:set var="i" value="${it.issues}"/>
+  <j:if test="${i.isNotEmpty()}">
 
-    <script type="text/javascript" src="${resURL}/plugin/analysis-core/yui/utilities.js" />
-    <l:yui module="tabview" />
-    <script type="text/javascript" src="${resURL}/plugin/analysis-core/yui/dispatcher-min.js" />
+    <div class="col">
+      <div id="statistics">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">${%Details}
+              <i class="fa fa-search icon-right fa-2x" aria-hidden="true"/>
+            </h5>
 
-    <script type="text/javascript">
-      var myTabs = new YAHOO.widget.TabView("statistics");
-      <j:if test="${size(i.modules) > 1}">
-        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '<div id="modules">${l.modules}</div>',
-            dataSrc: 'tab.moduleName/',
-            cacheData: true,
-            active: false
-        }), myTabs);
-      </j:if>
-      <j:if test="${size(i.packages) > 1}">
-        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '<div id="packages">${l.packages}</div>',
-            dataSrc: 'tab.packageName/',
-            cacheData: true,
-            active: false
-        }), myTabs);
-      </j:if>
-      <j:if test="${size(i.files) > 1}">
-        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '<div id="files">${l.files}</div>',
-            dataSrc: 'tab.fileName/',
-            cacheData: true,
-            active: false
-        }), myTabs);
-      </j:if>
-      <j:if test="${size(i.categories) > 1}">
-        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-        label: '<div id="categories">${l.categories}</div>',
-        dataSrc: 'tab.category/',
-        cacheData: true,
-        active: false
-        }), myTabs);
-      </j:if>
-      <j:if test="${size(i.types) > 1}">
-        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-            label: '<div id="types">${l.types}</div>',
-            dataSrc: 'tab.type/',
-            cacheData: true,
-            active: false
-        }), myTabs);
-      </j:if>
-      YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-          label: '<div id="warnings">${l.warnings}</div>',
-          dataSrc: 'tab.table/',
-          cacheData: true,
-          active: false
-      }), myTabs);
-      <j:if test="${it.useAuthors()}">
-        YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-        label: '<div id="origin">${l.origin}</div>',
-        dataSrc: 'tab.origin/',
-        cacheData: true,
-        active: false
-        }), myTabs);
-      </j:if>
-      YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-          label: '<div id="details">${l.details}</div>',
-          dataSrc: 'tab.details/',
-          cacheData: true,
-          active: false
-      }), myTabs);
-      myTabs.set('activeIndex', 0);
+            <ul class="nav nav-tabs flex-wrap" role="tablist" id="tab-details">
 
-    </script>
+              <issues:property-tab property="moduleName" name="${l.modules}" elements="${i.modules}"/>
+              <issues:property-tab property="packageName" name="${l.packages}" elements="${i.packages}"/>
+              <issues:property-tab property="fileName" name="${l.files}" elements="${i.files}"/>
+              <issues:property-tab property="category" name="${l.categories}" elements="${i.categories}"/>
+              <issues:property-tab property="type" name="${l.types}" elements="${i.types}"/>
 
-    <style type="text/css">
+              <j:if test="${i.isNotEmpty()}">
+                <li class="nav-item">
+                  <a class="nav-link" role="tab" data-toggle="tab" href="#warningsContent">${l.warnings}</a>
+                </li>
+              </j:if>
 
-        /* .yui-navset defaults to .yui-navset-top */
-        .yui-skin-sam .yui-navset .yui-nav,
-        .yui-skin-sam .yui-navset .yui-navset-top .yui-nav { /* protect nested tabviews from other orientations */
-            border:solid #b0b0b0; /* color between tab list and content */
-            border-width:0 0 0px;
-            color:#bbb;
-            Xposition:relative;
-            zoom:1;
-        }
+              <j:if test="${i.isNotEmpty()}">
+                <li class="nav-item">
+                  <a class="nav-link" role="tab" data-toggle="tab" href="#warningsDetails">${l.details}</a>
+                </li>
+              </j:if>
 
-        .yui-skin-sam .yui-navset .yui-nav li,
-        .yui-skin-sam .yui-navset .yui-navset-top .yui-nav li {
-            margin:0 0.16em 0 0; /* space between tabs */
-            padding:1px 0 0; /* gecko: make room for overflow */
-            zoom:1;
-        }
+            </ul>
 
-        .yui-skin-sam .yui-navset .yui-nav a,
-        .yui-skin-sam .yui-navset .yui-navset-top .yui-nav a {
-            background:#ffffff; /* tab background */
-            border:solid #b0b0b0;
-            border-width:0 1px;
-            color:#000;
-            text-decoration:none;
-        }
+            <div class="tab-content">
 
-        .yui-skin-sam .yui-navset .yui-nav a em,
-        .yui-skin-sam .yui-navset .yui-navset-top .yui-nav a em {
-            border:solid #b0b0b0;
-            border-width:1px 0 0;
-            cursor:hand;
-            padding:0.25em .75em;
-            left:0; right: 0; bottom: 0; /* protect from other orientations */
-            top:-1px; /* for 1px rounded corners */
-            position:relative;
-        }
+              <issues:property property="moduleName" name="${l.moduleName}"/>
+              <issues:property property="packageName" name="${l.packageName}"/>
+              <issues:property property="fileName" name="${l.fileName}"/>
+              <issues:property property="category" name="${l.category}"/>
+              <issues:property property="type" name="${l.type}"/>
 
-        .yui-skin-sam .yui-navset .yui-nav .selected a,
-        .yui-skin-sam .yui-navset .yui-nav .selected a:focus, /* no focus effect for selected */
-        .yui-skin-sam .yui-navset .yui-nav .selected a:hover { /* no hover effect for selected */
-            background:#f0f0f0; /* selected tab background */
-            color:#000;
-            font-weight:bold;
-        }
+              <issues:table issues="${i}"/>
+              <issues:list issues="${i}" />
 
-        .yui-skin-sam .yui-navset .yui-nav a:hover,
-        .yui-skin-sam .yui-navset .yui-nav a:focus {
-            background:#b0b0b0; /* selected tab background */
-            outline:0;
-            border-bottom: 1px solid #b0b0b0;
-        }
-
-        .yui-skin-sam .yui-navset .yui-nav .selected a em {
-            padding:0.35em 0.75em; /* raise selected tab */
-        }
-
-        .yui-skin-sam .yui-navset .yui-nav .selected a,
-        .yui-skin-sam .yui-navset .yui-nav .selected a em {
-            border-color:#b0b0b0; /* selected tab border color */
-        }
-
-        .yui-skin-sam .yui-navset .yui-content {
-            background:#ffffff; /* content background color */
-        }
-
-        .yui-skin-sam .yui-navset .yui-content,
-        .yui-skin-sam .yui-navset .yui-navset-top .yui-content {
-            border:1px solid #b0b0b0; /* content border */
-            border-top-color:#b0b0b0; /* different border color */
-            padding:0.25em 0.5em; /* content padding */
-        }
-
-        #statistics .yui-content {
-            padding:1em;
-        }
-
-        #statistics .loading {
-            background:#ffffff; /* content background color */
-            background-image:url(${resURL}/plugin/analysis-core/icons/spinner.gif);
-            background-position:center center;
-            background-repeat:no-repeat;
-        }
-
-        .priority-high {
-            background: #EF2929;
-            background-image:url(${resURL}/plugin/analysis-core/icons/clearpixel.gif);
-        }
-
-        .priority-normal {
-            background: #FCE94F;
-            background-image:url(${resURL}/plugin/analysis-core/icons/clearpixel.gif);
-        }
-
-        .priority-low {
-            background: #729FCF;
-            background-image:url(${resURL}/plugin/analysis-core/icons/clearpixel.gif);
-        }
-
-    </style>
-
-    <h2>${%Details}</h2>
-    <div id="statistics" class="yui-navset" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </j:if>
+
 </j:jelly>

@@ -1,0 +1,152 @@
+.card-body {
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1.25rem;
+}
+
+.pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    background-color: #607d8b;
+    border-color: #607d8b;
+}
+
+.pagination > li > a, .pagination > li > span {
+    color: #607d8b;
+}
+
+.page-item.active .page-link {
+    z-index: 2;
+    color: #fff;
+    background-color: #607d8b;
+    border-color: #607d8b;
+}
+
+.icon-right {
+    float: right;
+    color: #ddd;
+    position: absolute;
+    right: 25px;
+    top: 10px;
+}
+
+.bar-graph {
+    float: left;
+    color: transparent;
+}
+
+.left {
+    display: block;
+    float: left;
+    margin-top: 0;
+    position: relative;
+    padding: 0;
+    text-align: left;
+}
+
+.priority-high {
+    background-color: #f5c6cb;
+}
+
+.priority-high--hover:hover {
+    background-color: #f5929f;
+}
+
+.priority-normal {
+    background-color: #ffeeba;
+}
+
+.priority-normal--hover:hover {
+    background-color: #ffeb75;
+}
+
+.priority-low {
+    background-color: #b8daff;
+}
+
+.priority-low--hover:hover {
+    background-color: #53bdff;
+}
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    vertical-align: middle;
+}
+
+/* Cursor Charts */
+.graph-cursor-pinter {
+    cursor: pointer;
+}
+
+.tab-content > .active {
+    display: block;
+    padding-top: 20px;
+}
+
+table.dataTable {
+    border-collapse: collapse !important;
+}
+
+.col-width-1 {
+    width: 8.333333%;
+}
+
+.col-width-2 {
+    width: 16.666667%;
+}
+
+.col-width-3 {
+    width: 25%;
+}
+
+.col-width-5 {
+    width: 41.66667%;
+}
+
+.col-width-6 {
+    width: 50%;
+}
+
+td.details-control {
+    position: relative;
+    cursor: pointer;
+}
+
+td.details-control:before {
+    content: "\f055";
+    font-family: FontAwesome;
+    padding: 12px;
+    font-size: 1.5em;
+    color: #b4b4b4;
+}
+
+tr.shown td.details-control {
+    position: relative;
+}
+
+tr.shown td.details-control:before {
+    content: "\f056";
+    font-family: FontAwesome;
+    padding: 12px;
+    font-size: 1.5em;
+    color: #b4b4b4;
+}
+
+@media only screen and (min-width: 576px) {
+    .graph-size {
+        position: relative;
+        width: 20vw;
+        margin: auto;
+    }
+
+    .table-responsive {
+        display: table;
+    }
+
+    .table-responsive-block {
+        display: block;
+    }
+}
+
+@media only screen and (max-width: 575px) {
+    .card-marg-bot {
+        margin-bottom: 2rem;
+    }
+}

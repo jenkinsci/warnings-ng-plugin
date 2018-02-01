@@ -1,0 +1,54 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:issues="/issues">
+  <st:documentation>
+    Renders the distribution of issues per property in a tab.
+    The property must be one of the supported issue properties.
+    <st:attribute name="property" use="required" type="String">
+      The property to render.
+    </st:attribute>
+    <st:attribute name="name" use="required" type="String">
+      The name of the property column.
+    </st:attribute>
+  </st:documentation>
+
+  <div role="tabpanel" id="${property}Content" class="tab-pane">
+    <j:set var="l" value="${it.tabLabelProvider}"/>
+    <j:set var="t" value="${it.getDetails(property)}"/>
+    <table class="table table-hover table-striped" id="${property}">
+      <colgroup>
+        <col class="col-width-5"/>
+        <col class="col-width-1"/>
+        <col class="col-width-6"/>
+      </colgroup>
+      <thead>
+        <tr>
+          <th>${name}</th>
+          <th>${%Total}</th>
+          <th class="no-sort">${%Distribution}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <j:forEach var="key" items="${t.keys}">
+          <j:set var="count" value="${t.getCount(key)}" />
+          <tr>
+            <td>
+              <a href="${t.property}.${key.hashCode()}/">${t.getDisplayName(key)}</a>
+            </td>
+            <td>${count}</td>
+            <td>
+              <issues:priority-graph max="${t.max}" high="${t.getHighCount(key)}"
+                                     normal="${t.getNormalCount(key)}" low="${t.getLowCount(key)}"/>
+            </td>
+          </tr>
+        </j:forEach>
+        <tfoot>
+          <tr>
+            <td>${%Total}</td>
+            <td>${size(t.issues)}</td>
+            <td/>
+          </tr>
+        </tfoot>
+      </tbody>
+    </table>
+  </div>
+
+</j:jelly>
