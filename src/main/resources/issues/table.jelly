@@ -1,4 +1,4 @@
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:issues="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
   <st:documentation>
     Renders issues in a table.
     <st:attribute name="issues" use="required" type="edu.hm.hafner.analysis.Issues">
@@ -9,87 +9,44 @@
   <div role="tabpanel" id="warningsContent" class="tab-pane">
     <table class="table table-responsive table-responsive-block table-hover table-striped" id="warnings">
       <colgroup>
-        <col class="col-width-1"/>
         <col class="col-width-2"/>
         <col class="col-width-2"/>
         <col class="col-width-1"/>
         <col class="col-width-2"/>
-        <col class="col-width-1"/>
         <col class="col-width-1"/>
       </colgroup>
       <thead>
         <tr>
-          <th class="no-sort">Details</th>
           <th>${%File}</th>
-          <j:if test="${size(issues.modules) > 1}">
-            <th>${%Module}</th>
-          </j:if>
-          <j:if test="${size(issues.packages) > 1}">
-            <th>${%Package}</th>
-          </j:if>
-          <th>${%Priority}</th>
-          <th>${%Type}</th>
+          <th>${%Package}</th>
           <th>${%Category}</th>
-          <th>${%Age}</th>
+          <th>${%Type}</th>
+          <th>${%Priority}</th>
         </tr>
       </thead>
-      <tbody>
-        <j:forEach var="issue" items="${issues}">
-          <tr>
-            <td class="details-control">
-              <div style="display: none">
-                <span id="warning-message">
-                  <j:out value="${it.sanitize(issue.message)}"/>
-                </span>
-                <span id="warning-toolTip">
-                  <j:out value="${it.sanitize(it.getDescription(issue))}"/>
-                </span>
-              </div>
-            </td>
-            <td>
-              <div tooltip="${issue.message}">
-                <issues:sourceLink it="${it}" issue="${issue}"/>
-              </div>
-            </td>
-            <j:if test="${size(i.modules) > 1}">
-              <td>
-                <div tooltip="${issue.message}">
-                  <a href="moduleName.${issue.moduleName.hashCode()}/">${issue.moduleName}</a>
-                </div>
-              </td>
-            </j:if>
-            <j:if test="${size(i.packages) > 1}">
-              <td>
-                <div tooltip="${issue.message}">
-                  <a href="packageName.${issue.packageName.hashCode()}/">${issue.packageName}</a>
-                </div>
-              </td>
-            </j:if>
-            <td>
-              <div tooltip="${issue.message}">${it.getLocalizedPriority(issue.priority)}</div>
-            </td>
-            <td>
-              <div tooltip="${issue.message}">${issue.type}</div>
-            </td>
-            <td>
-              <div tooltip="${issue.message}">${issue.category}</div>
-            </td>
-            <td>
-              <j:choose>
-                <j:when test="${issue.build != 0}">
-                  <a href="${it.getBuildUrl(issue.build)}" class="model-link inside">
-                    ${it.getAge(issue.build)}
-                  </a>
-                </j:when>
-                <j:otherwise>
-                  ${%N/A}
-                </j:otherwise>
-              </j:choose>
-            </td>
-          </tr>
-        </j:forEach>
-      </tbody>
     </table>
+
+    <script>
+      (function ($) {
+      $('#warnings').DataTable({
+      "order": [],
+      "pagingType": "numbers",
+      "columnDefs": [{
+      "targets": 'no-sort',
+      "orderable": false
+      }]
+      });
+      })(jQuery);
+
+      view.getTableModel(function(t) {
+      (function ($) {
+      console.log(t.responseObject().data);
+      var table = $('#warnings').DataTable();
+      table.rows.add(t.responseObject().data).draw()
+      })(jQuery);
+      })
+    </script>
+
   </div>
 
 </j:jelly>

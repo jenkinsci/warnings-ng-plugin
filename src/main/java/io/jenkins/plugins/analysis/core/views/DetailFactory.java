@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.core.views;
 
 import java.util.Collection;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
@@ -90,26 +89,6 @@ public class DetailFactory {
         }
         else if (Priority.LOW.equalsIgnoreCase(link)) {
             return createPrioritiesDetail(Priority.LOW, owner, allIssues, fixedIssues, oldIssues, newIssues, defaultEncoding, parent,
-                    labelProvider);
-        }
-        else if (link.startsWith("tab.table")) {
-            return new IssuesTableTab(owner, allIssues, defaultEncoding, parent, labelProvider);
-        }
-        else if (link.startsWith("tab.origin")) {
-            return new IssuesOriginTab(owner, allIssues, defaultEncoding, parent, labelProvider);
-        }
-        else if (link.startsWith("tab.details")) {
-            return new IssuesDetailTab(owner, allIssues, defaultEncoding, parent, labelProvider);
-        }
-        else if (link.startsWith("tab.")) {
-            Function<String, String> propertyFormatter;
-            if ("fileName".equals(plainLink)) {
-                propertyFormatter = IssuesDetail.FILE_NAME_FORMATTER;
-            }
-            else {
-                propertyFormatter = Function.identity();
-            }
-            return new PropertyCountTab(owner, allIssues, defaultEncoding, parent, plainLink, propertyFormatter,
                     labelProvider);
         }
         else {

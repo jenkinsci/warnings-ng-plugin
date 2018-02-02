@@ -33,6 +33,10 @@
       <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"/>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"/>
 
+      <script>
+      var view = <st:bind value="${it}"/>
+      </script>
+
       <div class="fluid-container">
 
         <h3>${it.header}</h3>

@@ -10,13 +10,16 @@ import java.util.function.Function;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
 import io.jenkins.plugins.analysis.core.model.BuildIssue;
+import io.jenkins.plugins.analysis.core.model.IssuesTableModel;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
+import net.sf.json.JSONObject;
 
 import hudson.markup.MarkupFormatter;
 import hudson.markup.RawHtmlMarkupFormatter;
@@ -97,6 +100,13 @@ public class IssuesDetail implements ModelObject {
 
     protected StaticAnalysisLabelProvider getLabelProvider() {
         return labelProvider;
+    }
+
+    // ------------------------------------ UI entry points for Stapler --------------------------------
+
+    @JavaScriptMethod
+    public JSONObject getTableModel() {
+        return JSONObject.fromObject(new IssuesTableModel().toJsonArray(getIssues()));
     }
 
     public Issues<BuildIssue> getIssues() {
@@ -227,8 +237,8 @@ public class IssuesDetail implements ModelObject {
         }
         return new PropertyCountTab(owner, issues, defaultEncoding, this, plainLink, propertyFormatter,
                 labelProvider);
-
     }
+
 
     /**
      * Returns all possible priorities.
@@ -256,6 +266,8 @@ public class IssuesDetail implements ModelObject {
     public String getDisplayName() {
         return displayName;
     }
+
+    // ------------------------------------ UI entry points for Stapler --------------------------------
 
     /**
      * Returns the build as owner of this object.

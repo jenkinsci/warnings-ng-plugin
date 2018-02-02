@@ -11,6 +11,8 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.LineRange;
 import edu.hm.hafner.analysis.LineRangeList;
 import edu.hm.hafner.util.Ensure;
+import static io.jenkins.plugins.analysis.core.views.IssuesDetail.*;
+import io.jenkins.plugins.analysis.core.views.LocalizedPriority;
 
 import hudson.util.RobustCollectionConverter;
 import hudson.util.XStream2;
@@ -48,6 +50,31 @@ public class BuildIssue extends Issue {
         return xStream2;
     }
 
+    public String toJson() {
+        return String.format("[\"%s\", \"%s\", \"%s\", \"%s\", \"%s\"]",
+                formatFileName(),
+                formatProperty("packageName", getPackageName()),
+                formatProperty("category", getCategory()),
+                formatProperty("type", getType()),
+                formatPriority());
+    }
+
+    private String formatPriority() {
+        return String.format("<a href=\\\"%s\\"
+                        + "\">%s</a>", getPriority().name(),
+                LocalizedPriority.getLocalizedString(getPriority()));
+    }
+
+    private String formatProperty(final String property, final String value) {
+        return String.format("<a href=\\\"%s.%d/\\\">%s</a>", property, value.hashCode(), value);
+    }
+
+    private String formatFileName() {
+        return String.format("<a href=\\\"source.%s/#%d\\\">%s:%d<\\"
+                        + "/a>", getId(), getLineStart(),
+                FILE_NAME_FORMATTER.apply(getFileName()), getLineStart());
+    }
+
     /**
      * {@link Converter} implementation for XStream.
      */
@@ -68,7 +95,7 @@ public class BuildIssue extends Issue {
                 final UnmarshallingContext context, final Collection collection) {
             super.populateCollection(reader, context, collection);
             Ensure.that(collection).isInstanceOf(LineRangeList.class);
-            ((LineRangeList)collection).trim();
+            ((LineRangeList) collection).trim();
         }
 
         @Override

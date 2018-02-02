@@ -63,14 +63,6 @@
             "orderable": false
         }]
     });
-    var table = $('#warnings').DataTable({
-        "order": [],
-        "pagingType": "numbers",
-        "columnDefs": [{
-            "targets": 'no-sort',
-            "orderable": false
-        }]
-    });
 
     // Add event listener for opening and closing details
     $('#warnings').on('click', 'td.details-control', function () {
