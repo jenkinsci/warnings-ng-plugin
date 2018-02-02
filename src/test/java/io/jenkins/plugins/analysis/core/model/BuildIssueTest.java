@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.model;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +11,9 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.IssueTest;
 import edu.hm.hafner.analysis.Priority;
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import net.sf.json.JSONArray;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import hudson.util.XStream2;
 
@@ -20,6 +23,45 @@ import hudson.util.XStream2;
  * @author Ullrich Hafner
  */
 class BuildIssueTest extends IssueTest {
+    @Test
+    void shouldBeConvertibleToJson() {
+        Locale.setDefault(Locale.ENGLISH);
+
+        IssueBuilder builder = new IssueBuilder();
+        Issue issue = builder.setFileName("path/to/file-1")
+                .setPackageName("package-1")
+                .setCategory("category-1")
+                .setType("type-1")
+                .setLineStart(15)
+                .setPriority(Priority.HIGH).build();
+
+        BuildIssue buildIssue = new BuildIssue(issue, 1);
+
+        JSONArray columns = JSONArray.fromObject(buildIssue.toJson());
+
+        assertThatJson(columns).isArray().ofLength(5);
+        assertThatColumnsAreValid(columns, 1);
+    }
+
+    static void assertThatColumnsAreValid(final JSONArray columns, int index) {
+        String actual = columns.getString(0);
+        assertThat(actual).matches(createFileLinkMatcher("file-" + index, 15));
+        assertThat(columns.get(1)).isEqualTo(createPropertyLink("packageName", "package-" + index));
+        assertThat(columns.get(2)).isEqualTo(createPropertyLink("category", "category-" + index));
+        assertThat(columns.get(3)).isEqualTo(createPropertyLink("type", "type-" + index));
+        assertThat(columns.get(4)).isEqualTo("<a href=\"HIGH\">High</a>");
+    }
+
+    private static String createPropertyLink(final String property, final String value) {
+        return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), value);
+    }
+
+    private static String createFileLinkMatcher(final String fileName, final int lineNumber) {
+        return "<a href=\"source.[0-9a-f-]+/#" + lineNumber + "\">"
+                + fileName + ":" + lineNumber
+                + "</a>";
+    }
+
     @SuppressWarnings("ParameterNumber")
     @Override
     protected Issue createIssue(final String fileName, final int lineStart, final int lineEnd, final int columnStart,
