@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.views;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -10,6 +9,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
+import io.jenkins.plugins.analysis.core.model.BuildIssue;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.model.ModelObject;
@@ -21,7 +21,7 @@ import hudson.model.Run;
  * @author Ulli Hafner
  */
 public class PropertyCountTab extends IssuesDetail {
-    private final Map<String, Integer> propertyCount;
+    private final Map<String, Issues<BuildIssue>> issuesByProperty;
     private final Function<String, String> propertyFormatter;
     private final String property;
 
@@ -40,8 +40,9 @@ public class PropertyCountTab extends IssuesDetail {
         super(owner, issues, NO_ISSUES, NO_ISSUES, NO_ISSUES, defaultEncoding, parent, labelProvider);
 
         this.property = property;
-        propertyCount = getIssues().getPropertyCount(getIssueStringFunction(property));
         this.propertyFormatter = propertyFormatter;
+
+        issuesByProperty = issues.groupByProperty(getIssueStringFunction(property));
     }
 
     static Function<Issue, String> getIssueStringFunction(final String property) {
@@ -65,7 +66,7 @@ public class PropertyCountTab extends IssuesDetail {
         try {
             return PropertyUtils.getProperty(new TabLabelProvider(issues), property).toString();
         }
-        catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ignored) {
             return "Element";
         }
     }
@@ -74,20 +75,34 @@ public class PropertyCountTab extends IssuesDetail {
         return property;
     }
 
-    public long getMax() {
-        return Collections.max(propertyCount.values());
+    public int getMax() {
+        return issuesByProperty.values().stream().mapToInt(issues -> issues.size()).max().orElse(0);
     }
 
     public String getDisplayName(final String key) {
         return propertyFormatter.apply(key);
     }
 
+    @Override
+    public String getDisplayName() {
+        return getDisplayName(property);
+    }
+
     public Set<String> getKeys() {
-        return propertyCount.keySet();
+        return issuesByProperty.keySet();
     }
 
     public long getCount(final String key) {
-        return propertyCount.get(key);
+        return issuesByProperty.get(key).size();
+    }
+    public long getLowCount(final String key) {
+        return issuesByProperty.get(key).getLowPrioritySize();
+    }
+    public long getHighCount(final String key) {
+        return issuesByProperty.get(key).getHighPrioritySize();
+    }
+    public long getNormalCount(final String key) {
+        return issuesByProperty.get(key).getNormalPrioritySize();
     }
 }
 
