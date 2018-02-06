@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import org.jvnet.hudson.test.TestExtension;
 
 import edu.hm.hafner.analysis.IssueParser;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
-import io.jenkins.plugins.analysis.core.model.ToolRegistry.StaticAnalysisToolFactory;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import static org.mockito.Mockito.*;
 
@@ -36,13 +37,13 @@ public class LabelProviderFactoryTest extends IntegrationTest {
 
         for (String name : names) {
             for (String id : ids) {
-                StaticAnalysisLabelProvider registered = factory.findLabelProvider(id, name);
+                StaticAnalysisLabelProvider registered = factory.create(id, name);
                 assertThat(registered).as("Tool %s and name '%s'", id, name).hasId(id);
                 assertThat(registered).as("Tool %s and name '%s'", id, name).hasName(id);
             }
         }
 
-        StaticAnalysisLabelProvider notRegistered = factory.findLabelProvider(UNDEFINED_ID, "");
+        StaticAnalysisLabelProvider notRegistered = factory.create(UNDEFINED_ID, "");
         assertThat(notRegistered).hasId(UNDEFINED_ID);
         assertThat(notRegistered).hasName(new DefaultLabelProvider(UNDEFINED_ID).getDefaultName());
     }
@@ -57,13 +58,12 @@ public class LabelProviderFactoryTest extends IntegrationTest {
         String[] ids = {ANNOTATED_ID, PROVIDER_ID, UNDEFINED_ID};
 
         for (String id : ids) {
-            StaticAnalysisLabelProvider registered = factory.findLabelProvider(id, TOOL_NAME);
+            StaticAnalysisLabelProvider registered = factory.create(id, TOOL_NAME);
             assertThat(registered).as("Tool %s and name '%s'", id, TOOL_NAME).hasId(id);
             assertThat(registered).as("Tool %s and name '%s'", id, TOOL_NAME).hasName(TOOL_NAME);
         }
     }
 
-    @TestExtension
     @SuppressWarnings("unused")
     public static class TestTool extends StaticAnalysisTool {
         @Override
@@ -72,13 +72,21 @@ public class LabelProviderFactoryTest extends IntegrationTest {
         }
 
         @Override
-        public StaticAnalysisLabelProvider getLabelProvider() {
-            return new DefaultLabelProvider(getId(), getId());
-        }
-
-        @Override
         public IssueParser createParser() {
             return null;
+        }
+
+        @TestExtension
+        public static final class TestToolDescriptor extends StaticAnalysisToolDescriptor {
+            public TestToolDescriptor() {
+                super(ANNOTATED_ID);
+            }
+
+            @Nonnull
+            @Override
+            public String getDisplayName() {
+                return ANNOTATED_ID;
+            }
         }
     }
 
@@ -99,5 +107,4 @@ public class LabelProviderFactoryTest extends IntegrationTest {
         }
 
     }
-
 }

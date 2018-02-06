@@ -9,8 +9,10 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import edu.hm.hafner.util.ResourceTest;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.FilePath;
+import hudson.model.Descriptor;
 import hudson.model.TopLevelItem;
 
 /**
@@ -45,7 +47,26 @@ public class IntegrationTest extends ResourceTest {
         }
     }
 
-    protected String createWorkspaceFileName(final String fileName) {
-        return String.format("%s-issues.txt", FilenameUtils.getBaseName(fileName));
+    /**
+     * Creates a pre-defined filename for a workspace file.
+     *
+     * @param fileNamePrefix
+     *         prefix of the filename
+     */
+    protected String createWorkspaceFileName(final String fileNamePrefix) {
+        return String.format("%s-issues.txt", FilenameUtils.getBaseName(fileNamePrefix));
+    }
+
+    /**
+     * Returns the ID of a static analysis tool that is given by its class file. Uses the associated descriptor to
+     * obtain the ID.
+     *
+     * @param tool
+     *         the class of the tool to get the ID from
+     */
+    protected String getIdOf(final Class<? extends StaticAnalysisTool> tool) {
+        Descriptor<?> descriptor = j.jenkins.getDescriptor(tool);
+        assertThat(descriptor).as("Descriptor for '%s' not found").isNotNull();
+        return descriptor.getId();
     }
 }

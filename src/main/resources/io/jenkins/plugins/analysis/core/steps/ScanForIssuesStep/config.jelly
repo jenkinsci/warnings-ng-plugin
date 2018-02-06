@@ -2,9 +2,7 @@
 <j:jelly xmlns:j="jelly:core"
          xmlns:f="/lib/form" xmlns:u="/util">
 
-  <f:entry title="${%title.tool}" description="${%description.tool}" field="tool">
-    <f:select/>
-  </f:entry>
+  <f:dropdownDescriptorSelector field="tool" title="${%title.tool}" descriptors="${descriptor.availableTools}"/>
   <f:entry title="${%title.pattern}" field="pattern"
            description="${%description.pattern('http://ant.apache.org/manual/Types/fileset.html')}">
     <f:textbox/>

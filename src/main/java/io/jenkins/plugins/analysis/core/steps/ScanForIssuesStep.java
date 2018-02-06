@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,11 +29,12 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.PackageNameResolver;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-import io.jenkins.plugins.analysis.core.model.ToolRegistry;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool.StaticAnalysisToolDescriptor;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.FilesParser;
 import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.util.LoggerFactory;
+import jenkins.model.Jenkins;
 
 import hudson.EnvVars;
 import hudson.Extension;
@@ -42,7 +44,6 @@ import hudson.console.ConsoleNote;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.EncodingValidator;
-import hudson.util.ListBoxModel;
 
 /**
  * Scan files or the console log for issues.
@@ -51,8 +52,8 @@ import hudson.util.ListBoxModel;
 public class ScanForIssuesStep extends Step {
     private String defaultEncoding;
     private boolean shouldDetectModules;
-    private String tool;
     private String pattern;
+    private StaticAnalysisTool tool;
 
     @DataBoundConstructor
     public ScanForIssuesStep() {
@@ -77,23 +78,22 @@ public class ScanForIssuesStep extends Step {
     }
 
     @CheckForNull
-    public String getTool() {
+    public StaticAnalysisTool getTool() {
         return tool;
     }
 
-    // FIXME: Should modules be scanned afterwards? Why is this optional?
-
     /**
-     * Sets the ID of the static analysis tool that produced the issues.
+     * Sets the static analysis tool that produced the issues.
      *
      * @param tool
      *         the static analysis tool
      */
     @DataBoundSetter
-    public void setTool(final String tool) {
+    public void setTool(final StaticAnalysisTool tool) {
         this.tool = tool;
     }
 
+    // FIXME: Should modules be scanned afterwards? Why is this optional?
     public boolean getShouldDetectModules() {
         return shouldDetectModules;
     }
@@ -138,7 +138,7 @@ public class ScanForIssuesStep extends Step {
     public static class Execution extends SynchronousNonBlockingStepExecution<Issues<?>> {
         private final String defaultEncoding;
         private final boolean shouldDetectModules;
-        private final String tool;
+        private final StaticAnalysisTool tool;
         private final String pattern;
         private int logPosition = 0;
 
@@ -156,13 +156,7 @@ public class ScanForIssuesStep extends Step {
             if (listener == null) {
                 return new LoggerFactory().createNullLogger();
             }
-            return new LoggerFactory().createLogger(listener.getLogger(), findTool().getName());
-        }
-
-        private StaticAnalysisTool findTool() {
-            // FIXME: should be static!
-            ToolRegistry registry = new ToolRegistry();
-            return registry.find(tool);
+            return new LoggerFactory().createLogger(listener.getLogger(), tool.getName());
         }
 
         private Run<?, ?> getRun() throws IOException, InterruptedException {
@@ -200,7 +194,7 @@ public class ScanForIssuesStep extends Step {
                 Thread.sleep(5000);
                 issues = scanConsoleLog(workspace, logger);
             }
-            issues.setId(tool);
+            issues.setId(tool.getId());
 
             logger.log("Parsing took %s", Duration.between(start, Instant.now()));
             return issues;
@@ -244,17 +238,20 @@ public class ScanForIssuesStep extends Step {
                 final Logger logger) throws IOException, InterruptedException {
             logger.log("Parsing console log (workspace: '%s')", workspace);
 
-            Issues<?> issues = findTool().createParser().parse(getRun().getLogFile(),
-                    getCharset(), new IssueBuilder().setOrigin(tool), line -> ConsoleNote.removeNotes(line));
+            Issues<?> issues = tool.createParser().parse(getRun().getLogFile(),
+                    getCharset(), new IssueBuilder().setOrigin(tool.getId()),
+                    line -> ConsoleNote.removeNotes(line));
             logIssuesMessages(issues, logger);
             return issues;
         }
 
         private Issues<Issue> scanFiles(final FilePath workspace,
                 final Logger logger) throws IOException, InterruptedException {
-            IssueParser<?> parser = findTool().createParser();
+            IssueParser<?> parser = tool.createParser();
+            // FIXME: ID is not needed, origin should be set afterwards!
+            // Actually issue setters should be protected so that all updates need to go through issues
             FilesParser filesParser = new FilesParser(expandEnvironmentVariables(pattern), parser,
-                    tool, shouldDetectModules, defaultEncoding);
+                    tool.getId(), shouldDetectModules, defaultEncoding);
             Issues<Issue> issues = workspace.act(filesParser);
 
             logIssuesMessages(issues, logger);
@@ -318,19 +315,9 @@ public class ScanForIssuesStep extends Step {
             return "Scan files or the console log for issues";
         }
 
-        /**
-         * Returns all registered static analysis tools. These are packed into a {@link ListBoxModel} in order to show
-         * them in the list box of the config.jelly view part.
-         *
-         * @return the model of the list box
-         */
-        public ListBoxModel doFillToolItems() {
-            ListBoxModel items = new ListBoxModel();
-            ToolRegistry registry = new ToolRegistry();
-            for (StaticAnalysisTool tool : registry.getAll()) {
-                items.add(tool.getName(), tool.getId());
-            }
-            return items;
+
+        public Collection<? extends StaticAnalysisToolDescriptor> getAvailableTools() {
+            return Jenkins.getInstance().getDescriptorList(StaticAnalysisTool.class);
         }
     }
 }

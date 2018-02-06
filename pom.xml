@@ -168,7 +168,7 @@
           <generateBddAssertions>false</generateBddAssertions>
           <generateJUnitSoftAssertions>false</generateJUnitSoftAssertions>
           <templates>
-            <templatesDirectory>src/test/resources/templates/</templatesDirectory>
+            <templatesDirectory>${project.basedir}/etc/templates/</templatesDirectory>
             <assertionsEntryPointClass>analysis_core_assertions_entry_point_class_template.txt</assertionsEntryPointClass>
           </templates>
         </configuration>

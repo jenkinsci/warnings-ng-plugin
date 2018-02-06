@@ -447,7 +447,7 @@ public class PublishIssuesStep extends Step {
         }
 
         private StaticAnalysisLabelProvider getTool(final String toolId) {
-            return new LabelProviderFactory().findLabelProvider(toolId, name);
+            return new LabelProviderFactory().create(toolId, name);
         }
 
         private Run<?, ?> getRun() throws IOException, InterruptedException {
