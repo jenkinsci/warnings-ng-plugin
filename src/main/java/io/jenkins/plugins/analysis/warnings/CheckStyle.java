@@ -1,5 +1,9 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import javax.annotation.Nonnull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
 import static hudson.plugins.warnings.WarningsDescriptor.*;
@@ -15,33 +19,31 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-@Extension
 public class CheckStyle extends StaticAnalysisTool {
     static final String ID = "checkstyle";
-    private static final String PARSER_NAME = Messages.Warnings_CheckStyle_ParserName();
-    private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
-    private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
-    private static final LabelProvider LABEL_PROVIDER = new LabelProvider();
+
+    /** Creates a new instance of {@link CheckStyle}. */
+    @DataBoundConstructor
+    public CheckStyle() {
+        // empty constructor required for stapler
+    }
 
     @Override
     public CheckStyleParser createParser() {
         return new CheckStyleParser();
     }
 
-    @Override
-    public StaticAnalysisLabelProvider getLabelProvider() {
-        return LABEL_PROVIDER;
-    }
-
     /** Provides the labels for the static analysis tool. */
     private static class LabelProvider extends DefaultLabelProvider {
+        private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
+        private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
+
         private final CheckStyleRules rules;
 
-        LabelProvider() {
-            super(ID, PARSER_NAME);
+        LabelProvider(final CheckStyleRules rules) {
+            super(ID, Messages.Warnings_CheckStyle_ParserName());
 
-            rules = new CheckStyleRules();
-            rules.initialize();
+            this.rules = rules;
         }
 
         @Override
@@ -57,6 +59,30 @@ public class CheckStyle extends StaticAnalysisTool {
         @Override
         public String getLargeIconUrl() {
             return LARGE_ICON_URL;
+        }
+    }
+
+    /** Descriptor for this static analysis tool. */
+    @Extension
+    public static class Descriptor extends StaticAnalysisToolDescriptor {
+        private final CheckStyleRules rules;
+
+        public Descriptor() {
+            super(ID);
+
+            rules = new CheckStyleRules();
+            rules.initialize();
+        }
+
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return Messages.Warnings_CheckStyle_ParserName();
+        }
+
+        @Override
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new LabelProvider(rules);
         }
     }
 }

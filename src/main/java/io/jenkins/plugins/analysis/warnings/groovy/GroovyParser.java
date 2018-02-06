@@ -18,7 +18,6 @@ import edu.hm.hafner.util.VisibleForTesting;
 import groovy.lang.Script;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-import io.jenkins.plugins.analysis.core.model.ToolRegistry;
 import jenkins.model.Jenkins;
 
 import hudson.Extension;
@@ -207,9 +206,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
             if (StringUtils.isBlank(id)) {
                 return FormValidation.error(Messages.GroovyParser_Error_Id_isEmpty());
             }
-            ToolRegistry registry = new ToolRegistry();
-            if (registry.contains(id)) {
-                return FormValidation.error(Messages.GroovyParser_Error_Id_isNotUnique(registry.find(id).getName()));
+            ParserConfiguration parsers = ParserConfiguration.getInstance();
+            if (parsers.contains(id)) {
+                return FormValidation.error(Messages.GroovyParser_Error_Id_isNotUnique(
+                        parsers.getParser(id).getName()));
             }
             return FormValidation.ok();
         }

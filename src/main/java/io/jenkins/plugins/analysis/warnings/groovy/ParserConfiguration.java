@@ -8,13 +8,15 @@ import org.eclipse.collections.impl.factory.Lists;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import edu.hm.hafner.util.NoSuchElementException;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.model.ToolRegistry;
-import io.jenkins.plugins.analysis.core.model.ToolRegistry.StaticAnalysisToolFactory;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 
 import hudson.Extension;
+import hudson.util.ListBoxModel;
 
 /**
  * Global configuration of Groovy based parsers. These parsers are dynamically registered.
@@ -63,6 +65,38 @@ public class ParserConfiguration extends GlobalConfiguration {
     @SuppressWarnings("unused") // Called from config.jelly
     public boolean canEditParsers() {
         return Jenkins.getInstance().getACL().hasPermission(Jenkins.RUN_SCRIPTS);
+    }
+
+    public StaticAnalysisTool getParser(final String id) {
+        for (GroovyParser parser : parsers) {
+            if (parser.getId().equals(id)) {
+                return parser.toStaticAnalysisTool();
+            }
+        }
+        throw new NoSuchElementException("No Groovy parser with ID '%s' found.", id);
+    }
+
+    public boolean contains(final String id) {
+        for (GroovyParser parser : parsers) {
+            if (parser.getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns all registered Groovy parsers. These are packed into a {@link ListBoxModel} in order to show them in the
+     * list box of the config.jelly view part.
+     *
+     * @return the model of the list box
+     */
+    public ListBoxModel asListBoxModel() {
+        ListBoxModel items = new ListBoxModel();
+        for (GroovyParser parser : parsers) {
+            items.add(parser.getName(), parser.getId());
+        }
+        return items;
     }
 
     /**

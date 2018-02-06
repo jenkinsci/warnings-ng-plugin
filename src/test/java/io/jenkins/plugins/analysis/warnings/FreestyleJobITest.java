@@ -112,5 +112,4 @@ public class FreestyleJobITest extends IntegrationTest {
 
         return action.getResult();
     }
-
 }

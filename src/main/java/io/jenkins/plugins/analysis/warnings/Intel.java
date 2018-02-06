@@ -1,8 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import javax.annotation.Nonnull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import edu.hm.hafner.analysis.parser.IntelParser;
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
@@ -12,19 +14,32 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-@Extension
 public class Intel extends StaticAnalysisTool {
     static final String ID = "intel";
-    private static final String PARSER_NAME = Messages.Warnings_Intel_ParserName();
+
+    /** Creates a new instance of {@link Intel}. */
+    @DataBoundConstructor
+    public Intel() {
+        // empty constructor required for stapler
+    }
 
     @Override
     public IntelParser createParser() {
         return new IntelParser();
     }
 
-    @Override
-    public StaticAnalysisLabelProvider getLabelProvider() {
-        return new DefaultLabelProvider(ID, PARSER_NAME);
+    /** Descriptor for this static analysis tool. */
+    @Extension
+    public static class Descriptor extends StaticAnalysisToolDescriptor {
+        public Descriptor() {
+            super(ID);
+        }
+
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return Messages.Warnings_Intel_ParserName();
+        }
     }
 }
 

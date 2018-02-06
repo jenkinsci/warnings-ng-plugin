@@ -1,10 +1,11 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import javax.annotation.Nonnull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import edu.hm.hafner.analysis.parser.dry.dupfinder.DupFinderParser;
-import static hudson.plugins.warnings.WarningsDescriptor.*;
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
 
@@ -13,16 +14,13 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-@Extension
-public class DupFinder extends StaticAnalysisTool {
+public class DupFinder extends DuplicateCodeScanner {
     static final String ID = "dupfinder";
-    private static final String PARSER_NAME = Messages.Warnings_DupFinder_ParserName();
-    private static final String SMALL_ICON_URL = IMAGE_PREFIX + "dry-24x24.png";
-    private static final String LARGE_ICON_URL = IMAGE_PREFIX + "dry-48x48.png";
 
-    @Override
-    public StaticAnalysisLabelProvider getLabelProvider() {
-        return new LabelProvider();
+    /** Creates a new instance of {@link DupFinder}. */
+    @DataBoundConstructor
+    public DupFinder() {
+        // empty constructor required for stapler
     }
 
     @Override
@@ -31,19 +29,28 @@ public class DupFinder extends StaticAnalysisTool {
     }
 
     /** Provides the labels for the static analysis tool. */
-    private static class LabelProvider extends DefaultLabelProvider {
+    private static class LabelProvider extends DryLabelProvider {
         LabelProvider() {
-            super(ID, PARSER_NAME);
+            super(ID, Messages.Warnings_DupFinder_ParserName());
+        }
+    }
+
+    /** Descriptor for this static analysis tool. */
+    @Extension
+    public static class Descriptor extends DryDescriptor {
+        public Descriptor() {
+            super(ID);
+        }
+
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return Messages.Warnings_DupFinder_ParserName();
         }
 
         @Override
-        public String getSmallIconUrl() {
-            return SMALL_ICON_URL;
-        }
-
-        @Override
-        public String getLargeIconUrl() {
-            return LARGE_ICON_URL;
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new LabelProvider();
         }
     }
 }

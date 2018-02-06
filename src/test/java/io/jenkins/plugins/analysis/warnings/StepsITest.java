@@ -4,8 +4,10 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.collections.impl.factory.Lists;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Test;
@@ -17,6 +19,7 @@ import edu.hm.hafner.analysis.Issues;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.BuildIssue;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
@@ -43,10 +46,12 @@ public class StepsITest extends PipelineITest {
     @Test
     public void issue11675() {
         WorkflowJob job = createJobWithWorkspaceFiles("issue11675.txt");
-        String scanStep = String.format("def issues = scanForIssues tool: '%s'", Eclipse.ID);
-        job.setDefinition(asStage("sh 'cat issue11675-issues.txt'", scanStep, PUBLISH_ISSUES_STEP));
+        job.setDefinition(asStage(
+                "sh 'cat issue11675-issues.txt'",
+                "def issues = scanForIssues tool: [$class: 'Eclipse']",
+                PUBLISH_ISSUES_STEP));
 
-        AnalysisResult result = scheduleBuild(job, Eclipse.ID);
+        AnalysisResult result = scheduleBuild(job, Eclipse.class);
 
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues()).hasSize(8);
@@ -92,9 +97,9 @@ public class StepsITest extends PipelineITest {
     private void publishResultsWithIdAndName(final String publishStep, final String expectedId,
             final String expectedName) {
         WorkflowJob job = createJobWithWorkspaceFiles("eclipse.txt", "javadoc.txt", "javac.txt");
-        job.setDefinition(asStage(createScanForIssuesStep(Java.ID, "java"),
-                createScanForIssuesStep(Eclipse.ID, "eclipse"),
-                createScanForIssuesStep(JavaDoc.ID, "javadoc"),
+        job.setDefinition(asStage(createScanForIssuesStep(Java.class, "java"),
+                createScanForIssuesStep(Eclipse.class, "eclipse"),
+                createScanForIssuesStep(JavaDoc.class, "javadoc"),
                 publishStep));
 
         WorkflowRun run = runSuccessfully(job);
@@ -122,14 +127,14 @@ public class StepsITest extends PipelineITest {
     @Test
     public void shouldHaveActionWithIdAndNameWithEmptyResults() {
         WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
-        job.setDefinition(asStage(createScanForIssuesStep(Java.ID, "java"),
+        job.setDefinition(asStage(createScanForIssuesStep(Java.class, "java"),
                 "publishIssues issues:[java]"));
 
         WorkflowRun run = runSuccessfully(job);
 
         ResultAction action = getResultAction(run);
         assertThat(action.getId()).isEqualTo("java");
-        assertThat(action.getDisplayName()).contains(Java.PARSER_NAME);
+        assertThat(action.getDisplayName()).contains(Messages.Warnings_JavaParser_ParserName());
 
         AnalysisResult result = action.getResult();
         assertThat(result.getIssues()).isEmpty();
@@ -142,7 +147,9 @@ public class StepsITest extends PipelineITest {
     @Test
     public void shouldShowWarningsOfGroovyParser() {
         WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
-        job.setDefinition(asStage(createScanForIssuesStep("groovy-pep8", "groovy"),
+        job.setDefinition(asStage(
+                String.format("def groovy = scanForIssues tool: [$class: 'GroovyScript', id:'groovy-pep8'], "
+                        + "pattern:'**/*issues.txt', defaultEncoding:'UTF-8'"),
                 "publishIssues issues:[groovy]"));
 
         ParserConfiguration configuration = ParserConfiguration.getInstance();
@@ -169,11 +176,11 @@ public class StepsITest extends PipelineITest {
     @Test
     public void shouldIncludeJustOneFile() {
         WorkflowJob job = createJobWithWorkspaceFiles("eclipse.txt");
-        job.setDefinition(asStage(createScanForIssuesStep(Eclipse.ID),
+        job.setDefinition(asStage(createScanForIssuesStep(Eclipse.class),
                 "publishIssues issues:[issues],  "
                         + "filters:[[property: [$class: 'IncludeFile'], pattern: '.*AttributeException.*']]"));
 
-        AnalysisResult result = scheduleBuild(job, Eclipse.ID);
+        AnalysisResult result = scheduleBuild(job, Eclipse.class);
 
         assertThat(result.getTotalSize()).isEqualTo(1);
         assertThat(result.getIssues()).hasSize(1);
@@ -205,10 +212,11 @@ public class StepsITest extends PipelineITest {
         String adaptedXxeFileContent = xxeFileContent.replace("$OOB_LINK$", oobInUserContentLink);
         createFileInWorkspace(job, "xxe.xml", adaptedXxeFileContent);
 
-        String[] tools = {CheckStyle.ID, Pmd.ID, FindBugs.ID, JcReport.ID};
-        for (String tool : tools) {
+        List<Class<? extends StaticAnalysisTool>> classes = Lists.mutable.of(CheckStyle.class, Pmd.class,
+                FindBugs.class, JcReport.class);
+        for (Class<? extends StaticAnalysisTool> tool : classes) {
             job.setDefinition(asStage(
-                    String.format("def issues = scanForIssues tool: '%s', pattern:'xxe.xml'", tool),
+                    String.format("def issues = scanForIssues tool: [$class: '%s'], pattern:'xxe.xml'", tool.getSimpleName()),
                     "publishIssues issues:[issues]"));
 
             scheduleBuild(job, tool);

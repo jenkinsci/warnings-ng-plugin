@@ -1,8 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import javax.annotation.Nonnull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import edu.hm.hafner.analysis.parser.SphinxBuildParser;
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
@@ -13,19 +15,32 @@ import hudson.plugins.warnings.parser.Messages;
  *
  * @author Ullrich Hafner
  */
-@Extension
 public class SphinxBuild extends StaticAnalysisTool {
     static final String ID = "sphinx";
-    private static final String PARSER_NAME = Messages.Warnings_SphinxBuild_ParserName();
+
+    /** Creates a new instance of {@link SphinxBuild}. */
+    @DataBoundConstructor
+    public SphinxBuild() {
+        // empty constructor required for stapler
+    }
 
     @Override
     public SphinxBuildParser createParser() {
         return new SphinxBuildParser();
     }
 
-    @Override
-    public StaticAnalysisLabelProvider getLabelProvider() {
-        return new DefaultLabelProvider(ID, PARSER_NAME);
+    /** Descriptor for this static analysis tool. */
+    @Extension
+    public static class Descriptor extends StaticAnalysisToolDescriptor {
+        public Descriptor() {
+            super(ID);
+        }
+
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return Messages.Warnings_SphinxBuild_ParserName();
+        }
     }
 }
 

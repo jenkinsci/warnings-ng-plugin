@@ -1,8 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import javax.annotation.Nonnull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import edu.hm.hafner.analysis.parser.Pep8Parser;
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
@@ -12,18 +14,31 @@ import hudson.Extension;
  *
  * @author Joscha Behrmann
  */
-@Extension
 public class Pep8 extends StaticAnalysisTool {
     static final String ID = "pep8";
-    private static final String PARSER_NAME = Messages.Warnings_Pep8_ParserName();
+
+    /** Creates a new instance of {@link NagFortran}. */
+    @DataBoundConstructor
+    public Pep8() {
+        // empty constructor required for stapler
+    }
 
     @Override
     public Pep8Parser createParser() {
         return new Pep8Parser();
     }
 
-    @Override
-    public StaticAnalysisLabelProvider getLabelProvider() {
-        return new DefaultLabelProvider(ID, PARSER_NAME);
+    /** Descriptor for this static analysis tool. */
+    @Extension
+    public static class Descriptor extends StaticAnalysisToolDescriptor {
+        public Descriptor() {
+            super(ID);
+        }
+
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return Messages.Warnings_Pep8_ParserName();
+        }
     }
 }

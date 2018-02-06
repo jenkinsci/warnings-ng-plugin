@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -18,7 +19,17 @@ public class GroovyParserToolAdapter extends StaticAnalysisTool {
     }
 
     @Override
-    public IssueParser createParser() {
+    public String getId() {
+        return parser.getId();
+    }
+
+    @Override
+    public String getName() {
+        return parser.getName();
+    }
+
+    @Override
+    public IssueParser<Issue> createParser() {
         return parser.createParser();
     }
 

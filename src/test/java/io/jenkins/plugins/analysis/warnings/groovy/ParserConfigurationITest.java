@@ -6,8 +6,8 @@ import java.util.List;
 import org.junit.Test;
 
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-import io.jenkins.plugins.analysis.core.model.ToolRegistry.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import static org.assertj.core.api.Assertions.*;
 

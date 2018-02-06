@@ -1,8 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import javax.annotation.Nonnull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import edu.hm.hafner.analysis.parser.GnuMakeGccParser;
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
@@ -12,18 +14,31 @@ import hudson.Extension;
  *
  * @author Michael Schmid
  */
-@Extension
 public class GnuMakeGcc extends StaticAnalysisTool {
     static final String ID = "gmake-gcc";
-    private static final String PARSER_NAME = Messages.Warnings_GnuMakeGcc_ParserName();
+
+    /** Creates a new instance of {@link GnuMakeGcc}. */
+    @DataBoundConstructor
+    public GnuMakeGcc() {
+        // empty constructor required for stapler
+    }
 
     @Override
     public GnuMakeGccParser createParser() {
         return new GnuMakeGccParser();
     }
 
-    @Override
-    public StaticAnalysisLabelProvider getLabelProvider() {
-        return new DefaultLabelProvider(ID, PARSER_NAME);
+    /** Descriptor for this static analysis tool. */
+    @Extension
+    public static class Descriptor extends StaticAnalysisToolDescriptor {
+        public Descriptor() {
+            super(ID);
+        }
+
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return Messages.Warnings_GnuMakeGcc_ParserName();
+        }
     }
 }

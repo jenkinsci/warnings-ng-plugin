@@ -1,5 +1,9 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import javax.annotation.Nonnull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.pmd.PmdParser;
 import static hudson.plugins.warnings.WarningsDescriptor.*;
@@ -14,17 +18,13 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-@Extension
 public class Pmd extends StaticAnalysisTool {
     static final String ID = "pmd";
-    private static final String PARSER_NAME = Messages.Warnings_PMD_ParserName();
-    private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
-    private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
-    private static final LabelProvider LABEL_PROVIDER = new LabelProvider();
 
-    @Override
-    public StaticAnalysisLabelProvider getLabelProvider() {
-        return LABEL_PROVIDER;
+    /** Creates a new instance of {@link Pmd}. */
+    @DataBoundConstructor
+    public Pmd() {
+        // empty constructor required for stapler
     }
 
     @Override
@@ -34,13 +34,15 @@ public class Pmd extends StaticAnalysisTool {
 
     /** Provides the labels for the static analysis tool. */
     private static class LabelProvider extends DefaultLabelProvider {
+        private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
+        private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
+
         private final PmdMessages messages;
 
-        LabelProvider() {
-            super(ID, PARSER_NAME);
+        LabelProvider(final PmdMessages messages) {
+            super(ID, Messages.Warnings_PMD_ParserName());
 
-            messages = new PmdMessages();
-            messages.initialize();
+            this.messages = messages;
         }
 
         @Override
@@ -58,4 +60,29 @@ public class Pmd extends StaticAnalysisTool {
             return LARGE_ICON_URL;
         }
     }
+
+    /** Descriptor for this static analysis tool. */
+    @Extension
+    public static class Descriptor extends StaticAnalysisToolDescriptor {
+        private final PmdMessages messages;
+
+        public Descriptor() {
+            super(ID);
+
+            messages = new PmdMessages();
+            messages.initialize();
+        }
+
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return Messages.Warnings_PMD_ParserName();
+        }
+
+        @Override
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new LabelProvider(messages);
+        }
+    }
 }
+

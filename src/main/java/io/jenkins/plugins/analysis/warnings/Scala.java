@@ -1,13 +1,14 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
+
+import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.SbtScalacParser;
 import edu.hm.hafner.analysis.parser.ScalacParser;
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
 import hudson.Extension;
@@ -18,18 +19,31 @@ import hudson.plugins.warnings.parser.Messages;
  *
  * @author Ullrich Hafner
  */
-@Extension
 public class Scala extends StaticAnalysisToolSuite {
     static final String ID = "scala";
-    private static final String PARSER_NAME = Messages.Warnings_ScalaParser_ParserName();
+
+    /** Creates a new instance of {@link Scala}. */
+    @DataBoundConstructor
+    public Scala() {
+        // empty constructor required for stapler
+    }
 
     @Override
     protected Collection<? extends AbstractParser<Issue>> getParsers() {
         return asList(new ScalacParser(), new SbtScalacParser());
     }
 
-    @Override
-    public StaticAnalysisLabelProvider getLabelProvider() {
-        return new DefaultLabelProvider(ID, PARSER_NAME);
+    /** Descriptor for this static analysis tool. */
+    @Extension
+    public static class Descriptor extends StaticAnalysisToolDescriptor {
+        public Descriptor() {
+            super(ID);
+        }
+
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return Messages.Warnings_ScalaParser_ParserName();
+        }
     }
 }

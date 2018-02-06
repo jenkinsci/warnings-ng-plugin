@@ -5,12 +5,11 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.warnings.FindBugsMessages.Pattern;
-import static org.junit.Assert.*;
 
 /**
  * Tests the class {@link FindBugsMessages}.
@@ -29,32 +28,60 @@ class FindBugsMessagesTest {
     /** Expected number of patterns in find-sec-bugs. */
     private static final int EXPECTED_SECURITY_PATTERNS = 113;
 
-    /**
-     * Verifies that the total number of supported bug messages is correct.
-     */
     @Test
-    void verifyTotals() {
-        assertEquals("Wrong number of messages read.", EXPECTED_PATTERNS + EXPECTED_CONTRIB_PATTERNS + EXPECTED_SECURITY_PATTERNS,
-                createMessages().size());
+    void shouldReadAllMessageFiles() {
+        assertThat(createMessages().size()).isEqualTo(
+                EXPECTED_PATTERNS + EXPECTED_CONTRIB_PATTERNS + EXPECTED_SECURITY_PATTERNS);
     }
 
-    /**
-     * Checks the number of different FindBugs messages.
-     *
-     * @throws SAXException
-     *             if we can't read the file
-     * @throws IOException
-     *             if we can't read the file
-     */
     @Test
-    void parseFindbugsMessages() throws IOException, SAXException {
-        InputStream file = read("messages.xml");
-        try {
-            List<Pattern> patterns = new FindBugsMessages().parse(file);
-            assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, EXPECTED_PATTERNS, patterns.size());
+    void shouldReadAllFindBugsMessages() {
+        assertThat(readMessages("messages.xml")).hasSize(EXPECTED_PATTERNS);
+    }
+
+    @Test
+    void shouldReadAllFindSecBugsMessages() {
+        assertThat(readMessages("find-sec-bugs-messages.xml")).hasSize(EXPECTED_SECURITY_PATTERNS);
+    }
+
+    @Test
+    void shouldReadAllFbContribMessages() {
+        assertThat(readMessages("fb-contrib-messages.xml")).hasSize(EXPECTED_CONTRIB_PATTERNS);
+    }
+
+    @Test
+    void shouldMapMessagesToTypes() {
+        FindBugsMessages messages = createMessages();
+        String expectedMessage = "A value that could be null is stored into a field that has been annotated as @Nonnull.";
+        assertThat(messages.getMessage(NP_STORE_INTO_NONNULL_FIELD, Locale.ENGLISH))
+                .contains(expectedMessage);
+        assertThat(messages.getMessage(NP_STORE_INTO_NONNULL_FIELD, Locale.GERMAN))
+                .contains(expectedMessage); // there is no German translation
+
+        assertThat(messages.getShortMessage(NP_STORE_INTO_NONNULL_FIELD, Locale.ENGLISH))
+                .isEqualTo("Store of null value into field annotated @Nonnull");
+
+        assertThat(messages.getMessage("NMCS_NEEDLESS_MEMBER_COLLECTION_SYNCHRONIZATION", Locale.ENGLISH))
+                .contains("This class defines a private collection member as synchronized. It appears however");
+        assertThat(messages.getShortMessage("NMCS_NEEDLESS_MEMBER_COLLECTION_SYNCHRONIZATION", Locale.ENGLISH))
+                .isEqualTo("Class defines unneeded synchronization on member collection");
+    }
+
+    @Test
+    void shouldProvideLocalizedMessagesForFrench() {
+        FindBugsMessages messages = createMessages();
+        assertThat(messages.getShortMessage(NP_STORE_INTO_NONNULL_FIELD, Locale.FRANCE))
+                .contains("Stocke une valeur null dans");
+        assertThat(messages.getMessage(NP_STORE_INTO_NONNULL_FIELD, Locale.FRANCE))
+                .contains("Une valeur qui pourrait");
+    }
+
+    private List<Pattern> readMessages(final String fileName) {
+        try (InputStream file = read(fileName)) {
+            return new FindBugsMessages().parse(file);
         }
-        finally {
-            IOUtils.closeQuietly(file);
+        catch (IOException | SAXException e) {
+            throw new AssertionError(e);
         }
     }
 
@@ -64,73 +91,7 @@ class FindBugsMessagesTest {
         return messages;
     }
 
-    /**
-     * Checks the number of different FindBugs messages in the fb-contrib package.
-     *
-     * @throws SAXException
-     *             if we can't read the file
-     * @throws IOException
-     *             if we can't read the file
-     */
-    @Test
-    void parseFindbugsContribMessages() throws IOException, SAXException {
-        InputStream file = read("fb-contrib-messages.xml");
-        try {
-            List<Pattern> patterns = new FindBugsMessages().parse(file);
-            assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, EXPECTED_CONTRIB_PATTERNS,
-                    patterns.size());
-        }
-        finally {
-            IOUtils.closeQuietly(file);
-        }
-    }
-
     private InputStream read(final String fileName) {
-        return FindBugsMessages.class.getResourceAsStream("findbugs/" + fileName);
-    }
-
-    /**
-     * Checks the number of different FindBugs messages in the find-sec-bugs package.
-     *
-     * @throws SAXException
-     *             if we can't read the file
-     * @throws IOException
-     *             if we can't read the file
-     */
-    @Test
-    void parseFindbugsSecurityMessages() throws IOException, SAXException {
-        InputStream file = read("find-sec-bugs-messages.xml");
-        try {
-            List<Pattern> patterns = new FindBugsMessages().parse(file);
-            assertEquals(WRONG_NUMBER_OF_WARNINGS_DETECTED, EXPECTED_SECURITY_PATTERNS,
-                    patterns.size());
-        }
-        finally {
-            IOUtils.closeQuietly(file);
-        }
-    }
-
-    /**
-     * Checks that a warning message of each file is correctly parsed.
-     */
-    @Test
-    void parse() {
-        FindBugsMessages messages = createMessages();
-        assertTrue(WRONG_WARNING_MESSAGE, messages.getMessage(NP_STORE_INTO_NONNULL_FIELD, Locale.ENGLISH).contains("A value that could be null is stored into a field that has been annotated as @Nonnull."));
-        assertTrue(WRONG_WARNING_MESSAGE, messages.getMessage(NP_STORE_INTO_NONNULL_FIELD, Locale.GERMAN).contains("A value that could be null is stored into a field that has been annotated as @Nonnull."));
-        assertEquals(WRONG_WARNING_MESSAGE, "Store of null value into field annotated @Nonnull", messages.getShortMessage(NP_STORE_INTO_NONNULL_FIELD, Locale.ENGLISH));
-        assertTrue(WRONG_WARNING_MESSAGE, messages.getMessage("NMCS_NEEDLESS_MEMBER_COLLECTION_SYNCHRONIZATION", Locale.ENGLISH).contains("This class defines a private collection member as synchronized. It appears however"));
-        assertEquals(WRONG_WARNING_MESSAGE, "Class defines unneeded synchronization on member collection", messages
-                .getShortMessage("NMCS_NEEDLESS_MEMBER_COLLECTION_SYNCHRONIZATION", Locale.ENGLISH));
-    }
-
-    /**
-     * Checks that localized messages are loaded.
-     */
-    @Test
-    void parseLocalizations() {
-        FindBugsMessages messages = createMessages();
-        assertTrue(WRONG_WARNING_MESSAGE, messages.getShortMessage(NP_STORE_INTO_NONNULL_FIELD, Locale.FRANCE).contains("Stocke une valeur null dans"));
-        assertTrue(WRONG_WARNING_MESSAGE, messages.getMessage(NP_STORE_INTO_NONNULL_FIELD, Locale.FRANCE).contains("Une valeur qui pourrait"));
+        return FindBugsMessages.class.getResourceAsStream("findbugs-messages/" + fileName);
     }
 }

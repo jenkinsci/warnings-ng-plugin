@@ -1,8 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import javax.annotation.Nonnull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import edu.hm.hafner.analysis.parser.LinuxKernelOutputParser;
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
@@ -12,18 +14,31 @@ import hudson.Extension;
  *
  * @author Johannes Arzt
  */
-@Extension
 public class LinuxKernelOutput extends StaticAnalysisTool {
     static final String ID = "linux";
-    private static final String PARSER_NAME = Messages.Warnings_LinuxKernelOutput_ParserName();
+
+    /** Creates a new instance of {@link LinuxKernelOutput}. */
+    @DataBoundConstructor
+    public LinuxKernelOutput() {
+        // empty constructor required for stapler
+    }
 
     @Override
     public LinuxKernelOutputParser createParser() {
         return new LinuxKernelOutputParser();
     }
 
-    @Override
-    public StaticAnalysisLabelProvider getLabelProvider() {
-        return new DefaultLabelProvider(ID, PARSER_NAME);
+    /** Descriptor for this static analysis tool. */
+    @Extension
+    public static class Descriptor extends StaticAnalysisToolDescriptor {
+        public Descriptor() {
+            super(ID);
+        }
+
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return Messages.Warnings_LinuxKernelOutput_ParserName();
+        }
     }
 }

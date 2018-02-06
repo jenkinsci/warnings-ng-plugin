@@ -1,8 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import javax.annotation.Nonnull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import edu.hm.hafner.analysis.parser.AjcParser;
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
@@ -12,27 +14,31 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-@Extension
 public class Ajc extends StaticAnalysisTool {
     static final String ID = "aspectj";
-    private static final String PARSER_NAME = Messages.Warnings_AjcParser_ParserName();
+
+    /** Creates a new instance of {@link Ajc}. */
+    @DataBoundConstructor
+    public Ajc() {
+        // empty constructor required for stapler
+    }
 
     @Override
     public AjcParser createParser() {
         return new AjcParser();
     }
 
-    @Override
-    public StaticAnalysisLabelProvider getLabelProvider() {
-        return new LabelProvider();
-    }
+    /** Descriptor for this static analysis tool. */
+    @Extension
+    public static class Descriptor extends StaticAnalysisToolDescriptor {
+        public Descriptor() {
+            super(ID);
+        }
 
-    // FIXME: remove Label provider classes
-
-    /** Provides the labels for the static analysis tool. */
-    private static class LabelProvider extends DefaultLabelProvider {
-        private LabelProvider() {
-            super(ID, PARSER_NAME);
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return Messages.Warnings_AjcParser_ParserName();
         }
     }
 }

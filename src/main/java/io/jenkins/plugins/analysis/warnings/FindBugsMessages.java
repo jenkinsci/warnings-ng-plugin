@@ -52,7 +52,7 @@ public final class FindBugsMessages {
             final Map<String, String> shortMessagesCache) throws IOException, SAXException {
         InputStream file = null;
         try {
-            file = FindBugsMessages.class.getResourceAsStream("findbugs/" + fileName);
+            file = FindBugsMessages.class.getResourceAsStream("findbugs-messages/" + fileName);
             List<Pattern> patterns = parse(file);
             for (Pattern pattern : patterns) {
                 if (messagesCache.get(pattern.getType()) != null || shortMessagesCache.get(pattern.getType()) != null) {

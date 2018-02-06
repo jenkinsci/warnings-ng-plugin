@@ -1,5 +1,9 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import javax.annotation.Nonnull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import edu.hm.hafner.analysis.parser.JavaDocParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
@@ -12,25 +16,43 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-@Extension
 public class JavaDoc extends StaticAnalysisTool {
     static final String ID = "javadoc";
-    private static final String PARSER_NAME = Messages.Warnings_JavaDoc_ParserName();
+
+    /** Creates a new instance of {@link JavaDoc}. */
+    @DataBoundConstructor
+    public JavaDoc() {
+        // empty constructor required for stapler
+    }
 
     @Override
     public JavaDocParser createParser() {
         return new JavaDocParser();
     }
 
-    @Override
-    public StaticAnalysisLabelProvider getLabelProvider() {
-        return new JavaDocLabelProvider();
-    }
-
     /** Provides the labels for the static analysis tool. */
     public static class JavaDocLabelProvider extends JavaLabelProvider {
         public JavaDocLabelProvider() {
-            super(ID, PARSER_NAME);
+            super(ID, Messages.Warnings_JavaDoc_ParserName());
+        }
+    }
+
+    /** Descriptor for this static analysis tool. */
+    @Extension
+    public static class Descriptor extends StaticAnalysisToolDescriptor {
+        public Descriptor() {
+            super(ID);
+        }
+
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return Messages.Warnings_JavaDoc_ParserName();
+        }
+
+        @Override
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new JavaDocLabelProvider();
         }
     }
 }
