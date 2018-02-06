@@ -35,7 +35,19 @@ public class JenkinsFacade implements Serializable {
         return getJenkins().getExtensionList(extensionType);
     }
 
-    public <T extends Describable<T>, D extends Descriptor<T>> DescriptorExtensionList<T,D> getDescriptorsFor(Class<T> descriptorType) {
+    /**
+     * Returns the discovered instances for the given descriptor type.
+     *
+     * @param descriptorType
+     *         the base type that represents the descriptor of the describable
+     * @param <T>
+     *         type of the describable
+     * @param <D>
+     *         type of the descriptor
+     *
+     * @return the discovered instances, might be an empty list
+     */
+    public <T extends Describable<T>, D extends Descriptor<T>> DescriptorExtensionList<T, D> getDescriptorsFor(Class<T> descriptorType) {
         return getJenkins().getDescriptorList(descriptorType);
     }
     /**
