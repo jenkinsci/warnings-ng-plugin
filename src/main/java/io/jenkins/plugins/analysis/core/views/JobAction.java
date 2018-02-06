@@ -88,7 +88,7 @@ public class JobAction implements Action {
     }
 
     private StaticAnalysisLabelProvider getTool() {
-        return new LabelProviderFactory().findLabelProvider(id, name);
+        return new LabelProviderFactory().create(id, name);
     }
 
     /**

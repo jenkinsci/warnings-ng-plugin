@@ -21,9 +21,7 @@ import hudson.remoting.VirtualChannel;
 class AffectedFilesResolverTest {
     private static final FilePath BUILD_ROOT = new FilePath(new File("builds"));
 
-    /**
-     * Ensures that illegal file names are processed without problems.
-     */
+    /** Ensures that illegal file names are processed without problems. */
     @ParameterizedTest(name = "[{index}] Illegal filename = {0}")
     @ValueSource(strings = {"/does/not/exist", "!<>$$&%/&(", "\0 Null-Byte"})
     void shouldReturnFallbackOnError(final String fileName) throws IOException, InterruptedException {

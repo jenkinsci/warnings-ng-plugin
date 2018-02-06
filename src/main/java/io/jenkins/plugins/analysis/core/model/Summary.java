@@ -24,7 +24,7 @@ public class Summary {
     private final StaticAnalysisRun2 result;
 
     public Summary(final String id, final String name, StaticAnalysisRun2 result) {
-        tool = new LabelProviderFactory().findLabelProvider(id, name);
+        tool = new LabelProviderFactory().create(id, name);
         this.result = result;
     }
 

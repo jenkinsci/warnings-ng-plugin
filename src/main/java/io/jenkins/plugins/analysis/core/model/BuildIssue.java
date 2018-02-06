@@ -50,6 +50,7 @@ public class BuildIssue extends Issue {
         return xStream2;
     }
 
+    // FIXME: should this return the JSON object?
     public String toJson() {
         return String.format("[\"%s\", \"%s\", \"%s\", \"%s\", \"%s\"]",
                 formatFileName(),

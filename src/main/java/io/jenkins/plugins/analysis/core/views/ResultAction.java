@@ -172,7 +172,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     private StaticAnalysisLabelProvider getLabelProvider() {
-        return new LabelProviderFactory().findLabelProvider(id, name);
+        return new LabelProviderFactory().create(id, name);
     }
 
     /**

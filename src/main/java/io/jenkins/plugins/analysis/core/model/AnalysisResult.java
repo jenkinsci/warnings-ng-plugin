@@ -625,7 +625,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     }
 
     private StaticAnalysisLabelProvider getTool() {
-        return new LabelProviderFactory().findLabelProvider(id, name);
+        return new LabelProviderFactory().create(id, name);
     }
 
     public String getDisplayName() {
