@@ -12,7 +12,6 @@ import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.model.BuildIssue;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
-import hudson.model.ModelObject;
 import hudson.model.Run;
 
 /**
@@ -35,7 +34,7 @@ public class PropertyCountTab extends IssuesDetail {
      * @param labelProvider
      */
     public PropertyCountTab(final Run<?, ?> owner, final Issues issues, final String defaultEncoding,
-            final ModelObject parent, final String property, final Function<String, String> propertyFormatter,
+            final IssuesDetail parent, final String property, final Function<String, String> propertyFormatter,
             final StaticAnalysisLabelProvider labelProvider) {
         super(owner, issues, NO_ISSUES, NO_ISSUES, NO_ISSUES, defaultEncoding, parent, labelProvider);
 

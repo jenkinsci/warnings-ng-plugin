@@ -51,8 +51,8 @@ public class DetailFactory {
     public Object createTrendDetails(final String link, final Run<?, ?> owner,
             final Issues<BuildIssue> allIssues, final Issues<BuildIssue> fixedIssues,
             final Issues<BuildIssue> newIssues, final Issues<BuildIssue> oldIssues,
-            final Collection<String> errors, final String defaultEncoding, final ModelObject parent,
-            final StaticAnalysisLabelProvider labelProvider) {
+            final Collection<String> errors, final String defaultEncoding, final IssuesDetail parent) {
+        StaticAnalysisLabelProvider labelProvider = parent.getLabelProvider();
         String plainLink = strip(link);
         if ("fixed".equals(link)) {
             return new FixedWarningsDetail(owner, fixedIssues, defaultEncoding, parent, labelProvider);
@@ -97,7 +97,8 @@ public class DetailFactory {
             Issues<BuildIssue> selectedIssues = allIssues.filter(filter);
             return new IssuesDetail(owner,
                     selectedIssues, fixedIssues.filter(filter), newIssues.filter(filter), oldIssues.filter(filter),
-                    defaultEncoding, parent, getDisplayNameOfDetails(property, selectedIssues), labelProvider);
+                    defaultEncoding, getDisplayNameOfDetails(property, selectedIssues), labelProvider,
+                    parent.getUrl() + "/" + plainLink);
         }
     }
 

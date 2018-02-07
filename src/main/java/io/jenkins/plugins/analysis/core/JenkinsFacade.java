@@ -50,6 +50,7 @@ public class JenkinsFacade implements Serializable {
     public <T extends Describable<T>, D extends Descriptor<T>> DescriptorExtensionList<T, D> getDescriptorsFor(Class<T> descriptorType) {
         return getJenkins().getDescriptorList(descriptorType);
     }
+
     /**
      * Checks if the current security principal has this permission.
      *
