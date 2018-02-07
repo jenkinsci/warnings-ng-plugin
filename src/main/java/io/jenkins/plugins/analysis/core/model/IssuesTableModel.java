@@ -53,6 +53,21 @@ public class IssuesTableModel {
         return data;
     }
 
+    public String[] getHeaders() {
+        return new String[] {
+                Messages.Table_Column_File(),
+                Messages.Table_Column_Package(),
+                Messages.Table_Column_Category(),
+                Messages.Table_Column_Type(),
+                Messages.Table_Column_Priority(),
+                Messages.Table_Column_Age()
+        };
+    }
+
+    public int[] getWidths() {
+        return new int[] {1, 2, 1, 1, 1, 1};
+    }
+
     static class AgeBuilder implements Function<Integer, String> {
         private final String plugin;
         private final String backward;

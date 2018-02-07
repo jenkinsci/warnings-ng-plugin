@@ -9,21 +9,15 @@
   <div role="tabpanel" id="warningsContent" class="tab-pane">
     <table class="table table-responsive table-responsive-block table-hover table-striped" id="warnings">
       <colgroup>
-        <col class="col-width-2"/>
-        <col class="col-width-2"/>
-        <col class="col-width-1"/>
-        <col class="col-width-2"/>
-        <col class="col-width-1"/>
-        <col class="col-width-1"/>
+        <j:forEach var="width" items="${it.tableWidths}">
+          <col class="col-width-${width}"/>
+        </j:forEach>
       </colgroup>
       <thead>
         <tr>
-          <th>${%File}</th>
-          <th>${%Package}</th>
-          <th>${%Category}</th>
-          <th>${%Type}</th>
-          <th>${%Priority}</th>
-          <th>${%Age}</th>
+          <j:forEach var="label" items="${it.tableHeaders}">
+            <th>${label}</th>
+          </j:forEach>
         </tr>
       </thead>
     </table>
@@ -33,10 +27,6 @@
         $('#warnings').DataTable({
           "order": [],
           "pagingType": "numbers",
-          "columnDefs": [{
-            "targets": 'no-sort',
-            "orderable": false
-            }]
         });
       })(jQuery);
 

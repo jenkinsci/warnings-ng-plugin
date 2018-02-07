@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.views;
 import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
-import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.plugins.analysis.Messages;
 
@@ -25,10 +24,10 @@ public class FixedWarningsDetail extends IssuesDetail {
      * @param labelProvider
      */
     public FixedWarningsDetail(final Run<?, ?> owner, final Issues fixedIssues, final String defaultEncoding,
-            final ModelObject parent,
-            final StaticAnalysisLabelProvider labelProvider) {
-        super(owner, fixedIssues, NO_ISSUES, fixedIssues, NO_ISSUES, defaultEncoding, parent, Messages.FixedWarningsDetail_Name(),
-                labelProvider);
+            final StaticAnalysisLabelProvider labelProvider, final String url) {
+        super(owner, fixedIssues, fixedIssues, NO_ISSUES, NO_ISSUES, Messages.FixedWarningsDetail_Name(), url,
+                labelProvider, defaultEncoding
+        );
     }
 }
 
