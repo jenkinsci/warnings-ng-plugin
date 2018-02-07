@@ -34,9 +34,11 @@ public class PropertyCountTab extends IssuesDetail {
      * @param labelProvider
      */
     public PropertyCountTab(final Run<?, ?> owner, final Issues issues, final String defaultEncoding,
-            final IssuesDetail parent, final String property, final Function<String, String> propertyFormatter,
-            final StaticAnalysisLabelProvider labelProvider) {
-        super(owner, issues, NO_ISSUES, NO_ISSUES, NO_ISSUES, defaultEncoding, parent, labelProvider);
+            final String property, final Function<String, String> propertyFormatter,
+            final StaticAnalysisLabelProvider labelProvider, final String url) {
+        super(owner, issues, NO_ISSUES, NO_ISSUES, NO_ISSUES, propertyFormatter.apply(property), url, labelProvider,
+                defaultEncoding
+        );
 
         this.property = property;
         this.propertyFormatter = propertyFormatter;

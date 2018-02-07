@@ -13,7 +13,6 @@ import io.jenkins.plugins.analysis.core.model.BuildIssue;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.model.Item;
-import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.plugins.analysis.Messages;
 
@@ -54,16 +53,20 @@ public class DetailFactory {
             final Collection<String> errors, final String defaultEncoding, final IssuesDetail parent) {
         StaticAnalysisLabelProvider labelProvider = parent.getLabelProvider();
         String plainLink = strip(link);
+        String url = parent.getUrl() + "/" + plainLink;
+
         if ("fixed".equals(link)) {
-            return new FixedWarningsDetail(owner, fixedIssues, defaultEncoding, parent, labelProvider);
+            return new FixedWarningsDetail(owner, fixedIssues, defaultEncoding, labelProvider, url);
         }
         else if ("new".equals(link)) {
-            return new IssuesDetail(owner, newIssues, EMPTY, newIssues, EMPTY, defaultEncoding, parent,
-                    Messages.NewWarningsDetail_Name(), labelProvider);
+            return new IssuesDetail(owner, newIssues, newIssues, EMPTY, EMPTY, Messages.NewWarningsDetail_Name(), url,
+                    labelProvider, defaultEncoding
+            );
         }
-        else if ("old".equals(link)) {
-            return new IssuesDetail(owner, oldIssues, EMPTY, EMPTY, oldIssues, defaultEncoding, parent,
-                    "Old Warnings", labelProvider);
+        else if ("outstanding".equals(link)) {
+            return new IssuesDetail(owner, oldIssues, EMPTY, oldIssues, EMPTY, "Outstanding Warnings", url,
+                    labelProvider, defaultEncoding
+            ); // l10n
         }
         else if ("error".equals(link)) {
             return new ErrorDetail(owner, errors, parent);
@@ -80,25 +83,25 @@ public class DetailFactory {
             }
         }
         else if (Priority.HIGH.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(Priority.HIGH, owner, allIssues, fixedIssues, oldIssues, newIssues, defaultEncoding, parent,
-                    labelProvider);
+            return createPrioritiesDetail(Priority.HIGH, owner, allIssues, fixedIssues, oldIssues, newIssues, defaultEncoding,
+                    labelProvider, url);
         }
         else if (Priority.NORMAL.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(Priority.NORMAL, owner, allIssues, fixedIssues, oldIssues, newIssues, defaultEncoding, parent,
-                    labelProvider);
+            return createPrioritiesDetail(Priority.NORMAL, owner, allIssues, fixedIssues, oldIssues, newIssues, defaultEncoding,
+                    labelProvider, url);
         }
         else if (Priority.LOW.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(Priority.LOW, owner, allIssues, fixedIssues, oldIssues, newIssues, defaultEncoding, parent,
-                    labelProvider);
+            return createPrioritiesDetail(Priority.LOW, owner, allIssues, fixedIssues, oldIssues, newIssues, defaultEncoding,
+                    labelProvider, url);
         }
         else {
             String property = StringUtils.substringBefore(link, ".");
             Predicate<Issue> filter = createPropertyFilter(plainLink, property);
             Issues<BuildIssue> selectedIssues = allIssues.filter(filter);
             return new IssuesDetail(owner,
-                    selectedIssues, fixedIssues.filter(filter), newIssues.filter(filter), oldIssues.filter(filter),
-                    defaultEncoding, getDisplayNameOfDetails(property, selectedIssues), labelProvider,
-                    parent.getUrl() + "/" + plainLink);
+                    selectedIssues, newIssues.filter(filter), oldIssues.filter(filter), fixedIssues.filter(filter),
+                    getDisplayNameOfDetails(property, selectedIssues), url, labelProvider, defaultEncoding
+            );
         }
     }
 
@@ -119,13 +122,14 @@ public class DetailFactory {
 
     private IssuesDetail createPrioritiesDetail(final Priority priority, final Run<?, ?> owner,
             final Issues<BuildIssue> issues, final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues,
-            final Issues<BuildIssue> oldIssues, final String defaultEncoding, final ModelObject parent,
-            final StaticAnalysisLabelProvider labelProvider) {
+            final Issues<BuildIssue> oldIssues, final String defaultEncoding,
+            final StaticAnalysisLabelProvider labelProvider, final String url) {
         Predicate<Issue> priorityFilter = issue -> issue.getPriority() == priority;
         return new IssuesDetail(owner,
-                issues.filter(priorityFilter), fixedIssues.filter(priorityFilter), newIssues.filter(priorityFilter),
-                oldIssues.filter(priorityFilter),defaultEncoding, parent, LocalizedPriority.getLongLocalizedString(priority),
-                labelProvider);
+                issues.filter(priorityFilter), newIssues.filter(priorityFilter), oldIssues.filter(priorityFilter),
+                fixedIssues.filter(priorityFilter),
+                LocalizedPriority.getLongLocalizedString(priority), url, labelProvider, defaultEncoding
+        );
     }
 
 }

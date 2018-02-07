@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,9 +28,9 @@ import hudson.model.Run;
 import hudson.plugins.analysis.core.GlobalSettings;
 
 /**
- * Jenkins view that shows a subset of issues.
+ * Build view that shows the details for a subset of issues.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class IssuesDetail implements ModelObject {
     protected static final Issues<BuildIssue> NO_ISSUES = new Issues<>();
@@ -42,74 +41,53 @@ public class IssuesDetail implements ModelObject {
     private final Run<?, ?> owner;
 
     private final Issues<BuildIssue> issues;
-    private final Issues<BuildIssue> fixedIssues;
     private final Issues<BuildIssue> newIssues;
-    private final Issues<BuildIssue> oldIssues;
+    private final Issues<BuildIssue> outstandingIssues;
+    private final Issues<BuildIssue> fixedIssues;
 
     private final String defaultEncoding;
-
-    private final Optional<ModelObject> parent;
-
     private final String displayName;
+    private final String url;
     private final StaticAnalysisLabelProvider labelProvider;
 
     /** Sanitizes HTML elements in warning messages and tooltips. Use this formatter if raw HTML should be shown. */
     private final MarkupFormatter sanitizer = new RawHtmlMarkupFormatter(true);
-    private String url; // FIXME: make URL everywhere
+    private final IssuesTableModel tableModel;
 
     public IssuesDetail(final Run<?, ?> owner,
-            final Issues<BuildIssue> issues,
-            final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues, final Issues<BuildIssue> oldIssues,
-            final String defaultEncoding, final String displayName, final StaticAnalysisLabelProvider labelProvider,
-            final String url) {
-        this(owner, issues, fixedIssues, newIssues, oldIssues, defaultEncoding, Optional.empty(), displayName,
-                labelProvider);
-        this.url = url;
-    }
-
-    public IssuesDetail(final Run<?, ?> owner,
-            final Issues<BuildIssue> issues,
-            final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues, final Issues<BuildIssue> oldIssues,
-            final String defaultEncoding, final IssuesDetail parent, final StaticAnalysisLabelProvider labelProvider) {
-        this(owner, issues, fixedIssues, newIssues, oldIssues, defaultEncoding, parent, StringUtils.EMPTY,
-                labelProvider);
-    }
-
-    public IssuesDetail(final Run<?, ?> owner,
-            final Issues<BuildIssue> issues, final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues,
-            final Issues<BuildIssue> oldIssues,
-            final String defaultEncoding, final ModelObject parent, final String displayName,
-            final StaticAnalysisLabelProvider labelProvider) {
-        this(owner, issues, fixedIssues, newIssues, oldIssues, defaultEncoding, Optional.of(parent), displayName,
-                labelProvider);
-    }
-
-    public IssuesDetail(final Run<?, ?> owner,
-            final Issues<BuildIssue> issues, final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues,
-            final Issues<BuildIssue> oldIssues,
-            final String defaultEncoding, final Optional<ModelObject> parent, final String displayName,
-            final StaticAnalysisLabelProvider labelProvider) {
+            final Issues<BuildIssue> issues, final Issues<BuildIssue> newIssues,
+            final Issues<BuildIssue> outstandingIssues, final Issues<BuildIssue> fixedIssues,
+            final String displayName, final String url, final StaticAnalysisLabelProvider labelProvider,
+            final String defaultEncoding) {
         this.owner = owner;
         this.issues = issues;
         this.fixedIssues = fixedIssues;
         this.newIssues = newIssues;
-        this.oldIssues = oldIssues;
+        this.outstandingIssues = outstandingIssues;
         this.defaultEncoding = defaultEncoding;
-        this.parent = parent;
         this.displayName = displayName;
         this.labelProvider = labelProvider;
-    }
+        this.url = url;
 
-    protected StaticAnalysisLabelProvider getLabelProvider() {
-        return labelProvider;
+        tableModel = new IssuesTableModel(owner.getNumber(), url);
     }
 
     // ------------------------------------ UI entry points for Stapler --------------------------------
 
+    public StaticAnalysisLabelProvider getLabelProvider() {
+        return labelProvider;
+    }
+
+    public String[] getTableHeaders() {
+        return tableModel.getHeaders();
+    }
+
+    public int[] getTableWidths() {
+        return tableModel.getWidths();
+    }
+
     @JavaScriptMethod
     public JSONObject getTableModel() {
-        IssuesTableModel tableModel = new IssuesTableModel(getOwner().getNumber(), getUrl());
-
         return JSONObject.fromObject(tableModel.toJsonArray(getIssues()));
     }
 
@@ -125,8 +103,8 @@ public class IssuesDetail implements ModelObject {
         return fixedIssues;
     }
 
-    public Issues<BuildIssue> getOldIssues() {
-        return oldIssues;
+    public Issues<BuildIssue> getOutstandingIssues() {
+        return outstandingIssues;
     }
 
     /**
@@ -239,8 +217,8 @@ public class IssuesDetail implements ModelObject {
         else {
             propertyFormatter = Function.identity();
         }
-        return new PropertyCountTab(owner, issues, defaultEncoding, this, plainLink, propertyFormatter,
-                labelProvider);
+        return new PropertyCountTab(owner, issues, defaultEncoding, plainLink, propertyFormatter,
+                labelProvider, getUrl() + "/" + plainLink);
     }
 
 
@@ -251,19 +229,6 @@ public class IssuesDetail implements ModelObject {
      */
     public Priority[] getPriorities() {
         return Priority.values();
-    }
-
-    /**
-     * Returns the header for the detail screen.
-     *
-     * @return the header
-     */
-    public String getHeader() {
-        return getPrefix() + getDisplayName();
-    }
-
-    private String getPrefix() {
-        return parent.map(view -> view.getDisplayName() + " - ").orElse(StringUtils.EMPTY);
     }
 
     @Override
@@ -307,7 +272,8 @@ public class IssuesDetail implements ModelObject {
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
         try {
-            return new DetailFactory().createTrendDetails(link, owner, issues, fixedIssues, newIssues, oldIssues,
+            return new DetailFactory().createTrendDetails(link, owner, issues, fixedIssues, newIssues,
+                    outstandingIssues,
                     Collections.emptyList(), getDefaultEncoding(), this);
         }
         catch (NoSuchElementException exception) {

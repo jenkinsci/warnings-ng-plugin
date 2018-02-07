@@ -39,7 +39,7 @@
 
       <div class="fluid-container">
 
-        <h3>${it.header}</h3>
+        <h3>${it.displayName}</h3>
 
         <div class="row py-3">
           <issues:trend-summary/>
