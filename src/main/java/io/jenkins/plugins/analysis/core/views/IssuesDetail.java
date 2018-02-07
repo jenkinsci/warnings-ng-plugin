@@ -55,20 +55,22 @@ public class IssuesDetail implements ModelObject {
 
     /** Sanitizes HTML elements in warning messages and tooltips. Use this formatter if raw HTML should be shown. */
     private final MarkupFormatter sanitizer = new RawHtmlMarkupFormatter(true);
+    private String url; // FIXME: make URL everywhere
 
     public IssuesDetail(final Run<?, ?> owner,
-            final Issues<BuildIssue> issues, final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues,
-            final Issues<BuildIssue> oldIssues,
-            final String defaultEncoding, final String displayName, final StaticAnalysisLabelProvider labelProvider) {
+            final Issues<BuildIssue> issues,
+            final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues, final Issues<BuildIssue> oldIssues,
+            final String defaultEncoding, final String displayName, final StaticAnalysisLabelProvider labelProvider,
+            final String url) {
         this(owner, issues, fixedIssues, newIssues, oldIssues, defaultEncoding, Optional.empty(), displayName,
                 labelProvider);
+        this.url = url;
     }
 
     public IssuesDetail(final Run<?, ?> owner,
-            final Issues<BuildIssue> issues, final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues,
-            final Issues<BuildIssue> oldIssues,
-            final String defaultEncoding, final ModelObject parent,
-            final StaticAnalysisLabelProvider labelProvider) {
+            final Issues<BuildIssue> issues,
+            final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues, final Issues<BuildIssue> oldIssues,
+            final String defaultEncoding, final IssuesDetail parent, final StaticAnalysisLabelProvider labelProvider) {
         this(owner, issues, fixedIssues, newIssues, oldIssues, defaultEncoding, parent, StringUtils.EMPTY,
                 labelProvider);
     }
@@ -106,7 +108,9 @@ public class IssuesDetail implements ModelObject {
 
     @JavaScriptMethod
     public JSONObject getTableModel() {
-        return JSONObject.fromObject(new IssuesTableModel().toJsonArray(getIssues()));
+        IssuesTableModel tableModel = new IssuesTableModel(getOwner().getNumber(), getUrl());
+
+        return JSONObject.fromObject(tableModel.toJsonArray(getIssues()));
     }
 
     public Issues<BuildIssue> getIssues() {
@@ -304,7 +308,7 @@ public class IssuesDetail implements ModelObject {
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
         try {
             return new DetailFactory().createTrendDetails(link, owner, issues, fixedIssues, newIssues, oldIssues,
-                    Collections.emptyList(), getDefaultEncoding(), this, labelProvider);
+                    Collections.emptyList(), getDefaultEncoding(), this);
         }
         catch (NoSuchElementException exception) {
             try {
@@ -317,8 +321,12 @@ public class IssuesDetail implements ModelObject {
         }
     }
 
-    // FIXME: why is default empty?
+    /**
+     * Returns the (relative) URL of this model object.
+     *
+     * @return this model objects' URL
+     */
     public String getUrl() {
-        return StringUtils.EMPTY;
+        return url;
     }
 }

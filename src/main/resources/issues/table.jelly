@@ -14,6 +14,7 @@
         <col class="col-width-1"/>
         <col class="col-width-2"/>
         <col class="col-width-1"/>
+        <col class="col-width-1"/>
       </colgroup>
       <thead>
         <tr>
@@ -22,28 +23,28 @@
           <th>${%Category}</th>
           <th>${%Type}</th>
           <th>${%Priority}</th>
+          <th>${%Age}</th>
         </tr>
       </thead>
     </table>
 
     <script>
       (function ($) {
-      $('#warnings').DataTable({
-      "order": [],
-      "pagingType": "numbers",
-      "columnDefs": [{
-      "targets": 'no-sort',
-      "orderable": false
-      }]
-      });
+        $('#warnings').DataTable({
+          "order": [],
+          "pagingType": "numbers",
+          "columnDefs": [{
+            "targets": 'no-sort',
+            "orderable": false
+            }]
+        });
       })(jQuery);
 
       view.getTableModel(function(t) {
-      (function ($) {
-      console.log(t.responseObject().data);
-      var table = $('#warnings').DataTable();
-      table.rows.add(t.responseObject().data).draw()
-      })(jQuery);
+        (function ($) {
+            var table = $('#warnings').DataTable();
+            table.rows.add(t.responseObject().data).draw()
+        })(jQuery);
       })
     </script>
 

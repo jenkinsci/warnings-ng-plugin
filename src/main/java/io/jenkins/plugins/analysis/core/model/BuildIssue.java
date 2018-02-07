@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
@@ -13,6 +14,7 @@ import edu.hm.hafner.analysis.LineRangeList;
 import edu.hm.hafner.util.Ensure;
 import static io.jenkins.plugins.analysis.core.views.IssuesDetail.*;
 import io.jenkins.plugins.analysis.core.views.LocalizedPriority;
+import net.sf.json.JSONArray;
 
 import hudson.util.RobustCollectionConverter;
 import hudson.util.XStream2;
@@ -25,6 +27,8 @@ import hudson.util.XStream2;
  */
 // FIXME: destroys CodeDuplications, should have a reference
 public class BuildIssue extends Issue {
+    private static final long serialVersionUID = 2302521113002278898L;
+
     private final int build;
 
     public BuildIssue(final Issue issue, final int build) {
@@ -51,28 +55,28 @@ public class BuildIssue extends Issue {
     }
 
     // FIXME: should this return the JSON object?
-    public String toJson() {
-        return String.format("[\"%s\", \"%s\", \"%s\", \"%s\", \"%s\"]",
-                formatFileName(),
-                formatProperty("packageName", getPackageName()),
-                formatProperty("category", getCategory()),
-                formatProperty("type", getType()),
-                formatPriority());
+    public JSONArray toJson(final Function<Integer, String> ageBuilder) {
+        JSONArray columns = new JSONArray();
+        columns.add(formatFileName());
+        columns.add(formatProperty("packageName", getPackageName()));
+        columns.add(formatProperty("category", getCategory()));
+        columns.add(formatProperty("type", getType()));
+        columns.add(formatPriority());
+        columns.add(ageBuilder.apply(getBuild()));
+        return columns;
     }
 
     private String formatPriority() {
-        return String.format("<a href=\\\"%s\\"
-                        + "\">%s</a>", getPriority().name(),
-                LocalizedPriority.getLocalizedString(getPriority()));
+        return String.format("<a href=\"%s\">%s</a>",
+                getPriority().name(), LocalizedPriority.getLocalizedString(getPriority()));
     }
 
     private String formatProperty(final String property, final String value) {
-        return String.format("<a href=\\\"%s.%d/\\\">%s</a>", property, value.hashCode(), value);
+        return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), value);
     }
 
     private String formatFileName() {
-        return String.format("<a href=\\\"source.%s/#%d\\\">%s:%d<\\"
-                        + "/a>", getId(), getLineStart(),
+        return String.format("<a href=\"source.%s/#%d\">%s:%d</a>", getId(), getLineStart(),
                 FILE_NAME_FORMATTER.apply(getFileName()), getLineStart());
     }
 

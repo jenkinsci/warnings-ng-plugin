@@ -23,6 +23,8 @@ import hudson.util.XStream2;
  * @author Ullrich Hafner
  */
 class BuildIssueTest extends IssueTest {
+    static final int EXPECTED_NUMBER_OF_COLUMNS = 6;
+
     @Test
     void shouldBeConvertibleToJson() {
         Locale.setDefault(Locale.ENGLISH);
@@ -37,9 +39,9 @@ class BuildIssueTest extends IssueTest {
 
         BuildIssue buildIssue = new BuildIssue(issue, 1);
 
-        JSONArray columns = JSONArray.fromObject(buildIssue.toJson());
+        JSONArray columns = buildIssue.toJson(build -> String.valueOf(build));
 
-        assertThatJson(columns).isArray().ofLength(5);
+        assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
         assertThatColumnsAreValid(columns, 1);
     }
 
@@ -50,6 +52,7 @@ class BuildIssueTest extends IssueTest {
         assertThat(columns.get(2)).isEqualTo(createPropertyLink("category", "category-" + index));
         assertThat(columns.get(3)).isEqualTo(createPropertyLink("type", "type-" + index));
         assertThat(columns.get(4)).isEqualTo("<a href=\"HIGH\">High</a>");
+        assertThat(columns.get(5)).isEqualTo("1");
     }
 
     private static String createPropertyLink(final String property, final String value) {
@@ -57,7 +60,7 @@ class BuildIssueTest extends IssueTest {
     }
 
     private static String createFileLinkMatcher(final String fileName, final int lineNumber) {
-        return "<a href=\"source.[0-9a-f-]+/#" + lineNumber + "\">"
+        return "<a href=\\\"source.[0-9a-f-]+/#" + lineNumber + "\\\">"
                 + fileName + ":" + lineNumber
                 + "</a>";
     }
