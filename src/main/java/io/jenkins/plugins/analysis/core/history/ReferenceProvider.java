@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.history;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
-import io.jenkins.plugins.analysis.core.model.BuildIssue;
 
 import hudson.model.Run;
 import hudson.plugins.analysis.core.IssueDifference;
@@ -21,7 +21,7 @@ public interface ReferenceProvider {
      *
      * @return the issues of the reference build
      */
-    Issues<BuildIssue> getIssues();
+    Issues<Issue> getIssues();
 
     /**
      * Returns the number of the reference run.

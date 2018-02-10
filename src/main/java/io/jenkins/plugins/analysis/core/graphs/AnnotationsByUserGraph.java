@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-
 import javax.annotation.CheckForNull;
 import java.awt.*;
 import java.util.Collection;
@@ -20,7 +19,6 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.BuildIssue;
 
 import hudson.plugins.analysis.Messages;
 import hudson.util.DataSetBuilder;
@@ -95,7 +93,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
 
     private void mergeResults(final Optional<AnalysisResult> current, final Map<String, Integer[]> annotationCountByUser) {
         current.ifPresent(analysisResult -> {
-            Issues<BuildIssue> issues = analysisResult.getOldIssues();
+            Issues<Issue> issues = analysisResult.getoutstandingIssues();
             for (Issue annotation : issues) {
 //                String author = annotation.getAuthor(); FIXME: no author anymore
                 String author = "FIXME";

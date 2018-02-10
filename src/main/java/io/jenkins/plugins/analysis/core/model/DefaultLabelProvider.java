@@ -1,19 +1,27 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import javax.annotation.CheckForNull;
+import java.util.function.Function;
 
 import org.apache.commons.lang.StringUtils;
 
+import edu.hm.hafner.analysis.IntegerParser;
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.util.VisibleForTesting;
+import io.jenkins.plugins.analysis.core.util.HtmlBuilder;
+import static io.jenkins.plugins.analysis.core.views.IssuesDetail.*;
+import io.jenkins.plugins.analysis.core.views.LocalizedPriority;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import hudson.plugins.analysis.util.HtmlPrinter;
 
 /**
- * A generic label provider for static analysis runs. Creates pre-defined labels that are parameterized with a
- * string placeholder, that will be replaced with the actual name of the static analysis tool. Moreover,
- * such a default label provider decorates the links and summary boxes with the default icon of the warnings
- * plug-in.
+ * A generic label provider for static analysis runs. Creates pre-defined labels that are parameterized with a string
+ * placeholder, that will be replaced with the actual name of the static analysis tool. Moreover, such a default label
+ * provider decorates the links and summary boxes with the default icon of the warnings plug-in.
  *
  * @author Ullrich Hafner
  */
@@ -47,6 +55,71 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
     public DefaultLabelProvider(final String id, @CheckForNull final String name) {
         this.id = id;
         this.name = name;
+    }
+
+    /**
+     * Creates a new {@link DefaultLabelProvider} with the ID 'analysis-core'. This label provider is used as fallback.
+     */
+    public DefaultLabelProvider() {
+        this("analysis-core");
+    }
+
+    @Override
+    public String[] getTableHeaders() {
+        return new String[] {
+                Messages.Table_Column_File(),
+                Messages.Table_Column_Package(),
+                Messages.Table_Column_Category(),
+                Messages.Table_Column_Type(),
+                Messages.Table_Column_Priority(),
+                Messages.Table_Column_Age()
+        };
+    }
+
+    @Override
+    public int[] getTableWidths() {
+        return new int[] {1, 2, 1, 1, 1, 1};
+    }
+
+    @Override
+    public JSONObject toJsonArray(final Issues<Issue> issues, final AgeBuilder ageBuilder) {
+        JSONArray rows = new JSONArray();
+        for (Issue issue : issues) {
+            rows.add(toJson(issue, ageBuilder));
+        }
+        JSONObject data = new JSONObject();
+        data.put("data", rows);
+        return data;
+    }
+
+    protected JSONArray toJson(final Issue issue, final AgeBuilder ageBuilder) {
+        JSONArray columns = new JSONArray();
+        columns.add(formatFileName(issue));
+        columns.add(formatProperty("packageName", issue.getPackageName()));
+        columns.add(formatProperty("category", issue.getCategory()));
+        columns.add(formatProperty("type", issue.getType()));
+        columns.add(formatPriority(issue.getPriority()));
+        columns.add(formatAge(issue, ageBuilder));
+        return columns;
+    }
+
+    protected String formatAge(final Issue issue, final AgeBuilder ageBuilder) {
+        return ageBuilder.apply(new IntegerParser().parseInt(issue.getReference()));
+    }
+
+    protected String formatPriority(final Priority priority) {
+        return String.format("<a href=\"%s\">%s</a>",
+                priority.name(), LocalizedPriority.getLocalizedString(priority));
+    }
+
+    private String formatProperty(final String property, final String value) {
+        return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), value);
+    }
+
+    // FIXME: only link if valid file name
+    protected String formatFileName(final Issue issue) {
+        return String.format("<a href=\"source.%s/#%d\">%s:%d</a>", issue.getId(), issue.getLineStart(),
+                FILE_NAME_FORMATTER.apply(issue.getFileName()), issue.getLineStart());
     }
 
     @VisibleForTesting
@@ -173,6 +246,39 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
         }
         else {
             return Messages.Result_MultipleFixedWarnings(fixedWarnings);
+        }
+    }
+
+    public interface AgeBuilder extends Function<Integer, String> {
+        // no new methods
+    }
+    public static class DefaultAgeBuilder implements AgeBuilder {
+        private final String plugin;
+        private final String backward;
+        private final int currentBuild;
+
+        public DefaultAgeBuilder(final int currentBuild, final String resultUrl) {
+            this.currentBuild = currentBuild;
+            String cleanUrl = org.apache.commons.lang3.StringUtils.stripEnd(resultUrl, "/");
+            plugin = org.apache.commons.lang3.StringUtils.substringBefore(cleanUrl, "/");
+            int subDetailsCount = org.apache.commons.lang3.StringUtils.countMatches(cleanUrl, "/");
+
+            backward = org.apache.commons.lang3.StringUtils.repeat("../", subDetailsCount + 2);
+        }
+
+        @Override
+        public String apply(final Integer origin) {
+            if (origin >= currentBuild) {
+                return "1"; // fallback
+            }
+            else {
+                return new HtmlBuilder().linkWithClass(String.format("%s%d/%s", backward, origin, plugin),
+                        computeAge(origin), "model-link inside").build();
+            }
+        }
+
+        private String computeAge(final int buildNumber) {
+            return String.valueOf(currentBuild - buildNumber + 1);
         }
     }
 }

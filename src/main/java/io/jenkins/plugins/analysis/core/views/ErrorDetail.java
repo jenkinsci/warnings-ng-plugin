@@ -2,7 +2,8 @@ package io.jenkins.plugins.analysis.core.views;
 
 import java.util.Collection;
 
-import com.google.common.collect.ImmutableList;
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.impl.factory.Lists;
 
 import hudson.model.ModelObject;
 import hudson.model.Run;
@@ -17,7 +18,7 @@ public class ErrorDetail implements ModelObject  {
     /** Current build as owner of this action. */
     private final Run<?, ?> owner;
     /** All errors of the project. */
-    private final Collection<String> errors;
+    private final ImmutableList<String> errors;
 
     private final ModelObject parent;
 
@@ -31,7 +32,7 @@ public class ErrorDetail implements ModelObject  {
      */
     public ErrorDetail(final Run<?, ?> owner, final Collection<String> errors, final ModelObject parent) {
         this.owner = owner;
-        this.errors = ImmutableList.copyOf(errors);
+        this.errors = Lists.immutable.ofAll(errors);
         this.parent = parent;
     }
 
@@ -55,7 +56,7 @@ public class ErrorDetail implements ModelObject  {
      * @return the errors in the project
      */
     public Collection<String> getErrors() {
-        return errors;
+        return errors.castToCollection();
     }
 }
 

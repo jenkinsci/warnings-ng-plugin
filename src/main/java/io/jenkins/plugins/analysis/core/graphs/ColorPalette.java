@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import java.awt.Color;
+import java.awt.*;
 
 import com.google.common.collect.ImmutableList;
 

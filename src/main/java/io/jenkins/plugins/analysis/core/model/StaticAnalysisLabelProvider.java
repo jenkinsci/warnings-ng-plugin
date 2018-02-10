@@ -1,6 +1,9 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
+import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider.AgeBuilder;
+import net.sf.json.JSONObject;
 
 import hudson.plugins.analysis.util.ToolTipProvider;
 
@@ -25,7 +28,9 @@ public interface StaticAnalysisLabelProvider extends ToolTipProvider {
     /**
      * Returns a detailed description of the specified issue.
      *
-     * @param issue the issue to get the description for
+     * @param issue
+     *         the issue to get the description for
+     *
      * @return the description
      */
     String getDescription(Issue issue);
@@ -55,4 +60,30 @@ public interface StaticAnalysisLabelProvider extends ToolTipProvider {
     String getDeltaMessage(int newSize, int fixedSize);
 
     String getId();
+
+    /**
+     * Returns the table headers of the issues table.
+     *
+     * @return the table headers
+     */
+    String[] getTableHeaders();
+
+    /**
+     * Returns the widths of the table headers of the issues table.
+     *
+     * @return the width of the table headers
+     */
+    int[] getTableWidths();
+
+    /**
+     * Converts the specified set of issues into a table.
+     *
+     * @param issues
+     *         the issues to show in the table
+     * @param ageBuilder
+     *         produces the age of an issue based on the current build number
+     *
+     * @return the table as String
+     */
+    JSONObject toJsonArray(Issues<Issue> issues, AgeBuilder ageBuilder);
 }

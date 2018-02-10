@@ -14,8 +14,7 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
-import io.jenkins.plugins.analysis.core.model.BuildIssue;
-import io.jenkins.plugins.analysis.core.model.IssuesTableModel;
+import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import net.sf.json.JSONObject;
@@ -33,17 +32,17 @@ import hudson.plugins.analysis.core.GlobalSettings;
  * @author Ullrich Hafner
  */
 public class IssuesDetail implements ModelObject {
-    protected static final Issues<BuildIssue> NO_ISSUES = new Issues<>();
+    protected static final Issues<Issue> NO_ISSUES = new Issues<>();
 
     public static final Function<String, String> FILE_NAME_FORMATTER
             = string -> StringUtils.substringAfterLast(string, "/");
 
     private final Run<?, ?> owner;
 
-    private final Issues<BuildIssue> issues;
-    private final Issues<BuildIssue> newIssues;
-    private final Issues<BuildIssue> outstandingIssues;
-    private final Issues<BuildIssue> fixedIssues;
+    private final Issues<Issue> issues;
+    private final Issues<Issue> newIssues;
+    private final Issues<Issue> outstandingIssues;
+    private final Issues<Issue> fixedIssues;
 
     private final String defaultEncoding;
     private final String displayName;
@@ -52,11 +51,10 @@ public class IssuesDetail implements ModelObject {
 
     /** Sanitizes HTML elements in warning messages and tooltips. Use this formatter if raw HTML should be shown. */
     private final MarkupFormatter sanitizer = new RawHtmlMarkupFormatter(true);
-    private final IssuesTableModel tableModel;
 
     public IssuesDetail(final Run<?, ?> owner,
-            final Issues<BuildIssue> issues, final Issues<BuildIssue> newIssues,
-            final Issues<BuildIssue> outstandingIssues, final Issues<BuildIssue> fixedIssues,
+            final Issues<Issue> issues, final Issues<Issue> newIssues,
+            final Issues<Issue> outstandingIssues, final Issues<Issue> fixedIssues,
             final String displayName, final String url, final StaticAnalysisLabelProvider labelProvider,
             final String defaultEncoding) {
         this.owner = owner;
@@ -68,8 +66,6 @@ public class IssuesDetail implements ModelObject {
         this.displayName = displayName;
         this.labelProvider = labelProvider;
         this.url = url;
-
-        tableModel = new IssuesTableModel(owner.getNumber(), url);
     }
 
     // ------------------------------------ UI entry points for Stapler --------------------------------
@@ -78,32 +74,35 @@ public class IssuesDetail implements ModelObject {
         return labelProvider;
     }
 
+    @SuppressWarnings("unused") // Called by jelly view
     public String[] getTableHeaders() {
-        return tableModel.getHeaders();
+        return labelProvider.getTableHeaders();
     }
 
+    @SuppressWarnings("unused") // Called by jelly view
     public int[] getTableWidths() {
-        return tableModel.getWidths();
+        return labelProvider.getTableWidths();
     }
 
     @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
     public JSONObject getTableModel() {
-        return JSONObject.fromObject(tableModel.toJsonArray(getIssues()));
+        return labelProvider.toJsonArray(getIssues(), new DefaultAgeBuilder(owner.getNumber(), getUrl()));
     }
 
-    public Issues<BuildIssue> getIssues() {
+    public Issues<Issue> getIssues() {
         return issues;
     }
 
-    public Issues<BuildIssue> getNewIssues() {
+    public Issues<Issue> getNewIssues() {
         return newIssues;
     }
 
-    public Issues<BuildIssue> getFixedIssues() {
+    public Issues<Issue> getFixedIssues() {
         return fixedIssues;
     }
 
-    public Issues<BuildIssue> getOutstandingIssues() {
+    public Issues<Issue> getOutstandingIssues() {
         return outstandingIssues;
     }
 

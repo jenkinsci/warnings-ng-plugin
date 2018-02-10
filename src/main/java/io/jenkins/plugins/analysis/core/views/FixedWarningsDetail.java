@@ -20,7 +20,6 @@ public class FixedWarningsDetail extends IssuesDetail {
      *         the fixed issues to show in this tab
      * @param defaultEncoding
      *         the default encoding to be used when reading and parsing files
-     * @param parent
      * @param labelProvider
      */
     public FixedWarningsDetail(final Run<?, ?> owner, final Issues fixedIssues, final String defaultEncoding,

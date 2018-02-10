@@ -72,6 +72,7 @@ public abstract class ReferenceFinder extends BuildHistory implements ReferenceP
      *
      * @return the issues of the reference build
      */
+    // FIXME: generic
     @Override
     public Issues getIssues() {
         return getReferenceAction()

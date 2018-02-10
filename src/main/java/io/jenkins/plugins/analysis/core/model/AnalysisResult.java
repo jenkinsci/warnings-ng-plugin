@@ -52,17 +52,17 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     /**
      * All old issues: i.e. all issues, that are part of the current and previous report.
      */
-    private transient WeakReference<Issues<BuildIssue>> oldIssuesReference;
+    private transient WeakReference<Issues<Issue>> outstandingIssuesReference;
     /**
      * All new issues: i.e. all issues, that are part of the current report but have not been shown up in the previous
      * report.
      */
-    private transient WeakReference<Issues<BuildIssue>> newIssuesReference;
+    private transient WeakReference<Issues<Issue>> newIssuesReference;
     /**
      * All fixed issues: i.e. all issues, that are part of the previous report but are not present in the current report
      * anymore.
      */
-    private transient WeakReference<Issues<BuildIssue>> fixedIssuesReference;
+    private transient WeakReference<Issues<Issue>> fixedIssuesReference;
 
     private final QualityGate qualityGate;
     private final String defaultEncoding;
@@ -165,20 +165,20 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
 
         referenceBuild = referenceProvider.getNumber();
 
-        Issues<BuildIssue> referenceResult = referenceProvider.getIssues();
+        Issues<Issue> referenceResult = referenceProvider.getIssues();
         IssueDifference difference = new IssueDifference(issues, this.owner.getNumber(), referenceResult);
 
-        Issues<BuildIssue> oldIssues = difference.getOldIssues();
-        oldIssuesReference = new WeakReference<>(oldIssues);
+        Issues<Issue> outstandingIssues = difference.getOutstandingIssues();
+        outstandingIssuesReference = new WeakReference<>(outstandingIssues);
 
-        Issues<BuildIssue> newIssues = difference.getNewIssues();
+        Issues<Issue> newIssues = difference.getNewIssues();
         newIssuesReference = new WeakReference<>(newIssues);
         newSize = newIssues.getSize();
         newHighPrioritySize = newIssues.getHighPrioritySize();
         newNormalPrioritySize = newIssues.getNormalPrioritySize();
         newLowPrioritySize = newIssues.getLowPrioritySize();
 
-        Issues<BuildIssue> fixedIssues = difference.getFixedIssues();
+        Issues<Issue> fixedIssues = difference.getFixedIssues();
         fixedIssuesReference = new WeakReference<>(fixedIssues);
         numberOfFixedWarnings = fixedIssues.size();
 
@@ -187,7 +187,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         evaluateStatus(previousResult);
 
         if (canSerialize) {
-            serializeAnnotations(oldIssues, newIssues, fixedIssues);
+            serializeAnnotations(outstandingIssues, newIssues, fixedIssues);
         }
     }
 
@@ -319,7 +319,8 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      * @return the serialization file.
      */
     private XmlFile getDataFile(final String suffix) {
-        return new XmlFile(BuildIssue.createStream(), new File(getOwner().getRootDir(),
+        IssueStream model = new IssueStream();
+        return new XmlFile(model.createStream(), new File(getOwner().getRootDir(),
                 getSerializationFileName().replace("issues.xml", suffix + "-issues.xml")));
     }
 
@@ -336,14 +337,14 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         return owner;
     }
 
-    private void serializeAnnotations(final Issues<BuildIssue> oldIssues,
-            final Issues<BuildIssue> newIssues, final Issues<BuildIssue> fixedIssues) {
-        serializeIssues(oldIssues, "old");
+    private void serializeAnnotations(final Issues<Issue> outstandingIssues,
+            final Issues<Issue> newIssues, final Issues<Issue> fixedIssues) {
+        serializeIssues(outstandingIssues, "old");
         serializeIssues(newIssues, "new");
         serializeIssues(fixedIssues, "fixed");
     }
 
-    private void serializeIssues(final Issues<BuildIssue> issues, final String suffix) {
+    private void serializeIssues(final Issues<Issue> issues, final String suffix) {
         try {
             getDataFile(suffix).write(issues);
         }
@@ -353,56 +354,56 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         }
     }
 
-    private WeakReference<Issues<BuildIssue>> getOldIssuesReference() {
-        return oldIssuesReference;
+    private WeakReference<Issues<Issue>> getoutstandingIssuesReference() {
+        return outstandingIssuesReference;
     }
 
-    private void setOldIssuesReference(final WeakReference<Issues<BuildIssue>> oldIssuesReference) {
-        this.oldIssuesReference = oldIssuesReference;
+    private void setoutstandingIssuesReference(final WeakReference<Issues<Issue>> outstandingIssuesReference) {
+        this.outstandingIssuesReference = outstandingIssuesReference;
     }
 
-    public WeakReference<Issues<BuildIssue>> getNewIssuesReference() {
+    public WeakReference<Issues<Issue>> getNewIssuesReference() {
         return newIssuesReference;
     }
 
-    private void setNewIssuesReference(final WeakReference<Issues<BuildIssue>> newIssuesReference) {
+    private void setNewIssuesReference(final WeakReference<Issues<Issue>> newIssuesReference) {
         this.newIssuesReference = newIssuesReference;
     }
 
-    public WeakReference<Issues<BuildIssue>> getFixedIssuesReference() {
+    public WeakReference<Issues<Issue>> getFixedIssuesReference() {
         return fixedIssuesReference;
     }
 
-    public void setFixedIssuesReference(final WeakReference<Issues<BuildIssue>> fixedIssuesReference) {
+    public void setFixedIssuesReference(final WeakReference<Issues<Issue>> fixedIssuesReference) {
         this.fixedIssuesReference = fixedIssuesReference;
     }
 
-    public Issues<BuildIssue> getIssues() {
-        Issues<BuildIssue> merged = new Issues<>();
-        merged.addAll(getNewIssues(), getOldIssues());
+    public Issues<Issue> getIssues() {
+        Issues<Issue> merged = new Issues<>();
+        merged.addAll(getNewIssues(), getoutstandingIssues());
         return merged;
     }
 
-    public Issues<BuildIssue> getOldIssues() {
-        return getIssues(AnalysisResult::getOldIssuesReference, AnalysisResult::setOldIssuesReference, "old");
+    public Issues<Issue> getoutstandingIssues() {
+        return getIssues(AnalysisResult::getoutstandingIssuesReference, AnalysisResult::setoutstandingIssuesReference, "old");
     }
 
-    public Issues<BuildIssue> getNewIssues() {
+    public Issues<Issue> getNewIssues() {
         return getIssues(AnalysisResult::getNewIssuesReference, AnalysisResult::setNewIssuesReference, "new");
     }
 
-    public Issues<BuildIssue> getFixedIssues() {
+    public Issues<Issue> getFixedIssues() {
         return getIssues(AnalysisResult::getFixedIssuesReference, AnalysisResult::setFixedIssuesReference, "fixed");
     }
 
-    private Issues<BuildIssue> getIssues(final Function<AnalysisResult, WeakReference<Issues<BuildIssue>>> getter,
-            final BiConsumer<AnalysisResult, WeakReference<Issues<BuildIssue>>> setter, final String suffix) {
+    private Issues<Issue> getIssues(final Function<AnalysisResult, WeakReference<Issues<Issue>>> getter,
+            final BiConsumer<AnalysisResult, WeakReference<Issues<Issue>>> setter, final String suffix) {
         lock.lock();
         try {
             if (getter.apply(this) == null) {
                 return readIssues(setter, suffix);
             }
-            Issues<BuildIssue> result = getter.apply(this).get();
+            Issues<Issue> result = getter.apply(this).get();
             if (result == null) {
                 return readIssues(setter, suffix);
             }
@@ -413,17 +414,17 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         }
     }
 
-    private Issues<BuildIssue> readIssues(final BiConsumer<AnalysisResult, WeakReference<Issues<BuildIssue>>> setter,
+    private Issues<Issue> readIssues(final BiConsumer<AnalysisResult, WeakReference<Issues<Issue>>> setter,
             final String suffix) {
-        Issues<BuildIssue> issues = readIssues(suffix);
+        Issues<Issue> issues = readIssues(suffix);
         setter.accept(this, new WeakReference<>(issues));
         return issues;
     }
 
-    private Issues<BuildIssue> readIssues(final String suffix) {
+    private Issues<Issue> readIssues(final String suffix) {
         XmlFile dataFile = getDataFile(suffix);
         try {
-            Issues<BuildIssue> result = (Issues<BuildIssue>) dataFile.read();
+            Issues<Issue> result = (Issues<Issue>) dataFile.read();
 
             LOGGER.log(Level.FINE, "Loaded data file " + dataFile + " for run " + getOwner());
 

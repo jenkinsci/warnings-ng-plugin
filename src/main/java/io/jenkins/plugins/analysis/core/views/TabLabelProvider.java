@@ -4,8 +4,8 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
-import io.jenkins.plugins.analysis.core.model.BuildIssue;
 
 import hudson.plugins.analysis.Messages;
 
@@ -15,9 +15,9 @@ import hudson.plugins.analysis.Messages;
  * @author Ullrich Hafner
  */
 public class TabLabelProvider {
-    private final Issues<BuildIssue> issues;
+    private final Issues<Issue> issues;
 
-    public TabLabelProvider(final Issues<BuildIssue> issues) {
+    public TabLabelProvider(final Issues<Issue> issues) {
         this.issues = issues;
     }
 
