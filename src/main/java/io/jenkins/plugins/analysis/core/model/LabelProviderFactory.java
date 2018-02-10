@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import edu.hm.hafner.util.NoSuchElementException;
 import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool.StaticAnalysisToolDescriptor;
@@ -22,7 +21,7 @@ public class LabelProviderFactory {
     private final JenkinsFacade jenkins;
 
     /**
-     * Creates a new instance of {@link ToolRegistry}.
+     * Creates a new instance of {@link LabelProviderFactory}.
      */
     public LabelProviderFactory() {
         this(new JenkinsFacade());
@@ -38,12 +37,24 @@ public class LabelProviderFactory {
      *
      * @param id
      *         the ID of the tool to find
+     *
+     * @return The label provider of the selected static analysis tool. If the tool is not found then a default label
+     *         provider is returned.
+     */
+    public StaticAnalysisLabelProvider create(final String id) {
+        return create(id, StringUtils.EMPTY);
+    }
+
+    /**
+     * Finds the label provider for the static analysis tool with the specified ID.
+     *
+     * @param id
+     *         the ID of the tool to find
      * @param name
      *         the name of the tool (might be empty or null)
      *
-     * @return the static analysis tool
-     * @throws NoSuchElementException
-     *         if the tool could not be found
+     * @return The label provider of the selected static analysis tool. If the tool is not found then a default label
+     *         provider is returned.
      */
     public StaticAnalysisLabelProvider create(final String id, @CheckForNull final String name) {
         DescriptorExtensionList<StaticAnalysisTool, StaticAnalysisToolDescriptor> extensions
@@ -66,7 +77,8 @@ public class LabelProviderFactory {
         return new DefaultLabelProvider(id, name);
     }
 
-    private StaticAnalysisLabelProvider wrapLabelProvider(final StaticAnalysisLabelProvider labelProvider, final String name) {
+    private StaticAnalysisLabelProvider wrapLabelProvider(final StaticAnalysisLabelProvider labelProvider,
+            final String name) {
         if (StringUtils.isNotBlank(name)) {
             return new CompositeLabelProvider(labelProvider, name);
         }

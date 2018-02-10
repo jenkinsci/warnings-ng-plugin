@@ -9,7 +9,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
-import io.jenkins.plugins.analysis.core.model.BuildIssue;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.model.Run;
@@ -20,7 +19,7 @@ import hudson.model.Run;
  * @author Ulli Hafner
  */
 public class PropertyCountTab extends IssuesDetail {
-    private final Map<String, Issues<BuildIssue>> issuesByProperty;
+    private final Map<String, Issues<Issue>> issuesByProperty;
     private final Function<String, String> propertyFormatter;
     private final String property;
 

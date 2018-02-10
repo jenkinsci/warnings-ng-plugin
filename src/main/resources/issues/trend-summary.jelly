@@ -18,7 +18,7 @@
         <div style="display: none">
           <span id="numberOfNewWarnings">${size(it.newIssues)}</span>
           <span id="numberOfFixedWarnings">${size(it.fixedIssues)}</span>
-          <span id="numberOfExistingWarnings">${size(it.oldIssues)}</span>
+          <span id="numberOfExistingWarnings">${size(it.outstandingIssues)}</span>
         </div>
 
         <div class="graph-size">

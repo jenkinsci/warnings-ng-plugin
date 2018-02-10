@@ -105,6 +105,7 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
                 issues.logError(Messages.FilesParser_Error_EmptyFile(module, file));
             }
             else {
+                // FIXME: setting of attributes should be a lambda on issue builder so that builder can be created after each warning
                 IssueBuilder builder = new IssueBuilder();
                 builder.setModuleName(module);
                 builder.setOrigin(id);

@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
-import io.jenkins.plugins.analysis.core.model.BuildIssue;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.model.Item;
@@ -22,7 +21,7 @@ import hudson.plugins.analysis.Messages;
  * @author Ulli Hafner
  */
 public class DetailFactory {
-    private static final Issues<BuildIssue> EMPTY = new Issues<>();
+    private static final Issues<Issue> EMPTY = new Issues<>();
 
     /**
      * Returns a detail object for the selected element for the specified issues.
@@ -48,8 +47,8 @@ public class DetailFactory {
      * @return the dynamic result of this module detail view
      */
     public Object createTrendDetails(final String link, final Run<?, ?> owner,
-            final Issues<BuildIssue> allIssues, final Issues<BuildIssue> fixedIssues,
-            final Issues<BuildIssue> newIssues, final Issues<BuildIssue> oldIssues,
+            final Issues<Issue> allIssues, final Issues<Issue> fixedIssues,
+            final Issues<Issue> newIssues, final Issues<Issue> outstandingIssues,
             final Collection<String> errors, final String defaultEncoding, final IssuesDetail parent) {
         StaticAnalysisLabelProvider labelProvider = parent.getLabelProvider();
         String plainLink = strip(link);
@@ -64,7 +63,7 @@ public class DetailFactory {
             );
         }
         else if ("outstanding".equals(link)) {
-            return new IssuesDetail(owner, oldIssues, EMPTY, oldIssues, EMPTY, "Outstanding Warnings", url,
+            return new IssuesDetail(owner, outstandingIssues, EMPTY, outstandingIssues, EMPTY, "Outstanding Warnings", url,
                     labelProvider, defaultEncoding
             ); // l10n
         }
@@ -83,23 +82,23 @@ public class DetailFactory {
             }
         }
         else if (Priority.HIGH.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(Priority.HIGH, owner, allIssues, fixedIssues, oldIssues, newIssues, defaultEncoding,
+            return createPrioritiesDetail(Priority.HIGH, owner, allIssues, fixedIssues, outstandingIssues, newIssues, defaultEncoding,
                     labelProvider, url);
         }
         else if (Priority.NORMAL.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(Priority.NORMAL, owner, allIssues, fixedIssues, oldIssues, newIssues, defaultEncoding,
+            return createPrioritiesDetail(Priority.NORMAL, owner, allIssues, fixedIssues, outstandingIssues, newIssues, defaultEncoding,
                     labelProvider, url);
         }
         else if (Priority.LOW.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(Priority.LOW, owner, allIssues, fixedIssues, oldIssues, newIssues, defaultEncoding,
+            return createPrioritiesDetail(Priority.LOW, owner, allIssues, fixedIssues, outstandingIssues, newIssues, defaultEncoding,
                     labelProvider, url);
         }
         else {
             String property = StringUtils.substringBefore(link, ".");
             Predicate<Issue> filter = createPropertyFilter(plainLink, property);
-            Issues<BuildIssue> selectedIssues = allIssues.filter(filter);
+            Issues<Issue> selectedIssues = allIssues.filter(filter);
             return new IssuesDetail(owner,
-                    selectedIssues, newIssues.filter(filter), oldIssues.filter(filter), fixedIssues.filter(filter),
+                    selectedIssues, newIssues.filter(filter), outstandingIssues.filter(filter), fixedIssues.filter(filter),
                     getDisplayNameOfDetails(property, selectedIssues), url, labelProvider, defaultEncoding
             );
         }
@@ -110,7 +109,7 @@ public class DetailFactory {
                 PropertyCountTab.getIssueStringFunction(property).apply(issue).hashCode()));
     }
 
-    private String getDisplayNameOfDetails(final String property, final Issues<BuildIssue> selectedIssues) {
+    private String getDisplayNameOfDetails(final String property, final Issues<Issue> selectedIssues) {
         return PropertyCountTab.getColumnHeaderFor(selectedIssues, property)
                 + " "
                 + PropertyCountTab.getIssueStringFunction(property).apply(selectedIssues.get(0));
@@ -121,12 +120,12 @@ public class DetailFactory {
     }
 
     private IssuesDetail createPrioritiesDetail(final Priority priority, final Run<?, ?> owner,
-            final Issues<BuildIssue> issues, final Issues<BuildIssue> fixedIssues, final Issues<BuildIssue> newIssues,
-            final Issues<BuildIssue> oldIssues, final String defaultEncoding,
+            final Issues<Issue> issues, final Issues<Issue> fixedIssues, final Issues<Issue> newIssues,
+            final Issues<Issue> outstandingIssues, final String defaultEncoding,
             final StaticAnalysisLabelProvider labelProvider, final String url) {
         Predicate<Issue> priorityFilter = issue -> issue.getPriority() == priority;
         return new IssuesDetail(owner,
-                issues.filter(priorityFilter), newIssues.filter(priorityFilter), oldIssues.filter(priorityFilter),
+                issues.filter(priorityFilter), newIssues.filter(priorityFilter), outstandingIssues.filter(priorityFilter),
                 fixedIssues.filter(priorityFilter),
                 LocalizedPriority.getLongLocalizedString(priority), url, labelProvider, defaultEncoding
         );

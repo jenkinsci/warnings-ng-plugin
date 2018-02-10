@@ -19,7 +19,7 @@ public class IssueDifference {
         newIssues = new HashSet<>(currentIssues);
         fixedIssues = new HashSet<>(referenceIssues);
         
-        Set<FileAnnotation> oldIssues = new HashSet<>(); // TODO: do we need old issues?
+        Set<FileAnnotation> outstandingIssues = new HashSet<>(); // TODO: do we need old issues?
 
         for (FileAnnotation current : currentIssues) {
             FileAnnotation referenceToRemove = findReferenceByEquals(current);
@@ -29,7 +29,7 @@ public class IssueDifference {
             }
 
             if (referenceToRemove != null) {
-                oldIssues.add(current);
+                outstandingIssues.add(current);
                 newIssues.remove(current);
                 fixedIssues.remove(referenceToRemove);
 
