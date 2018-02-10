@@ -18,7 +18,6 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.BuildIssue;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
@@ -56,7 +55,7 @@ public class StepsITest extends PipelineITest {
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues()).hasSize(8);
 
-        Issues<BuildIssue> issues = result.getIssues();
+        Issues<Issue> issues = result.getIssues();
         assertThat(issues.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(8);
         for (Issue annotation : issues) {
             assertThat(annotation.getMessage()).matches("[a-zA-Z].*");
@@ -112,7 +111,7 @@ public class StepsITest extends PipelineITest {
     }
 
     private void assertThatJavaIssuesArePublished(final AnalysisResult result) {
-        Issues<BuildIssue> issues = result.getIssues();
+        Issues<Issue> issues = result.getIssues();
         assertThat(issues.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(8);
         assertThat(issues.filter(issue -> "java".equals(issue.getOrigin()))).hasSize(2);
         assertThat(issues.filter(issue -> "javadoc".equals(issue.getOrigin()))).hasSize(6);

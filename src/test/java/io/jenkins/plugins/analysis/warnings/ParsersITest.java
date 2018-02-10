@@ -5,10 +5,10 @@ import org.assertj.core.api.Assertions;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.junit.Test;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.BuildIssue;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
@@ -64,7 +64,7 @@ public class ParsersITest extends PipelineITest {
     /** Runs the CPD parser on output files that contains 2 issues. */
     @Test
     public void shouldFindAllCpdIssues() {
-        Issues<BuildIssue> issues = shouldFindIssuesOfTool(2, Cpd.class, "cpd.xml");
+        Issues<Issue> issues = shouldFindIssuesOfTool(2, Cpd.class, "cpd.xml");
 
         assertThat(issues.get(0)).hasDescription(CODE_FRAGMENT);
     }
@@ -78,7 +78,7 @@ public class ParsersITest extends PipelineITest {
     /** Runs the DupFinder parser on output files that contains 2 issues. */
     @Test
     public void shouldFindAllDupFinderIssues() {
-        Issues<BuildIssue> issues = shouldFindIssuesOfTool(2, DupFinder.class, "dupfinder.xml");
+        Issues<Issue> issues = shouldFindIssuesOfTool(2, DupFinder.class, "dupfinder.xml");
 
         assertThat(issues.get(0)).hasDescription("if (items == null) throw new ArgumentNullException(\"items\");");
     }
@@ -104,9 +104,9 @@ public class ParsersITest extends PipelineITest {
     /** Runs the PMD parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllPmdIssues() {
-        Issues<BuildIssue> issues = shouldFindIssuesOfTool(4, Pmd.class, "pmd-warnings.xml");
+        Issues<Issue> issues = shouldFindIssuesOfTool(4, Pmd.class, "pmd-warnings.xml");
 
-        BuildIssue issue = issues.get(0);
+        Issue issue = issues.get(0);
 
         StaticAnalysisLabelProvider labelProvider = new Pmd().getLabelProvider();
         assertThat(issue).hasDescription(StringUtils.EMPTY);
@@ -119,9 +119,9 @@ public class ParsersITest extends PipelineITest {
     /** Runs the CheckStyle parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllCheckStyleIssues() {
-        Issues<BuildIssue> issues = shouldFindIssuesOfTool(6, CheckStyle.class, "checkstyle.xml");
+        Issues<Issue> issues = shouldFindIssuesOfTool(6, CheckStyle.class, "checkstyle.xml");
 
-        BuildIssue issue = issues.get(2);
+        Issue issue = issues.get(2);
 
         StaticAnalysisLabelProvider labelProvider = new CheckStyle().getLabelProvider();
         assertThat(issue).hasDescription(StringUtils.EMPTY);
@@ -131,9 +131,9 @@ public class ParsersITest extends PipelineITest {
     /** Runs the FindBugs parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllFindBugsIssues() {
-        Issues<BuildIssue> issues = shouldFindIssuesOfTool(2, FindBugs.class, "findbugs-native.xml");
+        Issues<Issue> issues = shouldFindIssuesOfTool(2, FindBugs.class, "findbugs-native.xml");
 
-        BuildIssue issue = issues.get(0);
+        Issue issue = issues.get(0);
 
         StaticAnalysisLabelProvider labelProvider = new FindBugs().getLabelProvider();
         assertThat(issue).hasDescription(StringUtils.EMPTY);
@@ -145,9 +145,9 @@ public class ParsersITest extends PipelineITest {
     /** Runs the SpotBugs parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllSpotBugsIssues() {
-        Issues<BuildIssue> issues = shouldFindIssuesOfTool(2, SpotBugs.class, "spotbugsXml.xml");
+        Issues<Issue> issues = shouldFindIssuesOfTool(2, SpotBugs.class, "spotbugsXml.xml");
 
-        BuildIssue issue = issues.get(0);
+        Issue issue = issues.get(0);
 
         StaticAnalysisLabelProvider labelProvider = new FindBugs().getLabelProvider();
         assertThat(issue).hasDescription(StringUtils.EMPTY);
@@ -499,7 +499,7 @@ public class ParsersITest extends PipelineITest {
     }
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private Issues<BuildIssue> shouldFindIssuesOfTool(final int expectedSizeOfIssues,
+    private Issues<Issue> shouldFindIssuesOfTool(final int expectedSizeOfIssues,
             final Class<? extends StaticAnalysisTool> tool, final String... fileNames) {
         try {
             WorkflowJob job = createJobWithWorkspaceFiles(fileNames);
@@ -510,7 +510,7 @@ public class ParsersITest extends PipelineITest {
             assertThat(result.getTotalSize()).isEqualTo(expectedSizeOfIssues);
             assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);
 
-            Issues<BuildIssue> issues = result.getIssues();
+            Issues<Issue> issues = result.getIssues();
             assertThat(issues.filter(issue -> issue.getOrigin().equals(getIdOf(tool))))
                     .hasSize(expectedSizeOfIssues);
 

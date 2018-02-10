@@ -70,6 +70,11 @@
       <artifactId>commons-digester3</artifactId>
       <version>3.2</version>
     </dependency>
+    <dependency>
+      <groupId>com.j2html</groupId>
+      <artifactId>j2html</artifactId>
+      <version>1.2.2</version>
+    </dependency>
 
     <!-- PMD Messages -->
     <dependency>

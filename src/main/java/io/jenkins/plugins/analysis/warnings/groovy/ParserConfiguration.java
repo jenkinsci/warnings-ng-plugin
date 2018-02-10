@@ -9,9 +9,9 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import edu.hm.hafner.util.NoSuchElementException;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-import io.jenkins.plugins.analysis.core.model.ToolRegistry;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 
@@ -100,8 +100,8 @@ public class ParserConfiguration extends GlobalConfiguration {
     }
 
     /**
-     * Registers all parsers in the {@link ToolRegistry} of the analysis-core plug-in so that these parsers can be
-     * referenced in steps and publishers.
+     * Registers all Groovy parsers as static analysis tools in the {@link LabelProviderFactory} of the analysis-core
+     * plug-in so that these parsers can be referenced in steps and publishers.
      */
     @Extension
     @SuppressWarnings("unused") // Picked up by Jenkins Extension Scanner

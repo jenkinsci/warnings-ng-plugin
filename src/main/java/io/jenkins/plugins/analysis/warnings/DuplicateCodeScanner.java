@@ -1,11 +1,18 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.List;
+
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.parser.dry.CodeDuplication;
 import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import static io.jenkins.plugins.analysis.core.views.IssuesDetail.*;
+import static j2html.TagCreator.*;
+import net.sf.json.JSONArray;
 
 import hudson.util.FormValidation;
 
@@ -65,7 +72,7 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
     }
 
     /** Provides icons for DRY parsers. */
-    abstract static class DryLabelProvider extends DefaultLabelProvider {
+    static class DryLabelProvider extends DefaultLabelProvider {
         protected DryLabelProvider(final String id, final String name) {
             super(id, name);
         }
@@ -78,6 +85,54 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
         @Override
         public String getLargeIconUrl() {
             return LARGE_ICON_URL;
+        }
+
+        /**
+         * Returns a JSON array that contains the column values for this issue.
+         *
+         * @param ageBuilder
+         *         the builder to compute the age of a build
+         *
+         * @return the columns of this issue
+         */
+        @Override
+        protected JSONArray toJson(final Issue issue, final AgeBuilder ageBuilder) {
+            JSONArray columns = new JSONArray();
+            columns.add(formatFileName(issue));
+            columns.add(formatPriority(issue.getPriority()));
+            columns.add(issue.getLineEnd() - issue.getLineStart() + 1);
+            columns.add(formatTargets(issue));
+            columns.add(formatAge(issue, ageBuilder));
+            return columns;
+        }
+
+        private String formatTargets(final Issue issue) {
+            if (issue instanceof CodeDuplication) {
+                List<CodeDuplication> duplications = ((CodeDuplication) issue).getDuplications();
+                return ul(each(duplications, link -> li(a()
+                                .withHref(String.format("source.%s/#%d", link.getId(), link.getLineStart()))
+                                .withText(String.format("%s:%s", FILE_NAME_FORMATTER.apply(link.getFileName()),
+                                        link.getLineStart()))
+                        ))
+                ).render();
+            }
+            return "-";
+        }
+
+        @Override
+        public int[] getTableWidths() {
+            return new int[]{2, 1, 1, 3, 1};
+        }
+
+        @Override
+        public String[] getTableHeaders() {
+            return new String[]{
+                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_File(),
+                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_Priority(),
+                    Messages.DRY_Table_Column_LinesCount(),
+                    Messages.DRY_Table_Column_DuplicatedIn(),
+                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_Age()
+            };
         }
     }
 
