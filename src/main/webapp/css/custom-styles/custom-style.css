@@ -1,0 +1,153 @@
+/* Table customcColumn widths */
+.col-width-1 {
+    width: 8.333333%;
+}
+
+.col-width-2 {
+    width: 16.666667%;
+}
+
+.col-width-3 {
+    width: 25%;
+}
+
+.col-width-5 {
+    width: 41.66667%;
+}
+
+.col-width-6 {
+    width: 50%;
+}
+
+/* ------------------------------------------------------------------------------------------------------------------- */
+
+/* DataTables */
+table.dataTable {
+    border-collapse: collapse !important;
+}
+
+/* Change color of active pagination, to fit to the material blue grey css */
+.pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    background-color: #607d8b;
+    border-color: #607d8b;
+}
+
+/* Change color of inactive pagination, to fit to the material blue grey css */
+.pagination > li > a, .pagination > li > span {
+    color: #607d8b;
+}
+
+/* Change color of active pagination, to fit to the material blue grey css */
+.page-item.active .page-link {
+    background-color: #607d8b;
+    border-color: #607d8b;
+}
+
+/* Add padding-top for more space */
+.tab-content > .active {
+    display: block;
+    padding-top: 20px;
+}
+
+/* ------------------------------------------------------------------------------------------------------------------- */
+
+/* DataTables Details */
+/* Mouse cursor pointer for details icon */
+div.details-control {
+    position: relative;
+    cursor: pointer;
+}
+
+/*Add font awesome plus icon when its closed*/
+div.details-control:before {
+    content: "\f055";
+    font-family: FontAwesome;
+    padding: 12px;
+    font-size: 1.5em;
+    color: #b4b4b4;
+}
+
+/* Add font awesome minus icon when it's opened */
+tr.shown div.details-control:before {
+    content: "\f056";
+    font-family: FontAwesome;
+    padding: 12px;
+    font-size: 1.5em;
+    color: #b4b4b4;
+}
+
+/* ------------------------------------------------------------------------------------------------------------------- */
+
+/* Font awesome icons float right */
+.icon-right {
+    float: right;
+    color: #ddd;
+    position: absolute;
+    right: 25px;
+    top: 10px;
+}
+
+/* ------------------------------------------------------------------------------------------------------------------- */
+
+/* Bar graph in table */
+.bar-graph {
+    float: left;
+    color: transparent;
+}
+
+.priority-high {
+    background-color: #f5c6cb;
+}
+
+.priority-high--hover:hover {
+    background-color: #f5929f;
+}
+
+.priority-normal {
+    background-color: #ffeeba;
+}
+
+.priority-normal--hover:hover {
+    background-color: #ffeb75;
+}
+
+.priority-low {
+    background-color: #b8daff;
+}
+
+.priority-low--hover:hover {
+    background-color: #53bdff;
+}
+
+/* ------------------------------------------------------------------------------------------------------------------- */
+
+/* Mouse cursor pointer for clicking on doughnut charts */
+.graph-cursor-pointer {
+    cursor: pointer;
+}
+
+/* ------------------------------------------------------------------------------------------------------------------- */
+
+/* Responsive classes */
+/* Change graph size to displays with min-width 576px */
+@media only screen and (min-width: 576px) {
+    .graph-size {
+        position: relative;
+        width: 20vw;
+        margin: auto;
+    }
+
+    .table-responsive {
+        display: table;
+    }
+
+    .table-responsive-block {
+        display: block;
+    }
+}
+
+@media only screen and (max-width: 575px) {
+    .card-marg-bot {
+        margin-bottom: 2rem;
+    }
+}

@@ -56,13 +56,14 @@ class DefaultLabelProviderTest {
     }
 
     void assertThatColumnsAreValid(final JSONArray columns, int index) {
-        String actual = columns.getString(0);
+        assertThat(columns.get(0)).isEqualTo("<div class=\"details-control\" />");
+        String actual = columns.getString(1);
         assertThat(actual).matches(createFileLinkMatcher("file-" + index, 15));
-        assertThat(columns.get(1)).isEqualTo(createPropertyLink("packageName", "package-" + index));
-        assertThat(columns.get(2)).isEqualTo(createPropertyLink("category", "category-" + index));
-        assertThat(columns.get(3)).isEqualTo(createPropertyLink("type", "type-" + index));
-        assertThat(columns.get(4)).isEqualTo("<a href=\"HIGH\">High</a>");
-        assertThat(columns.get(5)).isEqualTo("1");
+        assertThat(columns.get(2)).isEqualTo(createPropertyLink("packageName", "package-" + index));
+        assertThat(columns.get(3)).isEqualTo(createPropertyLink("category", "category-" + index));
+        assertThat(columns.get(4)).isEqualTo(createPropertyLink("type", "type-" + index));
+        assertThat(columns.get(5)).isEqualTo("<a href=\"HIGH\">High</a>");
+        assertThat(columns.get(6)).isEqualTo("1");
     }
 
     private static String createPropertyLink(final String property, final String value) {
@@ -162,7 +163,7 @@ class DefaultLabelProviderTest {
 
     @Nested
     class IssueModelTest extends ResourceTest {
-        static final int EXPECTED_NUMBER_OF_COLUMNS = 6;
+        static final int EXPECTED_NUMBER_OF_COLUMNS = 7;
 
         @Test
         void shouldConvertIssueToArrayOfColumns() {

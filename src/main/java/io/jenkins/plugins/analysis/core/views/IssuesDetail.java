@@ -74,6 +74,8 @@ public class IssuesDetail implements ModelObject {
         return labelProvider;
     }
 
+    // FIXME: use labelProvider directly in jelly file
+
     @SuppressWarnings("unused") // Called by jelly view
     public String[] getTableHeaders() {
         return labelProvider.getTableHeaders();

@@ -13,7 +13,7 @@
   <div role="tabpanel" id="${property}Content" class="tab-pane">
     <j:set var="l" value="${it.tabLabelProvider}"/>
     <j:set var="t" value="${it.getDetails(property)}"/>
-    <table class="table table-hover table-striped" id="${property}">
+    <table class="table table-hover table-responsive table-striped display" id="${property}">
       <colgroup>
         <col class="col-width-5"/>
         <col class="col-width-1"/>

@@ -1,20 +1,19 @@
 (function ($) {
-    var newWarning = $('#numberOfNewWarnings').text();
-    var fixedWarning = $('#numberOfFixedWarnings').text();
-    var existingWarning = $('#numberOfExistingWarnings').text();
+    var numberIssues = $('#number-issues');
 
-    var trend = document.getElementById("doughnut-trend-summary");
+    var trend = document.getElementById("trend-chart");
     var context = trend.getContext("2d");
     context.height = 200;
     context.width = 200;
     var trendSummaryChart = new Chart(context, {
         type: 'doughnut',
         data: {
-            labels: ["New", "Fixed", "Existing"],
-            urls: ["new", "fixed", "old"],
+            // FIXME: i18n
+            labels: ["New", "Fixed", "Outstanding"],
+            urls: ["new", "fixed", "outstanding"],
             datasets: [{
                 label: 'New issues, Fixed issues, Existing issues',
-                data: [newWarning, fixedWarning, existingWarning],
+                data: [numberIssues.data('new-issues'), numberIssues.data('fixed-issues'), numberIssues.data('outstanding-issues')],
                 backgroundColor: [
                     '#f5c6cb',
                     '#b8daff',
@@ -32,6 +31,11 @@
         }
     });
 
+    /**
+     * @summary adding a on click event to the chart
+     * @link http://www.chartjs.org/docs/latest/developers/api.html
+     * @event click
+     */
     trend.onclick = function (evt) {
         var activePoints = trendSummaryChart.getElementsAtEvent(evt);
         if (activePoints[0]) {
@@ -39,16 +43,7 @@
             var idx = activePoints[0]['_index'];
 
             var url = chartData.urls[idx];
-            window.open(url, "_self");
+            window.open(url, '_self');
         }
     };
 })(jQuery);
-
-// .getElementsAtEvent(e)
-//
-// Looks for the element under the event point, then returns all elements at
-// the same data index. This is used internally for 'label' mode highlighting.
-//
-// Calling getElementsAtEvent(event) on your Chart instance passing an
-// argument of an event, or jQuery event, will return the point elements
-// that are at that the same position of that event.
