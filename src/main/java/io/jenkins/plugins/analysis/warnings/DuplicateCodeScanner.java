@@ -98,6 +98,7 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
         @Override
         protected JSONArray toJson(final Issue issue, final AgeBuilder ageBuilder) {
             JSONArray columns = new JSONArray();
+            columns.add(formatDetails(issue));
             columns.add(formatFileName(issue));
             columns.add(formatPriority(issue.getPriority()));
             columns.add(issue.getLineEnd() - issue.getLineStart() + 1);
@@ -121,12 +122,13 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
 
         @Override
         public int[] getTableWidths() {
-            return new int[]{2, 1, 1, 3, 1};
+            return new int[]{1, 2, 1, 1, 3, 1};
         }
 
         @Override
         public String[] getTableHeaders() {
             return new String[]{
+                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_Details(),
                     io.jenkins.plugins.analysis.core.model.Messages.Table_Column_File(),
                     io.jenkins.plugins.analysis.core.model.Messages.Table_Column_Priority(),
                     Messages.DRY_Table_Column_LinesCount(),

@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Ullrich Hafner
  */
 class DuplicateCodeScannerTest {
-    private static final int EXPECTED_NUMBER_OF_COLUMNS = 5;
+    private static final int EXPECTED_NUMBER_OF_COLUMNS = 6;
 
     @Test
     void shouldConvertIssueToArrayOfColumns() {
@@ -35,20 +35,22 @@ class DuplicateCodeScannerTest {
         JSONArray firstColumns = labelProvider.toJson(first, build -> String.valueOf(build));
         assertThatJson(firstColumns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
 
-        assertThat(firstColumns.getString(0)).matches(createFileLinkMatcher("file-1", 15));
-        assertThat(firstColumns.get(1)).isEqualTo("<a href=\"NORMAL\">Normal</a>");
-        assertThat(firstColumns.get(2)).isEqualTo(15);
-        assertThat(firstColumns.getString(3)).matches(createLinkMatcher("file-2", 5));
-        assertThat(firstColumns.get(4)).isEqualTo("1");
+        assertThat(firstColumns.get(0)).isEqualTo("<div class=\"details-control\" data-description=\"\"/>");
+        assertThat(firstColumns.getString(1)).matches(createFileLinkMatcher("file-1", 15));
+        assertThat(firstColumns.get(2)).isEqualTo("<a href=\"NORMAL\">Normal</a>");
+        assertThat(firstColumns.get(3)).isEqualTo(15);
+        assertThat(firstColumns.getString(4)).matches(createLinkMatcher("file-2", 5));
+        assertThat(firstColumns.get(5)).isEqualTo("1");
 
         JSONArray secondColumns = labelProvider.toJson(second, build -> String.valueOf(build));
         assertThatJson(secondColumns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
 
-        assertThat(secondColumns.getString(0)).matches(createFileLinkMatcher("file-2", 5));
-        assertThat(secondColumns.get(1)).isEqualTo("<a href=\"NORMAL\">Normal</a>");
-        assertThat(secondColumns.get(2)).isEqualTo(15);
-        assertThat(secondColumns.getString(3)).matches(createLinkMatcher("file-1", 15));
-        assertThat(secondColumns.get(4)).isEqualTo("1");
+        assertThat(firstColumns.get(0)).isEqualTo("<div class=\"details-control\" data-description=\"\"/>");
+        assertThat(secondColumns.getString(1)).matches(createFileLinkMatcher("file-2", 5));
+        assertThat(secondColumns.get(2)).isEqualTo("<a href=\"NORMAL\">Normal</a>");
+        assertThat(secondColumns.get(3)).isEqualTo(15);
+        assertThat(secondColumns.getString(4)).matches(createLinkMatcher("file-1", 15));
+        assertThat(secondColumns.get(5)).isEqualTo("1");
     }
 
     private static String createFileLinkMatcher(final String fileName, final int lineNumber) {
