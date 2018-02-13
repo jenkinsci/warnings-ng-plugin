@@ -56,7 +56,7 @@ class DefaultLabelProviderTest {
     }
 
     void assertThatColumnsAreValid(final JSONArray columns, int index) {
-        assertThat(columns.get(0)).isEqualTo("<div class=\"details-control\" />");
+        assertThat(columns.get(0)).isEqualTo("<div class=\"details-control\" data-description=\"\"/>");
         String actual = columns.getString(1);
         assertThat(actual).matches(createFileLinkMatcher("file-" + index, 15));
         assertThat(columns.get(2)).isEqualTo(createPropertyLink("packageName", "package-" + index));

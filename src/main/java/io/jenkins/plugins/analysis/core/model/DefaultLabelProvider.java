@@ -96,8 +96,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
 
     protected JSONArray toJson(final Issue issue, final AgeBuilder ageBuilder) {
         JSONArray columns = new JSONArray();
-        columns.add(String.format("<div class=\"details-control\" data-description=\"%s\"/>",
-                StringEscapeUtils.escapeHtml4(getDescription(issue))));
+        columns.add(formatDetails(issue));
         columns.add(formatFileName(issue));
         columns.add(formatProperty("packageName", issue.getPackageName()));
         columns.add(formatProperty("category", issue.getCategory()));
@@ -105,6 +104,11 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
         columns.add(formatPriority(issue.getPriority()));
         columns.add(formatAge(issue, ageBuilder));
         return columns;
+    }
+
+    protected String formatDetails(final Issue issue) {
+        return String.format("<div class=\"details-control\" data-description=\"%s\"/>",
+                StringEscapeUtils.escapeHtml4(getDescription(issue)));
     }
 
     protected String formatAge(final Issue issue, final AgeBuilder ageBuilder) {
