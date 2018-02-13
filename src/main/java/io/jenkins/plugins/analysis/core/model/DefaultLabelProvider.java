@@ -4,6 +4,7 @@ import javax.annotation.CheckForNull;
 import java.util.function.Function;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import edu.hm.hafner.analysis.IntegerParser;
 import edu.hm.hafner.analysis.Issue;
@@ -67,6 +68,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
     @Override
     public String[] getTableHeaders() {
         return new String[] {
+                Messages.Table_Column_Details(),
                 Messages.Table_Column_File(),
                 Messages.Table_Column_Package(),
                 Messages.Table_Column_Category(),
@@ -78,7 +80,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
 
     @Override
     public int[] getTableWidths() {
-        return new int[] {1, 2, 1, 1, 1, 1};
+        return new int[] {1, 1, 2, 1, 1, 1, 1};
     }
 
     @Override
@@ -94,6 +96,8 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
 
     protected JSONArray toJson(final Issue issue, final AgeBuilder ageBuilder) {
         JSONArray columns = new JSONArray();
+        columns.add(String.format("<div class=\"details-control\" data-description=\"%s\"/>",
+                StringEscapeUtils.escapeHtml4(getDescription(issue))));
         columns.add(formatFileName(issue));
         columns.add(formatProperty("packageName", issue.getPackageName()));
         columns.add(formatProperty("category", issue.getCategory()));

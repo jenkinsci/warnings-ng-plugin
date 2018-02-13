@@ -3,26 +3,23 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
 
   <st:documentation>
-    Renders a doughnut graph showing fixed, new and existing issues.
+    Renders a doughnut graph showing fixed, new and outstanding issues.
   </st:documentation>
 
   <div class="col-sm-6">
-
     <div class="card card-marg-bot">
-      <div class="card-body">
+      <div data-role="page" class="card-body" >
 
-        <h5 class="card-title">${%Trend}
-          <i class="fa fa-line-chart icon-right fa-2x" aria-hidden="true"/>
+        <!-- data-xxx-issues...: model values for chart -->
+        <h5 id="number-issues" class="card-title"
+            data-new-issues="${size(it.newIssues)}"
+            data-fixed-issues="${size(it.fixedIssues)}"
+            data-outstanding-issues="${size(it.outstandingIssues)}">
+          ${%Trend}<i class="fa fa-line-chart icon-right fa-2x" aria-hidden="true"/>
         </h5>
 
-        <div style="display: none">
-          <span id="numberOfNewWarnings">${size(it.newIssues)}</span>
-          <span id="numberOfFixedWarnings">${size(it.fixedIssues)}</span>
-          <span id="numberOfExistingWarnings">${size(it.outstandingIssues)}</span>
-        </div>
-
         <div class="graph-size">
-          <canvas id="doughnut-trend-summary" class="graph-cursor-pointer" width="100" height="100"/>
+          <canvas id="trend-chart" class="graph-cursor-pointer" width="100" height="100"/>
         </div>
       </div>
     </div>

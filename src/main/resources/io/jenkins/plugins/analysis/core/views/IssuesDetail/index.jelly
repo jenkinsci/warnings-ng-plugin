@@ -13,7 +13,7 @@
             crossorigin="anonymous"/>
       <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css"/>
 
-      <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/bootstrap-customized/bootstrap-customized.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/custom-styles/custom-style.css"/>
       <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/font-awesome470/font-awesome.css"/>
       <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/material-blue-grey.css"/>
 

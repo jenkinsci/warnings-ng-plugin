@@ -1,19 +1,18 @@
 (function ($) {
-    var highPriority = $('#HIGH').text();
-    var normalPriority = $('#NORMAL').text();
-    var lowPriority = $('#LOW').text();
+    var numberPriorities = $('#number-priorities');
 
-    var canvas = document.getElementById("doughnut-priorities-summary");
-    var ctx = canvas.getContext("2d");
-    ctx.height = 200;
-    ctx.width = 200;
-    var prioritiesSummaryChart = new Chart(ctx, {
+    var summary = document.getElementById("priorities-chart");
+    var context = summary.getContext("2d");
+    context.height = 200;
+    context.width = 200;
+    var prioritiesSummaryChart = new Chart(context, {
         type: 'doughnut',
         data: {
+            // FIXME: i18n
             labels: ["High", "Normal", "Low"],
             datasets: [{
                 label: 'High priority, Normal priority, Low priority',
-                data: [highPriority, normalPriority, lowPriority],
+                data: [numberPriorities.data('high'), numberPriorities.data('normal'), numberPriorities.data('low')],
                 backgroundColor: [
                     '#f5c6cb',
                     '#ffeeba',
@@ -31,24 +30,20 @@
         }
     });
 
-    canvas.onclick = function (evt) {
+    /**
+     * @summary adding a on click event to the chart
+     * @link http://www.chartjs.org/docs/latest/developers/api.html
+     * @event click
+     */
+    summary.onclick = function (evt) {
         var activePoints = prioritiesSummaryChart.getElementsAtEvent(evt);
         if (activePoints[0]) {
             var chartData = activePoints[0]['_chart'].config.data;
             var idx = activePoints[0]['_index'];
 
             var url = chartData.labels[idx];
-            window.open(url, "_self");
+            window.open(url, '_self');
         }
     };
 
 })(jQuery);
-
-// .getElementsAtEvent(e)
-//
-// Looks for the element under the event point, then returns all elements at
-// the same data index. This is used internally for 'label' mode highlighting.
-//
-// Calling getElementsAtEvent(event) on your Chart instance passing an
-// argument of an event, or jQuery event, will return the point elements
-// that are at that the same position of that event.
