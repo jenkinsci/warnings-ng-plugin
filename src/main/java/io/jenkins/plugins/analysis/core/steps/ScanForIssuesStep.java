@@ -50,7 +50,8 @@ import hudson.plugins.analysis.util.EncodingValidator;
  */
 @SuppressWarnings("InstanceVariableMayNotBeInitialized")
 public class ScanForIssuesStep extends Step {
-    private String defaultEncoding;
+    private String logFileEncoding;
+    private String sourceCodeEncoding;
     private boolean shouldDetectModules;
     private String pattern;
     private StaticAnalysisTool tool;
@@ -83,7 +84,7 @@ public class ScanForIssuesStep extends Step {
     }
 
     /**
-     * Sets the static analysis tool that produced the issues.
+     * Sets the static analysis tool that will scan files and create issues.
      *
      * @param tool
      *         the static analysis tool
@@ -111,20 +112,35 @@ public class ScanForIssuesStep extends Step {
     }
 
     @CheckForNull
-    public String getDefaultEncoding() {
-        return defaultEncoding;
+    public String getLogFileEncoding() {
+        return logFileEncoding;
     }
 
     /**
-     * Sets the default encoding used to read files (warnings, source code, etc.).
+     * Sets the default encoding used to read the log files that contain the warnings.
      *
-     * @param defaultEncoding
+     * @param logFileEncoding
      *         the encoding, e.g. "ISO-8859-1"
      */
-    // FIXME: two encodings are required: log file AND source file
     @DataBoundSetter
-    public void setDefaultEncoding(final String defaultEncoding) {
-        this.defaultEncoding = defaultEncoding;
+    public void setLogFileEncoding(final String logFileEncoding) {
+        this.logFileEncoding = logFileEncoding;
+    }
+
+    @CheckForNull
+    public String getSourceCodeEncoding() {
+        return sourceCodeEncoding;
+    }
+
+    /**
+     * Sets the default encoding used to read the log files that contain the warnings.
+     *
+     * @param sourceCodeEncoding
+     *         the encoding, e.g. "ISO-8859-1"
+     */
+    @DataBoundSetter
+    public void setSourceCodeEncoding(final String sourceCodeEncoding) {
+        this.sourceCodeEncoding = sourceCodeEncoding;
     }
 
     @Override
@@ -136,7 +152,8 @@ public class ScanForIssuesStep extends Step {
      * Actually performs the execution of the associated step.
      */
     public static class Execution extends SynchronousNonBlockingStepExecution<Issues<?>> {
-        private final String defaultEncoding;
+        private final String logFileEncoding;
+        private final String sourceCodeEncoding;
         private final boolean shouldDetectModules;
         private final StaticAnalysisTool tool;
         private final String pattern;
@@ -145,10 +162,24 @@ public class ScanForIssuesStep extends Step {
         protected Execution(@Nonnull final StepContext context, final ScanForIssuesStep step) {
             super(context);
 
-            defaultEncoding = step.getDefaultEncoding();
+            logFileEncoding = step.getLogFileEncoding();
+            sourceCodeEncoding = step.getSourceCodeEncoding();
             shouldDetectModules = step.getShouldDetectModules();
             tool = step.getTool();
             pattern = step.getPattern();
+        }
+
+        @Override
+        protected Issues<?> run() throws IOException, InterruptedException, IllegalStateException {
+            FilePath workspace = getWorkspace();
+
+            Logger logger = createLogger();
+            Issues<?> issues = findIssues(workspace, logger);
+            resolveAbsolutePaths(issues, workspace, logger);
+            resolvePackageNames(issues, logger);
+            createFingerprints(issues, logger);
+
+            return issues;
         }
 
         private Logger createLogger() throws IOException, InterruptedException {
@@ -163,22 +194,21 @@ public class ScanForIssuesStep extends Step {
             return getContext().get(Run.class);
         }
 
-        @Override
-        protected Issues<?> run() throws IOException, InterruptedException, IllegalStateException {
+        private FilePath getWorkspace() throws IOException, InterruptedException {
             FilePath workspace = getContext().get(FilePath.class);
-
             if (workspace == null) {
                 throw new IllegalStateException("No workspace set for step " + this);
             }
-            else {
-                Logger logger = createLogger();
 
-                Issues<?> issues = findIssues(workspace, logger);
-                resolveAbsolutePaths(issues, workspace, logger);
-                resolvePackageNames(issues, logger);
-                createFingerprints(issues, logger);
-                return issues;
-            }
+            return workspace;
+        }
+
+        private Charset getLogFileCharset() {
+            return EncodingValidator.defaultCharset(logFileEncoding);
+        }
+
+        private Charset getSourceCodeCharset() {
+            return EncodingValidator.defaultCharset(sourceCodeEncoding);
         }
 
         private Issues<?> findIssues(final FilePath workspace, final Logger logger)
@@ -203,8 +233,9 @@ public class ScanForIssuesStep extends Step {
         private void resolvePackageNames(final Issues<?> issues, final Logger logger) {
             Instant start = Instant.now();
 
+            logger.log("Using encoding '%s' to resolve package names (or namespaces)", getSourceCodeCharset());
             PackageNameResolver resolver = new PackageNameResolver();
-            resolver.run(issues, new IssueBuilder(), getCharset());
+            resolver.run(issues, new IssueBuilder(), getSourceCodeCharset());
             logIssuesMessages(issues, logger);
 
             logger.log("Resolving package names took %s", Duration.between(start, Instant.now()));
@@ -223,35 +254,32 @@ public class ScanForIssuesStep extends Step {
         private void createFingerprints(final Issues<?> issues, final Logger logger) {
             Instant start = Instant.now();
 
+            logger.log("Using encoding '%s' to read source files", getSourceCodeCharset());
             FingerprintGenerator generator = new FingerprintGenerator();
-            generator.run(new FullTextFingerprint(), issues, new IssueBuilder(), getCharset());
+            generator.run(new FullTextFingerprint(), issues, new IssueBuilder(), getSourceCodeCharset());
             logIssuesMessages(issues, logger);
 
             logger.log("Extracting fingerprints took %s", Duration.between(start, Instant.now()));
         }
 
-        private Charset getCharset() {
-            return EncodingValidator.defaultCharset(defaultEncoding);
-        }
-
-        private Issues<?> scanConsoleLog(final FilePath workspace,
-                final Logger logger) throws IOException, InterruptedException {
+        private Issues<?> scanConsoleLog(final FilePath workspace, final Logger logger)
+                throws IOException, InterruptedException {
             logger.log("Parsing console log (workspace: '%s')", workspace);
 
             Issues<?> issues = tool.createParser().parse(getRun().getLogFile(),
-                    getCharset(), new IssueBuilder().setOrigin(tool.getId()),
+                    getLogFileCharset(), new IssueBuilder().setOrigin(tool.getId()),
                     line -> ConsoleNote.removeNotes(line));
             logIssuesMessages(issues, logger);
             return issues;
         }
 
-        private Issues<Issue> scanFiles(final FilePath workspace,
-                final Logger logger) throws IOException, InterruptedException {
+        private Issues<Issue> scanFiles(final FilePath workspace, final Logger logger)
+                throws IOException, InterruptedException {
             IssueParser<?> parser = tool.createParser();
             // FIXME: ID is not needed, origin should be set afterwards!
             // Actually issue setters should be protected so that all updates need to go through issues
             FilesParser filesParser = new FilesParser(expandEnvironmentVariables(pattern), parser,
-                    tool.getId(), shouldDetectModules, defaultEncoding);
+                    tool.getId(), shouldDetectModules, logFileEncoding);
             Issues<Issue> issues = workspace.act(filesParser);
 
             logIssuesMessages(issues, logger);
@@ -267,6 +295,7 @@ public class ScanForIssuesStep extends Step {
             }
         }
 
+        // FIXME: expansion should be extracted to new class
         /** Maximum number of times that the environment expansion is executed. */
         private static final int RESOLVE_VARIABLES_DEPTH = 10;
 
@@ -313,8 +342,7 @@ public class ScanForIssuesStep extends Step {
         @Override
         public String getDisplayName() {
             return "Scan files or the console log for issues";
-        }
-
+        } // TODO: i18n
 
         public Collection<? extends StaticAnalysisToolDescriptor> getAvailableTools() {
             return Jenkins.getInstance().getDescriptorList(StaticAnalysisTool.class);
