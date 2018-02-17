@@ -2,7 +2,11 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.Instant;
@@ -23,10 +27,11 @@ import com.google.common.collect.ImmutableSet;
 
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.ModuleDetector;
+import edu.hm.hafner.analysis.ModuleDetector.FileSystem;
 import edu.hm.hafner.analysis.PackageNameResolver;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool.StaticAnalysisToolDescriptor;
@@ -34,6 +39,7 @@ import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.FilesParser;
 import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.util.LoggerFactory;
+import io.jenkins.plugins.analysis.core.util.ModuleResolver;
 import jenkins.model.Jenkins;
 
 import hudson.EnvVars;
@@ -44,6 +50,7 @@ import hudson.console.ConsoleNote;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.EncodingValidator;
+import hudson.plugins.analysis.util.FileFinder;
 
 /**
  * Scan files or the console log for issues.
@@ -52,7 +59,6 @@ import hudson.plugins.analysis.util.EncodingValidator;
 public class ScanForIssuesStep extends Step {
     private String logFileEncoding;
     private String sourceCodeEncoding;
-    private boolean shouldDetectModules;
     private String pattern;
     private StaticAnalysisTool tool;
 
@@ -92,23 +98,6 @@ public class ScanForIssuesStep extends Step {
     @DataBoundSetter
     public void setTool(final StaticAnalysisTool tool) {
         this.tool = tool;
-    }
-
-    // FIXME: Should modules be scanned afterwards? Why is this optional?
-    public boolean getShouldDetectModules() {
-        return shouldDetectModules;
-    }
-
-    /**
-     * Enables or disables module scanning. If {@code shouldDetectModules} is set, then the module name is derived by
-     * parsing Maven POM or Ant build files.
-     *
-     * @param shouldDetectModules
-     *         if set to {@code true} then modules are scanned.
-     */
-    @DataBoundSetter
-    public void setShouldDetectModules(final boolean shouldDetectModules) {
-        this.shouldDetectModules = shouldDetectModules;
     }
 
     @CheckForNull
@@ -154,7 +143,6 @@ public class ScanForIssuesStep extends Step {
     public static class Execution extends SynchronousNonBlockingStepExecution<Issues<?>> {
         private final String logFileEncoding;
         private final String sourceCodeEncoding;
-        private final boolean shouldDetectModules;
         private final StaticAnalysisTool tool;
         private final String pattern;
         private int logPosition = 0;
@@ -164,7 +152,6 @@ public class ScanForIssuesStep extends Step {
 
             logFileEncoding = step.getLogFileEncoding();
             sourceCodeEncoding = step.getSourceCodeEncoding();
-            shouldDetectModules = step.getShouldDetectModules();
             tool = step.getTool();
             pattern = step.getPattern();
         }
@@ -176,6 +163,7 @@ public class ScanForIssuesStep extends Step {
             Logger logger = createLogger();
             Issues<?> issues = findIssues(workspace, logger);
             resolveAbsolutePaths(issues, workspace, logger);
+            resolveModuleNames(issues, logger);
             resolvePackageNames(issues, logger);
             createFingerprints(issues, logger);
 
@@ -194,13 +182,19 @@ public class ScanForIssuesStep extends Step {
             return getContext().get(Run.class);
         }
 
-        private FilePath getWorkspace() throws IOException, InterruptedException {
-            FilePath workspace = getContext().get(FilePath.class);
-            if (workspace == null) {
-                throw new IllegalStateException("No workspace set for step " + this);
-            }
+        // FIXME: no exception in getter signatures
+        private FilePath getWorkspace() {
+            try {
+                FilePath workspace = getContext().get(FilePath.class);
+                if (workspace == null) {
+                    throw new IllegalStateException("No workspace set for step " + this);
+                }
 
-            return workspace;
+                return workspace;
+            }
+            catch (IOException | InterruptedException  exception) {
+                throw new IllegalStateException("Can't obtain workspace for step " + this, exception);
+            }
         }
 
         private Charset getLogFileCharset() {
@@ -228,6 +222,18 @@ public class ScanForIssuesStep extends Step {
 
             logger.log("Parsing took %s", Duration.between(start, Instant.now()));
             return issues;
+        }
+
+        private void resolveModuleNames(final Issues<?> issues, final Logger logger) {
+            Instant start = Instant.now();
+
+            logger.log("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
+            ModuleResolver resolver = new ModuleResolver();
+            File workspace = new File(getWorkspace().getRemote());
+            resolver.run(issues, workspace, new ModuleDetector(workspace, new DefaultFileSystem()));
+            logIssuesMessages(issues, logger);
+
+            logger.log("Resolving module names took %s", Duration.between(start, Instant.now()));
         }
 
         private void resolvePackageNames(final Issues<?> issues, final Logger logger) {
@@ -273,14 +279,14 @@ public class ScanForIssuesStep extends Step {
             return issues;
         }
 
-        private Issues<Issue> scanFiles(final FilePath workspace, final Logger logger)
+        private Issues<?> scanFiles(final FilePath workspace, final Logger logger)
                 throws IOException, InterruptedException {
             IssueParser<?> parser = tool.createParser();
             // FIXME: ID is not needed, origin should be set afterwards!
             // Actually issue setters should be protected so that all updates need to go through issues
             FilesParser filesParser = new FilesParser(expandEnvironmentVariables(pattern), parser,
-                    tool.getId(), shouldDetectModules, logFileEncoding);
-            Issues<Issue> issues = workspace.act(filesParser);
+                    tool.getId(), logFileEncoding);
+            Issues<?> issues = workspace.act(filesParser);
 
             logIssuesMessages(issues, logger);
 
@@ -326,6 +332,24 @@ public class ScanForIssuesStep extends Step {
         }
     }
 
+    /**
+     * Provides file system operations using real IO.
+     */
+    private static final class DefaultFileSystem implements FileSystem {
+        @Override
+        public InputStream create(final String fileName) throws FileNotFoundException {
+            return new FileInputStream(new File(fileName));
+        }
+
+        @Override
+        public String[] find(final File root, final String pattern) {
+            return new FileFinder(pattern).find(root);
+        }
+    }
+
+    /**
+     * Descriptor for this step: defines the context and the UI elements.
+     */
     @Extension
     public static class Descriptor extends StepDescriptor {
         @Override
