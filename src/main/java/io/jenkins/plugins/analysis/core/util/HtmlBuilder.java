@@ -5,6 +5,7 @@ package io.jenkins.plugins.analysis.core.util;
  *
  * @author Ulli Hafner
  */
+// FIXME: replace with lib
 public class HtmlBuilder {
     private final StringBuilder buffer = new StringBuilder();
 

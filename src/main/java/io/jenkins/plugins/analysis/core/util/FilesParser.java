@@ -14,11 +14,8 @@ import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import jenkins.MasterToSlaveFileCallable;
 
-import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.FileFinder;
-import hudson.plugins.analysis.util.ModuleDetector;
-import hudson.plugins.analysis.util.NullModuleDetector;
 import hudson.remoting.VirtualChannel;
 
 /**
@@ -26,14 +23,12 @@ import hudson.remoting.VirtualChannel;
  *
  * @author Ulli Hafner
  */
-public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
+// FIXME: do not create issues here
+public class FilesParser extends MasterToSlaveFileCallable<Issues<?>> {
     private final String filePattern;
-    private final IssueParser parser;
+    private final IssueParser<?> parser;
     private final String id;
-
-    /** Determines whether module names should be derived from Maven pom.xml or Ant build.xml files. */
-    private final boolean shouldDetectModules;
-    private final String defaultEncoding;
+    private final String encoding;
 
     /**
      * Creates a new instance of {@link FilesParser}.
@@ -44,18 +39,15 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
      *         the parser to scan the found files for issues
      * @param id
      *         the ID of the parser
-     * @param shouldDetectModules
-     *         determines whether modules should be detected from pom.xml or build.xml files
-     * @param defaultEncoding
-     *         the default encoding used to read files (warnings, source code, etc.).
+     * @param encoding
+     *         the encoding to use when reading files
      */
-    public FilesParser(final String filePattern, final IssueParser parser, final String id,
-            final boolean shouldDetectModules, final String defaultEncoding) {
+    public FilesParser(final String filePattern, final IssueParser<?> parser, final String id,
+            final String encoding) {
         this.filePattern = filePattern;
         this.parser = parser;
         this.id = id;
-        this.shouldDetectModules = shouldDetectModules;
-        this.defaultEncoding = defaultEncoding;
+        this.encoding = encoding;
     }
 
     @Override
@@ -66,10 +58,10 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
 
         String[] fileNames = new FileFinder(filePattern).find(workspace);
         if (fileNames.length == 0) {
-            issues.logError("No files found. Configuration error?");
+            issues.logError("No files found for pattern '%s'. Configuration error?", filePattern);
         }
         else {
-            issues.logInfo("--> found %s", plural(fileNames.length, "file"));
+            issues.logInfo("-> found %s", plural(fileNames.length, "file"));
             parseFiles(workspace, fileNames, issues);
         }
 
@@ -87,8 +79,6 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
      *         the issues of the parsing
      */
     private void parseFiles(final File workspace, final String[] fileNames, final Issues<Issue> issues) {
-        ModuleDetector detector = createModuleDetector(workspace);
-
         for (String fileName : fileNames) {
             File file = new File(fileName);
 
@@ -96,30 +86,18 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
                 file = new File(workspace, fileName);
             }
 
-            String module = detector.guessModuleName(file.getAbsolutePath());
-
             if (!file.canRead()) {
-                issues.logError(Messages.FilesParser_Error_NoPermission(module, file));
+                issues.logError("Skipping file '%s' because Jenkins has no permission to read the file.", fileName);
             }
             else if (file.length() <= 0) {
-                issues.logError(Messages.FilesParser_Error_EmptyFile(module, file));
+                issues.logError("Skipping file '%s' because it's empty.", fileName);
             }
             else {
                 // FIXME: setting of attributes should be a lambda on issue builder so that builder can be created after each warning
                 IssueBuilder builder = new IssueBuilder();
-                builder.setModuleName(module);
                 builder.setOrigin(id);
                 parseFile(file, issues, builder);
             }
-        }
-    }
-
-    private ModuleDetector createModuleDetector(final File workspace) {
-        if (shouldDetectModules) {
-            return new ModuleDetector(workspace);
-        }
-        else {
-            return new NullModuleDetector();
         }
     }
 
@@ -142,9 +120,9 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<Issue>> {
      */
     private void parseFile(final File file, final Issues<Issue> issues, final IssueBuilder builder) {
         try {
-            Issues<Issue> result = parser.parse(file, EncodingValidator.defaultCharset(defaultEncoding),
+            Issues<?> result = parser.parse(file, EncodingValidator.defaultCharset(encoding),
                     builder, Function.identity());
-
+            // FIXME: why two issue instances?
             issues.addAll(result);
             issues.logInfo("Successfully parsed file %s: found %s (skipped %s)", file,
                     plural(issues.getSize(), "issue"),
