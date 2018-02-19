@@ -365,8 +365,8 @@ public class ScanForIssuesStep extends Step {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return "Scan files or the console log for issues";
-        } // TODO: i18n
+            return Messages.ScanForIssues_DisplayName();
+        }
 
         public Collection<? extends StaticAnalysisToolDescriptor> getAvailableTools() {
             return Jenkins.getInstance().getDescriptorList(StaticAnalysisTool.class);

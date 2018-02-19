@@ -3,8 +3,8 @@ package io.jenkins.plugins.analysis.core.util;
 import java.io.File;
 import java.util.function.Function;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
@@ -96,7 +96,7 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<?>> {
                 // FIXME: setting of attributes should be a lambda on issue builder so that builder can be created after each warning
                 IssueBuilder builder = new IssueBuilder();
                 builder.setOrigin(id);
-                parseFile(file, issues, builder);
+                aggregateIssuesOfFile(file, issues, builder);
             }
         }
     }
@@ -111,29 +111,24 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<?>> {
         return builder.toString();
     }
 
-    /**
-     * Parses the specified file and stores all found annotations. If the file could not be parsed then an error message
-     * is appended to the issues.
-     *
-     * @param file
-     *         the file to parse
-     */
-    private void parseFile(final File file, final Issues<Issue> issues, final IssueBuilder builder) {
+    private void aggregateIssuesOfFile(final File file, final Issues<Issue> issues, final IssueBuilder builder) {
         try {
             Issues<?> result = parser.parse(file, EncodingValidator.defaultCharset(encoding),
                     builder, Function.identity());
-            // FIXME: why two issue instances?
             issues.addAll(result);
             issues.logInfo("Successfully parsed file %s: found %s (skipped %s)", file,
                     plural(issues.getSize(), "issue"),
                     plural(issues.getDuplicatesSize(), "duplicate"));
         }
         catch (ParsingException exception) {
-            issues.logError(Messages.FilesParser_Error_Exception(file) + "\n\n"
-                    + ExceptionUtils.getStackTrace((Throwable) ObjectUtils.defaultIfNull(exception.getCause(), exception)));
+            issues.logError("Parsing of file '%s' failed due to an exception: \n\n%s", file, getStackTrace(exception));
         }
         catch (ParsingCanceledException ignored) {
             issues.logInfo("Parsing of file %s has been canceled", file);
         }
+    }
+
+    private String getStackTrace(final ParsingException exception) {
+        return ExceptionUtils.getStackTrace(ObjectUtils.defaultIfNull(exception.getCause(), exception));
     }
 }
