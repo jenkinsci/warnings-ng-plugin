@@ -28,7 +28,6 @@ import com.google.common.collect.ImmutableSet;
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.ModuleDetector;
 import edu.hm.hafner.analysis.ModuleDetector.FileSystem;
@@ -36,7 +35,7 @@ import edu.hm.hafner.analysis.PackageNameResolver;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool.StaticAnalysisToolDescriptor;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
-import io.jenkins.plugins.analysis.core.util.FilesParser;
+import io.jenkins.plugins.analysis.core.util.FilesScanner;
 import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.util.LoggerFactory;
 import io.jenkins.plugins.analysis.core.util.ModuleResolver;
@@ -273,20 +272,17 @@ public class ScanForIssuesStep extends Step {
             logger.log("Parsing console log (workspace: '%s')", workspace);
 
             Issues<?> issues = tool.createParser().parse(getRun().getLogFile(),
-                    getLogFileCharset(), new IssueBuilder().setOrigin(tool.getId()),
-                    line -> ConsoleNote.removeNotes(line));
+                    getLogFileCharset(), line -> ConsoleNote.removeNotes(line));
+
             logIssuesMessages(issues, logger);
+
             return issues;
         }
 
         private Issues<?> scanFiles(final FilePath workspace, final Logger logger)
                 throws IOException, InterruptedException {
-            IssueParser<?> parser = tool.createParser();
-            // FIXME: ID is not needed, origin should be set afterwards!
-            // Actually issue setters should be protected so that all updates need to go through issues
-            FilesParser filesParser = new FilesParser(expandEnvironmentVariables(pattern), parser,
-                    tool.getId(), logFileEncoding);
-            Issues<?> issues = workspace.act(filesParser);
+            Issues<?> issues = workspace.act(
+                    new FilesScanner(expandEnvironmentVariables(pattern), tool.createParser(), logFileEncoding));
 
             logIssuesMessages(issues, logger);
 
