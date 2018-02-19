@@ -1,13 +1,12 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import java.io.File;
-import java.util.function.Function;
+import java.io.Serializable;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.ParsingCanceledException;
@@ -19,34 +18,30 @@ import hudson.plugins.analysis.util.FileFinder;
 import hudson.remoting.VirtualChannel;
 
 /**
- * Parses all files that match a specified pattern for {@link Issues issues}.
+ * Scans files that match a specified Ant files pattern for issues and aggregates the found issues into a single {@link
+ * Issues issues} instance. This callable will be invoked on a slave agent so all fields and the returned issues need to
+ * be {@link Serializable}.
  *
  * @author Ulli Hafner
  */
-// FIXME: do not create issues here
-public class FilesParser extends MasterToSlaveFileCallable<Issues<?>> {
+public class FilesScanner extends MasterToSlaveFileCallable<Issues<?>> {
     private final String filePattern;
     private final IssueParser<?> parser;
-    private final String id;
     private final String encoding;
 
     /**
-     * Creates a new instance of {@link FilesParser}.
+     * Creates a new instance of {@link FilesScanner}.
      *
      * @param filePattern
      *         ant file-set pattern to scan for files to parse
      * @param parser
      *         the parser to scan the found files for issues
-     * @param id
-     *         the ID of the parser
      * @param encoding
-     *         the encoding to use when reading files
+     *         encoding of the files to parse
      */
-    public FilesParser(final String filePattern, final IssueParser<?> parser, final String id,
-            final String encoding) {
+    public FilesScanner(final String filePattern, final IssueParser<?> parser, final String encoding) {
         this.filePattern = filePattern;
         this.parser = parser;
-        this.id = id;
         this.encoding = encoding;
     }
 
@@ -62,23 +57,13 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<?>> {
         }
         else {
             issues.logInfo("-> found %s", plural(fileNames.length, "file"));
-            parseFiles(workspace, fileNames, issues);
+            scanFiles(workspace, fileNames, issues);
         }
 
         return issues;
     }
 
-    /**
-     * Parses the specified collection of files and appends the results to the provided container.
-     *
-     * @param workspace
-     *         the workspace root
-     * @param fileNames
-     *         the names of the file to parse
-     * @param issues
-     *         the issues of the parsing
-     */
-    private void parseFiles(final File workspace, final String[] fileNames, final Issues<Issue> issues) {
+    private void scanFiles(final File workspace, final String[] fileNames, final Issues<Issue> issues) {
         for (String fileName : fileNames) {
             File file = new File(fileName);
 
@@ -93,28 +78,14 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<?>> {
                 issues.logError("Skipping file '%s' because it's empty.", fileName);
             }
             else {
-                // FIXME: setting of attributes should be a lambda on issue builder so that builder can be created after each warning
-                IssueBuilder builder = new IssueBuilder();
-                builder.setOrigin(id);
-                aggregateIssuesOfFile(file, issues, builder);
+                aggregateIssuesOfFile(file, issues);
             }
         }
     }
 
-    private String plural(final int count, final String itemName) {
-        StringBuilder builder = new StringBuilder(itemName);
-        if (count != 1) {
-            builder.append('s');
-        }
-        builder.insert(0, ' ');
-        builder.insert(0, count);
-        return builder.toString();
-    }
-
-    private void aggregateIssuesOfFile(final File file, final Issues<Issue> issues, final IssueBuilder builder) {
+    private void aggregateIssuesOfFile(final File file, final Issues<Issue> issues) {
         try {
-            Issues<?> result = parser.parse(file, EncodingValidator.defaultCharset(encoding),
-                    builder, Function.identity());
+            Issues<?> result = parser.parse(file, EncodingValidator.defaultCharset(encoding));
             issues.addAll(result);
             issues.logInfo("Successfully parsed file %s: found %s (skipped %s)", file,
                     plural(issues.getSize(), "issue"),
@@ -126,6 +97,16 @@ public class FilesParser extends MasterToSlaveFileCallable<Issues<?>> {
         catch (ParsingCanceledException ignored) {
             issues.logInfo("Parsing of file %s has been canceled", file);
         }
+    }
+
+    private String plural(final int count, final String itemName) {
+        StringBuilder builder = new StringBuilder(itemName);
+        if (count != 1) {
+            builder.append('s');
+        }
+        builder.insert(0, ' ');
+        builder.insert(0, count);
+        return builder.toString();
     }
 
     private String getStackTrace(final ParsingException exception) {

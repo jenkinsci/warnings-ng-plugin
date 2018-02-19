@@ -10,7 +10,6 @@ import java.util.function.Function;
 
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Issues;
 
@@ -68,11 +67,11 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
         }
 
         @Override
-        public Issues<Issue> parse(final File file, final Charset charset, final IssueBuilder builder,
+        public Issues<Issue> parse(final File file, final Charset charset,
                 final Function<String, String> preProcessor) {
             Issues<Issue> aggregated = new Issues<>();
             for (AbstractParser<Issue> parser : parsers) {
-                aggregated.addAll(parser.parse(file, charset, builder, preProcessor));
+                aggregated.addAll(parser.parse(file, charset, preProcessor));
             }
             return aggregated;
         }
