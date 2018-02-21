@@ -53,11 +53,27 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
      */
     public abstract IssueParser<?> createParser();
 
+    /**
+     * Returns whether this parser can scan the console log. Typically, only line based parsers can scan the console
+     * log. XML parsers should always parse a given file only.
+     *
+     * @return the parser to use
+     */
+    public boolean canScanConsoleLog() {
+        return true;
+    }
+
     /** Descriptor for {@link StaticAnalysisTool}. **/
     public abstract static class StaticAnalysisToolDescriptor extends Descriptor<StaticAnalysisTool> {
         private final String id;
 
-        public StaticAnalysisToolDescriptor(final String id) {
+        /**
+         * Creates a new instance of {@link StaticAnalysisToolDescriptor} with the given ID.
+         *
+         * @param id
+         *         the unique ID of the tool
+         */
+        protected StaticAnalysisToolDescriptor(final String id) {
             this.id = id;
         }
 

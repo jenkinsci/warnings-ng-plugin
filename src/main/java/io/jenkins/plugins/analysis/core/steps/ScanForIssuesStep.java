@@ -32,6 +32,7 @@ import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.ModuleDetector;
 import edu.hm.hafner.analysis.ModuleDetector.FileSystem;
 import edu.hm.hafner.analysis.PackageNameResolver;
+import edu.hm.hafner.util.Ensure;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool.StaticAnalysisToolDescriptor;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
@@ -213,6 +214,9 @@ public class ScanForIssuesStep extends Step {
                 issues = scanFiles(workspace, logger);
             }
             else {
+                Ensure.that(tool.canScanConsoleLog()).isTrue(
+                        "Static analysis tool %s cannot scan console log output, please define a file pattern",
+                        tool.getName());
                 logger.log("Sleeping for 5 seconds due to JENKINS-32191...");
                 Thread.sleep(5000);
                 issues = scanConsoleLog(workspace, logger);
