@@ -252,5 +252,4 @@ public class StepsITest extends PipelineITest {
             return HttpResponses.plainText("triggered");
         }
     }
-
 }
