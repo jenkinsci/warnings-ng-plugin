@@ -12,6 +12,7 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
@@ -50,7 +51,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     private transient Run<?, ?> owner;
 
     /**
-     * All old issues: i.e. all issues, that are part of the current and previous report.
+     * All outstanding issues: i.e. all issues, that are part of the current and previous report.
      */
     private transient WeakReference<Issues<Issue>> outstandingIssuesReference;
     /**
@@ -65,14 +66,13 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     private transient WeakReference<Issues<Issue>> fixedIssuesReference;
 
     private final QualityGate qualityGate;
-    private final String defaultEncoding;
 
-    /** The number of warnings in this build. */
+    /** The total number of issues in this build. */
     private final int size;
-    /** The number of new warnings in this build. */
+    /** The number of new issues in this build. */
     private final int newSize;
-    /** The number of fixed warnings in this build. */
-    private final int numberOfFixedWarnings;
+    /** The number of fixed issues in this build. */
+    private final int fixedSize;
 
     /** The number of low priority warnings in this build. */
     private final int lowPrioritySize;
@@ -128,13 +128,11 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      *
      * @param owner
      *         the current run as owner of this action
-     * @param qualityGate
-     *         enforces the quality gate for this project
      */
-    public AnalysisResult(final String name, final Run owner, final ReferenceProvider referenceProvider,
-            final Optional<AnalysisResult> previousResult, final QualityGate qualityGate, final String defaultEncoding,
+    public AnalysisResult(final String name, final Run<?, ?> owner, final ReferenceProvider referenceProvider,
+            final Optional<AnalysisResult> previousResult, final QualityGate qualityGate,
             final Issues<Issue> issues) {
-        this(name, owner, referenceProvider, previousResult, qualityGate, defaultEncoding, issues, true);
+        this(name, owner, referenceProvider, previousResult, qualityGate, issues, true);
     }
 
     /**
@@ -142,18 +140,15 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      *
      * @param owner
      *         the current run as owner of this action
-     * @param qualityGate
-     *         enforces the quality gate for this project
      */
     // FIXME: should we ignore the issues in previousResult?
     protected AnalysisResult(final String name, final Run<?, ?> owner,
             final ReferenceProvider referenceProvider,
-            final Optional<AnalysisResult> previousResult, final QualityGate qualityGate, final String defaultEncoding,
+            final Optional<AnalysisResult> previousResult, final QualityGate qualityGate,
             final Issues<Issue> issues, final boolean canSerialize) {
         this.name = name;
         this.owner = owner;
         this.qualityGate = qualityGate;
-        this.defaultEncoding = defaultEncoding;
 
         errors = issues.getErrorMessages();
 
@@ -180,7 +175,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
 
         Issues<Issue> fixedIssues = difference.getFixedIssues();
         fixedIssuesReference = new WeakReference<>(fixedIssues);
-        numberOfFixedWarnings = fixedIssues.size();
+        fixedSize = fixedIssues.size();
 
         computeZeroWarningsHighScore(owner, issues, previousResult, issues.isEmpty());
 
@@ -291,6 +286,34 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     }
 
     /**
+     * Returns the ID of the static analysis result.
+     *
+     * @return the ID
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Returns an optional user provided name for this result. If left empty, the predefined name of the {@link
+     * StaticAnalysisLabelProvider} is used.
+     *
+     * @return optional name
+     */
+    public String getName() {
+        return StringUtils.defaultString(name);
+    }
+
+    /**
+     * Returns the run as owner of this action.
+     *
+     * @return the owner
+     */
+    public Run<?, ?> getOwner() {
+        return owner;
+    }
+
+    /**
      * Sets the run for this result after Jenkins read its data from disk.
      *
      * @param owner
@@ -299,15 +322,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     public void setOwner(final Run<?, ?> owner) {
         this.owner = owner;
         lock = new ReentrantLock();
-    }
-
-    /**
-     * Returns the defined default encoding.
-     *
-     * @return the default encoding
-     */
-    public String getDefaultEncoding() {
-        return defaultEncoding;
     }
 
     /**
@@ -328,15 +342,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         return id + "-issues.xml";
     }
 
-    /**
-     * Returns the build as owner of this action.
-     *
-     * @return the owner
-     */
-    public Run<?, ?> getOwner() {
-        return owner;
-    }
-
     private void serializeAnnotations(final Issues<Issue> outstandingIssues,
             final Issues<Issue> newIssues, final Issues<Issue> fixedIssues) {
         serializeIssues(outstandingIssues, "old");
@@ -354,11 +359,17 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         }
     }
 
-    private WeakReference<Issues<Issue>> getoutstandingIssuesReference() {
+    public Issues<Issue> getIssues() {
+        Issues<Issue> merged = new Issues<>();
+        merged.addAll(getNewIssues(), getOutstandingIssues());
+        return merged;
+    }
+
+    private WeakReference<Issues<Issue>> getOutstandingIssuesReference() {
         return outstandingIssuesReference;
     }
 
-    private void setoutstandingIssuesReference(final WeakReference<Issues<Issue>> outstandingIssuesReference) {
+    private void setOutstandingIssuesReference(final WeakReference<Issues<Issue>> outstandingIssuesReference) {
         this.outstandingIssuesReference = outstandingIssuesReference;
     }
 
@@ -378,14 +389,9 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         this.fixedIssuesReference = fixedIssuesReference;
     }
 
-    public Issues<Issue> getIssues() {
-        Issues<Issue> merged = new Issues<>();
-        merged.addAll(getNewIssues(), getoutstandingIssues());
-        return merged;
-    }
-
-    public Issues<Issue> getoutstandingIssues() {
-        return getIssues(AnalysisResult::getoutstandingIssuesReference, AnalysisResult::setoutstandingIssuesReference, "old");
+    public Issues<Issue> getOutstandingIssues() {
+        return getIssues(AnalysisResult::getOutstandingIssuesReference, AnalysisResult::setOutstandingIssuesReference,
+                "outstanding");
     }
 
     public Issues<Issue> getNewIssues() {
@@ -533,7 +539,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     /**
      * Returns if the current result reached the old successful high score.
      *
-     * @return <code>true</code>, if the current result reached the old successful high score.
+     * @return {@code true}, if the current result reached the old successful high score.
      */
     @Override
     @Exported
@@ -554,7 +560,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     /**
      * Returns whether this build is successful with respect to the {@link HealthDescriptor} of this result.
      *
-     * @return <code>true</code> if the build is successful, <code>false</code> if the build has been set to {@link
+     * @return {@code true} if the build is successful, {@code false} if the build has been set to {@link
      *         Result#UNSTABLE} or {@link Result#FAILURE} by this result.
      */
     @Override
@@ -576,7 +582,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     /**
      * Returns whether the successful state has been touched.
      *
-     * @return <code>true</code> if the successful state has been touched, <code>false</code> otherwise
+     * @return {@code true} if the successful state has been touched, {@code false} otherwise
      */
     @Override
     public boolean isSuccessfulTouched() {
@@ -710,6 +716,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
 
     @Override
     public int getFixedSize() {
-        return numberOfFixedWarnings;
+        return fixedSize;
     }
 }

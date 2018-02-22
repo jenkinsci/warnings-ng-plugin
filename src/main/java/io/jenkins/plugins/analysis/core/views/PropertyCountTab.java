@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.views;
 
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -25,19 +26,17 @@ public class PropertyCountTab extends IssuesDetail {
 
     /**
      * Creates a new instance of {@link PropertyCountTab}.
-     *  @param owner
+     *
+     * @param owner
      *         current build as owner of this action.
-     * @param issues
      * @param property
      *         the property to show the details for
-     * @param labelProvider
      */
-    public PropertyCountTab(final Run<?, ?> owner, final Issues issues, final String defaultEncoding,
+    public PropertyCountTab(final Run<?, ?> owner, final Issues issues, final Charset defaultEncoding,
             final String property, final Function<String, String> propertyFormatter,
             final StaticAnalysisLabelProvider labelProvider, final String url) {
         super(owner, issues, NO_ISSUES, NO_ISSUES, NO_ISSUES, propertyFormatter.apply(property), url, labelProvider,
-                defaultEncoding
-        );
+                defaultEncoding);
 
         this.property = property;
         this.propertyFormatter = propertyFormatter;
@@ -95,12 +94,15 @@ public class PropertyCountTab extends IssuesDetail {
     public long getCount(final String key) {
         return issuesByProperty.get(key).size();
     }
+
     public long getLowCount(final String key) {
         return issuesByProperty.get(key).getLowPrioritySize();
     }
+
     public long getHighCount(final String key) {
         return issuesByProperty.get(key).getHighPrioritySize();
     }
+
     public long getNormalCount(final String key) {
         return issuesByProperty.get(key).getNormalPrioritySize();
     }

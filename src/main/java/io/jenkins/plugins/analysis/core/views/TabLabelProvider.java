@@ -4,20 +4,19 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 
 import hudson.plugins.analysis.Messages;
 
 /**
- * Provides localized labels for the different categories of annotations stored in an annotation container.
+ * Provides localized labels for the different categories of issues.
  *
  * @author Ullrich Hafner
  */
 public class TabLabelProvider {
-    private final Issues<Issue> issues;
+    private final Issues<?> issues;
 
-    public TabLabelProvider(final Issues<Issue> issues) {
+    public TabLabelProvider(final Issues<?> issues) {
         this.issues = issues;
     }
 

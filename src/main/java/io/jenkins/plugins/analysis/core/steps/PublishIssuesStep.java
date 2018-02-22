@@ -502,7 +502,8 @@ public class PublishIssuesStep extends Step {
 
             String id = filtered.getId();
             logger.log("Attaching ResultAction with ID '%s' to run '%s'.", id, run);
-            ResultAction action = new ResultAction(run, result, healthDescriptor, id, name);
+            ResultAction action = new ResultAction(run, result, healthDescriptor, id, name,
+                    EncodingValidator.defaultCharset(defaultEncoding));
             run.addAction(action);
 
             return action;
@@ -521,8 +522,9 @@ public class PublishIssuesStep extends Step {
             ReferenceProvider referenceProvider = ReferenceFinder.create(run,
                     selector, usePreviousBuildAsReference, useStableBuildAsReference);
             BuildHistory buildHistory = new BuildHistory(run, selector);
+
             return new AnalysisResult(name, run, referenceProvider, buildHistory.getPreviousResult(),
-                    qualityGate, defaultEncoding, filtered);
+                    qualityGate, filtered);
         }
     }
 

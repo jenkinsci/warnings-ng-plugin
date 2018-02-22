@@ -93,7 +93,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
 
     private void mergeResults(final Optional<AnalysisResult> current, final Map<String, Integer[]> annotationCountByUser) {
         current.ifPresent(analysisResult -> {
-            Issues<Issue> issues = analysisResult.getoutstandingIssues();
+            Issues<Issue> issues = analysisResult.getOutstandingIssues();
             for (Issue annotation : issues) {
 //                String author = annotation.getAuthor(); FIXME: no author anymore
                 String author = "FIXME";

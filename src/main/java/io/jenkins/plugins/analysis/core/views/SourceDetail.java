@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.io.IOUtils;
@@ -23,7 +24,6 @@ import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 
 import hudson.model.ModelObject;
 import hudson.model.Run;
-import hudson.plugins.analysis.util.EncodingValidator;
 
 /**
  * Renders a source file containing an annotation for the whole file or a specific line number.
@@ -47,7 +47,7 @@ public class SourceDetail implements ModelObject {
     /** The rendered source file. */
     private String sourceCode = StringUtils.EMPTY;
     /** The default encoding to be used when reading and parsing files. */
-    private final String defaultEncoding;
+    private final Charset sourceEncoding;
 
     /**
      * Creates a new instance of this source code object.
@@ -56,13 +56,13 @@ public class SourceDetail implements ModelObject {
      *         the current build as owner of this object
      * @param annotation
      *         the warning to display in the source file
-     * @param defaultEncoding
-     *         the default encoding to be used when reading and parsing files
+     * @param sourceEncoding
+     *         the encoding to use when displaying source files
      */
-    public SourceDetail(final Run<?, ?> owner, final Issue annotation, final String defaultEncoding) {
+    public SourceDetail(final Run<?, ?> owner, final Issue annotation, final Charset sourceEncoding) {
         this.owner = owner;
         this.annotation = annotation;
-        this.defaultEncoding = defaultEncoding;
+        this.sourceEncoding = sourceEncoding;
         fileName = StringUtils.substringAfterLast(annotation.getFileName(), "/");
 
         initializeContent();
@@ -107,8 +107,7 @@ public class SourceDetail implements ModelObject {
      *         if the source code could not be read
      */
     public final String highlightSource(final InputStream file) throws IOException {
-        JavaSource source = new JavaSourceParser().parse(
-                new InputStreamReader(file, EncodingValidator.defaultCharset(defaultEncoding)));
+        JavaSource source = new JavaSourceParser().parse(new InputStreamReader(file, sourceEncoding));
 
         JavaSource2HTMLConverter converter = new JavaSource2HTMLConverter();
         StringWriter writer = new StringWriter();
@@ -132,6 +131,7 @@ public class SourceDetail implements ModelObject {
 
         LineIterator lineIterator = IOUtils.lineIterator(new StringReader(sourceFile));
 
+        // FIXME: add support for line ranges
         try {
             int lineNumber = 1;
             while (lineNumber < SOURCE_GENERATOR_OFFSET) {

@@ -85,5 +85,5 @@ public interface StaticAnalysisLabelProvider extends ToolTipProvider {
      *
      * @return the table as String
      */
-    JSONObject toJsonArray(Issues<Issue> issues, AgeBuilder ageBuilder);
+    JSONObject toJsonArray(Issues<?> issues, AgeBuilder ageBuilder);
 }
