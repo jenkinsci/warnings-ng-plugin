@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.core.model;
 import javax.annotation.CheckForNull;
 import java.util.function.Function;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
 import edu.hm.hafner.analysis.IntegerParser;
@@ -278,11 +278,11 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
 
         public DefaultAgeBuilder(final int currentBuild, final String resultUrl) {
             this.currentBuild = currentBuild;
-            String cleanUrl = org.apache.commons.lang3.StringUtils.stripEnd(resultUrl, "/");
-            plugin = org.apache.commons.lang3.StringUtils.substringBefore(cleanUrl, "/");
-            int subDetailsCount = org.apache.commons.lang3.StringUtils.countMatches(cleanUrl, "/");
+            String cleanUrl = StringUtils.stripEnd(resultUrl, "/");
+            plugin = StringUtils.substringBefore(cleanUrl, "/");
+            int subDetailsCount = StringUtils.countMatches(cleanUrl, "/");
 
-            backward = org.apache.commons.lang3.StringUtils.repeat("../", subDetailsCount + 2);
+            backward = StringUtils.repeat("../", subDetailsCount + 2);
         }
 
         @Override
