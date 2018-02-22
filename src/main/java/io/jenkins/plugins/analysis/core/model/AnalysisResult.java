@@ -11,6 +11,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -43,6 +45,7 @@ import hudson.plugins.analysis.core.HealthDescriptor;
 public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     private static final long serialVersionUID = 1110545450292087475L;
     private static final Logger LOGGER = Logger.getLogger(AnalysisResult.class.getName());
+    private static final Pattern ISSUES_FILE_NAME = Pattern.compile("issues.xml", Pattern.LITERAL);
 
     private final String id;
     private final String name;
@@ -53,17 +56,17 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     /**
      * All outstanding issues: i.e. all issues, that are part of the current and previous report.
      */
-    private transient WeakReference<Issues<Issue>> outstandingIssuesReference;
+    private transient WeakReference<Issues<?>> outstandingIssuesReference;
     /**
      * All new issues: i.e. all issues, that are part of the current report but have not been shown up in the previous
      * report.
      */
-    private transient WeakReference<Issues<Issue>> newIssuesReference;
+    private transient WeakReference<Issues<?>> newIssuesReference;
     /**
      * All fixed issues: i.e. all issues, that are part of the previous report but are not present in the current report
      * anymore.
      */
-    private transient WeakReference<Issues<Issue>> fixedIssuesReference;
+    private transient WeakReference<Issues<?>> fixedIssuesReference;
 
     private final QualityGate qualityGate;
 
@@ -129,9 +132,9 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      * @param owner
      *         the current run as owner of this action
      */
-    public AnalysisResult(final String name, final Run<?, ?> owner, final ReferenceProvider referenceProvider,
+    public AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider, final String name,
             final Optional<AnalysisResult> previousResult, final QualityGate qualityGate,
-            final Issues<Issue> issues) {
+            final Issues<?> issues) {
         this(name, owner, referenceProvider, previousResult, qualityGate, issues, true);
     }
 
@@ -145,7 +148,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     protected AnalysisResult(final String name, final Run<?, ?> owner,
             final ReferenceProvider referenceProvider,
             final Optional<AnalysisResult> previousResult, final QualityGate qualityGate,
-            final Issues<Issue> issues, final boolean canSerialize) {
+            final Issues<?> issues, final boolean canSerialize) {
         this.name = name;
         this.owner = owner;
         this.qualityGate = qualityGate;
@@ -160,20 +163,20 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
 
         referenceBuild = referenceProvider.getNumber();
 
-        Issues<Issue> referenceResult = referenceProvider.getIssues();
+        Issues<?> referenceResult = referenceProvider.getIssues();
         IssueDifference difference = new IssueDifference(issues, this.owner.getNumber(), referenceResult);
 
-        Issues<Issue> outstandingIssues = difference.getOutstandingIssues();
+        Issues<?> outstandingIssues = difference.getOutstandingIssues();
         outstandingIssuesReference = new WeakReference<>(outstandingIssues);
 
-        Issues<Issue> newIssues = difference.getNewIssues();
+        Issues<?> newIssues = difference.getNewIssues();
         newIssuesReference = new WeakReference<>(newIssues);
         newSize = newIssues.getSize();
         newHighPrioritySize = newIssues.getHighPrioritySize();
         newNormalPrioritySize = newIssues.getNormalPrioritySize();
         newLowPrioritySize = newIssues.getLowPrioritySize();
 
-        Issues<Issue> fixedIssues = difference.getFixedIssues();
+        Issues<?> fixedIssues = difference.getFixedIssues();
         fixedIssuesReference = new WeakReference<>(fixedIssues);
         fixedSize = fixedIssues.size();
 
@@ -193,7 +196,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      * @param build
      *         the current build
      */
-    private void computeZeroWarningsHighScore(final Run<?, ?> build, final Issues<Issue> currentResult,
+    private void computeZeroWarningsHighScore(final Run<?, ?> build, final Issues<?> currentResult,
             final Optional<AnalysisResult> previousResult, final boolean containsIssues) {
         if (previousResult.isPresent()) {
             AnalysisResult previous = previousResult.get();
@@ -333,23 +336,23 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      * @return the serialization file.
      */
     private XmlFile getDataFile(final String suffix) {
-        IssueStream model = new IssueStream();
-        return new XmlFile(model.createStream(), new File(getOwner().getRootDir(),
-                getSerializationFileName().replace("issues.xml", suffix + "-issues.xml")));
+        return new XmlFile(new IssueStream().createStream(), new File(getOwner().getRootDir(),
+                ISSUES_FILE_NAME.matcher(getSerializationFileName())
+                        .replaceAll(Matcher.quoteReplacement(suffix + "-issues.xml"))));
     }
 
     private String getSerializationFileName() {
         return id + "-issues.xml";
     }
 
-    private void serializeAnnotations(final Issues<Issue> outstandingIssues,
-            final Issues<Issue> newIssues, final Issues<Issue> fixedIssues) {
-        serializeIssues(outstandingIssues, "old");
+    private void serializeAnnotations(final Issues<?> outstandingIssues,
+            final Issues<?> newIssues, final Issues<?> fixedIssues) {
+        serializeIssues(outstandingIssues, "outstanding");
         serializeIssues(newIssues, "new");
         serializeIssues(fixedIssues, "fixed");
     }
 
-    private void serializeIssues(final Issues<Issue> issues, final String suffix) {
+    private void serializeIssues(final Issues<?> issues, final String suffix) {
         try {
             getDataFile(suffix).write(issues);
         }
@@ -359,57 +362,83 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         }
     }
 
-    public Issues<Issue> getIssues() {
+    /**
+     * Returns all issues of the associated static analysis run. These include outstanding issues as well as new
+     * issues.
+     *
+     * @return all issues
+     */
+    public Issues<?> getIssues() {
         Issues<Issue> merged = new Issues<>();
         merged.addAll(getNewIssues(), getOutstandingIssues());
         return merged;
     }
 
-    private WeakReference<Issues<Issue>> getOutstandingIssuesReference() {
-        return outstandingIssuesReference;
-    }
-
-    private void setOutstandingIssuesReference(final WeakReference<Issues<Issue>> outstandingIssuesReference) {
-        this.outstandingIssuesReference = outstandingIssuesReference;
-    }
-
-    public WeakReference<Issues<Issue>> getNewIssuesReference() {
-        return newIssuesReference;
-    }
-
-    private void setNewIssuesReference(final WeakReference<Issues<Issue>> newIssuesReference) {
-        this.newIssuesReference = newIssuesReference;
-    }
-
-    public WeakReference<Issues<Issue>> getFixedIssuesReference() {
-        return fixedIssuesReference;
-    }
-
-    public void setFixedIssuesReference(final WeakReference<Issues<Issue>> fixedIssuesReference) {
-        this.fixedIssuesReference = fixedIssuesReference;
-    }
-
-    public Issues<Issue> getOutstandingIssues() {
+    /**
+     * Returns all outstanding issues of the associated static analysis run. I.e. all issues, that are part of the
+     * current and previous report.
+     *
+     * @return all outstanding issues
+     */
+    public Issues<?> getOutstandingIssues() {
         return getIssues(AnalysisResult::getOutstandingIssuesReference, AnalysisResult::setOutstandingIssuesReference,
                 "outstanding");
     }
 
-    public Issues<Issue> getNewIssues() {
-        return getIssues(AnalysisResult::getNewIssuesReference, AnalysisResult::setNewIssuesReference, "new");
+    /**
+     * Returns all new issues of the associated static analysis run. I.e. all issues, that are part of the current
+     * report but have not been shown up in the previous report.
+     *
+     * @return all new issues
+     */
+    public Issues<?> getNewIssues() {
+        return getIssues(AnalysisResult::getNewIssuesReference, AnalysisResult::setNewIssuesReference,
+                "new");
     }
 
-    public Issues<Issue> getFixedIssues() {
-        return getIssues(AnalysisResult::getFixedIssuesReference, AnalysisResult::setFixedIssuesReference, "fixed");
+    /**
+     * Returns all fixed issues of the associated static analysis run. I.e. all issues, that are part of the previous
+     * report but are not present in the current report anymore.
+     *
+     * @return all fixed issues
+     */
+    public Issues<?> getFixedIssues() {
+        return getIssues(AnalysisResult::getFixedIssuesReference, AnalysisResult::setFixedIssuesReference,
+                "fixed");
     }
 
-    private Issues<Issue> getIssues(final Function<AnalysisResult, WeakReference<Issues<Issue>>> getter,
-            final BiConsumer<AnalysisResult, WeakReference<Issues<Issue>>> setter, final String suffix) {
+    private WeakReference<Issues<?>> getOutstandingIssuesReference() {
+        return outstandingIssuesReference;
+    }
+
+    private void setOutstandingIssuesReference(final WeakReference<Issues<?>> outstandingIssuesReference) {
+        this.outstandingIssuesReference = outstandingIssuesReference;
+    }
+
+    private WeakReference<Issues<?>> getNewIssuesReference() {
+        return newIssuesReference;
+    }
+
+    private void setNewIssuesReference(final WeakReference<Issues<?>> newIssuesReference) {
+        this.newIssuesReference = newIssuesReference;
+    }
+
+    private WeakReference<Issues<?>> getFixedIssuesReference() {
+        return fixedIssuesReference;
+    }
+
+    private void setFixedIssuesReference(final WeakReference<Issues<?>> fixedIssuesReference) {
+        this.fixedIssuesReference = fixedIssuesReference;
+    }
+
+    private Issues<?> getIssues(final Function<AnalysisResult, WeakReference<Issues<?>>> getter,
+            final BiConsumer<AnalysisResult, WeakReference<Issues<?>>> setter, final String suffix) {
         lock.lock();
         try {
             if (getter.apply(this) == null) {
                 return readIssues(setter, suffix);
             }
-            Issues<Issue> result = getter.apply(this).get();
+            Issues<?> result = getter.apply(this).get();
             if (result == null) {
                 return readIssues(setter, suffix);
             }
@@ -420,27 +449,32 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         }
     }
 
-    private Issues<Issue> readIssues(final BiConsumer<AnalysisResult, WeakReference<Issues<Issue>>> setter,
+    private Issues<?> readIssues(final BiConsumer<AnalysisResult, WeakReference<Issues<?>>> setter,
             final String suffix) {
-        Issues<Issue> issues = readIssues(suffix);
+        Issues<?> issues = readIssues(suffix);
         setter.accept(this, new WeakReference<>(issues));
         return issues;
     }
 
-    private Issues<Issue> readIssues(final String suffix) {
+    private Issues<?> readIssues(final String suffix) {
         XmlFile dataFile = getDataFile(suffix);
         try {
-            Issues<Issue> result = (Issues<Issue>) dataFile.read();
+            Object deserialized = dataFile.read();
+            
+            if (deserialized instanceof Issues) {
+                Issues<?> result = (Issues<?>) deserialized;
 
-            LOGGER.log(Level.FINE, "Loaded data file " + dataFile + " for run " + getOwner());
+                LOGGER.log(Level.FINE, "Loaded data file " + dataFile + " for run " + getOwner());
 
-            return result;
+                return result;
+            }
+            LOGGER.log(Level.SEVERE, "Failed to load " + dataFile + ", wrong type: " + deserialized);
         }
         catch (IOException exception) {
-            LOGGER.log(Level.WARNING, "Failed to load " + dataFile, exception);
+            LOGGER.log(Level.SEVERE, "Failed to load " + dataFile, exception);
 
-            return new Issues<>();
         }
+        return new Issues<>(); // fallback
     }
 
     /**
