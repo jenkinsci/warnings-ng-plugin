@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.views;
 
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -13,56 +14,54 @@ import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
+import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
 import hudson.model.Action;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
+import hudson.model.Result;
 import hudson.model.Run;
 
 /**
  * Controls the live cycle of the results in a job. This action persists the results of a build and displays them on the
- * build page. The actual visualization of the results is defined in the matching {@code summary.jelly} file.
- *
- * <p>
- * Moreover, this class renders the results trend.
- * </p>
+ * build page. The actual visualization of the results is defined in the matching {@code summary.jelly} file. This
+ * action also provides access to the static analysis details: these are rendered using a new {@link IssuesDetail}
+ * instance.
  *
  * @author Ulli Hafner
  */
-//CHECKSTYLE:COUPLING-OFF
 @ExportedBean
 public class ResultAction implements HealthReportingAction, LastBuildAction, RunAction2, StaplerProxy {
     private transient Run<?, ?> owner;
 
     private final AnalysisResult result;
-    private final String id;
     private final HealthDescriptor healthDescriptor;
-    private final String name;
+    private final Charset charset;
 
     /**
      * Creates a new instance of {@link ResultAction}.
      *
      * @param owner
-     *         the associated build of this action
+     *         the associated build/run of this action
      * @param result
      *         the result of the static analysis run
      * @param healthDescriptor
-     *         defines the health for the current result
+     *         the health descriptor of the static analysis run
      * @param id
-     *         the ID of the static analysis tool
+     *         the ID of the results
      * @param name
-     *         The name of the tool. If empty the name is resolved using the ID.
+     *         the optional name of the results
+     * @param charset
+     *         the charset to use to display source files
      */
-    // TODO: use ID and name of result
     public ResultAction(final Run<?, ?> owner, final AnalysisResult result, final HealthDescriptor healthDescriptor,
-            final String id, final String name) {
+            final String id, final String name, final Charset charset) {
         this.owner = owner;
         this.result = result;
-        this.id = id;
         this.healthDescriptor = healthDescriptor;
-        this.name = name;
+        this.charset = charset;
     }
 
     @Exported
@@ -82,7 +81,11 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     public String getId() {
-        return id;
+        return result.getId();
+    }
+
+    private String getName() {
+        return result.getName();
     }
 
     @Override
@@ -105,7 +108,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return Collections.singleton(new JobAction(owner.getParent(), id, name));
+        return Collections.singleton(new JobAction(owner.getParent(), getId(), getName()));
     }
 
     @Exported
@@ -124,9 +127,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     /**
      * Returns whether a large image is defined.
      *
-     * @return <code>true</code> if a large image is defined, <code>false</code> otherwise. If no large image is
-     *         defined, then the attribute {@code icon} must to be provided in jelly tag {@code summary}.
-     * @since 1.41
+     * @return {@code true} if a large image is defined, {@code false} otherwise
      */
     public boolean hasLargeImage() {
         return StringUtils.isNotBlank(getLargeImageName());
@@ -136,7 +137,6 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      * Returns the URL of the 48x48 image used in the build summary.
      *
      * @return the URL of the image
-     * @since 1.41
      */
     public String getLargeImageName() {
         return getLabelProvider().getLargeIconUrl();
@@ -146,7 +146,6 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      * Returns the URL of the 24x24 image used in the build link.
      *
      * @return the URL of the image
-     * @since 1.41
      */
     public String getSmallImageName() {
         return getSmallImage();
@@ -161,6 +160,13 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         return getLabelProvider().getSmallIconUrl();
     }
 
+    /**
+     * Returns whether the static analysis result is considered successfully with respect to the used {@link
+     * QualityGate}.
+     *
+     * @return {@code true} if the result is successful, {@code false} if the result has been set to {@link
+     *         Result#UNSTABLE} or {@link Result#FAILURE}.
+     */
     @Exported
     public boolean isSuccessful() {
         return getResult().isSuccessful();
@@ -172,7 +178,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     private StaticAnalysisLabelProvider getLabelProvider() {
-        return new LabelProviderFactory().create(id, name);
+        return new LabelProviderFactory().create(getId(), getName());
     }
 
     /**
@@ -182,11 +188,8 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     @Override
     public Object getTarget() {
-        AnalysisResult result = getResult();
-
         return new IssuesDetail(owner,
-                result.getIssues(), result.getNewIssues(), result.getoutstandingIssues(), result.getFixedIssues(),
-                getLabelProvider().getLinkName(), getUrlName(), getLabelProvider(), result.getDefaultEncoding()
-        );
+                result.getIssues(), result.getNewIssues(), result.getOutstandingIssues(), result.getFixedIssues(),
+                getLabelProvider().getLinkName(), getUrlName(), getLabelProvider(), charset);
     }
 }

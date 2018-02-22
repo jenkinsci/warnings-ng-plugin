@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.views;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
@@ -39,12 +40,12 @@ public class IssuesDetail implements ModelObject {
 
     private final Run<?, ?> owner;
 
-    private final Issues<Issue> issues;
-    private final Issues<Issue> newIssues;
-    private final Issues<Issue> outstandingIssues;
-    private final Issues<Issue> fixedIssues;
+    private final Issues<?> issues;
+    private final Issues<?> newIssues;
+    private final Issues<?> outstandingIssues;
+    private final Issues<?> fixedIssues;
 
-    private final String defaultEncoding;
+    private final Charset sourceEncoding;
     private final String displayName;
     private final String url;
     private final StaticAnalysisLabelProvider labelProvider;
@@ -53,16 +54,16 @@ public class IssuesDetail implements ModelObject {
     private final MarkupFormatter sanitizer = new RawHtmlMarkupFormatter(true);
 
     public IssuesDetail(final Run<?, ?> owner,
-            final Issues<Issue> issues, final Issues<Issue> newIssues,
-            final Issues<Issue> outstandingIssues, final Issues<Issue> fixedIssues,
+            final Issues<?> issues, final Issues<?> newIssues,
+            final Issues<?> outstandingIssues, final Issues<?> fixedIssues,
             final String displayName, final String url, final StaticAnalysisLabelProvider labelProvider,
-            final String defaultEncoding) {
+            final Charset sourceEncoding) {
         this.owner = owner;
         this.issues = issues;
         this.fixedIssues = fixedIssues;
         this.newIssues = newIssues;
         this.outstandingIssues = outstandingIssues;
-        this.defaultEncoding = defaultEncoding;
+        this.sourceEncoding = sourceEncoding;
         this.displayName = displayName;
         this.labelProvider = labelProvider;
         this.url = url;
@@ -92,19 +93,19 @@ public class IssuesDetail implements ModelObject {
         return labelProvider.toJsonArray(getIssues(), new DefaultAgeBuilder(owner.getNumber(), getUrl()));
     }
 
-    public Issues<Issue> getIssues() {
+    public Issues<?> getIssues() {
         return issues;
     }
 
-    public Issues<Issue> getNewIssues() {
+    public Issues<?> getNewIssues() {
         return newIssues;
     }
 
-    public Issues<Issue> getFixedIssues() {
+    public Issues<?> getFixedIssues() {
         return fixedIssues;
     }
 
-    public Issues<Issue> getOutstandingIssues() {
+    public Issues<?> getOutstandingIssues() {
         return outstandingIssues;
     }
 
@@ -127,8 +128,13 @@ public class IssuesDetail implements ModelObject {
         return false;
     }
 
-    public String getDefaultEncoding() {
-        return defaultEncoding;
+    /**
+     * Returns the encoding to use when displaying source files.
+     *
+     * @return source files encoding
+     */
+    public Charset getSourceEncoding() {
+        return sourceEncoding;
     }
 
     public String getFileDisplayName(final Issue issue) {
@@ -218,7 +224,7 @@ public class IssuesDetail implements ModelObject {
         else {
             propertyFormatter = Function.identity();
         }
-        return new PropertyCountTab(owner, issues, defaultEncoding, plainLink, propertyFormatter,
+        return new PropertyCountTab(owner, issues, sourceEncoding, plainLink, propertyFormatter,
                 labelProvider, getUrl() + "/" + plainLink);
     }
 
@@ -258,9 +264,7 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
-     * Returns the dynamic result of this module detail view. Depending on the number of packages, one of the following
-     * detail objects is returned: <ul> <li>A detail object for a single workspace file (if the module contains only one
-     * package).</li> <li>A package detail object for a specified package (in any other case).</li> </ul>
+     * Returns a new view for the selected link.
      *
      * @param link
      *         the link to identify the sub page to show
@@ -273,15 +277,14 @@ public class IssuesDetail implements ModelObject {
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
         try {
-            return new DetailFactory().createTrendDetails(link, owner, issues, fixedIssues, newIssues,
-                    outstandingIssues,
-                    Collections.emptyList(), getDefaultEncoding(), this);
+            return new DetailFactory().createTrendDetails(link, owner, issues, fixedIssues, newIssues, outstandingIssues,
+                    Collections.emptyList(), sourceEncoding, this);
         }
         catch (NoSuchElementException exception) {
             try {
                 response.sendRedirect2("../");
             }
-            catch (IOException e) {
+            catch (IOException ignore) {
                 // ignore
             }
             return this; // fallback on broken URLs

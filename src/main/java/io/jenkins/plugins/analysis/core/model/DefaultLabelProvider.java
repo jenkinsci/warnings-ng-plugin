@@ -67,7 +67,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
 
     @Override
     public String[] getTableHeaders() {
-        return new String[] {
+        return new String[]{
                 Messages.Table_Column_Details(),
                 Messages.Table_Column_File(),
                 Messages.Table_Column_Package(),
@@ -80,11 +80,11 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
 
     @Override
     public int[] getTableWidths() {
-        return new int[] {1, 1, 2, 1, 1, 1, 1};
+        return new int[]{1, 1, 2, 1, 1, 1, 1};
     }
 
     @Override
-    public JSONObject toJsonArray(final Issues<Issue> issues, final AgeBuilder ageBuilder) {
+    public JSONObject toJsonArray(final Issues<?> issues, final AgeBuilder ageBuilder) {
         JSONArray rows = new JSONArray();
         for (Issue issue : issues) {
             rows.add(toJson(issue, ageBuilder));
@@ -94,6 +94,16 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
         return data;
     }
 
+    /**
+     * Returns an JSON array that represents the columns of the issues table.
+     *
+     * @param issue
+     *         the issue to get the column properties for
+     * @param ageBuilder
+     *         age builder to compute the age of a build
+     *
+     * @return the columns
+     */
     protected JSONArray toJson(final Issue issue, final AgeBuilder ageBuilder) {
         JSONArray columns = new JSONArray();
         columns.add(formatDetails(issue));
@@ -260,6 +270,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
     public interface AgeBuilder extends Function<Integer, String> {
         // no new methods
     }
+
     public static class DefaultAgeBuilder implements AgeBuilder {
         private final String plugin;
         private final String backward;
