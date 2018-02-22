@@ -523,7 +523,7 @@ public class PublishIssuesStep extends Step {
                     selector, usePreviousBuildAsReference, useStableBuildAsReference);
             BuildHistory buildHistory = new BuildHistory(run, selector);
 
-            return new AnalysisResult(name, run, referenceProvider, buildHistory.getPreviousResult(),
+            return new AnalysisResult(run, referenceProvider, name, buildHistory.getPreviousResult(),
                     qualityGate, filtered);
         }
     }
