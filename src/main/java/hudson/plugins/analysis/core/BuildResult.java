@@ -288,8 +288,6 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
 
         Set<FileAnnotation> allWarnings = result.getAnnotations();
 
-        // FIXME: why is there a flag to enable computation of new warnings?
-
         IssueDifference difference = new IssueDifference(allWarnings, referenceResult.getAnnotations());
         Set<FileAnnotation> newWarnings = difference.getNewIssues();
         numberOfNewWarnings = newWarnings.size();
@@ -363,7 +361,7 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
      * @see {@link WithBridgeMethods}
      */
     @Deprecated
-    private final Object getReferenceAbstractBuild(Run owner, Class targetClass) {
+    private Object getReferenceAbstractBuild(Run owner, Class targetClass) {
       return owner instanceof AbstractBuild ? ((AbstractBuild) owner).getProject().getBuildByNumber(referenceBuild) : null;
     }
 
@@ -1691,15 +1689,15 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
     // Backward compatibility. Do not remove.
     // CHECKSTYLE:OFF
     @Deprecated
-    @java.lang.SuppressWarnings("unused")
+    @SuppressWarnings("unused")
     private transient Map<String, MavenModule> emptyModules; // NOPMD
     @Deprecated
-    @java.lang.SuppressWarnings("all")
+    @SuppressWarnings("all")
     protected transient String low;
     @Deprecated
-    @java.lang.SuppressWarnings("all")
+    @SuppressWarnings("all")
     protected transient String normal;
     @Deprecated
-    @java.lang.SuppressWarnings("all")
+    @SuppressWarnings("all")
     protected transient String high;
 }
