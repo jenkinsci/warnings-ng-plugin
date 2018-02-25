@@ -40,16 +40,6 @@ public class CompositeLabelProvider extends DefaultLabelProvider {
     }
 
     @Override
-    public String getSummary(final int numberOfIssues, final int numberOfModules) {
-        return labelProvider.getSummary(numberOfIssues, numberOfModules);
-    }
-
-    @Override
-    public String getDeltaMessage(final int newSize, final int fixedSize) {
-        return labelProvider.getDeltaMessage(newSize, fixedSize);
-    }
-
-    @Override
     public String getTooltip(final int numberOfItems) {
         return labelProvider.getTooltip(numberOfItems);
     }

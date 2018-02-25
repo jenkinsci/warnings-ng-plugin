@@ -12,6 +12,7 @@ import org.kohsuke.stapler.export.ExportedBean;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.Summary;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
@@ -156,8 +157,17 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      *
      * @return the URL of the image
      */
-    protected String getSmallImage() {
+    public String getSmallImage() {
         return getLabelProvider().getSmallIconUrl();
+    }
+
+    /**
+     * Returns a summary message of the static analysis run. This message is shown in the 'summary.jelly' view.
+     *
+     * @return summary message (HTML)
+     */
+    public String getSummary() {
+        return new Summary(getLabelProvider(), getResult()).create();
     }
 
     /**

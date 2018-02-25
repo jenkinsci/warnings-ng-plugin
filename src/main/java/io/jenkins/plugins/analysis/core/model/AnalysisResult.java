@@ -1,11 +1,11 @@
 package io.jenkins.plugins.analysis.core.model; // NOPMD
 
+import javax.annotation.CheckForNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -22,16 +22,17 @@ import org.kohsuke.stapler.export.ExportedBean;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.RunAdapter;
+import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 
 import hudson.XmlFile;
 import hudson.model.Api;
 import hudson.model.Result;
 import hudson.model.Run;
-import hudson.plugins.analysis.core.HealthDescriptor;
 
 /**
  * Stores the results of a static analysis run. This class is capable of storing a reference to the current build.
@@ -42,10 +43,12 @@ import hudson.plugins.analysis.core.HealthDescriptor;
  */
 @ExportedBean
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength"})
-public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
+public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private static final long serialVersionUID = 1110545450292087475L;
+
     private static final Logger LOGGER = Logger.getLogger(AnalysisResult.class.getName());
     private static final Pattern ISSUES_FILE_NAME = Pattern.compile("issues.xml", Pattern.LITERAL);
+    private static final int NO_BUILD = -1;
 
     private final String id;
     private final String name;
@@ -56,16 +59,19 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     /**
      * All outstanding issues: i.e. all issues, that are part of the current and previous report.
      */
+    @CheckForNull
     private transient WeakReference<Issues<?>> outstandingIssuesReference;
     /**
      * All new issues: i.e. all issues, that are part of the current report but have not been shown up in the previous
      * report.
      */
+    @CheckForNull
     private transient WeakReference<Issues<?>> newIssuesReference;
     /**
      * All fixed issues: i.e. all issues, that are part of the previous report but are not present in the current report
      * anymore.
      */
+    @CheckForNull
     private transient WeakReference<Issues<?>> fixedIssuesReference;
 
     private final QualityGate qualityGate;
@@ -91,40 +97,20 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
     /** The number of high priority warnings in this build. */
     private final int newHighPrioritySize;
 
-    /** Determines since which build we have zero warnings. */
-    private int zeroWarningsSinceBuild;
-    /** Determines since which time we have zero warnings. */
-    private long zeroWarningsSinceDate;
-    /** Determines the zero warnings high score. */
-    private long zeroWarningsHighScore;
-    /** Determines if the old zero high score has been broken. */
-    private boolean isZeroWarningsHighScore;
-    /** Determines the number of msec still to go before a new high score is reached. */
-    private long highScoreGap;
-
-    /** Error messages. */
     private final ImmutableList<String> errors;
+
+    /** Determines since which build we have zero warnings. */
+    private int noIssuesSinceBuild;
+    /** Determines since which build the result is successful. */
+    private int successfulSinceBuild;
+    /** Reference build number. If not defined then 0 or -1 could be used. */
+    private final int referenceBuild;
 
     /**
      * The build result of the associated plug-in. This result is an additional state that denotes if this plug-in has
      * changed the overall build result.
      */
-    private Result pluginResult = Result.SUCCESS;
-    /** Determines since which build the result is successful. */
-    private int successfulSinceBuild;
-    /** Determines since which time the result is successful. */
-    private long successfulSinceDate;
-    /** Determines the successful build result high score. */
-    private long successfulHighScore;
-    /** Determines if the old successful build result high score has been broken. */
-    private boolean isSuccessfulHighScore;
-    /** Determines the number of msec still to go before a new high score is reached. */
-    private long successfulHighScoreGap;
-    /** Determines if this result has touched the successful state. */
-    private boolean isSuccessfulStateTouched;
-
-    /** Reference build number. If not defined then 0 or -1 could be used. */
-    private final int referenceBuild;
+    private Result overallResult = Result.SUCCESS;
 
     /**
      * Creates a new instance of {@link AnalysisResult}.
@@ -133,9 +119,33 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      *         the current run as owner of this action
      */
     public AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider, final String name,
-            final Optional<AnalysisResult> previousResult, final QualityGate qualityGate,
-            final Issues<?> issues) {
-        this(name, owner, referenceProvider, previousResult, qualityGate, issues, true);
+            final Issues<?> issues, final QualityGate qualityGate, final AnalysisResult previousResult) {
+        this(owner, referenceProvider, name, issues, qualityGate, true);
+
+        if (issues.isEmpty()) {
+            if (previousResult.noIssuesSinceBuild == NO_BUILD) {
+                noIssuesSinceBuild = owner.getNumber();
+            }
+            else {
+                noIssuesSinceBuild = previousResult.noIssuesSinceBuild;
+            }
+        }
+        else {
+            noIssuesSinceBuild = NO_BUILD;
+        }
+
+        if (overallResult == Result.SUCCESS) {
+            if (previousResult.overallResult == Result.SUCCESS) {
+                successfulSinceBuild = previousResult.successfulSinceBuild;
+            }
+            else {
+                successfulSinceBuild = owner.getNumber();
+            }
+
+        }
+        else {
+            successfulSinceBuild = NO_BUILD;
+        }
     }
 
     /**
@@ -144,11 +154,33 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
      * @param owner
      *         the current run as owner of this action
      */
-    // FIXME: should we ignore the issues in previousResult?
-    protected AnalysisResult(final String name, final Run<?, ?> owner,
-            final ReferenceProvider referenceProvider,
-            final Optional<AnalysisResult> previousResult, final QualityGate qualityGate,
-            final Issues<?> issues, final boolean canSerialize) {
+    public AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider, final String name,
+            final Issues<?> issues, final QualityGate qualityGate) {
+        this(owner, referenceProvider, name, issues, qualityGate, true);
+
+        if (issues.isEmpty()) {
+            noIssuesSinceBuild = owner.getNumber();
+        }
+        else {
+            noIssuesSinceBuild = NO_BUILD;
+        }
+        if (overallResult == Result.SUCCESS) {
+            successfulSinceBuild = owner.getNumber();
+        }
+        else {
+            successfulSinceBuild = NO_BUILD;
+        }
+    }
+
+    /**
+     * Creates a new instance of {@link AnalysisResult}.
+     *
+     * @param owner
+     *         the current run as owner of this action
+     */
+    @VisibleForTesting
+    protected AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider, final String name,
+            final Issues<?> issues, final QualityGate qualityGate, final boolean canSerialize) {
         this.name = name;
         this.owner = owner;
         this.qualityGate = qualityGate;
@@ -180,111 +212,11 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         fixedIssuesReference = new WeakReference<>(fixedIssues);
         fixedSize = fixedIssues.size();
 
-        computeZeroWarningsHighScore(owner, issues, previousResult, issues.isEmpty());
-
-        evaluateStatus(previousResult);
+        overallResult = qualityGate.evaluate(this);
+        owner.setResult(overallResult);
 
         if (canSerialize) {
             serializeAnnotations(outstandingIssues, newIssues, fixedIssues);
-        }
-    }
-
-    /**
-     * Computes the zero warnings high score based on the current build and the previous build (with results of the
-     * associated plug-in).
-     *
-     * @param build
-     *         the current build
-     */
-    private void computeZeroWarningsHighScore(final Run<?, ?> build, final Issues<?> currentResult,
-            final Optional<AnalysisResult> previousResult, final boolean containsIssues) {
-        if (previousResult.isPresent()) {
-            AnalysisResult previous = previousResult.get();
-            if (containsIssues) {
-                if (previous.getTotalSize() == 0) {
-                    zeroWarningsSinceBuild = previous.getZeroWarningsSinceBuild();
-                    zeroWarningsSinceDate = previous.getZeroWarningsSinceDate();
-                }
-                else {
-                    zeroWarningsSinceBuild = build.getNumber();
-                    zeroWarningsSinceDate = build.getTimestamp().getTimeInMillis();
-                }
-                zeroWarningsHighScore = Math.max(previous.getZeroWarningsHighScore(),
-                        build.getTimestamp().getTimeInMillis() - zeroWarningsSinceDate);
-                if (previous.getZeroWarningsHighScore() == 0) {
-                    isZeroWarningsHighScore = true;
-                }
-                else {
-                    isZeroWarningsHighScore = zeroWarningsHighScore != previous.getZeroWarningsHighScore();
-
-                }
-                if (!isZeroWarningsHighScore) {
-                    highScoreGap = previous.getZeroWarningsHighScore()
-                            - (build.getTimestamp().getTimeInMillis() - zeroWarningsSinceDate);
-                }
-            }
-            else {
-                zeroWarningsHighScore = previous.getZeroWarningsHighScore();
-            }
-        }
-        else {
-            if (currentResult.isEmpty()) {
-                zeroWarningsSinceBuild = build.getNumber();
-                zeroWarningsSinceDate = build.getTimestamp().getTimeInMillis();
-                isZeroWarningsHighScore = true;
-                zeroWarningsHighScore = 0;
-            }
-        }
-    }
-
-    /**
-     * Updates the build status, i.e. sets this plug-in result status field to the corresponding {@link Result}.
-     * Additionally, the {@link Result} of the build that owns this instance of {@link AnalysisResult} will be also
-     * changed.
-     */
-    private void evaluateStatus(final Optional<AnalysisResult> previousResult) {
-        // FIXME split two parts
-        Result result = qualityGate.evaluate(this);
-        pluginResult = result;
-        owner.setResult(pluginResult);
-
-        // FIXME is this still required?
-        isSuccessfulStateTouched = true;
-
-        if (previousResult.isPresent()) {
-            AnalysisResult previous = previousResult.get();
-            // FIXME: same code to compute zero warnings
-            if (isSuccessful()) {
-                if (previous.isSuccessful() && previous.isSuccessfulTouched()) {
-                    successfulSinceBuild = previous.getSuccessfulSinceBuild();
-                    successfulSinceDate = previous.getSuccessfulSinceDate();
-                }
-                else {
-                    successfulSinceBuild = owner.getNumber();
-                    successfulSinceDate = owner.getTimestamp().getTimeInMillis();
-                }
-                successfulHighScore = Math.max(previous.getSuccessfulHighScore(),
-                        owner.getTimestamp().getTimeInMillis() - successfulSinceDate);
-                if (previous.getSuccessfulHighScore() == 0) {
-                    isSuccessfulHighScore = true;
-                }
-                else {
-                    isSuccessfulHighScore = successfulHighScore != previous.getSuccessfulHighScore();
-
-                }
-                if (!isSuccessfulHighScore) {
-                    successfulHighScoreGap = previous.getSuccessfulHighScore()
-                            - (owner.getTimestamp().getTimeInMillis() - successfulSinceDate);
-                }
-            }
-            else {
-                successfulHighScore = previous.getSuccessfulHighScore();
-            }
-        }
-        else {
-            if (isSuccessful()) {
-                resetSuccessfulState();
-            }
         }
     }
 
@@ -307,11 +239,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         return StringUtils.defaultString(name);
     }
 
-    /**
-     * Returns the run as owner of this action.
-     *
-     * @return the owner
-     */
     public Run<?, ?> getOwner() {
         return owner;
     }
@@ -460,7 +387,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         XmlFile dataFile = getDataFile(suffix);
         try {
             Object deserialized = dataFile.read();
-            
+
             if (deserialized instanceof Issues) {
                 Issues<?> result = (Issues<?>) deserialized;
 
@@ -486,178 +413,39 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
         return new Api(this);
     }
 
-    /**
-     * Returns the number of the run since we have zero warnings.
-     *
-     * @return the number of the run since we have zero warnings
-     */
     @Override
     @Exported
-    public int getZeroWarningsSinceBuild() {
-        return zeroWarningsSinceBuild;
+    public int getNoIssuesSinceBuild() {
+        return noIssuesSinceBuild;
     }
 
-    /**
-     * Returns the time since we have zero warnings.
-     *
-     * @return the time since we have zero warnings
-     */
-    @Exported
-    public long getZeroWarningsSinceDate() {
-        return zeroWarningsSinceDate;
-    }
-
-    /**
-     * Returns the maximum period with zero warnings in a build.
-     *
-     * @return the time since we have zero warnings
-     */
     @Override
-    @Exported
-    public long getZeroWarningsHighScore() {
-        return zeroWarningsHighScore;
-    }
-
-    /**
-     * Returns if the current result reached the old zero warnings high score.
-     *
-     * @return {@code true}, if the current result reached the old zero warnings high score.
-     */
-    @Override
-    @Exported
-    public boolean isNewZeroWarningsHighScore() {
-        return isZeroWarningsHighScore;
-    }
-
-    /**
-     * Returns the number of msec still to go before a new high score is reached.
-     *
-     * @return the number of msec still to go before a new high score is reached.
-     */
-    @Override
-    public long getHighScoreGap() {
-        return highScoreGap;
-    }
-
-    /**
-     * Returns the build since we are successful.
-     *
-     * @return the build since we are successful
-     */
     @Exported
     public int getSuccessfulSinceBuild() {
         return successfulSinceBuild;
     }
 
     /**
-     * Returns the time since we are successful.
+     * Returns whether the static analysis result is successful with respect to the defined {@link QualityGate}.
      *
-     * @return the time since we are successful
+     * @return {@code true} if the static analysis result is successful, {@code false} if the static analysis result is
+     *         {@link Result#UNSTABLE} or {@link Result#FAILURE}
      */
     @Exported
-    public long getSuccessfulSinceDate() {
-        return successfulSinceDate;
-    }
-
-    /**
-     * Returns the maximum period of successful builds.
-     *
-     * @return the maximum period of successful builds
-     */
-    @Override
-    @Exported
-    public long getSuccessfulHighScore() {
-        return successfulHighScore;
-    }
-
-    /**
-     * Returns if the current result reached the old successful high score.
-     *
-     * @return {@code true}, if the current result reached the old successful high score.
-     */
-    @Override
-    @Exported
-    public boolean isNewSuccessfulHighScore() {
-        return isSuccessfulHighScore;
-    }
-
-    /**
-     * Returns the number of msec still to go before a new highscore is reached.
-     *
-     * @return the number of msec still to go before a new highscore is reached.
-     */
-    @Override
-    public long getSuccessfulHighScoreGap() {
-        return successfulHighScoreGap;
-    }
-
-    /**
-     * Returns whether this build is successful with respect to the {@link HealthDescriptor} of this result.
-     *
-     * @return {@code true} if the build is successful, {@code false} if the build has been set to {@link
-     *         Result#UNSTABLE} or {@link Result#FAILURE} by this result.
-     */
-    @Override
     public boolean isSuccessful() {
-        return pluginResult == Result.SUCCESS;
+        return overallResult == Result.SUCCESS;
     }
 
-    /**
-     * Returns the {@link Result} of the plug-in.
-     *
-     * @return the plugin result
-     */
     @Override
     @Exported
-    public Result getPluginResult() {
-        return pluginResult;
+    public QualityGate getQualityGate() {
+        return qualityGate;
     }
 
-    /**
-     * Returns whether the successful state has been touched.
-     *
-     * @return {@code true} if the successful state has been touched, {@code false} otherwise
-     */
     @Override
-    public boolean isSuccessfulTouched() {
-        return isSuccessfulStateTouched;
-    }
-
-    /**
-     * /** Resets the successful high score counters.
-     */
-    private void resetSuccessfulState() {
-        successfulSinceBuild = owner.getNumber();
-        successfulSinceDate = owner.getTimestamp().getTimeInMillis();
-        isSuccessfulHighScore = true;
-        successfulHighScore = 0;
-    }
-
-    /**
-     * Returns the summary message for the summary.jelly file.
-     *
-     * @return the summary message
-     */
-    public String getSummary() {
-        return getTool().getSummary(size, getIssues().getModules().size());
-    }
-
-    /**
-     * Returns the detail messages for the summary.jelly file.
-     *
-     * @return the summary message
-     */
-    public String getDetails() {
-        return new Summary(id, name, this).toString();
-    }
-
-    /**
-     * Returns the header for the build result page.
-     *
-     * @return the header for the build result page
-     */
-    public String getHeader() {
-        return getTool().getLinkName();
+    @Exported
+    public Result getOverallResult() {
+        return overallResult;
     }
 
     @Override
@@ -671,12 +459,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun2 {
 
     public String getDisplayName() {
         return getTool().getLinkName();
-    }
-
-    @Override
-    public String getReason() {
-        // TODO: use this code directly?
-        return qualityGate.evaluate(this).toString();
     }
 
     @Override

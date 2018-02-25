@@ -56,7 +56,7 @@ class AbsolutePathGeneratorTest {
         FileSystem fileSystem = mock(FileSystem.class);
         when(fileSystem.resolveFile(fileName, WORKSPACE)).thenReturn(absolutePath);
 
-        Issues<Issue> issues = createIssuesSingleton(fileName, ISSUE_BUILDER.setOrigin("Test"));
+        Issues<Issue> issues = createIssuesSingleton(fileName, ISSUE_BUILDER.setOrigin(ID));
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator(fileSystem);
         generator.run(issues, ISSUE_BUILDER, WORKSPACE);
@@ -86,7 +86,7 @@ class AbsolutePathGeneratorTest {
         FileSystem fileSystem = mock(FileSystem.class);
         when(fileSystem.resolveFile(relative, WORKSPACE)).thenReturn(absolutePath);
 
-        Issues<Issue> issues = createIssuesSingleton(relative, ISSUE_BUILDER.setOrigin("Test"));
+        Issues<Issue> issues = createIssuesSingleton(relative, ISSUE_BUILDER.setOrigin(ID));
         Issue issueWithAbsolutePath = ISSUE_BUILDER.setFileName("/absolute/path.txt").build();
         issues.add(issueWithAbsolutePath);
 

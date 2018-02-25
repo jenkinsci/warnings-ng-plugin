@@ -1,40 +1,87 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import org.apache.commons.lang.time.DateUtils;
-import org.kohsuke.stapler.Stapler;
+import java.util.stream.Collectors;
 
+import edu.hm.hafner.util.VisibleForTesting;
+import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
-import jenkins.model.Jenkins;
-
-import hudson.model.Result;
-import hudson.plugins.analysis.Messages;
-import hudson.plugins.analysis.util.HtmlPrinter;
+import static j2html.TagCreator.*;
+import j2html.tags.ContainerTag;
 
 /**
  * Summary message of a static analysis run. This message is shown as part of the 'summary.jelly' information of the
  * associated {@link ResultAction}.
+ * <pre>
+ *     Tool Name: %d issues from %d analyses
+ *        - Results from analyses {%s, ... %s}
+ *        - %d new issues (since build %d)
+ *        - %d outstanding issues
+ *        - %d fixed issues
+ *        - No issues since build %d
+ *        - Quality gates: passed (Reference build %d)
+ * </pre>
  *
  * @author Ullrich Hafner
  */
+// FIXME: is the number of parsed reports available yet?
+// FIXME: %d issues should be part of label provider
 public class Summary {
-    private static final String UNSTABLE = "yellow.png";
-    private static final String FAILED = "red.png";
-    private static final String SUCCESS = "blue.png";
-    private final StaticAnalysisLabelProvider tool;
-    private final StaticAnalysisRun2 result;
+    private final StaticAnalysisLabelProvider labelProvider;
+    private final StaticAnalysisRun analysisRun;
+    private final LabelProviderFactoryFacade facade;
 
-    public Summary(final String id, final String name, StaticAnalysisRun2 result) {
-        tool = new LabelProviderFactory().create(id, name);
-        this.result = result;
+    public Summary(final StaticAnalysisLabelProvider labelProvider, final StaticAnalysisRun analysisRun) {
+        this(labelProvider, analysisRun, new LabelProviderFactoryFacade());
     }
 
+    @VisibleForTesting
+    Summary(final StaticAnalysisLabelProvider labelProvider, final StaticAnalysisRun analysisRun,
+            final LabelProviderFactoryFacade facade) {
+        this.labelProvider = labelProvider;
+        this.analysisRun = analysisRun;
+        this.facade = facade;
+    }
+
+    public String create() {
+        return div(labelProvider.getTitle(analysisRun), createDescription())
+                .withId(labelProvider.getId() + "-summary")
+                .renderFormatted();
+    }
+
+    private ContainerTag createDescription() {
+        int currentBuild = analysisRun.getBuild().getNumber();
+        return ul()
+                .condWith(analysisRun.getSizePerOrigin().size() > 1,
+                        li(getToolNames()))
+                .condWith(analysisRun.getTotalSize() == 0
+                                && currentBuild > analysisRun.getNoIssuesSinceBuild(),
+                        li(labelProvider.getNoIssuesSinceLabel(currentBuild, analysisRun.getNoIssuesSinceBuild())))
+                .condWith(analysisRun.getNewSize() > 0,
+                        li(labelProvider.getNewIssuesLabel(analysisRun.getNewSize())))
+                .condWith(analysisRun.getFixedSize() > 0,
+                        li(labelProvider.getFixedIssuesLabel(analysisRun.getFixedSize())))
+                .condWith(analysisRun.getQualityGate().isEnabled(),
+                        li(labelProvider.getQualityGateResult(analysisRun.getOverallResult(),
+                                analysisRun.getReferenceBuild())));
+    }
+
+    private String getToolNames() {
+        String tools = analysisRun.getSizePerOrigin()
+                .keySet()
+                .stream()
+                .map((id) -> facade.get(id).getName())
+                .collect(Collectors.joining(", "));
+        return Messages.Tool_ParticipatingTools(tools);
+    }
+
+    /*
     @Override
     public String toString() {
         HtmlPrinter printer = new HtmlPrinter();
         printer.append(createDeltaMessage());
 
-        if (result.getTotalSize() == 0 && result.getZeroWarningsSinceBuild() > 0) {
-            printer.append(printer.item(Messages.ResultAction_NoWarningsSince(result.getZeroWarningsSinceBuild())));
+        if (result.getTotalSize() == 0 && result.getNoIssuesSinceBuild() > 0) {
+            printer.append(printer.item(Messages.ResultAction_NoWarningsSince(result.getNoIssuesSinceBuild())));
             printer.append(printer.item(createHighScoreMessage()));
         }
         else if (result.isSuccessfulTouched()) {
@@ -114,20 +161,11 @@ public class Summary {
         return Math.max(1, ms / DateUtils.MILLIS_PER_DAY);
     }
 
-    private String getResultIcon() {
-        String message = "<img src=\"" + Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH
-                + "/images/16x16/%s\" alt=\"%s\" title=\"%s\"/>";
-        if (result.getPluginResult() == Result.FAILURE) {
-            return String.format(message, FAILED,
-                    hudson.model.Messages.BallColor_Failed(), hudson.model.Messages.BallColor_Failed());
-        }
-        else if (result.getPluginResult() == Result.UNSTABLE) {
-            return String.format(message, UNSTABLE,
-                    hudson.model.Messages.BallColor_Unstable(), hudson.model.Messages.BallColor_Unstable());
-        }
-        else {
-            return String.format(message, SUCCESS,
-                    hudson.model.Messages.BallColor_Success(), hudson.model.Messages.BallColor_Success());
+    */
+
+    static class LabelProviderFactoryFacade {
+        public StaticAnalysisLabelProvider get(final String id) {
+            return new LabelProviderFactory().create(id);
         }
     }
 }

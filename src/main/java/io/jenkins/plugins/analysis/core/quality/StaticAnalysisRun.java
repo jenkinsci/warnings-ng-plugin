@@ -2,7 +2,11 @@ package io.jenkins.plugins.analysis.core.quality;
 
 import java.util.Map;
 
+import org.kohsuke.stapler.export.Exported;
+
 import edu.hm.hafner.analysis.Priority;
+
+import hudson.model.Result;
 
 /**
  * Describes the results of a static analysis run.
@@ -82,6 +86,35 @@ public interface StaticAnalysisRun {
      * @return number of fixed issues
      */
     int getFixedSize();
+
+    QualityGate getQualityGate();
+
+    /**
+     * Returns the build number since the associated job has no issues.
+     *
+     * @return the build number since there are no issues, or -1 if issues have been reported
+     */
+    @Exported
+    int getNoIssuesSinceBuild();
+
+    /**
+     * Returns the build number since the associated job has a successful static analysis result.
+     *
+     * @return the build number since the static analysis result is successful, or -1 if the result is
+     *         not successful
+     */
+    @Exported
+    int getSuccessfulSinceBuild();
+
+    /**
+     * Returns the {@link Result} of the static analysis run.
+     *
+     * @return the static analysis result
+     */
+    @Exported
+    Result getOverallResult();
+
+    int getReferenceBuild();
 
     /**
      * Returns the number of issues in this analysis run, mapped by their origin.
