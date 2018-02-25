@@ -5,19 +5,24 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.kohsuke.stapler.Stapler;
 
 import edu.hm.hafner.analysis.IntegerParser;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.util.VisibleForTesting;
-import io.jenkins.plugins.analysis.core.util.HtmlBuilder;
+import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 import static io.jenkins.plugins.analysis.core.views.IssuesDetail.*;
 import io.jenkins.plugins.analysis.core.views.LocalizedPriority;
+import static j2html.TagCreator.*;
+import j2html.tags.ContainerTag;
+import j2html.tags.DomContent;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import hudson.plugins.analysis.util.HtmlPrinter;
+import hudson.model.BallColor;
+import hudson.model.Result;
 
 /**
  * A generic label provider for static analysis runs. Creates pre-defined labels that are parameterized with a string
@@ -34,6 +39,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
     private final String id;
     @CheckForNull
     private final String name;
+    private final IconPathResolver resolver;
 
     /**
      * Creates a new {@link DefaultLabelProvider} with the specified ID.
@@ -54,14 +60,29 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
      *         the name of the static analysis tool
      */
     public DefaultLabelProvider(final String id, @CheckForNull final String name) {
+        this(id, name, new IconPathResolver());
+    }
+
+    /**
+     * Creates a new {@link DefaultLabelProvider} with the specified ID.
+     *
+     * @param id
+     *         the ID
+     * @param name
+     *         the name of the static analysis tool
+     */
+    @VisibleForTesting
+    DefaultLabelProvider(final String id, @CheckForNull final String name, final IconPathResolver resolver) {
         this.id = id;
         this.name = name;
+        this.resolver = resolver;
     }
 
     /**
      * Creates a new {@link DefaultLabelProvider} with the ID 'analysis-core'. This label provider is used as fallback.
      */
-    public DefaultLabelProvider() {
+    @VisibleForTesting
+    DefaultLabelProvider() {
         this("analysis-core");
     }
 
@@ -194,6 +215,59 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
     }
 
     @Override
+    public ContainerTag getTitle(final StaticAnalysisRun analysisRun) {
+        return div(join(getName() + ": ", getWarningsCount(analysisRun)))
+                .withId(id + "-title");
+    }
+
+    @Override
+    public ContainerTag getNewIssuesLabel(final int newSize) {
+        return a(newSize == 1 ? Messages.Tool_OneNewWarning() : Messages.Tool_MultipleNewWarnings(newSize))
+                .withHref(getResultUrl() + "/new"); // Make messages overridable
+    }
+
+    @Override
+    public ContainerTag getFixedIssuesLabel(final int fixedSize) {
+        return a(fixedSize == 1 ? Messages.Tool_OneFixedWarning() : Messages.Tool_MultipleFixedWarnings(fixedSize))
+                .withHref(getResultUrl() + "/fixed");
+    }
+
+    @Override
+    public DomContent getNoIssuesSinceLabel(final int currentBuild, final int noIssuesSinceBuild) {
+        return join(Messages.Tool_NoIssuesSinceBuild(Messages.Tool_NoIssues(),
+                currentBuild - noIssuesSinceBuild + 1, linkBuild(noIssuesSinceBuild, getResultUrl()).render()));
+    }
+
+    private Object getWarningsCount(final StaticAnalysisRun analysisRun) {
+        int size = analysisRun.getTotalSize();
+        if (size == 0) {
+            return Messages.Tool_NoIssues();
+        }
+        if (size == 1) {
+            return linkToIssues(Messages.Tool_OneIssue());
+        }
+        return linkToIssues(Messages.Tool_MultipleIssues(size));
+    }
+
+    private ContainerTag linkToIssues(final String linkText) {
+        return a(linkText).withHref(getResultUrl());
+    }
+
+    @Override
+    public DomContent getQualityGateResult(final Result overallResult, final int referenceBuild) {
+        return join(Messages.Tool_QualityGate(),
+                getResultIcon(overallResult.color),
+                Messages.Tool_ReferenceBuild(linkBuild(referenceBuild, getResultUrl()).render()));
+    }
+
+    private ContainerTag getResultIcon(final BallColor color) {
+        return a(color.getDescription())
+                .withHref(resolver.getImagePath(color))
+                .withAlt(color.getDescription())
+                .withTitle(color.getDescription());
+    }
+
+    @Override
     public String getTooltip(final int numberOfItems) {
         if (numberOfItems == 1) {
             return getSingleItemTooltip();
@@ -217,7 +291,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
      * @return the tooltip for several items
      */
     private String getMultipleItemsTooltip(final int numberOfItems) {
-        return Messages.Result_MultipleWarnings(numberOfItems);
+        return Messages.Tool_MultipleIssues(numberOfItems);
     }
 
     /**
@@ -226,78 +300,63 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
      * @return the tooltip for exactly one item
      */
     private String getSingleItemTooltip() {
-        return Messages.Result_OneWarning();
+        return Messages.Tool_OneIssue();
     }
 
-    @Override
-    public String getSummary(final int numberOfIssues, final int numberOfModules) {
-        return getName() + ": " + new ResultSummaryPrinter().createDefaultSummary(getResultUrl(),
-                numberOfIssues, numberOfModules);
+    private static ContainerTag linkBuild(final int referenceBuild, final String resultUrl,
+            final String displayName) {
+        String cleanUrl = StringUtils.stripEnd(resultUrl, "/");
+        String id = StringUtils.substringBefore(cleanUrl, "/");
+        int subDetailsCount = StringUtils.countMatches(cleanUrl, "/");
+        String backward = StringUtils.repeat("../", subDetailsCount + 2);
+
+        return a(displayName)
+                .withHref(String.format("%s%d/%s", backward, referenceBuild, id))
+                .withClasses("model-link", "inside");
     }
 
-    @Override
-    public String getDeltaMessage(final int newSize, final int fixedSize) {
-        HtmlPrinter summary = new HtmlPrinter();
-        if (newSize > 0) {
-            summary.append(summary.item(
-                    summary.link(getResultUrl() + "/new", createNewWarningsLinkName(newSize))));
-        }
-        if (fixedSize > 0) {
-            summary.append(summary.item(
-                    summary.link(getResultUrl() + "/fixed", createFixedWarningsLinkName(fixedSize))));
-        }
-        return summary.toString();
-    }
-
-    private static String createNewWarningsLinkName(final int newWarnings) {
-        if (newWarnings == 1) {
-            return Messages.Result_OneNewWarning();
-        }
-        else {
-            return Messages.Result_MultipleNewWarnings(newWarnings);
-        }
-    }
-
-    private static String createFixedWarningsLinkName(final int fixedWarnings) {
-        if (fixedWarnings == 1) {
-            return Messages.Result_OneFixedWarning();
-        }
-        else {
-            return Messages.Result_MultipleFixedWarnings(fixedWarnings);
-        }
+    private static ContainerTag linkBuild(final int referenceBuild, final String resultUrl) {
+        return linkBuild(referenceBuild, resultUrl, String.valueOf(referenceBuild));
     }
 
     public interface AgeBuilder extends Function<Integer, String> {
         // no new methods
+
     }
 
+    /**
+     * Computes the age of a build as a hyper link.
+     */
     public static class DefaultAgeBuilder implements AgeBuilder {
-        private final String plugin;
-        private final String backward;
         private final int currentBuild;
+        private final String resultUrl;
 
         public DefaultAgeBuilder(final int currentBuild, final String resultUrl) {
             this.currentBuild = currentBuild;
-            String cleanUrl = StringUtils.stripEnd(resultUrl, "/");
-            plugin = StringUtils.substringBefore(cleanUrl, "/");
-            int subDetailsCount = StringUtils.countMatches(cleanUrl, "/");
-
-            backward = StringUtils.repeat("../", subDetailsCount + 2);
+            this.resultUrl = resultUrl;
         }
 
         @Override
-        public String apply(final Integer origin) {
-            if (origin >= currentBuild) {
+        public String apply(final Integer referenceBuild) {
+            if (referenceBuild >= currentBuild) {
                 return "1"; // fallback
             }
             else {
-                return new HtmlBuilder().linkWithClass(String.format("%s%d/%s", backward, origin, plugin),
-                        computeAge(origin), "model-link inside").build();
+                return linkBuild(referenceBuild, resultUrl, computeAge(referenceBuild)).render();
             }
         }
 
         private String computeAge(final int buildNumber) {
             return String.valueOf(currentBuild - buildNumber + 1);
+        }
+    }
+
+    /**
+     * Resolves the path to the image of a {@link BallColor} using Staplers {@link Stapler#getCurrentRequest()}.
+     */
+    static class IconPathResolver {
+        String getImagePath(final BallColor color) {
+            return color.getImageOf("16");
         }
     }
 }

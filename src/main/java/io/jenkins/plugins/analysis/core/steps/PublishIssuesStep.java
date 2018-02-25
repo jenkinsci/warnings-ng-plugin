@@ -476,7 +476,7 @@ public class PublishIssuesStep extends Step {
                     result.getTotalSize(), result.getNewSize(), result.getFixedSize());
             logger.log("Creating analysis result took %s", getElapsedTime(startResult));
 
-            Result pluginResult = result.getPluginResult();
+            Result pluginResult = result.getOverallResult();
 
             if (qualityGate.isEnabled()) {
                 if (pluginResult.isBetterOrEqualTo(Result.SUCCESS)) {
@@ -523,12 +523,15 @@ public class PublishIssuesStep extends Step {
                     selector, usePreviousBuildAsReference, useStableBuildAsReference);
             BuildHistory buildHistory = new BuildHistory(run, selector);
 
-            return new AnalysisResult(run, referenceProvider, name, buildHistory.getPreviousResult(),
-                    qualityGate, filtered);
+            return buildHistory.getPreviousResult().map(
+                    result -> new AnalysisResult(run, referenceProvider, name, filtered, qualityGate, result))
+                    .orElseGet(() -> new AnalysisResult(run, referenceProvider, name, filtered, qualityGate));
         }
     }
 
-    // TODO: i18n
+    /**
+     * Descriptor for this step: defines the context and the UI labels.
+     */
     @Extension
     public static class Descriptor extends StepDescriptor {
         @Override
@@ -544,7 +547,7 @@ public class PublishIssuesStep extends Step {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return "Publish issues created by a static analysis run";
+            return Messages.PublishIssues_DisplayName();
         }
     }
 }

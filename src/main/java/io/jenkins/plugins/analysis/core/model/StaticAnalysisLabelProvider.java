@@ -3,8 +3,12 @@ package io.jenkins.plugins.analysis.core.model;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider.AgeBuilder;
+import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
+import j2html.tags.ContainerTag;
+import j2html.tags.DomContent;
 import net.sf.json.JSONObject;
 
+import hudson.model.Result;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
 /**
@@ -12,6 +16,7 @@ import hudson.plugins.analysis.util.ToolTipProvider;
  *
  * @author Ullrich Hafner
  */
+// TODO: check if the interface is required or DefaultLabelrovider is the thing to use
 public interface StaticAnalysisLabelProvider extends ToolTipProvider {
     String getName();
 
@@ -25,6 +30,8 @@ public interface StaticAnalysisLabelProvider extends ToolTipProvider {
 
     String getResultUrl();
 
+    ContainerTag getTitle(StaticAnalysisRun analysisRun);
+
     /**
      * Returns a detailed description of the specified issue.
      *
@@ -34,30 +41,6 @@ public interface StaticAnalysisLabelProvider extends ToolTipProvider {
      * @return the description
      */
     String getDescription(Issue issue);
-
-    /**
-     * Returns a summary message for the summary.jelly file.
-     *
-     * @param numberOfIssues
-     *         the number of issues in the report
-     * @param numberOfModules
-     *         the number of modules in the report
-     *
-     * @return the summary message
-     */
-    String getSummary(int numberOfIssues, int numberOfModules);
-
-    /**
-     * Creates a default delta message for the build result.
-     *
-     * @param newSize
-     *         number of new issues
-     * @param fixedSize
-     *         number of fixed issues
-     *
-     * @return the summary message
-     */
-    String getDeltaMessage(int newSize, int fixedSize);
 
     String getId();
 
@@ -86,4 +69,12 @@ public interface StaticAnalysisLabelProvider extends ToolTipProvider {
      * @return the table as String
      */
     JSONObject toJsonArray(Issues<?> issues, AgeBuilder ageBuilder);
+
+    ContainerTag getNewIssuesLabel(int newSize);
+
+    ContainerTag getFixedIssuesLabel(int fixedSize);
+
+    DomContent getNoIssuesSinceLabel(int currentBuild, int noIssuesSinceBuild);
+
+    DomContent getQualityGateResult(Result overallResult, int referenceBuild);
 }

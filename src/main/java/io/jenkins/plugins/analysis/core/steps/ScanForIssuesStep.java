@@ -222,6 +222,7 @@ public class ScanForIssuesStep extends Step {
                 issues = scanConsoleLog(workspace, logger);
             }
             issues.setId(tool.getId());
+            issues.forEach(issue -> issue.setOrigin(tool.getId()));
 
             logger.log("Parsing took %s", Duration.between(start, Instant.now()));
             return issues;
