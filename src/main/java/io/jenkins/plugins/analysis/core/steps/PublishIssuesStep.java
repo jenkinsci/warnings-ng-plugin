@@ -36,6 +36,7 @@ import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
+import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.Logger;
@@ -85,7 +86,8 @@ public class PublishIssuesStep extends Step {
      * @param issues
      *         the issues to publish as {@link Action} in the {@link Job}.
      */
-    @DataBoundConstructor @SafeVarargs
+    @DataBoundConstructor
+    @SafeVarargs
     public PublishIssuesStep(final Issues<Issue>... issues) {
         if (issues == null || issues.length == 0) {
             this.issues = new Issues<>();
@@ -103,8 +105,8 @@ public class PublishIssuesStep extends Step {
     }
 
     /**
-     * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If
-     * no ID is given, then the ID of the associated result object is used.
+     * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If no ID is
+     * given, then the ID of the associated result object is used.
      *
      * @param id
      *         the ID of the results
@@ -119,8 +121,8 @@ public class PublishIssuesStep extends Step {
     }
 
     /**
-     * Defines the name of the results. The name is used for all labels in the UI. If
-     * no name is given, then the name of the associated {@link StaticAnalysisLabelProvider} is used.
+     * Defines the name of the results. The name is used for all labels in the UI. If no name is given, then the name of
+     * the associated {@link StaticAnalysisLabelProvider} is used.
      *
      * @param name
      *         the name of the results
@@ -409,6 +411,7 @@ public class PublishIssuesStep extends Step {
         private final QualityGate qualityGate;
         private final RegexpFilter[] filters;
         private final String name;
+        private final Thresholds thresholds;
 
         protected Execution(@Nonnull final StepContext context, final PublishIssuesStep step) {
             super(context);
@@ -418,7 +421,8 @@ public class PublishIssuesStep extends Step {
             defaultEncoding = step.getDefaultEncoding();
             healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnHealthy(), step.getMinimumPriority());
 
-            qualityGate = new QualityGate(step.getThresholds());
+            thresholds = step.getThresholds();
+            qualityGate = new QualityGate(thresholds);
             name = StringUtils.defaultString(step.getName());
             issues = step.getIssues();
             if (StringUtils.isNotBlank(step.getId())) {
@@ -484,10 +488,12 @@ public class PublishIssuesStep extends Step {
                 }
                 else {
                     logger.log("Some quality gates have been missed: overall result is %s", pluginResult);
+                    QualityGateResult detailedResult = qualityGate.evaluate(result);
+                    logger.logEachLine(detailedResult.getEvaluations(result, thresholds));
                 }
             }
             else {
-                    logger.log("No quality gates have been set - skipping");
+                logger.log("No quality gates have been set - skipping");
             }
 
             FilePath workspace = getContext().get(FilePath.class);

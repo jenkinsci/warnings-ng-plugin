@@ -34,7 +34,7 @@ class AbsolutePathGeneratorTest {
     void shouldReturnFallbackOnError(final String fileName) {
         Issues<Issue> issues = createIssuesSingleton(fileName, ISSUE_BUILDER);
 
-        new AbsolutePathGenerator().run(issues, ISSUE_BUILDER, WORKSPACE);
+        new AbsolutePathGenerator().run(issues, WORKSPACE);
 
         assertThat(issues.iterator()).containsExactly(issues.get(0));
         assertThat(issues).hasId(ID);
@@ -59,7 +59,7 @@ class AbsolutePathGeneratorTest {
         Issues<Issue> issues = createIssuesSingleton(fileName, ISSUE_BUILDER.setOrigin(ID));
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator(fileSystem);
-        generator.run(issues, ISSUE_BUILDER, WORKSPACE);
+        generator.run(issues, WORKSPACE);
 
         assertThat(issues.iterator()).containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build());
         assertThat(issues).hasId(ID);
@@ -70,7 +70,7 @@ class AbsolutePathGeneratorTest {
         AbsolutePathGenerator generator = new AbsolutePathGenerator();
         Issues<Issue> issues = new Issues<>();
         issues.setId(ID);
-        generator.run(issues, ISSUE_BUILDER, WORKSPACE);
+        generator.run(issues, WORKSPACE);
         assertThat(issues).hasSize(0);
         assertThat(issues).hasId(ID);
     }
@@ -91,7 +91,7 @@ class AbsolutePathGeneratorTest {
         issues.add(issueWithAbsolutePath);
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator(fileSystem);
-        generator.run(issues, ISSUE_BUILDER, WORKSPACE);
+        generator.run(issues, WORKSPACE);
 
         assertThat(issues.iterator())
                 .containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build(), issueWithAbsolutePath);

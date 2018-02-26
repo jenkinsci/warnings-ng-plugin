@@ -95,6 +95,28 @@ public class ThresholdSet implements Serializable {
                 || isLowThresholdReached(lowToCheck);
     }
 
+    /**
+     * Check if one or more of the thresholds is retched or exceeded.
+     *
+     * @param totalToCheck
+     *         total count of warnings
+     * @param highToCheck
+     *         count of high prioritized warnings
+     * @param normalToCheck
+     *         count of normal prioritized warnings
+     * @param lowToCheck
+     *         count of low prioritized warnings
+     *
+     * @return the result of the evaluation
+     */
+    public ThresholdResult evaluate(final int totalToCheck, final int highToCheck, final int normalToCheck,
+            final int lowToCheck) {
+        return new ThresholdResult(isTotalThresholdReached(totalToCheck),
+                isHighThresholdReached(highToCheck),
+                isNormalThresholdReached(normalToCheck),
+                isLowThresholdReached(lowToCheck));
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -132,6 +154,42 @@ public class ThresholdSet implements Serializable {
                 || isEnabled(highThreshold)
                 || isEnabled(normalThreshold)
                 || isEnabled(lowThreshold);
+    }
+
+    public static class ThresholdResult {
+        private final boolean isTotalReached;
+        private final boolean isHighReached;
+        private final boolean isNormalReached;
+        private final boolean isLowReached;
+
+        public ThresholdResult(final boolean isTotalReached, final boolean isHighReached, final boolean isNormalReached,
+                final boolean isLowReached) {
+            this.isTotalReached = isTotalReached;
+            this.isHighReached = isHighReached;
+            this.isNormalReached = isNormalReached;
+            this.isLowReached = isLowReached;
+        }
+
+        public boolean isTotalReached() {
+            return isTotalReached;
+        }
+
+        public boolean isHighReached() {
+            return isHighReached;
+        }
+
+        public boolean isNormalReached() {
+            return isNormalReached;
+        }
+
+        public boolean isLowReached() {
+            return isLowReached;
+        }
+
+        @SuppressWarnings("OverlyComplexBooleanExpression")
+        public boolean isSuccess() {
+            return !isTotalReached && !isHighReached && !isNormalReached && !isLowReached;
+        }
     }
 
     public static class ThresholdSetBuilder {

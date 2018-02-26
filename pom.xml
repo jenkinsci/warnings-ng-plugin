@@ -161,7 +161,8 @@
         </executions>
         <configuration>
           <packages>
-            <param>io.jenkins.plugins.analysis.core.model</param>
+            <package>io.jenkins.plugins.analysis.core.model</package>
+            <package>io.jenkins.plugins.analysis.core.quality</package>
           </packages>
           <cleanTargetDir>true</cleanTargetDir>
           <hierarchical>false</hierarchical>

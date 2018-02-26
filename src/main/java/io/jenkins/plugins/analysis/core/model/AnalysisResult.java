@@ -212,7 +212,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         fixedIssuesReference = new WeakReference<>(fixedIssues);
         fixedSize = fixedIssues.size();
 
-        overallResult = qualityGate.evaluate(this);
+        overallResult = qualityGate.evaluate(this).getOverallResult();
         owner.setResult(overallResult);
 
         if (canSerialize) {
