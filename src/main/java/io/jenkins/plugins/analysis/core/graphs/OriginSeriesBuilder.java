@@ -7,7 +7,7 @@ import java.util.TreeMap;
 
 import com.google.common.collect.Lists;
 
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 
 /**
  * Builds the series for the {@link OriginGraph}.
@@ -20,7 +20,7 @@ public class OriginSeriesBuilder extends SeriesBuilder {
     private final List<String> originLabels = Lists.newArrayList();
 
     @Override
-    protected List<Integer> computeSeries(final StaticAnalysisRun current) {
+    protected List<Integer> computeSeries(final AnalysisResult current) {
         List<Integer> series = new ArrayList<>();
         SortedMap<String, Integer> sizePerOrigin = new TreeMap<>(current.getSizePerOrigin());
         int max = 8;

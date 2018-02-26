@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -40,7 +40,7 @@ class PrioritySeriesBuilderTest {
     void shouldHaveThreeValuesForSingleBuild() {
         PrioritySeriesBuilder builder = new PrioritySeriesBuilder();
 
-        StaticAnalysisRun singleResult = createBuildResult(1, 1, 2, 3);
+        AnalysisResult singleResult = createBuildResult(1, 1, 2, 3);
 
         CategoryDataset dataSet = builder.createDataSet(createConfiguration(), Lists.newArrayList(singleResult));
 
@@ -54,9 +54,9 @@ class PrioritySeriesBuilderTest {
         assertThat(dataSet.getValue(2, 0)).isEqualTo(1);
     }
 
-    private StaticAnalysisRun createBuildResult(final int buildNumber, final int numberOfHighPriorityIssues,
+    private AnalysisResult createBuildResult(final int buildNumber, final int numberOfHighPriorityIssues,
             final int numberOfNormalPriorityIssues, final int numberOfLowPriorityIssues) {
-        StaticAnalysisRun buildResult = mock(StaticAnalysisRun.class);
+        AnalysisResult buildResult = mock(AnalysisResult.class);
 
         when(buildResult.getTotalHighPrioritySize()).thenReturn(numberOfHighPriorityIssues);
         when(buildResult.getTotalNormalPrioritySize()).thenReturn(numberOfNormalPriorityIssues);

@@ -5,8 +5,8 @@ import java.time.ZoneId;
 
 import org.junit.jupiter.api.Test;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -30,14 +30,14 @@ class ResultTimeTest {
 
         GraphConfiguration configuration = createConfiguration(false);
 
-        StaticAnalysisRun run = createRunAt(today.minusYears(20));
+        AnalysisResult run = createRunAt(today.minusYears(20));
 
         assertThat(time.areResultsTooOld(configuration, run)).as("Result date marked as too old").isFalse();
         verify(configuration, never()).getDayCount();
     }
 
-    private StaticAnalysisRun createRunAt(final LocalDate now) {
-        StaticAnalysisRun run = mock(StaticAnalysisRun.class);
+    private AnalysisResult createRunAt(final LocalDate now) {
+        AnalysisResult run = mock(AnalysisResult.class);
         AnalysisBuild build = mock(AnalysisBuild.class);
         when(build.getTimeInMillis()).thenReturn(now.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
         when(run.getBuild()).thenReturn(build);
@@ -77,7 +77,7 @@ class ResultTimeTest {
     private void assertThatRunIsOutsideOfDayCount(final LocalDate runDate, final ResultTime time) {
         GraphConfiguration configuration = createGraphConfigurationWithDayCount();
 
-        StaticAnalysisRun run = createRunAt(runDate);
+        AnalysisResult run = createRunAt(runDate);
 
         assertThat(time.areResultsTooOld(configuration, run)).as("Result date marked as ok").isEqualTo(true);
     }
@@ -85,7 +85,7 @@ class ResultTimeTest {
     private void assertThatRunIsWithinDayCount(final LocalDate runDate, final ResultTime time) {
         GraphConfiguration configuration = createGraphConfigurationWithDayCount();
 
-        StaticAnalysisRun run = createRunAt(runDate);
+        AnalysisResult run = createRunAt(runDate);
 
         assertThat(time.areResultsTooOld(configuration, run)).as("Result date marked as too old").isEqualTo(false);
     }

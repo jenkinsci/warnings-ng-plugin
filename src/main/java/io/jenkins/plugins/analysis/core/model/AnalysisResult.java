@@ -27,7 +27,6 @@ import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.RunAdapter;
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 
 import hudson.XmlFile;
 import hudson.model.Api;
@@ -43,7 +42,7 @@ import hudson.model.Run;
  */
 @ExportedBean
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength"})
-public class AnalysisResult implements Serializable, StaticAnalysisRun {
+public class AnalysisResult implements Serializable {
     private static final long serialVersionUID = 1110545450292087475L;
 
     private static final Logger LOGGER = Logger.getLogger(AnalysisResult.class.getName());
@@ -413,13 +412,22 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         return new Api(this);
     }
 
-    @Override
+    /**
+         * Returns the build number since the associated job has no issues.
+         *
+         * @return the build number since there are no issues, or -1 if issues have been reported
+         */
     @Exported
     public int getNoIssuesSinceBuild() {
         return noIssuesSinceBuild;
     }
 
-    @Override
+    /**
+         * Returns the build number since the associated job has a successful static analysis result.
+         *
+         * @return the build number since the static analysis result is successful, or -1 if the result is
+         *         not successful
+         */
     @Exported
     public int getSuccessfulSinceBuild() {
         return successfulSinceBuild;
@@ -436,13 +444,16 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         return overallResult == Result.SUCCESS;
     }
 
-    @Override
     @Exported
     public QualityGate getQualityGate() {
         return qualityGate;
     }
 
-    @Override
+    /**
+         * Returns the {@link Result} of the static analysis run.
+         *
+         * @return the static analysis result
+         */
     @Exported
     public Result getOverallResult() {
         return overallResult;
@@ -461,27 +472,45 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         return getTool().getLinkName();
     }
 
-    @Override
     public int getReferenceBuild() {
         return referenceBuild;
     }
 
-    @Override
+    /**
+         * Returns the number of issues in this analysis run, mapped by their origin.
+         *
+         * @return number of issues per origin
+         */
     public Map<String, Integer> getSizePerOrigin() {
         return getIssues().getPropertyCount(issue -> issue.getOrigin());
     }
 
-    @Override
+    /**
+         * Returns the associated build that this run was part of.
+         *
+         * @return the associated build
+         */
     public AnalysisBuild getBuild() {
         return new RunAdapter(owner);
     }
 
-    @Override
+    /**
+         * Returns the total number of issues in this analysis run.
+         *
+         * @return total number of issues
+         */
     public int getTotalSize() {
         return size;
     }
 
-    @Override
+    /**
+         * Returns the total number of issues in this analysis run, that have the specified {@link Priority}.
+         *
+         * @param priority
+         *         the priority of the issues to match
+         *
+         * @return total number of issues
+         */
     public int getTotalSize(final Priority priority) {
         if (priority == Priority.HIGH) {
             return getTotalHighPrioritySize();
@@ -495,42 +524,74 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         return 0;
     }
 
-    @Override
+    /**
+         * Returns the total number of high priority issues in this analysis run.
+         *
+         * @return total number of high priority issues
+         */
     public int getTotalHighPrioritySize() {
         return highPrioritySize;
     }
 
-    @Override
+    /**
+         * Returns the total number of normal priority issues in this analysis run.
+         *
+         * @return total number of normal priority issues
+         */
     public int getTotalNormalPrioritySize() {
         return normalPrioritySize;
     }
 
-    @Override
+    /**
+         * Returns the total number of low priority issues in this analysis run.
+         *
+         * @return total number of low priority of issues
+         */
     public int getTotalLowPrioritySize() {
         return lowPrioritySize;
     }
 
-    @Override
+    /**
+         * Returns the number of new issues in this analysis run.
+         *
+         * @return number of new issues
+         */
     public int getNewSize() {
         return newSize;
     }
 
-    @Override
+    /**
+         * Returns the number of new high priority issues in this analysis run.
+         *
+         * @return number of new high priority issues
+         */
     public int getNewHighPrioritySize() {
         return newHighPrioritySize;
     }
 
-    @Override
+    /**
+         * Returns the number of new normal priority issues in this analysis run.
+         *
+         * @return number of new normal priority issues
+         */
     public int getNewNormalPrioritySize() {
         return newNormalPrioritySize;
     }
 
-    @Override
+    /**
+         * Returns the number of new low priority issues in this analysis run.
+         *
+         * @return number of new low priority of issues
+         */
     public int getNewLowPrioritySize() {
         return newLowPrioritySize;
     }
 
-    @Override
+    /**
+         * Returns the number of fixed issues in this analysis run.
+         *
+         * @return number of fixed issues
+         */
     public int getFixedSize() {
         return fixedSize;
     }

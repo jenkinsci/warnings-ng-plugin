@@ -10,7 +10,6 @@ import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider.IconPathResol
 import io.jenkins.plugins.analysis.core.model.Summary.LabelProviderFactoryFacade;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -32,7 +31,7 @@ class SummaryTest {
         when(facade.get("checkstyle")).thenReturn(createLabelProvider("checkstyle", "CheckStyle"));
         when(facade.get("pmd")).thenReturn(createLabelProvider("pmd", "PMD"));
 
-        StaticAnalysisRun analysisRun = mock(StaticAnalysisRun.class);
+        AnalysisResult analysisRun = mock(AnalysisResult.class);
         when(analysisRun.getSizePerOrigin()).thenReturn(Maps.fixedSize.of("checkstyle", 15, "pmd", 20));
         when(analysisRun.getNewSize()).thenReturn(2);
         when(analysisRun.getFixedSize()).thenReturn(2);

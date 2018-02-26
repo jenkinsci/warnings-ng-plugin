@@ -17,7 +17,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.Pair;
@@ -29,7 +29,7 @@ import hudson.plugins.analysis.util.Pair;
  * @author Ulli Hafner
  */
 public class DifferenceGraph extends BuildResultGraph {
-    private ResultTime resultTime = new ResultTime();
+    private final ResultTime resultTime = new ResultTime();
 
     @Override
     public String getId() {
@@ -122,7 +122,7 @@ public class DifferenceGraph extends BuildResultGraph {
     private void extractPoints(final GraphConfiguration configuration, final ResultHistory history,
                                final List<Pair<Integer, Integer>> fixedWarnings, final List<Pair<Integer, Integer>> newWarnings) {
         int buildCount = 0;
-        for (StaticAnalysisRun current : history) {
+        for (AnalysisResult current : history) {
             if (resultTime.areResultsTooOld(configuration, current)) {
                 break;
             }
