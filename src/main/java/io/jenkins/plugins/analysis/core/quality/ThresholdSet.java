@@ -156,6 +156,9 @@ public class ThresholdSet implements Serializable {
                 || isEnabled(lowThreshold);
     }
 
+    /**
+     * Result of a subset of the {@link QualityGate} evaluation.
+     */
     public static class ThresholdResult {
         private final boolean isTotalReached;
         private final boolean isHighReached;
@@ -192,6 +195,9 @@ public class ThresholdSet implements Serializable {
         }
     }
 
+    /**
+     * Creates {@link ThresholdSet} instances using the builder pattern.
+     */
     public static class ThresholdSetBuilder {
         private int totalThreshold = 0;
         private int highThreshold = 0;

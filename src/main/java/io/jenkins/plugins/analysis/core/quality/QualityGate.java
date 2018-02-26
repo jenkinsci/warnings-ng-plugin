@@ -188,7 +188,9 @@ public class QualityGate implements Serializable {
     /**
      * Result of the {@link QualityGate} evaluation.
      */ 
-    public static class QualityGateResult {
+    public static class QualityGateResult implements Serializable {
+        private static final long serialVersionUID = -629019781304545613L;
+
         private final ThresholdResult totalFailed;
         private final ThresholdResult totalUnstable;
         private final ThresholdResult newFailed;
