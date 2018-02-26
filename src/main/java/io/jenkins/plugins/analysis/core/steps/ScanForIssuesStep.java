@@ -255,7 +255,7 @@ public class ScanForIssuesStep extends Step {
             Instant start = Instant.now();
 
             AbsolutePathGenerator generator = new AbsolutePathGenerator();
-            generator.run(issues, new IssueBuilder(), workspace);
+            generator.run(issues, workspace);
             logIssuesMessages(issues, logger);
 
             logger.log("Resolving absolute file names took %s", Duration.between(start, Instant.now()));

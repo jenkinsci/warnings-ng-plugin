@@ -6,12 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.assertThat;
-import edu.hm.hafner.analysis.assertj.SoftAssertions;
 import edu.hm.hafner.util.SerializableTest;
+import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateBuilder;
+import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.quality.ThresholdSet.ThresholdSetBuilder;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 import hudson.model.Result;
@@ -21,6 +20,7 @@ import hudson.model.Result;
  *
  * @author Michael Schmid
  */
+// FIXME: check if dependency to old package and Thresholds still is required
 class QualityGateTest extends SerializableTest<QualityGate> {
     @Override
     protected QualityGate createSerializable() {
@@ -121,10 +121,10 @@ class QualityGateTest extends SerializableTest<QualityGate> {
         StaticAnalysisRun run = mock(StaticAnalysisRun.class);
         when(run.getTotalSize()).thenReturn(1);
 
-        assertThat(qualityGate.isEnabled()).isFalse();
+        assertThat(qualityGate).isNotEnabled();
 
-        Result qualityGateResult = qualityGate.evaluate(run);
-        assertThat(qualityGateResult).isEqualTo(Result.SUCCESS);
+        QualityGateResult qualityGateResult = qualityGate.evaluate(run);
+        assertThat(qualityGateResult).hasOverallResult(Result.SUCCESS);
     }
 
     @Test
@@ -356,28 +356,25 @@ class QualityGateTest extends SerializableTest<QualityGate> {
         when(runLow.getTotalLowPrioritySize()).thenReturn(totalWarningCount);
         when(runLow.getNewLowPrioritySize()).thenReturn(newWarningCount);
 
-        SoftAssertions.assertSoftly((softly) -> {
-            softly.assertThat(qualityGateTotal.evaluate(runTotal))
-                    .as("Threshold was <" + threshold + "> warning count was <" + totalWarningCount + ">")
-                    .isEqualTo(result);
-            softly.assertThat(qualityGateTotal.isEnabled()).isEqualTo(threshold > 0);
+        assertThat(qualityGateTotal.evaluate(runTotal))
+                .as("Threshold was <" + threshold + "> warning count was <" + totalWarningCount + ">")
+                .hasOverallResult(result);
+        assertThat(qualityGateTotal.isEnabled()).isEqualTo(threshold > 0);
 
-            softly.assertThat(qualityGateHigh.evaluate(runHigh))
-                    .as("High priority threshold was <" + threshold + "> warning count was <" + totalWarningCount + ">")
-                    .isEqualTo(result);
-            softly.assertThat(qualityGateHigh.isEnabled()).isEqualTo(threshold > 0);
+        assertThat(qualityGateHigh.evaluate(runHigh))
+                .as("High priority threshold was <" + threshold + "> warning count was <" + totalWarningCount + ">")
+                .hasOverallResult(result);
+        assertThat(qualityGateHigh.isEnabled()).isEqualTo(threshold > 0);
 
-            softly.assertThat(qualityGateNormal.evaluate(runNormal))
-                    .as("Normal priority threshold was <" + threshold + "> warning count was <" + totalWarningCount
-                            + ">")
-                    .isEqualTo(result);
-            softly.assertThat(qualityGateNormal.isEnabled()).isEqualTo(threshold > 0);
+        assertThat(qualityGateNormal.evaluate(runNormal))
+                .as("Normal priority threshold was <" + threshold + "> warning count was <" + totalWarningCount + ">")
+                .hasOverallResult(result);
+        assertThat(qualityGateNormal.isEnabled()).isEqualTo(threshold > 0);
 
-            softly.assertThat(qualityGateLow.evaluate(runLow))
-                    .as("Low priority threshold was <" + threshold + "> warning count was <" + totalWarningCount + ">")
-                    .isEqualTo(result);
-            softly.assertThat(qualityGateLow.isEnabled()).isEqualTo(threshold > 0);
-        });
+        assertThat(qualityGateLow.evaluate(runLow))
+                .as("Low priority threshold was <" + threshold + "> warning count was <" + totalWarningCount + ">")
+                .hasOverallResult(result);
+        assertThat(qualityGateLow.isEnabled()).isEqualTo(threshold > 0);
     }
 
     /** Verifies that a String input parameter is validated. */
@@ -407,8 +404,9 @@ class QualityGateTest extends SerializableTest<QualityGate> {
         StaticAnalysisRun run = mock(StaticAnalysisRun.class);
         when(run.getTotalSize()).thenReturn(1);
 
-        Result qualityGateResult = qualityGate.evaluate(run);
-        assertThat(qualityGateResult).as("Does not convert %s to zero threshold").isEqualTo(Result.SUCCESS);
+        QualityGateResult qualityGateResult = qualityGate.evaluate(run);
+        assertThat(qualityGateResult).as("Does not convert %s to zero threshold")
+                .hasOverallResult(Result.SUCCESS);
     }
 
 }

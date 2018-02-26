@@ -256,7 +256,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
     @Override
     public DomContent getQualityGateResult(final Result overallResult, final int referenceBuild) {
         return join(Messages.Tool_QualityGate(),
-                getResultIcon(overallResult.color),
+                getResultIcon(overallResult.color), "-",
                 Messages.Tool_ReferenceBuild(linkBuild(referenceBuild, getResultUrl()).render()));
     }
 

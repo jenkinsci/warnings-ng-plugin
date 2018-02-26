@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.util.VisibleForTesting;
 
@@ -20,7 +19,7 @@ import hudson.FilePath;
  *
  * @author Ullrich Hafner
  */
-// TODO: if this class is called on the master then an remote call is initiated for each affected file
+// TODO: if this class is called on the master then a remote call is initiated for each affected file
 public class AbsolutePathGenerator {
     private final FileSystem fileSystem;
 
@@ -41,12 +40,10 @@ public class AbsolutePathGenerator {
      *
      * @param issues
      *         the issues to resolve the paths
-     * @param builder
-     *         a builder to copy issue instances
      * @param workspace
      *         the workspace containing the affected files
      */
-    public void run(final Issues<?> issues, final IssueBuilder builder, final FilePath workspace) {
+    public void run(final Issues<?> issues, final FilePath workspace) {
         Set<String> relativeFileNames = issues.getFiles()
                 .stream()
                 .filter(fileName -> isRelative(fileName))
