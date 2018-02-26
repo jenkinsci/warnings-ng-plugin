@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 
 /**
  * Builds the series for a graph showing all warnings by health descriptor.
@@ -33,7 +33,7 @@ public class HealthSeriesBuilder extends SeriesBuilder {
     }
 
     @Override
-    protected List<Integer> computeSeries(final StaticAnalysisRun current) {
+    protected List<Integer> computeSeries(final AnalysisResult current) {
         List<Integer> series = new ArrayList<>();
         int remainder = current.getTotalSize();
 

@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.model;
 import java.util.stream.Collectors;
 
 import edu.hm.hafner.util.VisibleForTesting;
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import static j2html.TagCreator.*;
 import j2html.tags.ContainerTag;
@@ -27,15 +26,15 @@ import j2html.tags.ContainerTag;
 // FIXME: %d issues should be part of label provider
 public class Summary {
     private final StaticAnalysisLabelProvider labelProvider;
-    private final StaticAnalysisRun analysisRun;
+    private final AnalysisResult analysisRun;
     private final LabelProviderFactoryFacade facade;
 
-    public Summary(final StaticAnalysisLabelProvider labelProvider, final StaticAnalysisRun analysisRun) {
+    public Summary(final StaticAnalysisLabelProvider labelProvider, final AnalysisResult analysisRun) {
         this(labelProvider, analysisRun, new LabelProviderFactoryFacade());
     }
 
     @VisibleForTesting
-    Summary(final StaticAnalysisLabelProvider labelProvider, final StaticAnalysisRun analysisRun,
+    Summary(final StaticAnalysisLabelProvider labelProvider, final AnalysisResult analysisRun,
             final LabelProviderFactoryFacade facade) {
         this.labelProvider = labelProvider;
         this.analysisRun = analysisRun;

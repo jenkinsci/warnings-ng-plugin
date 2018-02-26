@@ -1,14 +1,13 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -86,7 +85,7 @@ class HealthSeriesBuilderTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("testData")
-    void testComputeSeries(final String name, final HealthDescriptor descriptor, final StaticAnalysisRun run, final Iterable<Integer> expectedSeries) {
+    void testComputeSeries(final String name, final HealthDescriptor descriptor, final AnalysisResult run, final Iterable<Integer> expectedSeries) {
         HealthSeriesBuilder sut = new HealthSeriesBuilder(descriptor);
 
         List<Integer> series = sut.computeSeries(run);
@@ -95,8 +94,8 @@ class HealthSeriesBuilderTest {
                 .containsExactlyElementsOf(expectedSeries);
     }
 
-    private static StaticAnalysisRun createRunWithSize(final int totalSize) {
-        StaticAnalysisRun run = mock(StaticAnalysisRun.class);
+    private static AnalysisResult createRunWithSize(final int totalSize) {
+        AnalysisResult run = mock(AnalysisResult.class);
         when(run.getTotalSize()).thenReturn(totalSize);
         return run;
     }
@@ -125,7 +124,7 @@ class HealthSeriesBuilderTest {
      */
     private static class TestArgumentsBuilder {
         private String name;
-        private StaticAnalysisRun run;
+        private AnalysisResult run;
         private HealthDescriptor descriptor;
         private Iterable<Integer> series;
 
@@ -166,7 +165,7 @@ class HealthSeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setRun(final StaticAnalysisRun run) {
+        TestArgumentsBuilder setRun(final AnalysisResult run) {
             this.run = run;
 
             return this;
@@ -181,7 +180,7 @@ class HealthSeriesBuilderTest {
          * @return this
          */
         TestArgumentsBuilder setExpectedSeries(final Integer... series) {
-            this.series = Arrays.asList(series);
+            this.series = asList(series);
 
             return this;
         }

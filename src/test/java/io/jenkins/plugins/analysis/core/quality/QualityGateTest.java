@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import edu.hm.hafner.util.SerializableTest;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateResult;
@@ -118,7 +119,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
                 .setTotalUnstableThreshold(noThresholdsDefined)
                 .build();
 
-        StaticAnalysisRun run = mock(StaticAnalysisRun.class);
+        AnalysisResult run = mock(AnalysisResult.class);
         when(run.getTotalSize()).thenReturn(1);
 
         assertThat(qualityGate).isNotEnabled();
@@ -340,19 +341,19 @@ class QualityGateTest extends SerializableTest<QualityGate> {
                 new ThresholdSetBuilder().setTotalThreshold(Integer.MAX_VALUE).setLowThreshold(threshold).build())
                 .build();
 
-        StaticAnalysisRun runTotal = mock(StaticAnalysisRun.class);
+        AnalysisResult runTotal = mock(AnalysisResult.class);
         when(runTotal.getTotalSize()).thenReturn(totalWarningCount);
         when(runTotal.getNewSize()).thenReturn(newWarningCount);
 
-        StaticAnalysisRun runHigh = mock(StaticAnalysisRun.class);
+        AnalysisResult runHigh = mock(AnalysisResult.class);
         when(runHigh.getTotalHighPrioritySize()).thenReturn(totalWarningCount);
         when(runHigh.getNewHighPrioritySize()).thenReturn(newWarningCount);
 
-        StaticAnalysisRun runNormal = mock(StaticAnalysisRun.class);
+        AnalysisResult runNormal = mock(AnalysisResult.class);
         when(runNormal.getTotalNormalPrioritySize()).thenReturn(totalWarningCount);
         when(runNormal.getNewNormalPrioritySize()).thenReturn(newWarningCount);
 
-        StaticAnalysisRun runLow = mock(StaticAnalysisRun.class);
+        AnalysisResult runLow = mock(AnalysisResult.class);
         when(runLow.getTotalLowPrioritySize()).thenReturn(totalWarningCount);
         when(runLow.getNewLowPrioritySize()).thenReturn(newWarningCount);
 
@@ -401,7 +402,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
                 .setTotalUnstableThreshold(noThresholdsDefined)
                 .build();
 
-        StaticAnalysisRun run = mock(StaticAnalysisRun.class);
+        AnalysisResult run = mock(AnalysisResult.class);
         when(run.getTotalSize()).thenReturn(1);
 
         QualityGateResult qualityGateResult = qualityGate.evaluate(run);

@@ -122,7 +122,7 @@ public class QualityGate implements Serializable {
      *
      * @return result of the evaluation, expressed by a build state
      */
-    public QualityGateResult evaluate(final StaticAnalysisRun run) {
+    public QualityGateResult evaluate(final AnalysisResult run) {
         return new QualityGateResult(
                 getTotalFailedThreshold().evaluate(
                         run.getTotalSize(),

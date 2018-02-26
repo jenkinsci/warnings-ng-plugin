@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.model;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider.AgeBuilder;
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
 import net.sf.json.JSONObject;
@@ -30,7 +29,7 @@ public interface StaticAnalysisLabelProvider extends ToolTipProvider {
 
     String getResultUrl();
 
-    ContainerTag getTitle(StaticAnalysisRun analysisRun);
+    ContainerTag getTitle(AnalysisResult analysisRun);
 
     /**
      * Returns a detailed description of the specified issue.

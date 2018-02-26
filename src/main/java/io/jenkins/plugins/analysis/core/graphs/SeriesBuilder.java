@@ -17,8 +17,8 @@ import com.google.common.collect.Sets;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 
 import hudson.util.DataSetBuilder;
 
@@ -29,7 +29,7 @@ import hudson.util.DataSetBuilder;
  * @author Ullrich Hafner
  */
 public abstract class SeriesBuilder {
-    private ResultTime resultTime;
+    private final ResultTime resultTime;
 
     public SeriesBuilder() {
         this(new ResultTime());
@@ -53,7 +53,7 @@ public abstract class SeriesBuilder {
      * @return the created data set
      */
     public CategoryDataset createDataSet(final GraphConfiguration configuration,
-            final Iterable<? extends StaticAnalysisRun> results) {
+            final Iterable<? extends AnalysisResult> results) {
         CategoryDataset dataSet;
         if (configuration.useBuildDateAsDomain()) {
             Map<LocalDate, List<Integer>> averagePerDay = averageByDate(createSeriesPerBuild(configuration, results));
@@ -67,10 +67,10 @@ public abstract class SeriesBuilder {
 
     @SuppressWarnings("rawtypes")
     private Map<AnalysisBuild, List<Integer>> createSeriesPerBuild(
-            final GraphConfiguration configuration, final Iterable<? extends StaticAnalysisRun> results) {
+            final GraphConfiguration configuration, final Iterable<? extends AnalysisResult> results) {
         int buildCount = 0;
         Map<AnalysisBuild, List<Integer>> valuesPerBuildNumber = Maps.newHashMap();
-        for (StaticAnalysisRun current : results) {
+        for (AnalysisResult current : results) {
             if (resultTime.areResultsTooOld(configuration, current)) {
                 break;
             }
@@ -92,7 +92,7 @@ public abstract class SeriesBuilder {
      * @param current the current build result
      * @return the series to plot
      */
-    protected abstract List<Integer> computeSeries(StaticAnalysisRun current);
+    protected abstract List<Integer> computeSeries(AnalysisResult current);
 
     /**
      * Creates a data set that contains a series per build number.

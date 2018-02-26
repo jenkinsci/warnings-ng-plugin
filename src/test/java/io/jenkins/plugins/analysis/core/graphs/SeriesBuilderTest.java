@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.jfree.data.category.CategoryDataset;
@@ -11,8 +10,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static io.jenkins.plugins.analysis.core.graphs.assertj.Assertions.*;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 import static java.util.Arrays.*;
 import static org.mockito.Mockito.*;
 
@@ -37,10 +36,10 @@ class SeriesBuilderTest {
     private static final DateTime SAME_DAY = DAY.plusHours(4);
     private static final DateTime NEXT_DAY = DAY.plusDays(1);
 
-    private static final StaticAnalysisRun RUN_PREVIOUS_DAY = createRun(1, PREVIOUS_DAY);
-    private static final StaticAnalysisRun RUN_DAY = createRun(2, DAY);
-    private static final StaticAnalysisRun RUN_SAME_DAY = createRun(3, SAME_DAY);
-    private static final StaticAnalysisRun RUN_NEXT_DAY = createRun(4, NEXT_DAY);
+    private static final AnalysisResult RUN_PREVIOUS_DAY = createRun(1, PREVIOUS_DAY);
+    private static final AnalysisResult RUN_DAY = createRun(2, DAY);
+    private static final AnalysisResult RUN_SAME_DAY = createRun(3, SAME_DAY);
+    private static final AnalysisResult RUN_NEXT_DAY = createRun(4, NEXT_DAY);
 
     private static final List<Integer> FIRST_SERIES = series(0, 1, 2);
     private static final List<Integer> SECOND_SERIES = series(3, 4, 5);
@@ -144,7 +143,7 @@ class SeriesBuilderTest {
     @MethodSource("createDataSetData")
     final void testCreateDataSet(final String testName,
             final ResultTime time, final GraphConfiguration config,
-            final List<StaticAnalysisRun> runs, final List<List<Integer>> expected) {
+            final List<AnalysisResult> runs, final List<List<Integer>> expected) {
 
         SeriesBuilder sut = new TestSeriesBuilder(time);
 
@@ -172,8 +171,8 @@ class SeriesBuilderTest {
     }
 
 
-    private static StaticAnalysisRun createRun(final int buildNo, final DateTime buildTime) {
-        StaticAnalysisRun run = mock(StaticAnalysisRun.class);
+    private static AnalysisResult createRun(final int buildNo, final DateTime buildTime) {
+        AnalysisResult run = mock(AnalysisResult.class);
 
         AnalysisBuild build = mock(AnalysisBuild.class);
         when(build.getTimeInMillis()).thenReturn(buildTime.getMillis());
@@ -187,7 +186,7 @@ class SeriesBuilderTest {
 
     private static ResultTime resultTime(final Boolean value, final Boolean... continuations) {
         ResultTime time = mock(ResultTime.class);
-        when(time.areResultsTooOld(any(GraphConfiguration.class), any(StaticAnalysisRun.class)))
+        when(time.areResultsTooOld(any(GraphConfiguration.class), any(AnalysisResult.class)))
                 .thenReturn(value, continuations);
         return time;
     }
@@ -209,7 +208,7 @@ class SeriesBuilderTest {
         }
 
         @Override
-        protected List<Integer> computeSeries(final StaticAnalysisRun current) {
+        protected List<Integer> computeSeries(final AnalysisResult current) {
             return asList(count++, count++, count++);
 
         }
@@ -222,7 +221,7 @@ class SeriesBuilderTest {
 
         private String testName;
         private GraphConfiguration config;
-        private List<StaticAnalysisRun> runs;
+        private List<AnalysisResult> runs;
         private List<List<Integer>> series;
         private ResultTime time;
 
@@ -278,8 +277,8 @@ class SeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setRuns(final StaticAnalysisRun... runs) {
-            this.runs = Arrays.asList(runs);
+        TestArgumentsBuilder setRuns(final AnalysisResult... runs) {
+            this.runs = asList(runs);
 
             return this;
         }
@@ -295,7 +294,7 @@ class SeriesBuilderTest {
          */
         @SafeVarargs
         public final TestArgumentsBuilder setExpected(final List<Integer>... series) {
-            this.series = Arrays.asList(series);
+            this.series = asList(series);
 
             return this;
         }

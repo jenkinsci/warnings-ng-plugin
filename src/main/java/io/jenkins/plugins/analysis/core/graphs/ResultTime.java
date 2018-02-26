@@ -7,7 +7,7 @@ import java.time.ZoneId;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 
 /**
  * Determines whether a build result is too old in order to be considered for a trend graph (based on the properties of
@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
  * @author Ullrich Hafner
  */
 public class ResultTime {
-    private LocalDate today;
+    private final LocalDate today;
 
     /**
      * Creates a new instance of {@link ResultTime}. The current date from the system clock in the default time-zone is
@@ -47,11 +47,11 @@ public class ResultTime {
      *
      * @return {@code true} if the build is too old
      */
-    public boolean areResultsTooOld(final GraphConfiguration configuration, final StaticAnalysisRun analysisRun) {
+    public boolean areResultsTooOld(final GraphConfiguration configuration, final AnalysisResult analysisRun) {
         return configuration.isDayCountDefined() && computeDayDelta(analysisRun) > configuration.getDayCount();
     }
 
-    private int computeDayDelta(final StaticAnalysisRun analysisRun) {
+    private int computeDayDelta(final AnalysisResult analysisRun) {
         return Math.abs(Period.between(toLocalDate(analysisRun.getBuild().getTimeInMillis()), today).getDays());
     }
 

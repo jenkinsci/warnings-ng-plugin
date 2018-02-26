@@ -12,7 +12,6 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.util.VisibleForTesting;
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 import static io.jenkins.plugins.analysis.core.views.IssuesDetail.*;
 import io.jenkins.plugins.analysis.core.views.LocalizedPriority;
 import static j2html.TagCreator.*;
@@ -215,7 +214,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
     }
 
     @Override
-    public ContainerTag getTitle(final StaticAnalysisRun analysisRun) {
+    public ContainerTag getTitle(final AnalysisResult analysisRun) {
         return div(join(getName() + ": ", getWarningsCount(analysisRun)))
                 .withId(id + "-title");
     }
@@ -238,7 +237,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
                 currentBuild - noIssuesSinceBuild + 1, linkBuild(noIssuesSinceBuild, getResultUrl()).render()));
     }
 
-    private Object getWarningsCount(final StaticAnalysisRun analysisRun) {
+    private Object getWarningsCount(final AnalysisResult analysisRun) {
         int size = analysisRun.getTotalSize();
         if (size == 0) {
             return Messages.Tool_NoIssues();
