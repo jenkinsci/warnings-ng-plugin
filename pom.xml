@@ -17,12 +17,6 @@
   <description>This plug-in reads the compiler warnings from the console log file and generates a trend report.
   </description>
 
-  <properties>
-    <jenkins-test-harness.version>2.32</jenkins-test-harness.version>
-    <junit.surefire.provider>1.0.0</junit.surefire.provider>
-    <surefire.maven.plugin>2.19.1</surefire.maven.plugin>
-  </properties>
-
   <licenses>
     <license>
       <name>MIT license</name>
@@ -142,23 +136,6 @@
     </dependency>
 
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <configuration>
-          <rules>
-            <requireUpperBoundDeps>
-              <excludes combine.children="append">
-              </excludes>
-            </requireUpperBoundDeps>
-          </rules>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
   <scm>
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
