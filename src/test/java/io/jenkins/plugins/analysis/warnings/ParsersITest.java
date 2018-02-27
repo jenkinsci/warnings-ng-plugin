@@ -18,7 +18,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
  * @author Ullrich Hafner
  */
 public class ParsersITest extends PipelineITest {
-    private static final String CODE_FRAGMENT = "<pre>#\n"
+    private static final String CODE_FRAGMENT = "<pre><code>#\n"
             + "\n"
             + "    ERROR HANDLING: N/A\n"
             + "    #\n"
@@ -59,7 +59,7 @@ public class ParsersITest extends PipelineITest {
             + "for i in $*\n"
             + "do\n"
             + "files=\"$files $directory/$i\"\n"
-            + "done</pre>";
+            + "done</code></pre>";
 
     /** Runs the CPD parser on output files that contains 2 issues. */
     @Test
@@ -80,7 +80,7 @@ public class ParsersITest extends PipelineITest {
     public void shouldFindAllDupFinderIssues() {
         Issues<?> issues = shouldFindIssuesOfTool(2, DupFinder.class, "dupfinder.xml");
 
-        assertThat(issues.get(0)).hasDescription("<pre>if (items == null) throw new ArgumentNullException(\"items\");</pre>");
+        assertThat(issues.get(0)).hasDescription("<pre><code>if (items == null) throw new ArgumentNullException(\"items\");</code></pre>");
     }
 
     /** Runs the Armcc parser on output files that contains 3 + 3 issues. */
