@@ -109,7 +109,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return Collections.singleton(new JobAction(owner.getParent(), getId(), getName()));
+        return Collections.singleton(new JobAction(owner.getParent(), getLabelProvider(), healthDescriptor));
     }
 
     @Exported

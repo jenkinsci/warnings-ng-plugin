@@ -14,7 +14,6 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import com.google.common.collect.Lists;
 
-import io.jenkins.plugins.analysis.core.graphs.AnnotationsByUserGraph;
 import io.jenkins.plugins.analysis.core.graphs.BuildResultGraph;
 import io.jenkins.plugins.analysis.core.graphs.DefaultGraphConfigurationView;
 import io.jenkins.plugins.analysis.core.graphs.DifferenceGraph;
@@ -32,7 +31,6 @@ import io.jenkins.plugins.analysis.core.history.BuildHistory;
 import io.jenkins.plugins.analysis.core.history.NullBuildHistory;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
-import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import jenkins.model.Jenkins;
@@ -41,13 +39,11 @@ import hudson.model.Action;
 import hudson.model.Api;
 import hudson.model.Job;
 import hudson.model.Run;
-import hudson.plugins.analysis.core.GlobalSettings;
 import hudson.util.Graph;
 
 /**
- * A job action displays a link on the side panel of a job. This action
- * also is responsible to render the historical trend via its associated
- * 'floatingBox.jelly' view.
+ * A job action displays a link on the side panel of a job. This action also is responsible to render the historical
+ * trend via its associated 'floatingBox.jelly' view.
  *
  * @author Ulli Hafner
  */
@@ -56,21 +52,25 @@ import hudson.util.Graph;
 public class JobAction implements Action {
     private static final Logger LOGGER = Logger.getLogger(JobAction.class.getName());
 
-    private final Job<?, ?> job;
-    private final String id;
-    private final String name;
+    private final Job<?, ?> owner;
+    private final StaticAnalysisLabelProvider labelProvider;
+    private final HealthDescriptor healthDescriptor;
 
     /**
      * Creates a new instance of {@link JobAction}.
-     *  @param job
-     *            the job that owns this action
-     * @param id
-     * @param name
+     *
+     * @param owner
+     *         the job that owns this action
+     * @param labelProvider
+     *         the label provider
+     * @param healthDescriptor
+     *         the health descriptor
      */
-    public JobAction(final Job<?, ?> job, final String id, final String name) {
-        this.job = job;
-        this.id = id;
-        this.name = name;
+    public JobAction(final Job<?, ?> owner, final StaticAnalysisLabelProvider labelProvider,
+            final HealthDescriptor healthDescriptor) {
+        this.owner = owner;
+        this.labelProvider = labelProvider;
+        this.healthDescriptor = healthDescriptor;
     }
 
     /**
@@ -82,13 +82,10 @@ public class JobAction implements Action {
         return new Api(this);
     }
 
-    @Override @Exported
+    @Override
+    @Exported
     public String getDisplayName() {
-        return getTool().getLinkName();
-    }
-
-    private StaticAnalysisLabelProvider getTool() {
-        return new LabelProviderFactory().create(id, name);
+        return labelProvider.getLinkName();
     }
 
     /**
@@ -97,7 +94,7 @@ public class JobAction implements Action {
      * @return the title of the trend graph.
      */
     public String getTrendName() {
-        return getTool().getTrendName();
+        return labelProvider.getTrendName();
     }
 
     /**
@@ -105,21 +102,21 @@ public class JobAction implements Action {
      *
      * @return the job
      */
-    public final Job<?, ?> getJob() {
-        return job;
+    public final Job<?, ?> getOwner() {
+        return owner;
     }
 
     /**
-     * Returns the graph configuration view for the associated job. If the requested
-     * link is neither the user graph configuration nor the default
-     * configuration then <code>null</code> is returned.
+     * Returns the graph configuration view for the associated job. If the requested link is neither the user graph
+     * configuration nor the default configuration then {@code null} is returned.
      *
      * @param link
-     *            the requested link
+     *         the requested link
      * @param request
-     *            Stapler request
+     *         Stapler request
      * @param response
-     *            Stapler response
+     *         Stapler response
+     *
      * @return the dynamic result of the analysis (detail page).
      */
     @CheckForNull
@@ -148,13 +145,14 @@ public class JobAction implements Action {
      * Returns the trend graph details.
      *
      * @param request
-     *            Stapler request
+     *         Stapler request
      * @param response
-     *            Stapler response
+     *         Stapler response
+     *
      * @return the details
      */
     public Object getTrendDetails(final StaplerRequest request, final StaplerResponse response) {
-        return new TrendDetails(getJob(), getTrendGraph(request, response, "../../"), getTrendGraphId());
+        return new TrendDetails(getOwner(), getTrendGraph(request, response, "../../"), getTrendGraphId());
     }
 
     /**
@@ -170,9 +168,10 @@ public class JobAction implements Action {
      * Returns the configured trend graph.
      *
      * @param request
-     *            Stapler request
+     *         Stapler request
      * @param response
-     *            Stapler response
+     *         Stapler response
+     *
      * @return the trend graph
      */
     public Graph getTrendGraph(final StaplerRequest request, final StaplerResponse response) {
@@ -202,8 +201,9 @@ public class JobAction implements Action {
      * Returns whether the trend graph is visible.
      *
      * @param request
-     *            the request to get the cookie from
-     * @return <code>true</code> if the trend is visible
+     *         the request to get the cookie from
+     *
+     * @return {@code true} if the trend is visible
      */
     public boolean isTrendVisible(final StaplerRequest request) {
         GraphConfigurationView configuration = createUserConfiguration(request);
@@ -226,8 +226,9 @@ public class JobAction implements Action {
      * Returns whether the trend graph is deactivated.
      *
      * @param request
-     *            the request to get the cookie from
-     * @return <code>true</code> if the trend is deactivated
+     *         the request to get the cookie from
+     *
+     * @return {@code true} if the trend is deactivated
      */
     public boolean isTrendDeactivated(final StaplerRequest request) {
         return createUserConfiguration(request).isDeactivated();
@@ -237,7 +238,8 @@ public class JobAction implements Action {
      * Returns whether the enable trend graph link should be shown.
      *
      * @param request
-     *            the request to get the cookie from
+     *         the request to get the cookie from
+     *
      * @return the graph configuration
      */
     public boolean canShowEnableTrendLink(final StaplerRequest request) {
@@ -252,12 +254,13 @@ public class JobAction implements Action {
      * Creates a view to configure the trend graph for the current user.
      *
      * @param request
-     *            Stapler request
+     *         Stapler request
+     *
      * @return a view to configure the trend graph for the current user
      */
     protected GraphConfigurationView createUserConfiguration(final StaplerRequest request) {
-        return new UserGraphConfigurationView(createConfiguration(), getJob(),
-                getUrlName(), request.getCookies(), createBuildHistory(), getTool());
+        return new UserGraphConfigurationView(createConfiguration(), getOwner(),
+                getUrlName(), request.getCookies(), createBuildHistory(), labelProvider);
     }
 
     /**
@@ -266,8 +269,8 @@ public class JobAction implements Action {
      * @return a view to configure the trend graph defaults
      */
     protected GraphConfigurationView createDefaultConfiguration() {
-        return new DefaultGraphConfigurationView(createConfiguration(), getJob(),
-                getUrlName(), createBuildHistory(), getTool());
+        return new DefaultGraphConfigurationView(createConfiguration(), getOwner(),
+                getUrlName(), createBuildHistory(), labelProvider);
     }
 
     private ResultHistory createBuildHistory() {
@@ -276,7 +279,7 @@ public class JobAction implements Action {
             return new NullBuildHistory();
         }
         else {
-            return new BuildHistory(lastFinishedRun, new ByIdResultSelector(id));
+            return new BuildHistory(lastFinishedRun, new ByIdResultSelector(labelProvider.getId()));
         }
     }
 
@@ -302,7 +305,7 @@ public class JobAction implements Action {
         availableGraphs.add(new PriorityGraph());
         availableGraphs.add(new TotalsGraph());
         if (hasValidResults()) {
-            availableGraphs.add(new HealthGraph(new HealthDescriptor())); // FIXME: get health descriptor
+            availableGraphs.add(new HealthGraph(healthDescriptor));
         }
         else {
             availableGraphs.add(new HealthGraph(new HealthDescriptor()));
@@ -310,9 +313,6 @@ public class JobAction implements Action {
         availableGraphs.add(new DifferenceGraph());
         availableGraphs.add(new EmptyGraph());
         availableGraphs.add(new NullGraph());
-        if (!GlobalSettings.instance().getNoAuthors()) {
-            availableGraphs.add(new AnnotationsByUserGraph());
-        }
 
         return availableGraphs;
     }
@@ -321,7 +321,8 @@ public class JobAction implements Action {
      * Creates the graph configuration.
      *
      * @param availableGraphs
-     *            the available graphs
+     *         the available graphs
+     *
      * @return the graph configuration.
      */
     protected GraphConfiguration createConfiguration(final List<BuildResultGraph> availableGraphs) {
@@ -329,8 +330,8 @@ public class JobAction implements Action {
     }
 
     /**
-     * Returns the icon URL for the side-panel in the job screen. If there
-     * is no valid result yet, then <code>null</code> is returned.
+     * Returns the icon URL for the side-panel in the job screen. If there is no valid result yet, then {@code null} is
+     * returned.
      *
      * @return the icon URL for the side-panel in the job screen
      */
@@ -338,20 +339,20 @@ public class JobAction implements Action {
     public String getIconFileName() {
         ResultAction lastAction = getLastAction();
         if (lastAction != null && lastAction.getResult().getTotalSize() > 0) {
-            return Jenkins.RESOURCE_PATH + getTool().getSmallIconUrl();
+            return Jenkins.RESOURCE_PATH + labelProvider.getSmallIconUrl();
         }
         return null;
     }
 
     @Override
     public final String getUrlName() {
-        return id;
+        return labelProvider.getId();
     }
 
     /**
      * Returns whether this owner has a valid result action attached.
      *
-     * @return <code>true</code> if the results are valid
+     * @return {@code true} if the results are valid
      */
     public final boolean hasValidResults() {
         return getLastAction() != null;
@@ -360,8 +361,7 @@ public class JobAction implements Action {
     /**
      * Returns the last valid result action.
      *
-     * @return the last valid result action, or <code>null</code> if no such
-     *         action is found
+     * @return the last valid result action, or {@code null} if no such action is found
      */
     @CheckForNull
     public ResultAction getLastAction() {
@@ -378,8 +378,9 @@ public class JobAction implements Action {
      * Returns the result action for the specified build.
      *
      * @param lastRun
-     *            the build to get the action for
-     * @return the action or <code>null</code> if there is no such action
+     *         the build to get the action for
+     *
+     * @return the action or {@code null} if there is no such action
      */
     @CheckForNull
     protected ResultAction getResultAction(final Run<?, ?> lastRun) {
@@ -389,15 +390,12 @@ public class JobAction implements Action {
     /**
      * Returns the last finished run.
      *
-     * @return the last finished run or <code>null</code> if there is no
-     *         such run
+     * @return the last finished run or {@code null} if there is no such run
      */
-    @CheckForNull @Exported
+    @CheckForNull
+    @Exported
     public Run<?, ?> getLastFinishedRun() {
-        if (job == null) { // FIXME: can't be null
-            return null;
-        }
-        Run<?, ?> lastRun = job.getLastBuild();
+        Run<?, ?> lastRun = owner.getLastBuild();
         while (lastRun != null && (lastRun.isBuilding() || getResultAction(lastRun) == null)) {
             lastRun = lastRun.getPreviousBuild();
         }
@@ -408,21 +406,22 @@ public class JobAction implements Action {
      * Redirects the index page to the last result.
      *
      * @param request
-     *            Stapler request
+     *         Stapler request
      * @param response
-     *            Stapler response
+     *         Stapler response
+     *
      * @throws IOException
-     *             in case of an error
+     *         in case of an error
      */
     public void doIndex(final StaplerRequest request, final StaplerResponse response) throws IOException {
         Run<?, ?> lastRun = getLastFinishedRun();
         if (lastRun != null) {
-            response.sendRedirect2(String.format("../%d/%s", lastRun.getNumber(), getTool().getResultUrl()));
+            response.sendRedirect2(String.format("../%d/%s", lastRun.getNumber(), labelProvider.getResultUrl()));
         }
     }
 
     @Override
     public String toString() {
-        return String.format("%s(%s)", getClass().getName(), id);
+        return String.format("%s (%s)", getClass().getName(), labelProvider.getName());
     }
 }
