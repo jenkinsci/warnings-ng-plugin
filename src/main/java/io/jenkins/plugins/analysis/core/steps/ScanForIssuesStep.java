@@ -1,14 +1,11 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
@@ -19,27 +16,18 @@ import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
-import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import com.google.common.collect.ImmutableSet;
 
-import edu.hm.hafner.analysis.FingerprintGenerator;
-import edu.hm.hafner.analysis.FullTextFingerprint;
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.ModuleDetector;
-import edu.hm.hafner.analysis.ModuleDetector.FileSystem;
-import edu.hm.hafner.analysis.PackageNameResolver;
-import edu.hm.hafner.util.Ensure;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool.StaticAnalysisToolDescriptor;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.FilesScanner;
 import io.jenkins.plugins.analysis.core.util.Logger;
-import io.jenkins.plugins.analysis.core.util.LoggerFactory;
 import io.jenkins.plugins.analysis.core.util.ModuleResolver;
+
 import jenkins.model.Jenkins;
 
 import hudson.EnvVars;
@@ -51,6 +39,17 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.FileFinder;
+
+import edu.hm.hafner.analysis.FingerprintGenerator;
+import edu.hm.hafner.analysis.FullTextFingerprint;
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.ModuleDetector;
+import edu.hm.hafner.analysis.ModuleDetector.FileSystem;
+import edu.hm.hafner.analysis.PackageNameResolver;
+import edu.hm.hafner.util.Ensure;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Scan files or the console log for issues.
@@ -140,14 +139,14 @@ public class ScanForIssuesStep extends Step {
     /**
      * Actually performs the execution of the associated step.
      */
-    public static class Execution extends SynchronousNonBlockingStepExecution<Issues<?>> {
+    public static class Execution extends AnalysisExecution<Issues<?>> {
         private final String logFileEncoding;
         private final String sourceCodeEncoding;
         private final StaticAnalysisTool tool;
         private final String pattern;
         private int logPosition = 0;
 
-        protected Execution(@Nonnull final StepContext context, final ScanForIssuesStep step) {
+        protected Execution(@NonNull final StepContext context, final ScanForIssuesStep step) {
             super(context);
 
             logFileEncoding = step.getLogFileEncoding();
@@ -160,7 +159,7 @@ public class ScanForIssuesStep extends Step {
         protected Issues<?> run() throws IOException, InterruptedException, IllegalStateException {
             FilePath workspace = getWorkspace();
 
-            Logger logger = createLogger();
+            Logger logger = createLogger(tool.getName());
             Issues<?> issues = findIssues(workspace, logger);
             resolveAbsolutePaths(issues, workspace, logger);
             resolveModuleNames(issues, logger);
@@ -168,33 +167,6 @@ public class ScanForIssuesStep extends Step {
             createFingerprints(issues, logger);
 
             return issues;
-        }
-
-        private Logger createLogger() throws IOException, InterruptedException {
-            TaskListener listener = getContext().get(TaskListener.class);
-            if (listener == null) {
-                return new LoggerFactory().createNullLogger();
-            }
-            return new LoggerFactory().createLogger(listener.getLogger(), tool.getName());
-        }
-
-        private Run<?, ?> getRun() throws IOException, InterruptedException {
-            return getContext().get(Run.class);
-        }
-
-        // FIXME: no exception in getter signatures
-        private FilePath getWorkspace() {
-            try {
-                FilePath workspace = getContext().get(FilePath.class);
-                if (workspace == null) {
-                    throw new IllegalStateException("No workspace set for step " + this);
-                }
-
-                return workspace;
-            }
-            catch (IOException | InterruptedException  exception) {
-                throw new IllegalStateException("Can't obtain workspace for step " + this, exception);
-            }
         }
 
         private Charset getLogFileCharset() {
@@ -224,7 +196,7 @@ public class ScanForIssuesStep extends Step {
             issues.setId(tool.getId());
             issues.forEach(issue -> issue.setOrigin(tool.getId()));
 
-            logger.log("Parsing took %s", Duration.between(start, Instant.now()));
+            logger.log("Parsing took %s", computeElapsedTime(start));
             return issues;
         }
 
@@ -237,7 +209,7 @@ public class ScanForIssuesStep extends Step {
             resolver.run(issues, workspace, new ModuleDetector(workspace, new DefaultFileSystem()));
             logIssuesMessages(issues, logger);
 
-            logger.log("Resolving module names took %s", Duration.between(start, Instant.now()));
+            logger.log("Resolving module names took %s", computeElapsedTime(start));
         }
 
         private void resolvePackageNames(final Issues<?> issues, final Logger logger) {
@@ -248,7 +220,7 @@ public class ScanForIssuesStep extends Step {
             resolver.run(issues, new IssueBuilder(), getSourceCodeCharset());
             logIssuesMessages(issues, logger);
 
-            logger.log("Resolving package names took %s", Duration.between(start, Instant.now()));
+            logger.log("Resolving package names took %s", computeElapsedTime(start));
         }
 
         private void resolveAbsolutePaths(final Issues<?> issues, final FilePath workspace, final Logger logger) {
@@ -258,7 +230,7 @@ public class ScanForIssuesStep extends Step {
             generator.run(issues, workspace);
             logIssuesMessages(issues, logger);
 
-            logger.log("Resolving absolute file names took %s", Duration.between(start, Instant.now()));
+            logger.log("Resolving absolute file names took %s", computeElapsedTime(start));
         }
 
         private void createFingerprints(final Issues<?> issues, final Logger logger) {
@@ -269,7 +241,7 @@ public class ScanForIssuesStep extends Step {
             generator.run(new FullTextFingerprint(), issues, new IssueBuilder(), getSourceCodeCharset());
             logIssuesMessages(issues, logger);
 
-            logger.log("Extracting fingerprints took %s", Duration.between(start, Instant.now()));
+            logger.log("Extracting fingerprints took %s", computeElapsedTime(start));
         }
 
         private Issues<?> scanConsoleLog(final FilePath workspace, final Logger logger)
@@ -363,7 +335,7 @@ public class ScanForIssuesStep extends Step {
             return "scanForIssues";
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.ScanForIssues_DisplayName();
