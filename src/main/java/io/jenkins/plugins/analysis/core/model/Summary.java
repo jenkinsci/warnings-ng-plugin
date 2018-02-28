@@ -2,10 +2,12 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.util.stream.Collectors;
 
-import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
+
 import static j2html.TagCreator.*;
 import j2html.tags.ContainerTag;
+
+import edu.hm.hafner.util.VisibleForTesting;
 
 /**
  * Summary message of a static analysis run. This message is shown as part of the 'summary.jelly' information of the
@@ -23,7 +25,6 @@ import j2html.tags.ContainerTag;
  * @author Ullrich Hafner
  */
 // FIXME: is the number of parsed reports available yet?
-// FIXME: %d issues should be part of label provider
 public class Summary {
     private final StaticAnalysisLabelProvider labelProvider;
     private final AnalysisResult analysisRun;
