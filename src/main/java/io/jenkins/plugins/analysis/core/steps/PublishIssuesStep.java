@@ -1,9 +1,6 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -15,16 +12,12 @@ import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
-import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
 import io.jenkins.plugins.analysis.core.history.BuildHistory;
 import io.jenkins.plugins.analysis.core.history.ReferenceFinder;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
@@ -40,7 +33,6 @@ import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.Logger;
-import io.jenkins.plugins.analysis.core.util.LoggerFactory;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.Extension;
@@ -53,6 +45,12 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.remoting.VirtualChannel;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Publish issues created by a static analysis run. The recorded issues are stored as a {@link ResultAction} in the
@@ -402,7 +400,7 @@ public class PublishIssuesStep extends Step {
     /**
      * Actually performs the execution of the associated step.
      */
-    public static class Execution extends SynchronousNonBlockingStepExecution<ResultAction> {
+    public static class Execution extends AnalysisExecution<ResultAction> {
         private final HealthDescriptor healthDescriptor;
         private final boolean useStableBuildAsReference;
         private final boolean usePreviousBuildAsReference;
@@ -413,7 +411,7 @@ public class PublishIssuesStep extends Step {
         private final String name;
         private final Thresholds thresholds;
 
-        protected Execution(@Nonnull final StepContext context, final PublishIssuesStep step) {
+        protected Execution(@NonNull final StepContext context, final PublishIssuesStep step) {
             super(context);
 
             usePreviousBuildAsReference = step.getUsePreviousBuildAsReference();
@@ -444,27 +442,13 @@ public class PublishIssuesStep extends Step {
             return publishResult(run, selector);
         }
 
-        private Logger createLogger() throws IOException, InterruptedException {
-            TaskListener listener = getContext().get(TaskListener.class);
-
-            return new LoggerFactory().createLogger(listener.getLogger(), getTool(issues.getId()).getName());
-        }
-
         private StaticAnalysisLabelProvider getTool(final String toolId) {
             return new LabelProviderFactory().create(toolId, name);
         }
 
-        private Run<?, ?> getRun() throws IOException, InterruptedException {
-            return getContext().get(Run.class);
-        }
-
-        private VirtualChannel getChannel() throws IOException, InterruptedException {
-            return getContext().get(Computer.class).getChannel();
-        }
-
         private ResultAction publishResult(final Run<?, ?> run, final ResultSelector selector)
                 throws IOException, InterruptedException {
-            Logger logger = createLogger();
+            Logger logger = createLogger(getTool(issues.getId()).getName());
 
             Instant startResult = Instant.now();
             IssueFilterBuilder builder = new IssueFilterBuilder();
@@ -478,7 +462,7 @@ public class PublishIssuesStep extends Step {
             AnalysisResult result = createAnalysisResult(filtered, run, selector);
             logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
                     result.getTotalSize(), result.getNewSize(), result.getFixedSize());
-            logger.log("Creating analysis result took %s", getElapsedTime(startResult));
+            logger.log("Creating analysis result took %s", computeElapsedTime(startResult));
 
             Result pluginResult = result.getOverallResult();
 
@@ -500,11 +484,18 @@ public class PublishIssuesStep extends Step {
             Set<String> files = result.getIssues().getFiles();
 
             Instant startCopy = Instant.now();
-            String copyingLogMessage = new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(getChannel(),
-                    getBuildFolder(), EncodingValidator.getEncoding(defaultEncoding), files);
-            logger.log("Copied %d affected files from '%s' to build folder (%s)",
-                    files.size(), workspace, copyingLogMessage);
-            logger.log("Copying affected files took %s", getElapsedTime(startCopy));
+            Optional<VirtualChannel> channel = getChannel();
+            if (channel.isPresent()) {
+                String copyingLogMessage = new AffectedFilesResolver()
+                        .copyFilesWithAnnotationsToBuildFolder(channel.get(), getBuildFolder(),
+                                EncodingValidator.getEncoding(defaultEncoding), files);
+                logger.log("Copied %d affected files from '%s' to build folder (%s)",
+                        files.size(), workspace, copyingLogMessage);
+                logger.log("Copying affected files took %s", computeElapsedTime(startCopy));
+            }
+            else {
+                logger.log("Can't copy affected files since channel to agent is not available");
+            }
 
             String id = filtered.getId();
             logger.log("Attaching ResultAction with ID '%s' to run '%s'.", id, run);
@@ -513,14 +504,6 @@ public class PublishIssuesStep extends Step {
             run.addAction(action);
 
             return action;
-        }
-
-        private Duration getElapsedTime(final Instant startResult) {
-            return Duration.between(startResult, Instant.now());
-        }
-
-        private FilePath getBuildFolder() throws IOException, InterruptedException {
-            return new FilePath(getRun().getRootDir());
         }
 
         private AnalysisResult createAnalysisResult(final Issues<Issue> filtered,
@@ -550,7 +533,7 @@ public class PublishIssuesStep extends Step {
             return "publishIssues";
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.PublishIssues_DisplayName();

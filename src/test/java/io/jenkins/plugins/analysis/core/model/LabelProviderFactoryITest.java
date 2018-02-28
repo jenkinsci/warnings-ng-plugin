@@ -1,24 +1,26 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
 import org.jvnet.hudson.test.TestExtension;
 
-import edu.hm.hafner.analysis.IssueParser;
-import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
+
+import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import static org.mockito.Mockito.*;
+
+import edu.hm.hafner.analysis.IssueParser;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Tests the class {@link LabelProviderFactory}.
  *
  * @author Ullrich Hafner
  */
-public class LabelProviderFactoryTest extends IntegrationTest {
+public class LabelProviderFactoryITest extends IntegrationTest {
     private static final String ANNOTATED_ID = "annotatedTool";
     private static final String PROVIDER_ID = "provider";
     private static final String UNDEFINED_ID = "undefined-id";
@@ -82,7 +84,7 @@ public class LabelProviderFactoryTest extends IntegrationTest {
                 super(ANNOTATED_ID);
             }
 
-            @Nonnull
+            @NonNull
             @Override
             public String getDisplayName() {
                 return ANNOTATED_ID;
