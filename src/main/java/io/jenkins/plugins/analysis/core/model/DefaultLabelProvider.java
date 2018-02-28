@@ -1,19 +1,15 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import javax.annotation.CheckForNull;
 import java.util.function.Function;
+import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.kohsuke.stapler.Stapler;
 
-import edu.hm.hafner.analysis.IntegerParser;
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
-import edu.hm.hafner.util.VisibleForTesting;
-import static io.jenkins.plugins.analysis.core.views.IssuesDetail.*;
 import io.jenkins.plugins.analysis.core.views.LocalizedPriority;
+
+import static io.jenkins.plugins.analysis.core.views.IssuesDetail.*;
 import static j2html.TagCreator.*;
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
@@ -22,6 +18,12 @@ import net.sf.json.JSONObject;
 
 import hudson.model.BallColor;
 import hudson.model.Result;
+
+import edu.hm.hafner.analysis.IntegerParser;
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.util.VisibleForTesting;
 
 /**
  * A generic label provider for static analysis runs. Creates pre-defined labels that are parameterized with a string
@@ -234,7 +236,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
     @Override
     public DomContent getNoIssuesSinceLabel(final int currentBuild, final int noIssuesSinceBuild) {
         return join(Messages.Tool_NoIssuesSinceBuild(Messages.Tool_NoIssues(),
-                currentBuild - noIssuesSinceBuild + 1, linkBuild(noIssuesSinceBuild, getResultUrl()).render()));
+                currentBuild - noIssuesSinceBuild + 1, linkBuild(noIssuesSinceBuild, getResultUrl(), false).render()));
     }
 
     private Object getWarningsCount(final AnalysisResult analysisRun) {
@@ -256,7 +258,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
     public DomContent getQualityGateResult(final Result overallResult, final int referenceBuild) {
         return join(Messages.Tool_QualityGate(),
                 getResultIcon(overallResult.color), "-",
-                Messages.Tool_ReferenceBuild(linkBuild(referenceBuild, getResultUrl()).render()));
+                Messages.Tool_ReferenceBuild(linkBuild(referenceBuild, getResultUrl(), true).render()));
     }
 
     private ContainerTag getResultIcon(final BallColor color) {
@@ -303,24 +305,30 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
     }
 
     private static ContainerTag linkBuild(final int referenceBuild, final String resultUrl,
-            final String displayName) {
+            final String displayName, final boolean isResult) {
         String cleanUrl = StringUtils.stripEnd(resultUrl, "/");
         String id = StringUtils.substringBefore(cleanUrl, "/");
         int subDetailsCount = StringUtils.countMatches(cleanUrl, "/");
         String backward = StringUtils.repeat("../", subDetailsCount + 2);
 
+        String url;
+        if (isResult) {
+            url = String.format("%s%d/%s", backward, referenceBuild, id);
+        }
+        else {
+            url = String.format("%s%d", backward, referenceBuild);
+        }
         return a(displayName)
-                .withHref(String.format("%s%d/%s", backward, referenceBuild, id))
+                .withHref(url)
                 .withClasses("model-link", "inside");
     }
 
-    private static ContainerTag linkBuild(final int referenceBuild, final String resultUrl) {
-        return linkBuild(referenceBuild, resultUrl, String.valueOf(referenceBuild));
+    private static ContainerTag linkBuild(final int referenceBuild, final String resultUrl, final boolean isResult) {
+        return linkBuild(referenceBuild, resultUrl, String.valueOf(referenceBuild), isResult);
     }
 
     public interface AgeBuilder extends Function<Integer, String> {
         // no new methods
-
     }
 
     /**
@@ -341,7 +349,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
                 return "1"; // fallback
             }
             else {
-                return linkBuild(referenceBuild, resultUrl, computeAge(referenceBuild)).render();
+                return linkBuild(referenceBuild, resultUrl, computeAge(referenceBuild), true).render();
             }
         }
 
