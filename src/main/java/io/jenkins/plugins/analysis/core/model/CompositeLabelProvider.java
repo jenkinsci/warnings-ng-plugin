@@ -8,7 +8,7 @@ import edu.hm.hafner.analysis.Issue;
  *
  * @author Ullrich Hafner
  */
-public class CompositeLabelProvider extends DefaultLabelProvider {
+public class CompositeLabelProvider extends StaticAnalysisLabelProvider {
     private final StaticAnalysisLabelProvider labelProvider;
     private final String name;
 

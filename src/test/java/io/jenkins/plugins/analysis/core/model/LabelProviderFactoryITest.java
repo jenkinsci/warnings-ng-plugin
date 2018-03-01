@@ -9,7 +9,7 @@ import org.jvnet.hudson.test.TestExtension;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 
-import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+import static io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProviderAssert.*;
 import static org.mockito.Mockito.*;
 
 import edu.hm.hafner.analysis.IssueParser;
@@ -47,7 +47,7 @@ public class LabelProviderFactoryITest extends IntegrationTest {
 
         StaticAnalysisLabelProvider notRegistered = factory.create(UNDEFINED_ID, "");
         assertThat(notRegistered).hasId(UNDEFINED_ID);
-        assertThat(notRegistered).hasName(new DefaultLabelProvider(UNDEFINED_ID).getDefaultName());
+        assertThat(notRegistered).hasName(new StaticAnalysisLabelProvider(UNDEFINED_ID).getDefaultName());
     }
 
     /**
@@ -104,7 +104,7 @@ public class LabelProviderFactoryITest extends IntegrationTest {
             StaticAnalysisTool tool = mock(StaticAnalysisTool.class);
             when(tool.getId()).thenReturn(id);
             when(tool.getName()).thenReturn(id);
-            when(tool.getLabelProvider()).thenReturn(new DefaultLabelProvider(id, id));
+            when(tool.getLabelProvider()).thenReturn(new StaticAnalysisLabelProvider(id, id));
             return tool;
         }
 
