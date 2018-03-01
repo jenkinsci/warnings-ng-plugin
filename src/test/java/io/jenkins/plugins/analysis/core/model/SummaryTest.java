@@ -11,6 +11,7 @@ import io.jenkins.plugins.analysis.core.model.Summary.LabelProviderFactoryFacade
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -50,13 +51,13 @@ class SummaryTest {
         String actualSummary = new Summary(createLabelProvider("test", "SummaryTest"), analysisRun, facade).create();
         assertThat(actualSummary).contains("CheckStyle, PMD");
         assertThat(actualSummary).contains("No warnings for 2 builds");
-        assertThat(actualSummary).contains("since build <a href=\"../../1/testResult\" class=\"model-link inside\">1</a>");
+        assertThat(actualSummary).contains("since build <a href=\"../1\" class=\"model-link inside\">1</a>");
         assertThat(actualSummary).containsPattern(
                 createWarningsLink("<a href=\"testResult/new\">.*2 new warnings.*</a>"));
         assertThat(actualSummary).containsPattern(
                 createWarningsLink("<a href=\"testResult/fixed\">.*2 fixed warnings.*</a>"));
         assertThat(actualSummary).contains("Quality gates: <a href=\"BLUE\" alt=\"Success\" title=\"Success\">Success</a>");
-        assertThat(actualSummary).contains("Reference build <a href=\"../../15/testResult\" class=\"model-link inside\">15</a>");
+        assertThat(actualSummary).contains("Reference build <a href=\"../15/testResult\" class=\"model-link inside\">15</a>");
     }
 
     private DefaultLabelProvider createLabelProvider(final String checkstyle, final String checkStyle) {

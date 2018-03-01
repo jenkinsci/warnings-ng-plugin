@@ -4,7 +4,7 @@
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
   <l:layout title="${it.displayName}" norefresh="true">
 
-    <st:include it="${it.owner}" page="sidepanel.jelly" />
+    <st:include it="${it.owner}" page="sidepanel.jelly"/>
 
     <l:main-panel>
 
@@ -36,47 +36,50 @@
 
       <div class="fluid-container">
 
-      <h3>${it.displayName}</h3>
+        <h3>${it.displayName}</h3>
 
-      <table class="table table-responsive table-responsive-block table-hover table-striped" id="fixed">
-        <colgroup>
-          <col class="col-width-5"/>
-          <col class="col-width-1"/>
-          <col class="col-width-1"/>
-          <col class="col-width-3"/>
-          <col class="col-width-2"/>
-        </colgroup>
-        <thead>
-          <tr>
-            <th>${%File}</th>
-            <th>${%Line}</th>
-            <th>${%Priority}</th>
-            <th>${%Type}</th>
-            <th>${%Category}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <j:forEach var="issue" items="${it.issues}">
+        <table class="table table-responsive table-responsive-block table-hover table-striped" id="fixed">
+          <colgroup>
+            <col class="col-width-5"/>
+            <col class="col-width-1"/>
+            <col class="col-width-1"/>
+            <col class="col-width-3"/>
+            <col class="col-width-2"/>
+          </colgroup>
+          <thead>
             <tr>
-              <td class="pane" id="file">${it.getFileDisplayName(issue)}</td>
-              <td class="pane" id="line">
-                <j:choose>
-                  <j:when test="${issue.lineStart &lt; 1}">
-                    -
-                  </j:when>
-                  <j:otherwise>
-                    ${issue.lineStart}
-                  </j:otherwise>
-                </j:choose>
-              </td>
-              <td class="pane" id="priority">${it.getLocalizedPriority(issue.priority)} </td>
-              <td class="pane" id="type">${issue.type} </td>
-              <td class="pane" id="category">${issue.category} </td>
+              <th>${%File}</th>
+              <th>${%Line}</th>
+              <th>${%Priority}</th>
+              <th>${%Type}</th>
+              <th>${%Category}</th>
             </tr>
-          </j:forEach>
-        </tbody>
-      </table>
-      <script type="text/javascript" src="${resURL}/plugin/analysis-core/js/jQuery-noConflict.js"/>
+          </thead>
+          <tbody>
+            <j:forEach var="issue" items="${it.issues}">
+              <tr>
+                <td class="pane" id="file">${it.getFileDisplayName(issue)}</td>
+                <td class="pane" id="line">
+                  <j:choose>
+                    <j:when test="${issue.lineStart &lt; 1}">
+                      -
+                    </j:when>
+                    <j:otherwise>
+                      ${issue.lineStart}
+                    </j:otherwise>
+                  </j:choose>
+                </td>
+                <td class="pane" id="priority">${it.getLocalizedPriority(issue.priority)}</td>
+                <td class="pane" id="type">${issue.type}</td>
+                <td class="pane" id="category">${issue.category}</td>
+              </tr>
+            </j:forEach>
+          </tbody>
+        </table>
+        <script type="text/javascript" src="${resURL}/plugin/analysis-core/js/jQuery-noConflict.js"/>
+
+      </div>
+
     </l:main-panel>
   </l:layout>
 </j:jelly>

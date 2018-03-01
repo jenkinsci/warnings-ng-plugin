@@ -309,7 +309,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
         String cleanUrl = StringUtils.stripEnd(resultUrl, "/");
         String id = StringUtils.substringBefore(cleanUrl, "/");
         int subDetailsCount = StringUtils.countMatches(cleanUrl, "/");
-        String backward = StringUtils.repeat("../", subDetailsCount + 2);
+        String backward = StringUtils.repeat("../", subDetailsCount + 1);
 
         String url;
         if (isResult) {
@@ -331,6 +331,7 @@ public class DefaultLabelProvider implements StaticAnalysisLabelProvider {
         // no new methods
     }
 
+    // FIXME: age builder: url depends on the depth of the subpage (currently ../ is missing)
     /**
      * Computes the age of a build as a hyper link.
      */
