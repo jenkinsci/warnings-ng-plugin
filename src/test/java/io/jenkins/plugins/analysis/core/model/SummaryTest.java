@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
 
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider.IconPathResolver;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.IconPathResolver;
 import io.jenkins.plugins.analysis.core.model.Summary.LabelProviderFactoryFacade;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
@@ -60,8 +60,8 @@ class SummaryTest {
         assertThat(actualSummary).contains("Reference build <a href=\"../15/testResult\" class=\"model-link inside\">15</a>");
     }
 
-    private DefaultLabelProvider createLabelProvider(final String checkstyle, final String checkStyle) {
-        return new DefaultLabelProvider(checkstyle, checkStyle, new IconResolverStub());
+    private StaticAnalysisLabelProvider createLabelProvider(final String checkstyle, final String checkStyle) {
+        return new StaticAnalysisLabelProvider(checkstyle, checkStyle, new IconResolverStub());
     }
 
     private Pattern createWarningsLink(final String href) {

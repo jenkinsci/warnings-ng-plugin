@@ -5,30 +5,32 @@ import java.util.Locale;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
+
+import static io.jenkins.plugins.analysis.core.model.Assertions.assertThat;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.util.ResourceTest;
-import static io.jenkins.plugins.analysis.core.model.Assertions.assertThat;
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider.AgeBuilder;
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider.DefaultAgeBuilder;
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
- * Tests the class {@link DefaultLabelProvider}.
+ * Tests the class {@link StaticAnalysisLabelProvider}.
  *
  * @author Ullrich Hafner
  */
-class DefaultLabelProviderTest {
+class StaticAnalysisLabelProviderTest {
     private static final String ID = "id";
     private static final String NAME = "name";
 
     @Test
     void shouldReturnIdAndNameOfConstructorParametersInAllDisplayProperties() {
-        DefaultLabelProvider labelProvider = new DefaultLabelProvider(ID, NAME);
+        StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider(ID, NAME);
 
         assertThat(labelProvider).hasId(ID);
         assertThat(labelProvider).hasName(NAME);
@@ -39,17 +41,17 @@ class DefaultLabelProviderTest {
 
     @Test
     void shouldReturnIdAndDefaultNameIfNoNameIsGiven() {
-        DefaultLabelProvider emptyNameLabelProvider = new DefaultLabelProvider(ID, "");
+        StaticAnalysisLabelProvider emptyNameLabelProvider = new StaticAnalysisLabelProvider(ID, "");
 
         assertThat(emptyNameLabelProvider).hasId(ID);
         assertThat(emptyNameLabelProvider).hasName(emptyNameLabelProvider.getDefaultName());
 
-        DefaultLabelProvider nullNameLabelProvider = new DefaultLabelProvider(ID, null);
+        StaticAnalysisLabelProvider nullNameLabelProvider = new StaticAnalysisLabelProvider(ID, null);
 
         assertThat(nullNameLabelProvider).hasId(ID);
         assertThat(nullNameLabelProvider).hasName(nullNameLabelProvider.getDefaultName());
 
-        DefaultLabelProvider noNameLabelProvider = new DefaultLabelProvider(ID);
+        StaticAnalysisLabelProvider noNameLabelProvider = new StaticAnalysisLabelProvider(ID);
 
         assertThat(noNameLabelProvider).hasId(ID);
         assertThat(noNameLabelProvider).hasName(noNameLabelProvider.getDefaultName());
@@ -116,7 +118,7 @@ class DefaultLabelProviderTest {
             Issues<Issue> issues = new Issues<>();
             issues.add(createIssue(1));
 
-            DefaultLabelProvider labelProvider = new DefaultLabelProvider();
+            StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider();
             JSONObject oneElement = labelProvider.toJsonArray(issues, new DefaultAgeBuilder(1, "url"));
 
             assertThatJson(oneElement).node("data").isArray().ofLength(1);
@@ -178,7 +180,7 @@ class DefaultLabelProviderTest {
                     .setPriority(Priority.HIGH)
                     .setReference("1").build();
 
-            DefaultLabelProvider provider = new DefaultLabelProvider();
+            StaticAnalysisLabelProvider provider = new StaticAnalysisLabelProvider();
             JSONArray columns = provider.toJson(issue, build -> String.valueOf(build));
 
             assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);

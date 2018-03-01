@@ -12,12 +12,10 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
+
 import net.sf.json.JSONObject;
 
 import hudson.markup.MarkupFormatter;
@@ -26,6 +24,10 @@ import hudson.model.Item;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.plugins.analysis.core.GlobalSettings;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
 
 /**
  * Build view that shows the details for a subset of issues.

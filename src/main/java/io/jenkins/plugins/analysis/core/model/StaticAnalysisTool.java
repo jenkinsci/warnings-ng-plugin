@@ -2,10 +2,10 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.io.Serializable;
 
-import edu.hm.hafner.analysis.IssueParser;
-
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+
+import edu.hm.hafner.analysis.IssueParser;
 
 /**
  * Describes a static analysis tool that reports issues.
@@ -83,7 +83,7 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
         }
 
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new DefaultLabelProvider(getId(), getDisplayName());
+            return new StaticAnalysisLabelProvider(getId(), getDisplayName());
         }
     }
 }

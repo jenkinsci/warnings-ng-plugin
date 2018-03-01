@@ -15,7 +15,7 @@ class CompositeLabelProviderTest {
 
     @Test
     void shouldReturnIdAndNameOfConstructorParametersInAllDisplayProperties() {
-        CompositeLabelProvider labelProvider = new CompositeLabelProvider(new DefaultLabelProvider(ID), NAME);
+        CompositeLabelProvider labelProvider = new CompositeLabelProvider(new StaticAnalysisLabelProvider(ID), NAME);
 
         assertThat(labelProvider).hasId(ID);
         assertThat(labelProvider).hasName(NAME);

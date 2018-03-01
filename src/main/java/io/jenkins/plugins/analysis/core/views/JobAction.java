@@ -1,10 +1,10 @@
 package io.jenkins.plugins.analysis.core.views;
 
-import javax.annotation.CheckForNull;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.CheckForNull;
 
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
@@ -33,6 +33,7 @@ import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
+
 import jenkins.model.Jenkins;
 
 import hudson.model.Action;
@@ -260,7 +261,7 @@ public class JobAction implements Action {
      */
     protected GraphConfigurationView createUserConfiguration(final StaplerRequest request) {
         return new UserGraphConfigurationView(createConfiguration(), getOwner(),
-                getUrlName(), request.getCookies(), createBuildHistory(), labelProvider);
+                getUrlName(), request.getCookies(), createBuildHistory(), labelProvider.getToolTipProvider());
     }
 
     /**
@@ -270,7 +271,7 @@ public class JobAction implements Action {
      */
     protected GraphConfigurationView createDefaultConfiguration() {
         return new DefaultGraphConfigurationView(createConfiguration(), getOwner(),
-                getUrlName(), createBuildHistory(), labelProvider);
+                getUrlName(), createBuildHistory(), labelProvider.getToolTipProvider());
     }
 
     private ResultHistory createBuildHistory() {
