@@ -6,15 +6,16 @@ import org.jvnet.localizer.LocaleProvider;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.parser.FindBugsParser;
-import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
-import static hudson.plugins.warnings.WarningsDescriptor.*;
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
+import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
+import static hudson.plugins.warnings.WarningsDescriptor.*;
+
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.parser.FindBugsParser;
 
 /**
  * Provides a parser and customized messages for FindBugs.
@@ -54,7 +55,7 @@ public class FindBugs extends StaticAnalysisTool {
     }
 
     /** Provides the labels for the static analysis tool. */
-    static class FindBugsLabelProvider extends DefaultLabelProvider {
+    static class FindBugsLabelProvider extends StaticAnalysisLabelProvider {
         private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
         private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
         private final FindBugsMessages messages;

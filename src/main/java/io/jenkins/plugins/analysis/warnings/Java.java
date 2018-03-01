@@ -4,13 +4,13 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.JavacParser;
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
 import hudson.plugins.warnings.WarningsDescriptor;
+
+import edu.hm.hafner.analysis.parser.JavacParser;
 
 /**
  * Provides a parser and customized messages for the Java compiler.
@@ -34,7 +34,7 @@ public class Java extends StaticAnalysisTool {
     }
 
     /** Provides the labels for the static analysis tool. */
-    public static class JavaLabelProvider extends DefaultLabelProvider {
+    public static class JavaLabelProvider extends StaticAnalysisLabelProvider {
         JavaLabelProvider() {
             this(ID, Messages.Warnings_JavaParser_ParserName());
         }

@@ -5,16 +5,18 @@ import java.util.List;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.parser.dry.CodeDuplication;
-import static hudson.plugins.warnings.WarningsDescriptor.*;
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+
+import static hudson.plugins.warnings.WarningsDescriptor.*;
 import static io.jenkins.plugins.analysis.core.views.IssuesDetail.*;
 import static j2html.TagCreator.*;
 import net.sf.json.JSONArray;
 
 import hudson.util.FormValidation;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.parser.dry.CodeDuplication;
 
 /**
  * Provides settings for duplicate code scanners.
@@ -72,7 +74,7 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
     }
 
     /** Provides icons for DRY parsers. */
-    static class DryLabelProvider extends DefaultLabelProvider {
+    static class DryLabelProvider extends StaticAnalysisLabelProvider {
         protected DryLabelProvider(final String id, final String name) {
             super(id, name);
         }

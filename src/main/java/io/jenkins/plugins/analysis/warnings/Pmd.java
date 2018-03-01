@@ -4,14 +4,15 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.parser.pmd.PmdParser;
-import static hudson.plugins.warnings.WarningsDescriptor.*;
-import io.jenkins.plugins.analysis.core.model.DefaultLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
+import static hudson.plugins.warnings.WarningsDescriptor.*;
+
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.parser.pmd.PmdParser;
 
 /**
  * Provides a parser and customized messages for PMD.
@@ -33,7 +34,7 @@ public class Pmd extends StaticAnalysisTool {
     }
 
     /** Provides the labels for the static analysis tool. */
-    private static class LabelProvider extends DefaultLabelProvider {
+    private static class LabelProvider extends StaticAnalysisLabelProvider {
         private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
         private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
 
