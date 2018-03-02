@@ -9,9 +9,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static io.jenkins.plugins.analysis.core.graphs.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
+
+import static io.jenkins.plugins.analysis.core.graphs.assertj.Assertions.*;
 import static java.util.Arrays.*;
 import static org.mockito.Mockito.*;
 
@@ -186,7 +187,7 @@ class SeriesBuilderTest {
 
     private static ResultTime resultTime(final Boolean value, final Boolean... continuations) {
         ResultTime time = mock(ResultTime.class);
-        when(time.areResultsTooOld(any(GraphConfiguration.class), any(AnalysisResult.class)))
+        when(time.isResultTooOld(any(GraphConfiguration.class), any(AnalysisResult.class)))
                 .thenReturn(value, continuations);
         return time;
     }

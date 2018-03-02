@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
+
 import net.sf.json.JSONObject;
 
 import hudson.model.Job;
@@ -153,7 +154,7 @@ public abstract class GraphConfigurationView implements ModelObject {
     public boolean hasMeaningfulGraph() {
         Optional<AnalysisResult> previousResult = buildHistory.getPreviousResult();
         if (previousResult.isPresent()) {
-            return !resultTime.areResultsTooOld(configuration, previousResult.get());
+            return !resultTime.isResultTooOld(configuration, previousResult.get());
         }
         return false;
     }
