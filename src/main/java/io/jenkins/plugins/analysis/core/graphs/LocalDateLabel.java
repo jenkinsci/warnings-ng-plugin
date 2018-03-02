@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import org.joda.time.LocalDate;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Graph label showing the build date.
@@ -9,6 +10,7 @@ import org.joda.time.LocalDate;
  */
 public class LocalDateLabel implements Comparable<LocalDateLabel> {
     private final LocalDate date;
+    private final DateTimeFormatter formatter;
 
     /**
      * Creates a new instance of {@link hudson.plugins.analysis.graph.LocalDateLabel}.
@@ -18,6 +20,7 @@ public class LocalDateLabel implements Comparable<LocalDateLabel> {
      */
     public LocalDateLabel(final LocalDate date) {
         this.date = date;
+        formatter = DateTimeFormatter.ofPattern("MM-dd");
     }
 
     @Override
@@ -27,7 +30,7 @@ public class LocalDateLabel implements Comparable<LocalDateLabel> {
 
     @Override
     public String toString() {
-        return date.toString("MM-dd");
+        return formatter.format(date);
     }
 
     @Override
@@ -51,14 +54,9 @@ public class LocalDateLabel implements Comparable<LocalDateLabel> {
         }
         LocalDateLabel other = (LocalDateLabel)obj;
         if (date == null) {
-            if (other.date != null) {
-                return false;
-            }
+            return other.date == null;
         }
-        else if (!date.equals(other.date)) {
-            return false;
-        }
-        return true;
+        else return date.equals(other.date);
     }
 }
 

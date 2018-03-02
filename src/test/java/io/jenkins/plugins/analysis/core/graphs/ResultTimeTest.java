@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,7 +33,7 @@ class ResultTimeTest {
 
         AnalysisResult run = createRunAt(today.minusYears(20));
 
-        assertThat(time.areResultsTooOld(configuration, run)).as("Result date marked as too old").isFalse();
+        assertThat(time.isResultTooOld(configuration, run)).as("Result date marked as too old").isFalse();
         verify(configuration, never()).getDayCount();
     }
 
@@ -79,7 +80,7 @@ class ResultTimeTest {
 
         AnalysisResult run = createRunAt(runDate);
 
-        assertThat(time.areResultsTooOld(configuration, run)).as("Result date marked as ok").isEqualTo(true);
+        assertThat(time.isResultTooOld(configuration, run)).as("Result date marked as ok").isEqualTo(true);
     }
 
     private void assertThatRunIsWithinDayCount(final LocalDate runDate, final ResultTime time) {
@@ -87,7 +88,7 @@ class ResultTimeTest {
 
         AnalysisResult run = createRunAt(runDate);
 
-        assertThat(time.areResultsTooOld(configuration, run)).as("Result date marked as too old").isEqualTo(false);
+        assertThat(time.isResultTooOld(configuration, run)).as("Result date marked as too old").isEqualTo(false);
     }
 
     private GraphConfiguration createGraphConfigurationWithDayCount() {

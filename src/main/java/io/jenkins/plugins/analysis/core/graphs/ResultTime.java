@@ -47,10 +47,11 @@ public class ResultTime {
      *
      * @return {@code true} if the build is too old
      */
-    public boolean areResultsTooOld(final GraphConfiguration configuration, final AnalysisResult analysisRun) {
+    public boolean isResultTooOld(final GraphConfiguration configuration, final AnalysisResult analysisRun) {
         return configuration.isDayCountDefined() && computeDayDelta(analysisRun) > configuration.getDayCount();
     }
 
+    // FIXME: compute day delta computation
     private int computeDayDelta(final AnalysisResult analysisRun) {
         return Math.abs(Period.between(toLocalDate(analysisRun.getBuild().getTimeInMillis()), today).getDays());
     }

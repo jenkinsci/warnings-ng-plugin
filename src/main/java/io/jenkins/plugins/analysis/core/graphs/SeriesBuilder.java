@@ -1,5 +1,8 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -9,22 +12,22 @@ import java.util.Set;
 
 import org.eclipse.collections.impl.multimap.list.FastListMultimap;
 import org.jfree.data.category.CategoryDataset;
-import org.joda.time.LocalDate;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 
 import hudson.util.DataSetBuilder;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
- * Provides the base algorithms to create a data set for a static analysis graph. The actual series for each
- * result needs to be implemented by sub classes in method {@link #computeSeries}.
+ * Provides the base algorithms to create a data set for a static analysis graph. The actual series for each result
+ * needs to be implemented by sub classes in method {@link #computeSeries}.
  *
  * @author Ullrich Hafner
  */
@@ -71,7 +74,7 @@ public abstract class SeriesBuilder {
         int buildCount = 0;
         Map<AnalysisBuild, List<Integer>> valuesPerBuildNumber = Maps.newHashMap();
         for (AnalysisResult current : results) {
-            if (resultTime.areResultsTooOld(configuration, current)) {
+            if (resultTime.isResultTooOld(configuration, current)) {
                 break;
             }
             valuesPerBuildNumber.put(current.getBuild(), computeSeries(current));
@@ -89,7 +92,9 @@ public abstract class SeriesBuilder {
     /**
      * Returns the series to plot for the specified build result.
      *
-     * @param current the current build result
+     * @param current
+     *         the current build result
+     *
      * @return the series to plot
      */
     protected abstract List<Integer> computeSeries(AnalysisResult current);
@@ -98,7 +103,8 @@ public abstract class SeriesBuilder {
      * Creates a data set that contains a series per build number.
      *
      * @param valuesPerBuild
-     *            the collected values
+     *         the collected values
+     *
      * @return a data set
      */
     private CategoryDataset createDataSetPerBuildNumber(final Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
@@ -120,7 +126,8 @@ public abstract class SeriesBuilder {
      * Creates a data set that contains one series of values per day.
      *
      * @param averagePerDay
-     *            the collected values averaged by day
+     *         the collected values averaged by day
+     *
      * @return a data set
      */
     @SuppressWarnings("unchecked")
@@ -140,11 +147,11 @@ public abstract class SeriesBuilder {
     }
 
     /**
-     * Aggregates multiple series per day to one single series per day by
-     * computing the average value.
+     * Aggregates multiple series per day to one single series per day by computing the average value.
      *
      * @param multiSeriesPerDate
-     *            the values given as multiple series per day
+     *         the values given as multiple series per day
+     *
      * @return the values as one series per day (average)
      */
     private Map<LocalDate, List<Integer>> createSeriesPerDay(
@@ -179,7 +186,8 @@ public abstract class SeriesBuilder {
      * Aggregates the series per build to a series per date.
      *
      * @param valuesPerBuild
-     *            the series per build
+     *         the series per build
+     *
      * @return the series per date
      */
     private Map<LocalDate, List<Integer>> averageByDate(
@@ -191,7 +199,8 @@ public abstract class SeriesBuilder {
      * Creates a mapping of values per day.
      *
      * @param valuesPerBuild
-     *            the values per build
+     *         the values per build
+     *
      * @return the multi map with the values per day
      */
     @SuppressWarnings("rawtypes")
@@ -200,24 +209,28 @@ public abstract class SeriesBuilder {
             final Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
         FastListMultimap<LocalDate, List<Integer>> valuesPerDate = FastListMultimap.newMultimap();
         for (AnalysisBuild build : valuesPerBuild.keySet()) {
-            valuesPerDate.put(new LocalDate(build.getTimeInMillis()), valuesPerBuild.get(build));
+            LocalDate buildDate = Instant.ofEpochMilli(build.getTimeInMillis())
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+            valuesPerDate.put(buildDate, valuesPerBuild.get(build));
         }
         return valuesPerDate;
     }
 
     /**
-     * Returns the row identifier for the specified level. This identifier will
-     * be used in the legend.
+     * Returns the row identifier for the specified level. This identifier will be used in the legend.
      *
      * @param level
-     *            the level
+     *         the level
+     *
      * @return the row identifier
      */
     protected String getRowId(final int level) {
         return String.valueOf(level);
     }
 
-    public CategoryDataset createAggregation(final GraphConfiguration configuration, final Collection<ResultHistory> resultActions) {
+    public CategoryDataset createAggregation(final GraphConfiguration configuration,
+            final Collection<ResultHistory> resultActions) {
         Set<LocalDate> availableDates = Sets.newHashSet();
         Map<ResultHistory, Map<LocalDate, List<Integer>>> averagesPerJob = Maps.newHashMap();
         for (ResultHistory resultAction : resultActions) {
@@ -231,15 +244,16 @@ public abstract class SeriesBuilder {
     }
 
     /**
-     * Creates the totals for all available dates. If a job has no results for a
-     * given day then the previous value is used.
+     * Creates the totals for all available dates. If a job has no results for a given day then the previous value is
+     * used.
      *
      * @param jobs
-     *            the result actions belonging to the jobs
+     *         the result actions belonging to the jobs
      * @param availableDates
-     *            the available dates in all jobs
+     *         the available dates in all jobs
      * @param averagesPerJob
-     *            the averages per day, mapped by job
+     *         the averages per day, mapped by job
+     *
      * @return the aggregated values
      */
     private Map<LocalDate, List<Integer>> createTotalsForAllAvailableDates(
@@ -268,7 +282,7 @@ public abstract class SeriesBuilder {
     }
 
     private void addValues(final LocalDate buildDate, final Map<LocalDate, List<Integer>> totals,
-                           final List<Integer> additionalResult) {
+            final List<Integer> additionalResult) {
         if (totals.containsKey(buildDate)) {
             List<Integer> existingResult = totals.get(buildDate);
             List<Integer> sum = Lists.newArrayList();

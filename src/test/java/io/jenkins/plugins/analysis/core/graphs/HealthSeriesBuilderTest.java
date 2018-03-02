@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
+
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -18,9 +19,8 @@ import static org.mockito.Mockito.*;
  * @author Florian Pirchmoser
  */
 class HealthSeriesBuilderTest {
-
     private static final int HEALTH_THRESHOLD = 2;
-    private static final int UNHEALTH_THRESHOLD = 5;
+    private static final int UNHEALTHY_THRESHOLD = 5;
 
     private static Iterable<Object> testData() {
         return asList(
@@ -33,50 +33,50 @@ class HealthSeriesBuilderTest {
 
                 new TestArgumentsBuilder()
                         .setTestName("no issues")
-                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTH_THRESHOLD))
+                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
                         .setRun(createRunWithSize(0))
                         .setExpectedSeries(0, 0, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("all healthy when below health threshold")
-                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTH_THRESHOLD))
+                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
                         .setRun(createRunWithSize(1))
                         .setExpectedSeries(HEALTH_THRESHOLD - 1, 0, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("all healthy when at health threshold")
-                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTH_THRESHOLD))
+                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
                         .setRun(createRunWithSize(HEALTH_THRESHOLD))
                         .setExpectedSeries(HEALTH_THRESHOLD, 0, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("one medium when above health, below unhealth threshold")
-                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTH_THRESHOLD))
+                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
                         .setRun(createRunWithSize(HEALTH_THRESHOLD + 1))
                         .setExpectedSeries(2, 1, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("none unhealthy when below unhealth threshold")
-                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTH_THRESHOLD))
-                        .setRun(createRunWithSize(UNHEALTH_THRESHOLD - 1))
+                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
+                        .setRun(createRunWithSize(UNHEALTHY_THRESHOLD - 1))
                         .setExpectedSeries(2, 2, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("none unhealthy when at unhealth threshold")
-                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTH_THRESHOLD))
-                        .setRun(createRunWithSize(UNHEALTH_THRESHOLD))
+                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
+                        .setRun(createRunWithSize(UNHEALTHY_THRESHOLD))
                         .setExpectedSeries(2, 3, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("one unhealthy when above unhealth threshold")
-                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTH_THRESHOLD))
-                        .setRun(createRunWithSize(UNHEALTH_THRESHOLD + 1))
+                        .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
+                        .setRun(createRunWithSize(UNHEALTHY_THRESHOLD + 1))
                         .setExpectedSeries(2, 3, 1)
                         .build()
         );
