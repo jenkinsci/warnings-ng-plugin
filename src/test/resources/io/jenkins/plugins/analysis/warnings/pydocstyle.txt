@@ -1,0 +1,66 @@
+fs/csm/admin_api/ui_api.py:1 at module level:
+        D100: Missing docstring in public module
+fs/csm/admin_api/main.py:1 at module level:
+        D100: Missing docstring in public module
+fs/csm/admin_api/dao.py:1 at module level:
+        D100: Missing docstring in public module
+fs/csm/admin_api/dao.py:8 in public class `Dao`:
+        D101: Missing docstring in public class
+fs/csm/admin_api/admin_api.py:1 at module level:
+        D100: Missing docstring in public module
+fs/csm/admin_api/admin_api.py:34 in public function `x_debug_check`:
+        D103: Missing docstring in public function
+fs/csm/admin_api/admin_api.py:40 in public class `NewNodeSchema`:
+        D101: Missing docstring in public class
+fs/csm/admin_api/admin_api.py:227 in public class `NewChildNodeSchema`:
+        D101: Missing docstring in public class
+fs/csm/admin_api/admin_api.py:463 in public class `NewParentNodeSchema`:
+        D101: Missing docstring in public class
+fs/csm/admin_api/admin_api.py:614 in public class `PatchNodeSchema`:
+        D101: Missing docstring in public class
+fs/csm/admin_api/settings.py:1 at module level:
+        D100: Missing docstring in public module
+fs/csm/admin_api/settings.py:12 in public class `SettingsService`:
+        D101: Missing docstring in public class
+fs/csm/admin_api/settings.py:14 in public method `try_create_root_node`:
+        D102: Missing docstring in public method
+fs/csm/admin_api/settings.py:26 in public method `try_create_child_node`:
+        D102: Missing docstring in public method
+fs/csm/admin_api/settings.py:43 in public method `try_create_parent_node`:
+        D102: Missing docstring in public method
+fs/csm/admin_api/sphinx.py:1 at module level:
+        D100: Missing docstring in public module
+fs/csm/admin_api/auth.py:1 at module level:
+        D100: Missing docstring in public module
+fs/csm/admin_api/auth.py:20 in public method `__init__`:
+        D102: Missing docstring in public method
+fs/csm/admin_api/auth.py:25 in public method `__str__`:
+        D105: Missing docstring in magic method
+fs/csm/admin_api/auth.py:38 in public method `authorize`:
+        D102: Missing docstring in public method
+fs/csm/admin_api/auth.py:73 in public class `OAuth2Resolver`:
+        D101: Missing docstring in public class
+fs/csm/admin_api/auth.py:126 in public class `AdminApiResolver`:
+        D101: Missing docstring in public class
+fs/csm/admin_api/auth.py:128 in public method `__init__`:
+        D102: Missing docstring in public method
+fs/csm/admin_api/auth.py:131 in public method `configure`:
+        D102: Missing docstring in public method
+fs/csm/admin_api/auth.py:134 in public method `auth`:
+        D102: Missing docstring in public method
+fs/csm/admin_api/auth.py:137 in public method `resolve`:
+        D102: Missing docstring in public method
+fs/csm/admin_api/__init__.py:1 at module level:
+        D104: Missing docstring in public package
+fs/csm/admin_api/application.py:1 at module level:
+        D100: Missing docstring in public module
+fs/csm/admin_api/application.py:46 in public function `build_app`:
+        D103: Missing docstring in public function
+fs/csm/admin_api/wsgi.py:1 at module level:
+        D100: Missing docstring in public module
+fs/csm/admin_api/test/conftest.py:1 at module level:
+        D100: Missing docstring in public module
+fs/csm/admin_api/test/conftest.py:18 in public function `admin_api_wsgi`:
+        D103: Missing docstring in public function
+fs/csm/admin_api/test/__init__.py:1 at module level:
+        D104: Missing docstring in public package

@@ -5,12 +5,14 @@ import org.assertj.core.api.Assertions;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.junit.Test;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
 
 /**
  * Integration tests of all parsers of the warnings plug-in in pipelines.
@@ -60,6 +62,84 @@ public class ParsersITest extends PipelineITest {
             + "do\n"
             + "files=\"$files $directory/$i\"\n"
             + "done</code></pre>";
+
+    /** Runs the Android Lint parser on output files that contains 2 issues. */
+    @Test
+    public void shouldFindAllAndroidLintIssues() {
+        shouldFindIssuesOfTool(2, AndroidLint.class, "android-lint.xml");
+    }
+
+    /** Runs the CodeNarc parser on output files that contains 11 issues. */
+    @Test
+    public void shouldFindAllCodeNArcIssues() {
+        shouldFindIssuesOfTool(11, CodeNArc.class, "codeNarc.xml");
+    }
+
+    /** Runs the Cppcheck parser on output files that contains 3 issues. */
+    @Test
+    public void shouldFindAllCppCheckIssues() {
+        shouldFindIssuesOfTool(3, CppCheck.class, "cppcheck.xml");
+    }
+
+    /** Runs the DocFx parser on output files that contains 3 issues. */
+    @Test
+    public void shouldFindAllDocFXIssues() {
+        shouldFindIssuesOfTool(3, DocFx.class, "docfx.json");
+    }
+
+    /** Runs the ErrorProne parser on output files that contains 5 issues. */
+    @Test
+    public void shouldFindAllErrorProneIssues() {
+        shouldFindIssuesOfTool(5, ErrorProne.class, "error-prone.log");
+    }
+
+    /** Runs the Flake8 parser on output files that contains 12 issues. */
+    @Test
+    public void shouldFindAllFlake8Issues() {
+        shouldFindIssuesOfTool(12, Flake8.class, "flake8.txt");
+    }
+
+    /** Runs the JSHint parser on output files that contains 6 issues. */
+    @Test
+    public void shouldFindAllJsHintIssues() {
+        shouldFindIssuesOfTool(6, JsHint.class, "jshint.xml");
+    }
+
+    /** Runs the Klocwork parser on output files that contains 2 issues. */
+    @Test
+    public void shouldFindAllKlocWorkIssues() {
+        shouldFindIssuesOfTool(2, KlocWork.class, "klocwork.xml");
+    }
+
+    /** Runs the MyPy parser on output files that contains 5 issues. */
+    @Test
+    public void shouldFindAllMyPyIssues() {
+        shouldFindIssuesOfTool(5, MyPy.class, "mypy.txt");
+    }
+
+    /** Runs the PIT parser on output files that contains 25 issues. */
+    @Test
+    public void shouldFindAllPitIssues() {
+        shouldFindIssuesOfTool(25, Pit.class, "pit.xml");
+    }
+
+    /** Runs the PyDocStyle parser on output files that contains 33 issues. */
+    @Test
+    public void shouldFindAllPyDocStyleIssues() {
+        shouldFindIssuesOfTool(33, PyDocStyle.class, "pydocstyle.txt");
+    }
+
+    /** Runs the XML Lint parser on output files that contains 3 issues. */
+    @Test
+    public void shouldFindAllXmlLintStyleIssues() {
+        shouldFindIssuesOfTool(3, XmlLint.class, "xmllint.txt");
+    }
+
+    /** Runs the zptlint parser on output files that contains 2 issues. */
+    @Test
+    public void shouldFindAllZptLintStyleIssues() {
+        shouldFindIssuesOfTool(2, ZptLint.class, "zptlint.log");
+    }
 
     /** Runs the CPD parser on output files that contains 2 issues. */
     @Test

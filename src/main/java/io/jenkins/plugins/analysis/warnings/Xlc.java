@@ -1,17 +1,18 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
+import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
+
+import hudson.Extension;
 
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.XlcCompilerParser;
 import edu.hm.hafner.analysis.parser.XlcLinkerParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
-
-import hudson.Extension;
 
 /**
  * Provides a parser and customized messages for IBM xlC compiler and linker.
@@ -21,7 +22,7 @@ import hudson.Extension;
 public class Xlc extends StaticAnalysisToolSuite {
     static final String ID = "xlc";
 
-    /** Creates a new instance of {@link NagFortran}. */
+    /** Creates a new instance of {@link Xlc}. */
     @DataBoundConstructor
     public Xlc() {
         // empty constructor required for stapler

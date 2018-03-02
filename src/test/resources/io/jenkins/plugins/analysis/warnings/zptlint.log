@@ -1,0 +1,2 @@
+ Error in: cpplint.py  abc def ghe '" 123  , at line 4796
+ Error in: cpplint.py  abc '" 123 def ghe  , at line 4797

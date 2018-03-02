@@ -1,0 +1,8 @@
+fs/cs/backend/log.py: note: In member "filter" of class "CsLogFilter":
+fs/cs/backend/log.py:16: error: "LogRecord" has no attribute "user_uuid"
+fs/cs/backend/log.py:17: error: "LogRecord" has no attribute "tenant_id"
+fs/cs/backend/errorhandler.py: note: In member "__init__" of class "CsErrorHandler":
+fs/cs/backend/errorhandler.py:16: error: The return type of "__init__" must be None
+fs/cs/backend/api.py: note: At top level:
+fs/cs/backend/api.py:23: error: ContextManager[Any] not callable
+tests/test_schema.py:864: error: Name 'test_nested_only_and_exclude' already defined

@@ -14,7 +14,7 @@ import hudson.plugins.analysis.util.model.Priority;
 /**
  * Tests the class {@link ResharperInspectCodeParser}.
  */
-public class ResharperInspectCodeParserTest extends ParserTester {
+public class ResharperInspectCodeAdapterTest extends ParserTester {
     /**
      * Parses a file with warnings of the Reshaper InspectCodeParser  tools.
      *

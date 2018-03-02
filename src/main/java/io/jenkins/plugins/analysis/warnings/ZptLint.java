@@ -8,25 +8,25 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
 
-import edu.hm.hafner.analysis.parser.violations.ResharperInspectCodeAdapter;
+import edu.hm.hafner.analysis.parser.violations.ZptLintAdapter;
 
 /**
- * Provides a parser and customized messages for Resharper Inspections.
+ * Provides a parser and customized messages for ZPT-Lint.
  *
  * @author Ullrich Hafner
  */
-public class ResharperInspectCode extends StaticAnalysisTool {
-    static final String ID = "resharper";
+public class ZptLint extends StaticAnalysisTool {
+    static final String ID = "zpt-lint";
 
-    /** Creates a new instance of {@link ResharperInspectCode}. */
+    /** Creates a new instance of {@link ZptLint}. */
     @DataBoundConstructor
-    public ResharperInspectCode() {
+    public ZptLint() {
         // empty constructor required for stapler
     }
 
     @Override
-    public ResharperInspectCodeAdapter createParser() {
-        return new ResharperInspectCodeAdapter();
+    public ZptLintAdapter createParser() {
+        return new ZptLintAdapter();
     }
 
     /** Descriptor for this static analysis tool. */
@@ -39,7 +39,7 @@ public class ResharperInspectCode extends StaticAnalysisTool {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return Messages.Warnings_ReshaperInspectCode_ParserName();
+            return Messages.Violations_ZPTLint();
         }
     }
 }

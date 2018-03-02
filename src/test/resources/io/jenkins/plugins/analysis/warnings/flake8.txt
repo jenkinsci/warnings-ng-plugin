@@ -1,0 +1,16 @@
+<!--
+ flake8 --format=pylint myproject
+//-->
+myproject/__init__.py:7: [F401] 'db' imported but unused
+myproject/__init__.py:7: [F401] 'logger' imported but unused
+myproject/__main__.py:8: [E401] multiple imports on one line
+myproject/__main__.py:15: [F401] 'ggrc' imported but unused
+myproject/__main__.py:19: [E402] module level import not at top of file
+myproject/__main__.py:24: [E265] block comment should start with '# '
+myproject/__main__.py:25: [E265] block comment should start with '# '
+myproject/__main__.py:26: [E265] block comment should start with '# '
+myproject/app.py:6: [F401] 'sys' imported but unused
+
+__fake__.py:26: [F265] test with F
+__fake__.py:27: [W265] test with W
+__fake__.py:28: [C265] test with C

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<start>
+ <noend/>
+</start>
+<?xml version="1.0"?>
+<start>
+ <noend/>
+</start>
+xml/other.xml:5: parser error : Opening and ending tag mismatch: font line 4 and body
+</body> 
+       ^
+xml/other.xml:6: parser error : Opening and ending tag mismatch: body line 3 and html
+</html>
+       ^
+xml/other.xml:7: parser error : Premature end of data in tag html line 1

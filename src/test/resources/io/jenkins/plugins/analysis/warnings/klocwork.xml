@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<errorList xmlns="http://www.klocwork.com/inForce/report/1.0" version="9.6 or later">
+  <problem>
+    <problemID>10</problemID>
+    <file>/home/test_build/src/main/java/Main.java</file>
+    <method>main</method>
+    <code>JD.VNU.NULL</code>
+    <message>Variable 'bzz' was never read after null being assigned.</message>
+    <citingStatus>Analyze</citingStatus>
+    <state>New</state>
+    <owner>unowned</owner>
+    <severity>Review</severity>
+    <severitylevel>4</severitylevel>
+    <displayAs>Review</displayAs>
+    <taxonomies>
+      <taxonomy metaInf="" name="Java"/>
+    </taxonomies>
+    <url>http://server:8080/review/insight-review.html#goto:project=TestProject,pid=10</url>
+  </problem>
+  <problem>
+    <problemID>11</problemID>
+    <file>/home/test_build/src/main/java/Main2.java</file>
+    <method>getURLConnection</method>
+    <code>EXC.BROADTHROWS</code>
+    <message>The 'getURLConnection' method throws a generic exception 'java.lang.Exception'</message>
+    <citingStatus>Analyze</citingStatus>
+    <state>Existing</state>
+    <owner>unowned</owner>
+    <severity>Review</severity>
+    <severitylevel>4</severitylevel>
+    <displayAs>Review</displayAs>
+    <taxonomies>
+      <taxonomy metaInf="" name="Java"/>
+    </taxonomies>
+    <url>http://server:8080/review/insight-review.html#goto:project=TestProject,pid=15</url>
+  </problem>
+</errorList>
