@@ -1,17 +1,18 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
+import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.AbstractParser;
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.parser.MetrowerksCWCompilerParser;
-import edu.hm.hafner.analysis.parser.MetrowerksCWLinkerParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.parser.MetrowerksCwCompilerParser;
+import edu.hm.hafner.analysis.parser.MetrowerksCwLinkerParser;
 
 /**
  * Provides a parser and customized messages for the Metrowerks CodeWarrior compiler and linker.
@@ -29,7 +30,7 @@ public class MetrowerksCodeWarrior extends StaticAnalysisToolSuite {
 
     @Override
     protected Collection<? extends AbstractParser<Issue>> getParsers() {
-        return asList(new MetrowerksCWCompilerParser(), new MetrowerksCWLinkerParser());
+        return asList(new MetrowerksCwCompilerParser(), new MetrowerksCwLinkerParser());
     }
 
     /** Descriptor for this static analysis tool. */

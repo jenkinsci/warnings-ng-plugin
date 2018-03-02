@@ -4,10 +4,11 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.FlexSDKParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.parser.FlexSdkParser;
 
 /**
  * Provides a parser and customized messages for FLEX SDK.
@@ -24,8 +25,8 @@ public class FlexSDK extends StaticAnalysisTool {
     }
 
     @Override
-    public FlexSDKParser createParser() {
-        return new FlexSDKParser();
+    public FlexSdkParser createParser() {
+        return new FlexSdkParser();
     }
 
     /** Descriptor for this static analysis tool. */

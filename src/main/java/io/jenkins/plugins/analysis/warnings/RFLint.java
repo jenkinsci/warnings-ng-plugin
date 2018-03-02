@@ -4,10 +4,11 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.RFLintParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.parser.RfLintParser;
 
 /**
  * Provides a parser and customized messages for RFLint.
@@ -24,8 +25,8 @@ public class RFLint extends StaticAnalysisTool {
     }
 
     @Override
-    public RFLintParser createParser() {
-        return new RFLintParser();
+    public RfLintParser createParser() {
+        return new RfLintParser();
     }
 
     /** Descriptor for this static analysis tool. */

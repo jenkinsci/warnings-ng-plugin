@@ -4,10 +4,11 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.PREfastParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.parser.PreFastParser;
 
 /**
  * Provides a parser and customized messages for Microsoft PREfast.
@@ -24,8 +25,8 @@ public class PREfast extends StaticAnalysisTool {
     }
 
     @Override
-    public PREfastParser createParser() {
-        return new PREfastParser();
+    public PreFastParser createParser() {
+        return new PreFastParser();
     }
 
     /** Descriptor for this static analysis tool. */

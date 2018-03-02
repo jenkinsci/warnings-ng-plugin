@@ -4,10 +4,11 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.TaskingVXCompilerParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.parser.TaskingVxCompilerParser;
 
 /**
  * Provides a parser and customized messages for TASKING VX.
@@ -24,8 +25,8 @@ public class TaskingVx extends StaticAnalysisTool {
     }
 
     @Override
-    public TaskingVXCompilerParser createParser() {
-        return new TaskingVXCompilerParser();
+    public TaskingVxCompilerParser createParser() {
+        return new TaskingVxCompilerParser();
     }
 
     /** Descriptor for this static analysis tool. */

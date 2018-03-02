@@ -4,10 +4,11 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.QACSourceCodeAnalyserParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.parser.QacSourceCodeAnalyserParser;
 
 /**
  * Provides a parser and customized messages for the PRQA QA-C Sourcecode Analyser.
@@ -24,8 +25,8 @@ public class QACSourceCodeAnalyser extends StaticAnalysisTool {
     }
 
     @Override
-    public QACSourceCodeAnalyserParser createParser() {
-        return new QACSourceCodeAnalyserParser();
+    public QacSourceCodeAnalyserParser createParser() {
+        return new QacSourceCodeAnalyserParser();
     }
 
     /** Descriptor for this static analysis tool. */
