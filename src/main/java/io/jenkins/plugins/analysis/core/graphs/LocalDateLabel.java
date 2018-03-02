@@ -56,7 +56,9 @@ public class LocalDateLabel implements Comparable<LocalDateLabel> {
         if (date == null) {
             return other.date == null;
         }
-        else return date.equals(other.date);
+        else {
+            return date.equals(other.date);
+        }
     }
 }
 
