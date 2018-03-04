@@ -11,7 +11,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
+import org.kohsuke.stapler.export.ExportedBean;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.PropertyStatistics;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
@@ -20,7 +23,7 @@ import net.sf.json.JSONObject;
 
 import hudson.markup.MarkupFormatter;
 import hudson.markup.RawHtmlMarkupFormatter;
-import hudson.model.Item;
+import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.plugins.analysis.core.GlobalSettings;
@@ -34,6 +37,7 @@ import edu.hm.hafner.analysis.Priority;
  *
  * @author Ullrich Hafner
  */
+@ExportedBean
 public class IssuesDetail implements ModelObject {
     protected static final Issues<Issue> NO_ISSUES = new Issues<>();
 
@@ -55,20 +59,77 @@ public class IssuesDetail implements ModelObject {
     /** Sanitizes HTML elements in warning messages and tooltips. Use this formatter if raw HTML should be shown. */
     private final MarkupFormatter sanitizer = new RawHtmlMarkupFormatter(true);
 
-    public IssuesDetail(final Run<?, ?> owner,
+    private final AnalysisResult result;
+
+    /**
+     * Creates a new detail model with the corresponding view {@code IssuesDetail/index.jelly}.
+     *
+     * @param owner
+     *         the associated build/run of this view
+     * @param result
+     *         the analysis result
+     * @param issues
+     *         all issues that should be shown in this details view
+     * @param outstandingIssues
+     *         all outstanding issues
+     * @param newIssues
+     *         all new issues
+     * @param fixedIssues
+     *         all fixed issues
+     * @param url
+     *         the relative URL of this view
+     * @param displayName
+     *         the human readable name of this view (shown in breadcrumb)
+     * @param labelProvider
+     *         the label provider for the static analysis tool
+     * @param sourceEncoding
+     *         the encoding to use when displaying source files
+     */
+    @SuppressWarnings("ParameterNumber")
+    public IssuesDetail(final Run<?, ?> owner, final AnalysisResult result,
             final Issues<?> issues, final Issues<?> newIssues,
             final Issues<?> outstandingIssues, final Issues<?> fixedIssues,
             final String displayName, final String url, final StaticAnalysisLabelProvider labelProvider,
             final Charset sourceEncoding) {
         this.owner = owner;
+        this.result = result;
+
         this.issues = issues;
         this.fixedIssues = fixedIssues;
         this.newIssues = newIssues;
         this.outstandingIssues = outstandingIssues;
+
         this.sourceEncoding = sourceEncoding;
         this.displayName = displayName;
         this.labelProvider = labelProvider;
         this.url = url;
+    }
+
+    /**
+     * Creates a new detail model with the corresponding view {@code IssuesDetail/index.jelly}.
+     *
+     * @param owner
+     *         the associated build/run of this view
+     * @param result
+     *         the analysis result
+     * @param labelProvider
+     *         the label provider for the static analysis tool
+     * @param sourceEncoding
+     *         the charset to visualize source files with
+     */
+    public IssuesDetail(final Run<?, ?> owner, final AnalysisResult result,
+            final StaticAnalysisLabelProvider labelProvider, final Charset sourceEncoding) {
+        this(owner, result, result.getIssues(), result.getNewIssues(), result.getOutstandingIssues(),
+                result.getFixedIssues(), labelProvider.getLinkName(), result.getId(), labelProvider, sourceEncoding);
+    }
+
+    /**
+     * Gets the remote API for this action.
+     *
+     * @return the remote API
+     */
+    public Api getApi() {
+        return new Api(result);
     }
 
     // ------------------------------------ UI entry points for Stapler --------------------------------
@@ -114,20 +175,17 @@ public class IssuesDetail implements ModelObject {
     /**
      * Returns whether author and commit information should be shown or not.
      *
-     * @return on <code>true</code> the SCM will be called to obtain author and commit information, on
-     *         <code>false</code> author and commit information are omitted
+     * @return on {@code true} the SCM will be called to obtain author and commit information, on
+     *         {@code false} author and commit information are omitted
      */
-    public boolean useAuthors() {
+    public boolean isAuthorInformationEnabled() {
         return !GlobalSettings.instance().getNoAuthors();
     }
 
     public boolean canDisplayFile(final Issue issue) {
-        if (owner.hasPermission(Item.WORKSPACE)) {
-            return ConsoleDetail.isInConsoleLog(issue)
-                    || new File(issue.getFileName()).exists()
-                    || AffectedFilesResolver.getTempFile(owner, issue).exists();
-        }
-        return false;
+        return ConsoleDetail.isInConsoleLog(issue)
+                || new File(issue.getFileName()).exists()
+                || AffectedFilesResolver.getTempFile(owner, issue).exists();
     }
 
     /**
@@ -218,7 +276,7 @@ public class IssuesDetail implements ModelObject {
         return getLabelProvider().getDescription(issue);
     }
 
-    public PropertyCountTab getDetails(final String plainLink) {
+    public PropertyStatistics getDetails(final String plainLink) {
         Function<String, String> propertyFormatter;
         if ("fileName".equals(plainLink)) {
             propertyFormatter = IssuesDetail.FILE_NAME_FORMATTER;
@@ -226,10 +284,8 @@ public class IssuesDetail implements ModelObject {
         else {
             propertyFormatter = Function.identity();
         }
-        return new PropertyCountTab(owner, issues, sourceEncoding, plainLink, propertyFormatter,
-                labelProvider, getUrl() + "/" + plainLink);
+        return new PropertyStatistics(issues, plainLink, propertyFormatter);
     }
-
 
     /**
      * Returns all possible priorities.
@@ -279,7 +335,8 @@ public class IssuesDetail implements ModelObject {
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
         try {
-            return new DetailFactory().createTrendDetails(link, owner, issues, fixedIssues, newIssues, outstandingIssues,
+            return new DetailFactory().createTrendDetails(link, owner, result,
+                    issues, fixedIssues, newIssues, outstandingIssues,
                     Collections.emptyList(), sourceEncoding, this);
         }
         catch (NoSuchElementException exception) {

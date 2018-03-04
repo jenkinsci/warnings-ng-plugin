@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.kohsuke.stapler.export.ExportedBean;
+
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.ThresholdSet.ThresholdResult;
 import io.jenkins.plugins.analysis.core.quality.ThresholdSet.ThresholdSetBuilder;
@@ -16,6 +18,7 @@ import hudson.model.Result;
  *
  * @author Michael Schmid
  */
+@ExportedBean
 public class QualityGate implements Serializable {
     private final ThresholdSet totalUnstableThreshold;
     private final ThresholdSet totalFailedThreshold;

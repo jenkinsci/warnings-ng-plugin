@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.model; // NOPMD
 
-import javax.annotation.CheckForNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -13,25 +12,26 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.CheckForNull;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.impl.factory.Maps;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
-import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.RunAdapter;
 
 import hudson.XmlFile;
-import hudson.model.Api;
 import hudson.model.Result;
 import hudson.model.Run;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.util.VisibleForTesting;
 
 /**
  * Stores the results of a static analysis run. This class is capable of storing a reference to the current build.
@@ -50,7 +50,6 @@ public class AnalysisResult implements Serializable {
     private static final int NO_BUILD = -1;
 
     private final String id;
-    private final String name;
 
     private transient ReentrantLock lock = new ReentrantLock();
     private transient Run<?, ?> owner;
@@ -97,6 +96,7 @@ public class AnalysisResult implements Serializable {
     private final int newHighPrioritySize;
 
     private final ImmutableList<String> errors;
+    private final ImmutableList<String> infos;
 
     /** Determines since which build we have zero warnings. */
     private int noIssuesSinceBuild;
@@ -110,6 +110,7 @@ public class AnalysisResult implements Serializable {
      * changed the overall build result.
      */
     private Result overallResult = Result.SUCCESS;
+    private final Map<String, Integer> sizePerOrigin;
 
     /**
      * Creates a new instance of {@link AnalysisResult}.
@@ -117,9 +118,9 @@ public class AnalysisResult implements Serializable {
      * @param owner
      *         the current run as owner of this action
      */
-    public AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider, final String name,
+    public AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider,
             final Issues<?> issues, final QualityGate qualityGate, final AnalysisResult previousResult) {
-        this(owner, referenceProvider, name, issues, qualityGate, true);
+        this(owner, referenceProvider, issues, qualityGate, true);
 
         if (issues.isEmpty()) {
             if (previousResult.noIssuesSinceBuild == NO_BUILD) {
@@ -153,9 +154,9 @@ public class AnalysisResult implements Serializable {
      * @param owner
      *         the current run as owner of this action
      */
-    public AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider, final String name,
+    public AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider,
             final Issues<?> issues, final QualityGate qualityGate) {
-        this(owner, referenceProvider, name, issues, qualityGate, true);
+        this(owner, referenceProvider, issues, qualityGate, true);
 
         if (issues.isEmpty()) {
             noIssuesSinceBuild = owner.getNumber();
@@ -178,13 +179,13 @@ public class AnalysisResult implements Serializable {
      *         the current run as owner of this action
      */
     @VisibleForTesting
-    protected AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider, final String name,
+    protected AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider,
             final Issues<?> issues, final QualityGate qualityGate, final boolean canSerialize) {
-        this.name = name;
         this.owner = owner;
         this.qualityGate = qualityGate;
 
         errors = issues.getErrorMessages();
+        infos = issues.getInfoMessages();
 
         id = issues.getId();
         size = issues.getSize();
@@ -214,6 +215,8 @@ public class AnalysisResult implements Serializable {
         overallResult = qualityGate.evaluate(this).getOverallResult();
         owner.setResult(overallResult);
 
+        sizePerOrigin = issues.getPropertyCount(issue -> issue.getOrigin());
+
         if (canSerialize) {
             serializeAnnotations(outstandingIssues, newIssues, fixedIssues);
         }
@@ -224,20 +227,17 @@ public class AnalysisResult implements Serializable {
      *
      * @return the ID
      */
+    @Exported
     public String getId() {
         return id;
     }
 
     /**
-     * Returns an optional user provided name for this result. If left empty, the predefined name of the {@link
-     * StaticAnalysisLabelProvider} is used.
+     * Returns the run that created this static analysis result.
      *
-     * @return optional name
+     * @return the run
      */
-    public String getName() {
-        return StringUtils.defaultString(name);
-    }
-
+    @Exported
     public Run<?, ?> getOwner() {
         return owner;
     }
@@ -251,6 +251,26 @@ public class AnalysisResult implements Serializable {
     public void setOwner(final Run<?, ?> owner) {
         this.owner = owner;
         lock = new ReentrantLock();
+    }
+
+    /**
+     * Returns the error messages of the analysis run.
+     *
+     * @return the error messages
+     */
+    @Exported
+    public ImmutableList<String> getErrorMessages() {
+        return errors;
+    }
+
+    /**
+     * Returns the info messages of the analysis run.
+     *
+     * @return the info messages
+     */
+    @Exported
+    public ImmutableList<String> getInfoMessages() {
+        return infos;
     }
 
     /**
@@ -294,6 +314,7 @@ public class AnalysisResult implements Serializable {
      *
      * @return all issues
      */
+    @Exported
     public Issues<?> getIssues() {
         Issues<Issue> merged = new Issues<>();
         merged.addAll(getNewIssues(), getOutstandingIssues());
@@ -306,6 +327,7 @@ public class AnalysisResult implements Serializable {
      *
      * @return all outstanding issues
      */
+    @Exported
     public Issues<?> getOutstandingIssues() {
         return getIssues(AnalysisResult::getOutstandingIssuesReference, AnalysisResult::setOutstandingIssuesReference,
                 "outstanding");
@@ -317,6 +339,7 @@ public class AnalysisResult implements Serializable {
      *
      * @return all new issues
      */
+    @Exported
     public Issues<?> getNewIssues() {
         return getIssues(AnalysisResult::getNewIssuesReference, AnalysisResult::setNewIssuesReference,
                 "new");
@@ -328,6 +351,7 @@ public class AnalysisResult implements Serializable {
      *
      * @return all fixed issues
      */
+    @Exported
     public Issues<?> getFixedIssues() {
         return getIssues(AnalysisResult::getFixedIssuesReference, AnalysisResult::setFixedIssuesReference,
                 "fixed");
@@ -404,31 +428,19 @@ public class AnalysisResult implements Serializable {
     }
 
     /**
-     * Gets the remote API for this build result.
+     * Returns the build number since the associated job has no issues.
      *
-     * @return the remote API
+     * @return the build number since there are no issues, or -1 if issues have been reported
      */
-    public Api getApi() {
-        return new Api(this);
-    }
-
-    /**
-         * Returns the build number since the associated job has no issues.
-         *
-         * @return the build number since there are no issues, or -1 if issues have been reported
-         */
-    @Exported
     public int getNoIssuesSinceBuild() {
         return noIssuesSinceBuild;
     }
 
     /**
-         * Returns the build number since the associated job has a successful static analysis result.
-         *
-         * @return the build number since the static analysis result is successful, or -1 if the result is
-         *         not successful
-         */
-    @Exported
+     * Returns the build number since the associated job has a successful static analysis result.
+     *
+     * @return the build number since the static analysis result is successful, or -1 if the result is not successful
+     */
     public int getSuccessfulSinceBuild() {
         return successfulSinceBuild;
     }
@@ -444,16 +456,15 @@ public class AnalysisResult implements Serializable {
         return overallResult == Result.SUCCESS;
     }
 
-    @Exported
     public QualityGate getQualityGate() {
         return qualityGate;
     }
 
     /**
-         * Returns the {@link Result} of the static analysis run.
-         *
-         * @return the static analysis result
-         */
+     * Returns the {@link Result} of the static analysis run.
+     *
+     * @return the static analysis result
+     */
     @Exported
     public Result getOverallResult() {
         return overallResult;
@@ -461,56 +472,50 @@ public class AnalysisResult implements Serializable {
 
     @Override
     public String toString() {
-        return getDisplayName() + " : " + getTotalSize() + " issues";
+        return getId() + " : " + getTotalSize() + " issues";
     }
 
-    private StaticAnalysisLabelProvider getTool() {
-        return new LabelProviderFactory().create(id, name);
-    }
-
-    public String getDisplayName() {
-        return getTool().getLinkName();
-    }
-
+    // TODO: this should be a run!
     public int getReferenceBuild() {
         return referenceBuild;
     }
 
     /**
-         * Returns the number of issues in this analysis run, mapped by their origin.
-         *
-         * @return number of issues per origin
-         */
+     * Returns the number of issues in this analysis run, mapped by their origin.
+     *
+     * @return number of issues per origin
+     */
     public Map<String, Integer> getSizePerOrigin() {
-        return getIssues().getPropertyCount(issue -> issue.getOrigin());
+        return Maps.immutable.ofAll(sizePerOrigin).toMap();
     }
 
     /**
-         * Returns the associated build that this run was part of.
-         *
-         * @return the associated build
-         */
+     * Returns the associated build that this run was part of.
+     *
+     * @return the associated build
+     */
     public AnalysisBuild getBuild() {
         return new RunAdapter(owner);
     }
 
     /**
-         * Returns the total number of issues in this analysis run.
-         *
-         * @return total number of issues
-         */
+     * Returns the total number of issues in this analysis run.
+     *
+     * @return total number of issues
+     */
+    @Exported
     public int getTotalSize() {
         return size;
     }
 
     /**
-         * Returns the total number of issues in this analysis run, that have the specified {@link Priority}.
-         *
-         * @param priority
-         *         the priority of the issues to match
-         *
-         * @return total number of issues
-         */
+     * Returns the total number of issues in this analysis run, that have the specified {@link Priority}.
+     *
+     * @param priority
+     *         the priority of the issues to match
+     *
+     * @return total number of issues
+     */
     public int getTotalSize(final Priority priority) {
         if (priority == Priority.HIGH) {
             return getTotalHighPrioritySize();
@@ -525,73 +530,81 @@ public class AnalysisResult implements Serializable {
     }
 
     /**
-         * Returns the total number of high priority issues in this analysis run.
-         *
-         * @return total number of high priority issues
-         */
+     * Returns the total number of high priority issues in this analysis run.
+     *
+     * @return total number of high priority issues
+     */
+    @Exported
     public int getTotalHighPrioritySize() {
         return highPrioritySize;
     }
 
     /**
-         * Returns the total number of normal priority issues in this analysis run.
-         *
-         * @return total number of normal priority issues
-         */
+     * Returns the total number of normal priority issues in this analysis run.
+     *
+     * @return total number of normal priority issues
+     */
+    @Exported
     public int getTotalNormalPrioritySize() {
         return normalPrioritySize;
     }
 
     /**
-         * Returns the total number of low priority issues in this analysis run.
-         *
-         * @return total number of low priority of issues
-         */
+     * Returns the total number of low priority issues in this analysis run.
+     *
+     * @return total number of low priority of issues
+     */
+    @Exported
     public int getTotalLowPrioritySize() {
         return lowPrioritySize;
     }
 
     /**
-         * Returns the number of new issues in this analysis run.
-         *
-         * @return number of new issues
-         */
+     * Returns the number of new issues in this analysis run.
+     *
+     * @return number of new issues
+     */
+    @Exported
     public int getNewSize() {
         return newSize;
     }
 
     /**
-         * Returns the number of new high priority issues in this analysis run.
-         *
-         * @return number of new high priority issues
-         */
+     * Returns the number of new high priority issues in this analysis run.
+     *
+     * @return number of new high priority issues
+     */
+    @Exported
     public int getNewHighPrioritySize() {
         return newHighPrioritySize;
     }
 
     /**
-         * Returns the number of new normal priority issues in this analysis run.
-         *
-         * @return number of new normal priority issues
-         */
+     * Returns the number of new normal priority issues in this analysis run.
+     *
+     * @return number of new normal priority issues
+     */
+    @Exported
     public int getNewNormalPrioritySize() {
         return newNormalPrioritySize;
     }
 
     /**
-         * Returns the number of new low priority issues in this analysis run.
-         *
-         * @return number of new low priority of issues
-         */
+     * Returns the number of new low priority issues in this analysis run.
+     *
+     * @return number of new low priority of issues
+     */
+    @Exported
     public int getNewLowPrioritySize() {
         return newLowPrioritySize;
     }
 
     /**
-         * Returns the number of fixed issues in this analysis run.
-         *
-         * @return number of fixed issues
-         */
+     * Returns the number of fixed issues in this analysis run.
+     *
+     * @return number of fixed issues
+     */
+    @Exported
     public int getFixedSize() {
         return fixedSize;
     }
