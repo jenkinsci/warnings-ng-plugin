@@ -60,7 +60,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 @SuppressWarnings("InstanceVariableMayNotBeInitialized")
 public class PublishIssuesStep extends Step {
-    private static final String DEFAULT_ID = "analysis";
     private static final String DEFAULT_MINIMUM_PRIORITY = "low";
 
     private final Issues<Issue> issues;
@@ -487,8 +486,7 @@ public class PublishIssuesStep extends Step {
             Optional<VirtualChannel> channel = getChannel();
             if (channel.isPresent()) {
                 String copyingLogMessage = new AffectedFilesResolver()
-                        .copyFilesWithAnnotationsToBuildFolder(channel.get(), getBuildFolder(),
-                                EncodingValidator.getEncoding(defaultEncoding), files);
+                        .copyFilesWithAnnotationsToBuildFolder(channel.get(), getBuildFolder(), files);
                 logger.log("Copied %d affected files from '%s' to build folder (%s)",
                         files.size(), workspace, copyingLogMessage);
                 logger.log("Copying affected files took %s", computeElapsedTime(startCopy));
@@ -513,8 +511,8 @@ public class PublishIssuesStep extends Step {
             BuildHistory buildHistory = new BuildHistory(run, selector);
 
             return buildHistory.getPreviousResult().map(
-                    result -> new AnalysisResult(run, referenceProvider, name, filtered, qualityGate, result))
-                    .orElseGet(() -> new AnalysisResult(run, referenceProvider, name, filtered, qualityGate));
+                    result -> new AnalysisResult(run, referenceProvider, filtered, qualityGate, result))
+                    .orElseGet(() -> new AnalysisResult(run, referenceProvider, filtered, qualityGate));
         }
     }
 

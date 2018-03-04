@@ -1,19 +1,23 @@
 package io.jenkins.plugins.analysis.core.views;
 
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.model.Item;
 import hudson.model.Run;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
 
 /**
  * Creates detail objects for the selected link in the issues detail view. Each link might be visualized by a
@@ -46,7 +50,7 @@ public class DetailFactory {
      *
      * @return the dynamic result of this module detail view
      */
-    public Object createTrendDetails(final String link, final Run<?, ?> owner,
+    public Object createTrendDetails(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Issues<?> allIssues, final Issues<?> fixedIssues,
             final Issues<?> newIssues, final Issues<?> outstandingIssues,
             final Collection<String> errors, final Charset sourceEncoding, final IssuesDetail parent) {
@@ -55,19 +59,20 @@ public class DetailFactory {
         String url = parent.getUrl() + "/" + plainLink;
 
         if ("fixed".equals(link)) {
-            return new FixedWarningsDetail(owner, fixedIssues, sourceEncoding, labelProvider, url);
+            return new FixedWarningsDetail(owner, result, fixedIssues, url, labelProvider, sourceEncoding);
         }
         if ("new".equals(link)) {
-            return new IssuesDetail(owner, newIssues, newIssues, EMPTY, EMPTY,
-                    Messages.New_Warnings_Header(), url, labelProvider, sourceEncoding);
+            return new IssuesDetail(owner, result, newIssues, newIssues, EMPTY,
+                    EMPTY, Messages.New_Warnings_Header(), url, labelProvider, sourceEncoding);
         }
         if ("outstanding".equals(link)) {
-            return new IssuesDetail(owner, outstandingIssues, EMPTY, outstandingIssues, EMPTY,
-                    Messages.Outstanding_Warnings_Header(), url, labelProvider, sourceEncoding);
+            return new IssuesDetail(owner, result, outstandingIssues, EMPTY, outstandingIssues,
+                    EMPTY, Messages.Outstanding_Warnings_Header(), url, labelProvider, sourceEncoding);
         }
-        if ("error".equals(link)) { // FIXME: what is shown here?
-            return new ErrorDetail(owner, errors, parent);
-        }
+        // FIXME: Check what to show in the errors view
+//        if ("error".equals(link)) {
+//            return new ErrorDetail(owner, result.getErrorMessages(), result.getInfoMessages(), parent);
+//        }
         if (link.startsWith("source.")) {
             owner.checkPermission(Item.WORKSPACE);
 
@@ -80,53 +85,70 @@ public class DetailFactory {
             }
         }
         if (Priority.HIGH.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(Priority.HIGH, owner, allIssues, fixedIssues, outstandingIssues, newIssues,
-                    sourceEncoding, labelProvider, url);
+            return createPrioritiesDetail(owner, result, Priority.HIGH, allIssues, fixedIssues, outstandingIssues, newIssues,
+                    url, labelProvider, sourceEncoding);
         }
         if (Priority.NORMAL.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(Priority.NORMAL, owner, allIssues, fixedIssues, outstandingIssues, newIssues,
-                    sourceEncoding, labelProvider, url);
+            return createPrioritiesDetail(owner, result, Priority.NORMAL, allIssues, fixedIssues, outstandingIssues, newIssues,
+                    url, labelProvider, sourceEncoding);
         }
         if (Priority.LOW.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(Priority.LOW, owner, allIssues, fixedIssues, outstandingIssues, newIssues,
-                    sourceEncoding, labelProvider, url);
+            return createPrioritiesDetail(owner, result, Priority.LOW, allIssues, fixedIssues, outstandingIssues, newIssues,
+                    url, labelProvider, sourceEncoding);
         }
 
         String property = StringUtils.substringBefore(link, ".");
         Predicate<Issue> filter = createPropertyFilter(plainLink, property);
         Issues<?> selectedIssues = allIssues.filter(filter);
-        return new IssuesDetail(owner,
-                selectedIssues, newIssues.filter(filter), outstandingIssues.filter(filter), fixedIssues.filter(filter),
-                getDisplayNameOfDetails(property, selectedIssues), url, labelProvider, sourceEncoding
-        );
+        return new IssuesDetail(owner, result,
+                selectedIssues, newIssues.filter(filter), outstandingIssues.filter(filter),
+                fixedIssues.filter(filter), getDisplayNameOfDetails(property, selectedIssues), url, labelProvider,
+                sourceEncoding);
     }
 
     private Predicate<Issue> createPropertyFilter(final String plainLink, final String property) {
         return issue -> plainLink.equals(String.valueOf(
-                PropertyCountTab.getIssueStringFunction(property).apply(issue).hashCode()));
+                Issue.getPropertyValueAsString(issue, property).hashCode()));
     }
 
     private String getDisplayNameOfDetails(final String property, final Issues<?> selectedIssues) {
-        return PropertyCountTab.getColumnHeaderFor(selectedIssues, property)
+        return getColumnHeaderFor(selectedIssues, property)
                 + " "
-                + PropertyCountTab.getIssueStringFunction(property).apply(selectedIssues.get(0));
+                + Issue.getPropertyValueAsString(selectedIssues.get(0), property);
     }
 
     private String strip(final String link) {
         return StringUtils.substringAfter(link, ".");
     }
 
-    private IssuesDetail createPrioritiesDetail(final Priority priority, final Run<?, ?> owner,
+    private IssuesDetail createPrioritiesDetail(final Run<?, ?> owner,
+            final AnalysisResult result, final Priority priority,
             final Issues<?> issues, final Issues<?> fixedIssues, final Issues<?> newIssues,
-            final Issues<?> outstandingIssues, final Charset defaultEncoding,
-            final StaticAnalysisLabelProvider labelProvider, final String url) {
+            final Issues<?> outstandingIssues, final String url, final StaticAnalysisLabelProvider labelProvider,
+            final Charset sourceEncoding) {
         Predicate<Issue> priorityFilter = issue -> issue.getPriority() == priority;
-        return new IssuesDetail(owner,
-                issues.filter(priorityFilter), newIssues.filter(priorityFilter),
+        return new IssuesDetail(owner, result,
+                issues.filter(priorityFilter),
+                newIssues.filter(priorityFilter),
                 outstandingIssues.filter(priorityFilter),
-                fixedIssues.filter(priorityFilter),
-                LocalizedPriority.getLongLocalizedString(priority), url, labelProvider, defaultEncoding
-        );
+                fixedIssues.filter(priorityFilter), LocalizedPriority.getLongLocalizedString(priority), url,
+                labelProvider, sourceEncoding);
     }
 
+    /**
+     * Returns the localized column header of the specified property name.
+     *
+     * @param propertyName
+     *         the name of the property
+     *
+     * @return the function that obtains the value
+     */
+    private String getColumnHeaderFor(final Issues<?> issues, final String propertyName) {
+        try {
+            return PropertyUtils.getProperty(new TabLabelProvider(issues), propertyName).toString();
+        }
+        catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ignored) {
+            return "Element";
+        }
+    }
 }

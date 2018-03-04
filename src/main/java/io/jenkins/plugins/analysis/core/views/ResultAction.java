@@ -6,8 +6,6 @@ import java.util.Collections;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerProxy;
-import org.kohsuke.stapler.export.Exported;
-import org.kohsuke.stapler.export.ExportedBean;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
@@ -16,6 +14,7 @@ import io.jenkins.plugins.analysis.core.model.Summary;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
+
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
@@ -33,19 +32,20 @@ import hudson.model.Run;
  *
  * @author Ulli Hafner
  */
-@ExportedBean
 public class ResultAction implements HealthReportingAction, LastBuildAction, RunAction2, StaplerProxy {
     private transient Run<?, ?> owner;
 
     private final AnalysisResult result;
     private final HealthDescriptor healthDescriptor;
+    private final String id;
+    private final String name;
     private final Charset charset;
 
     /**
      * Creates a new instance of {@link ResultAction}.
      *
      * @param owner
-     *         the associated build/run of this action
+     *         the associated build/run that created the static analysis result
      * @param result
      *         the result of the static analysis run
      * @param healthDescriptor
@@ -62,10 +62,25 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         this.owner = owner;
         this.result = result;
         this.healthDescriptor = healthDescriptor;
+        this.id = id;
+        this.name = name;
         this.charset = charset;
     }
 
-    @Exported
+    /**
+     * Returns the ID (and URL) of this action.
+     *
+     * @return the ID
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Returns the associated build/run that created the static analysis result.
+     *
+     * @return the run
+     */
     public Run<?, ?> getOwner() {
         return owner;
     }
@@ -81,28 +96,17 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         onAttached(r);
     }
 
-    public String getId() {
-        return result.getId();
-    }
-
-    private String getName() {
-        return result.getName();
-    }
-
     @Override
-    @Exported
     public String getDisplayName() {
         return getLabelProvider().getLinkName();
     }
 
     @Override
-    @Exported
     public String getUrlName() {
         return getLabelProvider().getResultUrl();
     }
 
     @Override
-    @Exported
     public HealthReport getBuildHealth() {
         return new HealthReportBuilder(healthDescriptor).computeHealth(getResult());
     }
@@ -112,7 +116,6 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         return Collections.singleton(new JobAction(owner.getParent(), getLabelProvider(), healthDescriptor));
     }
 
-    @Exported
     public AnalysisResult getResult() {
         return result;
     }
@@ -177,7 +180,6 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      * @return {@code true} if the result is successful, {@code false} if the result has been set to {@link
      *         Result#UNSTABLE} or {@link Result#FAILURE}.
      */
-    @Exported
     public boolean isSuccessful() {
         return getResult().isSuccessful();
     }
@@ -188,7 +190,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     private StaticAnalysisLabelProvider getLabelProvider() {
-        return new LabelProviderFactory().create(getId(), getName());
+        return new LabelProviderFactory().create(id, name);
     }
 
     /**
@@ -198,8 +200,6 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     @Override
     public Object getTarget() {
-        return new IssuesDetail(owner,
-                result.getIssues(), result.getNewIssues(), result.getOutstandingIssues(), result.getFixedIssues(),
-                getLabelProvider().getLinkName(), getUrlName(), getLabelProvider(), charset);
+        return new IssuesDetail(owner, result, getLabelProvider(), charset);
     }
 }

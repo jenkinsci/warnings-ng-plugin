@@ -9,8 +9,6 @@ import javax.annotation.CheckForNull;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
-import org.kohsuke.stapler.export.Exported;
-import org.kohsuke.stapler.export.ExportedBean;
 
 import com.google.common.collect.Lists;
 
@@ -37,7 +35,6 @@ import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import jenkins.model.Jenkins;
 
 import hudson.model.Action;
-import hudson.model.Api;
 import hudson.model.Job;
 import hudson.model.Run;
 import hudson.util.Graph;
@@ -49,7 +46,6 @@ import hudson.util.Graph;
  * @author Ulli Hafner
  */
 // CHECKSTYLE:COUPLING-OFF
-@ExportedBean
 public class JobAction implements Action {
     private static final Logger LOGGER = Logger.getLogger(JobAction.class.getName());
 
@@ -74,17 +70,7 @@ public class JobAction implements Action {
         this.healthDescriptor = healthDescriptor;
     }
 
-    /**
-     * Gets the remote API for this action.
-     *
-     * @return the remote API
-     */
-    public Api getApi() {
-        return new Api(this);
-    }
-
     @Override
-    @Exported
     public String getDisplayName() {
         return labelProvider.getLinkName();
     }
@@ -394,7 +380,6 @@ public class JobAction implements Action {
      * @return the last finished run or {@code null} if there is no such run
      */
     @CheckForNull
-    @Exported
     public Run<?, ?> getLastFinishedRun() {
         Run<?, ?> lastRun = owner.getLastBuild();
         while (lastRun != null && (lastRun.isBuilding() || getResultAction(lastRun) == null)) {

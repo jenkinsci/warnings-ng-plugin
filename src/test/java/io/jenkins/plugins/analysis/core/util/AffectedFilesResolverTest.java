@@ -26,7 +26,7 @@ class AffectedFilesResolverTest {
     @ValueSource(strings = {"/does/not/exist", "!<>$$&%/&(", "\0 Null-Byte"})
     void shouldReturnFallbackOnError(final String fileName) throws IOException, InterruptedException {
         String message = new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(
-                mock(VirtualChannel.class), BUILD_ROOT, "UTF-8", Collections.singleton(fileName));
+                mock(VirtualChannel.class), BUILD_ROOT, Collections.singleton(fileName));
         assertThat(message).isEqualTo("0 copied, 1 not-found, 0 with I/O error");
     }
 }
