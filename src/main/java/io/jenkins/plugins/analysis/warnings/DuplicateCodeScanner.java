@@ -9,7 +9,6 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import static hudson.plugins.warnings.WarningsDescriptor.*;
-import static io.jenkins.plugins.analysis.core.views.IssuesDetail.*;
 import static j2html.TagCreator.*;
 import net.sf.json.JSONArray;
 
