@@ -39,11 +39,6 @@ import edu.hm.hafner.analysis.Priority;
  */
 @ExportedBean
 public class IssuesDetail implements ModelObject {
-    protected static final Issues<Issue> NO_ISSUES = new Issues<>();
-
-    public static final Function<String, String> FILE_NAME_FORMATTER
-            = string -> StringUtils.substringAfterLast(string, "/");
-
     private final Run<?, ?> owner;
 
     private final Issues<?> issues;
@@ -134,20 +129,13 @@ public class IssuesDetail implements ModelObject {
 
     // ------------------------------------ UI entry points for Stapler --------------------------------
 
+    /**
+     * Returns the label provider to render the localized labels.
+     *
+     * @return the label provider
+     */
     public StaticAnalysisLabelProvider getLabelProvider() {
         return labelProvider;
-    }
-
-    // FIXME: use labelProvider directly in jelly file
-
-    @SuppressWarnings("unused") // Called by jelly view
-    public String[] getTableHeaders() {
-        return labelProvider.getTableHeaders();
-    }
-
-    @SuppressWarnings("unused") // Called by jelly view
-    public int[] getTableWidths() {
-        return labelProvider.getTableWidths();
     }
 
     @JavaScriptMethod
@@ -156,18 +144,45 @@ public class IssuesDetail implements ModelObject {
         return labelProvider.toJsonArray(getIssues(), new DefaultAgeBuilder(owner.getNumber(), getUrl()));
     }
 
+    /**
+     * Returns all issues of the associated static analysis run.
+     *
+     * @return all issues
+     */
+    @SuppressWarnings("unused") // Called by jelly view
     public Issues<?> getIssues() {
         return issues;
     }
 
+    /**
+     * Returns all new issues of the associated static analysis run. I.e. all issues, that are part of the current
+     * report but have not been shown up in the previous report.
+     *
+     * @return all new issues
+     */
+    @SuppressWarnings("unused") // Called by jelly view
     public Issues<?> getNewIssues() {
         return newIssues;
     }
 
+    /**
+     * Returns all fixed issues of the associated static analysis run. I.e. all issues, that are part of the previous
+     * report but are not present in the current report anymore.
+     *
+     * @return all fixed issues
+     */
+    @SuppressWarnings("unused") // Called by jelly view
     public Issues<?> getFixedIssues() {
         return fixedIssues;
     }
 
+    /**
+     * Returns all outstanding issues of the associated static analysis run. I.e. all issues, that are part of the
+     * current and previous report.
+     *
+     * @return all outstanding issues
+     */
+    @SuppressWarnings("unused") // Called by jelly view
     public Issues<?> getOutstandingIssues() {
         return outstandingIssues;
     }
@@ -175,17 +190,24 @@ public class IssuesDetail implements ModelObject {
     /**
      * Returns whether author and commit information should be shown or not.
      *
-     * @return on {@code true} the SCM will be called to obtain author and commit information, on
-     *         {@code false} author and commit information are omitted
+     * @return on {@code true} the SCM will be called to obtain author and commit information, on {@code false} author
+     *         and commit information are omitted
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public boolean isAuthorInformationEnabled() {
         return !GlobalSettings.instance().getNoAuthors();
     }
 
+    /**
+     * Returns whether the affected file of the specified issue can be shown in the UI.
+     *
+     * @return {@code true} if the file could be shown, {@code false} otherwise
+     */
+    @SuppressWarnings("unused") // Called by jelly view
     public boolean canDisplayFile(final Issue issue) {
         return ConsoleDetail.isInConsoleLog(issue)
-                || new File(issue.getFileName()).exists()
-                || AffectedFilesResolver.getTempFile(owner, issue).exists();
+                || AffectedFilesResolver.getTempFile(owner, issue).exists()
+                || new File(issue.getFileName()).exists();
     }
 
     /**
@@ -193,14 +215,27 @@ public class IssuesDetail implements ModelObject {
      *
      * @return source files encoding
      */
+    // FIXME: not used?
     public Charset getSourceEncoding() {
         return sourceEncoding;
     }
 
+    /**
+     * Returns the short name for an absolute path name.
+     *
+     * @return the file name
+     */
+    @SuppressWarnings("unused") // Called by jelly view
     public String getFileDisplayName(final Issue issue) {
-        return FILE_NAME_FORMATTER.apply(issue.getFileName());
+        return StaticAnalysisLabelProvider.FILE_NAME_FORMATTER.apply(issue.getFileName());
     }
 
+    /**
+     * Returns the label provider for the localized tab names.
+     *
+     * @return the label provider
+     */
+    @SuppressWarnings("unused") // Called by jelly view
     public TabLabelProvider getTabLabelProvider() {
         return new TabLabelProvider(getIssues());
     }
@@ -213,6 +248,7 @@ public class IssuesDetail implements ModelObject {
      *
      * @return the sanitized HTML page
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public String sanitize(final String html) {
         try {
             return sanitizer.translate(html);
@@ -223,32 +259,6 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
-     * Return the relative URL to navigate to the specified build from this detail view.
-     *
-     * @param buildNumber
-     *         the build number
-     *
-     * @return the relative URL
-     */
-    public String getBuildUrl(final int buildNumber) {
-        int backward = StringUtils.countMatches(getUrl(), "/");
-
-        return StringUtils.repeat("../", backward + 2) + buildNumber;
-    }
-
-    /**
-     * Return the age of a warning given as number of builds since the first occurrence.
-     *
-     * @param buildNumber
-     *         the build number
-     *
-     * @return the age
-     */
-    public int getAge(final int buildNumber) {
-        return getOwner().getNumber() - buildNumber + 1;
-    }
-
-    /**
      * Returns a localized priority name.
      *
      * @param priorityName
@@ -256,6 +266,7 @@ public class IssuesDetail implements ModelObject {
      *
      * @return localized priority name
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public String getLocalizedPriority(final String priorityName) {
         return getLocalizedPriority(Priority.fromString(priorityName));
     }
@@ -268,37 +279,64 @@ public class IssuesDetail implements ModelObject {
      *
      * @return localized priority name
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public String getLocalizedPriority(final Priority priority) {
         return LocalizedPriority.getLocalizedString(priority);
     }
 
-    public String getDescription(final Issue issue) {
-        return getLabelProvider().getDescription(issue);
-    }
-
-    public PropertyStatistics getDetails(final String plainLink) {
+    /**
+     * Returns statics for the specified property.
+     *
+     * @param propertyName
+     *         the name of the property
+     *
+     * @return the statistics
+     */
+    @SuppressWarnings("unused") // Called by jelly view
+    public PropertyStatistics getDetails(final String propertyName) {
         Function<String, String> propertyFormatter;
-        if ("fileName".equals(plainLink)) {
-            propertyFormatter = IssuesDetail.FILE_NAME_FORMATTER;
+        if ("fileName".equals(propertyName)) {
+            propertyFormatter = StaticAnalysisLabelProvider.FILE_NAME_FORMATTER;
         }
         else {
             propertyFormatter = Function.identity();
         }
-        return new PropertyStatistics(issues, plainLink, propertyFormatter);
-    }
-
-    /**
-     * Returns all possible priorities.
-     *
-     * @return all priorities
-     */
-    public Priority[] getPriorities() {
-        return Priority.values();
+        return new PropertyStatistics(issues, propertyName, propertyFormatter);
     }
 
     @Override
     public String getDisplayName() {
         return displayName;
+    }
+
+    /**
+     * Returns a new sub page for the selected link.
+     *
+     * @param link
+     *         the link to identify the sub page to show
+     * @param request
+     *         Stapler request
+     * @param response
+     *         Stapler response
+     *
+     * @return the new sub page
+     */
+    @SuppressWarnings("unused") // Called by jelly view
+    public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
+        try {
+            return new DetailFactory().createTrendDetails(link, owner, result,
+                    issues, fixedIssues, newIssues, outstandingIssues,
+                    Collections.emptyList(), sourceEncoding, this);
+        }
+        catch (NoSuchElementException ignored) {
+            try {
+                response.sendRedirect2("../");
+            }
+            catch (IOException ignore) {
+                // ignore
+            }
+            return this; // fallback on broken URLs
+        }
     }
 
     // ------------------------------------ UI entry points for Stapler --------------------------------
@@ -319,35 +357,6 @@ public class IssuesDetail implements ModelObject {
      */
     public final boolean isCurrent() {
         return owner.getParent().getLastBuild().number == owner.number;
-    }
-
-    /**
-     * Returns a new view for the selected link.
-     *
-     * @param link
-     *         the link to identify the sub page to show
-     * @param request
-     *         Stapler request
-     * @param response
-     *         Stapler response
-     *
-     * @return the dynamic result of this module detail view
-     */
-    public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
-        try {
-            return new DetailFactory().createTrendDetails(link, owner, result,
-                    issues, fixedIssues, newIssues, outstandingIssues,
-                    Collections.emptyList(), sourceEncoding, this);
-        }
-        catch (NoSuchElementException exception) {
-            try {
-                response.sendRedirect2("../");
-            }
-            catch (IOException ignore) {
-                // ignore
-            }
-            return this; // fallback on broken URLs
-        }
     }
 
     /**

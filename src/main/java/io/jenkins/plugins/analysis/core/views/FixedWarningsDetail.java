@@ -8,6 +8,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import hudson.model.Run;
 import hudson.plugins.analysis.Messages;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 
 /**
@@ -16,6 +17,8 @@ import edu.hm.hafner.analysis.Issues;
  * @author Ulli Hafner
  */
 public class FixedWarningsDetail extends IssuesDetail {
+    protected static final Issues<Issue> NO_ISSUES = new Issues<>();
+
     /**
      * Creates a new instance of {@code FixedWarningsDetail}.
      *

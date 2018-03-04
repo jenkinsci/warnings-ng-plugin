@@ -48,8 +48,8 @@
               <issues:property property="category" name="${l.category}"/>
               <issues:property property="type" name="${l.type}"/>
 
-              <issues:table issues="${i}"/>
-              <issues:list issues="${i}" />
+              <issues:table issues="${i}" labelProvider="${l}"/>
+              <issues:list issues="${i}" labelProvider="${l}"/>
 
             </div>
           </div>
