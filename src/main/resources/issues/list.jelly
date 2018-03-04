@@ -4,6 +4,9 @@
     <st:attribute name="issues" use="required" type="edu.hm.hafner.analysis.Issues">
       The issues to show.
     </st:attribute>
+    <st:attribute name="labelProvider" use="required" type="io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider">
+      The issues to show.
+    </st:attribute>
   </st:documentation>
 
   <div role="tabpanel" id="warningsDetails" class="tab-pane">
@@ -26,7 +29,7 @@
               <b><j:out value="${it.sanitize(i.message)}"/></b>
             </p>
             <p>
-              <j:out value="${it.sanitize(it.getDescription(i))}"/>
+              <j:out value="${it.sanitize(labelProvider.getDescription(i))}"/>
             </p>
           </td>
         </tr>

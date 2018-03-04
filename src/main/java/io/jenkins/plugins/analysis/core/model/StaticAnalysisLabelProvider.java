@@ -9,7 +9,6 @@ import org.kohsuke.stapler.Stapler;
 
 import io.jenkins.plugins.analysis.core.views.LocalizedPriority;
 
-import static io.jenkins.plugins.analysis.core.views.IssuesDetail.*;
 import static j2html.TagCreator.*;
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
@@ -34,6 +33,10 @@ import edu.hm.hafner.util.VisibleForTesting;
  * @author Ullrich Hafner
  */
 public class StaticAnalysisLabelProvider {
+    /** Formats a full path: selects the file name portion.  */
+    public static final Function<String, String> FILE_NAME_FORMATTER
+            = string -> StringUtils.substringAfterLast(string, "/");
+
     private static final String ICONS_PREFIX = "/plugin/analysis-core/icons/";
     private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
     private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
