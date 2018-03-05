@@ -6,8 +6,9 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import static hudson.plugins.analysis.util.ThresholdValidator.*;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Data object that simply stores the thresholds.
@@ -84,7 +85,7 @@ public class Thresholds implements Serializable {
      * @param threshold
      *        string representation of the threshold value
      * @return <code>true</code> if the provided threshold string parameter is a
-     *         valid number >= 0
+     *         valid number greater or equal 0
      */
     public static boolean isValid(final String threshold) {
         if (StringUtils.isNotBlank(threshold)) {

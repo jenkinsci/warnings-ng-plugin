@@ -1,18 +1,13 @@
 package hudson.plugins.analysis.util;
 
 import java.lang.reflect.Method;
-
 import javax.annotation.Nonnull;
 
 /**
  * Compatibility utilities.
  */
 public final class Compatibility {
-
-    /**
-     * Util.isOverridden does not work on non-public methods, that's why this one is used here.
-     */
-    public static boolean isOverridden(@Nonnull Class base, @Nonnull Class derived, @Nonnull String methodName, @Nonnull Class... types) {
+   public static boolean isOverridden(@Nonnull Class base, @Nonnull Class derived, @Nonnull String methodName, @Nonnull Class... types) {
         try {
             return !getMethod(base, methodName, types).equals(getMethod(derived, methodName, types));
         } catch (NoSuchMethodException e) {

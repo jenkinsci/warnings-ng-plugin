@@ -566,7 +566,7 @@ public class GraphConfiguration  {
                 && newGraphType != null
                 && newDayCount >= 0
                 && isValidBuildCount(newBuildCount)
-                && !(StringUtils.isNotBlank(newParameterName) ^ StringUtils.isNotBlank(newParameterValue));
+                && StringUtils.isNotBlank(newParameterName) == StringUtils.isNotBlank(newParameterValue);
     }
     //CHECKSTYLE:ON
 
@@ -745,8 +745,7 @@ public class GraphConfiguration  {
      *
      * @param graphId
      *            the graph ID
-     * @return the graph with the specified ID. If the graph is not found, then
-     *         {@link #DEFAULT_GRAPH} is returned.
+     * @return the graph with the specified ID. If the graph is not found, then DEFAULT_GRAPH is returned.
      */
     public BuildResultGraph getGraph(final String graphId) {
         if (graphId2Graph.containsKey(graphId)) {
@@ -841,16 +840,11 @@ public class GraphConfiguration  {
             }
         }
         if (parameterValue == null) {
-            if (other.parameterValue != null) {
-                return false;
-            }
+            return other.parameterValue == null;
         }
         else {
-            if (!parameterValue.equals(other.parameterValue)) {
-                return false;
-            }
+            return parameterValue.equals(other.parameterValue);
         }
-        return true;
     }
     // CHECKSTYLE:ON
 }

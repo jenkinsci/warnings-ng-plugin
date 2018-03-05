@@ -29,7 +29,8 @@ import hudson.util.Graph;
  * Configuration properties of a trend graph.
  */
 public abstract class GraphConfigurationView implements ModelObject {
-    private static final Logger LOGGER = Logger.getLogger(hudson.plugins.analysis.graph.GraphConfigurationView.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(
+            hudson.plugins.analysis.graph.GraphConfigurationView.class.getName());
 
     /** The owning job to configure the graphs for. */
     private final Job<?, ?> owner;
@@ -44,13 +45,15 @@ public abstract class GraphConfigurationView implements ModelObject {
 
     /**
      * Creates a new instance of {@link hudson.plugins.analysis.graph.GraphConfigurationView}.
-     *  @param configuration
-     *            the graph configuration
+     *
+     * @param configuration
+     *         the graph configuration
      * @param job
-     *            the owning job to configure the graphs for
+     *         the owning job to configure the graphs for
      * @param key
- *            unique key of this graph
+     *         unique key of this graph
      * @param buildHistory
+     *         the build result history
      */
     public GraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job, final String key,
             final ResultHistory buildHistory) {
@@ -65,9 +68,10 @@ public abstract class GraphConfigurationView implements ModelObject {
      * Creates a file with for the default values.
      *
      * @param job
-     *            the job used as directory for the file
+     *         the job used as directory for the file
      * @param pluginName
-     *            the name of the plug-in
+     *         the name of the plug-in
+     *
      * @return the created file
      */
     protected static File createDefaultsFile(final Job<?, ?> job, final String pluginName) {
@@ -118,9 +122,9 @@ public abstract class GraphConfigurationView implements ModelObject {
      * Saves the configured values. Subclasses need to implement the actual persistence.
      *
      * @param request
-     *            Stapler request
+     *         Stapler request
      * @param response
-     *            Stapler response
+     *         Stapler response
      */
     public void doSave(final StaplerRequest request, final StaplerResponse response) {
         try {
@@ -163,29 +167,30 @@ public abstract class GraphConfigurationView implements ModelObject {
      * Persists the configured values.
      *
      * @param value
-     *            the values configured by the user.
+     *         the values configured by the user.
      * @param pluginName
-     *            the name of the plug-in
+     *         the name of the plug-in
      * @param request
-     *            Stapler request
+     *         Stapler request
      * @param response
-     *            Stapler response
+     *         Stapler response
+     *
      * @throws IOException
-     *             if the values could not be persisted
+     *         if the values could not be persisted
      */
     protected abstract void persistValue(String value, String pluginName,
             StaplerRequest request, StaplerResponse response) throws IOException;
 
     /**
-     * This method will be called by Stapler if an example image for the
-     * specified graph should be rendered.
+     * This method will be called by Stapler if an example image for the specified graph should be rendered.
      *
      * @param graphId
-     *            the ID of the graph to render
+     *         the ID of the graph to render
      * @param request
-     *            Stapler request
+     *         Stapler request
      * @param response
-     *            Stapler response
+     *         Stapler response
+     *
      * @return <code>null</code>
      */
     public Object getDynamic(final String graphId, final StaplerRequest request, final StaplerResponse response) {
@@ -207,9 +212,10 @@ public abstract class GraphConfigurationView implements ModelObject {
      * Returns the graph renderer of the specified graph.
      *
      * @param graph
-     *            the graph
+     *         the graph
      * @param url
-     *            the URL of links in the trend graph
+     *         the URL of links in the trend graph
+     *
      * @return the graph renderer of the specified graph
      */
     public Graph getGraphRenderer(final BuildResultGraph graph, final String url) {
@@ -229,7 +235,8 @@ public abstract class GraphConfigurationView implements ModelObject {
      * Returns the graph renderer of the current graph.
      *
      * @param url
-     *            the URL of links in the trend graph
+     *         the URL of links in the trend graph
+     *
      * @return the graph renderer of the current graph
      */
     public Graph getGraphRenderer(final String url) {
@@ -300,11 +307,11 @@ public abstract class GraphConfigurationView implements ModelObject {
     }
 
     /**
-     * Returns the value as integer. If the value is 0, then an empty string is
-     * returned.
+     * Returns the value as integer. If the value is 0, then an empty string is returned.
      *
      * @param value
-     *            the value to convert
+     *         the value to convert
+     *
      * @return string representation of <code>value</code>
      */
     private String getStringValue(final int value) {
@@ -391,10 +398,12 @@ public abstract class GraphConfigurationView implements ModelObject {
     }
 
     /**
-     * Sets the prefix of the URLs in the trend graph. Depending on the sub page this trend is shown a different
-     * prefix can be set for the relative URL.
+     * Sets the prefix of the URLs in the trend graph. Depending on the sub page this trend is shown a different prefix
+     * can be set for the relative URL.
      *
-     * @param urlPrefix prefix, might be empty
+     * @param urlPrefix
+     *         prefix, might be empty
+     *
      * @since 1.73
      */
     public void setUrlPrefix(final String urlPrefix) {

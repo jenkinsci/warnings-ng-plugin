@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
-
 import hudson.plugins.analysis.util.Compatibility;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.Priority;
@@ -104,17 +103,11 @@ public class PriorityDetailFactory {
         }
     }
 
-    /**
-     * @deprecated use {@link #create(String, Run, AnnotationContainer, String, String)} instead
-     */
     @Deprecated
     public PrioritiesDetail create(final String priority, final AbstractBuild<?, ?> owner, final AnnotationContainer container, final String defaultEncoding, final String header) {
         return create(priority, (Run<?, ?>) owner, container, defaultEncoding, header);
     }
 
-    /**
-     * @deprecated use {@link #createPrioritiesDetail(Priority, Run, AnnotationContainer, String, String)} instead
-     */
     @Deprecated
     protected PrioritiesDetail createPrioritiesDetail(final Priority priority, final AbstractBuild<?, ?> owner, final AnnotationContainer container,
             final String defaultEncoding, final String header) {

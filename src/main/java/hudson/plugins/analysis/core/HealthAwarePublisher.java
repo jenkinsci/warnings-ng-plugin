@@ -5,13 +5,13 @@ import java.util.Set;
 
 import hudson.FilePath;
 import hudson.Launcher;
-
-import hudson.model.Result;
 import hudson.model.AbstractBuild;
+import hudson.model.Result;
 import hudson.model.Run;
-
-import hudson.plugins.analysis.util.*;
-
+import hudson.plugins.analysis.util.BlameFactory;
+import hudson.plugins.analysis.util.Blamer;
+import hudson.plugins.analysis.util.Compatibility;
+import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.tasks.BuildStep;
 
@@ -147,7 +147,7 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
     @Deprecated
     protected BuildResult perform(AbstractBuild<?, ?> build, PluginLogger logger)
             throws InterruptedException, IOException {
-        return perform((Run) build, null, logger);
+        return perform(build, null, logger);
     }
 
     @SuppressWarnings("deprecation")
@@ -212,9 +212,6 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
                 thresholdLimit, defaultEncoding, useDeltaValues, canRunOnFailed, pluginName);
     }
 
-    /** Backwards compatibility.
-     * @deprecated
-     */
     @SuppressWarnings("deprecation")
     @Deprecated
     public HealthAwarePublisher(final String healthy, final String unHealthy,
@@ -285,79 +282,6 @@ public abstract class HealthAwarePublisher extends HealthAwareRecorder {
                 true, pluginName);
     }
 
-    /**
-     * Creates a new instance of {@link HealthAwarePublisher}.
-     *
-     * @param healthy
-     *            Report health as 100% when the number of open tasks is less
-     *            than this value
-     * @param unHealthy
-     *            Report health as 0% when the number of open tasks is greater
-     *            than this value
-     * @param thresholdLimit
-     *            determines which warning priorities should be considered when
-     *            evaluating the build stability and health
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param useDeltaValues
-     *            determines whether the absolute annotations delta or the
-     *            actual annotations set difference should be used to evaluate
-     *            the build stability
-     * @param unstableTotalAll
-     *            annotation threshold
-     * @param unstableTotalHigh
-     *            annotation threshold
-     * @param unstableTotalNormal
-     *            annotation threshold
-     * @param unstableTotalLow
-     *            annotation threshold
-     * @param unstableNewAll
-     *            annotation threshold
-     * @param unstableNewHigh
-     *            annotation threshold
-     * @param unstableNewNormal
-     *            annotation threshold
-     * @param unstableNewLow
-     *            annotation threshold
-     * @param failedTotalAll
-     *            annotation threshold
-     * @param failedTotalHigh
-     *            annotation threshold
-     * @param failedTotalNormal
-     *            annotation threshold
-     * @param failedTotalLow
-     *            annotation threshold
-     * @param failedNewAll
-     *            annotation threshold
-     * @param failedNewHigh
-     *            annotation threshold
-     * @param failedNewNormal
-     *            annotation threshold
-     * @param failedNewLow
-     *            annotation threshold
-     * @param canRunOnFailed
-     *            determines whether the plug-in can run for failed builds, too
-     * @param usePreviousBuildAsReference
-     *            determine if the previous build should always be used as the
-     *            reference build, no matter its overall result.
-     * @param useStableBuildAsReference
-     *            determines whether only stable builds should be used as
-     *            reference builds or not
-     * @param shouldDetectModules
-     *            determines whether module names should be derived from Maven
-     *            POM or Ant build files
-     * @param canComputeNew
-     *            determines whether new warnings should be computed (with
-     *            respect to baseline)
-     * @param canResolveRelativePaths
-     *            determines whether relative paths in warnings should be
-     *            resolved using a time expensive operation that scans the whole
-     *            workspace for matching files.
-     * @param pluginName
-     *            the name of the plug-in
-     * @since 1.66
-     * @deprecated use {@link #HealthAwarePublisher(String)} and setters instead
-     */
     @SuppressWarnings({"PMD", "deprecation"})
     @Deprecated
     public HealthAwarePublisher(final String healthy, final String unHealthy,

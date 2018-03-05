@@ -201,6 +201,9 @@ public class IssuesDetail implements ModelObject {
     /**
      * Returns whether the affected file of the specified issue can be shown in the UI.
      *
+     * @param issue
+     *         the issue to get the affected file for
+     *
      * @return {@code true} if the file could be shown, {@code false} otherwise
      */
     @SuppressWarnings("unused") // Called by jelly view
@@ -211,17 +214,10 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
-     * Returns the encoding to use when displaying source files.
-     *
-     * @return source files encoding
-     */
-    // FIXME: not used?
-    public Charset getSourceEncoding() {
-        return sourceEncoding;
-    }
-
-    /**
      * Returns the short name for an absolute path name.
+     *
+     * @param issue
+     *         the issue to get the file name for
      *
      * @return the file name
      */
@@ -325,7 +321,7 @@ public class IssuesDetail implements ModelObject {
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
         try {
             return new DetailFactory().createTrendDetails(link, owner, result,
-                    issues, fixedIssues, newIssues, outstandingIssues,
+                    issues, newIssues, outstandingIssues, fixedIssues,
                     Collections.emptyList(), sourceEncoding, this);
         }
         catch (NoSuchElementException ignored) {

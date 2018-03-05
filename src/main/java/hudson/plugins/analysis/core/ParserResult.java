@@ -254,7 +254,7 @@ public class ParserResult implements Serializable {
      * @param annotation the annotation to add
      * @return the number of added annotations
      */
-    @WithBridgeMethods(value = void.class) // JENKINS-25405
+    @WithBridgeMethods(void.class) // JENKINS-25405
     public final int addAnnotation(final FileAnnotation annotation) {
         expandRelativePaths(annotation);
         if (annotations.add(annotation)) {
@@ -271,7 +271,7 @@ public class ParserResult implements Serializable {
      * @param newAnnotations the annotations to add
      * @return the number of added annotations
      */
-    @WithBridgeMethods(value = void.class) // JENKINS-25405
+    @WithBridgeMethods(void.class) // JENKINS-25405
     public final int addAnnotations(final Collection<? extends FileAnnotation> newAnnotations) {
         int count = 0;
         for (FileAnnotation annotation : newAnnotations) {
@@ -463,13 +463,10 @@ public class ParserResult implements Serializable {
         return id;
     }
 
-    /**
-     * repopulate the transient fileNameCache
-     */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
-        this.fileNameCache = HashMultimap.create();
+        fileNameCache = HashMultimap.create();
     }
 
     /**
@@ -535,7 +532,7 @@ public class ParserResult implements Serializable {
         }
 
         @Override
-        public boolean exists() throws IOException, InterruptedException {
+        public boolean exists() {
             return false;
         }
 
@@ -545,7 +542,7 @@ public class ParserResult implements Serializable {
         }
 
         @Override
-        public String[] findFiles(final String pattern) throws IOException, InterruptedException {
+        public String[] findFiles(final String pattern) {
             return new String[0];
         }
     }

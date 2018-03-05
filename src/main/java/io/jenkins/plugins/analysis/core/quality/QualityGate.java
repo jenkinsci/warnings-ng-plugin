@@ -304,6 +304,8 @@ public class QualityGate implements Serializable {
 
         /**
          * Creates a new {@link QualityGate} instance using the defined parameters.
+         *
+         * @return the created quality gate
          */
         public QualityGate build() {
             return new QualityGate(totalFailedThreshold, totalUnstableThreshold, newFailedThreshold,

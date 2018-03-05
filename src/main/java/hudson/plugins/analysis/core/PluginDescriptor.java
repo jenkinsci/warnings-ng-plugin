@@ -6,7 +6,6 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
@@ -18,6 +17,8 @@ import hudson.plugins.analysis.util.ThresholdValidator;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Base class for a Jenkins plug-in descriptor.
@@ -66,7 +67,7 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
     }
 
     /**
-     * Converts the hierarchical JSON object that contains a sub-section for {@value #COMPUTE_NEW_SECTION_KEY} to a
+     * Converts the hierarchical JSON object that contains a sub-section for {@link #COMPUTE_NEW_SECTION_KEY} to a
      * corresponding flat JSON object.
      *
      * @param hierarchical

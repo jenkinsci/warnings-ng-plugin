@@ -200,7 +200,8 @@ public class ScanForIssuesStep extends Step {
             return issues;
         }
 
-        private void resolveModuleNames(final Issues<?> issues, final Logger logger) {
+        private void resolveModuleNames(final Issues<?> issues, final Logger logger)
+                throws IOException, InterruptedException {
             Instant start = Instant.now();
 
             logger.log("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");

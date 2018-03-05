@@ -5,9 +5,8 @@ import javax.servlet.http.Cookie;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import hudson.model.Job;
 import hudson.model.AbstractProject;
-
+import hudson.model.Job;
 import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.util.CookieHandler;
@@ -57,8 +56,7 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      *            the cookies containing the graph configuration
      * @param buildHistory
      *            the build history for this project
-     * @deprecated use
-     *             {@link #UserGraphConfigurationView(GraphConfiguration, Job, String, String, Cookie, BuildHistory)}
+     * @deprecated use UserGraphConfigurationView(GraphConfiguration, Job, String, String, Cookie, BuildHistory)
      */
     @Deprecated
     public UserGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
@@ -98,8 +96,7 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      *            the cookies containing the graph configuration
      * @param buildHistory
      *            the build history for this project
-     * @deprecated use
-     *             {@link #UserGraphConfigurationView(GraphConfiguration, Job, String, Cookie, BuildHistory)}
+     * @deprecated use UserGraphConfigurationView(GraphConfiguration, Job, String, Cookie, BuildHistory)
      */
     @Deprecated
     public UserGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,

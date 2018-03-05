@@ -20,7 +20,7 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
     private final String url;
 
     /**
-     * Creates a new instance of {@link hudson.plugins.analysis.graph.DefaultGraphConfigurationView}.
+     * Creates a new instance of {@link DefaultGraphConfigurationView}.
      *
      * @param configuration
      *         the graph configuration
@@ -30,6 +30,8 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
      *         The name of the plug-in.
      * @param buildHistory
      *         the build history for this job
+     * @param toolTipProvider
+     *         the tool tip provider to use
      */
     public DefaultGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
             final String pluginName, final ResultHistory buildHistory,

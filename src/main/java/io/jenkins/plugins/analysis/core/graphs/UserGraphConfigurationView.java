@@ -29,6 +29,8 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      *         the cookies containing the graph configuration
      * @param buildHistory
      *         the build history for this job
+     * @param toolTipProvider
+     *         the tool tip provider to use
      */
     public UserGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
             final String jobActionUrl, final Cookie[] cookies,

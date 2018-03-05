@@ -12,7 +12,7 @@ public class SerializableSettings implements Settings, Serializable {
 
     private final boolean failOnCorrupt;
     private final boolean quietMode;
-    /** @Since 1.88 */
+    /** @since 1.88 */
     private final Boolean noAuthors;
 
     /**

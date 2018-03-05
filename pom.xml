@@ -76,11 +76,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency>
-      <groupId>com.j2html</groupId>
-      <artifactId>j2html</artifactId>
-      <version>1.2.2</version>
-    </dependency>
 
     <!-- Jenkins Plug-in Dependencies -->
     <dependency>
@@ -165,15 +160,6 @@
 
   <build>
     <plugins>
-      <!-- TODO: Remove once fatal Javadoc errors are fixed -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <additionalparam>-Xdoclint:none</additionalparam>
-        </configuration>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>

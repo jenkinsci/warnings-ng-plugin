@@ -1,11 +1,11 @@
 package hudson.plugins.analysis.util.model;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
+import javax.annotation.Nonnull;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,8 +13,6 @@ import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import com.google.common.collect.ImmutableList;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Item;
@@ -24,6 +22,8 @@ import hudson.plugins.analysis.core.AbstractAnnotationParser;
 import hudson.plugins.analysis.util.PackageDetectors;
 import hudson.plugins.analysis.util.TreeString;
 import hudson.plugins.analysis.util.TreeStringBuilder;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * A base class for annotations.
@@ -478,7 +478,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      * @param packageCategoryName the value to set
      */
     public final void setOverridePackageCategoryName(final String packageCategoryName) {
-        this.overridePackageCategoryName = TreeString.of(packageCategoryName);
+        overridePackageCategoryName = TreeString.of(packageCategoryName);
     }
 
     @Override
@@ -667,10 +667,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         if (origin != null ? !origin.equals(that.origin) : that.origin != null) {
             return false;
         }
-        if (pathName != null ? !pathName.equals(that.pathName) : that.pathName != null) {
-            return false;
-        }
-        return true;
+        return pathName != null ? pathName.equals(that.pathName) : that.pathName == null;
     }
 
     @Override
@@ -759,9 +756,6 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         return build;
     }
 
-    /**
-     * @deprecated use {@link #getTempName(Run)} instead
-     */
     @Deprecated
     public String getTempName(final AbstractBuild<?, ?> owner) {
         return getTempName((Run<?, ?>) owner);

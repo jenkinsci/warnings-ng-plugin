@@ -35,12 +35,16 @@ public class DetailFactory {
      *         the link to identify the sub page to show
      * @param owner
      *         the build as owner of the detail page
+     * @param result
+     *         the overall analysis result
      * @param allIssues
      *         the issues to get the details for
-     * @param fixedIssues
-     *         the fixed issues to get the details for
      * @param newIssues
      *         the new issues to get the details for
+     * @param fixedIssues
+     *         the fixed issues to get the details for
+     * @param outstandingIssues
+     *         the outstanding issues to get the details for
      * @param errors
      *         the errors during scanning the static analysis results
      * @param sourceEncoding
@@ -51,8 +55,8 @@ public class DetailFactory {
      * @return the dynamic result of this module detail view
      */
     public Object createTrendDetails(final String link, final Run<?, ?> owner, final AnalysisResult result,
-            final Issues<?> allIssues, final Issues<?> fixedIssues,
-            final Issues<?> newIssues, final Issues<?> outstandingIssues,
+            final Issues<?> allIssues, final Issues<?> newIssues, final Issues<?> outstandingIssues,
+            final Issues<?> fixedIssues,
             final Collection<String> errors, final Charset sourceEncoding, final IssuesDetail parent) {
         StaticAnalysisLabelProvider labelProvider = parent.getLabelProvider();
         String plainLink = strip(link);
@@ -85,15 +89,18 @@ public class DetailFactory {
             }
         }
         if (Priority.HIGH.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Priority.HIGH, allIssues, fixedIssues, outstandingIssues, newIssues,
+            return createPrioritiesDetail(owner, result, Priority.HIGH, allIssues, fixedIssues, outstandingIssues,
+                    newIssues,
                     url, labelProvider, sourceEncoding);
         }
         if (Priority.NORMAL.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Priority.NORMAL, allIssues, fixedIssues, outstandingIssues, newIssues,
+            return createPrioritiesDetail(owner, result, Priority.NORMAL, allIssues, fixedIssues, outstandingIssues,
+                    newIssues,
                     url, labelProvider, sourceEncoding);
         }
         if (Priority.LOW.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Priority.LOW, allIssues, fixedIssues, outstandingIssues, newIssues,
+            return createPrioritiesDetail(owner, result, Priority.LOW, allIssues, fixedIssues, outstandingIssues,
+                    newIssues,
                     url, labelProvider, sourceEncoding);
         }
 
