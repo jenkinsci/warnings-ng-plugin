@@ -1,6 +1,5 @@
 package hudson.plugins.analysis.graph;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 

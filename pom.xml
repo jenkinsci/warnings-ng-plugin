@@ -79,6 +79,33 @@
 
     <!-- Jenkins Plug-in Dependencies -->
     <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-job</artifactId>
+      <version>2.16</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Groovy -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-cps</artifactId>
+      <version>2.42</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- stage -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>pipeline-stage-step</artifactId>
+      <version>2.3</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- node -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-durable-task-step</artifactId>
+      <version>2.16</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ant</artifactId>
       <version>1.1</version>
