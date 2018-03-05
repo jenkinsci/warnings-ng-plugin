@@ -4,12 +4,12 @@ import java.io.Serializable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
-
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
 
 /**
  * Defines a filter criteria based on a regular expression for {@link Issues}.
@@ -24,7 +24,9 @@ public class RegexpFilter extends AbstractDescribableImpl<RegexpFilter> implemen
      * Creates a new instance of {@link RegexpFilter}.
      *
      * @param pattern
-     *            the regular expression of the filter
+     *         the regular expression of the filter
+     * @param property
+     *         the property to filter by
      */
     @DataBoundConstructor
     public RegexpFilter(final String pattern, final IssuesFilter property) {
@@ -55,7 +57,8 @@ public class RegexpFilter extends AbstractDescribableImpl<RegexpFilter> implemen
     /**
      * Applies the filter on the specified builder.
      *
-     * @param builder the issue filter builder
+     * @param builder
+     *         the issue filter builder
      */
     public void apply(final IssueFilterBuilder builder) {
         property.apply(builder, pattern);
@@ -66,8 +69,8 @@ public class RegexpFilter extends AbstractDescribableImpl<RegexpFilter> implemen
      *
      * @author Ulli Hafner
      */
-   @Extension
-   public static class DescriptorImpl extends Descriptor<RegexpFilter> {
+    @Extension
+    public static class DescriptorImpl extends Descriptor<RegexpFilter> {
         // Required for Jenkins
-   }
+    }
 }

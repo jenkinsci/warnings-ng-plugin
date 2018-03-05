@@ -32,7 +32,7 @@ public class Files {
      *            directory to store the copied files in
      * @param annotations
      *            annotations determining the actual files to copy
-     * @param defaultEncoding
+     * @param defaultEncoding default encoding
      * @throws IOException
      *             if the files could not be written
      * @throws InterruptedException
@@ -52,7 +52,7 @@ public class Files {
      *            directory to store the copied files in
      * @param annotations
      *            annotations determining the actual files to copy
-     * @param defaultEncoding
+     * @param defaultEncoding default encoding
      * @throws IOException
      *             if the files could not be written
      * @throws InterruptedException

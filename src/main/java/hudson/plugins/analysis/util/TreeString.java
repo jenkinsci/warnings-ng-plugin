@@ -60,12 +60,6 @@ public final class TreeString implements Serializable {
         return new String(label);
     }
 
-    /**
-     * Inserts a new node between this node and its parent, and returns the
-     * newly inserted node.
-     * <p>
-     * This operation doesn't change the string representation of this node.
-     */
     /* package */TreeString split(final String prefix) {
         assert getLabel().startsWith(prefix);
         char[] suffix = new char[label.length - prefix.length()];
@@ -132,9 +126,6 @@ public final class TreeString implements Serializable {
         return buf.toString();
     }
 
-    /**
-     * Interns {@link #label}
-     */
     /* package */void dedup(final Map<String, char[]> table) {
         String l = getLabel();
         char[] v = table.get(l);
@@ -154,13 +145,6 @@ public final class TreeString implements Serializable {
         return t == null ? null : t.toString();
     }
 
-    /**
-     * Creates a {@link TreeString}. Useful if you need to create one-off
-     * {@link TreeString} without {@link TreeStringBuilder}. Memory consumption
-     * is still about the same to {@code new String(s)}.
-     *
-     * @return null if the parameter is null
-     */
     public static TreeString of(final String s) {
         if (s == null) {
             return null;

@@ -92,8 +92,7 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
      *            The name of the plug-in.
      * @param buildHistory
      *            the build history for this project
-     * @deprecated use
-     *             {@link #AbstractProjectAction(GraphConfiguration, Job, String, BuildHistory)}
+     * @deprecated use AbstractProjectAction(GraphConfiguration, Job, String, BuildHistory)
      */
     @Deprecated
     public DefaultGraphConfigurationView(final GraphConfiguration configuration, final AbstractProject<?, ?> project,
@@ -122,7 +121,7 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
     }
 
     @Override
-    protected void persistValue(final String value, final String pluginName, final StaplerRequest request, final StaplerResponse response) throws FileNotFoundException, IOException {
+    protected void persistValue(final String value, final String pluginName, final StaplerRequest request, final StaplerResponse response) throws IOException {
         try (FileOutputStream output = new FileOutputStream(createDefaultsFile(getOwner(), pluginName))) {
             IOUtils.write(value, output);
         }

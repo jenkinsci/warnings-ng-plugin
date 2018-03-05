@@ -36,10 +36,6 @@ public class TreeStringBuilder {
             this.node = node;
         }
 
-        /**
-         * Adds one edge and leaf to this tree node, or returns an existing node
-         * if any.
-         */
         public Child intern(final String s) {
             if (s.length() == 0) {
                 return this;
@@ -84,12 +80,7 @@ public class TreeStringBuilder {
             }
         }
 
-        /**
-         * Inserts a new node between this node and its parent, and returns that
-         * node. Newly inserted 'middle' node will have this node as its sole
-         * child.
-         */
-        private Child split(final String prefix) {
+       private Child split(final String prefix) {
             String suffix = node.getLabel().substring(prefix.length());
 
             Child middle = new Child(node.split(prefix));
@@ -98,10 +89,6 @@ public class TreeStringBuilder {
 
             return middle;
         }
-
-        /**
-         * Returns the common prefix between two strings.
-         */
         private int commonPrefix(final String a, final String b) {
             int m = Math.min(a.length(), b.length());
 
@@ -112,10 +99,6 @@ public class TreeStringBuilder {
             }
             return m;
         }
-
-        /**
-         * Calls {@link TreeString#dedup(Map)} recursively.
-         */
         private void dedup(final Map<String, char[]> table) {
             node.dedup(table);
             for (Child child : children.values()) {
@@ -124,9 +107,6 @@ public class TreeStringBuilder {
         }
     }
 
-    /**
-     * Interns a string.
-     */
     public TreeString intern(final String s) {
         if (s==null) {
             return null;
@@ -134,9 +114,6 @@ public class TreeStringBuilder {
         return root.intern(s).node;
     }
 
-    /**
-     * Interns a {@link TreeString} created elsewhere.
-     */
     public TreeString intern(final TreeString s) {
         if (s==null) {
             return null;

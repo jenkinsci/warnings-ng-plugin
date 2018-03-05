@@ -2,11 +2,12 @@ package io.jenkins.plugins.analysis.core.history;
 
 import java.util.Optional;
 
-import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.model.Result;
 import hudson.model.Run;
+
+import edu.hm.hafner.analysis.Issues;
 
 /**
  * Finds a previous result of an analysis run for the same software artifact. Selection of the previous result is
@@ -30,6 +31,8 @@ public abstract class ReferenceFinder extends BuildHistory implements ReferenceP
      *         if  {@code true} then only runs with an overall result of {@link Result#SUCCESS} are considered as a
      *         reference, otherwise every run that contains results of the same static analysis configuration is
      *         considered
+     *
+     * @return the created {@link ReferenceProvider}
      */
     @SuppressWarnings("BooleanParameter")
     public static ReferenceProvider create(final Run<?, ?> run, final ResultSelector selector,

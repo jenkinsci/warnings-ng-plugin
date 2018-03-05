@@ -3,7 +3,6 @@ package hudson.plugins.analysis.util;
 import org.apache.commons.lang.StringUtils;
 
 import hudson.plugins.analysis.Messages;
-
 import hudson.util.FormValidation;
 
 /**
@@ -37,7 +36,7 @@ public class ThresholdValidator implements Validator {
      * @param threshold
      *            string representation of the threshold value
      * @return <code>true</code> if the provided threshold string parameter is a
-     *         valid number >= 0
+     *         valid number greater or equal 0
      */
     public static boolean isValid(final String threshold) {
         if (StringUtils.isNotBlank(threshold)) {

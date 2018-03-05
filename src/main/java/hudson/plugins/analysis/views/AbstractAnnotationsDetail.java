@@ -147,7 +147,7 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      * @see {@link WithBridgeMethods}
      */
     @Deprecated
-    private final Object getAbstractBuild(Run owner, Class targetClass) {
+    private Object getAbstractBuild(Run owner, Class targetClass) {
       return owner instanceof AbstractBuild ? (AbstractBuild) owner : null;
     }
 
@@ -227,7 +227,7 @@ public abstract class AbstractAnnotationsDetail extends AnnotationContainer impl
      *            the name of this object
      * @param hierarchy
      *            the hierarchy level of this detail object
-     * @deprecated use {@link #AbstractAnnotationsDetail(Run, DetailFactory, Collection, String, String, Hierarchy)} instead
+     * @deprecated use AbstractAnnotationsDetail(Run, DetailFactory, Collection, String, String, Hierarchy) instead
      */
     @Deprecated
     public AbstractAnnotationsDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String defaultEncoding, final String name, final Hierarchy hierarchy) {

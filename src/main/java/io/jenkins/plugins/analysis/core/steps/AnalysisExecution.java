@@ -34,6 +34,10 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      * Returns the corresponding pipeline run.
      *
      * @return the run
+     * @throws IOException
+     *         if the run could be be restored
+     * @throws InterruptedException
+     *         if the user canceled the run
      */
     protected Run<?, ?> getRun() throws IOException, InterruptedException {
         Run<?, ?> run = getContext().get(Run.class);
@@ -72,7 +76,11 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      * Returns a {@link VirtualChannel} to the agent where this step is executed.
      *
      * @return the channel
-    */
+     * @throws IOException
+     *         if the run could be be restored
+     * @throws InterruptedException
+     *         if the user canceled the run
+     */
     protected Optional<VirtualChannel> getChannel() throws IOException, InterruptedException {
         Computer computer = getContext().get(Computer.class);
 
@@ -99,6 +107,10 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      * Returns Jenkins' build folder.
      *
      * @return the build folder
+     * @throws IOException
+     *         if the run could be be restored
+     * @throws InterruptedException
+     *         if the user canceled the run
      */
     protected FilePath getBuildFolder() throws IOException, InterruptedException {
         return new FilePath(getRun().getRootDir());
@@ -108,19 +120,18 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      * Returns the workspace for this job.
      *
      * @return the workspace
+     * @throws IOException
+     *         if the run could be be restored
+     * @throws InterruptedException
+     *         if the user canceled the run
      */
-    protected FilePath getWorkspace() {
-        try {
-            FilePath workspace = getContext().get(FilePath.class);
+    protected FilePath getWorkspace() throws IOException, InterruptedException {
+        FilePath workspace = getContext().get(FilePath.class);
 
-            if (workspace == null) {
-                throw new IllegalStateException("No workspace available for " + toString());
-            }
+        if (workspace == null) {
+            throw new IllegalStateException("No workspace available for " + toString());
+        }
 
-            return workspace;
-        }
-        catch (IOException | InterruptedException exception) {
-            throw new IllegalStateException("Can't obtain workspace for " + toString(), exception);
-        }
+        return workspace;
     }
 }

@@ -1,8 +1,8 @@
 package hudson.plugins.analysis.views;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
+import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -31,7 +31,7 @@ public class DetailFactory {
     /** Default detail builder class. */
     private static final DetailFactory DEFAULT_DETAIL_BUILDER = new DetailFactory();
     /** Maps plug-ins to detail builders. */
-    private static Map<Class<? extends ResultAction<? extends BuildResult>>, DetailFactory> factories = Maps.newHashMap();
+    private static final Map<Class<? extends ResultAction<? extends BuildResult>>, DetailFactory> factories = Maps.newHashMap();
 
     /**
      * Creates a new detail builder.
@@ -126,7 +126,8 @@ public class DetailFactory {
     /**
      * Returns the default label provider that is used to visualize the build result (i.e., the tab labels).
      *
-     * @return the default label provider
+     * @param container the container
+     *
      * @since 1.69
      */
     protected void attachLabelProvider(final AnnotationContainer container) {
@@ -306,40 +307,12 @@ public class DetailFactory {
         }
     }
 
-    /**
-     * Creates a generic detail tab with the specified link.
-     *
-     * @param owner
-     *            the build as owner of the detail page
-     * @param annotations
-     *            the annotations to display
-     * @param url
-     *            the URL for the details view
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @return the detail view
-     * @deprecated use {@link #createTabDetail(Run, Collection, String, String)} instead
-     */
     @Deprecated
     protected TabDetail createTabDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations,
             final String url, final String defaultEncoding) {
         return new TabDetail(owner, this, annotations, url, defaultEncoding);
     }
 
-    /**
-     * Creates a generic fixed warnings detail tab with the specified link.
-     *
-     * @param owner
-     *            the build as owner of the detail page
-     * @param fixedAnnotations
-     *            the annotations to display
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param displayName
-     *            the name of the view
-     * @return the detail view
-     * @deprecated use {@link #createFixedWarningsDetail(Run, Collection, String, String)} instead
-     */
     @Deprecated
     protected FixedWarningsDetail createFixedWarningsDetail(final AbstractBuild<?, ?> owner,
             final Collection<FileAnnotation> fixedAnnotations, final String defaultEncoding,
@@ -347,18 +320,12 @@ public class DetailFactory {
         return new FixedWarningsDetail(owner, this, fixedAnnotations, defaultEncoding, displayName);
     }
 
-    /**
-     * @deprecated use {@link #createAttributeDetail(Run, DefaultAnnotationContainer, String, String, String)} instead
-     */
     @Deprecated
     protected AttributeDetail createAttributeDetail(final AbstractBuild<?, ?> owner, final DefaultAnnotationContainer annotations,
             final String displayName, final String header, final String defaultEncoding) {
         return new AttributeDetail(owner, this, annotations.getAnnotations(), defaultEncoding, displayName, header + " " + annotations.getName());
     }
 
-    /**
-     * @deprecated use {@link #createTrendDetails(String, Run, AnnotationContainer, Collection, Collection, Collection, String, String)} instead
-     */
     @Deprecated
     public Object createTrendDetails(final String link, final AbstractBuild<?, ?> owner,
             final AnnotationContainer container, final Collection<FileAnnotation> fixedAnnotations,
@@ -387,9 +354,6 @@ public class DetailFactory {
         return detail;
     }
 
-    /**
-     * @deprecated use {@link #createDetails(String, Run, AnnotationContainer, String, String)} instead
-     */
     @Deprecated
     public Object createDetails(final String link, final AbstractBuild<?, ?> owner, final AnnotationContainer container,
             final String defaultEncoding, final String displayName) {

@@ -1,6 +1,5 @@
 package hudson.plugins.analysis.core; // NOPMD
 
-import javax.annotation.CheckForNull;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -161,9 +161,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         return Collections.emptyList();
     }
 
-    /**
-     * Resolve build parameters in the file pattern up to {@link #RESOLVE_VARIABLES_DEPTH} times.
-     */
     protected String expandFilePattern(final String filePattern, final EnvVars envVars) {
         String expanded = filePattern;
         for (int i = 0; i < RESOLVE_VARIABLES_DEPTH && StringUtils.isNotBlank(expanded); i++) {
@@ -228,9 +225,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         return usePreviousBuildAsReference;
     }
 
-    /**
-     * @see {@link #getUsePreviousBuildAsReference}
-     */
     @DataBoundSetter
     public void setUsePreviousBuildAsReference(final boolean usePreviousBuildAsReference) {
         this.usePreviousBuildAsReference = usePreviousBuildAsReference;
@@ -246,9 +240,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         return useStableBuildAsReference;
     }
 
-    /**
-     * @see {@link #getUseStableBuildAsReference}
-     */
     @DataBoundSetter
     public void setUseStableBuildAsReference(final boolean useStableBuildAsReference) {
         this.useStableBuildAsReference = useStableBuildAsReference;
@@ -392,9 +383,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         return canRunOnFailed;
     }
 
-    /**
-     * @see {@link #getCanRunOnFailed()}
-     */
     @DataBoundSetter
     public void setCanRunOnFailed(final boolean canRunOnFailed) {
         this.canRunOnFailed = canRunOnFailed;
@@ -410,9 +398,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         return shouldDetectModules;
     }
 
-    /**
-     * @see {@link #getShouldDetectModules()}
-     */
     @DataBoundSetter
     public void setShouldDetectModules(final boolean shouldDetectModules) {
         this.shouldDetectModules = shouldDetectModules;
@@ -464,9 +449,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         return useDeltaValues;
     }
 
-    /**
-     * @see {@link #getUseDeltaValues()}
-     */
     @DataBoundSetter
     public void setUseDeltaValues(final boolean useDeltaValues) {
         this.useDeltaValues = useDeltaValues;
@@ -483,9 +465,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         return healthy;
     }
 
-    /**
-     * @see {@link #getHealthy()}
-     */
     @DataBoundSetter
     public void setHealthy(final String healthy) {
         this.healthy = healthy;
@@ -502,9 +481,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         return unHealthy;
     }
 
-    /**
-     * @see {@link #getUnHealthy()}
-     */
     @DataBoundSetter
     public void setUnHealthy(final String unHealthy) {
         this.unHealthy = unHealthy;
@@ -520,9 +496,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         return defaultEncoding;
     }
 
-    /**
-     * @see {@link #getDefaultEncoding()}
-     */
     @DataBoundSetter
     public void setDefaultEncoding(final String defaultEncoding) {
         this.defaultEncoding = defaultEncoding;
@@ -600,9 +573,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         return thresholdLimit;
     }
 
-    /**
-     * @see {@link #getThresholdLimit()}
-     */
     @DataBoundSetter
     public void setThresholdLimit(final String thresholdLimit) {
         this.thresholdLimit = StringUtils.defaultIfEmpty(thresholdLimit, DEFAULT_PRIORITY_THRESHOLD_LIMIT);
@@ -613,23 +583,11 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         return BuildStepMonitor.NONE;
     }
 
-    /**
-     *  Added to avoid the fat constructor. It replicates the constructor behaviour and
-     *  offers the same field name outside.
-     *  
-     *  Useful when defining the groovy script in workflow jobs.
-     */
     @DataBoundSetter
     public void setCanResolveRelativePaths(final boolean canResolveRelativePaths) {
         doNotResolveRelativePaths = !canResolveRelativePaths;
     }
 
-    /**
-     *  Added to avoid the fat constructor. It replicates the constructor behavior and
-     *  offers the same field name outside.
-     *  
-     *  Useful when defining the groovy script in workflow jobs.
-     */
     @DataBoundSetter
     public void setCanComputeNew(final boolean canComputeNew) {
         dontComputeNew = !canComputeNew;
@@ -851,9 +809,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
     @Deprecated
     private transient String height;
 
-    /** Backwards compatibility.
-     * @deprecated
-     */
     @Deprecated
     @SuppressWarnings({"PMD", "deprecation"})
     public HealthAwareRecorder(final String healthy, final String unHealthy,
@@ -881,7 +836,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
                 pluginName);
     }
 
-    /** Backward compatibility. @deprecated */
     @SuppressWarnings({"PMD","javadoc"})
     @Deprecated
     public HealthAwareRecorder(final String threshold, final String newThreshold,
@@ -909,7 +863,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
         this.pluginName = "[" + pluginName + "] ";
     }
 
-    /** Backward compatibility. @deprecated */
     @SuppressWarnings({"PMD", "javadoc", "deprecation"})
     @Deprecated
     public HealthAwareRecorder(final String healthy, final String unHealthy,
@@ -932,78 +885,6 @@ public abstract class HealthAwareRecorder extends Recorder implements HealthDesc
                 canRunOnFailed, false, shouldDetectModules, canComputeNew, canResolveRelativePaths, pluginName);
     }
 
-    /**
-     * Creates a new instance of {@link HealthAwareRecorder}.
-     *
-     * @param healthy
-     *            Report health as 100% when the number of open tasks is less
-     *            than this value
-     * @param unHealthy
-     *            Report health as 0% when the number of open tasks is greater
-     *            than this value
-     * @param thresholdLimit
-     *            determines which warning priorities should be considered when
-     *            evaluating the build stability and health
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param useDeltaValues
-     *            determines whether the absolute annotations delta or the
-     *            actual annotations set difference should be used to evaluate
-     *            the build stability
-     * @param unstableTotalAll
-     *            annotation threshold
-     * @param unstableTotalHigh
-     *            annotation threshold
-     * @param unstableTotalNormal
-     *            annotation threshold
-     * @param unstableTotalLow
-     *            annotation threshold
-     * @param unstableNewAll
-     *            annotation threshold
-     * @param unstableNewHigh
-     *            annotation threshold
-     * @param unstableNewNormal
-     *            annotation threshold
-     * @param unstableNewLow
-     *            annotation threshold
-     * @param failedTotalAll
-     *            annotation threshold
-     * @param failedTotalHigh
-     *            annotation threshold
-     * @param failedTotalNormal
-     *            annotation threshold
-     * @param failedTotalLow
-     *            annotation threshold
-     * @param failedNewAll
-     *            annotation threshold
-     * @param failedNewHigh
-     *            annotation threshold
-     * @param failedNewNormal
-     *            annotation threshold
-     * @param failedNewLow
-     *            annotation threshold
-     * @param canRunOnFailed
-     *            determines whether the plug-in can run for failed builds, too
-     * @param usePreviousBuildAsReference
-     *            determine if the previous build should always be used as the
-     *            reference build, no matter its overall result.
-     * @param useStableBuildAsReference
-     *            determines whether only stable builds should be used as
-     *            reference builds or not
-     * @param shouldDetectModules
-     *            determines whether module names should be derived from Maven
-     *            POM or Ant build files
-     * @param canComputeNew
-     *            determines whether new warnings should be computed (with
-     *            respect to baseline)
-     * @param canResolveRelativePaths
-     *            determines whether relative paths in warnings should be
-     *            resolved using a time expensive operation that scans the whole
-     *            workspace for matching files.
-     * @param pluginName
-     *            the name of the plug-in
-     * @deprecated use setters instead
-     */
     // CHECKSTYLE:OFF
     @SuppressWarnings("PMD")
     @Deprecated

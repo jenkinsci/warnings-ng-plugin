@@ -8,8 +8,6 @@ import java.util.Collection;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.project.MavenProject;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.maven.MavenAggregatedReport;
@@ -32,6 +30,8 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStep;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * A base class for Maven reporters with the following two characteristics:
@@ -179,7 +179,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         this.canRunOnFailed = canRunOnFailed;
         this.usePreviousBuildAsReference = usePreviousBuildAsReference;
         this.useStableBuildAsReference = useStableBuildAsReference;
-        this.dontComputeNew = !canComputeNew;
+        dontComputeNew = !canComputeNew;
         this.pluginName = "[" + pluginName + "] ";
 
         this.useDeltaValues = useDeltaValues;
@@ -387,7 +387,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
             buildResult.evaluateStatus(thresholds, useDeltaValues, canComputeNew(), pluginLogger, baseUrl);
         }
         mavenBuild.addAction(createMavenAggregatedReport(mavenBuild, buildResult));
-        mavenBuild.registerAsProjectAction(HealthAwareReporter.this);
+        mavenBuild.registerAsProjectAction(this);
         Run<?, ?> referenceBuild = buildResult.getHistory().getReferenceBuild();
         if (referenceBuild != null) {
             pluginLogger.log("Computing warning deltas based on reference build " + referenceBuild.getDisplayName());
@@ -486,7 +486,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
      */
     private void copyFilesWithAnnotationsToBuildFolder(final PluginLogger logger, final FilePath buildRoot,
             final Collection<FileAnnotation> annotations) throws IOException,
-            FileNotFoundException, InterruptedException {
+            InterruptedException {
         new Files().copyFilesWithAnnotationsToBuildFolder(null, buildRoot, annotations,
                 EncodingValidator.getEncoding(getDefaultEncoding()));
     }
@@ -677,9 +677,6 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
     @Deprecated
     private transient String newThreshold;
     // CHECKSTYLE:OFF
-    /** Backwards compatibility.
-     * @deprecated
-     */
     @SuppressWarnings({"PMD.ExcessiveParameterList", "javadoc"})
     @Deprecated
     public HealthAwareReporter(final String healthy, final String unHealthy, final String thresholdLimit, final boolean useDeltaValues,
@@ -697,7 +694,6 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
             failedNewNormal, failedNewLow, canRunOnFailed, false,
             useStableBuildAsReference, canComputeNew, pluginName);
     }
-    /** Backward compatibility. @deprecated */
     @SuppressWarnings({"PMD.ExcessiveParameterList", "javadoc", "deprecation"})
     @Deprecated
     public HealthAwareReporter(final String healthy, final String unHealthy, final String thresholdLimit, final boolean useDeltaValues,
@@ -715,7 +711,6 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
                 canRunOnFailed, false, canComputeNew,
                 pluginName);
     }
-    /** Backward compatibility. @deprecated */
     @SuppressWarnings({"PMD.ExcessiveParameterList", "javadoc", "deprecation"})
     @Deprecated
     public HealthAwareReporter(final String healthy, final String unHealthy, final String thresholdLimit, final boolean useDeltaValues,
@@ -731,16 +726,10 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
                 failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
                 canRunOnFailed, true, pluginName);
     }
-    /**
-     * @deprecated mistyped method name from v1.72 - see {@link #getUsePreviousBuildAsReference()}
-     */
     @Deprecated
     public boolean getUsePreviousBuildAsStable() {
         return getUsePreviousBuildAsReference();
     }
-    /**
-     * @deprecated mistyped method name from v1.72 - see {@link #usePreviousBuildAsReference()}
-     */
     @Deprecated
     public boolean usePreviousBuildAsStable() {
         return usePreviousBuildAsReference();
@@ -756,7 +745,7 @@ public abstract class HealthAwareReporter<T extends BuildResult> extends MavenRe
         private static final long serialVersionUID = -270795641776014760L;
 
             @Override
-        public Result call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
+        public Result call(final MavenBuild mavenBuild) {
             return mavenBuild.getResult();
         }
     }

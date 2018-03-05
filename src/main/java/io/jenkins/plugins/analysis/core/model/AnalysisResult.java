@@ -117,6 +117,14 @@ public class AnalysisResult implements Serializable {
      *
      * @param owner
      *         the current run as owner of this action
+     * @param referenceProvider
+     *         provides the reference build
+     * @param issues
+     *         the issues of this result
+     * @param qualityGate
+     *         the quality gate to enforce
+     * @param previousResult
+     *         the analysis result of the previous run
      */
     public AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider,
             final Issues<?> issues, final QualityGate qualityGate, final AnalysisResult previousResult) {
@@ -153,6 +161,12 @@ public class AnalysisResult implements Serializable {
      *
      * @param owner
      *         the current run as owner of this action
+     * @param referenceProvider
+     *         provides the reference build
+     * @param issues
+     *         the issues of this result
+     * @param qualityGate
+     *         the quality gate to enforce
      */
     public AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider,
             final Issues<?> issues, final QualityGate qualityGate) {
@@ -177,6 +191,14 @@ public class AnalysisResult implements Serializable {
      *
      * @param owner
      *         the current run as owner of this action
+     * @param referenceProvider
+     *         provides the reference build
+     * @param issues
+     *         the issues of this result
+     * @param qualityGate
+     *         the quality gate to enforce
+     * @param canSerialize
+     *         determines whether the result should be persisted in the build folder
      */
     @VisibleForTesting
     protected AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider,

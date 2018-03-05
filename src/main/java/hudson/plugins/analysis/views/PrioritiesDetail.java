@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
-
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
@@ -20,7 +19,7 @@ public class PrioritiesDetail extends AbstractAnnotationsDetail {
     private final Priority priority;
 
     /**
-     * Creates a new instance of <code>ModuleDetail</code>.
+     * Creates a new instance of <code>PrioritiesDetail</code>.
      *
      * @param owner
      *            current build as owner of this action.
@@ -55,23 +54,6 @@ public class PrioritiesDetail extends AbstractAnnotationsDetail {
         return priority.getLongLocalizedString();
     }
 
-    /**
-     * Creates a new instance of <code>ModuleDetail</code>.
-     *
-     * @param owner
-     *            current build as owner of this action.
-     * @param detailFactory
-     *            factory to create detail objects with
-     * @param annotations
-     *            the package to show the details for
-     * @param priority
-     *            the priority of all annotations
-     * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
-     * @param header
-     *            header to be shown on detail page
-     * @deprecated use {@link #PrioritiesDetail(Run, DetailFactory, Collection, Priority, String, String)} instead
-     */
     @Deprecated
     public PrioritiesDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final Priority priority, final String defaultEncoding, final String header) {
         this((Run<?, ?>) owner, detailFactory, annotations, priority, defaultEncoding, header);

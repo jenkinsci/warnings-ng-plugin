@@ -14,7 +14,7 @@ import hudson.plugins.analysis.Messages;
  *
  * @author Ulli Hafner
  */
-public class ErrorDetail implements ModelObject  {
+public class ErrorDetail implements ModelObject {
     /** Current build as owner of this action. */
     private final Run<?, ?> owner;
     /** All errors of the project. */
@@ -26,9 +26,11 @@ public class ErrorDetail implements ModelObject  {
      * Creates a new instance of {@code ErrorDetail}.
      *
      * @param owner
-     *            current build as owner of this action.
+     *         current build as owner of this action.
      * @param errors
-     *            all modules of the project
+     *         all modules of the project
+     * @param parent
+     *         parent of this view
      */
     public ErrorDetail(final Run<?, ?> owner, final Collection<String> errors, final ModelObject parent) {
         this.owner = owner;
