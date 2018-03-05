@@ -1,6 +1,4 @@
-<!--
-  Section header
--->
+<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core">
 
   <h2>${%Summary}</h2>

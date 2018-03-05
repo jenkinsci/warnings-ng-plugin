@@ -1,6 +1,3 @@
-<!--
-  Section header
--->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:issues="/issues">
 

@@ -1,5 +1,4 @@
 <?jelly escape-by-default='true'?>
-<!-- Section header -->
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
 
   <st:documentation>

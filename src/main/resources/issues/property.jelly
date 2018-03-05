@@ -1,3 +1,4 @@
+<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:issues="/issues">
   <st:documentation>
     Renders the distribution of issues per property in a tab.

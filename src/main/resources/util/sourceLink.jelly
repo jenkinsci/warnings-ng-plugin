@@ -4,10 +4,9 @@
   <%@attribute name="it" required="true" %>
   <%@attribute name="warning" required="true" %>
 -->
-
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
-  xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
-  xmlns:f="/lib/form" xmlns:u="/util">
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core"
+>
 
     <j:choose>
       <j:when test="${warning.canDisplayFile(it.owner)}">
