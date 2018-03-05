@@ -7,13 +7,14 @@ import java.util.regex.Matcher;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
 import hudson.plugins.warnings.WarningsDescriptor;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
 
 /**
  * Creates a warning based on a regular expression match and groovy script.
@@ -125,6 +126,8 @@ public class GroovyExpressionMatcher implements Serializable {
      *
      * @param matcher
      *         the regular expression matcher
+     * @param builder
+     *         the issue builder
      *
      * @return a new annotation for the specified pattern
      */

@@ -7,9 +7,6 @@ import hudson.Extension;
 /**
  * A parser for Microsoft PREfast (aka Code Analysis for C/C++) XML files.
  *
- * @see MSDN: "/analyze (Code Analysis)"
- * http://msdn.microsoft.com/en-us/library/ms173498.aspx
- *
  * @author Charles Chan
  */
 @Extension
@@ -69,10 +66,10 @@ public class PREfastParser extends RegexpLineParser {
 
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        final String fileName = matcher.group(1);
-        final String lineNumber = matcher.group(2);
-        final String category = matcher.group(3);
-        final String message = matcher.group(4);
+        String fileName = matcher.group(1);
+        String lineNumber = matcher.group(2);
+        String category = matcher.group(3);
+        String message = matcher.group(4);
 
         return createWarning(fileName, getLineNumber(lineNumber), category, message);
     }

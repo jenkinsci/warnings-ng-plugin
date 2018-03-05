@@ -15,11 +15,6 @@ public class FxCopRule {
 	private transient String url;
 	private transient String description;
 
-	/**
-	 * @param typeName
-	 * @param category
-	 * @param checkId
-	 */
 	public FxCopRule(final String typeName, final String category, final String checkId) {
 		this.typeName = typeName;
 		this.category = category;

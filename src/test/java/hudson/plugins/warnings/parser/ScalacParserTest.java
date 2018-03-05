@@ -4,15 +4,17 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import hudson.plugins.analysis.util.model.Priority;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * Tests the class {@link ScalacParser}.
- * Author: <a href="mailto:alexey.kislin@gmail.com">Alexey Kislin</a>
+ *
+ * @author: Alexey Kislin
  */
 public class ScalacParserTest extends ParserTester {
 

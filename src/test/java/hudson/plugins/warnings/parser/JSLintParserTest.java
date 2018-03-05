@@ -1,7 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,6 +10,8 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import static org.junit.Assert.*;
+
 import hudson.plugins.analysis.util.model.DefaultAnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
@@ -20,7 +20,7 @@ import hudson.plugins.analysis.util.model.WorkspaceFile;
 /**
  * Tests the class {@link JSLintParser}.
  *
- * @author Gavin Mogan <gavin@kodekoan.com>
+ * @author Gavin Mogan
  */
 public class JSLintParserTest extends ParserTester {
     private static final String EXPECTED_FILE_NAME = "duckworth/hudson-jslint-freestyle/src/prototype.js";

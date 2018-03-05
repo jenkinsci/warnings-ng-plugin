@@ -8,9 +8,9 @@ import hudson.plugins.warnings.WarningsDescriptor;
 
 /**
  * A parser for the sbt scala compiler warnings.
- * You should use -feature & -deprecation compiler opts.
+ * You should use -feature and -deprecation compiler opts.
  *
- * @author <a href="mailto:hochak@gmail.com">Hochak Hung</a>
+ * @author Hochak Hung
  */
 @Extension
 public class SbtScalacParser extends RegexpLineParser {

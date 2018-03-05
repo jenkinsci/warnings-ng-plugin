@@ -6,13 +6,12 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 
 import hudson.Extension;
-
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A parser for puppet-lint checks warnings.
  *
- * @author Jan Vansteenkiste <jan@vstone.eu>
+ * @author Jan Vansteenkiste
  */
 @Extension
 public class PuppetLintParser extends RegexpLineParser {
@@ -42,11 +41,11 @@ public class PuppetLintParser extends RegexpLineParser {
 
     @Override
     protected Warning createWarning(final Matcher matcher) {
-        final String fileName = matcher.group(1);
-        final String start = matcher.group(2);
-        final String category = matcher.group(3);
-        final String level = matcher.group(4);
-        final String message = matcher.group(5);
+        String fileName = matcher.group(1);
+        String start = matcher.group(2);
+        String category = matcher.group(3);
+        String level = matcher.group(4);
+        String message = matcher.group(5);
 
         Priority priority = Priority.NORMAL;
         if (level.contains("error") || level.contains("ERROR")) {

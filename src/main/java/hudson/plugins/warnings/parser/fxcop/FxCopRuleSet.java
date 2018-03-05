@@ -20,7 +20,7 @@ public class FxCopRuleSet {
 
 	/***
 	 * Parse the element and insert the rule into the rule set.
-	 * @param element the element <Rule>
+	 * @param element the element
 	 */
 	public void addRule(final Element element) {
 		FxCopRule rule = new FxCopRule(element.getAttribute("TypeName"), element.getAttribute("Category"), element.getAttribute("CheckId"));
@@ -50,7 +50,7 @@ public class FxCopRuleSet {
 	 * Returns if the rule set contains a rule for the specified category and id
 	 * @param category the rule category
 	 * @param checkId the rule id
-	 * @return
+	 * @return true if it is contained
 	 */
 	public boolean contains(final String category, final String checkId) {
 		return (rules.containsKey(getRuleKey(category, checkId)));

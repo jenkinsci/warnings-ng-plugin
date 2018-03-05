@@ -11,11 +11,11 @@ import java.util.List;
  * @author Johann Vierthaler, johann.vierthaler@web.de
  */
 public class Report {
-    private List<File> files = new ArrayList<File>();
+    private List<File> files = new ArrayList<>();
 
     /**
      * Returns an unmodifiable Collection.
-     * @return files -> getter
+     * @return files getter
      */
     public List<File> getFiles() {
         return Collections.unmodifiableList(files);
@@ -23,14 +23,14 @@ public class Report {
 
     /**
      * Setter for the List files.
-     * @param files -> a list of files.
+     * @param files a list of files.
      */
     public void setFiles(final List<File> files) {
         this.files = files;
     }
     /**
      * Adds a new File to the Collection.
-     * @param file -> setter
+     * @param file setter
      */
     public void addFile(final File file) {
         files.add(file);

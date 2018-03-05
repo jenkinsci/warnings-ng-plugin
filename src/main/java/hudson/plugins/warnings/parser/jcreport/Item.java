@@ -27,7 +27,7 @@ public class Item {
 
     /**
      * Getter for column-Field.
-     * @return column -> string
+     * @return column string
      */
     public String getColumn() {
         return column;
@@ -35,7 +35,7 @@ public class Item {
 
     /**
      * Setter for Column-Field.
-     * @param column -> setter
+     * @param column setter
      */
     public void setColumn(final String column) {
         this.column = column;
@@ -43,7 +43,7 @@ public class Item {
 
     /**
      * Getter for findingtype-Field.
-     * @return findingtype -> getter
+     * @return findingtype getter
      */
     public String getFindingtype() {
         return findingtype;
@@ -51,7 +51,7 @@ public class Item {
 
     /**
      * Setter for findingtype-Field.
-     * @param findingtype -> setter
+     * @param findingtype setter
      */
     public void setFindingtype(final String findingtype) {
         this.findingtype = findingtype;
@@ -59,7 +59,7 @@ public class Item {
 
     /**
      * Getter for line-Field.
-     * @return line -> getter
+     * @return line getter
      */
     public String getLine() {
         return line;
@@ -67,7 +67,7 @@ public class Item {
 
     /**
      * Setter for line-Field.
-     * @param line -> setter
+     * @param line setter
      */
     public void setLine(final String line) {
         this.line = line;
@@ -75,7 +75,7 @@ public class Item {
 
     /**
      * Getter for message-Field.
-     * @return message -> getter
+     * @return message getter
      */
     public String getMessage() {
         return message;
@@ -83,7 +83,7 @@ public class Item {
 
     /**
      * Setter for message-Field.
-     * @param message -> setter
+     * @param message setter
      */
     public void setMessage(final String message) {
         this.message = message;
@@ -91,7 +91,7 @@ public class Item {
 
     /**
      * Getter for origin-Field.
-     * @return origin -> getter
+     * @return origin getter
      */
     public String getOrigin() {
         return origin;
@@ -99,7 +99,7 @@ public class Item {
 
     /**
      * Setter for origin-Field.
-     * @param origin -> setter
+     * @param origin setter
      */
     public void setOrigin(final String origin) {
         this.origin = origin;
@@ -107,7 +107,7 @@ public class Item {
 
     /**
      * Getter for severity-Field.
-     * @return severity -> getter
+     * @return severity getter
      */
     public String getSeverity() {
         return severity;
@@ -115,7 +115,7 @@ public class Item {
 
     /**
      * Setter for severtiy-Field.
-     * @param severity -> setter
+     * @param severity setter
      */
     public void setSeverity(final String severity) {
         this.severity = severity;
@@ -124,7 +124,7 @@ public class Item {
 
     /**
      * Getter for endline-Field.
-     * @return endline -> getter
+     * @return endline getter
      */
     public String getEndline() {
         return endline;
@@ -133,7 +133,7 @@ public class Item {
 
     /**
      * Setter for endline-Field.
-     * @param endline -> setter
+     * @param endline setter
      */
     public void setEndline(final String endline) {
         this.endline = endline;
@@ -141,7 +141,7 @@ public class Item {
 
     /**
      * Getter for endcolumn-Field.
-     * @return endcolumn -> getter
+     * @return endcolumn getter
      */
     public String getEndcolumn() {
         return endcolumn;
@@ -149,7 +149,7 @@ public class Item {
 
     /**
      * Setter for endcolumn-Field.
-     * @param endcolumn -> setter
+     * @param endcolumn setter
      */
     public void setEndcolumn(final String endcolumn) {
         this.endcolumn = endcolumn;

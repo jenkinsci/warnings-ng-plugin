@@ -13,7 +13,8 @@ import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * Tests the class {@link SbtScalacParser}.
- * Author: <a href="mailto:hochak@gmail.com">Hochak Hung</a>
+ *
+ * @author Hochak Hung
  */
 public class SbtScalacParserTest extends ParserTester {
 

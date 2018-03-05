@@ -1,9 +1,9 @@
 package hudson.plugins.warnings.parser;
 
-import javax.annotation.CheckForNull;
 import java.util.Collection;
 import java.util.Set;
 import java.util.regex.Pattern;
+import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -21,7 +21,7 @@ public class WarningsFilter {
     private final Set<Pattern> includePatterns = Sets.newHashSet();
     private final Set<Pattern> excludePatterns = Sets.newHashSet();
 
-    private Set<Pattern> addFilePatterns(final @CheckForNull String pattern) {
+    private Set<Pattern> addFilePatterns(@CheckForNull final String pattern) {
         Set<Pattern> patterns = Sets.newHashSet();
         if (StringUtils.isNotBlank(pattern)) {
             String[] split = StringUtils.split(pattern, ',');
@@ -34,7 +34,7 @@ public class WarningsFilter {
         return patterns;
     }
 
-    private Set<Pattern> addStringPatterns(final @CheckForNull String pattern) {
+    private Set<Pattern> addStringPatterns(@CheckForNull final String pattern) {
         Set<Pattern> patterns = Sets.newHashSet();
         if (StringUtils.isNotBlank(pattern)) {
             String[] split = StringUtils.split(pattern, '\n');
@@ -46,27 +46,11 @@ public class WarningsFilter {
         return patterns;
     }
 
-    /**
-     *  Filters te specified warnings by exclude and include patterns.
-     *
-     * @param allAnnotations
-     *            all annotations
-     * @param includePattern
-     *            regexp pattern of files to include in report,
-     *            <code>null</code> or an empty string do not filter the output
-     * @param excludePattern
-     *            regexp pattern of files to exclude from report,
-     *            <code>null</code> or an empty string do not filter the output
-     * @param messagesPattern
-     *            regexp pattern of warning messages to exclude from report,
-     *            <code>null</code> or an empty string do not filter the output
-     * @return the filtered annotations if there is a filter defined
-     */
     public Collection<FileAnnotation> apply(final Collection<FileAnnotation> allAnnotations,
-                                     final @CheckForNull String includePattern,
-                                     final @CheckForNull String excludePattern,
-                                     final @CheckForNull String messagesPattern,
-                                     final @CheckForNull String categoriesPattern,
+                                     @CheckForNull final String includePattern,
+                                     @CheckForNull final String excludePattern,
+                                     @CheckForNull final String messagesPattern,
+                                     @CheckForNull final String categoriesPattern,
                                      final PluginLogger logger) {
         Collection<Pattern> includePatterns = addFilePatterns(includePattern);
         Collection<Pattern> excludePatterns = addFilePatterns(excludePattern);

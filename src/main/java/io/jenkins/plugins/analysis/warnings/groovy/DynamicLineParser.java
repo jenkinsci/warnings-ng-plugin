@@ -21,6 +21,8 @@ public class DynamicLineParser extends RegexpLineParser {
      *
      * @param regexp
      *         regular expression
+     * @param script
+     *         the script to execute
      */
     public DynamicLineParser(final String regexp, final String script) {
         super(regexp);
