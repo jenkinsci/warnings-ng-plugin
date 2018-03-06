@@ -82,6 +82,10 @@
           <groupId>net.sourceforge.saxon</groupId>
           <artifactId>saxon</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>asm</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -92,6 +96,10 @@
         <exclusion>
           <groupId>net.sourceforge.saxon</groupId>
           <artifactId>saxon</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>asm</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
