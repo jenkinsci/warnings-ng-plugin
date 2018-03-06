@@ -31,5 +31,7 @@ node {
         def findbugs = scanForIssues tool: [$class: 'FindBugs'], pattern: '**/target/findbugsXml.xml'
         publishIssues issues:[findbugs], useStableBuildAsReference: true, id:'findbugs'
 
-    }
+        def maven = scanForIssues tool: [$class: 'MavenConsole']
+        publishIssues issues:[maven]
+     }
 }
