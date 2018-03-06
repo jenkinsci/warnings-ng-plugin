@@ -3,7 +3,8 @@ It has built-in support for numerous static analysis tools (including several co
 [GitHub repository](https://github.com/jenkinsci/analysis-model/tree/master/src/main/java/edu/hm/hafner/analysis/parser) 
 for a complete list of supported formats. If your tool is not yet supported you can either define a new parser in the
 user interface or provide a parser within a new small plug-in. If the parser is useful for other teams please share it 
-and provide a [pull request](https://github.com/jenkinsci/warnings-plugin/pulls).  
+and provide pull requests for the [warnings plug-in](https://github.com/jenkinsci/warnings-plugin/pulls) and 
+the [analysis parsers library](https://github.com/jenkinsci/analysis-model/).
 
 For more details please refer to the corresponding [Jenkins wiki page](https://wiki.jenkins.io/x/G4CGAQ).
 
