@@ -120,7 +120,7 @@ public class ParsersITest extends PipelineITest {
     /** Runs the PIT parser on output files that contains 25 issues. */
     @Test
     public void shouldFindAllPitIssues() {
-        shouldFindIssuesOfTool(25, Pit.class, "pit.xml");
+        shouldFindIssuesOfTool(22, Pit.class, "pit.xml");
     }
 
     /** Runs the PyDocStyle parser on output files that contains 33 issues. */
