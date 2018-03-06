@@ -7,10 +7,11 @@ project overall, check out [Jenkins' contributing landing page](https://jenkins.
  
 ## Parser Implementations
 
-If you are planning to provide your own parser, please also have a look at the 
-[Static Analysis Model and Parsers](https://github.com/jenkinsci/analysis-model). Here, all parsers need to be added. 
-The Jenkins Warnings Plug-in does not include the parsers anymore, it links the parsers using the analysis-model 
-library.
+If you are planning to provide your own parser, please also have a look at the project 
+[Static Analysis Model and Parsers](https://github.com/jenkinsci/analysis-model). Here, all parsers need to be 
+added first. The Jenkins Warnings Plug-in does not include the parsers anymore, it links the parsers using the 
+analysis-model library. You still need to add a reference to the new parser afterwards in order to get the parser
+represented in the UI. 
 
 ## Getting started
 
@@ -33,14 +34,16 @@ For [IntelliJ IDEA](https://www.jetbrains.com/idea/) users: the coding style is 
 `.idea` folder. If you import this project into IntelliJ this style will used automatically. 
 
 Moreover (since this project is about static code analysis :wink:) a configuration for the following static code
-analysis tools is defined in the `etc` folder:
+analysis tools is defined in the POM and the `etc` and `.idea` folders:
 - [Checkstyle](http://checkstyle.sourceforge.net/)
 - [PMD](https://pmd.github.io/)
 - [FindBugs](http://findbugs.sourceforge.net/) and [SpotBugs](https://spotbugs.github.io)
+- [Error Prone](http://errorprone.info)
 - [IntelliJ](https://www.jetbrains.com/help/idea/code-inspection.html)
 
 This configuration will be picked up automatically if you build the project using maven. If you install the CheckStyle 
-plugin of IntelliJ then the correct set of CheckStyle rules will used automatically. 
+plugin of IntelliJ then the correct set of CheckStyle rules will used automatically. Moreover, the code formatter and 
+the inspection rules will be automatically picked up bey IntelliJ.
 
 ## Proposing Changes
 
