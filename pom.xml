@@ -1,6 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <properties>
+    <pmd.version>6.1.0</pmd.version>
+  </properties>
 
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
@@ -69,7 +72,7 @@
     <dependency>
       <groupId>net.sourceforge.pmd</groupId>
       <artifactId>pmd-core</artifactId>
-      <version>5.7.0</version>
+      <version>${pmd.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.ibm.icu</groupId>
@@ -84,7 +87,7 @@
     <dependency>
       <groupId>net.sourceforge.pmd</groupId>
       <artifactId>pmd-java</artifactId>
-      <version>5.7.0</version>
+      <version>${pmd.version}</version>
       <exclusions>
         <exclusion>
           <groupId>net.sourceforge.saxon</groupId>
