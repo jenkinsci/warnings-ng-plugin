@@ -181,19 +181,30 @@ public class ParsersITest extends PipelineITest {
         shouldFindIssuesOfTool(3, Cadence.class, "CadenceIncisive.txt");
     }
 
-    /** Runs the PMD parser on an output file that contains 4 issues. */
+    /** Runs the PMD parser on an output file that contains 262 issues (PMD 6.1.0). */
     @Test
     public void shouldFindAllPmdIssues() {
-        Issues<?> issues = shouldFindIssuesOfTool(4, Pmd.class, "pmd-warnings.xml");
+        Issues<?> issues = shouldFindIssuesOfTool(262, Pmd.class, "pmd-6.xml");
 
         Issue issue = issues.get(0);
 
         StaticAnalysisLabelProvider labelProvider = new Pmd().getLabelProvider();
         assertThat(issue).hasDescription(StringUtils.EMPTY);
-        Assertions.assertThat(labelProvider.getDescription(issue)).isEqualTo("\n"
-                + "Sometimes two consecutive 'if' statements can be consolidated by separating their conditions with a boolean short-circuit operator.\n"
-                + "      <pre>\n  \nvoid bar() {\n\tif (x) {\t\t\t// original implementation\n\t\tif (y) {\n\t\t\t// do stuff\n\t\t}\n"
-                + "\t}\n}\n\nvoid bar() {\n\tif (x && y) {\t\t// optimized implementation\n\t\t// do stuff\n\t}\n}\n \n      </pre>");
+        Assertions.assertThat(labelProvider.getDescription(issue))
+                .isEqualTo("\n"
+                + "A high number of imports can indicate a high degree of coupling within an object. This rule \n"
+                + "counts the number of unique imports and reports a violation if the count is above the \n"
+                + "user-specified threshold.\n"
+                + "        <pre>\n"
+                + "\n"
+                + "import blah.blah.Baz;\n"
+                + "import blah.blah.Bif;\n"
+                + "// 18 others from the same package elided\n"
+                + "public class Foo {\n"
+                + "    public void doWork() {}\n"
+                + "}\n"
+                + "\n"
+                + "        </pre>");
     }
 
     /** Runs the CheckStyle parser on an output file that contains 6 issues. */

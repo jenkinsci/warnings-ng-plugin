@@ -1,0 +1,952 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 http://pmd.sourceforge.net/report_2_0_0.xsd"
+    version="6.1.0" timestamp="2018-03-07T00:11:22.885">
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/core/AbstractProjectAction.java">
+<violation beginline="1" endline="527" begincolumn="1" endcolumn="3" rule="ExcessiveImports" ruleset="Design" package="hudson.plugins.analysis.core" class="AbstractProjectAction" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#excessiveimports" priority="3">
+A high number of imports can indicate a high degree of coupling within an object.
+</violation>
+<violation beginline="178" endline="178" begincolumn="83" endcolumn="86" rule="NullAssignment" ruleset="Error Prone" package="hudson.plugins.analysis.core" class="AbstractProjectAction" method="getProject" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#nullassignment" priority="3">
+Assigning an Object to null is a code smell.  Consider refactoring.
+</violation>
+<violation beginline="262" endline="262" begincolumn="17" endcolumn="87" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="AbstractProjectAction" method="getTrendGraph" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="491" endline="491" begincolumn="99" endcolumn="102" rule="NullAssignment" ruleset="Error Prone" package="hudson.plugins.analysis.core" class="AbstractProjectAction" method="getLastFinishedBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#nullassignment" priority="3">
+Assigning an Object to null is a code smell.  Consider refactoring.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/core/AbstractResultAction.java">
+<violation beginline="159" endline="159" begincolumn="66" endcolumn="76" rule="UnusedFormalParameter" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="AbstractResultAction" method="getAbstractBuild" variable="targetClass" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'targetClass'.
+</violation>
+<violation beginline="159" endline="159" begincolumn="20" endcolumn="77" rule="UnusedPrivateMethod" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="AbstractResultAction" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'getAbstractBuild(Run,Class)'.
+</violation>
+<violation beginline="160" endline="160" begincolumn="71" endcolumn="74" rule="NullAssignment" ruleset="Error Prone" package="hudson.plugins.analysis.core" class="AbstractResultAction" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#nullassignment" priority="3">
+Assigning an Object to null is a code smell.  Consider refactoring.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/core/AnnotationsClassifier.java">
+<violation beginline="35" endline="38" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="hudson.plugins.analysis.core" class="AnnotationsClassifier" method="AnnotationsClassifier" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/core/BuildHistory.java">
+<violation beginline="202" endline="202" begincolumn="73" endcolumn="83" rule="UnusedFormalParameter" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="BuildHistory" method="getReferenceAbstractBuild" variable="targetClass" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'targetClass'.
+</violation>
+<violation beginline="202" endline="202" begincolumn="20" endcolumn="84" rule="UnusedPrivateMethod" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="BuildHistory" method="getReferenceAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'getReferenceAbstractBuild(Run,Class)'.
+</violation>
+<violation beginline="203" endline="203" begincolumn="69" endcolumn="72" rule="NullAssignment" ruleset="Error Prone" package="hudson.plugins.analysis.core" class="BuildHistory" method="getReferenceAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#nullassignment" priority="3">
+Assigning an Object to null is a code smell.  Consider refactoring.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/core/BuildResult.java">
+<violation beginline="65" endline="1702" begincolumn="17" endcolumn="1" rule="CyclomaticComplexity" ruleset="Design" package="hudson.plugins.analysis.core" class="BuildResult" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The class 'BuildResult' has a total cyclomatic complexity of 115 (highest 8).
+</violation>
+<violation beginline="365" endline="365" begincolumn="63" endcolumn="73" rule="UnusedFormalParameter" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="BuildResult" method="getReferenceAbstractBuild" variable="targetClass" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'targetClass'.
+</violation>
+<violation beginline="365" endline="365" begincolumn="20" endcolumn="74" rule="UnusedPrivateMethod" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="BuildResult" method="getReferenceAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'getReferenceAbstractBuild(Run,Class)'.
+</violation>
+<violation beginline="365" endline="365" begincolumn="46" endcolumn="54" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="BuildResult" method="getReferenceAbstractBuild" variable="owner" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'owner' is not assigned and could be declared final
+</violation>
+<violation beginline="365" endline="365" begincolumn="57" endcolumn="73" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="BuildResult" method="getReferenceAbstractBuild" variable="targetClass" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'targetClass' is not assigned and could be declared final
+</violation>
+<violation beginline="366" endline="366" begincolumn="119" endcolumn="122" rule="NullAssignment" ruleset="Error Prone" package="hudson.plugins.analysis.core" class="BuildResult" method="getReferenceAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#nullassignment" priority="3">
+Assigning an Object to null is a code smell.  Consider refactoring.
+</violation>
+<violation beginline="602" endline="602" begincolumn="66" endcolumn="76" rule="UnusedFormalParameter" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="BuildResult" method="getAbstractBuild" variable="targetClass" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'targetClass'.
+</violation>
+<violation beginline="602" endline="602" begincolumn="20" endcolumn="77" rule="UnusedPrivateMethod" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="BuildResult" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'getAbstractBuild(Run,Class)'.
+</violation>
+<violation beginline="603" endline="603" begincolumn="71" endcolumn="74" rule="NullAssignment" ruleset="Error Prone" package="hudson.plugins.analysis.core" class="BuildResult" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#nullassignment" priority="3">
+Assigning an Object to null is a code smell.  Consider refactoring.
+</violation>
+<violation beginline="702" endline="702" begincolumn="33" endcolumn="91" rule="OptimizableToArrayCall" ruleset="Performance" package="hudson.plugins.analysis.core" class="BuildResult" method="serializeAnnotations" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_performance.html#optimizabletoarraycall" priority="3">
+This call to Collection.toArray() may be optimizable
+</violation>
+<violation beginline="707" endline="707" begincolumn="38" endcolumn="100" rule="OptimizableToArrayCall" ruleset="Performance" package="hudson.plugins.analysis.core" class="BuildResult" method="serializeAnnotations" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_performance.html#optimizabletoarraycall" priority="3">
+This call to Collection.toArray() may be optimizable
+</violation>
+<violation beginline="982" endline="982" begincolumn="13" endcolumn="112" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="BuildResult" method="loadResult" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="986" endline="986" begincolumn="13" endcolumn="83" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="BuildResult" method="loadResult" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="1073" endline="1073" begincolumn="13" endcolumn="117" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="BuildResult" method="loadFixedWarningsAfterRelease72" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="1076" endline="1076" begincolumn="13" endcolumn="88" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="BuildResult" method="loadFixedWarningsAfterRelease72" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/core/BuildResultEvaluator.java">
+<violation beginline="163" endline="165" begincolumn="9" endcolumn="9" rule="SimplifyBooleanReturns" ruleset="Design" package="hudson.plugins.analysis.core" class="BuildResultEvaluator" method="check" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#simplifybooleanreturns" priority="3">
+Avoid unnecessary if..then..else statements when returning booleans
+</violation>
+<violation beginline="179" endline="181" begincolumn="9" endcolumn="9" rule="SimplifyBooleanReturns" ruleset="Design" package="hudson.plugins.analysis.core" class="BuildResultEvaluator" method="checkFailedNew" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#simplifybooleanreturns" priority="3">
+Avoid unnecessary if..then..else statements when returning booleans
+</violation>
+<violation beginline="195" endline="197" begincolumn="9" endcolumn="9" rule="SimplifyBooleanReturns" ruleset="Design" package="hudson.plugins.analysis.core" class="BuildResultEvaluator" method="checkUnstableNew" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#simplifybooleanreturns" priority="3">
+Avoid unnecessary if..then..else statements when returning booleans
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/core/FilesParser.java">
+<violation beginline="53" endline="61" begincolumn="13" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="hudson.plugins.analysis.core" class="FilesParser" method="FilesParser" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+<violation beginline="63" endline="74" begincolumn="13" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="hudson.plugins.analysis.core" class="FilesParser" method="FilesParser" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+<violation beginline="221" endline="221" begincolumn="9" endcolumn="115" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="FilesParser" method="parserCollectionOfFiles" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="231" endline="231" begincolumn="13" endcolumn="104" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="FilesParser" method="parserCollectionOfFiles" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="238" endline="238" begincolumn="9" endcolumn="58" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="FilesParser" method="parseSingleFile" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="327" endline="329" begincolumn="13" endcolumn="72" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="FilesParser" method="parseFile" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/core/HealthAwareMavenReporter.java">
+<violation beginline="295" endline="295" begincolumn="9" endcolumn="96" rule="PrematureDeclaration" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwareMavenReporter" method="postExecute" variable="logger" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#prematuredeclaration" priority="3">
+Avoid declaring a variable if it is unreferenced before a possible exit point.
+</violation>
+<violation beginline="301" endline="301" begincolumn="13" endcolumn="82" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="HealthAwareMavenReporter" method="postExecute" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/core/HealthAwarePublisher.java">
+<violation beginline="71" endline="71" begincolumn="13" endcolumn="78" rule="PrematureDeclaration" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwarePublisher" method="perform" variable="referenceBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#prematuredeclaration" priority="3">
+Avoid declaring a variable if it is unreferenced before a possible exit point.
+</violation>
+<violation beginline="78" endline="78" begincolumn="17" endcolumn="114" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="HealthAwarePublisher" method="perform" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="148" endline="148" begincolumn="35" endcolumn="59" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwarePublisher" method="perform" variable="build" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'build' is not assigned and could be declared final
+</violation>
+<violation beginline="148" endline="148" begincolumn="62" endcolumn="80" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwarePublisher" method="perform" variable="logger" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'logger' is not assigned and could be declared final
+</violation>
+<violation beginline="154" endline="154" begincolumn="83" endcolumn="101" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwarePublisher" method="perform" variable="logger" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'logger' is not assigned and could be declared final
+</violation>
+<violation beginline="154" endline="154" begincolumn="48" endcolumn="60" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwarePublisher" method="perform" variable="run" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'run' is not assigned and could be declared final
+</violation>
+<violation beginline="154" endline="154" begincolumn="63" endcolumn="80" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwarePublisher" method="perform" variable="workspace" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'workspace' is not assigned and could be declared final
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/core/HealthAwareRecorder.java">
+<violation beginline="148" endline="150" begincolumn="15" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwareRecorder" method="HealthAwareRecorder" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+<violation beginline="148" endline="148" begincolumn="35" endcolumn="51" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwareRecorder" method="HealthAwareRecorder" variable="pluginName" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'pluginName' is not assigned and could be declared final
+</violation>
+<violation beginline="300" endline="300" begincolumn="13" endcolumn="85" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="HealthAwareRecorder" method="perform" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="942" endline="942" begincolumn="50" endcolumn="66" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwareRecorder$MatrixBridge" method="createAggregator" variable="build" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'build' is not assigned and could be declared final
+</violation>
+<violation beginline="942" endline="942" begincolumn="69" endcolumn="85" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwareRecorder$MatrixBridge" method="createAggregator" variable="launcher" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'launcher' is not assigned and could be declared final
+</violation>
+<violation beginline="942" endline="942" begincolumn="88" endcolumn="109" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwareRecorder$MatrixBridge" method="createAggregator" variable="listener" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'listener' is not assigned and could be declared final
+</violation>
+<violation beginline="968" endline="968" begincolumn="29" endcolumn="45" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwareRecorder$MatrixBridge$ProxyAggregator" method="ProxyAggregator" variable="build" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'build' is not assigned and could be declared final
+</violation>
+<violation beginline="968" endline="968" begincolumn="91" endcolumn="118" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwareRecorder$MatrixBridge$ProxyAggregator" method="ProxyAggregator" variable="impls" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'impls' is not assigned and could be declared final
+</violation>
+<violation beginline="968" endline="968" begincolumn="48" endcolumn="64" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwareRecorder$MatrixBridge$ProxyAggregator" method="ProxyAggregator" variable="launcher" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'launcher' is not assigned and could be declared final
+</violation>
+<violation beginline="968" endline="968" begincolumn="67" endcolumn="88" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwareRecorder$MatrixBridge$ProxyAggregator" method="ProxyAggregator" variable="listener" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'listener' is not assigned and could be declared final
+</violation>
+<violation beginline="984" endline="984" begincolumn="35" endcolumn="47" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="HealthAwareRecorder$MatrixBridge$ProxyAggregator" method="endRun" variable="run" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'run' is not assigned and could be declared final
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/core/HealthAwareReporter.java">
+<violation beginline="330" endline="330" begincolumn="13" endcolumn="82" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="HealthAwareReporter" method="postExecute" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="343" endline="343" begincolumn="17" endcolumn="72" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="HealthAwareReporter" method="postExecute" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="393" endline="393" begincolumn="13" endcolumn="116" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="HealthAwareReporter" method="registerResults" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="487" endline="487" begincolumn="75" endcolumn="80" rule="UnusedFormalParameter" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="HealthAwareReporter" method="copyFilesWithAnnotationsToBuildFolder" variable="logger" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'logger'.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/core/MavenResultAction.java">
+<violation beginline="299" endline="299" begincolumn="47" endcolumn="51" rule="UnusedFormalParameter" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="MavenResultAction" method="getAbstractBuild" variable="owner" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'owner'.
+</violation>
+<violation beginline="299" endline="299" begincolumn="66" endcolumn="76" rule="UnusedFormalParameter" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="MavenResultAction" method="getAbstractBuild" variable="targetClass" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'targetClass'.
+</violation>
+<violation beginline="299" endline="299" begincolumn="20" endcolumn="77" rule="UnusedPrivateMethod" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="MavenResultAction" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'getAbstractBuild(Run,Class)'.
+</violation>
+<violation beginline="300" endline="300" begincolumn="107" endcolumn="110" rule="NullAssignment" ruleset="Error Prone" package="hudson.plugins.analysis.core" class="MavenResultAction" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#nullassignment" priority="3">
+Assigning an Object to null is a code smell.  Consider refactoring.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/core/ParserResult.java">
+<violation beginline="105" endline="105" begincolumn="51" endcolumn="81" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="ParserResult" method="ParserResult" variable="canResolveRelativePaths" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'canResolveRelativePaths' is not assigned and could be declared final
+</violation>
+<violation beginline="137" endline="137" begincolumn="9" endcolumn="35" rule="ConstructorCallsOverridableMethod" ruleset="Error Prone" package="hudson.plugins.analysis.core" class="ParserResult" method="ParserResult" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#constructorcallsoverridablemethod" priority="1">
+Overridable method 'addAnnotation' called during object construction
+</violation>
+<violation beginline="137" endline="137" begincolumn="9" endcolumn="35" rule="ConstructorCallsOverridableMethod" ruleset="Error Prone" package="hudson.plugins.analysis.core" class="ParserResult" method="ParserResult" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#constructorcallsoverridablemethod" priority="1">
+Overridable method 'addAnnotations' called during object construction
+</violation>
+<violation beginline="231" endline="231" begincolumn="9" endcolumn="141" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.core" class="ParserResult" method="populateFileNameCache" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="466" endline="466" begincolumn="47" endcolumn="48" rule="AvoidPrefixingMethodParameters" ruleset="Code Style" package="hudson.plugins.analysis.core" class="ParserResult" method="readObject" variable="in" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#avoidprefixingmethodparameters" priority="4">
+Avoid prefixing parameters by in, out or inOut. Uses Javadoc to document this behavior.
+</violation>
+<violation beginline="466" endline="466" begincolumn="29" endcolumn="48" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="ParserResult" method="readObject" variable="in" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'in' is not assigned and could be declared final
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/graph/AnnotationsByUserGraph.java">
+<violation beginline="74" endline="74" begincolumn="59" endcolumn="71" rule="UnusedFormalParameter" ruleset="Best Practices" package="hudson.plugins.analysis.graph" class="AnnotationsByUserGraph" method="attachRenderers" variable="configuration" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'configuration'.
+</violation>
+<violation beginline="74" endline="74" begincolumn="87" endcolumn="96" rule="UnusedFormalParameter" ruleset="Best Practices" package="hudson.plugins.analysis.graph" class="AnnotationsByUserGraph" method="attachRenderers" variable="pluginName" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'pluginName'.
+</violation>
+<violation beginline="75" endline="75" begincolumn="35" endcolumn="49" rule="UnusedFormalParameter" ruleset="Best Practices" package="hudson.plugins.analysis.graph" class="AnnotationsByUserGraph" method="attachRenderers" variable="toolTipProvider" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'toolTipProvider'.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/graph/CategoryBuildResultGraph.java">
+<violation beginline="1" endline="498" begincolumn="1" endcolumn="1" rule="ExcessiveImports" ruleset="Design" package="hudson.plugins.analysis.graph" class="CategoryBuildResultGraph" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#excessiveimports" priority="3">
+A high number of imports can indicate a high degree of coupling within an object.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/graph/GraphConfiguration.java">
+<violation beginline="713" endline="713" begincolumn="20" endcolumn="48" rule="CompareObjectsWithEquals" ruleset="Error Prone" package="hudson.plugins.analysis.graph" class="GraphConfiguration" method="isDefault" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#compareobjectswithequals" priority="3">
+Use equals() to compare object references.
+</violation>
+<violation beginline="714" endline="714" begincolumn="20" endcolumn="50" rule="CompareObjectsWithEquals" ruleset="Error Prone" package="hudson.plugins.analysis.graph" class="GraphConfiguration" method="isDefault" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#compareobjectswithequals" priority="3">
+Use equals() to compare object references.
+</violation>
+<violation beginline="775" endline="775" begincolumn="16" endcolumn="70" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.graph" class="GraphConfiguration" method="checkHeight" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/graph/GraphConfigurationView.java">
+<violation beginline="144" endline="144" begincolumn="68" endcolumn="78" rule="UnusedFormalParameter" ruleset="Best Practices" package="hudson.plugins.analysis.graph" class="GraphConfigurationView" method="getAbstractProject" variable="targetClass" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'targetClass'.
+</violation>
+<violation beginline="144" endline="144" begincolumn="20" endcolumn="79" rule="UnusedPrivateMethod" ruleset="Best Practices" package="hudson.plugins.analysis.graph" class="GraphConfigurationView" method="getAbstractProject" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'getAbstractProject(Job,Class)'.
+</violation>
+<violation beginline="145" endline="145" begincolumn="77" endcolumn="80" rule="NullAssignment" ruleset="Error Prone" package="hudson.plugins.analysis.graph" class="GraphConfigurationView" method="getAbstractProject" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#nullassignment" priority="3">
+Assigning an Object to null is a code smell.  Consider refactoring.
+</violation>
+<violation beginline="181" endline="181" begincolumn="13" endcolumn="87" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.graph" class="GraphConfigurationView" method="doSave" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="184" endline="184" begincolumn="13" endcolumn="90" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.graph" class="GraphConfigurationView" method="doSave" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="246" endline="246" begincolumn="13" endcolumn="81" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.graph" class="GraphConfigurationView" method="getDynamic" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/graph/TrendDetails.java">
+<violation beginline="95" endline="95" begincolumn="83" endcolumn="86" rule="NullAssignment" ruleset="Error Prone" package="hudson.plugins.analysis.graph" class="TrendDetails" method="getProject" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#nullassignment" priority="3">
+Assigning an Object to null is a code smell.  Consider refactoring.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/tokens/AbstractTokenMacro.java">
+<violation beginline="47" endline="47" begincolumn="53" endcolumn="70" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.tokens" class="AbstractTokenMacro" method="evaluate" variable="workspace" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'workspace' is not assigned and could be declared final
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/util/AbstractBlamer.java">
+<violation beginline="163" endline="163" begincolumn="9" endcolumn="70" rule="GuardLogStatement" ruleset="Best Practices" package="hudson.plugins.analysis.util" class="AbstractBlamer" method="error" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/util/BlameFactory.java">
+<violation beginline="26" endline="26" begincolumn="39" endcolumn="51" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.util" class="BlameFactory" method="createBlamer" variable="run" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'run' is not assigned and could be declared final
+</violation>
+<violation beginline="26" endline="26" begincolumn="54" endcolumn="71" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.util" class="BlameFactory" method="createBlamer" variable="workspace" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'workspace' is not assigned and could be declared final
+</violation>
+<violation beginline="35" endline="46" begincolumn="13" endcolumn="13" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util" class="BlameFactory" method="createBlamer" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/util/BlameRequest.java">
+<violation beginline="15" endline="68" begincolumn="8" endcolumn="1" rule="MissingSerialVersionUID" ruleset="Error Prone" package="hudson.plugins.analysis.util" class="BlameRequest" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#missingserialversionuid" priority="3">
+Classes implementing Serializable should set a serialVersionUID
+</violation>
+<violation beginline="16" endline="16" begincolumn="20" endcolumn="27" rule="ImmutableField" ruleset="Design" package="hudson.plugins.analysis.util" class="BlameRequest" variable="fileName" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#immutablefield" priority="3">
+Private field 'fileName' could be made final; it is only initialized in the declaration or constructor.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/util/Compatibility.java">
+<violation beginline="10" endline="10" begincolumn="39" endcolumn="57" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.util" class="Compatibility" method="isOverridden" variable="base" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'base' is not assigned and could be declared final
+</violation>
+<violation beginline="10" endline="10" begincolumn="60" endcolumn="81" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.util" class="Compatibility" method="isOverridden" variable="derived" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'derived' is not assigned and could be declared final
+</violation>
+<violation beginline="10" endline="10" begincolumn="84" endcolumn="109" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.util" class="Compatibility" method="isOverridden" variable="methodName" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'methodName' is not assigned and could be declared final
+</violation>
+<violation beginline="10" endline="10" begincolumn="112" endcolumn="134" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.util" class="Compatibility" method="isOverridden" variable="types" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'types' is not assigned and could be declared final
+</violation>
+<violation beginline="18" endline="18" begincolumn="37" endcolumn="56" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.util" class="Compatibility" method="getMethod" variable="clazz" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'clazz' is not assigned and could be declared final
+</violation>
+<violation beginline="18" endline="18" begincolumn="59" endcolumn="84" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.util" class="Compatibility" method="getMethod" variable="methodName" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'methodName' is not assigned and could be declared final
+</violation>
+<violation beginline="18" endline="18" begincolumn="87" endcolumn="109" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.util" class="Compatibility" method="getMethod" variable="types" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'types' is not assigned and could be declared final
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/util/EncodingValidator.java">
+<violation beginline="40" endline="40" begincolumn="16" endcolumn="24" rule="AvoidCatchingGenericException" ruleset="Design" package="hudson.plugins.analysis.util" class="EncodingValidator" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#avoidcatchinggenericexception" priority="3">
+Avoid catching generic exceptions such as NullPointerException, RuntimeException, Exception in try-catch block
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/util/FileFinder.java">
+<violation beginline="40" endline="43" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="hudson.plugins.analysis.util" class="FileFinder" method="FileFinder" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/util/GitBlamer.java">
+<violation beginline="105" endline="105" begincolumn="27" endcolumn="35" rule="ImmutableField" ruleset="Design" package="hudson.plugins.analysis.util" class="GitBlamer$BlameCallback" variable="gitBlamer" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#immutablefield" priority="3">
+Private field 'gitBlamer' could be made final; it is only initialized in the declaration or constructor.
+</violation>
+<violation beginline="106" endline="106" begincolumn="26" endcolumn="35" rule="ImmutableField" ruleset="Design" package="hudson.plugins.analysis.util" class="GitBlamer$BlameCallback" variable="headCommit" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#immutablefield" priority="3">
+Private field 'headCommit' could be made final; it is only initialized in the declaration or constructor.
+</violation>
+<violation beginline="107" endline="107" begincolumn="42" endcolumn="49" rule="ImmutableField" ruleset="Design" package="hudson.plugins.analysis.util" class="GitBlamer$BlameCallback" variable="requests" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#immutablefield" priority="3">
+Private field 'requests' could be made final; it is only initialized in the declaration or constructor.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/util/HtmlPrinter.java">
+<violation beginline="9" endline="9" begincolumn="19" endcolumn="31" rule="AvoidStringBufferField" ruleset="Best Practices" package="hudson.plugins.analysis.util" class="HtmlPrinter" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#avoidstringbufferfield" priority="3">
+StringBuffers can grow quite a lot, and so may become a source of memory leak (if the owning class has a long life time).
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/util/ModuleDetector.java">
+<violation beginline="186" endline="186" begincolumn="57" endcolumn="71" rule="UseProperClassLoader" ruleset="Error Prone" package="hudson.plugins.analysis.util" class="ModuleDetector" method="parseBuildXml" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#useproperclassloader" priority="3">
+In J2EE, getClassLoader() might not work as expected.  Use Thread.currentThread().getContextClassLoader() instead.
+</violation>
+<violation beginline="224" endline="224" begincolumn="57" endcolumn="71" rule="UseProperClassLoader" ruleset="Error Prone" package="hudson.plugins.analysis.util" class="ModuleDetector" method="parsePomAttribute" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#useproperclassloader" priority="3">
+In J2EE, getClassLoader() might not work as expected.  Use Thread.currentThread().getContextClassLoader() instead.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/util/Pair.java">
+<violation beginline="86" endline="86" begincolumn="19" endcolumn="31" rule="UselessParentheses" ruleset="Code Style" package="hudson.plugins.analysis.util" class="Pair" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#uselessparentheses" priority="4">
+Useless parentheses.
+</violation>
+<violation beginline="86" endline="86" begincolumn="38" endcolumn="67" rule="UselessParentheses" ruleset="Code Style" package="hudson.plugins.analysis.util" class="Pair" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#uselessparentheses" priority="4">
+Useless parentheses.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/util/SaxSetup.java">
+<violation beginline="32" endline="37" begincolumn="9" endcolumn="9" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util" class="SaxSetup" method="cleanup" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/util/model/AbstractAnnotation.java">
+<violation beginline="1" endline="763" begincolumn="1" endcolumn="2" rule="ExcessivePublicCount" ruleset="Design" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#excessivepubliccount" priority="3">
+This class has a bunch of public methods and attributes
+</violation>
+<violation beginline="584" endline="671" begincolumn="12" endcolumn="5" rule="NPathComplexity" ruleset="Design" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#npathcomplexity" priority="3">
+The method 'equals(Object)' has an NPath complexity of 3981312
+</violation>
+<violation beginline="603" endline="615" begincolumn="9" endcolumn="9" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="619" endline="619" begincolumn="13" endcolumn="94" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="622" endline="634" begincolumn="9" endcolumn="9" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="635" endline="647" begincolumn="9" endcolumn="9" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="648" endline="660" begincolumn="9" endcolumn="9" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="661" endline="661" begincolumn="13" endcolumn="86" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="664" endline="664" begincolumn="13" endcolumn="70" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="667" endline="667" begincolumn="13" endcolumn="78" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="670" endline="670" begincolumn="16" endcolumn="88" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="674" endline="689" begincolumn="12" endcolumn="5" rule="NPathComplexity" ruleset="Design" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="hashCode" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#npathcomplexity" priority="3">
+The method 'hashCode()' has an NPath complexity of 1024
+</violation>
+<violation beginline="675" endline="675" begincolumn="22" endcolumn="61" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="hashCode" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="676" endline="676" begincolumn="33" endcolumn="74" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="hashCode" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="677" endline="677" begincolumn="33" endcolumn="78" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="hashCode" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="679" endline="679" begincolumn="33" endcolumn="74" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="hashCode" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="680" endline="680" begincolumn="33" endcolumn="78" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="hashCode" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="681" endline="681" begincolumn="33" endcolumn="80" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="hashCode" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="682" endline="682" begincolumn="33" endcolumn="74" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="hashCode" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="683" endline="683" begincolumn="33" endcolumn="66" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="hashCode" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="684" endline="684" begincolumn="33" endcolumn="70" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="hashCode" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="685" endline="685" begincolumn="33" endcolumn="74" rule="ConfusingTernary" ruleset="Code Style" package="hudson.plugins.analysis.util.model" class="AbstractAnnotation" method="hashCode" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/util/model/AnnotationContainer.java">
+<violation beginline="32" endline="1025" begincolumn="17" endcolumn="1" rule="CyclomaticComplexity" ruleset="Design" package="hudson.plugins.analysis.util.model" class="AnnotationContainer" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The class 'AnnotationContainer' has a total cyclomatic complexity of 109 (highest 5).
+</violation>
+<violation beginline="32" endline="1025" begincolumn="17" endcolumn="1" rule="TooManyFields" ruleset="Design" package="hudson.plugins.analysis.util.model" class="AnnotationContainer" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#toomanyfields" priority="3">
+Too many fields
+</violation>
+<violation beginline="247" endline="269" begincolumn="13" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="hudson.plugins.analysis.util.model" class="AnnotationContainer" method="updateMappings" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'updateMappings(FileAnnotation)' has a cyclomatic complexity of 13.
+</violation>
+<violation beginline="247" endline="269" begincolumn="13" endcolumn="5" rule="NPathComplexity" ruleset="Design" package="hudson.plugins.analysis.util.model" class="AnnotationContainer" method="updateMappings" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#npathcomplexity" priority="3">
+The method 'updateMappings(FileAnnotation)' has an NPath complexity of 480
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/util/model/Author.java">
+<violation beginline="11" endline="11" begincolumn="20" endcolumn="30" rule="ImmutableField" ruleset="Design" package="hudson.plugins.analysis.util.model" class="Author" variable="displayName" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#immutablefield" priority="3">
+Private field 'displayName' could be made final; it is only initialized in the declaration or constructor.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/util/model/LineRange.java">
+<violation beginline="95" endline="97" begincolumn="9" endcolumn="9" rule="SimplifyBooleanReturns" ruleset="Design" package="hudson.plugins.analysis.util.model" class="LineRange" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#simplifybooleanreturns" priority="3">
+Avoid unnecessary if..then..else statements when returning booleans
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/views/AbstractAnnotationsDetail.java">
+<violation beginline="150" endline="150" begincolumn="54" endcolumn="64" rule="UnusedFormalParameter" ruleset="Best Practices" package="hudson.plugins.analysis.views" class="AbstractAnnotationsDetail" method="getAbstractBuild" variable="targetClass" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'targetClass'.
+</violation>
+<violation beginline="150" endline="150" begincolumn="20" endcolumn="65" rule="UnusedPrivateMethod" ruleset="Best Practices" package="hudson.plugins.analysis.views" class="AbstractAnnotationsDetail" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'getAbstractBuild(Run,Class)'.
+</violation>
+<violation beginline="150" endline="150" begincolumn="37" endcolumn="45" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.views" class="AbstractAnnotationsDetail" method="getAbstractBuild" variable="owner" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'owner' is not assigned and could be declared final
+</violation>
+<violation beginline="150" endline="150" begincolumn="48" endcolumn="64" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.views" class="AbstractAnnotationsDetail" method="getAbstractBuild" variable="targetClass" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'targetClass' is not assigned and could be declared final
+</violation>
+<violation beginline="151" endline="151" begincolumn="71" endcolumn="74" rule="NullAssignment" ruleset="Error Prone" package="hudson.plugins.analysis.views" class="AbstractAnnotationsDetail" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#nullassignment" priority="3">
+Assigning an Object to null is a code smell.  Consider refactoring.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/views/ConsoleDetail.java">
+<violation beginline="126" endline="128" begincolumn="19" endcolumn="5" rule="UnnecessaryModifier" ruleset="Code Style" package="hudson.plugins.analysis.views" class="ConsoleDetail" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessarymodifier" priority="3">
+Avoid modifiers which are implied by the context
+</violation>
+<violation beginline="126" endline="126" begincolumn="60" endcolumn="70" rule="UnusedFormalParameter" ruleset="Best Practices" package="hudson.plugins.analysis.views" class="ConsoleDetail" method="getAbstractBuild" variable="targetClass" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'targetClass'.
+</violation>
+<violation beginline="126" endline="126" begincolumn="26" endcolumn="71" rule="UnusedPrivateMethod" ruleset="Best Practices" package="hudson.plugins.analysis.views" class="ConsoleDetail" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'getAbstractBuild(Run,Class)'.
+</violation>
+<violation beginline="126" endline="126" begincolumn="43" endcolumn="51" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.views" class="ConsoleDetail" method="getAbstractBuild" variable="owner" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'owner' is not assigned and could be declared final
+</violation>
+<violation beginline="126" endline="126" begincolumn="54" endcolumn="70" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.views" class="ConsoleDetail" method="getAbstractBuild" variable="targetClass" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'targetClass' is not assigned and could be declared final
+</violation>
+<violation beginline="127" endline="127" begincolumn="71" endcolumn="74" rule="NullAssignment" ruleset="Error Prone" package="hudson.plugins.analysis.views" class="ConsoleDetail" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#nullassignment" priority="3">
+Assigning an Object to null is a code smell.  Consider refactoring.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/views/DetailFactory.java">
+<violation beginline="34" endline="34" begincolumn="99" endcolumn="107" rule="VariableNamingConventions" ruleset="Code Style" package="hudson.plugins.analysis.views" class="DetailFactory" variable="factories" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#variablenamingconventions" priority="1">
+Variables that are final and static should be all capitals, 'factories' is not all capitals.
+</violation>
+<violation beginline="153" endline="205" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="hudson.plugins.analysis.views" class="DetailFactory" method="createDetails" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'createDetails(String, Run, AnnotationContainer, String, String)' has a cyclomatic complexity of 14.
+</violation>
+<violation beginline="358" endline="404" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="hudson.plugins.analysis.views" class="DetailFactory" method="createDetails" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'createDetails(String, AbstractBuild, AnnotationContainer, String, String)' has a cyclomatic complexity of 12.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/views/ErrorDetail.java">
+<violation beginline="54" endline="56" begincolumn="19" endcolumn="5" rule="UnnecessaryModifier" ruleset="Code Style" package="hudson.plugins.analysis.views" class="ErrorDetail" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessarymodifier" priority="3">
+Avoid modifiers which are implied by the context
+</violation>
+<violation beginline="54" endline="54" begincolumn="60" endcolumn="70" rule="UnusedFormalParameter" ruleset="Best Practices" package="hudson.plugins.analysis.views" class="ErrorDetail" method="getAbstractBuild" variable="targetClass" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'targetClass'.
+</violation>
+<violation beginline="54" endline="54" begincolumn="26" endcolumn="71" rule="UnusedPrivateMethod" ruleset="Best Practices" package="hudson.plugins.analysis.views" class="ErrorDetail" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'getAbstractBuild(Run,Class)'.
+</violation>
+<violation beginline="54" endline="54" begincolumn="43" endcolumn="51" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.views" class="ErrorDetail" method="getAbstractBuild" variable="owner" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'owner' is not assigned and could be declared final
+</violation>
+<violation beginline="54" endline="54" begincolumn="54" endcolumn="70" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.views" class="ErrorDetail" method="getAbstractBuild" variable="targetClass" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'targetClass' is not assigned and could be declared final
+</violation>
+<violation beginline="55" endline="55" begincolumn="71" endcolumn="74" rule="NullAssignment" ruleset="Error Prone" package="hudson.plugins.analysis.views" class="ErrorDetail" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#nullassignment" priority="3">
+Assigning an Object to null is a code smell.  Consider refactoring.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/views/SourceDetail.java">
+<violation beginline="156" endline="156" begincolumn="30" endcolumn="42" rule="ConsecutiveLiteralAppends" ruleset="Performance" package="hudson.plugins.analysis.views" class="SourceDetail" method="splitSourceFile" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_performance.html#consecutiveliteralappends" priority="3">
+StringBuffer (or StringBuilder).append is called 3 consecutive times with literals. Use a single append with a single combined String.
+</violation>
+<violation beginline="160" endline="160" begincolumn="30" endcolumn="38" rule="ConsecutiveLiteralAppends" ruleset="Performance" package="hudson.plugins.analysis.views" class="SourceDetail" method="splitSourceFile" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_performance.html#consecutiveliteralappends" priority="3">
+StringBuffer (or StringBuilder).append is called 2 consecutive times with literals. Use a single append with a single combined String.
+</violation>
+<violation beginline="168" endline="168" begincolumn="30" endcolumn="53" rule="ConsecutiveLiteralAppends" ruleset="Performance" package="hudson.plugins.analysis.views" class="SourceDetail" method="splitSourceFile" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_performance.html#consecutiveliteralappends" priority="3">
+StringBuffer (or StringBuilder).append is called 2 consecutive times with literals. Use a single append with a single combined String.
+</violation>
+<violation beginline="182" endline="182" begincolumn="30" endcolumn="46" rule="ConsecutiveLiteralAppends" ruleset="Performance" package="hudson.plugins.analysis.views" class="SourceDetail" method="splitSourceFile" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_performance.html#consecutiveliteralappends" priority="3">
+StringBuffer (or StringBuilder).append is called 5 consecutive times with literals. Use a single append with a single combined String.
+</violation>
+<violation beginline="233" endline="233" begincolumn="23" endcolumn="26" rule="AppendCharacterWithChar" ruleset="Performance" package="hudson.plugins.analysis.views" class="SourceDetail" method="copyLine" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_performance.html#appendcharacterwithchar" priority="3">
+Avoid appending characters as strings in StringBuffer.append.
+</violation>
+<violation beginline="262" endline="264" begincolumn="19" endcolumn="5" rule="UnnecessaryModifier" ruleset="Code Style" package="hudson.plugins.analysis.views" class="SourceDetail" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessarymodifier" priority="3">
+Avoid modifiers which are implied by the context
+</violation>
+<violation beginline="262" endline="262" begincolumn="60" endcolumn="70" rule="UnusedFormalParameter" ruleset="Best Practices" package="hudson.plugins.analysis.views" class="SourceDetail" method="getAbstractBuild" variable="targetClass" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'targetClass'.
+</violation>
+<violation beginline="262" endline="262" begincolumn="26" endcolumn="71" rule="UnusedPrivateMethod" ruleset="Best Practices" package="hudson.plugins.analysis.views" class="SourceDetail" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'getAbstractBuild(Run,Class)'.
+</violation>
+<violation beginline="262" endline="262" begincolumn="43" endcolumn="51" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.views" class="SourceDetail" method="getAbstractBuild" variable="owner" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'owner' is not assigned and could be declared final
+</violation>
+<violation beginline="262" endline="262" begincolumn="54" endcolumn="70" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.views" class="SourceDetail" method="getAbstractBuild" variable="targetClass" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'targetClass' is not assigned and could be declared final
+</violation>
+<violation beginline="263" endline="263" begincolumn="71" endcolumn="74" rule="NullAssignment" ruleset="Error Prone" package="hudson.plugins.analysis.views" class="SourceDetail" method="getAbstractBuild" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#nullassignment" priority="3">
+Assigning an Object to null is a code smell.  Consider refactoring.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/hudson/plugins/analysis/views/TabDetail.java">
+<violation beginline="26" endline="26" begincolumn="31" endcolumn="49" rule="UnusedPrivateField" ruleset="Best Practices" package="hudson.plugins.analysis.views" class="TabDetail" variable="commitUrlsAttempted" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedprivatefield" priority="3">
+Avoid unused private fields such as 'commitUrlsAttempted'.
+</violation>
+<violation beginline="29" endline="29" begincolumn="40" endcolumn="49" rule="UnusedPrivateField" ruleset="Best Practices" package="hudson.plugins.analysis.views" class="TabDetail" variable="commitUrls" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedprivatefield" priority="3">
+Avoid unused private fields such as 'commitUrls'.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/JenkinsFacade.java">
+<violation beginline="50" endline="50" begincolumn="112" endcolumn="134" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="io.jenkins.plugins.analysis.core" class="JenkinsFacade" variable="descriptorType" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'descriptorType' is not assigned and could be declared final
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/graphs/AnnotationsByUserGraph.java">
+<violation beginline="75" endline="75" begincolumn="58" endcolumn="70" rule="UnusedFormalParameter" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.graphs" class="AnnotationsByUserGraph" method="attachRenderer" variable="configuration" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'configuration'.
+</violation>
+<violation beginline="75" endline="75" begincolumn="86" endcolumn="95" rule="UnusedFormalParameter" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.graphs" class="AnnotationsByUserGraph" method="attachRenderer" variable="pluginName" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'pluginName'.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/graphs/GraphConfiguration.java">
+<violation beginline="715" endline="715" begincolumn="20" endcolumn="48" rule="CompareObjectsWithEquals" ruleset="Error Prone" package="io.jenkins.plugins.analysis.core.graphs" class="GraphConfiguration" method="isDefault" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#compareobjectswithequals" priority="3">
+Use equals() to compare object references.
+</violation>
+<violation beginline="716" endline="716" begincolumn="20" endcolumn="50" rule="CompareObjectsWithEquals" ruleset="Error Prone" package="io.jenkins.plugins.analysis.core.graphs" class="GraphConfiguration" method="isDefault" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#compareobjectswithequals" priority="3">
+Use equals() to compare object references.
+</violation>
+<violation beginline="778" endline="778" begincolumn="16" endcolumn="70" rule="GuardLogStatement" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.graphs" class="GraphConfiguration" method="checkHeight" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="782" endline="814" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="io.jenkins.plugins.analysis.core.graphs" class="GraphConfiguration" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'equals(Object)' has a cyclomatic complexity of 17.
+</violation>
+<violation beginline="782" endline="814" begincolumn="12" endcolumn="5" rule="NPathComplexity" ruleset="Design" package="io.jenkins.plugins.analysis.core.graphs" class="GraphConfiguration" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#npathcomplexity" priority="3">
+The method 'equals(Object)' has an NPath complexity of 1536
+</violation>
+<violation beginline="807" endline="807" begincolumn="13" endcolumn="90" rule="ConfusingTernary" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.graphs" class="GraphConfiguration" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="810" endline="810" begincolumn="13" endcolumn="106" rule="ConfusingTernary" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.graphs" class="GraphConfiguration" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="813" endline="813" begincolumn="16" endcolumn="112" rule="ConfusingTernary" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.graphs" class="GraphConfiguration" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="820" endline="820" begincolumn="33" endcolumn="76" rule="ConfusingTernary" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.graphs" class="GraphConfiguration" method="hashCode" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="824" endline="824" begincolumn="33" endcolumn="84" rule="ConfusingTernary" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.graphs" class="GraphConfiguration" method="hashCode" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="825" endline="825" begincolumn="33" endcolumn="86" rule="ConfusingTernary" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.graphs" class="GraphConfiguration" method="hashCode" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/graphs/GraphConfigurationView.java">
+<violation beginline="138" endline="138" begincolumn="13" endcolumn="87" rule="GuardLogStatement" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.graphs" class="GraphConfigurationView" method="doSave" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="141" endline="141" begincolumn="13" endcolumn="90" rule="GuardLogStatement" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.graphs" class="GraphConfigurationView" method="doSave" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="205" endline="205" begincolumn="13" endcolumn="81" rule="GuardLogStatement" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.graphs" class="GraphConfigurationView" method="getDynamic" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/graphs/HealthSeriesBuilder.java">
+<violation beginline="24" endline="26" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.graphs" class="HealthSeriesBuilder" method="HealthSeriesBuilder" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/graphs/NumberOnlyBuildLabel.java">
+<violation beginline="17" endline="17" begincolumn="26" endcolumn="47" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.graphs" class="NumberOnlyBuildLabel" method="compareTo" variable="o" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'o' is not assigned and could be declared final
+</violation>
+<violation beginline="32" endline="32" begincolumn="16" endcolumn="76" rule="ConfusingTernary" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.graphs" class="NumberOnlyBuildLabel" method="equals" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="37" endline="37" begincolumn="16" endcolumn="51" rule="ConfusingTernary" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.graphs" class="NumberOnlyBuildLabel" method="hashCode" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#confusingternary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/graphs/OriginGraph.java">
+<violation beginline="28" endline="29" begincolumn="12" endcolumn="5" rule="UnnecessaryConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.graphs" class="OriginGraph" method="OriginGraph" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryconstructor" priority="3">
+Avoid unnecessary constructors - the compiler will generate these for you
+</violation>
+<violation beginline="28" endline="29" begincolumn="12" endcolumn="5" rule="UncommentedEmptyConstructor" ruleset="Documentation" package="io.jenkins.plugins.analysis.core.graphs" class="OriginGraph" method="OriginGraph" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_documentation.html#uncommentedemptyconstructor" priority="3">
+Document empty constructor
+</violation>
+<violation beginline="28" endline="29" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.graphs" class="OriginGraph" method="OriginGraph" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+<violation beginline="77" endline="77" begincolumn="16" endcolumn="55" rule="OptimizableToArrayCall" ruleset="Performance" package="io.jenkins.plugins.analysis.core.graphs" class="OriginGraph" method="getColors" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_performance.html#optimizabletoarraycall" priority="3">
+This call to Collection.toArray() may be optimizable
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/graphs/OriginSeriesBuilder.java">
+<violation beginline="19" endline="19" begincolumn="30" endcolumn="54" rule="UnusedPrivateField" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.graphs" class="OriginSeriesBuilder" variable="MAXIMUM_NUMBER_OF_ORIGINS" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedprivatefield" priority="3">
+Avoid unused private fields such as 'MAXIMUM_NUMBER_OF_ORIGINS'.
+</violation>
+<violation beginline="29" endline="29" begincolumn="17" endcolumn="26" rule="AssignmentInOperand" ruleset="Error Prone" package="io.jenkins.plugins.analysis.core.graphs" class="OriginSeriesBuilder" method="computeSeries" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#assignmentinoperand" priority="3">
+Avoid assignments in operands
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/history/BuildHistory.java">
+<violation beginline="123" endline="123" begincolumn="16" endcolumn="58" rule="AccessorClassGeneration" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.history" class="BuildHistory" method="iterator" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#accessorclassgeneration" priority="3">
+Avoid instantiation through private constructors from outside of the constructors class.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/model/AnalysisResult.java">
+<violation beginline="434" endline="434" begincolumn="17" endcolumn="97" rule="GuardLogStatement" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.model" class="AnalysisResult" method="readIssues" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="438" endline="438" begincolumn="13" endcolumn="100" rule="GuardLogStatement" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.model" class="AnalysisResult" method="readIssues" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+<violation beginline="441" endline="441" begincolumn="13" endcolumn="77" rule="GuardLogStatement" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.model" class="AnalysisResult" method="readIssues" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/model/ExcludeCategory.java">
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="UnnecessaryConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="ExcludeCategory" method="ExcludeCategory" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryconstructor" priority="3">
+Avoid unnecessary constructors - the compiler will generate these for you
+</violation>
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="ExcludeCategory" method="ExcludeCategory" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/model/ExcludeFile.java">
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="UnnecessaryConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="ExcludeFile" method="ExcludeFile" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryconstructor" priority="3">
+Avoid unnecessary constructors - the compiler will generate these for you
+</violation>
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="ExcludeFile" method="ExcludeFile" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/model/ExcludeModule.java">
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="UnnecessaryConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="ExcludeModule" method="ExcludeModule" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryconstructor" priority="3">
+Avoid unnecessary constructors - the compiler will generate these for you
+</violation>
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="ExcludeModule" method="ExcludeModule" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/model/ExcludePackage.java">
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="UnnecessaryConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="ExcludePackage" method="ExcludePackage" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryconstructor" priority="3">
+Avoid unnecessary constructors - the compiler will generate these for you
+</violation>
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="ExcludePackage" method="ExcludePackage" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/model/ExcludeType.java">
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="UnnecessaryConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="ExcludeType" method="ExcludeType" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryconstructor" priority="3">
+Avoid unnecessary constructors - the compiler will generate these for you
+</violation>
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="ExcludeType" method="ExcludeType" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/model/IncludeCategory.java">
+<violation beginline="20" endline="22" begincolumn="12" endcolumn="5" rule="UnnecessaryConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="IncludeCategory" method="IncludeCategory" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryconstructor" priority="3">
+Avoid unnecessary constructors - the compiler will generate these for you
+</violation>
+<violation beginline="20" endline="22" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="IncludeCategory" method="IncludeCategory" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/model/IncludeFile.java">
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="UnnecessaryConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="IncludeFile" method="IncludeFile" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryconstructor" priority="3">
+Avoid unnecessary constructors - the compiler will generate these for you
+</violation>
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="IncludeFile" method="IncludeFile" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/model/IncludeModule.java">
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="UnnecessaryConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="IncludeModule" method="IncludeModule" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryconstructor" priority="3">
+Avoid unnecessary constructors - the compiler will generate these for you
+</violation>
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="IncludeModule" method="IncludeModule" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/model/IncludePackage.java">
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="UnnecessaryConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="IncludePackage" method="IncludePackage" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryconstructor" priority="3">
+Avoid unnecessary constructors - the compiler will generate these for you
+</violation>
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="IncludePackage" method="IncludePackage" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/model/IncludeType.java">
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="UnnecessaryConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="IncludeType" method="IncludeType" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryconstructor" priority="3">
+Avoid unnecessary constructors - the compiler will generate these for you
+</violation>
+<violation beginline="22" endline="24" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="IncludeType" method="IncludeType" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/model/RegexpFilter.java">
+<violation beginline="19" endline="76" begincolumn="8" endcolumn="1" rule="MissingSerialVersionUID" ruleset="Error Prone" package="io.jenkins.plugins.analysis.core.model" class="RegexpFilter" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#missingserialversionuid" priority="3">
+Classes implementing Serializable should set a serialVersionUID
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/model/StaticAnalysisTool.java">
+<violation beginline="76" endline="78" begincolumn="19" endcolumn="9" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="StaticAnalysisTool$StaticAnalysisToolDescriptor" method="StaticAnalysisToolDescriptor" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/model/StaticAnalysisToolSuite.java">
+<violation beginline="65" endline="67" begincolumn="9" endcolumn="9" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="StaticAnalysisToolSuite$CompositeParser" method="CompositeParser" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/quality/HealthDescriptor.java">
+<violation beginline="17" endline="84" begincolumn="8" endcolumn="1" rule="MissingSerialVersionUID" ruleset="Error Prone" package="io.jenkins.plugins.analysis.core.quality" class="HealthDescriptor" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#missingserialversionuid" priority="3">
+Classes implementing Serializable should set a serialVersionUID
+</violation>
+<violation beginline="40" endline="40" begincolumn="16" endcolumn="41" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.quality" class="HealthDescriptor" method="getHealthy" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary use of fully qualified name 'ThresholdValidator.convert' due to existing static import 'hudson.plugins.analysis.util.ThresholdValidator.*'
+</violation>
+<violation beginline="51" endline="51" begincolumn="16" endcolumn="41" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.quality" class="HealthDescriptor" method="getUnHealthy" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary use of fully qualified name 'ThresholdValidator.convert' due to existing static import 'hudson.plugins.analysis.util.ThresholdValidator.*'
+</violation>
+<violation beginline="77" endline="77" begincolumn="33" endcolumn="58" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.quality" class="HealthDescriptor" method="isEnabled" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary use of fully qualified name 'ThresholdValidator.convert' due to existing static import 'hudson.plugins.analysis.util.ThresholdValidator.*'
+</violation>
+<violation beginline="78" endline="78" begincolumn="35" endcolumn="60" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.quality" class="HealthDescriptor" method="isEnabled" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary use of fully qualified name 'ThresholdValidator.convert' due to existing static import 'hudson.plugins.analysis.util.ThresholdValidator.*'
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/quality/QualityGate.java">
+<violation beginline="22" endline="335" begincolumn="8" endcolumn="1" rule="MissingSerialVersionUID" ruleset="Error Prone" package="io.jenkins.plugins.analysis.core.quality" class="QualityGate" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#missingserialversionuid" priority="3">
+Classes implementing Serializable should set a serialVersionUID
+</violation>
+<violation beginline="226" endline="293" begincolumn="16" endcolumn="9" rule="CyclomaticComplexity" ruleset="Design" package="io.jenkins.plugins.analysis.core.quality" class="QualityGate$QualityGateResult" method="getEvaluations" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'getEvaluations(AnalysisResult, Thresholds)' has a cyclomatic complexity of 17.
+</violation>
+<violation beginline="226" endline="293" begincolumn="16" endcolumn="9" rule="NPathComplexity" ruleset="Design" package="io.jenkins.plugins.analysis.core.quality" class="QualityGate$QualityGateResult" method="getEvaluations" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#npathcomplexity" priority="3">
+The method 'getEvaluations(AnalysisResult, Thresholds)' has an NPath complexity of 65536
+</violation>
+<violation beginline="311" endline="312" begincolumn="20" endcolumn="41" rule="AccessorClassGeneration" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.quality" class="QualityGate$QualityGateBuilder" method="build" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#accessorclassgeneration" priority="3">
+Avoid instantiation through private constructors from outside of the constructors class.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/quality/ThresholdSet.java">
+<violation beginline="12" endline="354" begincolumn="8" endcolumn="1" rule="MissingSerialVersionUID" ruleset="Error Prone" package="io.jenkins.plugins.analysis.core.quality" class="ThresholdSet" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#missingserialversionuid" priority="3">
+Classes implementing Serializable should set a serialVersionUID
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/PublishIssuesStep.java">
+<violation beginline="1" endline="565" begincolumn="1" endcolumn="2" rule="ExcessiveImports" ruleset="Design" package="io.jenkins.plugins.analysis.core.steps" class="PublishIssuesStep" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#excessiveimports" priority="3">
+A high number of imports can indicate a high degree of coupling within an object.
+</violation>
+<violation beginline="1" endline="565" begincolumn="1" endcolumn="2" rule="ExcessivePublicCount" ruleset="Design" package="io.jenkins.plugins.analysis.core.steps" class="PublishIssuesStep" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#excessivepubliccount" priority="3">
+This class has a bunch of public methods and attributes
+</violation>
+<violation beginline="90" endline="100" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.steps" class="PublishIssuesStep" method="PublishIssuesStep" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+<violation beginline="401" endline="401" begincolumn="16" endcolumn="64" rule="OptimizableToArrayCall" ruleset="Performance" package="io.jenkins.plugins.analysis.core.steps" class="PublishIssuesStep" method="getFilters" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_performance.html#optimizabletoarraycall" priority="3">
+This call to Collection.toArray() may be optimizable
+</violation>
+<violation beginline="477" endline="478" begincolumn="13" endcolumn="83" rule="GuardLogStatement" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.steps" class="PublishIssuesStep$Execution" method="publishResult" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/ScanForIssuesStep.java">
+<violation beginline="1" endline="349" begincolumn="1" endcolumn="2" rule="ExcessiveImports" ruleset="Design" package="io.jenkins.plugins.analysis.core.steps" class="ScanForIssuesStep" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#excessiveimports" priority="3">
+A high number of imports can indicate a high degree of coupling within an object.
+</violation>
+<violation beginline="65" endline="67" begincolumn="12" endcolumn="5" rule="UnnecessaryConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.steps" class="ScanForIssuesStep" method="ScanForIssuesStep" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#unnecessaryconstructor" priority="3">
+Avoid unnecessary constructors - the compiler will generate these for you
+</violation>
+<violation beginline="65" endline="67" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.steps" class="ScanForIssuesStep" method="ScanForIssuesStep" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolver.java">
+<violation beginline="106" endline="106" begincolumn="39" endcolumn="53" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.util" class="AffectedFilesResolver" method="getTempName" variable="fileName" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'fileName' is not assigned and could be declared final
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/util/FilesScanner.java">
+<violation beginline="42" endline="46" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.util" class="FilesScanner" method="FilesScanner" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#callsuperinconstructor" priority="3">
+It is a good practice to call super() in a constructor
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/util/LoggerFactory.java">
+<violation beginline="50" endline="50" begincolumn="20" endcolumn="35" rule="AccessorClassGeneration" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.util" class="LoggerFactory" method="createLogger" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#accessorclassgeneration" priority="3">
+Avoid instantiation through private constructors from outside of the constructors class.
+</violation>
+<violation beginline="53" endline="53" begincolumn="20" endcolumn="63" rule="AccessorClassGeneration" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.util" class="LoggerFactory" method="createLogger" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#accessorclassgeneration" priority="3">
+Avoid instantiation through private constructors from outside of the constructors class.
+</violation>
+<violation beginline="67" endline="67" begincolumn="16" endcolumn="31" rule="AccessorClassGeneration" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.util" class="LoggerFactory" method="createNullLogger" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#accessorclassgeneration" priority="3">
+Avoid instantiation through private constructors from outside of the constructors class.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/views/JobAction.java">
+<violation beginline="1" endline="413" begincolumn="1" endcolumn="2" rule="ExcessiveImports" ruleset="Design" package="io.jenkins.plugins.analysis.core.views" class="JobAction" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#excessiveimports" priority="3">
+A high number of imports can indicate a high degree of coupling within an object.
+</violation>
+<violation beginline="180" endline="180" begincolumn="17" endcolumn="87" rule="GuardLogStatement" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.views" class="JobAction" method="getTrendGraph" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+There is log block not surrounded by if
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/main/java/io/jenkins/plugins/analysis/core/views/SourceDetail.java">
+<violation beginline="147" endline="147" begincolumn="26" endcolumn="38" rule="ConsecutiveLiteralAppends" ruleset="Performance" package="io.jenkins.plugins.analysis.core.views" class="SourceDetail" method="splitSourceFile" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_performance.html#consecutiveliteralappends" priority="3">
+StringBuffer (or StringBuilder).append is called 3 consecutive times with literals. Use a single append with a single combined String.
+</violation>
+<violation beginline="151" endline="151" begincolumn="26" endcolumn="34" rule="ConsecutiveLiteralAppends" ruleset="Performance" package="io.jenkins.plugins.analysis.core.views" class="SourceDetail" method="splitSourceFile" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_performance.html#consecutiveliteralappends" priority="3">
+StringBuffer (or StringBuilder).append is called 2 consecutive times with literals. Use a single append with a single combined String.
+</violation>
+<violation beginline="159" endline="159" begincolumn="26" endcolumn="49" rule="ConsecutiveLiteralAppends" ruleset="Performance" package="io.jenkins.plugins.analysis.core.views" class="SourceDetail" method="splitSourceFile" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_performance.html#consecutiveliteralappends" priority="3">
+StringBuffer (or StringBuilder).append is called 2 consecutive times with literals. Use a single append with a single combined String.
+</violation>
+<violation beginline="173" endline="173" begincolumn="26" endcolumn="42" rule="ConsecutiveLiteralAppends" ruleset="Performance" package="io.jenkins.plugins.analysis.core.views" class="SourceDetail" method="splitSourceFile" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_performance.html#consecutiveliteralappends" priority="3">
+StringBuffer (or StringBuilder).append is called 5 consecutive times with literals. Use a single append with a single combined String.
+</violation>
+<violation beginline="229" endline="229" begincolumn="23" endcolumn="26" rule="AppendCharacterWithChar" ruleset="Performance" package="io.jenkins.plugins.analysis.core.views" class="SourceDetail" method="copyLine" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_performance.html#appendcharacterwithchar" priority="3">
+Avoid appending characters as strings in StringBuffer.append.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/test/java/hudson/plugins/analysis/core/IsOverriddenTest.java">
+<violation beginline="37" endline="37" begincolumn="33" endcolumn="34" rule="UncommentedEmptyMethodBody" ruleset="Documentation" package="hudson.plugins.analysis.core" class="IsOverriddenTest$Intermediate" method="method" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_documentation.html#uncommentedemptymethodbody" priority="3">
+Document empty method body
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/test/java/hudson/plugins/analysis/core/ParserResultTest.java">
+<violation beginline="60" endline="60" begincolumn="37" endcolumn="45" rule="SignatureDeclareThrowsException" ruleset="Design" package="hudson.plugins.analysis.core" class="ParserResultTest" method="issue32150" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#signaturedeclarethrowsexception" priority="3">
+A method/constructor should not explicitly throw java.lang.Exception
+</violation>
+<violation beginline="188" endline="188" begincolumn="45" endcolumn="67" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="hudson.plugins.analysis.core" class="ParserResultTest" method="createParserResult" variable="workspaceFiles" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'workspaceFiles' is not assigned and could be declared final
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/test/java/io/jenkins/plugins/analysis/core/graphs/HealthSeriesBuilderTest.java">
+<violation beginline="25" endline="25" begincolumn="37" endcolumn="46" rule="UnusedPrivateMethod" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.graphs" class="HealthSeriesBuilderTest" method="testData" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'testData()'.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/test/java/io/jenkins/plugins/analysis/core/graphs/SeriesBuilderTest.java">
+<violation beginline="50" endline="50" begincolumn="37" endcolumn="55" rule="UnusedPrivateMethod" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.graphs" class="SeriesBuilderTest" method="createDataSetData" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'createDataSetData()'.
+</violation>
+<violation beginline="195" endline="195" begincolumn="41" endcolumn="57" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.graphs" class="SeriesBuilderTest" method="series" variable="values" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'values' is not assigned and could be declared final
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/test/java/io/jenkins/plugins/analysis/core/history/OtherJobReferenceFinderTest.java">
+<violation beginline="22" endline="22" begincolumn="33" endcolumn="38" rule="UnusedLocalVariable" ruleset="Best Practices" package="io.jenkins.plugins.analysis.core.history" class="OtherJobReferenceFinderTest" method="should" variable="finder" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_bestpractices.html#unusedlocalvariable" priority="3">
+Avoid unused local variables such as 'finder'.
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/test/java/io/jenkins/plugins/analysis/core/model/StaticAnalysisLabelProviderTest.java">
+<violation beginline="60" endline="60" begincolumn="61" endcolumn="69" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.model" class="StaticAnalysisLabelProviderTest" method="assertThatColumnsAreValid" variable="index" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'index' is not assigned and could be declared final
+</violation>
+</file>
+<file name="/Users/hafner/Development/git/analysis-suite-3.0/analysis-core-plugin/src/test/java/io/jenkins/plugins/analysis/core/quality/QualityGateTest.java">
+<violation beginline="330" endline="330" begincolumn="32" endcolumn="81" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="io.jenkins.plugins.analysis.core.quality" class="QualityGateTest" method="testThreshold" variable="builder" externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'builder' is not assigned and could be declared final
+</violation>
+</file>
+</pmd>

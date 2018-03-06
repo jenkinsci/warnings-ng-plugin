@@ -16,22 +16,24 @@ class PmdMessagesTest {
     @Test
     public void shouldHaveAllMessage() {
         PmdMessages messages = new PmdMessages();
-        assertThat(messages.initialize()).as("Wrong number of rulesets found").isEqualTo(25);
+        assertThat(messages.initialize()).as("Wrong number of rulesets found").isEqualTo(7);
 
-        assertThat(messages.getMessage("Empty Code", "EmptyCatchBlock")).isEqualTo("\n"
-                + "Empty Catch Block finds instances where an exception is caught, but nothing is done.  \n"
-                + "In most circumstances, this swallows an exception which should either be acted on \n"
-                + "or reported.\n"
-                + "      <pre>\n"
-                + "  \n"
-                + "public void doSomething() {\n"
-                + "  try {\n"
-                + "    FileInputStream fis = new FileInputStream(\"/tmp/bugger\");\n"
-                + "  } catch (IOException ioe) {\n"
-                + "      // not good\n"
-                + "  }\n"
-                + "}\n"
+        assertThat(messages.getMessage("Error Prone", "NullAssignment"))
+                .isEqualTo("\n"
+                + "Assigning a \"null\" to a variable (outside of its declaration) is usually bad form.  Sometimes, this type\n"
+                + "of assignment is an indication that the programmer doesn't completely understand what is going on in the code.\n"
+                + "\n"
+                + "NOTE: This sort of assignment may used in some cases to dereference objects and encourage garbage collection.\n"
+                + "        <pre>\n"
                 + " \n"
-                + "      </pre>");
+                + "public void bar() {\n"
+                + "  Object x = null; // this is OK\n"
+                + "  x = new Object();\n"
+                + "     // big, complex piece of code here\n"
+                + "  x = null; // this is not required\n"
+                + "     // big, complex piece of code here\n"
+                + "}\n"
+                + "\n"
+                + "        </pre>");
     }
 }
