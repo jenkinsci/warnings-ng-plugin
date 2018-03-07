@@ -32,8 +32,8 @@ node ('linux') {
                 sh command
             }
 
-            junit testResults: '**/target/surefire-reports/TEST-*.xml'
-            warnings consoleParsers: [[parserName: 'Java Compiler (javac)'], [parserName: 'JavaDoc']]
+            junit testResults: '**/target/*-reports/TEST-*.xml'
+            warnings consoleParsers: [[parserName: 'Java Compiler (javac)'], [parserName: 'JavaDoc'], [parserName: 'Maven']]
             checkstyle pattern: '**/target/checkstyle-result.xml'
             findbugs pattern: '**/target/*Xml.xml'
             pmd pattern: '**/target/pmd.xml'
