@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.views;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 
@@ -322,7 +321,7 @@ public class IssuesDetail implements ModelObject {
         try {
             return new DetailFactory().createTrendDetails(link, owner, result,
                     issues, newIssues, outstandingIssues, fixedIssues,
-                    Collections.emptyList(), sourceEncoding, this);
+                    sourceEncoding, this);
         }
         catch (NoSuchElementException ignored) {
             try {

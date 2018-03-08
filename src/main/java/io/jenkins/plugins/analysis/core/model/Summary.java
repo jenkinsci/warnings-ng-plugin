@@ -42,8 +42,13 @@ public class Summary {
         this.facade = facade;
     }
 
+    /**
+     * Creates the summary as HTML string.
+     *
+     * @return the summary
+     */
     public String create() {
-        return div(labelProvider.getTitle(analysisRun), createDescription())
+        return div(labelProvider.getTitle(analysisRun, analysisRun.getErrorMessages().isEmpty()), createDescription())
                 .withId(labelProvider.getId() + "-summary")
                 .renderFormatted();
     }

@@ -230,8 +230,11 @@ public class StaticAnalysisLabelProvider {
         return getId() + "Result";
     }
 
-    public ContainerTag getTitle(final AnalysisResult analysisRun) {
-        return div(join(getName() + ": ", getWarningsCount(analysisRun)))
+    public ContainerTag getTitle(final AnalysisResult analysisRun, final boolean hasErrors) {
+        String icon = hasErrors ? "fa-exclamation-triangle" : "fa-info-circle";
+        return div(join(getName() + ": ",
+                getWarningsCount(analysisRun),
+                a().withHref(getResultUrl() + "/info").with(i().withClasses("fa", icon))))
                 .withId(id + "-title");
     }
 

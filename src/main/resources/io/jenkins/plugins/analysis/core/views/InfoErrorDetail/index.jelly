@@ -1,0 +1,68 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:issues="/issues">
+
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+  <l:layout title="${it.displayName}" norefresh="true">
+
+    <st:include it="${it.owner}" page="sidepanel.jelly"/>
+
+    <l:main-panel>
+
+      <issues:libs/>
+
+      <div class="fluid-container">
+        <h3>${it.displayName}</h3>
+
+        <j:if test="${size(it.errorMessages) > 0}">
+          <div class="row py-3">
+            <div class="col">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">${%Error Messages}
+                    <i class="fa fa-exclamation-triangle icon-right fa-2x" aria-hidden="true"/>
+                  </h5>
+                  <pre>
+                    <samp>
+                      <j:forEach var="message" items="${it.errorMessages}">
+                        <div>
+                          ${message}
+                        </div>
+                      </j:forEach>
+                    </samp>
+                  </pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </j:if>
+
+        <div class="row py-3">
+          <div class="col">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">${%Information Messages}
+                  <i class="fa fa-info-circle icon-right fa-2x" aria-hidden="true"/>
+                </h5>
+                <pre>
+                  <samp>
+                    <j:forEach var="message" items="${it.infoMessages}">
+                      <div>
+                        ${message}
+                      </div>
+                    </j:forEach>
+                  </samp>
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <ol>
+      </ol>
+
+    </l:main-panel>
+  </l:layout>
+</j:jelly>
