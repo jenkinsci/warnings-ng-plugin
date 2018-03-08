@@ -17,19 +17,11 @@
 
             <ul class="nav nav-tabs flex-wrap" role="tablist" id="tab-details">
 
-              <issues:property-tab property="moduleName" name="${l.modules}" elements="${i.modules}"/>
-              <issues:property-tab property="packageName" name="${l.packages}" elements="${i.packages}"/>
-              <issues:property-tab property="fileName" name="${l.files}" elements="${i.files}"/>
-              <issues:property-tab property="category" name="${l.categories}" elements="${i.categories}"/>
-              <issues:property-tab property="type" name="${l.types}" elements="${i.types}"/>
-
               <j:if test="${i.isNotEmpty()}">
                 <li class="nav-item">
                   <a class="nav-link" role="tab" data-toggle="tab" href="#warningsContent">${l.warnings}</a>
                 </li>
-              </j:if>
 
-              <j:if test="${i.isNotEmpty()}">
                 <li class="nav-item">
                   <a class="nav-link" role="tab" data-toggle="tab" href="#warningsDetails">${l.details}</a>
                 </li>
@@ -39,16 +31,13 @@
 
             <div class="tab-content">
 
-              <issues:property property="moduleName" name="${l.moduleName}"/>
-              <issues:property property="packageName" name="${l.packageName}"/>
-              <issues:property property="fileName" name="${l.fileName}"/>
-              <issues:property property="category" name="${l.category}"/>
-              <issues:property property="type" name="${l.type}"/>
-
-              <issues:table issues="${i}" labelProvider="${l}"/>
-              <issues:list issues="${i}" labelProvider="${l}"/>
+              <j:if test="${i.isNotEmpty()}">
+                <issues:table issues="${i}" labelProvider="${l}"/>
+                <issues:list issues="${i}" labelProvider="${l}"/>
+              </j:if>
 
             </div>
+
           </div>
         </div>
       </div>
