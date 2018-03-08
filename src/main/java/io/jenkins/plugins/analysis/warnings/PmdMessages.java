@@ -33,7 +33,7 @@ public class PmdMessages {
     public int initialize() {
         try {
             Iterator<RuleSet> ruleSets = new RuleSetFactory().getRegisteredRuleSets();
-            for (; ruleSets.hasNext(); ) {
+            while (ruleSets.hasNext()) {
                 RuleSet ruleSet = ruleSets.next();
                 rules.put(ruleSet.getName(), ruleSet);
             }
