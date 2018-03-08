@@ -32,8 +32,8 @@
             <div class="tab-content">
 
               <j:if test="${i.isNotEmpty()}">
-                <issues:table issues="${i}" labelProvider="${l}"/>
-                <issues:list issues="${i}" labelProvider="${l}"/>
+                <issues:table issues="${i}" labelProvider="${it.labelProvider}"/>
+                <issues:list issues="${i}" labelProvider="${it.labelProvider}"/>
               </j:if>
 
             </div>
