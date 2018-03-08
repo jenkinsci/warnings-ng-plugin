@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:issues="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
   <l:layout title="${it.displayName}" norefresh="true">
@@ -8,7 +8,14 @@
 
     <l:main-panel>
 
-      <issues:libs/>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.3/css/tether.min.css"/>
+      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"/>
+
+      <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/custom-styles/custom-style.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/font-awesome470/font-awesome.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/material-blue-grey.css"/>
 
       <div class="fluid-container">
         <h3>${it.displayName}</h3>
@@ -58,10 +65,6 @@
         </div>
 
       </div>
-
-
-      <ol>
-      </ol>
 
     </l:main-panel>
   </l:layout>
