@@ -13,8 +13,9 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.util.Base64;
 import org.junit.Test;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
+
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
 
 import hudson.matrix.AxisList;
 import hudson.matrix.MatrixBuild;
@@ -44,7 +45,7 @@ public class MatrixJobITest extends IntegrationTest {
      * @throws Exception in case of an error
      */
     @Test
-    public void shouldCreateEmptyResult() throws Exception {
+    public void shouldCreateIndividualAxisResults() throws Exception {
         MatrixProject project = j.createProject(MatrixProject.class);
         enableWarnings(project);
 
