@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.model;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +37,7 @@ class SummaryTest {
         when(analysisRun.getSizePerOrigin()).thenReturn(Maps.fixedSize.of("checkstyle", 15, "pmd", 20));
         when(analysisRun.getNewSize()).thenReturn(2);
         when(analysisRun.getFixedSize()).thenReturn(2);
+        when(analysisRun.getErrorMessages()).thenReturn(Lists.immutable.empty());
         when(analysisRun.getNoIssuesSinceBuild()).thenReturn(1);
 
         Thresholds thresholds = new Thresholds();
