@@ -48,7 +48,7 @@ public class Summary {
      * @return the summary
      */
     public String create() {
-        return div(labelProvider.getTitle(analysisRun, analysisRun.getErrorMessages().isEmpty()), createDescription())
+        return div(labelProvider.getTitle(analysisRun, !analysisRun.getErrorMessages().isEmpty()), createDescription())
                 .withId(labelProvider.getId() + "-summary")
                 .renderFormatted();
     }
