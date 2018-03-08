@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.core.views;
 
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
-import java.util.Collection;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -45,8 +44,6 @@ public class DetailFactory {
      *         the fixed issues to get the details for
      * @param outstandingIssues
      *         the outstanding issues to get the details for
-     * @param errors
-     *         the errors during scanning the static analysis results
      * @param sourceEncoding
      *         the encoding to use when displaying source files
      * @param parent
@@ -55,9 +52,9 @@ public class DetailFactory {
      * @return the dynamic result of this module detail view
      */
     public Object createTrendDetails(final String link, final Run<?, ?> owner, final AnalysisResult result,
-            final Issues<?> allIssues, final Issues<?> newIssues, final Issues<?> outstandingIssues,
-            final Issues<?> fixedIssues,
-            final Collection<String> errors, final Charset sourceEncoding, final IssuesDetail parent) {
+            final Issues<?> allIssues, final Issues<?> newIssues,
+            final Issues<?> outstandingIssues, final Issues<?> fixedIssues,
+            final Charset sourceEncoding, final IssuesDetail parent) {
         StaticAnalysisLabelProvider labelProvider = parent.getLabelProvider();
         String plainLink = strip(link);
         String url = parent.getUrl() + "/" + plainLink;
@@ -73,10 +70,9 @@ public class DetailFactory {
             return new IssuesDetail(owner, result, outstandingIssues, EMPTY, outstandingIssues,
                     EMPTY, Messages.Outstanding_Warnings_Header(), url, labelProvider, sourceEncoding);
         }
-        // FIXME: Check what to show in the errors view
-//        if ("error".equals(link)) {
-//            return new ErrorDetail(owner, result.getErrorMessages(), result.getInfoMessages(), parent);
-//        }
+        if ("info".equals(link)) {
+            return new InfoErrorDetail(owner, result.getErrorMessages(), result.getInfoMessages(), labelProvider.getName());
+        }
         if (link.startsWith("source.")) {
             owner.checkPermission(Item.WORKSPACE);
 
@@ -107,10 +103,15 @@ public class DetailFactory {
         String property = StringUtils.substringBefore(link, ".");
         Predicate<Issue> filter = createPropertyFilter(plainLink, property);
         Issues<?> selectedIssues = allIssues.filter(filter);
-        return new IssuesDetail(owner, result,
-                selectedIssues, newIssues.filter(filter), outstandingIssues.filter(filter),
-                fixedIssues.filter(filter), getDisplayNameOfDetails(property, selectedIssues), url, labelProvider,
-                sourceEncoding);
+        if (selectedIssues.isEmpty()) {
+            return parent; // fallback
+        }
+        else {
+            return new IssuesDetail(owner, result,
+                    selectedIssues, newIssues.filter(filter), outstandingIssues.filter(filter),
+                    fixedIssues.filter(filter), getDisplayNameOfDetails(property, selectedIssues), url, labelProvider,
+                    sourceEncoding);
+        }
     }
 
     private Predicate<Issue> createPropertyFilter(final String plainLink, final String property) {
