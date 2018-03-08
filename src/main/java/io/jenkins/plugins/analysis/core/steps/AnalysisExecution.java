@@ -11,6 +11,7 @@ import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.util.LoggerFactory;
 
+import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.model.Computer;
 import hudson.model.Run;
@@ -65,6 +66,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
             if (listener == null) {
                 return loggerFactory.createNullLogger();
             }
+
             return loggerFactory.createLogger(listener.getLogger(), name);
         }
         catch (InterruptedException | IOException ignored) {
@@ -89,6 +91,19 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
         }
 
         return Optional.ofNullable(computer.getChannel());
+    }
+
+    /**
+     * Returns an {@link EnvVars} instance that contains the environment for this step.
+     *
+     * @return the environment
+     * @throws IOException
+     *         if the run could be be restored
+     * @throws InterruptedException
+     *         if the user canceled the run
+     */
+    protected Optional<EnvVars> getEnvironment() throws IOException, InterruptedException {
+        return Optional.ofNullable(getContext().get(EnvVars.class));
     }
 
     /**
