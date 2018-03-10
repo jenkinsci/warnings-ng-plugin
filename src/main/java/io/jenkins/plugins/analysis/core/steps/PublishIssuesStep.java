@@ -545,6 +545,7 @@ public class PublishIssuesStep extends Step {
             if (referenceJobName != null) {
                 Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
                 if (referenceJob.isPresent()) {
+                    // FIXME: what to do if last build is not available?
                     return new OtherJobReferenceFinder(referenceJob.get().getLastBuild(), selector,
                             ignoreAnalysisResult, overallResultMustBeSuccess);
                 }
