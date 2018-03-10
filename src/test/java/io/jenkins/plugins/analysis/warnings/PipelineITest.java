@@ -8,13 +8,14 @@ import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
+
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
 
 import hudson.FilePath;
 import hudson.model.Result;
@@ -93,8 +94,20 @@ public abstract class PipelineITest extends IntegrationTest {
      * @return the pipeline job
      */
     protected WorkflowJob createJob() {
+        return createJob("Integration-Test");
+    }
+
+    /**
+     * Creates an empty pipeline job with the specified name.
+     *
+     * @param name
+     *         the name of the job
+     *
+     * @return the pipeline job
+     */
+    protected WorkflowJob createJob(final String name) {
         try {
-            return j.jenkins.createProject(WorkflowJob.class, "Integration-Test");
+            return j.jenkins.createProject(WorkflowJob.class, name);
         }
         catch (IOException e) {
             throw new AssertionError(e);

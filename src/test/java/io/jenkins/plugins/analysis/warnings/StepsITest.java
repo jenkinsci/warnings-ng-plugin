@@ -14,9 +14,6 @@ import org.junit.Test;
 import org.jvnet.hudson.test.TestExtension;
 import org.kohsuke.stapler.HttpResponse;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
@@ -25,8 +22,13 @@ import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
 
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
+
 import hudson.model.UnprotectedRootAction;
 import hudson.util.HttpResponses;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
 
 /**
  * Integration tests of the warnings plug-in in pipelines.
@@ -71,9 +73,8 @@ public class StepsITest extends PipelineITest {
     }
 
     /**
-     * Runs the all Java parsers on three output files: the build should report issues of all tools.
-     * The results should be aggregated into a new action with the specified ID. Since no name is given
-     * the default name is used.
+     * Runs the all Java parsers on three output files: the build should report issues of all tools. The results should
+     * be aggregated into a new action with the specified ID. Since no name is given the default name is used.
      */
     @Test
     public void shouldProvideADefaultNameIfNoOneIsGiven() {
@@ -83,8 +84,8 @@ public class StepsITest extends PipelineITest {
     }
 
     /**
-     * Runs the all Java parsers on three output files: the build should report issues of all tools.
-     * The results should be aggregated into a new action with the specified ID and the specified name.
+     * Runs the all Java parsers on three output files: the build should report issues of all tools. The results should
+     * be aggregated into a new action with the specified ID and the specified name.
      */
     @Test
     public void shouldUseSpecifiedName() {
@@ -120,8 +121,8 @@ public class StepsITest extends PipelineITest {
     }
 
     /**
-     * Runs the Java parser on an pep8 log file: the build should report no issues.
-     * A result should be available with the java ID and name.
+     * Runs the Java parser on an pep8 log file: the build should report no issues. A result should be available with
+     * the java ID and name.
      */
     @Test
     public void shouldHaveActionWithIdAndNameWithEmptyResults() {
@@ -185,6 +186,36 @@ public class StepsITest extends PipelineITest {
         assertThat(result.getIssues()).hasSize(1);
     }
 
+    // TODO: check all variants of a reference (non-existing name, no run in job, overallResultMustBeSuccess, ignoreAnalysisResult, etc.)
+    /**
+     * Creates a reference job and starts the analysis for this job. Then another job is created that uses the first
+     * one as reference. Verifies that the association is correctly stored.
+     */
+    @Test
+    public void shouldUseOtherJobAsReference() {
+        WorkflowJob reference = createJob("reference");
+        copyFilesToWorkspace(reference, "java-start.txt");
+        reference.setDefinition(asStage(createScanForIssuesStep(Java.class), PUBLISH_ISSUES_STEP));
+
+        AnalysisResult referenceResult = scheduleBuild(reference, Java.class);
+
+        assertThat(referenceResult.getTotalSize()).isEqualTo(2);
+        assertThat(referenceResult.getIssues()).hasSize(2);
+        assertThat(referenceResult.getReferenceBuild()).isEmpty();
+
+        WorkflowJob job = createJobWithWorkspaceFiles("java-start.txt");
+        job.setDefinition(asStage(createScanForIssuesStep(Java.class),
+                "publishIssues issues:[issues], referenceJobName:'reference'"));
+
+        AnalysisResult result = scheduleBuild(reference, Java.class);
+
+        assertThat(result.getTotalSize()).isEqualTo(2);
+        assertThat(result.getIssues()).hasSize(2);
+        assertThat(result.getReferenceBuild()).hasValue(referenceResult.getOwner());
+
+        // TODO: add verification for io.jenkins.plugins.analysis.core.model.IssueDifference
+    }
+
     /**
      * Verifies that parsers based on Digester are not vulnerable to an XXE attack. Previous versions allowed any user
      * with an ability to configure a job to read any file from the Jenkins Master (even on hardened systems where
@@ -215,12 +246,14 @@ public class StepsITest extends PipelineITest {
                 FindBugs.class, JcReport.class);
         for (Class<? extends StaticAnalysisTool> tool : classes) {
             job.setDefinition(asStage(
-                    String.format("def issues = scanForIssues tool: [$class: '%s'], pattern:'xxe.xml'", tool.getSimpleName()),
+                    String.format("def issues = scanForIssues tool: [$class: '%s'], pattern:'xxe.xml'",
+                            tool.getSimpleName()),
                     "publishIssues issues:[issues]"));
 
             scheduleBuild(job, tool);
 
-            YouCannotTriggerMe urlHandler = j.jenkins.getExtensionList(UnprotectedRootAction.class).get(YouCannotTriggerMe.class);
+            YouCannotTriggerMe urlHandler = j.jenkins.getExtensionList(UnprotectedRootAction.class)
+                    .get(YouCannotTriggerMe.class);
             assertThat(urlHandler).isNotNull();
 
             assertThat(urlHandler.triggerCount).as("XXE detected for parser %s: URL has been triggered!", tool)
