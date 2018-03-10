@@ -55,7 +55,7 @@ public class Summary {
 
     private ContainerTag createDescription() {
         int currentBuild = analysisRun.getBuild().getNumber();
-        return ul()
+        ContainerTag ul = ul()
                 .condWith(analysisRun.getSizePerOrigin().size() > 1,
                         li(getToolNames()))
                 .condWith(analysisRun.getTotalSize() == 0
@@ -65,16 +65,26 @@ public class Summary {
                         li(labelProvider.getNewIssuesLabel(analysisRun.getNewSize())))
                 .condWith(analysisRun.getFixedSize() > 0,
                         li(labelProvider.getFixedIssuesLabel(analysisRun.getFixedSize())))
-                .condWith(analysisRun.getQualityGate().isEnabled(),
-                        li(labelProvider.getQualityGateResult(analysisRun.getOverallResult(),
-                                analysisRun.getReferenceBuild())));
+                .condWith(analysisRun.getQualityGate().isEnabled() && analysisRun.getReferenceBuild().isPresent(),
+                        li(labelProvider.getQualityGateResult(analysisRun.getOverallResult())));
+        return analysisRun.getReferenceBuild()
+                .map(reference -> ul.with(li(labelProvider.getReferenceBuild(reference))))
+                .orElse(ul);
+    }
+
+    void bla(String text) {
+
+    }
+    void bla(String text, Object... args) {
+
     }
 
     private String getToolNames() {
+        bla("allo");
         String tools = analysisRun.getSizePerOrigin()
                 .keySet()
                 .stream()
-                .map((id) -> facade.get(id).getName())
+                .map(id -> facade.get(id).getName())
                 .collect(Collectors.joining(", "));
         return Messages.Tool_ParticipatingTools(tools);
     }

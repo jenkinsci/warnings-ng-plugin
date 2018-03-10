@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -15,6 +18,7 @@ import java.util.regex.Pattern;
 import javax.annotation.CheckForNull;
 
 import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
@@ -22,6 +26,7 @@ import org.kohsuke.stapler.export.ExportedBean;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
+import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.quality.RunAdapter;
 
 import hudson.XmlFile;
@@ -74,26 +79,19 @@ public class AnalysisResult implements Serializable {
 
     private final QualityGate qualityGate;
 
-    /** The total number of issues in this build. */
     private final int size;
-    /** The number of new issues in this build. */
     private final int newSize;
-    /** The number of fixed issues in this build. */
     private final int fixedSize;
 
-    /** The number of low priority warnings in this build. */
     private final int lowPrioritySize;
-    /** The number of normal priority warnings in this build. */
     private final int normalPrioritySize;
-    /** The number of high priority warnings in this build. */
     private final int highPrioritySize;
 
-    /** The number of low priority warnings in this build. */
     private final int newLowPrioritySize;
-    /** The number of normal priority warnings in this build. */
     private final int newNormalPrioritySize;
-    /** The number of high priority warnings in this build. */
     private final int newHighPrioritySize;
+
+    private final Map<String, Integer> sizePerOrigin;
 
     private final ImmutableList<String> errors;
     private final ImmutableList<String> infos;
@@ -102,15 +100,16 @@ public class AnalysisResult implements Serializable {
     private int noIssuesSinceBuild;
     /** Determines since which build the result is successful. */
     private int successfulSinceBuild;
-    /** Reference build number. If not defined then 0 or -1 could be used. */
-    private final int referenceBuild;
+    /** Reference static analysis run. */
+    @CheckForNull
+    private final Run<?, ?> referenceBuild;
 
     /**
      * The build result of the associated plug-in. This result is an additional state that denotes if this plug-in has
      * changed the overall build result.
      */
     private Result overallResult = Result.SUCCESS;
-    private final Map<String, Integer> sizePerOrigin;
+
 
     /**
      * Creates a new instance of {@link AnalysisResult}.
@@ -206,16 +205,13 @@ public class AnalysisResult implements Serializable {
         this.owner = owner;
         this.qualityGate = qualityGate;
 
-        errors = issues.getErrorMessages();
-        infos = issues.getInfoMessages();
-
         id = issues.getId();
         size = issues.getSize();
         highPrioritySize = issues.getHighPrioritySize();
         normalPrioritySize = issues.getNormalPrioritySize();
         lowPrioritySize = issues.getLowPrioritySize();
 
-        referenceBuild = referenceProvider.getNumber();
+        referenceBuild = referenceProvider.getAnalysisRun().orElse(null);
 
         Issues<?> referenceResult = referenceProvider.getIssues();
         IssueDifference difference = new IssueDifference(issues, this.owner.getNumber(), referenceResult);
@@ -234,8 +230,27 @@ public class AnalysisResult implements Serializable {
         fixedIssuesReference = new WeakReference<>(fixedIssues);
         fixedSize = fixedIssues.size();
 
-        overallResult = qualityGate.evaluate(this).getOverallResult();
-        owner.setResult(overallResult);
+        List<String> messages = new ArrayList<>(issues.getInfoMessages().castToList());
+
+        if (qualityGate.isEnabled()) {
+            QualityGateResult result = qualityGate.evaluate(this);
+            overallResult = result.getOverallResult();
+            if (overallResult.isBetterOrEqualTo(Result.SUCCESS)) {
+                messages.add("All quality gates have been passed");
+            }
+            else {
+                messages.add(String.format("Some quality gates have been missed: overall result is %s", overallResult));
+                result.getEvaluations(this, qualityGate).forEach(message -> messages.add(message));
+            }
+            owner.setResult(overallResult);
+        }
+        else {
+            messages.add("No quality gates have been set - skipping");
+            overallResult = Result.SUCCESS;
+        }
+
+        infos = Lists.immutable.withAll(messages);
+        errors = issues.getErrorMessages();
 
         sizePerOrigin = issues.getPropertyCount(issue -> issue.getOrigin());
 
@@ -497,9 +512,13 @@ public class AnalysisResult implements Serializable {
         return getId() + " : " + getTotalSize() + " issues";
     }
 
-    // TODO: this should be a run!
-    public int getReferenceBuild() {
-        return referenceBuild;
+    /**
+     * Returns the reference static analysis run that has been used to compute the new issues.
+     *
+     * @return the reference build
+     */
+    public Optional<Run<?, ?>> getReferenceBuild() {
+        return Optional.ofNullable(referenceBuild);
     }
 
     /**

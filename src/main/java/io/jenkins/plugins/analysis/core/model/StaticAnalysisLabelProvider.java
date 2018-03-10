@@ -5,18 +5,20 @@ import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
-import org.kohsuke.stapler.Stapler;
 
+import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.views.LocalizedPriority;
 
 import static j2html.TagCreator.*;
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
+import j2html.tags.UnescapedText;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import hudson.model.BallColor;
 import hudson.model.Result;
+import hudson.model.Run;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
 import edu.hm.hafner.analysis.IntegerParser;
@@ -45,7 +47,7 @@ public class StaticAnalysisLabelProvider {
     private final String id;
     @CheckForNull
     private final String name;
-    private final IconPathResolver resolver;
+    private final JenkinsFacade jenkins;
 
     /**
      * Creates a new {@link StaticAnalysisLabelProvider} with the specified ID.
@@ -66,22 +68,14 @@ public class StaticAnalysisLabelProvider {
      *         the name of the static analysis tool
      */
     public StaticAnalysisLabelProvider(final String id, @CheckForNull final String name) {
-        this(id, name, new IconPathResolver());
+        this(id, name, new JenkinsFacade());
     }
 
-    /**
-     * Creates a new {@link StaticAnalysisLabelProvider} with the specified ID.
-     *
-     * @param id
-     *         the ID
-     * @param name
-     *         the name of the static analysis tool
-     */
     @VisibleForTesting
-    StaticAnalysisLabelProvider(final String id, @CheckForNull final String name, final IconPathResolver resolver) {
+    StaticAnalysisLabelProvider(final String id, @CheckForNull final String name, final JenkinsFacade jenkins) {
         this.id = id;
         this.name = name;
-        this.resolver = resolver;
+        this.jenkins = jenkins;
     }
 
     /**
@@ -268,21 +262,29 @@ public class StaticAnalysisLabelProvider {
         return a(linkText).withHref(getResultUrl());
     }
 
-    public DomContent getQualityGateResult(final Result overallResult, final int referenceBuild) {
-        return join(Messages.Tool_QualityGate(),
-                getResultIcon(overallResult.color), "-",
-                Messages.Tool_ReferenceBuild(linkBuild(referenceBuild, EMPTY_URL, getResultUrl()).render()));
+    public DomContent getQualityGateResult(final Result overallResult) {
+        return join(Messages.Tool_QualityGate(), getResultIcon(overallResult.color));
     }
 
-    private ContainerTag getResultIcon(final BallColor color) {
-        return a(color.getDescription())
-                .withHref(resolver.getImagePath(color))
+    public DomContent getReferenceBuild(final Run<?, ?> referenceBuild) {
+        return join(Messages.Tool_ReferenceBuild(), createReferenceBuildLink(referenceBuild));
+    }
+
+    private ContainerTag createReferenceBuildLink(final Run<?, ?> referenceBuild) {
+        String absoluteUrl = jenkins.getAbsoluteUrl(referenceBuild.getUrl(), getResultUrl());
+        return a(referenceBuild.getFullDisplayName()).withHref(absoluteUrl);
+    }
+
+    private UnescapedText getResultIcon(final BallColor color) {
+        return join(img()
+                .withSrc(jenkins.getImagePath(color))
                 .withAlt(color.getDescription())
-                .withTitle(color.getDescription());
+                .withTitle(color.getDescription()),
+                color.getDescription());
     }
 
     public ToolTipProvider getToolTipProvider() {
-        return (numberOfItems) -> getTooltip(numberOfItems);
+        return numberOfItems -> getTooltip(numberOfItems);
     }
 
     // FIXME: still required?
@@ -379,15 +381,6 @@ public class StaticAnalysisLabelProvider {
 
         private String computeAge(final int buildNumber) {
             return String.valueOf(currentBuild - buildNumber + 1);
-        }
-    }
-
-    /**
-     * Resolves the path to the image of a {@link BallColor} using Staplers {@link Stapler#getCurrentRequest()}.
-     */
-    static class IconPathResolver {
-        String getImagePath(final BallColor color) {
-            return color.getImageOf("16");
         }
     }
 }

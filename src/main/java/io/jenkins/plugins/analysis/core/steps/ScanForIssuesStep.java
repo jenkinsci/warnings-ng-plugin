@@ -8,11 +8,9 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.collections.api.list.ImmutableList;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
@@ -145,8 +143,6 @@ public class ScanForIssuesStep extends Step {
         private final String sourceCodeEncoding;
         private final StaticAnalysisTool tool;
         private final String pattern;
-        private int infoPosition = 0;
-        private int errorPosition = 0;
 
         protected Execution(@NonNull final StepContext context, final ScanForIssuesStep step) {
             super(context);
@@ -155,6 +151,11 @@ public class ScanForIssuesStep extends Step {
             sourceCodeEncoding = step.getSourceCodeEncoding();
             tool = step.getTool();
             pattern = step.getPattern();
+        }
+
+        @Override
+        protected String getId() {
+            return tool.getId();
         }
 
         @Override
@@ -194,7 +195,8 @@ public class ScanForIssuesStep extends Step {
                         tool.getName());
                 logger.log("Sleeping for 5 seconds due to JENKINS-32191...");
                 Thread.sleep(5000);
-                issues = scanConsoleLog(workspace);
+                getLogger().log("Parsing console log (workspace: '%s')", workspace);
+                issues = scanConsoleLog();
             }
             issues.setId(tool.getId());
             issues.forEach(issue -> issue.setOrigin(tool.getId()));
@@ -203,11 +205,29 @@ public class ScanForIssuesStep extends Step {
             return issues;
         }
 
+        private Issues<?> scanConsoleLog() throws IOException, InterruptedException {
+            Issues<?> issues = tool.createParser().parse(getRun().getLogFile(),
+                    getLogFileCharset(), line -> ConsoleNote.removeNotes(line));
+
+            log(issues);
+
+            return issues;
+        }
+
+        private Issues<?> scanFiles(final FilePath workspace) throws IOException, InterruptedException {
+            Issues<?> issues = workspace.act(
+                    new FilesScanner(expandEnvironmentVariables(), tool.createParser(), logFileEncoding));
+
+            log(issues);
+
+            return issues;
+        }
+
         private void resolveModuleNames(final Issues<?> issues)
                 throws IOException, InterruptedException {
-            Instant start = Instant.now();
-
             Logger logger = getLogger();
+
+            Instant start = Instant.now();
             logger.log("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
             ModuleResolver resolver = new ModuleResolver();
             File workspace = new File(getWorkspace().getRemote());
@@ -218,9 +238,9 @@ public class ScanForIssuesStep extends Step {
         }
 
         private void resolvePackageNames(final Issues<?> issues) {
-            Instant start = Instant.now();
-
             Logger logger = getLogger();
+
+            Instant start = Instant.now();
             logger.log("Using encoding '%s' to resolve package names (or namespaces)", getSourceCodeCharset());
             PackageNameResolver resolver = new PackageNameResolver();
             resolver.run(issues, new IssueBuilder(), getSourceCodeCharset());
@@ -230,9 +250,9 @@ public class ScanForIssuesStep extends Step {
         }
 
         private void resolveAbsolutePaths(final Issues<?> issues, final FilePath workspace) {
-            Instant start = Instant.now();
-
             Logger logger = getLogger();
+
+            Instant start = Instant.now();
             logger.log("Resolving absolute file names for all issues");
             AbsolutePathGenerator generator = new AbsolutePathGenerator();
             generator.run(issues, workspace);
@@ -242,9 +262,9 @@ public class ScanForIssuesStep extends Step {
         }
 
         private void createFingerprints(final Issues<?> issues) {
-            Instant start = Instant.now();
-
             Logger logger = getLogger();
+
+            Instant start = Instant.now();
             logger.log("Using encoding '%s' to read source files", getSourceCodeCharset());
             FingerprintGenerator generator = new FingerprintGenerator();
             generator.run(new FullTextFingerprint(), issues, getSourceCodeCharset());
@@ -253,60 +273,10 @@ public class ScanForIssuesStep extends Step {
             logger.log("Extracting fingerprints took %s", computeElapsedTime(start));
         }
 
-        private Issues<?> scanConsoleLog(final FilePath workspace) throws IOException, InterruptedException {
-            getLogger().log("Parsing console log (workspace: '%s')", workspace);
-
-            Issues<?> issues = tool.createParser().parse(getRun().getLogFile(),
-                    getLogFileCharset(), line -> ConsoleNote.removeNotes(line));
-
-            log(issues);
-
-            return issues;
-        }
-
-        private Issues<?> scanFiles(final FilePath workspace)
-                throws IOException, InterruptedException {
-            String expanded;
-            Optional<EnvVars> environment = getEnvironment();
-            if (environment.isPresent()) {
-                EnvironmentResolver environmentResolver = new EnvironmentResolver();
-                expanded = environmentResolver.expandEnvironmentVariables(environment.get(), pattern);
-            }
-            else {
-                expanded = pattern;
-            }
-            Issues<?> issues = workspace.act(new FilesScanner(expanded, tool.createParser(), logFileEncoding));
-
-            log(issues);
-
-            return issues;
-        }
-
-        private void log(final Issues<?> issues) {
-            logErrorMessages(issues);
-            logInfoMessages(issues);
-        }
-
-        private void logErrorMessages(final Issues<?> issues) {
-            Logger errorLogger = createLogger(String.format("[%s] [ERROR]", tool.getName()));
-            ImmutableList<String> errorMessages = issues.getErrorMessages();
-            if (errorPosition < errorMessages.size()) {
-                errorLogger.logEachLine(errorMessages.subList(errorPosition, errorMessages.size()).castToList());
-                errorPosition = errorMessages.size();
-            }
-        }
-
-        private void logInfoMessages(final Issues<?> issues) {
-            Logger logger = getLogger();
-            ImmutableList<String> infoMessages = issues.getInfoMessages();
-            if (infoPosition < infoMessages.size()) {
-                logger.logEachLine(infoMessages.subList(infoPosition, infoMessages.size()).castToList());
-                infoPosition = infoMessages.size();
-            }
-        }
-
-        private Logger getLogger() {
-            return createLogger(tool.getName());
+        private String expandEnvironmentVariables() throws IOException, InterruptedException {
+            return getEnvironment()
+                    .map(envVars -> new EnvironmentResolver().expandEnvironmentVariables(envVars, pattern))
+                    .orElse(pattern);
         }
     }
 

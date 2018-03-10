@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 
+import org.eclipse.collections.api.list.ImmutableList;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 
@@ -18,6 +19,8 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 
+import edu.hm.hafner.analysis.Issues;
+
 /**
  * Base class for static analysis step executions.
  *
@@ -27,9 +30,19 @@ import hudson.remoting.VirtualChannel;
  * @author Ullrich Hafner
  */
 abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<T> {
+    private int infoPosition = 0;
+    private int errorPosition = 0;
+
     AnalysisExecution(final StepContext context) {
         super(context);
     }
+
+    /**
+     * Returns the ID of the static analysis tool.
+     *
+     * @return the ID
+     */
+    protected abstract String getId();
 
     /**
      * Returns the corresponding pipeline run.
@@ -148,5 +161,37 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
         }
 
         return workspace;
+    }
+
+    protected void log(final Issues<?> issues) {
+        logErrorMessages(issues);
+        logInfoMessages(issues);
+    }
+
+    private void logErrorMessages(final Issues<?> issues) {
+        Logger errorLogger = createLogger(String.format("[%s] [ERROR]", getId()));
+        ImmutableList<String> errorMessages = issues.getErrorMessages();
+        if (errorPosition < errorMessages.size()) {
+            errorLogger.logEachLine(errorMessages.subList(errorPosition, errorMessages.size()).castToList());
+            errorPosition = errorMessages.size();
+        }
+    }
+
+    private void logInfoMessages(final Issues<?> issues) {
+        Logger logger = getLogger();
+        ImmutableList<String> infoMessages = issues.getInfoMessages();
+        if (infoPosition < infoMessages.size()) {
+            logger.logEachLine(infoMessages.subList(infoPosition, infoMessages.size()).castToList());
+            infoPosition = infoMessages.size();
+        }
+    }
+
+    /**
+     * Returns the logger for this step execution.
+     *
+     * @return the logger
+     */
+    protected Logger getLogger() {
+        return createLogger(getId());
     }
 }

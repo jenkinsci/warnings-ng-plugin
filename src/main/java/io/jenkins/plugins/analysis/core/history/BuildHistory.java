@@ -1,9 +1,9 @@
 package io.jenkins.plugins.analysis.core.history;
 
-import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import javax.annotation.Nonnull;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
@@ -37,8 +37,12 @@ public class BuildHistory implements ResultHistory {
     }
 
     @Override
-    public Optional<AnalysisResult> getBaseline() {
-        return selector.get(baseline).map(ResultAction::getResult);
+    public Optional<AnalysisResult> getBaselineResult() {
+        return getBaselineAction().map(ResultAction::getResult);
+    }
+
+    protected Optional<ResultAction> getBaselineAction() {
+        return selector.get(baseline);
     }
 
     /**

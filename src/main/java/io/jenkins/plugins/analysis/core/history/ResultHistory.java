@@ -15,12 +15,13 @@ public interface ResultHistory extends Iterable<AnalysisResult> {
      *
      * @return the baseline result
      */
-    Optional<AnalysisResult> getBaseline();
+    Optional<AnalysisResult> getBaselineResult();
 
     /**
      * Returns the previous result (if there is one with plugin result SUCCESS).
      *
      * @return the previous result
      */
+    // FIXME: currently the status must be SUCCESS!
     Optional<AnalysisResult> getPreviousResult();
 }

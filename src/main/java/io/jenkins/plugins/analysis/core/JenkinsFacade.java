@@ -2,13 +2,20 @@ package io.jenkins.plugins.analysis.core;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
+
+import org.acegisecurity.AccessDeniedException;
+import org.apache.commons.lang3.StringUtils;
 
 import jenkins.model.Jenkins;
 
 import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
+import hudson.model.BallColor;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
+import hudson.model.Item;
+import hudson.model.Job;
 import hudson.security.Permission;
 
 /**
@@ -42,12 +49,13 @@ public class JenkinsFacade implements Serializable {
      *         type of the describable
      * @param <D>
      *         type of the descriptor
-     *
      * @param descriptorType
      *         the base type that represents the descriptor of the describable
+     *
      * @return the discovered instances, might be an empty list
      */
-    public <T extends Describable<T>, D extends Descriptor<T>> DescriptorExtensionList<T, D> getDescriptorsFor(Class<T> descriptorType) {
+    public <T extends Describable<T>, D extends Descriptor<T>> DescriptorExtensionList<T, D> getDescriptorsFor(
+            Class<T> descriptorType) {
         return getJenkins().getDescriptorList(descriptorType);
     }
 
@@ -65,5 +73,62 @@ public class JenkinsFacade implements Serializable {
 
     private Jenkins getJenkins() {
         return Jenkins.getInstance();
+    }
+
+    /**
+     * Gets a {@link Job} by its full name. Full names are like path names, where each name of {@link Item} is combined
+     * by '/'.
+     *
+     * @param name
+     *         the full name of the job
+     *
+     * @return the selected job, if it exists under the given full name and if it is accessible
+     */
+    @SuppressWarnings("unchecked")
+    public Optional<Job<?, ?>> getJob(final String name) {
+        try {
+            return Optional.ofNullable(getJenkins().getItemByFullName(name, Job.class));
+        }
+        catch (AccessDeniedException ignore) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Returns the absolute URL for the specified ball icon.
+     *
+     * @param color
+     *         the color
+     *
+     * @return the absolute URL
+     */
+    public String getImagePath(final BallColor color) {
+        return color.getImageOf("16x16");
+    }
+
+    /**
+     * Returns an absolute URL for the specified url elements: e.g., creates the sequence ${rootUrl}/element1/element2.
+     *
+     * @param urlElements
+     *         the url elements
+     *
+     * @return the absolute URL
+     */
+    public String getAbsoluteUrl(final String... urlElements) {
+        return getAbsoluteUrl(StringUtils.join(urlElements, "/"));
+
+    }
+
+    private String getAbsoluteUrl(final String url) {
+        try {
+            String rootUrl = getJenkins().getRootUrl();
+            if (rootUrl != null) {
+                return rootUrl + "/" + url;
+            }
+        }
+        catch (IllegalStateException ignored) {
+            // ignored
+        }
+        return url;
     }
 }

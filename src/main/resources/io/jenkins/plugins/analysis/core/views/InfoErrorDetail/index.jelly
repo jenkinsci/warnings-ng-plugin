@@ -15,7 +15,6 @@
 
       <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/custom-styles/custom-style.css"/>
       <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/font-awesome470/font-awesome.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/material-blue-grey.css"/>
 
       <div class="fluid-container">
         <h3>${it.displayName}</h3>
