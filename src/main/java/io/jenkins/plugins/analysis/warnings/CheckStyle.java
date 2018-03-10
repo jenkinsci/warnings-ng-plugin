@@ -30,6 +30,11 @@ public class CheckStyle extends StaticAnalysisTool {
     }
 
     @Override
+    public boolean canScanConsoleLog() {
+        return false;
+    }
+
+    @Override
     public CheckStyleParser createParser() {
         return new CheckStyleParser();
     }

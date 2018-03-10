@@ -4,10 +4,11 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.dry.simian.SimianParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.parser.dry.simian.SimianParser;
 
 /**
  * Provides a parser and customized messages for Simian duplication scanner.
@@ -24,6 +25,11 @@ public class Simian extends DuplicateCodeScanner {
     }
 
     @Override
+    public boolean canScanConsoleLog() {
+        return false;
+    }
+
+    @Override
     public SimianParser createParser() {
         return new SimianParser();
     }
@@ -31,7 +37,7 @@ public class Simian extends DuplicateCodeScanner {
     /** Provides the labels for the static analysis tool. */
     private static class LabelProvider extends DryLabelProvider {
         LabelProvider() {
-            super(ID, Messages.Warnings_Simian_ParserName());
+            super(ID);
         }
     }
 

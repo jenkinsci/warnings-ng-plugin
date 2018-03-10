@@ -29,6 +29,11 @@ public class Pmd extends StaticAnalysisTool {
     }
 
     @Override
+    public boolean canScanConsoleLog() {
+        return false;
+    }
+
+    @Override
     public PmdParser createParser() {
         return new PmdParser();
     }

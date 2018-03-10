@@ -74,8 +74,8 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
 
     /** Provides icons for DRY parsers. */
     static class DryLabelProvider extends StaticAnalysisLabelProvider {
-        protected DryLabelProvider(final String id, final String name) {
-            super(id, name);
+        protected DryLabelProvider(final String id) {
+            super(id, Messages.Warnings_Dry_Name());
         }
 
         @Override

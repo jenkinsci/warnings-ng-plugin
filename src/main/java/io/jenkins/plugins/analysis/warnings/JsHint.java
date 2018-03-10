@@ -25,6 +25,11 @@ public class JsHint extends StaticAnalysisTool {
     }
 
     @Override
+    public boolean canScanConsoleLog() {
+        return false;
+    }
+
+    @Override
     public JsHintAdapter createParser() {
         return new JsHintAdapter();
     }

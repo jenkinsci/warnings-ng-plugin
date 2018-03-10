@@ -4,10 +4,11 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.StyleCopParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.parser.StyleCopParser;
 
 /**
  * Provides a parser and customized messages for StyleCop.
@@ -21,6 +22,11 @@ public class StyleCop extends StaticAnalysisTool {
     @DataBoundConstructor
     public StyleCop() {
         // empty constructor required for stapler
+    }
+
+    @Override
+    public boolean canScanConsoleLog() {
+        return false;
     }
 
     @Override

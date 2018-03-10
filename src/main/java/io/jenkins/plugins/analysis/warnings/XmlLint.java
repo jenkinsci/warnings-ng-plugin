@@ -25,6 +25,11 @@ public class XmlLint extends StaticAnalysisTool {
     }
 
     @Override
+    public boolean canScanConsoleLog() {
+        return false;
+    }
+
+    @Override
     public XmlLintAdapter createParser() {
         return new XmlLintAdapter();
     }

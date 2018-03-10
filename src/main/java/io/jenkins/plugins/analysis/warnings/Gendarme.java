@@ -4,10 +4,11 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.gendarme.GendarmeParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.parser.gendarme.GendarmeParser;
 
 /**
  * Provides a parser and customized messages for Gendarme violations.
@@ -21,6 +22,11 @@ public class Gendarme extends StaticAnalysisTool {
     @DataBoundConstructor
     public Gendarme() {
         // empty constructor required for stapler
+    }
+
+    @Override
+    public boolean canScanConsoleLog() {
+        return false;
     }
 
     @Override

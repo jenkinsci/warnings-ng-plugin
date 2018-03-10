@@ -25,6 +25,11 @@ public class CodeNArc extends StaticAnalysisTool {
     }
 
     @Override
+    public boolean canScanConsoleLog() {
+        return false;
+    }
+
+    @Override
     public CodeNarcAdapter createParser() {
         return new CodeNarcAdapter();
     }

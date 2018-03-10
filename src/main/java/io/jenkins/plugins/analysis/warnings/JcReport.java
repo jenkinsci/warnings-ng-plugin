@@ -4,10 +4,11 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.jcreport.JcReportParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.parser.jcreport.JcReportParser;
 
 /**
  * Provides a parser and customized messages for the JcReport compiler.
@@ -21,6 +22,11 @@ public class JcReport extends StaticAnalysisTool {
     @DataBoundConstructor
     public JcReport() {
         // empty constructor required for stapler
+    }
+
+    @Override
+    public boolean canScanConsoleLog() {
+        return false;
     }
 
     @Override

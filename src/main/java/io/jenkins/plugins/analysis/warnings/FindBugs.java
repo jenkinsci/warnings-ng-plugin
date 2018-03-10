@@ -33,6 +33,11 @@ public class FindBugs extends StaticAnalysisTool {
         // empty constructor required for stapler
     }
 
+    @Override
+    public boolean canScanConsoleLog() {
+        return false;
+    }
+
     public boolean getUseRankAsPriority() {
         return useRankAsPriority;
     }

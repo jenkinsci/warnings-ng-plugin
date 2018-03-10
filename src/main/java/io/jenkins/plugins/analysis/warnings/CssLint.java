@@ -4,10 +4,11 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.LintParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.parser.LintParser;
 
 /**
  * Provides a parser and customized messages for CSS-Lint.
@@ -21,6 +22,11 @@ public class CssLint extends StaticAnalysisTool {
     @DataBoundConstructor
     public CssLint() {
         // empty constructor required for stapler
+    }
+
+    @Override
+    public boolean canScanConsoleLog() {
+        return false;
     }
 
     @Override

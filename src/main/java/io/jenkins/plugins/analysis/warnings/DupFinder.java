@@ -4,10 +4,11 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.dry.dupfinder.DupFinderParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.parser.dry.dupfinder.DupFinderParser;
 
 /**
  * Provides a parser and customized messages for Resharper DupFinder.
@@ -24,6 +25,11 @@ public class DupFinder extends DuplicateCodeScanner {
     }
 
     @Override
+    public boolean canScanConsoleLog() {
+        return false;
+    }
+
+    @Override
     public DupFinderParser createParser() {
         return new DupFinderParser();
     }
@@ -31,7 +37,7 @@ public class DupFinder extends DuplicateCodeScanner {
     /** Provides the labels for the static analysis tool. */
     private static class LabelProvider extends DryLabelProvider {
         LabelProvider() {
-            super(ID, Messages.Warnings_DupFinder_ParserName());
+            super(ID);
         }
     }
 

@@ -4,10 +4,11 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.IdeaInspectionParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.parser.IdeaInspectionParser;
 
 /**
  * Provides a parser and customized messages for IDEA Inspections.
@@ -21,6 +22,11 @@ public class IdeaInspection extends StaticAnalysisTool {
     @DataBoundConstructor
     public IdeaInspection() {
         // empty constructor required for stapler
+    }
+
+    @Override
+    public boolean canScanConsoleLog() {
+        return false;
     }
 
     @Override

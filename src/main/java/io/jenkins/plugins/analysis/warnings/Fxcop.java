@@ -4,10 +4,11 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.fxcop.FxCopParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
+
+import edu.hm.hafner.analysis.parser.fxcop.FxCopParser;
 
 /**
  * Provides a parser and customized messages for FxCop.
@@ -21,6 +22,11 @@ public class Fxcop extends StaticAnalysisTool {
     @DataBoundConstructor
     public Fxcop() {
         // empty constructor required for stapler
+    }
+
+    @Override
+    public boolean canScanConsoleLog() {
+        return false;
     }
 
     @Override

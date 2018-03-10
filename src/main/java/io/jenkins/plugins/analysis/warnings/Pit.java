@@ -28,6 +28,11 @@ public class Pit extends StaticAnalysisTool {
     }
 
     @Override
+    public boolean canScanConsoleLog() {
+        return false;
+    }
+
+    @Override
     public PitAdapter createParser() {
         return new PitAdapter();
     }
@@ -35,9 +40,10 @@ public class Pit extends StaticAnalysisTool {
     private static class LabelProvider extends StaticAnalysisLabelProvider {
         private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
         private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
+        private static final String NAME = Messages.Violations_PIT();
 
-        public LabelProvider() {
-            super(ID, Messages.Violations_PIT());
+        LabelProvider() {
+            super(ID, NAME);
         }
 
         @Override
@@ -48,6 +54,11 @@ public class Pit extends StaticAnalysisTool {
         @Override
         public String getLargeIconUrl() {
             return LARGE_ICON_URL;
+        }
+
+        @Override
+        public String getLinkName() {
+            return NAME;
         }
     }
 

@@ -4,8 +4,9 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+
+import static hudson.plugins.warnings.WarningsDescriptor.*;
 
 import hudson.Extension;
 
@@ -21,6 +22,11 @@ public class SpotBugs extends FindBugs {
     @DataBoundConstructor
     public SpotBugs() {
         // empty constructor required for stapler
+    }
+
+    @Override
+    public boolean canScanConsoleLog() {
+        return false;
     }
 
     /** Provides the labels for the static analysis tool. */

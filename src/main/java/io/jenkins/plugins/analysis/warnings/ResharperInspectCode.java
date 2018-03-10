@@ -25,6 +25,11 @@ public class ResharperInspectCode extends StaticAnalysisTool {
     }
 
     @Override
+    public boolean canScanConsoleLog() {
+        return false;
+    }
+
+    @Override
     public ResharperInspectCodeAdapter createParser() {
         return new ResharperInspectCodeAdapter();
     }

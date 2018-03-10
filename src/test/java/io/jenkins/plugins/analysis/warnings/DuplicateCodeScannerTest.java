@@ -2,14 +2,16 @@ package io.jenkins.plugins.analysis.warnings;
 
 import org.junit.jupiter.api.Test;
 
+import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryLabelProvider;
+
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import net.sf.json.JSONArray;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.parser.dry.CodeDuplication;
 import edu.hm.hafner.analysis.parser.dry.CodeDuplication.DuplicationGroup;
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryLabelProvider;
-import net.sf.json.JSONArray;
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests the class {@link DuplicateCodeScanner}.
@@ -30,7 +32,7 @@ class DuplicateCodeScannerTest {
         CodeDuplication first = new CodeDuplication(issue, group);
         CodeDuplication second = new CodeDuplication(duplicate, group);
 
-        DryLabelProvider labelProvider = new DryLabelProvider("id", "name");
+        DryLabelProvider labelProvider = new DryLabelProvider("id");
 
         JSONArray firstColumns = labelProvider.toJson(first, build -> String.valueOf(build));
         assertThatJson(firstColumns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
