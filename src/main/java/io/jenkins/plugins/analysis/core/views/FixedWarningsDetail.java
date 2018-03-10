@@ -17,7 +17,7 @@ import edu.hm.hafner.analysis.Issues;
  * @author Ulli Hafner
  */
 public class FixedWarningsDetail extends IssuesDetail {
-    protected static final Issues<Issue> NO_ISSUES = new Issues<>();
+    private static final Issues<Issue> NO_ISSUES = new Issues<>();
 
     /**
      * Creates a new instance of {@code FixedWarningsDetail}.

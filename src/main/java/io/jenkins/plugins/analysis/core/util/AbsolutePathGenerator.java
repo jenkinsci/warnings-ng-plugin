@@ -8,11 +8,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import hudson.FilePath;
+
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.util.VisibleForTesting;
-
-import hudson.FilePath;
 
 /**
  * Resolves absolute paths of the affected files of a set of issues.
@@ -21,6 +22,8 @@ import hudson.FilePath;
  */
 // TODO: if this class is called on the master then a remote call is initiated for each affected file
 public class AbsolutePathGenerator {
+    static final String NOTHING_TO_DO = "Affected files for all issues already have absolute paths";
+
     private final FileSystem fileSystem;
 
     /**
@@ -46,11 +49,11 @@ public class AbsolutePathGenerator {
     public void run(final Issues<?> issues, final FilePath workspace) {
         Set<String> relativeFileNames = issues.getFiles()
                 .stream()
-                .filter(fileName -> isRelative(fileName))
+                .filter(fileName -> isRelative(fileName) && !IssueParser.SELF.equals(fileName))
                 .collect(Collectors.toSet());
 
         if (relativeFileNames.isEmpty()) {
-            issues.logInfo("Affected files for all issues already have absolute paths");
+            issues.logInfo(NOTHING_TO_DO);
 
             return;
         }

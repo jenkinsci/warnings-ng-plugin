@@ -107,6 +107,7 @@ public class JobAction implements Action {
      * @return the dynamic result of the analysis (detail page).
      */
     @CheckForNull
+    @SuppressWarnings("unused") // Called by jelly view
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
         if ("configureDefaults".equals(link)) {
             return createDefaultConfiguration();
@@ -124,6 +125,7 @@ public class JobAction implements Action {
      *
      * @return the details
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public Object getTrendDetails() {
         return getTrendDetails(Stapler.getCurrentRequest(), Stapler.getCurrentResponse());
     }
@@ -138,6 +140,7 @@ public class JobAction implements Action {
      *
      * @return the details
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public Object getTrendDetails(final StaplerRequest request, final StaplerResponse response) {
         return new TrendDetails(getOwner(), getTrendGraph(request, response, "../../"), getTrendGraphId());
     }
@@ -147,6 +150,7 @@ public class JobAction implements Action {
      *
      * @return the current trend graph
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public Object getTrendGraph() {
         return getTrendGraph(Stapler.getCurrentRequest(), Stapler.getCurrentResponse());
     }
@@ -161,6 +165,7 @@ public class JobAction implements Action {
      *
      * @return the trend graph
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public Graph getTrendGraph(final StaplerRequest request, final StaplerResponse response) {
         return getTrendGraph(request, response, "");
     }
@@ -192,6 +197,7 @@ public class JobAction implements Action {
      *
      * @return {@code true} if the trend is visible
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public boolean isTrendVisible(final StaplerRequest request) {
         GraphConfigurationView configuration = createUserConfiguration(request);
 
@@ -203,6 +209,7 @@ public class JobAction implements Action {
      *
      * @return ID of the selected trend graph
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public String getTrendGraphId() {
         GraphConfigurationView configuration = createUserConfiguration(Stapler.getCurrentRequest());
 
@@ -217,6 +224,7 @@ public class JobAction implements Action {
      *
      * @return {@code true} if the trend is deactivated
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public boolean isTrendDeactivated(final StaplerRequest request) {
         return createUserConfiguration(request).isDeactivated();
     }
@@ -229,6 +237,7 @@ public class JobAction implements Action {
      *
      * @return the graph configuration
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public boolean canShowEnableTrendLink(final StaplerRequest request) {
         GraphConfigurationView configuration = createUserConfiguration(request);
         if (configuration.hasMeaningfulGraph()) {

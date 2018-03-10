@@ -55,6 +55,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 @SuppressWarnings("InstanceVariableMayNotBeInitialized")
 public class ScanForIssuesStep extends Step {
+    private static final String CONSOLE_LOG = "<CONSOLE_LOG>";
     private String logFileEncoding;
     private String sourceCodeEncoding;
     private String pattern;

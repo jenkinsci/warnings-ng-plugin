@@ -8,6 +8,7 @@ import edu.hm.hafner.analysis.Issue;
  *
  * @author Ullrich Hafner
  */
+// FIXME: All methods should be overwritten
 public class CompositeLabelProvider extends StaticAnalysisLabelProvider {
     private final StaticAnalysisLabelProvider labelProvider;
     private final String name;

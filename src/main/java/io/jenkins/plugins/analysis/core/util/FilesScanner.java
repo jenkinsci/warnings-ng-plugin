@@ -6,16 +6,17 @@ import java.io.Serializable;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.ParsingCanceledException;
-import edu.hm.hafner.analysis.ParsingException;
 import jenkins.MasterToSlaveFileCallable;
 
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.FileFinder;
 import hudson.remoting.VirtualChannel;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueParser;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.ParsingCanceledException;
+import edu.hm.hafner.analysis.ParsingException;
 
 /**
  * Scans files that match a specified Ant files pattern for issues and aggregates the found issues into a single {@link
@@ -24,6 +25,7 @@ import hudson.remoting.VirtualChannel;
  *
  * @author Ulli Hafner
  */
+// TODO: Replace FileFinder with PathMatcher
 public class FilesScanner extends MasterToSlaveFileCallable<Issues<?>> {
     private final String filePattern;
     private final IssueParser<?> parser;
