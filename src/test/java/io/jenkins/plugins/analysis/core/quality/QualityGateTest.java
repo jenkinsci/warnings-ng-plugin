@@ -6,15 +6,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import edu.hm.hafner.util.SerializableTest;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.quality.ThresholdSet.ThresholdSetBuilder;
+
+import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import hudson.model.Result;
+
+import edu.hm.hafner.util.SerializableTest;
 
 /**
  * Tests the class {@link QualityGate QualityGate}. These Tests were created while developing the class QualityGate.
@@ -126,6 +128,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
 
         QualityGateResult qualityGateResult = qualityGate.evaluate(run);
         assertThat(qualityGateResult).hasOverallResult(Result.SUCCESS);
+        assertThat(qualityGateResult.getEvaluations(mock(AnalysisResult.class), qualityGate)).isEmpty();
     }
 
     @Test

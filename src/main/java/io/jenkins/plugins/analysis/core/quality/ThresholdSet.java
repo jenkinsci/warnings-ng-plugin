@@ -27,7 +27,7 @@ public class ThresholdSet implements Serializable {
         return isSingleThresholdReached(getTotalThreshold(), toCheck);
     }
 
-    private int getTotalThreshold() {
+    int getTotalThreshold() {
         return totalThreshold;
     }
 
@@ -35,7 +35,7 @@ public class ThresholdSet implements Serializable {
         return isSingleThresholdReached(getHighThreshold(), toCheck);
     }
 
-    private int getHighThreshold() {
+    int getHighThreshold() {
         return highThreshold;
     }
 
@@ -43,7 +43,7 @@ public class ThresholdSet implements Serializable {
         return isSingleThresholdReached(getNormalThreshold(), toCheck);
     }
 
-    private int getNormalThreshold() {
+    int getNormalThreshold() {
         return normalThreshold;
     }
 
@@ -51,7 +51,7 @@ public class ThresholdSet implements Serializable {
         return isSingleThresholdReached(getLowThreshold(), toCheck);
     }
 
-    private int getLowThreshold() {
+    int getLowThreshold() {
         return lowThreshold;
     }
 

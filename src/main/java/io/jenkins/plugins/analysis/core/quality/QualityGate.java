@@ -223,71 +223,71 @@ public class QualityGate implements Serializable {
             return Result.SUCCESS;
         }
 
-        public Collection<String> getEvaluations(final AnalysisResult issues, final Thresholds thresholds) {
+        public Collection<String> getEvaluations(final AnalysisResult result, final QualityGate thresholds) {
             List<String> messages = new ArrayList<>();
-            if (!totalFailed.isTotalReached()) {
+            if (totalFailed.isTotalReached()) {
                 messages.add(String.format("FAILURE -> Total number of issues: %d - Quality Gate: %d",
-                        issues.getTotalSize(), thresholds.failedTotalAll));
+                        result.getTotalSize(), thresholds.getTotalFailedThreshold().getTotalThreshold()));
             }
-            if (!totalFailed.isHighReached()) {
+            if (totalFailed.isHighReached()) {
                 messages.add(String.format("FAILURE -> Number of high priority issues: %d - Quality Gate: %d",
-                        issues.getTotalHighPrioritySize(), thresholds.failedTotalHigh));
+                        result.getTotalHighPrioritySize(), thresholds.getTotalFailedThreshold().getHighThreshold()));
             }
-            if (!totalFailed.isNormalReached()) {
+            if (totalFailed.isNormalReached()) {
                 messages.add(String.format("FAILURE -> Number of normal priority issues: %d - Quality Gate: %d",
-                        issues.getTotalNormalPrioritySize(), thresholds.failedTotalNormal));
+                        result.getTotalNormalPrioritySize(), thresholds.getTotalFailedThreshold().getNormalThreshold()));
             }
-            if (!totalFailed.isLowReached()) {
+            if (totalFailed.isLowReached()) {
                 messages.add(String.format("FAILURE -> Number of low priority issues: %d - Quality Gate: %d",
-                        issues.getTotalLowPrioritySize(), thresholds.failedTotalLow));
+                        result.getTotalLowPrioritySize(), thresholds.getTotalFailedThreshold().getLowThreshold()));
             }
-            if (!totalUnstable.isTotalReached()) {
+            if (totalUnstable.isTotalReached()) {
                 messages.add(String.format("UNSTABLE -> Total number of issues: %d - Quality Gate: %d",
-                        issues.getTotalSize(), thresholds.unstableTotalAll));
+                        result.getTotalSize(), thresholds.getTotalUnstableThreshold().getTotalThreshold()));
             }
-            if (!totalUnstable.isHighReached()) {
+            if (totalUnstable.isHighReached()) {
                 messages.add(String.format("UNSTABLE -> Number of high priority issues: %d - Quality Gate: %d",
-                        issues.getTotalHighPrioritySize(), thresholds.unstableTotalHigh));
+                        result.getTotalHighPrioritySize(), thresholds.getTotalUnstableThreshold().getHighThreshold()));
             }
-            if (!totalUnstable.isNormalReached()) {
+            if (totalUnstable.isNormalReached()) {
                 messages.add(String.format("UNSTABLE -> Number of normal priority issues: %d - Quality Gate: %d",
-                        issues.getTotalNormalPrioritySize(), thresholds.unstableTotalNormal));
+                        result.getTotalNormalPrioritySize(), thresholds.getTotalUnstableThreshold().getNormalThreshold()));
             }
-            if (!totalUnstable.isLowReached()) {
+            if (totalUnstable.isLowReached()) {
                 messages.add(String.format("UNSTABLE -> Number of low priority issues: %d - Quality Gate: %d",
-                        issues.getTotalLowPrioritySize(), thresholds.unstableTotalLow));
+                        result.getTotalLowPrioritySize(), thresholds.getTotalUnstableThreshold().getLowThreshold()));
             }
-            if (!newFailed.isTotalReached()) {
+            if (newFailed.isTotalReached()) {
                 messages.add(String.format("FAILURE -> Number of new issues: %d - Quality Gate: %d",
-                        issues.getNewSize(), thresholds.failedNewAll));
+                        result.getNewSize(), thresholds.getNewFailedThreshold().getTotalThreshold()));
             }
-            if (!newFailed.isHighReached()) {
+            if (newFailed.isHighReached()) {
                 messages.add(String.format("FAILURE -> Number of new high priority issues: %d - Quality Gate: %d",
-                        issues.getNewHighPrioritySize(), thresholds.failedNewHigh));
+                        result.getNewHighPrioritySize(), thresholds.getNewFailedThreshold().getHighThreshold()));
             }
-            if (!newFailed.isNormalReached()) {
+            if (newFailed.isNormalReached()) {
                 messages.add(String.format("FAILURE -> Number of new normal priority issues: %d - Quality Gate: %d",
-                        issues.getNewNormalPrioritySize(), thresholds.failedNewNormal));
+                        result.getNewNormalPrioritySize(), thresholds.getNewFailedThreshold().getNormalThreshold()));
             }
-            if (!newFailed.isLowReached()) {
+            if (newFailed.isLowReached()) {
                 messages.add(String.format("FAILURE -> Number of new low priority issues: %d - Quality Gate: %d",
-                        issues.getNewLowPrioritySize(), thresholds.failedNewLow));
+                        result.getNewLowPrioritySize(), thresholds.getNewFailedThreshold().getLowThreshold()));
             }
-            if (!newUnstable.isTotalReached()) {
+            if (newUnstable.isTotalReached()) {
                 messages.add(String.format("UNSTABLE -> New number of new issues: %d - Quality Gate: %d",
-                        issues.getNewSize(), thresholds.unstableNewAll));
+                        result.getNewSize(), thresholds.getNewUnstableThreshold().getTotalThreshold()));
             }
-            if (!newUnstable.isHighReached()) {
+            if (newUnstable.isHighReached()) {
                 messages.add(String.format("UNSTABLE -> Number of new high priority issues: %d - Quality Gate: %d",
-                        issues.getNewHighPrioritySize(), thresholds.unstableNewHigh));
+                        result.getNewHighPrioritySize(), thresholds.getNewUnstableThreshold().getHighThreshold()));
             }
-            if (!newUnstable.isNormalReached()) {
+            if (newUnstable.isNormalReached()) {
                 messages.add(String.format("UNSTABLE -> Number of new normal priority issues: %d - Quality Gate: %d",
-                        issues.getNewNormalPrioritySize(), thresholds.unstableNewNormal));
+                        result.getNewNormalPrioritySize(), thresholds.getNewUnstableThreshold().getNormalThreshold()));
             }
-            if (!newUnstable.isLowReached()) {
+            if (newUnstable.isLowReached()) {
                 messages.add(String.format("UNSTABLE -> Number of new low priority issues: %d - Quality Gate: %d",
-                        issues.getNewLowPrioritySize(), thresholds.unstableNewLow));
+                        result.getNewLowPrioritySize(), thresholds.getNewUnstableThreshold().getLowThreshold()));
             }
             return messages;
         }
