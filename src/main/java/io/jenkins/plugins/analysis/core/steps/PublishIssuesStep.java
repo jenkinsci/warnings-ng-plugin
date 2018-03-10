@@ -18,18 +18,18 @@ import org.kohsuke.stapler.DataBoundSetter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
+import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.history.BuildHistory;
+import io.jenkins.plugins.analysis.core.history.OtherJobReferenceFinder;
 import io.jenkins.plugins.analysis.core.history.ReferenceFinder;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.history.ResultSelector;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
-import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
-import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.Logger;
@@ -64,8 +64,8 @@ public class PublishIssuesStep extends Step {
 
     private final Issues<Issue> issues;
 
-    private boolean usePreviousBuildAsReference;
-    private boolean useStableBuildAsReference;
+    private boolean ignoreAnalysisResult;
+    private boolean overallResultMustBeSuccess;
 
     private String defaultEncoding;
 
@@ -76,6 +76,7 @@ public class PublishIssuesStep extends Step {
     private final Thresholds thresholds = new Thresholds();
     private String id;
     private String name;
+    private String referenceJobName;
 
     /**
      * Creates a new instance of {@link PublishIssuesStep}.
@@ -133,36 +134,51 @@ public class PublishIssuesStep extends Step {
         return name;
     }
 
-    public boolean getUsePreviousBuildAsReference() {
-        return usePreviousBuildAsReference;
-    }
-
-    // TODO: use same naming as in BuildHistory?
-
     /**
-     * Determines if the previous build should always be used as the reference build, no matter of its overall result.
+     * If {@code true} then the result of the previous analysis run is ignored when searching for the reference,
+     * otherwise the result of the static analysis reference must be {@link Result#SUCCESS}.
      *
-     * @param usePreviousBuildAsReference
+     * @param ignoreAnalysisResult
      *         if {@code true} then the previous build is always used
      */
     @DataBoundSetter
-    public void setUsePreviousBuildAsReference(final boolean usePreviousBuildAsReference) {
-        this.usePreviousBuildAsReference = usePreviousBuildAsReference;
+    public void setIgnoreAnalysisResult(final boolean ignoreAnalysisResult) {
+        this.ignoreAnalysisResult = ignoreAnalysisResult;
     }
 
-    public boolean getUseStableBuildAsReference() {
-        return useStableBuildAsReference;
+    public boolean getIgnoreAnalysisResult() {
+        return ignoreAnalysisResult;
     }
 
     /**
-     * Determines whether only stable builds should be used as reference builds or not.
+     * If {@code true} then only runs with an overall result of {@link Result#SUCCESS} are considered as a reference,
+     * otherwise every run that contains results of the same static analysis configuration is considered.
      *
-     * @param useStableBuildAsReference
+     * @param overallResultMustBeSuccess
      *         if {@code true} then a stable build is used as reference
      */
     @DataBoundSetter
-    public void setUseStableBuildAsReference(final boolean useStableBuildAsReference) {
-        this.useStableBuildAsReference = useStableBuildAsReference;
+    public void setOverallResultMustBeSuccess(final boolean overallResultMustBeSuccess) {
+        this.overallResultMustBeSuccess = overallResultMustBeSuccess;
+    }
+
+    public boolean getOverallResultMustBeSuccess() {
+        return overallResultMustBeSuccess;
+    }
+
+    /**
+     * Sets the reference job to get the results for the issue difference computation.
+     *
+     * @param referenceJobName
+     *         the name of reference job
+     */
+    @DataBoundSetter
+    public void setReferenceJobName(final String referenceJobName) {
+        this.referenceJobName = referenceJobName;
+    }
+
+    public String getReferenceJobName() {
+        return referenceJobName;
     }
 
     @CheckForNull
@@ -401,20 +417,22 @@ public class PublishIssuesStep extends Step {
      */
     public static class Execution extends AnalysisExecution<ResultAction> {
         private final HealthDescriptor healthDescriptor;
-        private final boolean useStableBuildAsReference;
-        private final boolean usePreviousBuildAsReference;
+        private final boolean overallResultMustBeSuccess;
+        private final boolean ignoreAnalysisResult;
         private final String defaultEncoding;
         private final Issues<Issue> issues;
         private final QualityGate qualityGate;
         private final RegexpFilter[] filters;
         private final String name;
         private final Thresholds thresholds;
+        private final String referenceJobName;
 
         protected Execution(@NonNull final StepContext context, final PublishIssuesStep step) {
             super(context);
 
-            usePreviousBuildAsReference = step.getUsePreviousBuildAsReference();
-            useStableBuildAsReference = step.getUseStableBuildAsReference();
+            ignoreAnalysisResult = step.getIgnoreAnalysisResult();
+            overallResultMustBeSuccess = step.getOverallResultMustBeSuccess();
+            referenceJobName = step.getReferenceJobName();
             defaultEncoding = step.getDefaultEncoding();
             healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnHealthy(), step.getMinimumPriority());
 
@@ -426,6 +444,11 @@ public class PublishIssuesStep extends Step {
                 issues.setId(step.getId());
             }
             filters = step.getFilters();
+        }
+
+        @Override
+        protected String getId() {
+            return issues.getId();
         }
 
         @Override
@@ -441,78 +464,92 @@ public class PublishIssuesStep extends Step {
             return publishResult(run, selector);
         }
 
-        private StaticAnalysisLabelProvider getTool(final String toolId) {
-            return new LabelProviderFactory().create(toolId, name);
-        }
-
         private ResultAction publishResult(final Run<?, ?> run, final ResultSelector selector)
                 throws IOException, InterruptedException {
-            Logger logger = createLogger(getTool(issues.getId()).getName());
+            Logger logger = getLogger();
 
-            Instant startResult = Instant.now();
-            IssueFilterBuilder builder = new IssueFilterBuilder();
-            for (RegexpFilter filter : filters) {
-                filter.apply(builder);
-            }
-            Issues<Issue> filtered = issues.filter(builder.build());
-            logger.log("Applying %d filters on the set of %d issues (%d issues have been removed)",
-                    filters.length, issues.size(), issues.size() - filtered.size());
+            Issues<Issue> filtered = filter();
+            copyAffectedFiles(filtered);
 
-            AnalysisResult result = createAnalysisResult(filtered, run, selector);
-            logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
-                    result.getTotalSize(), result.getNewSize(), result.getFixedSize());
-            logger.log("Creating analysis result took %s", computeElapsedTime(startResult));
-
-            Result pluginResult = result.getOverallResult();
-
-            if (qualityGate.isEnabled()) {
-                if (pluginResult.isBetterOrEqualTo(Result.SUCCESS)) {
-                    logger.log("All quality gates have been passed");
-                }
-                else {
-                    logger.log("Some quality gates have been missed: overall result is %s", pluginResult);
-                    QualityGateResult detailedResult = qualityGate.evaluate(result);
-                    logger.logEachLine(detailedResult.getEvaluations(result, thresholds));
-                }
-            }
-            else {
-                logger.log("No quality gates have been set - skipping");
-            }
-
-            FilePath workspace = getContext().get(FilePath.class);
-            Set<String> files = result.getIssues().getFiles();
-
-            Instant startCopy = Instant.now();
-            Optional<VirtualChannel> channel = getChannel();
-            if (channel.isPresent()) {
-                String copyingLogMessage = new AffectedFilesResolver()
-                        .copyFilesWithAnnotationsToBuildFolder(channel.get(), getBuildFolder(), files);
-                logger.log("Copied %d affected files from '%s' to build folder (%s)",
-                        files.size(), workspace, copyingLogMessage);
-                logger.log("Copying affected files took %s", computeElapsedTime(startCopy));
-            }
-            else {
-                logger.log("Can't copy affected files since channel to agent is not available");
-            }
-
-            String id = filtered.getId();
-            logger.log("Attaching ResultAction with ID '%s' to run '%s'.", id, run);
-            ResultAction action = new ResultAction(run, result, healthDescriptor, id, name,
+            logger.log("Attaching ResultAction with ID '%s' to run '%s'.", getId(), run);
+            AnalysisResult result = createResult(run, selector, filtered);
+            ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name,
                     EncodingValidator.defaultCharset(defaultEncoding));
             run.addAction(action);
 
             return action;
         }
 
+        private void copyAffectedFiles(final Issues<?> filtered) throws IOException, InterruptedException {
+            Logger logger = getLogger();
+            FilePath workspace = getContext().get(FilePath.class);
+
+            Instant start = Instant.now();
+
+            Set<String> files = filtered.getFiles();
+            Optional<VirtualChannel> channel = getChannel();
+            if (channel.isPresent()) {
+                String copyingLogMessage = new AffectedFilesResolver()
+                        .copyFilesWithAnnotationsToBuildFolder(channel.get(), getBuildFolder(), files);
+                filtered.logInfo("Copying %d affected files from '%s' to build folder (%s)",
+                        files.size(), workspace, copyingLogMessage);
+                logger.log("Copying affected files took %s", computeElapsedTime(start));
+            }
+            else {
+                filtered.logError("Can't copy affected files since channel to agent is not available");
+            }
+
+            log(filtered);
+        }
+
+        private AnalysisResult createResult(final Run<?, ?> run, final ResultSelector selector,
+                final Issues<Issue> filtered) {
+            Logger logger = getLogger();
+
+            Instant start = Instant.now();
+            AnalysisResult result = createAnalysisResult(filtered, run, selector);
+            logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
+                    result.getTotalSize(), result.getNewSize(), result.getFixedSize());
+            logger.log("Creating analysis result took %s", computeElapsedTime(start));
+
+            return result;
+        }
+
+        private Issues<Issue> filter() {
+            Logger logger = getLogger();
+
+            Instant start = Instant.now();
+            IssueFilterBuilder builder = new IssueFilterBuilder();
+            for (RegexpFilter filter : filters) {
+                filter.apply(builder);
+            }
+            Issues<Issue> filtered = issues.filter(builder.build());
+            filtered.logInfo("Applying %d filters on the set of %d issues (%d issues have been removed)",
+                    filters.length, issues.size(), issues.size() - filtered.size());
+            logger.log("Filtering issues took %s", computeElapsedTime(start));
+
+            log(filtered);
+
+            return filtered;
+        }
+
         private AnalysisResult createAnalysisResult(final Issues<Issue> filtered,
                 final Run<?, ?> run, final ResultSelector selector) {
-            ReferenceProvider referenceProvider = ReferenceFinder.create(run,
-                    selector, usePreviousBuildAsReference, useStableBuildAsReference);
-            BuildHistory buildHistory = new BuildHistory(run, selector);
-
-            return buildHistory.getPreviousResult().map(
-                    result -> new AnalysisResult(run, referenceProvider, filtered, qualityGate, result))
+            ReferenceProvider referenceProvider = createReferenceProvider(run, selector);
+            return new BuildHistory(run, selector).getPreviousResult()
+                    .map(previous -> new AnalysisResult(run, referenceProvider, filtered, qualityGate, previous))
                     .orElseGet(() -> new AnalysisResult(run, referenceProvider, filtered, qualityGate));
+        }
+
+        private ReferenceProvider createReferenceProvider(final Run<?, ?> run, final ResultSelector selector) {
+            if (referenceJobName != null) {
+                Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
+                if (referenceJob.isPresent()) {
+                    return new OtherJobReferenceFinder(referenceJob.get().getLastBuild(), selector,
+                            ignoreAnalysisResult, overallResultMustBeSuccess);
+                }
+            }
+            return ReferenceFinder.create(run, selector, ignoreAnalysisResult, overallResultMustBeSuccess);
         }
     }
 

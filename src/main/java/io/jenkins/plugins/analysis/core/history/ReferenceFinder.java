@@ -60,24 +60,18 @@ public abstract class ReferenceFinder extends BuildHistory implements ReferenceP
     /**
      * Returns the action of the reference build.
      *
-     * @return the action of the reference build, or {@code null} if no such build exists
+     * @return the action of the reference build
      */
     protected abstract Optional<ResultAction> getReferenceAction();
 
     @Override
-    public int getNumber() {
-        return getReferenceAction().map(pipelineResultAction -> pipelineResultAction.getOwner().getNumber())
-                .orElse(NO_REFERENCE_FOUND);
+    public Optional<Run<?, ?>> getAnalysisRun() {
+        return getReferenceAction()
+                .map(pipelineResultAction -> pipelineResultAction.getOwner());
     }
 
-    /**
-     * Returns the issues of the reference build.
-     *
-     * @return the issues of the reference build
-     */
-    // FIXME: generic
     @Override
-    public Issues getIssues() {
+    public Issues<?> getIssues() {
         return getReferenceAction()
                 .map(resultAction -> resultAction.getResult().getIssues())
                 .orElseGet(Issues::new);

@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import javax.annotation.CheckForNull;
 import java.awt.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jfree.chart.JFreeChart;
@@ -15,13 +15,14 @@ import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.data.category.CategoryDataset;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 
 import hudson.plugins.analysis.Messages;
 import hudson.util.DataSetBuilder;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
 
 /**
  * A build result graph that can create a graph based on authors of annotations.
@@ -36,7 +37,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
             final ResultHistory history, @CheckForNull final String pluginName) {
         Map<String, Integer[]> annotationCountByUser = new HashMap<>();
 
-        mergeResults(history.getBaseline(), annotationCountByUser);
+        mergeResults(history.getBaselineResult(), annotationCountByUser);
 
         return createGraphFromUserMapping(configuration, pluginName, annotationCountByUser);
     }
@@ -55,7 +56,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
         Map<String, Integer[]> annotationCountByUser = new HashMap<>();
 
         for (ResultHistory history : resultActions) {
-            mergeResults(history.getBaseline(), annotationCountByUser);
+            mergeResults(history.getBaselineResult(), annotationCountByUser);
         }
 
         return createGraphFromUserMapping(configuration, pluginName, annotationCountByUser);

@@ -1,13 +1,14 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
 
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.IconPathResolver;
+import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.Summary.LabelProviderFactoryFacade;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
@@ -16,8 +17,8 @@ import io.jenkins.plugins.analysis.core.quality.Thresholds;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import hudson.model.BallColor;
 import hudson.model.Result;
+import hudson.model.Run;
 
 /**
  * Tests the class {@link Summary}.
@@ -30,8 +31,10 @@ class SummaryTest {
         Locale.setDefault(Locale.ENGLISH);
 
         LabelProviderFactoryFacade facade = mock(LabelProviderFactoryFacade.class);
-        when(facade.get("checkstyle")).thenReturn(createLabelProvider("checkstyle", "CheckStyle"));
-        when(facade.get("pmd")).thenReturn(createLabelProvider("pmd", "PMD"));
+        StaticAnalysisLabelProvider checkStyleLabelProvider = createLabelProvider("checkstyle", "CheckStyle");
+        when(facade.get("checkstyle")).thenReturn(checkStyleLabelProvider);
+        StaticAnalysisLabelProvider pmdLabelProvider = createLabelProvider("pmd", "PMD");
+        when(facade.get("pmd")).thenReturn(pmdLabelProvider);
 
         AnalysisResult analysisRun = mock(AnalysisResult.class);
         when(analysisRun.getSizePerOrigin()).thenReturn(Maps.fixedSize.of("checkstyle", 15, "pmd", 20));
@@ -44,7 +47,10 @@ class SummaryTest {
         thresholds.unstableTotalAll = 1;
         when(analysisRun.getQualityGate()).thenReturn(new QualityGate(thresholds));
         when(analysisRun.getOverallResult()).thenReturn(Result.SUCCESS);
-        when(analysisRun.getReferenceBuild()).thenReturn(15);
+        Run<?, ?> run = mock(Run.class);
+        when(run.getFullDisplayName()).thenReturn("Job #15");
+        when(run.getUrl()).thenReturn("job/my-job/15");
+        when(analysisRun.getReferenceBuild()).thenReturn(Optional.of(run));
 
         AnalysisBuild build = mock(AnalysisBuild.class);
         when(build.getNumber()).thenReturn(2);
@@ -58,22 +64,18 @@ class SummaryTest {
                 createWarningsLink("<a href=\"testResult/new\">.*2 new warnings.*</a>"));
         assertThat(actualSummary).containsPattern(
                 createWarningsLink("<a href=\"testResult/fixed\">.*2 fixed warnings.*</a>"));
-        assertThat(actualSummary).contains("Quality gates: <a href=\"BLUE\" alt=\"Success\" title=\"Success\">Success</a>");
-        assertThat(actualSummary).contains("Reference build <a href=\"../15/testResult\" class=\"model-link inside\">15</a>");
+        assertThat(actualSummary).contains("Quality gates: <img src=\"color\" alt=\"Success\" title=\"Success\"> Success");
+        assertThat(actualSummary).contains("Reference build: <a href=\"absoluteUrl\">Job #15</a>");
     }
 
     private StaticAnalysisLabelProvider createLabelProvider(final String checkstyle, final String checkStyle) {
-        return new StaticAnalysisLabelProvider(checkstyle, checkStyle, new IconResolverStub());
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        when(jenkins.getImagePath(any())).thenReturn("color");
+        when(jenkins.getAbsoluteUrl(any())).thenReturn("absoluteUrl");
+        return new StaticAnalysisLabelProvider(checkstyle, checkStyle, jenkins);
     }
 
     private Pattern createWarningsLink(final String href) {
         return Pattern.compile(href, Pattern.MULTILINE | Pattern.DOTALL);
-    }
-
-    private static class IconResolverStub extends IconPathResolver {
-        @Override
-        String getImagePath(final BallColor color) {
-            return color.name();
-        }
     }
 }
