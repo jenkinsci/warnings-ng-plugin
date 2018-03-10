@@ -114,7 +114,8 @@ public class IssuesDetail implements ModelObject {
     public IssuesDetail(final Run<?, ?> owner, final AnalysisResult result,
             final StaticAnalysisLabelProvider labelProvider, final Charset sourceEncoding) {
         this(owner, result, result.getIssues(), result.getNewIssues(), result.getOutstandingIssues(),
-                result.getFixedIssues(), labelProvider.getLinkName(), result.getId(), labelProvider, sourceEncoding);
+                result.getFixedIssues(), labelProvider.getLinkName(), labelProvider.getResultUrl(),
+                labelProvider, sourceEncoding);
     }
 
     /**

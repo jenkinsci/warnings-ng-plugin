@@ -58,7 +58,8 @@ class StaticAnalysisLabelProviderTest {
     }
 
     void assertThatColumnsAreValid(final JSONArray columns, int index) {
-        assertThat(columns.get(0)).isEqualTo("<div class=\"details-control\" data-description=\"\"/>");
+        assertThat(columns.get(0)).isEqualTo(
+                "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;MESSAGE&lt;/strong&gt;&lt;/p&gt; DESCRIPTION\"></div>");
         String actual = columns.getString(1);
         assertThat(actual).matches(createFileLinkMatcher("file-" + index, 15));
         assertThat(columns.get(2)).isEqualTo(createPropertyLink("packageName", "package-" + index));
@@ -68,14 +69,18 @@ class StaticAnalysisLabelProviderTest {
         assertThat(columns.get(6)).isEqualTo("1");
     }
 
-    private static String createPropertyLink(final String property, final String value) {
+    private String createPropertyLink(final String property, final String value) {
         return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), value);
     }
 
-    private static String createFileLinkMatcher(final String fileName, final int lineNumber) {
+    private String createFileLinkMatcher(final String fileName, final int lineNumber) {
         return "<a href=\\\"source.[0-9a-f-]+/#" + lineNumber + "\\\">"
                 + fileName + ":" + lineNumber
                 + "</a>";
+    }
+
+    IssueBuilder createBuilder() {
+        return new IssueBuilder().setMessage("MESSAGE").setDescription("DESCRIPTION");
     }
 
     @Nested
@@ -91,19 +96,20 @@ class StaticAnalysisLabelProviderTest {
         void shouldCreateAgeLinkForPreviousBuilds() {
             AgeBuilder builder = new DefaultAgeBuilder(10, "checkstyleResult/");
             assertThat(builder.apply(1))
-                    .isEqualTo("<a href=\"../../1/checkstyleResult\" class=\"model-link inside\">10</a>");
+                    .isEqualTo("<a href=\"../../1/checkstyleResult\">10</a>");
             assertThat(builder.apply(9))
-                    .isEqualTo("<a href=\"../../9/checkstyleResult\" class=\"model-link inside\">2</a>");
+                    .isEqualTo("<a href=\"../../9/checkstyleResult\">2</a>");
             assertThat(builder.apply(10))
                     .isEqualTo("1");
         }
+
         @Test
         void shouldCreateAgeLinkForSubDetails() {
             AgeBuilder builder = new DefaultAgeBuilder(10, "checkstyleResult/package.1234/");
             assertThat(builder.apply(1))
-                    .isEqualTo("<a href=\"../../../1/checkstyleResult\" class=\"model-link inside\">10</a>");
+                    .isEqualTo("<a href=\"../../../1/checkstyleResult\">10</a>");
             assertThat(builder.apply(9))
-                    .isEqualTo("<a href=\"../../../9/checkstyleResult\" class=\"model-link inside\">2</a>");
+                    .isEqualTo("<a href=\"../../../9/checkstyleResult\">2</a>");
             assertThat(builder.apply(10))
                     .isEqualTo("1");
         }
@@ -151,7 +157,7 @@ class StaticAnalysisLabelProviderTest {
         }
 
         private Issue createIssue(final int index) {
-            IssueBuilder builder = new IssueBuilder();
+            IssueBuilder builder = createBuilder();
             builder.setFileName("/path/to/file-" + index)
                     .setPackageName("package-" + index)
                     .setCategory("category-" + index)
@@ -171,7 +177,7 @@ class StaticAnalysisLabelProviderTest {
         void shouldConvertIssueToArrayOfColumns() {
             Locale.setDefault(Locale.ENGLISH);
 
-            IssueBuilder builder = new IssueBuilder();
+            IssueBuilder builder = createBuilder();
             Issue issue = builder.setFileName("path/to/file-1")
                     .setPackageName("package-1")
                     .setCategory("category-1")
@@ -187,4 +193,4 @@ class StaticAnalysisLabelProviderTest {
             assertThatColumnsAreValid(columns, 1);
         }
     }
- }
+}

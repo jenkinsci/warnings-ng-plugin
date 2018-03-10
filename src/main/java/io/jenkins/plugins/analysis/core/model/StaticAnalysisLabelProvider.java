@@ -4,7 +4,6 @@ import java.util.function.Function;
 import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.views.LocalizedPriority;
@@ -35,14 +34,13 @@ import edu.hm.hafner.util.VisibleForTesting;
  * @author Ullrich Hafner
  */
 public class StaticAnalysisLabelProvider {
-    /** Formats a full path: selects the file name portion.  */
+    /** Formats a full path: selects the file name portion. */
     public static final Function<String, String> FILE_NAME_FORMATTER
             = string -> StringUtils.substringAfterLast(string, "/");
 
     private static final String ICONS_PREFIX = "/plugin/analysis-core/icons/";
     private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
     private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
-    private static final String EMPTY_URL = "";
 
     private final String id;
     @CheckForNull
@@ -79,7 +77,8 @@ public class StaticAnalysisLabelProvider {
     }
 
     /**
-     * Creates a new {@link StaticAnalysisLabelProvider} with the ID 'analysis-core'. This label provider is used as fallback.
+     * Creates a new {@link StaticAnalysisLabelProvider} with the ID 'analysis-core'. This label provider is used as
+     * fallback.
      */
     @VisibleForTesting
     StaticAnalysisLabelProvider() {
@@ -155,8 +154,9 @@ public class StaticAnalysisLabelProvider {
     }
 
     protected String formatDetails(final Issue issue) {
-        return String.format("<div class=\"details-control\" data-description=\"%s\"/>",
-                StringEscapeUtils.escapeHtml4(getDescription(issue)));
+        return div().withClass("details-control")
+                .attr("data-description", join(p(strong(issue.getMessage())), getDescription(issue)).render())
+                .render();
     }
 
     protected String formatAge(final Issue issue, final AgeBuilder ageBuilder) {
@@ -244,7 +244,10 @@ public class StaticAnalysisLabelProvider {
 
     public DomContent getNoIssuesSinceLabel(final int currentBuild, final int noIssuesSinceBuild) {
         return join(Messages.Tool_NoIssuesSinceBuild(Messages.Tool_NoIssues(),
-                currentBuild - noIssuesSinceBuild + 1, linkBuild(noIssuesSinceBuild, EMPTY_URL, EMPTY_URL).render()));
+                currentBuild - noIssuesSinceBuild + 1,
+                a(String.valueOf(noIssuesSinceBuild))
+                        .withHref("../" + noIssuesSinceBuild)
+                        .withClasses("model-link", "inside").render()));
     }
 
     private Object getWarningsCount(final AnalysisResult analysisRun) {
@@ -277,9 +280,9 @@ public class StaticAnalysisLabelProvider {
 
     private UnescapedText getResultIcon(final BallColor color) {
         return join(img()
-                .withSrc(jenkins.getImagePath(color))
-                .withAlt(color.getDescription())
-                .withTitle(color.getDescription()),
+                        .withSrc(jenkins.getImagePath(color))
+                        .withAlt(color.getDescription())
+                        .withTitle(color.getDescription()),
                 color.getDescription());
     }
 
@@ -330,29 +333,6 @@ public class StaticAnalysisLabelProvider {
         return Messages.Tool_OneIssue();
     }
 
-    private static ContainerTag linkBuild(final int referenceBuild, final String currentUrl,
-            final String displayName, final String suffix) {
-        String url;
-        if (StringUtils.isEmpty(currentUrl)) {
-            url = String.format("../%d/%s", referenceBuild, suffix);
-        }
-        else {
-            String cleanUrl = StringUtils.stripEnd(currentUrl, "/");
-            int subDetailsCount = StringUtils.countMatches(cleanUrl, "/");
-            String backward = StringUtils.repeat("../", subDetailsCount + 2);
-            String detailsUrl = StringUtils.substringBefore(cleanUrl, "/");
-
-            url = String.format("%s%d/%s%s", backward, referenceBuild, detailsUrl, suffix);
-        }
-        return a(displayName)
-                .withHref(StringUtils.stripEnd(url, "/"))
-                .withClasses("model-link", "inside");
-    }
-
-    private static ContainerTag linkBuild(final int referenceBuild, final String currentUrl, final String suffix) {
-        return linkBuild(referenceBuild, currentUrl, String.valueOf(referenceBuild), suffix);
-    }
-
     public interface AgeBuilder extends Function<Integer, String> {
         // no new methods
     }
@@ -375,7 +355,14 @@ public class StaticAnalysisLabelProvider {
                 return "1"; // fallback
             }
             else {
-                return linkBuild(referenceBuild, resultUrl, computeAge(referenceBuild), "").render();
+                String cleanUrl = StringUtils.stripEnd(resultUrl, "/");
+                int subDetailsCount = StringUtils.countMatches(cleanUrl, "/");
+                String backward = StringUtils.repeat("../", subDetailsCount + 2);
+                String detailsUrl = StringUtils.substringBefore(cleanUrl, "/");
+
+                String url = String.format("%s%d/%s", backward, referenceBuild, detailsUrl);
+                return a(computeAge(referenceBuild))
+                        .withHref(StringUtils.stripEnd(url, "/")).render();
             }
         }
 

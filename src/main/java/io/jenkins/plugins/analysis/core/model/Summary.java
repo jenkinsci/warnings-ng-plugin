@@ -65,7 +65,7 @@ public class Summary {
                         li(labelProvider.getNewIssuesLabel(analysisRun.getNewSize())))
                 .condWith(analysisRun.getFixedSize() > 0,
                         li(labelProvider.getFixedIssuesLabel(analysisRun.getFixedSize())))
-                .condWith(analysisRun.getQualityGate().isEnabled() && analysisRun.getReferenceBuild().isPresent(),
+                .condWith(analysisRun.getQualityGate().isEnabled(),
                         li(labelProvider.getQualityGateResult(analysisRun.getOverallResult())));
         return analysisRun.getReferenceBuild()
                 .map(reference -> ul.with(li(labelProvider.getReferenceBuild(reference))))

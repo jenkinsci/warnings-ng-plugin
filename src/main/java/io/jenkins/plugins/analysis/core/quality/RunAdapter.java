@@ -7,6 +7,7 @@ import hudson.model.Run;
  *
  * @author Ullrich Hafner
  */
+// FIXME: makes no sense anymore
 public class RunAdapter implements AnalysisBuild {
     private final Run<?, ?> run;
 
@@ -38,5 +39,24 @@ public class RunAdapter implements AnalysisBuild {
     @Override
     public int compareTo(final AnalysisBuild o) {
         return getNumber() - o.getNumber();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        RunAdapter that = (RunAdapter) o;
+
+        return run.equals(that.run);
+    }
+
+    @Override
+    public int hashCode() {
+        return run.hashCode();
     }
 }

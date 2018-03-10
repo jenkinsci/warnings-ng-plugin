@@ -14,7 +14,6 @@ import hudson.plugins.analysis.Messages;
  * @author Ulli Hafner
  */
 public class InfoErrorDetail implements ModelObject {
-    /** Current build as owner of this action. */
     private final Run<?, ?> owner;
     private final ImmutableList<String> errorMessages;
     private final ImmutableList<String> infoMessages;
@@ -60,6 +59,7 @@ public class InfoErrorDetail implements ModelObject {
      *
      * @return the error messages
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public Collection<String> getErrorMessages() {
         return errorMessages.castToCollection();
     }
@@ -69,6 +69,7 @@ public class InfoErrorDetail implements ModelObject {
      *
      * @return the information messages
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public Collection<String> getInfoMessages() {
         return infoMessages.castToCollection();
     }

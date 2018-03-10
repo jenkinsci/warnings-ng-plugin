@@ -12,10 +12,12 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  *  Tests the class {@link ModuleDetector}.
  */
-@SuppressWarnings("DMI")
+@SuppressFBWarnings("DMI")
 public class ModuleDetectorTest {
     private static final String EXPECTED_OSGI_MODULE = "de.faktorlogik.prototyp";
     private static final String MANIFEST = "MANIFEST.MF";
@@ -47,7 +49,7 @@ public class ModuleDetectorTest {
         when(factory.create(anyString()))
                 .thenReturn(read(fileName))
                 .thenReturn(read(fileName));
-        when(factory.find((File)anyObject(), anyString())).thenReturn(workspaceScanResult);
+        when(factory.find(anyObject(), anyString())).thenReturn(workspaceScanResult);
         return factory;
     }
 
@@ -65,7 +67,7 @@ public class ModuleDetectorTest {
     public void testOsgiModules() throws FileNotFoundException {
         FileInputStreamFactory factory = mock(FileInputStreamFactory.class);
         when(factory.create(anyString())).thenReturn(read(MANIFEST));
-        when(factory.find((File)anyObject(), anyString())).thenReturn(new String[]{PATH_PREFIX_OSGI + ModuleDetector.OSGI_BUNDLE});
+        when(factory.find(anyObject(), anyString())).thenReturn(new String[]{PATH_PREFIX_OSGI + ModuleDetector.OSGI_BUNDLE});
         ModuleDetector detector = createDetectorUnderTest(factory);
 
         verifyModuleName(detector, EXPECTED_OSGI_MODULE, PATH_PREFIX_OSGI + "/something.txt");
@@ -180,7 +182,7 @@ public class ModuleDetectorTest {
     private FileInputStreamFactory createDummyFactory() throws FileNotFoundException {
         FileInputStreamFactory factory = mock(FileInputStreamFactory.class);
         when(factory.create(anyString())).thenThrow(new FileNotFoundException());
-        when(factory.find((File)anyObject(), anyString())).thenReturn(new String[NO_RESULT]);
+        when(factory.find(anyObject(), anyString())).thenReturn(new String[NO_RESULT]);
         return factory;
     }
 
@@ -199,7 +201,7 @@ public class ModuleDetectorTest {
         when(factory.create(PREFIX + ant)).thenReturn(read(ModuleDetector.ANT_PROJECT));
         when(factory.create(PREFIX + maven)).thenReturn(read(ModuleDetector.MAVEN_POM));
 
-        when(factory.find((File)anyObject(), anyString())).thenReturn(new String[] {ant, maven});
+        when(factory.find(anyObject(), anyString())).thenReturn(new String[] {ant, maven});
         ModuleDetector detector = createDetectorUnderTest(factory);
 
         verifyModuleName(detector, EXPECTED_ANT_MODULE, PATH_PREFIX_ANT + "/something.txt");
@@ -228,7 +230,7 @@ public class ModuleDetectorTest {
         when(factory.create(ant)).thenReturn(read(ModuleDetector.ANT_PROJECT));
         when(factory.create(maven)).thenReturn(read(ModuleDetector.MAVEN_POM));
 
-        when(factory.find((File)anyObject(), anyString())).thenReturn(foundFiles);
+        when(factory.find(anyObject(), anyString())).thenReturn(foundFiles);
         ModuleDetector detector = createDetectorUnderTest(factory);
 
         assertEquals("Wrong module guessed", EXPECTED_MAVEN_MODULE,
@@ -263,7 +265,7 @@ public class ModuleDetectorTest {
         when(factory.create(maven)).thenReturn(read(ModuleDetector.MAVEN_POM));
         when(factory.create(osgi)).thenReturn(read(MANIFEST));
 
-        when(factory.find((File)anyObject(), anyString())).thenReturn(foundFiles);
+        when(factory.find(anyObject(), anyString())).thenReturn(foundFiles);
         ModuleDetector detector = createDetectorUnderTest(factory);
 
         assertEquals("Wrong module guessed", EXPECTED_OSGI_MODULE,
