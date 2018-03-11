@@ -1,10 +1,17 @@
-#!/bin/sh 
+#!/bin/sh
+
+if [[ -z "$JENKINS_HOME" ]]; then
+    echo "JENKINS_HOME is not defined" 1>&2
+    exit 1
+fi
+
+mvn verify -DskipTests || { echo "Build failed"; exit 1; }
 
 rm -rf $JENKINS_HOME/plugins/analysis-core*
 
-mvn install -DskipTests || { echo "Build failed"; exit 1; }
-
-cp -f target/analysis-core.hpi $JENKINS_HOME/plugins/
+cp -fv target/*.hpi $JENKINS_HOME/plugins
 
 cd $JENKINS_HOME
 ./go.sh
+
+
