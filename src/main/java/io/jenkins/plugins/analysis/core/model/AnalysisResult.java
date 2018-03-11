@@ -17,12 +17,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.CheckForNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
@@ -53,6 +55,7 @@ public class AnalysisResult implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(AnalysisResult.class.getName());
     private static final Pattern ISSUES_FILE_NAME = Pattern.compile("issues.xml", Pattern.LITERAL);
     private static final int NO_BUILD = -1;
+    private static final String NO_REFERENCE = StringUtils.EMPTY;
 
     private final String id;
 
@@ -100,9 +103,13 @@ public class AnalysisResult implements Serializable {
     private int noIssuesSinceBuild;
     /** Determines since which build the result is successful. */
     private int successfulSinceBuild;
-    /** Reference static analysis run. */
-    @CheckForNull
-    private final Run<?, ?> referenceBuild;
+    /**
+     * Reference run to compute the issues difference:
+     * since a run could not be persisted directly, the IDs are only stored.
+     */
+    private final String referenceJob;
+    private final String referenceBuild;
+
 
     /**
      * The build result of the associated plug-in. This result is an additional state that denotes if this plug-in has
@@ -211,8 +218,16 @@ public class AnalysisResult implements Serializable {
         normalPrioritySize = issues.getNormalPrioritySize();
         lowPrioritySize = issues.getLowPrioritySize();
 
-        referenceBuild = referenceProvider.getAnalysisRun().orElse(null);
-
+        Optional<Run<?, ?>> run = referenceProvider.getAnalysisRun();
+        if (run.isPresent()) {
+            Run<?, ?> referenceRun = run.get();
+            referenceJob = referenceRun.getParent().getFullName();
+            referenceBuild = referenceRun.getId();
+        }
+        else {
+            referenceJob = NO_REFERENCE;
+            referenceBuild = StringUtils.EMPTY;
+        }
         Issues<?> referenceResult = referenceProvider.getIssues();
         IssueDifference difference = new IssueDifference(issues, this.owner.getNumber(), referenceResult);
 
@@ -518,7 +533,10 @@ public class AnalysisResult implements Serializable {
      * @return the reference build
      */
     public Optional<Run<?, ?>> getReferenceBuild() {
-        return Optional.ofNullable(referenceBuild);
+        if (referenceJob == NO_REFERENCE) {
+            return Optional.empty();
+        }
+        return new JenkinsFacade().getBuild(referenceJob, referenceBuild);
     }
 
     /**
