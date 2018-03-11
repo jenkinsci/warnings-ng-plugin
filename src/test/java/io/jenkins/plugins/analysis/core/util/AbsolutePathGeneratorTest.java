@@ -6,14 +6,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator.FileSystem;
+
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import hudson.FilePath;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.IssueParser;
+import edu.hm.hafner.analysis.Issues;
 
 /**
  * Tests the class {@link AbsolutePathGenerator}.
@@ -63,6 +66,8 @@ class AbsolutePathGeneratorTest {
 
         assertThat(issues.iterator()).containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build());
         assertThat(issues).hasId(ID);
+        assertThat(issues.getInfoMessages()).hasSize(1);
+        assertThat(issues.getInfoMessages().get(0)).contains("1 resolved");
     }
 
     @Test
@@ -73,6 +78,7 @@ class AbsolutePathGeneratorTest {
         generator.run(issues, WORKSPACE);
         assertThat(issues).hasSize(0);
         assertThat(issues).hasId(ID);
+        assertThat(issues.getInfoMessages()).containsExactly(AbsolutePathGenerator.NOTHING_TO_DO);
     }
 
     /**
@@ -89,12 +95,17 @@ class AbsolutePathGeneratorTest {
         Issues<Issue> issues = createIssuesSingleton(relative, ISSUE_BUILDER.setOrigin(ID));
         Issue issueWithAbsolutePath = ISSUE_BUILDER.setFileName("/absolute/path.txt").build();
         issues.add(issueWithAbsolutePath);
+        Issue issueWithSelfReference = ISSUE_BUILDER.setFileName(IssueParser.SELF).build();
+        issues.add(issueWithSelfReference);
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator(fileSystem);
         generator.run(issues, WORKSPACE);
 
         assertThat(issues.iterator())
-                .containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build(), issueWithAbsolutePath);
+                .containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build(),
+                        issueWithAbsolutePath, issueWithSelfReference);
         assertThat(issues).hasId(ID);
+        assertThat(issues.getInfoMessages()).hasSize(1);
+        assertThat(issues.getInfoMessages().get(0)).contains("2 already absolute");
     }
 }

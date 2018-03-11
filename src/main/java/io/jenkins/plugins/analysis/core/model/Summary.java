@@ -80,7 +80,6 @@ public class Summary {
     }
 
     private String getToolNames() {
-        bla("allo");
         String tools = analysisRun.getSizePerOrigin()
                 .keySet()
                 .stream()

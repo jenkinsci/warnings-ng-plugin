@@ -22,6 +22,7 @@ import hudson.plugins.analysis.util.ToolTipProvider;
 
 import edu.hm.hafner.analysis.IntegerParser;
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.util.VisibleForTesting;
@@ -36,7 +37,9 @@ import edu.hm.hafner.util.VisibleForTesting;
 public class StaticAnalysisLabelProvider {
     /** Formats a full path: selects the file name portion. */
     public static final Function<String, String> FILE_NAME_FORMATTER
-            = string -> StringUtils.substringAfterLast(string, "/");
+            = string -> iffElse(IssueParser.SELF.equals(string),
+            Messages.ConsoleLog_Name(),
+            StringUtils.substringAfterLast(string, "/"));
 
     private static final String ICONS_PREFIX = "/plugin/analysis-core/icons/";
     private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
@@ -279,8 +282,7 @@ public class StaticAnalysisLabelProvider {
     }
 
     private UnescapedText getResultIcon(final BallColor color) {
-        return join(img()
-                        .withSrc(jenkins.getImagePath(color))
+        return join(img().withSrc(jenkins.getImagePath(color))
                         .withAlt(color.getDescription())
                         .withTitle(color.getDescription()),
                 color.getDescription());

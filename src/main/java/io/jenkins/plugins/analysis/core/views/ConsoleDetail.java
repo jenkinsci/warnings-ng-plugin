@@ -9,12 +9,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
-import edu.hm.hafner.analysis.Issue;
-
 import hudson.console.ConsoleNote;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.plugins.analysis.Messages;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueParser;
 
 /**
  * Renders a section of the console log.
@@ -22,11 +23,8 @@ import hudson.plugins.analysis.Messages;
  * @author Ulli Hafner
  */
 public class ConsoleDetail implements ModelObject {
-    /** Filename dummy if the console log is the source of the warning. */
-    public static final String CONSOLE_LOG_FILENAME = "Console Log";
-
     public static boolean isInConsoleLog(final Issue issue) {
-        return issue.getFileName().equals(ConsoleDetail.CONSOLE_LOG_FILENAME);
+        return IssueParser.SELF.equals(issue.getFileName());
     }
 
     /** The current build as owner of this object. */
