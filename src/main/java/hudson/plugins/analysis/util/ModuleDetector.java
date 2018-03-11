@@ -14,7 +14,6 @@ import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import org.apache.commons.digester3.Digester;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
@@ -181,9 +180,7 @@ public class ModuleDetector {
         InputStream file = null;
         try {
             file = factory.create(buildXml);
-            Digester digester = new Digester();
-            digester.setValidating(false);
-            digester.setClassLoader(ModuleDetector.class.getClassLoader());
+            SecureDigester digester = new SecureDigester(ModuleDetector.class);
 
             digester.push(new StringBuffer());
             String xPath = "project";
@@ -219,9 +216,7 @@ public class ModuleDetector {
         InputStream file = null;
         try {
             file = factory.create(pom);
-            Digester digester = new Digester();
-            digester.setValidating(false);
-            digester.setClassLoader(ModuleDetector.class.getClassLoader());
+            SecureDigester digester = new SecureDigester(ModuleDetector.class);
 
             digester.push(new StringBuffer());
             digester.addCallMethod("project/" + tagName, "append", 0);
