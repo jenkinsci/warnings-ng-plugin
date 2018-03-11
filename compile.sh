@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [[ -z "$JENKINS_HOME" ]]; then
     echo "JENKINS_HOME is not defined" 1>&2
@@ -11,7 +11,5 @@ rm -rf $JENKINS_HOME/plugins/analysis-core*
 
 cp -fv target/*.hpi $JENKINS_HOME/plugins
 
-cd $JENKINS_HOME
-./go.sh
 
 
