@@ -20,6 +20,8 @@ import edu.hm.hafner.analysis.parser.dry.CodeDuplication.DuplicationGroup;
  */
 class DuplicateCodeScannerTest {
     private static final int EXPECTED_NUMBER_OF_COLUMNS = 6;
+    private static final String EMPTY_DETAILS = "<div class=\"details-control\" "
+            + "data-description=\"&lt;p&gt;&lt;strong&gt;&lt;/strong&gt;&lt;/p&gt;\"></div>";
 
     @Test
     void shouldConvertIssueToArrayOfColumns() {
@@ -37,7 +39,7 @@ class DuplicateCodeScannerTest {
         JSONArray firstColumns = labelProvider.toJson(first, build -> String.valueOf(build));
         assertThatJson(firstColumns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
 
-        assertThat(firstColumns.get(0)).isEqualTo("<div class=\"details-control\" data-description=\"\"/>");
+        assertThat(firstColumns.get(0)).isEqualTo(EMPTY_DETAILS);
         assertThat(firstColumns.getString(1)).matches(createFileLinkMatcher("file-1", 15));
         assertThat(firstColumns.get(2)).isEqualTo("<a href=\"NORMAL\">Normal</a>");
         assertThat(firstColumns.get(3)).isEqualTo(15);
@@ -47,7 +49,7 @@ class DuplicateCodeScannerTest {
         JSONArray secondColumns = labelProvider.toJson(second, build -> String.valueOf(build));
         assertThatJson(secondColumns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
 
-        assertThat(firstColumns.get(0)).isEqualTo("<div class=\"details-control\" data-description=\"\"/>");
+        assertThat(firstColumns.get(0)).isEqualTo(EMPTY_DETAILS);
         assertThat(secondColumns.getString(1)).matches(createFileLinkMatcher("file-2", 5));
         assertThat(secondColumns.get(2)).isEqualTo("<a href=\"NORMAL\">Normal</a>");
         assertThat(secondColumns.get(3)).isEqualTo(15);
