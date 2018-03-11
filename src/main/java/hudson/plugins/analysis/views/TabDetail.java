@@ -4,11 +4,11 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
-
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.plugins.analysis.util.model.FileAnnotation;
+
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 /**
  * Result object representing a dynamic tab.
@@ -68,7 +68,7 @@ public class TabDetail extends AbstractAnnotationsDetail {
      * @return the name of the jelly script
      */
     public String getDetails() {
-        return "index.jelly";
+        return "details.jelly";
     }
 
     /**
@@ -77,7 +77,7 @@ public class TabDetail extends AbstractAnnotationsDetail {
      * @return the name of the jelly script
      */
     public String getWarnings() {
-        return "index.jelly";
+        return "warnings.jelly";
     }
 
     /**

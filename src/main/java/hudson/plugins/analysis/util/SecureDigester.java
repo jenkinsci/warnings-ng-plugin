@@ -1,11 +1,8 @@
 package hudson.plugins.analysis.util;
 
-import java.io.IOException;
-
 import org.apache.commons.digester3.Digester;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * A secure {@link Digester} implementation that does not resolve external entities.
@@ -25,7 +22,7 @@ public class SecureDigester extends Digester {
         disableFeature("external-parameter-entities");
         setEntityResolver(new EntityResolver() {
             @Override
-            public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException {
+            public InputSource resolveEntity(final String publicId, final String systemId) {
                 return new InputSource();
             }
         });

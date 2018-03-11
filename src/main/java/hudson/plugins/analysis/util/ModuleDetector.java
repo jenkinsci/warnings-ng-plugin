@@ -187,7 +187,7 @@ public class ModuleDetector {
             digester.addCallMethod(xPath, "append", 1);
             digester.addCallParam(xPath, 0, "name");
 
-            StringBuffer result = (StringBuffer)digester.parse(file);
+            StringBuffer result = digester.parse(file);
             return result.toString();
         }
         catch (IOException | SAXException exception) {
