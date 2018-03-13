@@ -262,7 +262,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
          * @return the validation result
          */
         public FormValidation doCheckScript(@QueryParameter(required = true) final String script) {
-            if (!canRunScripts()) {
+            if (isNotAllowedToRunScripts()) {
                 return NO_RUN_SCRIPT_PERMISSION_WARNING;
             }
             try {
@@ -282,8 +282,8 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
             }
         }
 
-        private boolean canRunScripts() {
-            return jenkinsFacade.hasPermission(Jenkins.RUN_SCRIPTS);
+        private boolean isNotAllowedToRunScripts() {
+            return !jenkinsFacade.hasPermission(Jenkins.RUN_SCRIPTS);
         }
 
         /**
@@ -300,7 +300,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
          */
         public FormValidation doCheckExample(@QueryParameter final String example,
                 @QueryParameter final String regexp, @QueryParameter final String script) {
-            if (!canRunScripts()) {
+            if (isNotAllowedToRunScripts()) {
                 return NO_RUN_SCRIPT_PERMISSION_WARNING;
             }
             if (StringUtils.isNotBlank(example) && StringUtils.isNotBlank(regexp) && StringUtils.isNotBlank(script)) {
