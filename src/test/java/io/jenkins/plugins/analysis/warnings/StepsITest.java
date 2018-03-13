@@ -10,10 +10,15 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.collections.impl.factory.Lists;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
+import org.junit.Assume;
 import org.junit.Test;
 import org.jvnet.hudson.test.TestExtension;
 import org.kohsuke.stapler.HttpResponse;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static hudson.Functions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
@@ -22,13 +27,8 @@ import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
-
 import hudson.model.UnprotectedRootAction;
 import hudson.util.HttpResponses;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
 
 /**
  * Integration tests of the warnings plug-in in pipelines.
@@ -46,6 +46,8 @@ public class StepsITest extends PipelineITest {
      */
     @Test
     public void issue11675() {
+        Assume.assumeFalse("Test not yet OS independent: requires UNIX commands", isWindows());
+
         WorkflowJob job = createJobWithWorkspaceFiles("issue11675.txt");
         job.setDefinition(asStage(
                 "sh 'cat issue11675-issues.txt'",

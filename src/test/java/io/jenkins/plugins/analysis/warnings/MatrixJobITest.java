@@ -11,8 +11,10 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.util.Base64;
+import org.junit.Assume;
 import org.junit.Test;
 
+import static hudson.Functions.isWindows;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
@@ -46,6 +48,8 @@ public class MatrixJobITest extends IntegrationTest {
      */
     @Test
     public void shouldCreateIndividualAxisResults() throws Exception {
+        Assume.assumeFalse("Test not yet OS independent: requires UNIX commands", isWindows());
+
         MatrixProject project = j.createProject(MatrixProject.class);
         enableWarnings(project);
 
