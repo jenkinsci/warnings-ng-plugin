@@ -6,7 +6,6 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.AbstractParser;
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.util.ResourceTest;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
@@ -49,7 +48,7 @@ class GroovyParserTest extends ResourceTest {
         assertThat(descriptor.doCheckExample(textToMatch, multiLineRegexp, script)).isOk();
 
         AbstractParser instance = parser.createParser();
-        Issues<Issue> warnings = instance.parse(new StringReader(textToMatch));
+        Issues<?> warnings = instance.parse(new StringReader(textToMatch));
 
         assertThat(warnings).hasSize(1);
     }
