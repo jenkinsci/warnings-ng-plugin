@@ -49,7 +49,7 @@ public class AbsolutePathGenerator {
     public void run(final Issues<?> issues, final FilePath workspace) {
         Set<String> relativeFileNames = issues.getFiles()
                 .stream()
-                .filter(fileName -> isRelative(fileName) && !IssueParser.SELF.equals(fileName))
+                .filter(fileName -> fileSystem.isRelative(fileName) && !IssueParser.SELF.equals(fileName))
                 .collect(Collectors.toSet());
 
         if (relativeFileNames.isEmpty()) {
@@ -84,15 +84,6 @@ public class AbsolutePathGenerator {
                 relativeToAbsoluteMapping.size(), resolvedCount, unresolvedCount, unchangedCount);
     }
 
-    private boolean isRelative(final String fileName) {
-        try {
-            return !Paths.get(fileName).isAbsolute();
-        }
-        catch (InvalidPathException ignored) {
-            return false; // do not try to resolve illegal paths
-        }
-    }
-
     private Map<String, String> resolveAbsoluteNames(final Set<String> relativeFileNames, final FilePath workspace) {
         Map<String, String> relativeToAbsoluteMapping = new HashMap<>();
         for (String fileName : relativeFileNames) {
@@ -107,6 +98,9 @@ public class AbsolutePathGenerator {
         return relativeToAbsoluteMapping;
     }
 
+    /**
+     * File system facade for test cases.
+     */
     @VisibleForTesting
     static class FileSystem {
         String resolveFile(final String fileName, final FilePath workspace) {
@@ -120,6 +114,15 @@ public class AbsolutePathGenerator {
                 // ignore
             }
             return fileName;
+        }
+
+        boolean isRelative(final String fileName) {
+            try {
+                return !Paths.get(fileName).isAbsolute();
+            }
+            catch (InvalidPathException ignored) {
+                return false; // do not try to resolve illegal paths
+            }
         }
     }
 }
