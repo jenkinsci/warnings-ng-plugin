@@ -8,12 +8,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import hudson.FilePath;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.util.VisibleForTesting;
+
+import hudson.FilePath;
 
 /**
  * Resolves absolute paths of the affected files of a set of issues.
@@ -97,6 +97,9 @@ public class AbsolutePathGenerator {
         Map<String, String> relativeToAbsoluteMapping = new HashMap<>();
         for (String fileName : relativeFileNames) {
             String absolute = fileSystem.resolveFile(fileName, workspace);
+            if (absolute == null) {
+                throw new IllegalStateException(String.format("Could not resolve absolute name for %s in %s", fileName, workspace));
+            }
             if (!absolute.equals(fileName)) {
                 relativeToAbsoluteMapping.put(fileName, absolute);
             }
