@@ -69,7 +69,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
     }
 
     private static boolean containsNewline(final String expression) {
-        return StringUtils.contains(expression, "\\n");
+        return StringUtils.contains(expression, "\\n") ||StringUtils.contains(expression, "\\r");
     }
 
     /**

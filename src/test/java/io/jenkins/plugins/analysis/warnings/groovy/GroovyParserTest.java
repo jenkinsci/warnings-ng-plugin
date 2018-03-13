@@ -37,7 +37,7 @@ class GroovyParserTest extends ResourceTest {
      */
     @Test
     void issue35262() {
-        String multiLineRegexp = "(make(?:(?!make)[\\s\\S])*?make-error:.*\\n)";
+        String multiLineRegexp = "(make(?:(?!make)[\\s\\S])*?make-error:.*(?:\\n|\\r\\n?))";
         String textToMatch = toString("issue35262.log");
         String script = toString("issue35262.groovy");
 
@@ -118,7 +118,7 @@ class GroovyParserTest extends ResourceTest {
     }
 
     @Test
-    public void shouldReportErrorWhenNoMatchesAreFoundInExample() {
+    void shouldReportErrorWhenNoMatchesAreFoundInExample() {
         DescriptorImpl descriptor = createDescriptor();
 
         assertThat(descriptor.doCheckExample("this is a warning message", SINGLE_LINE_REGEXP,
@@ -126,7 +126,7 @@ class GroovyParserTest extends ResourceTest {
     }
 
     @Test
-    public void shouldReportErrorWhenRegularExpressionHasIllegalMatchAccess() {
+    void shouldReportErrorWhenRegularExpressionHasIllegalMatchAccess() {
         DescriptorImpl descriptor = createDescriptor();
 
         assertThat(descriptor.doCheckExample(SINGLE_LINE_EXAMPLE, "^\\s*(.*):(\\d+):(.*)$",
@@ -134,7 +134,7 @@ class GroovyParserTest extends ResourceTest {
     }
 
     @Test
-    public void shouldAcceptMultiLineRegularExpression() {
+    void shouldAcceptMultiLineRegularExpression() {
         DescriptorImpl descriptor = createDescriptor();
 
         assertThat(descriptor.doCheckExample(MULTI_LINE_EXAMPLE, MULTI_LINE_REGEXP,
