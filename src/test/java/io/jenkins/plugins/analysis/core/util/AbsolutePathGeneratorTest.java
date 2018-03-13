@@ -6,17 +6,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator.FileSystem;
-
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import hudson.FilePath;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Issues;
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator.FileSystem;
+import static org.mockito.Mockito.*;
+
+import hudson.FilePath;
 
 /**
  * Tests the class {@link AbsolutePathGenerator}.
@@ -58,6 +56,7 @@ class AbsolutePathGeneratorTest {
 
         FileSystem fileSystem = mock(FileSystem.class);
         when(fileSystem.resolveFile(fileName, WORKSPACE)).thenReturn(absolutePath);
+        when(fileSystem.isRelative(fileName)).thenReturn(true);
 
         Issues<Issue> issues = createIssuesSingleton(fileName, ISSUE_BUILDER.setOrigin(ID));
 
@@ -91,6 +90,8 @@ class AbsolutePathGeneratorTest {
 
         FileSystem fileSystem = mock(FileSystem.class);
         when(fileSystem.resolveFile(relative, WORKSPACE)).thenReturn(absolutePath);
+        when(fileSystem.isRelative(absolutePath)).thenReturn(false);
+        when(fileSystem.isRelative(relative)).thenReturn(true);
 
         Issues<Issue> issues = createIssuesSingleton(relative, ISSUE_BUILDER.setOrigin(ID));
         Issue issueWithAbsolutePath = ISSUE_BUILDER.setFileName("/absolute/path.txt").build();
