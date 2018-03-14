@@ -1,5 +1,5 @@
 node ('linux') {
-    timeout(120) {
+    timeout(200) {
         stage ('Checkout') {
             checkout scm
         }
@@ -43,7 +43,7 @@ node ('linux') {
 }
 
 node ('windows') {
-    timeout(120) {
+    timeout(200) {
         stage ('Checkout') {
             checkout scm
         }
