@@ -1,147 +1,216 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import javax.annotation.Nonnull;
-
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Optional;
+import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
+import org.eclipse.collections.api.list.ImmutableList;
 
 import edu.hm.hafner.analysis.Issues;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
+import io.jenkins.plugins.analysis.core.JenkinsFacade;
+import io.jenkins.plugins.analysis.core.history.BuildHistory;
+import io.jenkins.plugins.analysis.core.history.OtherJobReferenceFinder;
+import io.jenkins.plugins.analysis.core.history.ReferenceFinder;
+import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
+import io.jenkins.plugins.analysis.core.history.ResultSelector;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
+import io.jenkins.plugins.analysis.core.model.RegexpFilter;
+import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.quality.QualityGate;
+import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.Logger;
-import io.jenkins.plugins.analysis.core.util.LoggerFactory;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
-import jenkins.tasks.SimpleBuildStep;
 
-import hudson.Extension;
 import hudson.FilePath;
-import hudson.Launcher;
-import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.model.Run;
-import hudson.model.TaskListener;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.Publisher;
-import hudson.tasks.Recorder;
+import hudson.plugins.analysis.util.EncodingValidator;
+import hudson.remoting.VirtualChannel;
 
 /**
- * Freestyle or Maven job {@link Recorder} that scans files or the console log for issues. Publishes the created issues
- * in a {@link ResultAction} in the associated run.
+ * FIXME: write comment.
  *
  * @author Ullrich Hafner
  */
-public class IssuesPublisher extends Recorder implements SimpleBuildStep {
-    private String logFileEncoding;
-    private String sourceCodeEncoding;
-    private String pattern;
-    private StaticAnalysisTool tool;
+public class IssuesPublisher {
+    private int infoPosition = 0;
+    private int errorPosition = 0;
 
-    @DataBoundConstructor
-    public IssuesPublisher() {
-        // empty constructor required for Stapler
-    }
+    private final Issues<?> issues;
+    private final RegexpFilter[] filters;
+    private final Run<?, ?> run;
+    private final FilePath workspace;
+    private final HealthDescriptor healthDescriptor;
+    private final String name;
+    private final String sourceCodeEncoding;
+    private final QualityGate qualityGate;
+    private final String referenceJobName;
+    private final boolean ignoreAnalysisResult;
+    private final boolean overallResultMustBeSuccess;
+    private final Logger logger;
+    private final Logger errorLogger;
 
-    @CheckForNull
-    public String getPattern() {
-        return pattern;
-    }
-
-    /**
-     * Sets the Ant file-set pattern of files to work with. If the pattern is undefined then the console log is
-     * scanned.
-     *
-     * @param pattern
-     *         the pattern to use
-     */
-    @DataBoundSetter
-    public void setPattern(final String pattern) {
-        this.pattern = pattern;
-    }
-
-    @CheckForNull
-    public StaticAnalysisTool getTool() {
-        return tool;
-    }
-
-    /**
-     * Sets the static analysis tool that will scan files and create issues.
-     *
-     * @param tool
-     *         the static analysis tool
-     */
-    @DataBoundSetter
-    public void setTool(final StaticAnalysisTool tool) {
-        this.tool = tool;
-    }
-
-    @CheckForNull
-    public String getLogFileEncoding() {
-        return logFileEncoding;
-    }
-
-    /**
-     * Sets the default encoding used to read the log files that contain the warnings.
-     *
-     * @param logFileEncoding
-     *         the encoding, e.g. "ISO-8859-1"
-     */
-    @DataBoundSetter
-    public void setLogFileEncoding(final String logFileEncoding) {
-        this.logFileEncoding = logFileEncoding;
-    }
-
-    @CheckForNull
-    public String getSourceCodeEncoding() {
-        return sourceCodeEncoding;
-    }
-
-    /**
-     * Sets the default encoding used to read the log files that contain the warnings.
-     *
-     * @param sourceCodeEncoding
-     *         the encoding, e.g. "ISO-8859-1"
-     */
-    @DataBoundSetter
-    public void setSourceCodeEncoding(final String sourceCodeEncoding) {
+    public IssuesPublisher(final Issues<?> issues, final RegexpFilter[] filters,
+            final Run<?, ?> run, final FilePath workspace,
+            final HealthDescriptor healthDescriptor, final String name, final String sourceCodeEncoding,
+            final QualityGate qualityGate,
+            final String referenceJobName, final boolean ignoreAnalysisResult,
+            final boolean overallResultMustBeSuccess, Logger logger,
+            Logger errorLogger) {
+        this.issues = issues;
+        this.filters = filters;
+        this.run = run;
+        this.workspace = workspace;
+        this.healthDescriptor = healthDescriptor;
+        this.name = name;
         this.sourceCodeEncoding = sourceCodeEncoding;
+        this.qualityGate = qualityGate;
+        this.referenceJobName = referenceJobName;
+        this.ignoreAnalysisResult = ignoreAnalysisResult;
+        this.overallResultMustBeSuccess = overallResultMustBeSuccess;
+        this.logger = logger;
+        this.errorLogger = errorLogger;
     }
 
-    @Override
-    public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace,
-            @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
-            throws InterruptedException, IOException {
-        IssuesScanner issuesScanner = new IssuesScanner(tool, workspace, logFileEncoding, sourceCodeEncoding,
-                createLogger(listener, tool.getId()),
-                createLogger(listener, String.format("[%s] [ERROR]", tool.getId())));
-        Issues<?> issues;
-        if (StringUtils.isBlank(pattern)) {
-            issues = issuesScanner.scanInConsoleLog(run.getLogFile());
+    public ResultAction attachAction() {
+        issues.logError("Can't copy affected files since channel to agent is not available");
+
+        return run();
+    }
+
+    public ResultAction attachAction(final VirtualChannel channel, final FilePath buildFolder)
+            throws IOException, InterruptedException {
+        ResultAction resultAction = run();
+
+        copyAffectedFiles(resultAction.getResult().getIssues(), channel, buildFolder);
+
+        return resultAction;
+    }
+
+    public ResultAction run() {
+
+        ResultSelector selector = new ByIdResultSelector(issues.getId());
+        Optional<ResultAction> other = selector.get(run);
+        if (other.isPresent()) {
+            throw new IllegalStateException(String.format("ID %s is already used by another action: %s%n",
+                    issues.getId(), other.get()));
         }
-        else {
-            issues = issuesScanner.scanInWorkspace(pattern, run.getEnvironment(listener));
+
+        Logger logger = this.logger;
+
+        Issues<?> filtered = filter();
+
+        logger.log("Attaching ResultAction with ID '%s' to run '%s'.", getId(), run);
+        AnalysisResult result = createResult(run, selector, filtered);
+        ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name,
+                EncodingValidator.defaultCharset(sourceCodeEncoding));
+        run.addAction(action);
+
+        return action;
+    }
+
+    private String getId() {
+        return issues.getId();
+    }
+
+    private void copyAffectedFiles(final Issues<?> filtered, final VirtualChannel channel,
+            final FilePath buildFolder)
+            throws IOException, InterruptedException {
+        Logger logger = this.logger;
+
+        Instant start = Instant.now();
+
+        Set<String> files = filtered.getFiles();
+        String copyingLogMessage = new AffectedFilesResolver()
+                .copyFilesWithAnnotationsToBuildFolder(channel, buildFolder, files);
+        filtered.logInfo("Copying %d affected files from '%s' to build folder (%s)",
+                files.size(), workspace, copyingLogMessage);
+        logger.log("Copying affected files took %s", computeElapsedTime(start));
+
+        log(filtered);
+    }
+
+    private AnalysisResult createResult(final Run<?, ?> run, final ResultSelector selector,
+            final Issues<?> filtered) {
+        Logger logger = this.logger;
+
+        Instant start = Instant.now();
+        AnalysisResult result = createAnalysisResult(filtered, run, selector);
+        logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
+                result.getTotalSize(), result.getNewSize(), result.getFixedSize());
+        logger.log("Creating analysis result took %s", computeElapsedTime(start));
+
+        return result;
+    }
+
+    private Issues<?> filter() {
+        Logger logger = this.logger;
+
+        Instant start = Instant.now();
+        IssueFilterBuilder builder = new IssueFilterBuilder();
+        for (RegexpFilter filter : filters) {
+            filter.apply(builder);
+        }
+        Issues<?> filtered = issues.filter(builder.build());
+        filtered.logInfo("Applying %d filters on the set of %d issues (%d issues have been removed)",
+                filters.length, issues.size(), issues.size() - filtered.size());
+        logger.log("Filtering issues took %s", computeElapsedTime(start));
+
+        log(filtered);
+
+        return filtered;
+    }
+
+    private AnalysisResult createAnalysisResult(final Issues<?> filtered,
+            final Run<?, ?> run, final ResultSelector selector) {
+        ReferenceProvider referenceProvider = createReferenceProvider(run, selector);
+        return new BuildHistory(run, selector).getPreviousResult()
+                .map(previous -> new AnalysisResult(run, referenceProvider, filtered, qualityGate, previous))
+                .orElseGet(() -> new AnalysisResult(run, referenceProvider, filtered, qualityGate));
+    }
+
+    private ReferenceProvider createReferenceProvider(final Run<?, ?> run, final ResultSelector selector) {
+        if (referenceJobName != null) {
+            Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
+            if (referenceJob.isPresent()) {
+                // FIXME: what to do if last build is not available?
+                return new OtherJobReferenceFinder(referenceJob.get().getLastBuild(), selector,
+                        ignoreAnalysisResult, overallResultMustBeSuccess);
+            }
+        }
+        return ReferenceFinder.create(run, selector, ignoreAnalysisResult, overallResultMustBeSuccess);
+    }
+    private void log(final Issues<?> issues) {
+        logErrorMessages(issues);
+        logInfoMessages(issues);
+    }
+
+    private void logErrorMessages(final Issues<?> issues) {
+        ImmutableList<String> errorMessages = issues.getErrorMessages();
+        if (errorPosition < errorMessages.size()) {
+            errorLogger.logEachLine(errorMessages.subList(errorPosition, errorMessages.size()).castToList());
+            errorPosition = errorMessages.size();
         }
     }
 
-    private Logger createLogger(final TaskListener listener, final String name) {
-        return new LoggerFactory().createLogger(listener.getLogger(), name);
+    private void logInfoMessages(final Issues<?> issues) {
+        ImmutableList<String> infoMessages = issues.getInfoMessages();
+        if (infoPosition < infoMessages.size()) {
+            logger.logEachLine(infoMessages.subList(infoPosition, infoMessages.size()).castToList());
+            infoPosition = infoMessages.size();
+        }
     }
 
-    /**
-     * Descriptor for this step: defines the context and the UI elements.
-     */
-    @Extension
-    public static class Descriptor extends BuildStepDescriptor<Publisher> {
-        @Nonnull
-        @Override
-        public String getDisplayName() {
-            return Messages.ScanAndPublishIssues_DisplayName();
-        }
+    private Duration computeElapsedTime(final Instant start) {
+        return Duration.between(start, Instant.now());
+    }
 
-        @Override
-        public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
-            return true;
-        }
+    private Charset getSourceCodeCharset() {
+        return EncodingValidator.defaultCharset(sourceCodeEncoding);
     }
 }
