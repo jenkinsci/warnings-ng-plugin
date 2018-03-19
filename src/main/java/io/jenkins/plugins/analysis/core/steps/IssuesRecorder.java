@@ -1,91 +1,146 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jenkinsci.plugins.workflow.steps.Step;
-import org.jenkinsci.plugins.workflow.steps.StepContext;
-import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
-import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
+import io.jenkins.plugins.analysis.core.util.Logger;
+import io.jenkins.plugins.analysis.core.util.LoggerFactory;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
+import jenkins.model.Jenkins;
+import jenkins.tasks.SimpleBuildStep;
 
 import hudson.Extension;
-import hudson.model.Action;
-import hudson.model.Computer;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.AbstractItem;
+import hudson.model.AbstractProject;
 import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.remoting.VirtualChannel;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
+import hudson.util.ComboBoxModel;
+import hudson.util.ListBoxModel;
 
 /**
- * Publish issues created by a static analysis run. The recorded issues are stored as a {@link ResultAction} in the
- * associated run. If the set of issues to store has a unique ID, then the created action will use this ID as well.
- * Otherwise a default ID is used to publish the results. In any case, the computed ID can be overwritten by specifying
- * an ID as step parameter.
+ * Freestyle or Maven job {@link Recorder} that scans files or the console log for issues. Publishes the created issues
+ * in a {@link ResultAction} in the associated run.
+ *
+ * @author Ullrich Hafner
  */
-@SuppressWarnings("InstanceVariableMayNotBeInitialized")
-public class PublishIssuesStep extends Step {
-    private static final String DEFAULT_MINIMUM_PRIORITY = "low";
+public class IssuesRecorder extends Recorder implements SimpleBuildStep {
+    private static final String DEFAULT_MINIMUM_PRIORITY = Priority.LOW.name();
 
-    private final Issues<Issue> issues;
+    private String reportEncoding;
+    private String sourceCodeEncoding;
+    private String pattern;
+    private StaticAnalysisTool tool;
 
     private boolean ignoreAnalysisResult;
     private boolean overallResultMustBeSuccess;
-
-    private String defaultEncoding;
+    private String referenceJobName;
 
     private String healthy;
     private String unHealthy;
     private String minimumPriority = DEFAULT_MINIMUM_PRIORITY;
-
     private final Thresholds thresholds = new Thresholds();
+
     private String id;
     private String name;
-    private String referenceJobName;
+
+    @DataBoundConstructor
+    public IssuesRecorder() {
+        // empty constructor required for Stapler
+    }
+
+    @CheckForNull
+    public String getPattern() {
+        return pattern;
+    }
 
     /**
-     * Creates a new instance of {@link PublishIssuesStep}.
+     * Sets the Ant file-set pattern of files to work with. If the pattern is undefined then the console log is
+     * scanned.
      *
-     * @param issues
-     *         the issues to publish as {@link Action} in the {@link Job}.
+     * @param pattern
+     *         the pattern to use
      */
-    @DataBoundConstructor
-    @SafeVarargs
-    public PublishIssuesStep(final Issues<Issue>... issues) {
-        if (issues == null || issues.length == 0) {
-            this.issues = new Issues<>();
-        }
-        else {
-            this.issues = new Issues<>();
-            for (Issues<Issue> issueSet : issues) {
-                this.issues.addAll(issueSet);
-            }
-        }
+    @DataBoundSetter
+    public void setPattern(final String pattern) {
+        this.pattern = pattern;
     }
 
-    public Issues<Issue> getIssues() {
-        return issues;
+    @CheckForNull
+    public StaticAnalysisTool getTool() {
+        return tool;
     }
+
+    /**
+     * Sets the static analysis tool that will scan files and create issues.
+     *
+     * @param tool
+     *         the static analysis tool
+     */
+    @DataBoundSetter
+    public void setTool(final StaticAnalysisTool tool) {
+        this.tool = tool;
+    }
+
+    @CheckForNull
+    public String getReportEncoding() {
+        return reportEncoding;
+    }
+
+    /**
+     * Sets the default encoding used to read the log files that contain the warnings.
+     *
+     * @param logFileEncoding
+     *         the encoding, e.g. "ISO-8859-1"
+     */
+    @DataBoundSetter
+    public void setReportEncoding(final String logFileEncoding) {
+        this.reportEncoding = logFileEncoding;
+    }
+
+    @CheckForNull
+    public String getSourceCodeEncoding() {
+        return sourceCodeEncoding;
+    }
+
+    /**
+     * Sets the default encoding used to read the log files that contain the warnings.
+     *
+     * @param sourceCodeEncoding
+     *         the encoding, e.g. "ISO-8859-1"
+     */
+    @DataBoundSetter
+    public void setSourceCodeEncoding(final String sourceCodeEncoding) {
+        this.sourceCodeEncoding = sourceCodeEncoding;
+    }
+
+    /** ------------------------------------------------------------ */
 
     /**
      * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If no ID is
@@ -164,22 +219,6 @@ public class PublishIssuesStep extends Step {
 
     public String getReferenceJobName() {
         return referenceJobName;
-    }
-
-    @CheckForNull
-    public String getDefaultEncoding() {
-        return defaultEncoding;
-    }
-
-    /**
-     * Sets the default encoding used to read files (warnings, source code, etc.).
-     *
-     * @param defaultEncoding
-     *         the encoding, e.g. "ISO-8859-1"
-     */
-    @DataBoundSetter
-    public void setDefaultEncoding(final String defaultEncoding) {
-        this.defaultEncoding = defaultEncoding;
     }
 
     @CheckForNull
@@ -386,91 +425,87 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setFilters(final RegexpFilter[] filters) {
+    public void setFilters(final RegexpFilter[] filters) { // FIXME: why not a collection?
         if (filters != null && filters.length > 0) {
             this.filters.addAll(Arrays.asList(filters));
         }
     }
 
+    /** ------------------------------------------------------------ */
+
     @Override
-    public StepExecution start(final StepContext stepContext) {
-        return new Execution(stepContext, this);
-    }
+    public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace,
+            @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
+            throws InterruptedException, IOException {
+        Logger logger = createLogger(listener, tool.getId());
+        Logger errorLogger = createLogger(listener, String.format("[%s] [ERROR]", tool.getId()));
 
-    /**
-     * Actually performs the execution of the associated step.
-     */
-    public static class Execution extends AnalysisExecution<ResultAction> {
-        private final HealthDescriptor healthDescriptor;
-        private final boolean overallResultMustBeSuccess;
-        private final boolean ignoreAnalysisResult;
-        private final String sourceCodeEncoding;
-        private final Issues<Issue> issues;
-        private final QualityGate qualityGate;
-        private final RegexpFilter[] filters;
-        private final String name;
-        private final Thresholds thresholds;
-        private final String referenceJobName;
-
-        protected Execution(@NonNull final StepContext context, final PublishIssuesStep step) {
-            super(context);
-
-            ignoreAnalysisResult = step.getIgnoreAnalysisResult();
-            overallResultMustBeSuccess = step.getOverallResultMustBeSuccess();
-            referenceJobName = step.getReferenceJobName();
-            sourceCodeEncoding = step.getDefaultEncoding();
-            healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnHealthy(), step.getMinimumPriority());
-
-            thresholds = step.getThresholds();
-            qualityGate = new QualityGate(thresholds);
-            name = StringUtils.defaultString(step.getName());
-            issues = step.getIssues();
-            if (StringUtils.isNotBlank(step.getId())) {
-                issues.setId(step.getId());
-            }
-            filters = step.getFilters();
+        IssuesScanner issuesScanner = new IssuesScanner(tool, workspace, reportEncoding, sourceCodeEncoding,
+                logger, errorLogger);
+        Issues<?> issues;
+        if (StringUtils.isBlank(pattern)) {
+            issues = issuesScanner.scanInConsoleLog(run.getLogFile());
+        }
+        else {
+            issues = issuesScanner.scanInWorkspace(pattern, run.getEnvironment(listener));
         }
 
-        @Override
-        protected String getId() {
-            return issues.getId();
+        IssuesPublisher publisher = new IssuesPublisher(issues, getFilters(), run, workspace,
+                new HealthDescriptor(healthy, unHealthy, minimumPriority),
+                name, sourceCodeEncoding, new QualityGate(thresholds), referenceJobName, ignoreAnalysisResult,
+                overallResultMustBeSuccess, logger, errorLogger);
+        VirtualChannel channel = launcher.getChannel();
+        if (channel != null) {
+            publisher.attachAction(channel, new FilePath(run.getRootDir()));
         }
-
-        @Override
-        protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
-            IssuesPublisher publisher = new IssuesPublisher(issues, filters, getRun(), getWorkspace(),
-                    healthDescriptor, name, sourceCodeEncoding, qualityGate, referenceJobName, ignoreAnalysisResult,
-                    overallResultMustBeSuccess, getLogger(), getErrorLogger());
-            Optional<VirtualChannel> channel = getChannel();
-            if (channel.isPresent()) {
-                return publisher.attachAction(channel.get(), getBuildFolder());
-
-            }
-            else {
-                return publisher.attachAction();
-            }
+        else {
+            publisher.attachAction();
         }
     }
 
+    private Logger createLogger(final TaskListener listener, final String name) {
+        return new LoggerFactory().createLogger(listener.getLogger(), name);
+    }
+
     /**
-     * Descriptor for this step: defines the context and the UI labels.
+     * Descriptor for this step: defines the context and the UI elements.
      */
     @Extension
-    public static class Descriptor extends StepDescriptor {
-        @Override
-        public Set<Class<?>> getRequiredContext() {
-            return ImmutableSet.of(Run.class, TaskListener.class, Computer.class);
-        }
-
-        @Override
-        public String getFunctionName() {
-            return "publishIssues";
-        }
-
-        @NonNull
+    public static class Descriptor extends BuildStepDescriptor<Publisher> {
+        @Nonnull
         @Override
         public String getDisplayName() {
-            return Messages.PublishIssues_DisplayName();
+            return Messages.ScanAndPublishIssues_DisplayName();
         }
+
+        @Override
+        public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
+            return true;
+        }
+
+        public ComboBoxModel doFillReportEncodingItems() {
+            return new ComboBoxModel(EncodingValidator.getAvailableCharsets());
+        }
+
+        public ComboBoxModel doFillSourceCodeEncodingItems() {
+            return doFillReportEncodingItems();
+        }
+
+        public ListBoxModel doFillMinimumPriorityItems() {
+            ListBoxModel options = new ListBoxModel();
+            options.add(Messages.PriorityFilter_High(), Priority.HIGH.name());
+            options.add(Messages.PriorityFilter_Normal(), Priority.NORMAL.name());
+            options.add(Messages.PriorityFilter_Low(), Priority.LOW.name());
+            return options;
+        }
+
+        public ComboBoxModel doFillReferenceJobItems() {
+            // replace this with whitespace
+            return Jenkins.getInstance().getAllItems(Job.class).stream()
+                    .map(AbstractItem::getFullName)
+                    .distinct()
+                    .collect(Collectors.toCollection(ComboBoxModel::new));
+        }
+
     }
 }

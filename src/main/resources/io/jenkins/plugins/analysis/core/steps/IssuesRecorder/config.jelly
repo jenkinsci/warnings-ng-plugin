@@ -1,6 +1,7 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core"xmlns:i="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues">
 
+  <i:scan-parameters/>
   <i:publish-parameters/>
 
 </j:jelly>

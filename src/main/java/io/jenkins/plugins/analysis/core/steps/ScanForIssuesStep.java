@@ -31,7 +31,7 @@ import hudson.model.TaskListener;
  */
 @SuppressWarnings("InstanceVariableMayNotBeInitialized")
 public class ScanForIssuesStep extends Step {
-    private String logFileEncoding;
+    private String reportEncoding;
     private String sourceCodeEncoding;
     private String pattern;
     private StaticAnalysisTool tool;
@@ -75,19 +75,19 @@ public class ScanForIssuesStep extends Step {
     }
 
     @CheckForNull
-    public String getLogFileEncoding() {
-        return logFileEncoding;
+    public String getReportEncoding() {
+        return reportEncoding;
     }
 
     /**
      * Sets the default encoding used to read the log files that contain the warnings.
      *
-     * @param logFileEncoding
+     * @param reportEncoding
      *         the encoding, e.g. "ISO-8859-1"
      */
     @DataBoundSetter
-    public void setLogFileEncoding(final String logFileEncoding) {
-        this.logFileEncoding = logFileEncoding;
+    public void setReportEncoding(final String reportEncoding) {
+        this.reportEncoding = reportEncoding;
     }
 
     @CheckForNull
@@ -123,7 +123,7 @@ public class ScanForIssuesStep extends Step {
         protected Execution(@NonNull final StepContext context, final ScanForIssuesStep step) {
             super(context);
 
-            logFileEncoding = step.getLogFileEncoding();
+            logFileEncoding = step.getReportEncoding();
             sourceCodeEncoding = step.getSourceCodeEncoding();
             tool = step.getTool();
             pattern = step.getPattern();

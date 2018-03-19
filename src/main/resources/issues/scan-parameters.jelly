@@ -1,0 +1,26 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" >
+
+  <st:documentation>
+    Provides all required input fields to scan for issues.
+  </st:documentation>
+
+  <f:entry description="${description.tool}">
+    <f:dropdownDescriptorSelector field="tool" title="${%title.tool}"
+                                  descriptors="${descriptor.availableTools}"/>
+  </f:entry>
+
+  <f:entry title="${%title.pattern}" field="pattern"
+           description="${%description.pattern('http://ant.apache.org/manual/Types/fileset.html')}">
+    <f:textbox/>
+  </f:entry>
+
+  <f:entry title="${%title.reportEncoding}" description="${%description.reportEncoding}">
+    <f:combobox field="reportEncoding"/>
+  </f:entry>
+
+  <f:entry title="${%title.sourceCodeEncoding}" description="${%description.sourceCodeEncoding}">
+    <f:combobox field="sourceCodeEncoding"/>
+  </f:entry>
+
+</j:jelly>
