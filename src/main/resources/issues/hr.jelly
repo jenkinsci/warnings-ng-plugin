@@ -8,8 +8,6 @@
     </st:attribute>
   </st:documentation>
 
-  <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/custom-styles/custom-style.css"/>
-
   <f:block><div class="subsection-header"/></f:block>
 
   <tr>
