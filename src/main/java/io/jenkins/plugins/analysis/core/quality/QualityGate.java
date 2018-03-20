@@ -31,40 +31,6 @@ public class QualityGate implements Serializable {
      * @param thresholds
      *         the thresholds to apply
      */
-    public QualityGate(final hudson.plugins.analysis.core.Thresholds thresholds) {
-        ThresholdSetBuilder builder = new ThresholdSetBuilder();
-
-        builder.setTotalThreshold(thresholds.failedTotalAll);
-        builder.setHighThreshold(thresholds.failedTotalHigh);
-        builder.setNormalThreshold(thresholds.failedTotalNormal);
-        builder.setLowThreshold(thresholds.failedTotalLow);
-        totalFailedThreshold = builder.build();
-
-        builder.setTotalThreshold(thresholds.unstableTotalAll);
-        builder.setHighThreshold(thresholds.unstableTotalHigh);
-        builder.setNormalThreshold(thresholds.unstableTotalNormal);
-        builder.setLowThreshold(thresholds.unstableTotalLow);
-        totalUnstableThreshold = builder.build();
-
-        builder.setTotalThreshold(thresholds.failedNewAll);
-        builder.setHighThreshold(thresholds.failedNewHigh);
-        builder.setNormalThreshold(thresholds.failedNewNormal);
-        builder.setLowThreshold(thresholds.failedNewLow);
-        newFailedThreshold = builder.build();
-
-        builder.setTotalThreshold(thresholds.unstableNewAll);
-        builder.setHighThreshold(thresholds.unstableNewHigh);
-        builder.setNormalThreshold(thresholds.unstableNewNormal);
-        builder.setLowThreshold(thresholds.unstableNewLow);
-        newUnstableThreshold = builder.build();
-    }
-
-    /**
-     * Creates a new instance of {@link QualityGate}.
-     *
-     * @param thresholds
-     *         the thresholds to apply
-     */
     public QualityGate(final Thresholds thresholds) {
         ThresholdSetBuilder builder = new ThresholdSetBuilder();
 

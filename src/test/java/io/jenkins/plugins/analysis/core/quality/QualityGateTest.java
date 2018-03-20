@@ -6,58 +6,25 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import edu.hm.hafner.util.SerializableTest;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.quality.ThresholdSet.ThresholdSetBuilder;
-
-import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import hudson.model.Result;
-
-import edu.hm.hafner.util.SerializableTest;
 
 /**
  * Tests the class {@link QualityGate QualityGate}. These Tests were created while developing the class QualityGate.
  *
  * @author Michael Schmid
  */
-// FIXME: check if dependency to old package and Thresholds still is required
 class QualityGateTest extends SerializableTest<QualityGate> {
     @Override
     protected QualityGate createSerializable() {
         return new QualityGateBuilder().build();
-    }
-
-    @Test
-    void shouldCreateInstanceFromStringThresholds() {
-        hudson.plugins.analysis.core.Thresholds thresholds = new hudson.plugins.analysis.core.Thresholds();
-
-        thresholds.unstableTotalAll = "1";
-        thresholds.unstableTotalHigh = "2";
-        thresholds.unstableTotalNormal = "3";
-        thresholds.unstableTotalLow = "4";
-
-        thresholds.failedTotalAll = "5";
-        thresholds.failedTotalHigh = "6";
-        thresholds.failedTotalNormal = "7";
-        thresholds.failedTotalLow = "8";
-
-        thresholds.unstableNewAll = "11";
-        thresholds.unstableNewHigh = "12";
-        thresholds.unstableNewNormal = "13";
-        thresholds.unstableNewLow = "14";
-
-        thresholds.failedNewAll = "15";
-        thresholds.failedNewHigh = "16";
-        thresholds.failedNewNormal = "17";
-        thresholds.failedNewLow = "18";
-
-        QualityGate expected = createGateWithBuilder();
-        assertThat(expected.isEnabled()).isTrue();
-
-        assertThat(new QualityGate(thresholds)).isEqualTo(expected);
     }
 
     @Test
