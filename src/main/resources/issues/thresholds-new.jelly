@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:st="jelly:stapler">
 
   <st:documentation>
     Defines the quality gate for the number of new issues.
@@ -18,45 +18,45 @@
     <tbody>
       <tr>
         <td style="vertical-align: middle;">
-          <img src="${resURL}/images/16x16/yellow.gif" alt="100%"
+          <img src="${resURL}/images/24x24/yellow.png" alt="100%" class="icon-yellow icon-lg"
                title="${%description.unstableNew}"/>
         </td>
         <td>
-          <f:textbox name="unstableNewAll"
+          <i:number name="unstableNewAll"
                      value="${instance.thresholds.unstableNewAll}"/>
         </td>
         <td>
-          <f:textbox name="unstableNewHigh"
+          <i:number name="unstableNewHigh"
                      value="${instance.thresholds.unstableNewHigh}"/>
         </td>
         <td>
-          <f:textbox name="unstableNewNormal"
+          <i:number name="unstableNewNormal"
                      value="${instance.thresholds.unstableNewNormal}"/>
         </td>
         <td>
-          <f:textbox name="unstableNewLow"
+          <i:number name="unstableNewLow"
                      value="${instance.thresholds.unstableNewLow}"/>
         </td>
       </tr>
       <tr>
         <td style="vertical-align: middle;">
-          <img src="${resURL}/images/16x16/red.gif" alt="100%"
+          <img src="${resURL}/images/24x24/red.png" alt="100%" class="icon-red icon-lg"
                title="${%description.failedNew}"/>
         </td>
         <td>
-          <f:textbox name="failedNewAll"
+          <i:number name="failedNewAll"
                      value="${instance.thresholds.failedNewAll}"/>
         </td>
         <td>
-          <f:textbox name="failedNewHigh"
+          <i:number name="failedNewHigh"
                      value="${instance.thresholds.failedNewHigh}"/>
         </td>
         <td>
-          <f:textbox name="failedNewNormal"
+          <i:number name="failedNewNormal"
                      value="${instance.thresholds.failedNewNormal}"/>
         </td>
         <td>
-          <f:textbox name="failedNewLow"
+          <i:number name="failedNewLow"
                      value="${instance.thresholds.failedNewLow}"/>
         </td>
       </tr>
