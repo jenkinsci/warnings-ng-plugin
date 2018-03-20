@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -385,17 +385,15 @@ public class PublishIssuesStep extends Step {
         getThresholds().failedNewLow = failedNewLow;
     }
 
-    private final List<RegexpFilter> filters = Lists.newArrayList();
+    private List<RegexpFilter> filters = Lists.newArrayList();
 
-    public RegexpFilter[] getFilters() {
-        return filters.toArray(new RegexpFilter[filters.size()]);
+    public List<RegexpFilter> getFilters() {
+        return filters;
     }
 
     @DataBoundSetter
-    public void setFilters(final RegexpFilter[] filters) {
-        if (filters != null && filters.length > 0) {
-            this.filters.addAll(Arrays.asList(filters));
-        }
+    public void setFilters(final List<RegexpFilter> filters) {
+        this.filters = new ArrayList<>(filters);
     }
 
     @Override
@@ -413,7 +411,7 @@ public class PublishIssuesStep extends Step {
         private final String sourceCodeEncoding;
         private final Issues<Issue> issues;
         private final QualityGate qualityGate;
-        private final RegexpFilter[] filters;
+        private final List<RegexpFilter> filters;
         private final String name;
         private final Thresholds thresholds;
         private final String referenceJobName;

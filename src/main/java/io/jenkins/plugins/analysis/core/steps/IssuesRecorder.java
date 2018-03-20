@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,16 +22,17 @@ import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
 import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
 import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.util.LoggerFactory;
-import io.jenkins.plugins.analysis.core.views.ResultAction;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 
@@ -44,6 +45,7 @@ import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
@@ -54,8 +56,17 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
 /**
- * Freestyle or Maven job {@link Recorder} that scans files or the console log for issues. Publishes the created issues
- * in a {@link ResultAction} in the associated run.
+ * Freestyle or Maven job {@link Recorder} that scans report files or the console log for issues. Stores the created
+ * issues in an {@link AnalysisResult}. The result is attached to the {@link Run} by registering a {@link ResultAction}.
+ * <p>
+ * Additional features:
+ * <ul>
+ * <li>It provides a {@link QualityGate} that is checked after each run. If the quality gate is not passed, then the build
+ * will be set to {@link Result#UNSTABLE} or {@link Result#FAILURE}, depending on the configuration properties.</li>
+ * <li>It provides thresholds for the build health that could be adjusted in the configuration screen.
+ * These values are used by the {@link HealthReportBuilder} to compute the health and the health trend graph.
+ * </li>
+ * </ul>
  *
  * @author Ullrich Hafner
  */
@@ -435,17 +446,15 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         getThresholds().failedNewLow = failedNewLow;
     }
 
-    private final List<RegexpFilter> filters = Lists.newArrayList();
+    private List<RegexpFilter> filters = Lists.newArrayList();
 
-    public RegexpFilter[] getFilters() {
-        return filters.toArray(new RegexpFilter[filters.size()]);
+    public List<RegexpFilter> getFilters() {
+        return filters;
     }
 
     @DataBoundSetter
-    public void setFilters(final RegexpFilter[] filters) { // FIXME: why not a collection?
-        if (filters != null && filters.length > 0) {
-            this.filters.addAll(Arrays.asList(filters));
-        }
+    public void setFilters(final List<RegexpFilter> filters) {
+        this.filters = new ArrayList<>(filters);
     }
 
     /** ------------------------------------------------------------ */
@@ -655,9 +664,10 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
          * Performs on-the-fly validation on the ant pattern for input files.
          *
          * @param project
-         *            the project
+         *         the project
          * @param pattern
-         *            the file pattern
+         *         the file pattern
+         *
          * @return the validation result
          */
         public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,

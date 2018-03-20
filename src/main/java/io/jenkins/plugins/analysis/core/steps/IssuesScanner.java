@@ -31,7 +31,7 @@ import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.FileFinder;
 
 /**
- * FIXME: write comment.
+ * Scans report files or the console log for issues.
  *
  * @author Ullrich Hafner
  */
@@ -46,7 +46,6 @@ public class IssuesScanner {
     private final Logger logger;
     private final Logger errorLogger;
 
-    // FIXME: pattern should be expanded
     public IssuesScanner(final StaticAnalysisTool tool, final FilePath workspace,
             final String logFileEncoding, final String sourceCodeEncoding, Logger logger, Logger errorLogger) {
         this.workspace = workspace;
