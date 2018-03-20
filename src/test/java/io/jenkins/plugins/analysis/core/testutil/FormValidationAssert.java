@@ -71,4 +71,21 @@ public class FormValidationAssert extends AbstractAssert<FormValidationAssert, F
 
         return this;
     }
+
+    /**
+     * Verifies that the message of the {@link FormValidation} equals to the expected message.
+     *
+     * @return this assertion object.
+     * @throws AssertionError
+     *         if the message of the {@link FormValidation} is not equal to the expected message
+     */
+    public FormValidationAssert hasMessage(final String expectedMessage) {
+        isNotNull();
+
+        if (!ObjectUtils.equals(actual.getMessage(), expectedMessage)) {
+            failWithMessage(EXPECTED_BUT_WAS_MESSAGE, "message", actual, expectedMessage, actual.getMessage());
+        }
+
+        return this;
+    }
 }

@@ -2,6 +2,9 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,18 +12,22 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 
 import com.google.common.collect.Lists;
 
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
+import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
+import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
 import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.util.LoggerFactory;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
@@ -42,6 +49,7 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.ComboBoxModel;
+import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
 /**
@@ -51,7 +59,8 @@ import hudson.util.ListBoxModel;
  * @author Ullrich Hafner
  */
 public class IssuesRecorder extends Recorder implements SimpleBuildStep {
-    private static final String DEFAULT_MINIMUM_PRIORITY = Priority.LOW.name();
+    private static final Priority DEFAULT_MINIMUM_PRIORITY = Priority.LOW;
+    private static final String NO_REFERENCE_JOB = "-";
 
     private String reportEncoding;
     private String sourceCodeEncoding;
@@ -62,9 +71,9 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private boolean overallResultMustBeSuccess;
     private String referenceJobName;
 
-    private String healthy;
-    private String unHealthy;
-    private String minimumPriority = DEFAULT_MINIMUM_PRIORITY;
+    private int healthy;
+    private int unHealthy;
+    private Priority minimumPriority = DEFAULT_MINIMUM_PRIORITY;
     private final Thresholds thresholds = new Thresholds();
 
     private String id;
@@ -82,7 +91,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     /**
      * Sets the Ant file-set pattern of files to work with. If the pattern is undefined then the console log is
-     * scanned.
+     * scanned. A pattern may reference environment variables: their values will be resolved before the pattern
+     * is evaluated.
      *
      * @param pattern
      *         the pattern to use
@@ -140,7 +150,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         this.sourceCodeEncoding = sourceCodeEncoding;
     }
 
-    /** ------------------------------------------------------------ */
+    /* -------------------------------------------------------------------------------------------------------------- */
 
     /**
      * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If no ID is
@@ -214,15 +224,21 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      */
     @DataBoundSetter
     public void setReferenceJobName(final String referenceJobName) {
+        if (NO_REFERENCE_JOB.equals(referenceJobName)) {
+            this.referenceJobName = StringUtils.EMPTY;
+        }
         this.referenceJobName = referenceJobName;
     }
 
     public String getReferenceJobName() {
+        if (StringUtils.isBlank(referenceJobName)) {
+            return NO_REFERENCE_JOB;
+        }
         return referenceJobName;
     }
 
     @CheckForNull
-    public String getHealthy() {
+    public int getHealthy() {
         return healthy;
     }
 
@@ -233,12 +249,12 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *         the number of issues when health is reported as 100%
      */
     @DataBoundSetter
-    public void setHealthy(final String healthy) {
+    public void setHealthy(final int healthy) {
         this.healthy = healthy;
     }
 
     @CheckForNull
-    public String getUnHealthy() {
+    public int getUnHealthy() {
         return unHealthy;
     }
 
@@ -249,13 +265,13 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *         the number of issues when health is reported as 0%
      */
     @DataBoundSetter
-    public void setUnHealthy(final String unHealthy) {
+    public void setUnHealthy(final int unHealthy) {
         this.unHealthy = unHealthy;
     }
 
     @CheckForNull
     public String getMinimumPriority() {
-        return minimumPriority;
+        return minimumPriority.name();
     }
 
     /**
@@ -267,7 +283,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      */
     @DataBoundSetter
     public void setMinimumPriority(final String minimumPriority) {
-        this.minimumPriority = StringUtils.defaultIfEmpty(minimumPriority, DEFAULT_MINIMUM_PRIORITY);
+        this.minimumPriority = Priority.fromString(minimumPriority, Priority.LOW);
     }
 
     Thresholds getThresholds() {
@@ -447,7 +463,10 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             issues = issuesScanner.scanInConsoleLog(run.getLogFile());
         }
         else {
-            issues = issuesScanner.scanInWorkspace(pattern, run.getEnvironment(listener));
+            String expanded = new EnvironmentResolver()
+                    .expandEnvironmentVariables(run.getEnvironment(listener), pattern);
+
+            issues = issuesScanner.scanInWorkspace(expanded);
         }
 
         IssuesPublisher publisher = new IssuesPublisher(issues, getFilters(), run, workspace,
@@ -483,14 +502,29 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             return true;
         }
 
+        /**
+         * Returns a model with all available charsets.
+         *
+         * @return a model with all available charsets
+         */
         public ComboBoxModel doFillReportEncodingItems() {
             return new ComboBoxModel(EncodingValidator.getAvailableCharsets());
         }
 
+        /**
+         * Returns a model with all available charsets.
+         *
+         * @return a model with all available charsets
+         */
         public ComboBoxModel doFillSourceCodeEncodingItems() {
             return doFillReportEncodingItems();
         }
 
+        /**
+         * Returns a model with all available priority filters.
+         *
+         * @return a model with all available priority filters
+         */
         public ListBoxModel doFillMinimumPriorityItems() {
             ListBoxModel options = new ListBoxModel();
             options.add(Messages.PriorityFilter_High(), Priority.HIGH.name());
@@ -499,13 +533,121 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             return options;
         }
 
+        /**
+         * Returns the model with the possible reference jobs.
+         *
+         * @return the model with the possible reference jobs
+         */
         public ComboBoxModel doFillReferenceJobItems() {
-            // replace this with whitespace
-            return Jenkins.getInstance().getAllItems(Job.class).stream()
+            ComboBoxModel model = Jenkins.getInstance().getAllItems(Job.class).stream()
                     .map(AbstractItem::getFullName)
                     .distinct()
                     .collect(Collectors.toCollection(ComboBoxModel::new));
+            model.add(0, NO_REFERENCE_JOB); // make sure that no input is valid
+            return model;
         }
 
+        /**
+         * Performs on-the-fly validation of the reference job.
+         *
+         * @param referenceJob
+         *         the reference job
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckReferenceJob(@QueryParameter final String referenceJob) {
+            if (NO_REFERENCE_JOB.equals(referenceJob)
+                    || StringUtils.isBlank(referenceJob)
+                    || new JenkinsFacade().getJob(referenceJob).isPresent()) {
+                return FormValidation.ok();
+            }
+            return FormValidation.error(Messages.FieldValidator_Error_ReferenceJobDoesNotExist());
+        }
+
+        /**
+         * Performs on-the-fly validation of the character encoding.
+         *
+         * @param reportEncoding
+         *         the character encoding
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
+            try {
+                if (StringUtils.isBlank(reportEncoding) || Charset.forName(reportEncoding).canEncode()) {
+                    return FormValidation.ok();
+                }
+            }
+            catch (IllegalCharsetNameException | UnsupportedCharsetException ignore) {
+                // throw a FormValidation error
+            }
+            return FormValidation.errorWithMarkup(createWrongEncodingErrorMessage());
+        }
+
+        @VisibleForTesting
+        String createWrongEncodingErrorMessage() {
+            return Messages.FieldValidator_Error_DefaultEncoding(
+                    "https://docs.oracle.com/javase/8/docs/api/java/nio/charset/Charset.html");
+        }
+
+        /**
+         * Performs on-the-fly validation on the character encoding.
+         *
+         * @param sourceCodeEncoding
+         *         the character encoding
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckSourceCodeEncoding(@QueryParameter final String sourceCodeEncoding) {
+            return doCheckReportEncoding(sourceCodeEncoding);
+        }
+
+        /**
+         * Performs on-the-fly validation of the health report thresholds.
+         *
+         * @param healthy
+         *         the healthy threshold
+         * @param unHealthy
+         *         the unhealthy threshold
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckHealthy(@QueryParameter final int healthy, @QueryParameter final int unHealthy) {
+            if (healthy == 0 && unHealthy > 0) {
+                return FormValidation.error(Messages.FieldValidator_Error_ThresholdHealthyMissing());
+            }
+            return validateHealthReportConstraints(healthy, healthy, unHealthy);
+        }
+
+        /**
+         * Performs on-the-fly validation of the health report thresholds.
+         *
+         * @param healthy
+         *         the healthy threshold
+         * @param unHealthy
+         *         the unhealthy threshold
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckUnHealthy(@QueryParameter final int healthy, @QueryParameter final int unHealthy) {
+            if (healthy > 0 && unHealthy == 0) {
+                return FormValidation.error(Messages.FieldValidator_Error_ThresholdUnhealthyMissing());
+            }
+            return validateHealthReportConstraints(unHealthy, healthy, unHealthy);
+        }
+
+        private FormValidation validateHealthReportConstraints(final int nonNegative,
+                final int healthy, final int unHealthy) {
+            if (nonNegative < 0) {
+                return FormValidation.error(Messages.FieldValidator_Error_NegativeThreshold());
+            }
+            if (healthy == 0 && unHealthy == 0) {
+                return FormValidation.ok();
+            }
+            if (healthy >= unHealthy) {
+                return FormValidation.error(Messages.FieldValidator_Error_ThresholdOrder());
+            }
+            return FormValidation.ok();
+        }
     }
 }

@@ -1,7 +1,19 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:i="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:f="/lib/form" >
 
-  <i:scan-parameters/>
-  <i:publish-parameters/>
+  <f:entry description="${description.tool}">
+    <f:dropdownDescriptorSelector field="tool" title="${%title.tool}"
+                                  descriptors="${descriptor.availableTools}"/>
+  </f:entry>
+
+  <f:entry title="${%title.pattern}" field="pattern"
+           description="${%description.pattern('http://ant.apache.org/manual/Types/fileset.html')}">
+    <f:textbox/>
+  </f:entry>
+
+  <f:advanced>
+    <i:scan-parameters/>
+    <i:publish-parameters/>
+  </f:advanced>
 
 </j:jelly>

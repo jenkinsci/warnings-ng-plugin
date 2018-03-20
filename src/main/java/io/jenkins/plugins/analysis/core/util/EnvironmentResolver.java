@@ -2,10 +2,10 @@ package io.jenkins.plugins.analysis.core.util;
 
 import org.apache.commons.lang.StringUtils;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 import hudson.EnvVars;
 import hudson.Util;
-
-import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 /**
  * Resolves environment parameters in a string value.
@@ -21,11 +21,11 @@ public class EnvironmentResolver {
      *
      * @param environment
      *         environment variables
-     * @param unexpanded
+     * @param nonExpanded
      *         the string to expand
      */
-    public String expandEnvironmentVariables(@CheckForNull final EnvVars environment, final String unexpanded) {
-        String expanded = unexpanded;
+    public String expandEnvironmentVariables(@CheckForNull final EnvVars environment, final String nonExpanded) {
+        String expanded = nonExpanded;
         if (environment != null && !environment.isEmpty()) {
             for (int i = 0; i < RESOLVE_VARIABLES_DEPTH && StringUtils.isNotBlank(expanded); i++) {
                 String old = expanded;
