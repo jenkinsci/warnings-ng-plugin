@@ -142,7 +142,7 @@ public class ScanForIssuesStep extends Step {
                 return issuesScanner.scanInConsoleLog(getRun().getLogFile());
             }
             else {
-                return issuesScanner.scanInWorkspace(pattern, getEnvironment());
+                return issuesScanner.scanInWorkspace(pattern);
             }
         }
     }

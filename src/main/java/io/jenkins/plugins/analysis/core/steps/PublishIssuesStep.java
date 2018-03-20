@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
@@ -45,7 +46,7 @@ import hudson.remoting.VirtualChannel;
  */
 @SuppressWarnings("InstanceVariableMayNotBeInitialized")
 public class PublishIssuesStep extends Step {
-    private static final String DEFAULT_MINIMUM_PRIORITY = "low";
+    private static final Priority DEFAULT_MINIMUM_PRIORITY = Priority.LOW;
 
     private final Issues<Issue> issues;
 
@@ -54,11 +55,11 @@ public class PublishIssuesStep extends Step {
 
     private String defaultEncoding;
 
-    private String healthy;
-    private String unHealthy;
-    private String minimumPriority = DEFAULT_MINIMUM_PRIORITY;
-
+    private int healthy;
+    private int unHealthy;
+    private Priority minimumPriority = DEFAULT_MINIMUM_PRIORITY;
     private final Thresholds thresholds = new Thresholds();
+
     private String id;
     private String name;
     private String referenceJobName;
@@ -183,7 +184,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @CheckForNull
-    public String getHealthy() {
+    public int getHealthy() {
         return healthy;
     }
 
@@ -194,12 +195,12 @@ public class PublishIssuesStep extends Step {
      *         the number of issues when health is reported as 100%
      */
     @DataBoundSetter
-    public void setHealthy(final String healthy) {
+    public void setHealthy(final int healthy) {
         this.healthy = healthy;
     }
 
     @CheckForNull
-    public String getUnHealthy() {
+    public int getUnHealthy() {
         return unHealthy;
     }
 
@@ -210,12 +211,17 @@ public class PublishIssuesStep extends Step {
      *         the number of issues when health is reported as 0%
      */
     @DataBoundSetter
-    public void setUnHealthy(final String unHealthy) {
+    public void setUnHealthy(final int unHealthy) {
         this.unHealthy = unHealthy;
     }
 
     @CheckForNull
     public String getMinimumPriority() {
+        return minimumPriority.name();
+    }
+
+    @CheckForNull
+    public Priority getMinimumPriorityAsPriority() {
         return minimumPriority;
     }
 
@@ -228,7 +234,7 @@ public class PublishIssuesStep extends Step {
      */
     @DataBoundSetter
     public void setMinimumPriority(final String minimumPriority) {
-        this.minimumPriority = StringUtils.defaultIfEmpty(minimumPriority, DEFAULT_MINIMUM_PRIORITY);
+        this.minimumPriority = Priority.fromString(minimumPriority, Priority.LOW);
     }
 
     Thresholds getThresholds() {
@@ -419,7 +425,7 @@ public class PublishIssuesStep extends Step {
             overallResultMustBeSuccess = step.getOverallResultMustBeSuccess();
             referenceJobName = step.getReferenceJobName();
             sourceCodeEncoding = step.getDefaultEncoding();
-            healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnHealthy(), step.getMinimumPriority());
+            healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnHealthy(), step.getMinimumPriorityAsPriority());
 
             thresholds = step.getThresholds();
             qualityGate = new QualityGate(thresholds);

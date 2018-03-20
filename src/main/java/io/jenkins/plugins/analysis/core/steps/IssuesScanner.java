@@ -21,12 +21,10 @@ import edu.hm.hafner.analysis.PackageNameResolver;
 import edu.hm.hafner.util.Ensure;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
-import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
 import io.jenkins.plugins.analysis.core.util.FilesScanner;
 import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.util.ModuleResolver;
 
-import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.console.ConsoleNote;
 import hudson.plugins.analysis.util.EncodingValidator;
@@ -61,26 +59,21 @@ public class IssuesScanner {
 
     /**
      * Scans for issues in a set of files specified by a pattern. The pattern will be applied on the files of the given
-     * workspace. A pattern may reference environment variables: their values will be resolved before the pattern
-     * is evaluated.
+     * workspace.
      *
      * @param pattern
-     *         the pattern of files - may reference environment variables
-     * @param environment
-     *         the mapping of environment variables to values
-     *
+     *         the pattern of files
      * @throws InterruptedException
      *         if the step is interrupted
      * @throws IOException
      *         if something goes wrong
      */
     // TODO: Pattern should be a glob
-    public Issues<?> scanInWorkspace(final String pattern, final EnvVars environment)
+    public Issues<?> scanInWorkspace(final String pattern)
             throws InterruptedException, IOException {
         Instant start = Instant.now();
 
-        String expanded = new EnvironmentResolver().expandEnvironmentVariables(environment, pattern);
-        Issues<?> issues = workspace.act(new FilesScanner(expanded, tool.createParser(), logFileEncoding));
+        Issues<?> issues = workspace.act(new FilesScanner(pattern, tool.createParser(), logFileEncoding));
 
         log(issues);
 

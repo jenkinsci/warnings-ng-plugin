@@ -64,7 +64,7 @@ class SummaryTest {
                 createWarningsLink("<a href=\"testResult/new\">.*2 new warnings.*</a>"));
         assertThat(actualSummary).containsPattern(
                 createWarningsLink("<a href=\"testResult/fixed\">.*2 fixed warnings.*</a>"));
-        assertThat(actualSummary).contains("Quality gates: <img src=\"color\" alt=\"Success\" title=\"Success\"> Success");
+        assertThat(actualSummary).contains("Quality gate: <img src=\"color\" class=\"icon-blue icon-lg\" alt=\"Success\" title=\"Success\"> Success");
         assertThat(actualSummary).contains("Reference build: <a href=\"absoluteUrl\">Job #15</a>");
     }
 

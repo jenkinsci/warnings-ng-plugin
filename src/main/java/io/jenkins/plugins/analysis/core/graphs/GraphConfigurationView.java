@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
+import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
@@ -18,7 +18,6 @@ import com.google.common.collect.Lists;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
-
 import net.sf.json.JSONObject;
 
 import hudson.model.Job;
@@ -52,16 +51,15 @@ public abstract class GraphConfigurationView implements ModelObject {
      *         the owning job to configure the graphs for
      * @param key
      *         unique key of this graph
-     * @param buildHistory
-     *         the build result history
      */
     public GraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job, final String key,
-            final ResultHistory buildHistory) {
+            final ResultHistory buildHistory,
+            final HealthDescriptor healthDescriptor) {
         this.configuration = configuration;
         owner = job;
         this.key = key;
         this.buildHistory = buildHistory;
-        healthDescriptor = new HealthDescriptor();
+        this.healthDescriptor = healthDescriptor;
     }
 
     /**
