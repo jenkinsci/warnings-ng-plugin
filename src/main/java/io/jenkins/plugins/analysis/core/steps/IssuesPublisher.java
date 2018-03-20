@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -33,7 +35,8 @@ import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.remoting.VirtualChannel;
 
 /**
- * FIXME: write comment.
+ * Publishes issues: Stores the created issues in an {@link AnalysisResult}. The result is attached to the
+ * {@link Run} by registering a {@link hudson.plugins.analysis.core.ResultAction}.
  *
  * @author Ullrich Hafner
  */
@@ -42,7 +45,7 @@ public class IssuesPublisher {
     private int errorPosition = 0;
 
     private final Issues<?> issues;
-    private final RegexpFilter[] filters;
+    private final ArrayList<RegexpFilter> filters;
     private final Run<?, ?> run;
     private final FilePath workspace;
     private final HealthDescriptor healthDescriptor;
@@ -55,7 +58,7 @@ public class IssuesPublisher {
     private final Logger logger;
     private final Logger errorLogger;
 
-    public IssuesPublisher(final Issues<?> issues, final RegexpFilter[] filters,
+    public IssuesPublisher(final Issues<?> issues, final List<RegexpFilter> filters,
             final Run<?, ?> run, final FilePath workspace,
             final HealthDescriptor healthDescriptor, final String name, final String sourceCodeEncoding,
             final QualityGate qualityGate,
@@ -63,7 +66,7 @@ public class IssuesPublisher {
             final boolean overallResultMustBeSuccess, Logger logger,
             Logger errorLogger) {
         this.issues = issues;
-        this.filters = filters;
+        this.filters = new ArrayList(filters);
         this.run = run;
         this.workspace = workspace;
         this.healthDescriptor = healthDescriptor;
@@ -158,7 +161,7 @@ public class IssuesPublisher {
         }
         Issues<?> filtered = issues.filter(builder.build());
         filtered.logInfo("Applying %d filters on the set of %d issues (%d issues have been removed)",
-                filters.length, issues.size(), issues.size() - filtered.size());
+                filters.size(), issues.size(), issues.size() - filtered.size());
         logger.log("Filtering issues took %s", computeElapsedTime(start));
 
         log(filtered);
