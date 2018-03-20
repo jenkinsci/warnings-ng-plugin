@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -647,6 +648,36 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             if (healthy >= unHealthy) {
                 return FormValidation.error(Messages.FieldValidator_Error_ThresholdOrder());
             }
+            return FormValidation.ok();
+        }
+
+        /**
+         * Performs on-the-fly validation on the ant pattern for input files.
+         *
+         * @param project
+         *            the project
+         * @param pattern
+         *            the file pattern
+         * @return the validation result
+         */
+        public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String pattern) {
+            if (project != null) { // there is no workspace in pipelines
+                try {
+                    FilePath workspace = project.getSomeWorkspace();
+                    if (workspace != null && workspace.exists()) {
+                        String result = workspace.validateAntFileMask(pattern,
+                                FilePath.VALIDATE_ANT_FILE_MASK_BOUND);
+                        if (result != null) {
+                            return FormValidation.error(result);
+                        }
+                    }
+                }
+                catch (InterruptedException | IOException ignore) {
+                    // ignore and return ok
+                }
+            }
+
             return FormValidation.ok();
         }
     }
