@@ -6,6 +6,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
+import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 
 import hudson.model.Job;
 import hudson.plugins.analysis.Messages;
@@ -34,8 +35,9 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      */
     public UserGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
             final String jobActionUrl, final Cookie[] cookies,
-            final ResultHistory buildHistory, final ToolTipProvider toolTipProvider) {
-        super(configuration, job, jobActionUrl, buildHistory);
+            final ResultHistory buildHistory, final ToolTipProvider toolTipProvider,
+            final HealthDescriptor healthDescriptor) {
+        super(configuration, job, jobActionUrl, buildHistory, healthDescriptor);
 
         if (!configuration.initializeFrom(createCookieHandler(jobActionUrl).getValue(cookies))) {
             configuration.initializeFromFile(createDefaultsFile(job, jobActionUrl));

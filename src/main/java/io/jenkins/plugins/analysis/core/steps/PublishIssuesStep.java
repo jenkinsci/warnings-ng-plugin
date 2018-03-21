@@ -1,8 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -18,39 +17,26 @@ import org.kohsuke.stapler.DataBoundSetter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
-import io.jenkins.plugins.analysis.core.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.history.BuildHistory;
-import io.jenkins.plugins.analysis.core.history.OtherJobReferenceFinder;
-import io.jenkins.plugins.analysis.core.history.ReferenceFinder;
-import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
-import io.jenkins.plugins.analysis.core.history.ResultSelector;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
-import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
-import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.Extension;
-import hudson.FilePath;
 import hudson.model.Action;
 import hudson.model.Computer;
 import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.remoting.VirtualChannel;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Publish issues created by a static analysis run. The recorded issues are stored as a {@link ResultAction} in the
@@ -60,7 +46,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 @SuppressWarnings("InstanceVariableMayNotBeInitialized")
 public class PublishIssuesStep extends Step {
-    private static final String DEFAULT_MINIMUM_PRIORITY = "low";
+    private static final Priority DEFAULT_MINIMUM_PRIORITY = Priority.LOW;
 
     private final Issues<Issue> issues;
 
@@ -69,11 +55,11 @@ public class PublishIssuesStep extends Step {
 
     private String defaultEncoding;
 
-    private String healthy;
-    private String unHealthy;
-    private String minimumPriority = DEFAULT_MINIMUM_PRIORITY;
-
+    private int healthy;
+    private int unHealthy;
+    private Priority minimumPriority = DEFAULT_MINIMUM_PRIORITY;
     private final Thresholds thresholds = new Thresholds();
+
     private String id;
     private String name;
     private String referenceJobName;
@@ -198,7 +184,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @CheckForNull
-    public String getHealthy() {
+    public int getHealthy() {
         return healthy;
     }
 
@@ -209,12 +195,12 @@ public class PublishIssuesStep extends Step {
      *         the number of issues when health is reported as 100%
      */
     @DataBoundSetter
-    public void setHealthy(final String healthy) {
+    public void setHealthy(final int healthy) {
         this.healthy = healthy;
     }
 
     @CheckForNull
-    public String getUnHealthy() {
+    public int getUnHealthy() {
         return unHealthy;
     }
 
@@ -225,12 +211,17 @@ public class PublishIssuesStep extends Step {
      *         the number of issues when health is reported as 0%
      */
     @DataBoundSetter
-    public void setUnHealthy(final String unHealthy) {
+    public void setUnHealthy(final int unHealthy) {
         this.unHealthy = unHealthy;
     }
 
     @CheckForNull
     public String getMinimumPriority() {
+        return minimumPriority.name();
+    }
+
+    @CheckForNull
+    public Priority getMinimumPriorityAsPriority() {
         return minimumPriority;
     }
 
@@ -243,7 +234,7 @@ public class PublishIssuesStep extends Step {
      */
     @DataBoundSetter
     public void setMinimumPriority(final String minimumPriority) {
-        this.minimumPriority = StringUtils.defaultIfEmpty(minimumPriority, DEFAULT_MINIMUM_PRIORITY);
+        this.minimumPriority = Priority.fromString(minimumPriority, Priority.LOW);
     }
 
     Thresholds getThresholds() {
@@ -394,17 +385,15 @@ public class PublishIssuesStep extends Step {
         getThresholds().failedNewLow = failedNewLow;
     }
 
-    private final List<RegexpFilter> filters = Lists.newArrayList();
+    private List<RegexpFilter> filters = Lists.newArrayList();
 
-    public RegexpFilter[] getFilters() {
-        return filters.toArray(new RegexpFilter[filters.size()]);
+    public List<RegexpFilter> getFilters() {
+        return filters;
     }
 
     @DataBoundSetter
-    public void setFilters(final RegexpFilter[] filters) {
-        if (filters != null && filters.length > 0) {
-            this.filters.addAll(Arrays.asList(filters));
-        }
+    public void setFilters(final List<RegexpFilter> filters) {
+        this.filters = new ArrayList<>(filters);
     }
 
     @Override
@@ -419,10 +408,10 @@ public class PublishIssuesStep extends Step {
         private final HealthDescriptor healthDescriptor;
         private final boolean overallResultMustBeSuccess;
         private final boolean ignoreAnalysisResult;
-        private final String defaultEncoding;
+        private final String sourceCodeEncoding;
         private final Issues<Issue> issues;
         private final QualityGate qualityGate;
-        private final RegexpFilter[] filters;
+        private final List<RegexpFilter> filters;
         private final String name;
         private final Thresholds thresholds;
         private final String referenceJobName;
@@ -433,8 +422,8 @@ public class PublishIssuesStep extends Step {
             ignoreAnalysisResult = step.getIgnoreAnalysisResult();
             overallResultMustBeSuccess = step.getOverallResultMustBeSuccess();
             referenceJobName = step.getReferenceJobName();
-            defaultEncoding = step.getDefaultEncoding();
-            healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnHealthy(), step.getMinimumPriority());
+            sourceCodeEncoding = step.getDefaultEncoding();
+            healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnHealthy(), step.getMinimumPriorityAsPriority());
 
             thresholds = step.getThresholds();
             qualityGate = new QualityGate(thresholds);
@@ -453,104 +442,17 @@ public class PublishIssuesStep extends Step {
 
         @Override
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
-            ResultSelector selector = new ByIdResultSelector(issues.getId());
-            Run<?, ?> run = getRun();
-            Optional<ResultAction> other = selector.get(run);
-            if (other.isPresent()) {
-                throw new IllegalStateException(String.format("ID %s is already used by another action: %s%n",
-                        issues.getId(), other.get()));
-            }
-
-            return publishResult(run, selector);
-        }
-
-        private ResultAction publishResult(final Run<?, ?> run, final ResultSelector selector)
-                throws IOException, InterruptedException {
-            Logger logger = getLogger();
-
-            Issues<Issue> filtered = filter();
-            copyAffectedFiles(filtered);
-
-            logger.log("Attaching ResultAction with ID '%s' to run '%s'.", getId(), run);
-            AnalysisResult result = createResult(run, selector, filtered);
-            ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name,
-                    EncodingValidator.defaultCharset(defaultEncoding));
-            run.addAction(action);
-
-            return action;
-        }
-
-        private void copyAffectedFiles(final Issues<?> filtered) throws IOException, InterruptedException {
-            Logger logger = getLogger();
-            FilePath workspace = getContext().get(FilePath.class);
-
-            Instant start = Instant.now();
-
-            Set<String> files = filtered.getFiles();
+            IssuesPublisher publisher = new IssuesPublisher(issues, filters, getRun(), getWorkspace(),
+                    healthDescriptor, name, sourceCodeEncoding, qualityGate, referenceJobName, ignoreAnalysisResult,
+                    overallResultMustBeSuccess, getLogger(), getErrorLogger());
             Optional<VirtualChannel> channel = getChannel();
             if (channel.isPresent()) {
-                String copyingLogMessage = new AffectedFilesResolver()
-                        .copyFilesWithAnnotationsToBuildFolder(channel.get(), getBuildFolder(), files);
-                filtered.logInfo("Copying %d affected files from '%s' to build folder (%s)",
-                        files.size(), workspace, copyingLogMessage);
-                logger.log("Copying affected files took %s", computeElapsedTime(start));
+                return publisher.attachAction(channel.get(), getBuildFolder());
+
             }
             else {
-                filtered.logError("Can't copy affected files since channel to agent is not available");
+                return publisher.attachAction();
             }
-
-            log(filtered);
-        }
-
-        private AnalysisResult createResult(final Run<?, ?> run, final ResultSelector selector,
-                final Issues<Issue> filtered) {
-            Logger logger = getLogger();
-
-            Instant start = Instant.now();
-            AnalysisResult result = createAnalysisResult(filtered, run, selector);
-            logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
-                    result.getTotalSize(), result.getNewSize(), result.getFixedSize());
-            logger.log("Creating analysis result took %s", computeElapsedTime(start));
-
-            return result;
-        }
-
-        private Issues<Issue> filter() {
-            Logger logger = getLogger();
-
-            Instant start = Instant.now();
-            IssueFilterBuilder builder = new IssueFilterBuilder();
-            for (RegexpFilter filter : filters) {
-                filter.apply(builder);
-            }
-            Issues<Issue> filtered = issues.filter(builder.build());
-            filtered.logInfo("Applying %d filters on the set of %d issues (%d issues have been removed)",
-                    filters.length, issues.size(), issues.size() - filtered.size());
-            logger.log("Filtering issues took %s", computeElapsedTime(start));
-
-            log(filtered);
-
-            return filtered;
-        }
-
-        private AnalysisResult createAnalysisResult(final Issues<Issue> filtered,
-                final Run<?, ?> run, final ResultSelector selector) {
-            ReferenceProvider referenceProvider = createReferenceProvider(run, selector);
-            return new BuildHistory(run, selector).getPreviousResult()
-                    .map(previous -> new AnalysisResult(run, referenceProvider, filtered, qualityGate, previous))
-                    .orElseGet(() -> new AnalysisResult(run, referenceProvider, filtered, qualityGate));
-        }
-
-        private ReferenceProvider createReferenceProvider(final Run<?, ?> run, final ResultSelector selector) {
-            if (referenceJobName != null) {
-                Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
-                if (referenceJob.isPresent()) {
-                    // FIXME: what to do if last build is not available?
-                    return new OtherJobReferenceFinder(referenceJob.get().getLastBuild(), selector,
-                            ignoreAnalysisResult, overallResultMustBeSuccess);
-                }
-            }
-            return ReferenceFinder.create(run, selector, ignoreAnalysisResult, overallResultMustBeSuccess);
         }
     }
 

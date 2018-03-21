@@ -1,0 +1,66 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Defines the quality gate for the total number of issues.
+  </st:documentation>
+
+  <table>
+    <thead>
+      <tr>
+        <td/>
+        <td>${%All priorities}</td>
+        <td>${%Priority high}</td>
+        <td>${%Priority normal}</td>
+        <td>${%Priority low}</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="vertical-align: middle;">
+          <img src="${resURL}/images/24x24/yellow.png" alt="100%" class="icon-yellow icon-lg"
+               title="${%description.unstableTotal}"/>
+        </td>
+        <td>
+          <i:number name="unstableTotalAll"
+                     value="${instance.thresholds.unstableTotalAll}"/>
+        </td>
+        <td>
+          <i:number name="unstableTotalHigh"
+                     value="${instance.thresholds.unstableTotalHigh}"/>
+        </td>
+        <td>
+          <i:number name="unstableTotalNormal"
+                     value="${instance.thresholds.unstableTotalNormal}"/>
+        </td>
+        <td>
+          <i:number name="unstableTotalLow"
+                     value="${instance.thresholds.unstableTotalLow}"/>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: middle;">
+          <img src="${resURL}/images/24x24/red.png" alt="100%" class="icon-red icon-lg"
+               title="${%description.failedTotal}"/>
+        </td>
+        <td>
+          <i:number name="failedTotalAll"
+                     value="${instance.thresholds.failedTotalAll}"/>
+        </td>
+        <td>
+          <i:number name="failedTotalHigh"
+                     value="${instance.thresholds.failedTotalHigh}"/>
+        </td>
+        <td>
+          <i:number name="failedTotalNormal"
+                     value="${instance.thresholds.failedTotalNormal}"/>
+        </td>
+        <td>
+          <i:number name="failedTotalLow"
+                     value="${instance.thresholds.failedTotalLow}"/>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</j:jelly>

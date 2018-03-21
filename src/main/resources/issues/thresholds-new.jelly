@@ -1,0 +1,66 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Defines the quality gate for the number of new issues.
+  </st:documentation>
+
+  <table>
+    <thead>
+      <tr>
+        <td/>
+        <td>${%All priorities}</td>
+        <td>${%Priority high}</td>
+        <td>${%Priority normal}</td>
+        <td>${%Priority low}</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="vertical-align: middle;">
+          <img src="${resURL}/images/24x24/yellow.png" alt="100%" class="icon-yellow icon-lg"
+               title="${%description.unstableNew}"/>
+        </td>
+        <td>
+          <i:number name="unstableNewAll"
+                     value="${instance.thresholds.unstableNewAll}"/>
+        </td>
+        <td>
+          <i:number name="unstableNewHigh"
+                     value="${instance.thresholds.unstableNewHigh}"/>
+        </td>
+        <td>
+          <i:number name="unstableNewNormal"
+                     value="${instance.thresholds.unstableNewNormal}"/>
+        </td>
+        <td>
+          <i:number name="unstableNewLow"
+                     value="${instance.thresholds.unstableNewLow}"/>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: middle;">
+          <img src="${resURL}/images/24x24/red.png" alt="100%" class="icon-red icon-lg"
+               title="${%description.failedNew}"/>
+        </td>
+        <td>
+          <i:number name="failedNewAll"
+                     value="${instance.thresholds.failedNewAll}"/>
+        </td>
+        <td>
+          <i:number name="failedNewHigh"
+                     value="${instance.thresholds.failedNewHigh}"/>
+        </td>
+        <td>
+          <i:number name="failedNewNormal"
+                     value="${instance.thresholds.failedNewNormal}"/>
+        </td>
+        <td>
+          <i:number name="failedNewLow"
+                     value="${instance.thresholds.failedNewLow}"/>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</j:jelly>

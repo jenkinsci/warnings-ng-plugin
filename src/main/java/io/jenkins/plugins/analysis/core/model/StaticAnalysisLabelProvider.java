@@ -1,13 +1,18 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.function.Function;
 import javax.annotation.CheckForNull;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.analysis.IntegerParser;
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueParser;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.views.LocalizedPriority;
-
 import static j2html.TagCreator.*;
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
@@ -19,13 +24,6 @@ import hudson.model.BallColor;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.plugins.analysis.util.ToolTipProvider;
-
-import edu.hm.hafner.analysis.IntegerParser;
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
-import edu.hm.hafner.util.VisibleForTesting;
 
 /**
  * A generic label provider for static analysis runs. Creates pre-defined labels that are parameterized with a string
@@ -283,6 +281,7 @@ public class StaticAnalysisLabelProvider {
 
     private UnescapedText getResultIcon(final BallColor color) {
         return join(img().withSrc(jenkins.getImagePath(color))
+                        .withClasses(color.getIconClassName(), "icon-lg")
                         .withAlt(color.getDescription())
                         .withTitle(color.getDescription()),
                 color.getDescription());

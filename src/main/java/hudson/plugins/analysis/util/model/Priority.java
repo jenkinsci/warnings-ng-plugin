@@ -44,7 +44,7 @@ public enum Priority {
             return type.equals(Priority.class);
         }
 
-            @Override
+        @Override
         public Object fromString(final String str) {
             return Priority.valueOf(str);
         }

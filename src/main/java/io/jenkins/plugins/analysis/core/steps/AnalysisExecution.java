@@ -9,6 +9,7 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 
+import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.util.LoggerFactory;
 
@@ -18,8 +19,6 @@ import hudson.model.Computer;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
-
-import edu.hm.hafner.analysis.Issues;
 
 /**
  * Base class for static analysis step executions.
@@ -64,30 +63,6 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
     }
 
     /**
-     * Creates a logger with the specified name.
-     *
-     * @param name
-     *         the logger name
-     *
-     * @return the logger (or a silent logger if the logger sink could not be accessed)
-     */
-    protected Logger createLogger(final String name) {
-        LoggerFactory loggerFactory = new LoggerFactory();
-        try {
-            TaskListener listener = getContext().get(TaskListener.class);
-
-            if (listener == null) {
-                return loggerFactory.createNullLogger();
-            }
-
-            return loggerFactory.createLogger(listener.getLogger(), name);
-        }
-        catch (InterruptedException | IOException ignored) {
-            return loggerFactory.createNullLogger();
-        }
-    }
-
-    /**
      * Returns a {@link VirtualChannel} to the agent where this step is executed.
      *
      * @return the channel
@@ -115,8 +90,12 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      * @throws InterruptedException
      *         if the user canceled the run
      */
-    protected Optional<EnvVars> getEnvironment() throws IOException, InterruptedException {
-        return Optional.ofNullable(getContext().get(EnvVars.class));
+    protected EnvVars getEnvironment() throws IOException, InterruptedException {
+        EnvVars envVars = getContext().get(EnvVars.class);
+        if (envVars == null) {
+            return new EnvVars(); // fallback FIXME: logger?
+        }
+        return envVars;
     }
 
     /**
@@ -169,7 +148,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
     }
 
     private void logErrorMessages(final Issues<?> issues) {
-        Logger errorLogger = createLogger(String.format("[%s] [ERROR]", getId()));
+        Logger errorLogger = getErrorLogger();
         ImmutableList<String> errorMessages = issues.getErrorMessages();
         if (errorPosition < errorMessages.size()) {
             errorLogger.logEachLine(errorMessages.subList(errorPosition, errorMessages.size()).castToList());
@@ -184,6 +163,34 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
             logger.logEachLine(infoMessages.subList(infoPosition, infoMessages.size()).castToList());
             infoPosition = infoMessages.size();
         }
+    }
+
+    /**
+     * Creates a logger with the specified name.
+     *
+     * @param name
+     *         the logger name
+     *
+     * @return the logger (or a silent logger if the logger sink could not be accessed)
+     */
+    protected Logger createLogger(final String name) {
+        LoggerFactory loggerFactory = new LoggerFactory();
+        try {
+            TaskListener listener = getContext().get(TaskListener.class);
+
+            if (listener == null) {
+                return loggerFactory.createNullLogger();
+            }
+
+            return loggerFactory.createLogger(listener.getLogger(), name);
+        }
+        catch (InterruptedException | IOException ignored) {
+            return loggerFactory.createNullLogger();
+        }
+    }
+
+    protected Logger getErrorLogger() {
+        return createLogger(String.format("[%s] [ERROR]", getId()));
     }
 
     /**

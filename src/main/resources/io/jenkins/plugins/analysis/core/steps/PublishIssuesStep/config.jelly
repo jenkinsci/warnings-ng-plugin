@@ -1,28 +1,6 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core"
-         xmlns:f="/lib/form" xmlns:u="/util">
+<j:jelly xmlns:j="jelly:core"xmlns:i="/issues">
 
-  <f:entry title="${%title.usePreviousBuildAsReference}" description="${%description.usePreviousBuildAsReference}"
-     field="usePreviousBuildAsReference">
-    <f:checkbox/>
-  </f:entry>
-  <f:entry title="${%title.onlyUseStableBuildsAsReference}" description="${%description.onlyUseStableBuildsAsReference}"
-      field="useStableBuildAsReference">
-    <f:checkbox/>
-  </f:entry>
-  <u:health id="${id}"/>
-
-  <f:entry title="${%title.status.total}" description="${%description.status.total}">
-    <u:thresholds-total/>
-  </f:entry>
-  <f:entry title="${%title.status.new}" description="${%description.status.new}">
-    <u:thresholds-new/>
-  </f:entry>
-
-  <f:entry title="${%Issue filters}" description="${%description.filter}">
-    <u:repeatable field="filters" minimum="1"/>
-  </f:entry>
-
-  <u:defaultEncoding id="${id}"/>
+  <i:publish-parameters/>
 
 </j:jelly>

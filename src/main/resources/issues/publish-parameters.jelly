@@ -1,0 +1,39 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:u="/util" xmlns:i="/issues" >
+
+  <st:documentation>
+    Provides all required input fields to publish issues.
+  </st:documentation>
+
+  <i:hr title="${%Reference Analysis Results}"/>
+
+  <f:entry title="${%title.ignoreAnalysisResult}" description="${%description.ignoreAnalysisResult}"
+           field="ignoreAnalysisResult">
+    <f:checkbox/>
+  </f:entry>
+  <f:entry title="${%title.overallResultMustBeSuccess}" description="${%description.overallResultMustBeSuccess}"
+           field="overallResultMustBeSuccess">
+    <f:checkbox/>
+  </f:entry>
+  <f:entry title="${%title.referenceJob}" field="referenceJobName" description="${%description.referenceJob}">
+    <f:combobox field="referenceJob"/>
+  </f:entry>
+
+  <i:health />
+
+  <i:hr title="${%Quality Gate Thresholds}"/>
+
+  <f:entry title="${%title.status.total}" description="${%description.status.total}">
+    <i:thresholds-total/>
+  </f:entry>
+  <f:entry title="${%title.status.new}" description="${%description.status.new}">
+    <i:thresholds-new/>
+  </f:entry>
+
+  <i:hr title="${%Issue filters}"/>
+
+  <f:entry title="${%Issue filters}" description="${%description.filter}">
+    <u:repeatable field="filters" minimum="1"/>
+  </f:entry>
+
+</j:jelly>
