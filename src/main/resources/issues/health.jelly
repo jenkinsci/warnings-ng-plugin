@@ -5,8 +5,6 @@
     Configures the health report.
   </st:documentation>
 
-  <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/custom-styles/custom-style.css"/>
-
   <i:hr title="${%Health Report Configuration}"/>
 
   <j:set var="healthyIcon" value="${resURL}/images/24x24/health-80plus.png"/>
