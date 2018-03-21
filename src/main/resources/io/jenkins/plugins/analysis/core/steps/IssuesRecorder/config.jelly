@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:f="/lib/form" >
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:f="/lib/form">
 
   <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/custom-styles/custom-style.css"/>
 
@@ -13,7 +13,9 @@
     <f:textbox/>
   </f:entry>
 
-  <i:scan-parameters/>
-  <i:publish-parameters/>
+  <f:advanced>
+    <i:scan-parameters/>
+    <i:publish-parameters/>
+  </f:advanced>
 
 </j:jelly>
