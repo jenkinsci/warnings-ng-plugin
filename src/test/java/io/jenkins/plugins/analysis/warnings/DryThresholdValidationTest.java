@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.ThresholdValidation;
@@ -21,7 +20,7 @@ class DryThresholdValidationTest {
             "49, 50",
             " 1,  2"})
     @DisplayName("OK: high > normal")
-    void shouldValidateSuccessfullyIfHighIsLargerThanNormal(final String normal, final String high) {
+    void shouldValidateSuccessfullyIfHighIsLargerThanNormal(final int normal, final int high) {
         ThresholdValidation validation = new ThresholdValidation();
 
         assertThat(validation.validateNormal(high, normal)).isOk();
@@ -35,23 +34,11 @@ class DryThresholdValidationTest {
             "500, 50",
             "-1, 50"})
     @DisplayName("ERROR: high <= normal")
-    void shouldReportErrorIfHighIsLessOrEqualThanNormal(final String normal, final String high) {
+    void shouldReportErrorIfHighIsLessOrEqualThanNormal(final int normal, final int high) {
         ThresholdValidation validation = new ThresholdValidation();
 
         assertThat(validation.validateNormal(high, normal)).isError();
         assertThat(validation.validateHigh(high, normal)).isError();
-    }
-
-    @ParameterizedTest(name = "{index} => value={0}")
-    @ValueSource(strings = {"", "Oh!", "0-1"})
-    @DisplayName("ERROR: Invalid Strings")
-    void shouldReportErrorOnNonInteger(final String value) {
-        ThresholdValidation validation = new ThresholdValidation();
-
-        assertThat(validation.validateNormal(value, "10")).isError();
-        assertThat(validation.validateNormal("10", value)).isError();
-        assertThat(validation.validateHigh(value, "10")).isError();
-        assertThat(validation.validateHigh("10", value)).isError();
     }
 
     /**

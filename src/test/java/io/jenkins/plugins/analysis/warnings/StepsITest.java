@@ -118,7 +118,7 @@ public class StepsITest extends PipelineITest {
         assertThat(issues.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(8);
         assertThat(issues.filter(issue -> "java".equals(issue.getOrigin()))).hasSize(2);
         assertThat(issues.filter(issue -> "javadoc".equals(issue.getOrigin()))).hasSize(6);
-        assertThat(issues.getToolNames()).containsExactlyInAnyOrder("java", "javadoc", "eclipse");
+        assertThat(issues.getTools()).containsExactlyInAnyOrder("java", "javadoc", "eclipse");
         assertThat(result.getIssues()).hasSize(8 + 2 + 6);
     }
 

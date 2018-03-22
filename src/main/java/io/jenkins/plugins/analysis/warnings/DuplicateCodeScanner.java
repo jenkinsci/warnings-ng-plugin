@@ -5,17 +5,15 @@ import java.util.List;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.parser.dry.CodeDuplication;
+import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-
-import static hudson.plugins.warnings.WarningsDescriptor.*;
 import static j2html.TagCreator.*;
 import net.sf.json.JSONArray;
 
 import hudson.util.FormValidation;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.parser.dry.CodeDuplication;
 
 /**
  * Provides settings for duplicate code scanners.
@@ -157,8 +155,8 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
          *
          * @return the validation result
          */
-        public FormValidation doCheckHighThreshold(@QueryParameter final String highThreshold,
-                @QueryParameter final String normalThreshold) {
+        public FormValidation doCheckHighThreshold(@QueryParameter final int highThreshold,
+                @QueryParameter final int normalThreshold) {
             return VALIDATION.validateHigh(highThreshold, normalThreshold);
         }
 
@@ -172,8 +170,8 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
          *
          * @return the validation result
          */
-        public FormValidation doCheckNormalThreshold(@QueryParameter final String highThreshold,
-                @QueryParameter final String normalThreshold) {
+        public FormValidation doCheckNormalThreshold(@QueryParameter final int highThreshold,
+                @QueryParameter final int normalThreshold) {
             return VALIDATION.validateNormal(highThreshold, normalThreshold);
         }
     }
@@ -198,7 +196,7 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
          *
          * @return the validation result
          */
-        public FormValidation validateHigh(final String highThreshold, final String normalThreshold) {
+        public FormValidation validateHigh(final int highThreshold, final int normalThreshold) {
             return validate(highThreshold, normalThreshold, Messages.DRY_ValidationError_HighThreshold());
         }
 
@@ -212,33 +210,26 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
          *
          * @return the validation result
          */
-        public FormValidation validateNormal(final String highThreshold, final String normalThreshold) {
+        public FormValidation validateNormal(final int highThreshold, final int normalThreshold) {
             return validate(highThreshold, normalThreshold, Messages.DRY_ValidationError_NormalThreshold());
         }
 
         /**
          * Performs on-the-fly validation on thresholds for high and normal warnings.
          *
-         * @param highThreshold
+         * @param high
          *         the threshold for high warnings
-         * @param normalThreshold
+         * @param normal
          *         the threshold for normal warnings
          * @param message
          *         the validation message
          *
          * @return the validation result
          */
-        private FormValidation validate(final String highThreshold, final String normalThreshold,
+        private FormValidation validate(final int high, final int normal,
                 final String message) {
-            try {
-                int high = Integer.parseInt(highThreshold);
-                int normal = Integer.parseInt(normalThreshold);
-                if (isValid(normal, high)) {
-                    return FormValidation.ok();
-                }
-            }
-            catch (NumberFormatException ignored) {
-                // ignore and return failure
+            if (isValid(normal, high)) {
+                return FormValidation.ok();
             }
             return FormValidation.error(message);
         }
