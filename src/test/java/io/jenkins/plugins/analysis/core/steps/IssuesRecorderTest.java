@@ -15,13 +15,10 @@ import hudson.util.FormValidation;
 class IssuesRecorderTest {
     @Test
     void shouldBeOkIfIfEncodingIsEmpty() {
-        // given
         Descriptor descriptor = new Descriptor();
 
-        // when
         FormValidation actualResult = descriptor.doCheckSourceCodeEncoding("");
 
-        // then
         assertThat(actualResult).isOk();
     }
 }
