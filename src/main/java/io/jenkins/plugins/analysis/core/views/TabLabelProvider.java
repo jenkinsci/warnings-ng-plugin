@@ -6,8 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issues;
 
-import hudson.plugins.analysis.Messages;
-
 /**
  * Provides localized labels for the different categories of issues.
  *
@@ -16,76 +14,62 @@ import hudson.plugins.analysis.Messages;
 public class TabLabelProvider {
     private final Issues<?> issues;
 
+    /**
+     * Creates a new {@link TabLabelProvider}.
+     *
+     * @param issues
+     *         the issues to show in the tabs
+     */
     public TabLabelProvider(final Issues<?> issues) {
         this.issues = issues;
     }
 
-    public String getAuthors() {
-        return Messages.BuildResult_Tab_Authors();
+    public String getIssues() {
+        return Messages.Tab_Issues();
     }
 
-    public String getWarnings() {
-        return Messages.BuildResult_Tab_Warnings();
+    public String getTools() {
+        return Messages.Tab_Tools();
     }
 
-    public String getOrigin() {
-        return Messages.BuildResult_Tab_Origin();
+    public String getToolName() {
+        return Messages.Tab_Tool();
     }
 
     public String getModules() {
-        return Messages.BuildResult_Tab_Modules();
+        return Messages.Tab_Modules();
     }
 
     public String getModuleName() {
-        return Messages.BuildResult_Tab_Module();
+        return Messages.Tab_Module();
     }
 
     public String getFiles() {
-        return Messages.BuildResult_Tab_Files();
+        return Messages.Tab_Files();
     }
 
     public String getFileName() {
-        return Messages.BuildResult_Tab_File();
+        return Messages.Tab_File();
     }
 
     public String getCategories() {
-        return Messages.BuildResult_Tab_Categories();
+        return Messages.Tab_Categories();
     }
 
     public String getCategory() {
-        return Messages.BuildResult_Tab_Category();
+        return Messages.Tab_Category();
     }
 
     public String getTypes() {
-        return Messages.BuildResult_Tab_Types();
+        return Messages.Tab_Types();
     }
 
     public String getType() {
-        return Messages.BuildResult_Tab_Type();
+        return Messages.Tab_Type();
     }
 
     public String getDetails() {
-        return Messages.BuildResult_Tab_Details();
-    }
-
-    public String getNew() {
-        return Messages.BuildResult_Tab_New();
-    }
-
-    public String getFixed() {
-        return Messages.BuildResult_Tab_Fixed();
-    }
-
-    public String getHigh() {
-        return Messages.BuildResult_Tab_High();
-    }
-
-    public String getNormal() {
-        return Messages.BuildResult_Tab_Normal();
-    }
-
-    public String getLow() {
-        return Messages.BuildResult_Tab_Low();
+        return Messages.Tab_Details();
     }
 
     /**
@@ -94,21 +78,25 @@ public class TabLabelProvider {
      * @return the package column title
      */
     public final String getPackageName() {
-        return getPackageOrNamespace(Messages.PackageDetail_header(), Messages.NamespaceDetail_header());
+        return getPackageOrNamespace(Messages.Tab_Package(), Messages.Tab_Namespace(), Messages.Tab_Folder());
     }
 
-   /**
+    /**
      * Returns the package category title using the suffix of the affected files.
      *
      * @return the package category title
      */
     public final String getPackages() {
-        return getPackageOrNamespace(Messages.PackageDetail_title(), Messages.NamespaceDetail_title());
+        return getPackageOrNamespace(Messages.Tab_Packages(), Messages.Tab_Namespaces(), Messages.Tab_Folders());
     }
 
-    private String getPackageOrNamespace(final String packageText, final String nameSpaceText) {
+    private String getPackageOrNamespace(final String packageText, final String nameSpaceText, final String fallback) {
         if (issues.isNotEmpty()) {
-            Set<String> fileTypes = issues.getProperties(issue -> StringUtils.substringAfterLast(issue.getFileName(), "."));
+            if (issues.getPackages().size() == 1) {
+                return fallback;
+            }
+            Set<String> fileTypes = issues.getProperties(
+                    issue -> StringUtils.substringAfterLast(issue.getFileName(), "."));
             if (fileTypes.contains("cs")) {
                 return nameSpaceText;
             }

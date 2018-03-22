@@ -17,6 +17,7 @@ public class PropertyStatistics {
     private final Map<String, ? extends Issues<?>> issuesByProperty;
     private final Function<String, String> propertyFormatter;
     private final String property;
+    private final int total;
 
     /**
      * Creates a new instance of {@link PropertyStatistics}.
@@ -33,6 +34,16 @@ public class PropertyStatistics {
         this.property = property;
         this.propertyFormatter = propertyFormatter;
         issuesByProperty = issues.groupByProperty(property);
+        total = issues.size();
+    }
+
+    /**
+     * Returns the total number of issues.
+     *
+     * @return total number of issues
+     */
+    public int getTotal() {
+        return total;
     }
 
     /**
