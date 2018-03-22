@@ -3,17 +3,17 @@
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
   xmlns:u="/util" xmlns:w="/warnings">
 
-  <f:entry field="pattern" title="${%File pattern}"
-    description="${%description.pattern('http://ant.apache.org/manual/Types/fileset.html')}">
-    <f:textbox />
-  </f:entry>
-  <f:entry title="${%Parser}" description="${%description.parser}" field="parserName">
-    <f:select/>
-  </f:entry>
+    <f:entry field="pattern" title="${%File pattern}"
+      description="${%description.pattern('http://ant.apache.org/manual/Types/fileset.html')}">
+      <f:textbox />
+    </f:entry>
+    <f:entry title="${%Parser}" description="${%description.parser}" field="parserName">
+      <f:select/>
+    </f:entry>
 
-  <f:entry title="">
-    <div align="right">
-      <f:repeatableDeleteButton />
-    </div>
-  </f:entry>
+    <f:entry title="">
+      <div align="right">
+        <f:repeatableDeleteButton />
+      </div>
+    </f:entry>
 </j:jelly>
