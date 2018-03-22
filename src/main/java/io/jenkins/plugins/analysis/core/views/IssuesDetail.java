@@ -12,12 +12,15 @@ import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.PropertyStatistics;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
-
 import net.sf.json.JSONObject;
 
 import hudson.markup.MarkupFormatter;
@@ -26,10 +29,6 @@ import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.plugins.analysis.core.GlobalSettings;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
 
 /**
  * Build view that shows the details for a subset of issues.
@@ -293,6 +292,9 @@ public class IssuesDetail implements ModelObject {
         Function<String, String> propertyFormatter;
         if ("fileName".equals(propertyName)) {
             propertyFormatter = StaticAnalysisLabelProvider.FILE_NAME_FORMATTER;
+        }
+        else if ("origin".equals(propertyName)) {
+            propertyFormatter = origin -> new LabelProviderFactory().create(origin).getName();
         }
         else {
             propertyFormatter = Function.identity();

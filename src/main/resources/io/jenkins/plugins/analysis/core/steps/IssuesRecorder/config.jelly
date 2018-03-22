@@ -1,16 +1,10 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:f="/lib/form" xmlns:u="/util">
 
   <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/custom-styles/custom-style.css"/>
 
-  <f:entry description="${description.tool}">
-    <f:dropdownDescriptorSelector field="tool" title="${%title.tool}"
-                                  descriptors="${descriptor.availableTools}"/>
-  </f:entry>
-
-  <f:entry title="${%title.pattern}" field="pattern"
-           description="${%description.pattern('http://ant.apache.org/manual/Types/fileset.html')}">
-    <f:textbox/>
+  <f:entry title="${%title.tool}" description="${%description.tool}">
+    <u:repeatable minimum="1" field="tools" />
   </f:entry>
 
   <f:advanced>

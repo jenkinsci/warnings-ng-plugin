@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import com.google.common.collect.Lists;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.util.VisibleForTesting;
@@ -76,8 +76,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     private String reportEncoding;
     private String sourceCodeEncoding;
-    private String pattern;
-    private StaticAnalysisTool tool;
+    private List<ToolConfiguration> tools;
 
     private boolean ignoreAnalysisResult;
     private boolean overallResultMustBeSuccess;
@@ -97,37 +96,19 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     @CheckForNull
-    public String getPattern() {
-        return pattern;
-    }
-
-    /**
-     * Sets the Ant file-set pattern of files to work with. If the pattern is undefined then the console log is
-     * scanned. A pattern may reference environment variables: their values will be resolved before the pattern
-     * is evaluated.
-     *
-     * @param pattern
-     *         the pattern to use
-     */
-    @DataBoundSetter
-    public void setPattern(final String pattern) {
-        this.pattern = pattern;
-    }
-
-    @CheckForNull
-    public StaticAnalysisTool getTool() {
-        return tool;
+    public List<ToolConfiguration> getTools() {
+        return tools;
     }
 
     /**
      * Sets the static analysis tool that will scan files and create issues.
      *
-     * @param tool
+     * @param tools
      *         the static analysis tool
      */
     @DataBoundSetter
-    public void setTool(final StaticAnalysisTool tool) {
-        this.tool = tool;
+    public void setTools(final List<ToolConfiguration> tools) {
+        this.tools = new ArrayList<>(tools);
     }
 
     @CheckForNull
@@ -463,23 +444,14 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace,
             @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
             throws InterruptedException, IOException {
-        Logger logger = createLogger(listener, tool.getId());
-        Logger errorLogger = createLogger(listener, String.format("[%s] [ERROR]", tool.getId()));
-
-        IssuesScanner issuesScanner = new IssuesScanner(tool, workspace, reportEncoding, sourceCodeEncoding,
-                logger, errorLogger);
-        Issues<?> issues;
-        if (StringUtils.isBlank(pattern)) {
-            issues = issuesScanner.scanInConsoleLog(run.getLogFile());
-        }
-        else {
-            String expanded = new EnvironmentResolver()
-                    .expandEnvironmentVariables(run.getEnvironment(listener), pattern);
-
-            issues = issuesScanner.scanInWorkspace(expanded);
+        Issues<Issue> totalIssues = new Issues<>();
+        for (ToolConfiguration toolConfiguration : tools) {
+            totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
         }
 
-        IssuesPublisher publisher = new IssuesPublisher(issues, getFilters(), run, workspace,
+        Logger logger = createLogger(listener, totalIssues.getId());
+        Logger errorLogger = createLogger(listener, String.format("[%s] [ERROR]", totalIssues.getId()));
+        IssuesPublisher publisher = new IssuesPublisher(totalIssues, getFilters(), run, workspace,
                 new HealthDescriptor(healthy, unHealthy, minimumPriority),
                 name, sourceCodeEncoding, new QualityGate(thresholds), referenceJobName, ignoreAnalysisResult,
                 overallResultMustBeSuccess, logger, errorLogger);
@@ -489,6 +461,27 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         }
         else {
             publisher.attachAction();
+        }
+    }
+
+    private Issues<?> scanWithTool(final @Nonnull Run<?, ?> run, final @Nonnull FilePath workspace,
+            final @Nonnull TaskListener listener, final ToolConfiguration toolConfiguration)
+            throws IOException, InterruptedException {
+        StaticAnalysisTool tool = toolConfiguration.getTool();
+        String pattern = toolConfiguration.getPattern();
+        Logger logger = createLogger(listener, tool.getId());
+        Logger errorLogger = createLogger(listener, String.format("[%s] [ERROR]", tool.getId()));
+
+        IssuesScanner issuesScanner
+                = new IssuesScanner(tool, workspace, reportEncoding, sourceCodeEncoding, logger, errorLogger);
+        if (StringUtils.isBlank(pattern)) {
+            return issuesScanner.scanInConsoleLog(run.getLogFile());
+        }
+        else {
+            String expanded = new EnvironmentResolver()
+                    .expandEnvironmentVariables(run.getEnvironment(listener), pattern);
+
+            return issuesScanner.scanInWorkspace(expanded);
         }
     }
 
@@ -657,37 +650,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             if (healthy >= unHealthy) {
                 return FormValidation.error(Messages.FieldValidator_Error_ThresholdOrder());
             }
-            return FormValidation.ok();
-        }
-
-        /**
-         * Performs on-the-fly validation on the ant pattern for input files.
-         *
-         * @param project
-         *         the project
-         * @param pattern
-         *         the file pattern
-         *
-         * @return the validation result
-         */
-        public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
-                @QueryParameter final String pattern) {
-            if (project != null) { // there is no workspace in pipelines
-                try {
-                    FilePath workspace = project.getSomeWorkspace();
-                    if (workspace != null && workspace.exists()) {
-                        String result = workspace.validateAntFileMask(pattern,
-                                FilePath.VALIDATE_ANT_FILE_MASK_BOUND);
-                        if (result != null) {
-                            return FormValidation.error(result);
-                        }
-                    }
-                }
-                catch (InterruptedException | IOException ignore) {
-                    // ignore and return ok
-                }
-            }
-
             return FormValidation.ok();
         }
     }
