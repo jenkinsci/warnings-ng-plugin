@@ -48,7 +48,7 @@
           <tfoot>
             <tr>
               <td>${%Total}</td>
-              <td>${size(t.issues)}</td>
+              <td>${t.total}</td>
               <td/>
             </tr>
           </tfoot>
