@@ -96,12 +96,11 @@ public class IssuesPublisher {
     }
 
     public ResultAction run() {
-
-        ResultSelector selector = new ByIdResultSelector(issues.getId());
+        ResultSelector selector = new ByIdResultSelector(getId());
         Optional<ResultAction> other = selector.get(run);
         if (other.isPresent()) {
             throw new IllegalStateException(String.format("ID %s is already used by another action: %s%n",
-                    issues.getId(), other.get()));
+                    getId(), other.get()));
         }
 
         Logger logger = this.logger;

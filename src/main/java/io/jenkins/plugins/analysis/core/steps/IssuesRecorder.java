@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -24,7 +25,6 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
@@ -87,8 +87,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private Priority minimumPriority = DEFAULT_MINIMUM_PRIORITY;
     private final Thresholds thresholds = new Thresholds();
 
-    private String id;
-    private String name;
+    private boolean isEnabledForFailure;
+    private boolean isAggregatingResults;
 
     @DataBoundConstructor
     public IssuesRecorder() {
@@ -146,35 +146,34 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     /* -------------------------------------------------------------------------------------------------------------- */
 
     /**
-     * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If no ID is
-     * given, then the ID of the associated result object is used.
+     * Returns whether the results for each configured static analysis result should be aggregated into a single
+     * result or if every tool should get an individual result.
      *
-     * @param id
-     *         the ID of the results
+     * @return {@code true}  if the results of each static analysis tool should be aggregated into a single result,
+     *         {@code false} if every tool should get an individual result.
      */
-    @DataBoundSetter
-    public void setId(final String id) {
-        this.id = id;
+    public boolean getAggregatingResults() {
+        return isAggregatingResults;
     }
 
-    public String getId() {
-        return id;
+    @DataBoundSetter
+    public void setAggregatingResults(final boolean aggregatingResults) {
+        this.isAggregatingResults = aggregatingResults;
     }
 
     /**
-     * Defines the name of the results. The name is used for all labels in the UI. If no name is given, then the name of
-     * the associated {@link StaticAnalysisLabelProvider} is used.
+     * Returns whether recording should be enabled for failed builds as well.
      *
-     * @param name
-     *         the name of the results
+     * @return {@code true}  if recording should be enabled for failed builds as well,
+     *         {@code false} if recording is enabled for successful or unstable builds only
      */
-    @DataBoundSetter
-    public void setName(final String name) {
-        this.name = name;
+    public boolean getEnabledForFailure() {
+        return isEnabledForFailure;
     }
 
-    public String getName() {
-        return name;
+    @DataBoundSetter
+    public void setEnabledForFailure(final boolean enabledForFailure) {
+        this.isEnabledForFailure = enabledForFailure;
     }
 
     /**
@@ -444,13 +443,35 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace,
             @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
             throws InterruptedException, IOException {
-        Issues<Issue> totalIssues = new Issues<>();
-        for (ToolConfiguration toolConfiguration : tools) {
-            totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
+        Result overallResult = run.getResult();
+        if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
+            record(run, workspace, launcher, listener);
         }
+    }
 
+    private void record(final @Nonnull Run<?, ?> run, final @Nonnull FilePath workspace,
+            final @Nonnull Launcher launcher, final @Nonnull TaskListener listener)
+            throws IOException, InterruptedException {
+        if (isAggregatingResults) {
+            Issues<Issue> totalIssues = new Issues<>();
+            for (ToolConfiguration toolConfiguration : tools) {
+                totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
+            }
+            publishResult(run, workspace, launcher, listener, totalIssues, Messages.Tool_Default_Name());
+        }
+        else {
+            for (ToolConfiguration toolConfiguration : tools) {
+                Issues<?> issues = scanWithTool(run, workspace, listener, toolConfiguration);
+                publishResult(run, workspace, launcher, listener, issues, StringUtils.EMPTY);
+            }
+        }
+    }
+
+    private void publishResult(final Run<?, ?> run, final FilePath workspace, final Launcher launcher,
+            final TaskListener listener, final Issues<?> totalIssues, final String name)
+            throws IOException, InterruptedException {
         Logger logger = createLogger(listener, totalIssues.getId());
-        Logger errorLogger = createLogger(listener, String.format("[%s] [ERROR]", totalIssues.getId()));
+        Logger errorLogger = createErrorLogger(listener, totalIssues.getId());
         IssuesPublisher publisher = new IssuesPublisher(totalIssues, getFilters(), run, workspace,
                 new HealthDescriptor(healthy, unHealthy, minimumPriority),
                 name, sourceCodeEncoding, new QualityGate(thresholds), referenceJobName, ignoreAnalysisResult,
@@ -464,13 +485,13 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         }
     }
 
-    private Issues<?> scanWithTool(final @Nonnull Run<?, ?> run, final @Nonnull FilePath workspace,
-            final @Nonnull TaskListener listener, final ToolConfiguration toolConfiguration)
+    private Issues<?> scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
+            final ToolConfiguration toolConfiguration)
             throws IOException, InterruptedException {
         StaticAnalysisTool tool = toolConfiguration.getTool();
         String pattern = toolConfiguration.getPattern();
         Logger logger = createLogger(listener, tool.getId());
-        Logger errorLogger = createLogger(listener, String.format("[%s] [ERROR]", tool.getId()));
+        Logger errorLogger = createErrorLogger(listener, tool.getId());
 
         IssuesScanner issuesScanner
                 = new IssuesScanner(tool, workspace, reportEncoding, sourceCodeEncoding, logger, errorLogger);
@@ -485,6 +506,10 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         }
     }
 
+    private Logger createErrorLogger(final TaskListener listener, final String name) {
+        return createLogger(listener, String.format("[%s] [ERROR]", name));
+    }
+
     private Logger createLogger(final TaskListener listener, final String name) {
         return new LoggerFactory().createLogger(listener.getLogger(), name);
     }
@@ -492,7 +517,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     /**
      * Descriptor for this step: defines the context and the UI elements.
      */
-    @Extension
+    @Extension @Symbol("recordIssues")
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
         @Nonnull
         @Override
