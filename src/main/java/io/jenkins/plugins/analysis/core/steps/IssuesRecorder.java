@@ -25,14 +25,11 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
 import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
-import io.jenkins.plugins.analysis.core.util.Logger;
-import io.jenkins.plugins.analysis.core.util.LoggerFactory;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 
@@ -447,10 +444,14 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
             record(run, workspace, launcher, listener);
         }
+        else {
+            LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
+            logHandler.log("Skipping execution of recorder since overall result is '%s'", overallResult);
+        }
     }
 
-    private void record(final @Nonnull Run<?, ?> run, final @Nonnull FilePath workspace,
-            final @Nonnull Launcher launcher, final @Nonnull TaskListener listener)
+    private void record(final Run<?, ?> run, final FilePath workspace, final Launcher launcher,
+            final TaskListener listener)
             throws IOException, InterruptedException {
         if (isAggregatingResults) {
             Issues<Issue> totalIssues = new Issues<>();
@@ -467,15 +468,28 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         }
     }
 
+    private Issues<?> scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
+            final ToolConfiguration toolConfiguration)
+            throws IOException, InterruptedException {
+        IssuesScanner issuesScanner = new IssuesScanner(toolConfiguration.getTool(), workspace,
+                reportEncoding, sourceCodeEncoding, listener);
+        if (StringUtils.isBlank(toolConfiguration.getPattern())) {
+            return issuesScanner.scanInConsoleLog(run.getLogFile());
+        }
+        else {
+            return issuesScanner.scanInWorkspace(
+                    expandEnvironmentVariables(run, listener, toolConfiguration.getPattern()));
+        }
+    }
+
     private void publishResult(final Run<?, ?> run, final FilePath workspace, final Launcher launcher,
             final TaskListener listener, final Issues<?> totalIssues, final String name)
             throws IOException, InterruptedException {
-        Logger logger = createLogger(listener, totalIssues.getId());
-        Logger errorLogger = createErrorLogger(listener, totalIssues.getId());
-        IssuesPublisher publisher = new IssuesPublisher(totalIssues, getFilters(), run, workspace,
-                new HealthDescriptor(healthy, unHealthy, minimumPriority),
-                name, sourceCodeEncoding, new QualityGate(thresholds), referenceJobName, ignoreAnalysisResult,
-                overallResultMustBeSuccess, logger, errorLogger);
+        IssuesPublisher publisher = new IssuesPublisher(run, totalIssues, getFilters(),
+                new HealthDescriptor(healthy, unHealthy, minimumPriority), new QualityGate(thresholds), workspace,
+                name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess, sourceCodeEncoding,
+                listener);
+
         VirtualChannel channel = launcher.getChannel();
         if (channel != null) {
             publisher.attachAction(channel, new FilePath(run.getRootDir()));
@@ -485,33 +499,13 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         }
     }
 
-    private Issues<?> scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final ToolConfiguration toolConfiguration)
+    private String createLoggerPrefix() {
+        return tools.stream().map(tool -> tool.getTool().getId()).collect(Collectors.joining());
+    }
+
+    private String expandEnvironmentVariables(final Run<?, ?> run, final TaskListener listener, final String pattern)
             throws IOException, InterruptedException {
-        StaticAnalysisTool tool = toolConfiguration.getTool();
-        String pattern = toolConfiguration.getPattern();
-        Logger logger = createLogger(listener, tool.getId());
-        Logger errorLogger = createErrorLogger(listener, tool.getId());
-
-        IssuesScanner issuesScanner
-                = new IssuesScanner(tool, workspace, reportEncoding, sourceCodeEncoding, logger, errorLogger);
-        if (StringUtils.isBlank(pattern)) {
-            return issuesScanner.scanInConsoleLog(run.getLogFile());
-        }
-        else {
-            String expanded = new EnvironmentResolver()
-                    .expandEnvironmentVariables(run.getEnvironment(listener), pattern);
-
-            return issuesScanner.scanInWorkspace(expanded);
-        }
-    }
-
-    private Logger createErrorLogger(final TaskListener listener, final String name) {
-        return createLogger(listener, String.format("[%s] [ERROR]", name));
-    }
-
-    private Logger createLogger(final TaskListener listener, final String name) {
-        return new LoggerFactory().createLogger(listener.getLogger(), name);
+        return new EnvironmentResolver().expandEnvironmentVariables(run.getEnvironment(listener), pattern);
     }
 
     /**

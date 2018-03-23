@@ -130,14 +130,10 @@ public class ScanForIssuesStep extends Step {
         }
 
         @Override
-        protected String getId() {
-            return tool.getId();
-        }
-
-        @Override
         protected Issues<?> run() throws IOException, InterruptedException, IllegalStateException {
+            String id = tool.getId();
             IssuesScanner issuesScanner = new IssuesScanner(tool, getWorkspace(), logFileEncoding, sourceCodeEncoding,
-                    getLogger(), getErrorLogger());
+                    getTaskListener());
             if (StringUtils.isBlank(pattern)) {
                 return issuesScanner.scanInConsoleLog(getRun().getLogFile());
             }

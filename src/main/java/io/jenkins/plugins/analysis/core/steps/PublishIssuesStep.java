@@ -436,15 +436,11 @@ public class PublishIssuesStep extends Step {
         }
 
         @Override
-        protected String getId() {
-            return issues.getId();
-        }
-
-        @Override
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
-            IssuesPublisher publisher = new IssuesPublisher(issues, filters, getRun(), getWorkspace(),
-                    healthDescriptor, name, sourceCodeEncoding, qualityGate, referenceJobName, ignoreAnalysisResult,
-                    overallResultMustBeSuccess, getLogger(), getErrorLogger());
+            IssuesPublisher publisher = new IssuesPublisher(getRun(), issues, filters, healthDescriptor, qualityGate,
+                    getWorkspace(),
+                    name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess, sourceCodeEncoding,
+                    getTaskListener());
             Optional<VirtualChannel> channel = getChannel();
             if (channel.isPresent()) {
                 return publisher.attachAction(channel.get(), getBuildFolder());

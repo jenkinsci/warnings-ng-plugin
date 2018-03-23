@@ -6,10 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.time.Duration;
 import java.time.Instant;
-
-import org.eclipse.collections.api.list.ImmutableList;
 
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
@@ -22,11 +19,11 @@ import edu.hm.hafner.util.Ensure;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.FilesScanner;
-import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.util.ModuleResolver;
 
 import hudson.FilePath;
 import hudson.console.ConsoleNote;
+import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.FileFinder;
 
@@ -35,25 +32,22 @@ import hudson.plugins.analysis.util.FileFinder;
  *
  * @author Ullrich Hafner
  */
-public class IssuesScanner {
-    private int infoPosition = 0;
-    private int errorPosition = 0;
-
+class IssuesScanner {
     private FilePath workspace;
     private final String logFileEncoding;
     private final String sourceCodeEncoding;
     private final StaticAnalysisTool tool;
-    private final Logger logger;
-    private final Logger errorLogger;
 
-    public IssuesScanner(final StaticAnalysisTool tool, final FilePath workspace,
-            final String logFileEncoding, final String sourceCodeEncoding, Logger logger, Logger errorLogger) {
+    private final LogHandler logger;
+
+    IssuesScanner(final StaticAnalysisTool tool, final FilePath workspace,
+            final String logFileEncoding, final String sourceCodeEncoding, final TaskListener listener) {
         this.workspace = workspace;
         this.logFileEncoding = logFileEncoding;
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
-        this.logger = logger;
-        this.errorLogger = errorLogger;
+
+        logger = new LogHandler(listener, tool.getId());
     }
 
     /**
@@ -74,9 +68,8 @@ public class IssuesScanner {
 
         Issues<?> issues = workspace.act(new FilesScanner(pattern, tool.createParser(), logFileEncoding));
 
-        log(issues);
-
-        logger.log("Parsing took %s", computeElapsedTime(start));
+        logger.log(issues);
+        logger.logDuration("Parsing took %s", start);
 
         return postProcess(issues);
     }
@@ -99,16 +92,15 @@ public class IssuesScanner {
 
         Issues<?> issues = tool.createParser().parse(consoleLog, getLogFileCharset(), ConsoleNote::removeNotes);
 
-        log(issues);
-
-        logger.log("Parsing took %s", computeElapsedTime(start));
+        logger.log(issues);
+        logger.logDuration("Parsing took %s", start);
 
         return postProcess(issues);
     }
 
     private void waitForConsoleToFlush() {
-        logger.log("Sleeping for 5 seconds due to JENKINS-32191...");
         try {
+            logger.log("Sleeping for 5 seconds due to JENKINS-32191...");
             Thread.sleep(5000);
         }
         catch (InterruptedException ignored) {
@@ -116,8 +108,7 @@ public class IssuesScanner {
         }
     }
 
-    private Issues<?> postProcess(final Issues<?> issues)
-            throws IllegalStateException {
+    private Issues<?> postProcess(final Issues<?> issues) {
         issues.setId(tool.getId());
         issues.forEach(issue -> issue.setOrigin(tool.getId()));
 
@@ -127,31 +118,6 @@ public class IssuesScanner {
         createFingerprints(issues);
 
         return issues;
-    }
-
-    private void log(final Issues<?> issues) {
-        logErrorMessages(issues);
-        logInfoMessages(issues);
-    }
-
-    private void logErrorMessages(final Issues<?> issues) {
-        ImmutableList<String> errorMessages = issues.getErrorMessages();
-        if (errorPosition < errorMessages.size()) {
-            errorLogger.logEachLine(errorMessages.subList(errorPosition, errorMessages.size()).castToList());
-            errorPosition = errorMessages.size();
-        }
-    }
-
-    private void logInfoMessages(final Issues<?> issues) {
-        ImmutableList<String> infoMessages = issues.getInfoMessages();
-        if (infoPosition < infoMessages.size()) {
-            logger.logEachLine(infoMessages.subList(infoPosition, infoMessages.size()).castToList());
-            infoPosition = infoMessages.size();
-        }
-    }
-
-    private Duration computeElapsedTime(final Instant start) {
-        return Duration.between(start, Instant.now());
     }
 
     private Charset getLogFileCharset() {
@@ -169,9 +135,9 @@ public class IssuesScanner {
         ModuleResolver resolver = new ModuleResolver();
         File workspaceAsFile = new File(workspace.getRemote());
         resolver.run(issues, workspaceAsFile, new ModuleDetector(workspaceAsFile, new DefaultFileSystem()));
-        log(issues);
 
-        logger.log("Resolving module names took %s", computeElapsedTime(start));
+        logger.log(issues);
+        logger.logDuration("Resolving module names took %s", start);
     }
 
     private void resolvePackageNames(final Issues<?> issues) {
@@ -180,9 +146,9 @@ public class IssuesScanner {
 
         PackageNameResolver resolver = new PackageNameResolver();
         resolver.run(issues, new IssueBuilder(), getSourceCodeCharset());
-        log(issues);
 
-        logger.log("Resolving package names took %s", computeElapsedTime(start));
+        logger.log(issues);
+        logger.logDuration("Resolving package names took %s", start);
     }
 
     private void resolveAbsolutePaths(final Issues<?> issues) {
@@ -191,9 +157,9 @@ public class IssuesScanner {
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator();
         generator.run(issues, workspace);
-        log(issues);
 
-        logger.log("Resolving absolute file names took %s", computeElapsedTime(start));
+        logger.log(issues);
+        logger.log("Resolving absolute file names took %s", start);
     }
 
     private void createFingerprints(final Issues<?> issues) {
@@ -202,9 +168,9 @@ public class IssuesScanner {
 
         FingerprintGenerator generator = new FingerprintGenerator();
         generator.run(new FullTextFingerprint(), issues, getSourceCodeCharset());
-        log(issues);
 
-        logger.log("Extracting fingerprints took %s", computeElapsedTime(start));
+        logger.log(issues);
+        logger.log("Extracting fingerprints took %s", start);
     }
 
     /**
