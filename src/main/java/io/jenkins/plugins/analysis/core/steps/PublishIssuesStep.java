@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,7 @@ import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.remoting.VirtualChannel;
 
 /**
@@ -438,9 +440,8 @@ public class PublishIssuesStep extends Step {
         @Override
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
             IssuesPublisher publisher = new IssuesPublisher(getRun(), issues, filters, healthDescriptor, qualityGate,
-                    getWorkspace(),
-                    name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess, sourceCodeEncoding,
-                    getTaskListener());
+                    getWorkspace(), name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess,
+                    getSourceCodeCharset(), new LogHandler(getTaskListener(), issues.getId()));
             Optional<VirtualChannel> channel = getChannel();
             if (channel.isPresent()) {
                 return publisher.attachAction(channel.get(), getBuildFolder());
@@ -449,6 +450,10 @@ public class PublishIssuesStep extends Step {
             else {
                 return publisher.attachAction();
             }
+        }
+
+        private Charset getSourceCodeCharset() {
+            return EncodingValidator.defaultCharset(sourceCodeEncoding);
         }
     }
 

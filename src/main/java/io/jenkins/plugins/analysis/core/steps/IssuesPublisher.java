@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,8 +26,6 @@ import io.jenkins.plugins.analysis.core.views.ResultAction;
 import hudson.FilePath;
 import hudson.model.Job;
 import hudson.model.Run;
-import hudson.model.TaskListener;
-import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.remoting.VirtualChannel;
 
 /**
@@ -56,8 +53,8 @@ class IssuesPublisher {
     IssuesPublisher(final Run<?, ?> run, final Issues<?> issues, final List<RegexpFilter> filters,
             final HealthDescriptor healthDescriptor, final QualityGate qualityGate, final FilePath workspace,
             final String name, final String referenceJobName, final boolean ignoreAnalysisResult,
-            final boolean overallResultMustBeSuccess, final String sourceCodeEncoding,
-            final TaskListener logger) {
+            final boolean overallResultMustBeSuccess, final Charset sourceCodeEncoding,
+            final LogHandler logger) {
         this.issues = issues;
         this.id = issues.getId();
         this.filters = new ArrayList<>(filters);
@@ -65,12 +62,12 @@ class IssuesPublisher {
         this.workspace = workspace;
         this.healthDescriptor = healthDescriptor;
         this.name = name;
-        this.sourceCodeEncoding = EncodingValidator.defaultCharset(sourceCodeEncoding);
+        this.sourceCodeEncoding = sourceCodeEncoding;
         this.qualityGate = qualityGate;
         this.referenceJobName = referenceJobName;
         this.ignoreAnalysisResult = ignoreAnalysisResult;
         this.overallResultMustBeSuccess = overallResultMustBeSuccess;
-        this.logger = new LogHandler(logger, issues.getId());
+        this.logger = logger;
     }
 
     /**
@@ -135,30 +132,25 @@ class IssuesPublisher {
     private void copyAffectedFiles(final Issues<?> filtered,
             final VirtualChannel channel, final FilePath buildFolder)
             throws IOException, InterruptedException {
-        Instant start = Instant.now();
-
         Set<String> files = filtered.getFiles();
         String copyingLogMessage = new AffectedFilesResolver()
                 .copyFilesWithAnnotationsToBuildFolder(channel, buildFolder, files);
         filtered.logInfo("Copying %d affected files from '%s' to build folder (%s)",
                 files.size(), workspace, copyingLogMessage);
-        logger.logDuration("Copying affected files took %s", start);
 
         logger.log(filtered);
     }
 
     private AnalysisResult createResult(final ResultSelector selector, final Issues<?> filtered) {
-        Instant start = Instant.now();
         AnalysisResult result = createAnalysisResult(filtered, selector);
+
         logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
                 result.getTotalSize(), result.getNewSize(), result.getFixedSize());
-        logger.logDuration("Creating analysis result took %s", start);
 
         return result;
     }
 
     private Issues<?> filter() {
-        Instant start = Instant.now();
         IssueFilterBuilder builder = new IssueFilterBuilder();
         for (RegexpFilter filter : filters) {
             filter.apply(builder);
@@ -166,7 +158,7 @@ class IssuesPublisher {
         Issues<?> filtered = issues.filter(builder.build());
         filtered.logInfo("Applying %d filters on the set of %d issues (%d issues have been removed)",
                 filters.size(), issues.size(), issues.size() - filtered.size());
-        logger.logDuration("Filtering issues took %s", start);
+
         logger.log(filtered);
 
         return filtered;

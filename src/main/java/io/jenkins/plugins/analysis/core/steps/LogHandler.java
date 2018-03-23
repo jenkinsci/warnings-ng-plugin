@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.time.Duration;
-import java.time.Instant;
-
 import org.eclipse.collections.api.list.ImmutableList;
 
 import edu.hm.hafner.analysis.Issues;
@@ -67,14 +64,6 @@ class LogHandler {
      */
     public void log(final String format, final Object... args) {
         logger.log(format, args);
-    }
-
-    public void logDuration(final String format, final Instant start) {
-        logger.log(format, computeElapsedTime(start));
-    }
-
-    private Duration computeElapsedTime(final Instant start) {
-        return Duration.between(start, Instant.now());
     }
 
     private void logErrorMessages(final Issues<?> issues) {

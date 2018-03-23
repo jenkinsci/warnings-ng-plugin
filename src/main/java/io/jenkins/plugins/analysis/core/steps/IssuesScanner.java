@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.time.Instant;
 
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
@@ -23,8 +22,6 @@ import io.jenkins.plugins.analysis.core.util.ModuleResolver;
 
 import hudson.FilePath;
 import hudson.console.ConsoleNote;
-import hudson.model.TaskListener;
-import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.FileFinder;
 
 /**
@@ -34,20 +31,19 @@ import hudson.plugins.analysis.util.FileFinder;
  */
 class IssuesScanner {
     private FilePath workspace;
-    private final String logFileEncoding;
-    private final String sourceCodeEncoding;
+    private final Charset logFileEncoding;
+    private final Charset sourceCodeEncoding;
     private final StaticAnalysisTool tool;
 
     private final LogHandler logger;
 
     IssuesScanner(final StaticAnalysisTool tool, final FilePath workspace,
-            final String logFileEncoding, final String sourceCodeEncoding, final TaskListener listener) {
+            final Charset logFileEncoding, final Charset sourceCodeEncoding, final LogHandler logger) {
         this.workspace = workspace;
         this.logFileEncoding = logFileEncoding;
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
-
-        logger = new LogHandler(listener, tool.getId());
+        this.logger = logger;
     }
 
     /**
@@ -62,14 +58,10 @@ class IssuesScanner {
      *         if something goes wrong
      */
     // TODO: Pattern should be a glob
-    public Issues<?> scanInWorkspace(final String pattern)
-            throws InterruptedException, IOException {
-        Instant start = Instant.now();
-
-        Issues<?> issues = workspace.act(new FilesScanner(pattern, tool.createParser(), logFileEncoding));
+    public Issues<?> scanInWorkspace(final String pattern) throws InterruptedException, IOException {
+        Issues<?> issues = workspace.act(new FilesScanner(pattern, tool.createParser(), logFileEncoding.name()));
 
         logger.log(issues);
-        logger.logDuration("Parsing took %s", start);
 
         return postProcess(issues);
     }
@@ -87,13 +79,11 @@ class IssuesScanner {
 
         waitForConsoleToFlush();
 
-        Instant start = Instant.now();
         logger.log("Parsing console log (workspace: '%s')", workspace);
 
-        Issues<?> issues = tool.createParser().parse(consoleLog, getLogFileCharset(), ConsoleNote::removeNotes);
+        Issues<?> issues = tool.createParser().parse(consoleLog, logFileEncoding, ConsoleNote::removeNotes);
 
         logger.log(issues);
-        logger.logDuration("Parsing took %s", start);
 
         return postProcess(issues);
     }
@@ -120,16 +110,16 @@ class IssuesScanner {
         return issues;
     }
 
-    private Charset getLogFileCharset() {
-        return EncodingValidator.defaultCharset(logFileEncoding);
-    }
+    private void resolveAbsolutePaths(final Issues<?> issues) {
+        logger.log("Resolving absolute file names for all issues");
 
-    private Charset getSourceCodeCharset() {
-        return EncodingValidator.defaultCharset(sourceCodeEncoding);
+        AbsolutePathGenerator generator = new AbsolutePathGenerator();
+        generator.run(issues, workspace);
+
+        logger.log(issues);
     }
 
     private void resolveModuleNames(final Issues<?> issues) {
-        Instant start = Instant.now();
         logger.log("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
 
         ModuleResolver resolver = new ModuleResolver();
@@ -137,40 +127,24 @@ class IssuesScanner {
         resolver.run(issues, workspaceAsFile, new ModuleDetector(workspaceAsFile, new DefaultFileSystem()));
 
         logger.log(issues);
-        logger.logDuration("Resolving module names took %s", start);
     }
 
     private void resolvePackageNames(final Issues<?> issues) {
-        Instant start = Instant.now();
-        logger.log("Using encoding '%s' to resolve package names (or namespaces)", getSourceCodeCharset());
+        logger.log("Using encoding '%s' to resolve package names (or namespaces)", sourceCodeEncoding);
 
         PackageNameResolver resolver = new PackageNameResolver();
-        resolver.run(issues, new IssueBuilder(), getSourceCodeCharset());
+        resolver.run(issues, new IssueBuilder(), sourceCodeEncoding);
 
         logger.log(issues);
-        logger.logDuration("Resolving package names took %s", start);
-    }
-
-    private void resolveAbsolutePaths(final Issues<?> issues) {
-        Instant start = Instant.now();
-        logger.log("Resolving absolute file names for all issues");
-
-        AbsolutePathGenerator generator = new AbsolutePathGenerator();
-        generator.run(issues, workspace);
-
-        logger.log(issues);
-        logger.log("Resolving absolute file names took %s", start);
     }
 
     private void createFingerprints(final Issues<?> issues) {
-        Instant start = Instant.now();
-        logger.log("Using encoding '%s' to read source files", getSourceCodeCharset());
+        logger.log("Using encoding '%s' to read source files", sourceCodeEncoding);
 
         FingerprintGenerator generator = new FingerprintGenerator();
-        generator.run(new FullTextFingerprint(), issues, getSourceCodeCharset());
+        generator.run(new FullTextFingerprint(), issues, sourceCodeEncoding);
 
         logger.log(issues);
-        logger.log("Extracting fingerprints took %s", start);
     }
 
     /**

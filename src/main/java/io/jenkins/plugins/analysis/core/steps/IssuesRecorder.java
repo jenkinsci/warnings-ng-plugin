@@ -25,6 +25,7 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
@@ -458,6 +459,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             for (ToolConfiguration toolConfiguration : tools) {
                 totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
             }
+            totalIssues.setId("analysis");
             publishResult(run, workspace, launcher, listener, totalIssues, Messages.Tool_Default_Name());
         }
         else {
@@ -471,8 +473,9 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private Issues<?> scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final ToolConfiguration toolConfiguration)
             throws IOException, InterruptedException {
-        IssuesScanner issuesScanner = new IssuesScanner(toolConfiguration.getTool(), workspace,
-                reportEncoding, sourceCodeEncoding, listener);
+        StaticAnalysisTool tool = toolConfiguration.getTool();
+        IssuesScanner issuesScanner = new IssuesScanner(tool, workspace,
+                getReportCharset(), getSourceCodeCharset(), new LogHandler(listener, tool.getId()));
         if (StringUtils.isBlank(toolConfiguration.getPattern())) {
             return issuesScanner.scanInConsoleLog(run.getLogFile());
         }
@@ -482,13 +485,21 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         }
     }
 
+    private Charset getSourceCodeCharset() {
+        return EncodingValidator.defaultCharset(sourceCodeEncoding);
+    }
+
+    private Charset getReportCharset() {
+        return EncodingValidator.defaultCharset(reportEncoding);
+    }
+
     private void publishResult(final Run<?, ?> run, final FilePath workspace, final Launcher launcher,
-            final TaskListener listener, final Issues<?> totalIssues, final String name)
+            final TaskListener listener, final Issues<?> issues, final String name)
             throws IOException, InterruptedException {
-        IssuesPublisher publisher = new IssuesPublisher(run, totalIssues, getFilters(),
+        IssuesPublisher publisher = new IssuesPublisher(run, issues, getFilters(),
                 new HealthDescriptor(healthy, unHealthy, minimumPriority), new QualityGate(thresholds), workspace,
-                name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess, sourceCodeEncoding,
-                listener);
+                name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess, getSourceCodeCharset(),
+                new LogHandler(listener, issues.getId()));
 
         VirtualChannel channel = launcher.getChannel();
         if (channel != null) {
