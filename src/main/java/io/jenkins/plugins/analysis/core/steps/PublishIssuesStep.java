@@ -23,6 +23,7 @@ import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
@@ -441,7 +442,7 @@ public class PublishIssuesStep extends Step {
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
             IssuesPublisher publisher = new IssuesPublisher(getRun(), issues, filters, healthDescriptor, qualityGate,
                     getWorkspace(), name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess,
-                    getSourceCodeCharset(), new LogHandler(getTaskListener(), issues.getId()));
+                    getSourceCodeCharset(), getLogger());
             Optional<VirtualChannel> channel = getChannel();
             if (channel.isPresent()) {
                 return publisher.attachAction(channel.get(), getBuildFolder());
@@ -450,6 +451,10 @@ public class PublishIssuesStep extends Step {
             else {
                 return publisher.attachAction();
             }
+        }
+
+        private LogHandler getLogger() throws InterruptedException {
+            return new LogHandler(getTaskListener(), new LabelProviderFactory().create(issues.getId(), name).getName());
         }
 
         private Charset getSourceCodeCharset() {

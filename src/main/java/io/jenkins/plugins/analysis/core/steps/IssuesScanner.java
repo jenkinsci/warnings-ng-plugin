@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
 import edu.hm.hafner.analysis.IssueBuilder;
@@ -46,6 +48,22 @@ class IssuesScanner {
         this.logger = logger;
     }
 
+    public Issues<?> scan(final String pattern, final File consoleLog) throws IOException, InterruptedException {
+        if (StringUtils.isBlank(pattern)) {
+            String defaultPattern = tool.getDescriptor().getPattern();
+            if (defaultPattern.isEmpty()) {
+                return scanInConsoleLog(consoleLog);
+            }
+            else {
+                logger.log("Using default pattern '%s' since user defined pattern is not set", defaultPattern);
+                return scanInWorkspace(defaultPattern);
+            }
+        }
+        else {
+            return scanInWorkspace(pattern);
+        }
+    }
+
     /**
      * Scans for issues in a set of files specified by a pattern. The pattern will be applied on the files of the given
      * workspace.
@@ -57,7 +75,6 @@ class IssuesScanner {
      * @throws IOException
      *         if something goes wrong
      */
-    // TODO: Pattern should be a glob
     public Issues<?> scanInWorkspace(final String pattern) throws InterruptedException, IOException {
         Issues<?> issues = workspace.act(new FilesScanner(pattern, tool.createParser(), logFileEncoding.name()));
 

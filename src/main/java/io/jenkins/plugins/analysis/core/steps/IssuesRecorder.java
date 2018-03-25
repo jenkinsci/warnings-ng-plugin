@@ -25,7 +25,6 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
@@ -473,16 +472,11 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private Issues<?> scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final ToolConfiguration toolConfiguration)
             throws IOException, InterruptedException {
-        StaticAnalysisTool tool = toolConfiguration.getTool();
-        IssuesScanner issuesScanner = new IssuesScanner(tool, workspace,
-                getReportCharset(), getSourceCodeCharset(), new LogHandler(listener, tool.getId()));
-        if (StringUtils.isBlank(toolConfiguration.getPattern())) {
-            return issuesScanner.scanInConsoleLog(run.getLogFile());
-        }
-        else {
-            return issuesScanner.scanInWorkspace(
-                    expandEnvironmentVariables(run, listener, toolConfiguration.getPattern()));
-        }
+        ToolConfiguration configuration = toolConfiguration;
+        IssuesScanner issuesScanner = new IssuesScanner(configuration.getTool(), workspace,
+                getReportCharset(), getSourceCodeCharset(), new LogHandler(listener, configuration.getTool().getName()));
+        return issuesScanner.scan(expandEnvironmentVariables(run, listener, configuration.getPattern()),
+                run.getLogFile());
     }
 
     private Charset getSourceCodeCharset() {

@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -133,15 +132,9 @@ public class ScanForIssuesStep extends Step {
 
         @Override
         protected Issues<?> run() throws IOException, InterruptedException, IllegalStateException {
-            String id = tool.getId();
             IssuesScanner issuesScanner = new IssuesScanner(tool, getWorkspace(), getReportCharset(),
-                    getSourceCodeCharset(), new LogHandler(getTaskListener(), id));
-            if (StringUtils.isBlank(pattern)) {
-                return issuesScanner.scanInConsoleLog(getRun().getLogFile());
-            }
-            else {
-                return issuesScanner.scanInWorkspace(pattern);
-            }
+                    getSourceCodeCharset(), new LogHandler(getTaskListener(), tool.getName()));
+            return issuesScanner.scan(pattern, getRun().getLogFile());
         }
 
         private Charset getSourceCodeCharset() {
