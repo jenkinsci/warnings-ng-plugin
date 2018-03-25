@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues">
 
   <f:entry title="${%High priority threshold}"
            description="${%Minimum number of duplicated lines for high priority warnings.}"
@@ -11,5 +11,7 @@
            field="normalThreshold">
     <f:textbox default="25"/>
   </f:entry>
+
+  <i:tool-defaults/>
 
 </j:jelly>
