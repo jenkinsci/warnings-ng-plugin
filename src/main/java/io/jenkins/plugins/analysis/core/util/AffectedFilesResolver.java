@@ -77,7 +77,7 @@ public class AffectedFilesResolver {
         String message = String.format("Copying %d affected files to Jenkins' build folder %s.%n"
                         + "%d copied, %d not-found, %d with I/O error", files.size(), jenkinsBuildRoot.getRemote(),
                 copied, notFound, error);
-        if (error > 0) {
+        if (error > 0 || notFound > 0) {
             issues.logError(message);
         }
         else {
