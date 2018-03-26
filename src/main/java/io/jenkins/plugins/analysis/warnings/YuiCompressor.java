@@ -35,6 +35,11 @@ public class YuiCompressor extends StaticAnalysisTool {
             super(ID);
         }
 
+        @Override
+        public String getHelp() {
+            return Messages.Warning_SlowMultiLineParser();
+        }
+
         @Nonnull
         @Override
         public String getDisplayName() {
