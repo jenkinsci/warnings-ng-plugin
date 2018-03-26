@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
@@ -132,11 +131,7 @@ class IssuesPublisher {
     private void copyAffectedFiles(final Issues<?> filtered,
             final VirtualChannel channel, final FilePath buildFolder)
             throws IOException, InterruptedException {
-        Set<String> files = filtered.getFiles();
-        String copyingLogMessage = new AffectedFilesResolver()
-                .copyFilesWithAnnotationsToBuildFolder(channel, buildFolder, files);
-        filtered.logInfo("Copying %d affected files from '%s' to build folder (%s)",
-                files.size(), workspace, copyingLogMessage);
+        new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(filtered, channel, buildFolder);
 
         logger.log(filtered);
     }

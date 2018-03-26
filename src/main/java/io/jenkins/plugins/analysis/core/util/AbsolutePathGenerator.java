@@ -79,9 +79,15 @@ public class AbsolutePathGenerator {
             }
         }
 
-        issues.logInfo(
+        String message = String.format(
                 "Resolved absolute paths for %d files (Issues %d resolved, %d unresolved, %d already absolute)",
                 relativeToAbsoluteMapping.size(), resolvedCount, unresolvedCount, unchangedCount);
+        if (unresolvedCount > 0) {
+            issues.logError(message);
+        }
+        else {
+            issues.logInfo(message);
+        }
     }
 
     private Map<String, String> resolveAbsoluteNames(final Set<String> relativeFileNames, final FilePath workspace) {
