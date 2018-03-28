@@ -1,0 +1,33 @@
+{
+  "name": "analysis-core",
+  "version": "1.0.0",
+  "description": "NPM packages for analysis core",
+  "main": "index.js",
+  "dependencies": {
+    "@jenkins-cd/js-modules": "0.0.10",
+    "bootstrap": "^4.0.0",
+    "chart.js": "^2.7.2",
+    "datatables.net": "^1.10.16",
+    "jquery": "^3.3.1",
+    "npm": "^5.8.0",
+    "popper.js": "^1.14.1",
+    "tether": "^1.4.3"
+  },
+  "devDependencies": {
+    "@jenkins-cd/js-builder": "0.0.63",
+    "gulp": "^3.9.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jenkinsci/analysis-core-plugin.git"
+  },
+  "author": "Ullrich Hafner",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jenkinsci/analysis-core-plugin/issues"
+  },
+  "homepage": "https://github.com/jenkinsci/analysis-core-plugin#readme"
+}
