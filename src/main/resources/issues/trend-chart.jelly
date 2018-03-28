@@ -20,6 +20,9 @@
         <div class="graph-size">
           <canvas id="trend-chart" class="graph-cursor-pointer" width="100" height="100"/>
         </div>
+
+        <st:adjunct includes="org.jenkins.ui.jsmodules.analysis-core.trend-chart"/>
+
       </div>
     </div>
   </div>
