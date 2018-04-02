@@ -12,6 +12,12 @@ import static org.mockito.Mockito.*;
 
 import hudson.model.Run;
 
+/**
+ * Unit test for {@link ByIdResultSelector}.
+ *
+ * @author Frank Christian Geyer
+ * @author Deniz Mardin
+ */
 class ByIdResultSelectorTest {
 
     private static final int NO_RESULT_EXPECTED = -1;
