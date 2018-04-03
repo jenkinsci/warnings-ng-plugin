@@ -38,8 +38,8 @@
         <h3>${it.displayName}</h3>
 
         <div class="row py-3">
-          <issues:trend-chart/>
-          <issues:priorities-chart/>
+          <issues:trend-summary/>
+          <issues:priorities-summary/>
         </div>
 
         <div class="row py-3">
@@ -51,6 +51,9 @@
       <script type="text/javascript" src="${resURL}/plugin/analysis-core/js/jQuery-noConflict.js"/>
       <script type="text/javascript" src="${resURL}/plugin/analysis-core/js/data-tables.js"/>
       <script type="text/javascript" src="${resURL}/plugin/analysis-core/js/tabs.js"/>
+
+      <st:adjunct includes="org.jenkins.ui.jsmodules.analysis-core.priority-chart"/>
+      <st:adjunct includes="org.jenkins.ui.jsmodules.analysis-core.trend-chart"/>
 
     </l:main-panel>
 
