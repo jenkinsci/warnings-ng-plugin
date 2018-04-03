@@ -30,17 +30,13 @@
       <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"/>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"/>
 
-      <script>
-        var view = <st:bind value="${it}"/>
-      </script>
-
       <div class="fluid-container">
 
         <h3>${it.displayName}</h3>
 
         <div class="row py-3">
-          <issues:trend-summary/>
-          <issues:priorities-summary/>
+          <issues:trend-chart/>
+          <issues:priorities-chart/>
         </div>
 
         <div class="row py-3">
@@ -49,11 +45,8 @@
 
       </div>
 
-      <script type="text/javascript" src="${resURL}/plugin/analysis-core/js/jQuery-noConflict.js"/>
-      <script type="text/javascript" src="${resURL}/plugin/analysis-core/js/data-tables.js"/>
-      <script type="text/javascript" src="${resURL}/plugin/analysis-core/js/priority-chart.js"/>
-      <script type="text/javascript" src="${resURL}/plugin/analysis-core/js/trend-chart.js"/>
-      <script type="text/javascript" src="${resURL}/plugin/analysis-core/js/tabs.js"/>
+      <script>var view = <st:bind value="${it}"/></script>
+      <script type="text/javascript" src="${resURL}/plugin/analysis-core/js/issues-detail.js"/>
 
     </l:main-panel>
 

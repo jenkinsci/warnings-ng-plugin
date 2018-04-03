@@ -11,7 +11,7 @@
   </st:documentation>
 
   <div role="tabpanel" id="warningsContent" class="tab-pane">
-    <table class="table table-responsive table-responsive-block table-hover table-striped" id="warnings">
+    <table class="table table-responsive table-responsive-block table-hover table-striped" id="issues">
       <colgroup>
         <j:forEach var="width" items="${labelProvider.tableWidths}">
           <col class="col-width-${width}"/>
@@ -25,41 +25,6 @@
         </tr>
       </thead>
     </table>
-
-    <script>
-      (function ($) {
-        var table = $('#warnings').DataTable({
-          'pagingType': 'numbers', // Page number button only
-          'columnDefs': [{
-            'targets': 'no-sort', // Columns with class 'no-sort' are not orderable
-            'orderable': false
-          }]
-        });
-
-        // Add event listener for opening and closing details
-        $('#warnings').on('click', 'div.details-control', function () {
-          var tr = $(this).parents('tr');
-          var row = table.row(tr);
-
-          if (row.child.isShown()) {
-            // This row is already open - close it
-            row.child.hide();
-            tr.removeClass('shown');
-          } else {
-            // Open this row
-            row.child($(this).data('description')).show();
-            tr.addClass('shown');
-          }
-        });
-      })(jQuery);
-
-      view.getTableModel(function(t) {
-        (function ($) {
-            var table = $('#warnings').DataTable();
-            table.rows.add(t.responseObject().data).draw()
-        })(jQuery);
-      })
-    </script>
 
   </div>
 
