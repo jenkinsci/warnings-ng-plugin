@@ -15,5 +15,16 @@
         return '<div><strong>' + message + '</strong><br/>' + tooltip + '</div>';
     }
 
-
+    /**
+     *
+     * @summary Initialise DataTable functions on all tables with the class display
+     * @link https://datatables.net/
+     */
+    $('table.display').DataTable({
+        'pagingType': 'numbers', // Page number button only
+        'columnDefs': [{
+            'targets': 'no-sort', // Columns with class 'no-sort' are not orderable
+            'orderable': false
+        }]
+    });
 })(jQuery);
