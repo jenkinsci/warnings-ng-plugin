@@ -92,15 +92,15 @@ public class TabLabelProvider {
 
     private String getPackageOrNamespace(final String packageText, final String nameSpaceText, final String fallback) {
         if (issues.isNotEmpty()) {
+            if (issues.getPackages().size() == 1) {
+                return fallback;
+            }
             Set<String> fileTypes = issues.getProperties(
                     issue -> StringUtils.substringAfterLast(issue.getFileName(), "."));
             if (fileTypes.contains("cs")) {
                 return nameSpaceText;
             }
-            else if (fileTypes.contains("java")) {
-                return packageText;
-            }
         }
-        return fallback;
+        return packageText;
     }
 }
