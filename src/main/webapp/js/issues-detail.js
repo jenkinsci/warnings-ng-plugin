@@ -33,14 +33,12 @@
     var prioritiesSummaryChart = new Chart(priorities, {
         type: 'doughnut',
         data: {
-            // FIXME: i18n
-            labels: ['High', 'Normal', 'Low'],
+            labels: [
+                priorityValues.data('high-label'),
+                priorityValues.data('normal-label'),
+                priorityValues.data('low-label')],
             urls: ['high', 'normal', 'low'],
             datasets: [{
-                label: [
-                    'High priority',
-                    'Normal priority',
-                    'Low priority'],
                 data: [
                     priorityValues.data('high'),
                     priorityValues.data('normal'),
@@ -73,15 +71,17 @@
     var trendSummaryChart = new Chart(trend, {
         type: 'doughnut',
         data: {
-            // FIXME: i18n
-            labels: ['New', 'Fixed', 'Outstanding'],
+            labels: [
+                numberIssues.data('new-label'),
+                numberIssues.data('fixed-label'),
+                numberIssues.data('outstanding-label')],
+
             urls: ['new', 'fixed', 'outstanding'],
             datasets: [{
-                label: 'New issues, Fixed issues, Existing issues',
                 data: [
-                    numberIssues.data('new-issues'),
-                    numberIssues.data('fixed-issues'),
-                    numberIssues.data('outstanding-issues')],
+                    numberIssues.data('new'),
+                    numberIssues.data('fixed'),
+                    numberIssues.data('outstanding')],
                 backgroundColor: [
                     '#f5c6cb',
                     '#b8daff',
@@ -99,19 +99,6 @@
         }
     });
     openSelectedUrl(trend, trendSummaryChart);
-
-    /**
-     * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.
-     */
-    var detailsTabs = $('#tab-details');
-    detailsTabs.find('li:first-child a').tab('show');
-    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
-        localStorage.setItem('activeTab', $(e.target).attr('href'));
-    });
-    var activeTab = localStorage.getItem('activeTab');
-    if (activeTab) {
-        detailsTabs.find('a[href="' + activeTab + '"]').tab('show');
-    }
 
     /**
      * Create a data table instance for all tables that are marked with class "display".
@@ -153,13 +140,31 @@
         }
     });
 
-    // FIXME: Ajax call should be done if the tab is selected
-    view.getTableModel(function (t) {
-        (function ($) {
-            var table = $('#issues').DataTable();
-            table.rows.add(t.responseObject().data).draw()
-        })(jQuery);
+    /**
+     * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.
+     */
+    var detailsTabs = $('#tab-details');
+    detailsTabs.find('li:first-child a').tab('show');
+    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+        var tabName = $(e.target).attr('href');
+        localStorage.setItem('activeTab', tabName);
+        var table = $('#issues').DataTable();
+        /**
+         * If the tab contains the issues, then load the content using an Ajax call.
+         */
+        if (tabName === '#issuesContent' && table.data().length === 0 ) {
+            view.getTableModel(function (t) {
+                (function ($) {
+                    var table = $('#issues').DataTable();
+                    table.rows.add(t.responseObject().data).draw()
+                })(jQuery);
+            });
+        }
     });
+    var activeTab = localStorage.getItem('activeTab');
+    if (activeTab) {
+        detailsTabs.find('a[href="' + activeTab + '"]').tab('show');
+    }
 
     /**
      * Opens the selected URL. For each value in a chart a different URL is registered.

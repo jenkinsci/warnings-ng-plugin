@@ -10,7 +10,7 @@
     </st:attribute>
   </st:documentation>
 
-  <div role="tabpanel" id="warningsContent" class="tab-pane">
+  <div role="tabpanel" id="issuesContent" class="tab-pane fade">
     <table class="table table-responsive table-responsive-block table-hover table-striped" id="issues">
       <colgroup>
         <j:forEach var="width" items="${labelProvider.tableWidths}">

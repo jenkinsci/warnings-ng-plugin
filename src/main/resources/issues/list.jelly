@@ -10,7 +10,7 @@
     </st:attribute>
   </st:documentation>
 
-  <div role="tabpanel" id="warningsDetails" class="tab-pane">
+  <div role="tabpanel" id="warningsDetails" class="tab-pane fade">
     <j:forEach var="i" items="${issues}">
       <table class="table table-hover table-striped" id="details">
         <thead>

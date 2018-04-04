@@ -26,7 +26,7 @@
 
               <j:if test="${i.isNotEmpty()}">
                 <li class="nav-item">
-                  <a class="nav-link" role="tab" data-toggle="tab" href="#warningsContent">${l.issues}</a>
+                  <a class="nav-link" role="tab" data-toggle="tab" href="#issuesContent">${l.issues}</a>
                 </li>
 
                 <li class="nav-item">
