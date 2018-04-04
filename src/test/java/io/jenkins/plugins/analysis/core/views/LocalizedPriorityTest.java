@@ -58,4 +58,16 @@ class LocalizedPriorityTest {
         assertThat(actualResult).inUnicode();
     }
 
+    @Test
+    void priorityIsNull() {
+        String actualResult = LocalizedPriority.getLocalizedString(null);
+        assertThat(actualResult).contains("Normal");
+    }
+
+    @Test
+    void priorityIsNullLong() {
+        String actualResult = LocalizedPriority.getLongLocalizedString(null);
+        assertThat(actualResult).contains("Normale Priorität");
+    }
+
 }
