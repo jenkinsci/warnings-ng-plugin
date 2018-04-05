@@ -9,6 +9,10 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
 
 import hudson.model.HealthReport;
 
+/**
+ * Test {@link HealthReportBuilder}
+ * @author alexandra wenzel
+ */
 class HealthReportBuilderTest {
 
     /** Description message. */
