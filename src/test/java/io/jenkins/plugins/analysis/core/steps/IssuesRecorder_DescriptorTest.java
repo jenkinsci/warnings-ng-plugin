@@ -44,7 +44,7 @@ class IssuesRecorder_DescriptorTest {
         assertThat(actualResult).isOk();
 
         // healthy < unhealthy
-        actualResult = descriptor.doCheckHealthy(10,3);
+        actualResult = descriptor.doCheckHealthy(3,10);
         assertThat(actualResult).isOk();
     }
 
@@ -60,7 +60,7 @@ class IssuesRecorder_DescriptorTest {
         assertThat(actualResult).isError();
 
         // healthy > 0 , unhealthy > healthy
-        actualResult = descriptor.doCheckHealthy(1,30);
+        actualResult = descriptor.doCheckHealthy(10,3);
         assertThat(actualResult).isError();
     }
 
@@ -91,10 +91,6 @@ class IssuesRecorder_DescriptorTest {
 
         // unhealthy < 0
         actualResult = descriptor.doCheckUnHealthy(0,-1);
-        assertThat(actualResult).isError();
-
-        // healthy = 0 = unhealthy
-        actualResult = descriptor.doCheckUnHealthy(0,0);
         assertThat(actualResult).isError();
     }
 }
