@@ -1,10 +1,12 @@
 package io.jenkins.plugins.analysis.core.model; // NOPMD
 
+import javax.annotation.CheckForNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,7 +17,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -24,6 +25,10 @@ import org.eclipse.collections.impl.factory.Maps;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
@@ -34,11 +39,6 @@ import io.jenkins.plugins.analysis.core.quality.RunAdapter;
 import hudson.XmlFile;
 import hudson.model.Result;
 import hudson.model.Run;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
-import edu.hm.hafner.util.VisibleForTesting;
 
 /**
  * Stores the results of a static analysis run. This class is capable of storing a reference to the current build.
@@ -546,6 +546,19 @@ public class AnalysisResult implements Serializable {
      */
     public Map<String, Integer> getSizePerOrigin() {
         return Maps.immutable.ofAll(sizePerOrigin).toMap();
+    }
+
+    /**
+     * Returns the number of issues in this analysis run, mapped by priority.
+     *
+     * @return number of issues per priority
+     */
+    public Map<Priority, Integer> getSizePerPriority() {
+        EnumMap<Priority, Integer> sizePerPriority = new EnumMap<>(Priority.class);
+        sizePerPriority.put(Priority.HIGH, highPrioritySize);
+        sizePerPriority.put(Priority.NORMAL, normalPrioritySize);
+        sizePerPriority.put(Priority.LOW, lowPrioritySize);
+        return sizePerPriority;
     }
 
     /**
