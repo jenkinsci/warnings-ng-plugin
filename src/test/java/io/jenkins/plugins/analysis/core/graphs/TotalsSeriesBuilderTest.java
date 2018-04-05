@@ -17,10 +17,10 @@ import static org.mockito.Mockito.when;
  */
 class TotalsSeriesBuilderTest {
 
-    @Test
     /**
      * Validates that only the total size is added tot the computed result list.
      */
+    @Test
     void computeSeries() {
         TotalsSeriesBuilder totalsSeriesBuilder = new TotalsSeriesBuilder();
         AnalysisResult analysisResult = createRun(1);
