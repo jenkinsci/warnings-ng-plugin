@@ -20,10 +20,10 @@ import static org.mockito.Mockito.when;
 class OriginSeriesBuilderTest {
 
 
-    @Test
     /**
      * Validates that the result of the computeSeries method does contains the correct values
      */
+    @Test
     void computeSeriesCheckLimitsWithValidSize() {
         OriginSeriesBuilder originSeriesBuilder = new OriginSeriesBuilder();
         AnalysisResult analysisResult = createRun(0, new DateTime(), createStringIntegerMapWithNumberStrings(8));
@@ -31,10 +31,10 @@ class OriginSeriesBuilderTest {
         assertThat(competedResult).containsExactly(0, 1, 2, 3, 4, 5, 6, 7);
     }
 
-    @Test
     /**
      * Validates that not to many values are computed the computed series method.
      */
+    @Test
     void computeSeriesCheckLimitsWithInvalidSize() {
         OriginSeriesBuilder originSeriesBuilder = new OriginSeriesBuilder();
         AnalysisResult analysisResult = createRun(0, new DateTime(), createStringIntegerMapWithNumberStrings(9));
@@ -45,10 +45,10 @@ class OriginSeriesBuilderTest {
         assertThat(computedResult).doesNotContain(-1);
     }
 
-    @Test
     /**
      * Validates that exactly given values are added in the computed series method.
      */
+    @Test
     void computeSeriesCheckReturn() {
         OriginSeriesBuilder originSeriesBuilder = new OriginSeriesBuilder();
         AnalysisResult analysisResult = createRun(0, new DateTime(), createStringIntegerMapWithNumberStrings(3));
@@ -56,10 +56,10 @@ class OriginSeriesBuilderTest {
         assertThat(computedResult).containsExactly(0, 1, 2);
     }
 
-    @Test
     /**
      * Validates that no additional values are returned by the compute series method.
      */
+    @Test
     void computeSeriesCheckReturnOnlyOne() {
         OriginSeriesBuilder originSeriesBuilder = new OriginSeriesBuilder();
         AnalysisResult analysisResult = createRun(0, new DateTime(), createStringIntegerMapWithNumberStrings(1));
@@ -67,10 +67,10 @@ class OriginSeriesBuilderTest {
         assertThat(computedResult).containsOnly(0);
     }
 
-    @Test
     /**
      * Validates that empty sizePerOrigin-map returns a empty result list.
      */
+    @Test
     void computeSeriesCheckReturnEmptyList() {
         OriginSeriesBuilder originSeriesBuilder = new OriginSeriesBuilder();
         AnalysisResult analysisResult = createRun(0, new DateTime(), new HashMap<>());

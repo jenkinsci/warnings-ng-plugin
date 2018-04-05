@@ -15,10 +15,10 @@ import static org.mockito.Mockito.when;
  */
 class NewVersusFixedSeriesBuilderTest {
 
-    @Test
     /**
      * Checks if exactly new size and fixed size are added to the result list.
      */
+    @Test
     void computeSeriesCheckComputedValues() {
         NewVersusFixedSeriesBuilder newVersusFixedSeriesBuilder = new NewVersusFixedSeriesBuilder();
         AnalysisResult analysisResult = createRun(1, 2);
