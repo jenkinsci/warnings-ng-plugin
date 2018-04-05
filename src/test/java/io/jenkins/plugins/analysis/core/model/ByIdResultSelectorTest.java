@@ -6,59 +6,111 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * Tests the class {@link ByIdResultSelector}
+ *
+ * @author Alexander Praegla
+ */
 class ByIdResultSelectorTest {
 
-	private ByIdResultSelector cut;
-
+	/**
+	 * Verifies the returned optional is empty if the provided list of {@link ResultAction} is empty
+	 */
 	@Test
-	void shouldBeEmptyOptionalFromEmptyList() {
-		cut  = new ByIdResultSelector("1");
-		Run<?, ?> run = mock(Run.class);
-		when(run.getActions(ResultAction.class)).thenReturn(new ArrayList<>());
+	void shouldBeEmptyIfActionsAreEmpty() {
+		ByIdResultSelector cut = new ByIdResultSelector("1");
 
-		Optional<ResultAction> resultAction = cut.get(run);
-		assertThat(resultAction).isEmpty();
-	}
-
-	@Test
-	void shouldBeEmptyOptionalFromList() {
-		cut  = new ByIdResultSelector("1");
-		ResultAction resultAction = mock(ResultAction.class);
-		when(resultAction.getId()).thenReturn("2");
-
-		List<ResultAction> resultActions = new ArrayList<>();
-		resultActions.add(resultAction);
-
-		Run<?, ?> run = mock(Run.class);
-		when(run.getActions(ResultAction.class)).thenReturn(resultActions);
+		Run<?, ?> run = createRunStub(new ArrayList<>());
 
 		assertThat(cut.get(run)).isEmpty();
 	}
 
+	/**
+	 * Verifies the returned optional is empty if the provided list of {@link ResultAction}
+	 * does not contains the id of the instance of {@link ByIdResultSelector}
+	 */
 	@Test
-	void shouldBeNonEmptyOptional() {
-		cut  = new ByIdResultSelector("1");
-		ResultAction resultAction = mock(ResultAction.class);
-		when(resultAction.getId()).thenReturn("1");
+	void shouldBeEmptyIfActionsHasDifferentId() {
+		ByIdResultSelector cut = new ByIdResultSelector("1");
 
 		List<ResultAction> resultActions = new ArrayList<>();
-		resultActions.add(resultAction);
+		resultActions.add(createResultActionStub("2"));
 
-		Run<?, ?> run = mock(Run.class);
-		when(run.getActions(ResultAction.class)).thenReturn(resultActions);
+		Run<?, ?> run = createRunStub(resultActions);
+
+		assertThat(cut.get(run)).isEmpty();
+	}
+
+	/**
+	 * Verifies the returned optional is not empty if the provided list of {@link ResultAction} contains one element
+	 */
+	@Test
+	void shouldFindActionWithSameId() {
+		ByIdResultSelector cut = new ByIdResultSelector("1");
+
+		List<ResultAction> resultActions = new ArrayList<>();
+		resultActions.add(createResultActionStub("1"));
+
+		Run<?, ?> run = createRunStub(resultActions);
 
 		assertThat(cut.get(run)).isPresent();
 	}
 
+	/**
+	 * Verifies the returned optional is empty if the provided list of {@link ResultAction} contains two elements with different id
+	 */
+	@Test
+	void shouldFindEmptyIfListContainsTwoDifferentIds() {
+		ByIdResultSelector cut = new ByIdResultSelector("1");
+
+		List<ResultAction> resultActions = new ArrayList<>();
+		resultActions.add(createResultActionStub("2"));
+		resultActions.add(createResultActionStub("3"));
+
+		Run<?, ?> run = createRunStub(resultActions);
+
+		assertThat(cut.get(run)).isEmpty();
+	}
+
+	/**
+	 * Verifies the returned optional is not empty if the provided list of {@link ResultAction} contains two elements
+	 */
+	@Test
+	void shouldFindActionWithSameIdIfListContainsTwoDifferentIds() {
+		ByIdResultSelector cut = new ByIdResultSelector("1");
+
+		List<ResultAction> resultActions = new ArrayList<>();
+		resultActions.add(createResultActionStub("2"));
+		resultActions.add(createResultActionStub("1"));
+
+		Run<?, ?> run = createRunStub(resultActions);
+
+		assertThat(cut.get(run)).isPresent();
+	}
+
+	/**
+	 * Verifies the toString method
+	 */
 	@Test
 	void testToString() {
-		cut  = new ByIdResultSelector("1");
+		ByIdResultSelector cut = new ByIdResultSelector("1");
 		assertThat(cut.toString()).isEqualTo("io.jenkins.plugins.analysis.core.views.ResultAction with ID 1");
+	}
+
+	private Run<?, ?> createRunStub(List<ResultAction> resultActions) {
+		Run<?, ?> run = mock(Run.class);
+		when(run.getActions(ResultAction.class)).thenReturn(resultActions);
+		return run;
+	}
+
+	private ResultAction createResultActionStub(String mockedIdValue) {
+		ResultAction resultAction = mock(ResultAction.class);
+		when(resultAction.getId()).thenReturn(mockedIdValue);
+		return resultAction;
 	}
 }
