@@ -64,10 +64,8 @@ class ByIdResultSelectorTest {
      */
     @Test
     void shouldReturnTheExpectedIdNameForAListContainingTheExpectedId() {
-        applyGetMethodAndCheckResult(ID_NAME_1, 0, ID_NAME_1, ID_NAME_2, ID_NAME_3);
-        applyGetMethodAndCheckResult(ID_NAME_1, 1, ID_NAME_2, ID_NAME_1, ID_NAME_3);
-        applyGetMethodAndCheckResult(ID_NAME_1, 2, ID_NAME_3, ID_NAME_2, ID_NAME_1);
-
+        applyGetMethodAndCheckResult(ID_NAME_1, 0, ID_NAME_1, ID_NAME_2);
+        applyGetMethodAndCheckResult(ID_NAME_1, 1, ID_NAME_2, ID_NAME_1);
     }
 
     /**
@@ -85,10 +83,10 @@ class ByIdResultSelectorTest {
      */
     @Test
     void shouldReturnNothingForAnEqualsCallOnANullObject() {
-        final ByIdResultSelector byIdResultSelector = new ByIdResultSelector(ID_NAME_1);
-        final Run run = mock(Run.class);
-        final List<ResultAction> actionArrayList = new LinkedList<>();
-        final ResultAction resultAction = mock(ResultAction.class);
+        ByIdResultSelector byIdResultSelector = new ByIdResultSelector(ID_NAME_1);
+        Run run = mock(Run.class);
+        List<ResultAction> actionArrayList = new LinkedList<>();
+        ResultAction resultAction = mock(ResultAction.class);
         when(run.getActions(ResultAction.class)).thenReturn(actionArrayList);
         when(resultAction.getId()).thenReturn(null);
 
@@ -100,10 +98,10 @@ class ByIdResultSelectorTest {
      */
     @Test
     void shouldThrowNullPointerExceptionWhenAnEqualsCallOnANullObjectHappens() {
-        final ByIdResultSelector byIdResultSelector = new ByIdResultSelector(null);
-        final Run run = mock(Run.class);
-        final List<ResultAction> actionArrayList = new LinkedList<>();
-        final ResultAction resultAction = mock(ResultAction.class);
+        ByIdResultSelector byIdResultSelector = new ByIdResultSelector(null);
+        Run run = mock(Run.class);
+        List<ResultAction> actionArrayList = new LinkedList<>();
+        ResultAction resultAction = mock(ResultAction.class);
         actionArrayList.add(resultAction);
         when(run.getActions(ResultAction.class)).thenReturn(actionArrayList);
 
@@ -117,7 +115,7 @@ class ByIdResultSelectorTest {
      */
     @Test
     void shouldThrowNullPointerExceptionForARunObjectWhichIsNull() {
-        final ByIdResultSelector byIdResultSelector = new ByIdResultSelector("Anything");
+        ByIdResultSelector byIdResultSelector = new ByIdResultSelector("Anything");
 
         assertThatNullPointerException().isThrownBy(
                 () -> byIdResultSelector.get(null))
@@ -129,21 +127,9 @@ class ByIdResultSelectorTest {
      */
     @Test
     void shouldReturnCorrectStringRepresentationForAGivenIdBasedOnAHardcodedClassname() {
-        final ByIdResultSelector byIdResultSelector = new ByIdResultSelector("ID-Name");
-
-        assertThat(byIdResultSelector.toString()).isEqualTo(
-                "io.jenkins.plugins.analysis.core.views.ResultAction with ID ID-Name");
-    }
-
-    /**
-     * Verifies the correct string representation for a value based on the actual classname.
-     */
-    @Test
-    void shouldReturnCorrectStringRepresentationForAGivenIdBasedOnTheActualClassname() {
         ByIdResultSelector byIdResultSelector = new ByIdResultSelector("ID-Name");
 
-        assertThat(byIdResultSelector.toString()).isEqualTo(
-                String.format("%s with ID ID-Name", ResultAction.class.getName()));
+        assertThat(byIdResultSelector.toString()).contains("ID-Name");
     }
 
     /**
@@ -153,16 +139,15 @@ class ByIdResultSelectorTest {
     void shouldReturnCorrectStringRepresentationForAnIdWhichIsNullBasedOnTheActualClassname() {
         ByIdResultSelector byIdResultSelector = new ByIdResultSelector(null);
 
-        assertThat(byIdResultSelector.toString()).isEqualTo(
-                String.format("%s with ID null", ResultAction.class.getName()));
+        assertThat(byIdResultSelector.toString()).contains("null");
     }
 
     private void applyGetMethodAndCheckResult(final String constructorId, final int expectedResult,
             final String... listIds) {
-        final ByIdResultSelector byIdResultSelector = new ByIdResultSelector(constructorId);
-        final Run run = mock(Run.class);
+        ByIdResultSelector byIdResultSelector = new ByIdResultSelector(constructorId);
+        Run run = mock(Run.class);
 
-        final List<ResultAction> actionArrayList = fillListWithMockedObjects(listIds);
+        List<ResultAction> actionArrayList = fillListWithMockedObjects(listIds);
 
         when(run.getActions(ResultAction.class)).thenReturn(actionArrayList);
 
@@ -175,10 +160,10 @@ class ByIdResultSelectorTest {
     }
 
     private List<ResultAction> fillListWithMockedObjects(final String... idNames) {
-        final List<ResultAction> actionArrayList = new LinkedList<>();
+        List<ResultAction> actionArrayList = new LinkedList<>();
 
         for (String idName : idNames) {
-            final ResultAction resultAction = mock(ResultAction.class);
+            ResultAction resultAction = mock(ResultAction.class);
             when(resultAction.getId()).thenReturn(idName);
             actionArrayList.add(resultAction);
         }
