@@ -146,13 +146,13 @@
     var detailsTabs = $('#tab-details');
     detailsTabs.find('li:first-child a').tab('show');
     $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
-        var tabName = $(e.target).attr('href');
-        localStorage.setItem('activeTab', tabName);
-        var table = $('#issues').DataTable();
+        var activeTab = $(e.target).attr('href');
+        localStorage.setItem('activeTab', activeTab);
+
         /**
-         * If the tab contains the issues, then load the content using an Ajax call.
+         * If the active tab contains the issues, then load the content using an Ajax call.
          */
-        if (tabName === '#issuesContent' && table.data().length === 0 ) {
+        if (activeTab === '#issuesContent' && table.data().length === 0 ) {
             view.getTableModel(function (t) {
                 (function ($) {
                     var table = $('#issues').DataTable();
@@ -161,10 +161,37 @@
             });
         }
     });
+
     var activeTab = localStorage.getItem('activeTab');
     if (activeTab) {
         detailsTabs.find('a[href="' + activeTab + '"]').tab('show');
     }
+
+    /**
+     * Stores the order of every table in the local storage of the browser.
+     */
+    var tables = $('#statistics').find('table').not('#details');
+    tables.on('order.dt', function (e) {
+        var table = $(e.target);
+        var order = table.DataTable().order();
+        var id = table.attr('id');
+        localStorage.setItem(id + '#orderBy', order[0][0]);
+        localStorage.setItem(id + '#orderDirection', order[0][1]);
+    });
+
+    /**
+     * Restores the order of every table by reading the local storage of the browser.
+     * If no order has been stored yet, the table is skipped.
+     */
+    tables.each(function () {
+        var id = $(this).attr('id');
+        var orderBy = localStorage.getItem(id + '#orderBy');
+        var orderDirection = localStorage.getItem(id + '#orderDirection');
+        if (orderBy && orderDirection) {
+            var order = [orderBy, orderDirection];
+            $(this).DataTable().order(order).draw();
+        }
+    });
 
     /**
      * Opens the selected URL. For each value in a chart a different URL is registered.
