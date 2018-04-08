@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
@@ -59,17 +56,14 @@ abstract class IssuesFilterTestUtil {
      *         the expected filter result.
      */
     void applyFilterAndCheckResult(final Predicate<? super Issue> criterion, final Issues<Issue> issues,
-            final boolean isPositiveTest, final Issue... expectedOutput) {
-        final String id = "id";
+            final Issue... expectedOutput) {
+        String id = "id";
 
         issues.setId(id);
-        final Issues<Issue> result = issues.filter(criterion);
-        if (isPositiveTest) {
-            assertThat(result.iterator()).containsExactly(expectedOutput);
-        }
-        else {
-            assertThat(result.iterator()).doesNotContain(expectedOutput);
-        }
+        Issues<Issue> result = issues.filter(criterion);
+
+        assertThat(result.iterator()).containsExactly(expectedOutput);
+
         IssuesAssert.assertThat(result).hasId(id);
     }
 
@@ -79,7 +73,7 @@ abstract class IssuesFilterTestUtil {
      * @return issues.
      */
     Issues<Issue> getIssues() {
-        final Issues<Issue> issues = new Issues<>();
+        Issues<Issue> issues = new Issues<>();
         issues.add(ISSUE1, ISSUE2, ISSUE3);
         return issues;
     }
@@ -104,20 +98,6 @@ abstract class IssuesFilterTestUtil {
                     Arrays.copyOfRange(pattern, 1, pattern.length));
         }
         return issueFilterBuilder.build();
-    }
-
-    /**
-     * Asserts that the given class is serializable.
-     *
-     * @param issuesFilter
-     *         the given issues filter.
-     */
-    void checkForIsSerializable(final IssuesFilter issuesFilter) throws IOException {
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        final ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-        objectOutputStream.writeObject(issuesFilter);
-        objectOutputStream.close();
-        assertThat(byteArrayOutputStream.toByteArray().length > 0).isTrue();
     }
 
 }

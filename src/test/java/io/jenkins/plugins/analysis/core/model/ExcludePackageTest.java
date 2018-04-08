@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.IOException;
 import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
@@ -26,23 +25,11 @@ class ExcludePackageTest extends IssuesFilterTestUtil {
      */
     @Test
     void shouldExcludeIssueWithFilterNameToCheck1PositiveTestCase() {
-        final Predicate<? super Issue> filter = buildIssueFilterBuilderWithGivenPatternStructure(
+        Predicate<? super Issue> filter = buildIssueFilterBuilderWithGivenPatternStructure(
                 new IssueFilterBuilder(), getIssuesFilterInstance(),
                 FILTER_NAME_TO_CHECK);
 
-        applyFilterAndCheckResult(filter, getIssues(), true, ISSUE2, ISSUE3);
-    }
-
-    /**
-     * Verifies that the given filter is handled correctly. This test case checks for negative results.
-     */
-    @Test
-    void shouldExcludeIssueWithFilterNameToCheck1NegativeTestCase() {
-        final Predicate<? super Issue> filter = buildIssueFilterBuilderWithGivenPatternStructure(
-                new IssueFilterBuilder(), getIssuesFilterInstance(),
-                FILTER_NAME_TO_CHECK);
-
-        applyFilterAndCheckResult(filter, getIssues(), false, ISSUE1);
+        applyFilterAndCheckResult(filter, getIssues(), ISSUE2, ISSUE3);
     }
 
     /**
@@ -50,11 +37,11 @@ class ExcludePackageTest extends IssuesFilterTestUtil {
      */
     @Test
     void shouldExcludeNoIssueWhenPatternIsEmpty() {
-        final Predicate<? super Issue> filter = buildIssueFilterBuilderWithGivenPatternStructure(
+        Predicate<? super Issue> filter = buildIssueFilterBuilderWithGivenPatternStructure(
                 new IssueFilterBuilder(), getIssuesFilterInstance(),
                 EMPTY_PATTERN);
 
-        applyFilterAndCheckResult(filter, getIssues(), true, ISSUE1, ISSUE2, ISSUE3);
+        applyFilterAndCheckResult(filter, getIssues(), ISSUE1, ISSUE2, ISSUE3);
     }
 
     /**
@@ -62,11 +49,11 @@ class ExcludePackageTest extends IssuesFilterTestUtil {
      */
     @Test
     void shouldPassNoneWhenAGeneralFilterIsAdded() {
-        final Predicate<? super Issue> filter = buildIssueFilterBuilderWithGivenPatternStructure(
+        Predicate<? super Issue> filter = buildIssueFilterBuilderWithGivenPatternStructure(
                 new IssueFilterBuilder(), getIssuesFilterInstance(),
                 "[a-zA-Z1-3]*");
 
-        applyFilterAndCheckResult(filter, getIssues(), true);
+        applyFilterAndCheckResult(filter, getIssues());
     }
 
     /**
@@ -74,10 +61,10 @@ class ExcludePackageTest extends IssuesFilterTestUtil {
      */
     @Test
     void shouldPassAllWhenUselessFilterIsAdded() {
-        final Predicate<? super Issue> conditionWithMultiplePattern = buildIssueFilterBuilderWithGivenPatternStructure(
+        Predicate<? super Issue> conditionWithMultiplePattern = buildIssueFilterBuilderWithGivenPatternStructure(
                 new IssueFilterBuilder(), getIssuesFilterInstance(), "[a-zA-Z99]*", "[a-zA-Z98]*", "[a-zA-Z97]*");
 
-        applyFilterAndCheckResult(conditionWithMultiplePattern, getIssues(), true, ISSUE1, ISSUE2, ISSUE3);
+        applyFilterAndCheckResult(conditionWithMultiplePattern, getIssues(), ISSUE1, ISSUE2, ISSUE3);
     }
 
     /**
@@ -85,11 +72,11 @@ class ExcludePackageTest extends IssuesFilterTestUtil {
      */
     @Test
     void shouldThrowNullPointerExceptionForAPatternWhichIsNull() {
-        final Predicate<? super Issue> filter = buildIssueFilterBuilderWithGivenPatternStructure(
+        Predicate<? super Issue> filter = buildIssueFilterBuilderWithGivenPatternStructure(
                 new IssueFilterBuilder(), getIssuesFilterInstance(),
                 (String) null);
 
-        assertThatNullPointerException().isThrownBy(() -> applyFilterAndCheckResult(filter, getIssues(), false))
+        assertThatNullPointerException().isThrownBy(() -> applyFilterAndCheckResult(filter, getIssues()))
                 .withNoCause();
     }
 
@@ -112,14 +99,6 @@ class ExcludePackageTest extends IssuesFilterTestUtil {
         assertThatNullPointerException().isThrownBy(
                 () -> buildIssueFilterBuilderWithGivenPatternStructure(new IssueFilterBuilder(), null, (String) null))
                 .withNoCause();
-    }
-
-    /**
-     * Verifies that the class implementing serializable is serializable.
-     */
-    @Test
-    void shouldBeSerializable() throws IOException {
-        checkForIsSerializable(getIssuesFilterInstance());
     }
 
     /**
