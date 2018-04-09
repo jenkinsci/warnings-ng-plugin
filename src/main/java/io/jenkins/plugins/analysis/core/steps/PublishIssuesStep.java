@@ -433,7 +433,7 @@ public class PublishIssuesStep extends Step {
             name = StringUtils.defaultString(step.getName());
             issues = step.getIssues();
             if (StringUtils.isNotBlank(step.getId())) {
-                issues.setId(step.getId());
+                issues.setOrigin(step.getId());
             }
             filters = step.getFilters();
         }
@@ -454,7 +454,7 @@ public class PublishIssuesStep extends Step {
         }
 
         private LogHandler getLogger() throws InterruptedException {
-            return new LogHandler(getTaskListener(), new LabelProviderFactory().create(issues.getId(), name).getName());
+            return new LogHandler(getTaskListener(), new LabelProviderFactory().create(issues.getOrigin(), name).getName());
         }
 
         private Charset getSourceCodeCharset() {

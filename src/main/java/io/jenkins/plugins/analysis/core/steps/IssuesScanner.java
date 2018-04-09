@@ -116,7 +116,7 @@ class IssuesScanner {
     }
 
     private Issues<?> postProcess(final Issues<?> issues) {
-        issues.setId(tool.getId());
+        issues.setOrigin(tool.getId());
         issues.forEach(issue -> issue.setOrigin(tool.getId()));
 
         resolveAbsolutePaths(issues);

@@ -55,7 +55,7 @@ class IssuesPublisher {
             final boolean overallResultMustBeSuccess, final Charset sourceCodeEncoding,
             final LogHandler logger) {
         this.issues = issues;
-        this.id = issues.getId();
+        this.id = issues.getOrigin();
         this.filters = new ArrayList<>(filters);
         this.run = run;
         this.workspace = workspace;
@@ -161,6 +161,8 @@ class IssuesPublisher {
 
     private AnalysisResult createAnalysisResult(final Issues<?> filtered, final ResultSelector selector) {
         ReferenceProvider referenceProvider = createReferenceProvider(selector);
+        filtered.setReference(String.valueOf(run.getNumber()));
+
         return new BuildHistory(run, selector).getPreviousResult()
                 .map(previous -> new AnalysisResult(run, referenceProvider, filtered, qualityGate, previous))
                 .orElseGet(() -> new AnalysisResult(run, referenceProvider, filtered, qualityGate));

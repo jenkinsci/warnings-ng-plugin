@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.model; // NOPMD
 
+import javax.annotation.CheckForNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -15,7 +16,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -24,6 +24,10 @@ import org.eclipse.collections.impl.factory.Maps;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
@@ -34,11 +38,6 @@ import io.jenkins.plugins.analysis.core.quality.RunAdapter;
 import hudson.XmlFile;
 import hudson.model.Result;
 import hudson.model.Run;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
-import edu.hm.hafner.util.VisibleForTesting;
 
 /**
  * Stores the results of a static analysis run. This class is capable of storing a reference to the current build.
@@ -212,7 +211,7 @@ public class AnalysisResult implements Serializable {
         this.owner = owner;
         this.qualityGate = qualityGate;
 
-        id = issues.getId();
+        id = issues.getOrigin();
         size = issues.getSize();
         highPrioritySize = issues.getHighPrioritySize();
         normalPrioritySize = issues.getNormalPrioritySize();
@@ -255,7 +254,7 @@ public class AnalysisResult implements Serializable {
             }
             else {
                 messages.add(String.format("Some quality gates have been missed: overall result is %s", overallResult));
-                result.getEvaluations(this, qualityGate).forEach(message -> messages.add(message));
+                messages.addAll(result.getEvaluations(this, qualityGate));
             }
             owner.setResult(overallResult);
         }
@@ -267,7 +266,7 @@ public class AnalysisResult implements Serializable {
         infos = Lists.immutable.withAll(messages);
         errors = issues.getErrorMessages();
 
-        sizePerOrigin = issues.getPropertyCount(issue -> issue.getOrigin());
+        sizePerOrigin = issues.getPropertyCount(Issue::getOrigin);
 
         if (canSerialize) {
             serializeAnnotations(outstandingIssues, newIssues, fixedIssues);

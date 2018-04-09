@@ -458,7 +458,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             for (ToolConfiguration toolConfiguration : tools) {
                 totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
             }
-            totalIssues.setId("analysis");
+            totalIssues.setOrigin("analysis");
             publishResult(run, workspace, launcher, listener, totalIssues, Messages.Tool_Default_Name());
         }
         else {
@@ -493,7 +493,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         IssuesPublisher publisher = new IssuesPublisher(run, issues, getFilters(),
                 new HealthDescriptor(healthy, unHealthy, minimumPriority), new QualityGate(thresholds), workspace,
                 name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess, getSourceCodeCharset(),
-                new LogHandler(listener, issues.getId()));
+                new LogHandler(listener, issues.getOrigin()));
 
         VirtualChannel channel = launcher.getChannel();
         if (channel != null) {
