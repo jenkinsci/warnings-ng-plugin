@@ -3,9 +3,11 @@ package io.jenkins.plugins.analysis.core.steps;
 import org.junit.jupiter.api.Test;
 
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.Descriptor;
-import static io.jenkins.plugins.analysis.core.testutil.FormValidationAssert.*;
+import static io.jenkins.plugins.analysis.core.testutil.FormValidationAssert.assertThat;
 
+import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 
 /**
  * Tests the class {@link IssuesRecorder}.
@@ -27,8 +29,31 @@ class IssuesRecorderTest {
 
         assertThat(emptyResult).isOk();
         assertThat(validResult).isOk();
-        assertThat(invalidResult).isError();
+        assertThat(invalidResult).hasMessage(invalid.createWrongEncodingErrorMessage());
     }
+
+    // doFill
+    @Test
+    void doFillSourceCodeEncodingItemsShouldBeNotEmpty(){
+        Descriptor descriptor = new Descriptor();
+        ComboBoxModel boxModel = descriptor.doFillSourceCodeEncodingItems();
+        edu.hm.hafner.analysis.assertj.Assertions.assertThat(boxModel).isNotEmpty();
+    }
+
+    @Test
+    void doFillMinimumPriorityItemsShouldBeNotEmpty(){
+        Descriptor descriptor = new Descriptor();
+        ListBoxModel boxModel = descriptor.doFillMinimumPriorityItems();
+        edu.hm.hafner.analysis.assertj.Assertions.assertThat(boxModel).isNotEmpty();
+    }
+
+    /* TODO
+    @Test
+    void doFillReferenceJobItemsShouldBeNotEmpty(){
+        Descriptor descriptor = new Descriptor();
+        ComboBoxModel boxModel = descriptor.doFillReferenceJobItems();
+        edu.hm.hafner.analysis.assertj.Assertions.assertThat(boxModel).isNotEmpty();
+    }*/
 
     // doCheckHealthy
 
