@@ -16,15 +16,20 @@ import hudson.Util;
 public class EnvironmentResolver {
     /** Maximum number of times that the environment expansion is executed. */
     private static final int RESOLVE_VARIABLE_DEPTH_DEFAULT = 10;
-    private static int resolveVariablesDepth;
 
+    private int resolveVariablesDepth;
+
+    /**
+     * Creates a new instance of {@link EnvironmentResolver}. Attempts up to {@link #RESOLVE_VARIABLE_DEPTH_DEFAULT}
+     * times to resolve a variable.
+     */
     public EnvironmentResolver() {
         this(RESOLVE_VARIABLE_DEPTH_DEFAULT);
     }
 
     @VisibleForTesting
-    EnvironmentResolver(final int resolveVariablesDepthParam) {
-        resolveVariablesDepth = resolveVariablesDepthParam;
+    EnvironmentResolver(final int resolveVariablesDepth) {
+        this.resolveVariablesDepth = resolveVariablesDepth;
     }
 
     /**
