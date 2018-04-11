@@ -16,17 +16,18 @@ import hudson.EnvVars;
  */
 class EnvironmentResolverTest {
 
-    private static final int NUMBER_OF_SIGNS = 1024;
-    private static final String KEY = "$KEY";
-    private static final String VALUE = "$VALUE";
+    private static final int NUMBER_OF_CHARS = 1024;
+    private static final String KEY = "KEY";
+    private static final String VALUE = "VALUE";
+    private static final String RESULT = "RESULT";
 
     /**
      * Verifies that the output is empty for an empty input.
      */
     @Test
     void shouldReturnUnmodifiedOutputForEmptyInput() {
-        final EnvironmentResolver environmentResolver = new EnvironmentResolver();
-        final String expanded = environmentResolver.expandEnvironmentVariables(new EnvVars(), "");
+        EnvironmentResolver environmentResolver = new EnvironmentResolver();
+        String expanded = environmentResolver.expandEnvironmentVariables(new EnvVars(), "");
 
         assertThat(expanded).isEmpty();
     }
@@ -36,21 +37,10 @@ class EnvironmentResolverTest {
      */
     @Test
     void shouldReturnSameOutputAsInput() {
-        final EnvironmentResolver environmentResolver = new EnvironmentResolver();
-        final String expanded = environmentResolver.expandEnvironmentVariables(new EnvVars(), "TestString");
+        EnvironmentResolver environmentResolver = new EnvironmentResolver();
+        String expanded = environmentResolver.expandEnvironmentVariables(new EnvVars(), "TestString");
 
         assertThat(expanded).isEqualTo("TestString");
-    }
-
-    /**
-     * Verifies that the output is null for an input which is null.
-     */
-    @Test
-    void shouldReturnNullForNullAsInput() {
-        final EnvironmentResolver environmentResolver = new EnvironmentResolver();
-        final String expanded = environmentResolver.expandEnvironmentVariables(new EnvVars(), null);
-
-        assertThat(expanded).isNull();
     }
 
     /**
@@ -58,36 +48,10 @@ class EnvironmentResolverTest {
      */
     @Test
     void shouldReturnSameOutputAsInputForAnEnvironmentWhichIsNull() {
-        final EnvironmentResolver environmentResolver = new EnvironmentResolver();
-        final String expanded = environmentResolver.expandEnvironmentVariables(null, "TestStringForNull");
+        EnvironmentResolver environmentResolver = new EnvironmentResolver();
+        String expanded = environmentResolver.expandEnvironmentVariables(null, "TestStringForNull");
 
         assertThat(expanded).isEqualTo("TestStringForNull");
-    }
-
-    /**
-     * Verifies that the output is null when both, the environment and the input are null.
-     */
-    @Test
-    void shouldReturnNullWhenBothParametersEnvironmentAndTheInputAreNull() {
-        final EnvironmentResolver environmentResolver = new EnvironmentResolver();
-        final String expanded = environmentResolver.expandEnvironmentVariables(null, null);
-
-        assertThat(expanded).isNull();
-    }
-
-    /**
-     * Verifies that the output is an adjusted value of a given special input, which is based on $-signs.
-     */
-    @Test
-    void shouldReturnAdjustedOutputForAGivenInputBasedOnDollarSigns() {
-        final EnvironmentResolver environmentResolver = new EnvironmentResolver();
-        final EnvVars envVars = new EnvVars();
-        envVars.put(KEY, VALUE);
-        final String previous = "$$Test$$Testing$TestString$$Testing$Test";
-        final String expanded = environmentResolver.expandEnvironmentVariables(envVars, previous);
-        final String expected = "$Test$Testing$TestString$Testing$Test";
-
-        assertThat(expanded).isEqualTo(expected);
     }
 
     /**
@@ -95,13 +59,84 @@ class EnvironmentResolverTest {
      */
     @Test
     void shouldReturnNonAdjustedOutputForDefinedInput() {
-        final EnvironmentResolver environmentResolver = new EnvironmentResolver();
-        final EnvVars envVars = new EnvVars();
+        EnvironmentResolver environmentResolver = new EnvironmentResolver();
+        EnvVars envVars = new EnvVars();
         envVars.put(KEY, VALUE);
-        final String expected = "$Test$Testing";
-        final String expanded = environmentResolver.expandEnvironmentVariables(envVars, expected);
+        String expected = "TestTesting";
+        String expanded = environmentResolver.expandEnvironmentVariables(envVars, expected);
 
         assertThat(expanded).isEqualTo(expected);
+    }
+
+    /**
+     * Verifies that the output is adjusted correctly for a given input.
+     */
+    @Test
+    void shouldReturnAdjustedOutputForDefinedInput() {
+        EnvironmentResolver environmentResolver = new EnvironmentResolver();
+        EnvVars envVars = new EnvVars();
+        envVars.put(KEY, VALUE);
+        String previous = "$" + KEY;
+        String expanded = environmentResolver.expandEnvironmentVariables(envVars, previous);
+
+        assertThat(expanded).isEqualTo(VALUE);
+    }
+
+    /**
+     * Verifies that the output is adjusted correctly for a given input two times in a row.
+     */
+    @Test
+    void shouldReplaceTheFirstKeyWithFirstValueAndThenReplaceFirstValueWithResult() {
+        EnvironmentResolver environmentResolver = new EnvironmentResolver();
+        EnvVars envVars = new EnvVars();
+        envVars.put(KEY, "$" + VALUE);
+        envVars.put(VALUE, RESULT);
+        String previous = "$" + KEY;
+        String expanded = environmentResolver.expandEnvironmentVariables(envVars, previous);
+
+        assertThat(expanded).isEqualTo(RESULT);
+    }
+
+    /**
+     * Verifies that the output is an adjusted value of a given special input, which is based on $-signs.
+     * This is rather a test of the method replaceMacro in the class {@link hudson.Util}.
+     */
+    @Test
+    void shouldReturnAdjustedOutputForAGivenInputBasedOnDollarSigns() {
+        EnvironmentResolver environmentResolver = new EnvironmentResolver();
+        EnvVars envVars = new EnvVars();
+        envVars.put(KEY, VALUE);
+        String previous = "$$Test$$Testing$TestString$$Testing$Test";
+        String expanded = environmentResolver.expandEnvironmentVariables(envVars, previous);
+        String expected = "$Test$Testing$TestString$Testing$Test";
+
+        assertThat(expanded).isEqualTo(expected);
+    }
+
+    /**
+     * Verifies that the loop is executed zero times.
+     */
+    @Test
+    void shouldRunZeroTimesThroughTheLoopAndLeaveTheInputUnmodified() {
+        EnvVars envVars = new EnvVars();
+        envVars.put(KEY, VALUE);
+        String nonExpanded = "$";
+        String expected = "$";
+
+        checkLoopWithNumberOfRuns(0, envVars, nonExpanded, expected);
+    }
+
+    /**
+     * Verifies that the loop is executed one time.
+     */
+    @Test
+    void shouldRunOneTimeThroughTheLoopAndModifyTheInput() {
+        EnvVars envVars = new EnvVars();
+        envVars.put(KEY, VALUE);
+        String nonExpanded = "$$";
+        String expected = "$";
+
+        checkLoopWithNumberOfRuns(1, envVars, nonExpanded, expected);
     }
 
     /**
@@ -110,32 +145,39 @@ class EnvironmentResolverTest {
      */
     @Test
     void shouldExitAfterSetRetriesHasExceededAndHenceLeaveTheInputUnmodified() {
-        final EnvironmentResolver environmentResolver = new EnvironmentResolver();
-        final EnvVars envVars = new EnvVars();
+        EnvironmentResolver environmentResolver = new EnvironmentResolver();
+        EnvVars envVars = new EnvVars();
         envVars.put(KEY, VALUE);
-        final String expanded = environmentResolver.expandEnvironmentVariables(envVars, createString('$'));
+        String expanded = environmentResolver.expandEnvironmentVariables(envVars, createDollarString());
 
         assertThat(expanded).isEqualTo("$");
     }
 
     /**
-     * Verifies that the loop gets exited after the statical set retries {@code RESOLVE_VARIABLES_DEPTH} successfully
-     * and the second condition StringUtils.isNotBlank(expanded) is not fulfilled.
+     * Verifies that the loop gets exited after the second condition StringUtils.isNotBlank(expanded) is not fulfilled.
      */
     @Test
     void shouldExitAfterSetRetriesHasExceededAndHenceLeaveTheInputUnmodifiedTestTheSecondShortCircuitCondition() {
-        final EnvironmentResolver environmentResolver = new EnvironmentResolver();
-        final EnvVars envVars = new EnvVars();
+        EnvironmentResolver environmentResolver = new EnvironmentResolver();
+        EnvVars envVars = new EnvVars();
         envVars.put(KEY, VALUE);
-        final String expanded = environmentResolver.expandEnvironmentVariables(envVars, createString(' '));
+        String expanded = environmentResolver.expandEnvironmentVariables(envVars, " ");
 
         assertThat(expanded).isEqualTo(expanded);
     }
 
-    private String createString(final char character) {
-        final char[] chars = new char[NUMBER_OF_SIGNS];
-        Arrays.fill(chars, character);
+    private String createDollarString() {
+        char[] chars = new char[NUMBER_OF_CHARS];
+        Arrays.fill(chars, '$');
         return new String(chars);
+    }
+
+    private void checkLoopWithNumberOfRuns(final int resolveVariablesDepth, final EnvVars environment,
+            final String nonExpanded, final String expected) {
+        EnvironmentResolver environmentResolver = new EnvironmentResolver(resolveVariablesDepth);
+        String expanded = environmentResolver.expandEnvironmentVariables(environment, nonExpanded);
+
+        assertThat(expanded).isEqualTo(expected);
     }
 
 }
