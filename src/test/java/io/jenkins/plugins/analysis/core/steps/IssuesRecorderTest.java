@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.Descriptor;
-//import static io.jenkins.plugins.analysis.core.testutil.FormValidationAssert.assertThat;
-
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -19,10 +17,10 @@ import hudson.util.ListBoxModel;
 /**
  * Tests the class {@link IssuesRecorder}.
  *
+ * @author Arne Schöntag
  * @author Ullrich Hafner
  */
 class IssuesRecorderTest {
-
     @Test
     void shouldBeOkWithValidEncodings() {
         Descriptor empty = new Descriptor();
@@ -39,89 +37,76 @@ class IssuesRecorderTest {
         assertThat(invalidResult).hasMessage(invalid.createWrongEncodingErrorMessage());
     }
 
-    // doFill
     @Test
-    void doFillSourceCodeEncodingItemsShouldBeNotEmpty(){
+    void doFillSourceCodeEncodingItemsShouldBeNotEmpty() {
         Descriptor descriptor = new Descriptor();
         ComboBoxModel boxModel = descriptor.doFillSourceCodeEncodingItems();
-        edu.hm.hafner.analysis.assertj.Assertions.assertThat(boxModel).isNotEmpty();
+        assertThat(boxModel).isNotEmpty();
     }
 
     @Test
-    void doFillMinimumPriorityItemsShouldBeNotEmpty(){
+    void doFillMinimumPriorityItemsShouldBeNotEmpty() {
         Descriptor descriptor = new Descriptor();
         ListBoxModel boxModel = descriptor.doFillMinimumPriorityItems();
-        edu.hm.hafner.analysis.assertj.Assertions.assertThat(boxModel).isNotEmpty();
+        assertThat(boxModel).isNotEmpty();
     }
 
-    /*
     @Test
-    void doFillReferenceJobItemsShouldBeNotEmpty(){
-        Descriptor descriptor = new Descriptor();
-        ComboBoxModel boxModel = descriptor.doFillReferenceJobItems();
-        edu.hm.hafner.analysis.assertj.Assertions.assertThat(boxModel).isNotEmpty();
-    }*/
-
-    // doCheckHealthy
-
-    @Test
-    void doCheckHealthyShouldBeOkWithValidValues(){
+    void doCheckHealthyShouldBeOkWithValidValues() {
         // healthy = 0 = unhealthy
         Descriptor descriptor = new Descriptor();
-        FormValidation actualResult = descriptor.doCheckHealthy(0,0);
+        FormValidation actualResult = descriptor.doCheckHealthy(0, 0);
         assertThat(actualResult).isOk();
 
         // healthy < unhealthy
-        actualResult = descriptor.doCheckHealthy(1,2);
+        actualResult = descriptor.doCheckHealthy(1, 2);
         assertThat(actualResult).isOk();
     }
 
     @Test
-    void doCheckHealthyShouldBeNotOkWithInvalidValues(){
+    void doCheckHealthyShouldBeNotOkWithInvalidValues() {
         // healthy < 0
         Descriptor descriptor = new Descriptor();
-        FormValidation actualResult = descriptor.doCheckHealthy(-1,0);
+        FormValidation actualResult = descriptor.doCheckHealthy(-1, 0);
         assertThat(actualResult).isError();
 
         // healthy = 0 , unhealthy > 0
-        actualResult = descriptor.doCheckHealthy(0,1);
+        actualResult = descriptor.doCheckHealthy(0, 1);
         assertThat(actualResult).isError();
 
         // healthy > 0 , unhealthy > healthy
-        actualResult = descriptor.doCheckHealthy(2,1);
+        actualResult = descriptor.doCheckHealthy(2, 1);
         assertThat(actualResult).isError();
     }
 
-    // doCheckUnHealthy
-
     @Test
-    void doCheckUnHealthyShouldBeOkWithValidValues(){
+    void doCheckUnHealthyShouldBeOkWithValidValues() {
         // unhealthy > healthy > 0
         Descriptor descriptor = new Descriptor();
-        FormValidation actualResult = descriptor.doCheckUnHealthy(1,2);
+        FormValidation actualResult = descriptor.doCheckUnHealthy(1, 2);
         assertThat(actualResult).isOk();
 
         // unhealthy > healthy = 0
-        actualResult = descriptor.doCheckUnHealthy(0,1);
+        actualResult = descriptor.doCheckUnHealthy(0, 1);
         assertThat(actualResult).isOk();
     }
 
     @Test
-    void doCheckUnHealthyShouldBeNotOkWithInvalidValues(){
+    void doCheckUnHealthyShouldBeNotOkWithInvalidValues() {
         // healthy > unhealthy = 0
         Descriptor descriptor = new Descriptor();
-        FormValidation actualResult = descriptor.doCheckUnHealthy(1,0);
+        FormValidation actualResult = descriptor.doCheckUnHealthy(1, 0);
         assertThat(actualResult).isError();
 
         // healthy > unhealthy > 0
-        actualResult = descriptor.doCheckUnHealthy(1,1);
+        actualResult = descriptor.doCheckUnHealthy(1, 1);
         assertThat(actualResult).isError();
 
         // unhealthy < 0
-        actualResult = descriptor.doCheckUnHealthy(0,-1);
+        actualResult = descriptor.doCheckUnHealthy(0, -1);
         assertThat(actualResult).isError();
     }
-    
+
     @Test
     void shouldContainEmptyJobPlaceHolder() {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
