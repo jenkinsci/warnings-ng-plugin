@@ -7,7 +7,6 @@ import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -33,15 +32,12 @@ import io.jenkins.plugins.analysis.core.quality.Thresholds;
 import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
 import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.util.LoggerFactory;
-import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
-import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -72,7 +68,9 @@ import hudson.util.ListBoxModel;
  */
 public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private static final Priority DEFAULT_MINIMUM_PRIORITY = Priority.LOW;
-    private static final String NO_REFERENCE_JOB = "-";
+
+    @VisibleForTesting
+    static final String NO_REFERENCE_JOB = "-";
 
     private String reportEncoding;
     private String sourceCodeEncoding;
@@ -438,8 +436,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         this.filters = new ArrayList<>(filters);
     }
 
-    /** ------------------------------------------------------------ */
-
     @Override
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace,
             @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
@@ -485,8 +481,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         }
     }
 
-    private Logger createLogger(final TaskListener listener, final String name) {
-        return new LoggerFactory().createLogger(listener.getLogger(), name);
+    private Logger createLogger(final TaskListener listener, final String loggerName) {
+        return new LoggerFactory().createLogger(listener.getLogger(), loggerName);
     }
 
     /**
@@ -494,6 +490,20 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      */
     @Extension
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
+        private final JenkinsFacade jenkins;
+
+        /**
+         * Creates a new instance of {@link Descriptor}.
+         */
+        public Descriptor() {
+            this(new JenkinsFacade());
+        }
+
+        @VisibleForTesting
+        Descriptor(final JenkinsFacade jenkins) {
+            this.jenkins = jenkins;
+        }
+
         @Nonnull
         @Override
         public String getDisplayName() {
@@ -542,10 +552,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
          * @return the model with the possible reference jobs
          */
         public ComboBoxModel doFillReferenceJobItems() {
-            ComboBoxModel model = Jenkins.getInstance().getAllItems(Job.class).stream()
-                    .map(AbstractItem::getFullName)
-                    .distinct()
-                    .collect(Collectors.toCollection(ComboBoxModel::new));
+            ComboBoxModel model = new ComboBoxModel(jenkins.getAllJobs());
             model.add(0, NO_REFERENCE_JOB); // make sure that no input is valid
             return model;
         }
@@ -561,7 +568,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         public FormValidation doCheckReferenceJob(@QueryParameter final String referenceJob) {
             if (NO_REFERENCE_JOB.equals(referenceJob)
                     || StringUtils.isBlank(referenceJob)
-                    || new JenkinsFacade().getJob(referenceJob).isPresent()) {
+                    || jenkins.getJob(referenceJob).isPresent()) {
                 return FormValidation.ok();
             }
             return FormValidation.error(Messages.FieldValidator_Error_ReferenceJobDoesNotExist());
