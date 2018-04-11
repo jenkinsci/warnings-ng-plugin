@@ -9,11 +9,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/*
+/**
+ * Tests the class {@link NewVersusFixedSeriesBuilder}.
  *
- * Created by Manuel Hampp
- * on 04.04.18
- *
+ * @author Manuel Hampp
  */
 class TotalsSeriesBuilderTest {
 
@@ -21,7 +20,7 @@ class TotalsSeriesBuilderTest {
      * Validates that only the total size is added tot the computed result list.
      */
     @Test
-    void computeSeries() {
+    void shouldContainTotalSize() {
         TotalsSeriesBuilder totalsSeriesBuilder = new TotalsSeriesBuilder();
         AnalysisResult analysisResult = createRun(1);
         List<Integer> computedResult = totalsSeriesBuilder.computeSeries(analysisResult);

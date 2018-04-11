@@ -9,27 +9,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/*
- * Created by Manuel Hampp
- * on 04.04.18
+
+/**
+ * Tests the class {@link NewVersusFixedSeriesBuilder}.
+ *
+ * @author Manuel Hampp
  */
 class NewVersusFixedSeriesBuilderTest {
+
+    private static AnalysisResult createResult(final int newSize, final int fixedSize) {
+        AnalysisResult run = mock(AnalysisResult.class);
+        when(run.getNewSize()).thenReturn(newSize);
+        when(run.getFixedSize()).thenReturn(fixedSize);
+        return run;
+    }
 
     /**
      * Checks if exactly new size and fixed size are added to the result list.
      */
     @Test
-    void computeSeriesCheckComputedValues() {
+    void shouldContainNewAndFixedSize() {
         NewVersusFixedSeriesBuilder newVersusFixedSeriesBuilder = new NewVersusFixedSeriesBuilder();
-        AnalysisResult analysisResult = createRun(1, 2);
+        AnalysisResult analysisResult = createResult(1, 2);
         List<Integer> computedResult = newVersusFixedSeriesBuilder.computeSeries(analysisResult);
         assertThat(computedResult).containsExactly(1, 2);
-    }
-
-    private static AnalysisResult createRun(final int newSize, final int fixedSize) {
-        AnalysisResult run = mock(AnalysisResult.class);
-        when(run.getNewSize()).thenReturn(newSize);
-        when(run.getFixedSize()).thenReturn(fixedSize);
-        return run;
     }
 }
