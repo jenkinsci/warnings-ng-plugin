@@ -10,7 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests the class {@link NewVersusFixedSeriesBuilder}.
+ * Tests the class {@link TotalsSeriesBuilder}.
  *
  * @author Manuel Hampp
  */
