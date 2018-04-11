@@ -16,17 +16,17 @@ import static org.mockito.Mockito.*;
 class NewVersusFixedSeriesBuilderTest {
 
     /**
-     * Verifies that computeSeries includes the totalSize and the fixedSize
+     * Verifies that computeSeries includes the newSize and the fixedSize
      * of an AnalysisResult.
      */
     @Test
-    void computeSeriesReturnsTotalAndFixedSize() {
-        int totalSize = 0;
-        int fixedSize = 1;
+    void shouldReturnNewAndFixedSize() {
+        int newSize = 2;
+        int fixedSize = 3;
         AnalysisResult analysisResult = mock(AnalysisResult.class);
-        when(analysisResult.getTotalSize()).thenReturn(totalSize);
+        when(analysisResult.getNewSize()).thenReturn(newSize);
         when(analysisResult.getFixedSize()).thenReturn(fixedSize);
         List<Integer> series = new NewVersusFixedSeriesBuilder().computeSeries(analysisResult);
-        assertThat(series).containsExactly(totalSize, fixedSize);
+        assertThat(series).containsExactly(newSize, fixedSize);
     }
 }

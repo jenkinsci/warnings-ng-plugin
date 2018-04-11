@@ -19,7 +19,7 @@ class TotalsSeriesBuilderTest {
      * Verifies that the computeSeries contains the totalSize of a given AnalysisResult.
      */
     @Test
-    void computeSeries() {
+    void shouldReturnTotalSize() {
         int totalSize = 8;
         AnalysisResult analysisResult = mock(AnalysisResult.class);
         when(analysisResult.getTotalSize()).thenReturn(totalSize);
