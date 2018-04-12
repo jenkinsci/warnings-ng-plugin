@@ -55,7 +55,7 @@ class IssuesRecorderTest {
     }
 
     @Test
-    void doFillReferenceJobItemsShouldBeNotEmpty(){
+    void doFillReferenceJobItemsShouldBeNotEmpty() {
         JenkinsFacade mock = mock(JenkinsFacade.class);
         when(mock.getAllJobs()).thenReturn(new HashSet<>());
         Descriptor descriptor = new Descriptor(mock);
@@ -64,11 +64,11 @@ class IssuesRecorderTest {
     }
 
     @Test
-    void doCheckReferenceJobShouldBeOkWithValidValues(){
+    void doCheckReferenceJobShouldBeOkWithValidValues() {
         JenkinsFacade mock = mock(JenkinsFacade.class);
         String string = "referenceJob";
-        Job<?,?> job = mock(Job.class);
-        Optional<Job<?,?>> op = Optional.of(job);
+        Job<?, ?> job = mock(Job.class);
+        Optional<Job<?, ?>> op = Optional.of(job);
         when(mock.getJob(string)).thenReturn(op);
         Descriptor descriptor = new Descriptor(mock);
 
@@ -84,11 +84,11 @@ class IssuesRecorderTest {
     }
 
     @Test
-    void doCheckReferenceJobShouldBeNotOkWithInvalidValues(){
+    void doCheckReferenceJobShouldBeNotOkWithInvalidValues() {
         JenkinsFacade mock = mock(JenkinsFacade.class);
         String string = "referenceJob";
-        Job<?,?> job = mock(Job.class);
-        Optional<Job<?,?>> optional = Optional.of(job);
+        Job<?, ?> job = mock(Job.class);
+        Optional<Job<?, ?>> optional = Optional.of(job);
         when(mock.getJob(string)).thenReturn(optional);
         Descriptor descriptor = new Descriptor(mock);
 
