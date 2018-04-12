@@ -8,8 +8,9 @@ import org.junit.jupiter.api.Test;
 
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.Descriptor;
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
-import static io.jenkins.plugins.analysis.core.testutil.SoftAssertions.assertSoftly;
+import static io.jenkins.plugins.analysis.core.steps.IssuesRecorder.NO_REFERENCE_JOB;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static io.jenkins.plugins.analysis.core.testutil.SoftAssertions.*;
 import static org.mockito.Mockito.*;
 
 import hudson.model.Job;
@@ -20,66 +21,63 @@ import hudson.util.ListBoxModel;
 /**
  * Tests the class {@link IssuesRecorder}.
  *
+ * @author Arne Schöntag
  * @author Ullrich Hafner
  */
 class IssuesRecorderTest {
-
     @Test
     void shouldBeOkWithValidEncodings() {
         Descriptor descriptor = new Descriptor();
 
-        FormValidation emptyResult = descriptor.doCheckSourceCodeEncoding("");
-        FormValidation validResult = descriptor.doCheckSourceCodeEncoding("UTF-8");
-        FormValidation invalidResult = descriptor.doCheckSourceCodeEncoding("Some wrong text");
-
         assertSoftly(softly -> {
-            softly.assertThat(emptyResult).isOk();
-            softly.assertThat(validResult).isOk();
-            softly.assertThat(invalidResult).hasMessage(descriptor.createWrongEncodingErrorMessage());
+            softly.assertThat(descriptor.doCheckSourceCodeEncoding(""))
+                    .isOk();
+            softly.assertThat(descriptor.doCheckSourceCodeEncoding("UTF-8"))
+                    .isOk();
+            softly.assertThat(descriptor.doCheckSourceCodeEncoding("Some wrong text"))
+                    .isError()
+                    .hasMessage(descriptor.createWrongEncodingErrorMessage());
         });
     }
 
-    // doFill
     @Test
     void doFillSourceCodeEncodingItemsShouldBeNotEmpty() {
         Descriptor descriptor = new Descriptor();
-        ComboBoxModel boxModel = descriptor.doFillSourceCodeEncodingItems();
-        edu.hm.hafner.analysis.assertj.Assertions.assertThat(boxModel).isNotEmpty();
+
+        assertThat(descriptor.doFillSourceCodeEncodingItems())
+                .isNotEmpty()
+                .contains("UTF-8", "ISO-8859-1");
     }
 
     @Test
     void doFillMinimumPriorityItemsShouldBeNotEmpty() {
         Descriptor descriptor = new Descriptor();
         ListBoxModel boxModel = descriptor.doFillMinimumPriorityItems();
-        edu.hm.hafner.analysis.assertj.Assertions.assertThat(boxModel).isNotEmpty();
+        assertThat(boxModel).isNotEmpty();
     }
 
     @Test
     void doFillReferenceJobItemsShouldBeNotEmpty() {
-        JenkinsFacade mock = mock(JenkinsFacade.class);
-        when(mock.getAllJobs()).thenReturn(new HashSet<>());
-        Descriptor descriptor = new Descriptor(mock);
-        ComboBoxModel boxModel = descriptor.doFillReferenceJobItems();
-        edu.hm.hafner.analysis.assertj.Assertions.assertThat(boxModel).isNotEmpty();
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        when(jenkins.getAllJobs()).thenReturn(new HashSet<>());
+
+        Descriptor descriptor = new Descriptor(jenkins);
+
+        assertThat(descriptor.doFillReferenceJobItems()).containsExactly(NO_REFERENCE_JOB);
     }
 
     @Test
     void doCheckReferenceJobShouldBeOkWithValidValues() {
-        JenkinsFacade mock = mock(JenkinsFacade.class);
-        String string = "referenceJob";
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
         Job<?, ?> job = mock(Job.class);
-        Optional<Job<?, ?>> op = Optional.of(job);
-        when(mock.getJob(string)).thenReturn(op);
-        Descriptor descriptor = new Descriptor(mock);
-
-        FormValidation formValidation1 = descriptor.doCheckReferenceJob(string);
-        FormValidation formValidation2 = descriptor.doCheckReferenceJob("-");
-        FormValidation formValidation3 = descriptor.doCheckReferenceJob("");
+        String jobName = "referenceJob";
+        when(jenkins.getJob(jobName)).thenReturn(Optional.of(job));
+        Descriptor descriptor = new Descriptor(jenkins);
 
         assertSoftly(softly -> {
-            softly.assertThat(formValidation1).isOk();
-            softly.assertThat(formValidation2).isOk();
-            softly.assertThat(formValidation3).isOk();
+            softly.assertThat(descriptor.doCheckReferenceJob(jobName)).isOk();
+            softly.assertThat(descriptor.doCheckReferenceJob(NO_REFERENCE_JOB)).isOk();
+            softly.assertThat(descriptor.doCheckReferenceJob("")).isOk();
         });
     }
 
@@ -104,8 +102,6 @@ class IssuesRecorderTest {
             softly.assertThat(formValidation2).hasMessage(Messages.FieldValidator_Error_ReferenceJobDoesNotExist());
         });
     }
-
-    // doCheckHealthy
 
     @Test
     void doCheckHealthyShouldBeOkWithValidValues() {
@@ -134,8 +130,6 @@ class IssuesRecorderTest {
         actualResult = descriptor.doCheckHealthy(2, 1);
         assertThat(actualResult).isError();
     }
-
-    // doCheckUnHealthy
 
     @Test
     void doCheckUnHealthyShouldBeOkWithValidValues() {
@@ -173,7 +167,7 @@ class IssuesRecorderTest {
         ComboBoxModel actualModel = descriptor.doFillReferenceJobItems();
 
         assertThat(actualModel).hasSize(1);
-        assertThat(actualModel).containsExactly(IssuesRecorder.NO_REFERENCE_JOB);
+        assertThat(actualModel).containsExactly(NO_REFERENCE_JOB);
     }
 
     @Test
@@ -189,6 +183,6 @@ class IssuesRecorderTest {
         ComboBoxModel actualModel = descriptor.doFillReferenceJobItems();
 
         assertThat(actualModel).hasSize(2);
-        assertThat(actualModel).containsExactly("-", name);
+        assertThat(actualModel).containsExactly(NO_REFERENCE_JOB, name);
     }
 }

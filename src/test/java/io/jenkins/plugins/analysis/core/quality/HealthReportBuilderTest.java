@@ -12,10 +12,9 @@ import hudson.model.HealthReport;
 /**
  * Test {@link HealthReportBuilder}.
  *
- * @author alexandra wenzel
+ * @author Alexandra Wenzel
  */
 class HealthReportBuilderTest {
-
     /** Description message. */
     private static final String DESCRIPTION_MESSAGE = "Static Analysis: ";
     private static final String DESCRIPTION_MESSAGE_ENDING_PLURAL = " warnings found.";
@@ -158,5 +157,4 @@ class HealthReportBuilderTest {
 
         return builder.computeHealth(sizePerPriority);
     }
-
 }
