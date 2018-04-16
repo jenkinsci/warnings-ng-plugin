@@ -6,10 +6,11 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
+import edu.hm.hafner.analysis.Priority;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.Descriptor;
-import static io.jenkins.plugins.analysis.core.steps.IssuesRecorder.NO_REFERENCE_JOB;
+import static io.jenkins.plugins.analysis.core.steps.IssuesRecorder.*;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import io.jenkins.plugins.analysis.core.testutil.LocalizedMessagesTest;
 import static io.jenkins.plugins.analysis.core.testutil.SoftAssertions.*;
 import static org.mockito.Mockito.*;
 
@@ -17,14 +18,16 @@ import hudson.model.Job;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import hudson.util.ListBoxModel.Option;
 
 /**
  * Tests the class {@link IssuesRecorder}.
  *
  * @author Arne Schöntag
+ * @author Stephan Plöderl
  * @author Ullrich Hafner
  */
-class IssuesRecorderTest {
+class IssuesRecorderTest extends LocalizedMessagesTest {
     @Test
     void shouldBeOkWithValidEncodings() {
         Descriptor descriptor = new Descriptor();
@@ -44,16 +47,31 @@ class IssuesRecorderTest {
     void doFillSourceCodeEncodingItemsShouldBeNotEmpty() {
         Descriptor descriptor = new Descriptor();
 
-        assertThat(descriptor.doFillSourceCodeEncodingItems())
+        ComboBoxModel sourceCodeEncodingItems = descriptor.doFillSourceCodeEncodingItems();
+        assertThat(sourceCodeEncodingItems)
                 .isNotEmpty()
                 .contains("UTF-8", "ISO-8859-1");
+        assertThat(descriptor.doFillReportEncodingItems())
+                .isEqualTo(sourceCodeEncodingItems);
     }
 
     @Test
     void doFillMinimumPriorityItemsShouldBeNotEmpty() {
         Descriptor descriptor = new Descriptor();
         ListBoxModel boxModel = descriptor.doFillMinimumPriorityItems();
-        assertThat(boxModel).isNotEmpty();
+
+        assertThat(boxModel.size()).isEqualTo(3);
+
+        Option actualHighOption = boxModel.get(0);
+        Option actualNormalOption = boxModel.get(1);
+        Option actualLowOption = boxModel.get(2);
+
+        assertThat(actualHighOption.value).isEqualTo(Priority.HIGH.name());
+        assertThat(actualHighOption.name).isEqualTo(Messages.PriorityFilter_High());
+        assertThat(actualNormalOption.value).isEqualTo(Priority.NORMAL.name());
+        assertThat(actualNormalOption.name).isEqualTo(Messages.PriorityFilter_Normal());
+        assertThat(actualLowOption.value).isEqualTo(Priority.LOW.name());
+        assertThat(actualLowOption.name).isEqualTo(Messages.PriorityFilter_Low());
     }
 
     @Test
@@ -82,25 +100,15 @@ class IssuesRecorderTest {
     }
 
     @Test
-    void doCheckReferenceJobShouldBeNotOkWithInvalidValues() {
-        JenkinsFacade mock = mock(JenkinsFacade.class);
-        String string = "referenceJob";
-        Job<?, ?> job = mock(Job.class);
-        Optional<Job<?, ?>> optional = Optional.of(job);
-        when(mock.getJob(string)).thenReturn(optional);
-        Descriptor descriptor = new Descriptor(mock);
+    void doCheckReferenceJobShouldBeNOkWithInvalidValue() {
+        String referenceJob = "referenceJob";
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        when(jenkins.getJob(referenceJob)).thenReturn(Optional.empty());
+        Descriptor descriptor = new Descriptor(jenkins);
 
-        FormValidation formValidation1 = descriptor.doCheckReferenceJob("not referenceJob");
-
-        optional = Optional.empty();
-        when(mock.getJob(string)).thenReturn(optional);
-
-        FormValidation formValidation2 = descriptor.doCheckReferenceJob("not referenceJob");
-
-        assertSoftly(softly -> {
-            softly.assertThat(formValidation1).hasMessage(Messages.FieldValidator_Error_ReferenceJobDoesNotExist());
-            softly.assertThat(formValidation2).hasMessage(Messages.FieldValidator_Error_ReferenceJobDoesNotExist());
-        });
+        assertThat(descriptor.doCheckReferenceJob(referenceJob))
+                .isError()
+                .hasMessage("There is no such job - maybe the job has been renamed?");
     }
 
     @Test
