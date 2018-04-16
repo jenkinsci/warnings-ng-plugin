@@ -1,9 +1,9 @@
 package io.jenkins.plugins.analysis.core.history;
 
-import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import javax.annotation.Nonnull;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
@@ -60,12 +60,16 @@ public class BuildHistory implements ResultHistory {
      */
     protected Optional<ResultAction> getPreviousAction(
             final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
-        Optional<Run<?, ?>> run = getRunWithResult(baseline.getPreviousBuild(), selector, ignoreAnalysisResult,
-                overallResultMustBeSuccess);
+        Optional<Run<?, ?>> run = getPreviousRun(baseline, selector, ignoreAnalysisResult, overallResultMustBeSuccess);
         if (run.isPresent()) {
             return selector.get(run.get());
         }
         return Optional.empty();
+    }
+
+    private static Optional<Run<?, ?>> getPreviousRun(final Run<?, ?> start,
+            final ResultSelector selector, final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
+        return getRunWithResult(start.getPreviousBuild(), selector, ignoreAnalysisResult, overallResultMustBeSuccess);
     }
 
     private static Optional<Run<?, ?>> getRunWithResult(final Run<?, ?> start, final ResultSelector selector,
@@ -152,7 +156,7 @@ public class BuildHistory implements ResultHistory {
                 Run<?, ?> run = cursor.get();
                 Optional<ResultAction> resultAction = selector.get(run);
 
-                cursor = getRunWithResult(run.getPreviousBuild(), selector, true, false);
+                cursor = getPreviousRun(run, selector,true, false);
 
                 return resultAction.get().getResult();
             }
@@ -162,3 +166,4 @@ public class BuildHistory implements ResultHistory {
         }
     }
 }
+
