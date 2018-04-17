@@ -1,315 +1,157 @@
 package io.jenkins.plugins.analysis.core.history;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
-import static org.assertj.core.api.Java6Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import hudson.model.Result;
 import hudson.model.Run;
 
-class StablePluginReferenceTest {
+class StablePluginReferenceTest extends ReferenceFinderTest {
 
     @Test
-    void shouldNotReturnAStableRunIfNotBuildYet(){
-        final Run<?, ?> baseline = mock(Run.class);
-        final ResultSelector resultSelector = mock(ResultSelector.class);
-        final boolean overallResultMusstBeSuccess = false;
-        final StablePluginReference stablePluginReference = new StablePluginReference(baseline,resultSelector, overallResultMusstBeSuccess);
+    void shouldNotReturnAStableRunIfNotBuildYet() {
+        Run<?, ?> baseline = mock(Run.class);
+        ResultSelector resultSelector = mock(ResultSelector.class);
 
-        final Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
+        StablePluginReference stablePluginReference = new StablePluginReference(baseline, resultSelector,
+                true);
+
+        Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
 
         assertThat(actualOptionalResultAction).isEqualTo(Optional.empty());
     }
 
     @Test
-    void shouldNotReturnAStableRunIfThereIsNoStableBuild(){
-        final Run baseline = mock(Run.class);
-        final Run lastJob = mock(Run.class);
-        final Run prevLastJob = mock(Run.class);
-        when(lastJob.getPreviousBuild()).thenReturn(prevLastJob);
-        when(baseline.getPreviousBuild()).thenReturn(lastJob);
-        final ResultSelector resultSelector = mock(ResultSelector.class);
-        final boolean overallResultMusstBeSuccess = false;
-        final StablePluginReference stablePluginReference = new StablePluginReference(baseline,resultSelector, overallResultMusstBeSuccess);
+    void shouldNotReturnAStableRunWhenThereIsNoResultAction() {
+        Run baseline = mock(Run.class);
+        Run prevRun = mock(Run.class);
+        when(baseline.getPreviousBuild()).thenReturn(prevRun);
 
-        final Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
+        ResultSelector resultSelector = mock(ResultSelector.class);
+        when(resultSelector.get(prevRun)).thenReturn(Optional.empty());
+
+        StablePluginReference stablePluginReference = new StablePluginReference(baseline, resultSelector,
+                true);
+
+        Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
 
         assertThat(actualOptionalResultAction).isEqualTo(Optional.empty());
     }
 
-
     @Test
-    void shouldReturnAPreviousStableRun(){
-        // mocking Runs
-        final Run baseline = mock(Run.class);
-        final Run firstPrevJob = mock(Run.class);
-        final Run secondPrevJob = mock(Run.class);
+    void shouldNotReturnARunWhenTheResultActionIsNotSuccessful() {
+        Run baseline = mock(Run.class);
+        Run prevRun = mock(Run.class);
+        when(baseline.getPreviousBuild()).thenReturn(prevRun);
 
-        // mocking results
-        final ResultAction resultAction  = mock(ResultAction.class);
-        final List<ResultAction> actions = Collections.singletonList(resultAction);
-        final Optional<ResultAction> optionalResultAction = Optional.of(resultAction);
+        ResultSelector resultSelector = mock(ResultSelector.class);
 
-        // mocking further parameters of constructor
-        final ResultSelector resultSelector = mock(ResultSelector.class);
-        final boolean overallResultMusstBeSuccess = true;
+        ResultAction resultAction = mock(ResultAction.class);
+        when(resultSelector.get(prevRun)).thenReturn(Optional.of(resultAction));
+        when(prevRun.getActions(ResultAction.class)).thenReturn(Collections.singletonList(resultAction));
+        when(resultAction.isSuccessful()).thenReturn(false);
 
-        // linking Runs
-        when(baseline.getPreviousBuild()).thenReturn(firstPrevJob);
-        when(firstPrevJob.getPreviousBuild()).thenReturn(secondPrevJob);
+        StablePluginReference stablePluginReference = new StablePluginReference(baseline, resultSelector,
+                true);
 
+        Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
 
-        when(resultSelector.get(secondPrevJob)).thenReturn(optionalResultAction);
-        when(secondPrevJob.getActions(ResultAction.class)).thenReturn(actions);
-        when(firstPrevJob.getResult()).thenReturn(null);
-        when(resultAction.isSuccessful()).thenReturn(true);
-        when(secondPrevJob.getResult()).thenReturn(Result.SUCCESS);
-
-        // creating StablePluginReference
-        final StablePluginReference stablePluginReference = new StablePluginReference(baseline,resultSelector, overallResultMusstBeSuccess);
-
-        final Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
-
-        assertThat(actualOptionalResultAction).isEqualTo(optionalResultAction);
+        assertThat(actualOptionalResultAction).isEqualTo(Optional.empty());
     }
 
     @Test
-    void shouldReturnBaseLineResult(){
-        final Run baselineRun = mock(Run.class);
-        final ResultSelector resultSelector = mock(ResultSelector.class);
-        final boolean overallResultMusstBeSuccess = true;
-        final ResultAction resultAction = mock(ResultAction.class);
-        final Optional<ResultAction> optionalResultAction = Optional.of(resultAction);
-        final StablePluginReference stablePluginReference = new StablePluginReference(baselineRun, resultSelector, overallResultMusstBeSuccess);
-        final AnalysisResult result = mock(AnalysisResult.class);
-        when(resultSelector.get(baselineRun)).thenReturn(optionalResultAction);
-        when(resultAction.getResult()).thenReturn(result);
+    void shouldNotReturnAResultActionIfTheAnalysisResultIsNoSuccess() {
+        Run baseline = mock(Run.class);
+        Run prevRun = mock(Run.class);
+        when(baseline.getPreviousBuild()).thenReturn(prevRun);
+        when(prevRun.getResult()).thenReturn(Result.SUCCESS);
 
-        final Optional<AnalysisResult> actualOptionalAnalysisResult = stablePluginReference.getBaselineResult();
+        ResultSelector resultSelector = mock(ResultSelector.class);
 
-        assertThat(actualOptionalAnalysisResult).isEqualTo(Optional.of(result));
+        ResultAction resultAction = mock(ResultAction.class);
+        when(resultSelector.get(prevRun)).thenReturn(Optional.of(resultAction));
+        when(prevRun.getActions(ResultAction.class)).thenReturn(Collections.singletonList(resultAction));
+        when(resultAction.isSuccessful()).thenReturn(false);
+
+        StablePluginReference stablePluginReference = new StablePluginReference(baseline, resultSelector,
+                true);
+
+        Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
+
+        assertThat(actualOptionalResultAction).isEqualTo(Optional.empty());
     }
 
     @Test
-    void nullShouldNotBeAValidResult(){
-        final Run baseline = mock(Run.class);
-        final Run prevBuild = mock(Run.class);
-        final ResultAction resultAction  = mock(ResultAction.class);
-        final List<ResultAction> actions = Collections.singletonList(resultAction);
-        final Optional<ResultAction> optionalResultAction = Optional.of(resultAction);
-        final ResultSelector resultSelector = mock(ResultSelector.class);
-        final boolean overallResultMusstBeSuccess = true;
-        final StablePluginReference stablePluginReference = new StablePluginReference(baseline,resultSelector,overallResultMusstBeSuccess);
-        // linking Runs
-        when(baseline.getPreviousBuild()).thenReturn(prevBuild);
+    void shouldReturnAResultActionIfPrevRunIsSuccessful() {
+        Run baseline = mock(Run.class);
+        Run prevRun = mock(Run.class);
+        when(baseline.getPreviousBuild()).thenReturn(prevRun);
+        when(prevRun.getResult()).thenReturn(Result.SUCCESS);
 
-        when(resultSelector.get(prevBuild)).thenReturn(optionalResultAction);
-        when(prevBuild.getActions(ResultAction.class)).thenReturn(actions);
-        when(prevBuild.getResult()).thenReturn(null);
+        ResultSelector resultSelector = mock(ResultSelector.class);
+
+        ResultAction resultAction = mock(ResultAction.class);
+        when(resultSelector.get(prevRun)).thenReturn(Optional.of(resultAction));
+        when(prevRun.getActions(ResultAction.class)).thenReturn(Collections.singletonList(resultAction));
         when(resultAction.isSuccessful()).thenReturn(true);
 
-        final Optional<ResultAction> actualOptionalAnalysisResult = stablePluginReference.getReferenceAction();
+        AnalysisResult analysisResult = mock(AnalysisResult.class);
+        when(resultAction.getResult()).thenReturn(analysisResult);
 
-        assertThat(actualOptionalAnalysisResult).isEqualTo(Optional.empty());
+        StablePluginReference stablePluginReference = new StablePluginReference(baseline, resultSelector,
+                true);
+
+        Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
+
+        verify(resultSelector, times(2)).get(prevRun);
+        assertThat(actualOptionalResultAction).isEqualTo(Optional.of(resultAction));
     }
 
     @Test
-    void shouldOnlyReturnPreviousNonFailureResultsOrBuildsWhereOverallResultsAreFailure(){
-        // mocking Runs
-        final Run baseline = mock(Run.class);
-        final Run prevJob = mock(Run.class);
-
-        // mocking results
-        final ResultAction resultAction  = mock(ResultAction.class);
-        final List<ResultAction> actions = Collections.singletonList(resultAction);
-        final Optional<ResultAction> optionalResultAction = Optional.of(resultAction);
-        final AnalysisResult analysisResult = mock(AnalysisResult.class);
-
-        // mocking further parameters of constructor
-        final ResultSelector resultSelector = mock(ResultSelector.class);
-        final boolean overallResultMusstBeSuccess = false;
-
-        // linking Runs
+    void shouldOnlyReturnPreviousNonFailureResultsOrBuildsWhereOverallResultsAreFailure() {
+        Run baseline = mock(Run.class);
+        Run prevJob = mock(Run.class);
         when(baseline.getPreviousBuild()).thenReturn(prevJob);
+        when(prevJob.getResult()).thenReturn(Result.UNSTABLE, Result.FAILURE);
 
-
-        when(resultSelector.get(prevJob)).thenReturn(optionalResultAction);
-        when(prevJob.getActions(ResultAction.class)).thenReturn(actions);
+        ResultAction resultAction = mock(ResultAction.class);
         when(resultAction.isSuccessful()).thenReturn(true);
-        when(prevJob.getResult()).thenReturn(Result.UNSTABLE,Result.FAILURE);
+
+        AnalysisResult analysisResult = mock(AnalysisResult.class);
         when(resultAction.getResult()).thenReturn(analysisResult);
         when(analysisResult.getOverallResult()).thenReturn(Result.UNSTABLE, Result.FAILURE);
 
-        // creating StablePluginReference
-        final StablePluginReference stablePluginReference = new StablePluginReference(baseline,resultSelector, overallResultMusstBeSuccess);
+        ResultSelector resultSelector = mock(ResultSelector.class);
+        when(resultSelector.get(prevJob)).thenReturn(Optional.of(resultAction));
+
+        List<ResultAction> actions = Collections.singletonList(resultAction);
+        when(prevJob.getActions(ResultAction.class)).thenReturn(actions);
+
+        StablePluginReference stablePluginReference = new StablePluginReference(baseline, resultSelector, false);
 
         // prevJob.getResult() returns Unstable
-        final Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
+        Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
         // prevJob.getResult() returns Failure and OverallResult is Unstable
-        final Optional<ResultAction> actualOptionalResultActionOfFailure = stablePluginReference.getReferenceAction();
+        Optional<ResultAction> actualOptionalResultActionOfFailure = stablePluginReference.getReferenceAction();
         // prevJob.getResult() returns Failure and OverallResult is Failure
-        final Optional<ResultAction> actualOptionalResultActionOfFailureAndOverallFailure = stablePluginReference.getReferenceAction();
+        Optional<ResultAction> actualOptionalResultActionOfFailureAndOverallFailure = stablePluginReference.getReferenceAction();
 
-        assertThat(actualOptionalResultAction).isEqualTo(optionalResultAction);
+        assertThat(actualOptionalResultAction).isEqualTo(Optional.of(resultAction));
         assertThat(actualOptionalResultActionOfFailure).isEqualTo(Optional.empty());
-        assertThat(actualOptionalResultActionOfFailureAndOverallFailure).isEqualTo(optionalResultAction);
+        assertThat(actualOptionalResultActionOfFailureAndOverallFailure).isEqualTo(Optional.of(resultAction));
 
     }
 
-    @Test
-    void createsRightInstance(){
-        final boolean creatingStablePluginReference = false;
-        final boolean creatingPreviousRunReference = true;
-
-        final ReferenceProvider actualStablePluginReference = StablePluginReference.create(null,null, creatingStablePluginReference, false);
-        final ReferenceProvider actualPreviousRunReference = StablePluginReference.create(null, null, creatingPreviousRunReference, false);
-
-        assertThat(actualStablePluginReference).isInstanceOf(StablePluginReference.class);
-        assertThat(actualPreviousRunReference).isInstanceOf(PreviousRunReference.class);
-    }
-    @Test
-    void shouldReturnRightOwner(){
-        final Run baseline = mock(Run.class);
-        final Run prevBuild = mock(Run.class);
-        final ResultAction resultAction  = mock(ResultAction.class);
-        final List<ResultAction> actions = Collections.singletonList(resultAction);
-        final Optional<ResultAction> optionalResultAction = Optional.of(resultAction);
-        final ResultSelector resultSelector = mock(ResultSelector.class);
-        final boolean overallResultMusstBeSuccess = true;
-        final StablePluginReference stablePluginReference = new StablePluginReference(baseline,resultSelector,overallResultMusstBeSuccess);
-        // linking Runs
-        when(baseline.getPreviousBuild()).thenReturn(prevBuild);
-
-        when(resultSelector.get(prevBuild)).thenReturn(optionalResultAction);
-        when(prevBuild.getActions(ResultAction.class)).thenReturn(actions);
-        when(resultAction.getOwner()).thenReturn(baseline, (Run) null);
-        when(prevBuild.getResult()).thenReturn(Result.SUCCESS);
-        when(resultAction.isSuccessful()).thenReturn(true);
-
-        final Optional<Run<?,?>> actualOwner = stablePluginReference.getAnalysisRun();
-        final Optional<Run<?,?>> actualNoOwner = stablePluginReference.getAnalysisRun();
-
-        assertThat(actualOwner).isEqualTo(Optional.of(baseline));
-        assertThat(actualNoOwner).isEqualTo(Optional.empty());
-
-    }
-
-    @Test
-    void getIssuesOfReferenceJob(){
-        final Run baseline = mock(Run.class);
-        final Run prevBuild = mock(Run.class);
-        final ResultAction resultAction  = mock(ResultAction.class);
-        final List<ResultAction> actions = Collections.singletonList(resultAction);
-        final Optional<ResultAction> optionalResultAction = Optional.of(resultAction);
-        final ResultSelector resultSelector = mock(ResultSelector.class);
-        final boolean overallResultMusstBeSuccess = true;
-        final AnalysisResult analysisResult = mock(AnalysisResult.class);
-        final IssueBuilder builder = new IssueBuilder();
-        final Issues issues = new Issues<>(Collections.singletonList(builder.setCategory("testCompany").setLineEnd(1).build()));
-        final StablePluginReference stablePluginReference = new StablePluginReference(baseline,resultSelector,overallResultMusstBeSuccess);
-        // linking Runs
-        when(baseline.getPreviousBuild()).thenReturn(prevBuild);
-
-        when(resultSelector.get(prevBuild)).thenReturn(optionalResultAction);
-        when(prevBuild.getActions(ResultAction.class)).thenReturn(actions);
-        when(prevBuild.getResult()).thenReturn(Result.SUCCESS);
-        when(resultAction.isSuccessful()).thenReturn(true);
-        when(resultAction.getResult()).thenReturn(analysisResult);
-        when(analysisResult.getIssues()).thenReturn(issues, (Issues) null);
-
-        final Issues<?> actualIssues = stablePluginReference.getIssues();
-        final Issues<?> actualEmptyIssues = stablePluginReference.getIssues();
-
-        assertThat(actualIssues).isEqualTo(issues);
-        assertThat(actualEmptyIssues).isEqualTo(new Issues<>());
-    }
-
-    @Test
-    void shouldBeIterable(){
-        final Run baseline = mock(Run.class);
-        final Run[] runs = {mock(Run.class), mock(Run.class), mock(Run.class)};
-        final Result[] results = {Result.SUCCESS, Result.SUCCESS, Result.UNSTABLE};
-        final AnalysisResult analysisResult = mock(AnalysisResult.class);
-        final ResultAction resultAction  = mock(ResultAction.class);
-        final List<ResultAction> actions = Collections.singletonList(resultAction);
-        final Optional<ResultAction> optionalResultAction = Optional.of(resultAction);
-
-        final ResultSelector resultSelector = mock(ResultSelector.class);
-        // linking runs
-        when(resultAction.getResult()).thenReturn(analysisResult);
-
-        when(baseline.getPreviousBuild()).thenReturn(runs[0]);
-        for(int i = 0; i < runs.length -1; i++)
-            when(runs[i].getPreviousBuild()).thenReturn(runs[i+1]);
-
-        for(int i = 0; i < runs.length; i++){
-            when(resultSelector.get(runs[i])).thenReturn(optionalResultAction);
-            when(runs[i].getActions(ResultAction.class)).thenReturn(actions);
-            when(runs[i].getResult()).thenReturn(results[i]);
-        }
-
-        StablePluginReference stablePluginReference = new StablePluginReference(baseline,resultSelector,false);
-
-        int loopCounter = 0;
-        for(AnalysisResult result: stablePluginReference){
-            assertThat(result).isEqualTo(analysisResult);
-            loopCounter++;
-        }
-        assertThat(loopCounter).isEqualTo(runs.length);
-    }
-
-    @Test
-    void shouldThrowException(){
-        final Run baseline = mock(Run.class);
-        final ResultSelector resultSelector = mock(ResultSelector.class);
-        final StablePluginReference stablePluginReference = new StablePluginReference(baseline, resultSelector, true);
-
-        final Iterator<AnalysisResult> iterator = stablePluginReference.iterator();
-
-        assertThrows(NoSuchElementException.class, iterator::next);
-    }
-
-    @Test
-    void shouldBeEmptyOptional(){
-        final Run baseline = mock(Run.class);
-        final ResultSelector resultSelector = mock(ResultSelector.class);
-        final StablePluginReference stablePluginReference = new StablePluginReference(baseline, resultSelector, true);
-
-        final Optional<AnalysisResult> actualResult = stablePluginReference.getPreviousResult();
-
-        assertThat(actualResult).isEqualTo(Optional.empty());
-    }
-
-    @Test
-    void shouldReturnPreviousResult(){
-        final Run baseline = mock(Run.class);
-        final Run prevRun = mock(Run.class);
-        final AnalysisResult analysisResult = mock(AnalysisResult.class);
-        final ResultSelector resultSelector = mock(ResultSelector.class);
-        final ResultAction resultAction  = mock(ResultAction.class);
-        when(baseline.getPreviousBuild()).thenReturn(prevRun);
-        when(resultSelector.get(prevRun)).thenReturn(Optional.of(resultAction));
-        when(prevRun.getResult()).thenReturn(Result.SUCCESS);
-        when(prevRun.getActions(ResultAction.class)).thenReturn(Collections.singletonList(resultAction));
-        when(resultAction.getResult()).thenReturn(analysisResult);
-        when(resultAction.isSuccessful()).thenReturn(true);
-        final StablePluginReference stablePluginReference = new StablePluginReference(baseline, resultSelector, true);
-
-
-        final Optional<AnalysisResult> actualResult = stablePluginReference.getPreviousResult();
-
-        assertThat(actualResult).isEqualTo(Optional.of(analysisResult));
+    @Override
+    ReferenceFinder getReferenceFinder(Run baseline, ResultSelector resultSelector) {
+        return new StablePluginReference(baseline, resultSelector, true);
     }
 }
