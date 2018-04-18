@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
  *
  * @author Ullrich Hafner
  */
-public class LocalizedMessagesTest {
+public abstract class LocalizedMessagesTest {
     @BeforeAll
     static void initializeLocale() {
         Locale.setDefault(Locale.ENGLISH);
