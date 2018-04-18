@@ -16,6 +16,7 @@ import hudson.model.Run;
 
 class StablePluginReferenceTest extends ReferenceFinderTest {
 
+    /** Verifies that getReferenceAction returns no action if not run, yet. */
     @Test
     void shouldNotReturnAStableRunIfNotBuildYet() {
         Run<?, ?> baseline = mock(Run.class);
@@ -29,6 +30,7 @@ class StablePluginReferenceTest extends ReferenceFinderTest {
         assertThat(actualOptionalResultAction).isEqualTo(Optional.empty());
     }
 
+    /** Verifies that getPreviousAction should not return a ResultAction if no ResultAction is available. */
     @Test
     void shouldNotReturnAStableRunWhenThereIsNoResultAction() {
         Run baseline = mock(Run.class);
@@ -46,6 +48,7 @@ class StablePluginReferenceTest extends ReferenceFinderTest {
         assertThat(actualOptionalResultAction).isEqualTo(Optional.empty());
     }
 
+    /** Verifies that getPreviousAction does not return a ResultAction if there is no successful run, yet. */
     @Test
     void shouldNotReturnARunWhenTheResultActionIsNotSuccessful() {
         Run baseline = mock(Run.class);
@@ -67,6 +70,7 @@ class StablePluginReferenceTest extends ReferenceFinderTest {
         assertThat(actualOptionalResultAction).isEqualTo(Optional.empty());
     }
 
+    /** Verifies that getPreviousAction does not return a ResultAction if the ResultAction is not successful. */
     @Test
     void shouldNotReturnAResultActionIfTheAnalysisResultIsNoSuccess() {
         Run baseline = mock(Run.class);
@@ -89,6 +93,7 @@ class StablePluginReferenceTest extends ReferenceFinderTest {
         assertThat(actualOptionalResultAction).isEqualTo(Optional.empty());
     }
 
+    /** Verifies that getPreviousAction returns successful ResultActions. */
     @Test
     void shouldReturnAResultActionIfPrevRunIsSuccessful() {
         Run baseline = mock(Run.class);
@@ -115,6 +120,7 @@ class StablePluginReferenceTest extends ReferenceFinderTest {
         assertThat(actualOptionalResultAction).isEqualTo(Optional.of(resultAction));
     }
 
+    /** Verifies that getPreviousAction only returns the wanted ResultActions. */
     @Test
     void shouldOnlyReturnPreviousNonFailureResultsOrBuildsWhereOverallResultsAreFailure() {
         Run baseline = mock(Run.class);
