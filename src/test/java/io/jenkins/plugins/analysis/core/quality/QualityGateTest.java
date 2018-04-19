@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.core.quality;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
