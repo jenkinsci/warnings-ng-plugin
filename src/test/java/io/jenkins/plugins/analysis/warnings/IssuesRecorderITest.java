@@ -26,6 +26,50 @@ import hudson.model.Result;
  */
 public class IssuesRecorderITest extends IntegrationTest {
     /**
+     * Runs the Eclipse parser on an empty workspace: the build should report 0 issues and an error message.
+     */
+    @Test
+    public void shouldCreateEmptyResult() {
+        FreeStyleProject project = createJob();
+        enableWarnings(project);
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result).hasTotalSize(0);
+        assertThat(result).hasErrorMessages("No files found for pattern '**/*issues.txt'. Configuration error?");
+    }
+
+    /**
+     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
+     */
+    @Test
+    public void shouldCreateResultWithWarnings() {
+        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
+        enableWarnings(project);
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result).hasTotalSize(8);
+        assertThat(result).hasInfoMessages("Resolved module names for 8 issues",
+                "Resolved package names of 4 affected files");
+    }
+
+    /**
+     * Sets the UNSTABLE threshold to 8 and parse a file that contains exactly 8 warnings: the build should be
+     * unstable.
+     */
+    @Test
+    public void shouldCreateUnstableResult() {
+        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
+        enableWarnings(project, publisher -> publisher.setUnstableTotalAll(7));
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+
+        assertThat(result).hasTotalSize(8);
+        assertThat(result).hasOverallResult(Result.UNSTABLE);
+    }
+
+    /**
      * Creates a new {@link FreeStyleProject freestyle job}. The job will get a generated name.
      *
      * @return the created job
