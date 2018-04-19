@@ -14,7 +14,6 @@ import static org.mockito.Mockito.*;
  * @author Michaela Reitschuster
  */
 class NewVersusFixedSeriesBuilderTest {
-
     /**
      * Verifies that computeSeries includes the newSize and the fixedSize
      * of an AnalysisResult.
