@@ -1,127 +1,172 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
+import edu.hm.hafner.analysis.Priority;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.Descriptor;
-//import static io.jenkins.plugins.analysis.core.testutil.FormValidationAssert.assertThat;
-
+import static io.jenkins.plugins.analysis.core.steps.IssuesRecorder.*;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import io.jenkins.plugins.analysis.core.testutil.LocalizedMessagesTest;
+import static io.jenkins.plugins.analysis.core.testutil.SoftAssertions.*;
 import static org.mockito.Mockito.*;
 
 import hudson.model.Job;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import hudson.util.ListBoxModel.Option;
 
 /**
  * Tests the class {@link IssuesRecorder}.
  *
+ * @author Arne Schöntag
+ * @author Stephan Plöderl
  * @author Ullrich Hafner
  */
-class IssuesRecorderTest {
-
+class IssuesRecorderTest extends LocalizedMessagesTest {
     @Test
     void shouldBeOkWithValidEncodings() {
-        Descriptor empty = new Descriptor();
-        FormValidation emptyResult = empty.doCheckSourceCodeEncoding("");
-
-        Descriptor valid = new Descriptor();
-        FormValidation validResult = valid.doCheckSourceCodeEncoding("UTF-8");
-
-        Descriptor invalid = new Descriptor();
-        FormValidation invalidResult = invalid.doCheckSourceCodeEncoding("Some wrong text");
-
-        assertThat(emptyResult).isOk();
-        assertThat(validResult).isOk();
-        assertThat(invalidResult).hasMessage(invalid.createWrongEncodingErrorMessage());
-    }
-
-    // doFill
-    @Test
-    void doFillSourceCodeEncodingItemsShouldBeNotEmpty(){
         Descriptor descriptor = new Descriptor();
-        ComboBoxModel boxModel = descriptor.doFillSourceCodeEncodingItems();
-        edu.hm.hafner.analysis.assertj.Assertions.assertThat(boxModel).isNotEmpty();
+
+        assertSoftly(softly -> {
+            softly.assertThat(descriptor.doCheckSourceCodeEncoding(""))
+                    .isOk();
+            softly.assertThat(descriptor.doCheckSourceCodeEncoding("UTF-8"))
+                    .isOk();
+            softly.assertThat(descriptor.doCheckSourceCodeEncoding("Some wrong text"))
+                    .isError()
+                    .hasMessage(descriptor.createWrongEncodingErrorMessage());
+        });
     }
 
     @Test
-    void doFillMinimumPriorityItemsShouldBeNotEmpty(){
+    void doFillSourceCodeEncodingItemsShouldBeNotEmpty() {
+        Descriptor descriptor = new Descriptor();
+
+        ComboBoxModel sourceCodeEncodingItems = descriptor.doFillSourceCodeEncodingItems();
+        assertThat(sourceCodeEncodingItems)
+                .isNotEmpty()
+                .contains("UTF-8", "ISO-8859-1");
+        assertThat(descriptor.doFillReportEncodingItems())
+                .isEqualTo(sourceCodeEncodingItems);
+    }
+
+    @Test
+    void doFillMinimumPriorityItemsShouldBeNotEmpty() {
         Descriptor descriptor = new Descriptor();
         ListBoxModel boxModel = descriptor.doFillMinimumPriorityItems();
-        edu.hm.hafner.analysis.assertj.Assertions.assertThat(boxModel).isNotEmpty();
+
+        assertThat(boxModel.size()).isEqualTo(3);
+
+        Option actualHighOption = boxModel.get(0);
+        Option actualNormalOption = boxModel.get(1);
+        Option actualLowOption = boxModel.get(2);
+
+        assertThat(actualHighOption.value).isEqualTo(Priority.HIGH.name());
+        assertThat(actualHighOption.name).isEqualTo(Messages.PriorityFilter_High());
+        assertThat(actualNormalOption.value).isEqualTo(Priority.NORMAL.name());
+        assertThat(actualNormalOption.name).isEqualTo(Messages.PriorityFilter_Normal());
+        assertThat(actualLowOption.value).isEqualTo(Priority.LOW.name());
+        assertThat(actualLowOption.name).isEqualTo(Messages.PriorityFilter_Low());
     }
 
-    /*
     @Test
-    void doFillReferenceJobItemsShouldBeNotEmpty(){
-        Descriptor descriptor = new Descriptor();
-        ComboBoxModel boxModel = descriptor.doFillReferenceJobItems();
-        edu.hm.hafner.analysis.assertj.Assertions.assertThat(boxModel).isNotEmpty();
-    }*/
+    void doFillReferenceJobItemsShouldBeNotEmpty() {
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        when(jenkins.getAllJobs()).thenReturn(new HashSet<>());
 
-    // doCheckHealthy
+        Descriptor descriptor = new Descriptor(jenkins);
+
+        assertThat(descriptor.doFillReferenceJobItems()).containsExactly(NO_REFERENCE_JOB);
+    }
 
     @Test
-    void doCheckHealthyShouldBeOkWithValidValues(){
+    void doCheckReferenceJobShouldBeOkWithValidValues() {
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        Job<?, ?> job = mock(Job.class);
+        String jobName = "referenceJob";
+        when(jenkins.getJob(jobName)).thenReturn(Optional.of(job));
+        Descriptor descriptor = new Descriptor(jenkins);
+
+        assertSoftly(softly -> {
+            softly.assertThat(descriptor.doCheckReferenceJob(jobName)).isOk();
+            softly.assertThat(descriptor.doCheckReferenceJob(NO_REFERENCE_JOB)).isOk();
+            softly.assertThat(descriptor.doCheckReferenceJob("")).isOk();
+        });
+    }
+
+    @Test
+    void doCheckReferenceJobShouldBeNOkWithInvalidValue() {
+        String referenceJob = "referenceJob";
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        when(jenkins.getJob(referenceJob)).thenReturn(Optional.empty());
+        Descriptor descriptor = new Descriptor(jenkins);
+
+        assertThat(descriptor.doCheckReferenceJob(referenceJob))
+                .isError()
+                .hasMessage("There is no such job - maybe the job has been renamed?");
+    }
+
+    @Test
+    void doCheckHealthyShouldBeOkWithValidValues() {
         // healthy = 0 = unhealthy
         Descriptor descriptor = new Descriptor();
-        FormValidation actualResult = descriptor.doCheckHealthy(0,0);
+        FormValidation actualResult = descriptor.doCheckHealthy(0, 0);
         assertThat(actualResult).isOk();
 
         // healthy < unhealthy
-        actualResult = descriptor.doCheckHealthy(1,2);
+        actualResult = descriptor.doCheckHealthy(1, 2);
         assertThat(actualResult).isOk();
     }
 
     @Test
-    void doCheckHealthyShouldBeNotOkWithInvalidValues(){
+    void doCheckHealthyShouldBeNotOkWithInvalidValues() {
         // healthy < 0
         Descriptor descriptor = new Descriptor();
-        FormValidation actualResult = descriptor.doCheckHealthy(-1,0);
+        FormValidation actualResult = descriptor.doCheckHealthy(-1, 0);
         assertThat(actualResult).isError();
 
         // healthy = 0 , unhealthy > 0
-        actualResult = descriptor.doCheckHealthy(0,1);
+        actualResult = descriptor.doCheckHealthy(0, 1);
         assertThat(actualResult).isError();
 
         // healthy > 0 , unhealthy > healthy
-        actualResult = descriptor.doCheckHealthy(2,1);
+        actualResult = descriptor.doCheckHealthy(2, 1);
         assertThat(actualResult).isError();
     }
 
-    // doCheckUnHealthy
-
     @Test
-    void doCheckUnHealthyShouldBeOkWithValidValues(){
+    void doCheckUnHealthyShouldBeOkWithValidValues() {
         // unhealthy > healthy > 0
         Descriptor descriptor = new Descriptor();
-        FormValidation actualResult = descriptor.doCheckUnHealthy(1,2);
+        FormValidation actualResult = descriptor.doCheckUnHealthy(1, 2);
         assertThat(actualResult).isOk();
 
         // unhealthy > healthy = 0
-        actualResult = descriptor.doCheckUnHealthy(0,1);
+        actualResult = descriptor.doCheckUnHealthy(0, 1);
         assertThat(actualResult).isOk();
     }
 
     @Test
-    void doCheckUnHealthyShouldBeNotOkWithInvalidValues(){
+    void doCheckUnHealthyShouldBeNotOkWithInvalidValues() {
         // healthy > unhealthy = 0
         Descriptor descriptor = new Descriptor();
-        FormValidation actualResult = descriptor.doCheckUnHealthy(1,0);
+        FormValidation actualResult = descriptor.doCheckUnHealthy(1, 0);
         assertThat(actualResult).isError();
 
         // healthy > unhealthy > 0
-        actualResult = descriptor.doCheckUnHealthy(1,1);
+        actualResult = descriptor.doCheckUnHealthy(1, 1);
         assertThat(actualResult).isError();
 
         // unhealthy < 0
-        actualResult = descriptor.doCheckUnHealthy(0,-1);
+        actualResult = descriptor.doCheckUnHealthy(0, -1);
         assertThat(actualResult).isError();
     }
-    
+
     @Test
     void shouldContainEmptyJobPlaceHolder() {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
@@ -130,7 +175,7 @@ class IssuesRecorderTest {
         ComboBoxModel actualModel = descriptor.doFillReferenceJobItems();
 
         assertThat(actualModel).hasSize(1);
-        assertThat(actualModel).containsExactly(IssuesRecorder.NO_REFERENCE_JOB);
+        assertThat(actualModel).containsExactly(NO_REFERENCE_JOB);
     }
 
     @Test
@@ -146,6 +191,6 @@ class IssuesRecorderTest {
         ComboBoxModel actualModel = descriptor.doFillReferenceJobItems();
 
         assertThat(actualModel).hasSize(2);
-        assertThat(actualModel).containsExactly("-", name);
+        assertThat(actualModel).containsExactly(NO_REFERENCE_JOB, name);
     }
 }
