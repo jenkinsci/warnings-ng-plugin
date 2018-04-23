@@ -1,22 +1,19 @@
 package io.jenkins.plugins.analysis.core.views;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
+import hudson.model.Item;
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.util.UUID;
 import java.util.function.Predicate;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-
-import hudson.model.Item;
-import hudson.model.Run;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
 
 /**
  * Creates detail objects for the selected link in the issues detail view. Each link might be visualized by a
@@ -78,9 +75,11 @@ public class DetailFactory {
 
             Issue issue = allIssues.findById(UUID.fromString(plainLink));
             if (ConsoleDetail.isInConsoleLog(issue)) {
+                // FIXME: Put this in Jenkins Facade
                 return new ConsoleDetail(owner, issue.getLineStart(), issue.getLineEnd());
             }
             else {
+                // FIXME: Put this in Jenkins Facade
                 return new SourceDetail(owner, issue, sourceEncoding);
             }
         }
@@ -115,8 +114,7 @@ public class DetailFactory {
     }
 
     private Predicate<Issue> createPropertyFilter(final String plainLink, final String property) {
-        return issue -> plainLink.equals(String.valueOf(
-                Issue.getPropertyValueAsString(issue, property).hashCode()));
+        return issue -> plainLink.equals(String.valueOf(Issue.getPropertyValueAsString(issue, property).hashCode()));
     }
 
     private String getDisplayNameOfDetails(final String property, final Issues<?> selectedIssues) {
