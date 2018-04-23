@@ -72,13 +72,6 @@ public class Summary {
                 .orElse(ul);
     }
 
-    void bla(String text) {
-
-    }
-    void bla(String text, Object... args) {
-
-    }
-
     private String getToolNames() {
         String tools = analysisRun.getSizePerOrigin()
                 .keySet()
