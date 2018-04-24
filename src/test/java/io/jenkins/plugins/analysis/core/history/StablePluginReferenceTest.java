@@ -14,9 +14,14 @@ import static org.mockito.Mockito.*;
 import hudson.model.Result;
 import hudson.model.Run;
 
+/**
+ * Tests the class {@link StablePluginReference}.
+ *
+ * @author Stephan Plöderl
+ */
 class StablePluginReferenceTest extends ReferenceFinderTest {
 
-    /** Verifies that getReferenceAction returns no action if not run, yet. */
+    /** Verifies that {@link StablePluginReference#getReferenceAction()} returns no action if not run, yet. */
     @Test
     void shouldNotReturnAStableRunIfNotBuildYet() {
         Run<?, ?> baseline = mock(Run.class);
@@ -25,12 +30,10 @@ class StablePluginReferenceTest extends ReferenceFinderTest {
         StablePluginReference stablePluginReference = new StablePluginReference(baseline, resultSelector,
                 true);
 
-        Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
-
-        assertThat(actualOptionalResultAction).isEqualTo(Optional.empty());
+        assertThat(stablePluginReference.getReferenceAction()).isEmpty();
     }
 
-    /** Verifies that getPreviousAction should not return a ResultAction if no ResultAction is available. */
+    /** Verifies that {@link StablePluginReference#getReferenceAction()} should not return a ResultAction if no ResultAction is available. */
     @Test
     void shouldNotReturnAStableRunWhenThereIsNoResultAction() {
         Run baseline = mock(Run.class);
@@ -43,12 +46,10 @@ class StablePluginReferenceTest extends ReferenceFinderTest {
         StablePluginReference stablePluginReference = new StablePluginReference(baseline, resultSelector,
                 true);
 
-        Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
-
-        assertThat(actualOptionalResultAction).isEqualTo(Optional.empty());
+        assertThat(stablePluginReference.getReferenceAction()).isEmpty();
     }
 
-    /** Verifies that getPreviousAction does not return a ResultAction if there is no successful run, yet. */
+    /** Verifies that {@link StablePluginReference#getReferenceAction()} does not return a ResultAction if there is no successful run, yet. */
     @Test
     void shouldNotReturnARunWhenTheResultActionIsNotSuccessful() {
         Run baseline = mock(Run.class);
@@ -65,12 +66,10 @@ class StablePluginReferenceTest extends ReferenceFinderTest {
         StablePluginReference stablePluginReference = new StablePluginReference(baseline, resultSelector,
                 true);
 
-        Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
-
-        assertThat(actualOptionalResultAction).isEqualTo(Optional.empty());
+        assertThat(stablePluginReference.getReferenceAction()).isEmpty();
     }
 
-    /** Verifies that getPreviousAction does not return a ResultAction if the ResultAction is not successful. */
+    /** Verifies that {@link StablePluginReference#getReferenceAction()} does not return a ResultAction if the ResultAction is not successful. */
     @Test
     void shouldNotReturnAResultActionIfTheAnalysisResultIsNoSuccess() {
         Run baseline = mock(Run.class);
@@ -88,12 +87,10 @@ class StablePluginReferenceTest extends ReferenceFinderTest {
         StablePluginReference stablePluginReference = new StablePluginReference(baseline, resultSelector,
                 true);
 
-        Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
-
-        assertThat(actualOptionalResultAction).isEqualTo(Optional.empty());
+        assertThat(stablePluginReference.getReferenceAction()).isEmpty();
     }
 
-    /** Verifies that getPreviousAction returns successful ResultActions. */
+    /** Verifies that {@link StablePluginReference#getReferenceAction()} returns successful ResultActions. */
     @Test
     void shouldReturnAResultActionIfPrevRunIsSuccessful() {
         Run baseline = mock(Run.class);
@@ -114,26 +111,23 @@ class StablePluginReferenceTest extends ReferenceFinderTest {
         StablePluginReference stablePluginReference = new StablePluginReference(baseline, resultSelector,
                 true);
 
-        Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
-
+        assertThat(stablePluginReference.getReferenceAction()).contains(resultAction);
         verify(resultSelector, times(2)).get(prevRun);
-        assertThat(actualOptionalResultAction).isEqualTo(Optional.of(resultAction));
     }
 
-    /** Verifies that getPreviousAction only returns the wanted ResultActions. */
+    /** Verifies that {@link StablePluginReference#getReferenceAction()} only returns the wanted ResultActions. */
     @Test
     void shouldOnlyReturnPreviousNonFailureResultsOrBuildsWhereOverallResultsAreFailure() {
         Run baseline = mock(Run.class);
         Run prevJob = mock(Run.class);
         when(baseline.getPreviousBuild()).thenReturn(prevJob);
-        when(prevJob.getResult()).thenReturn(Result.UNSTABLE, Result.FAILURE);
 
         ResultAction resultAction = mock(ResultAction.class);
         when(resultAction.isSuccessful()).thenReturn(true);
 
         AnalysisResult analysisResult = mock(AnalysisResult.class);
         when(resultAction.getResult()).thenReturn(analysisResult);
-        when(analysisResult.getOverallResult()).thenReturn(Result.UNSTABLE, Result.FAILURE);
+        when(analysisResult.getOverallResult()).thenReturn(Result.UNSTABLE);
 
         ResultSelector resultSelector = mock(ResultSelector.class);
         when(resultSelector.get(prevJob)).thenReturn(Optional.of(resultAction));
@@ -143,21 +137,20 @@ class StablePluginReferenceTest extends ReferenceFinderTest {
 
         StablePluginReference stablePluginReference = new StablePluginReference(baseline, resultSelector, false);
 
-        // prevJob.getResult() returns Unstable
-        Optional<ResultAction> actualOptionalResultAction = stablePluginReference.getReferenceAction();
-        // prevJob.getResult() returns Failure and OverallResult is Unstable
-        Optional<ResultAction> actualOptionalResultActionOfFailure = stablePluginReference.getReferenceAction();
-        // prevJob.getResult() returns Failure and OverallResult is Failure
-        Optional<ResultAction> actualOptionalResultActionOfFailureAndOverallFailure = stablePluginReference.getReferenceAction();
+        when(prevJob.getResult()).thenReturn(Result.UNSTABLE);
+        assertThat(stablePluginReference.getReferenceAction()).contains(resultAction);
 
-        assertThat(actualOptionalResultAction).isEqualTo(Optional.of(resultAction));
-        assertThat(actualOptionalResultActionOfFailure).isEqualTo(Optional.empty());
-        assertThat(actualOptionalResultActionOfFailureAndOverallFailure).isEqualTo(Optional.of(resultAction));
+        when(prevJob.getResult()).thenReturn(Result.FAILURE);
+        assertThat(stablePluginReference.getReferenceAction()).isEmpty();
+
+        when(analysisResult.getOverallResult()).thenReturn(Result.FAILURE);
+        assertThat(stablePluginReference.getReferenceAction()).contains(resultAction);
 
     }
 
+    /** see {@link ReferenceFinderTest#getReferenceFinder(Run, ResultSelector)}.*/
     @Override
-    ReferenceFinder getReferenceFinder(Run baseline, ResultSelector resultSelector) {
+    protected ReferenceFinder getReferenceFinder(final Run baseline, final ResultSelector resultSelector) {
         return new StablePluginReference(baseline, resultSelector, true);
     }
 }

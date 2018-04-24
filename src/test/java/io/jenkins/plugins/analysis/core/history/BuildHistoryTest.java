@@ -16,7 +16,7 @@ import hudson.model.Result;
 import hudson.model.Run;
 
 /**
- * Tests the class {@link BuildHistory.BuildResultIterator}.
+ * Tests the class {@link BuildHistory}.
  *
  * @author Ullrich Hafner
  */
@@ -135,7 +135,7 @@ class BuildHistoryTest {
         assertThrows(NoSuchElementException.class, iterator::next);
     }
 
-    /** Verifies that getPreviousResult returns no results without ResultAction. */
+    /** Verifies that {@link BuildHistory#getPreviousResult()} returns no results without ResultAction. */
     @Test
     void shouldNotReturnResultsWithoutResultAction() {
         ResultAction action = mock(ResultAction.class);
@@ -153,12 +153,10 @@ class BuildHistoryTest {
 
         BuildHistory history = new BuildHistory(run, selector);
 
-        Optional<AnalysisResult> actualResultAction = history.getPreviousResult();
-
-        assertThat(actualResultAction).isEqualTo(Optional.empty());
+        assertThat(history.getPreviousResult()).isEmpty();
     }
 
-    /** Verifies that getPreviousResult returns a result. */
+    /** Verifies that {@link BuildHistory#getPreviousResult()} returns a result. */
     @Test
     void shouldOnlyReturnAnalysisResultIfResultActionIsSuccessful() {
         ResultAction action = mock(ResultAction.class);
@@ -172,7 +170,7 @@ class BuildHistoryTest {
         when(selector.get(run)).thenReturn(Optional.of(action));
 
         ResultAction prevAction = mock(ResultAction.class);
-        when(prevAction.isSuccessful()).thenReturn(true, false);
+        when(prevAction.isSuccessful()).thenReturn(true);
 
         AnalysisResult prevBuildResult = mock(AnalysisResult.class);
         when(prevAction.getResult()).thenReturn(prevBuildResult);
@@ -183,14 +181,15 @@ class BuildHistoryTest {
 
         BuildHistory history = new BuildHistory(run, selector);
 
-        Optional<AnalysisResult> actualResultActionSuccess = history.getPreviousResult();
-        Optional<AnalysisResult> actualResultActionNoSuccess = history.getPreviousResult();
+        when(prevAction.isSuccessful()).thenReturn(true);
+        assertThat(history.getPreviousResult()).contains(prevBuildResult);
 
-        assertThat(actualResultActionSuccess).isEqualTo(Optional.of(prevBuildResult));
-        assertThat(actualResultActionNoSuccess).isEqualTo(Optional.empty());
+
+        when(prevAction.isSuccessful()).thenReturn(false);
+        assertThat(history.getPreviousResult()).isEmpty();
     }
 
-    /** Verifies that getBaselineResult returns the result of the baseline. */
+    /** Verifies that {@link BuildHistory#getBaselineResult()} returns the result of the baseline. */
     @Test
     void shouldReturnBaseLineResult() {
         Run baselineRun = mock(Run.class);
@@ -201,11 +200,9 @@ class BuildHistoryTest {
         when(resultSelector.get(baselineRun)).thenReturn(Optional.of(resultAction));
         when(resultAction.getResult()).thenReturn(result);
 
-        StablePluginReference stablePluginReference = new StablePluginReference(baselineRun, resultSelector, true);
+        BuildHistory buildHistory = new BuildHistory(baselineRun, resultSelector);
 
-        final Optional<AnalysisResult> actualOptionalAnalysisResult = stablePluginReference.getBaselineResult();
-
-        assertThat(actualOptionalAnalysisResult).isEqualTo(Optional.of(result));
+        assertThat(buildHistory.getBaselineResult()).contains(result);
     }
 
 }
