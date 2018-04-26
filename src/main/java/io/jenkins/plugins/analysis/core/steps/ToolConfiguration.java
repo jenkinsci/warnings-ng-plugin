@@ -24,15 +24,15 @@ import hudson.util.FormValidation;
  */
 public class ToolConfiguration extends AbstractDescribableImpl<ToolConfiguration> {
     private final String pattern;
-    private StaticAnalysisTool tool;
+    private final StaticAnalysisTool tool;
 
     /**
      * Creates a new instance of {@link ToolConfiguration}.
      *
      * @param pattern
-     *            the pattern of files to parse
+     *         the pattern of files to parse
      * @param tool
-     *            the name of the parser to use
+     *         the name of the parser to use
      */
     @DataBoundConstructor
     public ToolConfiguration(final String pattern, final StaticAnalysisTool tool) {
@@ -42,10 +42,21 @@ public class ToolConfiguration extends AbstractDescribableImpl<ToolConfiguration
         this.tool = tool;
     }
 
+    /**
+     * Returns the static analysis tool that will scan files and create issues.
+     *
+     * @return the tool
+     */
     public StaticAnalysisTool getTool() {
         return tool;
     }
 
+    /**
+     * Returns the Ant file-set pattern of files to work with. If the pattern is undefined then the console log is
+     * scanned.
+     *
+     * @return the pattern
+     */
     public String getPattern() {
         return pattern;
     }

@@ -2,11 +2,13 @@ package io.jenkins.plugins.analysis.core.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Issues;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -25,8 +27,13 @@ class AffectedFilesResolverTest {
     @ParameterizedTest(name = "[{index}] Illegal filename = {0}")
     @ValueSource(strings = {"/does/not/exist", "!<>$$&%/&(", "\0 Null-Byte"})
     void shouldReturnFallbackOnError(final String fileName) throws IOException, InterruptedException {
-        String message = new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(
-                mock(VirtualChannel.class), BUILD_ROOT, Collections.singleton(fileName));
-        assertThat(message).isEqualTo("0 copied, 1 not-found, 0 with I/O error");
+        Issues<Issue> issues = new Issues<>();
+        IssueBuilder builder = new IssueBuilder();
+        issues.add(builder.setFileName(fileName).build());
+        new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(
+                issues, mock(VirtualChannel.class), BUILD_ROOT);
+
+        assertThat(issues.getErrorMessages()).hasSize(1);
+        assertThat(issues.getErrorMessages().get(0)).startsWith("Copying 1 affected files to Jenkins' build folder builds.");
     }
 }

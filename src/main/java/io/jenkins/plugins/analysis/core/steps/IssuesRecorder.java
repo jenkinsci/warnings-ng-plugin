@@ -7,15 +7,16 @@ import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import com.google.common.collect.Lists;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.util.VisibleForTesting;
@@ -23,15 +24,11 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
 import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
-import io.jenkins.plugins.analysis.core.util.Logger;
-import io.jenkins.plugins.analysis.core.util.LoggerFactory;
 import jenkins.tasks.SimpleBuildStep;
 
 import hudson.Extension;
@@ -85,8 +82,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private Priority minimumPriority = DEFAULT_MINIMUM_PRIORITY;
     private final Thresholds thresholds = new Thresholds();
 
-    private String id;
-    private String name;
+    private boolean isEnabledForFailure;
+    private boolean isAggregatingResults;
 
     @DataBoundConstructor
     public IssuesRecorder() {
@@ -144,35 +141,34 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     /* -------------------------------------------------------------------------------------------------------------- */
 
     /**
-     * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If no ID is
-     * given, then the ID of the associated result object is used.
+     * Returns whether the results for each configured static analysis result should be aggregated into a single
+     * result or if every tool should get an individual result.
      *
-     * @param id
-     *         the ID of the results
+     * @return {@code true}  if the results of each static analysis tool should be aggregated into a single result,
+     *         {@code false} if every tool should get an individual result.
      */
-    @DataBoundSetter
-    public void setId(final String id) {
-        this.id = id;
+    public boolean getAggregatingResults() {
+        return isAggregatingResults;
     }
 
-    public String getId() {
-        return id;
+    @DataBoundSetter
+    public void setAggregatingResults(final boolean aggregatingResults) {
+        this.isAggregatingResults = aggregatingResults;
     }
 
     /**
-     * Defines the name of the results. The name is used for all labels in the UI. If no name is given, then the name of
-     * the associated {@link StaticAnalysisLabelProvider} is used.
+     * Returns whether recording should be enabled for failed builds as well.
      *
-     * @param name
-     *         the name of the results
+     * @return {@code true}  if recording should be enabled for failed builds as well,
+     *         {@code false} if recording is enabled for successful or unstable builds only
      */
-    @DataBoundSetter
-    public void setName(final String name) {
-        this.name = name;
+    public boolean getEnabledForFailure() {
+        return isEnabledForFailure;
     }
 
-    public String getName() {
-        return name;
+    @DataBoundSetter
+    public void setEnabledForFailure(final boolean enabledForFailure) {
+        this.isEnabledForFailure = enabledForFailure;
     }
 
     /**
@@ -436,21 +432,67 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         this.filters = new ArrayList<>(filters);
     }
 
+    /** ------------------------------------------------------------ */
+
     @Override
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace,
             @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
             throws InterruptedException, IOException {
-        Issues<Issue> totalIssues = new Issues<>();
-        for (ToolConfiguration toolConfiguration : tools) {
-            totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
+        Result overallResult = run.getResult();
+        if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
+            record(run, workspace, launcher, listener);
         }
+        else {
+            LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
+            logHandler.log("Skipping execution of recorder since overall result is '%s'", overallResult);
+        }
+    }
 
-        Logger logger = createLogger(listener, totalIssues.getId());
-        Logger errorLogger = createLogger(listener, String.format("[%s] [ERROR]", totalIssues.getId()));
-        IssuesPublisher publisher = new IssuesPublisher(totalIssues, getFilters(), run, workspace,
-                new HealthDescriptor(healthy, unHealthy, minimumPriority),
-                name, sourceCodeEncoding, new QualityGate(thresholds), referenceJobName, ignoreAnalysisResult,
-                overallResultMustBeSuccess, logger, errorLogger);
+    private void record(final Run<?, ?> run, final FilePath workspace, final Launcher launcher,
+            final TaskListener listener)
+            throws IOException, InterruptedException {
+        if (isAggregatingResults) {
+            Issues totalIssues = new Issues();
+            for (ToolConfiguration toolConfiguration : tools) {
+                totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
+            }
+            totalIssues.setOrigin("analysis");
+            publishResult(run, workspace, launcher, listener, totalIssues, Messages.Tool_Default_Name());
+        }
+        else {
+            for (ToolConfiguration toolConfiguration : tools) {
+                Issues issues = scanWithTool(run, workspace, listener, toolConfiguration);
+                publishResult(run, workspace, launcher, listener, issues, StringUtils.EMPTY);
+            }
+        }
+    }
+
+    private Issues scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
+            final ToolConfiguration toolConfiguration)
+            throws IOException, InterruptedException {
+        ToolConfiguration configuration = toolConfiguration;
+        IssuesScanner issuesScanner = new IssuesScanner(configuration.getTool(), workspace,
+                getReportCharset(), getSourceCodeCharset(), new LogHandler(listener, configuration.getTool().getName()));
+        return issuesScanner.scan(expandEnvironmentVariables(run, listener, configuration.getPattern()),
+                run.getLogFile());
+    }
+
+    private Charset getSourceCodeCharset() {
+        return EncodingValidator.defaultCharset(sourceCodeEncoding);
+    }
+
+    private Charset getReportCharset() {
+        return EncodingValidator.defaultCharset(reportEncoding);
+    }
+
+    private void publishResult(final Run<?, ?> run, final FilePath workspace, final Launcher launcher,
+            final TaskListener listener, final Issues issues, final String name)
+            throws IOException, InterruptedException {
+        IssuesPublisher publisher = new IssuesPublisher(run, issues, getFilters(),
+                new HealthDescriptor(healthy, unHealthy, minimumPriority), new QualityGate(thresholds), workspace,
+                name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess, getSourceCodeCharset(),
+                new LogHandler(listener, issues.getOrigin()));
+
         VirtualChannel channel = launcher.getChannel();
         if (channel != null) {
             publisher.attachAction(channel, new FilePath(run.getRootDir()));
@@ -460,35 +502,19 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         }
     }
 
-    private Issues<?> scanWithTool(final @Nonnull Run<?, ?> run, final @Nonnull FilePath workspace,
-            final @Nonnull TaskListener listener, final ToolConfiguration toolConfiguration)
-            throws IOException, InterruptedException {
-        StaticAnalysisTool tool = toolConfiguration.getTool();
-        String pattern = toolConfiguration.getPattern();
-        Logger logger = createLogger(listener, tool.getId());
-        Logger errorLogger = createLogger(listener, String.format("[%s] [ERROR]", tool.getId()));
-
-        IssuesScanner issuesScanner
-                = new IssuesScanner(tool, workspace, reportEncoding, sourceCodeEncoding, logger, errorLogger);
-        if (StringUtils.isBlank(pattern)) {
-            return issuesScanner.scanInConsoleLog(run.getLogFile());
-        }
-        else {
-            String expanded = new EnvironmentResolver()
-                    .expandEnvironmentVariables(run.getEnvironment(listener), pattern);
-
-            return issuesScanner.scanInWorkspace(expanded);
-        }
+    private String createLoggerPrefix() {
+        return tools.stream().map(tool -> tool.getTool().getId()).collect(Collectors.joining());
     }
 
-    private Logger createLogger(final TaskListener listener, final String loggerName) {
-        return new LoggerFactory().createLogger(listener.getLogger(), loggerName);
+    private String expandEnvironmentVariables(final Run<?, ?> run, final TaskListener listener, final String pattern)
+            throws IOException, InterruptedException {
+        return new EnvironmentResolver().expandEnvironmentVariables(run.getEnvironment(listener), pattern);
     }
 
     /**
      * Descriptor for this step: defines the context and the UI elements.
      */
-    @Extension
+    @Extension @Symbol("recordIssues")
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
         private final JenkinsFacade jenkins;
 
