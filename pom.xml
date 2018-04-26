@@ -1,42 +1,68 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>1.68</version>
+    <version>2.0-20180411.213524-22</version>
     <relativePath>../analysis-pom</relativePath>
   </parent>
 
   <artifactId>analysis-core</artifactId>
   <packaging>hpi</packaging>
   <name>Static Analysis Utilities</name>
-  <version>1.96-SNAPSHOT</version>
+  <version>2.0-SNAPSHOT</version>
   <description>This plug-in provides utilities for the static code analysis plug-ins.</description>
 
   <url>http://wiki.jenkins-ci.org/x/CwDgAQ</url>
 
+  <properties>
+    <pitest-maven.plugin>1.3.2</pitest-maven.plugin>
+    <pitest-maven.junit5.plugin>0.4</pitest-maven.junit5.plugin>
+  </properties>
+
   <dependencies>
+    <!-- Project Dependencies -->
     <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>ant</artifactId>
-      <version>1.1</version>
-      <optional>true</optional>
+      <groupId>org.eclipse.collections</groupId>
+      <artifactId>eclipse-collections-api</artifactId>
+      <version>${eclipse-collections.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.collections</groupId>
+      <artifactId>eclipse-collections</artifactId>
+      <version>${eclipse-collections.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons.lang.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons.io.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-digester3</artifactId>
+      <version>${commons.digester.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>${commons.text.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>1.6</version>
     </dependency>
     <dependency>
       <groupId>de.java2html</groupId>
       <artifactId>java2html</artifactId>
       <version>5.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-digester3</artifactId>
-      <version>3.2</version>
     </dependency>
     <dependency>
       <groupId>xerces</groupId>
@@ -54,6 +80,46 @@
           <artifactId>annotation-indexer</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+
+    <!-- Jenkins Plug-in Dependencies -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-job</artifactId>
+      <version>2.16</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Groovy -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-cps</artifactId>
+      <version>2.42</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- stage -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>pipeline-stage-step</artifactId>
+      <version>2.3</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- node -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-durable-task-step</artifactId>
+      <version>2.16</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>ant</artifactId>
+      <version>1.1</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-step-api</artifactId>
+      <version>2.13</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -85,12 +151,22 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <!-- Project Test Dependencies -->
     <dependency>
       <groupId>org.easymock</groupId>
       <artifactId>easymock</artifactId>
       <version>2.4</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20171018</version>
+      <scope>test</scope>
+    </dependency>
+
+
   </dependencies>
 
   <scm>
@@ -116,15 +192,6 @@
 
   <build>
     <plugins>
-      <!-- TODO: Remove once fatal Javadoc errors are fixed -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <additionalparam>-Xdoclint:none</additionalparam>
-        </configuration>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -165,15 +232,41 @@
           <generateJUnitSoftAssertions>false</generateJUnitSoftAssertions>
           <templates>
             <templatesDirectory>${project.basedir}/etc/templates/</templatesDirectory>
-            <assertionsEntryPointClass>analysis_core_assertions_entry_point_class_template.txt</assertionsEntryPointClass>
+            <assertionsEntryPointClass>analysis_core_assertions_entry_point_class_template.txt
+            </assertionsEntryPointClass>
           </templates>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.pitest</groupId>
+        <artifactId>pitest-maven</artifactId>
+        <version>${pitest-maven.plugin}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-junit5-plugin</artifactId>
+            <version>${pitest-maven.junit5.plugin}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <outputFormats>XML,HTML</outputFormats>
+          <verbose>true</verbose>
+          <targetClasses>
+            <param>io.jenkins.plugins.analysis.*</param>
+          </targetClasses>
+          <targetTests>
+            <param>io.jenkins.plugins.analysis.*</param>
+          </targetTests>
+          <excludedTestClasses>
+            <param>*ITest</param>
+          </excludedTestClasses>
         </configuration>
       </plugin>
 
       <plugin>
         <groupId>com.infradna.tool</groupId>
         <artifactId>bridge-method-injector</artifactId>
-        <version>1.14</version>
+        <version>1.17</version>
         <executions>
           <execution>
             <goals>
@@ -183,6 +276,7 @@
         </executions>
       </plugin>
     </plugins>
+
   </build>
 
 </project>

@@ -1,9 +1,10 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import java.util.Calendar;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -11,18 +12,18 @@ import java.util.Set;
 
 import org.eclipse.collections.impl.multimap.list.FastListMultimap;
 import org.jfree.data.category.CategoryDataset;
-import org.joda.time.LocalDate;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
-import io.jenkins.plugins.analysis.core.quality.StaticAnalysisRun;
 
 import hudson.util.DataSetBuilder;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Provides the base algorithms to create a data set for a static analysis graph. The actual series for each result
@@ -31,7 +32,15 @@ import hudson.util.DataSetBuilder;
  * @author Ullrich Hafner
  */
 public abstract class SeriesBuilder {
-    private static final int A_DAY_IN_MSEC = 24 * 3600 * 1000;
+    private final ResultTime resultTime;
+
+    public SeriesBuilder() {
+        this(new ResultTime());
+    }
+
+    public SeriesBuilder(final ResultTime resultTime) {
+        this.resultTime = resultTime;
+    }
 
     /**
      * Creates a new data set for a category graph from the specified static analysis results. The results (provided by
@@ -47,7 +56,7 @@ public abstract class SeriesBuilder {
      * @return the created data set
      */
     public CategoryDataset createDataSet(final GraphConfiguration configuration,
-            final Iterable<? extends StaticAnalysisRun> results) {
+            final Iterable<? extends AnalysisResult> results) {
         CategoryDataset dataSet;
         if (configuration.useBuildDateAsDomain()) {
             Map<LocalDate, List<Integer>> averagePerDay = averageByDate(createSeriesPerBuild(configuration, results));
@@ -61,11 +70,11 @@ public abstract class SeriesBuilder {
 
     @SuppressWarnings("rawtypes")
     private Map<AnalysisBuild, List<Integer>> createSeriesPerBuild(
-            final GraphConfiguration configuration, final Iterable<? extends StaticAnalysisRun> results) {
+            final GraphConfiguration configuration, final Iterable<? extends AnalysisResult> results) {
         int buildCount = 0;
         Map<AnalysisBuild, List<Integer>> valuesPerBuildNumber = Maps.newHashMap();
-        for (StaticAnalysisRun current : results) {
-            if (isBuildTooOld(configuration, current)) {
+        for (AnalysisResult current : results) {
+            if (resultTime.isResultTooOld(configuration, current)) {
                 break;
             }
             valuesPerBuildNumber.put(current.getBuild(), computeSeries(current));
@@ -88,7 +97,7 @@ public abstract class SeriesBuilder {
      *
      * @return the series to plot
      */
-    protected abstract List<Integer> computeSeries(StaticAnalysisRun current);
+    protected abstract List<Integer> computeSeries(AnalysisResult current);
 
     /**
      * Creates a data set that contains a series per build number.
@@ -200,7 +209,10 @@ public abstract class SeriesBuilder {
             final Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
         FastListMultimap<LocalDate, List<Integer>> valuesPerDate = FastListMultimap.newMultimap();
         for (AnalysisBuild build : valuesPerBuild.keySet()) {
-            valuesPerDate.put(new LocalDate(build.getTimeInMillis()), valuesPerBuild.get(build));
+            LocalDate buildDate = Instant.ofEpochMilli(build.getTimeInMillis())
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+            valuesPerDate.put(buildDate, valuesPerBuild.get(build));
         }
         return valuesPerDate;
     }
@@ -217,7 +229,8 @@ public abstract class SeriesBuilder {
         return String.valueOf(level);
     }
 
-    public CategoryDataset createAggregation(final GraphConfiguration configuration, final Collection<ResultHistory> resultActions) {
+    public CategoryDataset createAggregation(final GraphConfiguration configuration,
+            final Collection<ResultHistory> resultActions) {
         Set<LocalDate> availableDates = Sets.newHashSet();
         Map<ResultHistory, Map<LocalDate, List<Integer>>> averagesPerJob = Maps.newHashMap();
         for (ResultHistory resultAction : resultActions) {
@@ -281,64 +294,5 @@ public abstract class SeriesBuilder {
         else {
             totals.put(buildDate, additionalResult);
         }
-    }
-
-    /**
-     * Returns whether the specified build result is too old in order to be considered for the trend graph.
-     *
-     * @param configuration
-     *         the graph configuration
-     * @param current
-     *         the current build
-     *
-     * @return <code>true</code> if the build is too old
-     */
-    public static boolean isBuildTooOld(final GraphConfiguration configuration, final StaticAnalysisRun current) {
-        return areResultsTooOld(configuration, current);
-    }
-
-    /**
-     * Computes the delta between two dates in days.
-     *
-     * @param first
-     *         the first date
-     * @param second
-     *         the second date (given by the build result)
-     *
-     * @return the delta between two dates in days
-     */
-    public static long computeDayDelta(final Calendar first, final StaticAnalysisRun second) {
-        return computeDayDelta(first, second.getBuild().getTimeInMillis());
-    }
-
-    /**
-     * Returns whether the specified build result is too old in order to be considered for the trend graph.
-     *
-     * @param configuration
-     *         the graph configuration
-     * @param current
-     *         the current build
-     *
-     * @return <code>true</code> if the build is too old
-     */
-    public static boolean areResultsTooOld(final GraphConfiguration configuration, final StaticAnalysisRun current) {
-        Calendar today = new GregorianCalendar();
-
-        return configuration.isDayCountDefined()
-                && computeDayDelta(today, current) >= configuration.getDayCount();
-    }
-
-    /**
-     * Computes the delta between two dates in days.
-     *
-     * @param first
-     *         the first date
-     * @param second
-     *         the second date
-     *
-     * @return the delta between two dates in days
-     */
-    public static long computeDayDelta(final Calendar first, final long second) {
-        return Math.abs((first.getTimeInMillis() - second) / A_DAY_IN_MSEC);
     }
 }
