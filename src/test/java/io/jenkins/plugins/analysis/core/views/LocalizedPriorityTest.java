@@ -1,10 +1,11 @@
 package io.jenkins.plugins.analysis.core.views;
 
-import java.util.Locale;
-import edu.hm.hafner.analysis.Priority;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import edu.hm.hafner.analysis.Priority;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import io.jenkins.plugins.analysis.core.testutil.LocalizedMessagesTest;
+
 import hudson.plugins.analysis.Messages;
 
 /**
@@ -12,13 +13,7 @@ import hudson.plugins.analysis.Messages;
  *
  * @author Anna-Maria Hardi
  */
-class LocalizedPriorityTest {
-
-    @BeforeAll
-    static void initializeLocale() {
-        Locale.setDefault(Locale.ENGLISH);
-    }
-
+class LocalizedPriorityTest extends LocalizedMessagesTest {
     @Test
     void testLocalizedStringHighLowNormalNull() {
         String actualResult;
