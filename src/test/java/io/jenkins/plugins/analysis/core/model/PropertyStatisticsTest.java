@@ -16,7 +16,9 @@ import static io.jenkins.plugins.analysis.core.model.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * PropertyStatisticsTest to test PropertyStatistics.
+ * PropertyStatisticsTest to test {@link PropertyStatistics}.
+ *
+ * @author Martin Weibel
  */
 class PropertyStatisticsTest {
 
@@ -246,10 +248,7 @@ class PropertyStatisticsTest {
         IssueBuilder builder = new IssueBuilder();
         PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
 
-        assertThrows(NoSuchElementException.class,
-                ()->{});
-        //assertThrows(NoSuchElementException.class, ()->{});
-        //TODO Das ist eigentlich ein "Bug". Schöner wäre, wenn da eine NoSuchElementException mit passender Meldung fliegt. Wenn Sie wollen, dürfen Sie das SUT auch abändern.
+        assertThrows(NoSuchElementException.class, ()->statistics.getCount("key"), "There are no issues available for the key 'key'.");
     }
 
     /**
@@ -342,7 +341,7 @@ class PropertyStatisticsTest {
         IssueBuilder builder = new IssueBuilder();
         PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
 
-        assertThrows(NullPointerException.class, ()->statistics.getHighCount("key"));
+        assertThrows(NoSuchElementException.class, ()->statistics.getHighCount("key"), "There are no issues available for the key 'key'.");
     }
 
     /**
@@ -387,7 +386,7 @@ class PropertyStatisticsTest {
         IssueBuilder builder = new IssueBuilder();
         PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
 
-        assertThrows(NullPointerException.class, ()->statistics.getNormalCount("key"));
+        assertThrows(NoSuchElementException.class, ()->statistics.getNormalCount("key"), "There are no issues available for the key 'key'.");
     }
 
     /**
@@ -429,7 +428,7 @@ class PropertyStatisticsTest {
         IssueBuilder builder = new IssueBuilder();
         PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
 
-        assertThrows(NullPointerException.class, ()->statistics.getLowCount("key"));
+        assertThrows(NoSuchElementException.class, ()->statistics.getLowCount("key"), "There are no issues available for the key 'key'.");
     }
 
     /**
