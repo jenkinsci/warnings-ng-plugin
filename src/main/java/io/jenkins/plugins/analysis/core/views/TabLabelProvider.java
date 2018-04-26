@@ -12,7 +12,7 @@ import edu.hm.hafner.analysis.Issues;
  * @author Ullrich Hafner
  */
 public class TabLabelProvider {
-    private final Issues<?> issues;
+    private final Issues issues;
 
     /**
      * Creates a new {@link TabLabelProvider}.
@@ -20,7 +20,7 @@ public class TabLabelProvider {
      * @param issues
      *         the issues to show in the tabs
      */
-    public TabLabelProvider(final Issues<?> issues) {
+    public TabLabelProvider(final Issues issues) {
         this.issues = issues;
     }
 

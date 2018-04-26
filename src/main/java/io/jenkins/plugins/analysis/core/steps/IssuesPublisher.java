@@ -34,7 +34,7 @@ import hudson.remoting.VirtualChannel;
  * @author Ullrich Hafner
  */
 class IssuesPublisher {
-    private final Issues<?> issues;
+    private final Issues issues;
     private final List<RegexpFilter> filters;
     private final Run<?, ?> run;
     private final FilePath workspace;
@@ -49,7 +49,7 @@ class IssuesPublisher {
     private final String id;
 
     @SuppressWarnings("ParameterNumber")
-    IssuesPublisher(final Run<?, ?> run, final Issues<?> issues, final List<RegexpFilter> filters,
+    IssuesPublisher(final Run<?, ?> run, final Issues issues, final List<RegexpFilter> filters,
             final HealthDescriptor healthDescriptor, final QualityGate qualityGate, final FilePath workspace,
             final String name, final String referenceJobName, final boolean ignoreAnalysisResult,
             final boolean overallResultMustBeSuccess, final Charset sourceCodeEncoding,
@@ -108,7 +108,7 @@ class IssuesPublisher {
     private ResultAction run() {
         ResultSelector selector = ensureThatIdIsUnique();
 
-        Issues<?> filtered = filter();
+        Issues filtered = filter();
 
         logger.log("Attaching ResultAction with ID '%s' to run '%s'.", id, run);
         AnalysisResult result = createResult(selector, filtered);
@@ -128,7 +128,7 @@ class IssuesPublisher {
         return selector;
     }
 
-    private void copyAffectedFiles(final Issues<?> filtered,
+    private void copyAffectedFiles(final Issues filtered,
             final VirtualChannel channel, final FilePath buildFolder)
             throws IOException, InterruptedException {
         new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(filtered, channel, buildFolder);
@@ -136,7 +136,7 @@ class IssuesPublisher {
         logger.log(filtered);
     }
 
-    private AnalysisResult createResult(final ResultSelector selector, final Issues<?> filtered) {
+    private AnalysisResult createResult(final ResultSelector selector, final Issues filtered) {
         AnalysisResult result = createAnalysisResult(filtered, selector);
 
         logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
@@ -145,12 +145,12 @@ class IssuesPublisher {
         return result;
     }
 
-    private Issues<?> filter() {
+    private Issues filter() {
         IssueFilterBuilder builder = new IssueFilterBuilder();
         for (RegexpFilter filter : filters) {
             filter.apply(builder);
         }
-        Issues<?> filtered = issues.filter(builder.build());
+        Issues filtered = issues.filter(builder.build());
         filtered.logInfo("Applying %d filters on the set of %d issues (%d issues have been removed)",
                 filters.size(), issues.size(), issues.size() - filtered.size());
 
@@ -159,7 +159,7 @@ class IssuesPublisher {
         return filtered;
     }
 
-    private AnalysisResult createAnalysisResult(final Issues<?> filtered, final ResultSelector selector) {
+    private AnalysisResult createAnalysisResult(final Issues filtered, final ResultSelector selector) {
         ReferenceProvider referenceProvider = createReferenceProvider(selector);
         filtered.setReference(String.valueOf(run.getNumber()));
 

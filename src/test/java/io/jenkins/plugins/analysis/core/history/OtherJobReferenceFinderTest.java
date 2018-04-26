@@ -29,7 +29,7 @@ class OtherJobReferenceFinderTest {
         ResultAction action = mock(ResultAction.class);
 
         AnalysisResult result = mock(AnalysisResult.class);
-        when(result.getIssues()).thenReturn(new Issues<>());
+        when(result.getIssues()).thenReturn(new Issues());
 
         when(action.getOwner()).thenReturn(run);
         when(action.getResult()).thenReturn(result);

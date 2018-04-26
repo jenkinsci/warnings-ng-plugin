@@ -17,7 +17,7 @@ import edu.hm.hafner.analysis.Issues;
  * @author Ulli Hafner
  */
 public class FixedWarningsDetail extends IssuesDetail {
-    private static final Issues<Issue> NO_ISSUES = new Issues<>();
+    private static final Issues NO_ISSUES = new Issues();
 
     /**
      * Creates a new instance of {@code FixedWarningsDetail}.
@@ -35,7 +35,7 @@ public class FixedWarningsDetail extends IssuesDetail {
      * @param sourceEncoding
      *         the encoding to use when displaying source files
      */
-    public FixedWarningsDetail(final Run<?, ?> owner, final AnalysisResult result, final Issues<?> fixedIssues,
+    public FixedWarningsDetail(final Run<?, ?> owner, final AnalysisResult result, final Issues fixedIssues,
             final String url, final StaticAnalysisLabelProvider labelProvider, final Charset sourceEncoding) {
         super(owner, result, fixedIssues, fixedIssues, NO_ISSUES, NO_ISSUES, Messages.FixedWarningsDetail_Name(),
                 url, labelProvider, sourceEncoding);

@@ -65,19 +65,19 @@ public class AnalysisResult implements Serializable {
      * All outstanding issues: i.e. all issues, that are part of the current and previous report.
      */
     @CheckForNull
-    private transient WeakReference<Issues<?>> outstandingIssuesReference;
+    private transient WeakReference<Issues> outstandingIssuesReference;
     /**
      * All new issues: i.e. all issues, that are part of the current report but have not been shown up in the previous
      * report.
      */
     @CheckForNull
-    private transient WeakReference<Issues<?>> newIssuesReference;
+    private transient WeakReference<Issues> newIssuesReference;
     /**
      * All fixed issues: i.e. all issues, that are part of the previous report but are not present in the current report
      * anymore.
      */
     @CheckForNull
-    private transient WeakReference<Issues<?>> fixedIssuesReference;
+    private transient WeakReference<Issues> fixedIssuesReference;
 
     private final QualityGate qualityGate;
 
@@ -132,7 +132,7 @@ public class AnalysisResult implements Serializable {
      *         the analysis result of the previous run
      */
     public AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider,
-            final Issues<?> issues, final QualityGate qualityGate, final AnalysisResult previousResult) {
+            final Issues issues, final QualityGate qualityGate, final AnalysisResult previousResult) {
         this(owner, referenceProvider, issues, qualityGate, true);
 
         if (issues.isEmpty()) {
@@ -174,7 +174,7 @@ public class AnalysisResult implements Serializable {
      *         the quality gate to enforce
      */
     public AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider,
-            final Issues<?> issues, final QualityGate qualityGate) {
+            final Issues issues, final QualityGate qualityGate) {
         this(owner, referenceProvider, issues, qualityGate, true);
 
         if (issues.isEmpty()) {
@@ -207,7 +207,7 @@ public class AnalysisResult implements Serializable {
      */
     @VisibleForTesting
     protected AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider,
-            final Issues<?> issues, final QualityGate qualityGate, final boolean canSerialize) {
+            final Issues issues, final QualityGate qualityGate, final boolean canSerialize) {
         this.owner = owner;
         this.qualityGate = qualityGate;
 
@@ -227,20 +227,20 @@ public class AnalysisResult implements Serializable {
             referenceJob = NO_REFERENCE;
             referenceBuild = StringUtils.EMPTY;
         }
-        Issues<?> referenceResult = referenceProvider.getIssues();
+        Issues referenceResult = referenceProvider.getIssues();
         IssueDifference difference = new IssueDifference(issues, this.owner.getNumber(), referenceResult);
 
-        Issues<?> outstandingIssues = difference.getOutstandingIssues();
+        Issues outstandingIssues = difference.getOutstandingIssues();
         outstandingIssuesReference = new WeakReference<>(outstandingIssues);
 
-        Issues<?> newIssues = difference.getNewIssues();
+        Issues newIssues = difference.getNewIssues();
         newIssuesReference = new WeakReference<>(newIssues);
         newSize = newIssues.getSize();
         newHighPrioritySize = newIssues.getHighPrioritySize();
         newNormalPrioritySize = newIssues.getNormalPrioritySize();
         newLowPrioritySize = newIssues.getLowPrioritySize();
 
-        Issues<?> fixedIssues = difference.getFixedIssues();
+        Issues fixedIssues = difference.getFixedIssues();
         fixedIssuesReference = new WeakReference<>(fixedIssues);
         fixedSize = fixedIssues.size();
 
@@ -342,14 +342,14 @@ public class AnalysisResult implements Serializable {
         return id + "-issues.xml";
     }
 
-    private void serializeAnnotations(final Issues<?> outstandingIssues,
-            final Issues<?> newIssues, final Issues<?> fixedIssues) {
+    private void serializeAnnotations(final Issues outstandingIssues,
+            final Issues newIssues, final Issues fixedIssues) {
         serializeIssues(outstandingIssues, "outstanding");
         serializeIssues(newIssues, "new");
         serializeIssues(fixedIssues, "fixed");
     }
 
-    private void serializeIssues(final Issues<?> issues, final String suffix) {
+    private void serializeIssues(final Issues issues, final String suffix) {
         try {
             getDataFile(suffix).write(issues);
         }
@@ -366,8 +366,8 @@ public class AnalysisResult implements Serializable {
      * @return all issues
      */
     @Exported
-    public Issues<?> getIssues() {
-        Issues<Issue> merged = new Issues<>();
+    public Issues getIssues() {
+        Issues merged = new Issues();
         merged.addAll(getNewIssues(), getOutstandingIssues());
         return merged;
     }
@@ -379,7 +379,7 @@ public class AnalysisResult implements Serializable {
      * @return all outstanding issues
      */
     @Exported
-    public Issues<?> getOutstandingIssues() {
+    public Issues getOutstandingIssues() {
         return getIssues(AnalysisResult::getOutstandingIssuesReference, AnalysisResult::setOutstandingIssuesReference,
                 "outstanding");
     }
@@ -391,7 +391,7 @@ public class AnalysisResult implements Serializable {
      * @return all new issues
      */
     @Exported
-    public Issues<?> getNewIssues() {
+    public Issues getNewIssues() {
         return getIssues(AnalysisResult::getNewIssuesReference, AnalysisResult::setNewIssuesReference,
                 "new");
     }
@@ -403,43 +403,43 @@ public class AnalysisResult implements Serializable {
      * @return all fixed issues
      */
     @Exported
-    public Issues<?> getFixedIssues() {
+    public Issues getFixedIssues() {
         return getIssues(AnalysisResult::getFixedIssuesReference, AnalysisResult::setFixedIssuesReference,
                 "fixed");
     }
 
-    private WeakReference<Issues<?>> getOutstandingIssuesReference() {
+    private WeakReference<Issues> getOutstandingIssuesReference() {
         return outstandingIssuesReference;
     }
 
-    private void setOutstandingIssuesReference(final WeakReference<Issues<?>> outstandingIssuesReference) {
+    private void setOutstandingIssuesReference(final WeakReference<Issues> outstandingIssuesReference) {
         this.outstandingIssuesReference = outstandingIssuesReference;
     }
 
-    private WeakReference<Issues<?>> getNewIssuesReference() {
+    private WeakReference<Issues> getNewIssuesReference() {
         return newIssuesReference;
     }
 
-    private void setNewIssuesReference(final WeakReference<Issues<?>> newIssuesReference) {
+    private void setNewIssuesReference(final WeakReference<Issues> newIssuesReference) {
         this.newIssuesReference = newIssuesReference;
     }
 
-    private WeakReference<Issues<?>> getFixedIssuesReference() {
+    private WeakReference<Issues> getFixedIssuesReference() {
         return fixedIssuesReference;
     }
 
-    private void setFixedIssuesReference(final WeakReference<Issues<?>> fixedIssuesReference) {
+    private void setFixedIssuesReference(final WeakReference<Issues> fixedIssuesReference) {
         this.fixedIssuesReference = fixedIssuesReference;
     }
 
-    private Issues<?> getIssues(final Function<AnalysisResult, WeakReference<Issues<?>>> getter,
-            final BiConsumer<AnalysisResult, WeakReference<Issues<?>>> setter, final String suffix) {
+    private Issues getIssues(final Function<AnalysisResult, WeakReference<Issues>> getter,
+            final BiConsumer<AnalysisResult, WeakReference<Issues>> setter, final String suffix) {
         lock.lock();
         try {
             if (getter.apply(this) == null) {
                 return readIssues(setter, suffix);
             }
-            Issues<?> result = getter.apply(this).get();
+            Issues result = getter.apply(this).get();
             if (result == null) {
                 return readIssues(setter, suffix);
             }
@@ -450,20 +450,20 @@ public class AnalysisResult implements Serializable {
         }
     }
 
-    private Issues<?> readIssues(final BiConsumer<AnalysisResult, WeakReference<Issues<?>>> setter,
+    private Issues readIssues(final BiConsumer<AnalysisResult, WeakReference<Issues>> setter,
             final String suffix) {
-        Issues<?> issues = readIssues(suffix);
+        Issues issues = readIssues(suffix);
         setter.accept(this, new WeakReference<>(issues));
         return issues;
     }
 
-    private Issues<?> readIssues(final String suffix) {
+    private Issues readIssues(final String suffix) {
         XmlFile dataFile = getDataFile(suffix);
         try {
             Object deserialized = dataFile.read();
 
             if (deserialized instanceof Issues) {
-                Issues<?> result = (Issues<?>) deserialized;
+                Issues result = (Issues) deserialized;
 
                 LOGGER.log(Level.FINE, "Loaded data file " + dataFile + " for run " + getOwner());
 
@@ -475,7 +475,7 @@ public class AnalysisResult implements Serializable {
             LOGGER.log(Level.SEVERE, "Failed to load " + dataFile, exception);
 
         }
-        return new Issues<>(); // fallback
+        return new Issues(); // fallback
     }
 
     /**

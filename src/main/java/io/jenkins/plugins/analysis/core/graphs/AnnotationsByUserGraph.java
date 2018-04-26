@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
+import javax.annotation.CheckForNull;
 import java.awt.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jfree.chart.JFreeChart;
@@ -15,14 +15,13 @@ import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.data.category.CategoryDataset;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 
 import hudson.plugins.analysis.Messages;
 import hudson.util.DataSetBuilder;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
 
 /**
  * A build result graph that can create a graph based on authors of annotations.
@@ -94,7 +93,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
 
     private void mergeResults(final Optional<AnalysisResult> current, final Map<String, Integer[]> annotationCountByUser) {
         current.ifPresent(analysisResult -> {
-            Issues<?> issues = analysisResult.getOutstandingIssues();
+            Issues issues = analysisResult.getOutstandingIssues();
             for (Issue annotation : issues) {
 //                String author = annotation.getAuthor(); FIXME: no author anymore
                 String author = "FIXME";

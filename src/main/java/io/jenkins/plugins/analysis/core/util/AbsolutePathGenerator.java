@@ -46,7 +46,7 @@ public class AbsolutePathGenerator {
      * @param workspace
      *         the workspace containing the affected files
      */
-    public void run(final Issues<?> issues, final FilePath workspace) {
+    public void run(final Issues issues, final FilePath workspace) {
         Set<String> relativeFileNames = issues.getFiles()
                 .stream()
                 .filter(fileName -> fileSystem.isRelative(fileName) && !IssueParser.SELF.equals(fileName))

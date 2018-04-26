@@ -293,7 +293,6 @@ class SeriesBuilderTest {
          *
          * @return this
          */
-        @SafeVarargs
         public final TestArgumentsBuilder setExpected(final List<Integer>... series) {
             this.series = asList(series);
 

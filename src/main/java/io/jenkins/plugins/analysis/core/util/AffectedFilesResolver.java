@@ -47,7 +47,7 @@ public class AffectedFilesResolver {
      * @throws InterruptedException
      *         if the user cancels the processing
      */
-    public void copyFilesWithAnnotationsToBuildFolder(final Issues<?> issues,
+    public void copyFilesWithAnnotationsToBuildFolder(final Issues issues,
             final VirtualChannel channel, final FilePath jenkinsBuildRoot)
             throws IOException, InterruptedException {
         int copied = 0;

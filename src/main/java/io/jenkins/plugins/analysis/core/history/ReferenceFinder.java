@@ -71,7 +71,7 @@ public abstract class ReferenceFinder extends BuildHistory implements ReferenceP
     }
 
     @Override
-    public Issues<?> getIssues() {
+    public Issues getIssues() {
         return getReferenceAction()
                 .map(resultAction -> resultAction.getResult().getIssues())
                 .orElseGet(Issues::new);

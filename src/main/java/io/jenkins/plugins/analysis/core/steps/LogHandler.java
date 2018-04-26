@@ -47,7 +47,7 @@ class LogHandler {
      * @param issues
      *         the issues with the collected logging messages
      */
-    public void log(final Issues<?> issues) {
+    public void log(final Issues issues) {
         logErrorMessages(issues);
         logInfoMessages(issues);
     }
@@ -66,7 +66,7 @@ class LogHandler {
         logger.log(format, args);
     }
 
-    private void logErrorMessages(final Issues<?> issues) {
+    private void logErrorMessages(final Issues issues) {
         ImmutableList<String> errorMessages = issues.getErrorMessages();
         if (errorPosition < errorMessages.size()) {
             errorLogger.logEachLine(errorMessages.subList(errorPosition, errorMessages.size()).castToList());
@@ -74,7 +74,7 @@ class LogHandler {
         }
     }
 
-    private void logInfoMessages(final Issues<?> issues) {
+    private void logInfoMessages(final Issues issues) {
         ImmutableList<String> infoMessages = issues.getInfoMessages();
         if (infoPosition < infoMessages.size()) {
             logger.logEachLine(infoMessages.subList(infoPosition, infoMessages.size()).castToList());

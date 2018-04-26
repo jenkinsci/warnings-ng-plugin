@@ -33,7 +33,7 @@ class AbsolutePathGeneratorTest {
     @ParameterizedTest(name = "[{index}] Illegal filename = {0}")
     @ValueSource(strings = {"/does/not/exist", "!<>$$&%/&(", "\0 Null-Byte"})
     void shouldReturnFallbackOnError(final String fileName) {
-        Issues<Issue> issues = createIssuesSingleton(fileName, ISSUE_BUILDER);
+        Issues issues = createIssuesSingleton(fileName, ISSUE_BUILDER);
 
         new AbsolutePathGenerator().run(issues, WORKSPACE);
 
@@ -41,8 +41,8 @@ class AbsolutePathGeneratorTest {
         assertThat(issues).hasOrigin(ID);
     }
 
-    private Issues<Issue> createIssuesSingleton(final String fileName, final IssueBuilder issueBuilder) {
-        Issues<Issue> issues = new Issues<>();
+    private Issues createIssuesSingleton(final String fileName, final IssueBuilder issueBuilder) {
+        Issues issues = new Issues();
         Issue issue = issueBuilder.setFileName(fileName).build();
         issues.add(issue);
         issues.setOrigin(ID);
@@ -58,7 +58,7 @@ class AbsolutePathGeneratorTest {
         when(fileSystem.resolveFile(fileName, WORKSPACE)).thenReturn(absolutePath);
         when(fileSystem.isRelative(fileName)).thenReturn(true);
 
-        Issues<Issue> issues = createIssuesSingleton(fileName, ISSUE_BUILDER.setOrigin(ID));
+        Issues issues = createIssuesSingleton(fileName, ISSUE_BUILDER.setOrigin(ID));
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator(fileSystem);
         generator.run(issues, WORKSPACE);
@@ -72,7 +72,7 @@ class AbsolutePathGeneratorTest {
     @Test
     void shouldDoNothingIfNoIssuesPresent() {
         AbsolutePathGenerator generator = new AbsolutePathGenerator();
-        Issues<Issue> issues = new Issues<>();
+        Issues issues = new Issues();
         issues.setOrigin(ID);
         generator.run(issues, WORKSPACE);
         assertThat(issues).hasSize(0);
@@ -93,7 +93,7 @@ class AbsolutePathGeneratorTest {
         when(fileSystem.isRelative(absolutePath)).thenReturn(false);
         when(fileSystem.isRelative(relative)).thenReturn(true);
 
-        Issues<Issue> issues = createIssuesSingleton(relative, ISSUE_BUILDER.setOrigin(ID));
+        Issues issues = createIssuesSingleton(relative, ISSUE_BUILDER.setOrigin(ID));
         Issue issueWithAbsolutePath = ISSUE_BUILDER.setFileName("/absolute/path.txt").build();
         issues.add(issueWithAbsolutePath);
         Issue issueWithSelfReference = ISSUE_BUILDER.setFileName(IssueParser.SELF).build();

@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 class ModuleResolverTest {
     @Test
     void shouldAssignModuleName() {
-        Issues<Issue> issues = new Issues<>();
+        Issues issues = new Issues();
         IssueBuilder builder = new IssueBuilder();
         String fileName = "/file/with/warnings.txt";
         builder.setFileName(fileName);

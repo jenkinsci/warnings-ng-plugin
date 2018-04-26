@@ -20,7 +20,7 @@ public interface ReferenceProvider {
      *
      * @return the issues of the reference run
      */
-    Issues<?> getIssues();
+    Issues getIssues();
 
     /**
      * Returns the actual reference run.

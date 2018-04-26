@@ -199,6 +199,7 @@
             <configuration>
               <includes>
                 <include>**/testutil/*</include>
+                <include>**/*Assert*</include>
               </includes>
             </configuration>
           </execution>

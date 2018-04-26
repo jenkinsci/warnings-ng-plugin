@@ -53,7 +53,7 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
      *
      * @return the parser to use
      */
-    public abstract IssueParser<?> createParser();
+    public abstract IssueParser createParser();
 
     /**
      * Returns whether this parser can scan the console log. Typically, only line based parsers can scan the console

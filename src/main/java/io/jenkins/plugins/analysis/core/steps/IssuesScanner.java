@@ -48,7 +48,7 @@ class IssuesScanner {
         this.logger = logger;
     }
 
-    public Issues<?> scan(final String pattern, final File consoleLog) throws IOException, InterruptedException {
+    public Issues scan(final String pattern, final File consoleLog) throws IOException, InterruptedException {
         if (StringUtils.isBlank(pattern)) {
             String defaultPattern = tool.getDescriptor().getPattern();
             if (defaultPattern.isEmpty()) {
@@ -75,8 +75,8 @@ class IssuesScanner {
      * @throws IOException
      *         if something goes wrong
      */
-    public Issues<?> scanInWorkspace(final String pattern) throws InterruptedException, IOException {
-        Issues<?> issues = workspace.act(new FilesScanner(pattern, tool.createParser(), logFileEncoding.name()));
+    public Issues scanInWorkspace(final String pattern) throws InterruptedException, IOException {
+        Issues issues = workspace.act(new FilesScanner(pattern, tool.createParser(), logFileEncoding.name()));
 
         logger.log(issues);
 
@@ -89,7 +89,7 @@ class IssuesScanner {
      * @param consoleLog
      *         file containing the console log
      */
-    public Issues<?> scanInConsoleLog(final File consoleLog) {
+    public Issues scanInConsoleLog(final File consoleLog) {
         Ensure.that(tool.canScanConsoleLog()).isTrue(
                 "Static analysis tool %s cannot scan console log output, please define a file pattern",
                 tool.getName());
@@ -98,7 +98,7 @@ class IssuesScanner {
 
         logger.log("Parsing console log (workspace: '%s')", workspace);
 
-        Issues<?> issues = tool.createParser().parse(consoleLog, logFileEncoding, ConsoleNote::removeNotes);
+        Issues issues = tool.createParser().parse(consoleLog, logFileEncoding, ConsoleNote::removeNotes);
 
         logger.log(issues);
 
@@ -115,7 +115,7 @@ class IssuesScanner {
         }
     }
 
-    private Issues<?> postProcess(final Issues<?> issues) {
+    private Issues postProcess(final Issues issues) {
         issues.setOrigin(tool.getId());
         issues.forEach(issue -> issue.setOrigin(tool.getId()));
 
@@ -127,7 +127,7 @@ class IssuesScanner {
         return issues;
     }
 
-    private void resolveAbsolutePaths(final Issues<?> issues) {
+    private void resolveAbsolutePaths(final Issues issues) {
         logger.log("Resolving absolute file names for all issues");
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator();
@@ -136,7 +136,7 @@ class IssuesScanner {
         logger.log(issues);
     }
 
-    private void resolveModuleNames(final Issues<?> issues) {
+    private void resolveModuleNames(final Issues issues) {
         logger.log("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
 
         ModuleResolver resolver = new ModuleResolver();
@@ -146,7 +146,7 @@ class IssuesScanner {
         logger.log(issues);
     }
 
-    private void resolvePackageNames(final Issues<?> issues) {
+    private void resolvePackageNames(final Issues issues) {
         logger.log("Using encoding '%s' to resolve package names (or namespaces)", sourceCodeEncoding);
 
         PackageNameResolver resolver = new PackageNameResolver();
@@ -155,7 +155,7 @@ class IssuesScanner {
         logger.log(issues);
     }
 
-    private void createFingerprints(final Issues<?> issues) {
+    private void createFingerprints(final Issues issues) {
         logger.log("Using encoding '%s' to read source files", sourceCodeEncoding);
 
         FingerprintGenerator generator = new FingerprintGenerator();

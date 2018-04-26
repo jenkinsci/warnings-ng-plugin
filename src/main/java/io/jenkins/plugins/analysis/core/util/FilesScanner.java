@@ -6,7 +6,6 @@ import java.io.Serializable;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.ParsingCanceledException;
@@ -23,9 +22,9 @@ import hudson.remoting.VirtualChannel;
  *
  * @author Ulli Hafner
  */
-public class FilesScanner extends MasterToSlaveFileCallable<Issues<?>> {
+public class FilesScanner extends MasterToSlaveFileCallable<Issues> {
     private final String filePattern;
-    private final IssueParser<?> parser;
+    private final IssueParser parser;
     private final String encoding;
 
     /**
@@ -38,15 +37,15 @@ public class FilesScanner extends MasterToSlaveFileCallable<Issues<?>> {
      * @param encoding
      *         encoding of the files to parse
      */
-    public FilesScanner(final String filePattern, final IssueParser<?> parser, final String encoding) {
+    public FilesScanner(final String filePattern, final IssueParser parser, final String encoding) {
         this.filePattern = filePattern;
         this.parser = parser;
         this.encoding = encoding;
     }
 
     @Override
-    public Issues<Issue> invoke(final File workspace, final VirtualChannel channel) {
-        Issues<Issue> issues = new Issues<>();
+    public Issues invoke(final File workspace, final VirtualChannel channel) {
+        Issues issues = new Issues();
         issues.logInfo("Searching for all files in '%s' that match the pattern '%s'",
                 workspace.getAbsolutePath(), filePattern);
 
@@ -62,7 +61,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Issues<?>> {
         return issues;
     }
 
-    private void scanFiles(final File workspace, final String[] fileNames, final Issues<Issue> issues) {
+    private void scanFiles(final File workspace, final String[] fileNames, final Issues issues) {
         for (String fileName : fileNames) {
             File file = new File(fileName);
 
@@ -82,9 +81,9 @@ public class FilesScanner extends MasterToSlaveFileCallable<Issues<?>> {
         }
     }
 
-    private void aggregateIssuesOfFile(final File file, final Issues<Issue> issues) {
+    private void aggregateIssuesOfFile(final File file, final Issues issues) {
         try {
-            Issues<?> result = parser.parse(file, EncodingValidator.defaultCharset(encoding));
+            Issues result = parser.parse(file, EncodingValidator.defaultCharset(encoding));
             issues.addAll(result);
             issues.logInfo("Successfully parsed file %s: found %s (skipped %s)", file,
                     plural(issues.getSize(), "issue"),

@@ -12,9 +12,9 @@ import edu.hm.hafner.analysis.Issues;
  * @author Ullrich Hafner
  */
 public class IssueDifference {
-    private final Issues<?> newIssues;
-    private final Issues<?> fixedIssues;
-    private final Issues<Issue> outstandingIssues;
+    private final Issues newIssues;
+    private final Issues fixedIssues;
+    private final Issues outstandingIssues;
 
     /**
      * Creates a new instance of {@link IssueDifference}.
@@ -26,11 +26,11 @@ public class IssueDifference {
      * @param referenceIssues
      *         the issues of a previous report (reference)
      */
-    public IssueDifference(final Issues<?> currentIssues, final int currentBuildNumber,
-            final Issues<?> referenceIssues) {
+    public IssueDifference(final Issues currentIssues, final int currentBuildNumber,
+            final Issues referenceIssues) {
         newIssues = currentIssues.copy();
         fixedIssues = referenceIssues.copy();
-        outstandingIssues = new Issues<>();
+        outstandingIssues = new Issues();
 
         for (Issue current : currentIssues) {
             Optional<Issue> referenceToRemove = findReferenceByEquals(current);
@@ -74,7 +74,7 @@ public class IssueDifference {
      *
      * @return the outstanding issues
      */
-    public Issues<?> getOutstandingIssues() {
+    public Issues getOutstandingIssues() {
         return outstandingIssues;
     }
 
@@ -84,7 +84,7 @@ public class IssueDifference {
      *
      * @return the new issues
      */
-    public Issues<?> getNewIssues() {
+    public Issues getNewIssues() {
         return newIssues;
     }
 
@@ -94,7 +94,7 @@ public class IssueDifference {
      *
      * @return the fixed issues
      */
-    public Issues<?> getFixedIssues() {
+    public Issues getFixedIssues() {
         return fixedIssues;
     }
 }

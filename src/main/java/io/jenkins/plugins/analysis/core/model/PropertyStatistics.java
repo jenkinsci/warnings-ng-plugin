@@ -14,7 +14,7 @@ import edu.hm.hafner.analysis.Priority;
  * @author Ulli Hafner
  */
 public class PropertyStatistics {
-    private final Map<String, ? extends Issues<?>> issuesByProperty;
+    private final Map<String, ? extends Issues> issuesByProperty;
     private final Function<String, String> propertyFormatter;
     private final String property;
     private final int total;
@@ -29,7 +29,7 @@ public class PropertyStatistics {
      * @param propertyFormatter
      *         the formatter that show the property
      */
-    public PropertyStatistics(final Issues<?> issues,
+    public PropertyStatistics(final Issues issues,
             final String property, final Function<String, String> propertyFormatter) {
         this.property = property;
         this.propertyFormatter = propertyFormatter;

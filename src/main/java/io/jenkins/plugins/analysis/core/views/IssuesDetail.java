@@ -39,10 +39,10 @@ import hudson.plugins.analysis.core.GlobalSettings;
 public class IssuesDetail implements ModelObject {
     private final Run<?, ?> owner;
 
-    private final Issues<?> issues;
-    private final Issues<?> newIssues;
-    private final Issues<?> outstandingIssues;
-    private final Issues<?> fixedIssues;
+    private final Issues issues;
+    private final Issues newIssues;
+    private final Issues outstandingIssues;
+    private final Issues fixedIssues;
 
     private final Charset sourceEncoding;
     private final String displayName;
@@ -80,8 +80,8 @@ public class IssuesDetail implements ModelObject {
      */
     @SuppressWarnings("ParameterNumber")
     public IssuesDetail(final Run<?, ?> owner, final AnalysisResult result,
-            final Issues<?> issues, final Issues<?> newIssues,
-            final Issues<?> outstandingIssues, final Issues<?> fixedIssues,
+            final Issues issues, final Issues newIssues,
+            final Issues outstandingIssues, final Issues fixedIssues,
             final String displayName, final String url, final StaticAnalysisLabelProvider labelProvider,
             final Charset sourceEncoding) {
         this.owner = owner;
@@ -149,7 +149,7 @@ public class IssuesDetail implements ModelObject {
      * @return all issues
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public Issues<?> getIssues() {
+    public Issues getIssues() {
         return issues;
     }
 
@@ -160,7 +160,7 @@ public class IssuesDetail implements ModelObject {
      * @return all new issues
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public Issues<?> getNewIssues() {
+    public Issues getNewIssues() {
         return newIssues;
     }
 
@@ -171,7 +171,7 @@ public class IssuesDetail implements ModelObject {
      * @return all fixed issues
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public Issues<?> getFixedIssues() {
+    public Issues getFixedIssues() {
         return fixedIssues;
     }
 
@@ -182,7 +182,7 @@ public class IssuesDetail implements ModelObject {
      * @return all outstanding issues
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public Issues<?> getOutstandingIssues() {
+    public Issues getOutstandingIssues() {
         return outstandingIssues;
     }
 

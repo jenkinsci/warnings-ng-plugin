@@ -115,7 +115,7 @@ public class ScanForIssuesStep extends Step {
     /**
      * Actually performs the execution of the associated step.
      */
-    public static class Execution extends AnalysisExecution<Issues<?>> {
+    public static class Execution extends AnalysisExecution<Issues> {
         private final String reportEncoding;
         private final String sourceCodeEncoding;
         private final StaticAnalysisTool tool;
@@ -131,7 +131,7 @@ public class ScanForIssuesStep extends Step {
         }
 
         @Override
-        protected Issues<?> run() throws IOException, InterruptedException, IllegalStateException {
+        protected Issues run() throws IOException, InterruptedException, IllegalStateException {
             IssuesScanner issuesScanner = new IssuesScanner(tool, getWorkspace(), getReportCharset(),
                     getSourceCodeCharset(), new LogHandler(getTaskListener(), tool.getName()));
             return issuesScanner.scan(pattern, getRun().getLogFile());

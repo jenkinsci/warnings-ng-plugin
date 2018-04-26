@@ -27,7 +27,7 @@ class AffectedFilesResolverTest {
     @ParameterizedTest(name = "[{index}] Illegal filename = {0}")
     @ValueSource(strings = {"/does/not/exist", "!<>$$&%/&(", "\0 Null-Byte"})
     void shouldReturnFallbackOnError(final String fileName) throws IOException, InterruptedException {
-        Issues<Issue> issues = new Issues<>();
+        Issues issues = new Issues();
         IssueBuilder builder = new IssueBuilder();
         issues.add(builder.setFileName(fileName).build());
         new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(

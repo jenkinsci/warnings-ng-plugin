@@ -52,10 +52,10 @@ public class OtherJobReferenceFinder extends ReferenceFinder {
     }
 
     @Override
-    public Issues<?> getIssues() {
+    public Issues getIssues() {
         return getReferenceAction()
                 .map(resultAction -> resultAction.getResult().getIssues())
-                .orElse(new Issues<>());
+                .orElse(new Issues());
     }
 
     @Override

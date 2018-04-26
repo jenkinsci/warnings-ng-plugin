@@ -8,15 +8,14 @@ import java.util.function.Predicate;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.model.Item;
 import hudson.model.Run;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
 
 /**
  * Creates detail objects for the selected link in the issues detail view. Each link might be visualized by a
@@ -25,7 +24,7 @@ import edu.hm.hafner.analysis.Priority;
  * @author Ulli Hafner
  */
 public class DetailFactory {
-    private static final Issues<Issue> EMPTY = new Issues<>();
+    private static final Issues EMPTY = new Issues();
 
     /**
      * Returns a detail object for the selected element for the specified issues.
@@ -52,8 +51,8 @@ public class DetailFactory {
      * @return the dynamic result of this module detail view
      */
     public Object createTrendDetails(final String link, final Run<?, ?> owner, final AnalysisResult result,
-            final Issues<?> allIssues, final Issues<?> newIssues,
-            final Issues<?> outstandingIssues, final Issues<?> fixedIssues,
+            final Issues allIssues, final Issues newIssues,
+            final Issues outstandingIssues, final Issues fixedIssues,
             final Charset sourceEncoding, final IssuesDetail parent) {
         StaticAnalysisLabelProvider labelProvider = parent.getLabelProvider();
         String plainLink = strip(link);
@@ -102,7 +101,7 @@ public class DetailFactory {
 
         String property = StringUtils.substringBefore(link, ".");
         Predicate<Issue> filter = createPropertyFilter(plainLink, property);
-        Issues<?> selectedIssues = allIssues.filter(filter);
+        Issues selectedIssues = allIssues.filter(filter);
         if (selectedIssues.isEmpty()) {
             return parent; // fallback
         }
@@ -119,7 +118,7 @@ public class DetailFactory {
                 Issue.getPropertyValueAsString(issue, property).hashCode()));
     }
 
-    private String getDisplayNameOfDetails(final String property, final Issues<?> selectedIssues) {
+    private String getDisplayNameOfDetails(final String property, final Issues selectedIssues) {
         return getColumnHeaderFor(selectedIssues, property)
                 + " "
                 + Issue.getPropertyValueAsString(selectedIssues.get(0), property);
@@ -131,8 +130,8 @@ public class DetailFactory {
 
     private IssuesDetail createPrioritiesDetail(final Run<?, ?> owner,
             final AnalysisResult result, final Priority priority,
-            final Issues<?> issues, final Issues<?> fixedIssues, final Issues<?> newIssues,
-            final Issues<?> outstandingIssues, final String url, final StaticAnalysisLabelProvider labelProvider,
+            final Issues issues, final Issues fixedIssues, final Issues newIssues,
+            final Issues outstandingIssues, final String url, final StaticAnalysisLabelProvider labelProvider,
             final Charset sourceEncoding) {
         Predicate<Issue> priorityFilter = issue -> issue.getPriority() == priority;
         return new IssuesDetail(owner, result,
@@ -151,7 +150,7 @@ public class DetailFactory {
      *
      * @return the function that obtains the value
      */
-    private String getColumnHeaderFor(final Issues<?> issues, final String propertyName) {
+    private String getColumnHeaderFor(final Issues issues, final String propertyName) {
         try {
             return PropertyUtils.getProperty(new TabLabelProvider(issues), propertyName).toString();
         }

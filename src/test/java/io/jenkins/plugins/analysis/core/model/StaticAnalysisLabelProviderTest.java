@@ -121,7 +121,7 @@ class StaticAnalysisLabelProviderTest {
         void shouldConvertIssuesToJsonArray() {
             Locale.setDefault(Locale.ENGLISH);
 
-            Issues<Issue> issues = new Issues<>();
+            Issues issues = new Issues();
             issues.add(createIssue(1));
 
             StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider();

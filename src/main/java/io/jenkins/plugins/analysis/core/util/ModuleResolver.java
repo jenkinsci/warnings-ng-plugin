@@ -24,7 +24,7 @@ public class ModuleResolver {
      * @param detector
      *         the module detector to use
      */
-    public void run(final Issues<?> issues, final File workspace, final ModuleDetector detector) {
+    public void run(final Issues issues, final File workspace, final ModuleDetector detector) {
         List<Issue> issuesWithoutModule = issues.stream()
                 .filter(issue -> !issue.hasModuleName())
                 .collect(Collectors.toList());

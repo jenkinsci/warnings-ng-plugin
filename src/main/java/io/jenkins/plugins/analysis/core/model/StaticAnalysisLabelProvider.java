@@ -122,7 +122,7 @@ public class StaticAnalysisLabelProvider {
      *
      * @return the table as String
      */
-    public JSONObject toJsonArray(final Issues<?> issues, final AgeBuilder ageBuilder) {
+    public JSONObject toJsonArray(final Issues issues, final AgeBuilder ageBuilder) {
         JSONArray rows = new JSONArray();
         for (Issue issue : issues) {
             rows.add(toJson(issue, ageBuilder));

@@ -18,7 +18,6 @@ import org.kohsuke.stapler.DataBoundSetter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
@@ -51,7 +50,7 @@ import hudson.remoting.VirtualChannel;
 public class PublishIssuesStep extends Step {
     private static final Priority DEFAULT_MINIMUM_PRIORITY = Priority.LOW;
 
-    private final Issues<Issue> issues;
+    private final Issues issues;
 
     private boolean ignoreAnalysisResult;
     private boolean overallResultMustBeSuccess;
@@ -74,20 +73,19 @@ public class PublishIssuesStep extends Step {
      *         the issues to publish as {@link Action} in the {@link Job}.
      */
     @DataBoundConstructor
-    @SafeVarargs
-    public PublishIssuesStep(final Issues<Issue>... issues) {
+    public PublishIssuesStep(final Issues... issues) {
         if (issues == null || issues.length == 0) {
-            this.issues = new Issues<>();
+            this.issues = new Issues();
         }
         else {
-            this.issues = new Issues<>();
-            for (Issues<Issue> issueSet : issues) {
+            this.issues = new Issues();
+            for (Issues issueSet : issues) {
                 this.issues.addAll(issueSet);
             }
         }
     }
 
-    public Issues<Issue> getIssues() {
+    public Issues getIssues() {
         return issues;
     }
 
@@ -412,7 +410,7 @@ public class PublishIssuesStep extends Step {
         private final boolean overallResultMustBeSuccess;
         private final boolean ignoreAnalysisResult;
         private final String sourceCodeEncoding;
-        private final Issues<Issue> issues;
+        private final Issues issues;
         private final QualityGate qualityGate;
         private final List<RegexpFilter> filters;
         private final String name;
