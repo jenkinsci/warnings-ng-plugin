@@ -40,5 +40,11 @@ public class Iar extends StaticAnalysisTool {
         public String getDisplayName() {
             return Messages.Warnings_iar_ParserName();
         }
+
+        @Override
+        public String getHelp() {
+            return "The IAR compilers need to be started with option <strong>--no_wrap_diagnostics</strong>. "
+                    + "Then the IAR compilers will create single-line warnings.";
+        }
     }
 }

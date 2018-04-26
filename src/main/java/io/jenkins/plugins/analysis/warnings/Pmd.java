@@ -4,15 +4,13 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.parser.pmd.PmdParser;
+import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
-import static hudson.plugins.warnings.WarningsDescriptor.*;
-
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.parser.pmd.PmdParser;
 
 /**
  * Provides a parser and customized messages for PMD.
@@ -88,6 +86,11 @@ public class Pmd extends StaticAnalysisTool {
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new LabelProvider(messages);
+        }
+
+        @Override
+        public String getPattern() {
+            return "**/pmd.xml";
         }
     }
 }
