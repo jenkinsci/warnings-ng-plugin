@@ -44,7 +44,7 @@ class SummaryTest {
     void shouldHaveDivWithInfoIcon() {
         AnalysisResult analysisResult = createAnalysisResult(Maps.fixedSize.of(), 0, 0, Lists.immutable.of(), 0, 0);
         String createdHtml = createTestData(analysisResult).create();
-        assertThat(createdHtml).contains("class=\"fa fa-info-circle\"");
+        assertThat(createdHtml).contains("<a href=\"testResult/info\"><i class=\"fa fa-info-circle\"></i>");
     }
 
     /**
@@ -79,7 +79,7 @@ class SummaryTest {
     }
 
     /**
-     * Tests if the createdHtml shows a message that no new issues have occured for a number of builds.
+     * Tests if the createdHtml shows a message that no new issues have occurred for a number of builds.
      */
     @Test
     void shouldContainNoIssuesSinceLabel() {
@@ -90,7 +90,7 @@ class SummaryTest {
     }
 
     /**
-     * Tests if errors in the AnalysisResult result in an exclamation triangle icon in the created HTML.
+     * Tests if the created HTML does not contain the label for no issues since when issues have occurred.
      */
     @Test
     void shouldNotContainNoIssuesSinceLabelWhenTotalIsNotZero() {
@@ -98,10 +98,11 @@ class SummaryTest {
         when(analysisResult.getTotalSize()).thenReturn(1);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).doesNotContain("No warnings for");
+        assertThat(createdHtml).contains("<a href=\"testResult\">One warning</a>");
     }
 
     /**
-     * Tests if errors in the AnalysisResult result in an exclamation triangle icon in the created HTML.
+     * Tests if the created HTML does not contain the label for no issues since when the current build is younger.
      */
     @Test
     void shouldNotContainNoIssuesSinceLabelWhenBuildIsYounger() {
@@ -113,6 +114,7 @@ class SummaryTest {
         when(analysisResult.getNoIssuesSinceBuild()).thenReturn(3);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).doesNotContain("No warnings for");
+        assertThat(createdHtml).contains("No warnings");
     }
 
     /**
