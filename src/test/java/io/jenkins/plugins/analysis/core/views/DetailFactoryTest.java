@@ -47,10 +47,7 @@ class DetailFactoryTest {
         Charset sourceEncoding = Charset.defaultCharset();
         IssuesDetail parent = mock(IssuesDetail.class);
         IssueBuilder builder = new IssueBuilder();
-        fixedIssues.add(builder.setMessage("fixed").build());
-        newIssues.add(builder.setMessage("new").build());
-        outstandingIssues.add(builder.setMessage("outstanding").build());
-        allIssues.add(builder.setMessage("all").build());
+
         Object fixedWarningsDetail = detailFactory.createTrendDetails("fixed", owner, result, allIssues, newIssues, outstandingIssues, fixedIssues, sourceEncoding, parent);
 
         assertThat(fixedWarningsDetail).isInstanceOf(FixedWarningsDetail.class);
@@ -68,10 +65,6 @@ class DetailFactoryTest {
         Charset sourceEncoding = Charset.defaultCharset();
         IssuesDetail parent = mock(IssuesDetail.class);
         IssueBuilder builder = new IssueBuilder();
-        fixedIssues.add(builder.setMessage("fixed").build());
-        newIssues.add(builder.setMessage("new").build());
-        outstandingIssues.add(builder.setMessage("outstanding").build());
-        allIssues.add(builder.setMessage("all").build());
 
         Object issuesDetail = detailFactory.createTrendDetails("new", owner, result, allIssues, newIssues, outstandingIssues, fixedIssues, sourceEncoding, parent);
 
