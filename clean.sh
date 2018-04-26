@@ -5,7 +5,7 @@ if [[ -z "$JENKINS_HOME" ]]; then
     exit 1
 fi
 
-mvn clean verify || { echo "Build failed"; exit 1; }
+mvn clean install || { echo "Build failed"; exit 1; }
 
 rm -rf $JENKINS_HOME/plugins/warnings*
 
