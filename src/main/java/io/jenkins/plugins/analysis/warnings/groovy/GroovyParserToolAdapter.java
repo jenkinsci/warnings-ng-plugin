@@ -29,7 +29,7 @@ public class GroovyParserToolAdapter extends StaticAnalysisTool {
     }
 
     @Override
-    public IssueParser<Issue> createParser() {
+    public IssueParser createParser() {
         return parser.createParser();
     }
 

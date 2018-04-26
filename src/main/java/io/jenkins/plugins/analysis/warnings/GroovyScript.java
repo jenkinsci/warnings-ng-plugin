@@ -54,7 +54,7 @@ public class GroovyScript extends StaticAnalysisTool {
     }
 
     @Override
-    public IssueParser<?> createParser() {
+    public IssueParser createParser() {
         return getTool().createParser();
     }
 

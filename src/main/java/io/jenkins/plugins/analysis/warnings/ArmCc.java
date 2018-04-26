@@ -28,7 +28,7 @@ public class ArmCc extends StaticAnalysisToolSuite {
     }
 
     @Override
-    public Collection<? extends AbstractParser<Issue>> getParsers() {
+    public Collection<? extends AbstractParser> getParsers() {
         return asList(new Armcc5CompilerParser(), new ArmccCompilerParser());
     }
 

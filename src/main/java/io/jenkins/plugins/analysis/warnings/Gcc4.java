@@ -28,7 +28,7 @@ public class Gcc4 extends StaticAnalysisToolSuite {
     }
 
     @Override
-    protected Collection<? extends AbstractParser<Issue>> getParsers() {
+    protected Collection<? extends AbstractParser> getParsers() {
         return asList(new Gcc4CompilerParser(), new Gcc4LinkerParser());
     }
 

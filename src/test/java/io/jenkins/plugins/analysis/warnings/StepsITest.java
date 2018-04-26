@@ -59,7 +59,7 @@ public class StepsITest extends PipelineITest {
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues()).hasSize(8);
 
-        Issues<?> issues = result.getIssues();
+        Issues issues = result.getIssues();
         assertThat(issues.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(8);
         for (Issue annotation : issues) {
             assertThat(annotation.getMessage()).matches("[a-zA-Z].*");
@@ -114,7 +114,7 @@ public class StepsITest extends PipelineITest {
     }
 
     private void assertThatJavaIssuesArePublished(final AnalysisResult result) {
-        Issues<?> issues = result.getIssues();
+        Issues issues = result.getIssues();
         assertThat(issues.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(8);
         assertThat(issues.filter(issue -> "java".equals(issue.getOrigin()))).hasSize(2);
         assertThat(issues.filter(issue -> "javadoc".equals(issue.getOrigin()))).hasSize(6);

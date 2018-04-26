@@ -48,7 +48,7 @@ class GroovyParserTest extends ResourceTest {
         assertThat(descriptor.doCheckExample(textToMatch, multiLineRegexp, script)).isOk();
 
         AbstractParser instance = parser.createParser();
-        Issues<?> warnings = instance.parse(new StringReader(textToMatch));
+        Issues warnings = instance.parse(new StringReader(textToMatch));
 
         assertThat(warnings).hasSize(1);
     }

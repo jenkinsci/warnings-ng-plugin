@@ -29,7 +29,7 @@ public class Xlc extends StaticAnalysisToolSuite {
     }
 
     @Override
-    protected Collection<? extends AbstractParser<Issue>> getParsers() {
+    protected Collection<? extends AbstractParser> getParsers() {
         return asList(new XlcCompilerParser(), new XlcLinkerParser());
     }
 
