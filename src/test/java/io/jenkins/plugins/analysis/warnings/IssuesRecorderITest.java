@@ -17,7 +17,9 @@ import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
+import hudson.model.HealthReport;
 import hudson.model.Result;
+
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -68,6 +70,93 @@ public class IssuesRecorderITest extends IntegrationTest {
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasOverallResult(Result.UNSTABLE);
     }
+
+
+    /**
+     * Sets the health threshold less then the unhealth threshold and parse a file that contains exactly warnings.
+     * The healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup
+     */
+    @Test
+    public void shouldCreateEmptyHealthReportForBoundaryMismatch() {
+        HealthReport report = createHealthReportTestSetup(5, 2);
+        assertThat(report).isNull();
+    }
+
+    /**
+     * Sets the health threshold equals to the unhealth threshold and parse a file that contains exactly warnings.
+     * The healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup
+     */
+    @Test
+    public void shouldCreateEmptyHealthReportForEqualBoundaries() {
+        HealthReport report = createHealthReportTestSetup(15, 15);
+        assertThat(report).isNull();
+    }
+
+    /**
+     * Should create a health report with icon health-80plus (sun).
+     */
+    @Test
+    public void shouldCreate80plusHealthReport() {
+        HealthReport report = createHealthReportTestSetup(10, 15);
+        assertThat(report.getDescription()).isEqualTo("Static Analysis: 8 warnings found.");
+        assertThat(report.getIconClassName()).isEqualTo("icon-health-80plus");
+    }
+
+    /**
+     * Should create a health report with icon health-60to79 (cloudy sun).
+     */
+    @Test
+    public void shouldCreate60To79HealthReport() {
+        HealthReport report = createHealthReportTestSetup(5, 15);
+        assertThat(report.getDescription()).isEqualTo("Static Analysis: 8 warnings found.");
+        assertThat(report.getIconClassName()).isEqualTo("icon-health-60to79");
+    }
+
+    /**
+     * Should create a health report with icon health-40to59 (cloud).
+     */
+    @Test
+    public void shouldCreate40To59HealthReport() {
+        HealthReport report = createHealthReportTestSetup(1, 15);
+        assertThat(report.getDescription()).isEqualTo("Static Analysis: 8 warnings found.");
+        assertThat(report.getIconClassName()).isEqualTo("icon-health-40to59");
+    }
+
+    /**
+     * Should create a health report with icon health-00to19 (rainy).
+     */
+    @Test
+    public void shouldCreate20To39HealthReport() {
+        HealthReport report = createHealthReportTestSetup(5, 10);
+        assertThat(report.getDescription()).isEqualTo("Static Analysis: 8 warnings found.");
+        assertThat(report.getIconClassName()).isEqualTo("icon-health-20to39");
+    }
+
+    /**
+     * Should create a health report with icon health-00to19 (rainy).
+     */
+    @Test
+    public void shouldCreate00To19HealthReport() {
+        HealthReport report = createHealthReportTestSetup(1, 5);
+        assertThat(report.getDescription()).isEqualTo("Static Analysis: 8 warnings found.");
+        assertThat(report.getIconClassName()).isEqualTo("icon-health-00to19");
+    }
+
+    /**
+     * Creates a {@link HealthReport} under test.
+     * @param health health threshold
+     * @param unhealth unghealt threshold
+     * @return a healthReport under test
+     */
+    private HealthReport createHealthReportTestSetup(int health, int unhealth) {
+        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
+        enableWarnings(project, publisher -> {
+            publisher.setHealthy(health);
+            publisher.setUnHealthy(unhealth); }
+        );
+        return scheduleBuildToGetHealthReportAndAssertStatus(project, Result.SUCCESS);
+    }
+
 
     /**
      * Creates a new {@link FreeStyleProject freestyle job}. The job will get a generated name.
@@ -154,6 +243,33 @@ public class IssuesRecorderITest extends IntegrationTest {
             assertThat(action).isNotNull();
 
             return action.getResult();
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    /**
+     * Schedules a new build for the specified job and returns the created {@link HealthReport} after the build has
+     * been finished.
+     *
+     * @param job
+     *         the job to schedule
+     * @param status
+     *         the expected result for the build
+     *
+     * @return the created {@link HealthReport}
+     */
+    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
+    private HealthReport scheduleBuildToGetHealthReportAndAssertStatus(final FreeStyleProject job, final Result status) {
+        try {
+            FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
+
+            ResultAction action = build.getAction(ResultAction.class);
+
+            assertThat(action).isNotNull();
+
+            return action.getBuildHealth();
         }
         catch (Exception e) {
             throw new AssertionError(e);
