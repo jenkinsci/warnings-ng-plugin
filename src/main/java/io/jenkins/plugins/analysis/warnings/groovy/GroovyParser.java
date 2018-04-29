@@ -69,7 +69,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
     }
 
     private static boolean containsNewline(final String expression) {
-        return StringUtils.contains(expression, "\\n") ||StringUtils.contains(expression, "\\r");
+        return StringUtils.contains(expression, "\\n") || StringUtils.contains(expression, "\\r");
     }
 
     /**
@@ -356,7 +356,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
                     Issue warning = (Issue) result;
                     message(okMessage, Messages.GroovyParser_Error_Example_ok_file(warning.getFileName()));
                     message(okMessage, Messages.GroovyParser_Error_Example_ok_line(warning.getLineStart()));
-                    message(okMessage, Messages.GroovyParser_Error_Example_ok_priority(warning.getPriority()));
+                    message(okMessage, Messages.GroovyParser_Error_Example_ok_priority(warning.getSeverity()));
                     message(okMessage, Messages.GroovyParser_Error_Example_ok_category(warning.getCategory()));
                     message(okMessage, Messages.GroovyParser_Error_Example_ok_type(warning.getType()));
                     message(okMessage, Messages.GroovyParser_Error_Example_ok_message(warning.getMessage()));

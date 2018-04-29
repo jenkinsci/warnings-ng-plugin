@@ -40,7 +40,7 @@ class DuplicateCodeScannerTest {
 
         DryLabelProvider labelProvider = new DryLabelProvider("id");
 
-        JSONArray firstColumns = labelProvider.toJson(issue, build -> String.valueOf(build));
+        JSONArray firstColumns = labelProvider.toJson(issue, String::valueOf);
         assertThatJson(firstColumns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
 
         assertThat(firstColumns.get(0)).isEqualTo(EMPTY_DETAILS);
@@ -50,7 +50,7 @@ class DuplicateCodeScannerTest {
         assertThat(firstColumns.getString(4)).matches(createLinkMatcher("file-2", 5));
         assertThat(firstColumns.get(5)).isEqualTo("1");
 
-        JSONArray secondColumns = labelProvider.toJson(duplicate, build -> String.valueOf(build));
+        JSONArray secondColumns = labelProvider.toJson(duplicate, String::valueOf);
         assertThatJson(secondColumns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
 
         assertThat(firstColumns.get(0)).isEqualTo(EMPTY_DETAILS);

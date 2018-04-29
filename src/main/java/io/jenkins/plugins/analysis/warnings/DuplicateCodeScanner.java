@@ -111,7 +111,7 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
             JSONArray columns = new JSONArray();
             columns.add(formatDetails(issue));
             columns.add(formatFileName(issue));
-            columns.add(formatPriority(issue.getPriority()));
+            columns.add(formatSeverity(issue.getSeverity()));
             columns.add(issue.getLineEnd() - issue.getLineStart() + 1);
             columns.add(formatTargets(issue));
             columns.add(formatAge(issue, ageBuilder));
