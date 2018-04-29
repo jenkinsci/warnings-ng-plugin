@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.jvnet.localizer.Localizable;
 
 import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 
 import hudson.model.HealthReport;
@@ -44,24 +45,25 @@ public class HealthReportBuilder implements Serializable {
      * @return the healthiness of a build
      */
     public HealthReport computeHealth(final AnalysisResult result) {
-        int numberOfAnnotations = 0;
+        int relevantIssuesSize = 0;
         for (Priority priority : Priority.collectPrioritiesFrom(healthDescriptor.getMinimumPriority())) {
-            numberOfAnnotations += result.getTotalSize(priority);
+            relevantIssuesSize += result.getTotalSize(Severity.of(priority));
         }
+        relevantIssuesSize += result.getTotalErrorsSize();
 
         if (healthDescriptor.isEnabled()) {
             int percentage;
             int healthy = healthDescriptor.getHealthy();
-            if (numberOfAnnotations < healthy) {
+            if (relevantIssuesSize < healthy) {
                 percentage = 100;
             }
             else {
                 int unHealthy = healthDescriptor.getUnHealthy();
-                if (numberOfAnnotations > unHealthy) {
+                if (relevantIssuesSize > unHealthy) {
                     percentage = 0;
                 }
                 else {
-                    percentage = 100 - ((numberOfAnnotations - healthy) * 100 / (unHealthy - healthy));
+                    percentage = 100 - ((relevantIssuesSize - healthy) * 100 / (unHealthy - healthy));
                 }
             }
 

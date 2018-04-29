@@ -100,7 +100,7 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
                 if (StringUtils.isNotBlank(author) && !"-".equals(author)) {
                     annotationCountByUser.computeIfAbsent(author, k -> new Integer[]{0, 0, 0});
                     Integer[] priorities = annotationCountByUser.get(author);
-                    int index = annotation.getPriority().ordinal();
+                    int index = 0; // FIXME annotation.getSeverity().ordinal();
                     priorities[index]++;
                 }
             }

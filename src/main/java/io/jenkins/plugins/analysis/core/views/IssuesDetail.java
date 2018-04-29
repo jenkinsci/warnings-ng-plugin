@@ -14,7 +14,7 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.PropertyStatistics;
@@ -254,29 +254,16 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
-     * Returns a localized priority name.
+     * Returns a localized severity name.
      *
-     * @param priorityName
-     *         priority as String value
-     *
-     * @return localized priority name
-     */
-    @SuppressWarnings("unused") // Called by jelly view
-    public String getLocalizedPriority(final String priorityName) {
-        return getLocalizedPriority(Priority.fromString(priorityName));
-    }
-
-    /**
-     * Returns a localized priority name.
-     *
-     * @param priority
-     *         the priority
+     * @param severity
+     *         the severity
      *
      * @return localized priority name
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public String getLocalizedPriority(final Priority priority) {
-        return LocalizedPriority.getLocalizedString(priority);
+    public String getLocalizedSeverity(final Severity severity) {
+        return LocalizedSeverity.getLocalizedString(severity);
     }
 
     /**

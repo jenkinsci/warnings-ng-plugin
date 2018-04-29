@@ -2,7 +2,7 @@
 <issue>
   <category>category</category>
   <type>type</type>
-  <priority>HIGH</priority>
+  <severity>HIGH</severity>
   <message>message</message>
   <lineStart>1</lineStart>
   <lineEnd>2</lineEnd>

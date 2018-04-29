@@ -11,9 +11,9 @@
 
         <!-- data-xxx...: model values for chart -->
         <h5 id="number-priorities" class="card-title"
-            data-high="${it.issues.highPrioritySize}"
-            data-normal="${it.issues.normalPrioritySize}"
-            data-low="${it.issues.lowPrioritySize}"
+            data-high="${it.issues.getSizeOf('HIGH')}"
+            data-normal="${it.issues.getSizeOf('NORMAL')}"
+            data-low="${it.issues.getSizeOf('LOW')}"
             data-high-label="${%High}"
             data-normal-label="${%Normal}"
             data-low-label="${%Low}"

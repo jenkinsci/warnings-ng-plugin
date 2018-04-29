@@ -6,17 +6,16 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import static java.util.Collections.*;
-import static org.assertj.core.api.Assertions.*;
-
-import hudson.util.XStream2;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.LineRange;
 import edu.hm.hafner.analysis.LineRangeList;
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.util.ResourceTest;
+import static java.util.Collections.*;
+import static org.assertj.core.api.Assertions.*;
+
+import hudson.util.XStream2;
 
 /**
  * Tests the class {@link IssueStream}.
@@ -47,6 +46,7 @@ class IssueStreamTest extends ResourceTest {
         XStream2 stream = new IssueStream().createStream();
 
         byte[] bytes = asBytes(createFilledIssue(), stream);
+        System.out.printf(new String(bytes));
 
         assertThatIssueCanBeRestoredFrom(bytes, stream);
     }

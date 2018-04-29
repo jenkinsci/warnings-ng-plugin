@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 
 /**
  * Groups issue by a specified property, like package name or origin. Provides statistics for this property in order to
@@ -82,7 +82,7 @@ public class PropertyStatistics {
      * @return the maximum number of issues
      */
     public int getMax() {
-        return issuesByProperty.values().stream().mapToInt(issues -> issues.size()).max().orElse(0);
+        return issuesByProperty.values().stream().mapToInt(Issues::size).max().orElse(0);
     }
 
     /**
@@ -98,7 +98,19 @@ public class PropertyStatistics {
     }
 
     /**
-     * Returns the number of issues with priority {@link Priority#HIGH} for the specified property instance.
+     * Returns the number of issues with priority {@link Severity#ERROR} for the specified property instance.
+     *
+     * @param key
+     *         the property instance
+     *
+     * @return the number of high priority issues
+     */
+    public long getErrorsCount(final String key) {
+        return issuesByProperty.get(key).getSizeOf(Severity.ERROR);
+    }
+
+    /**
+     * Returns the number of issues with priority {@link Severity#WARNING_HIGH} for the specified property instance.
      *
      * @param key
      *         the property instance
@@ -106,11 +118,11 @@ public class PropertyStatistics {
      * @return the number of high priority issues
      */
     public long getHighCount(final String key) {
-        return issuesByProperty.get(key).getHighPrioritySize();
+        return issuesByProperty.get(key).getSizeOf(Severity.WARNING_HIGH);
     }
 
     /**
-     * Returns the number of issues with priority {@link Priority#NORMAL} for the specified property instance.
+     * Returns the number of issues with priority {@link Severity#WARNING_NORMAL} for the specified property instance.
      *
      * @param key
      *         the property instance
@@ -118,11 +130,11 @@ public class PropertyStatistics {
      * @return the number of normal priority issues
      */
     public long getNormalCount(final String key) {
-        return issuesByProperty.get(key).getNormalPrioritySize();
+        return issuesByProperty.get(key).getSizeOf(Severity.WARNING_NORMAL);
     }
 
     /**
-     * Returns the number of issues with priority {@link Priority#LOW} for the specified property instance.
+     * Returns the number of issues with priority {@link Severity#WARNING_LOW} for the specified property instance.
      *
      * @param key
      *         the property instance
@@ -130,7 +142,7 @@ public class PropertyStatistics {
      * @return the number of low priority issues
      */
     public long getLowCount(final String key) {
-        return issuesByProperty.get(key).getLowPrioritySize();
+        return issuesByProperty.get(key).getSizeOf(Severity.WARNING_LOW);
     }
 }
 

@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
@@ -83,20 +83,21 @@ public class DetailFactory {
                 return new SourceDetail(owner, issue, sourceEncoding);
             }
         }
-        if (Priority.HIGH.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Priority.HIGH, allIssues, fixedIssues, outstandingIssues,
-                    newIssues,
-                    url, labelProvider, sourceEncoding);
+        if (Severity.ERROR.equalsIgnoreCase(link)) {
+            return createPrioritiesDetail(owner, result, Severity.WARNING_HIGH, allIssues, fixedIssues, outstandingIssues,
+                    newIssues, url, labelProvider, sourceEncoding);
         }
-        if (Priority.NORMAL.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Priority.NORMAL, allIssues, fixedIssues, outstandingIssues,
-                    newIssues,
-                    url, labelProvider, sourceEncoding);
+        if (Severity.WARNING_HIGH.equalsIgnoreCase(link)) {
+            return createPrioritiesDetail(owner, result, Severity.WARNING_HIGH, allIssues, fixedIssues, outstandingIssues,
+                    newIssues, url, labelProvider, sourceEncoding);
         }
-        if (Priority.LOW.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Priority.LOW, allIssues, fixedIssues, outstandingIssues,
-                    newIssues,
-                    url, labelProvider, sourceEncoding);
+        if (Severity.WARNING_NORMAL.equalsIgnoreCase(link)) {
+            return createPrioritiesDetail(owner, result, Severity.WARNING_NORMAL, allIssues, fixedIssues, outstandingIssues,
+                    newIssues, url, labelProvider, sourceEncoding);
+        }
+        if (Severity.WARNING_LOW.equalsIgnoreCase(link)) {
+            return createPrioritiesDetail(owner, result, Severity.WARNING_LOW, allIssues, fixedIssues, outstandingIssues,
+                    newIssues, url, labelProvider, sourceEncoding);
         }
 
         String property = StringUtils.substringBefore(link, ".");
@@ -129,16 +130,16 @@ public class DetailFactory {
     }
 
     private IssuesDetail createPrioritiesDetail(final Run<?, ?> owner,
-            final AnalysisResult result, final Priority priority,
+            final AnalysisResult result, final Severity severity,
             final Issues issues, final Issues fixedIssues, final Issues newIssues,
             final Issues outstandingIssues, final String url, final StaticAnalysisLabelProvider labelProvider,
             final Charset sourceEncoding) {
-        Predicate<Issue> priorityFilter = issue -> issue.getPriority() == priority;
+        Predicate<Issue> priorityFilter = issue -> issue.getSeverity() == severity;
         return new IssuesDetail(owner, result,
                 issues.filter(priorityFilter),
                 newIssues.filter(priorityFilter),
                 outstandingIssues.filter(priorityFilter),
-                fixedIssues.filter(priorityFilter), LocalizedPriority.getLongLocalizedString(priority), url,
+                fixedIssues.filter(priorityFilter), LocalizedSeverity.getLongLocalizedString(severity), url,
                 labelProvider, sourceEncoding);
     }
 

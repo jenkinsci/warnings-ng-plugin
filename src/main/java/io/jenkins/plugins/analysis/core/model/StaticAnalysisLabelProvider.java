@@ -9,10 +9,10 @@ import edu.hm.hafner.analysis.IntegerParser;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.views.LocalizedPriority;
+import io.jenkins.plugins.analysis.core.views.LocalizedSeverity;
 import static j2html.TagCreator.*;
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
@@ -149,7 +149,7 @@ public class StaticAnalysisLabelProvider {
         columns.add(formatProperty("packageName", issue.getPackageName()));
         columns.add(formatProperty("category", issue.getCategory()));
         columns.add(formatProperty("type", issue.getType()));
-        columns.add(formatPriority(issue.getPriority()));
+        columns.add(formatSeverity(issue.getSeverity()));
         columns.add(formatAge(issue, ageBuilder));
         return columns;
     }
@@ -164,9 +164,9 @@ public class StaticAnalysisLabelProvider {
         return ageBuilder.apply(new IntegerParser().parseInt(issue.getReference()));
     }
 
-    protected String formatPriority(final Priority priority) {
+    protected String formatSeverity(final Severity severity) {
         return String.format("<a href=\"%s\">%s</a>",
-                priority.name(), LocalizedPriority.getLocalizedString(priority));
+                severity.getName(), LocalizedSeverity.getLocalizedString(severity));
     }
 
     private String formatProperty(final String property, final String value) {

@@ -69,7 +69,7 @@
                     </j:otherwise>
                   </j:choose>
                 </td>
-                <td class="pane" id="priority">${it.getLocalizedPriority(issue.priority)}</td>
+                <td class="pane" id="severity">${it.getLocalizedSeverity(issue.severity)}</td>
                 <td class="pane" id="type">${issue.type}</td>
                 <td class="pane" id="category">${issue.category}</td>
               </tr>

@@ -26,7 +26,7 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
@@ -85,13 +85,15 @@ public class AnalysisResult implements Serializable {
     private final int newSize;
     private final int fixedSize;
 
-    private final int lowPrioritySize;
-    private final int normalPrioritySize;
+    private final int errorsSize;
     private final int highPrioritySize;
+    private final int normalPrioritySize;
+    private final int lowPrioritySize;
 
-    private final int newLowPrioritySize;
-    private final int newNormalPrioritySize;
+    private final int newErrorSize;
     private final int newHighPrioritySize;
+    private final int newNormalPrioritySize;
+    private final int newLowPrioritySize;
 
     private final Map<String, Integer> sizePerOrigin;
 
@@ -212,10 +214,12 @@ public class AnalysisResult implements Serializable {
         this.qualityGate = qualityGate;
 
         id = issues.getOrigin();
+
         size = issues.getSize();
-        highPrioritySize = issues.getHighPrioritySize();
-        normalPrioritySize = issues.getNormalPrioritySize();
-        lowPrioritySize = issues.getLowPrioritySize();
+        errorsSize = issues.getSizeOf(Severity.ERROR);
+        highPrioritySize = issues.getSizeOf(Severity.WARNING_HIGH);
+        normalPrioritySize = issues.getSizeOf(Severity.WARNING_NORMAL);
+        lowPrioritySize = issues.getSizeOf(Severity.WARNING_LOW);
 
         Optional<Run<?, ?>> run = referenceProvider.getAnalysisRun();
         if (run.isPresent()) {
@@ -235,10 +239,12 @@ public class AnalysisResult implements Serializable {
 
         Issues newIssues = difference.getNewIssues();
         newIssuesReference = new WeakReference<>(newIssues);
+
         newSize = newIssues.getSize();
-        newHighPrioritySize = newIssues.getHighPrioritySize();
-        newNormalPrioritySize = newIssues.getNormalPrioritySize();
-        newLowPrioritySize = newIssues.getLowPrioritySize();
+        newErrorSize = newIssues.getSizeOf(Severity.ERROR);
+        newHighPrioritySize = newIssues.getSizeOf(Severity.WARNING_HIGH);
+        newNormalPrioritySize = newIssues.getSizeOf(Severity.WARNING_NORMAL);
+        newLowPrioritySize = newIssues.getSizeOf(Severity.WARNING_LOW);
 
         Issues fixedIssues = difference.getFixedIssues();
         fixedIssuesReference = new WeakReference<>(fixedIssues);
@@ -567,24 +573,37 @@ public class AnalysisResult implements Serializable {
     }
 
     /**
-     * Returns the total number of issues in this analysis run, that have the specified {@link Priority}.
+     * Returns the total number of issues in this analysis run, that have the specified {@link Severity}.
      *
-     * @param priority
-     *         the priority of the issues to match
+     * @param severity
+     *         the severity of the issues to match
      *
      * @return total number of issues
      */
-    public int getTotalSize(final Priority priority) {
-        if (priority == Priority.HIGH) {
-            return getTotalHighPrioritySize();
+    public int getTotalSize(final Severity severity) {
+        if (severity == Severity.ERROR) {
+            return errorsSize;
         }
-        if (priority == Priority.NORMAL) {
-            return getTotalNormalPrioritySize();
+        if (severity == Severity.WARNING_HIGH) {
+            return highPrioritySize;
         }
-        if (priority == Priority.LOW) {
-            return getTotalLowPrioritySize();
+        if (severity == Severity.WARNING_NORMAL) {
+            return normalPrioritySize;
         }
-        return 0;
+        if (severity == Severity.WARNING_LOW) {
+            return lowPrioritySize;
+        }
+        return getIssues().getSizeOf(severity); // fallback requires loading of XML if not in memory
+    }
+
+    /**
+     * Returns the total number of errors in this analysis run.
+     *
+     * @return total number of errors
+     */
+    @Exported
+    public int getTotalErrorsSize() {
+        return errorsSize;
     }
 
     /**
@@ -625,6 +644,16 @@ public class AnalysisResult implements Serializable {
     @Exported
     public int getNewSize() {
         return newSize;
+    }
+
+    /**
+     * Returns the number of new errors in this analysis run.
+     *
+     * @return number of new errors issues
+     */
+    @Exported
+    public int getNewErrorSize() {
+        return newErrorSize;
     }
 
     /**

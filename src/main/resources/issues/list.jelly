@@ -17,7 +17,7 @@
           <tr>
             <th>
               <i:sourceLink it="${it}" issue="${i}"/>,
-              ${i.type}, ${%Priority}: ${it.getLocalizedPriority(i.priority)}
+              ${i.type}, ${%Priority}: ${it.getLocalizedSeverity(i.severity)}
               <j:if test="${h.size2(i.category) > 0}">
                 , ${%Category}: ${i.category}
               </j:if>
