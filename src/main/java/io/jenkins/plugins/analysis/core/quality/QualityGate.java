@@ -192,7 +192,7 @@ public class QualityGate implements Serializable {
          *
          * @return a list of messages of all failed and unstable issues
          */
-        public Collection<String> getEvaluations(final AnalysisResult result, final QualityGate thresholds) {
+        public List<String> getEvaluations(final AnalysisResult result, final QualityGate thresholds) {
             List<String> messages = new ArrayList<>();
             addMessagesForEvaluation(messages, result, thresholds);
             return messages;

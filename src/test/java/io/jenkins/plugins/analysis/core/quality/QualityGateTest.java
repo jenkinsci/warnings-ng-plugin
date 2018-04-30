@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.quality;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
@@ -25,6 +25,15 @@ import hudson.model.Result;
  * @author Michael Schmid
  */
 class QualityGateTest extends SerializableTest<QualityGate> {
+
+    /**
+     * The message state.
+     */
+    private enum MessageState {
+        FAILURE,
+        UNSTABLE
+    }
+
     @Override
     protected QualityGate createSerializable() {
         return new QualityGateBuilder().build();
@@ -313,14 +322,10 @@ class QualityGateTest extends SerializableTest<QualityGate> {
 
         QualityGate qualityGate = this.createGateWithBuilder();
 
-        ArrayList<String> evaluations = (ArrayList<String>) qualityGateResult.getEvaluations(analysisResult,
+        List<String> evaluations = qualityGateResult.getEvaluations(analysisResult,
                 qualityGate);
-        assertThat(evaluations).hasSize(4);
 
-        assertThat(evaluations.get(0)).contains("FAILURE");
-        assertThat(evaluations.get(1)).contains("UNSTABLE");
-        assertThat(evaluations.get(2)).contains("FAILURE");
-        assertThat(evaluations.get(3)).contains("UNSTABLE");
+        testEvaluationMessages(evaluations);
     }
 
     @Test
@@ -343,14 +348,10 @@ class QualityGateTest extends SerializableTest<QualityGate> {
 
         QualityGate qualityGate = this.createGateWithBuilder();
 
-        ArrayList<String> evaluations = (ArrayList<String>) qualityGateResult.getEvaluations(analysisResult,
+        List<String> evaluations = qualityGateResult.getEvaluations(analysisResult,
                 qualityGate);
-        assertThat(evaluations).hasSize(4);
 
-        assertThat(evaluations.get(0)).contains("FAILURE");
-        assertThat(evaluations.get(1)).contains("UNSTABLE");
-        assertThat(evaluations.get(2)).contains("FAILURE");
-        assertThat(evaluations.get(3)).contains("UNSTABLE");
+        testEvaluationMessages(evaluations);
 
     }
 
@@ -374,14 +375,10 @@ class QualityGateTest extends SerializableTest<QualityGate> {
 
         QualityGate qualityGate = this.createGateWithBuilder();
 
-        ArrayList<String> evaluations = (ArrayList<String>) qualityGateResult.getEvaluations(analysisResult,
+        List<String> evaluations = qualityGateResult.getEvaluations(analysisResult,
                 qualityGate);
-        assertThat(evaluations).hasSize(4);
 
-        assertThat(evaluations.get(0)).contains("FAILURE");
-        assertThat(evaluations.get(1)).contains("UNSTABLE");
-        assertThat(evaluations.get(2)).contains("FAILURE");
-        assertThat(evaluations.get(3)).contains("UNSTABLE");
+        testEvaluationMessages(evaluations);
     }
 
     @Test
@@ -404,103 +401,74 @@ class QualityGateTest extends SerializableTest<QualityGate> {
 
         QualityGate qualityGate = this.createGateWithBuilder();
 
-        ArrayList<String> evaluations = (ArrayList<String>) qualityGateResult.getEvaluations(analysisResult,
+        List<String> evaluations = qualityGateResult.getEvaluations(analysisResult,
                 qualityGate);
-        assertThat(evaluations).hasSize(4);
 
-        assertThat(evaluations.get(0)).contains("FAILURE");
-        assertThat(evaluations.get(1)).contains("UNSTABLE");
-        assertThat(evaluations.get(2)).contains("FAILURE");
-        assertThat(evaluations.get(3)).contains("UNSTABLE");
+        testEvaluationMessages(evaluations);
     }
 
     @Test
-    void shouldReturnEvaluationForTotalFailed() {
-        ThresholdResult totalThresholdResult = mock(ThresholdResult.class);
-        ThresholdResult totalUnstableThresholdResult = mock(ThresholdResult.class);
-        ThresholdResult newFailedThresholdResult = mock(ThresholdResult.class);
-        ThresholdResult newUnstableThresholdResult = mock(ThresholdResult.class);
+    void shouldReturnEvaluationsForAllReachedTrueAndFalse() {
+        ThresholdResult resultAllReachedTrue = mock(ThresholdResult.class);
+        ThresholdResult resultAllReachedFalse = mock(ThresholdResult.class);
 
-        when(totalThresholdResult.isTotalReached()).thenReturn(true);
-        when(totalThresholdResult.isHighReached()).thenReturn(true);
-        when(totalThresholdResult.isNormalReached()).thenReturn(true);
-        when(totalThresholdResult.isLowReached()).thenReturn(true);
+        when(resultAllReachedTrue.isTotalReached()).thenReturn(true);
+        when(resultAllReachedTrue.isHighReached()).thenReturn(true);
+        when(resultAllReachedTrue.isNormalReached()).thenReturn(true);
+        when(resultAllReachedTrue.isLowReached()).thenReturn(true);
 
-        AnalysisResult analysisResult = mock(AnalysisResult.class);
-        when(analysisResult.getTotalSize()).thenReturn(15);
-
-        QualityGateResult qualityGateResult = new QualityGateResult(totalThresholdResult, totalUnstableThresholdResult,
-                newFailedThresholdResult, newUnstableThresholdResult);
-
-        QualityGate qualityGate = this.createGateWithBuilder();
-
-        Collection<String> evaluations = qualityGateResult.getEvaluations(analysisResult, qualityGate);
-        assertThat(evaluations).hasSize(4);
-
-        testEvaluationMessageAllFailure(evaluations);
-    }
-
-    @Test
-    void shouldReturnEvaluationForNewFailed() {
-        ThresholdResult totalThresholdResult = mock(ThresholdResult.class);
-        ThresholdResult totalUnstableThresholdResult = mock(ThresholdResult.class);
-        ThresholdResult newFailedThresholdResult = mock(ThresholdResult.class);
-        ThresholdResult newUnstableThresholdResult = mock(ThresholdResult.class);
-
-        when(newFailedThresholdResult.isTotalReached()).thenReturn(true);
-        when(newFailedThresholdResult.isHighReached()).thenReturn(true);
-        when(newFailedThresholdResult.isNormalReached()).thenReturn(true);
-        when(newFailedThresholdResult.isLowReached()).thenReturn(true);
+        when(resultAllReachedFalse.isTotalReached()).thenReturn(false);
+        when(resultAllReachedFalse.isHighReached()).thenReturn(false);
+        when(resultAllReachedFalse.isNormalReached()).thenReturn(false);
+        when(resultAllReachedFalse.isLowReached()).thenReturn(false);
 
         AnalysisResult analysisResult = mock(AnalysisResult.class);
         when(analysisResult.getTotalSize()).thenReturn(10);
 
-        testEvaluation(totalThresholdResult, totalUnstableThresholdResult, newFailedThresholdResult,
-                newUnstableThresholdResult, analysisResult, false);
-    }
+        testEvaluation(resultAllReachedFalse, resultAllReachedFalse, resultAllReachedTrue,
+                resultAllReachedFalse, analysisResult, MessageState.FAILURE);
+        testEvaluation(resultAllReachedFalse, resultAllReachedTrue, resultAllReachedFalse,
+                resultAllReachedFalse, analysisResult, MessageState.UNSTABLE);
+        testEvaluation(resultAllReachedTrue, resultAllReachedFalse, resultAllReachedFalse,
+                resultAllReachedFalse, analysisResult, MessageState.FAILURE);
+        testEvaluation(resultAllReachedFalse, resultAllReachedFalse, resultAllReachedFalse,
+                resultAllReachedTrue, analysisResult, MessageState.UNSTABLE);
 
-    @Test
-    void shouldReturnEvaluationForNewUnstable() {
-        ThresholdResult totalThresholdResult = mock(ThresholdResult.class);
-        ThresholdResult totalUnstableThresholdResult = mock(ThresholdResult.class);
-        ThresholdResult newFailedThresholdResult = mock(ThresholdResult.class);
-        ThresholdResult newUnstableThresholdResult = mock(ThresholdResult.class);
-
-        when(newUnstableThresholdResult.isTotalReached()).thenReturn(true);
-        when(newUnstableThresholdResult.isHighReached()).thenReturn(true);
-        when(newUnstableThresholdResult.isNormalReached()).thenReturn(true);
-        when(newUnstableThresholdResult.isLowReached()).thenReturn(true);
-
-        AnalysisResult analysisResult = mock(AnalysisResult.class);
-        when(analysisResult.getTotalSize()).thenReturn(10);
-
-        testEvaluation(totalThresholdResult, totalUnstableThresholdResult, newFailedThresholdResult,
-                newUnstableThresholdResult, analysisResult, true);
     }
 
     /**
-     * Test the evaluation if all messages are failure messages.
+     * Test the evaluation if all messages are the same type as message state.
      *
      * @param messages
      *         collection of evaluation messages
+     * @param state
+     *         the message state
      */
-    private void testEvaluationMessageAllFailure(Collection<String> messages) {
+    private void testEvaluationMessages(List<String> messages, MessageState state) {
         ArrayList<String> evaluations = (ArrayList<String>) messages;
         for (String message : evaluations) {
-            assertThat(message).contains("FAILURE");
+            assertThat(message).contains(state.name());
         }
     }
 
     /**
-     * Test the evaluation if all messages are unstable messages.
+     * Test the evaluation if the message contains either FAILURE or UNSTABLE based on the index of the evaluation
+     * list.
      *
      * @param messages
-     *         collection of evaluation messages
+     *         list of evaluation messages
      */
-    private void testEvaluationMessageAllUnstable(Collection<String> messages) {
-        ArrayList<String> evaluations = (ArrayList<String>) messages;
-        for (String message : evaluations) {
-            assertThat(message).contains("UNSTABLE");
+    private void testEvaluationMessages(List<String> messages) {
+        assertThat(messages).hasSize(4);
+        int counter = 0;
+        for (String message : messages) {
+            if (counter % 2 == 0) {
+                assertThat(message).contains(MessageState.FAILURE.name());
+            }
+            else {
+                assertThat(message).contains(MessageState.UNSTABLE.name());
+            }
+            counter++;
         }
     }
 
@@ -517,27 +485,20 @@ class QualityGateTest extends SerializableTest<QualityGate> {
      *         the threshold result for new unstable
      * @param analysisResult
      *         the analysis result
-     * @param flag
-     *         true if  test should test if all unstable messages otherwise if all failure messages
+     * @param state
+     *         the state of the evaluation messages
      */
     private void testEvaluation(ThresholdResult totalThresholdResult, ThresholdResult totalUnstableThresholdResult,
             ThresholdResult newFailedThresholdResult, ThresholdResult newUnstableThresholdResult,
-            AnalysisResult analysisResult, boolean flag) {
+            AnalysisResult analysisResult, MessageState state) {
         QualityGateResult qualityGateResult = new QualityGateResult(totalThresholdResult, totalUnstableThresholdResult,
                 newFailedThresholdResult, newUnstableThresholdResult);
 
         QualityGate qualityGate = this.createGateWithBuilder();
 
-        Collection<String> evaluations = qualityGateResult.getEvaluations(analysisResult, qualityGate);
+        List<String> evaluations = qualityGateResult.getEvaluations(analysisResult, qualityGate);
         assertThat(evaluations).hasSize(4);
-
-        if (flag) {
-            testEvaluationMessageAllUnstable(evaluations);
-        }
-        else {
-            testEvaluationMessageAllFailure(evaluations);
-        }
-
+        testEvaluationMessages(evaluations, state);
     }
 
     /**
