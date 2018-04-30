@@ -29,7 +29,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
     /**
      * The message state.
      */
-    private enum MessageState {
+    private enum State {
         FAILURE,
         UNSTABLE
     }
@@ -426,13 +426,13 @@ class QualityGateTest extends SerializableTest<QualityGate> {
         when(analysisResult.getTotalSize()).thenReturn(10);
 
         testEvaluation(resultAllReachedFalse, resultAllReachedFalse, resultAllReachedTrue,
-                resultAllReachedFalse, analysisResult, MessageState.FAILURE);
+                resultAllReachedFalse, analysisResult, State.FAILURE);
         testEvaluation(resultAllReachedFalse, resultAllReachedTrue, resultAllReachedFalse,
-                resultAllReachedFalse, analysisResult, MessageState.UNSTABLE);
+                resultAllReachedFalse, analysisResult, State.UNSTABLE);
         testEvaluation(resultAllReachedTrue, resultAllReachedFalse, resultAllReachedFalse,
-                resultAllReachedFalse, analysisResult, MessageState.FAILURE);
+                resultAllReachedFalse, analysisResult, State.FAILURE);
         testEvaluation(resultAllReachedFalse, resultAllReachedFalse, resultAllReachedFalse,
-                resultAllReachedTrue, analysisResult, MessageState.UNSTABLE);
+                resultAllReachedTrue, analysisResult, State.UNSTABLE);
 
     }
 
@@ -444,7 +444,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
      * @param state
      *         the message state
      */
-    private void testEvaluationMessages(List<String> messages, MessageState state) {
+    private void testEvaluationMessages(List<String> messages, State state) {
         ArrayList<String> evaluations = (ArrayList<String>) messages;
         for (String message : evaluations) {
             assertThat(message).contains(state.name());
@@ -463,10 +463,10 @@ class QualityGateTest extends SerializableTest<QualityGate> {
         int counter = 0;
         for (String message : messages) {
             if (counter % 2 == 0) {
-                assertThat(message).contains(MessageState.FAILURE.name());
+                assertThat(message).contains(State.FAILURE.name());
             }
             else {
-                assertThat(message).contains(MessageState.UNSTABLE.name());
+                assertThat(message).contains(State.UNSTABLE.name());
             }
             counter++;
         }
@@ -490,7 +490,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
      */
     private void testEvaluation(ThresholdResult totalThresholdResult, ThresholdResult totalUnstableThresholdResult,
             ThresholdResult newFailedThresholdResult, ThresholdResult newUnstableThresholdResult,
-            AnalysisResult analysisResult, MessageState state) {
+            AnalysisResult analysisResult, State state) {
         QualityGateResult qualityGateResult = new QualityGateResult(totalThresholdResult, totalUnstableThresholdResult,
                 newFailedThresholdResult, newUnstableThresholdResult);
 
