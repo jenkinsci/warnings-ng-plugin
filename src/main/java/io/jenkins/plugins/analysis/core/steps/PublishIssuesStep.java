@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,7 @@ import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
@@ -36,6 +38,7 @@ import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.remoting.VirtualChannel;
 
 /**
@@ -430,21 +433,16 @@ public class PublishIssuesStep extends Step {
             name = StringUtils.defaultString(step.getName());
             issues = step.getIssues();
             if (StringUtils.isNotBlank(step.getId())) {
-                issues.setId(step.getId());
+                issues.setOrigin(step.getId());
             }
             filters = step.getFilters();
         }
 
         @Override
-        protected String getId() {
-            return issues.getId();
-        }
-
-        @Override
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
-            IssuesPublisher publisher = new IssuesPublisher(issues, filters, getRun(), getWorkspace(),
-                    healthDescriptor, name, sourceCodeEncoding, qualityGate, referenceJobName, ignoreAnalysisResult,
-                    overallResultMustBeSuccess, getLogger(), getErrorLogger());
+            IssuesPublisher publisher = new IssuesPublisher(getRun(), issues, filters, healthDescriptor, qualityGate,
+                    getWorkspace(), name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess,
+                    getSourceCodeCharset(), getLogger());
             Optional<VirtualChannel> channel = getChannel();
             if (channel.isPresent()) {
                 return publisher.attachAction(channel.get(), getBuildFolder());
@@ -453,6 +451,14 @@ public class PublishIssuesStep extends Step {
             else {
                 return publisher.attachAction();
             }
+        }
+
+        private LogHandler getLogger() throws InterruptedException {
+            return new LogHandler(getTaskListener(), new LabelProviderFactory().create(issues.getOrigin(), name).getName());
+        }
+
+        private Charset getSourceCodeCharset() {
+            return EncodingValidator.defaultCharset(sourceCodeEncoding);
         }
     }
 

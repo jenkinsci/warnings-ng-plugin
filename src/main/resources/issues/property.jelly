@@ -15,7 +15,7 @@
   </st:documentation>
 
   <j:if test="${size(elements) > 1}">
-    <div role="tabpanel" id="${property}Content" class="tab-pane">
+    <div role="tabpanel" id="${property}Content" class="tab-pane fade">
       <j:set var="l" value="${it.tabLabelProvider}"/>
       <j:set var="t" value="${it.getDetails(property)}"/>
       <table class="table table-hover table-responsive table-striped display" id="${property}">
