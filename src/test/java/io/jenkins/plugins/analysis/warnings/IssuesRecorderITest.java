@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.function.Consumer;
 
 import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule.WebClient;
 
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -59,7 +61,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      * unstable.
      */
     @Test
-    public void shouldCreateUnstableResult() {
+    public void shouldCreateUnstableResult() throws Exception {
         FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
         enableWarnings(project, publisher -> publisher.setUnstableTotalAll(7));
 
@@ -67,6 +69,11 @@ public class IssuesRecorderITest extends IntegrationTest {
 
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasOverallResult(Result.UNSTABLE);
+
+        WebClient webClient = j.createWebClient();
+        webClient.setJavaScriptEnabled(false);
+        HtmlPage page = webClient.getPage(result.getOwner(), "eclipseResult");
+        assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
     }
 
     /**
