@@ -38,14 +38,14 @@ class AbsolutePathGeneratorTest {
         new AbsolutePathGenerator().run(issues, WORKSPACE);
 
         assertThat(issues.iterator()).containsExactly(issues.get(0));
-        assertThat(issues).hasId(ID);
+        assertThat(issues).hasOrigin(ID);
     }
 
     private Issues<Issue> createIssuesSingleton(final String fileName, final IssueBuilder issueBuilder) {
         Issues<Issue> issues = new Issues<>();
         Issue issue = issueBuilder.setFileName(fileName).build();
         issues.add(issue);
-        issues.setId(ID);
+        issues.setOrigin(ID);
         return issues;
     }
 
@@ -64,7 +64,7 @@ class AbsolutePathGeneratorTest {
         generator.run(issues, WORKSPACE);
 
         assertThat(issues.iterator()).containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build());
-        assertThat(issues).hasId(ID);
+        assertThat(issues).hasOrigin(ID);
         assertThat(issues.getInfoMessages()).hasSize(1);
         assertThat(issues.getInfoMessages().get(0)).contains("1 resolved");
     }
@@ -73,10 +73,10 @@ class AbsolutePathGeneratorTest {
     void shouldDoNothingIfNoIssuesPresent() {
         AbsolutePathGenerator generator = new AbsolutePathGenerator();
         Issues<Issue> issues = new Issues<>();
-        issues.setId(ID);
+        issues.setOrigin(ID);
         generator.run(issues, WORKSPACE);
         assertThat(issues).hasSize(0);
-        assertThat(issues).hasId(ID);
+        assertThat(issues).hasOrigin(ID);
         assertThat(issues.getInfoMessages()).containsExactly(AbsolutePathGenerator.NOTHING_TO_DO);
     }
 
@@ -105,7 +105,7 @@ class AbsolutePathGeneratorTest {
         assertThat(issues.iterator())
                 .containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build(),
                         issueWithAbsolutePath, issueWithSelfReference);
-        assertThat(issues).hasId(ID);
+        assertThat(issues).hasOrigin(ID);
         assertThat(issues.getInfoMessages()).hasSize(1);
         assertThat(issues.getInfoMessages().get(0)).contains("2 already absolute");
     }

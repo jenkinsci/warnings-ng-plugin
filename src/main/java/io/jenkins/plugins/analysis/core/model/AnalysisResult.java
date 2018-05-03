@@ -212,7 +212,7 @@ public class AnalysisResult implements Serializable {
         this.owner = owner;
         this.qualityGate = qualityGate;
 
-        id = issues.getId();
+        id = issues.getOrigin();
         size = issues.getSize();
         highPrioritySize = issues.getHighPrioritySize();
         normalPrioritySize = issues.getNormalPrioritySize();
@@ -255,7 +255,7 @@ public class AnalysisResult implements Serializable {
             }
             else {
                 messages.add(String.format("Some quality gates have been missed: overall result is %s", overallResult));
-                result.getEvaluations(this, qualityGate).forEach(message -> messages.add(message));
+                messages.addAll(result.getEvaluations(this, qualityGate));
             }
             owner.setResult(overallResult);
         }
@@ -267,7 +267,7 @@ public class AnalysisResult implements Serializable {
         infos = Lists.immutable.withAll(messages);
         errors = issues.getErrorMessages();
 
-        sizePerOrigin = issues.getPropertyCount(issue -> issue.getOrigin());
+        sizePerOrigin = issues.getPropertyCount(Issue::getOrigin);
 
         if (canSerialize) {
             serializeAnnotations(outstandingIssues, newIssues, fixedIssues);

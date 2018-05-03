@@ -11,9 +11,13 @@
 
         <!-- data-xxx-issues...: model values for chart -->
         <h5 id="number-issues" class="card-title"
-            data-new-issues="${size(it.newIssues)}"
-            data-fixed-issues="${size(it.fixedIssues)}"
-            data-outstanding-issues="${size(it.outstandingIssues)}">
+            data-new="${size(it.newIssues)}"
+            data-fixed="${size(it.fixedIssues)}"
+            data-outstanding="${size(it.outstandingIssues)}"
+            data-new-label="${%New}"
+            data-fixed-label="${%Fixed}"
+            data-outstanding-label="${%Outstanding}"
+        >
           ${%Trend}<i class="fa fa-line-chart icon-right fa-2x" aria-hidden="true"/>
         </h5>
 
