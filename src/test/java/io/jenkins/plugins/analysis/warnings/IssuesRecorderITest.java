@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
+import org.xml.sax.SAXException;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -61,7 +62,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      * unstable.
      */
     @Test
-    public void shouldCreateUnstableResult() throws Exception {
+    public void shouldCreateUnstableResult() {
         FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
         enableWarnings(project, publisher -> publisher.setUnstableTotalAll(7));
 
@@ -70,10 +71,19 @@ public class IssuesRecorderITest extends IntegrationTest {
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasOverallResult(Result.UNSTABLE);
 
-        WebClient webClient = j.createWebClient();
-        webClient.setJavaScriptEnabled(false);
-        HtmlPage page = webClient.getPage(result.getOwner(), "eclipseResult");
+        HtmlPage page = getWebPage(result);
         assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
+    }
+
+    private HtmlPage getWebPage(final AnalysisResult result) {
+        try {
+            WebClient webClient = j.createWebClient();
+            webClient.setJavaScriptEnabled(false);
+            return webClient.getPage(result.getOwner(), "eclipseResult");
+        }
+        catch (SAXException | IOException e) {
+           throw new AssertionError(e);
+        }
     }
 
     /**
