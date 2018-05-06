@@ -16,7 +16,7 @@ import org.jvnet.hudson.test.TestExtension;
 import org.kohsuke.stapler.HttpResponse;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import static hudson.Functions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -59,9 +59,9 @@ public class StepsITest extends PipelineITest {
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues()).hasSize(8);
 
-        Issues issues = result.getIssues();
-        assertThat(issues.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(8);
-        for (Issue annotation : issues) {
+        Report report = result.getIssues();
+        assertThat(report.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(8);
+        for (Issue annotation : report) {
             assertThat(annotation.getMessage()).matches("[a-zA-Z].*");
         }
     }
@@ -114,11 +114,11 @@ public class StepsITest extends PipelineITest {
     }
 
     private void assertThatJavaIssuesArePublished(final AnalysisResult result) {
-        Issues issues = result.getIssues();
-        assertThat(issues.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(8);
-        assertThat(issues.filter(issue -> "java".equals(issue.getOrigin()))).hasSize(2);
-        assertThat(issues.filter(issue -> "javadoc".equals(issue.getOrigin()))).hasSize(6);
-        assertThat(issues.getTools()).containsExactlyInAnyOrder("java", "javadoc", "eclipse");
+        Report report = result.getIssues();
+        assertThat(report.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(8);
+        assertThat(report.filter(issue -> "java".equals(issue.getOrigin()))).hasSize(2);
+        assertThat(report.filter(issue -> "javadoc".equals(issue.getOrigin()))).hasSize(6);
+        assertThat(report.getTools()).containsExactlyInAnyOrder("java", "javadoc", "eclipse");
         assertThat(result.getIssues()).hasSize(8 + 2 + 6);
     }
 

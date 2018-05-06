@@ -6,7 +6,7 @@ import org.junit.Assume;
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import static hudson.Functions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -143,9 +143,9 @@ public class ParsersITest extends PipelineITest {
     /** Runs the CPD parser on output files that contains 2 issues. */
     @Test
     public void shouldFindAllCpdIssues() {
-        Issues issues = shouldFindIssuesOfTool(2, Cpd.class, "cpd.xml");
+        Report report = shouldFindIssuesOfTool(2, Cpd.class, "cpd.xml");
 
-        assertThatDescriptionOfIssueIsSet(new Cpd(), issues.get(0), CODE_FRAGMENT);
+        assertThatDescriptionOfIssueIsSet(new Cpd(), report.get(0), CODE_FRAGMENT);
     }
 
     /** Runs the Simian parser on output files that contains 4 issues. */
@@ -157,9 +157,9 @@ public class ParsersITest extends PipelineITest {
     /** Runs the DupFinder parser on output files that contains 2 issues. */
     @Test
     public void shouldFindAllDupFinderIssues() {
-        Issues issues = shouldFindIssuesOfTool(2, DupFinder.class, "dupfinder.xml");
+        Report report = shouldFindIssuesOfTool(2, DupFinder.class, "dupfinder.xml");
 
-        assertThatDescriptionOfIssueIsSet(new DupFinder(), issues.get(0),
+        assertThatDescriptionOfIssueIsSet(new DupFinder(), report.get(0),
                 "<pre><code>if (items == null) throw new ArgumentNullException(&quot;items&quot;);</code></pre>");
     }
 
@@ -184,9 +184,9 @@ public class ParsersITest extends PipelineITest {
     /** Runs the PMD parser on an output file that contains 262 issues (PMD 6.1.0). */
     @Test
     public void shouldFindAllPmdIssues() {
-        Issues issues = shouldFindIssuesOfTool(262, Pmd.class, "pmd-6.xml");
+        Report report = shouldFindIssuesOfTool(262, Pmd.class, "pmd-6.xml");
 
-        assertThatDescriptionOfIssueIsSet(new Pmd(), issues.get(0), "\n"
+        assertThatDescriptionOfIssueIsSet(new Pmd(), report.get(0), "\n"
                 + "A high number of imports can indicate a high degree of coupling within an object. This rule \n"
                 + "counts the number of unique imports and reports a violation if the count is above the \n"
                 + "user-specified threshold.\n"
@@ -205,9 +205,9 @@ public class ParsersITest extends PipelineITest {
     /** Runs the CheckStyle parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllCheckStyleIssues() {
-        Issues issues = shouldFindIssuesOfTool(6, CheckStyle.class, "checkstyle.xml");
+        Report report = shouldFindIssuesOfTool(6, CheckStyle.class, "checkstyle.xml");
 
-        assertThatDescriptionOfIssueIsSet(new CheckStyle(), issues.get(2),
+        assertThatDescriptionOfIssueIsSet(new CheckStyle(), report.get(2),
                 "<p>Since Checkstyle 3.1</p><p>\n"
                         + "          The check finds classes that are designed for extension (subclass creation).\n"
                         + "        </p><p>\n");
@@ -223,9 +223,9 @@ public class ParsersITest extends PipelineITest {
     /** Runs the FindBugs parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllFindBugsIssues() {
-        Issues issues = shouldFindIssuesOfTool(2, FindBugs.class, "findbugs-native.xml");
+        Report report = shouldFindIssuesOfTool(2, FindBugs.class, "findbugs-native.xml");
 
-        assertThatDescriptionOfIssueIsSet(new FindBugs(), issues.get(0),
+        assertThatDescriptionOfIssueIsSet(new FindBugs(), report.get(0),
                 "<p> The fields of this class appear to be accessed inconsistently with respect\n"
                         + "  to synchronization.&nbsp; This bug report indicates that the bug pattern detector\n"
                         + "  judged that\n"
@@ -255,9 +255,9 @@ public class ParsersITest extends PipelineITest {
     /** Runs the SpotBugs parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllSpotBugsIssues() {
-        Issues issues = shouldFindIssuesOfTool(2, SpotBugs.class, "spotbugsXml.xml");
+        Report report = shouldFindIssuesOfTool(2, SpotBugs.class, "spotbugsXml.xml");
 
-        assertThatDescriptionOfIssueIsSet(new FindBugs(), issues.get(0),
+        assertThatDescriptionOfIssueIsSet(new FindBugs(), report.get(0),
                 "<p>This code calls a method and ignores the return value. However our analysis shows that\n"
                         + "the method (including its implementations in subclasses if any) does not produce any effect \n"
                         + "other than return value. Thus this call can be removed.\n"
@@ -618,7 +618,7 @@ public class ParsersITest extends PipelineITest {
     }
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private Issues shouldFindIssuesOfTool(final int expectedSizeOfIssues,
+    private Report shouldFindIssuesOfTool(final int expectedSizeOfIssues,
             final Class<? extends StaticAnalysisTool> tool, final String... fileNames) {
         try {
             WorkflowJob job = createJobWithWorkspaceFiles(fileNames);
@@ -629,11 +629,11 @@ public class ParsersITest extends PipelineITest {
             assertThat(result.getTotalSize()).isEqualTo(expectedSizeOfIssues);
             assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);
 
-            Issues issues = result.getIssues();
-            assertThat(issues.filter(issue -> issue.getOrigin().equals(getIdOf(tool))))
+            Report report = result.getIssues();
+            assertThat(report.filter(issue -> issue.getOrigin().equals(getIdOf(tool))))
                     .hasSize(expectedSizeOfIssues);
 
-            return issues;
+            return report;
         }
         catch (Exception exception) {
             throw new AssertionError(exception);
