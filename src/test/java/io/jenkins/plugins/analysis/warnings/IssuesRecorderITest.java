@@ -19,7 +19,7 @@ import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.HealthReport;
 import hudson.model.Result;
-
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -33,7 +33,7 @@ public class IssuesRecorderITest extends IntegrationTest {
     @Test
     public void shouldCreateEmptyResult() {
         FreeStyleProject project = createJob();
-        enableWarnings(project);
+        enableWarnings(project, new ToolConfiguration("**/*issues.txt", new Eclipse()));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
@@ -47,7 +47,7 @@ public class IssuesRecorderITest extends IntegrationTest {
     @Test
     public void shouldCreateResultWithWarnings() {
         FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
-        enableWarnings(project);
+        enableWarnings(project, new ToolConfiguration("**/*issues.txt", new Eclipse()));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
@@ -63,7 +63,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     @Test
     public void shouldCreateUnstableResult() {
         FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
-        enableWarnings(project, publisher -> publisher.setUnstableTotalAll(7));
+        enableWarnings(project, publisher -> publisher.setUnstableTotalAll(7),
+                new ToolConfiguration("**/*issues.txt", new Eclipse()));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
 
@@ -71,24 +72,23 @@ public class IssuesRecorderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.UNSTABLE);
     }
 
-
     /**
-     * Sets the health threshold less then the unhealth threshold and parse a file that contains exactly warnings.
-     * The healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup
+     * Sets the health threshold less then the unhealthy threshold and parse a file that contains exactly warnings. The
+     * healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup
      */
     @Test
     public void shouldCreateEmptyHealthReportForBoundaryMismatch() {
-        HealthReport report = createHealthReportTestSetup(5, 2);
+        HealthReport report = createHealthReportTestSetupEclipse(5, 2);
         assertThat(report).isNull();
     }
 
     /**
-     * Sets the health threshold equals to the unhealth threshold and parse a file that contains exactly warnings.
-     * The healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup
+     * Sets the health threshold equals to the unhealthy threshold and parse a file that contains exactly warnings. The
+     * healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup
      */
     @Test
     public void shouldCreateEmptyHealthReportForEqualBoundaries() {
-        HealthReport report = createHealthReportTestSetup(15, 15);
+        HealthReport report = createHealthReportTestSetupEclipse(15, 15);
         assertThat(report).isNull();
     }
 
@@ -97,7 +97,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void shouldCreate80plusHealthReport() {
-        HealthReport report = createHealthReportTestSetup(10, 15);
+        HealthReport report = createHealthReportTestSetupEclipse(10, 15);
         assertThat(report.getDescription()).isEqualTo("Static Analysis: 8 warnings found.");
         assertThat(report.getIconClassName()).isEqualTo("icon-health-80plus");
     }
@@ -107,7 +107,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void shouldCreate60To79HealthReport() {
-        HealthReport report = createHealthReportTestSetup(5, 15);
+        HealthReport report = createHealthReportTestSetupEclipse(5, 15);
         assertThat(report.getDescription()).isEqualTo("Static Analysis: 8 warnings found.");
         assertThat(report.getIconClassName()).isEqualTo("icon-health-60to79");
     }
@@ -117,7 +117,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void shouldCreate40To59HealthReport() {
-        HealthReport report = createHealthReportTestSetup(1, 15);
+        HealthReport report = createHealthReportTestSetupEclipse(1, 15);
         assertThat(report.getDescription()).isEqualTo("Static Analysis: 8 warnings found.");
         assertThat(report.getIconClassName()).isEqualTo("icon-health-40to59");
     }
@@ -127,7 +127,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void shouldCreate20To39HealthReport() {
-        HealthReport report = createHealthReportTestSetup(5, 10);
+        HealthReport report = createHealthReportTestSetupEclipse(5, 10);
         assertThat(report.getDescription()).isEqualTo("Static Analysis: 8 warnings found.");
         assertThat(report.getIconClassName()).isEqualTo("icon-health-20to39");
     }
@@ -137,26 +137,76 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void shouldCreate00To19HealthReport() {
-        HealthReport report = createHealthReportTestSetup(1, 5);
+        HealthReport report = createHealthReportTestSetupEclipse(1, 5);
         assertThat(report.getDescription()).isEqualTo("Static Analysis: 8 warnings found.");
         assertThat(report.getIconClassName()).isEqualTo("icon-health-00to19");
     }
 
     /**
-     * Creates a {@link HealthReport} under test.
-     * @param health health threshold
-     * @param unhealth unghealt threshold
+     * Should create a health report for only high priority issues. Only error issues.
+     */
+    @Test
+    public void shouldCreateHealthReportWithHighPriority() {
+        HealthReport report = createHealthReportTestSetupCheckstyle(Priority.HIGH);
+        assertThat(report.getDescription()).isEqualTo("Static Analysis: 2 warnings found.");
+        assertThat(report.getIconClassName()).isEqualTo("icon-health-80plus");
+    }
+
+    /**
+     * Should create a health report for normal priority issues. Error and warning issues.
+     */
+    @Test
+    public void shouldCreateHealthReportWithNormalPriority() {
+        HealthReport report = createHealthReportTestSetupCheckstyle(Priority.NORMAL);
+        assertThat(report.getDescription()).isEqualTo("Static Analysis: 4 warnings found.");
+        assertThat(report.getIconClassName()).isEqualTo("icon-health-80plus");
+    }
+
+    /**
+     * Should create a health report for low priority issues. Error, warnings and info issues.
+     */
+    @Test
+    public void shouldCreateHealthReportWithLowPriority() {
+        HealthReport report = createHealthReportTestSetupCheckstyle(Priority.LOW);
+        assertThat(report.getDescription()).isEqualTo("Static Analysis: 6 warnings found.");
+        assertThat(report.getIconClassName()).isEqualTo("icon-health-80plus");
+    }
+
+    /**
+     * Creates a {@link HealthReport} under test with eclipse workspace file.
+     *
+     * @param health
+     *         health threshold
+     * @param unhealthy
+     *         unhealthy threshold
+     *
      * @return a healthReport under test
      */
-    private HealthReport createHealthReportTestSetup(int health, int unhealth) {
+    private HealthReport createHealthReportTestSetupEclipse(int health, int unhealthy) {
         FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
         enableWarnings(project, publisher -> {
             publisher.setHealthy(health);
-            publisher.setUnHealthy(unhealth); }
+            publisher.setUnHealthy(unhealthy); },
+                new ToolConfiguration("**/*issues.txt", new Eclipse())
         );
         return scheduleBuildToGetHealthReportAndAssertStatus(project, Result.SUCCESS);
     }
 
+    /**
+     * Creates a {@link HealthReport} under test with checkstyle workspace file.
+     *
+     * @return a healthReport under test
+     */
+    private HealthReport createHealthReportTestSetupCheckstyle(Priority priority) {
+        FreeStyleProject project = createJobWithWorkspaceFile("checkstyle.xml");
+        enableWarnings(project, publisher -> {
+            publisher.setHealthy(10);
+            publisher.setUnHealthy(15);
+            publisher.setMinimumPriority(priority.name()); },
+                new ToolConfiguration("**/*issues.txt", new CheckStyle())
+        );
+        return scheduleBuildToGetHealthReportAndAssertStatus(project, Result.SUCCESS);
+    }
 
     /**
      * Creates a new {@link FreeStyleProject freestyle job}. The job will get a generated name.
@@ -193,13 +243,15 @@ public class IssuesRecorderITest extends IntegrationTest {
      *
      * @param job
      *         the job to register the recorder for
+     * @param configuration
+     *         the tool configuration
      *
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    private IssuesRecorder enableWarnings(final FreeStyleProject job) {
+    private IssuesRecorder enableWarnings(final FreeStyleProject job, ToolConfiguration configuration) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration("**/*issues.txt", new Eclipse())));
+        publisher.setTools(Collections.singletonList(configuration));
         job.getPublishersList().add(publisher);
         return publisher;
     }
@@ -212,14 +264,12 @@ public class IssuesRecorderITest extends IntegrationTest {
      *         the job to register the recorder for
      * @param configuration
      *         configuration of the recorder
-     *
-     * @return the created recorder
      */
     @CanIgnoreReturnValue
-    private IssuesRecorder enableWarnings(final FreeStyleProject job, final Consumer<IssuesRecorder> configuration) {
-        IssuesRecorder publisher = enableWarnings(job);
+    private void enableWarnings(final FreeStyleProject job, final Consumer<IssuesRecorder> configuration,
+            final ToolConfiguration toolConfiguration) {
+        IssuesRecorder publisher = enableWarnings(job, toolConfiguration);
         configuration.accept(publisher);
-        return publisher;
     }
 
     /**
@@ -250,8 +300,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Schedules a new build for the specified job and returns the created {@link HealthReport} after the build has
-     * been finished.
+     * Schedules a new build for the specified job and returns the created {@link HealthReport} after the build has been
+     * finished.
      *
      * @param job
      *         the job to schedule
@@ -261,7 +311,8 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @return the created {@link HealthReport}
      */
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private HealthReport scheduleBuildToGetHealthReportAndAssertStatus(final FreeStyleProject job, final Result status) {
+    private HealthReport scheduleBuildToGetHealthReportAndAssertStatus(final FreeStyleProject job,
+            final Result status) {
         try {
             FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
 
