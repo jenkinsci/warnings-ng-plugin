@@ -5,7 +5,7 @@ import java.util.Optional;
 import hudson.model.Run;
 import hudson.plugins.analysis.core.IssueDifference;
 
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 
 /**
  * Provides the reference result for a new static analysis run. When outstanding, new, and fixed issues are computed
@@ -20,7 +20,7 @@ public interface ReferenceProvider {
      *
      * @return the issues of the reference run
      */
-    Issues getIssues();
+    Report getIssues();
 
     /**
      * Returns the actual reference run.

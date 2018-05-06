@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 
 /**
  * A {@link StaticAnalysisTool} that is composed of several tools. Every parser of this suite will be called on the
@@ -65,9 +65,9 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
         }
 
         @Override
-        public Issues parse(final File file, final Charset charset,
+        public Report parse(final File file, final Charset charset,
                 final Function<String, String> preProcessor) {
-            Issues aggregated = new Issues();
+            Report aggregated = new Report();
             for (AbstractParser parser : parsers) {
                 aggregated.addAll(parser.parse(file, charset, preProcessor));
             }

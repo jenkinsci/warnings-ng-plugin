@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.history.BuildHistory;
 import io.jenkins.plugins.analysis.core.history.OtherJobReferenceFinder;
@@ -34,7 +34,7 @@ import hudson.remoting.VirtualChannel;
  * @author Ullrich Hafner
  */
 class IssuesPublisher {
-    private final Issues issues;
+    private final Report report;
     private final List<RegexpFilter> filters;
     private final Run<?, ?> run;
     private final FilePath workspace;
@@ -49,13 +49,13 @@ class IssuesPublisher {
     private final String id;
 
     @SuppressWarnings("ParameterNumber")
-    IssuesPublisher(final Run<?, ?> run, final Issues issues, final List<RegexpFilter> filters,
+    IssuesPublisher(final Run<?, ?> run, final Report report, final List<RegexpFilter> filters,
             final HealthDescriptor healthDescriptor, final QualityGate qualityGate, final FilePath workspace,
             final String name, final String referenceJobName, final boolean ignoreAnalysisResult,
             final boolean overallResultMustBeSuccess, final Charset sourceCodeEncoding,
             final LogHandler logger) {
-        this.issues = issues;
-        this.id = issues.getOrigin();
+        this.report = report;
+        this.id = report.getOrigin();
         this.filters = new ArrayList<>(filters);
         this.run = run;
         this.workspace = workspace;
@@ -76,7 +76,7 @@ class IssuesPublisher {
      * @return the created result action
      */
     public ResultAction attachAction() {
-        issues.logError("Can't copy affected files since channel to agent is not available");
+        report.logError("Can't copy affected files since channel to agent is not available");
 
         return run();
     }
@@ -108,7 +108,7 @@ class IssuesPublisher {
     private ResultAction run() {
         ResultSelector selector = ensureThatIdIsUnique();
 
-        Issues filtered = filter();
+        Report filtered = filter();
 
         logger.log("Attaching ResultAction with ID '%s' to run '%s'.", id, run);
         AnalysisResult result = createResult(selector, filtered);
@@ -128,7 +128,7 @@ class IssuesPublisher {
         return selector;
     }
 
-    private void copyAffectedFiles(final Issues filtered,
+    private void copyAffectedFiles(final Report filtered,
             final VirtualChannel channel, final FilePath buildFolder)
             throws IOException, InterruptedException {
         new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(filtered, channel, buildFolder);
@@ -136,7 +136,7 @@ class IssuesPublisher {
         logger.log(filtered);
     }
 
-    private AnalysisResult createResult(final ResultSelector selector, final Issues filtered) {
+    private AnalysisResult createResult(final ResultSelector selector, final Report filtered) {
         AnalysisResult result = createAnalysisResult(filtered, selector);
 
         logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
@@ -145,21 +145,21 @@ class IssuesPublisher {
         return result;
     }
 
-    private Issues filter() {
+    private Report filter() {
         IssueFilterBuilder builder = new IssueFilterBuilder();
         for (RegexpFilter filter : filters) {
             filter.apply(builder);
         }
-        Issues filtered = issues.filter(builder.build());
+        Report filtered = report.filter(builder.build());
         filtered.logInfo("Applying %d filters on the set of %d issues (%d issues have been removed)",
-                filters.size(), issues.size(), issues.size() - filtered.size());
+                filters.size(), report.size(), report.size() - filtered.size());
 
         logger.log(filtered);
 
         return filtered;
     }
 
-    private AnalysisResult createAnalysisResult(final Issues filtered, final ResultSelector selector) {
+    private AnalysisResult createAnalysisResult(final Report filtered, final ResultSelector selector) {
         ReferenceProvider referenceProvider = createReferenceProvider(selector);
         filtered.setReference(String.valueOf(run.getNumber()));
 

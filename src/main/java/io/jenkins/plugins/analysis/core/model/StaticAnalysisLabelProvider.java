@@ -5,10 +5,10 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 
-import edu.hm.hafner.analysis.IntegerParser;
+import edu.hm.hafner.util.IntegerParser;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
@@ -115,16 +115,16 @@ public class StaticAnalysisLabelProvider {
     /**
      * Converts the specified set of issues into a table.
      *
-     * @param issues
+     * @param report
      *         the issues to show in the table
      * @param ageBuilder
      *         produces the age of an issue based on the current build number
      *
      * @return the table as String
      */
-    public JSONObject toJsonArray(final Issues issues, final AgeBuilder ageBuilder) {
+    public JSONObject toJsonArray(final Report report, final AgeBuilder ageBuilder) {
         JSONArray rows = new JSONArray();
-        for (Issue issue : issues) {
+        for (Issue issue : report) {
             rows.add(toJson(issue, ageBuilder));
         }
         JSONObject data = new JSONObject();

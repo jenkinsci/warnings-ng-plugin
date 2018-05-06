@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import hudson.FilePath;
@@ -41,19 +41,19 @@ public class AbsolutePathGenerator {
     /**
      * Resolves absolute paths of the affected files of the specified set of issues.
      *
-     * @param issues
+     * @param report
      *         the issues to resolve the paths
      * @param workspace
      *         the workspace containing the affected files
      */
-    public void run(final Issues issues, final FilePath workspace) {
-        Set<String> relativeFileNames = issues.getFiles()
+    public void run(final Report report, final FilePath workspace) {
+        Set<String> relativeFileNames = report.getFiles()
                 .stream()
                 .filter(fileName -> fileSystem.isRelative(fileName) && !IssueParser.SELF.equals(fileName))
                 .collect(Collectors.toSet());
 
         if (relativeFileNames.isEmpty()) {
-            issues.logInfo(NOTHING_TO_DO);
+            report.logInfo(NOTHING_TO_DO);
 
             return;
         }
@@ -63,7 +63,7 @@ public class AbsolutePathGenerator {
         int resolvedCount = 0;
         int unchangedCount = 0;
         int unresolvedCount = 0;
-        for (Issue issue : issues) {
+        for (Issue issue : report) {
             if (relativeToAbsoluteMapping.containsKey(issue.getFileName())) {
                 String absoluteFileName = relativeToAbsoluteMapping.get(issue.getFileName());
                 issue.setFileName(absoluteFileName);
@@ -83,10 +83,10 @@ public class AbsolutePathGenerator {
                 "Resolved absolute paths for %d files (Issues %d resolved, %d unresolved, %d already absolute)",
                 relativeToAbsoluteMapping.size(), resolvedCount, unresolvedCount, unchangedCount);
         if (unresolvedCount > 0) {
-            issues.logError(message);
+            report.logError(message);
         }
         else {
-            issues.logInfo(message);
+            report.logInfo(message);
         }
     }
 

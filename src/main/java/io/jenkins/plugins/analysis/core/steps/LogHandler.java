@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import org.eclipse.collections.api.list.ImmutableList;
 
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import io.jenkins.plugins.analysis.core.util.Logger;
 import io.jenkins.plugins.analysis.core.util.LoggerFactory;
 
@@ -44,12 +44,12 @@ class LogHandler {
      * Log all info and error messages that are stored in the set of issues. Note that subsequent calls to this method
      * will only log messages that have not yet been logged.
      *
-     * @param issues
+     * @param report
      *         the issues with the collected logging messages
      */
-    public void log(final Issues issues) {
-        logErrorMessages(issues);
-        logInfoMessages(issues);
+    public void log(final Report report) {
+        logErrorMessages(report);
+        logInfoMessages(report);
     }
 
     /**
@@ -66,16 +66,16 @@ class LogHandler {
         logger.log(format, args);
     }
 
-    private void logErrorMessages(final Issues issues) {
-        ImmutableList<String> errorMessages = issues.getErrorMessages();
+    private void logErrorMessages(final Report report) {
+        ImmutableList<String> errorMessages = report.getErrorMessages();
         if (errorPosition < errorMessages.size()) {
             errorLogger.logEachLine(errorMessages.subList(errorPosition, errorMessages.size()).castToList());
             errorPosition = errorMessages.size();
         }
     }
 
-    private void logInfoMessages(final Issues issues) {
-        ImmutableList<String> infoMessages = issues.getInfoMessages();
+    private void logInfoMessages(final Report report) {
+        ImmutableList<String> infoMessages = report.getInfoMessages();
         if (infoPosition < infoMessages.size()) {
             logger.logEachLine(infoMessages.subList(infoPosition, infoMessages.size()).castToList());
             infoPosition = infoMessages.size();

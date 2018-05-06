@@ -15,7 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 
 import hudson.FilePath;
 import hudson.model.Run;
@@ -35,7 +35,7 @@ public class AffectedFilesResolver {
     /**
      * Copies all files with issues from the workspace to the build folder.
      *
-     * @param issues
+     * @param report
      *         the issues
      * @param channel
      *         channel to get the files from
@@ -47,14 +47,14 @@ public class AffectedFilesResolver {
      * @throws InterruptedException
      *         if the user cancels the processing
      */
-    public void copyFilesWithAnnotationsToBuildFolder(final Issues issues,
+    public void copyFilesWithAnnotationsToBuildFolder(final Report report,
             final VirtualChannel channel, final FilePath jenkinsBuildRoot)
             throws IOException, InterruptedException {
         int copied = 0;
         int notFound = 0;
         int error = 0;
 
-        Set<String> files = issues.getFiles();
+        Set<String> files = report.getFiles();
         for (String file : files) {
             if (exists(file)) {
                 FilePath directory = ensureThatBuildDirectoryExists(jenkinsBuildRoot);
@@ -78,10 +78,10 @@ public class AffectedFilesResolver {
                         + "%d copied, %d not-found, %d with I/O error", files.size(), jenkinsBuildRoot.getRemote(),
                 copied, notFound, error);
         if (error > 0 || notFound > 0) {
-            issues.logError(message);
+            report.logError(message);
         }
         else {
-            issues.logInfo(message);
+            report.logInfo(message);
         }
     }
 

@@ -7,7 +7,7 @@ import io.jenkins.plugins.analysis.core.views.ResultAction;
 import hudson.model.Result;
 import hudson.model.Run;
 
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 
 /**
  * Find the last available analysis run for the specified job. You can specify if the overall result of the run should
@@ -52,10 +52,10 @@ public class OtherJobReferenceFinder extends ReferenceFinder {
     }
 
     @Override
-    public Issues getIssues() {
+    public Report getIssues() {
         return getReferenceAction()
                 .map(resultAction -> resultAction.getResult().getIssues())
-                .orElse(new Issues());
+                .orElse(new Report());
     }
 
     @Override

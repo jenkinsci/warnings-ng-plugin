@@ -16,7 +16,7 @@ import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.data.category.CategoryDataset;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 
@@ -93,8 +93,8 @@ public class AnnotationsByUserGraph extends BuildResultGraph {
 
     private void mergeResults(final Optional<AnalysisResult> current, final Map<String, Integer[]> annotationCountByUser) {
         current.ifPresent(analysisResult -> {
-            Issues issues = analysisResult.getOutstandingIssues();
-            for (Issue annotation : issues) {
+            Report report = analysisResult.getOutstandingIssues();
+            for (Issue annotation : report) {
 //                String author = annotation.getAuthor(); FIXME: no author anymore
                 String author = "FIXME";
                 if (StringUtils.isNotBlank(author) && !"-".equals(author)) {

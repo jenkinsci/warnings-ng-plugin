@@ -7,7 +7,7 @@ import io.jenkins.plugins.analysis.core.views.ResultAction;
 import hudson.model.Result;
 import hudson.model.Run;
 
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 
 /**
  * Finds a previous result of an analysis run for the same software artifact. Selection of the previous result is
@@ -71,9 +71,9 @@ public abstract class ReferenceFinder extends BuildHistory implements ReferenceP
     }
 
     @Override
-    public Issues getIssues() {
+    public Report getIssues() {
         return getReferenceAction()
                 .map(resultAction -> resultAction.getResult().getIssues())
-                .orElseGet(Issues::new);
+                .orElseGet(Report::new);
     }
 }

@@ -13,7 +13,7 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
@@ -39,10 +39,10 @@ import hudson.plugins.analysis.core.GlobalSettings;
 public class IssuesDetail implements ModelObject {
     private final Run<?, ?> owner;
 
-    private final Issues issues;
-    private final Issues newIssues;
-    private final Issues outstandingIssues;
-    private final Issues fixedIssues;
+    private final Report report;
+    private final Report newIssues;
+    private final Report outstandingIssues;
+    private final Report fixedIssues;
 
     private final Charset sourceEncoding;
     private final String displayName;
@@ -61,7 +61,7 @@ public class IssuesDetail implements ModelObject {
      *         the associated build/run of this view
      * @param result
      *         the analysis result
-     * @param issues
+     * @param report
      *         all issues that should be shown in this details view
      * @param outstandingIssues
      *         all outstanding issues
@@ -80,14 +80,14 @@ public class IssuesDetail implements ModelObject {
      */
     @SuppressWarnings("ParameterNumber")
     public IssuesDetail(final Run<?, ?> owner, final AnalysisResult result,
-            final Issues issues, final Issues newIssues,
-            final Issues outstandingIssues, final Issues fixedIssues,
+            final Report report, final Report newIssues,
+            final Report outstandingIssues, final Report fixedIssues,
             final String displayName, final String url, final StaticAnalysisLabelProvider labelProvider,
             final Charset sourceEncoding) {
         this.owner = owner;
         this.result = result;
 
-        this.issues = issues;
+        this.report = report;
         this.fixedIssues = fixedIssues;
         this.newIssues = newIssues;
         this.outstandingIssues = outstandingIssues;
@@ -140,7 +140,7 @@ public class IssuesDetail implements ModelObject {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public JSONObject getTableModel() {
-        return labelProvider.toJsonArray(getIssues(), new DefaultAgeBuilder(owner.getNumber(), getUrl()));
+        return labelProvider.toJsonArray(getReport(), new DefaultAgeBuilder(owner.getNumber(), getUrl()));
     }
 
     /**
@@ -149,8 +149,8 @@ public class IssuesDetail implements ModelObject {
      * @return all issues
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public Issues getIssues() {
-        return issues;
+    public Report getReport() {
+        return report;
     }
 
     /**
@@ -160,7 +160,7 @@ public class IssuesDetail implements ModelObject {
      * @return all new issues
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public Issues getNewIssues() {
+    public Report getNewIssues() {
         return newIssues;
     }
 
@@ -171,7 +171,7 @@ public class IssuesDetail implements ModelObject {
      * @return all fixed issues
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public Issues getFixedIssues() {
+    public Report getFixedIssues() {
         return fixedIssues;
     }
 
@@ -182,7 +182,7 @@ public class IssuesDetail implements ModelObject {
      * @return all outstanding issues
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public Issues getOutstandingIssues() {
+    public Report getOutstandingIssues() {
         return outstandingIssues;
     }
 
@@ -232,7 +232,7 @@ public class IssuesDetail implements ModelObject {
      */
     @SuppressWarnings("unused") // Called by jelly view
     public TabLabelProvider getTabLabelProvider() {
-        return new TabLabelProvider(getIssues());
+        return new TabLabelProvider(getReport());
     }
 
     /**
@@ -286,7 +286,7 @@ public class IssuesDetail implements ModelObject {
         else {
             propertyFormatter = Function.identity();
         }
-        return new PropertyStatistics(issues, propertyName, propertyFormatter);
+        return new PropertyStatistics(report, propertyName, propertyFormatter);
     }
 
     @Override
@@ -310,7 +310,7 @@ public class IssuesDetail implements ModelObject {
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
         try {
             return new DetailFactory().createTrendDetails(link, owner, result,
-                    issues, newIssues, outstandingIssues, fixedIssues,
+                    report, newIssues, outstandingIssues, fixedIssues,
                     sourceEncoding, this);
         }
         catch (NoSuchElementException ignored) {

@@ -13,7 +13,7 @@ import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
@@ -115,7 +115,7 @@ public class ScanForIssuesStep extends Step {
     /**
      * Actually performs the execution of the associated step.
      */
-    public static class Execution extends AnalysisExecution<Issues> {
+    public static class Execution extends AnalysisExecution<Report> {
         private final String reportEncoding;
         private final String sourceCodeEncoding;
         private final StaticAnalysisTool tool;
@@ -131,7 +131,7 @@ public class ScanForIssuesStep extends Step {
         }
 
         @Override
-        protected Issues run() throws IOException, InterruptedException, IllegalStateException {
+        protected Report run() throws IOException, InterruptedException, IllegalStateException {
             IssuesScanner issuesScanner = new IssuesScanner(tool, getWorkspace(), getReportCharset(),
                     getSourceCodeCharset(), new LogHandler(getTaskListener(), tool.getName()));
             return issuesScanner.scan(pattern, getRun().getLogFile());

@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator.FileSystem;
 import static org.mockito.Mockito.*;
@@ -33,20 +33,20 @@ class AbsolutePathGeneratorTest {
     @ParameterizedTest(name = "[{index}] Illegal filename = {0}")
     @ValueSource(strings = {"/does/not/exist", "!<>$$&%/&(", "\0 Null-Byte"})
     void shouldReturnFallbackOnError(final String fileName) {
-        Issues issues = createIssuesSingleton(fileName, ISSUE_BUILDER);
+        Report report = createIssuesSingleton(fileName, ISSUE_BUILDER);
 
-        new AbsolutePathGenerator().run(issues, WORKSPACE);
+        new AbsolutePathGenerator().run(report, WORKSPACE);
 
-        assertThat(issues.iterator()).containsExactly(issues.get(0));
-        assertThat(issues).hasOrigin(ID);
+        assertThat(report.iterator()).containsExactly(report.get(0));
+        assertThat(report).hasOrigin(ID);
     }
 
-    private Issues createIssuesSingleton(final String fileName, final IssueBuilder issueBuilder) {
-        Issues issues = new Issues();
+    private Report createIssuesSingleton(final String fileName, final IssueBuilder issueBuilder) {
+        Report report = new Report();
         Issue issue = issueBuilder.setFileName(fileName).build();
-        issues.add(issue);
-        issues.setOrigin(ID);
-        return issues;
+        report.add(issue);
+        report.setOrigin(ID);
+        return report;
     }
 
     @ParameterizedTest(name = "[{index}] File name = {0}")
@@ -58,26 +58,26 @@ class AbsolutePathGeneratorTest {
         when(fileSystem.resolveFile(fileName, WORKSPACE)).thenReturn(absolutePath);
         when(fileSystem.isRelative(fileName)).thenReturn(true);
 
-        Issues issues = createIssuesSingleton(fileName, ISSUE_BUILDER.setOrigin(ID));
+        Report report = createIssuesSingleton(fileName, ISSUE_BUILDER.setOrigin(ID));
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator(fileSystem);
-        generator.run(issues, WORKSPACE);
+        generator.run(report, WORKSPACE);
 
-        assertThat(issues.iterator()).containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build());
-        assertThat(issues).hasOrigin(ID);
-        assertThat(issues.getInfoMessages()).hasSize(1);
-        assertThat(issues.getInfoMessages().get(0)).contains("1 resolved");
+        assertThat(report.iterator()).containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build());
+        assertThat(report).hasOrigin(ID);
+        assertThat(report.getInfoMessages()).hasSize(1);
+        assertThat(report.getInfoMessages().get(0)).contains("1 resolved");
     }
 
     @Test
     void shouldDoNothingIfNoIssuesPresent() {
         AbsolutePathGenerator generator = new AbsolutePathGenerator();
-        Issues issues = new Issues();
-        issues.setOrigin(ID);
-        generator.run(issues, WORKSPACE);
-        assertThat(issues).hasSize(0);
-        assertThat(issues).hasOrigin(ID);
-        assertThat(issues.getInfoMessages()).containsExactly(AbsolutePathGenerator.NOTHING_TO_DO);
+        Report report = new Report();
+        report.setOrigin(ID);
+        generator.run(report, WORKSPACE);
+        assertThat(report).hasSize(0);
+        assertThat(report).hasOrigin(ID);
+        assertThat(report.getInfoMessages()).containsExactly(AbsolutePathGenerator.NOTHING_TO_DO);
     }
 
     /**
@@ -93,20 +93,20 @@ class AbsolutePathGeneratorTest {
         when(fileSystem.isRelative(absolutePath)).thenReturn(false);
         when(fileSystem.isRelative(relative)).thenReturn(true);
 
-        Issues issues = createIssuesSingleton(relative, ISSUE_BUILDER.setOrigin(ID));
+        Report report = createIssuesSingleton(relative, ISSUE_BUILDER.setOrigin(ID));
         Issue issueWithAbsolutePath = ISSUE_BUILDER.setFileName("/absolute/path.txt").build();
-        issues.add(issueWithAbsolutePath);
+        report.add(issueWithAbsolutePath);
         Issue issueWithSelfReference = ISSUE_BUILDER.setFileName(IssueParser.SELF).build();
-        issues.add(issueWithSelfReference);
+        report.add(issueWithSelfReference);
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator(fileSystem);
-        generator.run(issues, WORKSPACE);
+        generator.run(report, WORKSPACE);
 
-        assertThat(issues.iterator())
+        assertThat(report.iterator())
                 .containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build(),
                         issueWithAbsolutePath, issueWithSelfReference);
-        assertThat(issues).hasOrigin(ID);
-        assertThat(issues.getInfoMessages()).hasSize(1);
-        assertThat(issues.getInfoMessages().get(0)).contains("2 already absolute");
+        assertThat(report).hasOrigin(ID);
+        assertThat(report.getInfoMessages()).hasSize(1);
+        assertThat(report.getInfoMessages().get(0)).contains("2 already absolute");
     }
 }

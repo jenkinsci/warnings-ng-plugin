@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.ModuleDetector;
 import edu.hm.hafner.analysis.ModuleDetector.FileSystem;
 import edu.hm.hafner.analysis.PackageNameResolver;
@@ -48,7 +48,7 @@ class IssuesScanner {
         this.logger = logger;
     }
 
-    public Issues scan(final String pattern, final File consoleLog) throws IOException, InterruptedException {
+    public Report scan(final String pattern, final File consoleLog) throws IOException, InterruptedException {
         if (StringUtils.isBlank(pattern)) {
             String defaultPattern = tool.getDescriptor().getPattern();
             if (defaultPattern.isEmpty()) {
@@ -75,12 +75,12 @@ class IssuesScanner {
      * @throws IOException
      *         if something goes wrong
      */
-    public Issues scanInWorkspace(final String pattern) throws InterruptedException, IOException {
-        Issues issues = workspace.act(new FilesScanner(pattern, tool.createParser(), logFileEncoding.name()));
+    public Report scanInWorkspace(final String pattern) throws InterruptedException, IOException {
+        Report report = workspace.act(new FilesScanner(pattern, tool.createParser(), logFileEncoding.name()));
 
-        logger.log(issues);
+        logger.log(report);
 
-        return postProcess(issues);
+        return postProcess(report);
     }
 
     /**
@@ -89,7 +89,7 @@ class IssuesScanner {
      * @param consoleLog
      *         file containing the console log
      */
-    public Issues scanInConsoleLog(final File consoleLog) {
+    public Report scanInConsoleLog(final File consoleLog) {
         Ensure.that(tool.canScanConsoleLog()).isTrue(
                 "Static analysis tool %s cannot scan console log output, please define a file pattern",
                 tool.getName());
@@ -98,11 +98,11 @@ class IssuesScanner {
 
         logger.log("Parsing console log (workspace: '%s')", workspace);
 
-        Issues issues = tool.createParser().parse(consoleLog, logFileEncoding, ConsoleNote::removeNotes);
+        Report report = tool.createParser().parse(consoleLog, logFileEncoding, ConsoleNote::removeNotes);
 
-        logger.log(issues);
+        logger.log(report);
 
-        return postProcess(issues);
+        return postProcess(report);
     }
 
     private void waitForConsoleToFlush() {
@@ -115,53 +115,53 @@ class IssuesScanner {
         }
     }
 
-    private Issues postProcess(final Issues issues) {
-        issues.setOrigin(tool.getId());
-        issues.forEach(issue -> issue.setOrigin(tool.getId()));
+    private Report postProcess(final Report report) {
+        report.setOrigin(tool.getId());
+        report.forEach(issue -> issue.setOrigin(tool.getId()));
 
-        resolveAbsolutePaths(issues);
-        resolveModuleNames(issues);
-        resolvePackageNames(issues);
-        createFingerprints(issues);
+        resolveAbsolutePaths(report);
+        resolveModuleNames(report);
+        resolvePackageNames(report);
+        createFingerprints(report);
 
-        return issues;
+        return report;
     }
 
-    private void resolveAbsolutePaths(final Issues issues) {
+    private void resolveAbsolutePaths(final Report report) {
         logger.log("Resolving absolute file names for all issues");
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator();
-        generator.run(issues, workspace);
+        generator.run(report, workspace);
 
-        logger.log(issues);
+        logger.log(report);
     }
 
-    private void resolveModuleNames(final Issues issues) {
+    private void resolveModuleNames(final Report report) {
         logger.log("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
 
         ModuleResolver resolver = new ModuleResolver();
         File workspaceAsFile = new File(workspace.getRemote());
-        resolver.run(issues, workspaceAsFile, new ModuleDetector(workspaceAsFile, new DefaultFileSystem()));
+        resolver.run(report, new ModuleDetector(workspaceAsFile, new DefaultFileSystem()));
 
-        logger.log(issues);
+        logger.log(report);
     }
 
-    private void resolvePackageNames(final Issues issues) {
+    private void resolvePackageNames(final Report report) {
         logger.log("Using encoding '%s' to resolve package names (or namespaces)", sourceCodeEncoding);
 
         PackageNameResolver resolver = new PackageNameResolver();
-        resolver.run(issues, new IssueBuilder(), sourceCodeEncoding);
+        resolver.run(report, new IssueBuilder(), sourceCodeEncoding);
 
-        logger.log(issues);
+        logger.log(report);
     }
 
-    private void createFingerprints(final Issues issues) {
+    private void createFingerprints(final Report report) {
         logger.log("Using encoding '%s' to read source files", sourceCodeEncoding);
 
         FingerprintGenerator generator = new FingerprintGenerator();
-        generator.run(new FullTextFingerprint(), issues, sourceCodeEncoding);
+        generator.run(new FullTextFingerprint(), report, sourceCodeEncoding);
 
-        logger.log(issues);
+        logger.log(report);
     }
 
     /**

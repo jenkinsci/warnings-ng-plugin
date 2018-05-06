@@ -7,7 +7,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import jenkins.MasterToSlaveFileCallable;
@@ -17,12 +17,12 @@ import hudson.remoting.VirtualChannel;
 
 /**
  * Scans files that match a specified Ant files pattern for issues and aggregates the found issues into a single {@link
- * Issues issues} instance. This callable will be invoked on a slave agent so all fields and the returned issues need to
+ * Report issues} instance. This callable will be invoked on a slave agent so all fields and the returned issues need to
  * be {@link Serializable}.
  *
  * @author Ulli Hafner
  */
-public class FilesScanner extends MasterToSlaveFileCallable<Issues> {
+public class FilesScanner extends MasterToSlaveFileCallable<Report> {
     private final String filePattern;
     private final IssueParser parser;
     private final String encoding;
@@ -44,24 +44,24 @@ public class FilesScanner extends MasterToSlaveFileCallable<Issues> {
     }
 
     @Override
-    public Issues invoke(final File workspace, final VirtualChannel channel) {
-        Issues issues = new Issues();
-        issues.logInfo("Searching for all files in '%s' that match the pattern '%s'",
+    public Report invoke(final File workspace, final VirtualChannel channel) {
+        Report report = new Report();
+        report.logInfo("Searching for all files in '%s' that match the pattern '%s'",
                 workspace.getAbsolutePath(), filePattern);
 
         String[] fileNames = new FileFinder(filePattern).find(workspace);
         if (fileNames.length == 0) {
-            issues.logError("No files found for pattern '%s'. Configuration error?", filePattern);
+            report.logError("No files found for pattern '%s'. Configuration error?", filePattern);
         }
         else {
-            issues.logInfo("-> found %s", plural(fileNames.length, "file"));
-            scanFiles(workspace, fileNames, issues);
+            report.logInfo("-> found %s", plural(fileNames.length, "file"));
+            scanFiles(workspace, fileNames, report);
         }
 
-        return issues;
+        return report;
     }
 
-    private void scanFiles(final File workspace, final String[] fileNames, final Issues issues) {
+    private void scanFiles(final File workspace, final String[] fileNames, final Report report) {
         for (String fileName : fileNames) {
             File file = new File(fileName);
 
@@ -70,30 +70,30 @@ public class FilesScanner extends MasterToSlaveFileCallable<Issues> {
             }
 
             if (!file.canRead()) {
-                issues.logError("Skipping file '%s' because Jenkins has no permission to read the file.", fileName);
+                report.logError("Skipping file '%s' because Jenkins has no permission to read the file.", fileName);
             }
             else if (file.length() <= 0) {
-                issues.logError("Skipping file '%s' because it's empty.", fileName);
+                report.logError("Skipping file '%s' because it's empty.", fileName);
             }
             else {
-                aggregateIssuesOfFile(file, issues);
+                aggregateIssuesOfFile(file, report);
             }
         }
     }
 
-    private void aggregateIssuesOfFile(final File file, final Issues issues) {
+    private void aggregateIssuesOfFile(final File file, final Report report) {
         try {
-            Issues result = parser.parse(file, EncodingValidator.defaultCharset(encoding));
-            issues.addAll(result);
-            issues.logInfo("Successfully parsed file %s: found %s (skipped %s)", file,
-                    plural(issues.getSize(), "issue"),
-                    plural(issues.getDuplicatesSize(), "duplicate"));
+            Report result = parser.parse(file, EncodingValidator.defaultCharset(encoding));
+            report.addAll(result);
+            report.logInfo("Successfully parsed file %s: found %s (skipped %s)", file,
+                    plural(report.getSize(), "issue"),
+                    plural(report.getDuplicatesSize(), "duplicate"));
         }
         catch (ParsingException exception) {
-            issues.logError("Parsing of file '%s' failed due to an exception: \n\n%s", file, getStackTrace(exception));
+            report.logError("Parsing of file '%s' failed due to an exception: \n\n%s", file, getStackTrace(exception));
         }
         catch (ParsingCanceledException ignored) {
-            issues.logInfo("Parsing of file %s has been canceled", file);
+            report.logInfo("Parsing of file %s has been canceled", file);
         }
     }
 

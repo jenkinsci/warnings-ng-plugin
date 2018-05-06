@@ -12,7 +12,7 @@ import static org.mockito.Mockito.*;
 
 import hudson.model.Run;
 
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 
 /**
  * Tests the class {@link OtherJobReferenceFinder}.
@@ -29,7 +29,7 @@ class OtherJobReferenceFinderTest {
         ResultAction action = mock(ResultAction.class);
 
         AnalysisResult result = mock(AnalysisResult.class);
-        when(result.getIssues()).thenReturn(new Issues());
+        when(result.getIssues()).thenReturn(new Report());
 
         when(action.getOwner()).thenReturn(run);
         when(action.getResult()).thenReturn(result);

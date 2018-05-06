@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:i="/issues">
   <st:documentation>
     Renders issues in a list.
-    <st:attribute name="issues" use="required" type="edu.hm.hafner.analysis.Issues">
+    <st:attribute name="issues" use="required" type="edu.hm.hafner.analysis.Report">
       The issues to show.
     </st:attribute>
     <st:attribute name="labelProvider" use="required" type="io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider">

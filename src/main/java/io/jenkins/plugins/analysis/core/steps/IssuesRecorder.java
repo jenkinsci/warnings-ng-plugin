@@ -17,7 +17,7 @@ import org.kohsuke.stapler.QueryParameter;
 
 import com.google.common.collect.Lists;
 
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
@@ -453,7 +453,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             final TaskListener listener)
             throws IOException, InterruptedException {
         if (isAggregatingResults) {
-            Issues totalIssues = new Issues();
+            Report totalIssues = new Report();
             for (ToolConfiguration toolConfiguration : tools) {
                 totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
             }
@@ -462,13 +462,13 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         }
         else {
             for (ToolConfiguration toolConfiguration : tools) {
-                Issues issues = scanWithTool(run, workspace, listener, toolConfiguration);
-                publishResult(run, workspace, launcher, listener, issues, StringUtils.EMPTY);
+                Report report = scanWithTool(run, workspace, listener, toolConfiguration);
+                publishResult(run, workspace, launcher, listener, report, StringUtils.EMPTY);
             }
         }
     }
 
-    private Issues scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
+    private Report scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final ToolConfiguration toolConfiguration)
             throws IOException, InterruptedException {
         ToolConfiguration configuration = toolConfiguration;
@@ -487,12 +487,12 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     private void publishResult(final Run<?, ?> run, final FilePath workspace, final Launcher launcher,
-            final TaskListener listener, final Issues issues, final String name)
+            final TaskListener listener, final Report report, final String name)
             throws IOException, InterruptedException {
-        IssuesPublisher publisher = new IssuesPublisher(run, issues, getFilters(),
+        IssuesPublisher publisher = new IssuesPublisher(run, report, getFilters(),
                 new HealthDescriptor(healthy, unHealthy, minimumPriority), new QualityGate(thresholds), workspace,
                 name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess, getSourceCodeCharset(),
-                new LogHandler(listener, issues.getOrigin()));
+                new LogHandler(listener, report.getOrigin()));
 
         VirtualChannel channel = launcher.getChannel();
         if (channel != null) {

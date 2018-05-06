@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 
 /**
  * Provides localized labels for the different categories of issues.
@@ -12,19 +12,19 @@ import edu.hm.hafner.analysis.Issues;
  * @author Ullrich Hafner
  */
 public class TabLabelProvider {
-    private final Issues issues;
+    private final Report report;
 
     /**
      * Creates a new {@link TabLabelProvider}.
      *
-     * @param issues
+     * @param report
      *         the issues to show in the tabs
      */
-    public TabLabelProvider(final Issues issues) {
-        this.issues = issues;
+    public TabLabelProvider(final Report report) {
+        this.report = report;
     }
 
-    public String getIssues() {
+    public String getReport() {
         return Messages.Tab_Issues();
     }
 
@@ -91,8 +91,8 @@ public class TabLabelProvider {
     }
 
     private String getPackageOrNamespace(final String packageText, final String nameSpaceText, final String fallback) {
-        if (issues.isNotEmpty()) {
-            Set<String> fileTypes = issues.getProperties(
+        if (report.isNotEmpty()) {
+            Set<String> fileTypes = report.getProperties(
                     issue -> StringUtils.substringAfterLast(issue.getFileName(), "."));
             if (fileTypes.contains("cs")) {
                 return nameSpaceText;

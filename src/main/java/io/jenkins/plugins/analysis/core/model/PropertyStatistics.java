@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 
 /**
@@ -14,7 +14,7 @@ import edu.hm.hafner.analysis.Severity;
  * @author Ulli Hafner
  */
 public class PropertyStatistics {
-    private final Map<String, ? extends Issues> issuesByProperty;
+    private final Map<String, ? extends Report> issuesByProperty;
     private final Function<String, String> propertyFormatter;
     private final String property;
     private final int total;
@@ -22,19 +22,19 @@ public class PropertyStatistics {
     /**
      * Creates a new instance of {@link PropertyStatistics}.
      *
-     * @param issues
+     * @param report
      *         the issues that should be grouped by property
      * @param property
      *         the property to show the details for
      * @param propertyFormatter
      *         the formatter that show the property
      */
-    public PropertyStatistics(final Issues issues,
+    public PropertyStatistics(final Report report,
             final String property, final Function<String, String> propertyFormatter) {
         this.property = property;
         this.propertyFormatter = propertyFormatter;
-        issuesByProperty = issues.groupByProperty(property);
-        total = issues.size();
+        issuesByProperty = report.groupByProperty(property);
+        total = report.size();
     }
 
     /**
@@ -82,7 +82,7 @@ public class PropertyStatistics {
      * @return the maximum number of issues
      */
     public int getMax() {
-        return issuesByProperty.values().stream().mapToInt(Issues::size).max().orElse(0);
+        return issuesByProperty.values().stream().mapToInt(Report::size).max().orElse(0);
     }
 
     /**

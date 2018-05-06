@@ -8,8 +8,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import hudson.model.Run;
 import hudson.plugins.analysis.Messages;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 
 /**
  * Result object to visualize the fixed issues in a build/run.
@@ -17,7 +16,7 @@ import edu.hm.hafner.analysis.Issues;
  * @author Ulli Hafner
  */
 public class FixedWarningsDetail extends IssuesDetail {
-    private static final Issues NO_ISSUES = new Issues();
+    private static final Report NO_ISSUES = new Report();
 
     /**
      * Creates a new instance of {@code FixedWarningsDetail}.
@@ -35,7 +34,7 @@ public class FixedWarningsDetail extends IssuesDetail {
      * @param sourceEncoding
      *         the encoding to use when displaying source files
      */
-    public FixedWarningsDetail(final Run<?, ?> owner, final AnalysisResult result, final Issues fixedIssues,
+    public FixedWarningsDetail(final Run<?, ?> owner, final AnalysisResult result, final Report fixedIssues,
             final String url, final StaticAnalysisLabelProvider labelProvider, final Charset sourceEncoding) {
         super(owner, result, fixedIssues, fixedIssues, NO_ISSUES, NO_ISSUES, Messages.FixedWarningsDetail_Name(),
                 url, labelProvider, sourceEncoding);

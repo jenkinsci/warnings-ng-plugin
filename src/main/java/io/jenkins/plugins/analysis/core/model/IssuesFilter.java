@@ -2,14 +2,14 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.io.Serializable;
 
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 
 /**
- * Base class for include filters for {@link Issues} that use a regular expression to filter the issues for a specific
+ * Base class for include filters for {@link Report} that use a regular expression to filter the issues for a specific
  * property.
  *
  * @author Ullrich Hafner

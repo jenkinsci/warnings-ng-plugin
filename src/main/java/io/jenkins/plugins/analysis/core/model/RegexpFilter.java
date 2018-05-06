@@ -8,11 +8,11 @@ import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 
 /**
- * Defines a filter criteria based on a regular expression for {@link Issues}.
+ * Defines a filter criteria based on a regular expression for {@link Report}.
  *
  * @author Ulli Hafner
  */

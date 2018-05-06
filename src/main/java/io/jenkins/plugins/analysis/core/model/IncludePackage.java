@@ -4,13 +4,13 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 
 import hudson.Extension;
 
 /**
- * Defines a filter criteria for {@link Issues}.
+ * Defines a filter criteria for {@link Report}.
  *
  * @author Ulli Hafner
  */

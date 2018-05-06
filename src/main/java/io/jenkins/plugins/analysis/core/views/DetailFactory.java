@@ -9,7 +9,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -24,7 +24,7 @@ import hudson.model.Run;
  * @author Ulli Hafner
  */
 public class DetailFactory {
-    private static final Issues EMPTY = new Issues();
+    private static final Report EMPTY = new Report();
 
     /**
      * Returns a detail object for the selected element for the specified issues.
@@ -51,8 +51,8 @@ public class DetailFactory {
      * @return the dynamic result of this module detail view
      */
     public Object createTrendDetails(final String link, final Run<?, ?> owner, final AnalysisResult result,
-            final Issues allIssues, final Issues newIssues,
-            final Issues outstandingIssues, final Issues fixedIssues,
+            final Report allIssues, final Report newIssues,
+            final Report outstandingIssues, final Report fixedIssues,
             final Charset sourceEncoding, final IssuesDetail parent) {
         StaticAnalysisLabelProvider labelProvider = parent.getLabelProvider();
         String plainLink = strip(link);
@@ -102,7 +102,7 @@ public class DetailFactory {
 
         String property = StringUtils.substringBefore(link, ".");
         Predicate<Issue> filter = createPropertyFilter(plainLink, property);
-        Issues selectedIssues = allIssues.filter(filter);
+        Report selectedIssues = allIssues.filter(filter);
         if (selectedIssues.isEmpty()) {
             return parent; // fallback
         }
@@ -119,7 +119,7 @@ public class DetailFactory {
                 Issue.getPropertyValueAsString(issue, property).hashCode()));
     }
 
-    private String getDisplayNameOfDetails(final String property, final Issues selectedIssues) {
+    private String getDisplayNameOfDetails(final String property, final Report selectedIssues) {
         return getColumnHeaderFor(selectedIssues, property)
                 + " "
                 + Issue.getPropertyValueAsString(selectedIssues.get(0), property);
@@ -131,12 +131,12 @@ public class DetailFactory {
 
     private IssuesDetail createPrioritiesDetail(final Run<?, ?> owner,
             final AnalysisResult result, final Severity severity,
-            final Issues issues, final Issues fixedIssues, final Issues newIssues,
-            final Issues outstandingIssues, final String url, final StaticAnalysisLabelProvider labelProvider,
+            final Report report, final Report fixedIssues, final Report newIssues,
+            final Report outstandingIssues, final String url, final StaticAnalysisLabelProvider labelProvider,
             final Charset sourceEncoding) {
         Predicate<Issue> priorityFilter = issue -> issue.getSeverity() == severity;
         return new IssuesDetail(owner, result,
-                issues.filter(priorityFilter),
+                report.filter(priorityFilter),
                 newIssues.filter(priorityFilter),
                 outstandingIssues.filter(priorityFilter),
                 fixedIssues.filter(priorityFilter), LocalizedSeverity.getLongLocalizedString(severity), url,
@@ -151,9 +151,9 @@ public class DetailFactory {
      *
      * @return the function that obtains the value
      */
-    private String getColumnHeaderFor(final Issues issues, final String propertyName) {
+    private String getColumnHeaderFor(final Report report, final String propertyName) {
         try {
-            return PropertyUtils.getProperty(new TabLabelProvider(issues), propertyName).toString();
+            return PropertyUtils.getProperty(new TabLabelProvider(report), propertyName).toString();
         }
         catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ignored) {
             return "Element";

@@ -18,7 +18,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Priority;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -50,7 +50,7 @@ import hudson.remoting.VirtualChannel;
 public class PublishIssuesStep extends Step {
     private static final Priority DEFAULT_MINIMUM_PRIORITY = Priority.LOW;
 
-    private final Issues issues;
+    private final Report report;
 
     private boolean ignoreAnalysisResult;
     private boolean overallResultMustBeSuccess;
@@ -73,20 +73,20 @@ public class PublishIssuesStep extends Step {
      *         the issues to publish as {@link Action} in the {@link Job}.
      */
     @DataBoundConstructor
-    public PublishIssuesStep(final Issues... issues) {
+    public PublishIssuesStep(final Report... issues) {
         if (issues == null || issues.length == 0) {
-            this.issues = new Issues();
+            this.report = new Report();
         }
         else {
-            this.issues = new Issues();
-            for (Issues issueSet : issues) {
-                this.issues.addAll(issueSet);
+            this.report = new Report();
+            for (Report issueSet : issues) {
+                this.report.addAll(issueSet);
             }
         }
     }
 
-    public Issues getIssues() {
-        return issues;
+    public Report getReport() {
+        return report;
     }
 
     /**
@@ -410,7 +410,7 @@ public class PublishIssuesStep extends Step {
         private final boolean overallResultMustBeSuccess;
         private final boolean ignoreAnalysisResult;
         private final String sourceCodeEncoding;
-        private final Issues issues;
+        private final Report report;
         private final QualityGate qualityGate;
         private final List<RegexpFilter> filters;
         private final String name;
@@ -429,16 +429,16 @@ public class PublishIssuesStep extends Step {
             thresholds = step.getThresholds();
             qualityGate = new QualityGate(thresholds);
             name = StringUtils.defaultString(step.getName());
-            issues = step.getIssues();
+            report = step.getReport();
             if (StringUtils.isNotBlank(step.getId())) {
-                issues.setOrigin(step.getId());
+                report.setOrigin(step.getId());
             }
             filters = step.getFilters();
         }
 
         @Override
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
-            IssuesPublisher publisher = new IssuesPublisher(getRun(), issues, filters, healthDescriptor, qualityGate,
+            IssuesPublisher publisher = new IssuesPublisher(getRun(), report, filters, healthDescriptor, qualityGate,
                     getWorkspace(), name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess,
                     getSourceCodeCharset(), getLogger());
             Optional<VirtualChannel> channel = getChannel();
@@ -452,7 +452,7 @@ public class PublishIssuesStep extends Step {
         }
 
         private LogHandler getLogger() throws InterruptedException {
-            return new LogHandler(getTaskListener(), new LabelProviderFactory().create(issues.getOrigin(), name).getName());
+            return new LogHandler(getTaskListener(), new LabelProviderFactory().create(report.getOrigin(), name).getName());
         }
 
         private Charset getSourceCodeCharset() {

@@ -15,7 +15,7 @@ import net.sf.json.JSONObject;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.util.ResourceTest;
 
@@ -121,11 +121,11 @@ class StaticAnalysisLabelProviderTest {
         void shouldConvertIssuesToJsonArray() {
             Locale.setDefault(Locale.ENGLISH);
 
-            Issues issues = new Issues();
-            issues.add(createIssue(1));
+            Report report = new Report();
+            report.add(createIssue(1));
 
             StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider();
-            JSONObject oneElement = labelProvider.toJsonArray(issues, new DefaultAgeBuilder(1, "url"));
+            JSONObject oneElement = labelProvider.toJsonArray(report, new DefaultAgeBuilder(1, "url"));
 
             assertThatJson(oneElement).node("data").isArray().ofLength(1);
 
@@ -135,8 +135,8 @@ class StaticAnalysisLabelProviderTest {
 
             assertThatColumnsAreValid(columns, 1);
 
-            issues.add(createIssue(2));
-            JSONObject twoElements = labelProvider.toJsonArray(issues, new DefaultAgeBuilder(1, "url"));
+            report.add(createIssue(2));
+            JSONObject twoElements = labelProvider.toJsonArray(report, new DefaultAgeBuilder(1, "url"));
 
             assertThatJson(twoElements).node("data").isArray().ofLength(2);
 

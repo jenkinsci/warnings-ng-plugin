@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.core.model;
 import java.util.Optional;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 
 /**
  * Computes old, new, and fixed issues based on the reports of two consecutive static analysis runs for the same
@@ -12,9 +12,9 @@ import edu.hm.hafner.analysis.Issues;
  * @author Ullrich Hafner
  */
 public class IssueDifference {
-    private final Issues newIssues;
-    private final Issues fixedIssues;
-    private final Issues outstandingIssues;
+    private final Report newIssues;
+    private final Report fixedIssues;
+    private final Report outstandingIssues;
 
     /**
      * Creates a new instance of {@link IssueDifference}.
@@ -26,11 +26,11 @@ public class IssueDifference {
      * @param referenceIssues
      *         the issues of a previous report (reference)
      */
-    public IssueDifference(final Issues currentIssues, final int currentBuildNumber,
-            final Issues referenceIssues) {
+    public IssueDifference(final Report currentIssues, final int currentBuildNumber,
+            final Report referenceIssues) {
         newIssues = currentIssues.copy();
         fixedIssues = referenceIssues.copy();
-        outstandingIssues = new Issues();
+        outstandingIssues = new Report();
 
         for (Issue current : currentIssues) {
             Optional<Issue> referenceToRemove = findReferenceByEquals(current);
@@ -74,7 +74,7 @@ public class IssueDifference {
      *
      * @return the outstanding issues
      */
-    public Issues getOutstandingIssues() {
+    public Report getOutstandingIssues() {
         return outstandingIssues;
     }
 
@@ -84,7 +84,7 @@ public class IssueDifference {
      *
      * @return the new issues
      */
-    public Issues getNewIssues() {
+    public Report getNewIssues() {
         return newIssues;
     }
 
@@ -94,7 +94,7 @@ public class IssueDifference {
      *
      * @return the fixed issues
      */
-    public Issues getFixedIssues() {
+    public Report getFixedIssues() {
         return fixedIssues;
     }
 }
