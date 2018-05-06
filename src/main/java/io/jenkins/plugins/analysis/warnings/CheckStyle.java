@@ -4,16 +4,14 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
+import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyleRules;
 
-import static hudson.plugins.warnings.WarningsDescriptor.*;
-
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
 
 /**
  * Provides a parser and customized messages for CheckStyle.
@@ -89,6 +87,11 @@ public class CheckStyle extends StaticAnalysisTool {
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new LabelProvider(rules);
+        }
+
+        @Override
+        public String getPattern() {
+            return "**/checkstyle-result.xml";
         }
     }
 }
