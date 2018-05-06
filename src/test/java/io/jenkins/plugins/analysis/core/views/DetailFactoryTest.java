@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.views;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
 import hudson.model.Job;
@@ -29,6 +30,12 @@ import static org.mockito.Mockito.when;
  */
 class DetailFactoryTest {
 
+    IssueBuilder builder = new IssueBuilder();
+    private final Issues allIssues = issueWithPriorityDeliveryService(3, 2, 1, "all");
+    private final Issues newIssues = issueWithPriorityDeliveryService(3, 2, 1, "new");
+    private final Issues outstandingIssues = issueWithPriorityDeliveryService(3, 2, 1, "outstanding");
+    private final Issues fixedIssues = issueWithPriorityDeliveryService(3, 2, 1, "fixed");
+
     /**
      * Checks that a link to the fixed view, returns a FixedWarningsDetail-View
      */
@@ -37,16 +44,14 @@ class DetailFactoryTest {
         DetailFactory detailFactory = new DetailFactory();
         Run<?, ?> owner = mock(Run.class);
         AnalysisResult result = mock(AnalysisResult.class);
-        Issues<?> allIssues = mock(Issues.class);
-        Issues<?> newIssues = mock(Issues.class);
-        Issues<?> outstandingIssues = mock(Issues.class);
-        Issues<?> fixedIssues = mock(Issues.class);
         Charset sourceEncoding = Charset.defaultCharset();
         IssuesDetail parent = mock(IssuesDetail.class);
+        IssueBuilder builder = new IssueBuilder();
 
         Object fixedWarningsDetail = detailFactory.createTrendDetails("fixed", owner, result, allIssues, newIssues, outstandingIssues, fixedIssues, sourceEncoding, parent);
 
         assertThat(fixedWarningsDetail).isInstanceOf(FixedWarningsDetail.class);
+        assertThat(((FixedWarningsDetail) fixedWarningsDetail).getIssues()).isEqualTo(fixedIssues);
     }
 
     /**
@@ -57,16 +62,14 @@ class DetailFactoryTest {
         DetailFactory detailFactory = new DetailFactory();
         Run<?, ?> owner = mock(Run.class);
         AnalysisResult result = mock(AnalysisResult.class);
-        Issues<?> allIssues = mock(Issues.class);
-        Issues<?> newIssues = mock(Issues.class);
-        Issues<?> outstandingIssues = mock(Issues.class);
-        Issues<?> fixedIssues = mock(Issues.class);
         Charset sourceEncoding = Charset.defaultCharset();
         IssuesDetail parent = mock(IssuesDetail.class);
+        IssueBuilder builder = new IssueBuilder();
 
         Object issuesDetail = detailFactory.createTrendDetails("new", owner, result, allIssues, newIssues, outstandingIssues, fixedIssues, sourceEncoding, parent);
 
         assertThat(issuesDetail).isInstanceOf(IssuesDetail.class);
+        assertThat(((IssuesDetail) issuesDetail).getIssues()).isEqualTo(newIssues);
     }
 
     /**
@@ -77,16 +80,19 @@ class DetailFactoryTest {
         DetailFactory detailFactory = new DetailFactory();
         Run<?, ?> owner = mock(Run.class);
         AnalysisResult result = mock(AnalysisResult.class);
-        Issues<?> allIssues = mock(Issues.class);
-        Issues<?> newIssues = mock(Issues.class);
-        Issues<?> outstandingIssues = mock(Issues.class);
-        Issues<?> fixedIssues = mock(Issues.class);
         Charset sourceEncoding = Charset.defaultCharset();
         IssuesDetail parent = mock(IssuesDetail.class);
+        IssueBuilder builder = new IssueBuilder();
+        fixedIssues.add(builder.setMessage("fixed").build());
+        newIssues.add(builder.setMessage("new").build());
+        outstandingIssues.add(builder.setMessage("outstanding").build());
+        allIssues.add(builder.setMessage("all").build());
 
         Object issuesDetail = detailFactory.createTrendDetails("outstanding", owner, result, allIssues, newIssues, outstandingIssues, fixedIssues, sourceEncoding, parent);
 
         assertThat(issuesDetail).isInstanceOf(IssuesDetail.class);
+        assertThat(((IssuesDetail) issuesDetail).getIssues()).isEqualTo(outstandingIssues);
+
     }
 
     /**
@@ -98,10 +104,6 @@ class DetailFactoryTest {
         Run<?, ?> owner = mock(Run.class);
         AnalysisResult result = mock(AnalysisResult.class);
         List<String> valueList = Arrays.asList("foo", "bar");
-        Issues<?> allIssues = mock(Issues.class);
-        Issues<?> newIssues = mock(Issues.class);
-        Issues<?> outstandingIssues = mock(Issues.class);
-        Issues<?> fixedIssues = mock(Issues.class);
         Charset sourceEncoding = Charset.defaultCharset();
         IssuesDetail parent = mock(IssuesDetail.class);
 
@@ -122,20 +124,17 @@ class DetailFactoryTest {
         Run<?, ?> owner = mock(Run.class);
         AnalysisResult result = mock(AnalysisResult.class);
         @SuppressWarnings("unchecked")
-        Issues<Issue> allIssues = mock(Issues.class);
-        Issues<?> newIssues = mock(Issues.class);
-        Issues<?> outstandingIssues = mock(Issues.class);
-        Issues<?> fixedIssues = mock(Issues.class);
+        Issues<Issue> allIssuesWithUUIDIssue = mock(Issues.class);
         Charset sourceEncoding = Charset.defaultCharset();
         IssuesDetail parent = mock(IssuesDetail.class);
         Issue issueFromUUID = mock(Issue.class);
         File file = File.createTempFile("test", "file");
 
-        when(allIssues.findById(any())).thenReturn(issueFromUUID);
+        when(allIssuesWithUUIDIssue.findById(any())).thenReturn(issueFromUUID);
         when(issueFromUUID.getFileName()).thenReturn("<SELF>");
         when(owner.getLogFile()).thenReturn(file);
 
-        Object consoleDetail = detailFactory.createTrendDetails("source." + UUID.randomUUID().toString(), owner, result, allIssues, newIssues, outstandingIssues, fixedIssues, sourceEncoding, parent);
+        Object consoleDetail = detailFactory.createTrendDetails("source." + UUID.randomUUID().toString(), owner, result, allIssuesWithUUIDIssue, newIssues, outstandingIssues, fixedIssues, sourceEncoding, parent);
         assertThat(consoleDetail).isInstanceOf(ConsoleDetail.class);
     }
 
@@ -148,22 +147,19 @@ class DetailFactoryTest {
         Run<?, ?> owner = mock(Run.class);
         AnalysisResult result = mock(AnalysisResult.class);
         @SuppressWarnings("unchecked")
-        Issues<Issue> allIssues = mock(Issues.class);
-        Issues<?> newIssues = mock(Issues.class);
-        Issues<?> outstandingIssues = mock(Issues.class);
-        Issues<?> fixedIssues = mock(Issues.class);
+        Issues<Issue> allIssuesWithUUIDIssue = mock(Issues.class);
         Charset sourceEncoding = Charset.defaultCharset();
         IssuesDetail parent = mock(IssuesDetail.class);
         Job parentJob = mock(Job.class);
         File file = File.createTempFile("test", "file");
         Issue issueFromUUID = mock(Issue.class);
 
-        when(allIssues.findById(any())).thenReturn(issueFromUUID);
+        when(allIssuesWithUUIDIssue.findById(any())).thenReturn(issueFromUUID);
         when(owner.getParent()).thenAnswer(invocation -> parentJob);
         when(parentJob.getBuildDir()).thenReturn(file);
         when(issueFromUUID.getFileName()).thenReturn("test");
 
-        Object fixedWarningsDetail = detailFactory.createTrendDetails("source." + UUID.randomUUID().toString(), owner, result, allIssues, newIssues, outstandingIssues, fixedIssues, sourceEncoding, parent);
+        Object fixedWarningsDetail = detailFactory.createTrendDetails("source." + UUID.randomUUID().toString(), owner, result, allIssuesWithUUIDIssue, newIssues, outstandingIssues, fixedIssues, sourceEncoding, parent);
         assertThat(fixedWarningsDetail).isInstanceOf(SourceDetail.class);
     }
 
@@ -176,11 +172,6 @@ class DetailFactoryTest {
         Run<?, ?> owner = mock(Run.class);
         AnalysisResult result = mock(AnalysisResult.class);
         List<String> valueList = Arrays.asList("foo", "bar");
-        @SuppressWarnings("unchecked")
-        Issues<Issue> allIssues = mock(Issues.class);
-        Issues<?> newIssues = mock(Issues.class);
-        Issues<?> outstandingIssues = mock(Issues.class);
-        Issues<?> fixedIssues = mock(Issues.class);
         Charset sourceEncoding = Charset.defaultCharset();
         IssuesDetail parent = mock(IssuesDetail.class);
 
@@ -201,11 +192,6 @@ class DetailFactoryTest {
         Run<?, ?> owner = mock(Run.class);
         AnalysisResult result = mock(AnalysisResult.class);
         List<String> valueList = Arrays.asList("foo", "bar");
-        @SuppressWarnings("unchecked")
-        Issues<Issue> allIssues = mock(Issues.class);
-        Issues<?> newIssues = mock(Issues.class);
-        Issues<?> outstandingIssues = mock(Issues.class);
-        Issues<?> fixedIssues = mock(Issues.class);
         Charset sourceEncoding = Charset.defaultCharset();
         IssuesDetail parent = mock(IssuesDetail.class);
 
@@ -226,11 +212,6 @@ class DetailFactoryTest {
         Run<?, ?> owner = mock(Run.class);
         AnalysisResult result = mock(AnalysisResult.class);
         List<String> valueList = Arrays.asList("foo", "bar");
-        @SuppressWarnings("unchecked")
-        Issues<Issue> allIssues = mock(Issues.class);
-        Issues<?> newIssues = mock(Issues.class);
-        Issues<?> outstandingIssues = mock(Issues.class);
-        Issues<?> fixedIssues = mock(Issues.class);
         Charset sourceEncoding = Charset.defaultCharset();
         IssuesDetail parent = mock(IssuesDetail.class);
 
@@ -252,11 +233,6 @@ class DetailFactoryTest {
         AnalysisResult result = mock(AnalysisResult.class);
 
         List<String> valueList = Arrays.asList("foo", "bar");
-
-        Issues<?> allIssues = issueWithPriorityDeliveryService(3, 2, 1);
-        Issues<?> newIssues = issueWithPriorityDeliveryService(3, 2, 1);
-        Issues<?> outstandingIssues = issueWithPriorityDeliveryService(3, 2, 1);
-        Issues<?> fixedIssues = issueWithPriorityDeliveryService(3, 2, 1);
         Charset sourceEncoding = Charset.defaultCharset();
         IssuesDetail parent = mock(IssuesDetail.class);
 
@@ -294,10 +270,6 @@ class DetailFactoryTest {
 
         List<String> valueList = Arrays.asList("foo", "bar");
 
-        Issues<?> allIssues = issueWithPriorityDeliveryService(3, 2, 1);
-        Issues<?> newIssues = issueWithPriorityDeliveryService(3, 2, 1);
-        Issues<?> outstandingIssues = issueWithPriorityDeliveryService(3, 2, 1);
-        Issues<?> fixedIssues = issueWithPriorityDeliveryService(3, 2, 1);
         Charset sourceEncoding = Charset.defaultCharset();
         IssuesDetail parent = mock(IssuesDetail.class);
 
@@ -335,10 +307,6 @@ class DetailFactoryTest {
 
         List<String> valueList = Arrays.asList("foo", "bar");
 
-        Issues<?> allIssues = issueWithPriorityDeliveryService(3, 2, 1);
-        Issues<?> newIssues = issueWithPriorityDeliveryService(3, 2, 1);
-        Issues<?> outstandingIssues = issueWithPriorityDeliveryService(3, 2, 1);
-        Issues<?> fixedIssues = issueWithPriorityDeliveryService(3, 2, 1);
         Charset sourceEncoding = Charset.defaultCharset();
         IssuesDetail parent = mock(IssuesDetail.class);
 
@@ -393,33 +361,29 @@ class DetailFactoryTest {
     /**
      * Checks that a link with a filter, that results to an non empty set, returns an IssueDetail-View that only contains filtered issues.
      */
+    @SuppressWarnings("unchecked")
     @Test
     void shouldReturnIssueDetailFiltered() {
         DetailFactory detailFactory = new DetailFactory();
         Run<?, ?> owner = mock(Run.class);
         AnalysisResult result = mock(AnalysisResult.class);
-        @SuppressWarnings("unchecked")
-        Issues<Issue> allIssues = mock(Issues.class);
-        @SuppressWarnings("unchecked")
-        Issues<Issue> newIssues = mock(Issues.class);
-        @SuppressWarnings("unchecked")
-        Issues<Issue> outstandingIssues = mock(Issues.class);
-        @SuppressWarnings("unchecked")
-        Issues<Issue> fixedIssues = mock(Issues.class);
+        Issues<Issue> allIssuesFilterable = mock(Issues.class);
+        Issues<Issue> newIssuesFilterable = mock(Issues.class);
+        Issues<Issue> outstandingIssuesFilterable = mock(Issues.class);
+        Issues<Issue> fixedIssuesFilterable = mock(Issues.class);
         Charset sourceEncoding = Charset.defaultCharset();
         IssuesDetail parent = mock(IssuesDetail.class);
-        @SuppressWarnings("unchecked")
         Issues<Issue> filteredIssues = mock(Issues.class);
         Issue filteredIssuesOnZeroPosition = mock(Issue.class);
 
-        when(allIssues.filter(any())).thenReturn(filteredIssues);
-        when(newIssues.filter(any())).thenReturn(filteredIssues);
-        when(outstandingIssues.filter(any())).thenReturn(filteredIssues);
-        when(fixedIssues.filter(any())).thenReturn(filteredIssues);
+        when(allIssuesFilterable.filter(any())).thenReturn(filteredIssues);
+        when(newIssuesFilterable.filter(any())).thenReturn(filteredIssues);
+        when(outstandingIssuesFilterable.filter(any())).thenReturn(filteredIssues);
+        when(fixedIssuesFilterable.filter(any())).thenReturn(filteredIssues);
         when(filteredIssues.isEmpty()).thenReturn(false);
         when(filteredIssues.get(0)).thenReturn(filteredIssuesOnZeroPosition);
 
-        Object issueDetail = detailFactory.createTrendDetails("foo.bar", owner, result, allIssues, newIssues, outstandingIssues, fixedIssues, sourceEncoding, parent);
+        Object issueDetail = detailFactory.createTrendDetails("foo.bar", owner, result, allIssuesFilterable, newIssuesFilterable, outstandingIssuesFilterable, fixedIssuesFilterable, sourceEncoding, parent);
         IssuesDetail issuesDetailCasted = (IssuesDetail) issueDetail;
 
         assertThat(issueDetail).isInstanceOf(IssuesDetail.class);
@@ -429,22 +393,16 @@ class DetailFactoryTest {
         assertThat(issuesDetailCasted.getFixedIssues().get(0)).isEqualTo(filteredIssuesOnZeroPosition);
     }
 
-    private Issues<?> issueWithPriorityDeliveryService(int prioHigh, int prioNormal, int prioLow) {
-        Issues<Issue> issues = new Issues<>();
+    private Issues issueWithPriorityDeliveryService(int prioHigh, int prioNormal, int prioLow, String link) {
+        Issues issues = new Issues<>();
         for (int i = 0; i < prioHigh; i++) {
-            Issue issue = mock(Issue.class);
-            when(issue.getPriority()).thenReturn(Priority.HIGH);
-            issues.add(issue);
+            issues.add(builder.setPriority(Priority.HIGH).setMessage(link + " - " + i).build());
         }
         for (int i = 0; i < prioNormal; i++) {
-            Issue issue = mock(Issue.class);
-            when(issue.getPriority()).thenReturn(Priority.NORMAL);
-            issues.add(issue);
+            issues.add(builder.setPriority(Priority.NORMAL).setMessage(link + " - " + i).build());
         }
         for (int i = 0; i < prioLow; i++) {
-            Issue issue = mock(Issue.class);
-            when(issue.getPriority()).thenReturn(Priority.LOW);
-            issues.add(issue);
+            issues.add(builder.setPriority(Priority.LOW).setMessage(link + " - " + i).build());
         }
         return issues;
     }
