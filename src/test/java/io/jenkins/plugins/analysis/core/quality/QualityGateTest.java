@@ -23,12 +23,10 @@ import hudson.model.Result;
  * Tests the class {@link QualityGate QualityGate}. These Tests were created while developing the class QualityGate.
  *
  * @author Michael Schmid
+ * @author Alexandra Wenzel
  */
 class QualityGateTest extends SerializableTest<QualityGate> {
-
-    /**
-     * The message state.
-     */
+    /** The message state. */
     private enum State {
         FAILURE,
         UNSTABLE
