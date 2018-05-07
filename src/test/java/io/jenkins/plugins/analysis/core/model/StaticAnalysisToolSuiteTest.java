@@ -2,8 +2,8 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
@@ -12,8 +12,7 @@ import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -22,74 +21,71 @@ import static org.mockito.Mockito.*;
  * @author Arne Schöntag
  */
 class StaticAnalysisToolSuiteTest {
+    private static final Charset ENCODING = StandardCharsets.UTF_8;
+    private static final Function<String, String> IDENTITY = Function.identity();
+    private static final File FILE = mock(File.class);
 
-    private Issue issue = new IssueBuilder().setMessage("test")
-            .setFileName("filename")
-            .setPriority(Priority.HIGH)
-            .build();
-    private File file = mock(File.class);
-    private Function<String, String> func = mock(Function.class);
-    private Charset charset = mock(Charset.class);
-    private AbstractParser<Issue> parser = mock(AbstractParser.class);
+    @Test
+    void shouldReturnEmptyReportIfSuiteIsEmpty() {
+        TestStaticAnalysisToolSuite suite = new TestStaticAnalysisToolSuite();
 
-    private StaticAnalysisToolSuite suite = new StaticAnalysisToolSuite() {
+        Issues<Issue> issues = suite.createParser().parse(FILE, ENCODING, IDENTITY);
+
+        assertThat(issues).isEmpty();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldReturnReportOfSingleParser() {
+        AbstractParser<Issue> parser = mock(AbstractParser.class);
+        Issues<Issue> issues = createIssues(1);
+        when(parser.parse(FILE, ENCODING, IDENTITY)).thenReturn(issues);
+
+        TestStaticAnalysisToolSuite suite = new TestStaticAnalysisToolSuite(parser);
+
+        Issues<Issue> compositeIssues = suite.createParser().parse(FILE, ENCODING, IDENTITY);
+
+        assertThat(compositeIssues).isEqualTo(issues);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldReturnAggregationOfTwoParsers() {
+        AbstractParser<Issue> firstParser = mock(AbstractParser.class);
+        Issues<Issue> issuesFirstParser = createIssues(1);
+        when(firstParser.parse(FILE, ENCODING, IDENTITY)).thenReturn(issuesFirstParser);
+
+        AbstractParser<Issue> secondParser = mock(AbstractParser.class);
+        Issues<Issue> issuesSecondParser = createIssues(2);
+        when(secondParser.parse(FILE, ENCODING, IDENTITY)).thenReturn(issuesSecondParser);
+
+        TestStaticAnalysisToolSuite suite = new TestStaticAnalysisToolSuite(firstParser, secondParser);
+
+        Issues<Issue> compositeIssues = suite.createParser().parse(FILE, ENCODING, IDENTITY);
+
+        Issues<Issue> expected = new Issues<>();
+        expected.addAll(issuesFirstParser, issuesSecondParser);
+        assertThat(compositeIssues).isEqualTo(expected);
+    }
+
+    private Issues<Issue> createIssues(final int id) {
+        Issues<Issue> issues = new Issues<>();
+        IssueBuilder issueBuilder = new IssueBuilder();
+        issues.add(issueBuilder.setMessage(String.valueOf(id)).build());
+        return issues;
+    }
+
+    private class TestStaticAnalysisToolSuite extends StaticAnalysisToolSuite {
+        private final Collection<? extends AbstractParser<Issue>> parsers;
+
+        @SafeVarargs
+        TestStaticAnalysisToolSuite(AbstractParser<Issue>... parsers) {
+            this.parsers = asList(parsers);
+        }
+
         @Override
         protected Collection<? extends AbstractParser<Issue>> getParsers() {
-            Issues<Issue> list = new Issues<>();
-            list.add(issue);
-            when(parser.parse(file, charset, func)).thenReturn(list);
-            return asList(parser);
+            return parsers;
         }
-    };
-
-    //parse
-
-    @Test
-    void shouldBeOkIfAsListDoesContainParser() {
-        List<AbstractParser<Issue>> result = (List<AbstractParser<Issue>>) suite.asList(parser);
-        assertThat(result).contains(this.parser);
     }
-
-    @Test
-    void shouldBeOkIfParseIsPerformedCorrectlyWithOneParser() {
-        Issues<Issue> issues = suite.createParser().parse(file, charset, func);
-        verify(parser, times(1)).parse(file, charset, func);
-        assertThat(issues.get(0)).isEqualTo(issue);
-    }
-
-    @Test
-    void shouldBeOkIfParseIsPerformedCorrectlyWithMoreParsers() {
-        AbstractParser<Issue> parser2 = mock(AbstractParser.class);
-        Issue issue2 = new IssueBuilder().setMessage("second")
-                .setFileName("filename2")
-                .setPriority(Priority.LOW)
-                .build();
-
-        AbstractParser<Issue> parser3 = mock(AbstractParser.class);
-        Issue issue3 = new IssueBuilder().setMessage("third")
-                .setFileName("filename3")
-                .setPriority(Priority.NORMAL)
-                .build();
-
-        StaticAnalysisToolSuite toolSuite = new StaticAnalysisToolSuite() {
-            @Override
-            protected Collection<? extends AbstractParser<Issue>> getParsers() {
-                Issues<Issue> list = new Issues<>();
-                list.add(issue);
-                when(parser.parse(file, charset, func)).thenReturn(list);
-
-                Issues<Issue> list2 = new Issues<>();
-                list.add(issue2);
-                when(parser2.parse(file, charset, func)).thenReturn(list2);
-
-                Issues<Issue> list3 = new Issues<>();
-                list.add(issue3);
-                when(parser3.parse(file, charset, func)).thenReturn(list3);
-                return asList(parser, parser2, parser3);
-            }
-        };
-        Issues<Issue> issues = toolSuite.createParser().parse(file, charset, func);
-        assertThat(issues).hasSize(3);
-    }
-
 }
