@@ -1,19 +1,21 @@
 package io.jenkins.plugins.analysis.core.views;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Priority;
-import hudson.model.Item;
-import hudson.model.Run;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.util.UUID;
 import java.util.function.Predicate;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Priority;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+
+import hudson.model.Item;
+import hudson.model.Run;
 
 /**
  * Creates detail objects for the selected link in the issues detail view. Each link might be visualized by a
@@ -85,18 +87,15 @@ public class DetailFactory {
         }
         if (Priority.HIGH.equalsIgnoreCase(link)) {
             return createPrioritiesDetail(owner, result, Priority.HIGH, allIssues, fixedIssues, outstandingIssues,
-                    newIssues,
-                    url, labelProvider, sourceEncoding);
+                    newIssues, url, labelProvider, sourceEncoding);
         }
         if (Priority.NORMAL.equalsIgnoreCase(link)) {
             return createPrioritiesDetail(owner, result, Priority.NORMAL, allIssues, fixedIssues, outstandingIssues,
-                    newIssues,
-                    url, labelProvider, sourceEncoding);
+                    newIssues, url, labelProvider, sourceEncoding);
         }
         if (Priority.LOW.equalsIgnoreCase(link)) {
             return createPrioritiesDetail(owner, result, Priority.LOW, allIssues, fixedIssues, outstandingIssues,
-                    newIssues,
-                    url, labelProvider, sourceEncoding);
+                    newIssues, url, labelProvider, sourceEncoding);
         }
 
         String property = StringUtils.substringBefore(link, ".");
