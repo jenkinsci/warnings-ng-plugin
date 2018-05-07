@@ -9,7 +9,6 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
  *
  * @author Ulli Hafner
  */
-// FIXME: still required?
 public class NullBuildHistory extends BuildHistory {
     /**
      * Creates a new instance of {@link NullBuildHistory}.

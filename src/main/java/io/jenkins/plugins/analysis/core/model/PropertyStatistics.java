@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.util.NoSuchElementException;
 
 /**
  * Groups issue by a specified property, like package name or origin. Provides statistics for this property in order to
@@ -94,7 +95,7 @@ public class PropertyStatistics {
      * @return the maximum number of issues
      */
     public long getCount(final String key) {
-        return issuesByProperty.get(key).size();
+        return getIssues(key).size();
     }
 
     /**
@@ -106,7 +107,7 @@ public class PropertyStatistics {
      * @return the number of high priority issues
      */
     public long getHighCount(final String key) {
-        return issuesByProperty.get(key).getHighPrioritySize();
+        return getIssues(key).getHighPrioritySize();
     }
 
     /**
@@ -118,7 +119,7 @@ public class PropertyStatistics {
      * @return the number of normal priority issues
      */
     public long getNormalCount(final String key) {
-        return issuesByProperty.get(key).getNormalPrioritySize();
+        return getIssues(key).getNormalPrioritySize();
     }
 
     /**
@@ -130,7 +131,21 @@ public class PropertyStatistics {
      * @return the number of low priority issues
      */
     public long getLowCount(final String key) {
-        return issuesByProperty.get(key).getLowPrioritySize();
+        return getIssues(key).getLowPrioritySize();
+    }
+
+    /**
+     * Returns the issues by key, or trows a NoSuchElementException exception if there is no issue available for the key.
+     *
+     * @param key
+     *         the property instance
+     *
+     * @return the issues for the key
+     */
+    private Issues<?> getIssues(final String key){
+        if (!issuesByProperty.containsKey(key))
+            throw new NoSuchElementException(String.format("There are no issues available for the key '%s'.", key));
+        return issuesByProperty.get(key);
     }
 }
 

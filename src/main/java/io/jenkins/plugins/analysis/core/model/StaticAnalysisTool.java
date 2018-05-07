@@ -2,10 +2,12 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.io.Serializable;
 
-import hudson.model.AbstractDescribableImpl;
-import hudson.model.Descriptor;
+import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.IssueParser;
+
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.Descriptor;
 
 /**
  * Describes a static analysis tool that reports issues.
@@ -82,8 +84,32 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
             return id;
         }
 
+        /**
+         * Returns a {@link StaticAnalysisLabelProvider} that will render all tool specific labels.
+         *
+         * @return a tool specific {@link StaticAnalysisLabelProvider}
+         */
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new StaticAnalysisLabelProvider(getId(), getDisplayName());
+        }
+
+        /**
+         * Returns the default filename pattern for this tool.
+         *
+         * @return the default pattern
+         */
+        public String getPattern() {
+            return StringUtils.EMPTY;
+        }
+
+        /**
+         * Returns an optional help text that can provide useful hints on how to configure the static analysis tool soo that
+         * the report files could be parsed by Jenkins. This help can be a plain text message or an HTML snippet.
+         *
+         * @return the help
+         */
+        public String getHelp() {
+            return StringUtils.EMPTY;
         }
     }
 }

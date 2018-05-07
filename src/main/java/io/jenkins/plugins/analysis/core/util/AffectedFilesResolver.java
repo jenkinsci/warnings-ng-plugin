@@ -9,20 +9,21 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
-import java.util.Collection;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
 
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.remoting.VirtualChannel;
 
-import edu.hm.hafner.analysis.Issue;
-
 /**
- * Copies all affected files that are referenced in at least one of the issues to Jenkins build folder. These files then
- * can be shown in the UI later on.
+ * Copies all affected files that are referenced in at least one of the issues to Jenkins build folder. These files can
+ * be inspected in the UI later on.
  *
  * @author Ullrich Hafner
  */
@@ -34,26 +35,27 @@ public class AffectedFilesResolver {
     /**
      * Copies all files with issues from the workspace to the build folder.
      *
+     * @param issues
+     *         the issues
      * @param channel
      *         channel to get the files from
      * @param jenkinsBuildRoot
      *         directory to store the copied files in
-     * @param affectedFiles
-     *         the affected files
      *
-     * @return message describing the result
      * @throws IOException
      *         if the files could not be written
      * @throws InterruptedException
      *         if the user cancels the processing
      */
-    public String copyFilesWithAnnotationsToBuildFolder(
-            final VirtualChannel channel, final FilePath jenkinsBuildRoot, final Collection<String> affectedFiles)
+    public void copyFilesWithAnnotationsToBuildFolder(final Issues<?> issues,
+            final VirtualChannel channel, final FilePath jenkinsBuildRoot)
             throws IOException, InterruptedException {
         int copied = 0;
         int notFound = 0;
         int error = 0;
-        for (String file : affectedFiles) {
+
+        Set<String> files = issues.getFiles();
+        for (String file : files) {
             if (exists(file)) {
                 FilePath directory = ensureThatBuildDirectoryExists(jenkinsBuildRoot);
                 FilePath buildFolderCopy = directory.child(getTempName(file));
@@ -71,7 +73,16 @@ public class AffectedFilesResolver {
                 notFound++;
             }
         }
-        return String.format("%d copied, %d not-found, %d with I/O error", copied, notFound, error);
+
+        String message = String.format("Copying %d affected files to Jenkins' build folder %s.%n"
+                        + "%d copied, %d not-found, %d with I/O error", files.size(), jenkinsBuildRoot.getRemote(),
+                copied, notFound, error);
+        if (error > 0 || notFound > 0) {
+            issues.logError(message);
+        }
+        else {
+            issues.logInfo(message);
+        }
     }
 
     private boolean exists(final String file) {
@@ -107,9 +118,20 @@ public class AffectedFilesResolver {
         return Integer.toHexString(fileName.hashCode()) + ".tmp";
     }
 
-    public static File getTempFile(final Run<?, ?> owner, final Issue annotation) {
-        File buildDir = owner.getParent().getBuildDir();
-        return new File(new File(buildDir, AFFECTED_FILES_FOLDER_NAME), getTempName(annotation.getFileName()));
+    /**
+     * Returns the affected file in Jenkins' build folder.
+     *
+     * @param run
+     *         the run referencing the build folder
+     * @param issue
+     *         the issue in the affected file
+     *
+     * @return the file
+     */
+    public static File getTempFile(final Run<?, ?> run, final Issue issue) {
+        File buildDir = run.getParent().getBuildDir();
+
+        return new File(new File(buildDir, AFFECTED_FILES_FOLDER_NAME), getTempName(issue.getFileName()));
     }
 
     private void logExceptionToFile(final IOException exception, final FilePath masterFile,
