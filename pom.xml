@@ -1,14 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <properties>
-    <pmd.version>6.1.0</pmd.version>
-  </properties>
 
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>2.0-20180314.125915-18</version>
+    <version>2.0-20180501.220702-24</version>
     <relativePath>../analysis-pom</relativePath>
   </parent>
 
@@ -19,6 +16,10 @@
   <url>http://wiki.jenkins-ci.org/x/G4CGAQ</url>
   <description>This plug-in reads the compiler warnings from the console log file and generates a trend report.
   </description>
+
+  <properties>
+    <pmd.version>6.1.0</pmd.version>
+  </properties>
 
   <licenses>
     <license>
