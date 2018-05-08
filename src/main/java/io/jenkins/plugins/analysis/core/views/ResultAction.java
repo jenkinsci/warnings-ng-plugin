@@ -108,7 +108,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public HealthReport getBuildHealth() {
-        return new HealthReportBuilder(healthDescriptor).computeHealth(getResult().getSizePerPriority());
+        return new HealthReportBuilder(healthDescriptor).computeHealth(getResult().getSizePerSeverity());
     }
 
     @Override

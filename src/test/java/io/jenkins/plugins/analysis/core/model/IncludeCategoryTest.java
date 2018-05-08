@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
+import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import io.jenkins.plugins.analysis.core.model.IncludeCategory.DescriptorImpl;
 import static org.assertj.core.api.Assertions.*;
 

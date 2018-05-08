@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.history;
 
-import java.sql.Ref;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -8,9 +7,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import static org.mockito.Mockito.*;
 
@@ -82,15 +81,15 @@ public abstract class ReferenceFinderTest {
         when(prevBuild.getActions(ResultAction.class)).thenReturn(actions);
 
         IssueBuilder builder = new IssueBuilder();
-        Issues issues = new Issues<>(
+        Report issues = new Report(
                 Collections.singletonList(builder.setCategory("testCompany").setLineEnd(1).build()));
         //noinspection unchecked
-        when(analysisResult.getIssues()).thenReturn(issues, (Issues) null);
+        when(analysisResult.getIssues()).thenReturn(issues, (Report) null);
 
         ReferenceFinder referenceFinder = getReferenceFinder(baseline, resultSelector);
 
         assertThat(referenceFinder.getIssues()).isEqualTo(issues);
-        assertThat(referenceFinder.getIssues()).isEqualTo(new Issues<>());
+        assertThat(referenceFinder.getIssues()).isEqualTo(new Report());
     }
 
 }

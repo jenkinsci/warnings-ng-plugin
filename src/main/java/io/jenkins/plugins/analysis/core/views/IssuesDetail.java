@@ -140,7 +140,7 @@ public class IssuesDetail implements ModelObject {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public JSONObject getTableModel() {
-        return labelProvider.toJsonArray(getReport(), new DefaultAgeBuilder(owner.getNumber(), getUrl()));
+        return labelProvider.toJsonArray(getIssues(), new DefaultAgeBuilder(owner.getNumber(), getUrl()));
     }
 
     /**
@@ -149,7 +149,7 @@ public class IssuesDetail implements ModelObject {
      * @return all issues
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public Report getReport() {
+    public Report getIssues() {
         return report;
     }
 
@@ -232,7 +232,7 @@ public class IssuesDetail implements ModelObject {
      */
     @SuppressWarnings("unused") // Called by jelly view
     public TabLabelProvider getTabLabelProvider() {
-        return new TabLabelProvider(getReport());
+        return new TabLabelProvider(getIssues());
     }
 
     /**

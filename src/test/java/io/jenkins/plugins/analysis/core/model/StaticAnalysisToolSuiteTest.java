@@ -9,9 +9,8 @@ import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.AbstractParser;
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,7 +28,7 @@ class StaticAnalysisToolSuiteTest {
     void shouldReturnEmptyReportIfSuiteIsEmpty() {
         TestStaticAnalysisToolSuite suite = new TestStaticAnalysisToolSuite();
 
-        Issues<Issue> issues = suite.createParser().parse(FILE, ENCODING, IDENTITY);
+        Report issues = suite.createParser().parse(FILE, ENCODING, IDENTITY);
 
         assertThat(issues).isEmpty();
     }
@@ -37,13 +36,13 @@ class StaticAnalysisToolSuiteTest {
     @Test
     @SuppressWarnings("unchecked")
     void shouldReturnReportOfSingleParser() {
-        AbstractParser<Issue> parser = mock(AbstractParser.class);
-        Issues<Issue> issues = createIssues(1);
+        AbstractParser parser = mock(AbstractParser.class);
+        Report issues = createIssues(1);
         when(parser.parse(FILE, ENCODING, IDENTITY)).thenReturn(issues);
 
         TestStaticAnalysisToolSuite suite = new TestStaticAnalysisToolSuite(parser);
 
-        Issues<Issue> compositeIssues = suite.createParser().parse(FILE, ENCODING, IDENTITY);
+        Report compositeIssues = suite.createParser().parse(FILE, ENCODING, IDENTITY);
 
         assertThat(compositeIssues).isEqualTo(issues);
     }
@@ -51,40 +50,40 @@ class StaticAnalysisToolSuiteTest {
     @Test
     @SuppressWarnings("unchecked")
     void shouldReturnAggregationOfTwoParsers() {
-        AbstractParser<Issue> firstParser = mock(AbstractParser.class);
-        Issues<Issue> issuesFirstParser = createIssues(1);
+        AbstractParser firstParser = mock(AbstractParser.class);
+        Report issuesFirstParser = createIssues(1);
         when(firstParser.parse(FILE, ENCODING, IDENTITY)).thenReturn(issuesFirstParser);
 
-        AbstractParser<Issue> secondParser = mock(AbstractParser.class);
-        Issues<Issue> issuesSecondParser = createIssues(2);
+        AbstractParser secondParser = mock(AbstractParser.class);
+        Report issuesSecondParser = createIssues(2);
         when(secondParser.parse(FILE, ENCODING, IDENTITY)).thenReturn(issuesSecondParser);
 
         TestStaticAnalysisToolSuite suite = new TestStaticAnalysisToolSuite(firstParser, secondParser);
 
-        Issues<Issue> compositeIssues = suite.createParser().parse(FILE, ENCODING, IDENTITY);
+        Report compositeIssues = suite.createParser().parse(FILE, ENCODING, IDENTITY);
 
-        Issues<Issue> expected = new Issues<>();
+        Report expected = new Report();
         expected.addAll(issuesFirstParser, issuesSecondParser);
         assertThat(compositeIssues).isEqualTo(expected);
     }
 
-    private Issues<Issue> createIssues(final int id) {
-        Issues<Issue> issues = new Issues<>();
+    private Report createIssues(final int id) {
+        Report issues = new Report();
         IssueBuilder issueBuilder = new IssueBuilder();
         issues.add(issueBuilder.setMessage(String.valueOf(id)).build());
         return issues;
     }
 
     private class TestStaticAnalysisToolSuite extends StaticAnalysisToolSuite {
-        private final Collection<? extends AbstractParser<Issue>> parsers;
+        private final Collection<? extends AbstractParser> parsers;
 
         @SafeVarargs
-        TestStaticAnalysisToolSuite(AbstractParser<Issue>... parsers) {
+        TestStaticAnalysisToolSuite(AbstractParser... parsers) {
             this.parsers = asList(parsers);
         }
 
         @Override
-        protected Collection<? extends AbstractParser<Issue>> getParsers() {
+        protected Collection<? extends AbstractParser> getParsers() {
             return parsers;
         }
     }

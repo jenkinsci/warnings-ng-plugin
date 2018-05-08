@@ -39,17 +39,17 @@ public class HealthReportBuilder implements Serializable {
      * greater than {@link HealthDescriptor#getUnHealthy()}. The computation takes only annotations of the specified
      * severity into account.
      *
-     * @param sizePerPriority
-     *         number of issues per priority
+     * @param sizePerSeverity
+     *         number of issues per severity
      *
      * @return the healthiness of a build
      */
-    public HealthReport computeHealth(final Map<Severity, Integer> sizePerPriority) {
+    public HealthReport computeHealth(final Map<Severity, Integer> sizePerSeverity) {
         int relevantIssuesSize = 0;
         for (Priority priority : Priority.collectPrioritiesFrom(healthDescriptor.getMinimumPriority())) {
-            relevantIssuesSize += sizePerPriority.get(priority);
+            relevantIssuesSize += sizePerSeverity.get(Severity.of(priority));
         }
-        relevantIssuesSize += result.getTotalErrorsSize();
+        relevantIssuesSize += sizePerSeverity.get(Severity.ERROR);
 
         if (healthDescriptor.isEnabled()) {
             int percentage;

@@ -8,6 +8,10 @@ import java.util.function.Predicate;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
@@ -82,18 +86,19 @@ public class DetailFactory {
                 return new SourceDetail(owner, issue, sourceEncoding);
             }
         }
+        // FIXME: Do we need an error view?
         if (Priority.HIGH.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Priority.HIGH, allIssues, fixedIssues, outstandingIssues,
+            return createPrioritiesDetail(owner, result, Severity.WARNING_HIGH, allIssues, fixedIssues, outstandingIssues,
                     newIssues,
                     url, labelProvider, sourceEncoding);
         }
         if (Priority.NORMAL.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Priority.NORMAL, allIssues, fixedIssues, outstandingIssues,
+            return createPrioritiesDetail(owner, result, Severity.WARNING_NORMAL, allIssues, fixedIssues, outstandingIssues,
                     newIssues,
                     url, labelProvider, sourceEncoding);
         }
         if (Priority.LOW.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Priority.LOW, allIssues, fixedIssues, outstandingIssues,
+            return createPrioritiesDetail(owner, result, Severity.WARNING_LOW, allIssues, fixedIssues, outstandingIssues,
                     newIssues,
                     url, labelProvider, sourceEncoding);
         }

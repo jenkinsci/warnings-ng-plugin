@@ -112,7 +112,7 @@
     });
 
     /**
-     * Create a data table instance for all tables that are marked with class "display".
+     * Create a data table instance for the issues table.
      */
     var issues = $('#issues');
     var table = issues.DataTable({

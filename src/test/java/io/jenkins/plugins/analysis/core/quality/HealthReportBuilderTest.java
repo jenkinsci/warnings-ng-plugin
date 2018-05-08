@@ -1,11 +1,13 @@
 package io.jenkins.plugins.analysis.core.quality;
 
-import java.util.EnumMap;
+import java.util.Map;
 
+import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Priority;
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
+import edu.hm.hafner.analysis.Severity;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 
 import hudson.model.HealthReport;
 
@@ -150,11 +152,9 @@ class HealthReportBuilderTest {
         HealthDescriptor healthDescriptor = new HealthDescriptor(healthyThreshold, unhealthyThreshold, priority);
         HealthReportBuilder builder = new HealthReportBuilder(healthDescriptor);
 
-        EnumMap<Priority, Integer> sizePerPriority = new EnumMap<>(Priority.class);
-        sizePerPriority.put(Priority.HIGH, highSize);
-        sizePerPriority.put(Priority.NORMAL, normalSize);
-        sizePerPriority.put(Priority.LOW, lowSize);
-
-        return builder.computeHealth(sizePerPriority);
+        Map<Severity, Integer> sizesPerSeverity = Maps.mutable.of(
+                Severity.WARNING_HIGH, highSize, Severity.WARNING_NORMAL, normalSize, Severity.WARNING_LOW, lowSize);
+        sizesPerSeverity.put(Severity.ERROR, 0);
+        return builder.computeHealth(sizesPerSeverity);
     }
 }

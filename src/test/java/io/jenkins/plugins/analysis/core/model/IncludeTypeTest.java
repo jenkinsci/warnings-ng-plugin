@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
+import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import io.jenkins.plugins.analysis.core.model.IncludeType.DescriptorImpl;
 import static org.assertj.core.api.Assertions.*;
 
@@ -16,7 +16,6 @@ import static org.assertj.core.api.Assertions.*;
  * @author Deniz Mardin
  */
 class IncludeTypeTest extends IssuesFilterTestUtil {
-
     private static final String FILTER_NAME_TO_CHECK = "Type1";
     private static final String DESCRIPTOR_NAME = "Include types";
 

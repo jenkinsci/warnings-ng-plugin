@@ -5,8 +5,8 @@ import java.util.function.Predicate;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
-import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 
 /**
@@ -17,7 +17,6 @@ import static io.jenkins.plugins.analysis.core.model.Assertions.*;
  * @author Deniz Mardin
  */
 abstract class IssuesFilterTestUtil {
-
     static final String EMPTY_PATTERN = "";
 
     static final Issue ISSUE1 = new IssueBuilder()
@@ -54,7 +53,7 @@ abstract class IssuesFilterTestUtil {
      * @param expectedOutput
      *         the expected filter result.
      */
-    void applyFilterAndCheckResult(final Predicate<? super Issue> criterion, final Issues<Issue> issues,
+    void applyFilterAndCheckResult(final Predicate<? super Issue> criterion, final Report issues,
             final Issue... expectedOutput) {
         String origin = "origin";
         String reference = "reference";
@@ -62,7 +61,7 @@ abstract class IssuesFilterTestUtil {
         issues.setOrigin(origin);
         issues.setReference(reference);
 
-        Issues<Issue> result = issues.filter(criterion);
+        Report result = issues.filter(criterion);
 
         assertThat(result.iterator()).containsExactly(expectedOutput);
 
@@ -75,8 +74,8 @@ abstract class IssuesFilterTestUtil {
      *
      * @return issues.
      */
-    Issues<Issue> getIssues() {
-        Issues<Issue> issues = new Issues<>();
+    Report getIssues() {
+        Report issues = new Report();
         issues.add(ISSUE1, ISSUE2, ISSUE3);
         return issues;
     }

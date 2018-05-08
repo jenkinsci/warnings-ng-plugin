@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.util.NoSuchElementException;
 
 /**
  * Groups issue by a specified property, like package name or origin. Provides statistics for this property in order to
@@ -94,7 +95,7 @@ public class PropertyStatistics {
      * @return the maximum number of issues
      */
     public long getCount(final String key) {
-        return issuesByProperty.get(key).size();
+        return getReportFor(key).size();
     }
 
     /**
@@ -106,7 +107,7 @@ public class PropertyStatistics {
      * @return the number of high priority issues
      */
     public long getErrorsCount(final String key) {
-        return issuesByProperty.get(key).getSizeOf(Severity.ERROR);
+        return getReportFor(key).getSizeOf(Severity.ERROR);
     }
 
     /**
@@ -118,7 +119,7 @@ public class PropertyStatistics {
      * @return the number of high priority issues
      */
     public long getHighCount(final String key) {
-        return issuesByProperty.get(key).getHighPrioritySize();
+        return getReportFor(key).getSizeOf(Severity.WARNING_HIGH);
     }
 
     /**
@@ -130,7 +131,7 @@ public class PropertyStatistics {
      * @return the number of normal priority issues
      */
     public long getNormalCount(final String key) {
-        return issuesByProperty.get(key).getNormalPrioritySize();
+        return getReportFor(key).getSizeOf(Severity.WARNING_NORMAL);
     }
 
     /**
@@ -142,7 +143,14 @@ public class PropertyStatistics {
      * @return the number of low priority issues
      */
     public long getLowCount(final String key) {
-        return issuesByProperty.get(key).getLowPrioritySize();
+        return getReportFor(key).getSizeOf(Severity.WARNING_LOW);
+    }
+
+    private Report getReportFor(final String key) {
+        if (issuesByProperty.containsKey(key)) {
+            return issuesByProperty.get(key);
+        }
+        throw new NoSuchElementException("There is no report for key '%s'", key);
     }
 }
 

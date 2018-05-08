@@ -2,42 +2,43 @@ package io.jenkins.plugins.analysis.core.views;
 
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.testutil.LocalizedMessagesTest;
-
-import hudson.plugins.analysis.Messages;
+import static io.jenkins.plugins.analysis.core.views.LocalizedSeverity.*;
+import static org.mockito.Mockito.*;
 
 /**
- * Tests the class {@link LocalizedPriority}.
+ * Tests the class {@link LocalizedSeverity}.
  *
  * @author Anna-Maria Hardi
  */
-class LocalizedPriorityTest extends LocalizedMessagesTest {
+class LocalizedSeverityTest extends LocalizedMessagesTest {
+
+    private static final String SEVERITY_NAME = "Severity Name";
+
     @Test
-    void testLocalizedStringHighLowNormalNull() {
-        String actualResult;
-        actualResult = LocalizedPriority.getLocalizedString(Priority.HIGH);
-        assertThat(actualResult).isEqualTo(Messages.Priority_High());
-        actualResult = LocalizedPriority.getLocalizedString(Priority.LOW);
-        assertThat(actualResult).isEqualTo(Messages.Priority_Low());
-        actualResult = LocalizedPriority.getLocalizedString(Priority.NORMAL);
-        assertThat(actualResult).isEqualTo(Messages.Priority_Normal());
-        actualResult = LocalizedPriority.getLocalizedString(null);
-        assertThat(actualResult).isEqualTo(Messages.Priority_Normal());
+    void shouldProvideLocalizedSeverity() {
+        assertThat(getLocalizedString(Severity.ERROR)).isEqualTo(Messages.Severity_Short_Error());
+        assertThat(getLocalizedString(Severity.WARNING_HIGH)).isEqualTo(Messages.Severity_Short_High());
+        assertThat(getLocalizedString(Severity.WARNING_NORMAL)).isEqualTo(Messages.Severity_Short_Normal());
+        assertThat(getLocalizedString(Severity.WARNING_LOW)).isEqualTo(Messages.Severity_Short_Low());
+        assertThat(getLocalizedString(createSeverity())).isEqualTo(SEVERITY_NAME);
     }
 
     @Test
-    void testLongLocalizedStringHighLowNormalNull() {
-        String actualResult;
-        actualResult = LocalizedPriority.getLongLocalizedString(Priority.HIGH);
-        assertThat(actualResult).isEqualTo(Messages.HighPriority());
-        actualResult = LocalizedPriority.getLongLocalizedString(Priority.LOW);
-        assertThat(actualResult).isEqualTo(Messages.LowPriority());
-        actualResult = LocalizedPriority.getLongLocalizedString(Priority.NORMAL);
-        assertThat(actualResult).isEqualTo(Messages.NormalPriority());
-        actualResult = LocalizedPriority.getLongLocalizedString(null);
-        assertThat(actualResult).isEqualTo(Messages.NormalPriority());
+    void shouldProvideLongLocalizedSeverity() {
+        assertThat(getLongLocalizedString(Severity.ERROR)).isEqualTo(Messages.Severity_Long_Error());
+        assertThat(getLongLocalizedString(Severity.WARNING_HIGH)).isEqualTo(Messages.Severity_Long_High());
+        assertThat(getLongLocalizedString(Severity.WARNING_NORMAL)).isEqualTo(Messages.Severity_Long_Normal());
+        assertThat(getLongLocalizedString(Severity.WARNING_LOW)).isEqualTo(Messages.Severity_Long_Low());
+        assertThat(getLongLocalizedString(createSeverity())).isEqualTo(SEVERITY_NAME);
+    }
+
+    private Severity createSeverity() {
+        Severity severity = mock(Severity.class);
+        when(severity.getName()).thenReturn(SEVERITY_NAME);
+        return severity;
     }
 
 }

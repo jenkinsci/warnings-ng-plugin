@@ -11,8 +11,9 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
@@ -33,10 +34,10 @@ class DetailFactoryTest {
     private static final String[] ERROR_MESSAGES = new String[]{"error", "messages"};
     private static final String[] LOG_MESSAGES = new String[]{"log", "messages"};
 
-    private static final Issues<?> ALL_ISSUES = createReportWith(3, 2, 1, "all");
-    private static final Issues<?> NEW_ISSUES = createReportWith(3, 2, 1, "new");
-    private static final Issues<?> OUTSTANDING_ISSUES = createReportWith(3, 2, 1, "outstanding");
-    private static final Issues<?> FIXED_ISSUES = createReportWith(3, 2, 1, "fixed");
+    private static final Report ALL_ISSUES = createReportWith(3, 2, 1, "all");
+    private static final Report NEW_ISSUES = createReportWith(3, 2, 1, "new");
+    private static final Report OUTSTANDING_ISSUES = createReportWith(3, 2, 1, "outstanding");
+    private static final Report FIXED_ISSUES = createReportWith(3, 2, 1, "fixed");
     private static final String PARENT_NAME = "Parent Name";
 
     @Test
@@ -81,23 +82,9 @@ class DetailFactoryTest {
 
         assertThat(detail).isInstanceOf(IssuesDetail.class);
         IssuesDetail issuesDetail = (IssuesDetail) detail;
-        assertThat(issuesDetail).hasIssues(ALL_ISSUES.filter(issue -> issue.getPriority() == Priority.HIGH));
+        assertThat(issuesDetail).hasIssues(ALL_ISSUES.filter(Issue.bySeverity(Severity.WARNING_HIGH)));
 
-        assertThat(issuesDetail.getFixedIssues().getHighPrioritySize()).isEqualTo(3);
-        assertThat(issuesDetail.getFixedIssues().getNormalPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getFixedIssues().getLowPrioritySize()).isEqualTo(0);
-
-        assertThat(issuesDetail.getIssues().getHighPrioritySize()).isEqualTo(3);
-        assertThat(issuesDetail.getIssues().getNormalPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getIssues().getLowPrioritySize()).isEqualTo(0);
-
-        assertThat(issuesDetail.getOutstandingIssues().getHighPrioritySize()).isEqualTo(3);
-        assertThat(issuesDetail.getOutstandingIssues().getNormalPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getOutstandingIssues().getLowPrioritySize()).isEqualTo(0);
-
-        assertThat(issuesDetail.getNewIssues().getHighPrioritySize()).isEqualTo(3);
-        assertThat(issuesDetail.getNewIssues().getNormalPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getNewIssues().getLowPrioritySize()).isEqualTo(0);
+        assertThatPrioritiesAreCorrectlySet(issuesDetail, 3, 0, 0);
     }
 
     @Test
@@ -109,23 +96,9 @@ class DetailFactoryTest {
 
         assertThat(detail).isInstanceOf(IssuesDetail.class);
         IssuesDetail issuesDetail = (IssuesDetail) detail;
-        assertThat(issuesDetail).hasIssues(ALL_ISSUES.filter(issue -> issue.getPriority() == Priority.NORMAL));
+        assertThat(issuesDetail).hasIssues(ALL_ISSUES.filter(Issue.bySeverity(Severity.WARNING_NORMAL)));
 
-        assertThat(issuesDetail.getFixedIssues().getHighPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getFixedIssues().getNormalPrioritySize()).isEqualTo(2);
-        assertThat(issuesDetail.getFixedIssues().getLowPrioritySize()).isEqualTo(0);
-
-        assertThat(issuesDetail.getIssues().getHighPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getIssues().getNormalPrioritySize()).isEqualTo(2);
-        assertThat(issuesDetail.getIssues().getLowPrioritySize()).isEqualTo(0);
-
-        assertThat(issuesDetail.getOutstandingIssues().getHighPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getOutstandingIssues().getNormalPrioritySize()).isEqualTo(2);
-        assertThat(issuesDetail.getOutstandingIssues().getLowPrioritySize()).isEqualTo(0);
-
-        assertThat(issuesDetail.getNewIssues().getHighPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getNewIssues().getNormalPrioritySize()).isEqualTo(2);
-        assertThat(issuesDetail.getNewIssues().getLowPrioritySize()).isEqualTo(0);
+        assertThatPrioritiesAreCorrectlySet(issuesDetail, 0, 2, 0);
     }
 
     @Test
@@ -137,23 +110,17 @@ class DetailFactoryTest {
 
         assertThat(detail).isInstanceOf(IssuesDetail.class);
         IssuesDetail issuesDetail = (IssuesDetail) detail;
-        assertThat(issuesDetail).hasIssues(ALL_ISSUES.filter(issue -> issue.getPriority() == Priority.LOW));
+        assertThat(issuesDetail).hasIssues(ALL_ISSUES.filter(Issue.bySeverity(Severity.WARNING_LOW)));
 
-        assertThat(issuesDetail.getFixedIssues().getHighPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getFixedIssues().getNormalPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getFixedIssues().getLowPrioritySize()).isEqualTo(1);
+        assertThatPrioritiesAreCorrectlySet(issuesDetail, 0, 0, 1);
+    }
 
-        assertThat(issuesDetail.getIssues().getHighPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getIssues().getNormalPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getIssues().getLowPrioritySize()).isEqualTo(1);
-
-        assertThat(issuesDetail.getOutstandingIssues().getHighPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getOutstandingIssues().getNormalPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getOutstandingIssues().getLowPrioritySize()).isEqualTo(1);
-
-        assertThat(issuesDetail.getNewIssues().getHighPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getNewIssues().getNormalPrioritySize()).isEqualTo(0);
-        assertThat(issuesDetail.getNewIssues().getLowPrioritySize()).isEqualTo(1);
+    private void assertThatPrioritiesAreCorrectlySet(final IssuesDetail issuesDetail,
+            final int expectedSizeHigh, final int expectedSizeNormal, final int expectedSizeLow) {
+        assertThat(issuesDetail.getIssues()).hasPriorities(expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
+        assertThat(issuesDetail.getOutstandingIssues()).hasPriorities(expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
+        assertThat(issuesDetail.getFixedIssues()).hasPriorities(expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
+        assertThat(issuesDetail.getNewIssues()).hasPriorities(expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
     }
 
     @Test
@@ -174,7 +141,7 @@ class DetailFactoryTest {
         DetailFactory detailFactory = new DetailFactory();
 
         IssuesDetail parent = createParent();
-        Issues<Issue> empty = new Issues<>();
+        Report empty = new Report();
         Object issuesDetail = detailFactory.createTrendDetails("foo.bar", RUN, createResult(),
                 empty, empty, empty, empty, ENCODING, parent);
 
@@ -188,7 +155,7 @@ class DetailFactoryTest {
     void shouldReturnConsoleDetailWhenCalledWithSourceLinkAndIssueInConsoleLog() throws IOException {
         DetailFactory detailFactory = new DetailFactory();
         @SuppressWarnings("unchecked")
-        Issues<Issue> allIssuesWithUUIDIssue = mock(Issues.class);
+        Report allIssuesWithUUIDIssue = mock(Report.class);
         Issue issueFromUUID = mock(Issue.class);
         File file = File.createTempFile("test", "file");
 
@@ -209,7 +176,7 @@ class DetailFactoryTest {
     void shouldReturnSourceDetailWhenCalledWithSourceLinkAndIssueNotInConsoleLog() throws IOException {
         DetailFactory detailFactory = new DetailFactory();
         @SuppressWarnings("unchecked")
-        Issues<Issue> allIssuesWithUUIDIssue = mock(Issues.class);
+        Report allIssuesWithUUIDIssue = mock(Report.class);
         Job parentJob = mock(Job.class);
         File file = File.createTempFile("test", "file");
         Issue issueFromUUID = mock(Issue.class);
@@ -234,11 +201,11 @@ class DetailFactoryTest {
     void shouldReturnIssueDetailFiltered() {
         DetailFactory detailFactory = new DetailFactory();
         AnalysisResult result = mock(AnalysisResult.class);
-        Issues<Issue> allIssuesFilterable = mock(Issues.class);
-        Issues<Issue> newIssuesFilterable = mock(Issues.class);
-        Issues<Issue> outstandingIssuesFilterable = mock(Issues.class);
-        Issues<Issue> fixedIssuesFilterable = mock(Issues.class);
-        Issues<Issue> filteredIssues = mock(Issues.class);
+        Report allIssuesFilterable = mock(Report.class);
+        Report newIssuesFilterable = mock(Report.class);
+        Report outstandingIssuesFilterable = mock(Report.class);
+        Report fixedIssuesFilterable = mock(Report.class);
+        Report filteredIssues = mock(Report.class);
         Issue filteredIssuesOnZeroPosition = mock(Issue.class);
 
         when(allIssuesFilterable.filter(any())).thenReturn(filteredIssues);
@@ -279,9 +246,9 @@ class DetailFactoryTest {
         return parent;
     }
 
-    private static Issues<?> createReportWith(final int high, final int normal, final int low, final String link) {
+    private static Report createReportWith(final int high, final int normal, final int low, final String link) {
         IssueBuilder builder = new IssueBuilder();
-        Issues<Issue> issues = new Issues<>();
+        Report issues = new Report();
         for (int i = 0; i < high; i++) {
             issues.add(builder.setPriority(Priority.HIGH).setMessage(link + " - " + i).build());
         }

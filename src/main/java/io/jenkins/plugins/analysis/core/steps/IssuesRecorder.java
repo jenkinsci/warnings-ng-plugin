@@ -17,9 +17,8 @@ import org.kohsuke.stapler.QueryParameter;
 
 import com.google.common.collect.Lists;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
@@ -30,15 +29,12 @@ import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
 import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
-import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
-import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -456,7 +452,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             final TaskListener listener)
             throws IOException, InterruptedException {
         if (isAggregatingResults) {
-            Issues<Issue> totalIssues = new Issues<>();
+            Report totalIssues = new Report();
             for (ToolConfiguration toolConfiguration : tools) {
                 totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
             }
@@ -465,15 +461,14 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         }
         else {
             for (ToolConfiguration toolConfiguration : tools) {
-                Issues<?> issues = scanWithTool(run, workspace, listener, toolConfiguration);
-                publishResult(run, workspace, launcher, listener, issues, StringUtils.EMPTY);
+                Report report = scanWithTool(run, workspace, listener, toolConfiguration);
+                publishResult(run, workspace, launcher, listener, report, StringUtils.EMPTY);
             }
         }
     }
 
-    private Issues<?> scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final ToolConfiguration toolConfiguration)
-            throws IOException, InterruptedException {
+    private Report scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
+            final ToolConfiguration toolConfiguration) throws IOException, InterruptedException {
         ToolConfiguration configuration = toolConfiguration;
         IssuesScanner issuesScanner = new IssuesScanner(configuration.getTool(), workspace,
                 getReportCharset(), getSourceCodeCharset(), new LogHandler(listener, configuration.getTool().getName()));
@@ -490,7 +485,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     private void publishResult(final Run<?, ?> run, final FilePath workspace, final Launcher launcher,
-            final TaskListener listener, final Issues<?> issues, final String name)
+            final TaskListener listener, final Report report, final String name)
             throws IOException, InterruptedException {
         IssuesPublisher publisher = new IssuesPublisher(run, report, getFilters(),
                 new HealthDescriptor(healthy, unHealthy, minimumPriority), new QualityGate(thresholds), workspace,

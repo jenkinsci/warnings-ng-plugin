@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import org.assertj.core.api.AbstractAssert;
 
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import io.jenkins.plugins.analysis.core.views.IssuesDetail;
 
 /**
@@ -43,13 +43,13 @@ public class IssuesDetailAssert extends AbstractAssert<IssuesDetailAssert, Issue
      * Verifies that the actual issues of the {@link IssuesDetail} instance are equal to the expected ones.
      *
      * @param expectedIssues
-     *         the expected issues to compare the actual {@link Issues} to.
+     *         the expected issues to compare the actual {@link Report} to.
      *
      * @return this assertion object.
      * @throws AssertionError
-     *         if the actual {@link Issues} are not equal to the given ones.
+     *         if the actual {@link Report} are not equal to the given ones.
      */
-    public IssuesDetailAssert hasIssues(final Issues<?> expectedIssues) {
+    public IssuesDetailAssert hasIssues(final Report expectedIssues) {
         isNotNull();
 
         if (!Objects.equals(actual.getIssues(), expectedIssues)) {
