@@ -142,12 +142,12 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
         @Override
         public String[] getTableHeaders() {
             return new String[]{
-                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_Details(),
-                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_File(),
-                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_Priority(),
+                    Messages.DRY_Table_Column_Details(),
+                    Messages.DRY_Table_Column_File(),
+                    Messages.DRY_Table_Column_Priority(),
                     Messages.DRY_Table_Column_LinesCount(),
                     Messages.DRY_Table_Column_DuplicatedIn(),
-                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_Age()
+                    Messages.DRY_Table_Column_Age()
             };
         }
     }
