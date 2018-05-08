@@ -182,7 +182,6 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
             this(new JenkinsFacade());
         }
 
-        @VisibleForTesting
         DescriptorImpl(final JenkinsFacade jenkinsFacade) {
             this.jenkinsFacade = jenkinsFacade;
         }
