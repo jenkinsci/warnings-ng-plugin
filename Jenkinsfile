@@ -32,6 +32,7 @@ node ('linux') {
                 sh command
             }
 
+            archiveArtifacts artifacts: '**/target/*.hpi', fingerprint: true
             junit testResults: '**/target/*-reports/TEST-*.xml'
             warnings consoleParsers: [[parserName: 'Java Compiler (javac)'], [parserName: 'JavaDoc'], [parserName: 'Maven']]
             checkstyle pattern: '**/target/checkstyle-result.xml'

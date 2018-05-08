@@ -1,10 +1,10 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -25,6 +25,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.plugins.analysis.util.EncodingValidator;
 
 /**
  * Scan files or the console log for issues.
@@ -115,7 +116,7 @@ public class ScanForIssuesStep extends Step {
      * Actually performs the execution of the associated step.
      */
     public static class Execution extends AnalysisExecution<Issues<?>> {
-        private final String logFileEncoding;
+        private final String reportEncoding;
         private final String sourceCodeEncoding;
         private final StaticAnalysisTool tool;
         private final String pattern;
@@ -123,27 +124,25 @@ public class ScanForIssuesStep extends Step {
         protected Execution(@NonNull final StepContext context, final ScanForIssuesStep step) {
             super(context);
 
-            logFileEncoding = step.getReportEncoding();
+            reportEncoding = step.getReportEncoding();
             sourceCodeEncoding = step.getSourceCodeEncoding();
             tool = step.getTool();
             pattern = step.getPattern();
         }
 
         @Override
-        protected String getId() {
-            return tool.getId();
+        protected Issues<?> run() throws IOException, InterruptedException, IllegalStateException {
+            IssuesScanner issuesScanner = new IssuesScanner(tool, getWorkspace(), getReportCharset(),
+                    getSourceCodeCharset(), new LogHandler(getTaskListener(), tool.getName()));
+            return issuesScanner.scan(pattern, getRun().getLogFile());
         }
 
-        @Override
-        protected Issues<?> run() throws IOException, InterruptedException, IllegalStateException {
-            IssuesScanner issuesScanner = new IssuesScanner(tool, getWorkspace(), logFileEncoding, sourceCodeEncoding,
-                    getLogger(), getErrorLogger());
-            if (StringUtils.isBlank(pattern)) {
-                return issuesScanner.scanInConsoleLog(getRun().getLogFile());
-            }
-            else {
-                return issuesScanner.scanInWorkspace(pattern);
-            }
+        private Charset getSourceCodeCharset() {
+            return EncodingValidator.defaultCharset(sourceCodeEncoding);
+        }
+
+        private Charset getReportCharset() {
+            return EncodingValidator.defaultCharset(reportEncoding);
         }
     }
 

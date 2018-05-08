@@ -1,279 +1,331 @@
 package io.jenkins.plugins.analysis.core.history;
 
-import hudson.model.Result;
-import hudson.model.Run;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.views.ResultAction;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Optional;
-
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.views.ResultAction;
+import static java.util.Arrays.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+import hudson.model.Result;
+import hudson.model.Run;
+
+/**
+ * Tests the class {@link PreviousRunReference}.
+ *
+ * @author Alexander Praegla
+ */
 class PreviousRunReferenceTest {
 
-	private static Iterable<Object> testData() {
-		return asList(
-				new TestArgumentsBuilder()
-						.setTestName("isPresent when analysisResult#overallResult is SUCCESS and result of previous run is SUCCESS")
-						.setOverallResult(Result.SUCCESS)
-						.setRunResult(Result.SUCCESS)
-						.setPreviousRunResult(Result.SUCCESS)
-						.setOverallMustBeSuccess(true)
-						.setOptionalPresent(true)
-						.build(),
-				new TestArgumentsBuilder()
-						.setTestName("isPresent when analysisResult#overallResult is SUCCESS and result of previous run is SUCCESS")
-						.setOverallResult(Result.SUCCESS)
-						.setRunResult(Result.SUCCESS)
-						.setPreviousRunResult(Result.SUCCESS)
-						.setOverallMustBeSuccess(false)
-						.setOptionalPresent(true)
-						.build(),
-				new TestArgumentsBuilder()
-						.setTestName("isPresent when analysisResult#overallResult is NOT_BUILT and result of previous run is SUCCESS")
-						.setOverallResult(Result.FAILURE)
-						.setRunResult(Result.SUCCESS)
-						.setPreviousRunResult(Result.SUCCESS)
-						.setOverallMustBeSuccess(false)
-						.setOptionalPresent(true)
-						.build(),
-				new TestArgumentsBuilder()
-						.setTestName("isPresent when analysisResult#overallResult is FAILURE and result of previous run is FAILURE")
-						.setOverallResult(Result.FAILURE)
-						.setRunResult(Result.SUCCESS)
-						.setPreviousRunResult(Result.FAILURE)
-						.setOverallMustBeSuccess(false)
-						.setOptionalPresent(true)
-						.build(),
-				new TestArgumentsBuilder()
-						.setTestName("isPresent when analysisResult#overallResult is NOT_BUILT and result of previous run is NOT_BUILT")
-						.setOverallResult(Result.NOT_BUILT)
-						.setRunResult(Result.SUCCESS)
-						.setPreviousRunResult(Result.NOT_BUILT)
-						.setOverallMustBeSuccess(false)
-						.setOptionalPresent(true)
-						.build(),
-				new TestArgumentsBuilder()
-						.setTestName("isEmpty when result of previous run is null")
-						.setOverallResult(Result.SUCCESS)
-						.setRunResult(Result.SUCCESS)
-						.setPreviousRunResult(null)
-						.setOverallMustBeSuccess(true)
-						.setOptionalPresent(false)
-						.build(),
-				new TestArgumentsBuilder()
-						.setTestName("isEmpty when result of previous run is FAILURE")
-						.setOverallResult(Result.SUCCESS)
-						.setRunResult(Result.SUCCESS)
-						.setPreviousRunResult(Result.FAILURE)
-						.setOverallMustBeSuccess(true)
-						.setOptionalPresent(false)
-						.build(),
-				new TestArgumentsBuilder()
-						.setTestName("isEmpty when analysisResult#overallResult is SUCCESS and result of previous run is NOT_BUILT")
-						.setOverallResult(Result.SUCCESS)
-						.setRunResult(Result.SUCCESS)
-						.setPreviousRunResult(Result.NOT_BUILT)
-						.setOverallMustBeSuccess(false)
-						.setOptionalPresent(false)
-						.build()
-		);
-	}
+    /**
+     * Method to provide test element that return an empty optional.
+     *
+     * @return list of test data objects
+     */
+    private static Iterable<Object> testDataOptionalIsEmpty() {
+        return asList(
+                new TestArgumentsBuilder()
+                        .setTestName("isEmpty when result of previous run is null")
+                        .setOverallResult(Result.SUCCESS)
+                        .setRunResult(Result.SUCCESS)
+                        .setPreviousRunResult(null)
+                        .setOverallMustBeSuccess(true)
+                        .setEnableAssertThatResultIsPresent(false)
+                        .setEnableAssertThatResultIsEmpty(true)
+                        .build(),
+                new TestArgumentsBuilder()
+                        .setTestName("isEmpty when result of previous run is FAILURE")
+                        .setOverallResult(Result.SUCCESS)
+                        .setRunResult(Result.SUCCESS)
+                        .setPreviousRunResult(Result.FAILURE)
+                        .setOverallMustBeSuccess(true)
+                        .setEnableAssertThatResultIsPresent(false)
+                        .setEnableAssertThatResultIsEmpty(true)
+                        .build(),
+                new TestArgumentsBuilder()
+                        .setTestName(
+                                "isEmpty when analysisResult#overallResult is SUCCESS and result of previous run is NOT_BUILT")
+                        .setOverallResult(Result.SUCCESS)
+                        .setRunResult(Result.SUCCESS)
+                        .setPreviousRunResult(Result.NOT_BUILT)
+                        .setOverallMustBeSuccess(false)
+                        .setEnableAssertThatResultIsPresent(false)
+                        .setEnableAssertThatResultIsEmpty(true)
+                        .build()
+        );
+    }
 
-	/**
-	 * Testing the different branches of {@link BuildHistory#getRunWithResult(hudson.model.Run, io.jenkins.plugins.analysis.core.history.ResultSelector, boolean, boolean)}
-	 * in the first iteration of the loop
-	 * @param name Name of the Test
-	 * @param overallResult Mocked value for {@link AnalysisResult#getOverallResult()}
-	 * @param runResult Mocked value for {@link Run#getResult()} of the baseline run
-	 * @param previousRunResult Mocked value for {@link Run#getResult()} of the previous run that is processed
-	 * @param overallResultMustBeSuccess construtor param of {@link PreviousRunReference#PreviousRunReference(hudson.model.Run, io.jenkins.plugins.analysis.core.history.ResultSelector, boolean)}
-	 * @param isOptionalPresent indicates if the returned optional should be empty or present
-	 */
-	@ParameterizedTest(name = "{0}")
-	@MethodSource("testData")
-	void shouldTestFirstIterationOfLoop(String name,
-										Result overallResult,
-										Result runResult,
-										Result previousRunResult,
-										boolean overallResultMustBeSuccess,
-										boolean isOptionalPresent) {
-		AnalysisResult analysisResult = createAnalysisResultStub(overallResult);
-		Optional<ResultAction> resultActionOptional = createResultActionOptional(analysisResult);
-		ResultSelector selector = createResultSelectorStub(resultActionOptional);
+    /**
+     * Method to provide test element that return an present optional.
+     *
+     * @return list of test data objects
+     */
+    private static Iterable<Object> testDataOptionalIsPresent() {
+        return asList(
+                new TestArgumentsBuilder()
+                        .setTestName(
+                                "isPresent when analysisResult#overallResult is SUCCESS and result of previous run is SUCCESS")
+                        .setOverallResult(Result.SUCCESS)
+                        .setRunResult(Result.SUCCESS)
+                        .setPreviousRunResult(Result.SUCCESS)
+                        .setOverallMustBeSuccess(true)
+                        .setEnableAssertThatResultIsPresent(true)
+                        .setEnableAssertThatResultIsEmpty(false)
+                        .build(),
+                new TestArgumentsBuilder()
+                        .setTestName(
+                                "isPresent when analysisResult#overallResult is SUCCESS and result of previous run is SUCCESS")
+                        .setOverallResult(Result.SUCCESS)
+                        .setRunResult(Result.SUCCESS)
+                        .setPreviousRunResult(Result.SUCCESS)
+                        .setOverallMustBeSuccess(false)
+                        .setEnableAssertThatResultIsPresent(true)
+                        .setEnableAssertThatResultIsEmpty(false)
+                        .build(),
+                new TestArgumentsBuilder()
+                        .setTestName(
+                                "isPresent when analysisResult#overallResult is FAILURE and result of previous run is SUCCESS")
+                        .setOverallResult(Result.FAILURE)
+                        .setRunResult(Result.SUCCESS)
+                        .setPreviousRunResult(Result.SUCCESS)
+                        .setOverallMustBeSuccess(false)
+                        .setEnableAssertThatResultIsPresent(true)
+                        .setEnableAssertThatResultIsEmpty(false)
+                        .build(),
+                new TestArgumentsBuilder()
+                        .setTestName(
+                                "isPresent when analysisResult#overallResult is FAILURE and result of previous run is FAILURE")
+                        .setOverallResult(Result.FAILURE)
+                        .setRunResult(Result.SUCCESS)
+                        .setPreviousRunResult(Result.FAILURE)
+                        .setOverallMustBeSuccess(false)
+                        .setEnableAssertThatResultIsPresent(true)
+                        .setEnableAssertThatResultIsEmpty(false)
+                        .build()
+        );
+    }
 
-		Run previousBuild = createRunStub(null, previousRunResult);
-		Run baseline = createRunStub(previousBuild, runResult);
-		PreviousRunReference cut = new PreviousRunReference(baseline, selector, overallResultMustBeSuccess);
-		if (isOptionalPresent) {
-			assertThat(cut.getReferenceAction()).isPresent();
-		} else {
-			assertThat(cut.getReferenceAction()).isEmpty();
-		}
-	}
+    /**
+     * Testing the different branches of {@link BuildHistory#getRunWithResult(hudson.model.Run,
+     * io.jenkins.plugins.analysis.core.history.ResultSelector, boolean, boolean)} in the first iteration of the loop.
+     *
+     * @param name
+     *         Name of the Test
+     * @param overallResult
+     *         Mocked value for {@link AnalysisResult#getOverallResult()}
+     * @param runResult
+     *         Mocked value for {@link Run#getResult()} of the baseline run
+     * @param previousRunResult
+     *         Mocked value for {@link Run#getResult()} of the previous run that is processed
+     * @param overallResultMustBeSuccess
+     *         construtor param of {@link PreviousRunReference#PreviousRunReference(hudson.model.Run,
+     *         io.jenkins.plugins.analysis.core.history.ResultSelector, boolean)}
+     */
+    @ParameterizedTest(name = "{0}")
+    @MethodSource({"testDataOptionalIsEmpty", "testDataOptionalIsPresent"})
+    void shouldTestFirstIterationOfLoop(String name,
+            Result overallResult,
+            Result runResult,
+            Result previousRunResult,
+            boolean overallResultMustBeSuccess,
+            boolean enableAssertThatResultIsPresent,
+            boolean enableAssertThatResultIsEmpty) {
+        AnalysisResult analysisResult = createAnalysisResultStub(overallResult);
+        Optional<ResultAction> resultActionOptional = createResultActionOptional(analysisResult);
+        ResultSelector selector = createResultSelectorStub(resultActionOptional);
 
-	/**
-	 * Testing the different branches of {@link BuildHistory#getRunWithResult(hudson.model.Run, io.jenkins.plugins.analysis.core.history.ResultSelector, boolean, boolean)}
-	 * in the second iteration of the loop
-	 * @param name Name of the Test
-	 * @param overallResult Mocked value for {@link AnalysisResult#getOverallResult()}
-	 * @param runResult Mocked value for {@link Run#getResult()} of the baseline run
-	 * @param previousRunResult Mocked value for {@link Run#getResult()} of the previous run that is processed
-	 * @param overallResultMustBeSuccess construtor param of {@link PreviousRunReference#PreviousRunReference(hudson.model.Run, io.jenkins.plugins.analysis.core.history.ResultSelector, boolean)}
-	 * @param isOptionalPresent indicates if the returned optional should be empty or present
-	 */
-	@ParameterizedTest(name = "{0}")
-	@MethodSource("testData")
-	void shouldTestSecondIterationOfLoop(String name,
-										Result overallResult,
-										Result runResult,
-										Result previousRunResult,
-										boolean overallResultMustBeSuccess,
-										boolean isOptionalPresent) {
+        Run previousBuild = createRunStub(null, previousRunResult);
+        Run baseline = createRunStub(previousBuild, runResult);
+        PreviousRunReference cut = new PreviousRunReference(baseline, selector, overallResultMustBeSuccess);
 
-		AnalysisResult analysisResult = createAnalysisResultStub(overallResult);
-		Optional<ResultAction> resultActionOptional = createResultActionOptional(analysisResult);
+        if (enableAssertThatResultIsPresent) {
+            assertThat(cut.getReferenceAction()).isPresent();
+        }
 
-		ResultSelector selector = mock(ResultSelector.class);
-		when(selector.get(any())).thenReturn(Optional.empty()).thenReturn(resultActionOptional);
+        if (enableAssertThatResultIsEmpty) {
+            assertThat(cut.getReferenceAction()).isEmpty();
+        }
+    }
 
-		Run previousPreviousBuild = createRunStub(null, previousRunResult);
-		Run previousBuild = createRunStub(previousPreviousBuild, previousRunResult);
-		Run baseline = createRunStub(previousBuild, runResult);
-		PreviousRunReference cut = new PreviousRunReference(baseline, selector, overallResultMustBeSuccess);
-		if (isOptionalPresent) {
-			assertThat(cut.getReferenceAction()).isPresent();
-		} else {
-			assertThat(cut.getReferenceAction()).isEmpty();
-		}
-	}
+    /**
+     * Testing the different branches of {@link BuildHistory#getRunWithResult(hudson.model.Run,
+     * io.jenkins.plugins.analysis.core.history.ResultSelector, boolean, boolean)} in the second iteration of the loop.
+     *
+     * @param name
+     *         Name of the Test
+     * @param overallResult
+     *         Mocked value for {@link AnalysisResult#getOverallResult()}
+     * @param runResult
+     *         Mocked value for {@link Run#getResult()} of the baseline run
+     * @param previousRunResult
+     *         Mocked value for {@link Run#getResult()} of the previous run that is processed
+     * @param overallResultMustBeSuccess
+     *         construtor param of {@link PreviousRunReference#PreviousRunReference(hudson.model.Run,
+     *         io.jenkins.plugins.analysis.core.history.ResultSelector, boolean)}
+     */
+    @ParameterizedTest(name = "{0}")
+    @MethodSource({"testDataOptionalIsEmpty", "testDataOptionalIsPresent"})
+    void shouldTestSecondIterationOfLoop(String name,
+            Result overallResult,
+            Result runResult,
+            Result previousRunResult,
+            boolean overallResultMustBeSuccess,
+            boolean enableAssertThatResultIsPresent,
+            boolean enableAssertThatResultIsEmpty) {
 
-	/**
-	 * Testing the first branch in {@link BuildHistory#getPreviousAction(boolean, boolean)}
-	 * if no previous runs are available
-	 */
-	@Test
-	void shouldBeEmptyIfNoPreviousRunsAreAvailable() {
+        AnalysisResult analysisResult = createAnalysisResultStub(overallResult);
+        Optional<ResultAction> resultActionOptional = createResultActionOptional(analysisResult);
 
-		Run baseline = createRunStub(null, Result.SUCCESS);
-		ResultSelector selector = createResultSelectorStub(Optional.empty());
+        ResultSelector selector = mock(ResultSelector.class);
+        when(selector.get(any())).thenReturn(Optional.empty()).thenReturn(resultActionOptional);
 
-		PreviousRunReference cut = new PreviousRunReference(baseline, selector, true);
+        Run previousPreviousBuild = createRunStub(null, previousRunResult);
+        Run previousBuild = createRunStub(previousPreviousBuild, previousRunResult);
+        Run baseline = createRunStub(previousBuild, runResult);
+        PreviousRunReference cut = new PreviousRunReference(baseline, selector, overallResultMustBeSuccess);
 
-		assertThat(cut.getReferenceAction()).isEmpty();
-	}
+        if (enableAssertThatResultIsPresent) {
+            assertThat(cut.getReferenceAction()).isPresent();
+        }
 
+        if (enableAssertThatResultIsEmpty) {
+            assertThat(cut.getReferenceAction()).isEmpty();
+        }
+    }
 
-	/**
-	 * Creating a stub of {@link Optional<ResultAction>} containing the nested stub of {@link AnalysisResult}
-	 *
-	 * @param analysisResult already mocked instance of {@link AnalysisResult}
-	 * @return Mocked optional of {@link ResultAction}
-	 */
-	private Optional<ResultAction> createResultActionOptional(AnalysisResult analysisResult) {
-		ResultAction resultAction = mock(ResultAction.class);
-		when(resultAction.getResult()).thenReturn(analysisResult);
+    /**
+     * Testing the first branch in {@link BuildHistory#getPreviousAction(boolean, boolean)} if no previous runs are
+     * available.
+     */
+    @Test
+    void shouldBeEmptyIfNoPreviousRunsAreAvailable() {
 
-		// can be always true because the second part of the OR logic is also set to true
-		when(resultAction.isSuccessful()).thenReturn(true);
-		return Optional.of(resultAction);
-	}
+        Run baseline = createRunStub(null, Result.SUCCESS);
+        ResultSelector selector = createResultSelectorStub(Optional.empty());
 
-	/**
-	 * Creating a stub of {@link Run} containing the nested stub of another run
-	 */
-	private Run createRunStub(Run previousBuild, Result runResult) {
-		Run stub = mock(Run.class);
-		when(stub.getPreviousBuild()).thenReturn(previousBuild);
-		when(stub.getResult()).thenReturn(runResult);
-		return stub;
-	}
+        PreviousRunReference cut = new PreviousRunReference(baseline, selector, true);
 
-	/**
-	 * creating complete stub of {@link ResultSelector} for the test
-	 *
-	 * @return Created stub of {@link ResultSelector}
-	 */
-	private ResultSelector createResultSelectorStub(Optional<ResultAction> optionalResultAction) {
-		ResultSelector selector = mock(ResultSelector.class);
-		when(selector.get(any())).thenReturn(optionalResultAction);
+        assertThat(cut.getReferenceAction()).isEmpty();
+    }
 
-		return selector;
-	}
+    /**
+     * Creating a stub of {@link Optional<ResultAction>} containing the nested stub of {@link AnalysisResult}.
+     *
+     * @param analysisResult
+     *         already mocked instance of {@link AnalysisResult}
+     *
+     * @return Mocked optional of {@link ResultAction}
+     */
+    private Optional<ResultAction> createResultActionOptional(AnalysisResult analysisResult) {
+        ResultAction resultAction = mock(ResultAction.class);
+        when(resultAction.getResult()).thenReturn(analysisResult);
 
-	private AnalysisResult createAnalysisResultStub(Result overallResult) {
-		AnalysisResult analysisResult = mock(AnalysisResult.class);
+        // can be always true because the second part of the OR logic is also set to true
+        when(resultAction.isSuccessful()).thenReturn(true);
+        return Optional.of(resultAction);
+    }
 
-		when(analysisResult.getOverallResult()).thenReturn(overallResult);
-		return analysisResult;
-	}
+    /**
+     * Creating a stub of {@link Run} containing the nested stub of another run.
+     */
+    private Run createRunStub(Run previousBuild, Result runResult) {
+        Run stub = mock(Run.class);
+        when(stub.getPreviousBuild()).thenReturn(previousBuild);
+        when(stub.getResult()).thenReturn(runResult);
+        return stub;
+    }
 
-	/**
-	 * Builds arg for the parameterized test.
-	 */
-	private static class TestArgumentsBuilder {
+    /**
+     * creating complete stub of {@link ResultSelector} for the test.
+     *
+     * @return Created stub of {@link ResultSelector}
+     */
+    private ResultSelector createResultSelectorStub(Optional<ResultAction> optionalResultAction) {
+        ResultSelector selector = mock(ResultSelector.class);
+        when(selector.get(any())).thenReturn(optionalResultAction);
 
-		private String testName;
-		private Result overallResult;
-		private Result runResult;
-		private Result previousRunResult;
-		private boolean overallMustBeSuccess;
-		private boolean isOptionalPresent;
+        return selector;
+    }
 
-		TestArgumentsBuilder setTestName(String name) {
-			this.testName = name;
-			return this;
-		}
+    private AnalysisResult createAnalysisResultStub(Result overallResult) {
+        AnalysisResult analysisResult = mock(AnalysisResult.class);
 
-		TestArgumentsBuilder setOverallResult(Result overallResult) {
-			this.overallResult = overallResult;
-			return this;
-		}
+        when(analysisResult.getOverallResult()).thenReturn(overallResult);
+        return analysisResult;
+    }
 
-		TestArgumentsBuilder setRunResult(Result runResult) {
-			this.runResult = runResult;
-			return this;
-		}
+    /**
+     * Builds arg for the parameterized test.
+     */
+    private static class TestArgumentsBuilder {
 
-		TestArgumentsBuilder setPreviousRunResult(Result previousRunResult) {
-			this.previousRunResult = previousRunResult;
-			return this;
-		}
+        private String testName;
+        private Result overallResult;
+        private Result runResult;
+        private Result previousRunResult;
+        private boolean overallMustBeSuccess;
+        private boolean enableAssertThatResultIsPresent;
+        private boolean enableAssertThatResultIsEmpty;
 
-		TestArgumentsBuilder setOverallMustBeSuccess(boolean overallMustBeSuccess) {
-			this.overallMustBeSuccess = overallMustBeSuccess;
-			return this;
-		}
+        TestArgumentsBuilder setTestName(String name) {
+            this.testName = name;
+            return this;
+        }
 
-		TestArgumentsBuilder setOptionalPresent(boolean optionalPresent) {
-			this.isOptionalPresent = optionalPresent;
-			return this;
-		}
+        TestArgumentsBuilder setOverallResult(Result overallResult) {
+            this.overallResult = overallResult;
+            return this;
+        }
 
-		/**
-		 * Build the tests argument.
-		 *
-		 * @return test arg
-		 */
-		public Object build() {
-			return Arguments.of(
-					testName,
-					overallResult,
-					runResult,
-					previousRunResult,
-					overallMustBeSuccess,
-					isOptionalPresent
-			);
-		}
-	}
+        TestArgumentsBuilder setRunResult(Result runResult) {
+            this.runResult = runResult;
+            return this;
+        }
+
+        TestArgumentsBuilder setPreviousRunResult(Result previousRunResult) {
+            this.previousRunResult = previousRunResult;
+            return this;
+        }
+
+        TestArgumentsBuilder setOverallMustBeSuccess(boolean overallMustBeSuccess) {
+            this.overallMustBeSuccess = overallMustBeSuccess;
+            return this;
+        }
+
+        TestArgumentsBuilder setEnableAssertThatResultIsPresent(boolean enableAssertThatResultIsPresent) {
+            this.enableAssertThatResultIsPresent = enableAssertThatResultIsPresent;
+            return this;
+        }
+
+        TestArgumentsBuilder setEnableAssertThatResultIsEmpty(boolean enableAssertThatResultIsEmpty) {
+            this.enableAssertThatResultIsEmpty = enableAssertThatResultIsEmpty;
+            return this;
+        }
+
+        /**
+         * Build the tests argument.
+         *
+         * @return test arg
+         */
+        public Object build() {
+            return Arguments.of(
+                    testName,
+                    overallResult,
+                    runResult,
+                    previousRunResult,
+                    overallMustBeSuccess,
+                    enableAssertThatResultIsPresent,
+                    enableAssertThatResultIsEmpty
+            );
+        }
+    }
 
 }
 

@@ -7,8 +7,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Issues.IssueFilterBuilder;
-import edu.hm.hafner.analysis.assertj.IssuesAssert;
-import static org.assertj.core.api.Assertions.*;
+import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 
 /**
  * An abstract class containing various helping methods for testing classes which extend IssuesFilter.
@@ -57,14 +56,18 @@ abstract class IssuesFilterTestUtil {
      */
     void applyFilterAndCheckResult(final Predicate<? super Issue> criterion, final Issues<Issue> issues,
             final Issue... expectedOutput) {
-        String id = "id";
+        String origin = "origin";
+        String reference = "reference";
 
-        issues.setId(id);
+        issues.setOrigin(origin);
+        issues.setReference(reference);
+
         Issues<Issue> result = issues.filter(criterion);
 
         assertThat(result.iterator()).containsExactly(expectedOutput);
 
-        IssuesAssert.assertThat(result).hasId(id);
+        assertThat(result).hasOrigin(origin);
+        assertThat(result).hasReference(reference);
     }
 
     /**
