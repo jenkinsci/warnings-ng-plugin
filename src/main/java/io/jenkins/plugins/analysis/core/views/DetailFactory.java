@@ -8,9 +8,6 @@ import java.util.function.Predicate;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
@@ -77,27 +74,28 @@ public class DetailFactory {
 
             Issue issue = allIssues.findById(UUID.fromString(plainLink));
             if (ConsoleDetail.isInConsoleLog(issue)) {
+                // FIXME: Put this in Jenkins Facade
                 return new ConsoleDetail(owner, issue.getLineStart(), issue.getLineEnd());
             }
             else {
+                // FIXME: Put this in Jenkins Facade
                 return new SourceDetail(owner, issue, sourceEncoding);
             }
         }
-        if (Severity.ERROR.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Severity.WARNING_HIGH, allIssues, fixedIssues, outstandingIssues,
-                    newIssues, url, labelProvider, sourceEncoding);
+        if (Priority.HIGH.equalsIgnoreCase(link)) {
+            return createPrioritiesDetail(owner, result, Priority.HIGH, allIssues, fixedIssues, outstandingIssues,
+                    newIssues,
+                    url, labelProvider, sourceEncoding);
         }
-        if (Severity.WARNING_HIGH.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Severity.WARNING_HIGH, allIssues, fixedIssues, outstandingIssues,
-                    newIssues, url, labelProvider, sourceEncoding);
+        if (Priority.NORMAL.equalsIgnoreCase(link)) {
+            return createPrioritiesDetail(owner, result, Priority.NORMAL, allIssues, fixedIssues, outstandingIssues,
+                    newIssues,
+                    url, labelProvider, sourceEncoding);
         }
-        if (Severity.WARNING_NORMAL.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Severity.WARNING_NORMAL, allIssues, fixedIssues, outstandingIssues,
-                    newIssues, url, labelProvider, sourceEncoding);
-        }
-        if (Severity.WARNING_LOW.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Severity.WARNING_LOW, allIssues, fixedIssues, outstandingIssues,
-                    newIssues, url, labelProvider, sourceEncoding);
+        if (Priority.LOW.equalsIgnoreCase(link)) {
+            return createPrioritiesDetail(owner, result, Priority.LOW, allIssues, fixedIssues, outstandingIssues,
+                    newIssues,
+                    url, labelProvider, sourceEncoding);
         }
 
         String property = StringUtils.substringBefore(link, ".");

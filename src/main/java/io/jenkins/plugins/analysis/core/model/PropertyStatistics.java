@@ -118,7 +118,7 @@ public class PropertyStatistics {
      * @return the number of high priority issues
      */
     public long getHighCount(final String key) {
-        return issuesByProperty.get(key).getSizeOf(Severity.WARNING_HIGH);
+        return issuesByProperty.get(key).getHighPrioritySize();
     }
 
     /**
@@ -130,7 +130,7 @@ public class PropertyStatistics {
      * @return the number of normal priority issues
      */
     public long getNormalCount(final String key) {
-        return issuesByProperty.get(key).getSizeOf(Severity.WARNING_NORMAL);
+        return issuesByProperty.get(key).getNormalPrioritySize();
     }
 
     /**
@@ -142,7 +142,7 @@ public class PropertyStatistics {
      * @return the number of low priority issues
      */
     public long getLowCount(final String key) {
-        return issuesByProperty.get(key).getSizeOf(Severity.WARNING_LOW);
+        return issuesByProperty.get(key).getLowPrioritySize();
     }
 }
 

@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.core.quality;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.jvnet.localizer.Localizable;
 
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.analysis.Severity;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 
 import hudson.model.HealthReport;
 import hudson.plugins.analysis.Messages;
@@ -39,15 +39,15 @@ public class HealthReportBuilder implements Serializable {
      * greater than {@link HealthDescriptor#getUnHealthy()}. The computation takes only annotations of the specified
      * severity into account.
      *
-     * @param result
-     *         annotations of the current build
+     * @param sizePerPriority
+     *         number of issues per priority
      *
      * @return the healthiness of a build
      */
-    public HealthReport computeHealth(final AnalysisResult result) {
+    public HealthReport computeHealth(final Map<Severity, Integer> sizePerPriority) {
         int relevantIssuesSize = 0;
         for (Priority priority : Priority.collectPrioritiesFrom(healthDescriptor.getMinimumPriority())) {
-            relevantIssuesSize += result.getTotalSize(Severity.of(priority));
+            relevantIssuesSize += sizePerPriority.get(priority);
         }
         relevantIssuesSize += result.getTotalErrorsSize();
 
@@ -67,22 +67,22 @@ public class HealthReportBuilder implements Serializable {
                 }
             }
 
-            return new HealthReport(percentage, getDescription(result));
+            return new HealthReport(percentage, getDescription(relevantIssuesSize));
         }
         return null;
     }
 
 
-    private Localizable getDescription(final AnalysisResult result) {
+    private Localizable getDescription(final int size) {
         String name = "Static Analysis"; // FIXME: extract from IssueParser.find(id)
-        if (result.getTotalSize() == 0) {
+        if (size == 0) {
             return Messages._ResultAction_HealthReportNoItem(name);
         }
-        else if (result.getTotalSize() == 1) {
+        else if (size == 1) {
             return Messages._ResultAction_HealthReportSingleItem(name);
         }
         else {
-            return Messages._ResultAction_HealthReportMultipleItem(name, result.getTotalSize());
+            return Messages._ResultAction_HealthReportMultipleItem(name, size);
         }
     }
 }

@@ -3,6 +3,8 @@ package io.jenkins.plugins.analysis.core;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.acegisecurity.AccessDeniedException;
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +13,7 @@ import jenkins.model.Jenkins;
 
 import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
+import hudson.model.AbstractItem;
 import hudson.model.BallColor;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
@@ -156,5 +159,27 @@ public class JenkinsFacade implements Serializable {
             // ignored
         }
         return url;
+    }
+
+    /**
+     * Returns the full names of all available jobs. The full name is given by {@link AbstractItem#getFullName()}.
+     *
+     * @return the full names of all jobs
+     */
+    public Set<String> getAllJobs() {
+        return getJenkins().getAllItems(Job.class).stream()
+                .map(this::getFullNameOf).distinct().collect(Collectors.toSet());
+    }
+
+    /**
+     * Returns the full name of the specified job.
+     *
+     * @param job
+     *         the job to get the name for
+     *
+     * @return the full name
+     */
+    public String getFullNameOf(final Job job) {
+        return job.getFullName(); // getFullName is final
     }
 }

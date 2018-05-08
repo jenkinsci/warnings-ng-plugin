@@ -17,7 +17,8 @@ import org.kohsuke.stapler.QueryParameter;
 
 import com.google.common.collect.Lists;
 
-import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Issues;
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
@@ -68,7 +69,9 @@ import hudson.util.ListBoxModel;
  */
 public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private static final Priority DEFAULT_MINIMUM_PRIORITY = Priority.LOW;
-    private static final String NO_REFERENCE_JOB = "-";
+
+    @VisibleForTesting
+    static final String NO_REFERENCE_JOB = "-";
 
     private String reportEncoding;
     private String sourceCodeEncoding;
@@ -453,7 +456,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             final TaskListener listener)
             throws IOException, InterruptedException {
         if (isAggregatingResults) {
-            Report totalIssues = new Report();
+            Issues<Issue> totalIssues = new Issues<>();
             for (ToolConfiguration toolConfiguration : tools) {
                 totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
             }
@@ -462,13 +465,13 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         }
         else {
             for (ToolConfiguration toolConfiguration : tools) {
-                Report report = scanWithTool(run, workspace, listener, toolConfiguration);
-                publishResult(run, workspace, launcher, listener, report, StringUtils.EMPTY);
+                Issues<?> issues = scanWithTool(run, workspace, listener, toolConfiguration);
+                publishResult(run, workspace, launcher, listener, issues, StringUtils.EMPTY);
             }
         }
     }
 
-    private Report scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
+    private Issues<?> scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final ToolConfiguration toolConfiguration)
             throws IOException, InterruptedException {
         ToolConfiguration configuration = toolConfiguration;
@@ -487,7 +490,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     private void publishResult(final Run<?, ?> run, final FilePath workspace, final Launcher launcher,
-            final TaskListener listener, final Report report, final String name)
+            final TaskListener listener, final Issues<?> issues, final String name)
             throws IOException, InterruptedException {
         IssuesPublisher publisher = new IssuesPublisher(run, report, getFilters(),
                 new HealthDescriptor(healthy, unHealthy, minimumPriority), new QualityGate(thresholds), workspace,
@@ -517,6 +520,20 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      */
     @Extension @Symbol("recordIssues")
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
+        private final JenkinsFacade jenkins;
+
+        /**
+         * Creates a new instance of {@link Descriptor}.
+         */
+        public Descriptor() {
+            this(new JenkinsFacade());
+        }
+
+        @VisibleForTesting
+        Descriptor(final JenkinsFacade jenkins) {
+            this.jenkins = jenkins;
+        }
+
         @Nonnull
         @Override
         public String getDisplayName() {
@@ -565,10 +582,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
          * @return the model with the possible reference jobs
          */
         public ComboBoxModel doFillReferenceJobItems() {
-            ComboBoxModel model = Jenkins.getInstance().getAllItems(Job.class).stream()
-                    .map(AbstractItem::getFullName)
-                    .distinct()
-                    .collect(Collectors.toCollection(ComboBoxModel::new));
+            ComboBoxModel model = new ComboBoxModel(jenkins.getAllJobs());
             model.add(0, NO_REFERENCE_JOB); // make sure that no input is valid
             return model;
         }
@@ -584,7 +598,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         public FormValidation doCheckReferenceJob(@QueryParameter final String referenceJob) {
             if (NO_REFERENCE_JOB.equals(referenceJob)
                     || StringUtils.isBlank(referenceJob)
-                    || new JenkinsFacade().getJob(referenceJob).isPresent()) {
+                    || jenkins.getJob(referenceJob).isPresent()) {
                 return FormValidation.ok();
             }
             return FormValidation.error(Messages.FieldValidator_Error_ReferenceJobDoesNotExist());

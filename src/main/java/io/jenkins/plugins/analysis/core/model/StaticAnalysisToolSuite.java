@@ -65,8 +65,7 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
         }
 
         @Override
-        public Report parse(final File file, final Charset charset,
-                final Function<String, String> preProcessor) {
+        public Report parse(final File file, final Charset charset, final Function<String, String> preProcessor) {
             Report aggregated = new Report();
             for (AbstractParser parser : parsers) {
                 aggregated.addAll(parser.parse(file, charset, preProcessor));

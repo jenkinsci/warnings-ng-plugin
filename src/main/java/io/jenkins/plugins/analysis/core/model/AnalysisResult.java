@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -551,6 +552,19 @@ public class AnalysisResult implements Serializable {
      */
     public Map<String, Integer> getSizePerOrigin() {
         return Maps.immutable.ofAll(sizePerOrigin).toMap();
+    }
+
+    /**
+     * Returns the number of issues in this analysis run, mapped by priority.
+     *
+     * @return number of issues per priority
+     */
+    public Map<Priority, Integer> getSizePerPriority() {
+        EnumMap<Priority, Integer> sizePerPriority = new EnumMap<>(Priority.class);
+        sizePerPriority.put(Priority.HIGH, highPrioritySize);
+        sizePerPriority.put(Priority.NORMAL, normalPrioritySize);
+        sizePerPriority.put(Priority.LOW, lowPrioritySize);
+        return sizePerPriority;
     }
 
     /**
