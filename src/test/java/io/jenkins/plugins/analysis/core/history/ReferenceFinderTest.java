@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.history;
 
+import java.sql.Ref;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -16,23 +17,28 @@ import static org.mockito.Mockito.*;
 import hudson.model.Result;
 import hudson.model.Run;
 
-abstract class ReferenceFinderTest {
+/**
+ * Tests the abstract class {@link ReferenceFinderTest} using the abstract test pattern.
+ *
+ * @author Stephan Plöderl
+ */
+public abstract class ReferenceFinderTest {
 
-    /** Should return a ReferenceFinder with overallResultSuccessMustBe set to true. */
-    abstract ReferenceFinder getReferenceFinder(Run baseline, ResultSelector resultSelector);
+    /**
+     * Should return an instance of {@link ReferenceFinder} with overallResultSuccessMustBe set to true.
+     *
+     * @return instance of a childclass of {@link ReferenceFinder} which shall be tested.
+     */
+    protected abstract ReferenceFinder getReferenceFinder(Run baseline, ResultSelector resultSelector);
 
-    /** Verifies that the create Method creates the instances of the correct ReferenceProviders. */
+    /** Verifies that {@link ReferenceFinder#create(Run, ResultSelector, boolean, boolean)} creates the instances of the correct ReferenceProviders. */
     @Test
     void createsRightInstance() {
-
-        ReferenceProvider actualStablePluginReference = ReferenceFinder.create(null, null, false, false);
-        ReferenceProvider actualPreviousRunReference = ReferenceFinder.create(null, null, true, false);
-
-        assertThat(actualStablePluginReference).isInstanceOf(StablePluginReference.class);
-        assertThat(actualPreviousRunReference).isInstanceOf(PreviousRunReference.class);
+        assertThat(ReferenceFinder.create(null, null, false, false)).isInstanceOf(StablePluginReference.class);
+        assertThat(ReferenceFinder.create(null, null, true, false)).isInstanceOf(PreviousRunReference.class);
     }
 
-    /** Should return the right owner. */
+    /** Verifies that {@link ReferenceFinder#getAnalysisRun()} returns the right owner. */
     @Test
     void shouldReturnRightOwner() {
         Run baseline = mock(Run.class);
@@ -51,14 +57,11 @@ abstract class ReferenceFinderTest {
 
         ReferenceFinder referenceFinder = getReferenceFinder(baseline, resultSelector);
 
-        Optional<Run<?, ?>> actualOwner = referenceFinder.getAnalysisRun();
-        Optional<Run<?, ?>> actualNoOwner = referenceFinder.getAnalysisRun();
-
-        assertThat(actualOwner).isEqualTo(Optional.of(baseline));
-        assertThat(actualNoOwner).isEqualTo(Optional.empty());
+        assertThat(referenceFinder.getAnalysisRun()).contains(baseline);
+        assertThat(referenceFinder.getAnalysisRun()).isEmpty();
     }
 
-    /** should get the issues of the reference job. */
+    /** Verifies that {@link ReferenceFinder#getIssues()} returns the issues of the reference-job. */
     @Test
     void getIssuesOfReferenceJob() {
         Run baseline = mock(Run.class);
@@ -86,11 +89,8 @@ abstract class ReferenceFinderTest {
 
         ReferenceFinder referenceFinder = getReferenceFinder(baseline, resultSelector);
 
-        Issues<?> actualIssues = referenceFinder.getIssues();
-        Issues<?> actualEmptyIssues = referenceFinder.getIssues();
-
-        assertThat(actualIssues).isEqualTo(issues);
-        assertThat(actualEmptyIssues).isEqualTo(new Issues<>());
+        assertThat(referenceFinder.getIssues()).isEqualTo(issues);
+        assertThat(referenceFinder.getIssues()).isEqualTo(new Issues<>());
     }
 
 }
