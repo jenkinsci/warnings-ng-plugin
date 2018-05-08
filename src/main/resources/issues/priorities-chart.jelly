@@ -13,7 +13,11 @@
         <h5 id="number-priorities" class="card-title"
             data-high="${it.issues.highPrioritySize}"
             data-normal="${it.issues.normalPrioritySize}"
-            data-low="${it.issues.lowPrioritySize}">
+            data-low="${it.issues.lowPrioritySize}"
+            data-high-label="${%High}"
+            data-normal-label="${%Normal}"
+            data-low-label="${%Low}"
+        >
           ${%Priorities}<i class="fa fa fa-bell-o icon-right fa-2x" aria-hidden="true"/>
         </h5>
 
