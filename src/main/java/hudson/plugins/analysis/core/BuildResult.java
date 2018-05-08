@@ -1,5 +1,6 @@
 package hudson.plugins.analysis.core; // NOPMD
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -13,7 +14,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -28,6 +28,7 @@ import com.google.common.collect.Sets;
 import com.infradna.tool.bridge_method_injector.WithBridgeMethods;
 import com.thoughtworks.xstream.XStream;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jenkins.model.Jenkins;
 
 import hudson.XmlFile;
@@ -48,8 +49,6 @@ import hudson.plugins.analysis.util.model.JavaProject;
 import hudson.plugins.analysis.util.model.MavenModule;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.analysis.views.DetailFactory;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * A base class for build results that is capable of storing a reference to the
@@ -1531,15 +1530,15 @@ public abstract class BuildResult implements ModelObject, Serializable, Annotati
                 + "/images/16x16/%s\" alt=\"%s\" title=\"%s\"/>";
         if (pluginResult == Result.FAILURE) {
             return String.format(message, FAILED,
-                    hudson.model.Messages.BallColor_Failed(), hudson.model.Messages.BallColor_Failed());
+                    Messages.BallColor_Failed(), Messages.BallColor_Failed());
         }
         else if (pluginResult == Result.UNSTABLE) {
             return String.format(message, UNSTABLE,
-                    hudson.model.Messages.BallColor_Unstable(), hudson.model.Messages.BallColor_Unstable());
+                    Messages.BallColor_Unstable(), Messages.BallColor_Unstable());
         }
         else {
             return String.format(message, SUCCESS,
-                    hudson.model.Messages.BallColor_Success(), hudson.model.Messages.BallColor_Success());
+                    Messages.BallColor_Success(), Messages.BallColor_Success());
         }
     }
 
