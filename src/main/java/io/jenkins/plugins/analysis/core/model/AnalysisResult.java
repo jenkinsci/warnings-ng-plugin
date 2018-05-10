@@ -40,9 +40,8 @@ import hudson.model.Result;
 import hudson.model.Run;
 
 /**
- * Stores the results of a static analysis run. This class is capable of storing a reference to the current build.
- * Provides support for persisting the results of the build and loading and saving of issues (all, new, and fixed) and
- * delta computation.
+ * Stores the results of a static analysis run. Provides support for persisting the results of the build and loading and
+ * saving of issues (all, new, and fixed) and delta computation.
  *
  * @author Ulli Hafner
  */
@@ -90,7 +89,7 @@ public class AnalysisResult implements Serializable {
     private final Map<Severity, Integer> newSizePerSeverity;
 
     private final ImmutableList<String> errors;
-    private final ImmutableList<String> infos;
+    private final ImmutableList<String> messages;
 
     /** Determines since which build we have zero warnings. */
     private int noIssuesSinceBuild;
@@ -254,7 +253,7 @@ public class AnalysisResult implements Serializable {
             overallResult = Result.SUCCESS;
         }
 
-        infos = Lists.immutable.withAll(messages);
+        this.messages = Lists.immutable.withAll(messages);
         errors = report.getErrorMessages();
 
         if (canSerialize) {
@@ -310,7 +309,7 @@ public class AnalysisResult implements Serializable {
      */
     @Exported
     public ImmutableList<String> getInfoMessages() {
-        return infos;
+        return messages;
     }
 
     /**
