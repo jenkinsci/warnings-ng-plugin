@@ -24,7 +24,7 @@ public class TabLabelProvider {
         this.report = report;
     }
 
-    public String getReport() {
+    public String getIssues() {
         return Messages.Tab_Issues();
     }
 
