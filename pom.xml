@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>1.99-SNAPSHOT</version>
     <relativePath>../analysis-pom</relativePath>
   </parent>
 
@@ -18,7 +18,9 @@
   </description>
 
   <properties>
-    <pmd.version>6.1.0</pmd.version>
+    <pmd.version>6.3.0</pmd.version>
+    <commons-digester3.version>3.2</commons-digester3.version>
+    <analysis-core.version>1.99-SNAPSHOT</analysis-core.version>
   </properties>
 
   <licenses>
@@ -54,19 +56,19 @@
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-core</artifactId>
-      <version>2.0-SNAPSHOT</version>
+      <version>${analysis-core.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-core</artifactId>
-      <version>2.0-SNAPSHOT</version>
+      <version>${analysis-core.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-digester3</artifactId>
-      <version>3.2</version>
+      <version>${commons-digester3.version}</version>
     </dependency>
 
     <!-- PMD Messages -->
@@ -95,13 +97,6 @@
           <artifactId>saxon</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jvnet.hudson.plugins</groupId>
-      <artifactId>analysis-test</artifactId>
-      <version>2.0-SNAPSHOT</version>
-      <scope>test</scope>
     </dependency>
 
     <!-- Integration Test Dependencies -->
