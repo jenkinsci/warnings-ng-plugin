@@ -5,13 +5,14 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 
-import edu.hm.hafner.util.IntegerParser;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.util.IntegerParser;
 import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
+import io.jenkins.plugins.analysis.core.quality.Status;
 import io.jenkins.plugins.analysis.core.views.LocalizedSeverity;
 import static j2html.TagCreator.*;
 import j2html.tags.ContainerTag;
@@ -21,7 +22,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import hudson.model.BallColor;
-import hudson.model.Result;
 import hudson.model.Run;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
@@ -266,8 +266,8 @@ public class StaticAnalysisLabelProvider {
         return a(linkText).withHref(getResultUrl());
     }
 
-    public DomContent getQualityGateResult(final Result overallResult) {
-        return join(Messages.Tool_QualityGate(), getResultIcon(overallResult.color));
+    public DomContent getQualityGateResult(final Status qualityGateStatus) {
+        return join(Messages.Tool_QualityGate(), getResultIcon(qualityGateStatus));
     }
 
     public DomContent getReferenceBuild(final Run<?, ?> referenceBuild) {
@@ -279,7 +279,8 @@ public class StaticAnalysisLabelProvider {
         return a(referenceBuild.getFullDisplayName()).withHref(absoluteUrl);
     }
 
-    private UnescapedText getResultIcon(final BallColor color) {
+    private UnescapedText getResultIcon(final Status status) {
+        BallColor color = status.getColor();
         return join(img().withSrc(jenkins.getImagePath(color))
                         .withClasses(color.getIconClassName(), "icon-lg")
                         .withAlt(color.getDescription())

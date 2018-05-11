@@ -11,8 +11,6 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.ThresholdSet.ThresholdResult;
 import io.jenkins.plugins.analysis.core.quality.ThresholdSet.ThresholdSetBuilder;
 
-import hudson.model.Result;
-
 /**
  * Defines quality gates for a static analysis run.
  *
@@ -168,18 +166,18 @@ public class QualityGate implements Serializable {
         }
 
         /**
-         * Returns the overall result for the set quality gates.
+         * Returns the status for this quality gate.
          *
          * @return the overall result
          */
-        public Result getOverallResult() {
+        public Status getStatus() {
             if (!totalFailed.isSuccess() || !newFailed.isSuccess()) {
-                return Result.FAILURE;
+                return Status.ERROR;
             }
             if (!totalUnstable.isSuccess() || !newUnstable.isSuccess()) {
-                return Result.UNSTABLE;
+                return Status.WARNING;
             }
-            return Result.SUCCESS;
+            return Status.PASSED;
         }
 
         /**

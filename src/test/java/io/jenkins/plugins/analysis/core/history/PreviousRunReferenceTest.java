@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.quality.Status;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -23,7 +24,6 @@ import hudson.model.Run;
  * @author Alexander Praegla
  */
 class PreviousRunReferenceTest {
-
     /**
      * Method to provide test element that return an empty optional.
      *
@@ -33,7 +33,7 @@ class PreviousRunReferenceTest {
         return asList(
                 new TestArgumentsBuilder()
                         .setTestName("isEmpty when result of previous run is null")
-                        .setOverallResult(Result.SUCCESS)
+                        .setStatus(Status.PASSED)
                         .setRunResult(Result.SUCCESS)
                         .setPreviousRunResult(null)
                         .setOverallMustBeSuccess(true)
@@ -42,7 +42,7 @@ class PreviousRunReferenceTest {
                         .build(),
                 new TestArgumentsBuilder()
                         .setTestName("isEmpty when result of previous run is FAILURE")
-                        .setOverallResult(Result.SUCCESS)
+                        .setStatus(Status.PASSED)
                         .setRunResult(Result.SUCCESS)
                         .setPreviousRunResult(Result.FAILURE)
                         .setOverallMustBeSuccess(true)
@@ -52,7 +52,7 @@ class PreviousRunReferenceTest {
                 new TestArgumentsBuilder()
                         .setTestName(
                                 "isEmpty when analysisResult#overallResult is SUCCESS and result of previous run is NOT_BUILT")
-                        .setOverallResult(Result.SUCCESS)
+                        .setStatus(Status.PASSED)
                         .setRunResult(Result.SUCCESS)
                         .setPreviousRunResult(Result.NOT_BUILT)
                         .setOverallMustBeSuccess(false)
@@ -72,7 +72,7 @@ class PreviousRunReferenceTest {
                 new TestArgumentsBuilder()
                         .setTestName(
                                 "isPresent when analysisResult#overallResult is SUCCESS and result of previous run is SUCCESS")
-                        .setOverallResult(Result.SUCCESS)
+                        .setStatus(Status.PASSED)
                         .setRunResult(Result.SUCCESS)
                         .setPreviousRunResult(Result.SUCCESS)
                         .setOverallMustBeSuccess(true)
@@ -82,7 +82,7 @@ class PreviousRunReferenceTest {
                 new TestArgumentsBuilder()
                         .setTestName(
                                 "isPresent when analysisResult#overallResult is SUCCESS and result of previous run is SUCCESS")
-                        .setOverallResult(Result.SUCCESS)
+                        .setStatus(Status.PASSED)
                         .setRunResult(Result.SUCCESS)
                         .setPreviousRunResult(Result.SUCCESS)
                         .setOverallMustBeSuccess(false)
@@ -92,7 +92,7 @@ class PreviousRunReferenceTest {
                 new TestArgumentsBuilder()
                         .setTestName(
                                 "isPresent when analysisResult#overallResult is FAILURE and result of previous run is SUCCESS")
-                        .setOverallResult(Result.FAILURE)
+                        .setStatus(Status.ERROR)
                         .setRunResult(Result.SUCCESS)
                         .setPreviousRunResult(Result.SUCCESS)
                         .setOverallMustBeSuccess(false)
@@ -102,7 +102,7 @@ class PreviousRunReferenceTest {
                 new TestArgumentsBuilder()
                         .setTestName(
                                 "isPresent when analysisResult#overallResult is FAILURE and result of previous run is FAILURE")
-                        .setOverallResult(Result.FAILURE)
+                        .setStatus(Status.ERROR)
                         .setRunResult(Result.SUCCESS)
                         .setPreviousRunResult(Result.FAILURE)
                         .setOverallMustBeSuccess(false)
@@ -119,7 +119,7 @@ class PreviousRunReferenceTest {
      * @param name
      *         Name of the Test
      * @param overallResult
-     *         Mocked value for {@link AnalysisResult#getOverallResult()}
+     *         Mocked value for {@link AnalysisResult#getStatus()}
      * @param runResult
      *         Mocked value for {@link Run#getResult()} of the baseline run
      * @param previousRunResult
@@ -131,7 +131,7 @@ class PreviousRunReferenceTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource({"testDataOptionalIsEmpty", "testDataOptionalIsPresent"})
     void shouldTestFirstIterationOfLoop(String name,
-            Result overallResult,
+            Status overallResult,
             Result runResult,
             Result previousRunResult,
             boolean overallResultMustBeSuccess,
@@ -161,7 +161,7 @@ class PreviousRunReferenceTest {
      * @param name
      *         Name of the Test
      * @param overallResult
-     *         Mocked value for {@link AnalysisResult#getOverallResult()}
+     *         Mocked value for {@link AnalysisResult#getStatus()}
      * @param runResult
      *         Mocked value for {@link Run#getResult()} of the baseline run
      * @param previousRunResult
@@ -173,7 +173,7 @@ class PreviousRunReferenceTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource({"testDataOptionalIsEmpty", "testDataOptionalIsPresent"})
     void shouldTestSecondIterationOfLoop(String name,
-            Result overallResult,
+            Status overallResult,
             Result runResult,
             Result previousRunResult,
             boolean overallResultMustBeSuccess,
@@ -254,10 +254,10 @@ class PreviousRunReferenceTest {
         return selector;
     }
 
-    private AnalysisResult createAnalysisResultStub(Result overallResult) {
+    private AnalysisResult createAnalysisResultStub(final Status status) {
         AnalysisResult analysisResult = mock(AnalysisResult.class);
 
-        when(analysisResult.getOverallResult()).thenReturn(overallResult);
+        when(analysisResult.getStatus()).thenReturn(status);
         return analysisResult;
     }
 
@@ -267,7 +267,7 @@ class PreviousRunReferenceTest {
     private static class TestArgumentsBuilder {
 
         private String testName;
-        private Result overallResult;
+        private Status status;
         private Result runResult;
         private Result previousRunResult;
         private boolean overallMustBeSuccess;
@@ -279,8 +279,8 @@ class PreviousRunReferenceTest {
             return this;
         }
 
-        TestArgumentsBuilder setOverallResult(Result overallResult) {
-            this.overallResult = overallResult;
+        TestArgumentsBuilder setStatus(Status status) {
+            this.status = status;
             return this;
         }
 
@@ -317,7 +317,7 @@ class PreviousRunReferenceTest {
         public Object build() {
             return Arguments.of(
                     testName,
-                    overallResult,
+                    status,
                     runResult,
                     previousRunResult,
                     overallMustBeSuccess,

@@ -1,11 +1,12 @@
 package io.jenkins.plugins.analysis.core.history;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.quality.Status;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.model.Result;
@@ -105,7 +106,7 @@ public class BuildHistory implements ResultHistory {
     }
 
     private static boolean isPluginCauseForFailure(final ResultAction action) {
-        return action.getResult().getOverallResult().isWorseOrEqualTo(Result.FAILURE);
+        return action.getResult().getStatus() == Status.ERROR;
     }
 
     // FIXME: should we ignore the result?

@@ -17,8 +17,6 @@ import io.jenkins.plugins.analysis.core.quality.ThresholdSet.ThresholdResult;
 import io.jenkins.plugins.analysis.core.quality.ThresholdSet.ThresholdSetBuilder;
 import static org.mockito.Mockito.*;
 
-import hudson.model.Result;
-
 /**
  * Tests the class {@link QualityGate QualityGate}. These Tests were created while developing the class QualityGate.
  *
@@ -104,14 +102,14 @@ class QualityGateTest extends SerializableTest<QualityGate> {
         assertThat(qualityGate).isNotEnabled();
 
         QualityGateResult qualityGateResult = qualityGate.evaluate(run);
-        assertThat(qualityGateResult).hasOverallResult(Result.SUCCESS);
+        assertThat(qualityGateResult).hasStatus(Status.PASSED);
         assertThat(qualityGateResult.getEvaluations(mock(AnalysisResult.class), qualityGate)).isEmpty();
     }
 
     @Test
     void shouldBeSuccessWhenNoThresholdIsSet() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder();
-        testThreshold(builder, 0, 0, 0, Result.SUCCESS);
+        testThreshold(builder, 0, 0, 0, Status.PASSED);
     }
 
     @Test
@@ -121,175 +119,175 @@ class QualityGateTest extends SerializableTest<QualityGate> {
                 .setTotalUnstableThreshold(s)
                 .setNewFailedThreshold(s)
                 .setNewUnstableThreshold(s);
-        testThreshold(builder, 2, 0, 0, Result.SUCCESS);
+        testThreshold(builder, 2, 0, 0, Status.PASSED);
     }
 
     @Test
     void shouldBeSuccessWhenWarningCountIsLowerThanFailedThreshold() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalFailedThreshold(
                 s);
-        testThreshold(builder, 2, 1, 0, Result.SUCCESS);
+        testThreshold(builder, 2, 1, 0, Status.PASSED);
     }
 
     @Test
     void shouldBeFailedWhenFailedThresholdIsEqualThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalFailedThreshold(
                 s);
-        testThreshold(builder, 2, 2, 0, Result.FAILURE);
+        testThreshold(builder, 2, 2, 0, Status.ERROR);
     }
 
     @Test
     void shouldBeFailedWhenFailedThresholdIsLowerThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalFailedThreshold(
                 s);
-        testThreshold(builder, 2, 3, 0, Result.FAILURE);
+        testThreshold(builder, 2, 3, 0, Status.ERROR);
     }
 
     @Test
     void shouldBeSuccessWhenWarningCountIsLowerThanUnstableThreshold() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalUnstableThreshold(
                 s);
-        testThreshold(builder, 2, 1, 0, Result.SUCCESS);
+        testThreshold(builder, 2, 1, 0, Status.PASSED);
     }
 
     @Test
     void shouldBeUnstableWhenUnstableThresholdIsEqualThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalUnstableThreshold(
                 s);
-        testThreshold(builder, 2, 2, 0, Result.UNSTABLE);
+        testThreshold(builder, 2, 2, 0, Status.WARNING);
     }
 
     @Test
     void shouldBeUnstableWhenUnstableThresholdIsLowerThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalUnstableThreshold(
                 s);
-        testThreshold(builder, 2, 3, 0, Result.UNSTABLE);
+        testThreshold(builder, 2, 3, 0, Status.WARNING);
     }
 
     @Test
     void shouldBeSuccessWhenWarningCountIsLowerThanFailedAndUnstableThreshold() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalFailedThreshold(
                 s).setTotalUnstableThreshold(s);
-        testThreshold(builder, 2, 1, 0, Result.SUCCESS);
+        testThreshold(builder, 2, 1, 0, Status.PASSED);
     }
 
     @Test
     void shouldBeFailedWhenFailedAndUnstableThresholdIsEqualThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalFailedThreshold(
                 s).setTotalUnstableThreshold(s);
-        testThreshold(builder, 2, 2, 0, Result.FAILURE);
+        testThreshold(builder, 2, 2, 0, Status.ERROR);
     }
 
     @Test
     void shouldBeFailedWhenFailedAndUnstableThresholdIsLowerThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalFailedThreshold(
                 s).setTotalUnstableThreshold(s);
-        testThreshold(builder, 2, 3, 0, Result.FAILURE);
+        testThreshold(builder, 2, 3, 0, Status.ERROR);
     }
 
     @Test
     void shouldBeSuccessWhenWarningCountIsLowerThanNewFailedThreshold() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewFailedThreshold(
                 s);
-        testThreshold(builder, 2, 0, 1, Result.SUCCESS);
+        testThreshold(builder, 2, 0, 1, Status.PASSED);
     }
 
     @Test
     void shouldBeFailedWhenNewFailedThresholdIsEqualThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewFailedThreshold(
                 s);
-        testThreshold(builder, 2, 0, 2, Result.FAILURE);
+        testThreshold(builder, 2, 0, 2, Status.ERROR);
     }
 
     @Test
     void shouldBeFailedWhenNewFailedThresholdIsLowerThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewFailedThreshold(
                 s);
-        testThreshold(builder, 2, 0, 3, Result.FAILURE);
+        testThreshold(builder, 2, 0, 3, Status.ERROR);
     }
 
     @Test
     void shouldBeSuccessWhenWarningCountIsLowerThanNewUnstableThreshold() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewUnstableThreshold(
                 s);
-        testThreshold(builder, 2, 0, 1, Result.SUCCESS);
+        testThreshold(builder, 2, 0, 1, Status.PASSED);
     }
 
     @Test
     void shouldBeFailedWhenNewUnstableThresholdIsEqualThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewUnstableThreshold(
                 s);
-        testThreshold(builder, 2, 0, 2, Result.UNSTABLE);
+        testThreshold(builder, 2, 0, 2, Status.WARNING);
     }
 
     @Test
     void shouldBeFailedWhenNewUnstableThresholdIsLowerThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewUnstableThreshold(
                 s);
-        testThreshold(builder, 2, 0, 3, Result.UNSTABLE);
+        testThreshold(builder, 2, 0, 3, Status.WARNING);
     }
 
     @Test
     void shouldBeSuccessWhenWarningCountIsLowerThanNewFailedAndUnstableThreshold() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewFailedThreshold(
                 s).setNewUnstableThreshold(s);
-        testThreshold(builder, 2, 0, 1, Result.SUCCESS);
+        testThreshold(builder, 2, 0, 1, Status.PASSED);
     }
 
     @Test
     void shouldBeFailedWhenNewFailedAndUnstableThresholdIsEqualThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewFailedThreshold(
                 s).setNewUnstableThreshold(s);
-        testThreshold(builder, 2, 0, 2, Result.FAILURE);
+        testThreshold(builder, 2, 0, 2, Status.ERROR);
     }
 
     @Test
     void shouldBeFailedWhenNewFailedAndUnstableThresholdIsLowerThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewFailedThreshold(
                 s).setNewUnstableThreshold(s);
-        testThreshold(builder, 2, 0, 3, Result.FAILURE);
+        testThreshold(builder, 2, 0, 3, Status.ERROR);
     }
 
     @Test
     void shouldBeSuccessWhenWarningCountIsLowerThanNewFailedAndTotalUnstableThreshold() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewFailedThreshold(
                 s).setTotalUnstableThreshold(s);
-        testThreshold(builder, 2, 1, 1, Result.SUCCESS);
+        testThreshold(builder, 2, 1, 1, Status.PASSED);
     }
 
     @Test
     void shouldBeFailedWhenNewFailedAndTotalUnstableThresholdIsEqualThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewFailedThreshold(
                 s).setTotalUnstableThreshold(s);
-        testThreshold(builder, 2, 2, 2, Result.FAILURE);
+        testThreshold(builder, 2, 2, 2, Status.ERROR);
     }
 
     @Test
     void shouldBeFailedWhenNewFailedAndTotalUnstableThresholdIsLowerThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewFailedThreshold(
                 s).setTotalUnstableThreshold(s);
-        testThreshold(builder, 2, 2, 3, Result.FAILURE);
+        testThreshold(builder, 2, 2, 3, Status.ERROR);
     }
 
     @Test
     void shouldBeSuccessWhenWarningCountIsLowerThanTotalFailedAndNewUnstableThreshold() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalFailedThreshold(
                 s).setNewUnstableThreshold(s);
-        testThreshold(builder, 2, 1, 1, Result.SUCCESS);
+        testThreshold(builder, 2, 1, 1, Status.PASSED);
     }
 
     @Test
     void shouldBeFailedWhenTotalFailedAndNewUnstableThresholdIsEqualThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalFailedThreshold(
                 s).setNewUnstableThreshold(s);
-        testThreshold(builder, 2, 2, 2, Result.FAILURE);
+        testThreshold(builder, 2, 2, 2, Status.ERROR);
     }
 
     @Test
     void shouldBeFailedWhenTotalFailedAndNewUnstableThresholdIsLowerThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalFailedThreshold(
                 s).setNewUnstableThreshold(s);
-        testThreshold(builder, 2, 2, 3, Result.FAILURE);
+        testThreshold(builder, 2, 2, 3, Status.ERROR);
     }
 
     @Test
@@ -511,11 +509,11 @@ class QualityGateTest extends SerializableTest<QualityGate> {
      *         count of all warnings
      * @param newWarningCount
      *         count of new warnings
-     * @param result
+     * @param status
      *         expected result of the tests
      */
     private void testThreshold(Function<ThresholdSet, QualityGateBuilder> builder,
-            final int threshold, final int totalWarningCount, final int newWarningCount, final Result result) {
+            final int threshold, final int totalWarningCount, final int newWarningCount, final Status status) {
         QualityGate qualityGateTotal = builder.apply(
                 new ThresholdSetBuilder().setTotalThreshold(threshold).build()).build();
         QualityGate qualityGateHigh = builder.apply(
@@ -546,22 +544,22 @@ class QualityGateTest extends SerializableTest<QualityGate> {
 
         assertThat(qualityGateTotal.evaluate(runTotal))
                 .as("Threshold was <" + threshold + "> warning count was <" + totalWarningCount + ">")
-                .hasOverallResult(result);
+                .hasStatus(status);
         assertThat(qualityGateTotal.isEnabled()).isEqualTo(threshold > 0);
 
         assertThat(qualityGateHigh.evaluate(runHigh))
                 .as("High priority threshold was <" + threshold + "> warning count was <" + totalWarningCount + ">")
-                .hasOverallResult(result);
+                .hasStatus(status);
         assertThat(qualityGateHigh.isEnabled()).isEqualTo(threshold > 0);
 
         assertThat(qualityGateNormal.evaluate(runNormal))
                 .as("Normal priority threshold was <" + threshold + "> warning count was <" + totalWarningCount + ">")
-                .hasOverallResult(result);
+                .hasStatus(status);
         assertThat(qualityGateNormal.isEnabled()).isEqualTo(threshold > 0);
 
         assertThat(qualityGateLow.evaluate(runLow))
                 .as("Low priority threshold was <" + threshold + "> warning count was <" + totalWarningCount + ">")
-                .hasOverallResult(result);
+                .hasStatus(status);
         assertThat(qualityGateLow.isEnabled()).isEqualTo(threshold > 0);
     }
 
@@ -594,7 +592,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
 
         QualityGateResult qualityGateResult = qualityGate.evaluate(run);
         assertThat(qualityGateResult).as("Does not convert %s to zero threshold")
-                .hasOverallResult(Result.SUCCESS);
+                .hasStatus(Status.PASSED);
     }
 
 }

@@ -34,6 +34,7 @@ import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.quality.RunAdapter;
+import io.jenkins.plugins.analysis.core.quality.Status;
 
 import hudson.XmlFile;
 import hudson.model.Result;
@@ -106,7 +107,7 @@ public class AnalysisResult implements Serializable {
      * The build result of the associated plug-in. This result is an additional state that denotes if this plug-in has
      * changed the overall build result.
      */
-    private Result overallResult = Result.SUCCESS;
+    private Status status = Status.PASSED;
 
     /**
      * Creates a new instance of {@link AnalysisResult}.
@@ -138,8 +139,8 @@ public class AnalysisResult implements Serializable {
             noIssuesSinceBuild = NO_BUILD;
         }
 
-        if (overallResult == Result.SUCCESS) {
-            if (previousResult.overallResult == Result.SUCCESS) {
+        if (status == Status.PASSED) {
+            if (previousResult.status == Status.PASSED) {
                 successfulSinceBuild = previousResult.successfulSinceBuild;
             }
             else {
@@ -174,7 +175,7 @@ public class AnalysisResult implements Serializable {
         else {
             noIssuesSinceBuild = NO_BUILD;
         }
-        if (overallResult == Result.SUCCESS) {
+        if (status == Status.PASSED) {
             successfulSinceBuild = owner.getNumber();
         }
         else {
@@ -234,31 +235,41 @@ public class AnalysisResult implements Serializable {
         fixedIssuesReference = new WeakReference<>(fixedIssues);
         fixedSize = fixedIssues.size();
 
-        List<String> messages = new ArrayList<>(report.getInfoMessages().castToList());
+        List<String> aggregatedMessages = new ArrayList<>(report.getInfoMessages().castToList());
 
         if (qualityGate.isEnabled()) {
             QualityGateResult result = qualityGate.evaluate(this);
-            overallResult = result.getOverallResult();
-            if (overallResult.isBetterOrEqualTo(Result.SUCCESS)) {
-                messages.add("All quality gates have been passed");
+            status = result.getStatus();
+            if (status == Status.PASSED) {
+                aggregatedMessages.add("All quality gates have been passed");
             }
             else {
-                messages.add(String.format("Some quality gates have been missed: overall result is %s", overallResult));
-                messages.addAll(result.getEvaluations(this, qualityGate));
+                aggregatedMessages.add(String.format("Some quality gates have been missed: overall result is %s", status));
+                aggregatedMessages.addAll(result.getEvaluations(this, qualityGate));
             }
-            owner.setResult(overallResult);
+            owner.setResult(createResult());
         }
         else {
-            messages.add("No quality gates have been set - skipping");
-            overallResult = Result.SUCCESS;
+            aggregatedMessages.add("No quality gates have been set - skipping");
+            status = Status.PASSED; // FIXME: does it make sense to add Status.SKIPPED
         }
 
-        this.messages = Lists.immutable.withAll(messages);
+        this.messages = Lists.immutable.withAll(aggregatedMessages);
         errors = report.getErrorMessages();
 
         if (canSerialize) {
             serializeAnnotations(outstandingIssues, newIssues, fixedIssues);
         }
+    }
+
+    private Result createResult() {
+        if (status == Status.WARNING) {
+            return Result.UNSTABLE;
+        }
+        if (status == Status.ERROR) {
+            return Result.FAILURE;
+        }
+        return Result.SUCCESS;
     }
 
     /**
@@ -488,11 +499,11 @@ public class AnalysisResult implements Serializable {
      * Returns whether the static analysis result is successful with respect to the defined {@link QualityGate}.
      *
      * @return {@code true} if the static analysis result is successful, {@code false} if the static analysis result is
-     *         {@link Result#UNSTABLE} or {@link Result#FAILURE}
+     *         {@link Status#WARNING} or {@link Status#ERROR}
      */
     @Exported
     public boolean isSuccessful() {
-        return overallResult == Result.SUCCESS;
+        return status == Status.PASSED;
     }
 
     public QualityGate getQualityGate() {
@@ -500,13 +511,13 @@ public class AnalysisResult implements Serializable {
     }
 
     /**
-     * Returns the {@link Result} of the static analysis run.
+     * Returns the {@link Status} of the {@link QualityGate} evaluation of the static analysis run.
      *
-     * @return the static analysis result
+     * @return the quality gate status
      */
     @Exported
-    public Result getOverallResult() {
-        return overallResult;
+    public Status getStatus() {
+        return status;
     }
 
     @Override
@@ -520,7 +531,7 @@ public class AnalysisResult implements Serializable {
      * @return the reference build
      */
     public Optional<Run<?, ?>> getReferenceBuild() {
-        if (referenceJob == NO_REFERENCE) {
+        if (NO_REFERENCE.equals(referenceJob)) {
             return Optional.empty();
         }
         return new JenkinsFacade().getBuild(referenceJob, referenceBuild);

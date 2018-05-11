@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.quality.Status;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import static org.mockito.Mockito.*;
@@ -127,7 +128,7 @@ class StablePluginReferenceTest extends ReferenceFinderTest {
 
         AnalysisResult analysisResult = mock(AnalysisResult.class);
         when(resultAction.getResult()).thenReturn(analysisResult);
-        when(analysisResult.getOverallResult()).thenReturn(Result.UNSTABLE);
+        when(analysisResult.getStatus()).thenReturn(Status.WARNING);
 
         ResultSelector resultSelector = mock(ResultSelector.class);
         when(resultSelector.get(prevJob)).thenReturn(Optional.of(resultAction));
@@ -143,7 +144,7 @@ class StablePluginReferenceTest extends ReferenceFinderTest {
         when(prevJob.getResult()).thenReturn(Result.FAILURE);
         assertThat(stablePluginReference.getReferenceAction()).isEmpty();
 
-        when(analysisResult.getOverallResult()).thenReturn(Result.FAILURE);
+        when(analysisResult.getStatus()).thenReturn(Status.ERROR);
         assertThat(stablePluginReference.getReferenceAction()).contains(resultAction);
 
     }

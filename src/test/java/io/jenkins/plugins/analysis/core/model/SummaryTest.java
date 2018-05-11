@@ -15,11 +15,11 @@ import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.Summary.LabelProviderFactoryFacade;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
+import io.jenkins.plugins.analysis.core.quality.Status;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import hudson.model.Result;
 import hudson.model.Run;
 
 /**
@@ -188,7 +188,7 @@ class SummaryTest {
     void shouldContainQualityGateResult() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
                 EMPTY_ERRORS, 0, 0);
-        when(analysisResult.getOverallResult()).thenReturn(Result.SUCCESS);
+        when(analysisResult.getStatus()).thenReturn(Status.PASSED);
         QualityGate qualityGate = mock(QualityGate.class);
         when(qualityGate.isEnabled()).thenReturn(true);
         when(analysisResult.getQualityGate()).thenReturn(qualityGate);
@@ -204,7 +204,7 @@ class SummaryTest {
     void shouldNotContainQualityGateResult() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
                 EMPTY_ERRORS, 0, 0);
-        when(analysisResult.getOverallResult()).thenReturn(Result.SUCCESS);
+        when(analysisResult.getStatus()).thenReturn(Status.PASSED);
         QualityGate qualityGate = mock(QualityGate.class);
         when(qualityGate.isEnabled()).thenReturn(false);
         String createdHtml = createTestData(analysisResult).create();
@@ -282,7 +282,7 @@ class SummaryTest {
         Thresholds thresholds = new Thresholds();
         thresholds.unstableTotalAll = numberOfThresholds;
         when(analysisRun.getQualityGate()).thenReturn(new QualityGate(thresholds));
-        when(analysisRun.getOverallResult()).thenReturn(Result.SUCCESS);
+        when(analysisRun.getStatus()).thenReturn(Status.PASSED);
         Run<?, ?> run = mock(Run.class);
         when(run.getFullDisplayName()).thenReturn("Job #15");
         when(run.getUrl()).thenReturn("job/my-job/15");
