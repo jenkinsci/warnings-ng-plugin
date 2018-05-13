@@ -13,6 +13,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+import io.jenkins.plugins.analysis.core.quality.Status;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
@@ -69,7 +70,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
 
         assertThat(result).hasTotalSize(8);
-        assertThat(result).hasOverallResult(Result.UNSTABLE);
+        assertThat(result).hasStatus(Status.WARNING);
 
         HtmlPage page = getWebPage(result);
         assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
