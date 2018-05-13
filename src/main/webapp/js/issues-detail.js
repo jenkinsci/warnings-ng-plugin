@@ -141,17 +141,11 @@
     });
 
     /**
-     * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.
+     * Issues are loaded on demand: if the active tab shows the issues table, then the content is loaded using an Ajax call.
      */
-    var detailsTabs = $('#tab-details');
-    detailsTabs.find('li:first-child a').tab('show');
-    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+    var tabToggleLink = $('a[data-toggle="tab"]');
+    tabToggleLink.on('show.bs.tab', function (e) {
         var activeTab = $(e.target).attr('href');
-        localStorage.setItem('activeTab', activeTab);
-
-        /**
-         * If the active tab contains the issues, then load the content using an Ajax call.
-         */
         if (activeTab === '#issuesContent' && table.data().length === 0 ) {
             view.getTableModel(function (t) {
                 (function ($) {
@@ -160,6 +154,20 @@
                 })(jQuery);
             });
         }
+    });
+
+    /**
+     * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.
+     */
+    var detailsTabs = $('#tab-details');
+    detailsTabs.find('li:first-child a').tab('show');
+
+    /**
+     * Store the selected tab in Browser's local storage.
+     */
+    tabToggleLink.on('show.bs.tab', function (e) {
+        var activeTab = $(e.target).attr('href');
+        localStorage.setItem('activeTab', activeTab);
     });
 
     var activeTab = localStorage.getItem('activeTab');
