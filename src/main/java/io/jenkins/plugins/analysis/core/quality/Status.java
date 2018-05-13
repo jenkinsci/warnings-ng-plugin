@@ -13,7 +13,9 @@ public enum Status {
 
     WARNING(Result.UNSTABLE),
 
-    ERROR(Result.FAILURE);
+    FAILED(Result.FAILURE),
+
+    INACTIVE(Result.NOT_BUILT);
 
     private Result result;
 
@@ -28,5 +30,14 @@ public enum Status {
      */
     public BallColor getColor() {
         return result.color;
+    }
+
+    /**
+     * Returns whether the quality gate has been passed (or has not been activated at all).
+     *
+     * @return {@code true} if the quality gate has been passed, {@code false}  otherwise
+     */
+    public boolean isSuccessful() {
+        return this == PASSED || this == INACTIVE;
     }
 }

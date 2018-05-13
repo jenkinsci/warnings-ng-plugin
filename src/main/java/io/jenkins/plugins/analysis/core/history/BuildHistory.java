@@ -106,7 +106,7 @@ public class BuildHistory implements ResultHistory {
     }
 
     private static boolean isPluginCauseForFailure(final ResultAction action) {
-        return action.getResult().getStatus() == Status.ERROR;
+        return action.getResult().getStatus() == Status.FAILED;
     }
 
     // FIXME: should we ignore the result?

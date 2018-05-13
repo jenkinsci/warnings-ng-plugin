@@ -92,7 +92,7 @@ class PreviousRunReferenceTest {
                 new TestArgumentsBuilder()
                         .setTestName(
                                 "isPresent when analysisResult#overallResult is FAILURE and result of previous run is SUCCESS")
-                        .setStatus(Status.ERROR)
+                        .setStatus(Status.FAILED)
                         .setRunResult(Result.SUCCESS)
                         .setPreviousRunResult(Result.SUCCESS)
                         .setOverallMustBeSuccess(false)
@@ -102,7 +102,7 @@ class PreviousRunReferenceTest {
                 new TestArgumentsBuilder()
                         .setTestName(
                                 "isPresent when analysisResult#overallResult is FAILURE and result of previous run is FAILURE")
-                        .setStatus(Status.ERROR)
+                        .setStatus(Status.FAILED)
                         .setRunResult(Result.SUCCESS)
                         .setPreviousRunResult(Result.FAILURE)
                         .setOverallMustBeSuccess(false)

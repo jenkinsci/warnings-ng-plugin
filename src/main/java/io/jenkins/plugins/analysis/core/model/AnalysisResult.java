@@ -240,7 +240,7 @@ public class AnalysisResult implements Serializable {
         if (qualityGate.isEnabled()) {
             QualityGateResult result = qualityGate.evaluate(this);
             status = result.getStatus();
-            if (status == Status.PASSED) {
+            if (status.isSuccessful()) {
                 aggregatedMessages.add("All quality gates have been passed");
             }
             else {
@@ -251,7 +251,7 @@ public class AnalysisResult implements Serializable {
         }
         else {
             aggregatedMessages.add("No quality gates have been set - skipping");
-            status = Status.PASSED; // FIXME: does it make sense to add Status.SKIPPED
+            status = Status.INACTIVE;
         }
 
         this.messages = Lists.immutable.withAll(aggregatedMessages);
@@ -266,7 +266,7 @@ public class AnalysisResult implements Serializable {
         if (status == Status.WARNING) {
             return Result.UNSTABLE;
         }
-        if (status == Status.ERROR) {
+        if (status == Status.FAILED) {
             return Result.FAILURE;
         }
         return Result.SUCCESS;
@@ -499,7 +499,7 @@ public class AnalysisResult implements Serializable {
      * Returns whether the static analysis result is successful with respect to the defined {@link QualityGate}.
      *
      * @return {@code true} if the static analysis result is successful, {@code false} if the static analysis result is
-     *         {@link Status#WARNING} or {@link Status#ERROR}
+     *         {@link Status#WARNING} or {@link Status#FAILED}
      */
     @Exported
     public boolean isSuccessful() {

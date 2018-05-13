@@ -172,7 +172,7 @@ public class QualityGate implements Serializable {
          */
         public Status getStatus() {
             if (!totalFailed.isSuccess() || !newFailed.isSuccess()) {
-                return Status.ERROR;
+                return Status.FAILED;
             }
             if (!totalUnstable.isSuccess() || !newUnstable.isSuccess()) {
                 return Status.WARNING;

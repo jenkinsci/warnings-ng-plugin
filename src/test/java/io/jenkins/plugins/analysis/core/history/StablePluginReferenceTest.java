@@ -144,7 +144,7 @@ class StablePluginReferenceTest extends ReferenceFinderTest {
         when(prevJob.getResult()).thenReturn(Result.FAILURE);
         assertThat(stablePluginReference.getReferenceAction()).isEmpty();
 
-        when(analysisResult.getStatus()).thenReturn(Status.ERROR);
+        when(analysisResult.getStatus()).thenReturn(Status.FAILED);
         assertThat(stablePluginReference.getReferenceAction()).contains(resultAction);
 
     }

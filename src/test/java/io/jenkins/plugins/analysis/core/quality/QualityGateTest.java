@@ -133,14 +133,14 @@ class QualityGateTest extends SerializableTest<QualityGate> {
     void shouldBeFailedWhenFailedThresholdIsEqualThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalFailedThreshold(
                 s);
-        testThreshold(builder, 2, 2, 0, Status.ERROR);
+        testThreshold(builder, 2, 2, 0, Status.FAILED);
     }
 
     @Test
     void shouldBeFailedWhenFailedThresholdIsLowerThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalFailedThreshold(
                 s);
-        testThreshold(builder, 2, 3, 0, Status.ERROR);
+        testThreshold(builder, 2, 3, 0, Status.FAILED);
     }
 
     @Test
@@ -175,14 +175,14 @@ class QualityGateTest extends SerializableTest<QualityGate> {
     void shouldBeFailedWhenFailedAndUnstableThresholdIsEqualThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalFailedThreshold(
                 s).setTotalUnstableThreshold(s);
-        testThreshold(builder, 2, 2, 0, Status.ERROR);
+        testThreshold(builder, 2, 2, 0, Status.FAILED);
     }
 
     @Test
     void shouldBeFailedWhenFailedAndUnstableThresholdIsLowerThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalFailedThreshold(
                 s).setTotalUnstableThreshold(s);
-        testThreshold(builder, 2, 3, 0, Status.ERROR);
+        testThreshold(builder, 2, 3, 0, Status.FAILED);
     }
 
     @Test
@@ -196,14 +196,14 @@ class QualityGateTest extends SerializableTest<QualityGate> {
     void shouldBeFailedWhenNewFailedThresholdIsEqualThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewFailedThreshold(
                 s);
-        testThreshold(builder, 2, 0, 2, Status.ERROR);
+        testThreshold(builder, 2, 0, 2, Status.FAILED);
     }
 
     @Test
     void shouldBeFailedWhenNewFailedThresholdIsLowerThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewFailedThreshold(
                 s);
-        testThreshold(builder, 2, 0, 3, Status.ERROR);
+        testThreshold(builder, 2, 0, 3, Status.FAILED);
     }
 
     @Test
@@ -238,14 +238,14 @@ class QualityGateTest extends SerializableTest<QualityGate> {
     void shouldBeFailedWhenNewFailedAndUnstableThresholdIsEqualThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewFailedThreshold(
                 s).setNewUnstableThreshold(s);
-        testThreshold(builder, 2, 0, 2, Status.ERROR);
+        testThreshold(builder, 2, 0, 2, Status.FAILED);
     }
 
     @Test
     void shouldBeFailedWhenNewFailedAndUnstableThresholdIsLowerThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewFailedThreshold(
                 s).setNewUnstableThreshold(s);
-        testThreshold(builder, 2, 0, 3, Status.ERROR);
+        testThreshold(builder, 2, 0, 3, Status.FAILED);
     }
 
     @Test
@@ -259,14 +259,14 @@ class QualityGateTest extends SerializableTest<QualityGate> {
     void shouldBeFailedWhenNewFailedAndTotalUnstableThresholdIsEqualThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewFailedThreshold(
                 s).setTotalUnstableThreshold(s);
-        testThreshold(builder, 2, 2, 2, Status.ERROR);
+        testThreshold(builder, 2, 2, 2, Status.FAILED);
     }
 
     @Test
     void shouldBeFailedWhenNewFailedAndTotalUnstableThresholdIsLowerThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setNewFailedThreshold(
                 s).setTotalUnstableThreshold(s);
-        testThreshold(builder, 2, 2, 3, Status.ERROR);
+        testThreshold(builder, 2, 2, 3, Status.FAILED);
     }
 
     @Test
@@ -280,14 +280,14 @@ class QualityGateTest extends SerializableTest<QualityGate> {
     void shouldBeFailedWhenTotalFailedAndNewUnstableThresholdIsEqualThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalFailedThreshold(
                 s).setNewUnstableThreshold(s);
-        testThreshold(builder, 2, 2, 2, Status.ERROR);
+        testThreshold(builder, 2, 2, 2, Status.FAILED);
     }
 
     @Test
     void shouldBeFailedWhenTotalFailedAndNewUnstableThresholdIsLowerThanWarningCount() {
         Function<ThresholdSet, QualityGateBuilder> builder = (ThresholdSet s) -> new QualityGateBuilder().setTotalFailedThreshold(
                 s).setNewUnstableThreshold(s);
-        testThreshold(builder, 2, 2, 3, Status.ERROR);
+        testThreshold(builder, 2, 2, 3, Status.FAILED);
     }
 
     @Test
