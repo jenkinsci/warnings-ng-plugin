@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.core.steps;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -29,13 +29,23 @@ public class ToolConfiguration extends AbstractDescribableImpl<ToolConfiguration
     /**
      * Creates a new instance of {@link ToolConfiguration}.
      *
-     * @param pattern
-     *         the pattern of files to parse
      * @param tool
-     *         the name of the parser to use
+     *         the ID of the tool to use
+     */
+    public ToolConfiguration(final StaticAnalysisTool tool) {
+        this(tool, StringUtils.EMPTY);
+    }
+
+    /**
+     * Creates a new instance of {@link ToolConfiguration}.
+     *
+     * @param tool
+     *         the ID of the tool to use
+     * @param pattern
+ *         the pattern of files to parse
      */
     @DataBoundConstructor
-    public ToolConfiguration(final String pattern, final StaticAnalysisTool tool) {
+    public ToolConfiguration(final StaticAnalysisTool tool, final String pattern) {
         super();
 
         this.pattern = pattern;

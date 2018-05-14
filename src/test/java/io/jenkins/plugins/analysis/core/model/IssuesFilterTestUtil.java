@@ -75,9 +75,7 @@ abstract class IssuesFilterTestUtil {
      * @return issues.
      */
     Report getIssues() {
-        Report issues = new Report();
-        issues.add(ISSUE1, ISSUE2, ISSUE3);
-        return issues;
+        return new Report().addAll(ISSUE1, ISSUE2, ISSUE3);
     }
 
     /**

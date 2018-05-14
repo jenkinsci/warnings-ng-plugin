@@ -457,22 +457,21 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
                 totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
             }
             totalIssues.setOrigin("analysis");
-            publishResult(run, workspace, launcher, listener, totalIssues, Messages.Tool_Default_Name());
+            publishResult(run, launcher, listener, totalIssues, Messages.Tool_Default_Name());
         }
         else {
             for (ToolConfiguration toolConfiguration : tools) {
                 Report report = scanWithTool(run, workspace, listener, toolConfiguration);
-                publishResult(run, workspace, launcher, listener, report, StringUtils.EMPTY);
+                publishResult(run, launcher, listener, report, StringUtils.EMPTY);
             }
         }
     }
 
     private Report scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final ToolConfiguration toolConfiguration) throws IOException, InterruptedException {
-        ToolConfiguration configuration = toolConfiguration;
-        IssuesScanner issuesScanner = new IssuesScanner(configuration.getTool(), workspace,
-                getReportCharset(), getSourceCodeCharset(), new LogHandler(listener, configuration.getTool().getName()));
-        return issuesScanner.scan(expandEnvironmentVariables(run, listener, configuration.getPattern()),
+        IssuesScanner issuesScanner = new IssuesScanner(toolConfiguration.getTool(), workspace,
+                getReportCharset(), getSourceCodeCharset(), new LogHandler(listener, toolConfiguration.getTool().getName()));
+        return issuesScanner.scan(expandEnvironmentVariables(run, listener, toolConfiguration.getPattern()),
                 run.getLogFile());
     }
 
@@ -484,11 +483,11 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         return EncodingValidator.defaultCharset(reportEncoding);
     }
 
-    private void publishResult(final Run<?, ?> run, final FilePath workspace, final Launcher launcher,
+    public void publishResult(final Run<?, ?> run, final Launcher launcher,
             final TaskListener listener, final Report report, final String name)
             throws IOException, InterruptedException {
         IssuesPublisher publisher = new IssuesPublisher(run, report, getFilters(),
-                new HealthDescriptor(healthy, unHealthy, minimumPriority), new QualityGate(thresholds), workspace,
+                new HealthDescriptor(healthy, unHealthy, minimumPriority), new QualityGate(thresholds),
                 name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess, getSourceCodeCharset(),
                 new LogHandler(listener, report.getOrigin()));
 

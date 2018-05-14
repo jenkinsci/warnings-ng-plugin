@@ -439,7 +439,7 @@ public class PublishIssuesStep extends Step {
         @Override
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report, filters, healthDescriptor, qualityGate,
-                    getWorkspace(), name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess,
+                    name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess,
                     getSourceCodeCharset(), getLogger());
             Optional<VirtualChannel> channel = getChannel();
             if (channel.isPresent()) {

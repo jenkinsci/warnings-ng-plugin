@@ -32,7 +32,7 @@ import hudson.plugins.analysis.util.FileFinder;
  * @author Ullrich Hafner
  */
 class IssuesScanner {
-    private FilePath workspace;
+    private final FilePath workspace;
     private final Charset logFileEncoding;
     private final Charset sourceCodeEncoding;
     private final StaticAnalysisTool tool;

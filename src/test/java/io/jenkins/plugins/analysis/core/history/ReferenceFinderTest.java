@@ -81,8 +81,7 @@ public abstract class ReferenceFinderTest {
         when(prevBuild.getActions(ResultAction.class)).thenReturn(actions);
 
         IssueBuilder builder = new IssueBuilder();
-        Report issues = new Report(
-                Collections.singletonList(builder.setCategory("testCompany").setLineEnd(1).build()));
+        Report issues = new Report().add(builder.setCategory("testCompany").setLineEnd(1).build());
         //noinspection unchecked
         when(analysisResult.getIssues()).thenReturn(issues, (Report) null);
 

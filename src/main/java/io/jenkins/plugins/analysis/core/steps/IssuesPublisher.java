@@ -37,7 +37,6 @@ class IssuesPublisher {
     private final Report report;
     private final List<RegexpFilter> filters;
     private final Run<?, ?> run;
-    private final FilePath workspace;
     private final HealthDescriptor healthDescriptor;
     private final String name;
     private final Charset sourceCodeEncoding;
@@ -50,7 +49,7 @@ class IssuesPublisher {
 
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final Report report, final List<RegexpFilter> filters,
-            final HealthDescriptor healthDescriptor, final QualityGate qualityGate, final FilePath workspace,
+            final HealthDescriptor healthDescriptor, final QualityGate qualityGate,
             final String name, final String referenceJobName, final boolean ignoreAnalysisResult,
             final boolean overallResultMustBeSuccess, final Charset sourceCodeEncoding,
             final LogHandler logger) {
@@ -58,7 +57,6 @@ class IssuesPublisher {
         this.id = report.getOrigin();
         this.filters = new ArrayList<>(filters);
         this.run = run;
-        this.workspace = workspace;
         this.healthDescriptor = healthDescriptor;
         this.name = name;
         this.sourceCodeEncoding = sourceCodeEncoding;
