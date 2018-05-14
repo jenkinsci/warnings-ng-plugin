@@ -503,7 +503,7 @@ public class AnalysisResult implements Serializable {
      */
     @Exported
     public boolean isSuccessful() {
-        return status == Status.PASSED;
+        return status.isSuccessful();
     }
 
     public QualityGate getQualityGate() {
