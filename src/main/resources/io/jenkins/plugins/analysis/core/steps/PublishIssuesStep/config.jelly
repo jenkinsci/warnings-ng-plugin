@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core"xmlns:i="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues">
 
   <i:publish-parameters/>
 
