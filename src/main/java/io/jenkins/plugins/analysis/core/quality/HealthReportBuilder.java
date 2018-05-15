@@ -47,7 +47,7 @@ public class HealthReportBuilder implements Serializable {
     public HealthReport computeHealth(final Map<Severity, Integer> sizePerSeverity) {
         int relevantIssuesSize = 0;
         for (Priority priority : Priority.collectPrioritiesFrom(healthDescriptor.getMinimumPriority())) {
-            relevantIssuesSize += sizePerSeverity.get(Severity.of(priority));
+            relevantIssuesSize += sizePerSeverity.get(Severity.valueOf(priority));
         }
         relevantIssuesSize += sizePerSeverity.get(Severity.ERROR);
 

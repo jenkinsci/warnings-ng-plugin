@@ -119,7 +119,7 @@ public class IssueStream {
         }
 
         public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
-            return Severity.of(reader.getValue());
+            return Severity.valueOf(reader.getValue());
         }
 
         public boolean canConvert(final Class type) {
