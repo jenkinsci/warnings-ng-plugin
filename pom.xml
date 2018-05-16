@@ -15,7 +15,7 @@
   <version>1.99-SNAPSHOT</version>
   <description>This plug-in provides utilities for the static code analysis plug-ins.</description>
 
-  <url>http://wiki.jenkins-ci.org/x/CwDgAQ</url>
+  <url>https://wiki.jenkins.io/x/CwDgAQ</url>
 
   <properties>
     <pitest-maven.plugin>1.4.0</pitest-maven.plugin>
