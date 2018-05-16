@@ -228,6 +228,9 @@
             <package>io.jenkins.plugins.analysis.core.model</package>
             <package>io.jenkins.plugins.analysis.core.quality</package>
           </packages>
+          <excludes>
+            <exclude>.*ITest</exclude>
+          </excludes>
           <cleanTargetDir>true</cleanTargetDir>
           <hierarchical>false</hierarchical>
           <generateBddAssertions>false</generateBddAssertions>
