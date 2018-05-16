@@ -73,7 +73,7 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Sets the health threshold less then the unhealthy threshold and parse a file that contains exactly warnings. The
+     * Sets the health threshold less then the unhealthy threshold and parse a file that contains warnings. The
      * healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup
      */
     @Test
@@ -83,7 +83,7 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Sets the health threshold equals to the unhealthy threshold and parse a file that contains exactly warnings. The
+     * Sets the health threshold equals to the unhealthy threshold and parse a file that contains warnings. The
      * healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup
      */
     @Test
@@ -123,7 +123,7 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Should create a health report with icon health-00to19 (rainy).
+     * Should create a health report with icon health-20to39 (rainy).
      */
     @Test
     public void shouldCreate20To39HealthReport() {
