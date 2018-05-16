@@ -6,16 +6,14 @@ import org.jvnet.localizer.LocaleProvider;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.parser.FindBugsParser;
+import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
+import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
-import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
-import static hudson.plugins.warnings.WarningsDescriptor.*;
-
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.parser.FindBugsParser;
 
 /**
  * Provides a parser and customized messages for FindBugs.
@@ -127,6 +125,11 @@ public class FindBugs extends StaticAnalysisTool {
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new FindBugsLabelProvider(messages);
+        }
+
+        @Override
+        public String getPattern() {
+            return "**/findbugsXml.xml";
         }
     }
 }

@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.dry.cpd.CpdParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.dry.cpd.CpdParser;
 
 /**
  * Provides a parser and customized messages for CPD.
@@ -53,6 +52,11 @@ public class Cpd extends DuplicateCodeScanner {
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new LabelProvider();
+        }
+
+        @Override
+        public String getPattern() {
+            return "**/cpd.xml";
         }
     }
 }

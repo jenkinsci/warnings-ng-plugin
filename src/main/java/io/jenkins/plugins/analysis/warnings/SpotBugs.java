@@ -66,5 +66,10 @@ public class SpotBugs extends FindBugs {
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new LabelProvider(getMessages());
         }
+
+        @Override
+        public String getPattern() {
+            return "**/target/spotbugsXml.xml";
+        }
     }
 }
