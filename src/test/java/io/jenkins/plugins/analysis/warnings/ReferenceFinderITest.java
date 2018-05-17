@@ -1,7 +1,9 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.junit.Test;
@@ -10,6 +12,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
@@ -18,6 +21,7 @@ import io.jenkins.plugins.analysis.core.views.ResultAction;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import hudson.tasks.Shell;
 
 public class ReferenceFinderITest extends IntegrationTest {
 
@@ -33,93 +37,396 @@ public class ReferenceFinderITest extends IntegrationTest {
     // publisher.setOverallResultMustBeSuccess();
     // publisher.setIgnoreAnalysisResult();
     private String jobName = "Job";
-
+    private String refName = "RefJob";
 
     @Test
-    public void shouldCreateUnstableResultIfPreviousIsUnstable() throws IOException, InterruptedException {
+    public void shouldCreateSuccessResultWithIgnoredUnstableInBetween() throws IOException, InterruptedException {
+        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse2Warnings.txt");
+        enableWarnings(project, publisher -> {
+            publisher.setUnstableNewAll(3);
+        });
 
-        /*String refName = "ReferenceJob";
-        FreeStyleProject ref = createJobWithWorkspaceFile(refName, "eclipse.txt");
-        enableWarnings(ref, publisher -> publisher.setUnstableTotalAll(7));
+        AnalysisResult result;
+        result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(result).hasTotalSize(2);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
 
-        AnalysisResult refResult = scheduleBuildAndAssertStatus(ref, Result.UNSTABLE);
-        assertThat(refResult).hasTotalSize(8);
-        assertThat(refResult).hasOverallResult(Result.UNSTABLE);
+        project.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(project, "eclipse.txt");
 
-        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse2.txt");
-        IssuesRecorder recorder = enableWarnings(project, publisher -> {
+        result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        assertThat(result).hasTotalSize(8);
+        assertThat(result).hasOverallResult(Result.UNSTABLE);
+
+        project.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(project, "eclipse4Warnings.txt");
+
+        result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(result).hasTotalSize(4);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+    }
+
+    @Test
+    public void shouldCreateUnstableResultWithIgnoredUnstableInBetween() throws IOException, InterruptedException {
+        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse2Warnings.txt");
+        enableWarnings(project, publisher -> {
+            publisher.setUnstableNewAll(3);
+        });
+
+        AnalysisResult result;
+        result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(result).hasTotalSize(2);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        project.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(project, "eclipse6Warnings.txt");
+
+        result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasOverallResult(Result.UNSTABLE);
+
+        project.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(project, "eclipse.txt");
+
+        result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        assertThat(result).hasTotalSize(8);
+        assertThat(result).hasOverallResult(Result.UNSTABLE);
+    }
+
+    @Test
+    public void shouldCreateSuccessResultWithNotIgnoredUnstableInBetween() throws IOException, InterruptedException {
+        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse2Warnings.txt");
+        enableWarnings(project, publisher -> {
+            publisher.setIgnoreAnalysisResult(true);
+            publisher.setUnstableNewAll(3);
+        });
+
+        AnalysisResult result;
+        result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(result).hasTotalSize(2);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        project.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(project, "eclipse6Warnings.txt");
+
+        result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasOverallResult(Result.UNSTABLE);
+
+        project.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(project, "eclipse.txt");
+
+        result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(result).hasTotalSize(8);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+    }
+
+    @Test
+    public void shouldCreateUnstableResultWithNotIgnoredUnstableInBetween() throws IOException, InterruptedException {
+        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse6Warnings.txt");
+        IssuesRecorder issuesRecorder = enableWarnings(project, publisher -> {
+            publisher.setIgnoreAnalysisResult(true);
+        });
+
+        AnalysisResult result;
+        result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        project.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(project, "eclipse4Warnings.txt");
+        issuesRecorder.setUnstableTotalAll(3);
+
+        result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        assertThat(result).hasTotalSize(4);
+        assertThat(result).hasOverallResult(Result.UNSTABLE);
+
+        project.getSomeWorkspace().deleteContents();
+        issuesRecorder.setUnstableNewAll(3);
+        issuesRecorder.setUnstableTotalAll(9);
+        copyFilesToWorkspace(project, "eclipse.txt");
+
+        result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        assertThat(result).hasTotalSize(8);
+        assertThat(result).hasOverallResult(Result.UNSTABLE);
+    }
+
+    @Test
+    public void shouldCreateUnstableResultWithOverAllMustBeSuccess() throws IOException, InterruptedException {
+        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse2Warnings.txt");
+        IssuesRecorder issuesRecorder = enableWarnings(project, publisher -> {
+            publisher.setOverallResultMustBeSuccess(true);
+            publisher.setUnstableNewAll(3);
+        });
+        AnalysisResult result;
+
+        result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(result).hasTotalSize(2);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        IssuesRecorder secondRecorder = enableWarnings(project, publisher -> {
+            publisher.setFailedTotalAll(1);
+            publisher.setFailedNewAll(1);
+            publisher.setUnstableTotalAll(1);
+            publisher.setOverallResultMustBeSuccess(true);
+        }, new CheckStyle());
+
+        project.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(project, "eclipse4Warnings.txt", "checkstyle.xml");
+
+        result = scheduleBuildAndAssertStatusWithMultiplePublisher(project, Result.FAILURE);
+
+        assertThat(result).hasTotalSize(4);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        project.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(project, "eclipse6Warnings.txt");
+
+        result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasOverallResult(Result.UNSTABLE);
+    }
+
+    @Test
+    public void shouldCreateSuccessResultWithOverAllMustBeSuccess() throws IOException, InterruptedException {
+        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse4Warnings.txt");
+        IssuesRecorder issuesRecorder = enableWarnings(project, publisher -> {
+            publisher.setOverallResultMustBeSuccess(true);
+        });
+        AnalysisResult result;
+
+        result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(result).hasTotalSize(4);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        IssuesRecorder secondRecorder = enableWarnings(project, publisher -> {
+            publisher.setFailedTotalAll(1);
+            publisher.setFailedNewAll(1);
+            publisher.setUnstableTotalAll(1);
+            publisher.setOverallResultMustBeSuccess(true);
+        }, new CheckStyle());
+
+        project.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(project, "eclipse2Warnings.txt", "checkstyle.xml");
+        issuesRecorder.setUnstableNewAll(3);
+
+        result = scheduleBuildAndAssertStatusWithMultiplePublisher(project, Result.FAILURE);
+
+        assertThat(result).hasTotalSize(2);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        project.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(project, "eclipse6Warnings.txt");
+
+        result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+    }
+
+    @Test
+    public void shouldCreateUnstableResultWithOverAllMustNotBeSuccess() throws IOException, InterruptedException {
+        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse4Warnings.txt");
+        IssuesRecorder issuesRecorder = enableWarnings(project, publisher -> {
+            publisher.setOverallResultMustBeSuccess(false);
+            publisher.setEnabledForFailure(true);
+        });
+        AnalysisResult result;
+
+        result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(result).hasTotalSize(4);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        project.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(project, "eclipse2Warnings.txt", "checkstyle.xml");
+        issuesRecorder.setUnstableNewAll(3);
+        Shell shell = new Shell("exit 1");
+        project.getBuildersList().add(shell);
+
+        result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        assertThat(result).hasTotalSize(2);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        project.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(project, "eclipse6Warnings.txt");
+        project.getBuildersList().remove(shell);
+
+        result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasOverallResult(Result.UNSTABLE);
+    }
+
+    // With Reference Build
+
+    @Test
+    public void shouldCreateSuccessResultWithIgnoredUnstableInBetweenWithReferenceBuild() throws IOException, InterruptedException {
+        FreeStyleProject refJob = createJobWithWorkspaceFile(refName, "eclipse2Warnings.txt");
+        enableWarnings(refJob, publisher -> {
+            publisher.setUnstableNewAll(3);
+        });
+
+        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse4Warnings.txt");
+        enableWarnings(project, publisher -> {
+            publisher.setUnstableNewAll(3);
             publisher.setReferenceJobName(refName);
             publisher.setUnstableTotalAll(7);
         });
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
-        assertThat(result).hasTotalSize(6);
-        assertThat(result).hasOverallResult(Result.UNSTABLE);*/
-
-
-
-        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse.txt");
-        enableWarnings(project, publisher -> {
-//            publisher.setAggregatingResults(true);
-            publisher.setUnstableTotalAll(7);
-        });
-
-
         AnalysisResult result;
-        result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        result = scheduleBuildAndAssertStatus(refJob, Result.SUCCESS);
+        assertThat(result).hasTotalSize(2);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        refJob.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(refJob, "eclipse.txt");
+
+        result = scheduleBuildAndAssertStatus(refJob, Result.UNSTABLE);
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasOverallResult(Result.UNSTABLE);
-
-        //System.out.println(project.getSomeWorkspace().list());
-        project.getSomeWorkspace().deleteContents();
-        copyFilesToWorkspace(project, "eclipse2.txt");
-
-        result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
-        assertThat(result).hasTotalSize(6);
-        assertThat(result).hasOverallResult(Result.UNSTABLE);
-    }
-
-    @Test
-    public void shouldCreateSuccessResultIfPreviousIsIgnored() throws IOException, InterruptedException {
-        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse.txt");
-        enableWarnings(project, publisher -> {
-            publisher.setUnstableTotalAll(7);
-            publisher.setIgnoreAnalysisResult(true);
-        });
-
-        AnalysisResult result;
-        result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
-        assertThat(result).hasTotalSize(8);
-        assertThat(result).hasOverallResult(Result.UNSTABLE);
-
-        project.getSomeWorkspace().deleteContents();
-        copyFilesToWorkspace(project, "eclipse2.txt");
 
         result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasTotalSize(4);
         assertThat(result).hasOverallResult(Result.SUCCESS);
     }
 
     @Test
-    public void shouldCreateSuccessResultIfOverallMustMeSuccess() throws IOException, InterruptedException {
+    public void shouldCreateUnstableResultWithIgnoredUnstableInBetweenWithReferenceBuild() throws IOException, InterruptedException {
+        FreeStyleProject refJob = createJobWithWorkspaceFile(refName, "eclipse2Warnings.txt");
+        enableWarnings(refJob, publisher -> {
+            publisher.setUnstableNewAll(3);
+            publisher.setIgnoreAnalysisResult(false);
+        });
+
         FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse.txt");
         enableWarnings(project, publisher -> {
-            publisher.setUnstableTotalAll(7);
+            publisher.setUnstableNewAll(3);
+            publisher.setReferenceJobName(refName);
+            publisher.setIgnoreAnalysisResult(false);
+        });
+
+        AnalysisResult result;
+        result = scheduleBuildAndAssertStatus(refJob, Result.SUCCESS);
+        assertThat(result).hasTotalSize(2);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        refJob.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(refJob, "eclipse6Warnings.txt");
+
+        result = scheduleBuildAndAssertStatus(refJob, Result.UNSTABLE);
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasOverallResult(Result.UNSTABLE);
+
+        result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        assertThat(result).hasTotalSize(8);
+        assertThat(result).hasOverallResult(Result.UNSTABLE);
+    }
+
+    @Test
+    public void shouldCreateSuccessResultWithNotIgnoredUnstableInBetweenWithReferenceBuild() throws IOException, InterruptedException {
+        FreeStyleProject refJob = createJobWithWorkspaceFile(refName, "eclipse2Warnings.txt");
+        enableWarnings(refJob, publisher -> {
+            publisher.setIgnoreAnalysisResult(true);
+            publisher.setUnstableNewAll(3);
+        });
+
+        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse.txt");
+        enableWarnings(project, publisher -> {
+            publisher.setUnstableNewAll(3);
+            publisher.setReferenceJobName(refName);
+            publisher.setIgnoreAnalysisResult(true);
+        });
+
+        AnalysisResult result;
+        result = scheduleBuildAndAssertStatus(refJob, Result.SUCCESS);
+        assertThat(result).hasTotalSize(2);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        refJob.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(refJob, "eclipse6Warnings.txt");
+
+        result = scheduleBuildAndAssertStatus(refJob, Result.UNSTABLE);
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasOverallResult(Result.UNSTABLE);
+
+        result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(result).hasTotalSize(8);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+    }
+
+    @Test
+    public void shouldCreateUnstableResultWithNotIgnoredUnstableInBetweenWithReferenceBuild() throws IOException, InterruptedException {
+        FreeStyleProject refJob = createJobWithWorkspaceFile(refName, "eclipse6Warnings.txt");
+        IssuesRecorder issuesRecorder = enableWarnings(refJob, publisher -> {
+            publisher.setIgnoreAnalysisResult(true);
+        });
+
+        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse.txt");
+        enableWarnings(project, publisher -> {
+            publisher.setUnstableNewAll(3);
+            publisher.setReferenceJobName(refName);
+            publisher.setIgnoreAnalysisResult(true);
+            publisher.setUnstableTotalAll(9);
+        });
+
+        AnalysisResult result;
+        result = scheduleBuildAndAssertStatus(refJob, Result.SUCCESS);
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        refJob.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(refJob, "eclipse4Warnings.txt");
+        issuesRecorder.setUnstableTotalAll(3);
+
+        result = scheduleBuildAndAssertStatus(refJob, Result.UNSTABLE);
+        assertThat(result).hasTotalSize(4);
+        assertThat(result).hasOverallResult(Result.UNSTABLE);
+
+        result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        assertThat(result).hasTotalSize(8);
+        assertThat(result).hasOverallResult(Result.UNSTABLE);
+    }
+
+    @Test
+    public void shouldCreateUnstableResultWithOverAllMustBeSuccessWithReferenceBuild() throws IOException, InterruptedException {
+        FreeStyleProject refJob = createJobWithWorkspaceFile(refName, "eclipse2Warnings.txt");
+        IssuesRecorder issuesRecorder = enableWarnings(refJob, publisher -> {
             publisher.setOverallResultMustBeSuccess(true);
-            publisher.setIgnoreAnalysisResult(true);
+            publisher.setUnstableNewAll(3);
+        });
+
+        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse6Warnings.txt");
+        enableWarnings(project, publisher -> {
+            publisher.setUnstableNewAll(3);
+            publisher.setReferenceJobName(refName);
+            publisher.setOverallResultMustBeSuccess(true);
         });
 
         AnalysisResult result;
-        result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
-        assertThat(result).hasTotalSize(8);
-        assertThat(result).hasOverallResult(Result.UNSTABLE);
 
-        project.getSomeWorkspace().deleteContents();
-        copyFilesToWorkspace(project, "eclipse2.txt");
-
-        result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        assertThat(result).hasTotalSize(6);
+        result = scheduleBuildAndAssertStatus(refJob, Result.SUCCESS);
+        assertThat(result).hasTotalSize(2);
         assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        IssuesRecorder secondRecorder = enableWarnings(refJob, publisher -> {
+            publisher.setFailedTotalAll(1);
+            publisher.setFailedNewAll(1);
+            publisher.setUnstableTotalAll(1);
+            publisher.setOverallResultMustBeSuccess(true);
+        }, new CheckStyle());
+
+        refJob.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(refJob, "eclipse4Warnings.txt", "checkstyle.xml");
+
+        result = scheduleBuildAndAssertStatusWithMultiplePublisher(refJob, Result.FAILURE);
+
+        assertThat(result).hasTotalSize(4);
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        refJob.getSomeWorkspace().deleteContents();
+        copyFilesToWorkspace(refJob, "eclipse6Warnings.txt");
+
+        result = scheduleBuildAndAssertStatus(refJob, Result.UNSTABLE);
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasOverallResult(Result.UNSTABLE);
     }
 
     @Test
@@ -132,7 +439,7 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(refResult).hasTotalSize(8);
         assertThat(refResult).hasOverallResult(Result.UNSTABLE);
 
-        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse2.txt");
+        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse6Warnings.txt");
         IssuesRecorder recorder = enableWarnings(project, publisher -> {
             publisher.setReferenceJobName(refName);
 //            publisher.setAggregatingResults(true);
@@ -192,6 +499,16 @@ public class ReferenceFinderITest extends IntegrationTest {
         return publisher;
     }
 
+    @CanIgnoreReturnValue
+    private IssuesRecorder enableWarnings(final FreeStyleProject job, StaticAnalysisTool analysisTool, StaticAnalysisTool analysisTool2) {
+        IssuesRecorder publisher = new IssuesRecorder();
+        List<ToolConfiguration> list = new ArrayList();
+        list.add(new ToolConfiguration("**/*issues.txt", analysisTool));
+        publisher.setTools(list);
+        job.getPublishersList().add(publisher);
+        return publisher;
+    }
+
     /**
      * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
      * the job.
@@ -206,6 +523,14 @@ public class ReferenceFinderITest extends IntegrationTest {
     @CanIgnoreReturnValue
     private IssuesRecorder enableWarnings(final FreeStyleProject job, final Consumer<IssuesRecorder> configuration) {
         IssuesRecorder publisher = enableWarnings(job);
+        configuration.accept(publisher);
+        return publisher;
+    }
+
+    @CanIgnoreReturnValue
+    private IssuesRecorder enableWarnings(final FreeStyleProject job, final Consumer<IssuesRecorder> configuration,
+            StaticAnalysisTool analysisTool) {
+        IssuesRecorder publisher = enableWarnings(job, analysisTool, null);
         configuration.accept(publisher);
         return publisher;
     }
@@ -233,6 +558,26 @@ public class ReferenceFinderITest extends IntegrationTest {
             return action.getResult();
         }
         catch (Exception e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
+    private AnalysisResult scheduleBuildAndAssertStatusWithMultiplePublisher(final FreeStyleProject job, final Result status) {
+        try {
+            FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
+
+            List<ResultAction> actions = build.getActions(ResultAction.class);
+            for (ResultAction action : actions){
+                System.out.println("INFO: Result: " + action.getResult());
+            }
+
+            return actions.get(0).getResult();
+        }
+            catch(
+        Exception e)
+
+        {
             throw new AssertionError(e);
         }
     }
