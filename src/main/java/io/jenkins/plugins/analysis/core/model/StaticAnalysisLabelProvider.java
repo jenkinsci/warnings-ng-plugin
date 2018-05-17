@@ -154,16 +154,44 @@ public class StaticAnalysisLabelProvider {
         return columns;
     }
 
+    /**
+     * Formats the text of the details column. The details column is not directly shown, it rather is a hidden element
+     * that is expanded if the corresponding button is selected. The actual text value is stored in the {@code
+     * data-description} attribute.
+     *
+     * @param issue
+     *         the issue in a table row
+     *
+     * @return the formatted column
+     */
     protected String formatDetails(final Issue issue) {
         return div().withClass("details-control")
                 .attr("data-description", join(p(strong(issue.getMessage())), getDescription(issue)).render())
                 .render();
     }
 
+    /**
+     * Formats the text of the age column. The age shows the number of builds a warning is reported.
+     *
+     * @param issue
+     *         the issue in a table row
+     * @param ageBuilder
+     *         renders the age
+     *
+     * @return the formatted column
+     */
     protected String formatAge(final Issue issue, final AgeBuilder ageBuilder) {
         return ageBuilder.apply(new IntegerParser().parseInt(issue.getReference()));
     }
 
+    /**
+     * Formats the text of the severity column.
+     *
+     * @param severity
+     *         the severity of the issue
+     *
+     * @return the formatted column
+     */
     protected String formatSeverity(final Severity severity) {
         return String.format("<a href=\"%s\">%s</a>",
                 severity.getName(), LocalizedSeverity.getLocalizedString(severity));
@@ -173,6 +201,14 @@ public class StaticAnalysisLabelProvider {
         return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), value);
     }
 
+    /**
+     * Formats the text of the file name column. The text actually is a link to the UI representation of the file.
+     *
+     * @param issue
+     *         the issue to show the file name for
+     *
+     * @return the formatted column
+     */
     // FIXME: only link if valid file name
     protected String formatFileName(final Issue issue) {
         return String.format("<a href=\"source.%s/#%d\">%s:%d</a>", issue.getId(), issue.getLineStart(),
@@ -193,6 +229,11 @@ public class StaticAnalysisLabelProvider {
         return id;
     }
 
+    /**
+     * Returns the human readable name of the tool. If the name has not been set, then the default name is returned.
+     *
+     * @return the name
+     */
     public String getName() {
         if (StringUtils.isNotBlank(name)) {
             return name;
@@ -205,44 +246,106 @@ public class StaticAnalysisLabelProvider {
         return String.format("%s: %s", getId(), getName());
     }
 
+    /**
+     * Returns the name of the link to the results in Jenkins' side panel.
+     *
+     * @return the name of the side panel link
+     */
     public String getLinkName() {
         return Messages.Tool_Link_Name(getName());
     }
 
+    /**
+     * Returns the legend for the trend chart in the project overview.
+     *
+     * @return the legend of the trend chart
+     */
     public String getTrendName() {
         return Messages.Tool_Trend_Name(getName());
     }
 
+    /**
+     * Returns the absolute URL to the small icon for the tool.
+     *
+     * @return absolute URL
+     */
     public String getSmallIconUrl() {
         return SMALL_ICON_URL;
     }
 
+    /**
+     * Returns the absolute URL to the large icon for the tool.
+     *
+     * @return absolute URL
+     */
     public String getLargeIconUrl() {
         return LARGE_ICON_URL;
     }
 
+    /**
+     * Returns the URL to the view that shows the results for the tool.
+     *
+     * @return absolute URL
+     */
     public String getResultUrl() {
         return getId() + "Result";
     }
 
-    public ContainerTag getTitle(final AnalysisResult analysisRun, final boolean hasErrors) {
+    /**
+     * Returns the title for the small information box in the corresponding build page.
+     *
+     * @param result
+     *         the result
+     * @param hasErrors
+     *         indicates if an error has been reported
+     *
+     * @return the title div
+     */
+    public ContainerTag getTitle(final AnalysisResult result, final boolean hasErrors) {
         String icon = hasErrors ? "fa-exclamation-triangle" : "fa-info-circle";
         return div(join(getName() + ": ",
-                getWarningsCount(analysisRun),
+                getWarningsCount(result),
                 a().withHref(getResultUrl() + "/info").with(i().withClasses("fa", icon))))
                 .withId(id + "-title");
     }
 
+    /**
+     * Returns the HTML label for the link to the new issues of the build.
+     *
+     * @param newSize
+     *         the number of new issues
+     *
+     * @return the legend of the trend chart
+     */
+    // TODO: Make messages overridable
     public ContainerTag getNewIssuesLabel(final int newSize) {
         return a(newSize == 1 ? Messages.Tool_OneNewWarning() : Messages.Tool_MultipleNewWarnings(newSize))
-                .withHref(getResultUrl() + "/new"); // Make messages overridable
+                .withHref(getResultUrl() + "/new");
     }
 
+    /**
+     * Returns the HTML label for the link to the fixed issues of the build.
+     *
+     * @param fixedSize
+     *         the number of fixed issues
+     *
+     * @return the legend of the trend chart
+     */
     public ContainerTag getFixedIssuesLabel(final int fixedSize) {
         return a(fixedSize == 1 ? Messages.Tool_OneFixedWarning() : Messages.Tool_MultipleFixedWarnings(fixedSize))
                 .withHref(getResultUrl() + "/fixed");
     }
 
+    /**
+     * Returns the HTML text showing the number of builds since the project has no issues.
+     *
+     * @param currentBuild
+     *         the current build number
+     * @param noIssuesSinceBuild
+     *         the build since there are no issues
+     *
+     * @return the legend of the trend chart
+     */
     public DomContent getNoIssuesSinceLabel(final int currentBuild, final int noIssuesSinceBuild) {
         return join(Messages.Tool_NoIssuesSinceBuild(Messages.Tool_NoIssues(),
                 currentBuild - noIssuesSinceBuild + 1,
@@ -266,10 +369,26 @@ public class StaticAnalysisLabelProvider {
         return a(linkText).withHref(getResultUrl());
     }
 
+    /**
+     * Returns the HTML text showing the result of the quality gate.
+     *
+     * @param qualityGateStatus
+     *         the status of the quality gate
+     *
+     * @return the legend of the trend chart
+     */
     public DomContent getQualityGateResult(final Status qualityGateStatus) {
         return join(Messages.Tool_QualityGate(), getResultIcon(qualityGateStatus));
     }
 
+    /**
+     * Returns the HTML text showing a link to the reference build.
+     *
+     * @param referenceBuild
+     *         the reference build
+     *
+     * @return the legend of the trend chart
+     */
     public DomContent getReferenceBuild(final Run<?, ?> referenceBuild) {
         return join(Messages.Tool_ReferenceBuild(), createReferenceBuildLink(referenceBuild));
     }
@@ -289,11 +408,11 @@ public class StaticAnalysisLabelProvider {
     }
 
     public ToolTipProvider getToolTipProvider() {
-        return numberOfItems -> getTooltip(numberOfItems);
+        return this::getTooltip;
     }
 
     // FIXME: still required?
-    public String getTooltip(final int numberOfItems) {
+    String getTooltip(final int numberOfItems) {
         if (numberOfItems == 1) {
             return getSingleItemTooltip();
         }

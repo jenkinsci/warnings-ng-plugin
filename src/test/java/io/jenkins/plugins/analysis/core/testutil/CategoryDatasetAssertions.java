@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.graphs.assertj;
+package io.jenkins.plugins.analysis.core.testutil;
 
 
 import java.util.List;

@@ -12,7 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 
-import static io.jenkins.plugins.analysis.core.graphs.assertj.Assertions.*;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
 import static java.util.Arrays.*;
 import static org.mockito.Mockito.*;
 
@@ -25,8 +25,6 @@ import static org.mockito.Mockito.*;
  * @author Florian Pirchmoser
  */
 class SeriesBuilderTest {
-
-
     private static final GraphConfiguration CONFIG_BUILD_COUNT_NONE = createWithBuildCount(0);
     private static final GraphConfiguration CONFIG_BUILD_COUNT_ONE = createWithBuildCount(1);
     private static final GraphConfiguration CONFIG_BUILD_COUNT_TWO = createWithBuildCount(2);
@@ -139,19 +137,16 @@ class SeriesBuilderTest {
         );
     }
 
-
     @ParameterizedTest(name = "{0}")
     @MethodSource("createDataSetData")
     final void testCreateDataSet(final String testName,
             final ResultTime time, final GraphConfiguration config,
             final List<AnalysisResult> runs, final List<List<Integer>> expected) {
+        SeriesBuilder seriesBuilder = new TestSeriesBuilder(time);
 
-        SeriesBuilder sut = new TestSeriesBuilder(time);
+        CategoryDataset result = seriesBuilder.createDataSet(config, runs);
 
-        CategoryDataset result = sut.createDataSet(config, runs);
-
-        assertThat(result)
-                .containsExactly(expected);
+        assertThat(result).containsExactly(expected);
     }
 
     private static GraphConfiguration createWithBuildCount(final int count) {
