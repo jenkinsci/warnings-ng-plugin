@@ -55,6 +55,7 @@ public class AnalysisResult implements Serializable {
     private static final Pattern ISSUES_FILE_NAME = Pattern.compile("issues.xml", Pattern.LITERAL);
     private static final int NO_BUILD = -1;
     private static final String NO_REFERENCE = StringUtils.EMPTY;
+    private static final Report EMPTY_REPORT = new Report();
 
     private final String id;
 
@@ -209,29 +210,38 @@ public class AnalysisResult implements Serializable {
         sizePerOrigin = report.getPropertyCount(Issue::getOrigin);
         sizePerSeverity = report.getPropertyCount(Issue::getSeverity);
 
+        Report outstandingIssues;
+        Report newIssues;
+        Report fixedIssues;
+
         Optional<Run<?, ?>> run = referenceProvider.getAnalysisRun();
         if (run.isPresent()) {
             Run<?, ?> referenceRun = run.get();
             referenceJob = referenceRun.getParent().getFullName();
             referenceBuild = referenceRun.getId();
+
+            IssueDifference difference = new IssueDifference(report, this.owner.getNumber(),
+                    referenceProvider.getIssues());
+
+            outstandingIssues = difference.getOutstandingIssues();
+            newIssues = difference.getNewIssues();
+            fixedIssues = difference.getFixedIssues();
         }
         else {
             referenceJob = NO_REFERENCE;
             referenceBuild = StringUtils.EMPTY;
-        }
-        Report referenceResult = referenceProvider.getIssues();
-        IssueDifference difference = new IssueDifference(report, this.owner.getNumber(), referenceResult);
 
-        Report outstandingIssues = difference.getOutstandingIssues();
+            outstandingIssues = report;
+            newIssues = EMPTY_REPORT;
+            fixedIssues = EMPTY_REPORT;
+        }
+
         outstandingIssuesReference = new WeakReference<>(outstandingIssues);
 
-        Report newIssues = difference.getNewIssues();
         newIssuesReference = new WeakReference<>(newIssues);
-
         newSize = newIssues.getSize();
         newSizePerSeverity = newIssues.getPropertyCount(Issue::getSeverity);
 
-        Report fixedIssues = difference.getFixedIssues();
         fixedIssuesReference = new WeakReference<>(fixedIssues);
         fixedSize = fixedIssues.size();
 
