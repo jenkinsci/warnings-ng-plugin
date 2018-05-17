@@ -57,6 +57,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(8);
+        assertThat(result).hasNewSize(0);
         assertThat(result).hasInfoMessages("Resolved module names for 8 issues",
                 "Resolved package names of 4 affected files");
     }
