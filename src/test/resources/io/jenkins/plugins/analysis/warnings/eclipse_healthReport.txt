@@ -17,7 +17,7 @@ compile-warning:
     [javac] 	                                  ^^^^
     [javac] The parameter text is never read
     [javac] ----------
-    [javac] 3. ERROR in C:\Desenvolvimento\Java\jfg\src\jfg\gui\swt\SWTTextBuilder.java (at line 85)
+    [javac] 3. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\gui\swt\SWTTextBuilder.java (at line 85)
     [javac] 	protected void addValidation(Text text, Object type)
     [javac] 	                                               ^^^^
     [javac] The parameter type is never read
@@ -32,7 +32,7 @@ compile-warning:
     [javac] 	                                                                 ^^^^
     [javac] The parameter type is never read
     [javac] ----------
-    [javac] 6. ERROR in C:\Desenvolvimento\Java\jfg\src\jfg\gui\swt\SWTTextBuilder.java (at line 97)
+    [javac] 6. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\gui\swt\SWTTextBuilder.java (at line 97)
     [javac] 	protected Object convertToObject(String value, Object type, boolean canBeNull)
     [javac] 	                                                      ^^^^
     [javac] The parameter type is never read
@@ -44,7 +44,7 @@ compile-warning:
     [javac] The serializable class ObjectReflectionException does not declare a static final serialVersionUID field of type long
     [javac] ----------
     [javac] ----------
-    [javac] 8. ERROR in C:\Desenvolvimento\Java\jfg\src\jfg\reflect\ObjectReflectionGroup.java (at line 31)
+    [javac] 8. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\reflect\ObjectReflectionGroup.java (at line 31)
     [javac] 	int x = 0;
     [javac] 	    ^
     [javac] The local variable x is never read

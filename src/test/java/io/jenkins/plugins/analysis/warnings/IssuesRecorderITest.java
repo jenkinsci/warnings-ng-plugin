@@ -160,7 +160,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Should create a health report for only high priority issues. Only error issues.
+     * Should create a health report for only high priority issues.
+     * Only error issues
      */
     @Test
     public void shouldCreateHealthReportWithHighPriority() {
@@ -170,7 +171,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Should create a health report for normal priority issues. Error and warning issues.
+     * Should create a health report for normal priority issues.
+     * Error and warning issues.
      */
     @Test
     public void shouldCreateHealthReportWithNormalPriority() {
@@ -180,7 +182,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Should create a health report for low priority issues. Error, warnings and info issues.
+     * Should create a health report for low priority issues.
+     * Error, warnings and info issues.
      */
     @Test
     public void shouldCreateHealthReportWithLowPriority() {
@@ -200,7 +203,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @return a healthReport under test
      */
     private HealthReport createHealthReportTestSetupEclipse(int health, int unhealthy) {
-        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
+        FreeStyleProject project = createJobWithWorkspaceFile("eclipse_healthReport.txt");
         enableWarnings(project, publisher -> {
             publisher.setHealthy(health);
             publisher.setUnHealthy(unhealthy); },
@@ -215,7 +218,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @return a healthReport under test
      */
     private HealthReport createHealthReportTestSetupCheckstyle(Priority priority) {
-        FreeStyleProject project = createJobWithWorkspaceFile("checkstyle.xml");
+        FreeStyleProject project = createJobWithWorkspaceFile("checkstyle_healthReport.xml");
         enableWarnings(project, publisher -> {
             publisher.setHealthy(10);
             publisher.setUnHealthy(15);
