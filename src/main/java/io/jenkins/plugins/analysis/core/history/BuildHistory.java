@@ -69,7 +69,8 @@ public class BuildHistory implements ResultHistory {
     }
 
     private static Optional<Run<?, ?>> getPreviousRun(final Run<?, ?> start,
-            final ResultSelector selector, final boolean ignoreAnalysisResult, final boolean overallResultMustBeSuccess) {
+            final ResultSelector selector, final boolean ignoreAnalysisResult,
+            final boolean overallResultMustBeSuccess) {
         return getRunWithResult(start.getPreviousBuild(), selector, ignoreAnalysisResult, overallResultMustBeSuccess);
     }
 
@@ -119,7 +120,8 @@ public class BuildHistory implements ResultHistory {
         return Optional.empty();
     }
 
-    @Override @Nonnull
+    @Override
+    @Nonnull
     public Iterator<AnalysisResult> iterator() {
         return new BuildResultIterator(baseline, selector);
     }
@@ -141,8 +143,8 @@ public class BuildHistory implements ResultHistory {
          * @param selector
          *         selects the associated action from a build
          */
-        private BuildResultIterator(final Run<?, ?> baseline, final ResultSelector selector) {
-            cursor = getRunWithResult(baseline, selector,true, false);
+        BuildResultIterator(final Run<?, ?> baseline, final ResultSelector selector) {
+            cursor = getRunWithResult(baseline, selector, true, false);
             this.selector = selector;
         }
 
@@ -157,8 +159,9 @@ public class BuildHistory implements ResultHistory {
                 Run<?, ?> run = cursor.get();
                 Optional<ResultAction> resultAction = selector.get(run);
 
-                cursor = getPreviousRun(run, selector,true, false);
+                cursor = getPreviousRun(run, selector, true, false);
 
+                // FIXME: might be not defined
                 return resultAction.get().getResult();
             }
             else {

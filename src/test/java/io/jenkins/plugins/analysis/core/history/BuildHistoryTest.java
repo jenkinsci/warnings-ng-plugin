@@ -58,7 +58,6 @@ class BuildHistoryTest {
         assertThat(history.iterator()).isEmpty();
     }
 
-    /** Verifies that runs without results are skipped. */
     @Test
     void shouldSkipRunsWithoutActions() {
         ResultAction baselineAction = mock(ResultAction.class);
@@ -87,7 +86,6 @@ class BuildHistoryTest {
         assertThat(history.iterator()).containsExactly(baselineResult, otherResult);
     }
 
-    /** Verifies that null-Results are skipped, */
     @Test
     void shouldSkipRunsWithANullResult() {
         ResultAction baselineAction = mock(ResultAction.class);

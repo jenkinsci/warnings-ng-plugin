@@ -149,9 +149,9 @@ class StablePluginReferenceTest extends ReferenceFinderTest {
 
     }
 
-    /** see {@link ReferenceFinderTest#getReferenceFinder(Run, ResultSelector)}.*/
+    /** see {@link ReferenceFinderTest#createReferenceFinder(Run, ResultSelector)}.*/
     @Override
-    protected ReferenceFinder getReferenceFinder(final Run baseline, final ResultSelector resultSelector) {
+    protected ReferenceFinder createReferenceFinder(final Run baseline, final ResultSelector resultSelector) {
         return new StablePluginReference(baseline, resultSelector, true);
     }
 }

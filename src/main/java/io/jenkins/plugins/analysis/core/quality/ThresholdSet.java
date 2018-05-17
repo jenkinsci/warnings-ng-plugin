@@ -182,6 +182,11 @@ public class ThresholdSet implements Serializable {
         private int normalThreshold = 0;
         private int lowThreshold = 0;
 
+        /**
+         * Creates the new {@link ThresholdSet} instance from the current set of properties.
+         *
+         * @return a new {@link ThresholdSet}
+         */
         public ThresholdSet build() {
             return new ThresholdSet(getTotalThreshold(), getHighThreshold(), getNormalThreshold(), getLowThreshold());
         }

@@ -57,8 +57,8 @@ import hudson.util.ListBoxModel;
  * Additional features:
  * <ul>
  * <li>It provides a {@link QualityGate} that is checked after each run. If the quality gate is not passed, then the
- * build
- * will be set to {@link Result#UNSTABLE} or {@link Result#FAILURE}, depending on the configuration properties.</li>
+ * build will be set to {@link Result#UNSTABLE} or {@link Result#FAILURE}, depending on the configuration
+ * properties.</li>
  * <li>It provides thresholds for the build health that could be adjusted in the configuration screen.
  * These values are used by the {@link HealthReportBuilder} to compute the health and the health trend graph.
  * </li>
@@ -220,6 +220,12 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         this.referenceJobName = referenceJobName;
     }
 
+    /**
+     * Returns the reference job to get the results for the issue difference computation. If the job is not defined,
+     * then {@link #NO_REFERENCE_JOB} is returned.
+     *
+     * @return the name of reference job, or {@link #NO_REFERENCE_JOB} if undefined
+     */
     public String getReferenceJobName() {
         if (StringUtils.isBlank(referenceJobName)) {
             return NO_REFERENCE_JOB;

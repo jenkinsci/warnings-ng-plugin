@@ -17,20 +17,27 @@ import hudson.model.Result;
 import hudson.model.Run;
 
 /**
- * Tests the abstract class {@link ReferenceFinderTest} using the abstract test pattern.
+ * Tests the class {@link ReferenceFinder} using the abstract test pattern.
  *
  * @author Stephan Plöderl
  */
 public abstract class ReferenceFinderTest {
+    /**
+     * Creates an instance of {@link ReferenceFinder} with overallResultSuccessMustBe set to {@code true} .
+     *
+     * @param baseline
+     *         the baseline
+     * @param resultSelector
+     *         the result selector
+     *
+     * @return instance of a child of {@link ReferenceFinder} which shall be tested.
+     */
+    protected abstract ReferenceFinder createReferenceFinder(Run baseline, ResultSelector resultSelector);
 
     /**
-     * Should return an instance of {@link ReferenceFinder} with overallResultSuccessMustBe set to true.
-     *
-     * @return instance of a childclass of {@link ReferenceFinder} which shall be tested.
+     * Verifies that {@link ReferenceFinder#create(Run, ResultSelector, boolean, boolean)} creates the instances of the
+     * correct ReferenceProviders.
      */
-    protected abstract ReferenceFinder getReferenceFinder(Run baseline, ResultSelector resultSelector);
-
-    /** Verifies that {@link ReferenceFinder#create(Run, ResultSelector, boolean, boolean)} creates the instances of the correct ReferenceProviders. */
     @Test
     void createsRightInstance() {
         assertThat(ReferenceFinder.create(null, null, false, false)).isInstanceOf(StablePluginReference.class);
@@ -54,7 +61,7 @@ public abstract class ReferenceFinderTest {
         ResultSelector resultSelector = mock(ResultSelector.class);
         when(resultSelector.get(prevBuild)).thenReturn(Optional.of(resultAction));
 
-        ReferenceFinder referenceFinder = getReferenceFinder(baseline, resultSelector);
+        ReferenceFinder referenceFinder = createReferenceFinder(baseline, resultSelector);
 
         assertThat(referenceFinder.getAnalysisRun()).contains(baseline);
         assertThat(referenceFinder.getAnalysisRun()).isEmpty();
@@ -85,10 +92,9 @@ public abstract class ReferenceFinderTest {
         //noinspection unchecked
         when(analysisResult.getIssues()).thenReturn(issues, (Report) null);
 
-        ReferenceFinder referenceFinder = getReferenceFinder(baseline, resultSelector);
+        ReferenceFinder referenceFinder = createReferenceFinder(baseline, resultSelector);
 
         assertThat(referenceFinder.getIssues()).isEqualTo(issues);
         assertThat(referenceFinder.getIssues()).isEqualTo(new Report());
     }
-
 }
