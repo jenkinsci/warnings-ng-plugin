@@ -17,13 +17,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 
 import hudson.util.DataSetBuilder;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Provides the base algorithms to create a data set for a static analysis graph. The actual series for each result
@@ -229,6 +228,15 @@ public abstract class SeriesBuilder {
         return String.valueOf(level);
     }
 
+    /**
+     * Creates an aggregated data set.
+     *
+     * @param configuration
+     *         configures the data set (how many results should be process, etc.)
+     * @param resultActions
+     *         the static analysis results
+     * @return
+     */
     public CategoryDataset createAggregation(final GraphConfiguration configuration,
             final Collection<ResultHistory> resultActions) {
         Set<LocalDate> availableDates = Sets.newHashSet();

@@ -21,7 +21,7 @@ public class SoftAssertions extends AbstractStandardSoftAssertions {
      *
      * @throws SoftAssertionError if any proxied assertion objects threw
      */
-    public void assertAll() {
+    private void assertAll() {
         List<Throwable> errors = errorsCollected();
         if (!errors.isEmpty()) {
             throw new SoftAssertionError(extractProperty("message", String.class).from(errors));

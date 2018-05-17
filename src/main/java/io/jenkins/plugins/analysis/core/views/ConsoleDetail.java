@@ -9,13 +9,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueParser;
+
 import hudson.console.ConsoleNote;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.plugins.analysis.Messages;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueParser;
 
 /**
  * Renders a section of the console log.
@@ -23,6 +23,15 @@ import edu.hm.hafner.analysis.IssueParser;
  * @author Ulli Hafner
  */
 public class ConsoleDetail implements ModelObject {
+    /**
+     * Returns whether the specified issue refers to a line in the console log.
+     *
+     * @param issue
+     *         the issue to check
+     *
+     * @return {@code true} if the issue refers to a line in the console log, {@code false} if the issue refers to a
+     *         source code file in the workspace
+     */
     public static boolean isInConsoleLog(final Issue issue) {
         return IssueParser.SELF.equals(issue.getFileName());
     }

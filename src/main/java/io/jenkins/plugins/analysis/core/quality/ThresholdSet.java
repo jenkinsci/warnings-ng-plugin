@@ -23,7 +23,7 @@ public class ThresholdSet implements Serializable {
         this.lowThreshold = lowThreshold;
     }
 
-    public boolean isTotalThresholdReached(final int toCheck) {
+    private boolean isTotalThresholdReached(final int toCheck) {
         return isSingleThresholdReached(getTotalThreshold(), toCheck);
     }
 
@@ -31,7 +31,7 @@ public class ThresholdSet implements Serializable {
         return totalThreshold;
     }
 
-    public boolean isHighThresholdReached(final int toCheck) {
+    private boolean isHighThresholdReached(final int toCheck) {
         return isSingleThresholdReached(getHighThreshold(), toCheck);
     }
 
@@ -39,7 +39,7 @@ public class ThresholdSet implements Serializable {
         return highThreshold;
     }
 
-    public boolean isNormalThresholdReached(final int toCheck) {
+    private boolean isNormalThresholdReached(final int toCheck) {
         return isSingleThresholdReached(getNormalThreshold(), toCheck);
     }
 
@@ -47,7 +47,7 @@ public class ThresholdSet implements Serializable {
         return normalThreshold;
     }
 
-    public boolean isLowThresholdReached(final int toCheck) {
+    private boolean isLowThresholdReached(final int toCheck) {
         return isSingleThresholdReached(getLowThreshold(), toCheck);
     }
 
@@ -71,28 +71,6 @@ public class ThresholdSet implements Serializable {
 
     private boolean isEnabled(final int threshold) {
         return threshold > 0;
-    }
-
-    /**
-     * Check if one or more of the thresholds is retched or exceeded.
-     *
-     * @param totalToCheck
-     *         total count of warnings
-     * @param highToCheck
-     *         count of high prioritized warnings
-     * @param normalToCheck
-     *         count of normal prioritized warnings
-     * @param lowToCheck
-     *         count of low prioritized warnings
-     *
-     * @return true if one or more of the counts retched or exceeded the threshold, else false
-     */
-    public boolean isThresholdReached(final int totalToCheck, final int highToCheck, final int normalToCheck,
-            final int lowToCheck) {
-        return isTotalThresholdReached(totalToCheck)
-                || isHighThresholdReached(highToCheck)
-                || isNormalThresholdReached(normalToCheck)
-                || isLowThresholdReached(lowToCheck);
     }
 
     /**

@@ -7,15 +7,13 @@ import org.junit.Rule;
 import org.junit.jupiter.api.Tag;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import edu.hm.hafner.util.ResourceTest;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.FilePath;
 import hudson.model.Descriptor;
 import hudson.model.TopLevelItem;
-
-import edu.hm.hafner.util.ResourceTest;
 
 /**
  * Base class for integration tests in Jenkins.
@@ -54,8 +52,9 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @param fileNamePrefix
      *         prefix of the filename
+     * @return the whole file name of the workspace file
      */
-    protected String createWorkspaceFileName(final String fileNamePrefix) {
+    private String createWorkspaceFileName(final String fileNamePrefix) {
         return String.format("%s-issues.txt", FilenameUtils.getBaseName(fileNamePrefix));
     }
 
@@ -65,6 +64,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @param tool
      *         the class of the tool to get the ID from
+     * @return the ID of the analysis tool
      */
     protected String getIdOf(final Class<? extends StaticAnalysisTool> tool) {
         Descriptor<?> descriptor = j.jenkins.getDescriptor(tool);

@@ -37,11 +37,12 @@ public class EnvironmentResolver {
      *
      * @param environment
      *         environment variables
-     * @param nonExpanded
-     *         the string to expand
+     * @param nonExpandedValue
+     *         the value to expand
+     * @return the expanded value
      */
-    public String expandEnvironmentVariables(@CheckForNull final EnvVars environment, final String nonExpanded) {
-        String expanded = nonExpanded;
+    public String expandEnvironmentVariables(@CheckForNull final EnvVars environment, final String nonExpandedValue) {
+        String expanded = nonExpandedValue;
         if (environment != null && !environment.isEmpty()) {
             for (int i = 0; i < resolveVariablesDepth && StringUtils.isNotBlank(expanded); i++) {
                 String old = expanded;

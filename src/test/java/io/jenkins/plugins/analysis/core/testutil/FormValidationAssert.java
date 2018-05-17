@@ -75,6 +75,9 @@ public class FormValidationAssert extends AbstractAssert<FormValidationAssert, F
     /**
      * Verifies that the message of the {@link FormValidation} equals to the expected message.
      *
+     * @param expectedMessage
+     *         the expected message of the validation result
+     *
      * @return this assertion object.
      * @throws AssertionError
      *         if the message of the {@link FormValidation} is not equal to the expected message

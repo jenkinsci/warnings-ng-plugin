@@ -35,6 +35,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
+import hudson.model.Action;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -50,11 +51,13 @@ import hudson.util.ListBoxModel;
 
 /**
  * Freestyle or Maven job {@link Recorder} that scans report files or the console log for issues. Stores the created
- * issues in an {@link AnalysisResult}. The result is attached to the {@link Run} by registering a {@link ResultAction}.
+ * issues in an {@link AnalysisResult}. The result is attached to the {@link Run} by registering a {@link
+ * ResultAction}.
  * <p>
  * Additional features:
  * <ul>
- * <li>It provides a {@link QualityGate} that is checked after each run. If the quality gate is not passed, then the build
+ * <li>It provides a {@link QualityGate} that is checked after each run. If the quality gate is not passed, then the
+ * build
  * will be set to {@link Result#UNSTABLE} or {@link Result#FAILURE}, depending on the configuration properties.</li>
  * <li>It provides thresholds for the build health that could be adjusted in the configuration screen.
  * These values are used by the {@link HealthReportBuilder} to compute the health and the health trend graph.
@@ -141,8 +144,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     /* -------------------------------------------------------------------------------------------------------------- */
 
     /**
-     * Returns whether the results for each configured static analysis result should be aggregated into a single
-     * result or if every tool should get an individual result.
+     * Returns whether the results for each configured static analysis result should be aggregated into a single result
+     * or if every tool should get an individual result.
      *
      * @return {@code true}  if the results of each static analysis tool should be aggregated into a single result,
      *         {@code false} if every tool should get an individual result.
@@ -159,8 +162,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     /**
      * Returns whether recording should be enabled for failed builds as well.
      *
-     * @return {@code true}  if recording should be enabled for failed builds as well,
-     *         {@code false} if recording is enabled for successful or unstable builds only
+     * @return {@code true}  if recording should be enabled for failed builds as well, {@code false} if recording is
+     *         enabled for successful or unstable builds only
      */
     public boolean getEnabledForFailure() {
         return isEnabledForFailure;
@@ -432,8 +435,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         this.filters = new ArrayList<>(filters);
     }
 
-    /** ------------------------------------------------------------ */
-
     @Override
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace,
             @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
@@ -470,7 +471,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private Report scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final ToolConfiguration toolConfiguration) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(toolConfiguration.getTool(), workspace,
-                getReportCharset(), getSourceCodeCharset(), new LogHandler(listener, toolConfiguration.getTool().getName()));
+                getReportCharset(), getSourceCodeCharset(),
+                new LogHandler(listener, toolConfiguration.getTool().getName()));
         return issuesScanner.scan(expandEnvironmentVariables(run, listener, toolConfiguration.getPattern()),
                 run.getLogFile());
     }
@@ -483,6 +485,26 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         return EncodingValidator.defaultCharset(reportEncoding);
     }
 
+    /**
+     * Publishes the results as {@link Action} in the job using an {@link IssuesPublisher}. Afterwards, all affected
+     * files are copied to Jenkins' build folder so that they are available to show warnings in the UI.
+     *
+     * @param run
+     *         the run
+     * @param launcher
+     *         the launcher
+     * @param listener
+     *         the listener
+     * @param report
+     *         the analysis report to publish
+     * @param name
+     *         the name of the report (might be empty)
+     *
+     * @throws IOException
+     *         if the files could not be copied to Jenkins' build folder
+     * @throws InterruptedException
+     *         the the copying has been canceled by the user
+     */
     public void publishResult(final Run<?, ?> run, final Launcher launcher,
             final TaskListener listener, final Report report, final String name)
             throws IOException, InterruptedException {
@@ -512,7 +534,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     /**
      * Descriptor for this step: defines the context and the UI elements.
      */
-    @Extension @Symbol("recordIssues")
+    @Extension
+    @Symbol("recordIssues")
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
         private final JenkinsFacade jenkins;
 

@@ -170,7 +170,7 @@ class DetailFactoryTest {
     }
 
     /**
-     * Checks that a link to a source, returns a SourceDetail-View
+     * Checks that a link to a source, returns a SourceDetail-View.
      */
     @Test
     void shouldReturnSourceDetailWhenCalledWithSourceLinkAndIssueNotInConsoleLog() throws IOException {

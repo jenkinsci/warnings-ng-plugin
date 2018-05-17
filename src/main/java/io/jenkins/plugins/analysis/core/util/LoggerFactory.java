@@ -59,15 +59,6 @@ public class LoggerFactory {
     }
 
     /**
-     * Returns a null logger that does not print anything.
-     *
-     * @return null logger
-     */
-    public Logger createNullLogger() {
-        return new NullLogger();
-    }
-
-    /**
      * A simple logger that prefixes each message with the name of the static analysis tool.
      *
      * @author Ulli Hafner
@@ -76,7 +67,7 @@ public class LoggerFactory {
         private final String toolName;
         private final PrintStream delegate;
 
-        private PrintStreamLogger(final PrintStream logger, final String toolName) {
+        PrintStreamLogger(final PrintStream logger, final String toolName) {
             if (toolName.contains("[")) {
                 this.toolName = toolName + " ";
             }
@@ -108,7 +99,7 @@ public class LoggerFactory {
         /**
          * Creates a new instance of {@link NullLogger}.
          */
-        private NullLogger() {
+        NullLogger() {
             super(new PrintStream(new ByteArrayOutputStream()), "null");
         }
     }

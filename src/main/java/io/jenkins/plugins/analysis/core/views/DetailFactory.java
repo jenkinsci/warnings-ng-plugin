@@ -51,6 +51,7 @@ public class DetailFactory {
      *
      * @return the dynamic result of this module detail view
      */
+    @SuppressWarnings({"ParameterNumber", "npathcomplexity"})
     public Object createTrendDetails(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Report allIssues, final Report newIssues,
             final Report outstandingIssues, final Report fixedIssues,
@@ -132,6 +133,7 @@ public class DetailFactory {
         return StringUtils.substringAfter(link, ".");
     }
 
+    @SuppressWarnings("ParameterNumber")
     private IssuesDetail createPrioritiesDetail(final Run<?, ?> owner,
             final AnalysisResult result, final Severity severity,
             final Report report, final Report fixedIssues, final Report newIssues,

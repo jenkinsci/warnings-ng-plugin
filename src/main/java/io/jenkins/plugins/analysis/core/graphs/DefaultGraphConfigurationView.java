@@ -33,6 +33,8 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
      *         the build history for this job
      * @param toolTipProvider
      *         the tool tip provider to use
+     * @param healthDescriptor
+     *         the health descriptor to use
      */
     public DefaultGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
             final String pluginName, final ResultHistory buildHistory,

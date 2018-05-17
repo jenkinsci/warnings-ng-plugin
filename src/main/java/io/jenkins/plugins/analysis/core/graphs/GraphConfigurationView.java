@@ -51,6 +51,10 @@ public abstract class GraphConfigurationView implements ModelObject {
      *         the owning job to configure the graphs for
      * @param key
      *         unique key of this graph
+     * @param buildHistory
+     *         the build history for this job
+         * @param healthDescriptor
+         *         the health descriptor to use
      */
     public GraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job, final String key,
             final ResultHistory buildHistory,

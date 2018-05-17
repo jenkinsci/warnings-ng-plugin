@@ -7,7 +7,7 @@ import edu.hm.hafner.analysis.Severity;
  *
  * @author Ullrich Hafner
  */
-public class LocalizedSeverity {
+public final class LocalizedSeverity {
     /**
      * Returns a localized description of the specified severity.
      *
@@ -54,5 +54,9 @@ public class LocalizedSeverity {
             return Messages.Severity_Long_Low();
         }
         return severity.getName(); // No i18n support for custom severities
+    }
+
+    private LocalizedSeverity() {
+        // prevents instantiation
     }
 }
