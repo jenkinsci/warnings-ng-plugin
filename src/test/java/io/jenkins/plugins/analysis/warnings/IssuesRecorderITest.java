@@ -130,7 +130,7 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Should create a health report with icon health-40to59 (cloud).
+     * Should create a health report with icon health-40to59 (cloudy).
      */
     @Test
     public void shouldCreate40To59HealthReport() {
