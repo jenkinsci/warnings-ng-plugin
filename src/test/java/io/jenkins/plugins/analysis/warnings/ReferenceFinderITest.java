@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -10,9 +9,9 @@ import org.junit.Test;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
+import io.jenkins.plugins.analysis.core.history.ReferenceFinder;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
@@ -23,11 +22,19 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.tasks.Shell;
 
+/**
+ * Integration tests of the warnings plug-in in freestyle jobs. Tests the new reference finder {@link ReferenceFinder}.
+ *
+ * @author Arne Schöntag
+ */
 public class ReferenceFinderITest extends IntegrationTest {
 
     private String jobName = "Job";
     private String refName = "RefJob";
 
+    /**
+     * Checks if the reference is taken from the last successful build and therefore returns a success in the end.
+     */
     @Test
     public void shouldCreateSuccessResultWithIgnoredUnstableInBetween() throws IOException, InterruptedException {
         FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse2Warnings.txt");
@@ -55,6 +62,9 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
     }
 
+    /**
+     * Checks if the reference is taken from the last successful build and therefore returns an unstable in the end.
+     */
     @Test
     public void shouldCreateUnstableResultWithIgnoredUnstableInBetween() throws IOException, InterruptedException {
         FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse2Warnings.txt");
@@ -82,6 +92,9 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.UNSTABLE);
     }
 
+    /**
+     * Checks if the reference ignores the result of the last build and therefore returns a success in the end.
+     */
     @Test
     public void shouldCreateSuccessResultWithNotIgnoredUnstableInBetween() throws IOException, InterruptedException {
         FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse2Warnings.txt");
@@ -110,6 +123,9 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
     }
 
+    /**
+     * Checks if the reference ignores the result of the last build and therefore returns an unstable in the end.
+     */
     @Test
     public void shouldCreateUnstableResultWithNotIgnoredUnstableInBetween() throws IOException, InterruptedException {
         FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse6Warnings.txt");
@@ -140,6 +156,10 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.UNSTABLE);
     }
 
+    /**
+     * Checks if the reference only looks at complete success builds instead of just looking at the eclipse result.
+     * Should return an unstable result.
+     */
     @Test
     public void shouldCreateUnstableResultWithOverAllMustBeSuccess() throws IOException, InterruptedException {
         FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse2Warnings.txt");
@@ -172,6 +192,10 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.UNSTABLE);
     }
 
+    /**
+     * Checks if the reference only looks at complete success builds instead of just looking at the eclipse result.
+     * Should return an success result.
+     */
     @Test
     public void shouldCreateSuccessResultWithOverAllMustBeSuccess() throws IOException, InterruptedException {
         FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse4Warnings.txt");
@@ -204,6 +228,10 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
     }
 
+    /**
+     * Checks if the reference only looks at the eclipse result of a build and not the overall success. Should return an
+     * unstable result.
+     */
     @Test
     public void shouldCreateUnstableResultWithOverAllMustNotBeSuccess() throws IOException, InterruptedException {
         FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse4Warnings.txt");
@@ -236,6 +264,10 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.UNSTABLE);
     }
 
+    /**
+     * Checks if the reference only looks at the eclipse result of a build and not the overall success. Should return an
+     * success result.
+     */
     @Test
     public void shouldCreateSuccessResultWithOverAllMustNotBeSuccess() throws IOException, InterruptedException {
         FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse2Warnings.txt");
@@ -271,8 +303,13 @@ public class ReferenceFinderITest extends IntegrationTest {
 
     // With Reference Build
 
+    /**
+     * Checks if the reference is taken from the last successful build and therefore returns a success in the end. Uses
+     * a different freestyle project for the reference.
+     */
     @Test
-    public void shouldCreateSuccessResultWithIgnoredUnstableInBetweenWithReferenceBuild() throws IOException, InterruptedException {
+    public void shouldCreateSuccessResultWithIgnoredUnstableInBetweenWithReferenceBuild()
+            throws IOException, InterruptedException {
         FreeStyleProject refJob = createJobWithWorkspaceFile(refName, "eclipse2Warnings.txt");
         enableWarnings(refJob, publisher -> {
             publisher.setUnstableNewAll(3);
@@ -302,8 +339,13 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
     }
 
+    /**
+     * Checks if the reference is taken from the last successful build and therefore returns an unstable in the end.
+     * Uses a different freestyle project for the reference.
+     */
     @Test
-    public void shouldCreateUnstableResultWithIgnoredUnstableInBetweenWithReferenceBuild() throws IOException, InterruptedException {
+    public void shouldCreateUnstableResultWithIgnoredUnstableInBetweenWithReferenceBuild()
+            throws IOException, InterruptedException {
         FreeStyleProject refJob = createJobWithWorkspaceFile(refName, "eclipse2Warnings.txt");
         enableWarnings(refJob, publisher -> {
             publisher.setUnstableNewAll(3);
@@ -334,8 +376,13 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.UNSTABLE);
     }
 
+    /**
+     * Checks if the reference ignores the result of the last build and therefore returns a success in the end. Uses a
+     * different freestyle project for the reference.
+     */
     @Test
-    public void shouldCreateSeuccssResultWithNotIgnoredUnstableInBetweenWithReferenceBuild() throws IOException, InterruptedException {
+    public void shouldCreateSeuccssResultWithNotIgnoredUnstableInBetweenWithReferenceBuild()
+            throws IOException, InterruptedException {
         FreeStyleProject refJob = createJobWithWorkspaceFile(refName, "eclipse2Warnings.txt");
         enableWarnings(refJob, publisher -> {
             publisher.setIgnoreAnalysisResult(true);
@@ -366,8 +413,13 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
     }
 
+    /**
+     * Checks if the reference ignores the result of the last build and therefore returns an unstable in the end. Uses a
+     * different freestyle project for the reference.
+     */
     @Test
-    public void shouldCreateUnstableResultWithNotIgnoredUnstableInBetweenWithReferenceBuild() throws IOException, InterruptedException {
+    public void shouldCreateUnstableResultWithNotIgnoredUnstableInBetweenWithReferenceBuild()
+            throws IOException, InterruptedException {
         FreeStyleProject refJob = createJobWithWorkspaceFile(refName, "eclipse6Warnings.txt");
         IssuesRecorder issuesRecorder = enableWarnings(refJob, publisher -> {
             publisher.setIgnoreAnalysisResult(true);
@@ -399,8 +451,13 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.UNSTABLE);
     }
 
+    /**
+     * Checks if the reference only looks at complete success builds instead of just looking at the eclipse result.
+     * Should return an unstable result. Uses a different freestyle project for the reference.
+     */
     @Test
-    public void shouldCreateUnstableResultWithOverAllMustBeSuccessWithReferenceBuild() throws IOException, InterruptedException {
+    public void shouldCreateUnstableResultWithOverAllMustBeSuccessWithReferenceBuild()
+            throws IOException, InterruptedException {
         FreeStyleProject refJob = createJobWithWorkspaceFile(refName, "eclipse2Warnings.txt");
         IssuesRecorder issuesRecorder = enableWarnings(refJob, publisher -> {
             publisher.setOverallResultMustBeSuccess(true);
@@ -437,8 +494,13 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.UNSTABLE);
     }
 
+    /**
+     * Checks if the reference only looks at complete success builds instead of just looking at the eclipse result.
+     * Should return a success result. Uses a different freestyle project for the reference.
+     */
     @Test
-    public void shouldCreateSuccessResultWithOverAllMustBeSuccessWithReferenceBuild() throws IOException, InterruptedException {
+    public void shouldCreateSuccessResultWithOverAllMustBeSuccessWithReferenceBuild()
+            throws IOException, InterruptedException {
         FreeStyleProject refJob = createJobWithWorkspaceFile(refName, "eclipse4Warnings.txt");
         IssuesRecorder issuesRecorder = enableWarnings(refJob, publisher -> {
             publisher.setOverallResultMustBeSuccess(true);
@@ -475,8 +537,13 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
     }
 
+    /**
+     * Checks if the reference only looks at the eclipse result of a build and not the overall success. Should return an
+     * unstable result. Uses a different freestyle project for the reference.
+     */
     @Test
-    public void shouldCreateUnstableResultWithOverAllMustNotBeSuccessWithReferenceBuild() throws IOException, InterruptedException {
+    public void shouldCreateUnstableResultWithOverAllMustNotBeSuccessWithReferenceBuild()
+            throws IOException, InterruptedException {
         FreeStyleProject refJob = createJobWithWorkspaceFile(refName, "eclipse4Warnings.txt");
         IssuesRecorder issuesRecorder = enableWarnings(refJob, publisher -> {
             publisher.setOverallResultMustBeSuccess(false);
@@ -513,8 +580,13 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.UNSTABLE);
     }
 
+    /**
+     * Checks if the reference only looks at the eclipse result of a build and not the overall success. Should return an
+     * a success result. Uses a different freestyle project for the reference.
+     */
     @Test
-    public void shouldCreateSuccessResultWithOverAllMustNotBeSuccessWithReferenceBuild() throws IOException, InterruptedException {
+    public void shouldCreateSuccessResultWithOverAllMustNotBeSuccessWithReferenceBuild()
+            throws IOException, InterruptedException {
         FreeStyleProject refJob = createJobWithWorkspaceFile(refName, "eclipse2Warnings.txt");
         IssuesRecorder issuesRecorder = enableWarnings(refJob, publisher -> {
             publisher.setOverallResultMustBeSuccess(false);
@@ -646,19 +718,20 @@ public class ReferenceFinderITest extends IntegrationTest {
     }
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private AnalysisResult scheduleBuildAndAssertStatusWithMultiplePublisher(final FreeStyleProject job, final Result status) {
+    private AnalysisResult scheduleBuildAndAssertStatusWithMultiplePublisher(final FreeStyleProject job,
+            final Result status) {
         try {
             FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
 
             List<ResultAction> actions = build.getActions(ResultAction.class);
-            for (ResultAction action : actions){
+            for (ResultAction action : actions) {
                 System.out.println("INFO: Result: " + action.getResult());
             }
 
             return actions.get(0).getResult();
         }
-            catch(
-        Exception e)
+        catch (
+                Exception e)
 
         {
             throw new AssertionError(e);
