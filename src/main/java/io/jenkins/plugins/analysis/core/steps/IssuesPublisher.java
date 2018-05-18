@@ -158,9 +158,9 @@ class IssuesPublisher {
     }
 
     private AnalysisResult createAnalysisResult(final Report filtered, final ResultSelector selector) {
-        ReferenceProvider referenceProvider = createReferenceProvider(selector);
         filtered.setReference(String.valueOf(run.getNumber()));
 
+        ReferenceProvider referenceProvider = createReferenceProvider(selector);
         return new BuildHistory(run, selector).getPreviousResult()
                 .map(previous -> new AnalysisResult(run, referenceProvider, filtered, qualityGate, previous))
                 .orElseGet(() -> new AnalysisResult(run, referenceProvider, filtered, qualityGate));

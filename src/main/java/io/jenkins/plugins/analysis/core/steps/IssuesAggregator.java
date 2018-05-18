@@ -31,7 +31,7 @@ public class IssuesAggregator extends MatrixAggregator {
     private final MutableMap<String, List<Report>> results = Maps.mutable.empty();
     private final List<String> names = Lists.mutable.empty();
 
-    private ReentrantLock aggregationTableLock = new ReentrantLock();
+    private final ReentrantLock aggregationTableLock = new ReentrantLock();
 
     public IssuesAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener,
             final IssuesRecorder recorder) {

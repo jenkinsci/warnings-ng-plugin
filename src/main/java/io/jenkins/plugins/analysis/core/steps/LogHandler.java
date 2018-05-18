@@ -13,6 +13,7 @@ import hudson.model.TaskListener;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.LoggerIsNotStaticFinal")
 class LogHandler {
     private final Logger errorLogger;
     private final Logger logger;

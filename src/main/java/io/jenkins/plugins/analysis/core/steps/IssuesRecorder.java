@@ -66,6 +66,7 @@ import hudson.util.ListBoxModel;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports"})
 public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private static final Priority DEFAULT_MINIMUM_PRIORITY = Priority.LOW;
 
@@ -520,11 +521,11 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
                 new LogHandler(listener, report.getOrigin()));
 
         VirtualChannel channel = launcher.getChannel();
-        if (channel != null) {
-            publisher.attachAction(channel, new FilePath(run.getRootDir()));
+        if (channel == null) {
+            publisher.attachAction();
         }
         else {
-            publisher.attachAction();
+            publisher.attachAction(channel, new FilePath(run.getRootDir()));
         }
     }
 
@@ -554,6 +555,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
         @VisibleForTesting
         Descriptor(final JenkinsFacade jenkins) {
+            super();
+
             this.jenkins = jenkins;
         }
 

@@ -1,7 +1,10 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
@@ -114,7 +117,7 @@ public class AffectedFilesResolver {
      *
      * @return the temporary name
      */
-    private static String getTempName(String fileName) {
+    private static String getTempName(final String fileName) {
         return Integer.toHexString(fileName.hashCode()) + ".tmp";
     }
 
@@ -127,11 +130,16 @@ public class AffectedFilesResolver {
      *         the issue in the affected file
      *
      * @return the file
+     * @throws FileNotFoundException if the file could not be found
      */
-    public static File getTempFile(final Run<?, ?> run, final Issue issue) {
+    public static InputStream getTempFile(final Run<?, ?> run, final Issue issue) throws FileNotFoundException {
         File buildDir = run.getParent().getBuildDir();
 
-        return new File(new File(buildDir, AFFECTED_FILES_FOLDER_NAME), getTempName(issue.getFileName()));
+        File tmpFile = new File(new File(buildDir, AFFECTED_FILES_FOLDER_NAME), getTempName(issue.getFileName()));
+        if (!tmpFile.exists()) {
+            new File(issue.getFileName()); // fallback, maybe the source still is on the master node
+        }
+        return new FileInputStream(tmpFile);
     }
 
     private void logExceptionToFile(final IOException exception, final FilePath masterFile,

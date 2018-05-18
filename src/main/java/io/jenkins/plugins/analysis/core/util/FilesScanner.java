@@ -38,6 +38,8 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
      *         encoding of the files to parse
      */
     public FilesScanner(final String filePattern, final IssueParser parser, final String encoding) {
+        super();
+
         this.filePattern = filePattern;
         this.parser = parser;
         this.encoding = encoding;

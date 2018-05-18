@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class LocalizedMessagesTest {
     @BeforeAll
     static void initializeLocale() {

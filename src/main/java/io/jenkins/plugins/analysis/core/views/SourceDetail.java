@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.views;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,24 +24,24 @@ import hudson.model.ModelObject;
 import hudson.model.Run;
 
 /**
- * Renders a source file containing an annotation for the whole file or a specific line number.
+ * Renders a source file containing an issue for the whole file or a specific line number.
  *
  * @author Ulli Hafner
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class SourceDetail implements ModelObject {
     /** Offset of the source code generator. After this line the actual source file lines start. */
-    protected static final int SOURCE_GENERATOR_OFFSET = 13;
-    /** Color for the first (primary) annotation range. */
+    private static final int SOURCE_GENERATOR_OFFSET = 13;
+    /** Color for the first (primary) issue range. */
     private static final String FIRST_COLOR = "#FCAF3E";
-    /** Color for all other annotation ranges. */
+    /** Color for all other issue ranges. */
     private static final String OTHER_COLOR = "#FCE94F";
     /** The current build as owner of this object. */
     private final Run<?, ?> owner;
-    /** Stripped file name of this annotation without the path prefix. */
+    /** Stripped file name of this issue without the path prefix. */
     private final String fileName;
-    /** The annotation to be shown. */
-    private final Issue annotation;
+    /** The issue to be shown. */
+    private final Issue issue;
     /** The rendered source file. */
     private String sourceCode = StringUtils.EMPTY;
     /** The default encoding to be used when reading and parsing files. */
@@ -54,16 +52,16 @@ public class SourceDetail implements ModelObject {
      *
      * @param owner
      *         the current build as owner of this object
-     * @param annotation
+     * @param issue
      *         the warning to display in the source file
      * @param sourceEncoding
      *         the encoding to use when displaying source files
      */
-    public SourceDetail(final Run<?, ?> owner, final Issue annotation, final Charset sourceEncoding) {
+    public SourceDetail(final Run<?, ?> owner, final Issue issue, final Charset sourceEncoding) {
         this.owner = owner;
-        this.annotation = annotation;
+        this.issue = issue;
         this.sourceEncoding = sourceEncoding;
-        fileName = StringUtils.substringAfterLast(annotation.getFileName(), "/");
+        fileName = StringUtils.substringAfterLast(issue.getFileName(), "/");
 
         initializeContent();
     }
@@ -72,22 +70,11 @@ public class SourceDetail implements ModelObject {
      * Initializes the content of the source file: reads the file, colors it, and splits it into three parts.
      */
     private void initializeContent() {
-        InputStream file = null;
-        try {
-            File tempFile = AffectedFilesResolver.getTempFile(owner, annotation);
-            if (tempFile.exists()) {
-                file = new FileInputStream(tempFile);
-            }
-            else {
-                file = new FileInputStream(new File(annotation.getFileName()));
-            }
+        try (InputStream file = AffectedFilesResolver.getTempFile(owner, issue)) {
             splitSourceFile(highlightSource(file));
         }
         catch (IOException exception) {
             sourceCode = "Can't read file: " + exception.getLocalizedMessage();
-        }
-        finally {
-            IOUtils.closeQuietly(file);
         }
     }
 
@@ -106,7 +93,7 @@ public class SourceDetail implements ModelObject {
      * @throws IOException
      *         if the source code could not be read
      */
-    public final String highlightSource(final InputStream file) throws IOException {
+    private String highlightSource(final InputStream file) throws IOException {
         JavaSource source = new JavaSourceParser().parse(new InputStreamReader(file, sourceEncoding));
 
         JavaSource2HTMLConverter converter = new JavaSource2HTMLConverter();
@@ -126,7 +113,7 @@ public class SourceDetail implements ModelObject {
      *         the source code of the whole file as rendered HTML string
      */
     // CHECKSTYLE:CONSTANTS-OFF
-    public final void splitSourceFile(final String sourceFile) {
+    private void splitSourceFile(final String sourceFile) {
         StringBuilder output = new StringBuilder(sourceFile.length());
 
         LineIterator lineIterator = IOUtils.lineIterator(new StringReader(sourceFile));
@@ -140,7 +127,7 @@ public class SourceDetail implements ModelObject {
             }
             lineNumber = 1;
             boolean isFirstRange = true;
-            while (lineNumber < annotation.getLineStart()) {
+            while (lineNumber < issue.getLineStart()) {
                 copyLine(output, lineIterator);
                 lineNumber++;
             }
@@ -150,22 +137,22 @@ public class SourceDetail implements ModelObject {
             appendRangeColor(output, isFirstRange);
             output.append("\">\n");
             output.append("<div id=\"line");
-            output.append(annotation.getLineStart());
+            output.append(issue.getLineStart());
             output.append("\" tooltip=\"");
-            if (annotation.getLineStart() > 0) {
-                outputEscaped(output, annotation.getMessage());
+            if (issue.getLineStart() > 0) {
+                outputEscaped(output, issue.getMessage());
             }
-            outputEscaped(output, annotation.getDescription());
+            outputEscaped(output, issue.getDescription());
             output.append("\" nodismiss=\"\">\n");
             output.append("<code><b>\n");
-            if (annotation.getLineStart() <= 0) {
-                output.append(annotation.getMessage());
-                if (StringUtils.isBlank(annotation.getMessage())) {
-                    output.append(annotation.getDescription());
+            if (issue.getLineStart() <= 0) {
+                output.append(issue.getMessage());
+                if (StringUtils.isBlank(issue.getMessage())) {
+                    output.append(issue.getDescription());
                 }
             }
             else {
-                while (lineNumber <= annotation.getLineEnd()) {
+                while (lineNumber <= issue.getLineEnd()) {
                     copyLine(output, lineIterator);
                     lineNumber++;
                 }

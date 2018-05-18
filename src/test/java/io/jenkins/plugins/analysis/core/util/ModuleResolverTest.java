@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.io.File;
-
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.ModuleDetector;
+import edu.hm.hafner.analysis.Report;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -30,7 +28,6 @@ class ModuleResolverTest {
         Issue withModule = builder.build();
         report.add(withModule);
 
-        File workspace = mock(File.class);
         ModuleDetector detector = mock(ModuleDetector.class);
         when(detector.guessModuleName(fileName)).thenReturn("module1");
 

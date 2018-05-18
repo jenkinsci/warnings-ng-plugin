@@ -51,7 +51,7 @@ public class DetailFactory {
      *
      * @return the dynamic result of this module detail view
      */
-    @SuppressWarnings({"ParameterNumber", "npathcomplexity"})
+    @SuppressWarnings({"ParameterNumber", "npathcomplexity", "PMD.CyclomaticComplexity"})
     public Object createTrendDetails(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Report allIssues, final Report newIssues,
             final Report outstandingIssues, final Report fixedIssues,
