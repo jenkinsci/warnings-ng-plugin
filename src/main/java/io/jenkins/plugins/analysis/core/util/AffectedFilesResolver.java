@@ -36,6 +36,47 @@ public class AffectedFilesResolver {
     private static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
 
     /**
+     * Returns whether the affected file in Jenkins' build folder does exist and is readable.
+     *
+     * @param run
+     *         the run referencing the build folder
+     * @param issue
+     *         the issue in the affected file
+     *
+     * @return the file
+     */
+    public static boolean hasAffectedFile(final Run<?, ?> run, final Issue issue) {
+        File file = createAffectedFile(run, issue);
+
+        return file.exists() && file.canRead();
+    }
+
+    /**
+     * Returns the affected file in Jenkins' build folder.
+     *
+     * @param run
+     *         the run referencing the build folder
+     * @param issue
+     *         the issue in the affected file
+     *
+     * @return the file
+     * @throws FileNotFoundException if the file could not be found
+     */
+    public static InputStream getAffectedFile(final Run<?, ?> run, final Issue issue) throws FileNotFoundException {
+        return new FileInputStream(createAffectedFile(run, issue));
+    }
+
+    private static File createAffectedFile(final Run<?, ?> run, final Issue issue) {
+        File buildDir = run.getRootDir();
+
+        File tmpFile = new File(new File(buildDir, AFFECTED_FILES_FOLDER_NAME), getTempName(issue.getFileName()));
+        if (!tmpFile.exists()) {
+            new File(issue.getFileName()); // fallback, maybe the source still is on the master node
+        }
+        return tmpFile;
+    }
+
+    /**
      * Copies all files with issues from the workspace to the build folder.
      *
      * @param report
@@ -119,27 +160,6 @@ public class AffectedFilesResolver {
      */
     private static String getTempName(final String fileName) {
         return Integer.toHexString(fileName.hashCode()) + ".tmp";
-    }
-
-    /**
-     * Returns the affected file in Jenkins' build folder.
-     *
-     * @param run
-     *         the run referencing the build folder
-     * @param issue
-     *         the issue in the affected file
-     *
-     * @return the file
-     * @throws FileNotFoundException if the file could not be found
-     */
-    public static InputStream getTempFile(final Run<?, ?> run, final Issue issue) throws FileNotFoundException {
-        File buildDir = run.getParent().getBuildDir();
-
-        File tmpFile = new File(new File(buildDir, AFFECTED_FILES_FOLDER_NAME), getTempName(issue.getFileName()));
-        if (!tmpFile.exists()) {
-            new File(issue.getFileName()); // fallback, maybe the source still is on the master node
-        }
-        return new FileInputStream(tmpFile);
     }
 
     private void logExceptionToFile(final IOException exception, final FilePath masterFile,

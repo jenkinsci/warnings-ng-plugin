@@ -70,7 +70,7 @@ public class SourceDetail implements ModelObject {
      * Initializes the content of the source file: reads the file, colors it, and splits it into three parts.
      */
     private void initializeContent() {
-        try (InputStream file = AffectedFilesResolver.getTempFile(owner, issue)) {
+        try (InputStream file = AffectedFilesResolver.getAffectedFile(owner, issue)) {
             splitSourceFile(highlightSource(file));
         }
         catch (IOException exception) {
