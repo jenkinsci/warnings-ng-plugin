@@ -79,6 +79,9 @@ public class Summary {
         return Messages.Tool_ParticipatingTools(tools);
     }
 
+    /**
+     * Provides a way to stub the label provider factory during tests.
+     */
     static class LabelProviderFactoryFacade {
         public StaticAnalysisLabelProvider get(final String id) {
             return new LabelProviderFactory().create(id);

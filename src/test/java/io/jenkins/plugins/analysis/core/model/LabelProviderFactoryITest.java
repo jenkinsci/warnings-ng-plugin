@@ -64,6 +64,9 @@ public class LabelProviderFactoryITest extends IntegrationTest {
         }
     }
 
+    /**
+     * Static analysis tool that that implements the extension point.
+     */
     @SuppressWarnings("unused")
     public static class TestTool extends StaticAnalysisTool {
         @Override
@@ -76,6 +79,9 @@ public class LabelProviderFactoryITest extends IntegrationTest {
             return null;
         }
 
+        /**
+         * Required descriptor for the tool.
+         */
         @TestExtension
         public static final class TestToolDescriptor extends StaticAnalysisToolDescriptor {
             public TestToolDescriptor() {
@@ -90,6 +96,9 @@ public class LabelProviderFactoryITest extends IntegrationTest {
         }
     }
 
+    /**
+     * Factory that returns a stub for all calls.
+     */
     @TestExtension
     @SuppressWarnings("unused")
     public static class TestFactory implements StaticAnalysisToolFactory {

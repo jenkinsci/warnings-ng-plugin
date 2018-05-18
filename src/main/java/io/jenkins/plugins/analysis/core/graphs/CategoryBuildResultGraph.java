@@ -72,6 +72,11 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
         return chart;
     }
 
+    /**
+     * Creates the series builder to use.
+     *
+     * @return the series builder
+     */
     protected abstract SeriesBuilder createSeriesBuilder();
 
     /**
@@ -123,7 +128,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *            the name of the plug-in
      * @return the renderer
      */
-    protected abstract CategoryItemRenderer createRenderer(GraphConfiguration configuration, final String pluginName);
+    protected abstract CategoryItemRenderer createRenderer(GraphConfiguration configuration, String pluginName);
 
     /**
      * Returns the colors for this graph. The first color is used for the first
@@ -153,7 +158,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *            label of the range axis, i.e. y axis
      * @return the created graph
      */
-    public JFreeChart createAreaChart(final CategoryDataset dataset, final String yAxisLabel) {
+    private JFreeChart createAreaChart(final CategoryDataset dataset, final String yAxisLabel) {
         JFreeChart chart = ChartFactory.createStackedAreaChart(
             null,                      // chart title
             null,                      // unused

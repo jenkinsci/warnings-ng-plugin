@@ -55,7 +55,7 @@ class StaticAnalysisLabelProviderTest {
         assertThat(noNameLabelProvider).hasName(noNameLabelProvider.getDefaultName());
     }
 
-    void assertThatColumnsAreValid(final JSONArray columns, int index) {
+    private void assertThatColumnsAreValid(final JSONArray columns, int index) {
         assertThat(columns.get(0)).isEqualTo(
                 "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;MESSAGE&lt;/strong&gt;&lt;/p&gt; DESCRIPTION\"></div>");
         String actual = columns.getString(1);
@@ -77,10 +77,13 @@ class StaticAnalysisLabelProviderTest {
                 + "</a>";
     }
 
-    IssueBuilder createBuilder() {
+    private IssueBuilder createBuilder() {
         return new IssueBuilder().setMessage("MESSAGE").setDescription("DESCRIPTION");
     }
 
+    /**
+     * Tests the class {@link AgeBuilder}.
+     */
     @Nested
     class AgeBuilderTest {
         @Test
@@ -113,6 +116,9 @@ class StaticAnalysisLabelProviderTest {
         }
     }
 
+    /**
+     * Tests the dynamic creation of the table model of a {@link Report}, i.e. a list of {@link Issue} instances.
+     */
     @Nested
     class TableModelTest {
         @Test
@@ -167,6 +173,9 @@ class StaticAnalysisLabelProviderTest {
         }
     }
 
+    /**
+     * Tests the dynamic creation of the table model for a single {@link Issue}.
+     */
     @Nested
     class IssueModelTest extends ResourceTest {
         static final int EXPECTED_NUMBER_OF_COLUMNS = 7;

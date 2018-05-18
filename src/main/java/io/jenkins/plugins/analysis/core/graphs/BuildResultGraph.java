@@ -87,7 +87,8 @@ public abstract class BuildResultGraph {
     /**
      * Sets the root URL to the specified value.
      *
-     * @param rootUrl the value to set
+     * @param rootUrl
+     *         the value to set
      */
     public void setRootUrl(final String rootUrl) {
         this.rootUrl = rootUrl;
@@ -106,37 +107,38 @@ public abstract class BuildResultGraph {
      * Creates a PNG image trend graph with clickable map.
      *
      * @param configuration
-     *            the configuration parameters
+     *         the configuration parameters
      * @param history
-     *            the result action to start the graph computation from
+     *         the result action to start the graph computation from
      * @param pluginName
-     *            the name of the plug-in (project action URL) to create links
-     *            to. If set to <code>null</code> then no links are created
+     *         the name of the plug-in (project action URL) to create links to. If set to <code>null</code> then no
+     *         links are created
+     *
      * @return the graph
      */
-    public abstract JFreeChart create(final GraphConfiguration configuration,
-                                      final ResultHistory history, @CheckForNull final String pluginName);
+    public abstract JFreeChart create(GraphConfiguration configuration,
+            ResultHistory history, @CheckForNull String pluginName);
 
     /**
      * Creates a PNG image trend graph with clickable map.
      *
      * @param configuration
-     *            the configuration parameters
+     *         the configuration parameters
      * @param resultActions
-     *            the result actions to start the graph computation from
+     *         the result actions to start the graph computation from
      * @param pluginName
-     *            the name of the plug-in
+     *         the name of the plug-in
+     *
      * @return the graph
      */
-    public abstract JFreeChart createAggregation(final GraphConfiguration configuration,
-                                                 final Collection<ResultHistory> resultActions, final String pluginName);
-
+    public abstract JFreeChart createAggregation(GraphConfiguration configuration,
+            Collection<ResultHistory> resultActions, String pluginName);
 
     /**
      * Sets properties common to all plots of this plug-in.
      *
      * @param plot
-     *            the plot to set the properties for
+     *         the plot to set the properties for
      */
     // CHECKSTYLE:OFF
     protected void setPlotProperties(final Plot plot) {
@@ -151,7 +153,8 @@ public abstract class BuildResultGraph {
      * Creates a XY graph from the specified data set.
      *
      * @param dataset
-     *            the values to display
+     *         the values to display
+     *
      * @return the created graph
      */
     public JFreeChart createXYChart(final XYDataset dataset) {
@@ -181,20 +184,21 @@ public abstract class BuildResultGraph {
     }
 
     /**
-     * Returns the new graph object that wraps the actual {@link JFreeChart}
-     * into a PNG image or map.
+     * Returns the new graph object that wraps the actual {@link JFreeChart} into a PNG image or map.
      *
      * @param timestamp
-     *            the last build time
+     *         the last build time
      * @param configuration
-     *            the graph configuration
+     *         the graph configuration
      * @param pluginName
-     *            the name of the plug-in
+     *         the name of the plug-in
      * @param history
-     *            the last valid action for this project
+     *         the last valid action for this project
+     *
      * @return the graph to render
      */
-    public Graph getGraph(final long timestamp, final GraphConfiguration configuration, final String pluginName, final ResultHistory history) {
+    public Graph getGraph(final long timestamp, final GraphConfiguration configuration, final String pluginName,
+            final ResultHistory history) {
         return new Graph(timestamp, configuration.getWidth(), configuration.getHeight()) {
             @Override
             protected JFreeChart createGraph() {
@@ -204,20 +208,21 @@ public abstract class BuildResultGraph {
     }
 
     /**
-     * Returns the new graph object that wraps the actual {@link JFreeChart}
-     * into a PNG image or map.
+     * Returns the new graph object that wraps the actual {@link JFreeChart} into a PNG image or map.
      *
      * @param timestamp
-     *            the last build time
+     *         the last build time
      * @param configuration
-     *            the graph configuration
+     *         the graph configuration
      * @param pluginName
-     *            the name of the plug-in
+     *         the name of the plug-in
      * @param actions
-     *            the actions to get the summary graph for
+     *         the actions to get the summary graph for
+     *
      * @return the graph to render
      */
-    public Graph getGraph(final long timestamp, final GraphConfiguration configuration, final String pluginName, final List<ResultHistory> actions) {
+    public Graph getGraph(final long timestamp, final GraphConfiguration configuration, final String pluginName,
+            final List<ResultHistory> actions) {
         return new Graph(timestamp, configuration.getWidth(), configuration.getHeight()) {
             @Override
             protected JFreeChart createGraph() {
@@ -227,8 +232,7 @@ public abstract class BuildResultGraph {
     }
 
     /**
-     * Returns whether the graph is deactivated. If the graph is deactivated,
-     * then no "enable graph" link is shown.
+     * Returns whether the graph is deactivated. If the graph is deactivated, then no "enable graph" link is shown.
      *
      * @return <code>true</code> if the graph is deactivated, <code>false</code>
      *         otherwise
@@ -241,7 +245,7 @@ public abstract class BuildResultGraph {
      * Sets properties common to all category graphs of this plug-in.
      *
      * @param plot
-     *            the chart to set the properties for
+     *         the chart to set the properties for
      */
     protected void setCategoryPlotProperties(final CategoryPlot plot) {
         plot.setRangeGridlinesVisible(true);
@@ -263,7 +267,8 @@ public abstract class BuildResultGraph {
      * Creates a stacked block graph from the specified data set.
      *
      * @param dataset
-     *            the values to display
+     *         the values to display
+     *
      * @return the created graph
      */
     public JFreeChart createBlockChart(final CategoryDataset dataset) {
@@ -274,9 +279,10 @@ public abstract class BuildResultGraph {
      * Creates a stacked block graph from the specified data set.
      *
      * @param dataset
-     *            the values to display
+     *         the values to display
      * @param yAxisLabel
-     *            label of the range axis, i.e. y axis
+     *         label of the range axis, i.e. y axis
+     *
      * @return the created graph
      */
     public JFreeChart createBlockChart(final CategoryDataset dataset, final String yAxisLabel) {
@@ -300,9 +306,9 @@ public abstract class BuildResultGraph {
      * Sets the series colors for the specified chart.
      *
      * @param chart
-     *            the chart
+     *         the chart
      * @param colors
-     *            the colors to set
+     *         the colors to set
      */
     public void setColors(final JFreeChart chart, final Color[] colors) {
         CategoryPlot plot = chart.getCategoryPlot();
