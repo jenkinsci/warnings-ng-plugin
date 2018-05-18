@@ -10,8 +10,8 @@ import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 
 /**
- * An abstract class containing various helping methods for testing classes which extend IssuesFilter.
- * Contains (adjusted) methods from {@link edu.hm.hafner.analysis.IssueFilterTest}
+ * An abstract class containing various helping methods for testing classes which extend IssuesFilter. Contains
+ * (adjusted) methods from {@link edu.hm.hafner.analysis.IssueFilterTest}
  *
  * @author Frank Christian Geyer
  * @author Deniz Mardin

@@ -194,7 +194,8 @@ class SummaryTest {
         when(analysisResult.getQualityGate()).thenReturn(qualityGate);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).containsPattern(
-                createWarningsLink("Quality gate: <img src=\"color\" class=\"icon-blue icon-lg\" alt=\"Success\" title=\"Success\"> Success"));
+                createWarningsLink(
+                        "Quality gate: <img src=\"color\" class=\"icon-blue icon-lg\" alt=\"Success\" title=\"Success\"> Success"));
     }
 
     /**
@@ -209,7 +210,8 @@ class SummaryTest {
         when(qualityGate.isEnabled()).thenReturn(false);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).doesNotContainPattern(
-                createWarningsLink("Quality gate: <img src=\"color\" class=\"icon-blue icon-lg\" alt=\"Success\" title=\"Success\"> Success"));
+                createWarningsLink(
+                        "Quality gate: <img src=\"color\" class=\"icon-blue icon-lg\" alt=\"Success\" title=\"Success\"> Success"));
     }
 
     /**

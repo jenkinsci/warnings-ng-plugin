@@ -15,6 +15,8 @@ import hudson.Extension;
  * @author Ulli Hafner
  */
 public class ExcludeModule extends IssuesFilter {
+    private static final long serialVersionUID = 8640962711241699659L;
+
     /**
      * Creates a new instance of {@link ExcludeModule}.
      */

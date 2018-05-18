@@ -5,19 +5,17 @@ import java.util.Locale;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.ResourceTest;
+import static io.jenkins.plugins.analysis.core.model.Assertions.assertThat;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
-
-import static io.jenkins.plugins.analysis.core.model.Assertions.assertThat;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.Priority;
-import edu.hm.hafner.util.ResourceTest;
 
 /**
  * Tests the class {@link StaticAnalysisLabelProvider}.

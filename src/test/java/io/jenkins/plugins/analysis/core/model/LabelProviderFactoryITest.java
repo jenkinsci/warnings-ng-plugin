@@ -6,14 +6,12 @@ import java.util.List;
 import org.junit.Test;
 import org.jvnet.hudson.test.TestExtension;
 
-import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
-
-import static io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProviderAssert.*;
-import static org.mockito.Mockito.*;
-
 import edu.hm.hafner.analysis.IssueParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
+import static io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProviderAssert.*;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link LabelProviderFactory}.

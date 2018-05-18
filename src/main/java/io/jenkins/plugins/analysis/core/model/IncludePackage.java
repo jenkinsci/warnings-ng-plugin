@@ -15,6 +15,8 @@ import hudson.Extension;
  * @author Ulli Hafner
  */
 public class IncludePackage extends IssuesFilter {
+    private static final long serialVersionUID = -168542391859856306L;
+
     /**
      * Creates a new instance of {@link IncludePackage}.
      */
