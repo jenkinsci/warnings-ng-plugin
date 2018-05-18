@@ -17,6 +17,10 @@
 
   <url>https://wiki.jenkins.io/x/CwDgAQ</url>
 
+  <prerequisites>
+    <maven>3.3</maven>
+  </prerequisites>
+
   <properties>
     <pitest-maven.plugin>1.4.0</pitest-maven.plugin>
     <pitest-maven.junit5.plugin>0.5</pitest-maven.junit5.plugin>

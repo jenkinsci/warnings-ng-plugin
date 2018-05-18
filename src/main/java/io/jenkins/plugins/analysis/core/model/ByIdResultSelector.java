@@ -19,7 +19,8 @@ public class ByIdResultSelector implements ResultSelector {
     /**
      * Creates a new instance of {@link ByIdResultSelector}.
      *
-     * @param id the ID of the result
+     * @param id
+     *         the ID of the result
      */
     public ByIdResultSelector(final String id) {
         this.id = id;

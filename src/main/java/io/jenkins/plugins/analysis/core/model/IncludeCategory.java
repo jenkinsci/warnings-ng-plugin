@@ -33,8 +33,8 @@ public class IncludeCategory extends IssuesFilter {
      *
      * @author Ulli Hafner
      */
-   @Extension
-   public static class DescriptorImpl extends IncludeFilterDescriptor {
+    @Extension
+    public static class DescriptorImpl extends IncludeFilterDescriptor {
         @Nonnull
         @Override
         public String getDisplayName() {

@@ -72,12 +72,12 @@ public class IssueStream {
     }
 
     /**
-     * Default {@link Converter} implementation for XStream that does interning
-     * scoped to one unmarshalling.
+     * Default {@link Converter} implementation for XStream that does interning scoped to one unmarshalling.
      */
     @SuppressWarnings("all")
     public static final class TreeStringConverter implements Converter {
-        public TreeStringConverter(final XStream xs) {}
+        public TreeStringConverter(final XStream xs) {
+        }
 
         public void marshal(final Object source, final HierarchicalStreamWriter writer,
                 final MarshallingContext context) {
@@ -85,7 +85,7 @@ public class IssueStream {
         }
 
         public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
-            TreeStringBuilder builder = (TreeStringBuilder)context.get(TreeStringBuilder.class);
+            TreeStringBuilder builder = (TreeStringBuilder) context.get(TreeStringBuilder.class);
             if (builder == null) {
                 context.put(TreeStringBuilder.class, builder = new TreeStringBuilder());
 
@@ -106,16 +106,16 @@ public class IssueStream {
     }
 
     /**
-     * Default {@link Converter} implementation for XStream that does interning
-     * scoped to one unmarshalling.
+     * Default {@link Converter} implementation for XStream that does interning scoped to one unmarshalling.
      */
     @SuppressWarnings("all")
     public static final class SeverityConverter implements Converter {
-        public SeverityConverter(final XStream xs) {}
+        public SeverityConverter(final XStream xs) {
+        }
 
         public void marshal(final Object source, final HierarchicalStreamWriter writer,
                 final MarshallingContext context) {
-            writer.setValue(source instanceof Severity? ((Severity) source).getName() : null);
+            writer.setValue(source instanceof Severity ? ((Severity) source).getName() : null);
         }
 
         public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {

@@ -4,12 +4,12 @@ import java.io.Serializable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
+
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
-
-import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 
 /**
  * Defines a filter criteria based on a regular expression for {@link Report}.

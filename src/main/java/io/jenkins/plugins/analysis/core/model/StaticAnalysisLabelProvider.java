@@ -454,6 +454,9 @@ public class StaticAnalysisLabelProvider {
         return Messages.Tool_OneIssue();
     }
 
+    /**
+     * Functional interface that maps the age of a build from an integer value to a String value.
+     */
     public interface AgeBuilder extends Function<Integer, String> {
         // no new methods
     }

@@ -103,8 +103,8 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
         }
 
         /**
-         * Returns an optional help text that can provide useful hints on how to configure the static analysis tool soo that
-         * the report files could be parsed by Jenkins. This help can be a plain text message or an HTML snippet.
+         * Returns an optional help text that can provide useful hints on how to configure the static analysis tool soo
+         * that the report files could be parsed by Jenkins. This help can be a plain text message or an HTML snippet.
          *
          * @return the help
          */

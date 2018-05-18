@@ -58,10 +58,23 @@ public class AnalysisResult implements Serializable {
     private static final Report EMPTY_REPORT = new Report();
 
     private final String id;
-
+    private final QualityGate qualityGate;
+    private final int size;
+    private final int newSize;
+    private final int fixedSize;
+    private final Map<String, Integer> sizePerOrigin;
+    private final Map<Severity, Integer> sizePerSeverity;
+    private final Map<Severity, Integer> newSizePerSeverity;
+    private final ImmutableList<String> errors;
+    private final ImmutableList<String> messages;
+    /**
+     * Reference run to compute the issues difference: since a run could not be persisted directly, the IDs are only
+     * stored.
+     */
+    private final String referenceJob;
+    private final String referenceBuild;
     private transient ReentrantLock lock = new ReentrantLock();
     private transient Run<?, ?> owner;
-
     /**
      * All outstanding issues: i.e. all issues, that are part of the current and previous report.
      */
@@ -79,31 +92,10 @@ public class AnalysisResult implements Serializable {
      */
     @CheckForNull
     private transient WeakReference<Report> fixedIssuesReference;
-
-    private final QualityGate qualityGate;
-
-    private final int size;
-    private final int newSize;
-    private final int fixedSize;
-
-    private final Map<String, Integer> sizePerOrigin;
-    private final Map<Severity, Integer> sizePerSeverity;
-    private final Map<Severity, Integer> newSizePerSeverity;
-
-    private final ImmutableList<String> errors;
-    private final ImmutableList<String> messages;
-
     /** Determines since which build we have zero warnings. */
     private int noIssuesSinceBuild;
     /** Determines since which build the result is successful. */
     private int successfulSinceBuild;
-    /**
-     * Reference run to compute the issues difference: since a run could not be persisted directly, the IDs are only
-     * stored.
-     */
-    private final String referenceJob;
-    private final String referenceBuild;
-
     /**
      * The build result of the associated plug-in. This result is an additional state that denotes if this plug-in has
      * changed the overall build result.
@@ -254,7 +246,8 @@ public class AnalysisResult implements Serializable {
                 aggregatedMessages.add("All quality gates have been passed");
             }
             else {
-                aggregatedMessages.add(String.format("Some quality gates have been missed: overall result is %s", status));
+                aggregatedMessages.add(
+                        String.format("Some quality gates have been missed: overall result is %s", status));
                 aggregatedMessages.addAll(result.getEvaluations(this, qualityGate));
             }
             owner.setResult(createResult());
