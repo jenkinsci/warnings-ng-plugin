@@ -40,7 +40,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *         the files to copy
      * @see #FILE_NAME_PATTERN
      */
-    protected void copyFilesToWorkspaceWithSuffix(final TopLevelItem job, final String... fileNames) {
+    protected void copyMultipleFilesToWorkspaceWithSuffix(final TopLevelItem job, final String... fileNames) {
         copy(job, fileNames, this::createWorkspaceFileName);
     }
 
@@ -52,7 +52,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * @param fileNames
      *         the files to copy
      */
-    protected void copyFilesToWorkspace(final TopLevelItem job, final String... fileNames) {
+    protected void copyMultipleFilesToWorkspace(final TopLevelItem job, final String... fileNames) {
         copy(job, fileNames, Function.identity());
     }
 
@@ -78,7 +78,7 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     private void copy(final TopLevelItem job, final String[] fileNames, final Function<String, String> fileNameMapper) {
-        Arrays.stream(fileNames).forEach(fileName -> copyFilesToWorkspace(job, fileName, fileNameMapper.apply(fileName)));
+        Arrays.stream(fileNames).forEach(fileName -> copySingleFileToWorkspace(job, fileName, fileNameMapper.apply(fileName)));
     }
 
     /**
