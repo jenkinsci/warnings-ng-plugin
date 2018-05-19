@@ -178,7 +178,7 @@
     /**
      * Stores the order of every table in the local storage of the browser.
      */
-    var tables = $('#statistics').find('table').not('#details');
+    var tables = $('#statistics').find('table').not('.ignore-column-sorting');
     tables.on('order.dt', function (e) {
         var table = $(e.target);
         var order = table.DataTable().order();
