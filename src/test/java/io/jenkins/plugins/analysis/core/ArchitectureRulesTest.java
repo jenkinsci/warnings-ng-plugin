@@ -31,7 +31,7 @@ class ArchitectureRulesTest {
      */
     @Test
     void shouldNotCreateDigesterWithConstructor() {
-        JavaClasses classes = new ClassFileImporter().importPackages("io.jenkins.plugins.analysis");
+        JavaClasses classes = getAllClasses();
 
         ArchRule noDigesterConstructorCalled = noClasses().that().dontHaveSimpleName("SecureDigester")
                 .should().callConstructor(Digester.class)
@@ -47,7 +47,7 @@ class ArchitectureRulesTest {
      */
     @Test
     void shouldNotUsePublicInTestCases() {
-        JavaClasses classes = new ClassFileImporter().importPackages("io.jenkins.plugins.analysis");
+        JavaClasses classes = getAllClasses();
 
         ArchRule noPublicTestClassesDefined = noClasses()
                 .that().dontHaveModifier(JavaModifier.ABSTRACT)
@@ -64,7 +64,7 @@ class ArchitectureRulesTest {
      */
     @Test
     void shouldNotCallVisibleForTestingOutsideOfTest() {
-        JavaClasses classes = new ClassFileImporter().importPackages("io.jenkins.plugins.analysis");
+        JavaClasses classes = getAllClasses();
 
         ArchRule noTestApiCalled = noClasses()
                 .that().haveSimpleNameNotEndingWith("Test")
@@ -72,6 +72,24 @@ class ArchitectureRulesTest {
 
         noTestApiCalled.check(classes);
     }
+
+    /**
+     * Prevents that deprecated classes from transitive dependencies are called.
+     */
+    @Test
+    void shouldNotCallCommonsLang() {
+        JavaClasses classes = getAllClasses();
+
+        ArchRule noTestApiCalled = noClasses()
+                .should().accessClassesThat().resideInAPackage("org.apache.commons.lang..");
+
+        noTestApiCalled.check(classes);
+    }
+
+    private JavaClasses getAllClasses() {
+        return new ClassFileImporter().importPackages("io.jenkins.plugins.analysis");
+    }
+
 
     /**
      * Matches if a call from outside the defining class uses a method or constructor annotated with
