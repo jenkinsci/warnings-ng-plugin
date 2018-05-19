@@ -452,7 +452,8 @@ public class PublishIssuesStep extends Step {
         }
 
         private LogHandler getLogger() throws InterruptedException {
-            return new LogHandler(getTaskListener(), new LabelProviderFactory().create(report.getOrigin(), name).getName());
+            String toolName = new LabelProviderFactory().create(report.getOrigin(), this.name).getName();
+            return new LogHandler(getTaskListener(), toolName, report);
         }
 
         private Charset getSourceCodeCharset() {

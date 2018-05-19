@@ -456,6 +456,10 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         }
     }
 
+    private String createLoggerPrefix() {
+        return tools.stream().map(tool -> tool.getTool().getName()).collect(Collectors.joining());
+    }
+
     private void record(final Run<?, ?> run, final FilePath workspace, final Launcher launcher,
             final TaskListener listener)
             throws IOException, InterruptedException {
@@ -465,12 +469,14 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
                 totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
             }
             totalIssues.setOrigin("analysis");
-            publishResult(run, launcher, listener, totalIssues, Messages.Tool_Default_Name());
+            publishResult(run, launcher, listener, Messages.Tool_Default_Name(),
+                    totalIssues, Messages.Tool_Default_Name());
         }
         else {
             for (ToolConfiguration toolConfiguration : tools) {
                 Report report = scanWithTool(run, workspace, listener, toolConfiguration);
-                publishResult(run, launcher, listener, report, StringUtils.EMPTY);
+                publishResult(run, launcher, listener, toolConfiguration.getTool().getName(), report,
+                        StringUtils.EMPTY);
             }
         }
     }
@@ -502,6 +508,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *         the launcher
      * @param listener
      *         the listener
+     * @param loggerName
+     *         the name of the logger
      * @param report
      *         the analysis report to publish
      * @param name
@@ -513,12 +521,12 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *         the the copying has been canceled by the user
      */
     public void publishResult(final Run<?, ?> run, final Launcher launcher,
-            final TaskListener listener, final Report report, final String name)
+            final TaskListener listener, final String loggerName, final Report report, final String name)
             throws IOException, InterruptedException {
         IssuesPublisher publisher = new IssuesPublisher(run, report, getFilters(),
                 new HealthDescriptor(healthy, unHealthy, minimumPriority), new QualityGate(thresholds),
                 name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess, getSourceCodeCharset(),
-                new LogHandler(listener, report.getOrigin()));
+                new LogHandler(listener, loggerName, report));
 
         VirtualChannel channel = launcher.getChannel();
         if (channel == null) {
@@ -527,10 +535,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         else {
             publisher.attachAction(channel, new FilePath(run.getRootDir()));
         }
-    }
-
-    private String createLoggerPrefix() {
-        return tools.stream().map(tool -> tool.getTool().getId()).collect(Collectors.joining());
     }
 
     private String expandEnvironmentVariables(final Run<?, ?> run, final TaskListener listener, final String pattern)

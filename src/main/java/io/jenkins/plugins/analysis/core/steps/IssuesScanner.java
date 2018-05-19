@@ -12,19 +12,22 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.ModuleDetector;
 import edu.hm.hafner.analysis.ModuleDetector.FileSystem;
 import edu.hm.hafner.analysis.PackageNameResolver;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.FilesScanner;
 import io.jenkins.plugins.analysis.core.util.ModuleResolver;
+import jenkins.MasterToSlaveFileCallable;
 
 import hudson.FilePath;
 import hudson.console.ConsoleNote;
+import hudson.model.Computer;
 import hudson.plugins.analysis.util.FileFinder;
+import hudson.remoting.VirtualChannel;
 
 /**
  * Scans report files or the console log for issues.
@@ -70,6 +73,7 @@ class IssuesScanner {
      *
      * @param pattern
      *         the pattern of files
+     *
      * @throws InterruptedException
      *         if the step is interrupted
      * @throws IOException
@@ -88,8 +92,13 @@ class IssuesScanner {
      *
      * @param consoleLog
      *         file containing the console log
+     *
+     * @throws InterruptedException
+     *         if the step is interrupted
+     * @throws IOException
+     *         if something goes wrong
      */
-    public Report scanInConsoleLog(final File consoleLog) {
+    public Report scanInConsoleLog(final File consoleLog) throws InterruptedException, IOException {
         Ensure.that(tool.canScanConsoleLog()).isTrue(
                 "Static analysis tool %s cannot scan console log output, please define a file pattern",
                 tool.getName());
@@ -115,53 +124,92 @@ class IssuesScanner {
         }
     }
 
-    private Report postProcess(final Report report) {
+    private Report postProcess(final Report report) throws IOException, InterruptedException {
         report.setOrigin(tool.getId());
         report.forEach(issue -> issue.setOrigin(tool.getId()));
 
-        resolveAbsolutePaths(report);
-        resolveModuleNames(report);
-        resolvePackageNames(report);
-        createFingerprints(report);
+        Report postProcessed;
+        if (report.isEmpty()) {
+            postProcessed = report; // nothing to post process
+        }
+        else {
 
-        return report;
+            report.logInfo("Post processing issues on '%s' with encoding '%s'", getAgentName(), sourceCodeEncoding);
+
+            postProcessed = workspace.act(new ReportPostProcessor(report, sourceCodeEncoding.name()));
+        }
+        logger.log(postProcessed);
+        return postProcessed;
     }
 
-    private void resolveAbsolutePaths(final Report report) {
-        logger.log("Resolving absolute file names for all issues");
-
-        AbsolutePathGenerator generator = new AbsolutePathGenerator();
-        generator.run(report, workspace);
-
-        logger.log(report);
+    private String getAgentName() {
+        return StringUtils.defaultIfBlank(getComputerName(), "Master");
     }
 
-    private void resolveModuleNames(final Report report) {
-        logger.log("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
-
-        ModuleResolver resolver = new ModuleResolver();
-        File workspaceAsFile = new File(workspace.getRemote());
-        resolver.run(report, new ModuleDetector(workspaceAsFile, new DefaultFileSystem()));
-
-        logger.log(report);
+    private String getComputerName() {
+        Computer computer = workspace.toComputer();
+        if (computer != null) {
+            return computer.getName();
+        }
+        return StringUtils.EMPTY;
     }
 
-    private void resolvePackageNames(final Report report) {
-        logger.log("Using encoding '%s' to resolve package names (or namespaces)", sourceCodeEncoding);
+    /**
+     * Post processes the report on the build agent. Assigns absolute paths, package names, and module names and
+     * computes fingerprints for each issue.
+     */
+    private static class ReportPostProcessor extends MasterToSlaveFileCallable<Report> {
+        private static final long serialVersionUID = -9138045560271783096L;
 
-        PackageNameResolver resolver = new PackageNameResolver();
-        resolver.run(report, new IssueBuilder(), sourceCodeEncoding);
+        private Report report;
+        private String sourceCodeEncoding;
 
-        logger.log(report);
-    }
+        ReportPostProcessor(final Report report, final String sourceCodeEncoding) {
+            this.report = report;
+            this.sourceCodeEncoding = sourceCodeEncoding;
+        }
 
-    private void createFingerprints(final Report report) {
-        logger.log("Using encoding '%s' to read source files", sourceCodeEncoding);
+        @Override
+        public Report invoke(final File workspace, final VirtualChannel channel) {
+            resolveAbsolutePaths(workspace);
+            resolveModuleNames(workspace);
+            resolvePackageNames();
+            createFingerprints();
 
-        FingerprintGenerator generator = new FingerprintGenerator();
-        generator.run(new FullTextFingerprint(), report, sourceCodeEncoding);
+            return report;
+        }
 
-        logger.log(report);
+        private void resolveAbsolutePaths(final File workspace) {
+            report.logInfo("Resolving absolute file names for all issues");
+
+            AbsolutePathGenerator generator = new AbsolutePathGenerator();
+            generator.run(report, workspace);
+        }
+
+        private void resolveModuleNames(final File workspace) {
+            report.logInfo("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
+
+            ModuleResolver resolver = new ModuleResolver();
+            resolver.run(report, new ModuleDetector(workspace, new DefaultFileSystem()));
+        }
+
+        private void resolvePackageNames() {
+            report.logInfo("Resolving package names (or namespaces) by parsing the affected files");
+
+            PackageNameResolver resolver = new PackageNameResolver();
+            resolver.run(report, new IssueBuilder(), getCharset());
+        }
+
+        private Charset getCharset() {
+            return Charset.forName(sourceCodeEncoding);
+        }
+
+        private void createFingerprints() {
+            report.logInfo("Creating fingerprints for all affected code blocks to track issues over different builds");
+
+            FingerprintGenerator generator = new FingerprintGenerator();
+            generator.run(new FullTextFingerprint(), report, getCharset());
+        }
     }
 
     /**

@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.io.IOException;
+import java.io.File;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -12,8 +12,6 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
-
-import hudson.FilePath;
 
 /**
  * Resolves absolute paths of the affected files of a set of issues.
@@ -46,7 +44,7 @@ public class AbsolutePathGenerator {
      * @param workspace
      *         the workspace containing the affected files
      */
-    public void run(final Report report, final FilePath workspace) {
+    public void run(final Report report, final File workspace) {
         Set<String> relativeFileNames = report.getFiles()
                 .stream()
                 .filter(fileName -> fileSystem.isRelative(fileName) && !IssueParser.SELF.equals(fileName))
@@ -90,7 +88,7 @@ public class AbsolutePathGenerator {
         }
     }
 
-    private Map<String, String> resolveAbsoluteNames(final Set<String> relativeFileNames, final FilePath workspace) {
+    private Map<String, String> resolveAbsoluteNames(final Set<String> relativeFileNames, final File workspace) {
         Map<String, String> relativeToAbsoluteMapping = new HashMap<>();
         for (String fileName : relativeFileNames) {
             String absolute = fileSystem.resolveFile(fileName, workspace);
@@ -106,15 +104,10 @@ public class AbsolutePathGenerator {
      */
     @VisibleForTesting
     static class FileSystem {
-        String resolveFile(final String fileName, final FilePath workspace) {
-            try {
-                FilePath remoteFile = workspace.child(fileName);
-                if (remoteFile.exists()) {
-                    return remoteFile.getRemote();
-                }
-            }
-            catch (IOException | InterruptedException ignored) {
-                // ignore
+        String resolveFile(final String fileName, final File workspace) {
+            File remoteFile = new File(workspace, fileName);
+            if (remoteFile.exists()) {
+                return remoteFile.getAbsolutePath();
             }
             return fileName;
         }

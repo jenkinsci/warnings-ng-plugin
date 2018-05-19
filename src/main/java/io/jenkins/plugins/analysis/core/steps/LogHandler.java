@@ -25,12 +25,30 @@ class LogHandler {
      *
      * @param listener
      *         the task listener that will print all log messages
-     * @param id
-     *         the ID of the logger
+     * @param name
+     *         the name of the logger
      */
-    LogHandler(final TaskListener listener, final String id) {
-        logger = createLogger(listener, id);
-        errorLogger = createErrorLogger(listener, id);
+    LogHandler(final TaskListener listener, final String name) {
+        this(listener, name, 0, 0);
+    }
+
+    /**
+     * Creates a new {@link LogHandler}.
+     *
+     * @param listener
+     *         the task listener that will print all log messages
+     * @param name
+     *         the name of the logger
+     */
+    LogHandler(final TaskListener listener, final String name, final Report report) {
+        this(listener, name, report.getInfoMessages().size(), report.getErrorMessages().size());
+    }
+
+    private LogHandler(final TaskListener listener, final String name, final int infoPosition, final int errorPosition) {
+        logger = createLogger(listener, name);
+        errorLogger = createErrorLogger(listener, name);
+        this.infoPosition = infoPosition;
+        this.errorPosition = errorPosition;
     }
 
     private Logger createErrorLogger(final TaskListener listener, final String name) {

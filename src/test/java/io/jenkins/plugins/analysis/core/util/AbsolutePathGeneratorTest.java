@@ -14,8 +14,6 @@ import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator.FileSystem;
 import static org.mockito.Mockito.*;
 
-import hudson.FilePath;
-
 /**
  * Tests the class {@link AbsolutePathGenerator}.
  *
@@ -23,7 +21,7 @@ import hudson.FilePath;
  */
 class AbsolutePathGeneratorTest {
     private static final String WORKSPACE_PATH = "path";
-    private static final FilePath WORKSPACE = new FilePath(new File(WORKSPACE_PATH));
+    private static final File WORKSPACE = new File(WORKSPACE_PATH);
     private static final IssueBuilder ISSUE_BUILDER = new IssueBuilder();
     private static final String ID = "ID";
 

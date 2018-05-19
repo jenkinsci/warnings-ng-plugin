@@ -76,8 +76,8 @@ public class IssuesAggregator extends MatrixAggregator {
     @Override
     public boolean endBuild() throws IOException, InterruptedException {
         for (Entry<String, List<Report>> reportsPerId : results.entrySet()) {
-            Report report = new Report(reportsPerId.getValue());
-            recorder.publishResult(build, launcher, listener, report, StringUtils.EMPTY);
+            Report aggregatedReport = new Report(reportsPerId.getValue());
+            recorder.publishResult(build, launcher, listener, Messages.Tool_Default_Name(), aggregatedReport, StringUtils.EMPTY);
         }
         return true;
     }
