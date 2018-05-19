@@ -26,7 +26,7 @@ public class Cpd extends DuplicateCodeScanner {
 
     @Override
     public CpdParser createParser() {
-        return new CpdParser();
+        return new CpdParser(getHighThreshold(), getNormalThreshold());
     }
 
     /** Provides the labels for the static analysis tool. */

@@ -31,7 +31,7 @@ public class Simian extends DuplicateCodeScanner {
 
     @Override
     public SimianParser createParser() {
-        return new SimianParser();
+        return new SimianParser(getHighThreshold(), getNormalThreshold());
     }
 
     /** Provides the labels for the static analysis tool. */
