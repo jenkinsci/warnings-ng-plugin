@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.function.Consumer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
@@ -84,6 +85,20 @@ public class IssuesRecorderITest extends IntegrationTest {
         assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
     }
 
+    /**
+     * Runs the CheckStyle parser without specifying a pattern: the default pattern should be used.
+     */
+    @Test
+    public void shouldUseDefaultFileNamePattern() {
+        FreeStyleProject project = createJob();
+        copySingleFileToWorkspace(project, "checkstyle.xml", "checkstyle-result.xml");
+        enableWarnings(project, new CheckStyle(), StringUtils.EMPTY);
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result).hasTotalSize(6);
+    }
+
     private HtmlPage getWebPage(final AnalysisResult result) {
         try {
             WebClient webClient = j.createWebClient();
@@ -120,7 +135,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
         FreeStyleProject job = createJob();
-        copyFilesToWorkspace(job, fileNames);
+        copyFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
     }
 
@@ -137,8 +152,27 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @CanIgnoreReturnValue
     protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final StaticAnalysisTool tool) {
+        return enableWarnings(job, tool, "**/*issues.txt");
+    }
+
+    /**
+     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
+     * the job.
+     *
+     * @param job
+     *         the job to register the recorder for
+     * @param tool
+     *         the tool to scan the warnings
+     * @param pattern
+     *         the pattern to use for files
+     *
+     * @return the created recorder
+     */
+    @CanIgnoreReturnValue
+    protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final StaticAnalysisTool tool,
+            final String pattern) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration(tool, "**/*issues.txt")));
+        publisher.setTools(Collections.singletonList(new ToolConfiguration(tool, pattern)));
         job.getPublishersList().add(publisher);
         return publisher;
     }

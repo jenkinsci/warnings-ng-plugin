@@ -84,7 +84,7 @@ public abstract class PipelineITest extends IntegrationTest {
      */
     protected WorkflowJob createJobWithWorkspaceFiles(final String... fileNames) {
         WorkflowJob job = createJob();
-        copyFilesToWorkspace(job, fileNames);
+        copyFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
     }
 

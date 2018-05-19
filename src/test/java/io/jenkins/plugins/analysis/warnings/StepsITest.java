@@ -196,7 +196,7 @@ public class StepsITest extends PipelineITest {
     @Test
     public void shouldUseOtherJobAsReference() {
         WorkflowJob reference = createJob("reference");
-        copyFilesToWorkspace(reference, "java-start.txt");
+        copyFilesToWorkspaceWithSuffix(reference, "java-start.txt");
         reference.setDefinition(asStage(createScanForIssuesStep(Java.class), PUBLISH_ISSUES_STEP));
 
         AnalysisResult referenceResult = scheduleBuild(reference, Java.class);
