@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.views;
 
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,14 +33,16 @@ import hudson.model.Run;
  *
  * @author Ulli Hafner
  */
-public class ResultAction implements HealthReportingAction, LastBuildAction, RunAction2, StaplerProxy {
+public class ResultAction implements HealthReportingAction, LastBuildAction, RunAction2, StaplerProxy, Serializable {
+    private static final long serialVersionUID = 6683647181785654908L;
+
     private transient Run<?, ?> owner;
 
     private final AnalysisResult result;
     private final HealthDescriptor healthDescriptor;
     private final String id;
     private final String name;
-    private final Charset charset;
+    private final String charset;
 
     /**
      * Creates a new instance of {@link ResultAction}.
@@ -64,7 +67,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         this.healthDescriptor = healthDescriptor;
         this.id = id;
         this.name = name;
-        this.charset = charset;
+        this.charset = charset.name();
     }
 
     /**
@@ -126,6 +129,25 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
             return getSmallImage();
         }
         return null;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        ResultAction that = (ResultAction) o;
+
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 
     /**
@@ -200,6 +222,6 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     @Override
     public Object getTarget() {
-        return new IssuesDetail(owner, result, getLabelProvider(), charset);
+        return new IssuesDetail(owner, result, getLabelProvider(), Charset.forName(charset));
     }
 }

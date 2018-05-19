@@ -1,0 +1,39 @@
+package io.jenkins.plugins.analysis.core.views;
+
+import java.nio.charset.StandardCharsets;
+
+import org.junit.jupiter.api.Test;
+
+import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.util.SerializableTest;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+
+import hudson.model.Run;
+
+/**
+ * Tests the class {@link ResultAction}.
+ *
+ * @author Ullrich Hafner
+ */
+class ResultActionTest extends SerializableTest<ResultAction> {
+    @Test
+    void shouldRestoreRun() {
+        ResultAction action = createSerializable();
+
+        assertThat(action.getOwner()).isNull();
+
+        Run run = mock(Run.class);
+        action.onAttached(run);
+        assertThat(action.getOwner()).isSameAs(run);
+    }
+
+    @Override
+    protected ResultAction createSerializable() {
+        return new ResultAction(null, mock(AnalysisResult.class),
+                new HealthDescriptor(0, 0, Priority.HIGH),
+                "ID", "Name", StandardCharsets.UTF_8);
+    }
+}
