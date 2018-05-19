@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.function.Function;
@@ -15,7 +16,10 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.FilePath;
 import hudson.model.Descriptor;
+import hudson.model.Slave;
 import hudson.model.TopLevelItem;
+import hudson.model.labels.LabelAtom;
+import hudson.slaves.DumbSlave;
 
 /**
  * Base class for integration tests in Jenkins.
@@ -31,13 +35,55 @@ public abstract class IntegrationTest extends ResourceTest {
     public final JenkinsRule j = new JenkinsRule();
 
     /**
-     * Copies the specified files to the workspace using a generated file name that uses the same suffix. So a
-     * pattern in the static analysis configuration can use the same regular expression for all types of tools.
+     * Creates a {@link DumbSlave agent} with the specified label.
+     *
+     * @param label
+     *         the label of the agent
+     *
+     * @return the agent
+     */
+    @SuppressWarnings("illegalcatch")
+    protected Slave createAgent(final String label) {
+        try {
+            return j.createOnlineSlave(new LabelAtom(label));
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    /**
+     * Creates a file with the specified content in the workspace.
+     *
+     * @param job
+     *         the job to get the workspace for
+     * @param fileName
+     *         the files to create
+     * @param content
+     *         the content of the file
+     */
+    protected void createFileInWorkspace(final TopLevelItem job, final String fileName, final String content) {
+        try {
+            FilePath workspace = j.jenkins.getWorkspaceFor(job);
+            assertThat(workspace).isNotNull();
+
+            FilePath child = workspace.child(fileName);
+            child.copyFrom(new ByteArrayInputStream(content.getBytes()));
+        }
+        catch (IOException | InterruptedException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    /**
+     * Copies the specified files to the workspace using a generated file name that uses the same suffix. So a pattern
+     * in the static analysis configuration can use the same regular expression for all types of tools.
      *
      * @param job
      *         the job to get the workspace for
      * @param fileNames
      *         the files to copy
+     *
      * @see #FILE_NAME_PATTERN
      */
     protected void copyMultipleFilesToWorkspaceWithSuffix(final TopLevelItem job, final String... fileNames) {
@@ -67,9 +113,33 @@ public abstract class IntegrationTest extends ResourceTest {
      *         the file name in the workspace
      */
     protected void copySingleFileToWorkspace(final TopLevelItem job, final String from, final String to) {
+        FilePath workspace = j.jenkins.getWorkspaceFor(job);
+        assertThat(workspace).isNotNull();
+
+        copySingleFileToWorkspace(workspace, from, to);
+    }
+
+    /**
+     * Copies the specified files to the workspace. Uses the specified new file name in the workspace.
+     *
+     * @param agent
+     *         the agent to get the workspace for
+     * @param job
+     *         the job to get the workspace for
+     * @param from
+     *         the file to copy
+     * @param to
+     *         the file name in the workspace
+     */
+    protected void copySingleFileToWorkspace(final Slave agent, final TopLevelItem job, final String from, final String to) {
+        FilePath workspace = agent.getWorkspaceFor(job);
+        assertThat(workspace).isNotNull();
+
+        copySingleFileToWorkspace(workspace, from, to);
+    }
+
+    private void copySingleFileToWorkspace(final FilePath workspace, final String from, final String to) {
         try {
-            FilePath workspace = j.jenkins.getWorkspaceFor(job);
-            assertThat(workspace).isNotNull();
             workspace.child(to).copyFrom(asInputStream(from));
         }
         catch (IOException | InterruptedException e) {
@@ -78,7 +148,8 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     private void copy(final TopLevelItem job, final String[] fileNames, final Function<String, String> fileNameMapper) {
-        Arrays.stream(fileNames).forEach(fileName -> copySingleFileToWorkspace(job, fileName, fileNameMapper.apply(fileName)));
+        Arrays.stream(fileNames)
+                .forEach(fileName -> copySingleFileToWorkspace(job, fileName, fileNameMapper.apply(fileName)));
     }
 
     /**
@@ -86,6 +157,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @param fileNamePrefix
      *         prefix of the filename
+     *
      * @return the whole file name of the workspace file
      */
     private String createWorkspaceFileName(final String fileNamePrefix) {
@@ -98,6 +170,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @param tool
      *         the class of the tool to get the ID from
+     *
      * @return the ID of the analysis tool
      */
     protected String getIdOf(final Class<? extends StaticAnalysisTool> tool) {
