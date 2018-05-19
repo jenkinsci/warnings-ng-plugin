@@ -12,7 +12,7 @@
 
   <div role="tabpanel" id="warningsDetails" class="tab-pane fade">
     <j:forEach var="i" items="${issues}">
-      <table class="table table-hover table-striped" id="details">
+      <table class="table table-hover table-striped ignore-column-sorting">
         <thead>
           <tr>
             <th>
