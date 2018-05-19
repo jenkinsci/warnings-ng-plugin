@@ -89,7 +89,7 @@ public class FreestyleJobITest extends IntegrationTest {
 
     private FreeStyleProject createJobWithWorkspaceFile(final String fileName) throws IOException {
         FreeStyleProject job = j.createFreeStyleProject();
-        copyFilesToWorkspaceWithSuffix(job, fileName);
+        copyMultipleFilesToWorkspaceWithSuffix(job, fileName);
         return job;
     }
 

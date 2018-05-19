@@ -135,7 +135,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
         FreeStyleProject job = createJob();
-        copyFilesToWorkspaceWithSuffix(job, fileNames);
+        copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
     }
 

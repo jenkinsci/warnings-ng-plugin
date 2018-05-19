@@ -1,13 +1,14 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Objects;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.flow.FlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
@@ -15,11 +16,7 @@ import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
-
-import hudson.FilePath;
 import hudson.model.Result;
-import hudson.model.TopLevelItem;
 
 /**
  * Integration tests of the warnings plug-in in pipelines.
@@ -84,7 +81,7 @@ public abstract class PipelineITest extends IntegrationTest {
      */
     protected WorkflowJob createJobWithWorkspaceFiles(final String... fileNames) {
         WorkflowJob job = createJob();
-        copyFilesToWorkspaceWithSuffix(job, fileNames);
+        copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
     }
 
@@ -162,33 +159,20 @@ public abstract class PipelineITest extends IntegrationTest {
         script.append("  }\n");
         script.append("}\n");
 
-        System.out.println("----------------------------------------------------------------------");
-        System.out.println(script);
-        System.out.println("----------------------------------------------------------------------");
-        return new CpsFlowDefinition(script.toString(), true);
+        String jenkinsFile = script.toString();
+        logJenkinsFile(jenkinsFile);
+        return new CpsFlowDefinition(jenkinsFile, true);
     }
 
     /**
-     * Copies the specified files to the workspace using a generated file name.
+     * Prints the content of the JenkinsFile to StdOut.
      *
-     * @param job
-     *         the job to get the workspace for
-     * @param fileName
-     *         the files to create
-     * @param content
-     *         the content of the file
+     * @param script the script
      */
-    protected void createFileInWorkspace(final TopLevelItem job, final String fileName, final String content) {
-        try {
-            FilePath workspace = j.jenkins.getWorkspaceFor(job);
-            assertThat(workspace).isNotNull();
-
-            FilePath child = workspace.child(fileName);
-            child.copyFrom(new ByteArrayInputStream(content.getBytes()));
-        }
-        catch (IOException | InterruptedException e) {
-            throw new AssertionError(e);
-        }
+    protected void logJenkinsFile(final String script) {
+        System.out.println("----------------------------------------------------------------------");
+        System.out.println(script);
+        System.out.println("----------------------------------------------------------------------");
     }
 
     /**
@@ -219,5 +203,11 @@ public abstract class PipelineITest extends IntegrationTest {
         ResultAction action = run.getAction(ResultAction.class);
         assertThat(action).as("No ResultAction found in run %s", run).isNotNull();
         return action;
+    }
+
+    protected FlowDefinition readDefinition(final String fileName) {
+        String script = toString(fileName);
+        logJenkinsFile(script);
+        return new CpsFlowDefinition(script, true);
     }
 }

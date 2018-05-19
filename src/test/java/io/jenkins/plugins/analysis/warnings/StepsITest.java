@@ -39,6 +39,37 @@ import hudson.util.HttpResponses;
  */
 public class StepsITest extends PipelineITest {
     /**
+     */
+    @Test
+    public void shouldRecordOutputOfParallelSteps() {
+        WorkflowJob job = createJob();
+
+        copySingleFileToWorkspace(createAgent("node1"), job, "eclipse.txt", "issues.txt");
+        copySingleFileToWorkspace(createAgent("node2"), job, "eclipse.txt", "issues.txt");
+
+        job.setDefinition(readDefinition("parallel.jenkinsfile"));
+
+        WorkflowRun run = runSuccessfully(job);
+        List<ResultAction> actions = run.getActions(ResultAction.class);
+
+        assertThat(actions).hasSize(2);
+
+        ResultAction first;
+        ResultAction second;
+        if (actions.get(0).getId().equals("java-1")) {
+            first = actions.get(0);
+            second = actions.get(1);
+        }
+        else {
+            first = actions.get(1);
+            second = actions.get(0);
+        }
+
+        assertThat(first.getResult().getIssues()).hasSize(5);
+        assertThat(second.getResult().getIssues()).hasSize(3);
+    }
+
+    /**
      * Runs the Eclipse parser on the console log that contains 8 issues which are decorated with console notes. The
      * output file is copied to the console log using a shell cat command.
      *
@@ -155,20 +186,22 @@ public class StepsITest extends PipelineITest {
                 "publishIssues issues:[groovy]"));
 
         ParserConfiguration configuration = ParserConfiguration.getInstance();
+        String id = "groovy-pep8";
         configuration.setParsers(Collections.singletonList(
-                new GroovyParser("groovy-pep8", "Groovy Pep8",
+                new GroovyParser(id, "Groovy Pep8",
                         "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
                         toString("groovy/pep8.groovy"), "")));
         WorkflowRun run = runSuccessfully(job);
 
         ResultAction action = getResultAction(run);
-        assertThat(action.getId()).isEqualTo("groovy-pep8");
+        assertThat(action.getId()).isEqualTo(id);
         assertThat(action.getDisplayName()).contains("Groovy Pep8");
 
         AnalysisResult result = action.getResult();
         assertThat(result.getIssues()).hasSize(8);
 
-        // FIXME: issues from the action should also have an ID
+        assertThat(result.getIssues()).hasOrigin(id);
+        assertThat(result.getIssues().getPropertyCount(Issue::getOrigin)).containsOnly(entry(id, 8));
     }
 
     /**
@@ -188,7 +221,6 @@ public class StepsITest extends PipelineITest {
         assertThat(result.getIssues()).hasSize(1);
     }
 
-    // TODO: check all variants of a reference (non-existing name, no run in job, overallResultMustBeSuccess, ignoreAnalysisResult, etc.)
     /**
      * Creates a reference job and starts the analysis for this job. Then another job is created that uses the first
      * one as reference. Verifies that the association is correctly stored.
@@ -196,7 +228,7 @@ public class StepsITest extends PipelineITest {
     @Test
     public void shouldUseOtherJobAsReference() {
         WorkflowJob reference = createJob("reference");
-        copyFilesToWorkspaceWithSuffix(reference, "java-start.txt");
+        copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start.txt");
         reference.setDefinition(asStage(createScanForIssuesStep(Java.class), PUBLISH_ISSUES_STEP));
 
         AnalysisResult referenceResult = scheduleBuild(reference, Java.class);
