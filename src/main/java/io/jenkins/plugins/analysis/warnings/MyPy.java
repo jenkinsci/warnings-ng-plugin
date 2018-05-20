@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.violations.MyPyAdapter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.violations.MyPyAdapter;
 
 /**
  * Provides a parser and customized messages for MyPy.
@@ -16,6 +15,7 @@ import edu.hm.hafner.analysis.parser.violations.MyPyAdapter;
  * @author Ullrich Hafner
  */
 public class MyPy extends StaticAnalysisTool {
+    private static final long serialVersionUID = -1864782743893780307L;
     static final String ID = "mypy";
 
     /** Creates a new instance of {@link MyPy}. */

@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Ajc extends StaticAnalysisTool {
+    private static final long serialVersionUID = 207829559393914788L;
     static final String ID = "aspectj";
 
     /** Creates a new instance of {@link Ajc}. */

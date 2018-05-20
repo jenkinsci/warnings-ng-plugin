@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Doxygen extends StaticAnalysisTool {
+    private static final long serialVersionUID = -958188599615335136L;
     static final String ID = "doxygen";
 
     /** Creates a new instance of {@link Doxygen}. */

@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Iar extends StaticAnalysisTool {
+    private static final long serialVersionUID = 6672928932731913714L;
     static final String ID = "iar";
 
     /** Creates a new instance of {@link Iar}. */

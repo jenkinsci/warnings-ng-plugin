@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Aykut Yilmaz
  */
 public class MavenConsole extends StaticAnalysisTool {
+    private static final long serialVersionUID = 4642573591598798109L;
     static final String ID = "maven";
 
     /** Creates a new instance of {@link MavenConsole}. */

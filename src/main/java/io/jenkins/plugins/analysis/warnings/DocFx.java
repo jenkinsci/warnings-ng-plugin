@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.violations.DocFxAdapter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.violations.DocFxAdapter;
 
 /**
  * Provides a parser and customized messages for DocFX.
@@ -16,6 +15,7 @@ import edu.hm.hafner.analysis.parser.violations.DocFxAdapter;
  * @author Ullrich Hafner
  */
 public class DocFx extends StaticAnalysisTool {
+    private static final long serialVersionUID = 268538556620830869L;
     static final String ID = "docfx";
 
     /** Creates a new instance of {@link DocFx}. */

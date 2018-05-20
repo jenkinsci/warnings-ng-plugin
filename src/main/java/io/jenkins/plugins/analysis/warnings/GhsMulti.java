@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Michael Schmid
  */
 public class GhsMulti extends StaticAnalysisTool {
+    private static final long serialVersionUID = -873750719433395569L;
     static final String ID = "ghs-multi";
 
     /** Creates a new instance of {@link GhsMulti}. */

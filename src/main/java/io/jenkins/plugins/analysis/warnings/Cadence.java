@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Cadence extends StaticAnalysisTool {
+    private static final long serialVersionUID = 8284958840616127492L;
     static final String ID = "cadence";
 
     /** Creates a new instance of {@link Cadence}. */

@@ -6,7 +6,6 @@ import java.util.Collection;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.AbstractParser;
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.Armcc5CompilerParser;
 import edu.hm.hafner.analysis.parser.ArmccCompilerParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
@@ -19,6 +18,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class ArmCc extends StaticAnalysisToolSuite {
+    private static final long serialVersionUID = 5712079077224290879L;
     static final String ID = "armcc";
 
     /** Creates a new instance of {@link ArmCc}. */

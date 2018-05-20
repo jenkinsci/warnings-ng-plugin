@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class TiCss extends StaticAnalysisTool {
+    private static final long serialVersionUID = -7982604310730169143L;
     static final String ID = "code-composer";
 
     /** Creates a new instance of {@link TiCss}. */

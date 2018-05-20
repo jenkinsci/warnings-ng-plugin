@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.violations.JsHintAdapter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.violations.JsHintAdapter;
 
 /**
  * Provides a parser and customized messages for JsHint.
@@ -16,6 +15,7 @@ import edu.hm.hafner.analysis.parser.violations.JsHintAdapter;
  * @author Ullrich Hafner
  */
 public class JsHint extends StaticAnalysisTool {
+    private static final long serialVersionUID = -871437328498798351L;
     static final String ID = "js-hint";
 
     /** Creates a new instance of {@link JsHint}. */

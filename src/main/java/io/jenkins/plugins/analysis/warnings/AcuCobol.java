@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class AcuCobol extends StaticAnalysisTool {
+    private static final long serialVersionUID = 2333849052758654239L;
     static final String ID = "acu-cobol";
 
     /** Creates a new instance of {@link AcuCobol}. */

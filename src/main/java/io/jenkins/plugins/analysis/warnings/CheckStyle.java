@@ -19,6 +19,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class CheckStyle extends StaticAnalysisTool {
+    private static final long serialVersionUID = -7944828406964963020L;
     static final String ID = "checkstyle";
 
     /** Creates a new instance of {@link CheckStyle}. */

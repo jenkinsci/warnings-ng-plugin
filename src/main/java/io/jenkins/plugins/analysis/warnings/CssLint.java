@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.LintParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.LintParser;
 
 /**
  * Provides a parser and customized messages for CSS-Lint.
@@ -16,6 +15,7 @@ import edu.hm.hafner.analysis.parser.LintParser;
  * @author Ullrich Hafner
  */
 public class CssLint extends StaticAnalysisTool {
+    private static final long serialVersionUID = -2790274869830094987L;
     static final String ID = "css-lint";
 
     /** Creates a new instance of {@link CssLint}. */

@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class PerlCritic extends StaticAnalysisTool {
+    private static final long serialVersionUID = 7864698398295336082L;
     static final String ID = "perl-critic";
 
     /** Creates a new instance of {@link PerlCritic}. */

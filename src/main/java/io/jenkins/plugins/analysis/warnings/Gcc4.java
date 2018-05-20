@@ -6,7 +6,6 @@ import java.util.Collection;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.AbstractParser;
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.Gcc4CompilerParser;
 import edu.hm.hafner.analysis.parser.Gcc4LinkerParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
@@ -19,6 +18,7 @@ import hudson.Extension;
  * @author Raphael Furch
  */
 public class Gcc4 extends StaticAnalysisToolSuite {
+    private static final long serialVersionUID = 7699675509414211993L;
     static final String ID = "gcc4";
 
     /** Creates a new instance of {@link Gcc4}. */

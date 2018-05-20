@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class PuppetLint extends StaticAnalysisTool {
+    private static final long serialVersionUID = 6585663572231821338L;
     static final String ID = "puppetlint";
 
     /** Creates a new instance of {@link PuppetLint}. */

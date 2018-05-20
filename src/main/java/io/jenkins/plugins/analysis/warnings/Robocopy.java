@@ -16,6 +16,7 @@ import hudson.plugins.warnings.parser.Messages;
  * @author Ullrich Hafner
  */
 public class Robocopy extends StaticAnalysisTool {
+    private static final long serialVersionUID = -9009703818411779941L;
     static final String ID = "robocopy";
 
     /** Creates a new instance of {@link Robocopy}. */

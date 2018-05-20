@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class YuiCompressor extends StaticAnalysisTool {
+    private static final long serialVersionUID = 4211786637477278304L;
     static final String ID = "yui";
 
     /** Creates a new instance of {@link YuiCompressor}. */

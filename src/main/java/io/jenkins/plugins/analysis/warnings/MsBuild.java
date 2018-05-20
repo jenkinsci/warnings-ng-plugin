@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Joscha Behrmann
  */
 public class MsBuild extends StaticAnalysisTool {
+    private static final long serialVersionUID = -6022797743536264094L;
     static final String ID = "msbuild";
 
     /** Creates a new instance of {@link MsBuild}. */

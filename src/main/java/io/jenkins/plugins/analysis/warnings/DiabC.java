@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class DiabC extends StaticAnalysisTool {
+    private static final long serialVersionUID = 5776036181907740586L;
     static final String ID = "diabc";
 
     /** Creates a new instance of {@link DiabC}. */

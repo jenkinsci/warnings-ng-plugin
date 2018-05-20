@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Michael Schmid
  */
 public class Gnat extends StaticAnalysisTool {
+    private static final long serialVersionUID = 1249773597483641464L;
     static final String ID = "gnat";
 
     /** Creates a new instance of {@link Gnat}. */

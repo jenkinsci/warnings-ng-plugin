@@ -17,6 +17,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class JavaDoc extends StaticAnalysisTool {
+    private static final long serialVersionUID = -3987566418736570996L;
     static final String ID = "javadoc";
 
     /** Creates a new instance of {@link JavaDoc}. */

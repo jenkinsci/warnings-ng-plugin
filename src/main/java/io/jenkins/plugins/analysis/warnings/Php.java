@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Php extends StaticAnalysisTool {
+    private static final long serialVersionUID = 7286546914256953672L;
     static final String ID = "php";
 
     /** Creates a new instance of {@link Php}. */

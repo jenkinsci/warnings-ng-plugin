@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.violations.KlocWorkAdapter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.violations.KlocWorkAdapter;
 
 /**
  * Provides a parser and customized messages for Klocwork.
@@ -16,6 +15,7 @@ import edu.hm.hafner.analysis.parser.violations.KlocWorkAdapter;
  * @author Ullrich Hafner
  */
 public class KlocWork extends StaticAnalysisTool {
+    private static final long serialVersionUID = -4352260844574399784L;
     static final String ID = "klocwork";
 
     /** Creates a new instance of {@link KlocWork}. */

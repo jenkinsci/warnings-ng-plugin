@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.IdeaInspectionParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.IdeaInspectionParser;
 
 /**
  * Provides a parser and customized messages for IDEA Inspections.
@@ -16,6 +15,7 @@ import edu.hm.hafner.analysis.parser.IdeaInspectionParser;
  * @author Ullrich Hafner
  */
 public class IdeaInspection extends StaticAnalysisTool {
+    private static final long serialVersionUID = 6473299663127011037L;
     static final String ID = "idea";
 
     /** Creates a new instance of {@link IdeaInspection}. */

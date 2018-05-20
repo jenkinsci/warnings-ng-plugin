@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.StyleCopParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.StyleCopParser;
 
 /**
  * Provides a parser and customized messages for StyleCop.
@@ -16,6 +15,7 @@ import edu.hm.hafner.analysis.parser.StyleCopParser;
  * @author Ullrich Hafner
  */
 public class StyleCop extends StaticAnalysisTool {
+    private static final long serialVersionUID = 230834175319040103L;
     static final String ID = "stylecop";
 
     /** Creates a new instance of {@link StyleCop}. */

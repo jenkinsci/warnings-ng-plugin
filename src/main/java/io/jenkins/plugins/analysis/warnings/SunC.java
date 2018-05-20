@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class SunC extends StaticAnalysisTool {
+    private static final long serialVersionUID = -2194739612322803223L;
     static final String ID = "sunc";
 
     /** Creates a new instance of {@link SunC}. */

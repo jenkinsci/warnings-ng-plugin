@@ -21,6 +21,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class FindBugs extends StaticAnalysisTool {
+    private static final long serialVersionUID = 4692318309214830824L;
     static final String ID = "findbugs";
 
     private boolean useRankAsPriority;

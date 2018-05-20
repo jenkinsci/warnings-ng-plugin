@@ -4,13 +4,12 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.JavacParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
 import hudson.plugins.warnings.WarningsDescriptor;
-
-import edu.hm.hafner.analysis.parser.JavacParser;
 
 /**
  * Provides a parser and customized messages for the Java compiler.
@@ -18,6 +17,7 @@ import edu.hm.hafner.analysis.parser.JavacParser;
  * @author Ullrich Hafner
  */
 public class Java extends StaticAnalysisTool {
+    private static final long serialVersionUID = 2254154391638811877L;
     static final String ID = "java";
     private static final String JAVA_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + ID + "-24x24.png";
     private static final String JAVA_LARGE_ICON = WarningsDescriptor.IMAGE_PREFIX + ID + "-48x48.png";

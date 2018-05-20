@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class CodeAnalysis extends StaticAnalysisTool {
+    private static final long serialVersionUID = -8955858553873691807L;
     static final String ID = "code-analysis";
 
     /** Creates a new instance of {@link CodeAnalysis}. */

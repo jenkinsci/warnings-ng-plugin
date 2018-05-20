@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Michael Schmid
  */
 public class GnuMakeGcc extends StaticAnalysisTool {
+    private static final long serialVersionUID = -5332481308142256483L;
     static final String ID = "gmake-gcc";
 
     /** Creates a new instance of {@link GnuMakeGcc}. */

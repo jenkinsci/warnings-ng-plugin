@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Joscha Behrmann
  */
 public class Perforce extends StaticAnalysisTool {
+    private static final long serialVersionUID = 4203426682751724907L;
     static final String ID = "perforce";
 
     /** Creates a new instance of {@link Perforce}. */

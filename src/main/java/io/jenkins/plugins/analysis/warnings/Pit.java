@@ -4,14 +4,12 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.violations.PitAdapter;
+import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
-import static hudson.plugins.warnings.WarningsDescriptor.*;
-
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.violations.PitAdapter;
 
 /**
  * Provides a parser and customized messages for PIT.
@@ -19,6 +17,7 @@ import edu.hm.hafner.analysis.parser.violations.PitAdapter;
  * @author Ullrich Hafner
  */
 public class Pit extends StaticAnalysisTool {
+    private static final long serialVersionUID = -3769283356498049888L;
     static final String ID = "pit";
 
     /** Creates a new instance of {@link Pit}. */

@@ -22,6 +22,7 @@ import hudson.util.FormValidation;
  * @author Ullrich Hafner
  */
 public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
+    private static final long serialVersionUID = -8446643146836067375L;
     private static final String SMALL_ICON_URL = IMAGE_PREFIX + "dry-24x24.png";
     private static final String LARGE_ICON_URL = IMAGE_PREFIX + "dry-48x48.png";
 

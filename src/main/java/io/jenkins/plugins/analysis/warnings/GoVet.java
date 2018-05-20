@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class GoVet extends StaticAnalysisTool {
+    private static final long serialVersionUID = -4075523780782589302L;
     static final String ID = "go-vet";
 
     /** Creates a new instance of {@link GoVet}. */

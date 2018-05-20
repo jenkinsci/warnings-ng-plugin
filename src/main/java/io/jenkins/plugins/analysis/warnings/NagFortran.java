@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Joscha Behrmann
  */
 public class NagFortran extends StaticAnalysisTool {
+    private static final long serialVersionUID = 6623024344311048456L;
     static final String ID = "nag-fortran";
 
     /** Creates a new instance of {@link NagFortran}. */

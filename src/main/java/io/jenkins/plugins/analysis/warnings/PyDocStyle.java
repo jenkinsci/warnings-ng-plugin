@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.violations.PyDocStyleAdapter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.violations.PyDocStyleAdapter;
 
 /**
  * Provides a parser and customized messages for PyDocStyle.
@@ -16,6 +15,7 @@ import edu.hm.hafner.analysis.parser.violations.PyDocStyleAdapter;
  * @author Ullrich Hafner
  */
 public class PyDocStyle extends StaticAnalysisTool {
+    private static final long serialVersionUID = 6413186216055796807L;
     static final String ID = "pydocstyle";
 
     /** Creates a new instance of {@link PyDocStyle}. */

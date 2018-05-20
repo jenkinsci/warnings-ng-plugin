@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Coolflux extends StaticAnalysisTool {
+    private static final long serialVersionUID = -6042318539034664498L;
     static final String ID = "coolflux";
 
     /** Creates a new instance of {@link Coolflux}. */

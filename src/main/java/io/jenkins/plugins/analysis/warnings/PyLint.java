@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class PyLint extends StaticAnalysisTool {
+    private static final long serialVersionUID = 4578376477574960381L;
     static final String ID = "pylint";
 
     /** Creates a new instance of {@link PyLint}. */

@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class DrMemory extends StaticAnalysisTool {
+    private static final long serialVersionUID = -8292426833255285102L;
     static final String ID = "dr-memory";
 
     /** Creates a new instance of {@link DrMemory}. */

@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Tnsdl extends StaticAnalysisTool {
+    private static final long serialVersionUID = 3738252418578966192L;
     static final String ID = "tnsdl";
 
     /** Creates a new instance of {@link Tnsdl}. */

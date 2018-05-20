@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Johannes Arzt
  */
 public class LinuxKernelOutput extends StaticAnalysisTool {
+    private static final long serialVersionUID = 6001299329805672199L;
     static final String ID = "linux";
 
     /** Creates a new instance of {@link LinuxKernelOutput}. */

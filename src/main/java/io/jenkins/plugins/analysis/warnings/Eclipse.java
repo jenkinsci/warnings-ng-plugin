@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Eclipse extends StaticAnalysisTool {
+    private static final long serialVersionUID = -2312612497121380654L;
     static final String ID = "eclipse";
 
     /** Creates a new instance of {@link Eclipse}. */

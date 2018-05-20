@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class GoLint extends StaticAnalysisTool {
+    private static final long serialVersionUID = -8739396276813816897L;
     static final String ID = "go-lint";
 
     /** Creates a new instance of {@link GoLint}. */

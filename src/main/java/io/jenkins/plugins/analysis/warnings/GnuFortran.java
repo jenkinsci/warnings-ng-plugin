@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Michael Schmid
  */
 public class GnuFortran extends StaticAnalysisTool {
+    private static final long serialVersionUID = -578099209983706725L;
     static final String ID = "fortran";
 
     /** Creates a new instance of {@link GnuFortran}. */

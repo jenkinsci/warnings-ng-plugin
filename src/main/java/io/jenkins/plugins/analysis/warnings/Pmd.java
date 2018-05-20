@@ -18,6 +18,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Pmd extends StaticAnalysisTool {
+    private static final long serialVersionUID = -7600332469176914690L;
     static final String ID = "pmd";
 
     /** Creates a new instance of {@link Pmd}. */

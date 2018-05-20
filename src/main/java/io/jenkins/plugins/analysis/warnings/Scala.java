@@ -6,7 +6,6 @@ import java.util.Collection;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.AbstractParser;
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.SbtScalacParser;
 import edu.hm.hafner.analysis.parser.ScalacParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
@@ -20,6 +19,7 @@ import hudson.plugins.warnings.parser.Messages;
  * @author Ullrich Hafner
  */
 public class Scala extends StaticAnalysisToolSuite {
+    private static final long serialVersionUID = -3425343204163661812L;
     static final String ID = "scala";
 
     /** Creates a new instance of {@link Scala}. */

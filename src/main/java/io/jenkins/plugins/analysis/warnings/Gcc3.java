@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Raphael Furch
  */
 public class Gcc3 extends StaticAnalysisTool {
+    private static final long serialVersionUID = -8985462824184450486L;
     static final String ID = "gcc3";
 
     /** Creates a new instance of {@link Gcc3}. */

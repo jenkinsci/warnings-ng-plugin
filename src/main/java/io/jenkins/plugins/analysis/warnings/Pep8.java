@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Joscha Behrmann
  */
 public class Pep8 extends StaticAnalysisTool {
+    private static final long serialVersionUID = -2199589729419226931L;
     static final String ID = "pep8";
 
     /** Creates a new instance of {@link NagFortran}. */

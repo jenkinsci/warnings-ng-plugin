@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.dry.simian.SimianParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.dry.simian.SimianParser;
 
 /**
  * Provides a parser and customized messages for Simian duplication scanner.
@@ -16,6 +15,7 @@ import edu.hm.hafner.analysis.parser.dry.simian.SimianParser;
  * @author Ullrich Hafner
  */
 public class Simian extends DuplicateCodeScanner {
+    private static final long serialVersionUID = 5817021796077055763L;
     static final String ID = "simian";
 
     /** Creates a new instance of {@link Simian}. */

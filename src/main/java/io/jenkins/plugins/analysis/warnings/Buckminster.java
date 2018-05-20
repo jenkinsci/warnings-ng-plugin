@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Buckminster extends StaticAnalysisTool {
+    private static final long serialVersionUID = 7067423260823622207L;
     static final String ID = "buckminster";
 
     /** Creates a new instance of {@link Buckminster}. */

@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.violations.Flake8Adapter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.violations.Flake8Adapter;
 
 /**
  * Provides a parser and customized messages for Android Lint.
@@ -16,6 +15,7 @@ import edu.hm.hafner.analysis.parser.violations.Flake8Adapter;
  * @author Ullrich Hafner
  */
 public class Flake8 extends StaticAnalysisTool {
+    private static final long serialVersionUID = 2133173655608279071L;
     static final String ID = "flake8";
 
     /** Creates a new instance of {@link Flake8}. */

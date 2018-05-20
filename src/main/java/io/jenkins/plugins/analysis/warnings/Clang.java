@@ -15,6 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Clang extends StaticAnalysisTool {
+    private static final long serialVersionUID = 4179684176599641118L;
     static final String ID = "clang";
 
     /** Creates a new instance of {@link Clang}. */
