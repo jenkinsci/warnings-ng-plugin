@@ -50,6 +50,7 @@ public class ArchitectureRulesTest {
 
         ArchRule noPublicTestClassesDefined = noClasses()
                 .that().dontHaveModifier(JavaModifier.ABSTRACT)
+                .and().haveNameNotMatching(getClass().getName())
                 .and().haveSimpleNameEndingWith("Test")
                 .and().haveSimpleNameNotEndingWith("ITest")
                 .should().bePublic();
