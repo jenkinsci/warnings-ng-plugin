@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.warnings.groovy;
 
 import java.io.StringReader;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.AbstractParser;
