@@ -136,9 +136,29 @@ public class IssuesRecorderITest extends IntegrationTest {
         return publisher;
     }
 
-
+    /**
+     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
+     * the job.
+     *
+     * @param job
+     *         the job to register the recorder for
+     * @param checkbox
+     *         aggregation is true or false
+     * @param toolPattern1
+     *         the first new filename in the workspace
+     * @param tool1
+     *         class of the first tool
+     * @param toolPattern2
+     *         the second new filename in the workspace
+     * @param tool2
+     *         class of the second tool
+     *
+     * @return the created recorder
+     */
     @CanIgnoreReturnValue
-    private IssuesRecorder enableWarningsAggregation(final FreeStyleProject job, final boolean checkbox, final String toolPattern1, final StaticAnalysisTool tool1, final String toolPattern2, final StaticAnalysisTool tool2) {
+    private IssuesRecorder enableWarningsAggregation(final FreeStyleProject job, final boolean checkbox,
+            final String toolPattern1, final StaticAnalysisTool tool1, final String toolPattern2,
+            final StaticAnalysisTool tool2) {
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setAggregatingResults(checkbox);
         List<ToolConfiguration> toolList = new ArrayList<>();
@@ -194,26 +214,28 @@ public class IssuesRecorderITest extends IntegrationTest {
             throw new AssertionError(e);
         }
     }
+
     /**
-     * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
-     * been finished as one result of both tools.
+     * Schedules a new build for the specified job and returns the created {@link List<AnalysisResult>} after the build
+     * has been finished as one result of both tools.
      *
      * @param job
      *         the job to schedule
      * @param status
      *         the expected result of both tools for the build
      *
-     * @return the created {@link ResultAction}
+     * @return the created {@link List<ResultAction>}
      */
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private List<AnalysisResult> scheduleBuildAndAssertStatusForBothTools(final FreeStyleProject job, final Result status) {
+    private List<AnalysisResult> scheduleBuildAndAssertStatusForBothTools(final FreeStyleProject job,
+            final Result status) {
         try {
             FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
 
             List<ResultAction> actions = build.getActions(ResultAction.class);
 
             List<AnalysisResult> results = new ArrayList<>();
-            for(ResultAction elements : actions){
+            for (ResultAction elements : actions) {
                 results.add(elements.getResult());
             }
 
@@ -226,16 +248,19 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Runs the Checksyle and PMD tools on an output file that contains several issues: the build should report 6 and 4 issues.
+     * Runs the CheckStyle and PMD tools on an output file that contains several issues: the build should report 6 and 4
+     * issues.
      */
-    @Test @WithTimeout(1000)
+    @Test
+    @WithTimeout(1000)
     public void shouldCreateMultipleToolsAndAggregationResultWithWarningsAggregateFalse() {
         FreeStyleProject project = createJobWithWorkspaceFile("checkstyle.xml", "pmd-warnings.xml");
-        enableWarningsAggregation(project, false, "**/checkstyle-issues.txt", new CheckStyle(), "**/pmd-warnings-issues.txt", new Pmd());
+        enableWarningsAggregation(project, false, "**/checkstyle-issues.txt", new CheckStyle(),
+                "**/pmd-warnings-issues.txt", new Pmd());
 
         List<AnalysisResult> results = scheduleBuildAndAssertStatusForBothTools(project, Result.SUCCESS);
 
-        for(AnalysisResult element: results){
+        for (AnalysisResult element : results) {
             if (element.getId().equals("checkstyle")) {
                 assertThat(element.getTotalSize()).isEqualTo(6);
             }
@@ -248,12 +273,14 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Runs the Checksyle and PMD tools on an output file that contains one issue: the build should report 10 issues.
+     * Runs the CheckStyle and PMD tools on an output file that contains one issue: the build should report 10 issues.
      */
-    @Test @WithTimeout(1000)
+    @Test
+    @WithTimeout(1000)
     public void shouldCreateMultipleToolsAndAggregationResultWithWarningsAggregateTrue() {
         FreeStyleProject project = createJobWithWorkspaceFile("checkstyle.xml", "pmd-warnings.xml");
-        enableWarningsAggregation(project, true, "**/checkstyle-issues.txt", new CheckStyle(), "**/pmd-warnings-issues.txt", new Pmd());
+        enableWarningsAggregation(project, true, "**/checkstyle-issues.txt", new CheckStyle(),
+                "**/pmd-warnings-issues.txt", new Pmd());
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(10);
@@ -264,28 +291,33 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Runs only the Checksyle tool multiple times on an output file that contains not several issues and produce a failure.
+     * Runs only the CheckStyle tool multiple times on an output file that contains not several issues and produce a
+     * failure.
      */
-    @Test @WithTimeout(1000)
+    @Test
+    @WithTimeout(1000)
     public void shouldCreateMultipleToolsAndAggregationResultWithWarningsAggregateFalseAndSameTool() {
         FreeStyleProject project = createJobWithWorkspaceFile("checkstyle2.xml", "checkstyle3.xml");
-        enableWarningsAggregation(project, false, "**/checkstyle2-issues.txt", new CheckStyle(), "**/checkstyle3-issues.txt", new CheckStyle());
+        enableWarningsAggregation(project, false, "**/checkstyle2-issues.txt", new CheckStyle(),
+                "**/checkstyle3-issues.txt", new CheckStyle());
         List<AnalysisResult> results = scheduleBuildAndAssertStatusForBothTools(project, Result.FAILURE);
 
-
-        for(AnalysisResult elements : results){
+        for (AnalysisResult elements : results) {
             //System.out.println(elements.getId() + " : " + elements.getTotalSize());
             assertThat(elements).hasOverallResult(Result.FAILURE);
         }
     }
 
     /**
-     * Runs only the Checkstyle tool multiple times on an output file that contains one issues: the build should report 12 issues.
+     * Runs only the CheckStyle tool multiple times on an output file that contains one issues: the build should report
+     * 6 issues.
      */
-    @Test @WithTimeout(1000)
+    @Test
+    @WithTimeout(1000)
     public void shouldCreateMultipleToolsAndAggregationResultWithWarningsAggregateTrueAndSameTool() {
         FreeStyleProject project = createJobWithWorkspaceFile("checkstyle2.xml", "checkstyle3.xml");
-        enableWarningsAggregation(project, true, "**/checkstyle2-issues.txt", new CheckStyle(), "**/checkstyle3-issues.txt", new CheckStyle());
+        enableWarningsAggregation(project, true, "**/checkstyle2-issues.txt", new CheckStyle(),
+                "**/checkstyle3-issues.txt", new CheckStyle());
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
