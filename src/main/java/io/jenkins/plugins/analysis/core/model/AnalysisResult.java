@@ -65,8 +65,8 @@ public class AnalysisResult implements Serializable {
     private final Map<String, Integer> sizePerOrigin;
     private final Map<Severity, Integer> sizePerSeverity;
     private final Map<Severity, Integer> newSizePerSeverity;
-    private final ImmutableList<String> errors;
-    private final ImmutableList<String> messages;
+    private final List<String> errors;
+    private final List<String> messages;
     /**
      * Reference run to compute the issues difference: since a run could not be persisted directly, the IDs are only
      * stored.
@@ -257,8 +257,8 @@ public class AnalysisResult implements Serializable {
             status = Status.INACTIVE;
         }
 
-        this.messages = Lists.immutable.withAll(aggregatedMessages);
-        errors = report.getErrorMessages();
+        this.messages = new ArrayList<>(aggregatedMessages);
+        errors = new ArrayList<>(report.getErrorMessages().castToList());
 
         if (canSerialize) {
             serializeAnnotations(outstandingIssues, newIssues, fixedIssues);
@@ -313,7 +313,7 @@ public class AnalysisResult implements Serializable {
      */
     @Exported
     public ImmutableList<String> getErrorMessages() {
-        return errors;
+        return Lists.immutable.withAll(errors);
     }
 
     /**
@@ -323,7 +323,7 @@ public class AnalysisResult implements Serializable {
      */
     @Exported
     public ImmutableList<String> getInfoMessages() {
-        return messages;
+        return Lists.immutable.withAll(messages);
     }
 
     /**
