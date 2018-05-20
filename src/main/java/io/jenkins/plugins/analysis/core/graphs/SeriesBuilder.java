@@ -235,7 +235,7 @@ public abstract class SeriesBuilder {
      *         configures the data set (how many results should be process, etc.)
      * @param resultActions
      *         the static analysis results
-     * @return
+     * @return the aggregated data set
      */
     public CategoryDataset createAggregation(final GraphConfiguration configuration,
             final Collection<ResultHistory> resultActions) {
