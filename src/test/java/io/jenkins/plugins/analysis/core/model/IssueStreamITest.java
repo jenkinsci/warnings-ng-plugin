@@ -4,13 +4,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.junit.jupiter.api.Test;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.LineRange;
 import edu.hm.hafner.analysis.LineRangeList;
 import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.ResourceTest;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
@@ -22,7 +25,7 @@ import hudson.util.XStream2;
  *
  * @author Ullrich Hafner
  */
-class IssueStreamTest extends ResourceTest {
+public class IssueStreamITest extends ResourceTest {
     private static final int LINE_START = 1;
     private static final int LINE_END = 2;
     private static final int COLUMN_START = 3;
@@ -40,18 +43,56 @@ class IssueStreamTest extends ResourceTest {
     private static final String REFERENCE = "reference";
     private static final LineRangeList LINE_RANGES = new LineRangeList(singletonList(new LineRange(5, 6)));
 
-    /** Ensures that an issue instance can be serialized and deserialized using XStream. */
+    /** Required to enable Jenkins security settings during serialization. */
+    @ClassRule
+    public static final JenkinsRule j = new JenkinsRule();
+
+    /** Ensures that a {@link Report} can be serialized and deserialized using XStream. */
     @Test
-    void shouldBeSerializableWithXStream() throws IOException {
+    public void shouldSerializeReportWithXStream() throws IOException {
         XStream2 stream = new IssueStream().createStream();
 
-        byte[] bytes = asBytes(createFilledIssue(), stream);
+        byte[] bytes = asBytes(createReport(), stream);
+
+        System.out.printf(new String(bytes));
+
+        assertThatReportCanBerRestoredFrom(stream, bytes);
+    }
+
+    private void assertThatReportCanBerRestoredFrom(final XStream2 stream, final byte[] bytes) {
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes)) {
+            Object issue = stream.fromXML(inputStream);
+
+            assertThat(issue).isInstanceOf(Report.class);
+
+            String xml = new String(asBytes(createReport(), new IssueStream().createStream()));
+
+            assertThat(issue).as(xml).isEqualTo(createReport());
+        }
+        catch (IOException e) {
+            throw new AssertionError("Can' resolve Report from byte array", e);
+        }
+    }
+
+    private Report createReport() {
+        Report report = new Report().addAll(createFilledIssue("1"), createFilledIssue("2"));
+        report.logError("error");
+        report.logInfo("info");
+        return report;
+    }
+
+    /** Ensures that an {@link Issue} can be serialized and deserialized using XStream. */
+    @Test
+    public void shouldSerializeIssueWithXStream() throws IOException {
+        XStream2 stream = new IssueStream().createStream();
+
+        byte[] bytes = asBytes(createFilledIssue(MESSAGE), stream);
         System.out.printf(new String(bytes));
 
         assertThatIssueCanBeRestoredFrom(bytes, stream);
     }
 
-    private Issue createFilledIssue() {
+    private Issue createFilledIssue(final String message) {
         IssueBuilder builder = new IssueBuilder();
         builder.setFileName(FILE_NAME)
                 .setLineStart(LINE_START)
@@ -63,7 +104,7 @@ class IssueStreamTest extends ResourceTest {
                 .setPackageName(PACKAGE_NAME)
                 .setModuleName(MODULE_NAME)
                 .setPriority(PRIORITY)
-                .setMessage(MESSAGE)
+                .setMessage(message)
                 .setDescription(DESCRIPTION)
                 .setOrigin(ORIGIN)
                 .setLineRanges(LINE_RANGES)
@@ -77,7 +118,7 @@ class IssueStreamTest extends ResourceTest {
      * current implementation of {@link Issue}.
      */
     @Test
-    void shouldReadIssueFromOldXmlSerialization() {
+    public void shouldReadIssueFromOldXmlSerialization() {
         IssueStream model = new IssueStream();
         XStream2 stream = model.createStream();
 
@@ -92,16 +133,16 @@ class IssueStreamTest extends ResourceTest {
 
             assertThat(issue).isInstanceOf(Issue.class);
 
-            String xml = new String(asBytes(createFilledIssue(), new IssueStream().createStream()));
+            String xml = new String(asBytes(createFilledIssue(MESSAGE), new IssueStream().createStream()));
 
-            assertThat(issue).as(xml).isEqualTo(createFilledIssue());
+            assertThat(issue).as(xml).isEqualTo(createFilledIssue(MESSAGE));
         }
         catch (IOException e) {
             throw new AssertionError("Can' resolve Issue from byte array", e);
         }
     }
 
-    private byte[] asBytes(final Issue issue, final XStream2 stream) throws IOException {
+    private byte[] asBytes(final Object issue, final XStream2 stream) throws IOException {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             stream.toXMLUTF8(issue, out);
             return out.toByteArray();
