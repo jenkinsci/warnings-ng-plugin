@@ -5,7 +5,7 @@ import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.StaplerProxy;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;

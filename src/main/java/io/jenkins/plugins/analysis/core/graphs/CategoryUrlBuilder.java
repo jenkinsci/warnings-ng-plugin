@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jfree.data.category.CategoryDataset;
 
 import hudson.plugins.analysis.util.SerializableUrlGenerator;

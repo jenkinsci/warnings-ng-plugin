@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
@@ -81,7 +81,7 @@ public class ConsoleDetail implements ModelObject {
                         console.append("style=\"background-color:#FCAF3E\"");
                     }
                     console.append(">\n");
-                    console.append(StringEscapeUtils.escapeHtml(line));
+                    console.append(StringEscapeUtils.escapeHtml4(line));
                     console.append("</td></tr>\n");
                 }
                 lineCount++;

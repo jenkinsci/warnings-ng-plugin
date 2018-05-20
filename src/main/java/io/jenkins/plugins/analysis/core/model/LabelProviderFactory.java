@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.core.model;
 import javax.annotation.CheckForNull;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;

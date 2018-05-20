@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core;
+package io.jenkins.plugins.analysis.core.testutil;
 
 import javax.xml.parsers.SAXParser;
 
@@ -16,14 +16,13 @@ import com.tngtech.archunit.lang.ArchRule;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 import edu.hm.hafner.util.VisibleForTesting;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 
 /**
  * Defines several architecture rules for the static analysis utilities.
  *
  * @author Ullrich Hafner
  */
-class ArchitectureRulesTest {
+public class ArchitectureRulesTest {
     private static final DescribedPredicate<JavaCall<?>> ACCESS_IS_RESTRICTED_TO_TESTS = new AccessRestrictedToTests();
 
     /**
@@ -86,7 +85,12 @@ class ArchitectureRulesTest {
         noTestApiCalled.check(classes);
     }
 
-    private JavaClasses getAllClasses() {
+    /**
+     * Returns the classes that should be checked.
+     *
+     * @return the classes that should be checked
+     */
+    protected JavaClasses getAllClasses() {
         return new ClassFileImporter().importPackages("io.jenkins.plugins.analysis");
     }
 

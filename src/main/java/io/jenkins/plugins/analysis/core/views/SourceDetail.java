@@ -10,8 +10,8 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import de.java2html.converter.JavaSource2HTMLConverter;
 import de.java2html.javasource.JavaSource;
@@ -183,7 +183,7 @@ public class SourceDetail implements ModelObject {
      *         the message to write
      */
     private void outputEscaped(final StringBuilder output, final String message) {
-        output.append(StringEscapeUtils.escapeHtml(message));
+        output.append(StringEscapeUtils.escapeHtml4(message));
     }
 
     /**

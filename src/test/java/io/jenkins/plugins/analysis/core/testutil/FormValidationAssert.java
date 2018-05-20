@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
-import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.assertj.core.api.AbstractAssert;
 
 import hudson.util.FormValidation;

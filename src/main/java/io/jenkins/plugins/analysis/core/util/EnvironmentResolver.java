@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
