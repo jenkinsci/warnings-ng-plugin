@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.fxcop.FxCopParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.fxcop.FxCopParser;
 
 /**
  * Provides a parser and customized messages for FxCop.
@@ -16,6 +15,7 @@ import edu.hm.hafner.analysis.parser.fxcop.FxCopParser;
  * @author Ullrich Hafner
  */
 public class Fxcop extends StaticAnalysisTool {
+    private static final long serialVersionUID = -2406459916117372776L;
     static final String ID = "fxcop";
 
     /** Creates a new instance of {@link Fxcop}. */

@@ -15,6 +15,8 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Intel extends StaticAnalysisTool {
+    private static final long serialVersionUID = 8514076930043335408L;
+
     static final String ID = "intel";
 
     /** Creates a new instance of {@link Intel}. */
