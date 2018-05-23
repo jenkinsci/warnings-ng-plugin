@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.util.ResourceTest;
+import edu.hm.hafner.util.SerializableTest;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser.DescriptorImpl;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Ulli Hafner
  */
-class GroovyParserTest extends ResourceTest {
+class GroovyParserTest extends SerializableTest<GroovyParser> {
     private static final String SINGLE_LINE_EXAMPLE = "file/name/relative/unix:42:evil: this is a warning message";
     private static final String MULTI_LINE_EXAMPLE
             = "    [javac] 1. WARNING in C:\\Desenvolvimento\\Java\\jfg\\src\\jfg\\AttributeException.java (at line 3)\n"
@@ -155,5 +155,11 @@ class GroovyParserTest extends ResourceTest {
         return new DescriptorImpl(facade);
     }
 
+    @Override
+    protected GroovyParser createSerializable() {
+        GroovyParser parser = new GroovyParser("id", "name", "regexp", "script", "example");
+        parser.setJenkinsFacade(createJenkinsFacade());
+        return parser;
+    }
 }
 

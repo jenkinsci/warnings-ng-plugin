@@ -1,10 +1,12 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -31,7 +33,8 @@ import hudson.util.FormValidation.Kind;
  *
  * @author Ulli Hafner
  */
-public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
+public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implements Serializable {
+    private static final long serialVersionUID = 2447124045452896581L;
     private static final int MAX_EXAMPLE_SIZE = 4096;
 
     private final String id;
@@ -40,7 +43,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
     private final String script;
     private final String example;
 
-    private JenkinsFacade jenkinsFacade = new JenkinsFacade();
+    private transient JenkinsFacade jenkinsFacade = new JenkinsFacade();
 
     /**
      * Creates a new instance of {@link GroovyParser}.
@@ -78,7 +81,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
      * @return {@code true} if this instance is valid, {@code false} otherwise
      */
     public boolean isValid() {
-        DescriptorImpl d = new DescriptorImpl(jenkinsFacade);
+        DescriptorImpl d = new DescriptorImpl(getJenkinsFacade());
 
         return d.doCheckScript(script).kind == Kind.OK
                 && d.doCheckRegexp(regexp).kind == Kind.OK
@@ -134,6 +137,30 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         return containsNewline(regexp);
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        GroovyParser that = (GroovyParser) o;
+
+        if (!regexp.equals(that.regexp)) {
+            return false;
+        }
+        return script.equals(that.script);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = regexp.hashCode();
+        result = 31 * result + script.hashCode();
+        return result;
+    }
+
     /**
      * Returns a new parser instance.
      *
@@ -159,6 +186,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
     @VisibleForTesting
     void setJenkinsFacade(final JenkinsFacade jenkinsFacade) {
         this.jenkinsFacade = jenkinsFacade;
+    }
+
+    private JenkinsFacade getJenkinsFacade() {
+        return ObjectUtils.defaultIfNull(jenkinsFacade, new JenkinsFacade());
     }
 
     /**
