@@ -152,11 +152,9 @@ public class IssuesRecorderITest extends IntegrationTest {
      *         the second new filename in the workspace
      * @param tool2
      *         class of the second tool
-     *
-     * @return the created recorder
      */
     @CanIgnoreReturnValue
-    private IssuesRecorder enableWarningsAggregation(final FreeStyleProject job, final boolean checkbox,
+    private void enableWarningsAggregation(final FreeStyleProject job, final boolean checkbox,
             final String toolPattern1, final StaticAnalysisTool tool1, final String toolPattern2,
             final StaticAnalysisTool tool2) {
         IssuesRecorder publisher = new IssuesRecorder();
@@ -167,7 +165,6 @@ public class IssuesRecorderITest extends IntegrationTest {
         publisher.setTools(toolList);
 
         job.getPublishersList().add(publisher);
-        return publisher;
     }
 
     /**
@@ -280,12 +277,11 @@ public class IssuesRecorderITest extends IntegrationTest {
         FreeStyleProject project = createJobWithWorkspaceFile("checkstyle.xml", "pmd-warnings.xml");
         enableWarningsAggregation(project, true, "**/checkstyle-issues.txt", new CheckStyle(),
                 "**/pmd-warnings-issues.txt", new Pmd());
+
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(10);
         assertThat(result.getSizePerOrigin()).containsKeys("checkstyle", "pmd");
-        assertThat(result.getSizePerOrigin().get("checkstyle").equals(6));
-        assertThat(result.getSizePerOrigin().get("pmd").equals(4));
         assertThat(result).hasOverallResult(Result.SUCCESS);
     }
 
@@ -299,6 +295,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         FreeStyleProject project = createJobWithWorkspaceFile("checkstyle2.xml", "checkstyle3.xml");
         enableWarningsAggregation(project, false, "**/checkstyle2-issues.txt", new CheckStyle(),
                 "**/checkstyle3-issues.txt", new CheckStyle());
+
         List<AnalysisResult> results = scheduleBuildAndAssertStatusForBothTools(project, Result.FAILURE);
 
         for (AnalysisResult elements : results) {
@@ -321,7 +318,6 @@ public class IssuesRecorderITest extends IntegrationTest {
 
         assertThat(result).hasTotalSize(6);
         assertThat(result.getSizePerOrigin()).containsKeys("checkstyle");
-        assertThat(result.getSizePerOrigin().get("checkstyle").equals(6));
         assertThat(result).hasOverallResult(Result.SUCCESS);
     }
 }
