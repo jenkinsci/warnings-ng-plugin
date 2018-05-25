@@ -301,11 +301,6 @@ public class IssuesRecorderITest extends IntegrationTest {
         enableWarningsAggregation(project, false, "**/checkstyle2-issues.txt", new CheckStyle(),
                 "**/checkstyle3-issues.txt", new CheckStyle());
         List<AnalysisResult> results = scheduleBuildAndAssertStatusForBothTools(project, Result.FAILURE);
-
-        for (AnalysisResult elements : results) {
-            //System.out.println(elements.getId() + " : " + elements.getTotalSize());
-            assertThat(elements).hasOverallResult(Result.FAILURE);
-        }
     }
 
     /**
