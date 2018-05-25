@@ -244,7 +244,6 @@ public class IssuesRecorderITest extends IntegrationTest {
         catch (Exception e) {
             throw new AssertionError(e);
         }
-
     }
 
     /**
@@ -301,6 +300,10 @@ public class IssuesRecorderITest extends IntegrationTest {
         enableWarningsAggregation(project, false, "**/checkstyle2-issues.txt", new CheckStyle(),
                 "**/checkstyle3-issues.txt", new CheckStyle());
         List<AnalysisResult> results = scheduleBuildAndAssertStatusForBothTools(project, Result.FAILURE);
+
+        for (AnalysisResult elements : results) {
+            assertThat(elements).hasErrorMessages();
+        }
     }
 
     /**
