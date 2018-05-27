@@ -240,6 +240,7 @@
         </executions>
         <configuration>
           <packages>
+            <package>io.jenkins.plugins.analysis.core.history</package>
             <package>io.jenkins.plugins.analysis.core.model</package>
             <package>io.jenkins.plugins.analysis.core.quality</package>
           </packages>

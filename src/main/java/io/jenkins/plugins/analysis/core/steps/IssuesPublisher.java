@@ -9,9 +9,9 @@ import java.util.Optional;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.history.BuildHistory;
-import io.jenkins.plugins.analysis.core.history.OtherJobReferenceFinder;
-import io.jenkins.plugins.analysis.core.history.ReferenceFinder;
+import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
+import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode.*;
+import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode.*;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.history.ResultSelector;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -161,20 +161,21 @@ class IssuesPublisher {
         filtered.setReference(String.valueOf(run.getNumber()));
 
         ReferenceProvider referenceProvider = createReferenceProvider(selector);
-        return new BuildHistory(run, selector).getPreviousResult()
+        return new AnalysisHistory(run, selector).getPreviousResult()
                 .map(previous -> new AnalysisResult(run, referenceProvider, filtered, qualityGate, previous))
                 .orElseGet(() -> new AnalysisResult(run, referenceProvider, filtered, qualityGate));
     }
 
     private ReferenceProvider createReferenceProvider(final ResultSelector selector) {
+        Run<?, ?> baseline = run;
         if (referenceJobName != null) {
             Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
             if (referenceJob.isPresent()) {
-                // FIXME: what to do if last build is not available?
-                return new OtherJobReferenceFinder(referenceJob.get().getLastBuild(), selector,
-                        ignoreAnalysisResult, overallResultMustBeSuccess);
+                baseline = referenceJob.get().getLastBuild();
             }
         }
-        return ReferenceFinder.create(run, selector, ignoreAnalysisResult, overallResultMustBeSuccess);
+        return new AnalysisHistory(baseline, selector,
+                ignoreAnalysisResult ? IGNORE_QUALITY_GATE : SUCCESSFUL_QUALITY_GATE,
+                overallResultMustBeSuccess ? JOB_MUST_BE_SUCCESSFUL : IGNORE_JOB_RESULT);
     }
 }

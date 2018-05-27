@@ -3,9 +3,10 @@ package io.jenkins.plugins.analysis.core.history;
 import java.util.Optional;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.quality.Status;
 
 /**
- * Provides access to the same static analysis results in the history of runs of a job.
+ * Provides access to the static analysis results of a predefined type in the history of builds of a job.
  *
  * @author Ullrich Hafner
  */
@@ -18,10 +19,10 @@ public interface ResultHistory extends Iterable<AnalysisResult> {
     Optional<AnalysisResult> getBaselineResult();
 
     /**
-     * Returns the previous result (if there is one with plugin result SUCCESS).
+     * Returns the previous result (if there is any). Note that the quality gate {@link Status} is not taken into
+     * account when selecting this result.
      *
      * @return the previous result
      */
-    // FIXME: currently the status must be SUCCESS!
     Optional<AnalysisResult> getPreviousResult();
 }

@@ -25,8 +25,8 @@ import io.jenkins.plugins.analysis.core.graphs.PriorityGraph;
 import io.jenkins.plugins.analysis.core.graphs.TotalsGraph;
 import io.jenkins.plugins.analysis.core.graphs.TrendDetails;
 import io.jenkins.plugins.analysis.core.graphs.UserGraphConfigurationView;
-import io.jenkins.plugins.analysis.core.history.BuildHistory;
-import io.jenkins.plugins.analysis.core.history.NullBuildHistory;
+import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
+import io.jenkins.plugins.analysis.core.history.NullAnalysisHistory;
 import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -272,10 +272,10 @@ public class JobAction implements Action {
     private ResultHistory createBuildHistory() {
         Run<?, ?> lastFinishedRun = getLastFinishedRun();
         if (lastFinishedRun == null) {
-            return new NullBuildHistory();
+            return new NullAnalysisHistory();
         }
         else {
-            return new BuildHistory(lastFinishedRun, new ByIdResultSelector(labelProvider.getId()));
+            return new AnalysisHistory(lastFinishedRun, new ByIdResultSelector(labelProvider.getId()));
         }
     }
 

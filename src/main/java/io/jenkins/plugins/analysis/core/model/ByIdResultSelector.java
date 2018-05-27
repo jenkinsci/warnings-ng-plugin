@@ -27,8 +27,8 @@ public class ByIdResultSelector implements ResultSelector {
     }
 
     @Override
-    public Optional<ResultAction> get(final Run<?, ?> run) {
-        List<ResultAction> actions = run.getActions(ResultAction.class);
+    public Optional<ResultAction> get(final Run<?, ?> build) {
+        List<ResultAction> actions = build.getActions(ResultAction.class);
         for (ResultAction action : actions) {
             if (id.equals(action.getId())) {
                 return Optional.of(action);

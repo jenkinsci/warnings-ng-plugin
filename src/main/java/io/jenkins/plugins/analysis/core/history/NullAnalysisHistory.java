@@ -9,11 +9,11 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
  *
  * @author Ulli Hafner
  */
-public class NullBuildHistory extends BuildHistory {
+public class NullAnalysisHistory extends AnalysisHistory {
     /**
-     * Creates a new instance of {@link NullBuildHistory}.
+     * Creates a new instance of {@link NullAnalysisHistory}.
      */
-    public NullBuildHistory() {
+    public NullAnalysisHistory() {
         super(null, null);
     }
 

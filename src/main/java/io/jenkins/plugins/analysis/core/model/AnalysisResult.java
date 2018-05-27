@@ -206,7 +206,7 @@ public class AnalysisResult implements Serializable {
         Report newIssues;
         Report fixedIssues;
 
-        Optional<Run<?, ?>> run = referenceProvider.getAnalysisRun();
+        Optional<Run<?, ?>> run = referenceProvider.getBuild();
         if (run.isPresent()) {
             Run<?, ?> referenceRun = run.get();
             referenceJob = referenceRun.getParent().getFullName();
