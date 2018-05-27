@@ -28,6 +28,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
@@ -47,6 +48,7 @@ import hudson.model.Run;
  * @author Ulli Hafner
  */
 @ExportedBean
+@SuppressFBWarnings(value = "SE", justification = "transient fields are restored using a Jenkins callback (or are checked for null")
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength"})
 public class AnalysisResult implements Serializable {
     private static final long serialVersionUID = 1110545450292087475L;

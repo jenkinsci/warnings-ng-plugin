@@ -17,6 +17,7 @@ import hudson.model.Descriptor;
  * @author Ulli Hafner
  */
 public class RegexpFilter extends AbstractDescribableImpl<RegexpFilter> implements Serializable {
+    private static final long serialVersionUID = 1892735849628260157L;
     private final String pattern;
     private final IssuesFilter property;
 
