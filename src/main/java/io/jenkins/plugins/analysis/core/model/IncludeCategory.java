@@ -22,6 +22,7 @@ public class IncludeCategory extends IssuesFilter {
      */
     @DataBoundConstructor
     public IncludeCategory() {
+        super();
         // Required for Stapler
     }
 

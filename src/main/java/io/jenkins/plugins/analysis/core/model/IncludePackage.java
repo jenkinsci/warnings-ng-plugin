@@ -22,6 +22,7 @@ public class IncludePackage extends IssuesFilter {
      */
     @DataBoundConstructor
     public IncludePackage() {
+        super();
         // Required for Stapler
     }
 

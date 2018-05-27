@@ -22,6 +22,7 @@ public class ExcludeFile extends IssuesFilter {
      */
     @DataBoundConstructor
     public ExcludeFile() {
+        super();
         // Required for Stapler
     }
 

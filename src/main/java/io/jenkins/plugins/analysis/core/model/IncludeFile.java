@@ -22,6 +22,7 @@ public class IncludeFile extends IssuesFilter {
      */
     @DataBoundConstructor
     public IncludeFile() {
+        super();
         // Required for Stapler
     }
 

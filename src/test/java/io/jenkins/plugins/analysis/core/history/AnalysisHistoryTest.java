@@ -9,8 +9,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode;
-import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode.*;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode;
+import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.history.AnalysisHistoryTest.ExpectedResult.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -28,7 +28,7 @@ import hudson.model.Run;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("ParameterNumber")
+@SuppressWarnings({"ParameterNumber", "PMD.UnusedPrivateMethod"})
 @SuppressFBWarnings("UPM")
 class AnalysisHistoryTest {
     @ParameterizedTest(name = "{0}")
@@ -442,8 +442,8 @@ class AnalysisHistoryTest {
         private Result jobResult;
         private ExpectedResult expectedBaselineResult;
         private ExpectedResult expectedPreviousResult;
-        private QualityGateEvaluationMode qualityGateEvaluationMode = QualityGateEvaluationMode.IGNORE_QUALITY_GATE;
-        private JobResultEvaluationMode jobResultEvaluationMode = JobResultEvaluationMode.IGNORE_JOB_RESULT;
+        private QualityGateEvaluationMode qualityGateEvaluationMode = IGNORE_QUALITY_GATE;
+        private JobResultEvaluationMode jobResultEvaluationMode = IGNORE_JOB_RESULT;
 
         public BuildHistoryBuilder setQualityGateEvaluationMode(
                 final QualityGateEvaluationMode qualityGateEvaluationMode) {

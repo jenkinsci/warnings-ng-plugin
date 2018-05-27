@@ -22,6 +22,7 @@ public class ExcludeModule extends IssuesFilter {
      */
     @DataBoundConstructor
     public ExcludeModule() {
+        super();
         // Required for Stapler
     }
 

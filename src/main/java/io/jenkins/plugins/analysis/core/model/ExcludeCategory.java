@@ -22,6 +22,7 @@ public class ExcludeCategory extends IssuesFilter {
      */
     @DataBoundConstructor
     public ExcludeCategory() {
+        super();
         // Required for Stapler
     }
 

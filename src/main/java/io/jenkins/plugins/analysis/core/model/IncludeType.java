@@ -22,6 +22,7 @@ public class IncludeType extends IssuesFilter {
      */
     @DataBoundConstructor
     public IncludeType() {
+        super();
         // Required for Stapler
     }
 
