@@ -17,7 +17,6 @@ import static io.jenkins.plugins.analysis.core.model.Assertions.*;
  * @author Martin Weibel
  */
 class PropertyStatisticsTest {
-
     private static final String KEY = "key";
 
     /**
@@ -66,9 +65,7 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnPropertyString() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity());
 
         String actualProperty = statistics.getProperty();
 
@@ -76,45 +73,15 @@ class PropertyStatisticsTest {
     }
 
     /**
-     * Verifies that getProperty() doesnt returns anything if there is no property.
-     */
-    @Test
-    void shouldReturnEmptyPropertyString() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        PropertyStatistics statistics = new PropertyStatistics(issues, "", Function.identity());
-
-        String actualProperty = statistics.getProperty();
-
-        assertThat(actualProperty).isEmpty();
-    }
-
-    /**
      * Verifies that getDisplayName() returns a display name for the specified property instance when key is valid.
      */
     @Test
     void shouldReturnDisplayNameString() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity());
 
         String actualDisplayName = statistics.getDisplayName("name");
 
         assertThat(actualDisplayName).isEqualTo("name");
-    }
-
-    /**
-     * Verifies that getDisplayName() returns nothing if key is an empty string.
-     */
-    @Test
-    void shouldReturnEmptyDisplayNameString() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
-
-        String actualDisplayName = statistics.getDisplayName("");
-
-        assertThat(actualDisplayName).isEmpty();
     }
 
     /**
@@ -180,7 +147,7 @@ class PropertyStatisticsTest {
     @Test
     void shouldReturnMaxValueZero() {
         Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
+
         PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
 
         int value = statistics.getMax();
