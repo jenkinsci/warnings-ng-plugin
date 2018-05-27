@@ -18,6 +18,8 @@ import io.jenkins.plugins.analysis.core.quality.ThresholdSet.ThresholdSetBuilder
  */
 @ExportedBean
 public class QualityGate implements Serializable {
+    private static final long serialVersionUID = 7408382033276007723L;
+
     private final ThresholdSet totalUnstableThreshold;
     private final ThresholdSet totalFailedThreshold;
     private final ThresholdSet newUnstableThreshold;

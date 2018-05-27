@@ -8,6 +8,7 @@ import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.StaplerProxy;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -15,7 +16,6 @@ import io.jenkins.plugins.analysis.core.model.Summary;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
-
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
@@ -33,6 +33,7 @@ import hudson.model.Run;
  *
  * @author Ulli Hafner
  */
+@SuppressFBWarnings(value = "SE", justification = "transient field owner ist restored using a Jenkins callback")
 public class ResultAction implements HealthReportingAction, LastBuildAction, RunAction2, StaplerProxy, Serializable {
     private static final long serialVersionUID = 6683647181785654908L;
 

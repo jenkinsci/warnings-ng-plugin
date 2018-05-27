@@ -10,6 +10,8 @@ import edu.hm.hafner.analysis.Priority;
  * @author Ulli Hafner
  */
 public class HealthDescriptor implements Serializable {
+    private static final long serialVersionUID = -2509226746813680432L;
+
     private final int healthy;
     private final int unHealthy;
     private final Priority minimumPriority;

@@ -48,7 +48,7 @@ import hudson.model.Run;
  * @author Ulli Hafner
  */
 @ExportedBean
-@SuppressFBWarnings(value = "SE", justification = "transient fields are restored using a Jenkins callback (or are checked for null")
+@SuppressFBWarnings(value = "SE", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength"})
 public class AnalysisResult implements Serializable {
     private static final long serialVersionUID = 1110545450292087475L;

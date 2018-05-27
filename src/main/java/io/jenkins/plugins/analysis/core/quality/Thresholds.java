@@ -13,6 +13,8 @@ import org.kohsuke.stapler.export.ExportedBean;
 @SuppressWarnings("all")
 @ExportedBean
 public class Thresholds implements Serializable {
+    private static final long serialVersionUID = 7500037879938406050L;
+
     @Exported
     public int unstableTotalAll = 0;
     @Exported

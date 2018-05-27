@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.quality;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -441,7 +440,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
      *         the message state
      */
     private void testEvaluationMessages(List<String> messages, State state) {
-        ArrayList<String> evaluations = (ArrayList<String>) messages;
+        List<String> evaluations = messages;
         for (String message : evaluations) {
             assertThat(message).contains(state.name());
         }

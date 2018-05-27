@@ -23,6 +23,8 @@ import hudson.remoting.VirtualChannel;
  * @author Ulli Hafner
  */
 public class FilesScanner extends MasterToSlaveFileCallable<Report> {
+    private static final long serialVersionUID = -4242755766101768715L;
+
     private final String filePattern;
     private final IssueParser parser;
     private final String encoding;

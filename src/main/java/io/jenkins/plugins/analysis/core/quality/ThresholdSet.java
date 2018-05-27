@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
  * @author Michael Schmid
  */
 public class ThresholdSet implements Serializable {
+    private static final long serialVersionUID = -853511213890047492L;
+
     private final int totalThreshold;
     private final int highThreshold;
     private final int normalThreshold;

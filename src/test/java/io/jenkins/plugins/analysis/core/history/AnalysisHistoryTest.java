@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode;
 import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode.*;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode;
@@ -28,6 +29,7 @@ import hudson.model.Run;
  * @author Ullrich Hafner
  */
 @SuppressWarnings("ParameterNumber")
+@SuppressFBWarnings("UPM")
 class AnalysisHistoryTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("provideSingleResultIfQualityGateAndBuildResultIsIgnored")

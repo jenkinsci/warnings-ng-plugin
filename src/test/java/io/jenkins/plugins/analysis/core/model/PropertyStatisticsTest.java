@@ -132,9 +132,7 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnEmptyKeys() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity());
 
         Set<String> actualProperty = statistics.getKeys();
 
@@ -348,9 +346,7 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnNormalCountException() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity());
 
         assertThatThrownBy(() -> statistics.getNormalCount(KEY))
                 .isInstanceOf(NoSuchElementException.class)
@@ -392,9 +388,7 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnLowCountException() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity());
 
         assertThatThrownBy(() -> statistics.getLowCount(KEY))
                 .isInstanceOf(NoSuchElementException.class)
