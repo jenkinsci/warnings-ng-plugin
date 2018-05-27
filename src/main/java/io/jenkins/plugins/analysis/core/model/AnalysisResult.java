@@ -469,15 +469,19 @@ public class AnalysisResult implements Serializable {
             if (deserialized instanceof Report) {
                 Report result = (Report) deserialized;
 
-                LOGGER.log(Level.FINE, "Loaded data file " + dataFile + " for run " + getOwner());
-
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.log(Level.FINE, "Loaded data file " + dataFile + " for run " + getOwner());
+                }
                 return result;
             }
-            LOGGER.log(Level.SEVERE, "Failed to load " + dataFile + ", wrong type: " + deserialized);
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE, "Failed to load " + dataFile + ", wrong type: " + deserialized);
+            }
         }
         catch (IOException exception) {
-            LOGGER.log(Level.SEVERE, "Failed to load " + dataFile, exception);
-
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE, "Failed to load " + dataFile, exception);
+            }
         }
         return new Report(); // fallback
     }
