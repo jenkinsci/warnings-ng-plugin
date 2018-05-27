@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 
@@ -22,6 +23,7 @@ class HealthSeriesBuilderTest {
     private static final int HEALTH_THRESHOLD = 2;
     private static final int UNHEALTHY_THRESHOLD = 5;
 
+    @SuppressFBWarnings("UPM")
     private static Iterable<Object> testData() {
         return asList(
                 new TestArgumentsBuilder()

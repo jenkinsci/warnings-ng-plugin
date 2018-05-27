@@ -181,7 +181,9 @@ public class JobAction implements Action {
                 response.sendRedirect2(request.getContextPath() + graphType.getExampleImage());
             }
             catch (IOException exception) {
-                LOGGER.log(Level.SEVERE, "Can't create graph: " + graphType, exception);
+                if (LOGGER.isLoggable(Level.SEVERE)) {
+                    LOGGER.log(Level.SEVERE, "Can't create graph: " + graphType, exception);
+                }
             }
 
             return null;

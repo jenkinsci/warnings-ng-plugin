@@ -768,7 +768,7 @@ public class GraphConfiguration  {
      */
     public static FormValidation checkHeight(final String height) {
         try {
-            if (isValidHeight(Integer.valueOf(height))) {
+            if (isValidHeight(Integer.parseInt(height))) {
                 return FormValidation.ok();
             }
         }

@@ -53,8 +53,8 @@ public abstract class GraphConfigurationView implements ModelObject {
      *         unique key of this graph
      * @param buildHistory
      *         the build history for this job
-         * @param healthDescriptor
-         *         the health descriptor to use
+     * @param healthDescriptor
+     *         the health descriptor to use
      */
     public GraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job, final String key,
             final ResultHistory buildHistory,
@@ -137,17 +137,23 @@ public abstract class GraphConfigurationView implements ModelObject {
             }
         }
         catch (IOException exception) {
-            LOGGER.log(Level.SEVERE, "Can't save the form data: " + request, exception);
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE, "Can't save the form data: " + request, exception);
+            }
         }
         catch (ServletException exception) {
-            LOGGER.log(Level.SEVERE, "Can't process the form data: " + request, exception);
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE, "Can't process the form data: " + request, exception);
+            }
         }
         finally {
             try {
                 response.sendRedirect(owner.getAbsoluteUrl());
             }
             catch (IOException exception) {
-                LOGGER.log(Level.SEVERE, "Can't redirect", exception);
+                if (LOGGER.isLoggable(Level.SEVERE)) {
+                    LOGGER.log(Level.SEVERE, "Can't redirect", exception);
+                }
             }
         }
     }

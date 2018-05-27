@@ -45,16 +45,21 @@ public class IssueStreamITest extends ResourceTest {
 
     /** Required to enable Jenkins security settings during serialization. */
     @ClassRule
-    public static final JenkinsRule j = new JenkinsRule();
+    public static final JenkinsRule JENKINS = new JenkinsRule();
 
-    /** Ensures that a {@link Report} can be serialized and deserialized using XStream. */
-    @Test
+    /**
+     * Ensures that a {@link Report} can be serialized and deserialized using XStream.
+     *
+     * @throws IOException
+     *         if the file could not be written
+     */
+    @Test @SuppressWarnings("PMD.SystemPrintln")
     public void shouldSerializeReportWithXStream() throws IOException {
         XStream2 stream = new IssueStream().createStream();
 
         byte[] bytes = asBytes(createReport(), stream);
 
-        System.out.printf(new String(bytes));
+        System.out.print(new String(bytes));
 
         assertThatReportCanBerRestoredFrom(stream, bytes);
     }
@@ -81,13 +86,18 @@ public class IssueStreamITest extends ResourceTest {
         return report;
     }
 
-    /** Ensures that an {@link Issue} can be serialized and deserialized using XStream. */
-    @Test
+    /**
+     * Ensures that an {@link Issue} can be serialized and deserialized using XStream.
+     *
+     * @throws IOException
+     *         if the file could not be written
+     */
+    @Test @SuppressWarnings("PMD.SystemPrintln")
     public void shouldSerializeIssueWithXStream() throws IOException {
         XStream2 stream = new IssueStream().createStream();
 
         byte[] bytes = asBytes(createFilledIssue(MESSAGE), stream);
-        System.out.printf(new String(bytes));
+        System.out.print(new String(bytes));
 
         assertThatIssueCanBeRestoredFrom(bytes, stream);
     }

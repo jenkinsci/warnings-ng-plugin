@@ -5,6 +5,7 @@ import java.time.ZoneId;
 
 import org.junit.jupiter.api.Test;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 
@@ -17,14 +18,13 @@ import static org.mockito.Mockito.*;
  * @author Ullrich Hafner
  */
 class ResultTimeTest {
-
     private static final int DAY_COUNT = 2;
 
     /**
      * Verifies that the day count property is not evaluated if {@link GraphConfiguration#isDayCountDefined()} is
      * disabled.
      */
-    @Test
+    @Test @SuppressFBWarnings("RV")
     void shouldNotEvaluateDayCountIfOptionIsDeactivated() {
         LocalDate today = LocalDate.now();
         ResultTime time = new ResultTime(today);
