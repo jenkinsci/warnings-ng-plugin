@@ -61,6 +61,8 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
          *         the parsers to use to scan the input files
          */
         CompositeParser(final Collection<? extends AbstractParser> parsers) {
+            super();
+
             this.parsers.addAll(parsers);
         }
 

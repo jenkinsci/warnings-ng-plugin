@@ -18,8 +18,8 @@ import org.kohsuke.stapler.DataBoundSetter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
-import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
@@ -74,13 +74,15 @@ public class PublishIssuesStep extends Step {
      */
     @DataBoundConstructor
     public PublishIssuesStep(final Report... issues) {
+        super();
+
         if (issues == null || issues.length == 0) {
-            this.report = new Report();
+            report = new Report();
         }
         else {
-            this.report = new Report();
+            report = new Report();
             for (Report issueSet : issues) {
-                this.report.addAll(issueSet);
+                report.addAll(issueSet);
             }
         }
     }
@@ -452,7 +454,7 @@ public class PublishIssuesStep extends Step {
         }
 
         private LogHandler getLogger() throws InterruptedException {
-            String toolName = new LabelProviderFactory().create(report.getOrigin(), this.name).getName();
+            String toolName = new LabelProviderFactory().create(report.getOrigin(), name).getName();
             return new LogHandler(getTaskListener(), toolName, report);
         }
 

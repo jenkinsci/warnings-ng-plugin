@@ -89,8 +89,13 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private boolean isEnabledForFailure;
     private boolean isAggregatingResults;
 
+    /**
+     * Creates a new instance of {@link IssuesRecorder}.
+     */
     @DataBoundConstructor
     public IssuesRecorder() {
+        super();
+
         // empty constructor required for Stapler
     }
 

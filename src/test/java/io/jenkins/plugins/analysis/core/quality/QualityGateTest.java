@@ -17,7 +17,7 @@ import io.jenkins.plugins.analysis.core.quality.ThresholdSet.ThresholdSetBuilder
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the class {@link QualityGate QualityGate}. These Tests were created while developing the class QualityGate.
+ * Tests the class {@link QualityGate}.
  *
  * @author Michael Schmid
  * @author Alexandra Wenzel
@@ -439,9 +439,8 @@ class QualityGateTest extends SerializableTest<QualityGate> {
      * @param state
      *         the message state
      */
-    private void testEvaluationMessages(List<String> messages, State state) {
-        List<String> evaluations = messages;
-        for (String message : evaluations) {
+    private void testEvaluationMessages(final List<String> messages, final State state) {
+        for (String message : messages) {
             assertThat(message).contains(state.name());
         }
     }
@@ -453,7 +452,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
      * @param messages
      *         list of evaluation messages
      */
-    private void testEvaluationMessages(List<String> messages) {
+    private void testEvaluationMessages(final List<String> messages) {
         assertThat(messages).hasSize(4);
         int counter = 0;
         for (String message : messages) {
@@ -483,9 +482,9 @@ class QualityGateTest extends SerializableTest<QualityGate> {
      * @param state
      *         the state of the evaluation messages
      */
-    private void testEvaluation(ThresholdResult totalThresholdResult, ThresholdResult totalUnstableThresholdResult,
-            ThresholdResult newFailedThresholdResult, ThresholdResult newUnstableThresholdResult,
-            AnalysisResult analysisResult, State state) {
+    private void testEvaluation(final ThresholdResult totalThresholdResult, final ThresholdResult totalUnstableThresholdResult,
+            final ThresholdResult newFailedThresholdResult, final ThresholdResult newUnstableThresholdResult,
+            final AnalysisResult analysisResult, final State state) {
         QualityGateResult qualityGateResult = new QualityGateResult(totalThresholdResult, totalUnstableThresholdResult,
                 newFailedThresholdResult, newUnstableThresholdResult);
 
@@ -511,7 +510,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
      * @param status
      *         expected result of the tests
      */
-    private void testThreshold(Function<ThresholdSet, QualityGateBuilder> builder,
+    private void testThreshold(final Function<ThresholdSet, QualityGateBuilder> builder,
             final int threshold, final int totalWarningCount, final int newWarningCount, final Status status) {
         QualityGate qualityGateTotal = builder.apply(
                 new ThresholdSetBuilder().setTotalThreshold(threshold).build()).build();

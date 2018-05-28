@@ -54,7 +54,7 @@ class IssuesPublisher {
             final boolean overallResultMustBeSuccess, final Charset sourceCodeEncoding,
             final LogHandler logger) {
         this.report = report;
-        this.id = report.getOrigin();
+        id = report.getOrigin();
         this.filters = new ArrayList<>(filters);
         this.run = run;
         this.healthDescriptor = healthDescriptor;
@@ -157,6 +157,7 @@ class IssuesPublisher {
         return filtered;
     }
 
+    @SuppressWarnings("PMD.PrematureDeclaration")
     private AnalysisResult createAnalysisResult(final Report filtered, final ResultSelector selector) {
         filtered.setReference(String.valueOf(run.getNumber()));
 

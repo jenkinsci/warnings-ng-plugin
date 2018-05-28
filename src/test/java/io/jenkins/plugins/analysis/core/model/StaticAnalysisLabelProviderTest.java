@@ -55,7 +55,7 @@ class StaticAnalysisLabelProviderTest {
         assertThat(noNameLabelProvider).hasName(noNameLabelProvider.getDefaultName());
     }
 
-    private void assertThatColumnsAreValid(final JSONArray columns, int index) {
+    private void assertThatColumnsAreValid(final JSONArray columns, final int index) {
         assertThat(columns.get(0)).isEqualTo(
                 "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;MESSAGE&lt;/strong&gt;&lt;/p&gt; DESCRIPTION\"></div>");
         String actual = columns.getString(1);

@@ -297,14 +297,14 @@ class SummaryTest {
         return analysisRun;
     }
 
-    private StaticAnalysisLabelProvider createLabelProvider(final String checkstyle, final String checkStyle) {
+    private StaticAnalysisLabelProvider createLabelProvider(String checkstyle, String checkStyle) {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
         when(jenkins.getImagePath(any())).thenReturn("color");
         when(jenkins.getAbsoluteUrl(any())).thenReturn("absoluteUrl");
         return new StaticAnalysisLabelProvider(checkstyle, checkStyle, jenkins);
     }
 
-    private Pattern createWarningsLink(final String href) {
+    private Pattern createWarningsLink(String href) {
         return Pattern.compile(href, Pattern.MULTILINE | Pattern.DOTALL);
     }
 }

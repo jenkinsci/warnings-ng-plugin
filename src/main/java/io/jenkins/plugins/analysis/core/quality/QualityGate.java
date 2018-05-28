@@ -198,7 +198,7 @@ public class QualityGate implements Serializable {
             return messages;
         }
 
-        private void addMessagesForEvaluation(Collection<String> messages, final AnalysisResult result,
+        private void addMessagesForEvaluation(final Collection<String> messages, final AnalysisResult result,
                 final QualityGate thresholds) {
             addMessagesForTotalFailed(messages, result, thresholds);
             addMessagesForTotalUnstable(messages, result, thresholds);
@@ -206,7 +206,7 @@ public class QualityGate implements Serializable {
             addMessagesForNewUnstable(messages, result, thresholds);
         }
 
-        private void addMessagesForTotalFailed(Collection<String> messages, final AnalysisResult result,
+        private void addMessagesForTotalFailed(final Collection<String> messages, final AnalysisResult result,
                 final QualityGate thresholds) {
             if (totalFailed.isTotalReached()) {
                 messages.add(String.format("FAILURE -> Total number of issues: %d - Quality Gate: %d",
@@ -227,7 +227,7 @@ public class QualityGate implements Serializable {
             }
         }
 
-        private void addMessagesForTotalUnstable(Collection<String> messages, final AnalysisResult result,
+        private void addMessagesForTotalUnstable(final Collection<String> messages, final AnalysisResult result,
                 final QualityGate thresholds) {
             if (totalUnstable.isTotalReached()) {
                 messages.add(String.format("UNSTABLE -> Total number of issues: %d - Quality Gate: %d",
@@ -248,7 +248,7 @@ public class QualityGate implements Serializable {
             }
         }
 
-        private void addMessagesForNewFailed(Collection<String> messages, final AnalysisResult result,
+        private void addMessagesForNewFailed(final Collection<String> messages, final AnalysisResult result,
                 final QualityGate thresholds) {
             if (newFailed.isTotalReached()) {
                 messages.add(String.format("FAILURE -> Number of new issues: %d - Quality Gate: %d",
@@ -268,7 +268,7 @@ public class QualityGate implements Serializable {
             }
         }
 
-        private void addMessagesForNewUnstable(Collection<String> messages, final AnalysisResult result,
+        private void addMessagesForNewUnstable(final Collection<String> messages, final AnalysisResult result,
                 final QualityGate thresholds) {
             if (newUnstable.isTotalReached()) {
                 messages.add(String.format("UNSTABLE -> New number of new issues: %d - Quality Gate: %d",

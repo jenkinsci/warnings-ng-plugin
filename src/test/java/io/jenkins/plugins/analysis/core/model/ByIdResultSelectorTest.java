@@ -99,13 +99,13 @@ class ByIdResultSelectorTest {
         assertThat(selector.toString()).isEqualTo("io.jenkins.plugins.analysis.core.views.ResultAction with ID 1");
     }
 
-    private Run<?, ?> createRunStub(List<ResultAction> resultActions) {
+    private Run<?, ?> createRunStub(final List<ResultAction> resultActions) {
         Run<?, ?> run = mock(Run.class);
         when(run.getActions(ResultAction.class)).thenReturn(resultActions);
         return run;
     }
 
-    private ResultAction createResultActionStub(String mockedIdValue) {
+    private ResultAction createResultActionStub(final String mockedIdValue) {
         ResultAction resultAction = mock(ResultAction.class);
         when(resultAction.getId()).thenReturn(mockedIdValue);
         return resultAction;

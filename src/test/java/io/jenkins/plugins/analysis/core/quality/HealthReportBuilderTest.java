@@ -16,6 +16,7 @@ import hudson.model.HealthReport;
  *
  * @author Alexandra Wenzel
  */
+@SuppressWarnings("ALL")
 class HealthReportBuilderTest {
     /** Description message. */
     private static final String DESCRIPTION_MESSAGE = "Static Analysis: ";

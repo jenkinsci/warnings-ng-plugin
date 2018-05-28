@@ -10,9 +10,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode;
-import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode.*;
-import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode.*;
-import static io.jenkins.plugins.analysis.core.history.AnalysisHistoryTest.ExpectedResult.*;
+import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode.*; // NOPMD
+import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode.*; // NOPMD
+import static io.jenkins.plugins.analysis.core.history.AnalysisHistoryTest.ExpectedResult.*; // NOPMD
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.Status;
 import io.jenkins.plugins.analysis.core.views.ResultAction;

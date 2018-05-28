@@ -119,7 +119,7 @@ class IssuesScanner {
             logger.log("Sleeping for 5 seconds due to JENKINS-32191...");
             Thread.sleep(5000);
         }
-        catch (InterruptedException ignored) {
+        catch (final InterruptedException ignored) {
             // ignore
         }
     }
@@ -161,10 +161,12 @@ class IssuesScanner {
     private static class ReportPostProcessor extends MasterToSlaveFileCallable<Report> {
         private static final long serialVersionUID = -9138045560271783096L;
 
-        private Report report;
-        private String sourceCodeEncoding;
+        private final Report report;
+        private final String sourceCodeEncoding;
 
         ReportPostProcessor(final Report report, final String sourceCodeEncoding) {
+            super();
+
             this.report = report;
             this.sourceCodeEncoding = sourceCodeEncoding;
         }

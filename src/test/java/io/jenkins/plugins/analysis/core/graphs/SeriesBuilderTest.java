@@ -10,7 +10,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 
@@ -191,7 +190,7 @@ class SeriesBuilderTest {
         return time;
     }
 
-    private static List<Integer> series(Integer... values) {
+    private static List<Integer> series(final Integer... values) {
         return asList(values);
     }
 

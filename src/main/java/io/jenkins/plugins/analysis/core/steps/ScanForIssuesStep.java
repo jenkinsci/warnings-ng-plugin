@@ -37,8 +37,13 @@ public class ScanForIssuesStep extends Step {
     private String pattern;
     private StaticAnalysisTool tool;
 
+    /**
+     * Creates a new instance of {@link ScanForIssuesStep}.
+     */
     @DataBoundConstructor
     public ScanForIssuesStep() {
+        super();
+
         // empty constructor required for Stapler
     }
 

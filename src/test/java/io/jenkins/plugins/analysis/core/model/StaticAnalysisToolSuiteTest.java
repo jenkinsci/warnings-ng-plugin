@@ -74,11 +74,15 @@ class StaticAnalysisToolSuiteTest {
         return issues;
     }
 
+    /**
+     * {@link StaticAnalysisToolSuite} to be used in the tests.
+     */
     private class TestStaticAnalysisToolSuite extends StaticAnalysisToolSuite {
         private final Collection<? extends AbstractParser> parsers;
 
-        @SafeVarargs
-        TestStaticAnalysisToolSuite(AbstractParser... parsers) {
+        TestStaticAnalysisToolSuite(final AbstractParser... parsers) {
+            super();
+
             this.parsers = asList(parsers);
         }
 

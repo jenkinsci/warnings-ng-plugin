@@ -210,7 +210,9 @@ public abstract class GraphConfigurationView implements ModelObject {
             response.sendRedirect2(request.getContextPath() + graph.getExampleImage());
         }
         catch (IOException exception) {
-            LOGGER.log(Level.SEVERE, "Can't create graph: " + request, exception);
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE, "Can't create graph: " + request, exception);
+            }
         }
 
         return null;

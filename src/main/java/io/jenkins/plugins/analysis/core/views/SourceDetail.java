@@ -10,8 +10,8 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import de.java2html.converter.JavaSource2HTMLConverter;
 import de.java2html.javasource.JavaSource;
@@ -113,6 +113,7 @@ public class SourceDetail implements ModelObject {
      *         the source code of the whole file as rendered HTML string
      */
     // CHECKSTYLE:CONSTANTS-OFF
+    @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private void splitSourceFile(final String sourceFile) {
         StringBuilder output = new StringBuilder(sourceFile.length());
 

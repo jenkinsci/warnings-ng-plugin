@@ -76,6 +76,8 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
          *         the unique ID of the tool
          */
         protected StaticAnalysisToolDescriptor(final String id) {
+            super();
+
             this.id = id;
         }
 

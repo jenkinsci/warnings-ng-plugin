@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.sf.json.JSONObject;
 
 import hudson.model.AbstractProject;
@@ -42,7 +43,7 @@ public class GraphConfiguration  {
     }
 
     /** Separator of cookie values. */
-    protected static final String SEPARATOR = "!";
+    private static final String SEPARATOR = "!";
 
     /** The height of the trend graph. */
     private int height;
@@ -815,6 +816,7 @@ public class GraphConfiguration  {
         return parameterValue != null ? parameterValue.equals(that.parameterValue) : that.parameterValue == null;
     }
 
+    @SuppressFBWarnings("ES")
     @SuppressWarnings("all")
     @Override
     public int hashCode() {

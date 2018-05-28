@@ -172,7 +172,7 @@ public class AnalysisHistory implements ResultHistory, ReferenceProvider {
             Optional<ResultAction> action = selector.get(run);
             if (action.isPresent()) {
                 ResultAction resultAction = action.get();
-                if (hasCorrectJobResult(resultAction, run, jobResultEvaluationMode)
+                if (hasCorrectJobResult(run, jobResultEvaluationMode)
                         && hasCorrectQualityGateStatus(resultAction, qualityGateEvaluationMode)) {
                     return Optional.of(run);
                 }
@@ -186,7 +186,7 @@ public class AnalysisHistory implements ResultHistory, ReferenceProvider {
         return action.isSuccessful() || qualityGateEvaluationMode == IGNORE_QUALITY_GATE;
     }
 
-    private static boolean hasCorrectJobResult(final ResultAction action, final Run<?, ?> run,
+    private static boolean hasCorrectJobResult(final Run<?, ?> run,
             final JobResultEvaluationMode jobResultEvaluationMode) {
         if (jobResultEvaluationMode == JOB_MUST_BE_SUCCESSFUL) {
             return run.getResult() == Result.SUCCESS;

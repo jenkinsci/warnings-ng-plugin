@@ -16,7 +16,7 @@ import static io.jenkins.plugins.analysis.core.model.Assertions.*;
  * @author Frank Christian Geyer
  * @author Deniz Mardin
  */
-abstract class IssuesFilterTestUtil {
+class IssuesFilterTestUtil {
     static final String EMPTY_PATTERN = "";
 
     static final Issue ISSUE1 = new IssueBuilder()
@@ -99,5 +99,4 @@ abstract class IssuesFilterTestUtil {
         }
         return issueFilterBuilder.build();
     }
-
 }
