@@ -22,6 +22,8 @@ public class HealthSeriesBuilder extends SeriesBuilder {
      * @param healthDescriptor the health descriptor to determine the colors of the graph
      */
     public HealthSeriesBuilder(final HealthDescriptor healthDescriptor) {
+        super();
+
         this.healthDescriptor = healthDescriptor;
     }
 

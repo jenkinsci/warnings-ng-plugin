@@ -704,11 +704,12 @@ public class GraphConfiguration  {
      *
      * @return <code>true</code> if this instance is initialized with its default values.
      */
-    // CHECKSTYLE:OFF
+    // CHECKSTYLE:OFF Reference comparison is ok in this case
+    @SuppressWarnings("all")
     public boolean isDefault() {
         return width == DEFAULT_WIDTH
                 && height == DEFAULT_HEIGHT
-                && graphType.getId() == createDefaultGraph().getId() // NOPMD
+                && graphType.getId() == createDefaultGraph().getId()
                 && buildCount == DEFAULT_BUILD_COUNT
                 && dayCount == DEFAULT_DAY_COUNT
                 && useBuildDate == DEFAULT_USE_BUILD_DATE
@@ -778,6 +779,7 @@ public class GraphConfiguration  {
         return FormValidation.error("Invalid height value: " + height);
     }
 
+    @SuppressWarnings("all")
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -813,6 +815,7 @@ public class GraphConfiguration  {
         return parameterValue != null ? parameterValue.equals(that.parameterValue) : that.parameterValue == null;
     }
 
+    @SuppressWarnings("all")
     @Override
     public int hashCode() {
         int result = height;

@@ -24,6 +24,7 @@ class HealthSeriesBuilderTest {
     private static final int UNHEALTHY_THRESHOLD = 5;
 
     @SuppressFBWarnings("UPM")
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private static Iterable<Object> testData() {
         return asList(
                 new TestArgumentsBuilder()

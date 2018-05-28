@@ -59,7 +59,7 @@ public class JenkinsFacade implements Serializable {
      * @return the discovered instances, might be an empty list
      */
     public <T extends Describable<T>, D extends Descriptor<T>> DescriptorExtensionList<T, D> getDescriptorsFor(
-            Class<T> descriptorType) {
+            final Class<T> descriptorType) {
         return getJenkins().getDescriptorList(descriptorType);
     }
 

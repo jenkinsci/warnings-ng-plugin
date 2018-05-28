@@ -9,6 +9,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 
@@ -45,6 +47,8 @@ class SeriesBuilderTest {
     private static final List<Integer> FORTH_SERIES = series(9, 10, 11);
     private static final List<Integer> AVERAGE_SECOND_AND_THIRD_SERIES = series(4, 5, 6);
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    @SuppressFBWarnings("UPM")
     private static Iterable<Object> createDataSetData() {
         return asList(
                 new TestArgumentsBuilder()
@@ -139,7 +143,7 @@ class SeriesBuilderTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("createDataSetData")
-    final void testCreateDataSet(final String testName,
+    void shouldCreateDataSet(@SuppressWarnings("unused") final String testName,
             final ResultTime time, final GraphConfiguration config,
             final List<AnalysisResult> runs, final List<List<Integer>> expected) {
         SeriesBuilder seriesBuilder = new TestSeriesBuilder(time);
