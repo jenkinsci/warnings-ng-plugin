@@ -12,8 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static java.util.Arrays.*;
 import static org.mockito.Mockito.*;
 
@@ -142,9 +141,9 @@ class SeriesBuilderTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("createDataSetData")
-    void shouldCreateDataSet(@SuppressWarnings("unused") final String testName,
-            final ResultTime time, final GraphConfiguration config,
-            final List<AnalysisResult> runs, final List<List<Integer>> expected) {
+    void shouldCreateDataSet(@SuppressWarnings("unused") String testName,
+            ResultTime time, GraphConfiguration config,
+            List<AnalysisResult> runs, List<List<Integer>> expected) {
         SeriesBuilder seriesBuilder = new TestSeriesBuilder(time);
 
         CategoryDataset result = seriesBuilder.createDataSet(config, runs);
@@ -152,7 +151,7 @@ class SeriesBuilderTest {
         assertThat(result).containsExactly(expected);
     }
 
-    private static GraphConfiguration createWithBuildCount(final int count) {
+    private static GraphConfiguration createWithBuildCount(int count) {
         GraphConfiguration config = createConfig();
         when(config.isBuildCountDefined()).thenReturn(true);
         when(config.getBuildCount()).thenReturn(count);
@@ -170,7 +169,7 @@ class SeriesBuilderTest {
     }
 
 
-    private static AnalysisResult createRun(final int buildNo, final DateTime buildTime) {
+    private static AnalysisResult createRun(int buildNo, DateTime buildTime) {
         AnalysisResult run = mock(AnalysisResult.class);
 
         AnalysisBuild build = mock(AnalysisBuild.class);
@@ -183,14 +182,14 @@ class SeriesBuilderTest {
         return run;
     }
 
-    private static ResultTime resultTime(final Boolean value, final Boolean... continuations) {
+    private static ResultTime resultTime(Boolean value, Boolean... continuations) {
         ResultTime time = mock(ResultTime.class);
         when(time.isResultTooOld(any(GraphConfiguration.class), any(AnalysisResult.class)))
                 .thenReturn(value, continuations);
         return time;
     }
 
-    private static List<Integer> series(final Integer... values) {
+    private static List<Integer> series(Integer... values) {
         return asList(values);
     }
 
@@ -199,15 +198,14 @@ class SeriesBuilderTest {
      * Dumb test implementation returning integers starting with 1 to n as series, three at a time.
      */
     private static class TestSeriesBuilder extends SeriesBuilder {
-
         private int count;
 
-        TestSeriesBuilder(final ResultTime resultTime) {
+        TestSeriesBuilder(ResultTime resultTime) {
             super(resultTime);
         }
 
         @Override
-        protected List<Integer> computeSeries(final AnalysisResult current) {
+        protected List<Integer> computeSeries(AnalysisResult current) {
             return asList(count++, count++, count++);
 
         }
@@ -233,7 +231,7 @@ class SeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setConfig(final GraphConfiguration config) {
+        TestArgumentsBuilder setConfig(GraphConfiguration config) {
             this.config = config;
 
             return this;
@@ -248,7 +246,7 @@ class SeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setTestName(final String name) {
+        TestArgumentsBuilder setTestName(String name) {
             testName = name;
 
             return this;
@@ -262,7 +260,7 @@ class SeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setTime(final ResultTime time) {
+        TestArgumentsBuilder setTime(ResultTime time) {
             this.time = time;
 
             return this;
@@ -276,7 +274,7 @@ class SeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setRuns(final AnalysisResult... runs) {
+        TestArgumentsBuilder setRuns(AnalysisResult... runs) {
             this.runs = asList(runs);
 
             return this;
@@ -291,7 +289,7 @@ class SeriesBuilderTest {
          *
          * @return this
          */
-        public final TestArgumentsBuilder setExpected(final List<Integer>... series) {
+        public final TestArgumentsBuilder setExpected(List<Integer>... series) {
             this.series = asList(series);
 
             return this;

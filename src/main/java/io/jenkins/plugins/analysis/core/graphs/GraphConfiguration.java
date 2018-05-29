@@ -90,7 +90,7 @@ public class GraphConfiguration  {
      * @param availableGraphs
      *            the available build graphs
      */
-    public GraphConfiguration(final Collection<? extends BuildResultGraph> availableGraphs) {
+    public GraphConfiguration(Collection<? extends BuildResultGraph> availableGraphs) {
         this.availableGraphs = ImmutableList.copyOf(availableGraphs);
         for (BuildResultGraph graph : availableGraphs) {
             graphId2Graph.put(graph.getId(), graph);
@@ -103,7 +103,7 @@ public class GraphConfiguration  {
      * @param availableGraphs
      *            the available build graphs
      */
-    public GraphConfiguration(final BuildResultGraph... availableGraphs) {
+    public GraphConfiguration(BuildResultGraph... availableGraphs) {
         this(Arrays.asList(availableGraphs));
     }
 
@@ -113,7 +113,7 @@ public class GraphConfiguration  {
      * @param graph
      *            the graph to use
      */
-    public GraphConfiguration(final BuildResultGraph graph) {
+    public GraphConfiguration(BuildResultGraph graph) {
         reset();
 
         availableGraphs = Lists.newArrayList();
@@ -133,8 +133,8 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      * @see #serializeToString()
      */
-    public boolean initializeFrom(final String value) {
-        return resetIfInvalid(intializeFromStringValue(value));
+    public boolean initializeFrom(String value) {
+        return resetIfInvalid(initializeFromStringValue(value));
     }
 
     /**
@@ -147,7 +147,7 @@ public class GraphConfiguration  {
      * @return <code>true</code> is the initialization was successful,
      *         <code>false</code> otherwise
      */
-    @SuppressWarnings("hiding")
+    @SuppressWarnings("hiddenfield")
     public boolean initializeFrom(final int width, final int height) { // NOCHECKSTYLE
         return initializeFrom(width, height, 0);
     }
@@ -164,8 +164,8 @@ public class GraphConfiguration  {
      * @return <code>true</code> is the initialization was successful,
      *         <code>false</code> otherwise
      */
-    @SuppressWarnings("hiding")
-    public boolean initializeFrom(final int width, final int height, final int dayCount) { // NOCHECKSTYLE
+    @SuppressWarnings("hiddenfield")
+    private boolean initializeFrom(final int width, final int height, final int dayCount) {
         return initializeFrom(width, height, dayCount, DEFAULT_NAME, DEFAULT_VALUE);
     }
 
@@ -186,8 +186,8 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      * @since 1.73
      */
-    @SuppressWarnings("hiding")
-    public boolean initializeFrom(final int width, final int height, final int dayCount, final String parameterName, final String parameterValue) { // NOCHECKSTYLE
+    @SuppressWarnings("hiddenfield")
+    public boolean initializeFrom(final int width, final int height, final int dayCount, final String parameterName, final String parameterValue) {
         this.width = width;
         this.height = height;
         this.dayCount = dayCount;
@@ -200,66 +200,13 @@ public class GraphConfiguration  {
     }
 
     /**
-     * Initializes this configuration with the specified values.
-     *
-     * @param width
-     *            the width of the graph
-     * @param height
-     *            the height of the graph
-     * @param dayCountString
-     *            the number of days to build the graph for
-     * @return <code>true</code> is the initialization was successful,
-     *         <code>false</code> otherwise
-     */
-    @SuppressWarnings("hiding")
-    public boolean initializeFrom(final String width, final String height, final String dayCountString) { // NOCHECKSTYLE
-        return initializeFrom(width, height, dayCountString, DEFAULT_NAME, DEFAULT_VALUE);
-    }
-
-    /**
-     * Initializes this configuration with the specified values.
-     *
-     * @param width
-     *            the width of the graph
-     * @param height
-     *            the height of the graph
-     * @param dayCountString
-     *            the number of days to build the graph for
-     * @param parameterName
-     *            name of parameter by which builds will be filtered for the graph
-     * @param parameterValue
-     *            value of parameter by which builds will be filtered for the graph
-     * @return <code>true</code> is the initialization was successful,
-     *         <code>false</code> otherwise
-     * @since 1.73
-     */
-    @SuppressWarnings("hiding")
-    public boolean initializeFrom(final String width, final String height, final String dayCountString, final String parameterName, final String parameterValue) { // NOCHECKSTYLE
-        try {
-            if (StringUtils.isBlank(dayCountString)) {
-                dayCount = 0;
-            }
-            else {
-                dayCount = Integer.parseInt(dayCountString);
-            }
-
-            return initializeFrom(Integer.parseInt(width), Integer.parseInt(height), dayCount, parameterName, parameterValue);
-        }
-        catch (NumberFormatException exception) {
-            reset();
-
-            return false;
-        }
-    }
-
-    /**
      * Resets this configuration if the result is false.
      *
      * @param isSuccessful
      *            the result of the conversion
      * @return the result
      */
-    private boolean resetIfInvalid(final boolean isSuccessful) {
+    private boolean resetIfInvalid(boolean isSuccessful) {
         if (!isSuccessful) {
             reset();
         }
@@ -275,7 +222,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      */
     // CHECKSTYLE:CONSTANTS-OFF
-    private boolean intializeFromStringValue(final String value) {
+    private boolean initializeFromStringValue(final String value) {
         if (StringUtils.isBlank(value)) {
             return false;
         }
@@ -561,9 +508,9 @@ public class GraphConfiguration  {
      * @since 1.73
      */
     //CHECKSTYLE:OFF
-    protected static boolean isValid(final int newWidth, final int newHeight,
-            final int newBuildCount, final int newDayCount, final BuildResultGraph newGraphType,
-            final String newParameterName, final String newParameterValue) {
+    protected static boolean isValid(int newWidth, int newHeight,
+            int newBuildCount, int newDayCount, BuildResultGraph newGraphType,
+            String newParameterName, String newParameterValue) {
         return isValidWidth(newWidth)
                 && isValidHeight(newHeight)
                 && newGraphType != null
@@ -580,7 +527,7 @@ public class GraphConfiguration  {
      *            the new build count
      * @return <code>true</code> if the build count is valid.
      */
-    protected static boolean isValidBuildCount(final int newBuildCount) {
+    protected static boolean isValidBuildCount(int newBuildCount) {
         return newBuildCount == 0 || newBuildCount > 1;
     }
 
@@ -592,7 +539,7 @@ public class GraphConfiguration  {
      * @return <code>true</code> if the width is valid, <code>false</code>
      *         otherwise
      */
-    protected static boolean isValidWidth(final int newWidth) {
+    protected static boolean isValidWidth(int newWidth) {
         return newWidth > MINIMUM_SIZE && newWidth < MAXIMUM_SIZE;
     }
 
@@ -604,7 +551,7 @@ public class GraphConfiguration  {
      * @return <code>true</code> if the width is valid, <code>false</code>
      *         otherwise
      */
-    protected static boolean isValidHeight(final int newHeight) {
+    protected static boolean isValidHeight(int newHeight) {
         return newHeight > MINIMUM_SIZE && newHeight  < MAXIMUM_SIZE;
     }
 
@@ -752,7 +699,7 @@ public class GraphConfiguration  {
      * @return the graph with the specified ID. If the graph is not found, then
      *         {@link #createDefaultGraph()} is returned.
      */
-    public BuildResultGraph getGraph(final String graphId) {
+    public BuildResultGraph getGraph(String graphId) {
         if (graphId2Graph.containsKey(graphId)) {
             return graphId2Graph.get(graphId);
         }
@@ -768,7 +715,7 @@ public class GraphConfiguration  {
      *            the height
      * @return the form validation
      */
-    public static FormValidation checkHeight(final String height) {
+    public static FormValidation checkHeight(String height) {
         try {
             if (isValidHeight(Integer.parseInt(height))) {
                 return FormValidation.ok();
@@ -831,7 +778,7 @@ public class GraphConfiguration  {
         return result;
     }
 
-    public void setToolTipProvider(final ToolTipProvider toolTipProvider) {
+    public void setToolTipProvider(ToolTipProvider toolTipProvider) {
         this.toolTipProvider = toolTipProvider;
     }
 
