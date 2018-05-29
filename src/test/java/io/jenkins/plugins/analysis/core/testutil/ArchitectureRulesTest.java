@@ -95,10 +95,13 @@ public class ArchitectureRulesTest {
         return new ClassFileImporter().importPackages("io.jenkins.plugins.analysis");
     }
 
-
     /**
      * Matches if a call from outside the defining class uses a method or constructor annotated with
-     * {@link VisibleForTesting}.
+     * {@link VisibleForTesting}. There are two exceptions:
+     * <ul>
+     *     <li>The method is called on the same class</li>
+     *     <li>The method is called in a method also annotated with {@link VisibleForTesting}</li>
+     * </ul>
      */
     private static class AccessRestrictedToTests extends DescribedPredicate<JavaCall<?>> {
         AccessRestrictedToTests() {
