@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
@@ -200,6 +201,7 @@ class SeriesBuilderTest {
     private static class TestSeriesBuilder extends SeriesBuilder {
         private int count;
 
+        @VisibleForTesting
         TestSeriesBuilder(ResultTime resultTime) {
             super(resultTime);
         }

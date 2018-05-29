@@ -3,8 +3,7 @@ package io.jenkins.plugins.analysis.core.graphs;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.annotations.VisibleForTesting;
-
+import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 
@@ -21,21 +20,21 @@ public class HealthSeriesBuilder extends SeriesBuilder {
      *
      * @param healthDescriptor the health descriptor to determine the colors of the graph
      */
-    public HealthSeriesBuilder(final HealthDescriptor healthDescriptor) {
+    public HealthSeriesBuilder(HealthDescriptor healthDescriptor) {
         super();
 
         this.healthDescriptor = healthDescriptor;
     }
 
     @VisibleForTesting
-    HealthSeriesBuilder(final HealthDescriptor healthDescriptor, final ResultTime resultTime) {
+    HealthSeriesBuilder(HealthDescriptor healthDescriptor, ResultTime resultTime) {
         super(resultTime);
 
         this.healthDescriptor = healthDescriptor;
     }
 
     @Override
-    protected List<Integer> computeSeries(final AnalysisResult current) {
+    protected List<Integer> computeSeries(AnalysisResult current) {
         List<Integer> series = new ArrayList<>();
         int remainder = current.getTotalSize();
 
