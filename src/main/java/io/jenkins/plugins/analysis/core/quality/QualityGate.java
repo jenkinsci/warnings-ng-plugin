@@ -31,7 +31,7 @@ public class QualityGate implements Serializable {
      * @param thresholds
      *         the thresholds to apply
      */
-    public QualityGate(Thresholds thresholds) {
+    public QualityGate(final Thresholds thresholds) {
         ThresholdSetBuilder builder = new ThresholdSetBuilder();
 
         builder.setTotalThreshold(thresholds.failedTotalAll);
@@ -59,8 +59,8 @@ public class QualityGate implements Serializable {
         newUnstableThreshold = builder.build();
     }
 
-    private QualityGate(ThresholdSet totalFailedThreshold, ThresholdSet totalUnstableThreshold,
-            ThresholdSet newFailedThreshold, ThresholdSet newUnstableThreshold) {
+    private QualityGate(final ThresholdSet totalFailedThreshold, final ThresholdSet totalUnstableThreshold,
+            final ThresholdSet newFailedThreshold, final ThresholdSet newUnstableThreshold) {
         this.totalFailedThreshold = totalFailedThreshold;
         this.totalUnstableThreshold = totalUnstableThreshold;
         this.newFailedThreshold = newFailedThreshold;
@@ -91,7 +91,7 @@ public class QualityGate implements Serializable {
      *
      * @return result of the evaluation, expressed by a build state
      */
-    public QualityGateResult evaluate(AnalysisResult run) {
+    public QualityGateResult evaluate(final AnalysisResult run) {
         return new QualityGateResult(
                 getTotalFailedThreshold().evaluate(
                         run.getTotalSize(),
@@ -116,7 +116,7 @@ public class QualityGate implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -158,9 +158,9 @@ public class QualityGate implements Serializable {
         private final ThresholdResult newFailed;
         private final ThresholdResult newUnstable;
 
-        QualityGateResult(ThresholdResult totalFailed,
-                ThresholdResult totalUnstable, ThresholdResult newFailed,
-                ThresholdResult newUnstable) {
+        QualityGateResult(final ThresholdResult totalFailed,
+                final ThresholdResult totalUnstable, final ThresholdResult newFailed,
+                final ThresholdResult newUnstable) {
             this.totalFailed = totalFailed;
             this.totalUnstable = totalUnstable;
             this.newFailed = newFailed;
@@ -192,22 +192,22 @@ public class QualityGate implements Serializable {
          *
          * @return a list of messages of all failed and unstable issues
          */
-        public List<String> getEvaluations(AnalysisResult result, QualityGate thresholds) {
+        public List<String> getEvaluations(final AnalysisResult result, final QualityGate thresholds) {
             List<String> messages = new ArrayList<>();
             addMessagesForEvaluation(messages, result, thresholds);
             return messages;
         }
 
-        private void addMessagesForEvaluation(Collection<String> messages, AnalysisResult result,
-                QualityGate thresholds) {
+        private void addMessagesForEvaluation(final Collection<String> messages, final AnalysisResult result,
+                final QualityGate thresholds) {
             addMessagesForTotalFailed(messages, result, thresholds);
             addMessagesForTotalUnstable(messages, result, thresholds);
             addMessagesForNewFailed(messages, result, thresholds);
             addMessagesForNewUnstable(messages, result, thresholds);
         }
 
-        private void addMessagesForTotalFailed(Collection<String> messages, AnalysisResult result,
-                QualityGate thresholds) {
+        private void addMessagesForTotalFailed(final Collection<String> messages, final AnalysisResult result,
+                final QualityGate thresholds) {
             if (totalFailed.isTotalReached()) {
                 messages.add(String.format("FAILURE -> Total number of issues: %d - Quality Gate: %d",
                         result.getTotalSize(), thresholds.getTotalFailedThreshold().getTotalThreshold()));
@@ -227,8 +227,8 @@ public class QualityGate implements Serializable {
             }
         }
 
-        private void addMessagesForTotalUnstable(Collection<String> messages, AnalysisResult result,
-                QualityGate thresholds) {
+        private void addMessagesForTotalUnstable(final Collection<String> messages, final AnalysisResult result,
+                final QualityGate thresholds) {
             if (totalUnstable.isTotalReached()) {
                 messages.add(String.format("UNSTABLE -> Total number of issues: %d - Quality Gate: %d",
                         result.getTotalSize(), thresholds.getTotalUnstableThreshold().getTotalThreshold()));
@@ -248,8 +248,8 @@ public class QualityGate implements Serializable {
             }
         }
 
-        private void addMessagesForNewFailed(Collection<String> messages, AnalysisResult result,
-                QualityGate thresholds) {
+        private void addMessagesForNewFailed(final Collection<String> messages, final AnalysisResult result,
+                final QualityGate thresholds) {
             if (newFailed.isTotalReached()) {
                 messages.add(String.format("FAILURE -> Number of new issues: %d - Quality Gate: %d",
                         result.getNewSize(), thresholds.getNewFailedThreshold().getTotalThreshold()));
@@ -268,8 +268,8 @@ public class QualityGate implements Serializable {
             }
         }
 
-        private void addMessagesForNewUnstable(Collection<String> messages, AnalysisResult result,
-                QualityGate thresholds) {
+        private void addMessagesForNewUnstable(final Collection<String> messages, final AnalysisResult result,
+                final QualityGate thresholds) {
             if (newUnstable.isTotalReached()) {
                 messages.add(String.format("UNSTABLE -> New number of new issues: %d - Quality Gate: %d",
                         result.getNewSize(), thresholds.getNewUnstableThreshold().getTotalThreshold()));
@@ -317,7 +317,7 @@ public class QualityGate implements Serializable {
          *
          * @return a quality gate builder with total unstable threshold
          */
-        public QualityGateBuilder setTotalUnstableThreshold(ThresholdSet totalUnstableThreshold) {
+        public QualityGateBuilder setTotalUnstableThreshold(final ThresholdSet totalUnstableThreshold) {
             this.totalUnstableThreshold = totalUnstableThreshold;
             return this;
         }
@@ -330,7 +330,7 @@ public class QualityGate implements Serializable {
          *
          * @return a quality gate builder with total failed threshold
          */
-        public QualityGateBuilder setTotalFailedThreshold(ThresholdSet totalFailedThreshold) {
+        public QualityGateBuilder setTotalFailedThreshold(final ThresholdSet totalFailedThreshold) {
             this.totalFailedThreshold = totalFailedThreshold;
             return this;
         }
@@ -343,7 +343,7 @@ public class QualityGate implements Serializable {
          *
          * @return a quality gate builder with new unstable threshold
          */
-        public QualityGateBuilder setNewUnstableThreshold(ThresholdSet newUnstableThreshold) {
+        public QualityGateBuilder setNewUnstableThreshold(final ThresholdSet newUnstableThreshold) {
             this.newUnstableThreshold = newUnstableThreshold;
             return this;
         }
@@ -356,7 +356,7 @@ public class QualityGate implements Serializable {
          *
          * @return a quality gate builder with new failed threshold
          */
-        public QualityGateBuilder setNewFailedThreshold(ThresholdSet newFailedThreshold) {
+        public QualityGateBuilder setNewFailedThreshold(final ThresholdSet newFailedThreshold) {
             this.newFailedThreshold = newFailedThreshold;
             return this;
         }

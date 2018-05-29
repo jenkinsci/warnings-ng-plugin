@@ -42,7 +42,7 @@ public abstract class SeriesBuilder {
     }
 
     @VisibleForTesting
-    SeriesBuilder(ResultTime resultTime) {
+    SeriesBuilder(final ResultTime resultTime) {
         this.resultTime = resultTime;
     }
 
@@ -59,8 +59,8 @@ public abstract class SeriesBuilder {
      *
      * @return the created data set
      */
-    public CategoryDataset createDataSet(GraphConfiguration configuration,
-            Iterable<? extends AnalysisResult> results) {
+    public CategoryDataset createDataSet(final GraphConfiguration configuration,
+            final Iterable<? extends AnalysisResult> results) {
         CategoryDataset dataSet;
         if (configuration.useBuildDateAsDomain()) {
             Map<LocalDate, List<Integer>> averagePerDay = averageByDate(createSeriesPerBuild(configuration, results));
@@ -74,7 +74,7 @@ public abstract class SeriesBuilder {
 
     @SuppressWarnings("rawtypes")
     private Map<AnalysisBuild, List<Integer>> createSeriesPerBuild(
-            GraphConfiguration configuration, Iterable<? extends AnalysisResult> results) {
+            final GraphConfiguration configuration, final Iterable<? extends AnalysisResult> results) {
         int buildCount = 0;
         Map<AnalysisBuild, List<Integer>> valuesPerBuildNumber = Maps.newHashMap();
         for (AnalysisResult current : results) {
@@ -111,7 +111,7 @@ public abstract class SeriesBuilder {
      *
      * @return a data set
      */
-    private CategoryDataset createDataSetPerBuildNumber(Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
+    private CategoryDataset createDataSetPerBuildNumber(final Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
         DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<>();
         List<AnalysisBuild> builds = Lists.newArrayList(valuesPerBuild.keySet());
         Collections.sort(builds);
@@ -135,7 +135,7 @@ public abstract class SeriesBuilder {
      * @return a data set
      */
     @SuppressWarnings("unchecked")
-    private CategoryDataset createDataSetPerDay(Map<LocalDate, List<Integer>> averagePerDay) {
+    private CategoryDataset createDataSetPerDay(final Map<LocalDate, List<Integer>> averagePerDay) {
         List<LocalDate> buildDates = Lists.newArrayList(averagePerDay.keySet());
         Collections.sort(buildDates);
 
@@ -159,7 +159,7 @@ public abstract class SeriesBuilder {
      * @return the values as one series per day (average)
      */
     private Map<LocalDate, List<Integer>> createSeriesPerDay(
-            FastListMultimap<LocalDate, List<Integer>> multiSeriesPerDate) {
+            final FastListMultimap<LocalDate, List<Integer>> multiSeriesPerDate) {
         Map<LocalDate, List<Integer>> seriesPerDate = Maps.newHashMap();
 
         for (LocalDate date : multiSeriesPerDate.keySet()) {
@@ -195,7 +195,7 @@ public abstract class SeriesBuilder {
      * @return the series per date
      */
     private Map<LocalDate, List<Integer>> averageByDate(
-            Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
+            final Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
         return createSeriesPerDay(createMultiSeriesPerDay(valuesPerBuild));
     }
 
@@ -210,7 +210,7 @@ public abstract class SeriesBuilder {
     @SuppressWarnings("rawtypes")
     @SuppressFBWarnings("WMI")
     private FastListMultimap<LocalDate, List<Integer>> createMultiSeriesPerDay(
-            Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
+            final Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
         FastListMultimap<LocalDate, List<Integer>> valuesPerDate = FastListMultimap.newMultimap();
         for (AnalysisBuild build : valuesPerBuild.keySet()) {
             LocalDate buildDate = Instant.ofEpochMilli(build.getTimeInMillis())
@@ -229,7 +229,7 @@ public abstract class SeriesBuilder {
      *
      * @return the row identifier
      */
-    protected String getRowId(int level) {
+    protected String getRowId(final int level) {
         return String.valueOf(level);
     }
 
@@ -242,8 +242,8 @@ public abstract class SeriesBuilder {
      *         the static analysis results
      * @return the aggregated data set
      */
-    public CategoryDataset createAggregation(GraphConfiguration configuration,
-            Collection<ResultHistory> resultActions) {
+    public CategoryDataset createAggregation(final GraphConfiguration configuration,
+            final Collection<ResultHistory> resultActions) {
         Set<LocalDate> availableDates = Sets.newHashSet();
         Map<ResultHistory, Map<LocalDate, List<Integer>>> averagesPerJob = Maps.newHashMap();
         for (ResultHistory resultAction : resultActions) {
@@ -270,9 +270,9 @@ public abstract class SeriesBuilder {
      * @return the aggregated values
      */
     private Map<LocalDate, List<Integer>> createTotalsForAllAvailableDates(
-            Collection<ResultHistory> jobs,
-            Set<LocalDate> availableDates,
-            Map<ResultHistory, Map<LocalDate, List<Integer>>> averagesPerJob) {
+            final Collection<ResultHistory> jobs,
+            final Set<LocalDate> availableDates,
+            final Map<ResultHistory, Map<LocalDate, List<Integer>>> averagesPerJob) {
         List<LocalDate> sortedDates = Lists.newArrayList(availableDates);
         Collections.sort(sortedDates);
 
@@ -294,8 +294,8 @@ public abstract class SeriesBuilder {
         return totals;
     }
 
-    private void addValues(LocalDate buildDate, Map<LocalDate, List<Integer>> totals,
-            List<Integer> additionalResult) {
+    private void addValues(final LocalDate buildDate, final Map<LocalDate, List<Integer>> totals,
+            final List<Integer> additionalResult) {
         if (totals.containsKey(buildDate)) {
             List<Integer> existingResult = totals.get(buildDate);
             List<Integer> sum = Lists.newArrayList();

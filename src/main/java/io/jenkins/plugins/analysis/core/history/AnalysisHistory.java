@@ -75,7 +75,7 @@ public class AnalysisHistory implements ResultHistory, ReferenceProvider {
      * @param selector
      *         selects the associated action from a build
      */
-    public AnalysisHistory(Run<?, ?> baseline, ResultSelector selector) {
+    public AnalysisHistory(final Run<?, ?> baseline, final ResultSelector selector) {
         this(baseline, selector, IGNORE_QUALITY_GATE, IGNORE_JOB_RESULT);
     }
 
@@ -91,9 +91,9 @@ public class AnalysisHistory implements ResultHistory, ReferenceProvider {
      * @param jobResultEvaluationMode
      *         determines if the job {@link Result} is taken into account when selecting the action
      */
-    public AnalysisHistory(Run<?, ?> baseline, ResultSelector selector,
-            QualityGateEvaluationMode qualityGateEvaluationMode,
-            JobResultEvaluationMode jobResultEvaluationMode) {
+    public AnalysisHistory(final Run<?, ?> baseline, final ResultSelector selector,
+            final QualityGateEvaluationMode qualityGateEvaluationMode,
+            final JobResultEvaluationMode jobResultEvaluationMode) {
         this.baseline = baseline;
         this.selector = selector;
         this.qualityGateEvaluationMode = qualityGateEvaluationMode;
@@ -156,8 +156,8 @@ public class AnalysisHistory implements ResultHistory, ReferenceProvider {
      */
     //FIXME: previous vs. references seems to be not matching
     protected Optional<ResultAction> getPreviousAction(
-            QualityGateEvaluationMode qualityGateEvaluationMode,
-            JobResultEvaluationMode jobResultEvaluationMode) {
+            final QualityGateEvaluationMode qualityGateEvaluationMode,
+            final JobResultEvaluationMode jobResultEvaluationMode) {
         Optional<Run<?, ?>> run = getRunWithResult(baseline, selector, qualityGateEvaluationMode,
                 jobResultEvaluationMode);
         if (run.isPresent()) {
@@ -166,9 +166,9 @@ public class AnalysisHistory implements ResultHistory, ReferenceProvider {
         return Optional.empty();
     }
 
-    private static Optional<Run<?, ?>> getRunWithResult(Run<?, ?> start, ResultSelector selector,
-            QualityGateEvaluationMode qualityGateEvaluationMode,
-            JobResultEvaluationMode jobResultEvaluationMode) {
+    private static Optional<Run<?, ?>> getRunWithResult(final Run<?, ?> start, final ResultSelector selector,
+            final QualityGateEvaluationMode qualityGateEvaluationMode,
+            final JobResultEvaluationMode jobResultEvaluationMode) {
         for (Run<?, ?> run = start; run != null; run = run.getPreviousBuild()) {
             Optional<ResultAction> action = selector.get(run);
             if (action.isPresent()) {
@@ -182,13 +182,13 @@ public class AnalysisHistory implements ResultHistory, ReferenceProvider {
         return Optional.empty();
     }
 
-    private static boolean hasCorrectQualityGateStatus(ResultAction action,
-            QualityGateEvaluationMode qualityGateEvaluationMode) {
+    private static boolean hasCorrectQualityGateStatus(final ResultAction action,
+            final QualityGateEvaluationMode qualityGateEvaluationMode) {
         return action.isSuccessful() || qualityGateEvaluationMode == IGNORE_QUALITY_GATE;
     }
 
-    private static boolean hasCorrectJobResult(Run<?, ?> run,
-            JobResultEvaluationMode jobResultEvaluationMode) {
+    private static boolean hasCorrectJobResult(final Run<?, ?> run,
+            final JobResultEvaluationMode jobResultEvaluationMode) {
         if (jobResultEvaluationMode == JOB_MUST_BE_SUCCESSFUL) {
             return run.getResult() == Result.SUCCESS;
         }
@@ -222,7 +222,7 @@ public class AnalysisHistory implements ResultHistory, ReferenceProvider {
          * @param selector
          *         selects the associated action from a build
          */
-        AnalysisResultIterator(Run<?, ?> baseline, ResultSelector selector) {
+        AnalysisResultIterator(final Run<?, ?> baseline, final ResultSelector selector) {
             cursor = getRunWithResult(baseline, selector, IGNORE_QUALITY_GATE, IGNORE_JOB_RESULT);
             this.selector = selector;
         }

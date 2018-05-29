@@ -16,7 +16,7 @@ public class NumberOnlyBuildLabel implements Comparable<NumberOnlyBuildLabel> {
      * @param build
      *         the build to show the label for
      */
-    public NumberOnlyBuildLabel(AnalysisBuild build) {
+    public NumberOnlyBuildLabel(final AnalysisBuild build) {
         this.build = build;
     }
 
@@ -25,7 +25,7 @@ public class NumberOnlyBuildLabel implements Comparable<NumberOnlyBuildLabel> {
     }
 
     @Override
-    public int compareTo(NumberOnlyBuildLabel o) {
+    public int compareTo(final NumberOnlyBuildLabel o) {
         return build.getNumber() - o.build.getNumber();
     }
 

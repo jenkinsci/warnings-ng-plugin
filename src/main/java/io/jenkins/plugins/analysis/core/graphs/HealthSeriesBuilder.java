@@ -20,21 +20,21 @@ public class HealthSeriesBuilder extends SeriesBuilder {
      *
      * @param healthDescriptor the health descriptor to determine the colors of the graph
      */
-    public HealthSeriesBuilder(HealthDescriptor healthDescriptor) {
+    public HealthSeriesBuilder(final HealthDescriptor healthDescriptor) {
         super();
 
         this.healthDescriptor = healthDescriptor;
     }
 
     @VisibleForTesting
-    HealthSeriesBuilder(HealthDescriptor healthDescriptor, ResultTime resultTime) {
+    HealthSeriesBuilder(final HealthDescriptor healthDescriptor, final ResultTime resultTime) {
         super(resultTime);
 
         this.healthDescriptor = healthDescriptor;
     }
 
     @Override
-    protected List<Integer> computeSeries(AnalysisResult current) {
+    protected List<Integer> computeSeries(final AnalysisResult current) {
         List<Integer> series = new ArrayList<>();
         int remainder = current.getTotalSize();
 

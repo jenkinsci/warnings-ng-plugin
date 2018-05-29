@@ -41,8 +41,8 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @return the graph
      */
     @Override
-    public JFreeChart create(GraphConfiguration configuration, ResultHistory history,
-            String pluginName) {
+    public JFreeChart create(final GraphConfiguration configuration, final ResultHistory history,
+            final String pluginName) {
         JFreeChart chart = createChart(configuration, history);
 
         attachRenderer(configuration, pluginName, chart);
@@ -64,8 +64,8 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      */
     @Override
     @SuppressFBWarnings("WMI")
-    public JFreeChart createAggregation(GraphConfiguration configuration,
-            Collection<ResultHistory> resultActions, String pluginName) {
+    public JFreeChart createAggregation(final GraphConfiguration configuration,
+            final Collection<ResultHistory> resultActions, final String pluginName) {
         CategoryDataset dataset = createSeriesBuilder().createAggregation(configuration, resultActions);
 
         JFreeChart chart = createChart(dataset);
@@ -92,8 +92,8 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * @param chart
      *         the graph to attach the renderer to
      */
-    private void attachRenderer(GraphConfiguration configuration, String pluginName,
-            JFreeChart chart) {
+    private void attachRenderer(final GraphConfiguration configuration, final String pluginName,
+            final JFreeChart chart) {
         CategoryItemRenderer renderer = createRenderer(configuration, pluginName);
         CategoryPlot plot = chart.getCategoryPlot();
         plot.setRenderer(renderer);
@@ -110,7 +110,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *
      * @return the created chart
      */
-    protected JFreeChart createChart(GraphConfiguration configuration, ResultHistory history) {
+    protected JFreeChart createChart(final GraphConfiguration configuration, final ResultHistory history) {
         CategoryDataset dataSet = createSeriesBuilder().createDataSet(configuration, history);
         return createChart(dataSet);
     }
@@ -152,7 +152,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *
      * @return the created graph
      */
-    public JFreeChart createAreaChart(CategoryDataset dataset) {
+    public JFreeChart createAreaChart(final CategoryDataset dataset) {
         return createAreaChart(dataset, "count");
     }
 
@@ -166,7 +166,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *
      * @return the created graph
      */
-    private JFreeChart createAreaChart(CategoryDataset dataset, String yAxisLabel) {
+    private JFreeChart createAreaChart(final CategoryDataset dataset, final String yAxisLabel) {
         JFreeChart chart = ChartFactory.createStackedAreaChart(
                 null,                      // chart title
                 null,                      // unused
@@ -206,7 +206,7 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *
      * @return the graph
      */
-    protected JFreeChart createLineGraph(CategoryDataset dataSet, boolean hasLegend) {
+    protected JFreeChart createLineGraph(final CategoryDataset dataSet, final boolean hasLegend) {
         return createLineGraph(dataSet, hasLegend, Y_AXIS_LABEL);
     }
 
@@ -222,8 +222,8 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      *
      * @return the graph
      */
-    protected JFreeChart createLineGraph(CategoryDataset dataSet, boolean hasLegend,
-            String yAxisLabel) {
+    protected JFreeChart createLineGraph(final CategoryDataset dataSet, final boolean hasLegend,
+            final String yAxisLabel) {
         NumberAxis numberAxis = new NumberAxis(yAxisLabel);
         numberAxis.setAutoRange(true);
         numberAxis.setAutoRangeIncludesZero(false);

@@ -41,8 +41,8 @@ public class DifferenceGraph extends BuildResultGraph {
     }
 
     @Override
-    public JFreeChart create(GraphConfiguration configuration,
-            ResultHistory history, String pluginName) {
+    public JFreeChart create(final GraphConfiguration configuration,
+            final ResultHistory history, final String pluginName) {
         List<Pair<Integer, Integer>> fixedWarnings = new ArrayList<>();
         List<Pair<Integer, Integer>> newWarnings = new ArrayList<>();
 
@@ -66,8 +66,8 @@ public class DifferenceGraph extends BuildResultGraph {
     }
 
     @Override
-    public JFreeChart createAggregation(GraphConfiguration configuration,
-            Collection<ResultHistory> resultActions, String pluginName) {
+    public JFreeChart createAggregation(final GraphConfiguration configuration,
+            final Collection<ResultHistory> resultActions, final String pluginName) {
         return create(configuration, resultActions.iterator().next(), pluginName);
     }
 
@@ -82,8 +82,8 @@ public class DifferenceGraph extends BuildResultGraph {
      * @return the series to plot
      */
     private XYSeriesCollection computeDifferenceSeries(
-            List<Pair<Integer, Integer>> fixedWarnings,
-            List<Pair<Integer, Integer>> newWarnings) {
+            final List<Pair<Integer, Integer>> fixedWarnings,
+            final List<Pair<Integer, Integer>> newWarnings) {
         XYSeries fixedSeries = new XYSeries("fixed");
         XYSeries newSeries = new XYSeries("new");
 
@@ -119,8 +119,8 @@ public class DifferenceGraph extends BuildResultGraph {
      * @param newWarnings
      *         list of pairs with the points for the new warnings
      */
-    private void extractPoints(GraphConfiguration configuration, ResultHistory history,
-            List<Pair<Integer, Integer>> fixedWarnings, List<Pair<Integer, Integer>> newWarnings) {
+    private void extractPoints(final GraphConfiguration configuration, final ResultHistory history,
+            final List<Pair<Integer, Integer>> fixedWarnings, final List<Pair<Integer, Integer>> newWarnings) {
         int buildCount = 0;
         for (AnalysisResult current : history) {
             if (resultTime.isResultTooOld(configuration, current)) {
@@ -151,12 +151,12 @@ public class DifferenceGraph extends BuildResultGraph {
         private static final long serialVersionUID = 3487003853901042584L;
 
         @Override
-        public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
+        public StringBuffer format(final double number, final StringBuffer toAppendTo, final FieldPosition pos) {
             return format((long) number, toAppendTo, pos);
         }
 
         @Override
-        public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
+        public StringBuffer format(final long number, final StringBuffer toAppendTo, final FieldPosition pos) {
             StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append('#');
             stringBuffer.append(number);
@@ -164,7 +164,7 @@ public class DifferenceGraph extends BuildResultGraph {
         }
 
         @Override
-        public Number parse(String source, ParsePosition parsePosition) {
+        public Number parse(final String source, final ParsePosition parsePosition) {
             return null; // ignore
         }
     }
@@ -184,12 +184,12 @@ public class DifferenceGraph extends BuildResultGraph {
          * @param pluginName
          *         the name of the plug-in
          */
-        public XyUrlBuilder(String rootUrl, String pluginName) {
+        public XyUrlBuilder(final String rootUrl, final String pluginName) {
             super(rootUrl, pluginName);
         }
 
         @Override
-        public String generateURL(XYDataset dataset, int series, int item) {
+        public String generateURL(final XYDataset dataset, final int series, final int item) {
             return getRootUrl() + (int) dataset.getXValue(series, item) + getPluginName();
         }
     }

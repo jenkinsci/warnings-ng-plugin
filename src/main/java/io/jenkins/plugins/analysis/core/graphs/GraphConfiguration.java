@@ -90,7 +90,7 @@ public class GraphConfiguration  {
      * @param availableGraphs
      *            the available build graphs
      */
-    public GraphConfiguration(Collection<? extends BuildResultGraph> availableGraphs) {
+    public GraphConfiguration(final Collection<? extends BuildResultGraph> availableGraphs) {
         this.availableGraphs = ImmutableList.copyOf(availableGraphs);
         for (BuildResultGraph graph : availableGraphs) {
             graphId2Graph.put(graph.getId(), graph);
@@ -103,7 +103,7 @@ public class GraphConfiguration  {
      * @param availableGraphs
      *            the available build graphs
      */
-    public GraphConfiguration(BuildResultGraph... availableGraphs) {
+    public GraphConfiguration(final BuildResultGraph... availableGraphs) {
         this(Arrays.asList(availableGraphs));
     }
 
@@ -113,7 +113,7 @@ public class GraphConfiguration  {
      * @param graph
      *            the graph to use
      */
-    public GraphConfiguration(BuildResultGraph graph) {
+    public GraphConfiguration(final BuildResultGraph graph) {
         reset();
 
         availableGraphs = Lists.newArrayList();
@@ -133,7 +133,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      * @see #serializeToString()
      */
-    public boolean initializeFrom(String value) {
+    public boolean initializeFrom(final String value) {
         return resetIfInvalid(initializeFromStringValue(value));
     }
 
@@ -148,7 +148,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      */
     @SuppressWarnings("hiddenfield")
-    public boolean initializeFrom(int width, int height) { // NOCHECKSTYLE
+    public boolean initializeFrom(final int width, final int height) { // NOCHECKSTYLE
         return initializeFrom(width, height, 0);
     }
 
@@ -165,7 +165,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      */
     @SuppressWarnings("hiddenfield")
-    private boolean initializeFrom(int width, int height, int dayCount) {
+    private boolean initializeFrom(final int width, final int height, final int dayCount) {
         return initializeFrom(width, height, dayCount, DEFAULT_NAME, DEFAULT_VALUE);
     }
 
@@ -187,7 +187,7 @@ public class GraphConfiguration  {
      * @since 1.73
      */
     @SuppressWarnings("hiddenfield")
-    public boolean initializeFrom(int width, int height, int dayCount, String parameterName, String parameterValue) {
+    public boolean initializeFrom(final int width, final int height, final int dayCount, final String parameterName, final String parameterValue) {
         this.width = width;
         this.height = height;
         this.dayCount = dayCount;
@@ -206,7 +206,7 @@ public class GraphConfiguration  {
      *            the result of the conversion
      * @return the result
      */
-    private boolean resetIfInvalid(boolean isSuccessful) {
+    private boolean resetIfInvalid(final boolean isSuccessful) {
         if (!isSuccessful) {
             reset();
         }
@@ -222,7 +222,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      */
     // CHECKSTYLE:CONSTANTS-OFF
-    private boolean initializeFromStringValue(String value) {
+    private boolean initializeFromStringValue(final String value) {
         if (StringUtils.isBlank(value)) {
             return false;
         }
@@ -278,7 +278,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      * @see #serializeToString()
      */
-    protected boolean initializeLocal(String[] localConfiguration) {
+    protected boolean initializeLocal(final String[] localConfiguration) {
         return true;
     }
 
@@ -293,7 +293,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      * @see #serializeToString()
      */
-    public boolean initializeFrom(JSONObject value) {
+    public boolean initializeFrom(final JSONObject value) {
         return resetIfInvalid(initializeFromJsonObject(value));
     }
 
@@ -304,7 +304,7 @@ public class GraphConfiguration  {
      * @return <code>true</code> is the initialization was successful,
      *         <code>false</code> otherwise
      */
-    private boolean initializeFromJsonObject(JSONObject value) {
+    private boolean initializeFromJsonObject(final JSONObject value) {
         width = value.getInt("width");
         height = value.getInt("height");
         String buildCountString = value.getString("buildCountString");
@@ -354,7 +354,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      * @see #serializeToString()
      */
-    protected boolean initializeLocal(JSONObject localConfiguration) {
+    protected boolean initializeLocal(final JSONObject localConfiguration) {
         return true;
     }
 
@@ -370,7 +370,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      * @see #serializeToString()
      */
-    public boolean initializeFromFile(File file) {
+    public boolean initializeFromFile(final File file) {
         return initializeFrom(readFromDefaultsFile(file));
     }
 
@@ -383,7 +383,7 @@ public class GraphConfiguration  {
      *            the name of the plug-in
      * @return the created file
      */
-    protected File createDefaultsFile(AbstractProject<?, ?> project, String pluginName) {
+    protected File createDefaultsFile(final AbstractProject<?, ?> project, final String pluginName) {
         return new File(project.getRootDir(), pluginName + ".txt");
     }
 
@@ -424,7 +424,7 @@ public class GraphConfiguration  {
      *            the file with the default values
      * @return the default values from file.
      */
-    private String readFromDefaultsFile(File defaultsFile) {
+    private String readFromDefaultsFile(final File defaultsFile) {
         String defaultValue = StringUtils.EMPTY;
         FileInputStream input = null;
         try {
@@ -477,7 +477,7 @@ public class GraphConfiguration  {
      * @param value the value
      * @return serialized value
      */
-    protected String serializeBoolean(boolean value) {
+    protected String serializeBoolean(final boolean value) {
         if (value) {
             return "1";
         }
@@ -508,9 +508,9 @@ public class GraphConfiguration  {
      * @since 1.73
      */
     //CHECKSTYLE:OFF
-    protected static boolean isValid(int newWidth, int newHeight,
-            int newBuildCount, int newDayCount, BuildResultGraph newGraphType,
-            String newParameterName, String newParameterValue) {
+    protected static boolean isValid(final int newWidth, final int newHeight,
+            final int newBuildCount, final int newDayCount, final BuildResultGraph newGraphType,
+            final String newParameterName, final String newParameterValue) {
         return isValidWidth(newWidth)
                 && isValidHeight(newHeight)
                 && newGraphType != null
@@ -527,7 +527,7 @@ public class GraphConfiguration  {
      *            the new build count
      * @return <code>true</code> if the build count is valid.
      */
-    protected static boolean isValidBuildCount(int newBuildCount) {
+    protected static boolean isValidBuildCount(final int newBuildCount) {
         return newBuildCount == 0 || newBuildCount > 1;
     }
 
@@ -539,7 +539,7 @@ public class GraphConfiguration  {
      * @return <code>true</code> if the width is valid, <code>false</code>
      *         otherwise
      */
-    protected static boolean isValidWidth(int newWidth) {
+    protected static boolean isValidWidth(final int newWidth) {
         return newWidth > MINIMUM_SIZE && newWidth < MAXIMUM_SIZE;
     }
 
@@ -551,7 +551,7 @@ public class GraphConfiguration  {
      * @return <code>true</code> if the width is valid, <code>false</code>
      *         otherwise
      */
-    protected static boolean isValidHeight(int newHeight) {
+    protected static boolean isValidHeight(final int newHeight) {
         return newHeight > MINIMUM_SIZE && newHeight  < MAXIMUM_SIZE;
     }
 
@@ -699,7 +699,7 @@ public class GraphConfiguration  {
      * @return the graph with the specified ID. If the graph is not found, then
      *         {@link #createDefaultGraph()} is returned.
      */
-    public BuildResultGraph getGraph(String graphId) {
+    public BuildResultGraph getGraph(final String graphId) {
         if (graphId2Graph.containsKey(graphId)) {
             return graphId2Graph.get(graphId);
         }
@@ -715,7 +715,7 @@ public class GraphConfiguration  {
      *            the height
      * @return the form validation
      */
-    public static FormValidation checkHeight(String height) {
+    public static FormValidation checkHeight(final String height) {
         try {
             if (isValidHeight(Integer.parseInt(height))) {
                 return FormValidation.ok();
@@ -778,7 +778,7 @@ public class GraphConfiguration  {
         return result;
     }
 
-    public void setToolTipProvider(ToolTipProvider toolTipProvider) {
+    public void setToolTipProvider(final ToolTipProvider toolTipProvider) {
         this.toolTipProvider = toolTipProvider;
     }
 

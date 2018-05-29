@@ -54,7 +54,7 @@ public class StaticAnalysisLabelProvider {
      * @param id
      *         the ID
      */
-    public StaticAnalysisLabelProvider(String id) {
+    public StaticAnalysisLabelProvider(final String id) {
         this(id, StringUtils.EMPTY);
     }
 
@@ -66,12 +66,12 @@ public class StaticAnalysisLabelProvider {
      * @param name
      *         the name of the static analysis tool
      */
-    public StaticAnalysisLabelProvider(String id, @CheckForNull String name) {
+    public StaticAnalysisLabelProvider(final String id, @CheckForNull final String name) {
         this(id, name, new JenkinsFacade());
     }
 
     @VisibleForTesting
-    StaticAnalysisLabelProvider(String id, @CheckForNull String name, JenkinsFacade jenkins) {
+    StaticAnalysisLabelProvider(final String id, @CheckForNull final String name, final JenkinsFacade jenkins) {
         this.id = id;
         this.name = name;
         this.jenkins = jenkins;
@@ -122,7 +122,7 @@ public class StaticAnalysisLabelProvider {
      *
      * @return the table as String
      */
-    public JSONObject toJsonArray(Report report, AgeBuilder ageBuilder) {
+    public JSONObject toJsonArray(final Report report, final AgeBuilder ageBuilder) {
         JSONArray rows = new JSONArray();
         for (Issue issue : report) {
             rows.add(toJson(issue, ageBuilder));
@@ -142,7 +142,7 @@ public class StaticAnalysisLabelProvider {
      *
      * @return the columns
      */
-    protected JSONArray toJson(Issue issue, AgeBuilder ageBuilder) {
+    protected JSONArray toJson(final Issue issue, final AgeBuilder ageBuilder) {
         JSONArray columns = new JSONArray();
         columns.add(formatDetails(issue));
         columns.add(formatFileName(issue));
@@ -164,7 +164,7 @@ public class StaticAnalysisLabelProvider {
      *
      * @return the formatted column
      */
-    protected String formatDetails(Issue issue) {
+    protected String formatDetails(final Issue issue) {
         return div().withClass("details-control")
                 .attr("data-description", join(p(strong(issue.getMessage())), getDescription(issue)).render())
                 .render();
@@ -180,7 +180,7 @@ public class StaticAnalysisLabelProvider {
      *
      * @return the formatted column
      */
-    protected String formatAge(Issue issue, AgeBuilder ageBuilder) {
+    protected String formatAge(final Issue issue, final AgeBuilder ageBuilder) {
         return ageBuilder.apply(new IntegerParser().parseInt(issue.getReference()));
     }
 
@@ -192,12 +192,12 @@ public class StaticAnalysisLabelProvider {
      *
      * @return the formatted column
      */
-    protected String formatSeverity(Severity severity) {
+    protected String formatSeverity(final Severity severity) {
         return String.format("<a href=\"%s\">%s</a>",
                 severity.getName(), LocalizedSeverity.getLocalizedString(severity));
     }
 
-    private String formatProperty(String property, String value) {
+    private String formatProperty(final String property, final String value) {
         return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), value);
     }
 
@@ -210,7 +210,7 @@ public class StaticAnalysisLabelProvider {
      * @return the formatted column
      */
     // FIXME: only link if valid file name
-    protected String formatFileName(Issue issue) {
+    protected String formatFileName(final Issue issue) {
         return String.format("<a href=\"source.%s/#%d\">%s:%d</a>", issue.getId(), issue.getLineStart(),
                 FILE_NAME_FORMATTER.apply(issue.getFileName()), issue.getLineStart());
     }
@@ -301,7 +301,7 @@ public class StaticAnalysisLabelProvider {
      *
      * @return the title div
      */
-    public ContainerTag getTitle(AnalysisResult result, boolean hasErrors) {
+    public ContainerTag getTitle(final AnalysisResult result, final boolean hasErrors) {
         String icon = hasErrors ? "fa-exclamation-triangle" : "fa-info-circle";
         return div(join(getName() + ": ",
                 getWarningsCount(result),
@@ -318,7 +318,7 @@ public class StaticAnalysisLabelProvider {
      * @return the legend of the trend chart
      */
     // TODO: Make messages overridable
-    public ContainerTag getNewIssuesLabel(int newSize) {
+    public ContainerTag getNewIssuesLabel(final int newSize) {
         return a(newSize == 1 ? Messages.Tool_OneNewWarning() : Messages.Tool_MultipleNewWarnings(newSize))
                 .withHref(getResultUrl() + "/new");
     }
@@ -331,7 +331,7 @@ public class StaticAnalysisLabelProvider {
      *
      * @return the legend of the trend chart
      */
-    public ContainerTag getFixedIssuesLabel(int fixedSize) {
+    public ContainerTag getFixedIssuesLabel(final int fixedSize) {
         return a(fixedSize == 1 ? Messages.Tool_OneFixedWarning() : Messages.Tool_MultipleFixedWarnings(fixedSize))
                 .withHref(getResultUrl() + "/fixed");
     }
@@ -346,7 +346,7 @@ public class StaticAnalysisLabelProvider {
      *
      * @return the legend of the trend chart
      */
-    public DomContent getNoIssuesSinceLabel(int currentBuild, int noIssuesSinceBuild) {
+    public DomContent getNoIssuesSinceLabel(final int currentBuild, final int noIssuesSinceBuild) {
         return join(Messages.Tool_NoIssuesSinceBuild(Messages.Tool_NoIssues(),
                 currentBuild - noIssuesSinceBuild + 1,
                 a(String.valueOf(noIssuesSinceBuild))
@@ -354,7 +354,7 @@ public class StaticAnalysisLabelProvider {
                         .withClasses("model-link", "inside").render()));
     }
 
-    private Object getWarningsCount(AnalysisResult analysisRun) {
+    private Object getWarningsCount(final AnalysisResult analysisRun) {
         int size = analysisRun.getTotalSize();
         if (size == 0) {
             return Messages.Tool_NoIssues();
@@ -365,7 +365,7 @@ public class StaticAnalysisLabelProvider {
         return linkToIssues(Messages.Tool_MultipleIssues(size));
     }
 
-    private ContainerTag linkToIssues(String linkText) {
+    private ContainerTag linkToIssues(final String linkText) {
         return a(linkText).withHref(getResultUrl());
     }
 
@@ -377,7 +377,7 @@ public class StaticAnalysisLabelProvider {
      *
      * @return the legend of the trend chart
      */
-    public DomContent getQualityGateResult(Status qualityGateStatus) {
+    public DomContent getQualityGateResult(final Status qualityGateStatus) {
         return join(Messages.Tool_QualityGate(), getResultIcon(qualityGateStatus));
     }
 
@@ -389,16 +389,16 @@ public class StaticAnalysisLabelProvider {
      *
      * @return the legend of the trend chart
      */
-    public DomContent getReferenceBuild(Run<?, ?> referenceBuild) {
+    public DomContent getReferenceBuild(final Run<?, ?> referenceBuild) {
         return join(Messages.Tool_ReferenceBuild(), createReferenceBuildLink(referenceBuild));
     }
 
-    private ContainerTag createReferenceBuildLink(Run<?, ?> referenceBuild) {
+    private ContainerTag createReferenceBuildLink(final Run<?, ?> referenceBuild) {
         String absoluteUrl = jenkins.getAbsoluteUrl(referenceBuild.getUrl(), getResultUrl());
         return a(referenceBuild.getFullDisplayName()).withHref(absoluteUrl);
     }
 
-    private UnescapedText getResultIcon(Status status) {
+    private UnescapedText getResultIcon(final Status status) {
         BallColor color = status.getColor();
         return join(img().withSrc(jenkins.getImagePath(color))
                         .withClasses(color.getIconClassName(), "icon-lg")
@@ -412,7 +412,7 @@ public class StaticAnalysisLabelProvider {
     }
 
     // FIXME: still required?
-    String getTooltip(int numberOfItems) {
+    String getTooltip(final int numberOfItems) {
         if (numberOfItems == 1) {
             return getSingleItemTooltip();
         }
@@ -429,7 +429,7 @@ public class StaticAnalysisLabelProvider {
      *
      * @return the description
      */
-    public String getDescription(Issue issue) {
+    public String getDescription(final Issue issue) {
         return issue.getDescription();
     }
 
@@ -441,7 +441,7 @@ public class StaticAnalysisLabelProvider {
      *
      * @return the tooltip for several items
      */
-    private String getMultipleItemsTooltip(int numberOfItems) {
+    private String getMultipleItemsTooltip(final int numberOfItems) {
         return Messages.Tool_MultipleIssues(numberOfItems);
     }
 
@@ -476,13 +476,13 @@ public class StaticAnalysisLabelProvider {
          * @param resultUrl
          *         URL to the results
          */
-        public DefaultAgeBuilder(int currentBuild, String resultUrl) {
+        public DefaultAgeBuilder(final int currentBuild, final String resultUrl) {
             this.currentBuild = currentBuild;
             this.resultUrl = resultUrl;
         }
 
         @Override
-        public String apply(Integer referenceBuild) {
+        public String apply(final Integer referenceBuild) {
             if (referenceBuild >= currentBuild) {
                 return "1"; // fallback
             }
@@ -498,7 +498,7 @@ public class StaticAnalysisLabelProvider {
             }
         }
 
-        private String computeAge(int buildNumber) {
+        private String computeAge(final int buildNumber) {
             return String.valueOf(currentBuild - buildNumber + 1);
         }
     }
