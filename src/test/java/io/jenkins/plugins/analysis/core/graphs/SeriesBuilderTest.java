@@ -280,17 +280,17 @@ class SeriesBuilderTest {
             return this;
         }
 
-
         /**
          * Set the tests expectations.
          *
-         * @param series
+         * @param expectedSeries
          *         to use in test, defaults to empty list
          *
          * @return this
          */
-        public final TestArgumentsBuilder setExpected(List<Integer>... series) {
-            this.series = asList(series);
+        @SafeVarargs
+        public final TestArgumentsBuilder setExpected(List<Integer>... expectedSeries) {
+            series = asList(expectedSeries);
 
             return this;
         }

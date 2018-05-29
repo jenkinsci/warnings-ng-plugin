@@ -5,16 +5,20 @@ import java.awt.*;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Replacement for Jenkins {@link hudson.util.ColorPalette} in order to get good
- * looking graphs even if the green balls plug-in is installed.
+ * Replacement for Jenkins {@link hudson.util.ColorPalette} in order to get good looking graphs even if the green balls
+ * plug-in is installed.
  *
  * @author Ulli Hafner
  */
 @SuppressWarnings("javadoc")
 public final class ColorPalette {
+    /** Replaces Jenkins red. */
     public static final Color RED = new Color(0xEF, 0x29, 0x29); // NOCHECKSTYLE
+    /** Replaces Jenkins yellow. */
     public static final Color YELLOW = new Color(0xFC, 0xE9, 0x4F); // NOCHECKSTYLE
+    /** Replaces Jenkins blue. */
     public static final Color BLUE = new Color(0x72, 0x9F, 0xCF); // NOCHECKSTYLE
+    /** Replaces Jenkins grey. */
     public static final Color GREY = new Color(0xAB, 0xAB, 0xAB); // NOCHECKSTYLE
 
     /**

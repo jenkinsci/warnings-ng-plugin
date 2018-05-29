@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
 
+import hudson.plugins.analysis.util.model.Priority;
+
 /**
  * Stores a set of four thresholds and checks if one or more of them are reached.
  *
@@ -17,15 +19,27 @@ public class ThresholdSet implements Serializable {
     private final int normalThreshold;
     private final int lowThreshold;
 
-    public ThresholdSet(final int totalThreshold, final int highThreshold, final int normalThreshold,
-            final int lowThreshold) {
+    /**
+     * Creates a new instance of {@link ThresholdSet}.
+     *
+     * @param totalThreshold
+     *         threshold for the totals number of issues
+     * @param highThreshold
+     *         threshold for the number of issues of {@link Priority#HIGH}
+     * @param normalThreshold
+     *         threshold for the number of issues of {@link Priority#NORMAL}
+     * @param lowThreshold
+     *         threshold for the number of issues of {@link Priority#LOW}
+     */
+    public ThresholdSet(int totalThreshold, int highThreshold, int normalThreshold,
+            int lowThreshold) {
         this.totalThreshold = totalThreshold;
         this.highThreshold = highThreshold;
         this.normalThreshold = normalThreshold;
         this.lowThreshold = lowThreshold;
     }
 
-    private boolean isTotalThresholdReached(final int toCheck) {
+    private boolean isTotalThresholdReached(int toCheck) {
         return isSingleThresholdReached(getTotalThreshold(), toCheck);
     }
 
@@ -33,7 +47,7 @@ public class ThresholdSet implements Serializable {
         return totalThreshold;
     }
 
-    private boolean isHighThresholdReached(final int toCheck) {
+    private boolean isHighThresholdReached(int toCheck) {
         return isSingleThresholdReached(getHighThreshold(), toCheck);
     }
 
@@ -41,7 +55,7 @@ public class ThresholdSet implements Serializable {
         return highThreshold;
     }
 
-    private boolean isNormalThresholdReached(final int toCheck) {
+    private boolean isNormalThresholdReached(int toCheck) {
         return isSingleThresholdReached(getNormalThreshold(), toCheck);
     }
 
@@ -49,7 +63,7 @@ public class ThresholdSet implements Serializable {
         return normalThreshold;
     }
 
-    private boolean isLowThresholdReached(final int toCheck) {
+    private boolean isLowThresholdReached(int toCheck) {
         return isSingleThresholdReached(getLowThreshold(), toCheck);
     }
 
@@ -67,11 +81,11 @@ public class ThresholdSet implements Serializable {
      *
      * @return true if reached or exceeded, else false
      */
-    private boolean isSingleThresholdReached(final int threshold, final int toCheck) {
+    private boolean isSingleThresholdReached(int threshold, int toCheck) {
         return isEnabled(threshold) && toCheck >= threshold;
     }
 
-    private boolean isEnabled(final int threshold) {
+    private boolean isEnabled(int threshold) {
         return threshold > 0;
     }
 
@@ -89,8 +103,8 @@ public class ThresholdSet implements Serializable {
      *
      * @return the result of the evaluation
      */
-    public ThresholdResult evaluate(final int totalToCheck, final int highToCheck, final int normalToCheck,
-            final int lowToCheck) {
+    public ThresholdResult evaluate(int totalToCheck, int highToCheck, int normalToCheck,
+            int lowToCheck) {
         return new ThresholdResult(isTotalThresholdReached(totalToCheck),
                 isHighThresholdReached(highToCheck),
                 isNormalThresholdReached(normalToCheck),
@@ -98,7 +112,7 @@ public class ThresholdSet implements Serializable {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -145,8 +159,8 @@ public class ThresholdSet implements Serializable {
         private final boolean isNormalReached;
         private final boolean isLowReached;
 
-        public ThresholdResult(final boolean isTotalReached, final boolean isHighReached, final boolean isNormalReached,
-                final boolean isLowReached) {
+        public ThresholdResult(boolean isTotalReached, boolean isHighReached, boolean isNormalReached,
+                boolean isLowReached) {
             this.isTotalReached = isTotalReached;
             this.isHighReached = isHighReached;
             this.isNormalReached = isNormalReached;
@@ -201,7 +215,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setTotalThreshold(final int totalThreshold) {
+        public ThresholdSetBuilder setTotalThreshold(int totalThreshold) {
             this.totalThreshold = totalThreshold;
             return this;
         }
@@ -214,7 +228,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setTotalThreshold(final String totalThreshold) {
+        public ThresholdSetBuilder setTotalThreshold(String totalThreshold) {
             return setTotalThreshold(asInt(totalThreshold));
         }
 
@@ -226,7 +240,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setHighThreshold(final int highThreshold) {
+        public ThresholdSetBuilder setHighThreshold(int highThreshold) {
             this.highThreshold = highThreshold;
             return this;
         }
@@ -239,7 +253,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setHighThreshold(final String highThreshold) {
+        public ThresholdSetBuilder setHighThreshold(String highThreshold) {
             return setHighThreshold(asInt(highThreshold));
         }
 
@@ -251,7 +265,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setNormalThreshold(final int normalThreshold) {
+        public ThresholdSetBuilder setNormalThreshold(int normalThreshold) {
             this.normalThreshold = normalThreshold;
             return this;
         }
@@ -264,7 +278,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setNormalThreshold(final String normalThreshold) {
+        public ThresholdSetBuilder setNormalThreshold(String normalThreshold) {
             return setNormalThreshold(asInt(normalThreshold));
         }
 
@@ -276,7 +290,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setLowThreshold(final int lowThreshold) {
+        public ThresholdSetBuilder setLowThreshold(int lowThreshold) {
             this.lowThreshold = lowThreshold;
             return this;
         }
@@ -289,7 +303,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setLowThreshold(final String lowThreshold) {
+        public ThresholdSetBuilder setLowThreshold(String lowThreshold) {
             return setLowThreshold(asInt(lowThreshold));
         }
 
@@ -301,10 +315,9 @@ public class ThresholdSet implements Serializable {
          *
          * @return integer threshold
          * @throws IllegalArgumentException
-         *         if the provided string can't be converted to an integer value
-         *         greater or equal zero
+         *         if the provided string can't be converted to an integer value greater or equal zero
          */
-        private int asInt(final String threshold) {
+        private int asInt(String threshold) {
             if (StringUtils.isNotBlank(threshold)) {
                 try {
                     int value = Integer.parseInt(threshold);

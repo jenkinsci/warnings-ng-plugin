@@ -148,7 +148,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      */
     @SuppressWarnings("hiddenfield")
-    public boolean initializeFrom(final int width, final int height) { // NOCHECKSTYLE
+    public boolean initializeFrom(int width, int height) { // NOCHECKSTYLE
         return initializeFrom(width, height, 0);
     }
 
@@ -165,7 +165,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      */
     @SuppressWarnings("hiddenfield")
-    private boolean initializeFrom(final int width, final int height, final int dayCount) {
+    private boolean initializeFrom(int width, int height, int dayCount) {
         return initializeFrom(width, height, dayCount, DEFAULT_NAME, DEFAULT_VALUE);
     }
 
@@ -187,7 +187,7 @@ public class GraphConfiguration  {
      * @since 1.73
      */
     @SuppressWarnings("hiddenfield")
-    public boolean initializeFrom(final int width, final int height, final int dayCount, final String parameterName, final String parameterValue) {
+    public boolean initializeFrom(int width, int height, int dayCount, String parameterName, String parameterValue) {
         this.width = width;
         this.height = height;
         this.dayCount = dayCount;
@@ -222,7 +222,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      */
     // CHECKSTYLE:CONSTANTS-OFF
-    private boolean initializeFromStringValue(final String value) {
+    private boolean initializeFromStringValue(String value) {
         if (StringUtils.isBlank(value)) {
             return false;
         }
@@ -278,7 +278,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      * @see #serializeToString()
      */
-    protected boolean initializeLocal(final String[] localConfiguration) {
+    protected boolean initializeLocal(String[] localConfiguration) {
         return true;
     }
 
@@ -293,7 +293,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      * @see #serializeToString()
      */
-    public boolean initializeFrom(final JSONObject value) {
+    public boolean initializeFrom(JSONObject value) {
         return resetIfInvalid(initializeFromJsonObject(value));
     }
 
@@ -304,7 +304,7 @@ public class GraphConfiguration  {
      * @return <code>true</code> is the initialization was successful,
      *         <code>false</code> otherwise
      */
-    private boolean initializeFromJsonObject(final JSONObject value) {
+    private boolean initializeFromJsonObject(JSONObject value) {
         width = value.getInt("width");
         height = value.getInt("height");
         String buildCountString = value.getString("buildCountString");
@@ -354,7 +354,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      * @see #serializeToString()
      */
-    protected boolean initializeLocal(final JSONObject localConfiguration) {
+    protected boolean initializeLocal(JSONObject localConfiguration) {
         return true;
     }
 
@@ -370,7 +370,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise
      * @see #serializeToString()
      */
-    public boolean initializeFromFile(final File file) {
+    public boolean initializeFromFile(File file) {
         return initializeFrom(readFromDefaultsFile(file));
     }
 
@@ -383,7 +383,7 @@ public class GraphConfiguration  {
      *            the name of the plug-in
      * @return the created file
      */
-    protected File createDefaultsFile(final AbstractProject<?, ?> project, final String pluginName) {
+    protected File createDefaultsFile(AbstractProject<?, ?> project, String pluginName) {
         return new File(project.getRootDir(), pluginName + ".txt");
     }
 
@@ -424,7 +424,7 @@ public class GraphConfiguration  {
      *            the file with the default values
      * @return the default values from file.
      */
-    private String readFromDefaultsFile(final File defaultsFile) {
+    private String readFromDefaultsFile(File defaultsFile) {
         String defaultValue = StringUtils.EMPTY;
         FileInputStream input = null;
         try {
@@ -477,7 +477,7 @@ public class GraphConfiguration  {
      * @param value the value
      * @return serialized value
      */
-    protected String serializeBoolean(final boolean value) {
+    protected String serializeBoolean(boolean value) {
         if (value) {
             return "1";
         }

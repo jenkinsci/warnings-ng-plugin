@@ -10,7 +10,13 @@ import hudson.util.ChartUtil;
 public class NumberOnlyBuildLabel implements Comparable<NumberOnlyBuildLabel> {
     private final AnalysisBuild build;
 
-    public NumberOnlyBuildLabel(final AnalysisBuild build) {
+    /**
+     * Creates a new label.
+     *
+     * @param build
+     *         the build to show the label for
+     */
+    public NumberOnlyBuildLabel(AnalysisBuild build) {
         this.build = build;
     }
 
@@ -19,7 +25,7 @@ public class NumberOnlyBuildLabel implements Comparable<NumberOnlyBuildLabel> {
     }
 
     @Override
-    public int compareTo(final NumberOnlyBuildLabel o) {
+    public int compareTo(NumberOnlyBuildLabel o) {
         return build.getNumber() - o.build.getNumber();
     }
 

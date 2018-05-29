@@ -9,7 +9,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
-
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -88,7 +87,7 @@ class HealthSeriesBuilderTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("testData")
-    void testComputeSeries(final String name, final HealthDescriptor descriptor, final AnalysisResult run, final Iterable<Integer> expectedSeries) {
+    void testComputeSeries(String name, HealthDescriptor descriptor, AnalysisResult run, Iterable<Integer> expectedSeries) {
         HealthSeriesBuilder sut = new HealthSeriesBuilder(descriptor);
 
         List<Integer> series = sut.computeSeries(run);
@@ -97,7 +96,7 @@ class HealthSeriesBuilderTest {
                 .containsExactlyElementsOf(expectedSeries);
     }
 
-    private static AnalysisResult createRunWithSize(final int totalSize) {
+    private static AnalysisResult createRunWithSize(int totalSize) {
         AnalysisResult run = mock(AnalysisResult.class);
         when(run.getTotalSize()).thenReturn(totalSize);
         return run;
@@ -107,14 +106,14 @@ class HealthSeriesBuilderTest {
         return createDescriptor(false);
     }
 
-    private static HealthDescriptor createEnabledDescriptor(final int healthThreshold, final int unhealthThreshhold) {
+    private static HealthDescriptor createEnabledDescriptor(int healthThreshold, int unhealthThreshhold) {
         HealthDescriptor healthDescriptor = createDescriptor(true);
         when(healthDescriptor.getHealthy()).thenReturn(healthThreshold);
         when(healthDescriptor.getUnHealthy()).thenReturn(unhealthThreshhold);
         return healthDescriptor;
     }
 
-    private static HealthDescriptor createDescriptor(final boolean isEnabled) {
+    private static HealthDescriptor createDescriptor(boolean isEnabled) {
         HealthDescriptor descriptor = mock(HealthDescriptor.class);
         if (isEnabled) {
             when(descriptor.isEnabled()).thenReturn(true);
@@ -135,13 +134,13 @@ class HealthSeriesBuilderTest {
         /**
          * Set the tests name.
          *
-         * @param name
+         * @param testName
          *         name of the test.
          *
          * @return this
          */
-        TestArgumentsBuilder setTestName(final String name) {
-            this.name = name;
+        TestArgumentsBuilder setTestName(String testName) {
+            name = testName;
 
             return this;
         }
@@ -154,7 +153,7 @@ class HealthSeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setDescriptor(final HealthDescriptor descriptor) {
+        TestArgumentsBuilder setDescriptor(HealthDescriptor descriptor) {
             this.descriptor = descriptor;
 
             return this;
@@ -168,7 +167,7 @@ class HealthSeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setRun(final AnalysisResult run) {
+        TestArgumentsBuilder setRun(AnalysisResult run) {
             this.run = run;
 
             return this;
@@ -177,13 +176,13 @@ class HealthSeriesBuilderTest {
         /**
          * Set test expectation.
          *
-         * @param series
+         * @param expectedSeries
          *         expected as result.
          *
          * @return this
          */
-        TestArgumentsBuilder setExpectedSeries(final Integer... series) {
-            this.series = asList(series);
+        TestArgumentsBuilder setExpectedSeries(Integer... expectedSeries) {
+            series = asList(expectedSeries);
 
             return this;
         }

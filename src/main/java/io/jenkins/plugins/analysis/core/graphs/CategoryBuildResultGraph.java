@@ -19,8 +19,8 @@ import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import hudson.plugins.analysis.Messages;
 
 /**
- * A build result graph using a {@link CategoryPlot}. Uses a template method to
- * create a graph based on a series of build results.
+ * A build result graph using a {@link CategoryPlot}. Uses a template method to create a graph based on a series of
+ * build results.
  *
  * @author Ulli Hafner
  */
@@ -32,15 +32,17 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * Creates a PNG image trend graph with clickable map.
      *
      * @param configuration
-     *            the configuration parameters
+     *         the configuration parameters
      * @param history
-     *            the result action to start the graph computation from
+     *         the result action to start the graph computation from
      * @param pluginName
-     *            the name of the plug-in
+     *         the name of the plug-in
+     *
      * @return the graph
      */
     @Override
-    public JFreeChart create(final GraphConfiguration configuration, final ResultHistory history, final String pluginName) {
+    public JFreeChart create(GraphConfiguration configuration, ResultHistory history,
+            String pluginName) {
         JFreeChart chart = createChart(configuration, history);
 
         attachRenderer(configuration, pluginName, chart);
@@ -52,17 +54,18 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * Creates a PNG image trend graph with clickable map.
      *
      * @param configuration
-     *            the configuration parameters
+     *         the configuration parameters
      * @param resultActions
-     *            the result actions to start the graph computation from
+     *         the result actions to start the graph computation from
      * @param pluginName
-     *            the name of the plug-in
+     *         the name of the plug-in
+     *
      * @return the graph
      */
     @Override
     @SuppressFBWarnings("WMI")
-    public JFreeChart createAggregation(final GraphConfiguration configuration,
-                                        final Collection<ResultHistory> resultActions, final String pluginName) {
+    public JFreeChart createAggregation(GraphConfiguration configuration,
+            Collection<ResultHistory> resultActions, String pluginName) {
         CategoryDataset dataset = createSeriesBuilder().createAggregation(configuration, resultActions);
 
         JFreeChart chart = createChart(dataset);
@@ -83,13 +86,14 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * Attach the renderer to the created graph.
      *
      * @param configuration
-     *            the configuration parameters
+     *         the configuration parameters
      * @param pluginName
-     *            the name of the plug-in
+     *         the name of the plug-in
      * @param chart
-     *            the graph to attach the renderer to
+     *         the graph to attach the renderer to
      */
-    private void attachRenderer(final GraphConfiguration configuration, final String pluginName, final JFreeChart chart) {
+    private void attachRenderer(GraphConfiguration configuration, String pluginName,
+            JFreeChart chart) {
         CategoryItemRenderer renderer = createRenderer(configuration, pluginName);
         CategoryPlot plot = chart.getCategoryPlot();
         plot.setRenderer(renderer);
@@ -100,21 +104,23 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * Creates the chart by iterating through all available actions.
      *
      * @param configuration
-     *            the configuration parameters
+     *         the configuration parameters
      * @param history
-     *            the action to start with
+     *         the action to start with
+     *
      * @return the created chart
      */
-    protected JFreeChart createChart(final GraphConfiguration configuration, final ResultHistory history) {
+    protected JFreeChart createChart(GraphConfiguration configuration, ResultHistory history) {
         CategoryDataset dataSet = createSeriesBuilder().createDataSet(configuration, history);
         return createChart(dataSet);
     }
 
-
     /**
      * Creates the chart for the specified data set.
      *
-     * @param dataSet the data set to show in the graph
+     * @param dataSet
+     *         the data set to show in the graph
+     *
      * @return the created graph
      */
     protected abstract JFreeChart createChart(CategoryDataset dataSet);
@@ -123,16 +129,16 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * Creates the renderer for this graph.
      *
      * @param configuration
-     *            the graph configuration
+     *         the graph configuration
      * @param pluginName
-     *            the name of the plug-in
+     *         the name of the plug-in
+     *
      * @return the renderer
      */
     protected abstract CategoryItemRenderer createRenderer(GraphConfiguration configuration, String pluginName);
 
     /**
-     * Returns the colors for this graph. The first color is used for the first
-     * series value, etc.
+     * Returns the colors for this graph. The first color is used for the first series value, etc.
      *
      * @return the colors
      */
@@ -142,10 +148,11 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * Creates a stacked area graph from the specified data set.
      *
      * @param dataset
-     *            the values to display
+     *         the values to display
+     *
      * @return the created graph
      */
-    public JFreeChart createAreaChart(final CategoryDataset dataset) {
+    public JFreeChart createAreaChart(CategoryDataset dataset) {
         return createAreaChart(dataset, "count");
     }
 
@@ -153,21 +160,22 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * Creates a stacked area graph from the specified data set.
      *
      * @param dataset
-     *            the values to display
+     *         the values to display
      * @param yAxisLabel
-     *            label of the range axis, i.e. y axis
+     *         label of the range axis, i.e. y axis
+     *
      * @return the created graph
      */
-    private JFreeChart createAreaChart(final CategoryDataset dataset, final String yAxisLabel) {
+    private JFreeChart createAreaChart(CategoryDataset dataset, String yAxisLabel) {
         JFreeChart chart = ChartFactory.createStackedAreaChart(
-            null,                      // chart title
-            null,                      // unused
-            yAxisLabel,                // range axis label
-            dataset,                   // data
-            PlotOrientation.VERTICAL,  // orientation
-            false,                     // include legend
-            true,                      // tooltips
-            false                      // urls
+                null,                      // chart title
+                null,                      // unused
+                yAxisLabel,                // range axis label
+                dataset,                   // data
+                PlotOrientation.VERTICAL,  // orientation
+                false,                     // include legend
+                true,                      // tooltips
+                false                      // urls
         );
         chart.setBackgroundPaint(Color.white);
         setCategoryPlotProperties(chart.getCategoryPlot());
@@ -192,12 +200,13 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * Creates a line graph for the specified data set.
      *
      * @param dataSet
-     *            the data to plot
+     *         the data to plot
      * @param hasLegend
-     *            determines whether to show a legend
+     *         determines whether to show a legend
+     *
      * @return the graph
      */
-    protected JFreeChart createLineGraph(final CategoryDataset dataSet, final boolean hasLegend) {
+    protected JFreeChart createLineGraph(CategoryDataset dataSet, boolean hasLegend) {
         return createLineGraph(dataSet, hasLegend, Y_AXIS_LABEL);
     }
 
@@ -205,14 +214,16 @@ public abstract class CategoryBuildResultGraph extends BuildResultGraph {
      * Creates a line graph for the specified data set.
      *
      * @param dataSet
-     *            the data to plot
+     *         the data to plot
      * @param hasLegend
-     *            determines whether to show a legend
+     *         determines whether to show a legend
      * @param yAxisLabel
-     *            label of the range axis, i.e. y axis
+     *         label of the range axis, i.e. y axis
+     *
      * @return the graph
      */
-    protected JFreeChart createLineGraph(final CategoryDataset dataSet, final boolean hasLegend, final String yAxisLabel) {
+    protected JFreeChart createLineGraph(CategoryDataset dataSet, boolean hasLegend,
+            String yAxisLabel) {
         NumberAxis numberAxis = new NumberAxis(yAxisLabel);
         numberAxis.setAutoRange(true);
         numberAxis.setAutoRangeIncludesZero(false);
