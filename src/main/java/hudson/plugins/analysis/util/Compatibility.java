@@ -1,7 +1,7 @@
 package hudson.plugins.analysis.util;
 
-import java.lang.reflect.Method;
 import javax.annotation.Nonnull;
+import java.lang.reflect.Method;
 
 /**
  * Compatibility utilities.

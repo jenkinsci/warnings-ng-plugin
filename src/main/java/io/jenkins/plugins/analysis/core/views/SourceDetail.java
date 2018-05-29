@@ -57,7 +57,7 @@ public class SourceDetail implements ModelObject {
      * @param sourceEncoding
      *         the encoding to use when displaying source files
      */
-    public SourceDetail(final Run<?, ?> owner, final Issue issue, final Charset sourceEncoding) {
+    public SourceDetail(Run<?, ?> owner, Issue issue, Charset sourceEncoding) {
         this.owner = owner;
         this.issue = issue;
         this.sourceEncoding = sourceEncoding;
@@ -93,7 +93,7 @@ public class SourceDetail implements ModelObject {
      * @throws IOException
      *         if the source code could not be read
      */
-    private String highlightSource(final InputStream file) throws IOException {
+    private String highlightSource(InputStream file) throws IOException {
         JavaSource source = new JavaSourceParser().parse(new InputStreamReader(file, sourceEncoding));
 
         JavaSource2HTMLConverter converter = new JavaSource2HTMLConverter();
@@ -114,7 +114,7 @@ public class SourceDetail implements ModelObject {
      */
     // CHECKSTYLE:CONSTANTS-OFF
     @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
-    private void splitSourceFile(final String sourceFile) {
+    private void splitSourceFile(String sourceFile) {
         StringBuilder output = new StringBuilder(sourceFile.length());
 
         LineIterator lineIterator = IOUtils.lineIterator(new StringReader(sourceFile));
@@ -183,7 +183,7 @@ public class SourceDetail implements ModelObject {
      * @param message
      *         the message to write
      */
-    private void outputEscaped(final StringBuilder output, final String message) {
+    private void outputEscaped(StringBuilder output, String message) {
         output.append(StringEscapeUtils.escapeHtml4(message));
     }
 
@@ -195,7 +195,7 @@ public class SourceDetail implements ModelObject {
      * @param isFirstRange
      *         determines whether the range is the first one
      */
-    private void appendRangeColor(final StringBuilder output, final boolean isFirstRange) {
+    private void appendRangeColor(StringBuilder output, boolean isFirstRange) {
         if (isFirstRange) {
             output.append(FIRST_COLOR);
         }
@@ -212,7 +212,7 @@ public class SourceDetail implements ModelObject {
      * @param lineIterator
      *         input
      */
-    private void copyLine(final StringBuilder output, final LineIterator lineIterator) {
+    private void copyLine(StringBuilder output, LineIterator lineIterator) {
         output.append(lineIterator.nextLine());
         output.append("\n");
     }

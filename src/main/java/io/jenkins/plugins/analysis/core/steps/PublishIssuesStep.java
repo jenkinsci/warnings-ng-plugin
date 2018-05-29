@@ -73,7 +73,7 @@ public class PublishIssuesStep extends Step {
      *         the issues to publish as {@link Action} in the {@link Job}.
      */
     @DataBoundConstructor
-    public PublishIssuesStep(final Report... issues) {
+    public PublishIssuesStep(Report... issues) {
         super();
 
         if (issues == null || issues.length == 0) {
@@ -99,7 +99,7 @@ public class PublishIssuesStep extends Step {
      *         the ID of the results
      */
     @DataBoundSetter
-    public void setId(final String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -115,7 +115,7 @@ public class PublishIssuesStep extends Step {
      *         the name of the results
      */
     @DataBoundSetter
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -131,7 +131,7 @@ public class PublishIssuesStep extends Step {
      *         if {@code true} then the previous build is always used
      */
     @DataBoundSetter
-    public void setIgnoreAnalysisResult(final boolean ignoreAnalysisResult) {
+    public void setIgnoreAnalysisResult(boolean ignoreAnalysisResult) {
         this.ignoreAnalysisResult = ignoreAnalysisResult;
     }
 
@@ -147,7 +147,7 @@ public class PublishIssuesStep extends Step {
      *         if {@code true} then a stable build is used as reference
      */
     @DataBoundSetter
-    public void setOverallResultMustBeSuccess(final boolean overallResultMustBeSuccess) {
+    public void setOverallResultMustBeSuccess(boolean overallResultMustBeSuccess) {
         this.overallResultMustBeSuccess = overallResultMustBeSuccess;
     }
 
@@ -162,7 +162,7 @@ public class PublishIssuesStep extends Step {
      *         the name of reference job
      */
     @DataBoundSetter
-    public void setReferenceJobName(final String referenceJobName) {
+    public void setReferenceJobName(String referenceJobName) {
         this.referenceJobName = referenceJobName;
     }
 
@@ -182,7 +182,7 @@ public class PublishIssuesStep extends Step {
      *         the encoding, e.g. "ISO-8859-1"
      */
     @DataBoundSetter
-    public void setDefaultEncoding(final String defaultEncoding) {
+    public void setDefaultEncoding(String defaultEncoding) {
         this.defaultEncoding = defaultEncoding;
     }
 
@@ -198,7 +198,7 @@ public class PublishIssuesStep extends Step {
      *         the number of issues when health is reported as 100%
      */
     @DataBoundSetter
-    public void setHealthy(final int healthy) {
+    public void setHealthy(int healthy) {
         this.healthy = healthy;
     }
 
@@ -214,7 +214,7 @@ public class PublishIssuesStep extends Step {
      *         the number of issues when health is reported as 0%
      */
     @DataBoundSetter
-    public void setUnHealthy(final int unHealthy) {
+    public void setUnHealthy(int unHealthy) {
         this.unHealthy = unHealthy;
     }
 
@@ -236,7 +236,7 @@ public class PublishIssuesStep extends Step {
      *         the priority to consider
      */
     @DataBoundSetter
-    public void setMinimumPriority(final String minimumPriority) {
+    public void setMinimumPriority(String minimumPriority) {
         this.minimumPriority = Priority.fromString(minimumPriority, Priority.LOW);
     }
 
@@ -249,7 +249,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setUnstableTotalAll(final int unstableTotalAll) {
+    public void setUnstableTotalAll(int unstableTotalAll) {
         getThresholds().unstableTotalAll = unstableTotalAll;
     }
 
@@ -258,7 +258,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setUnstableTotalHigh(final int unstableTotalHigh) {
+    public void setUnstableTotalHigh(int unstableTotalHigh) {
         getThresholds().unstableTotalHigh = unstableTotalHigh;
     }
 
@@ -267,7 +267,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setUnstableTotalNormal(final int unstableTotalNormal) {
+    public void setUnstableTotalNormal(int unstableTotalNormal) {
         getThresholds().unstableTotalNormal = unstableTotalNormal;
     }
 
@@ -276,7 +276,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setUnstableTotalLow(final int unstableTotalLow) {
+    public void setUnstableTotalLow(int unstableTotalLow) {
         getThresholds().unstableTotalLow = unstableTotalLow;
     }
 
@@ -285,7 +285,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setUnstableNewAll(final int unstableNewAll) {
+    public void setUnstableNewAll(int unstableNewAll) {
         getThresholds().unstableNewAll = unstableNewAll;
     }
 
@@ -294,7 +294,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setUnstableNewHigh(final int unstableNewHigh) {
+    public void setUnstableNewHigh(int unstableNewHigh) {
         getThresholds().unstableNewHigh = unstableNewHigh;
     }
 
@@ -303,7 +303,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setUnstableNewNormal(final int unstableNewNormal) {
+    public void setUnstableNewNormal(int unstableNewNormal) {
         getThresholds().unstableNewNormal = unstableNewNormal;
     }
 
@@ -312,7 +312,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setUnstableNewLow(final int unstableNewLow) {
+    public void setUnstableNewLow(int unstableNewLow) {
         getThresholds().unstableNewLow = unstableNewLow;
     }
 
@@ -321,7 +321,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setFailedTotalAll(final int failedTotalAll) {
+    public void setFailedTotalAll(int failedTotalAll) {
         getThresholds().failedTotalAll = failedTotalAll;
     }
 
@@ -330,7 +330,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setFailedTotalHigh(final int failedTotalHigh) {
+    public void setFailedTotalHigh(int failedTotalHigh) {
         getThresholds().failedTotalHigh = failedTotalHigh;
     }
 
@@ -339,7 +339,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setFailedTotalNormal(final int failedTotalNormal) {
+    public void setFailedTotalNormal(int failedTotalNormal) {
         getThresholds().failedTotalNormal = failedTotalNormal;
     }
 
@@ -348,7 +348,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setFailedTotalLow(final int failedTotalLow) {
+    public void setFailedTotalLow(int failedTotalLow) {
         getThresholds().failedTotalLow = failedTotalLow;
     }
 
@@ -357,7 +357,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setFailedNewAll(final int failedNewAll) {
+    public void setFailedNewAll(int failedNewAll) {
         getThresholds().failedNewAll = failedNewAll;
     }
 
@@ -366,7 +366,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setFailedNewHigh(final int failedNewHigh) {
+    public void setFailedNewHigh(int failedNewHigh) {
         getThresholds().failedNewHigh = failedNewHigh;
     }
 
@@ -375,7 +375,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setFailedNewNormal(final int failedNewNormal) {
+    public void setFailedNewNormal(int failedNewNormal) {
         getThresholds().failedNewNormal = failedNewNormal;
     }
 
@@ -384,7 +384,7 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setFailedNewLow(final int failedNewLow) {
+    public void setFailedNewLow(int failedNewLow) {
         getThresholds().failedNewLow = failedNewLow;
     }
 
@@ -395,12 +395,12 @@ public class PublishIssuesStep extends Step {
     }
 
     @DataBoundSetter
-    public void setFilters(final List<RegexpFilter> filters) {
+    public void setFilters(List<RegexpFilter> filters) {
         this.filters = new ArrayList<>(filters);
     }
 
     @Override
-    public StepExecution start(final StepContext stepContext) {
+    public StepExecution start(StepContext stepContext) {
         return new Execution(stepContext, this);
     }
 
@@ -419,7 +419,7 @@ public class PublishIssuesStep extends Step {
         private final Thresholds thresholds;
         private final String referenceJobName;
 
-        protected Execution(@NonNull final StepContext context, final PublishIssuesStep step) {
+        protected Execution(@NonNull StepContext context, PublishIssuesStep step) {
             super(context);
 
             ignoreAnalysisResult = step.getIgnoreAnalysisResult();

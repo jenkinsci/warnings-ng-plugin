@@ -294,7 +294,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
         QualityGateResult qualityGateResult = mock(QualityGateResult.class);
         AnalysisResult analysisResult = mock(AnalysisResult.class);
 
-        assertThat(qualityGateResult.getEvaluations(analysisResult, this.createGateWithBuilder())).isEmpty();
+        assertThat(qualityGateResult.getEvaluations(analysisResult, createGateWithBuilder())).isEmpty();
     }
 
     @Test
@@ -315,7 +315,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
         QualityGateResult qualityGateResult = new QualityGateResult(totalThresholdResult, totalUnstableThresholdResult,
                 newFailedThresholdResult, newUnstableThresholdResult);
 
-        QualityGate qualityGate = this.createGateWithBuilder();
+        QualityGate qualityGate = createGateWithBuilder();
 
         List<String> evaluations = qualityGateResult.getEvaluations(analysisResult,
                 qualityGate);
@@ -341,7 +341,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
         QualityGateResult qualityGateResult = new QualityGateResult(totalThresholdResult, totalUnstableThresholdResult,
                 newFailedThresholdResult, newUnstableThresholdResult);
 
-        QualityGate qualityGate = this.createGateWithBuilder();
+        QualityGate qualityGate = createGateWithBuilder();
 
         List<String> evaluations = qualityGateResult.getEvaluations(analysisResult,
                 qualityGate);
@@ -368,7 +368,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
         QualityGateResult qualityGateResult = new QualityGateResult(totalThresholdResult, totalUnstableThresholdResult,
                 newFailedThresholdResult, newUnstableThresholdResult);
 
-        QualityGate qualityGate = this.createGateWithBuilder();
+        QualityGate qualityGate = createGateWithBuilder();
 
         List<String> evaluations = qualityGateResult.getEvaluations(analysisResult,
                 qualityGate);
@@ -394,7 +394,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
         QualityGateResult qualityGateResult = new QualityGateResult(totalThresholdResult, totalUnstableThresholdResult,
                 newFailedThresholdResult, newUnstableThresholdResult);
 
-        QualityGate qualityGate = this.createGateWithBuilder();
+        QualityGate qualityGate = createGateWithBuilder();
 
         List<String> evaluations = qualityGateResult.getEvaluations(analysisResult,
                 qualityGate);
@@ -439,7 +439,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
      * @param state
      *         the message state
      */
-    private void testEvaluationMessages(final List<String> messages, final State state) {
+    private void testEvaluationMessages(List<String> messages, State state) {
         for (String message : messages) {
             assertThat(message).contains(state.name());
         }
@@ -452,7 +452,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
      * @param messages
      *         list of evaluation messages
      */
-    private void testEvaluationMessages(final List<String> messages) {
+    private void testEvaluationMessages(List<String> messages) {
         assertThat(messages).hasSize(4);
         int counter = 0;
         for (String message : messages) {
@@ -482,13 +482,13 @@ class QualityGateTest extends SerializableTest<QualityGate> {
      * @param state
      *         the state of the evaluation messages
      */
-    private void testEvaluation(final ThresholdResult totalThresholdResult, final ThresholdResult totalUnstableThresholdResult,
-            final ThresholdResult newFailedThresholdResult, final ThresholdResult newUnstableThresholdResult,
-            final AnalysisResult analysisResult, final State state) {
+    private void testEvaluation(ThresholdResult totalThresholdResult, ThresholdResult totalUnstableThresholdResult,
+            ThresholdResult newFailedThresholdResult, ThresholdResult newUnstableThresholdResult,
+            AnalysisResult analysisResult, State state) {
         QualityGateResult qualityGateResult = new QualityGateResult(totalThresholdResult, totalUnstableThresholdResult,
                 newFailedThresholdResult, newUnstableThresholdResult);
 
-        QualityGate qualityGate = this.createGateWithBuilder();
+        QualityGate qualityGate = createGateWithBuilder();
 
         List<String> evaluations = qualityGateResult.getEvaluations(analysisResult, qualityGate);
         assertThat(evaluations).hasSize(4);
@@ -510,8 +510,8 @@ class QualityGateTest extends SerializableTest<QualityGate> {
      * @param status
      *         expected result of the tests
      */
-    private void testThreshold(final Function<ThresholdSet, QualityGateBuilder> builder,
-            final int threshold, final int totalWarningCount, final int newWarningCount, final Status status) {
+    private void testThreshold(Function<ThresholdSet, QualityGateBuilder> builder,
+            int threshold, int totalWarningCount, int newWarningCount, Status status) {
         QualityGate qualityGateTotal = builder.apply(
                 new ThresholdSetBuilder().setTotalThreshold(threshold).build()).build();
         QualityGate qualityGateHigh = builder.apply(
@@ -564,14 +564,14 @@ class QualityGateTest extends SerializableTest<QualityGate> {
     /** Verifies that a String input parameter is validated. */
     @ParameterizedTest
     @ValueSource(strings = {"Nothing", "2V3", "-1", "-2"})
-    void shouldNotAcceptIllegalThresholdValues(final String threshold) {
+    void shouldNotAcceptIllegalThresholdValues(String threshold) {
         assertThatThrownBy(() -> new ThresholdSetBuilder().setTotalThreshold(threshold))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @ParameterizedTest(name = "[{index}] ''{0}''")
     @ValueSource(strings = {"", " ", "\t", "    "})
-    void shouldConvertEmptyStringToZero(final String threshold) {
+    void shouldConvertEmptyStringToZero(String threshold) {
         ThresholdSet noThresholdsDefined = new ThresholdSetBuilder()
                 .setTotalThreshold(threshold)
                 .setHighThreshold(threshold)

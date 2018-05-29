@@ -48,11 +48,11 @@ class IssuesPublisher {
     private final String id;
 
     @SuppressWarnings("ParameterNumber")
-    IssuesPublisher(final Run<?, ?> run, final Report report, final List<RegexpFilter> filters,
-            final HealthDescriptor healthDescriptor, final QualityGate qualityGate,
-            final String name, final String referenceJobName, final boolean ignoreAnalysisResult,
-            final boolean overallResultMustBeSuccess, final Charset sourceCodeEncoding,
-            final LogHandler logger) {
+    IssuesPublisher(Run<?, ?> run, Report report, List<RegexpFilter> filters,
+            HealthDescriptor healthDescriptor, QualityGate qualityGate,
+            String name, String referenceJobName, boolean ignoreAnalysisResult,
+            boolean overallResultMustBeSuccess, Charset sourceCodeEncoding,
+            LogHandler logger) {
         this.report = report;
         id = report.getOrigin();
         this.filters = new ArrayList<>(filters);
@@ -94,7 +94,7 @@ class IssuesPublisher {
      * @throws InterruptedException
      *         if the user cancels the processing
      */
-    public ResultAction attachAction(final VirtualChannel channel, final FilePath buildFolder)
+    public ResultAction attachAction(VirtualChannel channel, FilePath buildFolder)
             throws IOException, InterruptedException {
         ResultAction resultAction = run();
 
@@ -126,15 +126,15 @@ class IssuesPublisher {
         return selector;
     }
 
-    private void copyAffectedFiles(final Report filtered,
-            final VirtualChannel channel, final FilePath buildFolder)
+    private void copyAffectedFiles(Report filtered,
+            VirtualChannel channel, FilePath buildFolder)
             throws IOException, InterruptedException {
         new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(filtered, channel, buildFolder);
 
         logger.log(filtered);
     }
 
-    private AnalysisResult createResult(final ResultSelector selector, final Report filtered) {
+    private AnalysisResult createResult(ResultSelector selector, Report filtered) {
         AnalysisResult result = createAnalysisResult(filtered, selector);
 
         logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
@@ -158,7 +158,7 @@ class IssuesPublisher {
     }
 
     @SuppressWarnings("PMD.PrematureDeclaration")
-    private AnalysisResult createAnalysisResult(final Report filtered, final ResultSelector selector) {
+    private AnalysisResult createAnalysisResult(Report filtered, ResultSelector selector) {
         filtered.setReference(String.valueOf(run.getNumber()));
 
         ReferenceProvider referenceProvider = createReferenceProvider(selector);
@@ -167,7 +167,7 @@ class IssuesPublisher {
                 .orElseGet(() -> new AnalysisResult(run, referenceProvider, filtered, qualityGate));
     }
 
-    private ReferenceProvider createReferenceProvider(final ResultSelector selector) {
+    private ReferenceProvider createReferenceProvider(ResultSelector selector) {
         Run<?, ?> baseline = run;
         if (referenceJobName != null) {
             Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
