@@ -260,7 +260,7 @@ class SummaryTest {
         assertThat(actualSummary).contains("Reference build: <a href=\"absoluteUrl\">Job #15</a>");
     }
 
-    private Summary createTestData(AnalysisResult analysisResult) {
+    private Summary createTestData(final AnalysisResult analysisResult) {
         Locale.setDefault(Locale.ENGLISH);
 
         LabelProviderFactoryFacade facade = mock(LabelProviderFactoryFacade.class);
@@ -272,8 +272,8 @@ class SummaryTest {
         return new Summary(createLabelProvider("test", "SummaryTest"), analysisResult, facade);
     }
 
-    private AnalysisResult createAnalysisResult(Map<String, Integer> sizesPerOrigin, int newSize, int fixedSize,
-            ImmutableList<String> errorMessages, int numberOfIssuesSinceBuild, int numberOfThresholds) {
+    private AnalysisResult createAnalysisResult(final Map<String, Integer> sizesPerOrigin, final int newSize, final int fixedSize,
+            final ImmutableList<String> errorMessages, final int numberOfIssuesSinceBuild, final int numberOfThresholds) {
         AnalysisResult analysisRun = mock(AnalysisResult.class);
         when(analysisRun.getSizePerOrigin()).thenReturn(sizesPerOrigin);
         when(analysisRun.getNewSize()).thenReturn(newSize);
@@ -297,14 +297,14 @@ class SummaryTest {
         return analysisRun;
     }
 
-    private StaticAnalysisLabelProvider createLabelProvider(String checkstyle, String checkStyle) {
+    private StaticAnalysisLabelProvider createLabelProvider(final String checkstyle, final String checkStyle) {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
         when(jenkins.getImagePath(any())).thenReturn("color");
         when(jenkins.getAbsoluteUrl(any())).thenReturn("absoluteUrl");
         return new StaticAnalysisLabelProvider(checkstyle, checkStyle, jenkins);
     }
 
-    private Pattern createWarningsLink(String href) {
+    private Pattern createWarningsLink(final String href) {
         return Pattern.compile(href, Pattern.MULTILINE | Pattern.DOTALL);
     }
 }

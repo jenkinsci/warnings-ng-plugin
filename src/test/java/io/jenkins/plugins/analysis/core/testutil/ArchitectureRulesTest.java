@@ -109,7 +109,7 @@ public class ArchitectureRulesTest {
         }
 
         @Override
-        public boolean apply(JavaCall<?> input) {
+        public boolean apply(final JavaCall<?> input) {
             return input.getTarget().isAnnotatedWith(VisibleForTesting.class)
                     && !input.getOriginOwner().equals(input.getTargetOwner())
                     && !input.getOrigin().isAnnotatedWith(VisibleForTesting.class);

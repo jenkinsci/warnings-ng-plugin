@@ -142,9 +142,9 @@ class SeriesBuilderTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("createDataSetData")
-    void shouldCreateDataSet(@SuppressWarnings("unused") String testName,
-            ResultTime time, GraphConfiguration config,
-            List<AnalysisResult> runs, List<List<Integer>> expected) {
+    void shouldCreateDataSet(@SuppressWarnings("unused") final String testName,
+            final ResultTime time, final GraphConfiguration config,
+            final List<AnalysisResult> runs, final List<List<Integer>> expected) {
         SeriesBuilder seriesBuilder = new TestSeriesBuilder(time);
 
         CategoryDataset result = seriesBuilder.createDataSet(config, runs);
@@ -152,7 +152,7 @@ class SeriesBuilderTest {
         assertThat(result).containsExactly(expected);
     }
 
-    private static GraphConfiguration createWithBuildCount(int count) {
+    private static GraphConfiguration createWithBuildCount(final int count) {
         GraphConfiguration config = createConfig();
         when(config.isBuildCountDefined()).thenReturn(true);
         when(config.getBuildCount()).thenReturn(count);
@@ -170,7 +170,7 @@ class SeriesBuilderTest {
     }
 
 
-    private static AnalysisResult createRun(int buildNo, DateTime buildTime) {
+    private static AnalysisResult createRun(final int buildNo, final DateTime buildTime) {
         AnalysisResult run = mock(AnalysisResult.class);
 
         AnalysisBuild build = mock(AnalysisBuild.class);
@@ -183,14 +183,14 @@ class SeriesBuilderTest {
         return run;
     }
 
-    private static ResultTime resultTime(Boolean value, Boolean... continuations) {
+    private static ResultTime resultTime(final Boolean value, final Boolean... continuations) {
         ResultTime time = mock(ResultTime.class);
         when(time.isResultTooOld(any(GraphConfiguration.class), any(AnalysisResult.class)))
                 .thenReturn(value, continuations);
         return time;
     }
 
-    private static List<Integer> series(Integer... values) {
+    private static List<Integer> series(final Integer... values) {
         return asList(values);
     }
 
@@ -202,12 +202,12 @@ class SeriesBuilderTest {
         private int count;
 
         @VisibleForTesting
-        TestSeriesBuilder(ResultTime resultTime) {
+        TestSeriesBuilder(final ResultTime resultTime) {
             super(resultTime);
         }
 
         @Override
-        protected List<Integer> computeSeries(AnalysisResult current) {
+        protected List<Integer> computeSeries(final AnalysisResult current) {
             return asList(count++, count++, count++);
 
         }
@@ -233,7 +233,7 @@ class SeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setConfig(GraphConfiguration config) {
+        TestArgumentsBuilder setConfig(final GraphConfiguration config) {
             this.config = config;
 
             return this;
@@ -248,7 +248,7 @@ class SeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setTestName(String name) {
+        TestArgumentsBuilder setTestName(final String name) {
             testName = name;
 
             return this;
@@ -262,7 +262,7 @@ class SeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setTime(ResultTime time) {
+        TestArgumentsBuilder setTime(final ResultTime time) {
             this.time = time;
 
             return this;
@@ -276,7 +276,7 @@ class SeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setRuns(AnalysisResult... runs) {
+        TestArgumentsBuilder setRuns(final AnalysisResult... runs) {
             this.runs = asList(runs);
 
             return this;
@@ -291,7 +291,7 @@ class SeriesBuilderTest {
          * @return this
          */
         @SafeVarargs
-        public final TestArgumentsBuilder setExpected(List<Integer>... expectedSeries) {
+        public final TestArgumentsBuilder setExpected(final List<Integer>... expectedSeries) {
             series = asList(expectedSeries);
 
             return this;

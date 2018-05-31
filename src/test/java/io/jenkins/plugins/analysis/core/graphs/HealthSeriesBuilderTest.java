@@ -87,7 +87,8 @@ class HealthSeriesBuilderTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("testData")
-    void testComputeSeries(String name, HealthDescriptor descriptor, AnalysisResult run, Iterable<Integer> expectedSeries) {
+    void testComputeSeries(
+            final String name, final HealthDescriptor descriptor, final AnalysisResult run, final Iterable<Integer> expectedSeries) {
         HealthSeriesBuilder sut = new HealthSeriesBuilder(descriptor);
 
         List<Integer> series = sut.computeSeries(run);
@@ -96,7 +97,7 @@ class HealthSeriesBuilderTest {
                 .containsExactlyElementsOf(expectedSeries);
     }
 
-    private static AnalysisResult createRunWithSize(int totalSize) {
+    private static AnalysisResult createRunWithSize(final int totalSize) {
         AnalysisResult run = mock(AnalysisResult.class);
         when(run.getTotalSize()).thenReturn(totalSize);
         return run;
@@ -106,14 +107,14 @@ class HealthSeriesBuilderTest {
         return createDescriptor(false);
     }
 
-    private static HealthDescriptor createEnabledDescriptor(int healthThreshold, int unhealthThreshhold) {
+    private static HealthDescriptor createEnabledDescriptor(final int healthThreshold, final int unhealthThreshhold) {
         HealthDescriptor healthDescriptor = createDescriptor(true);
         when(healthDescriptor.getHealthy()).thenReturn(healthThreshold);
         when(healthDescriptor.getUnHealthy()).thenReturn(unhealthThreshhold);
         return healthDescriptor;
     }
 
-    private static HealthDescriptor createDescriptor(boolean isEnabled) {
+    private static HealthDescriptor createDescriptor(final boolean isEnabled) {
         HealthDescriptor descriptor = mock(HealthDescriptor.class);
         if (isEnabled) {
             when(descriptor.isEnabled()).thenReturn(true);
@@ -139,7 +140,7 @@ class HealthSeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setTestName(String testName) {
+        TestArgumentsBuilder setTestName(final String testName) {
             name = testName;
 
             return this;
@@ -153,7 +154,7 @@ class HealthSeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setDescriptor(HealthDescriptor descriptor) {
+        TestArgumentsBuilder setDescriptor(final HealthDescriptor descriptor) {
             this.descriptor = descriptor;
 
             return this;
@@ -167,7 +168,7 @@ class HealthSeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setRun(AnalysisResult run) {
+        TestArgumentsBuilder setRun(final AnalysisResult run) {
             this.run = run;
 
             return this;
@@ -181,7 +182,7 @@ class HealthSeriesBuilderTest {
          *
          * @return this
          */
-        TestArgumentsBuilder setExpectedSeries(Integer... expectedSeries) {
+        TestArgumentsBuilder setExpectedSeries(final Integer... expectedSeries) {
             series = asList(expectedSeries);
 
             return this;
