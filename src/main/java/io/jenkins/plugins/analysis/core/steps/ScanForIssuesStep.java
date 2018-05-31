@@ -126,6 +126,14 @@ public class ScanForIssuesStep extends Step {
         private final StaticAnalysisTool tool;
         private final String pattern;
 
+        /**
+         * Creates a new instance of the step execution object.
+         *
+         * @param context
+         *         context for this step
+         * @param step
+         *         the actual step to execute
+         */
         protected Execution(@NonNull final StepContext context, final ScanForIssuesStep step) {
             super(context);
 

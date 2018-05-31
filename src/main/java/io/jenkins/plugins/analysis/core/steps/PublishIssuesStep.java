@@ -419,6 +419,14 @@ public class PublishIssuesStep extends Step {
         private final Thresholds thresholds;
         private final String referenceJobName;
 
+        /**
+         * Creates a new instance of the step execution object.
+         *
+         * @param context
+         *         context for this step
+         * @param step
+         *         the actual step to execute
+         */
         protected Execution(@NonNull final StepContext context, final PublishIssuesStep step) {
             super(context);
 
@@ -426,7 +434,8 @@ public class PublishIssuesStep extends Step {
             overallResultMustBeSuccess = step.getOverallResultMustBeSuccess();
             referenceJobName = step.getReferenceJobName();
             sourceCodeEncoding = step.getDefaultEncoding();
-            healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnHealthy(), step.getMinimumPriorityAsPriority());
+            healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnHealthy(),
+                    step.getMinimumPriorityAsPriority());
 
             thresholds = step.getThresholds();
             qualityGate = new QualityGate(thresholds);

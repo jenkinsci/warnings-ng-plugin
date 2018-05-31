@@ -22,6 +22,8 @@ import edu.hm.hafner.util.VisibleForTesting;
  *
  * @author Ullrich Hafner
  */
+// FIXME: forbid calls to Jenkins.getInstance()
+// FIXME: do not import anything from hudson.plugins.analysis
 public class ArchitectureRulesTest {
     private static final DescribedPredicate<JavaCall<?>> ACCESS_IS_RESTRICTED_TO_TESTS = new AccessRestrictedToTests();
 

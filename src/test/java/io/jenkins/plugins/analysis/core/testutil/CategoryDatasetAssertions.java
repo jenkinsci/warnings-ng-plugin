@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
-
 import java.util.List;
 import java.util.Objects;
 
@@ -8,10 +7,12 @@ import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.util.Lists;
 import org.jfree.data.category.CategoryDataset;
 
-
+/**
+ * Assertions for {@link CategoryDataset} instances.
+ *
+ * @author Florian Pirchmoser
+ */
 public class CategoryDatasetAssertions extends AbstractAssert<CategoryDatasetAssertions, CategoryDataset> {
-
-
     private static final String EXPECTED_BUT_WAS_MESSAGE = "%nExpecting %s of:%n <%s>%nto be:%n <%s>%nbut was:%n <%s>.";
 
     CategoryDatasetAssertions(final CategoryDataset o) {
@@ -27,7 +28,6 @@ public class CategoryDatasetAssertions extends AbstractAssert<CategoryDatasetAss
      * @return this
      */
     public final CategoryDatasetAssertions containsExactly(final List<List<Integer>> expectedValues) {
-
         List<List<Integer>> actualValues = Lists.newArrayList();
         for (int c = 0; c < this.actual.getColumnCount(); ++c) {
             List<Integer> rowValues = Lists.newArrayList();
@@ -43,5 +43,4 @@ public class CategoryDatasetAssertions extends AbstractAssert<CategoryDatasetAss
 
         return this;
     }
-
 }

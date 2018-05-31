@@ -21,8 +21,8 @@ import hudson.matrix.MatrixRun;
 import hudson.model.BuildListener;
 
 /**
- * Aggregates the {@link AnalysisResult}s of all {@link ResultAction}s of several {@link MatrixRun}s into
- * {@link MatrixBuild}.
+ * Aggregates the {@link AnalysisResult}s of all {@link ResultAction}s of several {@link MatrixRun}s into {@link
+ * MatrixBuild}.
  *
  * @author Ullrich Hafner
  */
@@ -33,6 +33,18 @@ public class IssuesAggregator extends MatrixAggregator {
 
     private final ReentrantLock aggregationTableLock = new ReentrantLock();
 
+    /**
+     * Creates a new instance of {@link IssuesAggregator}.
+     *
+     * @param build
+     *         the associated matrix build
+     * @param launcher
+     *         the launcher to communicate with the build agent
+     * @param listener
+     *         the listener to log messages to
+     * @param recorder
+     *         the recorder that actually scans for issues and records the found issues
+     */
     public IssuesAggregator(final MatrixBuild build, final Launcher launcher, final BuildListener listener,
             final IssuesRecorder recorder) {
         super(build, launcher, listener);
@@ -77,7 +89,8 @@ public class IssuesAggregator extends MatrixAggregator {
     public boolean endBuild() throws IOException, InterruptedException {
         for (Entry<String, List<Report>> reportsPerId : results.entrySet()) {
             Report aggregatedReport = new Report(reportsPerId.getValue());
-            recorder.publishResult(build, launcher, listener, Messages.Tool_Default_Name(), aggregatedReport, StringUtils.EMPTY);
+            recorder.publishResult(build, launcher, listener, Messages.Tool_Default_Name(), aggregatedReport,
+                    StringUtils.EMPTY);
         }
         return true;
     }
