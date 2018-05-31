@@ -148,8 +148,8 @@ class HealthReportBuilderTest {
      *
      * @return the {@link HealthReport} under test
      */
-    private HealthReport createTestHealthReport(int healthyThreshold, int unhealthyThreshold, Priority priority,
-            int highSize, int normalSize, int lowSize) {
+    private HealthReport createTestHealthReport(final int healthyThreshold, final int unhealthyThreshold,
+            final Priority priority, final int highSize, final int normalSize, final int lowSize) {
         HealthDescriptor healthDescriptor = new HealthDescriptor(healthyThreshold, unhealthyThreshold, priority);
         HealthReportBuilder builder = new HealthReportBuilder(healthDescriptor);
 

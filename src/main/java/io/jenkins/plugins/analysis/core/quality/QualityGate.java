@@ -59,7 +59,7 @@ public class QualityGate implements Serializable {
         newUnstableThreshold = builder.build();
     }
 
-    private QualityGate(final ThresholdSet totalFailedThreshold, final ThresholdSet totalUnstableThreshold,
+    QualityGate(final ThresholdSet totalFailedThreshold, final ThresholdSet totalUnstableThreshold,
             final ThresholdSet newFailedThreshold, final ThresholdSet newUnstableThreshold) {
         this.totalFailedThreshold = totalFailedThreshold;
         this.totalUnstableThreshold = totalUnstableThreshold;
