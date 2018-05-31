@@ -159,7 +159,7 @@ public class ThresholdSet implements Serializable {
         private final boolean isNormalReached;
         private final boolean isLowReached;
 
-        public ThresholdResult(final boolean isTotalReached, final boolean isHighReached, final boolean isNormalReached,
+        ThresholdResult(final boolean isTotalReached, final boolean isHighReached, final boolean isNormalReached,
                 final boolean isLowReached) {
             this.isTotalReached = isTotalReached;
             this.isHighReached = isHighReached;

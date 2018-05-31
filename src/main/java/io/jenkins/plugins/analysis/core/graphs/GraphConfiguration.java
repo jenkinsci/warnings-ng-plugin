@@ -507,7 +507,7 @@ public class GraphConfiguration  {
      *         <code>false</code> otherwise.
      * @since 1.73
      */
-    //CHECKSTYLE:OFF
+    @SuppressWarnings("all")
     protected static boolean isValid(final int newWidth, final int newHeight,
             final int newBuildCount, final int newDayCount, final BuildResultGraph newGraphType,
             final String newParameterName, final String newParameterValue) {

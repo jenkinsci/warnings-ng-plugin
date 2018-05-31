@@ -47,6 +47,12 @@ public class IssueStream {
      */
     @SuppressWarnings("rawtypes")
     public static final class LineRangeListConverter extends RobustCollectionConverter {
+        /**
+         * Creates a nex {@link LineRangeListConverter} instance.
+         *
+         * @param xs
+         *         the stream to read from or write to
+         */
         public LineRangeListConverter(final XStream xs) {
             super(xs);
         }

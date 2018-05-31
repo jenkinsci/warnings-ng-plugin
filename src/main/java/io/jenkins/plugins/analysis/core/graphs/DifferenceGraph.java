@@ -184,7 +184,7 @@ public class DifferenceGraph extends BuildResultGraph {
          * @param pluginName
          *         the name of the plug-in
          */
-        public XyUrlBuilder(final String rootUrl, final String pluginName) {
+        XyUrlBuilder(final String rootUrl, final String pluginName) {
             super(rootUrl, pluginName);
         }
 

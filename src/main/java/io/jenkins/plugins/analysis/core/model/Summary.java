@@ -28,15 +28,23 @@ public class Summary {
     private final AnalysisResult analysisRun;
     private final LabelProviderFactoryFacade facade;
 
-    public Summary(final StaticAnalysisLabelProvider labelProvider, final AnalysisResult analysisRun) {
-        this(labelProvider, analysisRun, new LabelProviderFactoryFacade());
+    /**
+     * Creates a new {@link Summary}.
+     *
+     * @param labelProvider
+     *         the label provider to get the labels for the static analysis tool
+     * @param result
+     *         the result of the static analysis tool
+     */
+    public Summary(final StaticAnalysisLabelProvider labelProvider, final AnalysisResult result) {
+        this(labelProvider, result, new LabelProviderFactoryFacade());
     }
 
     @VisibleForTesting
-    Summary(final StaticAnalysisLabelProvider labelProvider, final AnalysisResult analysisRun,
+    Summary(final StaticAnalysisLabelProvider labelProvider, final AnalysisResult result,
             final LabelProviderFactoryFacade facade) {
         this.labelProvider = labelProvider;
-        this.analysisRun = analysisRun;
+        this.analysisRun = result;
         this.facade = facade;
     }
 

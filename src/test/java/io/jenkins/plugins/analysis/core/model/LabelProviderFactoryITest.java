@@ -84,7 +84,7 @@ public class LabelProviderFactoryITest extends IntegrationTest {
          */
         @TestExtension
         public static final class TestToolDescriptor extends StaticAnalysisToolDescriptor {
-            public TestToolDescriptor() {
+            TestToolDescriptor() {
                 super(ANNOTATED_ID);
             }
 

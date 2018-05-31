@@ -13,6 +13,14 @@ public class CompositeLabelProvider extends StaticAnalysisLabelProvider {
     private final StaticAnalysisLabelProvider labelProvider;
     private final String name;
 
+    /**
+     * Creates a new label provider that decorates another label provider.
+     *
+     * @param labelProvider
+     *         the label provider to decorate
+     * @param name
+     *         the name of the static analysis toool
+     */
     public CompositeLabelProvider(final StaticAnalysisLabelProvider labelProvider, final String name) {
         super(labelProvider.getId(), name);
 
