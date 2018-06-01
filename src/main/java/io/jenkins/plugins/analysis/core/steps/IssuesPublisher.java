@@ -12,7 +12,6 @@ import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode.*;
-import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
 import io.jenkins.plugins.analysis.core.history.ResultSelector;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
@@ -161,13 +160,13 @@ class IssuesPublisher {
     private AnalysisResult createAnalysisResult(final Report filtered, final ResultSelector selector) {
         filtered.setReference(String.valueOf(run.getNumber()));
 
-        ReferenceProvider referenceProvider = createReferenceProvider(selector);
+        AnalysisHistory history = createAnalysisHistory(selector);
         return new AnalysisHistory(run, selector).getPreviousResult()
-                .map(previous -> new AnalysisResult(run, referenceProvider, filtered, qualityGate, previous))
-                .orElseGet(() -> new AnalysisResult(run, referenceProvider, filtered, qualityGate));
+                .map(previous -> new AnalysisResult(run, history, filtered, qualityGate, previous))
+                .orElseGet(() -> new AnalysisResult(run, history, filtered, qualityGate));
     }
 
-    private ReferenceProvider createReferenceProvider(final ResultSelector selector) {
+    private AnalysisHistory createAnalysisHistory(final ResultSelector selector) {
         Run<?, ?> baseline = run;
         if (referenceJobName != null) {
             Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);

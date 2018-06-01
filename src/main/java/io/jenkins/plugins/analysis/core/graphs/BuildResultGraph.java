@@ -21,7 +21,7 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
-import io.jenkins.plugins.analysis.core.history.ResultHistory;
+import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 
 import hudson.util.Graph;
 import hudson.util.ShiftedCategoryAxis;
@@ -117,7 +117,7 @@ public abstract class BuildResultGraph {
      * @return the graph
      */
     public abstract JFreeChart create(GraphConfiguration configuration,
-            ResultHistory history, @CheckForNull String pluginName);
+            AnalysisHistory history, @CheckForNull String pluginName);
 
     /**
      * Creates a PNG image trend graph with clickable map.
@@ -132,7 +132,7 @@ public abstract class BuildResultGraph {
      * @return the graph
      */
     public abstract JFreeChart createAggregation(GraphConfiguration configuration,
-            Collection<ResultHistory> resultActions, String pluginName);
+            Collection<AnalysisHistory> resultActions, String pluginName);
 
     /**
      * Sets properties common to all plots of this plug-in.
@@ -198,7 +198,7 @@ public abstract class BuildResultGraph {
      * @return the graph to render
      */
     public Graph getGraph(final long timestamp, final GraphConfiguration configuration, final String pluginName,
-            final ResultHistory history) {
+            final AnalysisHistory history) {
         return new Graph(timestamp, configuration.getWidth(), configuration.getHeight()) {
             @Override
             protected JFreeChart createGraph() {
@@ -222,7 +222,7 @@ public abstract class BuildResultGraph {
      * @return the graph to render
      */
     public Graph getGraph(final long timestamp, final GraphConfiguration configuration, final String pluginName,
-            final List<ResultHistory> actions) {
+            final List<AnalysisHistory> actions) {
         return new Graph(timestamp, configuration.getWidth(), configuration.getHeight()) {
             @Override
             protected JFreeChart createGraph() {

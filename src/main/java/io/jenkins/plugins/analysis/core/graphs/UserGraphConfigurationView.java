@@ -5,7 +5,7 @@ import javax.servlet.http.Cookie;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import io.jenkins.plugins.analysis.core.history.ResultHistory;
+import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 
 import hudson.model.Job;
@@ -37,7 +37,7 @@ public class UserGraphConfigurationView extends GraphConfigurationView {
      */
     public UserGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
             final String jobActionUrl, final Cookie[] cookies,
-            final ResultHistory buildHistory, final ToolTipProvider toolTipProvider,
+            final AnalysisHistory buildHistory, final ToolTipProvider toolTipProvider,
             final HealthDescriptor healthDescriptor) {
         super(configuration, job, jobActionUrl, buildHistory, healthDescriptor);
 

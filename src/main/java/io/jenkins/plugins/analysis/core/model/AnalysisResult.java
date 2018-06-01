@@ -30,7 +30,7 @@ import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.history.ReferenceProvider;
+import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateResult;
@@ -108,8 +108,8 @@ public class AnalysisResult implements Serializable {
      * Creates a new instance of {@link AnalysisResult}.
      *
      * @param owner
-     *         the current run as owner of this action
-     * @param referenceProvider
+     *         the current build as owner of this action
+     * @param history
      *         provides the reference build
      * @param report
      *         the issues of this result
@@ -118,9 +118,9 @@ public class AnalysisResult implements Serializable {
      * @param previousResult
      *         the analysis result of the previous run
      */
-    public AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider,
+    public AnalysisResult(final Run<?, ?> owner, final AnalysisHistory history,
             final Report report, final QualityGate qualityGate, final AnalysisResult previousResult) {
-        this(owner, referenceProvider, report, qualityGate, true);
+        this(owner, history, report, qualityGate, true);
 
         if (report.isEmpty()) {
             if (previousResult.noIssuesSinceBuild == NO_BUILD) {
@@ -152,17 +152,17 @@ public class AnalysisResult implements Serializable {
      * Creates a new instance of {@link AnalysisResult}.
      *
      * @param owner
-     *         the current run as owner of this action
-     * @param referenceProvider
+     *         the current build as owner of this action
+     * @param history
      *         provides the reference build
      * @param report
      *         the issues of this result
      * @param qualityGate
      *         the quality gate to enforce
      */
-    public AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider,
+    public AnalysisResult(final Run<?, ?> owner, final AnalysisHistory history,
             final Report report, final QualityGate qualityGate) {
-        this(owner, referenceProvider, report, qualityGate, true);
+        this(owner, history, report, qualityGate, true);
 
         if (report.isEmpty()) {
             noIssuesSinceBuild = owner.getNumber();
@@ -183,7 +183,7 @@ public class AnalysisResult implements Serializable {
      *
      * @param owner
      *         the current run as owner of this action
-     * @param referenceProvider
+     * @param history
      *         provides the reference build
      * @param report
      *         the issues of this result
@@ -193,7 +193,7 @@ public class AnalysisResult implements Serializable {
      *         determines whether the result should be persisted in the build folder
      */
     @VisibleForTesting
-    protected AnalysisResult(final Run<?, ?> owner, final ReferenceProvider referenceProvider,
+    protected AnalysisResult(final Run<?, ?> owner, final AnalysisHistory history,
             final Report report, final QualityGate qualityGate, final boolean canSerialize) {
         this.owner = owner;
         this.qualityGate = qualityGate;
@@ -208,14 +208,14 @@ public class AnalysisResult implements Serializable {
         Report newIssues;
         Report fixedIssues;
 
-        Optional<Run<?, ?>> run = referenceProvider.getBuild();
+        Optional<Run<?, ?>> run = history.getPreviousBuild();
         if (run.isPresent()) {
             Run<?, ?> referenceRun = run.get();
             referenceJob = referenceRun.getParent().getFullName();
             referenceBuild = referenceRun.getId();
 
             IssueDifference difference = new IssueDifference(report, this.owner.getNumber(),
-                    referenceProvider.getIssues());
+                    history.getPreviousIssues());
 
             outstandingIssues = difference.getOutstandingIssues();
             newIssues = difference.getNewIssues();

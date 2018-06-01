@@ -7,7 +7,7 @@ import org.apache.commons.io.IOUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import io.jenkins.plugins.analysis.core.history.ResultHistory;
+import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 
 import hudson.model.Job;
@@ -37,7 +37,7 @@ public class DefaultGraphConfigurationView extends GraphConfigurationView {
      *         the health descriptor to use
      */
     public DefaultGraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job,
-            final String pluginName, final ResultHistory buildHistory,
+            final String pluginName, final AnalysisHistory buildHistory,
             final ToolTipProvider toolTipProvider, final HealthDescriptor healthDescriptor) {
         super(configuration, job, pluginName, buildHistory, healthDescriptor);
 

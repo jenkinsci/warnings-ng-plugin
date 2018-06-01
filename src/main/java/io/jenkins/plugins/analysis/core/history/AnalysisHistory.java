@@ -6,7 +6,6 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.util.VisibleForTesting;
 import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -29,7 +28,7 @@ import hudson.model.Run;
  *
  * @author Ullrich Hafner
  */
-public class AnalysisHistory implements ResultHistory, ReferenceProvider {
+public class AnalysisHistory implements Iterable<AnalysisResult> {
     /** The build to start the history from. */
     private final Run<?, ?> baseline;
     /** Selects a result of the same type. */
@@ -106,11 +105,6 @@ public class AnalysisHistory implements ResultHistory, ReferenceProvider {
         this.jobResultEvaluationMode = jobResultEvaluationMode;
     }
 
-    @Override
-    public Optional<AnalysisResult> getBaselineResult() {
-        return getBaselineAction().map(ResultAction::getResult);
-    }
-
     /**
      * Returns the baseline action (if already available).
      *
@@ -121,49 +115,38 @@ public class AnalysisHistory implements ResultHistory, ReferenceProvider {
     }
 
     /**
-     * Returns the action of the reference build, if there is any.
+     * Returns the baseline result (if already available).
      *
-     * @return the action of the reference build
+     * @return the baseline result
      */
-    @VisibleForTesting
-    Optional<ResultAction> getReferenceAction() {
-        return getPreviousAction(qualityGateEvaluationMode, jobResultEvaluationMode);
-    }
-
-    @Override
-    public Optional<Run<?, ?>> getBuild() {
-        return getReferenceAction().map(ResultAction::getOwner);
+    public Optional<AnalysisResult> getBaselineResult() {
+        return getBaselineAction().map(ResultAction::getResult);
     }
 
     /**
-     * Returns the result of the reference build.
+     * Returns the previous result (if there is any).
      *
-     * @return the result of the reference build
+     * @return the previous result
      */
-    // TODO: Should this be in the interface?
-    public Optional<AnalysisResult> getAnalysisResult() {
-        return getReferenceAction().map(ResultAction::getResult);
+    public Optional<AnalysisResult> getPreviousResult() {
+        return getPreviousAction().map(ResultAction::getResult);
     }
 
-    @Override
-    public Report getIssues() {
-        return getAnalysisResult().map(AnalysisResult::getIssues).orElseGet(Report::new);
+    public Optional<Run<?, ?>> getPreviousBuild() {
+        return getPreviousAction().map(ResultAction::getOwner);
     }
 
     /**
-     * Returns the previous action of the same type (starting from the baseline).
+     * Returns the issues of the previous build. If there is no previous build found, then an empty set of issues is
+     * returned.
      *
-     * @param qualityGateEvaluationMode
-     *         determines if the quality gate {@link Status} is taken into account when selecting the action
-     * @param jobResultEvaluationMode
-     *         determines if the job {@link Result} is taken into account when selecting the action
-     *
-     * @return the previous action
+     * @return the issues of the previous build
      */
-    //FIXME: previous vs. references seems to be not matching
-    protected Optional<ResultAction> getPreviousAction(
-            final QualityGateEvaluationMode qualityGateEvaluationMode,
-            final JobResultEvaluationMode jobResultEvaluationMode) {
+    public Report getPreviousIssues() {
+        return getPreviousResult().map(AnalysisResult::getIssues).orElseGet(Report::new);
+    }
+
+    private Optional<ResultAction> getPreviousAction() {
         Optional<Run<?, ?>> run = getRunWithResult(baseline, selector, qualityGateEvaluationMode,
                 jobResultEvaluationMode);
         if (run.isPresent()) {
@@ -201,12 +184,6 @@ public class AnalysisHistory implements ResultHistory, ReferenceProvider {
         return true;
     }
 
-    @Override
-    public Optional<AnalysisResult> getPreviousResult() {
-        return getPreviousAction(qualityGateEvaluationMode, jobResultEvaluationMode).map(ResultAction::getResult);
-    }
-
-    @Override
     @Nonnull
     public Iterator<AnalysisResult> iterator() {
         return new AnalysisResultIterator(baseline, selector);

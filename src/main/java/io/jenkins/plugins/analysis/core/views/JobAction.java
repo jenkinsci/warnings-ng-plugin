@@ -27,7 +27,6 @@ import io.jenkins.plugins.analysis.core.graphs.TrendDetails;
 import io.jenkins.plugins.analysis.core.graphs.UserGraphConfigurationView;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.history.NullAnalysisHistory;
-import io.jenkins.plugins.analysis.core.history.ResultHistory;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
@@ -271,7 +270,7 @@ public class JobAction implements Action {
                 getUrlName(), createBuildHistory(), labelProvider.getToolTipProvider(), healthDescriptor);
     }
 
-    private ResultHistory createBuildHistory() {
+    private AnalysisHistory createBuildHistory() {
         Run<?, ?> lastFinishedRun = getLastFinishedRun();
         if (lastFinishedRun == null) {
             return new NullAnalysisHistory();

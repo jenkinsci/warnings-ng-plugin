@@ -15,7 +15,7 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import com.google.common.collect.Lists;
 
-import io.jenkins.plugins.analysis.core.history.ResultHistory;
+import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import net.sf.json.JSONObject;
@@ -35,7 +35,7 @@ public abstract class GraphConfigurationView implements ModelObject {
     private final Job<?, ?> owner;
 
     private final String key;
-    private final ResultHistory buildHistory;
+    private final AnalysisHistory buildHistory;
     private final HealthDescriptor healthDescriptor;
     private final GraphConfiguration configuration;
     private String urlPrefix;
@@ -57,7 +57,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      *         the health descriptor to use
      */
     public GraphConfigurationView(final GraphConfiguration configuration, final Job<?, ?> job, final String key,
-            final ResultHistory buildHistory,
+            final AnalysisHistory buildHistory,
             final HealthDescriptor healthDescriptor) {
         this.configuration = configuration;
         owner = job;

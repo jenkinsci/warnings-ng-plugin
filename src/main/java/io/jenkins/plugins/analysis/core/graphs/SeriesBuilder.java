@@ -19,7 +19,7 @@ import com.google.common.collect.Sets;
 
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.jenkins.plugins.analysis.core.history.ResultHistory;
+import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 
@@ -238,22 +238,22 @@ public abstract class SeriesBuilder {
      *
      * @param configuration
      *         configures the data set (how many results should be process, etc.)
-     * @param resultActions
+     * @param histories
      *         the static analysis results
      * @return the aggregated data set
      */
     public CategoryDataset createAggregation(final GraphConfiguration configuration,
-            final Collection<ResultHistory> resultActions) {
+            final Collection<AnalysisHistory> histories) {
         Set<LocalDate> availableDates = Sets.newHashSet();
-        Map<ResultHistory, Map<LocalDate, List<Integer>>> averagesPerJob = Maps.newHashMap();
-        for (ResultHistory resultAction : resultActions) {
+        Map<AnalysisHistory, Map<LocalDate, List<Integer>>> averagesPerJob = Maps.newHashMap();
+        for (AnalysisHistory history : histories) {
             Map<LocalDate, List<Integer>> averageByDate = averageByDate(
-                    createSeriesPerBuild(configuration, resultAction));
-            averagesPerJob.put(resultAction, averageByDate);
+                    createSeriesPerBuild(configuration, history));
+            averagesPerJob.put(history, averageByDate);
             availableDates.addAll(averageByDate.keySet());
         }
         return createDataSetPerDay(
-                createTotalsForAllAvailableDates(resultActions, availableDates, averagesPerJob));
+                createTotalsForAllAvailableDates(histories, availableDates, averagesPerJob));
     }
 
     /**
@@ -270,14 +270,14 @@ public abstract class SeriesBuilder {
      * @return the aggregated values
      */
     private Map<LocalDate, List<Integer>> createTotalsForAllAvailableDates(
-            final Collection<ResultHistory> jobs,
+            final Collection<AnalysisHistory> jobs,
             final Set<LocalDate> availableDates,
-            final Map<ResultHistory, Map<LocalDate, List<Integer>>> averagesPerJob) {
+            final Map<AnalysisHistory, Map<LocalDate, List<Integer>>> averagesPerJob) {
         List<LocalDate> sortedDates = Lists.newArrayList(availableDates);
         Collections.sort(sortedDates);
 
         Map<LocalDate, List<Integer>> totals = Maps.newHashMap();
-        for (ResultHistory jobResult : jobs) {
+        for (AnalysisHistory jobResult : jobs) {
             Map<LocalDate, List<Integer>> availableResults = averagesPerJob.get(jobResult);
             List<Integer> lastResult = Collections.emptyList();
             for (LocalDate buildDate : sortedDates) {

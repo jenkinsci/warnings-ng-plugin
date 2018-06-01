@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import io.jenkins.plugins.analysis.core.history.ResultHistory;
+import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 
 import hudson.plugins.analysis.Messages;
 
@@ -26,13 +26,13 @@ public class EmptyGraph extends BuildResultGraph {
     }
 
     @Override
-    public JFreeChart create(final GraphConfiguration configuration, final ResultHistory history, final String pluginName) {
+    public JFreeChart create(final GraphConfiguration configuration, final AnalysisHistory history, final String pluginName) {
         return createXYChart(new XYSeriesCollection());
     }
 
     @Override
     public JFreeChart createAggregation(final GraphConfiguration configuration,
-                                        final Collection<ResultHistory> resultActions, final String pluginName) {
+                                        final Collection<AnalysisHistory> resultActions, final String pluginName) {
         return createXYChart(new XYSeriesCollection());
     }
 
