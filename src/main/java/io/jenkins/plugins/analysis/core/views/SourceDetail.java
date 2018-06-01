@@ -214,7 +214,7 @@ public class SourceDetail implements ModelObject {
      */
     private void copyLine(final StringBuilder output, final LineIterator lineIterator) {
         output.append(lineIterator.nextLine());
-        output.append("\n");
+        output.append('\n');
     }
 
     /**

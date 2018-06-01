@@ -715,6 +715,7 @@ public class GraphConfiguration  {
      *            the height
      * @return the form validation
      */
+    @SuppressWarnings("PMD.GuardLogStatement")
     public static FormValidation checkHeight(final String height) {
         try {
             if (isValidHeight(Integer.parseInt(height))) {
