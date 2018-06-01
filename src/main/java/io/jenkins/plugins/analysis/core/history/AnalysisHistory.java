@@ -184,6 +184,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
         return true;
     }
 
+    @Override
     @Nonnull
     public Iterator<AnalysisResult> iterator() {
         return new AnalysisResultIterator(baseline, selector);

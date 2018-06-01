@@ -78,19 +78,19 @@ public class AnalysisResult implements Serializable {
     private transient ReentrantLock lock = new ReentrantLock();
     private transient Run<?, ?> owner;
     /**
-     * All outstanding issues: i.e. all issues, that are part of the current and previous report.
+     * All outstanding issues: i.e. all issues, that are part of the current and reference report.
      */
     @CheckForNull
     private transient WeakReference<Report> outstandingIssuesReference;
     /**
-     * All new issues: i.e. all issues, that are part of the current report but have not been shown up in the previous
+     * All new issues: i.e. all issues, that are part of the current report but have not been shown up in the reference
      * report.
      */
     @CheckForNull
     private transient WeakReference<Report> newIssuesReference;
     /**
-     * All fixed issues: i.e. all issues, that are part of the previous report but are not present in the current report
-     * anymore.
+     * All fixed issues: i.e. all issues, that are part of the reference report but are not present in the current
+     * report anymore.
      */
     @CheckForNull
     private transient WeakReference<Report> fixedIssuesReference;
@@ -98,10 +98,7 @@ public class AnalysisResult implements Serializable {
     private int noIssuesSinceBuild;
     /** Determines since which build the result is successful. */
     private int successfulSinceBuild;
-    /**
-     * The build result of the associated plug-in. This result is an additional state that denotes if this plug-in has
-     * changed the overall build result.
-     */
+    /** The result of the quality gate evaluation. */
     private Status status = Status.PASSED;
 
     /**
