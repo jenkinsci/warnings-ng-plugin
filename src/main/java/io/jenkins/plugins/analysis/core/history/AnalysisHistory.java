@@ -18,9 +18,14 @@ import hudson.model.Result;
 import hudson.model.Run;
 
 /**
- * Provides a history of static analysis results. The history starts from a baseline and provides access for all previous
- * results of the same type. The results are selected by a specified {@link ResultSelector}. Note that the baseline run
- * might still be in progress and thus has not yet a result attached.
+ * Provides a history of static analysis results. The history starts from a baseline build and provides access to the
+ * previous build result of the same type (or to all previous results using the provided {@link AnalysisResultIterator
+ * AnalysisResultIterator} implementation). The results are filtered by a {@link ResultSelector}, so a history returns
+ * only results of the same type. This history can be configured to ignore the overall result of the associated Jenkins
+ * builds (see {@link JobResultEvaluationMode JobResultEvaluationMode}). Additionally, this history can be configured to
+ * ignore the builds that did not pass the quality gate (see {@link QualityGateEvaluationMode
+ * QualityGateEvaluationMode}). Note that the baseline run might still be in progress and thus has not yet a result
+ * attached.
  *
  * @author Ullrich Hafner
  */
@@ -29,6 +34,7 @@ public class AnalysisHistory implements ResultHistory, ReferenceProvider {
     private final Run<?, ?> baseline;
     /** Selects a result of the same type. */
     private final ResultSelector selector;
+
     private final QualityGateEvaluationMode qualityGateEvaluationMode;
     private final JobResultEvaluationMode jobResultEvaluationMode;
 
