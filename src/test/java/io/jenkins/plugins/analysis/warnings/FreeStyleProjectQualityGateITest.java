@@ -13,12 +13,6 @@ public class FreeStyleProjectQualityGateITest extends AbstractQualityGateITest<F
 
     @Override
     protected FreeStyleProject getProject() {
-        FreeStyleProject job = createJob();
-        copyFilesToWorkspace(job, "checkstyle-qualitygate.xml");
-        return job;
-    }
-
-    private FreeStyleProject createJob() {
         try {
             return j.createFreeStyleProject();
         }

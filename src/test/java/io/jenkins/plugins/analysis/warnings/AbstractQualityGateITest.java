@@ -6,23 +6,28 @@ import org.junit.Test;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
+import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
+import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.model.AbstractProject;
 import hudson.model.Result;
+import hudson.model.Run;
+import hudson.model.TopLevelItem;
 
 /**
  * This class is a generic way to test {@link io.jenkins.plugins.analysis.core.quality.QualityGate} with an {@link
- * AbstractProject}.
+ * AbstractProject}. The file checkstyle-qualitygate.xml is being used for the tests. It contains 11 issues overall,
+ * from which 6 have high, 2 have normal and 3 have low severity.
  *
  * @param <T>
  *         type of the project to test quality gate with
  *
  * @author Michaela Reitschuster
  */
-public abstract class AbstractQualityGateITest<T extends AbstractProject> extends IntegrationTest {
+public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLevelItem> extends IntegrationTest {
     /**
      * Returns the project which is used to be tested. This makes the implementation of the method mandatory so that all
      * extending classes can be used for the QualityGateIntegrationTest.
@@ -36,7 +41,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeUnstableWhenUnstableNewAllIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableNewAll(11);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -49,7 +54,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeUnstableWhenUnstableNewHighIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableNewHigh(6);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -62,7 +67,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeUnstableWhenUnstableNewNormalIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableNewNormal(2);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -75,7 +80,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeUnstableWhenUnstableNewLowIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableNewLow(3);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -87,7 +92,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeUnstableWhenUnstableTotalAllIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableTotalAll(11);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -100,7 +105,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeUnstableWhenUnstableTotalHighIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableTotalHigh(6);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -113,7 +118,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeUnstableWhenUnstableTotalNormalIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableTotalNormal(2);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -126,7 +131,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeUnstableWhenUnstableTotalLowIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableTotalLow(3);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -138,7 +143,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeFailureWhenFailedNewAllIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedNewAll(9);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -151,7 +156,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeFailureWhenFailedNewHighIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedNewHigh(6);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -164,7 +169,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeFailureWhenFailedNewNormalIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedNewNormal(2);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -177,7 +182,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeFailureWhenFailedNewLowIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedNewLow(3);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -189,7 +194,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeFailureWhenFailureTotalAllIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedTotalAll(11);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -201,7 +206,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeFailureWhenFailureTotalHighIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedTotalHigh(6);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -214,7 +219,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeFailureWhenFailureTotalNormalIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedTotalNormal(2);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -226,7 +231,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldBeFailureWhenFailureTotalLowIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedTotalLow(3);
         enableWarningsAndSetThreshholds(project, publisher);
@@ -238,7 +243,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
      */
     @Test
     public void shouldOverrideUnstableWhenFailureAndUnstableThresholdIsReached() {
-        T project = getProject();
+        T project = createProject();
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableTotalAll(1);
         publisher.setFailedTotalLow(3);
@@ -254,10 +259,18 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject> extend
         return publisher;
     }
 
+    private T createProject() {
+        T project = getProject();
+        copyFilesToWorkspace(project, "checkstyle-qualitygate.xml");
+        return project;
+    }
+
     @SuppressWarnings("illegalcatch")
     private void scheduleBuildAndAssertStatus(final AbstractProject job, final Result status) {
         try {
-            j.assertBuildStatus(status, job.scheduleBuild2(0));
+            Run build = j.assertBuildStatus(status, job.scheduleBuild2(0));
+            ResultAction action = build.getAction(ResultAction.class);
+            assertThat(action.getResult()).hasOverallResult(status);
         }
         catch (Exception e) {
             throw new AssertionError(e);

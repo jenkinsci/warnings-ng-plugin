@@ -29,7 +29,6 @@ public class MavenProjectQualityGateITest extends AbstractQualityGateITest<Maven
     @Override
     protected MavenModuleSet getProject() {
         MavenModuleSet project = createJob();
-        copyFilesToWorkspace(project, "checkstyle-qualitygate.xml");
         copyToWorkspace(project, "pom.xml");
         return project;
     }
