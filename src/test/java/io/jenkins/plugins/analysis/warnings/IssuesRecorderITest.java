@@ -74,7 +74,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      *
      * @return the created job
      */
-    private FreeStyleProject createJob() {
+    protected FreeStyleProject createJob() {
         try {
             return j.createFreeStyleProject();
         }
@@ -92,7 +92,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      *
      * @return the created job
      */
-    private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
+    protected FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
         FreeStyleProject job = createJob();
         copyFilesToWorkspace(job, fileNames);
         return job;
@@ -108,7 +108,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    private IssuesRecorder enableWarnings(final FreeStyleProject job) {
+    protected IssuesRecorder enableWarnings(final FreeStyleProject job) {
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setTools(Collections.singletonList(new ToolConfiguration("**/*issues.txt", new Eclipse())));
         job.getPublishersList().add(publisher);
@@ -127,7 +127,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    private IssuesRecorder enableWarnings(final FreeStyleProject job, final Consumer<IssuesRecorder> configuration) {
+    protected IssuesRecorder enableWarnings(final FreeStyleProject job, final Consumer<IssuesRecorder> configuration) {
         IssuesRecorder publisher = enableWarnings(job);
         configuration.accept(publisher);
         return publisher;
@@ -152,6 +152,29 @@ public class IssuesRecorderITest extends IntegrationTest {
             ResultAction action = build.getAction(ResultAction.class);
 
             assertThat(action).isNotNull();
+
+            return action.getResult();
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    /**
+     * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
+     * been finished.
+     *
+     * @param job
+     *         the job to schedule
+     *
+     * @return the created {@link ResultAction}
+     */
+    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
+    protected AnalysisResult scheduleBuild(final FreeStyleProject job) {
+        try {
+            FreeStyleBuild build = job.scheduleBuild2(0).get();
+
+            ResultAction action = build.getAction(ResultAction.class);
 
             return action.getResult();
         }
