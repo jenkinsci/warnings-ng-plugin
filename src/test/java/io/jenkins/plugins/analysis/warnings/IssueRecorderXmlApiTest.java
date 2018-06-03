@@ -28,8 +28,7 @@ import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import hudson.model.FreeStyleProject;
 
 /**
- * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}. Subclass
- * to test the xml api.
+ * Integration test for the issue remote api.
  *
  * @author Manuel Hampp
  */
@@ -87,7 +86,7 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
                     .goToXml(project.getUrl() + buildNumber + "/checkstyleResult/api/xml?xpath=/*/overallResult");
             Document test = page.getXmlDocument();
 
-            // assert that root is the xpath aimed element
+            // assert that root node is the xpath aimed element
             assertThat(test.getDocumentElement().getTagName()).isEqualTo("overallResult");
         }
         catch (IOException | SAXException e) {
@@ -117,7 +116,7 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
             Node deepLevelElement = (Node) xp.compile("//analysisResult//owner//action//cause//*")
                     .evaluate(test, XPathConstants.NODE);
 
-            // assert element exists, that is not contained in a call without depth parameter
+            // assert that an element exists, which is not returned by a call without depth parameter
             assertThat(deepLevelElement.getNodeName()).isEqualTo("shortDescription");
         }
         catch (IOException | SAXException | XPathExpressionException e) {
@@ -132,7 +131,7 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
      *         name from the file that is placed inside the 'test/resources/io/jenkins/plugins/analysis/warnings/'
      *         folder.
      *
-     * @return Document that was extracted from the file.
+     * @return document that was extracted from the file.
      */
     private Document loadControlDocumentFromFile(final String filename) {
         // create document builder
@@ -148,7 +147,7 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
             e.printStackTrace();
         }
 
-        // remove not comparable nodes
+        // remove run specific nodes that can not be compared
         document = removeRunSpecificXmlNodes(document);
 
         return document;
@@ -156,7 +155,7 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
     }
 
     /**
-     * Removes run specific nodes from document. Some infoMessage Elements (containing a temporary path) and the owner
+     * Removes run specific nodes from a document. Some infoMessage elements (containing a temporary path) and the owner
      * node are removed.
      */
     private Document removeRunSpecificXmlNodes(Document doc) {
@@ -174,7 +173,7 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
                         .removeChild(infoMessageNodesWithTmpFolderPath.item(i));
             }
 
-            // remove owner node (port could be different
+            // remove owner node (port could be different)
             Node n = (Node) xp.compile("//analysisResult//owner").evaluate(doc, XPathConstants.NODE);
             n.getParentNode().removeChild(n);
 

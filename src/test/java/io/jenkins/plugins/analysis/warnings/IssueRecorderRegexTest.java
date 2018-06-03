@@ -39,8 +39,7 @@ import hudson.model.FreeStyleProject;
 import hudson.model.TopLevelItem;
 
 /**
- * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}. Subclass
- * to test the regex filter
+ * Integration tests of the warnings plugin in freestyle jobs. Tests the post-action issue (regex-)filter.
  *
  * @author Manuel Hampp
  */
@@ -51,13 +50,13 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
      */
     @Test
     public void shouldFilterIssuesByModule() {
-        // get collection of filters, and expcepted results
+
+        // get collection of filters, and expected results
         Map<RegexpFilter, Integer[]> categoryFiltersWithResult = filterProviderModules();
 
         // run tests for all in collection
         for (Entry<RegexpFilter, Integer[]> entry : categoryFiltersWithResult.entrySet()) {
 
-            // move files to workspace
             String[] workspaceFiles = {"ModuleRegexTest/pmd.xml", "ModuleRegexTest/pom.xml", "ModuleRegexTest/m1/pom.xml", "ModuleRegexTest/m2/pom.xml"};
 
             // set up project
@@ -83,10 +82,10 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
      */
     @Test
     public void shouldFilterIssuesForCheckstyle() {
-        // get collection of filters, and expcepted results
+        // get collection of filters, and expected results
         Map<RegexpFilter, Integer[]> categoryFiltersWithResult = filterProviderCheckstyle();
 
-        // run tests for all in collection
+        // run tests for all entries in collection
         for (Entry<RegexpFilter, Integer[]> entry : categoryFiltersWithResult.entrySet()) {
 
             // set up environment
@@ -99,10 +98,8 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
             AnalysisResult result = scheduleBuild(project);
 
             // compare result with expected values
-            assertThat(result.getIssues()
-                    .stream()
-                    .map(Issue::getLineStart)
-                    .collect(Collectors.toList())).containsOnly(entry.getValue());
+            assertThat(result.getIssues().stream().map(Issue::getLineStart).collect(Collectors.toList()))
+                    .containsOnly(entry.getValue());
         }
     }
 
@@ -111,10 +108,10 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
      */
     @Test
     public void shouldFilterIssuesForPMD() {
-        // get collection of filters, and expcepted results
+        // get collection of filters, and expected results
         Map<RegexpFilter, Integer[]> categoryFiltersWithResult = filterProviderPMD();
 
-        // run tests for all in collection
+        // run tests for all entries in collection
         for (Entry<RegexpFilter, Integer[]> entry : categoryFiltersWithResult.entrySet()) {
 
             // set up environment
@@ -126,15 +123,13 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
             AnalysisResult result = scheduleBuild(project);
 
             // compare result with expected values
-            assertThat(result.getIssues()
-                    .stream()
-                    .map(Issue::getLineStart)
-                    .collect(Collectors.toList())).containsOnly(entry.getValue());
+            assertThat(result.getIssues().stream().map(Issue::getLineStart).collect(Collectors.toList()))
+                    .containsOnly(entry.getValue());
         }
     }
 
     /**
-     * Provides a map, that contains the filters and the linenumbers that are expceted to remain after filtering.
+     * Provides a map, that contains the filters and the linenumbers that are expected to remain after filtering.
      */
     private Map<RegexpFilter, Integer[]> filterProviderModules() {
         /*
@@ -149,7 +144,7 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
     }
 
     /**
-     * Provides a map, that contains the filters and the linenumbers that are expceted to remain after filtering.
+     * Provides a map, that contains the filters and the linenumbers that are expected to remain after filtering.
      */
     private Map<RegexpFilter, Integer[]> filterProviderCheckstyle() {
         /*
@@ -160,7 +155,6 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
           CsharpNamespaceDetector.java:42   -Sizes LineLengthCheck High 1
           CsharpNamespaceDetector.java:29   -Sizes LineLengthCheck High 1
           FileFinder.java:99                -Blocks RightCurlyCheck High 1
-
          */
         HashMap<RegexpFilter, Integer[]> filterResultMap = new HashMap<>();
         filterResultMap.put(new RegexpFilter("Blocks", new IncludeCategory()), new Integer[]{30, 37, 99});
@@ -175,7 +169,7 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
     }
 
     /**
-     * Provides a map, that contains the filters and the linenumbers that are expceted to remain after filtering.
+     * Provides a map, that contains the filters and the linenumbers that are expected to remain after filtering.
      */
     private Map<RegexpFilter, Integer[]> filterProviderPMD() {
         /*
@@ -225,7 +219,7 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
     }
 
     /**
-     * Creates a new {@link FreeStyleProject freestyle job} and copies the specified resources to the workspace folder.
+     * Creates a new {@link FreeStyleProject} and copies the specified resources to the workspace folder.
      * The job will get a generated name.
      *
      * @param fileNames
@@ -245,7 +239,7 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
      * @param job
      *         the job to get the workspace for
      * @param fileNames
-     *         the dir to copy
+     *         names of the files
      */
     private void prepareAndCopyFilesToWorkspace(final TopLevelItem job, final String... fileNames) {
         try {
@@ -255,7 +249,7 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
                 if (fileName.endsWith("pom.xml")) {
                     workspace.child(fileName).copyFrom(asInputStream(fileName));
                 }
-                // replace placeholders and copy issue xml
+                // replace placeholders (with the build-generated content) and copy issue xml
                 workspace.child(createWorkspaceFileName(fileName))
                         .copyFrom(
                                 new ReplacingInputStream(asInputStream(fileName), "WORKSPACEDIRPLACEHOLDER".getBytes(),
@@ -270,7 +264,7 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
 }
 
 /**
- * Simple filter for InputStream that replaces string parts with another.
+ * Simple filter for InputStream that replaces string parts with a given replacement.
  */
 class ReplacingInputStream extends FilterInputStream {
     private LinkedList<Integer> input = new LinkedList<Integer>();
@@ -284,7 +278,7 @@ class ReplacingInputStream extends FilterInputStream {
         this.replacement = replacement;
     }
 
-    private boolean isMatchFound() {
+    private boolean matchFound() {
         Iterator<Integer> inputIterator = input.iterator();
         for (byte b : search) {
             if (!inputIterator.hasNext() || b != inputIterator.next()) {
@@ -349,7 +343,7 @@ class ReplacingInputStream extends FilterInputStream {
     public int read() throws IOException {
         if (output.isEmpty()) {
             readAhead();
-            if (isMatchFound()) {
+            if (matchFound()) {
                 for (byte aSearch : search) {
                     input.remove();
                 }
