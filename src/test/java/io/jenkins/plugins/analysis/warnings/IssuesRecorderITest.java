@@ -142,8 +142,8 @@ public class IssuesRecorderITest extends IntegrationTest {
      *
      * @param job
      *         the job to register the recorder for
-     * @param checkbox
-     *         aggregation is true or false
+     * @param isAggregationEnabled
+     *         is aggregation enabled?
      * @param toolPattern1
      *         the first new filename in the workspace
      * @param tool1
@@ -154,11 +154,11 @@ public class IssuesRecorderITest extends IntegrationTest {
      *         class of the second tool
      */
     @CanIgnoreReturnValue
-    private void enableWarningsAggregation(final FreeStyleProject job, final boolean checkbox,
+    private void enableWarningsAggregation(final FreeStyleProject job, final boolean isAggregationEnabled,
             final String toolPattern1, final StaticAnalysisTool tool1, final String toolPattern2,
             final StaticAnalysisTool tool2) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setAggregatingResults(checkbox);
+        publisher.setAggregatingResults(isAggregationEnabled);
         List<ToolConfiguration> toolList = new ArrayList<>();
         toolList.add(new ToolConfiguration(toolPattern1, tool1));
         toolList.add(new ToolConfiguration(toolPattern2, tool2));
@@ -235,7 +235,6 @@ public class IssuesRecorderITest extends IntegrationTest {
             for (ResultAction elements : actions) {
                 results.add(elements.getResult());
             }
-
             return results;
         }
         catch (Exception e) {
@@ -244,8 +243,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Runs the CheckStyle and PMD tools on an output file that contains several issues: the build should report 6 and 4
-     * issues.
+     * Runs the CheckStyle and PMD tools for two corresponding files which contain at least 6 respectively 4 issues: the
+     * build should report 6 and 4 issues.
      */
     @Test
     @WithTimeout(1000)
@@ -256,20 +255,23 @@ public class IssuesRecorderITest extends IntegrationTest {
 
         List<AnalysisResult> results = scheduleBuildAndAssertStatusForBothTools(project, Result.SUCCESS);
 
+        assertThat(results).hasSize(2);
+
         for (AnalysisResult element : results) {
             if (element.getId().equals("checkstyle")) {
-                assertThat(element.getTotalSize()).isEqualTo(6);
+                assertThat(element).hasTotalSize(6);
             }
             else {
                 assertThat(element.getId()).isEqualTo("pmd");
-                assertThat(element.getTotalSize()).isEqualTo(4);
+                assertThat(element).hasTotalSize(4);
             }
             assertThat(element).hasOverallResult(Result.SUCCESS);
         }
     }
 
     /**
-     * Runs the CheckStyle and PMD tools on an output file that contains one issue: the build should report 10 issues.
+     * Runs the CheckStyle and PMD tools for two corresponding files which contain at least 6 respectively 4 issues: due
+     * to enabled aggregation, the build should report 10 issues.
      */
     @Test
     @WithTimeout(1000)
@@ -278,16 +280,20 @@ public class IssuesRecorderITest extends IntegrationTest {
         enableWarningsAggregation(project, true, "**/checkstyle-issues.txt", new CheckStyle(),
                 "**/pmd-warnings-issues.txt", new Pmd());
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        List<AnalysisResult> results = scheduleBuildAndAssertStatusForBothTools(project, Result.SUCCESS);
 
-        assertThat(result).hasTotalSize(10);
-        assertThat(result.getSizePerOrigin()).containsKeys("checkstyle", "pmd");
-        assertThat(result).hasOverallResult(Result.SUCCESS);
+        assertThat(results).hasSize(1);
+
+        for (AnalysisResult element : results) {
+            assertThat(element.getSizePerOrigin()).containsKeys("checkstyle", "pmd");
+            assertThat(element).hasTotalSize(10);
+            assertThat(element).hasId("analysis");
+            assertThat(element).hasOverallResult(Result.SUCCESS);
+        }
     }
 
     /**
-     * Runs only the CheckStyle tool multiple times on an output file that contains not several issues and produce a
-     * failure.
+     * Runs the CheckStyle tool twice for two different files with varying amount of issues: should produce a failure.
      */
     @Test
     @WithTimeout(1000)
@@ -298,14 +304,16 @@ public class IssuesRecorderITest extends IntegrationTest {
 
         List<AnalysisResult> results = scheduleBuildAndAssertStatusForBothTools(project, Result.FAILURE);
 
-        for (AnalysisResult elements : results) {
-            assertThat(elements).hasErrorMessages();
+        assertThat(results).hasSize(1);
+
+        for (AnalysisResult element : results) {
+            assertThat(element).hasId("checkstyle");
         }
     }
 
     /**
-     * Runs only the CheckStyle tool multiple times on an output file that contains one issues: the build should report
-     * 6 issues.
+     * Runs the CheckStyle tool twice for two different files with varying amount of issues: due to enabled aggregation,
+     * the build should report 6 issues.
      */
     @Test
     @WithTimeout(1000)
@@ -314,10 +322,15 @@ public class IssuesRecorderITest extends IntegrationTest {
         enableWarningsAggregation(project, true, "**/checkstyle2-issues.txt", new CheckStyle(),
                 "**/checkstyle3-issues.txt", new CheckStyle());
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        List<AnalysisResult> results = scheduleBuildAndAssertStatusForBothTools(project, Result.SUCCESS);
 
-        assertThat(result).hasTotalSize(6);
-        assertThat(result.getSizePerOrigin()).containsKeys("checkstyle");
-        assertThat(result).hasOverallResult(Result.SUCCESS);
+        assertThat(results).hasSize(1);
+
+        for (AnalysisResult element : results) {
+            assertThat(element.getSizePerOrigin()).containsKeys("checkstyle");
+            assertThat(element).hasTotalSize(6);
+            assertThat(element).hasId("analysis");
+            assertThat(element).hasOverallResult(Result.SUCCESS);
+        }
     }
 }
