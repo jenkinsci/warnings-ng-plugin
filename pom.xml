@@ -19,6 +19,7 @@
 
   <properties>
     <pmd.version>6.1.0</pmd.version>
+    <jenkins-test-harness.version>2.39-20180503.223048-1</jenkins-test-harness.version>
   </properties>
 
   <licenses>
