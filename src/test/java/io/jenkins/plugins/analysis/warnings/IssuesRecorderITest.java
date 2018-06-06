@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.function.Consumer;
 
+import hudson.model.Run;
+import io.jenkins.plugins.analysis.core.views.JobAction;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
@@ -13,6 +15,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
@@ -175,5 +178,139 @@ public class IssuesRecorderITest extends IntegrationTest {
         catch (Exception e) {
             throw new AssertionError(e);
         }
+    }
+
+
+
+
+    // JobActionTests -------------------------------------------------------------------------------------
+
+
+    /**
+     * Get JobAction from new FreeStyleProject and check DisplayName and TrendName
+     * DisplayName should be equal to "Eclipse ECJ Warnings"
+     * TrendName should be equal to "Eclipse ECJ Warnings Trend"
+     */
+    @Test
+    public void shouldShowDisplayNameAndTrendName() {
+
+        JobAction jobAction = getJobActionFromNewProject();
+
+        assertThat(jobAction.getDisplayName()).isEqualTo("Eclipse ECJ Warnings");
+        assertThat(jobAction.getTrendName()).isEqualTo("Eclipse ECJ Warnings Trend");
+    }
+
+    /**
+     * jobAction should return an action
+     */
+    @Test
+    public void shouldReturnLastAction() {
+
+        JobAction jobAction = getJobActionFromNewProjectWithWorkspaceFile();
+
+        ResultAction action = jobAction.getLastAction();
+
+        assertThat(action).isNotNull();
+    }
+
+    /**
+     * jobAction should return a run
+     */
+    @Test
+    public void shouldReturnLastFinishedRun() {
+
+        JobAction jobAction = getJobActionFromNewProjectWithWorkspaceFile();
+
+        Run<?, ?> run = jobAction.getLastFinishedRun();
+
+        assertThat(run).isNotNull();
+    }
+
+    /**
+     * iconFileName of JobAction should be null if the jobAction has no results
+     * the jobAction has no results because a new project is created without a workspace file
+     */
+    @Test
+    public void shouldNotHaveIconFileNameWhenLastActionHasNoResults() {
+
+        JobAction jobAction = getJobActionFromNewProject();
+
+        String iconFileName = jobAction.getIconFileName();
+
+        ResultAction action = jobAction.getLastAction();
+        assertThat(action.getResult().getTotalSize()).isEqualTo(0);
+
+        assertThat(iconFileName).isNull();
+    }
+
+    /**
+     * iconFileName of JobAction should be null if the jobAction has no results
+     * iconFileName should contain "/static/" and "/plugin/analysis-core/icons/analysis-24x24.png"
+     * The middle part of the iconFileName is generated
+     */
+    @Test
+    public void shouldHaveIconFileName() {
+
+        JobAction jobAction = getJobActionFromNewProjectWithWorkspaceFile();
+
+        String iconFileName = jobAction.getIconFileName();
+
+        ResultAction action = jobAction.getLastAction();
+        assertThat(action.getResult().getTotalSize()).isGreaterThan(0);
+
+        assertThat(iconFileName).contains("/static/", "/plugin/analysis-core/icons/analysis-24x24.png");
+    }
+
+    /**
+     * Returns the jobAction created during build of a new freeStyleProject with workspace file
+     * JobAction should exist
+     * JobActions last action should not have any error messages
+     * @return jobAction test object
+     */
+    private JobAction getJobActionFromNewProjectWithWorkspaceFile() {
+        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
+        enableWarningsWithFilePattern(project);
+
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        JobAction jobAction = project.getAction(JobAction.class);
+
+        assertThat(jobAction).isNotNull();
+        assertThat(jobAction.getLastAction().getResult().getErrorMessages().size()).isEqualTo(8);
+
+        return jobAction;
+    }
+
+    /**
+     * Returns the jobAction created during build of a new freeStyleProject
+     * @return jobAction test object
+     */
+    private JobAction getJobActionFromNewProject() {
+        FreeStyleProject project = createJob();
+        enableWarnings(project);
+
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        JobAction jobAction = project.getAction(JobAction.class);
+
+        assertThat(jobAction).isNotNull();
+
+        return jobAction;
+    }
+
+    /**
+     * Enables the warnings plugin for the specified job
+     *
+     * @param job
+     *         the job to register the recorder for
+     *
+     * @return the created recorder
+     */
+    @CanIgnoreReturnValue
+    private IssuesRecorder enableWarningsWithFilePattern(final FreeStyleProject job) {
+        IssuesRecorder publisher = new IssuesRecorder();
+        publisher.setTools(Collections.singletonList(new ToolConfiguration("*.txt", new Eclipse())));
+        job.getPublishersList().add(publisher);
+        return publisher;
     }
 }
