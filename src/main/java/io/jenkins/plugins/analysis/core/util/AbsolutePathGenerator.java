@@ -79,7 +79,7 @@ public class AbsolutePathGenerator {
 
         String message = String.format(
                 "Resolved absolute paths for %d files (Issues %d resolved, %d unresolved, %d already absolute)",
-                relativeToAbsoluteMapping.size(), resolvedCount, unresolvedCount, unchangedCount);
+                relativeFileNames.size(), resolvedCount, unresolvedCount, unchangedCount);
         if (unresolvedCount > 0) {
             report.logError(message);
         }
