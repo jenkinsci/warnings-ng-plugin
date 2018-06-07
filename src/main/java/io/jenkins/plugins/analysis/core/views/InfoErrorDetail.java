@@ -6,7 +6,6 @@ import org.eclipse.collections.api.list.ImmutableList;
 
 import hudson.model.ModelObject;
 import hudson.model.Run;
-import hudson.plugins.analysis.Messages;
 
 /**
  * Result object to visualize the logging messages and errors during a static analysis run.
@@ -37,7 +36,7 @@ public class InfoErrorDetail implements ModelObject {
         this.errorMessages = errorMessages;
         this.infoMessages = infoMessages;
 
-        displayName = toolDisplayName + " - " + Messages.Errors();
+        displayName = toolDisplayName + " - " + Messages.Messages_View_Name();
     }
 
     /**
