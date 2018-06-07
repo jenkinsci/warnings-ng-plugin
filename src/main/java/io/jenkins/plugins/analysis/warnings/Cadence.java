@@ -32,6 +32,9 @@ public class Cadence extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /**
+         * Creates a new instance of {@link Descriptor}.
+         */
         public Descriptor() {
             super(ID);
         }
