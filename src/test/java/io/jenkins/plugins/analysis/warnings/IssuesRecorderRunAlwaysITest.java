@@ -32,7 +32,7 @@ import hudson.tasks.Shell;
 public class IssuesRecorderRunAlwaysITest extends IntegrationTest {
 
     /**
-     * Runs TestBuilde with FAILURE, should still run checkstyle because of runAways is activated.
+     * Runs TestBuild with FAILURE, should still run checkstyle because of runAways is activated.
      */
     @Test
     public void shouldRunEvenResultIsFailure() {
@@ -50,7 +50,7 @@ public class IssuesRecorderRunAlwaysITest extends IntegrationTest {
     }
 
     /**
-     * Runs TestBuilde with FAILURE, should not run checkstyle because runAways is disabled.
+     * Runs TestBuild with FAILURE, should not run checkstyle because runAways is disabled.
      */
     @Test
     public void shouldNotRunWhenResultIsFailure() {
@@ -65,7 +65,7 @@ public class IssuesRecorderRunAlwaysITest extends IntegrationTest {
     }
 
     /**
-     * Runs TestBuilde with SUCCESS, should run checkstyle (runAlway is enabled).
+     * Runs TestBuild with SUCCESS, should run checkstyle (runAlways is enabled).
      */
     @Test
     public void shouldRunResultIsSuccessWithRunAlways() {
@@ -83,7 +83,7 @@ public class IssuesRecorderRunAlwaysITest extends IntegrationTest {
     }
 
     /**
-     * Runs TestBuilde with SUCCESS, should run checkstyle (runAlway is disabled).
+     * Runs TestBuild with SUCCESS, should run checkstyle (runAlways is disabled).
      */
     @Test
     public void shouldRunResultIsSuccessWithoutRunAlways() {
