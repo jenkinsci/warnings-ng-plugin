@@ -333,7 +333,11 @@ public class StepsITest extends PipelineITest {
             return "triggerMe";
         }
 
-        /** Should not be invoked. */
+        /**
+         * Should not be invoked by the test, otherwise Xxe attack is successful.
+         *
+         * @return the response
+         */
         public HttpResponse doIndex() {
             triggerCount++;
             return HttpResponses.text("triggered");

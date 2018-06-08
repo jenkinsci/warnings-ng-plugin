@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -360,6 +361,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          *
          * @return a result of {@link Kind#OK} if a warning has been found
          */
+        @SuppressWarnings("illegalcatch")
         private FormValidation parseExample(final String script, final String example, final String regexp,
                 final boolean hasMultiLineSupport) {
             Pattern pattern;
@@ -370,35 +372,36 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
                 pattern = Pattern.compile(regexp);
             }
             Matcher matcher = pattern.matcher(example);
-            if (matcher.find()) {
-                GroovyExpressionMatcher checker = new GroovyExpressionMatcher(script, null);
-                Object result = null;
-                try {
-                    result = checker.run(matcher, new IssueBuilder(), 0);
-                }
-                catch (Exception exception) { // NOCHECKSTYLE: catch all exceptions of the Groovy script
-                    return FormValidation.error(
-                            Messages.GroovyParser_Error_Example_exception(exception.getMessage()));
-                }
-                if (result instanceof Issue) {
-                    StringBuilder okMessage = new StringBuilder(
-                            Messages.GroovyParser_Error_Example_ok_title());
-                    Issue warning = (Issue) result;
-                    message(okMessage, Messages.GroovyParser_Error_Example_ok_file(warning.getFileName()));
-                    message(okMessage, Messages.GroovyParser_Error_Example_ok_line(warning.getLineStart()));
-                    message(okMessage, Messages.GroovyParser_Error_Example_ok_priority(warning.getSeverity()));
-                    message(okMessage, Messages.GroovyParser_Error_Example_ok_category(warning.getCategory()));
-                    message(okMessage, Messages.GroovyParser_Error_Example_ok_type(warning.getType()));
-                    message(okMessage, Messages.GroovyParser_Error_Example_ok_message(warning.getMessage()));
-                    return FormValidation.ok(okMessage.toString());
+            try {
+                if (matcher.find()) {
+                    GroovyExpressionMatcher checker = new GroovyExpressionMatcher(script, null);
+                    Object result = checker.run(matcher, new IssueBuilder(), 0);
+                    if (result instanceof Issue) {
+                        return createOkMessage((Issue) result);
+                    }
+                    else {
+                        return FormValidation.error(Messages.GroovyParser_Error_Example_wrongReturnType(result));
+                    }
                 }
                 else {
-                    return FormValidation.error(Messages.GroovyParser_Error_Example_wrongReturnType(result));
+                    return FormValidation.error(Messages.GroovyParser_Error_Example_regexpDoesNotMatch());
                 }
             }
-            else {
-                return FormValidation.error(Messages.GroovyParser_Error_Example_regexpDoesNotMatch());
+            catch (Exception exception) { // catch all exceptions of the Groovy script
+                return FormValidation.error(
+                        Messages.GroovyParser_Error_Example_exception(exception.getMessage()));
             }
+        }
+
+        private FormValidation createOkMessage(final Issue issue) {
+            StringBuilder okMessage = new StringBuilder(Messages.GroovyParser_Error_Example_ok_title());
+            message(okMessage, Messages.GroovyParser_Error_Example_ok_file(issue.getFileName()));
+            message(okMessage, Messages.GroovyParser_Error_Example_ok_line(issue.getLineStart()));
+            message(okMessage, Messages.GroovyParser_Error_Example_ok_priority(issue.getSeverity()));
+            message(okMessage, Messages.GroovyParser_Error_Example_ok_category(issue.getCategory()));
+            message(okMessage, Messages.GroovyParser_Error_Example_ok_type(issue.getType()));
+            message(okMessage, Messages.GroovyParser_Error_Example_ok_message(issue.getMessage()));
+            return FormValidation.ok(okMessage.toString());
         }
 
         private void message(final StringBuilder okMessage, final String message) {
@@ -415,6 +418,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             }
         }
 
+        @Nonnull
         @Override
         public String getDisplayName() {
             return StringUtils.EMPTY;

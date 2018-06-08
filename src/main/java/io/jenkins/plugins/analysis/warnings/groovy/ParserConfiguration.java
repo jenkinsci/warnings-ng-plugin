@@ -72,6 +72,10 @@ public class ParserConfiguration extends GlobalConfiguration {
      *
      * @param id
      *         the ID of the parser
+     *
+     * @return the parser
+     * @throws NoSuchElementException
+     *         if there is no such parser with the given ID
      */
     public StaticAnalysisTool getParser(final String id) {
         for (GroovyParser parser : parsers) {
@@ -87,6 +91,8 @@ public class ParserConfiguration extends GlobalConfiguration {
      *
      * @param id
      *         the ID of the parser
+     *
+     * @return {@code true} if there is already a parser with the ID, {@code false} otherwise
      */
     public boolean contains(final String id) {
         for (GroovyParser parser : parsers) {
