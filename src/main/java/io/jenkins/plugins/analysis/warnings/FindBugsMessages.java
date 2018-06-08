@@ -7,9 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Logger;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.SAXException;
 
@@ -22,7 +20,6 @@ import edu.hm.hafner.analysis.SecureDigester;
  */
 // TODO: when there are more translations available we should generalize that approach into a map of maps
 public final class FindBugsMessages {
-    private static final Logger LOGGER = Logger.getLogger(FindBugsMessages.class.getName());
     private static final String NO_MESSAGE_FOUND = "no message found";
 
     /** Maps a key to HTML description. */
@@ -52,21 +49,12 @@ public final class FindBugsMessages {
 
     private void loadMessages(final String fileName, final Map<String, String> messagesCache,
             final Map<String, String> shortMessagesCache) throws IOException, SAXException {
-        InputStream file = null;
-        try {
-            file = FindBugsMessages.class.getResourceAsStream("findbugs-messages/" + fileName);
+        try (InputStream file = FindBugsMessages.class.getResourceAsStream("findbugs-messages/" + fileName)) {
             List<Pattern> patterns = parse(file);
             for (Pattern pattern : patterns) {
-                if (messagesCache.get(pattern.getType()) != null || shortMessagesCache.get(pattern.getType()) != null) {
-                    LOGGER.warning(
-                            "The bug pattern " + pattern.getType() + " was already loaded. It could be a duplicate.");
-                }
                 messagesCache.put(pattern.getType(), pattern.getDescription());
                 shortMessagesCache.put(pattern.getType(), pattern.getShortDescription());
             }
-        }
-        finally {
-            IOUtils.closeQuietly(file);
         }
     }
 

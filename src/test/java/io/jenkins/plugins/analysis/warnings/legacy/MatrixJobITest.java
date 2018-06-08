@@ -14,10 +14,9 @@ import org.codehaus.plexus.util.Base64;
 import org.junit.Assume;
 import org.junit.Test;
 
-import static hudson.Functions.isWindows;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
-
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static hudson.Functions.*;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import io.jenkins.plugins.analysis.warnings.Resource;
 
 import hudson.matrix.AxisList;
@@ -100,9 +99,9 @@ public class MatrixJobITest extends IntegrationTest {
         }
     }
 
-    private void copy(final InputStream in, final ByteArrayOutputStream out) throws IOException {
-        try (OutputStream gz = new GZIPOutputStream(out)) {
-            IOUtils.copy(in, gz);
+    private void copy(final InputStream input, final ByteArrayOutputStream output) throws IOException {
+        try (OutputStream gz = new GZIPOutputStream(output)) {
+            IOUtils.copy(input, gz);
         }
     }
 

@@ -49,7 +49,7 @@ public class MatrixJobITest extends IssuesRecorderITest {
     public void shouldCreateIndividualAxisResults() throws Exception {
         Assume.assumeFalse("Test not yet OS independent: requires UNIX commands", isWindows());
 
-        MatrixProject project = j.createProject(MatrixProject.class);
+        MatrixProject project = createProject(MatrixProject.class);
 
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setTools(Collections.singletonList(new ToolConfiguration(new Gcc4())));
@@ -90,7 +90,7 @@ public class MatrixJobITest extends IssuesRecorderITest {
 
             // fileName can include path portion like foo/bar/zot
             return String.format(
-                    "(mkdir -p %1$s || true) && rm -r %1$s && base64 --decode << ENDOFFILE | gunzip > %1$s \n%2$s\nENDOFFILE",
+                    "(mkdir -p %1$s || true) && rm -r %1$s && base64 --decode << ENDOFFILE | gunzip > %1$s %n%2$s%nENDOFFILE",
                     resource.getName(), new String(Base64.encodeBase64Chunked(out.toByteArray())));
         }
         catch (IOException e) {
@@ -98,9 +98,9 @@ public class MatrixJobITest extends IssuesRecorderITest {
         }
     }
 
-    private void copy(final InputStream in, final ByteArrayOutputStream out) throws IOException {
-        try (OutputStream gz = new GZIPOutputStream(out)) {
-            IOUtils.copy(in, gz);
+    private void copy(final InputStream input, final ByteArrayOutputStream output) throws IOException {
+        try (OutputStream gz = new GZIPOutputStream(output)) {
+            IOUtils.copy(input, gz);
         }
     }
 

@@ -17,10 +17,6 @@ import io.jenkins.plugins.analysis.warnings.FindBugsMessages.Pattern;
 class FindBugsMessagesTest {
     /** Bug ID for test. */
     private static final String NP_STORE_INTO_NONNULL_FIELD = "NP_STORE_INTO_NONNULL_FIELD";
-    /** Error message. */
-    private static final String WRONG_NUMBER_OF_WARNINGS_DETECTED = "Wrong number of warnings detected.";
-    /** Error message. */
-    private static final String WRONG_WARNING_MESSAGE = "Wrong warning message.";
     /** Expected number of patterns. */
     private static final int EXPECTED_PATTERNS = 468;
     /** Expected number of patterns in fb-contrib. */

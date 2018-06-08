@@ -65,7 +65,7 @@ public class FindBugs extends StaticAnalysisTool {
         private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
         private final FindBugsMessages messages;
 
-        private FindBugsLabelProvider(final FindBugsMessages messages) {
+        FindBugsLabelProvider(final FindBugsMessages messages) {
             this(messages, ID, Messages.Warnings_FindBugs_ParserName());
         }
 

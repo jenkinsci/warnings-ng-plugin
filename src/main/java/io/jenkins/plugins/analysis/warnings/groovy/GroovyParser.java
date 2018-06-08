@@ -18,6 +18,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.util.Ensure;
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import groovy.lang.Script;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
@@ -44,6 +45,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
     private final String script;
     private final String example;
 
+    @SuppressFBWarnings("SE")
     private transient JenkinsFacade jenkinsFacade = new JenkinsFacade();
 
     /**
@@ -215,6 +217,8 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         }
 
         DescriptorImpl(final JenkinsFacade jenkinsFacade) {
+            super();
+            
             this.jenkinsFacade = jenkinsFacade;
         }
 

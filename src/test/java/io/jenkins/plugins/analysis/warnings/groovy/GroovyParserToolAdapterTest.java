@@ -11,7 +11,7 @@ class GroovyParserToolAdapterTest extends SerializableTest<GroovyParserToolAdapt
     @Override
     protected GroovyParserToolAdapter createSerializable() {
         GroovyParser parser = new GroovyParser("id", "name", "regexp", "script", "example");
-        GroovyParserToolAdapter adapter = new GroovyParserToolAdapter(parser);
-        return adapter;
+        
+        return new GroovyParserToolAdapter(parser);
     }
 }

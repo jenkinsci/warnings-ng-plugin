@@ -147,9 +147,9 @@ public abstract class PipelineITest extends IntegrationTest {
      *
      * @return the pipeline script
      */
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
+    @SuppressWarnings({"UseOfSystemOutOrSystemErr", "PMD.ConsecutiveLiteralAppends"})
     protected CpsFlowDefinition asStage(final String... steps) {
-        StringBuilder script = new StringBuilder();
+        StringBuilder script = new StringBuilder(1024);
         script.append("node {\n");
         script.append("  stage ('Integration Test') {\n");
         for (String step : steps) {
@@ -171,7 +171,8 @@ public abstract class PipelineITest extends IntegrationTest {
      * @param script
      *         the script
      */
-    protected void logJenkinsFile(final String script) {
+    @SuppressWarnings("PMD.SystemPrintln")
+    private void logJenkinsFile(final String script) {
         System.out.println("----------------------------------------------------------------------");
         System.out.println(script);
         System.out.println("----------------------------------------------------------------------");

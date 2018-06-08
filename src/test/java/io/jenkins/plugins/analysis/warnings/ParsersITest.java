@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.assertj.core.api.Assertions;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.junit.Assume;
 import org.junit.Test;
@@ -217,7 +216,7 @@ public class ParsersITest extends PipelineITest {
             final String expectedDescription) {
         StaticAnalysisLabelProvider labelProvider = tool.getLabelProvider();
         assertThat(issue).hasDescription("");
-        Assertions.assertThat(labelProvider.getDescription(issue)).startsWith(expectedDescription);
+        assertThat(labelProvider.getDescription(issue)).startsWith(expectedDescription);
     }
 
     /** Runs the FindBugs parser on an output file that contains 2 issues. */

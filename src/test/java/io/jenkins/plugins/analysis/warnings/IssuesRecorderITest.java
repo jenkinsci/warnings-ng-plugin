@@ -38,7 +38,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void shouldCreateEmptyResult() {
-        FreeStyleProject project = createJob();
+        FreeStyleProject project = createFreeStyleProject();
         enableEclipseWarnings(project);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -90,7 +90,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void shouldUseDefaultFileNamePattern() {
-        FreeStyleProject project = createJob();
+        FreeStyleProject project = createFreeStyleProject();
         copySingleFileToWorkspace(project, "checkstyle.xml", "checkstyle-result.xml");
         enableWarnings(project, new CheckStyle(), StringUtils.EMPTY);
 
@@ -111,20 +111,6 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Creates a new {@link FreeStyleProject freestyle job}. The job will get a generated name.
-     *
-     * @return the created job
-     */
-    private FreeStyleProject createJob() {
-        try {
-            return j.createFreeStyleProject();
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
      * Creates a new {@link FreeStyleProject freestyle job} and copies the specified resources to the workspace folder.
      * The job will get a generated name.
      *
@@ -134,7 +120,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @return the created job
      */
     private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
-        FreeStyleProject job = createJob();
+        FreeStyleProject job = createFreeStyleProject();
         copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
     }
@@ -151,7 +137,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final StaticAnalysisTool tool) {
+    private IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final StaticAnalysisTool tool) {
         return enableWarnings(job, tool, "**/*issues.txt");
     }
 
@@ -169,7 +155,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final StaticAnalysisTool tool,
+    private IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final StaticAnalysisTool tool,
             final String pattern) {
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setTools(Collections.singletonList(new ToolConfiguration(tool, pattern)));

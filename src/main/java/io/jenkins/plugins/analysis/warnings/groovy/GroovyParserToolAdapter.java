@@ -10,9 +10,13 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
  * @author Ullrich Hafner
  */
 public class GroovyParserToolAdapter extends StaticAnalysisTool {
+    private static final long serialVersionUID = -8466615502157837470L;
+
     private final GroovyParser parser;
 
     GroovyParserToolAdapter(final GroovyParser parser) {
+        super();
+        
         this.parser = parser;
     }
 
