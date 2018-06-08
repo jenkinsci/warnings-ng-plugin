@@ -210,7 +210,7 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
 
         project.getSomeWorkspace().deleteContents();
-        copyFilesToWorkspace(project, "eclipse2Warnings.txt", "checkstyle.xml");
+        copyFilesToWorkspace(project, "eclipse2Warnings.txt");
         issuesRecorder.setUnstableNewAll(3);
         Shell shell = new Shell("exit 1");
         project.getBuildersList().add(shell);
@@ -246,7 +246,7 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
 
         project.getSomeWorkspace().deleteContents();
-        copyFilesToWorkspace(project, "eclipse2Warnings.txt", "checkstyle.xml");
+        copyFilesToWorkspace(project, "eclipse2Warnings.txt");
         issuesRecorder.setUnstableNewAll(3);
         Shell shell = new Shell("exit 1");
         project.getBuildersList().add(shell);
@@ -283,7 +283,7 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
 
         project.getSomeWorkspace().deleteContents();
-        copyFilesToWorkspace(project, "eclipse4Warnings.txt", "checkstyle.xml");
+        copyFilesToWorkspace(project, "eclipse4Warnings.txt");
 
         Shell shell = new Shell("exit 1");
         project.getBuildersList().add(shell);
@@ -480,7 +480,7 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
 
         refJob.getSomeWorkspace().deleteContents();
-        copyFilesToWorkspace(refJob, "eclipse4Warnings.txt", "checkstyle.xml");
+        copyFilesToWorkspace(refJob, "eclipse4Warnings.txt");
         Shell shell = new Shell("exit 1");
         refJob.getBuildersList().add(shell);
 
@@ -522,7 +522,7 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
 
         refJob.getSomeWorkspace().deleteContents();
-        copyFilesToWorkspace(refJob, "eclipse2Warnings.txt", "checkstyle.xml");
+        copyFilesToWorkspace(refJob, "eclipse2Warnings.txt");
         issuesRecorder.setUnstableNewAll(3);
         Shell shell = new Shell("exit 1");
         refJob.getBuildersList().add(shell);
@@ -565,7 +565,7 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
 
         refJob.getSomeWorkspace().deleteContents();
-        copyFilesToWorkspace(refJob, "eclipse2Warnings.txt", "checkstyle.xml");
+        copyFilesToWorkspace(refJob, "eclipse2Warnings.txt");
         issuesRecorder.setUnstableNewAll(3);
         Shell shell = new Shell("exit 1");
         refJob.getBuildersList().add(shell);
@@ -609,7 +609,7 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
 
         refJob.getSomeWorkspace().deleteContents();
-        copyFilesToWorkspace(refJob, "eclipse4Warnings.txt", "checkstyle.xml");
+        copyFilesToWorkspace(refJob, "eclipse4Warnings.txt");
 
         Shell shell = new Shell("exit 1");
         refJob.getBuildersList().add(shell);
