@@ -71,6 +71,7 @@ public class Pmd extends StaticAnalysisTool {
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         private final PmdMessages messages;
 
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
 

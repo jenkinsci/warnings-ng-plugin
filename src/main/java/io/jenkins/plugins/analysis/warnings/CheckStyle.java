@@ -72,6 +72,7 @@ public class CheckStyle extends StaticAnalysisTool {
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         private final CheckStyleRules rules;
 
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
 

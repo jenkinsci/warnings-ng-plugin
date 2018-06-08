@@ -40,6 +40,7 @@ public class Cpd extends DuplicateCodeScanner {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends DryDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

@@ -157,6 +157,12 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
     abstract static class DryDescriptor extends StaticAnalysisToolDescriptor {
         private static final ThresholdValidation VALIDATION = new ThresholdValidation();
 
+        /**
+         * Creates the descriptor instance.
+         *
+         * @param id
+         *         ID of the tool
+         */
         protected DryDescriptor(final String id) {
             super(id);
         }

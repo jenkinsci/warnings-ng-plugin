@@ -103,10 +103,17 @@ public class FindBugs extends StaticAnalysisTool {
     public static class FindBugsDescriptor extends StaticAnalysisToolDescriptor {
         private final FindBugsMessages messages = new FindBugsMessages();
 
+        /** Creates the descriptor instance. */
         public FindBugsDescriptor() {
             this(ID);
         }
 
+        /**
+         * Creates the descriptor instance.
+         *
+         * @param id
+         *         ID of the tool
+         */
         public FindBugsDescriptor(final String id) {
             super(id);
 

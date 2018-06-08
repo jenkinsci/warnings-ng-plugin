@@ -35,6 +35,7 @@ public class Gcc4 extends StaticAnalysisToolSuite {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }
