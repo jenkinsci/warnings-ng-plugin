@@ -15,7 +15,11 @@ import edu.hm.hafner.util.ResourceTest;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.FilePath;
+import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
+import hudson.model.FreeStyleProject;
+import hudson.model.Result;
+import hudson.model.Run;
 import hudson.model.Slave;
 import hudson.model.TopLevelItem;
 import hudson.model.labels.LabelAtom;
@@ -131,7 +135,8 @@ public abstract class IntegrationTest extends ResourceTest {
      * @param to
      *         the file name in the workspace
      */
-    protected void copySingleFileToWorkspace(final Slave agent, final TopLevelItem job, final String from, final String to) {
+    protected void copySingleFileToWorkspace(final Slave agent, final TopLevelItem job, final String from,
+            final String to) {
         FilePath workspace = agent.getWorkspaceFor(job);
         assertThat(workspace).isNotNull();
 
@@ -177,5 +182,54 @@ public abstract class IntegrationTest extends ResourceTest {
         Descriptor<?> descriptor = j.jenkins.getDescriptor(tool);
         assertThat(descriptor).as("Descriptor for '%s' not found").isNotNull();
         return descriptor.getId();
+    }
+
+    /**
+     * Creates a new {@link FreeStyleProject freestyle job}. The job will get a generated name.
+     *
+     * @return the created job
+     */
+    protected FreeStyleProject createFreeStyleProject() {
+        return createProject(FreeStyleProject.class);
+    }
+
+    /**
+     * Creates a new job of the specified type. The job will get a generated name.
+     *
+     * @param type
+     *         type of the job
+     * @param <T>
+     *         the project type
+     *
+     * @return the created job
+     */
+    protected <T extends TopLevelItem> T createProject(final Class<T> type) {
+        try {
+            return j.createProject(type);
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    /**
+     * Schedules a build for the specified job. This method waits until the job has been finished. Afterwards, the
+     * result of the job is compared to the specified expected result.
+     *
+     * @param job
+     *         the job to build
+     * @param status
+     *         the expected job status
+     *
+     * @return the build
+     */
+    @SuppressWarnings("illegalcatch")
+    protected Run buildWithResult(final AbstractProject<?, ?> job, final Result status) {
+        try {
+            return j.assertBuildStatus(status, job.scheduleBuild2(0));
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
     }
 }
