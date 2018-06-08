@@ -24,6 +24,7 @@ public class Pmd extends StaticAnalysisTool {
     /** Creates a new instance of {@link Pmd}. */
     @DataBoundConstructor
     public Pmd() {
+        super();
         // empty constructor required for stapler
     }
 

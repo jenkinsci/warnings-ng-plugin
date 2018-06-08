@@ -21,6 +21,7 @@ public class SunC extends StaticAnalysisTool {
     /** Creates a new instance of {@link SunC}. */
     @DataBoundConstructor
     public SunC() {
+        super();
         // empty constructor required for stapler
     }
 

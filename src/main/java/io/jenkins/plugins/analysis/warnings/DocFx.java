@@ -21,6 +21,7 @@ public class DocFx extends StaticAnalysisTool {
     /** Creates a new instance of {@link DocFx}. */
     @DataBoundConstructor
     public DocFx() {
+        super();
         // empty constructor required for stapler
     }
 

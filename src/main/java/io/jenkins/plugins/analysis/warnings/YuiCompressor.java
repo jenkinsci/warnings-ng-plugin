@@ -21,6 +21,7 @@ public class YuiCompressor extends StaticAnalysisTool {
     /** Creates a new instance of {@link YuiCompressor}. */
     @DataBoundConstructor
     public YuiCompressor() {
+        super();
         // empty constructor required for stapler
     }
 

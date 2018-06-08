@@ -21,6 +21,7 @@ public class Eclipse extends StaticAnalysisTool {
     /** Creates a new instance of {@link Eclipse}. */
     @DataBoundConstructor
     public Eclipse() {
+        super();
         // empty constructor required for stapler
     }
 

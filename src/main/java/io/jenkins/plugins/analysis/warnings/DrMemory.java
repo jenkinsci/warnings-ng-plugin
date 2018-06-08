@@ -21,6 +21,7 @@ public class DrMemory extends StaticAnalysisTool {
     /** Creates a new instance of {@link DrMemory}. */
     @DataBoundConstructor
     public DrMemory() {
+        super();
         // empty constructor required for stapler
     }
 

@@ -21,6 +21,7 @@ public class Doxygen extends StaticAnalysisTool {
     /** Creates a new instance of {@link Doxygen}. */
     @DataBoundConstructor
     public Doxygen() {
+        super();
         // empty constructor required for stapler
     }
 

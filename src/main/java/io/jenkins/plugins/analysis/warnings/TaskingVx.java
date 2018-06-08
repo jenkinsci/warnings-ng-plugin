@@ -21,6 +21,7 @@ public class TaskingVx extends StaticAnalysisTool {
     /** Creates a new instance of {@link TaskingVx}. */
     @DataBoundConstructor
     public TaskingVx() {
+        super();
         // empty constructor required for stapler
     }
 

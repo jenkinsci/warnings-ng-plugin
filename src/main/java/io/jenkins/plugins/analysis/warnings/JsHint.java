@@ -21,6 +21,7 @@ public class JsHint extends StaticAnalysisTool {
     /** Creates a new instance of {@link JsHint}. */
     @DataBoundConstructor
     public JsHint() {
+        super();
         // empty constructor required for stapler
     }
 

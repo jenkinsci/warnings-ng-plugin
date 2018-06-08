@@ -21,6 +21,7 @@ public class JcReport extends StaticAnalysisTool {
     /** Creates a new instance of {@link JcReport}. */
     @DataBoundConstructor
     public JcReport() {
+        super();
         // empty constructor required for stapler
     }
 

@@ -24,6 +24,7 @@ public class MetrowerksCodeWarrior extends StaticAnalysisToolSuite {
     /** Creates a new instance of {@link MetrowerksCodeWarrior}. */
     @DataBoundConstructor
     public MetrowerksCodeWarrior() {
+        super();
         // empty constructor required for stapler
     }
 

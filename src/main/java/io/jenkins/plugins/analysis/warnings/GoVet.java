@@ -21,6 +21,7 @@ public class GoVet extends StaticAnalysisTool {
     /** Creates a new instance of {@link GoVet}. */
     @DataBoundConstructor
     public GoVet() {
+        super();
         // empty constructor required for stapler
     }
 

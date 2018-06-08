@@ -21,6 +21,7 @@ public class CodeNArc extends StaticAnalysisTool {
     /** Creates a new instance of {@link CodeNArc}. */
     @DataBoundConstructor
     public CodeNArc() {
+        super();
         // empty constructor required for stapler
     }
 

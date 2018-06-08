@@ -21,6 +21,7 @@ public class RFLint extends StaticAnalysisTool {
     /** Creates a new instance of {@link RFLint}. */
     @DataBoundConstructor
     public RFLint() {
+        super();
         // empty constructor required for stapler
     }
 

@@ -21,6 +21,7 @@ public class PerlCritic extends StaticAnalysisTool {
     /** Creates a new instance of {@link PerlCritic}. */
     @DataBoundConstructor
     public PerlCritic() {
+        super();
         // empty constructor required for stapler
     }
 

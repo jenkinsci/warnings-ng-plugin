@@ -21,6 +21,7 @@ public class PyLint extends StaticAnalysisTool {
     /** Creates a new instance of {@link PyLint}. */
     @DataBoundConstructor
     public PyLint() {
+        super();
         // empty constructor required for stapler
     }
 

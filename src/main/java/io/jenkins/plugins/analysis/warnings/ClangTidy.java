@@ -21,6 +21,7 @@ public class ClangTidy extends StaticAnalysisTool {
     /** Creates a new instance of {@link ClangTidy}. */
     @DataBoundConstructor
     public ClangTidy() {
+        super();
         // empty constructor required for stapler
     }
 

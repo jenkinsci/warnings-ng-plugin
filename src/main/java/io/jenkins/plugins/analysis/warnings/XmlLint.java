@@ -21,6 +21,7 @@ public class XmlLint extends StaticAnalysisTool {
     /** Creates a new instance of {@link XmlLint}. */
     @DataBoundConstructor
     public XmlLint() {
+        super();
         // empty constructor required for stapler
     }
 

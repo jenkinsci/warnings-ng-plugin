@@ -21,6 +21,7 @@ public class NagFortran extends StaticAnalysisTool {
     /** Creates a new instance of {@link NagFortran}. */
     @DataBoundConstructor
     public NagFortran() {
+        super();
         // empty constructor required for stapler
     }
 

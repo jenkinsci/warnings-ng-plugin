@@ -21,6 +21,7 @@ public class Simian extends DuplicateCodeScanner {
     /** Creates a new instance of {@link Simian}. */
     @DataBoundConstructor
     public Simian() {
+        super();
         // empty constructor required for stapler
     }
 

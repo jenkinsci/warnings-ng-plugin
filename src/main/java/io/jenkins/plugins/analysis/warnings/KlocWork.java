@@ -21,6 +21,7 @@ public class KlocWork extends StaticAnalysisTool {
     /** Creates a new instance of {@link KlocWork}. */
     @DataBoundConstructor
     public KlocWork() {
+        super();
         // empty constructor required for stapler
     }
 

@@ -21,6 +21,7 @@ public class ResharperInspectCode extends StaticAnalysisTool {
     /** Creates a new instance of {@link ResharperInspectCode}. */
     @DataBoundConstructor
     public ResharperInspectCode() {
+        super();
         // empty constructor required for stapler
     }
 

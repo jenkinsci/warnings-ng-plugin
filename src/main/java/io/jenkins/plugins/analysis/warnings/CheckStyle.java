@@ -25,6 +25,7 @@ public class CheckStyle extends StaticAnalysisTool {
     /** Creates a new instance of {@link CheckStyle}. */
     @DataBoundConstructor
     public CheckStyle() {
+        super();
         // empty constructor required for stapler
     }
 

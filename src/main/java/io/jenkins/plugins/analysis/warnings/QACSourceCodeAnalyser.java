@@ -21,6 +21,7 @@ public class QACSourceCodeAnalyser extends StaticAnalysisTool {
     /** Creates a new instance of {@link QACSourceCodeAnalyser}. */
     @DataBoundConstructor
     public QACSourceCodeAnalyser() {
+        super();
         // empty constructor required for stapler
     }
 

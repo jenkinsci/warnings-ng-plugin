@@ -21,6 +21,7 @@ public class CppCheck extends StaticAnalysisTool {
     /** Creates a new instance of {@link CppCheck}. */
     @DataBoundConstructor
     public CppCheck() {
+        super();
         // empty constructor required for stapler
     }
 

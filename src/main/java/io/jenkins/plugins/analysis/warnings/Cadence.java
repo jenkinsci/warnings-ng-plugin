@@ -21,6 +21,7 @@ public class Cadence extends StaticAnalysisTool {
     /** Creates a new instance of {@link Cadence}. */
     @DataBoundConstructor
     public Cadence() {
+        super();
         // empty constructor required for stapler
     }
 

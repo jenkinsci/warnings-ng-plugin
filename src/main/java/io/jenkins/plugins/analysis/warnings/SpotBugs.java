@@ -22,6 +22,7 @@ public class SpotBugs extends FindBugs {
     /** Creates a new instance of {@link SpotBugs}. */
     @DataBoundConstructor
     public SpotBugs() {
+        super();
         // empty constructor required for stapler
     }
 

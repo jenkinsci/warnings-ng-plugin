@@ -21,6 +21,7 @@ public class GnuFortran extends StaticAnalysisTool {
     /** Creates a new instance of {@link GnuFortran}. */
     @DataBoundConstructor
     public GnuFortran() {
+        super();
         // empty constructor required for stapler
     }
 

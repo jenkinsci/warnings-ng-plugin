@@ -21,6 +21,7 @@ public class StyleCop extends StaticAnalysisTool {
     /** Creates a new instance of {@link StyleCop}. */
     @DataBoundConstructor
     public StyleCop() {
+        super();
         // empty constructor required for stapler
     }
 

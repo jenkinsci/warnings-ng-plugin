@@ -21,6 +21,7 @@ public class Flake8 extends StaticAnalysisTool {
     /** Creates a new instance of {@link Flake8}. */
     @DataBoundConstructor
     public Flake8() {
+        super();
         // empty constructor required for stapler
     }
 

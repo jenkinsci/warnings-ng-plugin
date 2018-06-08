@@ -21,6 +21,7 @@ public class Php extends StaticAnalysisTool {
     /** Creates a new instance of {@link Php}. */
     @DataBoundConstructor
     public Php() {
+        super();
         // empty constructor required for stapler
     }
 

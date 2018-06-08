@@ -24,6 +24,7 @@ public class Gcc4 extends StaticAnalysisToolSuite {
     /** Creates a new instance of {@link Gcc4}. */
     @DataBoundConstructor
     public Gcc4() {
+        super();
         // empty constructor required for stapler
     }
 

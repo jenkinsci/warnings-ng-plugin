@@ -22,6 +22,7 @@ public class SphinxBuild extends StaticAnalysisTool {
     /** Creates a new instance of {@link SphinxBuild}. */
     @DataBoundConstructor
     public SphinxBuild() {
+        super();
         // empty constructor required for stapler
     }
 

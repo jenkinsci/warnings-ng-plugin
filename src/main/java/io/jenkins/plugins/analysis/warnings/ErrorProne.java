@@ -21,6 +21,7 @@ public class ErrorProne extends StaticAnalysisTool {
     /** Creates a new instance of {@link ErrorProne}. */
     @DataBoundConstructor
     public ErrorProne() {
+        super();
         // empty constructor required for stapler
     }
 

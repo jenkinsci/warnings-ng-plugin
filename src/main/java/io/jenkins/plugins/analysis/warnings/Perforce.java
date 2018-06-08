@@ -21,6 +21,7 @@ public class Perforce extends StaticAnalysisTool {
     /** Creates a new instance of {@link Perforce}. */
     @DataBoundConstructor
     public Perforce() {
+        super();
         // empty constructor required for stapler
     }
 

@@ -24,6 +24,7 @@ public class ArmCc extends StaticAnalysisToolSuite {
     /** Creates a new instance of {@link ArmCc}. */
     @DataBoundConstructor
     public ArmCc() {
+        super();
         // empty constructor required for stapler
     }
 

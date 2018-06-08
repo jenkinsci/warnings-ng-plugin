@@ -21,6 +21,7 @@ public class MavenConsole extends StaticAnalysisTool {
     /** Creates a new instance of {@link MavenConsole}. */
     @DataBoundConstructor
     public MavenConsole() {
+        super();
         // empty constructor required for stapler
     }
 

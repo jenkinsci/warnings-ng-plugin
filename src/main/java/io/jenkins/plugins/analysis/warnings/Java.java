@@ -25,6 +25,7 @@ public class Java extends StaticAnalysisTool {
     /** Creates a new instance of {@link NagFortran}. */
     @DataBoundConstructor
     public Java() {
+        super();
         // empty constructor required for stapler
     }
 

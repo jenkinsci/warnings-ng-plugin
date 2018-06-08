@@ -21,6 +21,7 @@ public class Tnsdl extends StaticAnalysisTool {
     /** Creates a new instance of {@link Tnsdl}. */
     @DataBoundConstructor
     public Tnsdl() {
+        super();
         // empty constructor required for stapler
     }
 

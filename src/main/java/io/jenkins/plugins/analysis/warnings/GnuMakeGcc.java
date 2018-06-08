@@ -21,6 +21,7 @@ public class GnuMakeGcc extends StaticAnalysisTool {
     /** Creates a new instance of {@link GnuMakeGcc}. */
     @DataBoundConstructor
     public GnuMakeGcc() {
+        super();
         // empty constructor required for stapler
     }
 

@@ -21,6 +21,7 @@ public class CodeAnalysis extends StaticAnalysisTool {
     /** Creates a new instance of {@link CodeAnalysis}. */
     @DataBoundConstructor
     public CodeAnalysis() {
+        super();
         // empty constructor required for stapler
     }
 

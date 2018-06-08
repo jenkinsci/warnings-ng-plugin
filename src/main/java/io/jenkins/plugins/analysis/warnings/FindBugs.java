@@ -29,6 +29,7 @@ public class FindBugs extends StaticAnalysisTool {
     /** Creates a new instance of {@link FindBugs}. */
     @DataBoundConstructor
     public FindBugs() {
+        super();
         // empty constructor required for stapler
     }
 

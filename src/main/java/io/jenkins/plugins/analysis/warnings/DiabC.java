@@ -21,6 +21,7 @@ public class DiabC extends StaticAnalysisTool {
     /** Creates a new instance of {@link DiabC}. */
     @DataBoundConstructor
     public DiabC() {
+        super();
         // empty constructor required for stapler
     }
 

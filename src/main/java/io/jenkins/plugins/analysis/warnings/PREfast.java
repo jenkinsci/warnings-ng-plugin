@@ -21,6 +21,7 @@ public class PREfast extends StaticAnalysisTool {
     /** Creates a new instance of {@link PREfast}. */
     @DataBoundConstructor
     public PREfast() {
+        super();
         // empty constructor required for stapler
     }
 

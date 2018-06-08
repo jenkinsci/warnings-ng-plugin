@@ -23,6 +23,7 @@ public class Pit extends StaticAnalysisTool {
     /** Creates a new instance of {@link Pit}. */
     @DataBoundConstructor
     public Pit() {
+        super();
         // empty constructor required for stapler
     }
 

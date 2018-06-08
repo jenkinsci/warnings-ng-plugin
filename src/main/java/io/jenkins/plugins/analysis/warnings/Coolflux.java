@@ -21,6 +21,7 @@ public class Coolflux extends StaticAnalysisTool {
     /** Creates a new instance of {@link Coolflux}. */
     @DataBoundConstructor
     public Coolflux() {
+        super();
         // empty constructor required for stapler
     }
 

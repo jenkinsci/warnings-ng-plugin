@@ -21,6 +21,7 @@ public class LinuxKernelOutput extends StaticAnalysisTool {
     /** Creates a new instance of {@link LinuxKernelOutput}. */
     @DataBoundConstructor
     public LinuxKernelOutput() {
+        super();
         // empty constructor required for stapler
     }
 

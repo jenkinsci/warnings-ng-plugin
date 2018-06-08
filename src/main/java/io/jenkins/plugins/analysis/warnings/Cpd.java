@@ -22,6 +22,7 @@ public class Cpd extends DuplicateCodeScanner {
      */
     @DataBoundConstructor
     public Cpd() {
+        super();
         // empty constructor required for stapler
     }
 

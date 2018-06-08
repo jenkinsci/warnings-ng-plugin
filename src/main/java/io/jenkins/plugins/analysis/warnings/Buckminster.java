@@ -21,6 +21,7 @@ public class Buckminster extends StaticAnalysisTool {
     /** Creates a new instance of {@link Buckminster}. */
     @DataBoundConstructor
     public Buckminster() {
+        super();
         // empty constructor required for stapler
     }
 

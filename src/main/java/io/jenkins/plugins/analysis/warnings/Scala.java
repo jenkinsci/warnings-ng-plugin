@@ -25,6 +25,7 @@ public class Scala extends StaticAnalysisToolSuite {
     /** Creates a new instance of {@link Scala}. */
     @DataBoundConstructor
     public Scala() {
+        super();
         // empty constructor required for stapler
     }
 

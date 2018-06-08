@@ -21,6 +21,7 @@ public class CssLint extends StaticAnalysisTool {
     /** Creates a new instance of {@link CssLint}. */
     @DataBoundConstructor
     public CssLint() {
+        super();
         // empty constructor required for stapler
     }
 

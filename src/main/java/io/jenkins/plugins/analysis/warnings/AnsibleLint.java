@@ -21,6 +21,7 @@ public class AnsibleLint extends StaticAnalysisTool {
     /** Creates a new instance of {@link AnsibleLint}. */
     @DataBoundConstructor
     public AnsibleLint() {
+        super();
         // empty constructor required for stapler
     }
 

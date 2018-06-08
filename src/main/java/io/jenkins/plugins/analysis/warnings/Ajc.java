@@ -21,6 +21,7 @@ public class Ajc extends StaticAnalysisTool {
     /** Creates a new instance of {@link Ajc}. */
     @DataBoundConstructor
     public Ajc() {
+        super();
         // empty constructor required for stapler
     }
 

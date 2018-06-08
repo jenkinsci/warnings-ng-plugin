@@ -21,6 +21,7 @@ public class AndroidLint extends StaticAnalysisTool {
     /** Creates a new instance of {@link AndroidLint}. */
     @DataBoundConstructor
     public AndroidLint() {
+        super();
         // empty constructor required for stapler
     }
 

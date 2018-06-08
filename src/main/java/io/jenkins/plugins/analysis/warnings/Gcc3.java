@@ -21,6 +21,7 @@ public class Gcc3 extends StaticAnalysisTool {
     /** Creates a new instance of {@link Gcc3}. */
     @DataBoundConstructor
     public Gcc3() {
+        super();
         // empty constructor required for stapler
     }
 

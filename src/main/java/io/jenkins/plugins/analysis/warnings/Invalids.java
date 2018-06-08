@@ -21,6 +21,7 @@ public class Invalids extends StaticAnalysisTool {
     /** Creates a new instance of {@link Invalids}. */
     @DataBoundConstructor
     public Invalids() {
+        super();
         // empty constructor required for stapler
     }
 

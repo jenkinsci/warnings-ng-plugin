@@ -21,6 +21,7 @@ public class Erlc extends StaticAnalysisTool {
     /** Creates a new instance of {@link Erlc}. */
     @DataBoundConstructor
     public Erlc() {
+        super();
         // empty constructor required for stapler
     }
 

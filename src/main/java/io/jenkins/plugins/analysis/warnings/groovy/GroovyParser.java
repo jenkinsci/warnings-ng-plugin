@@ -409,9 +409,9 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             int max = MAX_MESSAGE_LENGTH;
             if (message.length() > max) {
                 int size = max / 2 - 1;
-                okMessage.append(message.substring(0, size));
+                okMessage.append(message, 0, size);
                 okMessage.append("[...]");
-                okMessage.append(message.substring(message.length() - size, message.length()));
+                okMessage.append(message, message.length() - size, message.length());
             }
             else {
                 okMessage.append(message);

@@ -21,6 +21,7 @@ public class ZptLint extends StaticAnalysisTool {
     /** Creates a new instance of {@link ZptLint}. */
     @DataBoundConstructor
     public ZptLint() {
+        super();
         // empty constructor required for stapler
     }
 

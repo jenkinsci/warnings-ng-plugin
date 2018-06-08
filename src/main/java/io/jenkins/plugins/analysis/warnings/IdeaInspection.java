@@ -21,6 +21,7 @@ public class IdeaInspection extends StaticAnalysisTool {
     /** Creates a new instance of {@link IdeaInspection}. */
     @DataBoundConstructor
     public IdeaInspection() {
+        super();
         // empty constructor required for stapler
     }
 

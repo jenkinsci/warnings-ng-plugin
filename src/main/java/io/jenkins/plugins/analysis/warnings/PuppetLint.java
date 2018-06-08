@@ -21,6 +21,7 @@ public class PuppetLint extends StaticAnalysisTool {
     /** Creates a new instance of {@link PuppetLint}. */
     @DataBoundConstructor
     public PuppetLint() {
+        super();
         // empty constructor required for stapler
     }
 

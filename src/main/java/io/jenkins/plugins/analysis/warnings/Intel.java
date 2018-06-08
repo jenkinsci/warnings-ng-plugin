@@ -22,6 +22,7 @@ public class Intel extends StaticAnalysisTool {
     /** Creates a new instance of {@link Intel}. */
     @DataBoundConstructor
     public Intel() {
+        super();
         // empty constructor required for stapler
     }
 

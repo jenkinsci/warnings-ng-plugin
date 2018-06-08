@@ -21,6 +21,7 @@ public class MyPy extends StaticAnalysisTool {
     /** Creates a new instance of {@link MyPy}. */
     @DataBoundConstructor
     public MyPy() {
+        super();
         // empty constructor required for stapler
     }
 

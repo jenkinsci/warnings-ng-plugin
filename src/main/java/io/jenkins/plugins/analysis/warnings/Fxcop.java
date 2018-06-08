@@ -21,6 +21,7 @@ public class Fxcop extends StaticAnalysisTool {
     /** Creates a new instance of {@link Fxcop}. */
     @DataBoundConstructor
     public Fxcop() {
+        super();
         // empty constructor required for stapler
     }
 

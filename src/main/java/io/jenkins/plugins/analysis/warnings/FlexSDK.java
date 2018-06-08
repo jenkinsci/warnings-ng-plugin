@@ -21,6 +21,7 @@ public class FlexSDK extends StaticAnalysisTool {
     /** Creates a new instance of {@link FlexSDK}. */
     @DataBoundConstructor
     public FlexSDK() {
+        super();
         // empty constructor required for stapler
     }
 

@@ -21,6 +21,7 @@ public class MsBuild extends StaticAnalysisTool {
     /** Creates a new instance of {@link MsBuild}. */
     @DataBoundConstructor
     public MsBuild() {
+        super();
         // empty constructor required for stapler
     }
 

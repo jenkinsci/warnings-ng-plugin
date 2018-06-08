@@ -21,6 +21,7 @@ public class Gnat extends StaticAnalysisTool {
     /** Creates a new instance of {@link Gnat}. */
     @DataBoundConstructor
     public Gnat() {
+        super();
         // empty constructor required for stapler
     }
 

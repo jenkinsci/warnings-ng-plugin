@@ -21,6 +21,7 @@ public class GoLint extends StaticAnalysisTool {
     /** Creates a new instance of {@link GoLint}. */
     @DataBoundConstructor
     public GoLint() {
+        super();
         // empty constructor required for stapler
     }
 

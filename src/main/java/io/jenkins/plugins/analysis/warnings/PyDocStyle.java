@@ -21,6 +21,7 @@ public class PyDocStyle extends StaticAnalysisTool {
     /** Creates a new instance of {@link PyDocStyle}. */
     @DataBoundConstructor
     public PyDocStyle() {
+        super();
         // empty constructor required for stapler
     }
 

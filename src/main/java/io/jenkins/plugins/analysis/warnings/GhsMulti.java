@@ -21,6 +21,7 @@ public class GhsMulti extends StaticAnalysisTool {
     /** Creates a new instance of {@link GhsMulti}. */
     @DataBoundConstructor
     public GhsMulti() {
+        super();
         // empty constructor required for stapler
     }
 

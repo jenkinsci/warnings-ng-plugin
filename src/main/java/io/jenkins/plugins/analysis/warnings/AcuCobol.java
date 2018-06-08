@@ -21,6 +21,7 @@ public class AcuCobol extends StaticAnalysisTool {
     /** Creates a new instance of {@link AcuCobol}. */
     @DataBoundConstructor
     public AcuCobol() {
+        super();
         // empty constructor required for stapler
     }
 

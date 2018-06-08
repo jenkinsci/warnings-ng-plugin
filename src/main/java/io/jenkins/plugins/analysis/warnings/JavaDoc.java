@@ -23,6 +23,7 @@ public class JavaDoc extends StaticAnalysisTool {
     /** Creates a new instance of {@link JavaDoc}. */
     @DataBoundConstructor
     public JavaDoc() {
+        super();
         // empty constructor required for stapler
     }
 

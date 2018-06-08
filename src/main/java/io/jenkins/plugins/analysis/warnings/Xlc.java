@@ -24,6 +24,7 @@ public class Xlc extends StaticAnalysisToolSuite {
     /** Creates a new instance of {@link Xlc}. */
     @DataBoundConstructor
     public Xlc() {
+        super();
         // empty constructor required for stapler
     }
 

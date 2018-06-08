@@ -21,6 +21,7 @@ public class CppLint extends StaticAnalysisTool {
     /** Creates a new instance of {@link CppLint}. */
     @DataBoundConstructor
     public CppLint() {
+        super();
         // empty constructor required for stapler
     }
 

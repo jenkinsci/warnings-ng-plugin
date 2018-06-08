@@ -21,6 +21,7 @@ public class Clang extends StaticAnalysisTool {
     /** Creates a new instance of {@link Clang}. */
     @DataBoundConstructor
     public Clang() {
+        super();
         // empty constructor required for stapler
     }
 

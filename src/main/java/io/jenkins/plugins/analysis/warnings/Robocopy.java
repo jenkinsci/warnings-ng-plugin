@@ -22,6 +22,7 @@ public class Robocopy extends StaticAnalysisTool {
     /** Creates a new instance of {@link Robocopy}. */
     @DataBoundConstructor
     public Robocopy() {
+        super();
         // empty constructor required for stapler
     }
 

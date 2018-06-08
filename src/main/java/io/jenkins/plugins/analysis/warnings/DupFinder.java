@@ -21,6 +21,7 @@ public class DupFinder extends DuplicateCodeScanner {
     /** Creates a new instance of {@link DupFinder}. */
     @DataBoundConstructor
     public DupFinder() {
+        super();
         // empty constructor required for stapler
     }
 

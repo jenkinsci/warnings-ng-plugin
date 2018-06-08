@@ -21,6 +21,7 @@ public class TiCss extends StaticAnalysisTool {
     /** Creates a new instance of {@link TiCss}. */
     @DataBoundConstructor
     public TiCss() {
+        super();
         // empty constructor required for stapler
     }
 

@@ -21,6 +21,7 @@ public class Iar extends StaticAnalysisTool {
     /** Creates a new instance of {@link Iar}. */
     @DataBoundConstructor
     public Iar() {
+        super();
         // empty constructor required for stapler
     }
 

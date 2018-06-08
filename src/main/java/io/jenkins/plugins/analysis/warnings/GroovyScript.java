@@ -31,6 +31,7 @@ public class GroovyScript extends StaticAnalysisTool {
      */
     @DataBoundConstructor
     public GroovyScript() {
+        super();
         // empty constructor required for stapler
     }
 
