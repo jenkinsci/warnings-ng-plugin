@@ -48,7 +48,7 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
 
         project.getSomeWorkspace().deleteContents();
-        copyFilesToWorkspace(project, "eclipse.txt");
+        copyFilesToWorkspace(project, "eclipse8Warnings.txt");
 
         result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
         assertThat(result).hasTotalSize(8);
@@ -85,7 +85,7 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.UNSTABLE);
 
         project.getSomeWorkspace().deleteContents();
-        copyFilesToWorkspace(project, "eclipse.txt");
+        copyFilesToWorkspace(project, "eclipse8Warnings.txt");
 
         result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
         assertThat(result).hasTotalSize(8);
@@ -116,7 +116,7 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.UNSTABLE);
 
         project.getSomeWorkspace().deleteContents();
-        copyFilesToWorkspace(project, "eclipse.txt");
+        copyFilesToWorkspace(project, "eclipse8Warnings.txt");
 
         result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(result).hasTotalSize(8);
@@ -149,7 +149,7 @@ public class ReferenceFinderITest extends IntegrationTest {
         project.getSomeWorkspace().deleteContents();
         issuesRecorder.setUnstableNewAll(3);
         issuesRecorder.setUnstableTotalAll(9);
-        copyFilesToWorkspace(project, "eclipse.txt");
+        copyFilesToWorkspace(project, "eclipse8Warnings.txt");
 
         result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
         assertThat(result).hasTotalSize(8);
@@ -175,7 +175,7 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
 
         project.getSomeWorkspace().deleteContents();
-        copyFilesToWorkspace(project, "eclipse4Warnings.txt", "checkstyle.xml");
+        copyFilesToWorkspace(project, "eclipse4Warnings.txt");
         Shell shell = new Shell("exit 1");
         project.getBuildersList().add(shell);
 
@@ -328,7 +328,7 @@ public class ReferenceFinderITest extends IntegrationTest {
         assertThat(result).hasOverallResult(Result.SUCCESS);
 
         refJob.getSomeWorkspace().deleteContents();
-        copyFilesToWorkspace(refJob, "eclipse.txt");
+        copyFilesToWorkspace(refJob, "eclipse8Warnings.txt");
 
         result = scheduleBuildAndAssertStatus(refJob, Result.UNSTABLE);
         assertThat(result).hasTotalSize(8);
@@ -352,7 +352,7 @@ public class ReferenceFinderITest extends IntegrationTest {
             publisher.setIgnoreAnalysisResult(false);
         });
 
-        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse.txt");
+        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse8Warnings.txt");
         enableWarnings(project, publisher -> {
             publisher.setUnstableNewAll(3);
             publisher.setReferenceJobName(refName);
@@ -389,7 +389,7 @@ public class ReferenceFinderITest extends IntegrationTest {
             publisher.setUnstableNewAll(3);
         });
 
-        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse.txt");
+        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse8Warnings.txt");
         enableWarnings(project, publisher -> {
             publisher.setUnstableNewAll(3);
             publisher.setReferenceJobName(refName);
@@ -425,7 +425,7 @@ public class ReferenceFinderITest extends IntegrationTest {
             publisher.setIgnoreAnalysisResult(true);
         });
 
-        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse.txt");
+        FreeStyleProject project = createJobWithWorkspaceFile(jobName, "eclipse8Warnings.txt");
         enableWarnings(project, publisher -> {
             publisher.setUnstableNewAll(3);
             publisher.setReferenceJobName(refName);
@@ -713,27 +713,6 @@ public class ReferenceFinderITest extends IntegrationTest {
             return action.getResult();
         }
         catch (Exception e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private AnalysisResult scheduleBuildAndAssertStatusWithMultiplePublisher(final FreeStyleProject job,
-            final Result status) {
-        try {
-            FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
-
-            List<ResultAction> actions = build.getActions(ResultAction.class);
-            for (ResultAction action : actions) {
-                System.out.println("INFO: Result: " + action.getResult());
-            }
-
-            return actions.get(0).getResult();
-        }
-        catch (
-                Exception e)
-
-        {
             throw new AssertionError(e);
         }
     }
