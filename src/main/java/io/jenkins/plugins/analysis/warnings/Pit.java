@@ -36,6 +36,9 @@ public class Pit extends StaticAnalysisTool {
         return new PitAdapter();
     }
 
+    /**
+     * Label provider for PIT.
+     */
     private static class LabelProvider extends StaticAnalysisLabelProvider {
         private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
         private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";

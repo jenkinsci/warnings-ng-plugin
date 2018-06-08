@@ -22,8 +22,9 @@ import edu.hm.hafner.analysis.SecureDigester;
  */
 // TODO: when there are more translations available we should generalize that approach into a map of maps
 public final class FindBugsMessages {
+    private static final Logger LOGGER = Logger.getLogger(FindBugsMessages.class.getName());
     private static final String NO_MESSAGE_FOUND = "no message found";
-    private static final Logger logger = Logger.getLogger(FindBugsMessages.class.getName());
+
     /** Maps a key to HTML description. */
     private final Map<String, String> messages = new HashMap<>();
     private final Map<String, String> jaMessages = new HashMap<>();
@@ -57,7 +58,7 @@ public final class FindBugsMessages {
             List<Pattern> patterns = parse(file);
             for (Pattern pattern : patterns) {
                 if (messagesCache.get(pattern.getType()) != null || shortMessagesCache.get(pattern.getType()) != null) {
-                    logger.warning(
+                    LOGGER.warning(
                             "The bug pattern " + pattern.getType() + " was already loaded. It could be a duplicate.");
                 }
                 messagesCache.put(pattern.getType(), pattern.getDescription());

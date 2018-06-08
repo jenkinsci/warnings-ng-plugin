@@ -67,6 +67,12 @@ public class ParserConfiguration extends GlobalConfiguration {
         return Jenkins.getInstance().getACL().hasPermission(Jenkins.RUN_SCRIPTS);
     }
 
+    /**
+     * Returns the parser (wrapped into a {@link StaticAnalysisTool} instance) with the specified ID.
+     *
+     * @param id
+     *         the ID of the parser
+     */
     public StaticAnalysisTool getParser(final String id) {
         for (GroovyParser parser : parsers) {
             if (parser.getId().equals(id)) {
@@ -76,6 +82,12 @@ public class ParserConfiguration extends GlobalConfiguration {
         throw new NoSuchElementException("No Groovy parser with ID '%s' found.", id);
     }
 
+    /**
+     * Returns whether a parser with the specified ID does already exist. Parser IDs are unique in a Jenkins instance.
+     *
+     * @param id
+     *         the ID of the parser
+     */
     public boolean contains(final String id) {
         for (GroovyParser parser : parsers) {
             if (parser.getId().equals(id)) {

@@ -41,7 +41,8 @@ public class Doxygen extends StaticAnalysisTool {
         public String getHelp() {
             return Messages.Warning_SlowMultiLineParser();
         }
-            @Nonnull
+
+        @Nonnull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_Doxygen_ParserName();

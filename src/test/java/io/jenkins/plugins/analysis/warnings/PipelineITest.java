@@ -26,6 +26,7 @@ import hudson.model.Result;
  * @see PublishIssuesStep
  */
 public abstract class PipelineITest extends IntegrationTest {
+    /** Step to publish a set of issues. Uses defaults for all options. */
     protected static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
 
     /**
@@ -167,7 +168,8 @@ public abstract class PipelineITest extends IntegrationTest {
     /**
      * Prints the content of the JenkinsFile to StdOut.
      *
-     * @param script the script
+     * @param script
+     *         the script
      */
     protected void logJenkinsFile(final String script) {
         System.out.println("----------------------------------------------------------------------");
@@ -181,6 +183,8 @@ public abstract class PipelineITest extends IntegrationTest {
      *
      * @param job
      *         the job to run
+     *
+     * @return the successful build
      */
     @SuppressWarnings("illegalcatch")
     protected WorkflowRun runSuccessfully(final WorkflowJob job) {
@@ -196,15 +200,25 @@ public abstract class PipelineITest extends IntegrationTest {
      * Returns the {@link ResultAction} for the specified run. Note that this method does only return the first match,
      * even if a test registered multiple actions.
      *
-     * @param run
-     *         the run (aka build)
+     * @param build
+     *         the build
+     *
+     * @return the action of the specified build
      */
-    protected ResultAction getResultAction(final WorkflowRun run) {
-        ResultAction action = run.getAction(ResultAction.class);
-        assertThat(action).as("No ResultAction found in run %s", run).isNotNull();
+    protected ResultAction getResultAction(final WorkflowRun build) {
+        ResultAction action = build.getAction(ResultAction.class);
+        assertThat(action).as("No ResultAction found in run %s", build).isNotNull();
         return action;
     }
 
+    /**
+     * Reads a JenkinsFile (i.e. a {@link FlowDefinition}) from the specified file.
+     *
+     * @param fileName
+     *         path to the JenkinsFile
+     *
+     * @return the JenkinsFile as {@link FlowDefinition} instance
+     */
     protected FlowDefinition readDefinition(final String fileName) {
         String script = toString(fileName);
         logJenkinsFile(script);

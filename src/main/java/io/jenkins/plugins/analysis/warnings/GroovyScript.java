@@ -67,6 +67,7 @@ public class GroovyScript extends StaticAnalysisTool {
         return ParserConfiguration.getInstance().getParser(id);
     }
 
+    /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         /** Creates the descriptor instance. */

@@ -33,6 +33,9 @@ public class JavaDoc extends StaticAnalysisTool {
 
     /** Provides the labels for the static analysis tool. */
     public static class JavaDocLabelProvider extends JavaLabelProvider {
+        /**
+         * Creates a new {@link JavaDocLabelProvider}.
+         */
         public JavaDocLabelProvider() {
             super(ID, Messages.Warnings_JavaDoc_ParserName());
         }

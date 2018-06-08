@@ -1,12 +1,11 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.collections.impl.factory.Lists;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -39,6 +38,7 @@ import hudson.util.HttpResponses;
  */
 public class StepsITest extends PipelineITest {
     /**
+     * Creates a JenkinsFile with parallel steps and aggregates the warnings.
      */
     @Test
     public void shouldRecordOutputOfParallelSteps() {
@@ -181,8 +181,8 @@ public class StepsITest extends PipelineITest {
     public void shouldShowWarningsOfGroovyParser() {
         WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(
-                String.format("def groovy = scanForIssues tool: [$class: 'GroovyScript', id:'groovy-pep8'], "
-                        + "pattern:'**/*issues.txt', defaultEncoding:'UTF-8'"),
+                "def groovy = scanForIssues tool: [$class: 'GroovyScript', id:'groovy-pep8'], "
+                        + "pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
                 "publishIssues issues:[groovy]"));
 
         ParserConfiguration configuration = ParserConfiguration.getInstance();
@@ -258,19 +258,14 @@ public class StepsITest extends PipelineITest {
      * @see <a href="https://jenkins.io/security/advisory/2018-01-22/">Jenkins Security Advisory 2018-01-22</a>
      */
     @Test
-    public void showPreventXxeSecurity656() throws Exception {
-        String oobInUserContentLink = j.getURL() + "userContent/oob.xml";
-        String triggerLink = j.getURL() + "triggerMe";
+    public void showPreventXxeSecurity656() {
+        String oobInUserContentLink = getUrl("userContent/oob.xml");
+        String triggerLink = getUrl("triggerMe");
 
-        String xxeFile = getClass().getResource("testXxe-xxe.xml").getFile();
-        String xxeFileContent = FileUtils.readFileToString(new File(xxeFile), StandardCharsets.UTF_8);
+        String xxeFileContent = toString("testXxe-xxe.xml");
+        String oobFileContent = toString("testXxe-oob.xml");
 
-        String oobFile = getClass().getResource("testXxe-oob.xml").getFile();
-        String oobFileContent = FileUtils.readFileToString(new File(oobFile), StandardCharsets.UTF_8);
-
-        File userContentDir = new File(j.jenkins.getRootDir(), "userContent");
-        String adaptedOobFileContent = oobFileContent.replace("$TARGET_URL$", triggerLink);
-        Files.write(new File(userContentDir, "oob.xml").toPath(), adaptedOobFileContent.getBytes());
+        write(oobFileContent.replace("$TARGET_URL$", triggerLink));
 
         WorkflowJob job = createJob();
         String adaptedXxeFileContent = xxeFileContent.replace("$OOB_LINK$", oobInUserContentLink);
@@ -295,6 +290,30 @@ public class StepsITest extends PipelineITest {
         }
     }
 
+    private void write(final String adaptedOobFileContent) {
+        try {
+            File userContentDir = new File(j.jenkins.getRootDir(), "userContent");
+            Files.write(new File(userContentDir, "oob.xml").toPath(), adaptedOobFileContent.getBytes());
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    private String getUrl(final String relative) {
+        try {
+            return j.getURL() + relative;
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    /**
+     * Extension that should not be triggered.
+     *
+     * @see StepsITest#showPreventXxeSecurity656
+     */
     @TestExtension
     public static class YouCannotTriggerMe implements UnprotectedRootAction {
         private int triggerCount = 0;
@@ -314,9 +333,10 @@ public class StepsITest extends PipelineITest {
             return "triggerMe";
         }
 
+        /** Should not be invoked. */
         public HttpResponse doIndex() {
             triggerCount++;
-            return HttpResponses.plainText("triggered");
+            return HttpResponses.text("triggered");
         }
     }
 }
