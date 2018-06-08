@@ -555,9 +555,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
         private final JenkinsFacade jenkins;
 
-        /**
-         * Creates a new instance of {@link Descriptor}.
-         */
+        /** Creates a new descriptor. */
         public Descriptor() {
             this(new JenkinsFacade());
         }
