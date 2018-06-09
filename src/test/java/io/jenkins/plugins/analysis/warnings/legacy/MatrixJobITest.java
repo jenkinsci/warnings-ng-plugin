@@ -91,7 +91,7 @@ public class MatrixJobITest extends IntegrationTest {
 
             // fileName can include path portion like foo/bar/zot
             return String.format(
-                    "(mkdir -p %1$s || true) && rm -r %1$s && base64 --decode << ENDOFFILE | gunzip > %1$s \n%2$s\nENDOFFILE",
+                    "(mkdir -p %1$s || true) && rm -r %1$s && base64 --decode << ENDOFFILE | gunzip > %1$s %n%2$s%nENDOFFILE",
                     resource.getName(), new String(Base64.encodeBase64Chunked(out.toByteArray())));
         }
         catch (IOException e) {
