@@ -17,6 +17,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount"})
 public class ParsersITest extends PipelineITest {
     private static final String CODE_FRAGMENT = "<pre><code>#\n"
             + "\n"

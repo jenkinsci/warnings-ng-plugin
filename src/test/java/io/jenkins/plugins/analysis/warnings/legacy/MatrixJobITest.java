@@ -46,6 +46,7 @@ public class MatrixJobITest extends IntegrationTest {
      *
      * @throws Exception in case of an error
      */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     @Test
     public void shouldCreateIndividualAxisResults() throws Exception {
         Assume.assumeFalse("Test not yet OS independent: requires UNIX commands", isWindows());
