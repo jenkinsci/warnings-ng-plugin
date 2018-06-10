@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.apache.commons.fileupload.util.Streams;
+import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.w3c.dom.NodeList;
@@ -34,6 +35,7 @@ import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
+import hudson.model.Job;
 import hudson.model.Result;
 
 /**
@@ -233,11 +235,27 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
+     * Copies a file to the workspace with specified path.
+     * @param job the job to which the workspace belongs.
+     * @param sourceFile the file to be copied.
+     * @param targetFile the destination path relative to the workspace.
+     */
+    private void copyFileToWorkspace(final FreeStyleProject job, final String sourceFile, final String targetFile){
+        try {
+            j.jenkins.getWorkspaceFor(job).child(targetFile).copyFrom(asInputStream(sourceFile));
+        }
+        catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Verifies that the source code links are redirecting to a side displaying the source code.
      */
     @Test
     public void sourceCodeLinksShouldWork(){
         FreeStyleProject project = createJobWithWorkspaceFile("duplicateCode/cpd.xml");
+        copyFileToWorkspace(project, "duplicateCode/Main.source", "Main.java");
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
@@ -261,7 +279,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         assertThat(tableElement.asText()).isEqualTo(htmlFile);
     }
 
-    /**
+    /**j
      * Helper-method for clicking on a link.
      * @param element a {@link DomElement} which will trigger the redirection to a new page.
      * @return the wanted {@link HtmlPage}.
