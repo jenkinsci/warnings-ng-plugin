@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -46,8 +47,10 @@ public class AffectedFilesResolver {
      * @return the file
      */
     public static boolean hasAffectedFile(final Run<?, ?> run, final Issue issue) {
-        File file = createAffectedFile(run, issue);
+        return canAccess(getFile(run, issue));
+    }
 
+    private static boolean canAccess(final File file) {
         return file.exists() && file.canRead();
     }
 
@@ -60,17 +63,32 @@ public class AffectedFilesResolver {
      *         the issue in the affected file
      *
      * @return the file
-     * @throws FileNotFoundException if the file could not be found
+     * @throws UncheckedIOException if the file could not be found
      */
-    public static InputStream getAffectedFile(final Run<?, ?> run, final Issue issue) throws FileNotFoundException {
-        return new FileInputStream(createAffectedFile(run, issue));
+    public static InputStream asStream(final Run<?, ?> run, final Issue issue) throws UncheckedIOException {
+        try {
+            return new FileInputStream(getFile(run, issue));
+        }
+        catch (FileNotFoundException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
-    private static File createAffectedFile(final Run<?, ?> run, final Issue issue) {
+    /**
+     * Returns the affected file in Jenkins' build folder.
+     *
+     * @param run
+     *         the run referencing the build folder
+     * @param issue
+     *         the issue in the affected file
+     *
+     * @return the file
+     */
+    public static File getFile(final Run<?, ?> run, final Issue issue) {
         File buildDir = run.getRootDir();
 
         File tmpFile = new File(new File(buildDir, AFFECTED_FILES_FOLDER_NAME), getTempName(issue.getFileName()));
-        if (!tmpFile.exists()) {
+        if (!canAccess(tmpFile)) {
             new File(issue.getFileName()); // fallback, maybe the source still is on the master node
         }
         return tmpFile;

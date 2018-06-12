@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.util.NoSuchElementException;
 
@@ -70,10 +71,10 @@ public class SourceDetail implements ModelObject {
      * Initializes the content of the source file: reads the file, colors it, and splits it into three parts.
      */
     private void initializeContent() {
-        try (InputStream file = AffectedFilesResolver.getAffectedFile(owner, issue)) {
+        try (InputStream file = AffectedFilesResolver.asStream(owner, issue)) {
             splitSourceFile(highlightSource(file));
         }
-        catch (IOException exception) {
+        catch (IOException | UncheckedIOException exception) {
             sourceCode = "Can't read file: " + exception.getLocalizedMessage();
         }
     }
