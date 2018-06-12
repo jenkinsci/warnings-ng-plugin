@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class AnsibleLint extends StaticAnalysisTool {
+    private static final long serialVersionUID = -838846658095256811L;
     static final String ID = "ansible-lint";
 
     /** Creates a new instance of {@link AnsibleLint}. */
     @DataBoundConstructor
     public AnsibleLint() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class AnsibleLint extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

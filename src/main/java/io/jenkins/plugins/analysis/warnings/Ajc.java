@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Ajc extends StaticAnalysisTool {
+    private static final long serialVersionUID = 207829559393914788L;
     static final String ID = "aspectj";
 
     /** Creates a new instance of {@link Ajc}. */
     @DataBoundConstructor
     public Ajc() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class Ajc extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }
