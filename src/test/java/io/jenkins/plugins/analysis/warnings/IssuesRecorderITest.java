@@ -332,9 +332,9 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @param project
      *         the {@link FreeStyleProject} that shall be build.
      */
-    private void changeThresholdsAndCheckAmountOfPriorityWarnings(int normalThreshold, int highThreshold,
-            int low, int normal, int high,
-            DuplicateCodeScanner scanner, FreeStyleProject project) {
+    private void changeThresholdsAndCheckAmountOfPriorityWarnings(final int normalThreshold, final int highThreshold,
+            final int low, final int normal, final int high,
+            final DuplicateCodeScanner scanner, final FreeStyleProject project) {
         String priorityHeaderId = "number-priorities";
         scanner.setNormalThreshold(normalThreshold);
         scanner.setHighThreshold(highThreshold);
@@ -544,7 +544,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      *
      * @return the wanted {@link HtmlPage}.
      */
-    private HtmlPage clickOnLink(DomElement element) {
+    private HtmlPage clickOnLink(final DomElement element) {
         HtmlPage page;
         try {
             page = element.click();
@@ -585,7 +585,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      *
      * @return the relative path as {@link String} to the tools result page.
      */
-    private String getResultPath(DuplicateCodeScanner scanner) {
+    private String getResultPath(final DuplicateCodeScanner scanner) {
         return scanner.getClass().getSimpleName().toLowerCase() + "Result";
     }
 
@@ -600,8 +600,8 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @param resultPath
      *         the relative path to the tools result page.
      */
-    private void checkPriorityOfFirstWarningInTable(String expectedPriority, FreeStyleProject project,
-            String resultPath) {
+    private void checkPriorityOfFirstWarningInTable(final String expectedPriority, final FreeStyleProject project,
+            final String resultPath) {
         List<HtmlTableRow> tableRows = getIssueTableRows(project, resultPath);
         HtmlTableRow firstRow = tableRows.get(0);
         List<HtmlTableCell> tableCells = firstRow.getCells();
@@ -622,8 +622,8 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @param project
      *         the current {@link FreeStyleProject}.
      */
-    private void setHighThresholdAndCheckPriority(int highThreshold, String expectedPriority,
-            DuplicateCodeScanner scanner, FreeStyleProject project) {
+    private void setHighThresholdAndCheckPriority(final int highThreshold,final String expectedPriority,
+           final DuplicateCodeScanner scanner, final FreeStyleProject project) {
         scanner.setHighThreshold(highThreshold);
         checkPriorityOfFirstWarningInTable(expectedPriority, project, getResultPath(scanner));
     }
@@ -641,9 +641,9 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @param project
      *         the current {@link FreeStyleProject}.
      */
-    private void setNormalThresholdAndCheckPriority(int normalThreshold,
-            @SuppressWarnings("SameParameterValue") String expectedPriority,
-            DuplicateCodeScanner scanner, FreeStyleProject project) {
+    private void setNormalThresholdAndCheckPriority(final int normalThreshold,
+            @SuppressWarnings("SameParameterValue") final String expectedPriority,
+            final DuplicateCodeScanner scanner, final FreeStyleProject project) {
         scanner.setNormalThreshold(normalThreshold);
         checkPriorityOfFirstWarningInTable(expectedPriority, project, getResultPath(scanner));
     }
