@@ -213,7 +213,7 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
     private IssuesRecorder enableWarningsWithAnalysisTool(final FreeStyleProject job,
             StaticAnalysisTool staticAnalysisTool) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration("**/*issues.txt", staticAnalysisTool)));
+        publisher.setTools(Collections.singletonList(new ToolConfiguration(staticAnalysisTool, "**/*issues.txt")));
         job.getPublishersList().add(publisher);
         return publisher;
     }
@@ -267,8 +267,8 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
  * Simple filter for InputStream that replaces string parts with a given replacement.
  */
 class ReplacingInputStream extends FilterInputStream {
-    private LinkedList<Integer> input = new LinkedList<Integer>();
-    private LinkedList<Integer> output = new LinkedList<Integer>();
+    private final LinkedList<Integer> input = new LinkedList<Integer>();
+    private final LinkedList<Integer> output = new LinkedList<Integer>();
     private final byte[] search;
     private final byte[] replacement;
 

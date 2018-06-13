@@ -193,7 +193,7 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
      */
     private void enableWarningsWithCheckstyle(final FreeStyleProject job) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration("**/*issues.txt", new CheckStyle())));
+        publisher.setTools(Collections.singletonList(new ToolConfiguration(new CheckStyle(), "**/*issues.txt")));
         job.getPublishersList().add(publisher);
     }
 }
