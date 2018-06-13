@@ -165,7 +165,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the whole file name of the workspace file
      */
-    private String createWorkspaceFileName(final String fileNamePrefix) {
+    protected String createWorkspaceFileName(final String fileNamePrefix) {
         return String.format(FILE_NAME_PATTERN, FilenameUtils.getBaseName(fileNamePrefix));
     }
 
