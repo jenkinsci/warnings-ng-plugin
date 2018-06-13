@@ -13,7 +13,7 @@ import edu.hm.hafner.analysis.parser.EclipseParserTest;
  */
 class DynamicDocumentParserTest extends EclipseParserTest {
     @Override
-    protected AbstractParser<Issue> createParser() {
+    protected AbstractParser createParser() {
         return new DynamicDocumentParser(EclipseParser.ANT_ECLIPSE_WARNING_PATTERN, toString("eclipse.groovy"));
     }
 }

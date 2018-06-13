@@ -1,18 +1,16 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Collection;
 import javax.annotation.Nonnull;
+import java.util.Collection;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.parser.MetrowerksCwCompilerParser;
+import edu.hm.hafner.analysis.parser.MetrowerksCwLinkerParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.AbstractParser;
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.parser.MetrowerksCwCompilerParser;
-import edu.hm.hafner.analysis.parser.MetrowerksCwLinkerParser;
 
 /**
  * Provides a parser and customized messages for the Metrowerks CodeWarrior compiler and linker.
@@ -20,22 +18,25 @@ import edu.hm.hafner.analysis.parser.MetrowerksCwLinkerParser;
  * @author Aykut Yilmaz
  */
 public class MetrowerksCodeWarrior extends StaticAnalysisToolSuite {
+    private static final long serialVersionUID = 4315389958099766339L;
     static final String ID = "metrowerks";
 
     /** Creates a new instance of {@link MetrowerksCodeWarrior}. */
     @DataBoundConstructor
     public MetrowerksCodeWarrior() {
+        super();
         // empty constructor required for stapler
     }
 
     @Override
-    protected Collection<? extends AbstractParser<Issue>> getParsers() {
+    protected Collection<? extends AbstractParser> getParsers() {
         return asList(new MetrowerksCwCompilerParser(), new MetrowerksCwLinkerParser());
     }
 
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

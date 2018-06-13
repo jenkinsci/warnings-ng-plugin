@@ -18,11 +18,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Pmd extends StaticAnalysisTool {
+    private static final long serialVersionUID = -7600332469176914690L;
     static final String ID = "pmd";
 
     /** Creates a new instance of {@link Pmd}. */
     @DataBoundConstructor
     public Pmd() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -70,6 +72,7 @@ public class Pmd extends StaticAnalysisTool {
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         private final PmdMessages messages;
 
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
 

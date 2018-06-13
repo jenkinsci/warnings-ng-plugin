@@ -10,13 +10,14 @@ import static edu.hm.hafner.analysis.assertj.Assertions.*;
  * @author Ullrich Hafner
  */
 class PmdMessagesTest {
-    /**
-     * Verifies that the PMD messages could be correctly read.
-     */
+    private static final int EXPECTED_RULE_SETS_SIZE = 8;
+
     @Test
-    public void shouldHaveAllMessage() {
+    public void shouldInitializeRuleSets() {
         PmdMessages messages = new PmdMessages();
-        assertThat(messages.initialize()).as("Wrong number of rulesets found").isEqualTo(7);
+        assertThat(messages.initialize())
+                .as("Wrong number of rule sets found")
+                .isEqualTo(EXPECTED_RULE_SETS_SIZE);
 
         assertThat(messages.getMessage("Error Prone", "NullAssignment"))
                 .isEqualTo("\n"

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
@@ -14,10 +15,11 @@ import org.codehaus.plexus.util.Base64;
 import org.junit.Assume;
 import org.junit.Test;
 
-import static hudson.Functions.isWindows;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
-
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static hudson.Functions.*;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
+import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 
 import hudson.matrix.AxisList;
 import hudson.matrix.MatrixBuild;
@@ -25,9 +27,6 @@ import hudson.matrix.MatrixProject;
 import hudson.matrix.MatrixRun;
 import hudson.matrix.TextAxis;
 import hudson.model.Result;
-import hudson.plugins.warnings.AggregatedWarningsResultAction;
-import hudson.plugins.warnings.ConsoleParser;
-import hudson.plugins.warnings.WarningsPublisher;
 import hudson.tasks.Shell;
 
 /**
@@ -35,7 +34,7 @@ import hudson.tasks.Shell;
  *
  * @author Ullrich Hafner
  */
-public class MatrixJobITest extends IntegrationTest {
+public class MatrixJobITest extends IssuesRecorderITest {
     private static final String WARNINGS_FILE = "matrix-warnings.txt";
 
     /**
@@ -46,12 +45,16 @@ public class MatrixJobITest extends IntegrationTest {
      *
      * @throws Exception in case of an error
      */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     @Test
     public void shouldCreateIndividualAxisResults() throws Exception {
         Assume.assumeFalse("Test not yet OS independent: requires UNIX commands", isWindows());
 
-        MatrixProject project = j.createProject(MatrixProject.class);
-        enableWarnings(project);
+        MatrixProject project = createProject(MatrixProject.class);
+
+        IssuesRecorder publisher = new IssuesRecorder();
+        publisher.setTools(Collections.singletonList(new ToolConfiguration(new Gcc4())));
+        project.getPublishersList().add(publisher);
 
         AxisList axis = new AxisList();
         TextAxis userAxis = new TextAxis("user_axis", "one two three");
@@ -70,16 +73,13 @@ public class MatrixJobITest extends IntegrationTest {
         for (MatrixRun run : build.getRuns()) {
             j.assertBuildStatus(Result.SUCCESS, run);
 
-            AggregatedWarningsResultAction action = run.getAction(AggregatedWarningsResultAction.class);
+            AnalysisResult result = getAnalysisResult(run);
 
-            assertThat(action).isNotNull();
             String currentAxis = run.getBuildVariables().values().iterator().next();
-            assertThat(action.getResult().getNumberOfAnnotations()).isEqualTo(warningsPerAxis.get(currentAxis));
+            assertThat(result.getTotalSize()).isEqualTo(warningsPerAxis.get(currentAxis));
         }
-        AggregatedWarningsResultAction action = build.getAction(AggregatedWarningsResultAction.class);
-
-        assertThat(action).isNotNull();
-        assertThat(action.getResult().getNumberOfAnnotations()).isEqualTo(12);
+        AnalysisResult aggregation = getAnalysisResult(build);
+        assertThat(aggregation.getTotalSize()).isEqualTo(12);
     }
 
     private String copyResource(final String fileName) {
@@ -91,7 +91,7 @@ public class MatrixJobITest extends IntegrationTest {
 
             // fileName can include path portion like foo/bar/zot
             return String.format(
-                    "(mkdir -p %1$s || true) && rm -r %1$s && base64 --decode << ENDOFFILE | gunzip > %1$s \n%2$s\nENDOFFILE",
+                    "(mkdir -p %1$s || true) && rm -r %1$s && base64 --decode << ENDOFFILE | gunzip > %1$s %n%2$s%nENDOFFILE",
                     resource.getName(), new String(Base64.encodeBase64Chunked(out.toByteArray())));
         }
         catch (IOException e) {
@@ -99,9 +99,9 @@ public class MatrixJobITest extends IntegrationTest {
         }
     }
 
-    private void copy(final InputStream in, final ByteArrayOutputStream out) throws IOException {
-        try (OutputStream gz = new GZIPOutputStream(out)) {
-            IOUtils.copy(in, gz);
+    private void copy(final InputStream input, final ByteArrayOutputStream output) throws IOException {
+        try (OutputStream gz = new GZIPOutputStream(output)) {
+            IOUtils.copy(input, gz);
         }
     }
 
@@ -111,12 +111,5 @@ public class MatrixJobITest extends IntegrationTest {
             throw new AssertionError("No such resource " + path + " for " + getClass().getName());
         }
         return new Resource(resource);
-    }
-
-    private WarningsPublisher enableWarnings(final MatrixProject job) {
-        WarningsPublisher publisher = new WarningsPublisher();
-        publisher.setConsoleParsers(new ConsoleParser[]{new ConsoleParser("GNU C Compiler 4 (gcc)")});
-        job.getPublishersList().add(publisher);
-        return publisher;
     }
 }
