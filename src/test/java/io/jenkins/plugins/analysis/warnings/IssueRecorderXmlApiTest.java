@@ -83,11 +83,12 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
 
             // get xml result from API
             XmlPage page = j.createWebClient()
-                    .goToXml(project.getUrl() + buildNumber + "/checkstyleResult/api/xml?xpath=/*/overallResult");
+                    .goToXml(project.getUrl() + buildNumber + "/checkstyleResult/api/xml?xpath=/*/status");
             Document test = page.getXmlDocument();
 
             // assert that root node is the xpath aimed element
-            assertThat(test.getDocumentElement().getTagName()).isEqualTo("overallResult");
+            assertThat(test.getDocumentElement().getTagName()).isEqualTo("status");
+            assertThat(test.getDocumentElement().getNodeValue()).isEqualTo("status");
         }
         catch (IOException | SAXException e) {
             e.printStackTrace();

@@ -66,7 +66,6 @@ public class IssuesRecorderITest extends IntegrationTest {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
 
         assertThat(result).hasTotalSize(8);
-        assertThat(result).hasOverallResult(Result.UNSTABLE);
     }
 
     /**
@@ -94,7 +93,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     protected FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
         FreeStyleProject job = createJob();
-        copyFilesToWorkspace(job, fileNames);
+        copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
     }
 
@@ -110,7 +109,7 @@ public class IssuesRecorderITest extends IntegrationTest {
     @CanIgnoreReturnValue
     protected IssuesRecorder enableWarnings(final FreeStyleProject job) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration("**/*issues.txt", new Eclipse())));
+        publisher.setTools(Collections.singletonList(new ToolConfiguration(new Eclipse(), "**/*issues.txt")));
         job.getPublishersList().add(publisher);
         return publisher;
     }
