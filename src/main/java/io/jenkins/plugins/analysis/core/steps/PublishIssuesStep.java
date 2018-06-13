@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,13 +31,11 @@ import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.Extension;
 import hudson.model.Action;
-import hudson.model.Computer;
 import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.EncodingValidator;
-import hudson.remoting.VirtualChannel;
 
 /**
  * Publish issues created by a static analysis run. The recorded issues are stored as a {@link ResultAction} in the
@@ -452,14 +449,7 @@ public class PublishIssuesStep extends Step {
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report, filters, healthDescriptor, qualityGate,
                     name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess,
                     getSourceCodeCharset(), getLogger());
-            Optional<VirtualChannel> channel = getChannel();
-            if (channel.isPresent()) {
-                return publisher.attachAction(channel.get(), getBuildFolder());
-
-            }
-            else {
-                return publisher.attachAction();
-            }
+            return publisher.attachAction();
         }
 
         private LogHandler getLogger() throws InterruptedException {
@@ -479,7 +469,7 @@ public class PublishIssuesStep extends Step {
     public static class Descriptor extends StepDescriptor {
         @Override
         public Set<Class<?>> getRequiredContext() {
-            return ImmutableSet.of(Run.class, TaskListener.class, Computer.class);
+            return ImmutableSet.of(Run.class, TaskListener.class);
         }
 
         @Override

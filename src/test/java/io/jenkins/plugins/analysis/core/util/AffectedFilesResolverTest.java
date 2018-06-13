@@ -9,10 +9,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import hudson.FilePath;
-import hudson.remoting.VirtualChannel;
 
 /**
  * Tests the class {@link AffectedFilesResolver}.
@@ -30,7 +28,7 @@ class AffectedFilesResolverTest {
         IssueBuilder builder = new IssueBuilder();
         report.add(builder.setFileName(fileName).build());
         new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(
-                report, mock(VirtualChannel.class), BUILD_ROOT);
+                report, BUILD_ROOT);
 
         assertThat(report.getErrorMessages()).hasSize(1);
         assertThat(report.getErrorMessages().get(0)).startsWith("Copying 1 affected files to Jenkins' build folder builds.");

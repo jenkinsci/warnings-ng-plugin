@@ -23,7 +23,6 @@ import edu.hm.hafner.analysis.Report;
 
 import hudson.FilePath;
 import hudson.model.Run;
-import hudson.remoting.VirtualChannel;
 
 /**
  * Copies all affected files that are referenced in at least one of the issues to Jenkins build folder. These files can
@@ -99,8 +98,6 @@ public class AffectedFilesResolver {
      *
      * @param report
      *         the issues
-     * @param channel
-     *         channel to get the files from
      * @param jenkinsBuildRoot
      *         directory to store the copied files in
      *
@@ -110,7 +107,7 @@ public class AffectedFilesResolver {
      *         if the user cancels the processing
      */
     public void copyFilesWithAnnotationsToBuildFolder(final Report report,
-            final VirtualChannel channel, final FilePath jenkinsBuildRoot)
+            final FilePath jenkinsBuildRoot)
             throws IOException, InterruptedException {
         int copied = 0;
         int notFound = 0;
@@ -121,7 +118,7 @@ public class AffectedFilesResolver {
             if (exists(file)) {
                 FilePath directory = ensureThatBuildDirectoryExists(jenkinsBuildRoot);
                 FilePath buildFolderCopy = directory.child(getTempName(file));
-                FilePath sourceFileOnAgent = new FilePath(channel, Paths.get(file).toString());
+                FilePath sourceFileOnAgent = new FilePath(Paths.get(file).toFile());
                 try {
                     sourceFileOnAgent.copyTo(buildFolderCopy);
                     copied++;

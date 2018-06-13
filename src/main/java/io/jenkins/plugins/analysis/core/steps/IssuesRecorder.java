@@ -41,7 +41,6 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.util.EncodingValidator;
-import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
@@ -489,7 +488,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private Report scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final ToolConfiguration toolConfiguration) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(toolConfiguration.getTool(), workspace,
-                getReportCharset(), getSourceCodeCharset(),
+                getReportCharset(), getSourceCodeCharset(), new FilePath(run.getRootDir()), 
                 new LogHandler(listener, toolConfiguration.getTool().getName()));
         return issuesScanner.scan(expandEnvironmentVariables(run, listener, toolConfiguration.getPattern()),
                 run.getLogFile());
@@ -519,27 +518,14 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *         the analysis report to publish
      * @param name
      *         the name of the report (might be empty)
-     *
-     * @throws IOException
-     *         if the files could not be copied to Jenkins' build folder
-     * @throws InterruptedException
-     *         the the copying has been canceled by the user
      */
     public void publishResult(final Run<?, ?> run, final Launcher launcher,
-            final TaskListener listener, final String loggerName, final Report report, final String name)
-            throws IOException, InterruptedException {
+            final TaskListener listener, final String loggerName, final Report report, final String name) {
         IssuesPublisher publisher = new IssuesPublisher(run, report, getFilters(),
                 new HealthDescriptor(healthy, unHealthy, minimumPriority), new QualityGate(thresholds),
                 name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess, getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report));
-
-        VirtualChannel channel = launcher.getChannel();
-        if (channel == null) {
-            publisher.attachAction();
-        }
-        else {
-            publisher.attachAction(channel, new FilePath(run.getRootDir()));
-        }
+        publisher.attachAction();
     }
 
     private String expandEnvironmentVariables(final Run<?, ?> run, final TaskListener listener, final String pattern)

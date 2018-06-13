@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +17,10 @@ import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
-import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 
-import hudson.FilePath;
 import hudson.model.Job;
 import hudson.model.Run;
-import hudson.remoting.VirtualChannel;
 
 /**
  * Publishes issues: Stores the created issues in an {@link AnalysisResult}. The result is attached to the
@@ -68,41 +64,11 @@ class IssuesPublisher {
 
     /**
      * Creates a new {@link AnalysisResult} and attaches the result in an {@link ResultAction} that is registered with
-     * the current run. This method will not copy the affected files to Jenkins' build folder.
+     * the current run.
      *
      * @return the created result action
      */
     public ResultAction attachAction() {
-        report.logError("Can't copy affected files since channel to agent is not available");
-
-        return run();
-    }
-
-    /**
-     * Creates a new {@link AnalysisResult} and attaches the result in an {@link ResultAction} that is registered with
-     * the current run. After the result has been created, all affected files to Jenkins' build folder.
-     *
-     * @param channel
-     *         channel to the agent that stores the affected source files
-     * @param buildFolder
-     *         destination folder where all affected files will be copied to
-     *
-     * @return the created result action
-     * @throws IOException
-     *         if the files could not be written
-     * @throws InterruptedException
-     *         if the user cancels the processing
-     */
-    public ResultAction attachAction(final VirtualChannel channel, final FilePath buildFolder)
-            throws IOException, InterruptedException {
-        ResultAction resultAction = run();
-
-        copyAffectedFiles(resultAction.getResult().getIssues(), channel, buildFolder);
-
-        return resultAction;
-    }
-
-    private ResultAction run() {
         ResultSelector selector = ensureThatIdIsUnique();
 
         Report filtered = filter();
@@ -123,14 +89,6 @@ class IssuesPublisher {
                     String.format("ID %s is already used by another action: %s%n", id, other.get()));
         }
         return selector;
-    }
-
-    private void copyAffectedFiles(final Report filtered,
-            final VirtualChannel channel, final FilePath buildFolder)
-            throws IOException, InterruptedException {
-        new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(filtered, channel, buildFolder);
-
-        logger.log(filtered);
     }
 
     private AnalysisResult createResult(final ResultSelector selector, final Report filtered) {

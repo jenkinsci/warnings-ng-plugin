@@ -146,7 +146,8 @@ public class ScanForIssuesStep extends Step {
         @Override
         protected Report run() throws IOException, InterruptedException, IllegalStateException {
             IssuesScanner issuesScanner = new IssuesScanner(tool, getWorkspace(), getReportCharset(),
-                    getSourceCodeCharset(), new LogHandler(getTaskListener(), tool.getName()));
+                    getSourceCodeCharset(), new FilePath(getRun().getRootDir()), 
+                    new LogHandler(getTaskListener(), tool.getName()));
             return issuesScanner.scan(pattern, getRun().getLogFile());
         }
 

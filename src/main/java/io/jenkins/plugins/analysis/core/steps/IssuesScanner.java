@@ -19,6 +19,7 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
+import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FilesScanner;
 import io.jenkins.plugins.analysis.core.util.ModuleResolver;
 import jenkins.MasterToSlaveFileCallable;
@@ -36,6 +37,7 @@ import hudson.remoting.VirtualChannel;
  */
 class IssuesScanner {
     private final FilePath workspace;
+    private final FilePath jenkinsRootDir;
     private final Charset logFileEncoding;
     private final Charset sourceCodeEncoding;
     private final StaticAnalysisTool tool;
@@ -43,11 +45,13 @@ class IssuesScanner {
     private final LogHandler logger;
 
     IssuesScanner(final StaticAnalysisTool tool, final FilePath workspace,
-            final Charset logFileEncoding, final Charset sourceCodeEncoding, final LogHandler logger) {
-        this.workspace = workspace;
+            final Charset logFileEncoding, final Charset sourceCodeEncoding, final FilePath jenkinsRootDir,
+            final LogHandler logger) {
+        this.workspace = workspace; 
         this.logFileEncoding = logFileEncoding;
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
+        this.jenkinsRootDir = jenkinsRootDir;
         this.logger = logger;
     }
 
@@ -131,12 +135,14 @@ class IssuesScanner {
         Report postProcessed;
         if (report.isEmpty()) {
             postProcessed = report; // nothing to post process
+            if (report.hasErrors()) {
+                report.logInfo("Skipping post processing due to errors.");
+            }
         }
         else {
-
             report.logInfo("Post processing issues on '%s' with encoding '%s'", getAgentName(), sourceCodeEncoding);
 
-            postProcessed = workspace.act(new ReportPostProcessor(report, sourceCodeEncoding.name()));
+            postProcessed = workspace.act(new ReportPostProcessor(report, sourceCodeEncoding.name(), jenkinsRootDir));
         }
         logger.log(postProcessed);
         return postProcessed;
@@ -163,17 +169,20 @@ class IssuesScanner {
 
         private final Report report;
         private final String sourceCodeEncoding;
+        private final FilePath jenkinsRootDir;
 
-        ReportPostProcessor(final Report report, final String sourceCodeEncoding) {
+        ReportPostProcessor(final Report report, final String sourceCodeEncoding, final FilePath jenkinsRootDir) {
             super();
 
             this.report = report;
             this.sourceCodeEncoding = sourceCodeEncoding;
+            this.jenkinsRootDir = jenkinsRootDir;
         }
 
         @Override
-        public Report invoke(final File workspace, final VirtualChannel channel) {
+        public Report invoke(final File workspace, final VirtualChannel channel) throws IOException, InterruptedException {
             resolveAbsolutePaths(workspace);
+            copyAffectedFiles(workspace);
             resolveModuleNames(workspace);
             resolvePackageNames();
             createFingerprints();
@@ -187,6 +196,14 @@ class IssuesScanner {
             AbsolutePathGenerator generator = new AbsolutePathGenerator();
             generator.run(report, workspace);
         }
+
+        private void copyAffectedFiles(final File workspace)
+                throws IOException, InterruptedException {
+            report.logInfo("Copying affected files to Jenkins' build folder %s.%n", jenkinsRootDir);
+            
+            new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(report, jenkinsRootDir);
+        }
+
 
         private void resolveModuleNames(final File workspace) {
             report.logInfo("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
