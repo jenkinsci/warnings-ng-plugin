@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class YuiCompressor extends StaticAnalysisTool {
+    private static final long serialVersionUID = 4211786637477278304L;
     static final String ID = "yui";
 
     /** Creates a new instance of {@link YuiCompressor}. */
     @DataBoundConstructor
     public YuiCompressor() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,8 +33,14 @@ public class YuiCompressor extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
+        }
+
+        @Override
+        public String getHelp() {
+            return Messages.Warning_SlowMultiLineParser();
         }
 
         @Nonnull

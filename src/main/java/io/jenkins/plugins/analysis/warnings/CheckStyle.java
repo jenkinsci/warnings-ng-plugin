@@ -4,16 +4,14 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
+import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyleRules;
 
-import static hudson.plugins.warnings.WarningsDescriptor.*;
-
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
 
 /**
  * Provides a parser and customized messages for CheckStyle.
@@ -21,11 +19,13 @@ import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
  * @author Ullrich Hafner
  */
 public class CheckStyle extends StaticAnalysisTool {
+    private static final long serialVersionUID = -7944828406964963020L;
     static final String ID = "checkstyle";
 
     /** Creates a new instance of {@link CheckStyle}. */
     @DataBoundConstructor
     public CheckStyle() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -73,6 +73,7 @@ public class CheckStyle extends StaticAnalysisTool {
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         private final CheckStyleRules rules;
 
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
 
@@ -89,6 +90,11 @@ public class CheckStyle extends StaticAnalysisTool {
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new LabelProvider(rules);
+        }
+
+        @Override
+        public String getPattern() {
+            return "**/checkstyle-result.xml";
         }
     }
 }

@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.checkstyle;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Java Bean class representing a Checkstyle rule.

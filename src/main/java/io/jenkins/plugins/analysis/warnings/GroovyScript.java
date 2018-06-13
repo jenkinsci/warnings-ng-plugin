@@ -5,6 +5,8 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import edu.hm.hafner.analysis.IssueParser;
+import edu.hm.hafner.util.Ensure;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
@@ -13,15 +15,13 @@ import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
 import hudson.Extension;
 import hudson.util.ListBoxModel;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.util.Ensure;
-
 /**
  * Selects a {@link GroovyParser} using the specified ID.
  *
  * @author Ullrich Hafner
  */
 public class GroovyScript extends StaticAnalysisTool {
+    private static final long serialVersionUID = 8580859196688994603L;
     static final String ID = "groovy";
 
     private String id;
@@ -31,6 +31,7 @@ public class GroovyScript extends StaticAnalysisTool {
      */
     @DataBoundConstructor
     public GroovyScript() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -54,7 +55,7 @@ public class GroovyScript extends StaticAnalysisTool {
     }
 
     @Override
-    public IssueParser<?> createParser() {
+    public IssueParser createParser() {
         return getTool().createParser();
     }
 
@@ -67,8 +68,10 @@ public class GroovyScript extends StaticAnalysisTool {
         return ParserConfiguration.getInstance().getParser(id);
     }
 
+    /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

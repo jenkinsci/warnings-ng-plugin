@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Michael Schmid
  */
 public class GhsMulti extends StaticAnalysisTool {
+    private static final long serialVersionUID = -873750719433395569L;
     static final String ID = "ghs-multi";
 
     /** Creates a new instance of {@link GhsMulti}. */
     @DataBoundConstructor
     public GhsMulti() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,8 +33,14 @@ public class GhsMulti extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
+        }
+
+        @Override
+        public String getHelp() {
+            return Messages.Warning_SlowMultiLineParser();
         }
 
         @Nonnull

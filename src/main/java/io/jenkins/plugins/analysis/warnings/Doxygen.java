@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Doxygen extends StaticAnalysisTool {
+    private static final long serialVersionUID = -958188599615335136L;
     static final String ID = "doxygen";
 
     /** Creates a new instance of {@link Doxygen}. */
     @DataBoundConstructor
     public Doxygen() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,8 +33,14 @@ public class Doxygen extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
+        }
+
+        @Override
+        public String getHelp() {
+            return Messages.Warning_SlowMultiLineParser();
         }
 
         @Nonnull

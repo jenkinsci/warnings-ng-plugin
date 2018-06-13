@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Joscha Behrmann
  */
 public class Pep8 extends StaticAnalysisTool {
+    private static final long serialVersionUID = -2199589729419226931L;
     static final String ID = "pep8";
 
     /** Creates a new instance of {@link NagFortran}. */
     @DataBoundConstructor
     public Pep8() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class Pep8 extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

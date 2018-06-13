@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Invalids extends StaticAnalysisTool {
+    private static final long serialVersionUID = 8400984149210830144L;
     static final String ID = "invalids";
 
     /** Creates a new instance of {@link Invalids}. */
     @DataBoundConstructor
     public Invalids() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class Invalids extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Michael Schmid
  */
 public class Gnat extends StaticAnalysisTool {
+    private static final long serialVersionUID = 1249773597483641464L;
     static final String ID = "gnat";
 
     /** Creates a new instance of {@link Gnat}. */
     @DataBoundConstructor
     public Gnat() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class Gnat extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

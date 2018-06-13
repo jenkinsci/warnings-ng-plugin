@@ -4,15 +4,13 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.parser.pmd.PmdParser;
+import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
-import static hudson.plugins.warnings.WarningsDescriptor.*;
-
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.parser.pmd.PmdParser;
 
 /**
  * Provides a parser and customized messages for PMD.
@@ -20,11 +18,13 @@ import edu.hm.hafner.analysis.parser.pmd.PmdParser;
  * @author Ullrich Hafner
  */
 public class Pmd extends StaticAnalysisTool {
+    private static final long serialVersionUID = -7600332469176914690L;
     static final String ID = "pmd";
 
     /** Creates a new instance of {@link Pmd}. */
     @DataBoundConstructor
     public Pmd() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -72,6 +72,7 @@ public class Pmd extends StaticAnalysisTool {
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         private final PmdMessages messages;
 
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
 
@@ -88,6 +89,11 @@ public class Pmd extends StaticAnalysisTool {
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new LabelProvider(messages);
+        }
+
+        @Override
+        public String getPattern() {
+            return "**/pmd.xml";
         }
     }
 }

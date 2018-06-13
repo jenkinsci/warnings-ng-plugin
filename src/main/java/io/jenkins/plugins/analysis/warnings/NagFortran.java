@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Joscha Behrmann
  */
 public class NagFortran extends StaticAnalysisTool {
+    private static final long serialVersionUID = 6623024344311048456L;
     static final String ID = "nag-fortran";
 
     /** Creates a new instance of {@link NagFortran}. */
     @DataBoundConstructor
     public NagFortran() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,8 +33,14 @@ public class NagFortran extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
+        }
+
+        @Override
+        public String getHelp() {
+            return Messages.Warning_SlowMultiLineParser();
         }
 
         @Nonnull

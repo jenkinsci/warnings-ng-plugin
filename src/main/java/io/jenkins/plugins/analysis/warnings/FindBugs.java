@@ -6,16 +6,14 @@ import org.jvnet.localizer.LocaleProvider;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.parser.FindBugsParser;
+import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
+import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
-import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
-import static hudson.plugins.warnings.WarningsDescriptor.*;
-
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.parser.FindBugsParser;
 
 /**
  * Provides a parser and customized messages for FindBugs.
@@ -23,6 +21,7 @@ import edu.hm.hafner.analysis.parser.FindBugsParser;
  * @author Ullrich Hafner
  */
 public class FindBugs extends StaticAnalysisTool {
+    private static final long serialVersionUID = 4692318309214830824L;
     static final String ID = "findbugs";
 
     private boolean useRankAsPriority;
@@ -30,6 +29,7 @@ public class FindBugs extends StaticAnalysisTool {
     /** Creates a new instance of {@link FindBugs}. */
     @DataBoundConstructor
     public FindBugs() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -65,7 +65,7 @@ public class FindBugs extends StaticAnalysisTool {
         private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
         private final FindBugsMessages messages;
 
-        private FindBugsLabelProvider(final FindBugsMessages messages) {
+        FindBugsLabelProvider(final FindBugsMessages messages) {
             this(messages, ID, Messages.Warnings_FindBugs_ParserName());
         }
 
@@ -104,10 +104,17 @@ public class FindBugs extends StaticAnalysisTool {
     public static class FindBugsDescriptor extends StaticAnalysisToolDescriptor {
         private final FindBugsMessages messages = new FindBugsMessages();
 
+        /** Creates the descriptor instance. */
         public FindBugsDescriptor() {
             this(ID);
         }
 
+        /**
+         * Creates the descriptor instance.
+         *
+         * @param id
+         *         ID of the tool
+         */
         public FindBugsDescriptor(final String id) {
             super(id);
 
@@ -127,6 +134,11 @@ public class FindBugs extends StaticAnalysisTool {
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new FindBugsLabelProvider(messages);
+        }
+
+        @Override
+        public String getPattern() {
+            return "**/findbugsXml.xml";
         }
     }
 }
