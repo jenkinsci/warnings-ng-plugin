@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
@@ -103,7 +105,9 @@ class IssuesPublisher {
     private Report filter() {
         IssueFilterBuilder builder = new IssueFilterBuilder();
         for (RegexpFilter filter : filters) {
-            filter.apply(builder);
+            if (StringUtils.isNotBlank(filter.getPattern())) {
+                filter.apply(builder);
+            }
         }
         Report filtered = report.filter(builder.build());
         filtered.logInfo("Applying %d filters on the set of %d issues (%d issues have been removed)",

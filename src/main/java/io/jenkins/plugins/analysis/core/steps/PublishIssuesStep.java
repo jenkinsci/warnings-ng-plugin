@@ -62,6 +62,8 @@ public class PublishIssuesStep extends Step {
     private String id;
     private String name;
     private String referenceJobName;
+    
+    private List<RegexpFilter> filters = Lists.newArrayList();
 
     /**
      * Creates a new instance of {@link PublishIssuesStep}.
@@ -384,8 +386,6 @@ public class PublishIssuesStep extends Step {
     public void setFailedNewLow(final int failedNewLow) {
         getThresholds().failedNewLow = failedNewLow;
     }
-
-    private List<RegexpFilter> filters = Lists.newArrayList();
 
     public List<RegexpFilter> getFilters() {
         return filters;
