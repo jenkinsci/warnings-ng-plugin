@@ -29,11 +29,27 @@ import hudson.model.Result;
 import hudson.model.TopLevelItem;
 
 /**
- * Integration tests for {@link FilesScanner}.
+ * Integration tests for {@link FilesScanner}. This test is using a ZIP file with all the necessary files. The structure
+ * of the ZIP file is:
+ * <p>
+ * filesscanner_workspace.zip
+ * |-empty_workspace
+ * |-filled_workspace
+ *      |-checkstyle
+ *          |-checkstyle.xml
+ *      |-multipe_files
+ *          |-checkstyle.xml
+ *          |-nonFilePatternMatch.xml
+ *          |-zero_length_file.xml
+ *      |-no_file_pattern_match
+ *          |-nonFilePatternMatch.xml
+ *      |-no_read_permission
+ *          |-no_read_permission.xml
+ *      |-zero_length_file
+ *          |-zero_length_file.xml
  *
  * @author Alexander Praegla
  */
-@SuppressWarnings("ResultOfMethodCallIgnored")
 public class FilesScannerITest extends IntegrationTest {
 
     private static final String WORKSPACE_DIRECTORY = "filesscanner_workspace";
@@ -52,16 +68,13 @@ public class FilesScannerITest extends IntegrationTest {
 
     /**
      * Runs the {@link FilesScanner} on a workspace with no files.
-     * @throws IOException On errors during coping test files
+     *
+     *         On errors during coping test files
      */
     @Test
-    public void isEmptyWorkspace() throws IOException {
-        File workspace = unzipWorkspace();
-        FreeStyleProject project = createJobWithWorkspaceFile(new File(EMPTY_WORKSPACE_DIRECTORY));
+    public void isEmptyWorkspace() {
 
-        if (workspace != null) {
-            deleteWorkspace(workspace);
-        }
+        FreeStyleProject project = createJobWithWorkspaceFile(new File(EMPTY_WORKSPACE_DIRECTORY));
 
         enableWarnings(project, "*.xml", new CheckStyle());
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -75,25 +88,15 @@ public class FilesScannerITest extends IntegrationTest {
     }
 
     /**
-     * Runs the {@link FilesScanner} on a workspace with a none readable file.
-     * This should work on UNIX but it isn't tested so this test is uncommented because on Windows it still failes
-     * @throws IOException On errors during coping test files
+     * Runs the {@link FilesScanner} on a workspace with a none readable file. This should work on UNIX but it isn't
+     * tested so this test is uncommented because on Windows it still failes
+     *
      */
-    //@Test
-    public void cantReadFile() throws IOException {
-
-        File workspace = unzipWorkspace();
+    @Test
+    public void cantReadFile()  {
         FreeStyleProject project = createJobWithWorkspaceFile(new File(NON_READABLE_FILE_WORKSPACE));
 
-        if (workspace != null) {
-            deleteWorkspace(workspace);
-        }
-
-        enableWarnings(project, "*.xml", new CheckStyle());
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-
-        String pathToExtractedFile = j.jenkins.getWorkspaceFor(project) +  File.separator  + NON_READABLE_FILE;
+        String pathToExtractedFile = j.jenkins.getWorkspaceFor(project) + File.separator + NON_READABLE_FILE;
         File nonReadableFile = new File(pathToExtractedFile);
         if (System.getProperty("os.name").contains("Windows")) {
             execWindowsCommandIcacls(pathToExtractedFile, WINDOWS_FILE_DENY,
@@ -101,27 +104,28 @@ public class FilesScannerITest extends IntegrationTest {
         }
         else {
             assertThat(nonReadableFile.setReadable(false, false)).isTrue();
+            assertThat(nonReadableFile.canRead()).isFalse();
         }
 
-        assertThat(nonReadableFile.canRead()).isFalse();
+        enableWarnings(project, "*.xml", new CheckStyle());
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result.getTotalSize()).isZero();
-        assertThat(result.getErrorMessages().get(0)).contains(
-                "Skipping file");
+        if (System.getProperty("os.name").contains("Windows")) {
+            assertThat(result.getErrorMessages().get(0)).contains("java.io.FileNotFoundException:");
+        }
+        else {
+            assertThat(result.getErrorMessages().get(0)).contains("Skipping file 'no_read_permission.xml' because Jenkins has no permission to read the file.");
+        }
     }
 
     /**
      * Runs the {@link FilesScanner} on a workspace with a file with zero length.
-     * @throws IOException On errors during coping test files
+     *
      */
     @Test
-    public void fileLengthIsZero() throws IOException {
-        File workspace = unzipWorkspace();
+    public void fileLengthIsZero() {
         FreeStyleProject project = createJobWithWorkspaceFile(new File(ZERO_LENGTH_WORKSPACE));
-
-        if (workspace != null) {
-            deleteWorkspace(workspace);
-        }
 
         enableWarnings(project, "*.xml", new CheckStyle());
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -135,16 +139,11 @@ public class FilesScannerITest extends IntegrationTest {
 
     /**
      * Runs the {@link FilesScanner} on a workspace with files that do not match the file pattern.
-     * @throws IOException On errors during coping test files
+     *
      */
     @Test
-    public void filePatternDoesNotMatchAnyFile() throws IOException {
-        File workspace = unzipWorkspace();
+    public void filePatternDoesNotMatchAnyFile() {
         FreeStyleProject project = createJobWithWorkspaceFile(new File(NO_FILE_PATTERN_MATCH_WORKSPACE));
-
-        if (workspace != null) {
-            deleteWorkspace(workspace);
-        }
 
         enableWarnings(project, "*.xml", new CheckStyle());
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -156,16 +155,11 @@ public class FilesScannerITest extends IntegrationTest {
 
     /**
      * Runs the {@link FilesScanner} on a workspace with multiple files where some do match the criterias.
-     * @throws IOException On errors during coping test files
+     *
      */
     @Test
-    public void findIssuesWithMultipleFiles() throws IOException {
-        File workspace = unzipWorkspace();
+    public void findIssuesWithMultipleFiles() {
         FreeStyleProject project = createJobWithWorkspaceFile(new File(MULTIPLE_FILES_WORKSPACE));
-
-        if (workspace != null) {
-            deleteWorkspace(workspace);
-        }
 
         enableWarnings(project, "*.xml", new CheckStyle());
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -181,16 +175,11 @@ public class FilesScannerITest extends IntegrationTest {
 
     /**
      * Runs the {@link FilesScanner} on a workspace with a correct file that can be parsed.
-     * @throws IOException On errors during coping test files
+     *
      */
     @Test
-    public void parseCheckstyleFileCorrectly() throws IOException {
-        File workspace = unzipWorkspace();
+    public void parseCheckstyleFileCorrectly() {
         FreeStyleProject project = createJobWithWorkspaceFile(new File(CHECKSTYLE_WORKSPACE));
-
-        if (workspace != null) {
-            deleteWorkspace(workspace);
-        }
 
         enableWarnings(project, "*.xml", new CheckStyle());
 
@@ -207,9 +196,13 @@ public class FilesScannerITest extends IntegrationTest {
 
     /**
      * Executed the 'icals' command on the windows command line to remove the read permission of a file.
-     * @param path File to remove from the read permission
-     * @param command part of the icacls command
-     * @param accessMode param for the icacls command
+     *
+     * @param path
+     *         File to remove from the read permission
+     * @param command
+     *         part of the icacls command
+     * @param accessMode
+     *         param for the icacls command
      */
     private void execWindowsCommandIcacls(final String path, final String command, final String accessMode) {
         try {
@@ -223,14 +216,30 @@ public class FilesScannerITest extends IntegrationTest {
 
     /**
      * Creates a new free style project and copies a whole directory to the workspace fo the project.
-     * @param importDirectory Directory containing files for free style project
+     *
+     * @param importDirectory
+     *         Directory containing files for free style project
+     *
      * @return Created {@link FreeStyleProject}
-     * @throws IOException If an error occures during coping the files
+     * @throws IOException
+     *         If an error occures during coping the files
      */
-    private FreeStyleProject createJobWithWorkspaceFile(final File importDirectory) throws IOException {
-        FreeStyleProject job = j.createFreeStyleProject();
-        copyDirectoryToWorkspace(job, importDirectory);
-        return job;
+    private FreeStyleProject createJobWithWorkspaceFile(final File importDirectory)  {
+        try {
+            File workspace = unzipWorkspace();
+
+            FreeStyleProject job = j.createFreeStyleProject();
+            copyDirectoryToWorkspace(job, importDirectory);
+
+            if (workspace != null) {
+                deleteWorkspace(workspace);
+            }
+
+            return job;
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
     }
 
     /**
@@ -304,7 +313,9 @@ public class FilesScannerITest extends IntegrationTest {
 
     /**
      * Deletes recursively a whole directory including subdirectories.
-     * @param directoryToBeDeleted root directory to be deleted
+     *
+     * @param directoryToBeDeleted
+     *         root directory to be deleted
      */
     private void deleteWorkspace(File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();
@@ -318,8 +329,10 @@ public class FilesScannerITest extends IntegrationTest {
 
     /**
      * Unzipping the ZIP file in the resource folder to a tmp file.
+     *
      * @return created tmp file with hole test workspace files
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private File unzipWorkspace() {
 
         byte[] buffer = new byte[1024];
@@ -366,9 +379,8 @@ public class FilesScannerITest extends IntegrationTest {
 
             return folder;
         }
-        catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
+        catch (IOException e) {
+            throw new AssertionError(e);
         }
     }
 }
