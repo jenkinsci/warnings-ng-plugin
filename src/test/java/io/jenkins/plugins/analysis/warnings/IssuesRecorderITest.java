@@ -74,7 +74,9 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Runs the Eclipse parser on two output file. The first contains 8 Warnings, the second 5 Warnings.
+     * Runs the Eclipse parser on two output file. The first file contains 8 Warnings, the second 5 Warnings.
+     * The the fist file is for the first Build to get a Base. The second Build with the second File generates
+     * the difference between the Builds for the Test.
      * The build should report 0 New Warnings, 3 fixed Warnings, 5 outstanding Warnings and 5 Warnings Total.
      */
     @Test
@@ -85,15 +87,17 @@ public class IssuesRecorderITest extends IntegrationTest {
         enableWarningsForNewFixedOutstandingTest(project, oldPublisher, "eclipse_5_Warnings-issues.txt");
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThat(result.getNewSize()).isEqualTo(0);
-        assertThat(result.getFixedSize()).isEqualTo(3);
+        assertThat(result).hasNewSize(0);
+        assertThat(result).hasFixedSize(3);
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); //Outstanding
-        assertThat(result.getTotalSize()).isEqualTo(5);
+        assertThat(result).hasTotalSize(5);
         assertThat(result).hasOverallResult(Result.SUCCESS);
     }
 
     /**
-     * Runs the Eclipse parser on two output file. The first contains 5 Warnings, the second 8 Warnings.
+     * Runs the Eclipse parser on two output file. The first file contains 5 Warnings, the second 8 Warnings.
+     * The the fist file is for the first Build to get a Base. The second Build with the second File generates
+     * the difference between the Builds for the Test.
      * The build should report 3 New Warnings, 0 fixed Warnings, 5 outstanding Warnings and 8 Warnings Total.
      */
     @Test
@@ -104,15 +108,17 @@ public class IssuesRecorderITest extends IntegrationTest {
         enableWarningsForNewFixedOutstandingTest(project, oldPublisher, "eclipse_8_Warnings-issues.txt");
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThat(result.getNewSize()).isEqualTo(3);
-        assertThat(result.getFixedSize()).isEqualTo(0);
+        assertThat(result).hasNewSize(3);
+        assertThat(result).hasFixedSize(0);
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); //Outstanding
-        assertThat(result.getTotalSize()).isEqualTo(8);
+        assertThat(result).hasTotalSize(8);
         assertThat(result).hasOverallResult(Result.SUCCESS);
     }
 
     /**
      * Runs the Eclipse parser on one output file, that contains 8 Warnings.
+     * The the fist file is for the first Build to get a Base. The second Build with the second File generates
+     * the difference between the Builds for the Test.
      * The build should report 0 New Warnings, 0 fixed Warnings, 8 outstanding Warnings and 8 Warnings Total.
      */
     @Test
@@ -123,15 +129,17 @@ public class IssuesRecorderITest extends IntegrationTest {
         enableWarningsForNewFixedOutstandingTest(project, oldPublisher, "eclipse_8_Warnings-issues.txt");
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThat(result.getNewSize()).isEqualTo(0);
-        assertThat(result.getFixedSize()).isEqualTo(0);
+        assertThat(result).hasNewSize(0);
+        assertThat(result).hasFixedSize(0);
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(8);     //Outstanding
-        assertThat(result.getTotalSize()).isEqualTo(8);
+        assertThat(result).hasTotalSize(8);
         assertThat(result).hasOverallResult(Result.SUCCESS);
     }
 
     /**
-     * Runs the Eclipse parser on two output file. The first contains 5 Warnings, the second 4 Warnings.
+     * Runs the Eclipse parser on two output file. The first file contains 5 Warnings, the second 4 Warnings.
+     * The the fist file is for the first Build to get a Base. The second Build with the second File generates
+     * the difference between the Builds for the Test.
      * The build should report 2 New Warnings, 3 fixed Warnings, 2 outstanding Warnings and 4 Warnings Total.
      */
     @Test
@@ -142,10 +150,10 @@ public class IssuesRecorderITest extends IntegrationTest {
         enableWarningsForNewFixedOutstandingTest(project, oldPublisher, "eclipse_4_Warnings-issues.txt");
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThat(result.getNewSize()).isEqualTo(2);
-        assertThat(result.getFixedSize()).isEqualTo(3);
+        assertThat(result).hasNewSize(2);
+        assertThat(result).hasFixedSize(3);
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(2);     //Outstanding
-        assertThat(result.getTotalSize()).isEqualTo(4);
+        assertThat(result).hasTotalSize(4);
         assertThat(result).hasOverallResult(Result.SUCCESS);
     }
 
@@ -209,6 +217,19 @@ public class IssuesRecorderITest extends IntegrationTest {
         if(oldPublisher != null) {
             job.getPublishersList().remove(oldPublisher);
         }
+        return enableWarningsForNewFixedOutstandingTest(job, pattern);
+    }
+
+    /**
+     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
+     * the job.
+     *
+     * @param job the job to register the recorder for
+     * @param pattern the pattern for the inputfile for the toolConfiguration
+     * @return the created recorder
+     */
+    @CanIgnoreReturnValue
+    private IssuesRecorder enableWarningsForNewFixedOutstandingTest(final FreeStyleProject job, String pattern) {
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setTools(Collections.singletonList(new ToolConfiguration(pattern, new Eclipse())));
         job.getPublishersList().add(publisher);
