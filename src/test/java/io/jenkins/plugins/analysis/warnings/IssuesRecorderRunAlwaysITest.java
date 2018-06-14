@@ -22,6 +22,7 @@ import hudson.model.Action;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import hudson.tasks.BatchFile;
 import hudson.tasks.Shell;
 
 /**
@@ -29,24 +30,23 @@ import hudson.tasks.Shell;
  *
  * @author Martin Weibel
  */
-public class IssuesRecorderRunAlwaysITest extends IntegrationTest {
+public class IssuesRecorderRunAlwaysITest extends IssuesRecorderITest {
 
     /**
      * Runs TestBuild with FAILURE, should still run checkstyle because of runAways is activated.
      */
     @Test
     public void shouldRunEvenResultIsFailure() {
-        FreeStyleProject project = createJob();
+        FreeStyleProject project = createJobWithWorkspaceFile("checkstyle.xml");
+        enableWarnings(project);
 
-        project.getBuildersList().add(new Shell("exit 1"));
-
+        AddScript(project, "exit 1");
         enableCheckStyle(project, true);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE).getResult();
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
 
-        assertThat(result).hasTotalSize(0);
-        assertThat(result).hasErrorMessages(
-                "No files found for pattern '**/checkstyle-result.xml'. Configuration error?");
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasInfoMessages("Resolved module names for 6 issues");
     }
 
     /**
@@ -54,14 +54,20 @@ public class IssuesRecorderRunAlwaysITest extends IntegrationTest {
      */
     @Test
     public void shouldNotRunWhenResultIsFailure() {
-        FreeStyleProject project = createJob();
+        FreeStyleProject project = createJobWithWorkspaceFile("checkstyle.xml");
 
-        project.getBuildersList().add(new Shell("exit 1"));
+        AddScript(project, "exit 1");
         enableCheckStyle(project, false);
 
-        ResultAction result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        try {
+            FreeStyleBuild build = j.assertBuildStatus(Result.FAILURE, project.scheduleBuild2(0));
+            ResultAction result = build.getAction(ResultAction.class);
 
-        Assertions.assertThat(result).isNull();
+            Assertions.assertThat(result).isNull();
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
     }
 
     /**
@@ -71,15 +77,12 @@ public class IssuesRecorderRunAlwaysITest extends IntegrationTest {
     public void shouldRunResultIsSuccessWithRunAlways() {
         FreeStyleProject project = createJob();
 
-        project.getBuildersList().add(new Shell("exit 0"));
-
+        AddScript(project, "exit 0");
         enableCheckStyle(project, true);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS).getResult();
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
-        assertThat(result).hasErrorMessages(
-                "No files found for pattern '**/checkstyle-result.xml'. Configuration error?");
     }
 
     /**
@@ -89,29 +92,12 @@ public class IssuesRecorderRunAlwaysITest extends IntegrationTest {
     public void shouldRunResultIsSuccessWithoutRunAlways() {
         FreeStyleProject project = createJob();
 
-        project.getBuildersList().add(new Shell("exit 0"));
-
+        AddScript(project, "exit 0");
         enableCheckStyle(project, false);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS).getResult();
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
-        assertThat(result).hasErrorMessages(
-                "No files found for pattern '**/checkstyle-result.xml'. Configuration error?");
-    }
-
-    /**
-     * Creates a new {@link FreeStyleProject freestyle job}. The job will get a generated name.
-     *
-     * @return the created job
-     */
-    private FreeStyleProject createJob() {
-        try {
-            return j.createFreeStyleProject();
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
     }
 
     /**
@@ -123,12 +109,12 @@ public class IssuesRecorderRunAlwaysITest extends IntegrationTest {
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    private IssuesRecorder enableCheckStyle(final FreeStyleProject job, boolean setRunAlways) {
+    final private IssuesRecorder enableCheckStyle(final FreeStyleProject job, boolean setRunAlways) {
         IssuesRecorder publisher = new IssuesRecorder();
 
         publisher.setEnabledForFailure(setRunAlways);
         publisher.setTools(
-                Collections.singletonList(new ToolConfiguration("**/checkstyle-result.xml", new CheckStyle())));
+                Collections.singletonList(new ToolConfiguration("**/*issues.txt", new CheckStyle())));
 
         job.getPublishersList().add(publisher);
         return publisher;
@@ -146,7 +132,7 @@ public class IssuesRecorderRunAlwaysITest extends IntegrationTest {
      * @return the created {@link ResultAction}
      */
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private ResultAction scheduleBuildAndAssertStatus(final FreeStyleProject job, final Result status) {
+    private ResultAction scheduleBuildAndAssertStatusForNull(final FreeStyleProject job, final Result status) {
         try {
             FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
             ResultAction action = build.getAction(ResultAction.class);
@@ -158,4 +144,39 @@ public class IssuesRecorderRunAlwaysITest extends IntegrationTest {
         }
     }
 
+    /**
+     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
+     * the job.
+     *
+     * @param job
+     *         the job to register the recorder for
+     *
+     * @return the created recorder
+     */
+    @CanIgnoreReturnValue
+    private IssuesRecorder enableWarnings(final FreeStyleProject job) {
+        IssuesRecorder publisher = new IssuesRecorder();
+        publisher.setTools(Collections.singletonList(new ToolConfiguration("**/checkstyle-result.xml", new CheckStyle())));
+        job.getPublishersList().add(publisher);
+        return publisher;
+    }
+
+    /**
+     * Add a script as a Shell or BachFile depending on the OperationSystem.
+     *
+     * @param project
+     *         the FreeStyleProject
+     * @param script
+     *         the script which will be added to the FreeStyleProject
+     */
+    public void AddScript(FreeStyleProject project, String script){
+
+        if( isWindows() ){
+
+            project.getBuildersList().add(new BatchFile(script));
+        }else{
+
+            project.getBuildersList().add(new Shell(script));
+        }
+    }
 }

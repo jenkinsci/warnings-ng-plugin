@@ -91,7 +91,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      *
      * @return the created job
      */
-    private FreeStyleProject createJob() {
+    protected FreeStyleProject createJob() {
         try {
             return j.createFreeStyleProject();
         }
@@ -109,7 +109,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      *
      * @return the created job
      */
-    private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
+    protected FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
         FreeStyleProject job = createJob();
         copyFilesToWorkspace(job, fileNames);
         return job;
@@ -162,7 +162,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @return the created {@link ResultAction}
      */
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private AnalysisResult scheduleBuildAndAssertStatus(final FreeStyleProject job, final Result status) {
+    protected AnalysisResult scheduleBuildAndAssertStatus(final FreeStyleProject job, final Result status) {
         try {
             FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
 
