@@ -44,7 +44,7 @@ import hudson.model.TopLevelItem;
  *      |-no_file_pattern_match
  *          |-nonFilePatternMatch.xml
  *      |-no_read_permission
- *          |-no_read_permission.xml
+ *          |-no_read_permissions.xml
  *      |-zero_length_file
  *          |-zero_length_file.xml
  *
@@ -115,7 +115,7 @@ public class FilesScannerITest extends IntegrationTest {
             assertThat(result.getErrorMessages().get(0)).contains("java.io.FileNotFoundException:");
         }
         else {
-            assertThat(result.getErrorMessages().get(0)).contains("Skipping file 'no_read_permission.xml' because Jenkins has no permission to read the file.");
+            assertThat(result.getErrorMessages().get(0)).contains("Skipping file 'no_read_permissions.xml' because Jenkins has no permission to read the file.");
         }
     }
 
