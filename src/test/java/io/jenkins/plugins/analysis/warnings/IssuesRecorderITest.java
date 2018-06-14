@@ -30,6 +30,17 @@ import hudson.plugins.analysis.util.model.Priority;
  * @author Ullrich Hafner
  */
 public class IssuesRecorderITest extends IntegrationTest {
+
+    private static final String H80PLUS = "icon-health-80plus";
+    private static final String H60TO79 = "icon-health-60to79";
+    private static final String H40TO59 = "icon-health-40to59";
+    private static final String H20TO39 = "icon-health-20to39";
+    private static final String H00TO19 = "icon-health-00to19";
+    private static final String WARNINGS_8_FOUND = "Static Analysis: 8 warnings found.";
+    private static final String WARNINGS_2_FOUND = "Static Analysis: 2 warnings found.";
+    private static final String WARNINGS_4_FOUND = "Static Analysis: 4 warnings found.";
+    private static final String WARNINGS_6_FOUND = "Static Analysis: 6 warnings found.";
+
     /**
      * Runs the Eclipse parser on an empty workspace: the build should report 0 issues and an error message.
      */
@@ -115,8 +126,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     @Test
     public void shouldCreate80plusHealthReport() {
         HealthReport report = createHealthReportTestSetupEclipse(10, 15);
-        assertThat(report.getDescription()).isEqualTo("Static Analysis: 8 warnings found.");
-        assertThat(report.getIconClassName()).isEqualTo("icon-health-80plus");
+        assertThat(report.getDescription()).isEqualTo(WARNINGS_8_FOUND);
+        assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
     }
 
     /**
@@ -125,8 +136,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     @Test
     public void shouldCreate60To79HealthReport() {
         HealthReport report = createHealthReportTestSetupEclipse(5, 15);
-        assertThat(report.getDescription()).isEqualTo("Static Analysis: 8 warnings found.");
-        assertThat(report.getIconClassName()).isEqualTo("icon-health-60to79");
+        assertThat(report.getDescription()).isEqualTo(WARNINGS_8_FOUND);
+        assertThat(report.getIconClassName()).isEqualTo(H60TO79);
     }
 
     /**
@@ -135,8 +146,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     @Test
     public void shouldCreate40To59HealthReport() {
         HealthReport report = createHealthReportTestSetupEclipse(1, 15);
-        assertThat(report.getDescription()).isEqualTo("Static Analysis: 8 warnings found.");
-        assertThat(report.getIconClassName()).isEqualTo("icon-health-40to59");
+        assertThat(report.getDescription()).isEqualTo(WARNINGS_8_FOUND);
+        assertThat(report.getIconClassName()).isEqualTo(H40TO59);
     }
 
     /**
@@ -145,8 +156,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     @Test
     public void shouldCreate20To39HealthReport() {
         HealthReport report = createHealthReportTestSetupEclipse(5, 10);
-        assertThat(report.getDescription()).isEqualTo("Static Analysis: 8 warnings found.");
-        assertThat(report.getIconClassName()).isEqualTo("icon-health-20to39");
+        assertThat(report.getDescription()).isEqualTo(WARNINGS_8_FOUND);
+        assertThat(report.getIconClassName()).isEqualTo(H20TO39);
     }
 
     /**
@@ -155,8 +166,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     @Test
     public void shouldCreate00To19HealthReport() {
         HealthReport report = createHealthReportTestSetupEclipse(1, 5);
-        assertThat(report.getDescription()).isEqualTo("Static Analysis: 8 warnings found.");
-        assertThat(report.getIconClassName()).isEqualTo("icon-health-00to19");
+        assertThat(report.getDescription()).isEqualTo(WARNINGS_8_FOUND);
+        assertThat(report.getIconClassName()).isEqualTo(H00TO19);
     }
 
     /**
@@ -166,8 +177,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     @Test
     public void shouldCreateHealthReportWithHighPriority() {
         HealthReport report = createHealthReportTestSetupCheckstyle(Priority.HIGH);
-        assertThat(report.getDescription()).isEqualTo("Static Analysis: 2 warnings found.");
-        assertThat(report.getIconClassName()).isEqualTo("icon-health-80plus");
+        assertThat(report.getDescription()).isEqualTo(WARNINGS_2_FOUND);
+        assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
     }
 
     /**
@@ -177,8 +188,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     @Test
     public void shouldCreateHealthReportWithNormalPriority() {
         HealthReport report = createHealthReportTestSetupCheckstyle(Priority.NORMAL);
-        assertThat(report.getDescription()).isEqualTo("Static Analysis: 4 warnings found.");
-        assertThat(report.getIconClassName()).isEqualTo("icon-health-80plus");
+        assertThat(report.getDescription()).isEqualTo(WARNINGS_4_FOUND);
+        assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
     }
 
     /**
@@ -188,8 +199,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     @Test
     public void shouldCreateHealthReportWithLowPriority() {
         HealthReport report = createHealthReportTestSetupCheckstyle(Priority.LOW);
-        assertThat(report.getDescription()).isEqualTo("Static Analysis: 6 warnings found.");
-        assertThat(report.getIconClassName()).isEqualTo("icon-health-80plus");
+        assertThat(report.getDescription()).isEqualTo(WARNINGS_6_FOUND);
+        assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
     }
 
     /**
