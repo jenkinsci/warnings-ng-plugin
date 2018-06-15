@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import hudson.FilePath;
 
@@ -24,11 +25,9 @@ class AffectedFilesResolverTest {
     @ParameterizedTest(name = "[{index}] Illegal filename = {0}")
     @ValueSource(strings = {"/does/not/exist", "!<>$$&%/&(", "\0 Null-Byte"})
     void shouldReturnFallbackOnError(final String fileName) throws IOException, InterruptedException {
-        Report report = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        report.add(builder.setFileName(fileName).build());
-        new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(
-                report, BUILD_ROOT);
+        Report report = new Report().add(new IssueBuilder().setFileName(fileName).build());
+        
+        new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(report, BUILD_ROOT, mock(File.class));
 
         assertThat(report.getErrorMessages()).hasSize(1);
         assertThat(report.getErrorMessages().get(0)).startsWith("Copying 1 affected files to Jenkins' build folder builds.");

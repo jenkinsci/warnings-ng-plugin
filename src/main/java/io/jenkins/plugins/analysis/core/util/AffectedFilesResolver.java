@@ -12,6 +12,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 
@@ -62,7 +63,8 @@ public class AffectedFilesResolver {
      *         the issue in the affected file
      *
      * @return the file
-     * @throws UncheckedIOException if the file could not be found
+     * @throws UncheckedIOException
+     *         if the file could not be found
      */
     public static InputStream asStream(final Run<?, ?> run, final Issue issue) throws UncheckedIOException {
         try {
@@ -100,6 +102,8 @@ public class AffectedFilesResolver {
      *         the issues
      * @param jenkinsBuildRoot
      *         directory to store the copied files in
+     * @param workspace
+     *         local directory of the workspace, all source files must be part of this directory
      *
      * @throws IOException
      *         if the files could not be written
@@ -107,25 +111,30 @@ public class AffectedFilesResolver {
      *         if the user cancels the processing
      */
     public void copyFilesWithAnnotationsToBuildFolder(final Report report,
-            final FilePath jenkinsBuildRoot)
+            final FilePath jenkinsBuildRoot, final File workspace)
             throws IOException, InterruptedException {
         int copied = 0;
         int notFound = 0;
+        int notInWorkspace = 0;
         int error = 0;
 
         Set<String> files = report.getFiles();
         for (String file : files) {
             if (exists(file)) {
-                FilePath directory = ensureThatBuildDirectoryExists(jenkinsBuildRoot);
-                FilePath buildFolderCopy = directory.child(getTempName(file));
-                FilePath sourceFileOnAgent = new FilePath(Paths.get(file).toFile());
-                try {
-                    sourceFileOnAgent.copyTo(buildFolderCopy);
-                    copied++;
+                if (isInWorkspace(file, workspace)) {
+                    FilePath remoteBuildFolderCopy = createBuildDirectory(jenkinsBuildRoot).child(getTempName(file));
+                    FilePath localSourceFile = new FilePath(Paths.get(file).toFile());
+                    try {
+                        localSourceFile.copyTo(remoteBuildFolderCopy);
+                        copied++;
+                    }
+                    catch (IOException exception) {
+                        logExceptionToFile(exception, remoteBuildFolderCopy, localSourceFile);
+                        error++;
+                    }
                 }
-                catch (IOException exception) {
-                    logExceptionToFile(exception, buildFolderCopy, sourceFileOnAgent);
-                    error++;
+                else {
+                    notInWorkspace++;
                 }
             }
             else {
@@ -134,13 +143,35 @@ public class AffectedFilesResolver {
         }
 
         String message = String.format("Copying %d affected files to Jenkins' build folder %s.%n"
-                        + "%d copied, %d not-found, %d with I/O error", files.size(), jenkinsBuildRoot.getRemote(),
-                copied, notFound, error);
+                        + "%d copied, %d not in workspace, %d not-found, %d with I/O error",
+                files.size(), jenkinsBuildRoot.getRemote(), copied, notInWorkspace, notFound, error);
         if (error > 0 || notFound > 0) {
             report.logError(message);
         }
         else {
             report.logInfo(message);
+        }
+    }
+
+    /**
+     * Checks whether the source file is in the workspace. Due to security reasons copying of files outside of the
+     * workspace is prohibited.
+     *
+     * @param fileName
+     *         the file name of the source
+     * @param workspace
+     *         the workspace on the agent
+     * @return {@code true} if the file is in the workspace, {@code false} otherwise
+     */
+    private boolean isInWorkspace(final String fileName, final File workspace) {
+        try {
+            Path workspaceDirectory = workspace.toPath().toRealPath().normalize();
+            Path sourceFile = Paths.get(fileName).toRealPath();
+
+            return sourceFile.startsWith(workspaceDirectory);
+        }
+        catch (IOException e) {
+            return false;
         }
     }
 
@@ -153,7 +184,7 @@ public class AffectedFilesResolver {
         }
     }
 
-    private FilePath ensureThatBuildDirectoryExists(final FilePath jenkinsBuildRoot)
+    private FilePath createBuildDirectory(final FilePath jenkinsBuildRoot)
             throws IOException, InterruptedException {
         FilePath directory = jenkinsBuildRoot.child(AFFECTED_FILES_FOLDER_NAME);
         if (!directory.exists()) {

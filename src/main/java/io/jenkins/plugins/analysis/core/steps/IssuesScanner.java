@@ -199,9 +199,9 @@ class IssuesScanner {
 
         private void copyAffectedFiles(final File workspace)
                 throws IOException, InterruptedException {
-            report.logInfo("Copying affected files to Jenkins' build folder %s.%n", jenkinsRootDir);
+            report.logInfo("Copying affected files to Jenkins' build folder %s", jenkinsRootDir);
             
-            new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(report, jenkinsRootDir);
+            new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(report, jenkinsRootDir, workspace);
         }
 
 
