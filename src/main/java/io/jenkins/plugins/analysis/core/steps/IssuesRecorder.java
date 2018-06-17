@@ -600,7 +600,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
          *
          * @return the model with the possible reference jobs
          */
-        public ComboBoxModel doFillReferenceJobItems() {
+        public ComboBoxModel doFillReferenceJobNameItems() {
             ComboBoxModel model = new ComboBoxModel(jenkins.getAllJobs());
             model.add(0, NO_REFERENCE_JOB); // make sure that no input is valid
             return model;
@@ -609,15 +609,15 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         /**
          * Performs on-the-fly validation of the reference job.
          *
-         * @param referenceJob
+         * @param referenceJobName
          *         the reference job
          *
          * @return the validation result
          */
-        public FormValidation doCheckReferenceJob(@QueryParameter final String referenceJob) {
-            if (NO_REFERENCE_JOB.equals(referenceJob)
-                    || StringUtils.isBlank(referenceJob)
-                    || jenkins.getJob(referenceJob).isPresent()) {
+        public FormValidation doCheckReferenceJobName(@QueryParameter final String referenceJobName) {
+            if (NO_REFERENCE_JOB.equals(referenceJobName)
+                    || StringUtils.isBlank(referenceJobName)
+                    || jenkins.getJob(referenceJobName).isPresent()) {
                 return FormValidation.ok();
             }
             return FormValidation.error(Messages.FieldValidator_Error_ReferenceJobDoesNotExist());

@@ -81,7 +81,7 @@ class IssuesRecorderTest extends LocalizedMessagesTest {
 
         Descriptor descriptor = new Descriptor(jenkins);
 
-        assertThat(descriptor.doFillReferenceJobItems()).containsExactly(NO_REFERENCE_JOB);
+        assertThat(descriptor.doFillReferenceJobNameItems()).containsExactly(NO_REFERENCE_JOB);
     }
 
     @Test
@@ -93,9 +93,9 @@ class IssuesRecorderTest extends LocalizedMessagesTest {
         Descriptor descriptor = new Descriptor(jenkins);
 
         assertSoftly(softly -> {
-            softly.assertThat(descriptor.doCheckReferenceJob(jobName)).isOk();
-            softly.assertThat(descriptor.doCheckReferenceJob(NO_REFERENCE_JOB)).isOk();
-            softly.assertThat(descriptor.doCheckReferenceJob("")).isOk();
+            softly.assertThat(descriptor.doCheckReferenceJobName(jobName)).isOk();
+            softly.assertThat(descriptor.doCheckReferenceJobName(NO_REFERENCE_JOB)).isOk();
+            softly.assertThat(descriptor.doCheckReferenceJobName("")).isOk();
         });
     }
 
@@ -106,7 +106,7 @@ class IssuesRecorderTest extends LocalizedMessagesTest {
         when(jenkins.getJob(referenceJob)).thenReturn(Optional.empty());
         Descriptor descriptor = new Descriptor(jenkins);
 
-        assertThat(descriptor.doCheckReferenceJob(referenceJob))
+        assertThat(descriptor.doCheckReferenceJobName(referenceJob))
                 .isError()
                 .hasMessage("There is no such job - maybe the job has been renamed?");
     }
@@ -172,7 +172,7 @@ class IssuesRecorderTest extends LocalizedMessagesTest {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
         Descriptor descriptor = new Descriptor(jenkins);
 
-        ComboBoxModel actualModel = descriptor.doFillReferenceJobItems();
+        ComboBoxModel actualModel = descriptor.doFillReferenceJobNameItems();
 
         assertThat(actualModel).hasSize(1);
         assertThat(actualModel).containsExactly(NO_REFERENCE_JOB);
@@ -188,7 +188,7 @@ class IssuesRecorderTest extends LocalizedMessagesTest {
 
         Descriptor descriptor = new Descriptor(jenkins);
 
-        ComboBoxModel actualModel = descriptor.doFillReferenceJobItems();
+        ComboBoxModel actualModel = descriptor.doFillReferenceJobNameItems();
 
         assertThat(actualModel).hasSize(2);
         assertThat(actualModel).containsExactly(NO_REFERENCE_JOB, name);
