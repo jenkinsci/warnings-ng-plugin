@@ -9,7 +9,10 @@ import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
 
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlFormUtil;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -22,10 +25,13 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.model.AbstractProject;
+import hudson.model.Descriptor;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
+import hudson.tasks.Publisher;
+import hudson.util.DescribableList;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -33,6 +39,60 @@ import hudson.model.Run;
  * @author Ullrich Hafner
  */
 public class IssuesRecorderITest extends IntegrationTest {
+    /**
+     * Verifies that the reference job name can be set to another job.
+     */
+    @Test
+    public void shouldInitializeAndStoreReferenceJobName() {
+        FreeStyleProject job = createFreeStyleProject();
+        String initialization = "Reference Job";
+        enableWarnings(job, tool -> {
+            tool.setReferenceJobName(initialization);
+        });
+        
+        HtmlPage configPage = getWebPage(job, "configure");
+        HtmlForm form = configPage.getFormByName("config");
+        HtmlTextInput referenceJob = form.getInputByName("_.referenceJobName");
+        assertThat(referenceJob.getText()).isEqualTo(initialization);
+        
+        String update = "New Reference Job";
+        referenceJob.setText(update);
+
+        submit(form);
+        
+        assertThat(getRecorder(job).getReferenceJobName()).isEqualTo(update);
+    }
+    
+    private IssuesRecorder getRecorder(final AbstractProject<?, ?> job) {
+        DescribableList<Publisher, Descriptor<Publisher>> publishers = job.getPublishersList();
+        for (Publisher publisher : publishers) {
+            if (publisher instanceof IssuesRecorder) {
+                return (IssuesRecorder) publisher;
+            }
+        }
+        throw new AssertionError("No instance of IssuesRecorder found for job " + job);
+    }
+    
+    private void submit(final HtmlForm form) {
+        try {
+            HtmlFormUtil.submit(form);
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    private HtmlPage getWebPage(final AbstractProject job, final String page) {
+        try {
+            WebClient webClient = j.createWebClient();
+            webClient.setJavaScriptEnabled(true);
+            return webClient.getPage(job, page);
+        }
+        catch (SAXException | IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+    
     /**
      * Runs the Eclipse parser on an empty workspace: the build should report 0 issues and an error message.
      */
