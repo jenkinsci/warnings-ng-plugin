@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.eclipse.collections.api.list.ImmutableList;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.jvnet.hudson.test.recipes.WithTimeout;
@@ -305,6 +306,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         List<AnalysisResult> results = scheduleBuildAndAssertStatusForBothTools(project, Result.FAILURE);
 
         assertThat(results).hasSize(1);
+        assertThat(results.contains("java.lang.IllegalStateException: ID checkstyle is already used by another action: io.jenkins.plugins.analysis.core.views.ResultAction for CheckStyle"));
 
         for (AnalysisResult element : results) {
             assertThat(element).hasId("checkstyle");
