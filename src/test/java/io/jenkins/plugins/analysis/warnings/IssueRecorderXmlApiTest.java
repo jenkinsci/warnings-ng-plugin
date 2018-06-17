@@ -54,6 +54,7 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
         test = removeRunSpecificXmlNodes(test);
 
         // get control document
+        // TODO: Replace xml file after fixing JENKINS-51642 (the xml must not be formatted!)
         Document control = loadControlDocumentFromFile("checkstyleregextest_output.xml");
 
         // compare documents
