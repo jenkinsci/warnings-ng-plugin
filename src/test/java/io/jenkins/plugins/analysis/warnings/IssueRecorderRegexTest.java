@@ -37,6 +37,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import hudson.FilePath;
 import hudson.model.FreeStyleProject;
+import hudson.model.Result;
 import hudson.model.TopLevelItem;
 
 /**
@@ -184,7 +185,7 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
      */
     private void validateRemainingIssues(final FreeStyleProject project, final Integer[] expectedValues) {
         // get result
-        AnalysisResult result = scheduleBuild(project);
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // compare result with expected values
         assertThat(result.getIssues()
@@ -231,7 +232,7 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
      * @return the created job
      */
     private FreeStyleProject prepareFilesAndCreateJob(final String... fileNames) {
-        FreeStyleProject job = createJob();
+        FreeStyleProject job = createFreeStyleProject();
         prepareAndCopyFilesToWorkspace(job, fileNames);
         return job;
     }
