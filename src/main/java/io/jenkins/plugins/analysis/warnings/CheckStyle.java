@@ -19,11 +19,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class CheckStyle extends StaticAnalysisTool {
+    private static final long serialVersionUID = -7944828406964963020L;
     static final String ID = "checkstyle";
 
     /** Creates a new instance of {@link CheckStyle}. */
     @DataBoundConstructor
     public CheckStyle() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -71,6 +73,7 @@ public class CheckStyle extends StaticAnalysisTool {
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         private final CheckStyleRules rules;
 
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
 

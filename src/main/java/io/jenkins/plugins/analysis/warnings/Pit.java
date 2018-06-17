@@ -4,14 +4,12 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.violations.PitAdapter;
+import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
-import static hudson.plugins.warnings.WarningsDescriptor.*;
-
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.violations.PitAdapter;
 
 /**
  * Provides a parser and customized messages for PIT.
@@ -19,11 +17,13 @@ import edu.hm.hafner.analysis.parser.violations.PitAdapter;
  * @author Ullrich Hafner
  */
 public class Pit extends StaticAnalysisTool {
+    private static final long serialVersionUID = -3769283356498049888L;
     static final String ID = "pit";
 
     /** Creates a new instance of {@link Pit}. */
     @DataBoundConstructor
     public Pit() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -37,6 +37,9 @@ public class Pit extends StaticAnalysisTool {
         return new PitAdapter();
     }
 
+    /**
+     * Label provider for PIT.
+     */
     private static class LabelProvider extends StaticAnalysisLabelProvider {
         private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
         private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
@@ -65,6 +68,7 @@ public class Pit extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

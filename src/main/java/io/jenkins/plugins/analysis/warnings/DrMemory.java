@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class DrMemory extends StaticAnalysisTool {
+    private static final long serialVersionUID = -8292426833255285102L;
     static final String ID = "dr-memory";
 
     /** Creates a new instance of {@link DrMemory}. */
     @DataBoundConstructor
     public DrMemory() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class DrMemory extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }
