@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import javax.annotation.Nonnull;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,18 +40,16 @@ import hudson.model.FreeStyleProject;
 import hudson.model.TopLevelItem;
 
 /**
- * Integration tests of the warnings plugin in freestyle jobs. Tests the post-action issue (regex-)filter.
+ * Integration tests of the warnings plugin in freestyle jobs. Tests the issue (regex-)filter of the post-build action.
  *
  * @author Manuel Hampp
  */
 public class IssueRecorderRegexTest extends IssuesRecorderITest {
-
     /**
-     * Tests the module expression filter by comparing the result with expected.
+     * Tests the module expression filter: provides a pom.xml in the workspace so that modules are correctly assigned.
      */
     @Test
     public void shouldFilterIssuesByModule() {
-
         // get collection of filters, and expected results
         Map<RegexpFilter, Integer[]> categoryFiltersWithResult = filterProviderModules();
 
@@ -67,27 +66,22 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
                     new Pmd());
 
             validateRemainingIssues(project, entry.getValue());
-
         }
     }
 
     /**
-     * Validates the remaining issues in the projects result against the expected values.
-     *
-     * @param project
-     *         project that contains the issues to compare
-     * @param expectedValues
-     *         issue line numbers that are expected
+     * Provides a map, that contains the filters and the line numbers that are expected to remain after filtering.
      */
-    private void validateRemainingIssues(final FreeStyleProject project, final Integer[] expectedValues) {
-        // get result
-        AnalysisResult result = scheduleBuild(project);
+    private Map<RegexpFilter, Integer[]> filterProviderModules() {
+        /*
+        CopyToClipboard.java:54         com.avaloq.adt.env.internal.ui.actions          Basic CollapsibleIfStatements   Normal  1
+        ChangeSelectionAction.java:14   com.avaloq.adt.env.internal.ui.actions.change   Import Statement Rules  UnusedImports   Normal  1
+         */
+        HashMap<RegexpFilter, Integer[]> filterResultMap = new HashMap<>();
+        filterResultMap.put(new RegexpFilter("m1", new ExcludeModule()), new Integer[]{14});
+        filterResultMap.put(new RegexpFilter("m1", new IncludeModule()), new Integer[]{54});
 
-        // compare result with expected values
-        assertThat(result.getIssues()
-                .stream()
-                .map(Issue::getLineStart)
-                .collect(Collectors.toList())).containsOnly(expectedValues);
+        return filterResultMap;
     }
 
     /**
@@ -110,42 +104,6 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
             // validate
             validateRemainingIssues(project, entry.getValue());
         }
-    }
-
-    /**
-     * Tests the package and type expression filter by comparing the result with expected.
-     */
-    @Test
-    public void shouldFilterIssuesForPMD() {
-        // get collection of filters, and expected results
-        Map<RegexpFilter, Integer[]> categoryFiltersWithResult = filterProviderPMD();
-
-        // run tests for all entries in collection
-        for (Entry<RegexpFilter, Integer[]> entry : categoryFiltersWithResult.entrySet()) {
-
-            // set up environment
-            FreeStyleProject project = createJobWithWorkspaceFile("pmd-warnings.xml");
-            enableWarningsWithAnalysisTool(project,
-                    recorder -> recorder.setFilters(Collections.singletonList(entry.getKey())), new Pmd());
-
-            // validate
-            validateRemainingIssues(project, entry.getValue());
-        }
-    }
-
-    /**
-     * Provides a map, that contains the filters and the linenumbers that are expected to remain after filtering.
-     */
-    private Map<RegexpFilter, Integer[]> filterProviderModules() {
-        /*
-        CopyToClipboard.java:54         com.avaloq.adt.env.internal.ui.actions          Basic CollapsibleIfStatements   Normal  1
-        ChangeSelectionAction.java:14   com.avaloq.adt.env.internal.ui.actions.change   Import Statement Rules  UnusedImports   Normal  1
-         */
-        HashMap<RegexpFilter, Integer[]> filterResultMap = new HashMap<>();
-        filterResultMap.put(new RegexpFilter("m1", new ExcludeModule()), new Integer[]{14});
-        filterResultMap.put(new RegexpFilter("m1", new IncludeModule()), new Integer[]{54});
-
-        return filterResultMap;
     }
 
     /**
@@ -174,6 +132,27 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
     }
 
     /**
+     * Tests the package and type expression filter by comparing the result with expected.
+     */
+    @Test
+    public void shouldFilterIssuesForPMD() {
+        // get collection of filters, and expected results
+        Map<RegexpFilter, Integer[]> categoryFiltersWithResult = filterProviderPMD();
+
+        // run tests for all entries in collection
+        for (Entry<RegexpFilter, Integer[]> entry : categoryFiltersWithResult.entrySet()) {
+
+            // set up environment
+            FreeStyleProject project = createJobWithWorkspaceFile("pmd-warnings.xml");
+            enableWarningsWithAnalysisTool(project,
+                    recorder -> recorder.setFilters(Collections.singletonList(entry.getKey())), new Pmd());
+
+            // validate
+            validateRemainingIssues(project, entry.getValue());
+        }
+    }
+
+    /**
      * Provides a map, that contains the filters and the linenumbers that are expected to remain after filtering.
      */
     private Map<RegexpFilter, Integer[]> filterProviderPMD() {
@@ -196,11 +175,30 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
     }
 
     /**
+     * Validates the remaining issues in the projects result against the expected values.
+     *
+     * @param project
+     *         project that contains the issues to compare
+     * @param expectedValues
+     *         issue line numbers that are expected
+     */
+    private void validateRemainingIssues(final FreeStyleProject project, final Integer[] expectedValues) {
+        // get result
+        AnalysisResult result = scheduleBuild(project);
+
+        // compare result with expected values
+        assertThat(result.getIssues()
+                .stream()
+                .map(Issue::getLineStart)
+                .collect(Collectors.toList())).containsOnly(expectedValues);
+    }
+
+    /**
      * Enables warnings for the given job with the given analysis tool.
      */
     private void enableWarningsWithAnalysisTool(final FreeStyleProject job,
             final Consumer<IssuesRecorder> configuration,
-            StaticAnalysisTool staticAnalysisTool) {
+            final StaticAnalysisTool staticAnalysisTool) {
         IssuesRecorder publisher = enableWarningsWithAnalysisTool(job, staticAnalysisTool);
         configuration.accept(publisher);
     }
@@ -216,7 +214,7 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
      */
     @CanIgnoreReturnValue
     private IssuesRecorder enableWarningsWithAnalysisTool(final FreeStyleProject job,
-            StaticAnalysisTool staticAnalysisTool) {
+            final StaticAnalysisTool staticAnalysisTool) {
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setTools(Collections.singletonList(new ToolConfiguration(staticAnalysisTool, "**/*issues.txt")));
         job.getPublishersList().add(publisher);
@@ -273,12 +271,12 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
      * @author Manuel Hampp
      */
     class ReplacingInputStream extends FilterInputStream {
-        private LinkedList<Integer> input = new LinkedList<Integer>();
-        private LinkedList<Integer> output = new LinkedList<Integer>();
+        private final LinkedList<Integer> input = new LinkedList<>();
+        private final LinkedList<Integer> output = new LinkedList<>();
         private final byte[] search;
         private final byte[] replacement;
 
-        ReplacingInputStream(InputStream in, byte[] search, byte[] replacement) {
+        ReplacingInputStream(final InputStream in, final byte[] search, final byte[] replacement) {
             super(in);
             this.search = search;
             this.replacement = replacement;
@@ -305,17 +303,13 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
         }
 
         @Override
-        public int read(final byte[] b) throws IOException {
+        public int read(@Nonnull final byte[] b) throws IOException {
             return super.read(b);
         }
 
         @Override
-        public int read(final byte[] bytes, final int off, final int len) throws IOException {
-
-            if (bytes == null) {
-                throw new NullPointerException();
-            }
-            else if (off < 0 || len < 0 || len > bytes.length - off) {
+        public int read(@Nonnull final byte[] bytes, final int off, final int len) throws IOException {
+            if (off < 0 || len < 0 || len > bytes.length - off) {
                 throw new IndexOutOfBoundsException();
             }
             else if (len == 0) {

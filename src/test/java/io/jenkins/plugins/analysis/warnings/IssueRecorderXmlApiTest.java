@@ -34,20 +34,18 @@ import hudson.model.FreeStyleProject;
  * @author Manuel Hampp
  */
 public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
-
     /**
      * Compares the basic xml api (without parameters) against a control result.
      */
     @Test
     public void assertXmlApiMatchesExpected() {
-        // setup project
         FreeStyleProject project = createJobWithWorkspaceFile("checkstyleregextest.xml");
         enableWarningsWithCheckstyle(project);
 
         String buildNumber = String.valueOf(buildProjectAndReturnBuildNo(project));
 
         // get xml result from API
-        XmlPage page = getXmlPage(project, buildNumber, "/checkstyleResult/api/xml");
+        XmlPage page = getXmlPage(project, buildNumber, "/checkstyleResult/api/xml?exclude=/*/errorMessage&exclude=/*/infoMessage");
         Document test = page.getXmlDocument();
 
         // remove not comparable nodes
@@ -62,7 +60,7 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
         Diff diff = XMLUnit.compareXML(control, test);
 
         // assert that document recieved by api is the same as expected
-        assertThat(diff.identical()).isTrue();
+        assertThat(diff.identical()).as(diff.toString()).isTrue();
     }
 
     /**
@@ -104,12 +102,12 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
 
         // get xml result from API
         XmlPage page = getXmlPage(project, buildNumber,
-                "/checkstyleResult/api/xml?xpath=/*/overallResult");
+                "/checkstyleResult/api/xml?xpath=/*/status");
         Document test = page.getXmlDocument();
 
         // assert that root node is the xpath aimed element
-        assertThat(test.getDocumentElement().getTagName()).isEqualTo("overallResult");
-        assertThat(test.getDocumentElement().getFirstChild().getNodeValue()).isEqualTo("SUCCESS");
+        assertThat(test.getDocumentElement().getTagName()).isEqualTo("status");
+        assertThat(test.getDocumentElement().getFirstChild().getNodeValue()).isEqualTo("INACTIVE");
     }
 
     /**
@@ -124,7 +122,7 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
         String buildNumber = String.valueOf(buildProjectAndReturnBuildNo(project));
 
         // get xml result from API
-        XmlPage page = getXmlPage(project, buildNumber, "/checkstyleResult/api/xml?depth=0");
+        XmlPage page = getXmlPage(project, buildNumber, "/checkstyleResult/api/xml?depth=1");
         Document test = page.getXmlDocument();
 
         // navigate to deep level element
@@ -182,7 +180,7 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
         try {
             // remove nodes with run specific tmp-folder name
             NodeList infoMessageNodesWithTmpFolderPath = (NodeList) xp.compile(
-                    "//analysisResult//infoMessage[contains(text(), '/tmp/jenkinsTests.tmp/')]")
+                    "//analysisResult//infoMessage[contains(text(), 'jenkinsTests.tmp/')]")
                     .evaluate(doc, XPathConstants.NODESET);
 
             // delete nodes

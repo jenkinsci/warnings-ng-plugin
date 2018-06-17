@@ -1,1 +1,35 @@
-<?xml version="1.0" encoding="UTF-8"?><analysisResult _class="io.jenkins.plugins.analysis.core.model.AnalysisResult"><errorMessage>Can't read file 'X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java': java.nio.file.NoSuchFileException: X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java</errorMessage><errorMessage>Can't read file 'X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java': java.nio.file.NoSuchFileException: X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java</errorMessage><errorMessage>Can't read file 'X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java': java.nio.file.NoSuchFileException: X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java</errorMessage><errorMessage>Can't read file 'X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java': java.nio.file.NoSuchFileException: X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java</errorMessage><errorMessage>Can't read file 'X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java': java.nio.file.NoSuchFileException: X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java</errorMessage><errorMessage>Can't read file 'X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java': java.nio.file.NoSuchFileException: X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java</errorMessage><errorMessage>Can't read file 'X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/test/CategoryBuildResultGraph.java': java.nio.file.NoSuchFileException: X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/test/CategoryBuildResultGraph.java</errorMessage><fixedSize>0</fixedSize><id>checkstyle</id><infoMessage>Searching for all files in '/tmp/jenkinsTests.tmp/jenkins2199356404743244661test/workspace/test0' that match the pattern '**/*issues.txt'</infoMessage><infoMessage>-&gt; found 1 file</infoMessage><infoMessage>Successfully parsed file /tmp/jenkinsTests.tmp/jenkins2199356404743244661test/workspace/test0/checkstyleregextest-issues.txt: found 7 issues (skipped 0 duplicates)</infoMessage><infoMessage>Resolved absolute paths for 0 files (Issues 0 resolved, 7 unresolved, 0 already absolute)</infoMessage><infoMessage>Resolved module names for 7 issues</infoMessage><infoMessage>Resolved package names of 2 affected files</infoMessage><infoMessage>Applying 0 filters on the set of 7 issues (0 issues have been removed)</infoMessage><infoMessage>No quality gates have been set - skipping</infoMessage><issue/><issue/><issue/><issue/><issue/><issue/><issue/><newHighPrioritySize>7</newHighPrioritySize><newIssue/><newIssue/><newIssue/><newIssue/><newIssue/><newIssue/><newIssue/><newLowPrioritySize>0</newLowPrioritySize><newNormalPrioritySize>0</newNormalPrioritySize><newSize>7</newSize><overallResult>SUCCESS</overallResult><owner _class="hudson.model.FreeStyleBuild"><number>1</number><url>http://localhost:35139/jenkins/job/test0/1/</url></owner><successful>true</successful><totalHighPrioritySize>7</totalHighPrioritySize><totalLowPrioritySize>0</totalLowPrioritySize><totalNormalPrioritySize>0</totalNormalPrioritySize><totalSize>7</totalSize></analysisResult>
+<?xml version="1.0" encoding="UTF-8"?>
+<analysisResult _class="io.jenkins.plugins.analysis.core.model.AnalysisResult">
+  <fixedSize>0</fixedSize>
+  <id>checkstyle</id>
+  <issue/>
+  <issue/>
+  <issue/>
+  <issue/>
+  <issue/>
+  <issue/>
+  <issue/>
+  <newErrorSize>0</newErrorSize>
+  <newHighPrioritySize>0</newHighPrioritySize>
+  <newLowPrioritySize>0</newLowPrioritySize>
+  <newNormalPrioritySize>0</newNormalPrioritySize>
+  <newSize>0</newSize>
+  <outstandingIssue/>
+  <outstandingIssue/>
+  <outstandingIssue/>
+  <outstandingIssue/>
+  <outstandingIssue/>
+  <outstandingIssue/>
+  <outstandingIssue/>
+  <owner _class="hudson.model.FreeStyleBuild">
+    <number>1</number>
+    <url>http://localhost:62054/jenkins/job/test0/1/</url>
+  </owner>
+  <status>INACTIVE</status>
+  <successful>true</successful>
+  <totalErrorsSize>0</totalErrorsSize>
+  <totalHighPrioritySize>7</totalHighPrioritySize>
+  <totalLowPrioritySize>0</totalLowPrioritySize>
+  <totalNormalPrioritySize>0</totalNormalPrioritySize>
+  <totalSize>7</totalSize>
+</analysisResult>
