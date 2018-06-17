@@ -66,15 +66,28 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
                     recorder -> recorder.setFilters(Collections.singletonList(entry.getKey())),
                     new Pmd());
 
-            // get result
-            AnalysisResult result = scheduleBuild(project);
+            validateRemainingIssues(project, entry.getValue());
 
-            // compare result with expected values
-            assertThat(result.getIssues()
-                    .stream()
-                    .map(Issue::getLineStart)
-                    .collect(Collectors.toList())).containsOnly(entry.getValue());
         }
+    }
+
+    /**
+     * Validates the remaining issues in the projects result against the expected values.
+     *
+     * @param project
+     *         project that contains the issues to compare
+     * @param expectedValues
+     *         issue line numbers that are expected
+     */
+    private void validateRemainingIssues(final FreeStyleProject project, final Integer[] expectedValues) {
+        // get result
+        AnalysisResult result = scheduleBuild(project);
+
+        // compare result with expected values
+        assertThat(result.getIssues()
+                .stream()
+                .map(Issue::getLineStart)
+                .collect(Collectors.toList())).containsOnly(expectedValues);
     }
 
     /**
@@ -94,12 +107,8 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
                     recorder -> recorder.setFilters(Collections.singletonList(entry.getKey())),
                     new CheckStyle());
 
-            // get result
-            AnalysisResult result = scheduleBuild(project);
-
-            // compare result with expected values
-            assertThat(result.getIssues().stream().map(Issue::getLineStart).collect(Collectors.toList()))
-                    .containsOnly(entry.getValue());
+            // validate
+            validateRemainingIssues(project, entry.getValue());
         }
     }
 
@@ -119,12 +128,8 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
             enableWarningsWithAnalysisTool(project,
                     recorder -> recorder.setFilters(Collections.singletonList(entry.getKey())), new Pmd());
 
-            // get result
-            AnalysisResult result = scheduleBuild(project);
-
-            // compare result with expected values
-            assertThat(result.getIssues().stream().map(Issue::getLineStart).collect(Collectors.toList()))
-                    .containsOnly(entry.getValue());
+            // validate
+            validateRemainingIssues(project, entry.getValue());
         }
     }
 
@@ -219,8 +224,8 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
     }
 
     /**
-     * Creates a new {@link FreeStyleProject} and copies the specified resources to the workspace folder.
-     * The job will get a generated name.
+     * Creates a new {@link FreeStyleProject} and copies the specified resources to the workspace folder. The job will
+     * get a generated name.
      *
      * @param fileNames
      *         the files to copy to the workspace
@@ -261,100 +266,104 @@ public class IssueRecorderRegexTest extends IssuesRecorderITest {
         }
     }
 
-}
+    /**
+     * Simple filter for InputStream that replaces string parts with a given replacement. Mainly taken over from:
+     * https://github.com/apache/poi/blob/trunk/src/java/org/apache/poi/util/ReplacingInputStream.java
+     *
+     * @author Manuel Hampp
+     */
+    class ReplacingInputStream extends FilterInputStream {
+        private LinkedList<Integer> input = new LinkedList<Integer>();
+        private LinkedList<Integer> output = new LinkedList<Integer>();
+        private final byte[] search;
+        private final byte[] replacement;
 
-/**
- * Simple filter for InputStream that replaces string parts with a given replacement.
- */
-class ReplacingInputStream extends FilterInputStream {
-    private LinkedList<Integer> input = new LinkedList<Integer>();
-    private LinkedList<Integer> output = new LinkedList<Integer>();
-    private final byte[] search;
-    private final byte[] replacement;
+        ReplacingInputStream(InputStream in, byte[] search, byte[] replacement) {
+            super(in);
+            this.search = search;
+            this.replacement = replacement;
+        }
 
-    ReplacingInputStream(InputStream in, byte[] search, byte[] replacement) {
-        super(in);
-        this.search = search;
-        this.replacement = replacement;
-    }
-
-    private boolean matchFound() {
-        Iterator<Integer> inputIterator = input.iterator();
-        for (byte b : search) {
-            if (!inputIterator.hasNext() || b != inputIterator.next()) {
-                return false;
+        private boolean matchFound() {
+            Iterator<Integer> inputIterator = input.iterator();
+            for (byte b : search) {
+                if (!inputIterator.hasNext() || b != inputIterator.next()) {
+                    return false;
+                }
             }
-        }
-        return true;
-    }
-
-    private void readAhead() throws IOException {
-        while (input.size() < search.length) {
-            int next = super.read();
-            input.offer(next);
-            if (next == -1) {
-                break;
-            }
-        }
-    }
-
-    @Override
-    public int read(final byte[] b) throws IOException {
-        return super.read(b);
-    }
-
-    @Override
-    public int read(final byte[] bytes, final int off, final int len) throws IOException {
-
-        if (bytes == null) {
-            throw new NullPointerException();
-        }
-        else if (off < 0 || len < 0 || len > bytes.length - off) {
-            throw new IndexOutOfBoundsException();
-        }
-        else if (len == 0) {
-            return 0;
+            return true;
         }
 
-        int c = read();
-        if (c == -1) {
-            return -1;
-        }
-        bytes[off] = (byte) c;
-
-        int i = 1;
-        try {
-            for (; i < len; i++) {
-                c = read();
-                if (c == -1) {
+        private void readAhead() throws IOException {
+            while (input.size() < search.length) {
+                int next = super.read();
+                input.offer(next);
+                if (next == -1) {
                     break;
                 }
-                bytes[off + i] = (byte) c;
             }
         }
-        catch (IOException ignored) {
-            // ignore
-        }
-        return i;
 
+        @Override
+        public int read(final byte[] b) throws IOException {
+            return super.read(b);
+        }
+
+        @Override
+        public int read(final byte[] bytes, final int off, final int len) throws IOException {
+
+            if (bytes == null) {
+                throw new NullPointerException();
+            }
+            else if (off < 0 || len < 0 || len > bytes.length - off) {
+                throw new IndexOutOfBoundsException();
+            }
+            else if (len == 0) {
+                return 0;
+            }
+
+            int c = read();
+            if (c == -1) {
+                return -1;
+            }
+            bytes[off] = (byte) c;
+
+            int i = 1;
+            try {
+                for (; i < len; i++) {
+                    c = read();
+                    if (c == -1) {
+                        break;
+                    }
+                    bytes[off + i] = (byte) c;
+                }
+            }
+            catch (IOException ignored) {
+                // ignore
+            }
+            return i;
+
+        }
+
+        @Override
+        public int read() throws IOException {
+            if (output.isEmpty()) {
+                readAhead();
+                if (matchFound()) {
+                    for (byte aSearch : search) {
+                        input.remove();
+                    }
+                    for (byte b : replacement) {
+                        output.offer((int) b);
+                    }
+                }
+                else {
+                    output.add(input.remove());
+                }
+            }
+            return output.remove();
+        }
     }
 
-    @Override
-    public int read() throws IOException {
-        if (output.isEmpty()) {
-            readAhead();
-            if (matchFound()) {
-                for (byte aSearch : search) {
-                    input.remove();
-                }
-                for (byte b : replacement) {
-                    output.offer((int) b);
-                }
-            }
-            else {
-                output.add(input.remove());
-            }
-        }
-        return output.remove();
-    }
 }
+

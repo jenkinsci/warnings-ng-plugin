@@ -10,6 +10,7 @@ import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.concurrent.ExecutionException;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -39,34 +40,54 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
      */
     @Test
     public void assertXmlApiMatchesExpected() {
+        // setup project
+        FreeStyleProject project = createJobWithWorkspaceFile("checkstyleregextest.xml");
+        enableWarningsWithCheckstyle(project);
+
+        String buildNumber = String.valueOf(buildProjectAndReturnBuildNo(project));
+
+        // get xml result from API
+        XmlPage page = getXmlPage(project, buildNumber, "/checkstyleResult/api/xml");
+        Document test = page.getXmlDocument();
+
+        // remove not comparable nodes
+        test = removeRunSpecificXmlNodes(test);
+
+        // get control document
+        Document control = loadControlDocumentFromFile("checkstyleregextest_output.xml");
+
+        // compare documents
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff diff = XMLUnit.compareXML(control, test);
+
+        // assert that document recieved by api is the same as expected
+        assertThat(diff.identical()).isTrue();
+    }
+
+    /**
+     * Build project and return build number.
+     *
+     * @param project
+     *         project to build.
+     *
+     * @return number of the build
+     */
+    private int buildProjectAndReturnBuildNo(final FreeStyleProject project) {
         try {
-            // setup project
-            FreeStyleProject project = createJobWithWorkspaceFile("checkstyleregextest.xml");
-            enableWarningsWithCheckstyle(project);
-            String buildNumber = String.valueOf(project.getNextBuildNumber());
-            scheduleBuild(project);
+            return project.scheduleBuild2(0).get().number;
+        }
+        catch (InterruptedException | ExecutionException e) {
+            throw new AssertionError(e);
+        }
+    }
 
-            // get xml result from API
-            XmlPage page = j.createWebClient().goToXml(project.getUrl() + buildNumber + "/checkstyleResult/api/xml");
-            Document test = page.getXmlDocument();
-
-            // remove not comparable nodes
-            test = removeRunSpecificXmlNodes(test);
-
-            // get control document
-            Document control = loadControlDocumentFromFile("checkstyleregextest_output.xml");
-
-            // compare documents
-            Diff diff = XMLUnit.compareXML(control, test);
-
-            // assert that document recieved by api is the same as expected
-            assertThat(diff.identical());
-
+    private XmlPage getXmlPage(final FreeStyleProject project, final String buildNumber, final String s) {
+        try {
+            return j.createWebClient().goToXml(project.getUrl() + buildNumber + s);
         }
         catch (IOException | SAXException e) {
-            e.printStackTrace();
+            throw new AssertionError(e);
         }
-
     }
 
     /**
@@ -74,24 +95,20 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
      */
     @Test
     public void assertXmlApiWithXPathNavigationMatchesExpected() {
-        try {
-            // setup project
-            FreeStyleProject project = createJobWithWorkspaceFile("checkstyleregextest.xml");
-            enableWarningsWithCheckstyle(project);
-            String buildNumber = String.valueOf(project.getNextBuildNumber());
-            scheduleBuild(project);
+        // setup project
+        FreeStyleProject project = createJobWithWorkspaceFile("checkstyleregextest.xml");
+        enableWarningsWithCheckstyle(project);
 
-            // get xml result from API
-            XmlPage page = j.createWebClient()
-                    .goToXml(project.getUrl() + buildNumber + "/checkstyleResult/api/xml?xpath=/*/overallResult");
-            Document test = page.getXmlDocument();
+        String buildNumber = String.valueOf(buildProjectAndReturnBuildNo(project));
 
-            // assert that root node is the xpath aimed element
-            assertThat(test.getDocumentElement().getTagName()).isEqualTo("overallResult");
-        }
-        catch (IOException | SAXException e) {
-            e.printStackTrace();
-        }
+        // get xml result from API
+        XmlPage page = getXmlPage(project, buildNumber,
+                "/checkstyleResult/api/xml?xpath=/*/overallResult");
+        Document test = page.getXmlDocument();
+
+        // assert that root node is the xpath aimed element
+        assertThat(test.getDocumentElement().getTagName()).isEqualTo("overallResult");
+        assertThat(test.getDocumentElement().getFirstChild().getNodeValue()).isEqualTo("SUCCESS");
     }
 
     /**
@@ -99,29 +116,30 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
      */
     @Test
     public void assertXmlApiWithDepthContainsDeepElements() {
+        // setup project
+        FreeStyleProject project = createJobWithWorkspaceFile("checkstyleregextest.xml");
+        enableWarningsWithCheckstyle(project);
+
+        String buildNumber = String.valueOf(buildProjectAndReturnBuildNo(project));
+
+        // get xml result from API
+        XmlPage page = getXmlPage(project, buildNumber, "/checkstyleResult/api/xml?depth=0");
+        Document test = page.getXmlDocument();
+
+        // navigate to deep level element
+        XPath xp = XPathFactory.newInstance().newXPath();
+        Node deepLevelElement = null;
         try {
-            // setup project
-            FreeStyleProject project = createJobWithWorkspaceFile("checkstyleregextest.xml");
-            enableWarningsWithCheckstyle(project);
-            String buildNumber = String.valueOf(project.getNextBuildNumber());
-            scheduleBuild(project);
-
-            // get xml result from API
-            XmlPage page = j.createWebClient()
-                    .goToXml(project.getUrl() + buildNumber + "/checkstyleResult/api/xml?depth=1");
-            Document test = page.getXmlDocument();
-
-            // navigate to deep level element
-            XPath xp = XPathFactory.newInstance().newXPath();
-            Node deepLevelElement = (Node) xp.compile("//analysisResult//owner//action//cause//*")
+            deepLevelElement = (Node) xp.compile("//analysisResult//owner//action//cause//*")
                     .evaluate(test, XPathConstants.NODE);
+        }
+        catch (XPathExpressionException e) {
+            throw new AssertionError(e);
+        }
 
-            // assert that an element exists, which is not returned by a call without depth parameter
-            assertThat(deepLevelElement.getNodeName()).isEqualTo("shortDescription");
-        }
-        catch (IOException | SAXException | XPathExpressionException e) {
-            e.printStackTrace();
-        }
+        // assert that an element exists, which is not returned by a call without depth parameter
+        assertThat(deepLevelElement).isNotNull();
+        assertThat(deepLevelElement.getNodeName()).isEqualTo("shortDescription");
     }
 
     /**
@@ -144,7 +162,7 @@ public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
             document = builder.parse(new File("src/test/resources/io/jenkins/plugins/analysis/warnings/" + filename));
         }
         catch (ParserConfigurationException | SAXException | IOException e) {
-            e.printStackTrace();
+            throw new AssertionError(e);
         }
 
         // remove run specific nodes that can not be compared
