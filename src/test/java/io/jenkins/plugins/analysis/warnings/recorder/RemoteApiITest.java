@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,15 +25,16 @@ import com.gargoylesoftware.htmlunit.xml.XmlPage;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
 
 import hudson.model.FreeStyleProject;
 
 /**
- * Integration test for the issue remote api.
+ * Integration tests of the remote API.
  *
  * @author Manuel Hampp
  */
-public class IssueRecorderXmlApiTest extends IssuesRecorderITest {
+public class RemoteApiITest extends IssuesRecorderITest {
     /**
      * Compares the basic xml api (without parameters) against a control result.
      */

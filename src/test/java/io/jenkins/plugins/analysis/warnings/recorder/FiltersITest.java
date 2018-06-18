@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
 import javax.annotation.Nonnull;
 import java.io.FilterInputStream;
@@ -33,6 +33,8 @@ import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
+import io.jenkins.plugins.analysis.warnings.Pmd;
 import static org.assertj.core.api.Assertions.*;
 
 import hudson.FilePath;
@@ -41,11 +43,11 @@ import hudson.model.Result;
 import hudson.model.TopLevelItem;
 
 /**
- * Integration tests of the warnings plugin in freestyle jobs. Tests the issue (regex-)filter of the post-build action.
+ * Integration tests of the (regex-)filter of the post-build action.
  *
  * @author Manuel Hampp
  */
-public class IssueRecorderRegexTest extends IssuesRecorderITest {
+public class FiltersITest extends IssuesRecorderITest {
     /**
      * Tests the module expression filter: provides a pom.xml in the workspace so that modules are correctly assigned.
      */

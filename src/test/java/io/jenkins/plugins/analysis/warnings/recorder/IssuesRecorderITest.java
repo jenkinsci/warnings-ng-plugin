@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +13,10 @@ import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.jvnet.hudson.test.recipes.WithTimeout;
 import org.xml.sax.SAXException;
 
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlFormUtil;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -24,12 +27,18 @@ import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
+import io.jenkins.plugins.analysis.warnings.Eclipse;
+import io.jenkins.plugins.analysis.warnings.Pmd;
 
 import hudson.model.AbstractProject;
+import hudson.model.Descriptor;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
+import hudson.tasks.Publisher;
+import hudson.util.DescribableList;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -37,6 +46,60 @@ import hudson.model.Run;
  * @author Ullrich Hafner
  */
 public class IssuesRecorderITest extends IntegrationTest {
+    /**
+     * Verifies that the reference job name can be set to another job.
+     */
+    @Test
+    public void shouldInitializeAndStoreReferenceJobName() {
+        FreeStyleProject job = createFreeStyleProject();
+        String initialization = "Reference Job";
+        enableWarnings(job, tool -> {
+            tool.setReferenceJobName(initialization);
+        });
+        
+        HtmlPage configPage = getWebPage(job, "configure");
+        HtmlForm form = configPage.getFormByName("config");
+        HtmlTextInput referenceJob = form.getInputByName("_.referenceJobName");
+        assertThat(referenceJob.getText()).isEqualTo(initialization);
+        
+        String update = "New Reference Job";
+        referenceJob.setText(update);
+
+        submit(form);
+        
+        assertThat(getRecorder(job).getReferenceJobName()).isEqualTo(update);
+    }
+    
+    private IssuesRecorder getRecorder(final AbstractProject<?, ?> job) {
+        DescribableList<Publisher, Descriptor<Publisher>> publishers = job.getPublishersList();
+        for (Publisher publisher : publishers) {
+            if (publisher instanceof IssuesRecorder) {
+                return (IssuesRecorder) publisher;
+            }
+        }
+        throw new AssertionError("No instance of IssuesRecorder found for job " + job);
+    }
+    
+    private void submit(final HtmlForm form) {
+        try {
+            HtmlFormUtil.submit(form);
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    private HtmlPage getWebPage(final AbstractProject job, final String page) {
+        try {
+            WebClient webClient = j.createWebClient();
+            webClient.setJavaScriptEnabled(true);
+            return webClient.getPage(job, page);
+        }
+        catch (SAXException | IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+    
     /**
      * Runs the Eclipse parser on an empty workspace: the build should report 0 issues and an error message.
      */
@@ -110,20 +173,6 @@ public class IssuesRecorderITest extends IntegrationTest {
             return webClient.getPage(result.getOwner(), "eclipseResult");
         }
         catch (SAXException | IOException e) {
-           throw new AssertionError(e);
-        }
-    }
-
-    /**
-     * Creates a new {@link FreeStyleProject freestyle job}. The job will get a generated name.
-     *
-     * @return the created job
-     */
-    private FreeStyleProject createJob() {
-        try {
-            return j.createFreeStyleProject();
-        }
-        catch (IOException e) {
             throw new AssertionError(e);
         }
     }
@@ -137,7 +186,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      *
      * @return the created job
      */
-    private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
+    protected FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
         FreeStyleProject job = createFreeStyleProject();
         copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
@@ -242,7 +291,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @return the created {@link ResultAction}
      */
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private AnalysisResult scheduleBuildAndAssertStatus(final FreeStyleProject job, final Result status) {
+    protected AnalysisResult scheduleBuildAndAssertStatus(final FreeStyleProject job, final Result status) {
         try {
             FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
 
