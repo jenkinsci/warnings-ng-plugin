@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class ClangTidy extends StaticAnalysisTool {
+    private static final long serialVersionUID = 5834065931433801829L;
     static final String ID = "clang-tidy";
 
     /** Creates a new instance of {@link ClangTidy}. */
     @DataBoundConstructor
     public ClangTidy() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class ClangTidy extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

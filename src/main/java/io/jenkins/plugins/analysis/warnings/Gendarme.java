@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.gendarme.GendarmeParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.gendarme.GendarmeParser;
 
 /**
  * Provides a parser and customized messages for Gendarme violations.
@@ -16,11 +15,13 @@ import edu.hm.hafner.analysis.parser.gendarme.GendarmeParser;
  * @author Ullrich Hafner
  */
 public class Gendarme extends StaticAnalysisTool {
+    private static final long serialVersionUID = -8528091256734714597L;
     static final String ID = "gendarme";
 
     /** Creates a new instance of {@link Gendarme}. */
     @DataBoundConstructor
     public Gendarme() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -37,6 +38,7 @@ public class Gendarme extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

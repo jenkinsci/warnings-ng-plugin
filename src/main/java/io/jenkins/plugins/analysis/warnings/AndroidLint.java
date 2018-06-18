@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.violations.AndroidLintParserAdapter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.violations.AndroidLintParserAdapter;
 
 /**
  * Provides a parser and customized messages for Android Lint.
@@ -16,11 +15,13 @@ import edu.hm.hafner.analysis.parser.violations.AndroidLintParserAdapter;
  * @author Ullrich Hafner
  */
 public class AndroidLint extends StaticAnalysisTool {
+    private static final long serialVersionUID = -7264992947534927156L;
     static final String ID = "android-lint";
 
     /** Creates a new instance of {@link AndroidLint}. */
     @DataBoundConstructor
     public AndroidLint() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -32,6 +33,7 @@ public class AndroidLint extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

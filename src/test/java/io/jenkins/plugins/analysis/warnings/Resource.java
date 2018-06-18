@@ -11,12 +11,15 @@ import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Wraps a resource found by {@link Class#getResource(String)}.
  *
  * @author Kohsuke Kawaguchi
  */
 @SuppressWarnings("all")
+@SuppressFBWarnings("DM")
 public class Resource {
     public final URL url;
 

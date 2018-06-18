@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.violations.ErrorProneAdapter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.violations.ErrorProneAdapter;
 
 /**
  * Provides a parser and customized messages for Error Prone.
@@ -16,11 +15,13 @@ import edu.hm.hafner.analysis.parser.violations.ErrorProneAdapter;
  * @author Ullrich Hafner
  */
 public class ErrorProne extends StaticAnalysisTool {
+    private static final long serialVersionUID = -511511623854186032L;
     static final String ID = "error-prone";
 
     /** Creates a new instance of {@link ErrorProne}. */
     @DataBoundConstructor
     public ErrorProne() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -32,6 +33,7 @@ public class ErrorProne extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

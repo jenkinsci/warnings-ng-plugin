@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.*;
  * @author Ullrich Hafner
  */
 public class ParserConfigurationITest extends IntegrationTest {
+    /** Verifies that there is no parser defined and one factory. */
     @Test
     public void shouldHaveNoParsersAndOneProviderConfiguredWhenCreated() {
         ParserConfiguration configuration = getConfiguration();
@@ -28,6 +29,7 @@ public class ParserConfigurationITest extends IntegrationTest {
         assertThat(provider.getTools()).isEmpty();
     }
 
+    /** Verifies that there is one parser defined and one factory. */
     @Test
     public void shouldProvideOneParserForToolsRegistry() {
         ParserConfiguration configuration = getConfiguration();
