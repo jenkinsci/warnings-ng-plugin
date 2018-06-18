@@ -60,6 +60,7 @@ public class DetailFactory {
         String plainLink = strip(link);
         String url = parent.getUrl() + "/" + plainLink;
 
+        // FIXME: url is broken for new, high, etc.
         if ("fixed".equals(link)) {
             return new FixedWarningsDetail(owner, result, fixedIssues, url, labelProvider, sourceEncoding);
         }
