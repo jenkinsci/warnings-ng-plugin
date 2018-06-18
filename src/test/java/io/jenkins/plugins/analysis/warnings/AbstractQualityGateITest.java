@@ -1,7 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.function.Consumer;
 
+import org.eclipse.collections.impl.factory.Maps;
 import org.junit.Test;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -21,8 +24,8 @@ import hudson.model.TopLevelItem;
 
 /**
  * This class is a generic way to test {@link QualityGate} with an {@link AbstractProject}. The file
- * checkstyle-qualitygate.xml is being used for the tests. It contains 11 issues overall, from which 6 have high, 2 have
- * normal and 3 have low severity.
+ * 'checkstyle-quality-gate.xml' is being used for the tests. It contains 11 issues overall, from which 6 have high, 2
+ * have normal and 3 have low severity.
  *
  * @param <T>
  *         type of the project to test quality gate with
@@ -30,8 +33,13 @@ import hudson.model.TopLevelItem;
  * @author Michaela Reitschuster
  */
 public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLevelItem> extends IntegrationTest {
+    private static final Map<Result, Status> RESULT_TO_STATUS_MAPPING = Maps.fixedSize.of(
+            Result.UNSTABLE, Status.WARNING,
+            Result.FAILURE, Status.FAILED);
+    private static final String REPORT_FILE = "checkstyle-quality-gate.xml";
+
     /**
-     * Factory method to create the project which is used to be tested with the {@link IssuesRecorder}. 
+     * Factory method to create the project which is used to be tested with the {@link IssuesRecorder}.
      *
      * @return T project to test.
      */
@@ -43,16 +51,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeUnstableWhenUnstableNewAllIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setUnstableNewAll(11);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
-    }
-
-    private void runBuildTwice(final T project, final Result result, final Status status) {
-        scheduleBuildAndAssertStatus(project, Result.SUCCESS, Status.PASSED);
-        copyMultipleFilesToWorkspaceWithSuffix(project, "checkstyle-qualitygate.xml");
-        scheduleBuildAndAssertStatus(project, result, status);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableNewAll(11));
+        runJobTwice(project, Result.UNSTABLE, Status.WARNING);
     }
 
     /**
@@ -62,10 +62,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeUnstableWhenUnstableNewHighIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setUnstableNewHigh(6);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableNewHigh(6));
+        runJobTwice(project, Result.UNSTABLE, Status.WARNING);
     }
 
     /**
@@ -75,10 +73,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeUnstableWhenUnstableNewNormalIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setUnstableNewNormal(2);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableNewNormal(2));
+        runJobTwice(project, Result.UNSTABLE, Status.WARNING);
     }
 
     /**
@@ -88,10 +84,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeUnstableWhenUnstableNewLowIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setUnstableNewLow(3);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableNewLow(3));
+        runJobTwice(project, Result.UNSTABLE, Status.WARNING);
     }
 
     /**
@@ -100,10 +94,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeUnstableWhenUnstableTotalAllIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setUnstableTotalAll(11);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableTotalAll(11));
+        runJobTwice(project, Result.UNSTABLE, Status.WARNING);
     }
 
     /**
@@ -113,10 +105,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeUnstableWhenUnstableTotalHighIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setUnstableTotalHigh(6);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableTotalHigh(6));
+        runJobTwice(project, Result.UNSTABLE, Status.WARNING);
     }
 
     /**
@@ -126,10 +116,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeUnstableWhenUnstableTotalNormalIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setUnstableTotalNormal(2);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableTotalNormal(2));
+        runJobTwice(project, Result.UNSTABLE, Status.WARNING);
     }
 
     /**
@@ -139,10 +127,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeUnstableWhenUnstableTotalLowIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setUnstableTotalLow(3);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableTotalLow(3));
+        runJobTwice(project, Result.UNSTABLE, Status.WARNING);
     }
 
     /**
@@ -151,10 +137,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeFailureWhenFailedNewAllIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setFailedNewAll(9);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.FAILURE, Status.FAILED);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedNewAll(9));
+        runJobTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -164,10 +148,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeFailureWhenFailedNewHighIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setFailedNewHigh(6);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.FAILURE, Status.FAILED);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedNewHigh(6));
+        runJobTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -177,10 +159,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeFailureWhenFailedNewNormalIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setFailedNewNormal(2);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.FAILURE, Status.FAILED);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedNewNormal(2));
+        runJobTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -190,10 +170,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeFailureWhenFailedNewLowIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setFailedNewLow(3);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.FAILURE, Status.FAILED);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedNewLow(3));
+        runJobTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -202,10 +180,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeFailureWhenFailureTotalAllIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setFailedTotalAll(11);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.FAILURE, Status.FAILED);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedTotalAll(11));
+        runJobTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -214,10 +190,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeFailureWhenFailureTotalHighIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setFailedTotalHigh(6);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.FAILURE, Status.FAILED);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedTotalHigh(6));
+        runJobTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -227,10 +201,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeFailureWhenFailureTotalNormalIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setFailedTotalNormal(2);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.FAILURE, Status.FAILED);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedTotalNormal(2));
+        runJobTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -239,10 +211,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldBeFailureWhenFailureTotalLowIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setFailedTotalLow(3);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.FAILURE, Status.FAILED);
+        enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedTotalLow(3));
+        runJobTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -251,19 +221,33 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @Test
     public void shouldOverrideUnstableWhenFailureAndUnstableThresholdIsReached() {
         T project = createProject();
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setUnstableTotalAll(1);
-        publisher.setFailedTotalLow(3);
-        enableWarningsAndSetThreshholds(project, publisher);
-        runBuildTwice(project, Result.FAILURE, Status.FAILED);
+        enableAndConfigureCheckstyle(project, recorder -> {
+            recorder.setUnstableTotalAll(1);
+            recorder.setFailedTotalLow(3);
+        });
+        runJobTwice(project, Result.FAILURE, Status.FAILED);
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Runs the specified project two times in a row. During the first run, no warnings report file is in the workspace
+     * so the build always will be successful. In the second run, the file 'checkstyle-quality-gate.xml' is copied to
+     * the workspace so that the project will contain new warnings. (In the first run, new warnings are suppressed
+     * automatically, so at least two builds are required to fire the new warnings detection).
+     */
+    private void runJobTwice(final T project, final Result result, final Status status) {
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS, Status.PASSED);
+        copyMultipleFilesToWorkspaceWithSuffix(project, REPORT_FILE);
+        scheduleBuildAndAssertStatus(project, result, RESULT_TO_STATUS_MAPPING.get(result));
+    }
+
     @CanIgnoreReturnValue
-    private IssuesRecorder enableWarningsAndSetThreshholds(final AbstractProject job, IssuesRecorder publisher) {
-        publisher.setTools(Collections.singletonList(new ToolConfiguration(new CheckStyle(), "**/*issues.txt")));
-        job.getPublishersList().add(publisher);
-        return publisher;
+    private IssuesRecorder enableAndConfigureCheckstyle(final AbstractProject<?, ?> job,
+            final Consumer<IssuesRecorder> configuration) {
+        IssuesRecorder item = new IssuesRecorder();
+        item.setTools(Collections.singletonList(new ToolConfiguration(new CheckStyle(), "**/*issues.txt")));
+        job.getPublishersList().add(item);
+        configuration.accept(item);
+        return item;
     }
 
     @SuppressWarnings("illegalcatch")
