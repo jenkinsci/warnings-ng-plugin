@@ -12,7 +12,7 @@ import hudson.model.FreeStyleProject;
 public class FreeStyleProjectQualityGateITest extends AbstractQualityGateITest<FreeStyleProject> {
 
     @Override
-    protected FreeStyleProject getProject() {
+    protected FreeStyleProject createProject() {
         try {
             return j.createFreeStyleProject();
         }

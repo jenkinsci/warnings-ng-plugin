@@ -7,6 +7,8 @@ import org.junit.Test;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+import io.jenkins.plugins.analysis.core.quality.QualityGate;
+import io.jenkins.plugins.analysis.core.quality.Status;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
@@ -18,9 +20,9 @@ import hudson.model.Run;
 import hudson.model.TopLevelItem;
 
 /**
- * This class is a generic way to test {@link io.jenkins.plugins.analysis.core.quality.QualityGate} with an {@link
- * AbstractProject}. The file checkstyle-qualitygate.xml is being used for the tests. It contains 11 issues overall,
- * from which 6 have high, 2 have normal and 3 have low severity.
+ * This class is a generic way to test {@link QualityGate} with an {@link AbstractProject}. The file
+ * checkstyle-qualitygate.xml is being used for the tests. It contains 11 issues overall, from which 6 have high, 2 have
+ * normal and 3 have low severity.
  *
  * @param <T>
  *         type of the project to test quality gate with
@@ -29,12 +31,11 @@ import hudson.model.TopLevelItem;
  */
 public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLevelItem> extends IntegrationTest {
     /**
-     * Returns the project which is used to be tested. This makes the implementation of the method mandatory so that all
-     * extending classes can be used for the QualityGateIntegrationTest.
+     * Factory method to create the project which is used to be tested with the {@link IssuesRecorder}. 
      *
      * @return T project to test.
      */
-    protected abstract T getProject();
+    protected abstract T createProject();
 
     /**
      * Tests if the build is considered unstable when its defined threshold for new issues (overall) is reached.
@@ -45,7 +46,13 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableNewAll(11);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
+    }
+
+    private void runBuildTwice(final T project, final Result result, final Status status) {
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS, Status.PASSED);
+        copyMultipleFilesToWorkspaceWithSuffix(project, "checkstyle-qualitygate.xml");
+        scheduleBuildAndAssertStatus(project, result, status);
     }
 
     /**
@@ -58,7 +65,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableNewHigh(6);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
     }
 
     /**
@@ -71,7 +78,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableNewNormal(2);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
     }
 
     /**
@@ -84,7 +91,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableNewLow(3);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
     }
 
     /**
@@ -96,7 +103,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableTotalAll(11);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
     }
 
     /**
@@ -109,7 +116,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableTotalHigh(6);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
     }
 
     /**
@@ -122,7 +129,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableTotalNormal(2);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
     }
 
     /**
@@ -135,7 +142,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setUnstableTotalLow(3);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        runBuildTwice(project, Result.UNSTABLE, Status.WARNING);
     }
 
     /**
@@ -147,7 +154,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedNewAll(9);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        runBuildTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -160,7 +167,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedNewHigh(6);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        runBuildTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -173,7 +180,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedNewNormal(2);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        runBuildTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -186,7 +193,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedNewLow(3);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        runBuildTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -198,7 +205,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedTotalAll(11);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        runBuildTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -210,7 +217,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedTotalHigh(6);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        runBuildTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -223,7 +230,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedTotalNormal(2);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        runBuildTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -235,7 +242,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setFailedTotalLow(3);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        runBuildTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     /**
@@ -248,29 +255,23 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
         publisher.setUnstableTotalAll(1);
         publisher.setFailedTotalLow(3);
         enableWarningsAndSetThreshholds(project, publisher);
-        scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        runBuildTwice(project, Result.FAILURE, Status.FAILED);
     }
 
     @SuppressWarnings("unchecked")
     @CanIgnoreReturnValue
     private IssuesRecorder enableWarningsAndSetThreshholds(final AbstractProject job, IssuesRecorder publisher) {
-        publisher.setTools(Collections.singletonList(new ToolConfiguration("**/*issues.txt", new CheckStyle())));
+        publisher.setTools(Collections.singletonList(new ToolConfiguration(new CheckStyle(), "**/*issues.txt")));
         job.getPublishersList().add(publisher);
         return publisher;
     }
 
-    private T createProject() {
-        T project = getProject();
-        copyFilesToWorkspace(project, "checkstyle-qualitygate.xml");
-        return project;
-    }
-
     @SuppressWarnings("illegalcatch")
-    private void scheduleBuildAndAssertStatus(final AbstractProject job, final Result status) {
+    private void scheduleBuildAndAssertStatus(final AbstractProject job, final Result result, final Status status) {
         try {
-            Run build = j.assertBuildStatus(status, job.scheduleBuild2(0));
+            Run build = j.assertBuildStatus(result, job.scheduleBuild2(0));
             ResultAction action = build.getAction(ResultAction.class);
-            assertThat(action.getResult()).hasOverallResult(status);
+            assertThat(action.getResult()).hasStatus(status);
         }
         catch (Exception e) {
             throw new AssertionError(e);

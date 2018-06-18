@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.warnings;
 import java.io.IOException;
 
 import org.junit.Before;
+import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.ToolInstallations;
 
 import hudson.FilePath;
@@ -21,13 +22,13 @@ public class MavenProjectQualityGateITest extends AbstractQualityGateITest<Maven
     @Before
     public void initializeMaven() throws Exception {
         MavenInstallation mvn = ToolInstallations.configureMaven35();
-        MavenInstallation m3 = new MavenInstallation("apache-maven-3.3.9", mvn.getHome(), j.NO_PROPERTIES);
+        MavenInstallation m3 = new MavenInstallation("apache-maven-3.3.9", mvn.getHome(), JenkinsRule.NO_PROPERTIES);
         j.jenkins.getDescriptorByType(Maven.DescriptorImpl.class).setInstallations(m3);
 
     }
 
     @Override
-    protected MavenModuleSet getProject() {
+    protected MavenModuleSet createProject() {
         MavenModuleSet project = createJob();
         copyToWorkspace(project, "pom.xml");
         return project;
