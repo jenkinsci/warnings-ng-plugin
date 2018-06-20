@@ -22,20 +22,16 @@
                title="${%description.unstableNew}"/>
         </td>
         <td>
-          <i:number name="unstableNewAll"
-                     value="${instance.thresholds.unstableNewAll}"/>
+          <i:number name="unstableNewAll"/>
         </td>
         <td>
-          <i:number name="unstableNewHigh"
-                     value="${instance.thresholds.unstableNewHigh}"/>
+          <i:number name="unstableNewHigh"/>
         </td>
         <td>
-          <i:number name="unstableNewNormal"
-                     value="${instance.thresholds.unstableNewNormal}"/>
+          <i:number name="unstableNewNormal"/>
         </td>
         <td>
-          <i:number name="unstableNewLow"
-                     value="${instance.thresholds.unstableNewLow}"/>
+          <i:number name="unstableNewLow"/>
         </td>
       </tr>
       <tr>
@@ -44,20 +40,16 @@
                title="${%description.failedNew}"/>
         </td>
         <td>
-          <i:number name="failedNewAll"
-                     value="${instance.thresholds.failedNewAll}"/>
+          <i:number name="failedNewAll"/>
         </td>
         <td>
-          <i:number name="failedNewHigh"
-                     value="${instance.thresholds.failedNewHigh}"/>
+          <i:number name="failedNewHigh"/>
         </td>
         <td>
-          <i:number name="failedNewNormal"
-                     value="${instance.thresholds.failedNewNormal}"/>
+          <i:number name="failedNewNormal"/>
         </td>
         <td>
-          <i:number name="failedNewLow"
-                     value="${instance.thresholds.failedNewLow}"/>
+          <i:number name="failedNewLow"/>
         </td>
       </tr>
     </tbody>
