@@ -22,16 +22,16 @@
                title="${%description.unstableNew}"/>
         </td>
         <td>
-          <i:number name="unstableNewAll"/>
+          <i:number field="unstableNewAll"/>
         </td>
         <td>
-          <i:number name="unstableNewHigh"/>
+          <i:number field="unstableNewHigh"/>
         </td>
         <td>
-          <i:number name="unstableNewNormal"/>
+          <i:number field="unstableNewNormal"/>
         </td>
         <td>
-          <i:number name="unstableNewLow"/>
+          <i:number field="unstableNewLow"/>
         </td>
       </tr>
       <tr>
@@ -40,16 +40,16 @@
                title="${%description.failedNew}"/>
         </td>
         <td>
-          <i:number name="failedNewAll"/>
+          <i:number field="failedNewAll"/>
         </td>
         <td>
-          <i:number name="failedNewHigh"/>
+          <i:number field="failedNewHigh"/>
         </td>
         <td>
-          <i:number name="failedNewNormal"/>
+          <i:number field="failedNewNormal"/>
         </td>
         <td>
-          <i:number name="failedNewLow"/>
+          <i:number field="failedNewLow"/>
         </td>
       </tr>
     </tbody>
