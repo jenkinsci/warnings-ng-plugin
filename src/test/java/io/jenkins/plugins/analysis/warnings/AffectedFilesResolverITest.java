@@ -4,12 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
@@ -32,6 +35,7 @@ import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.FilePath;
 import hudson.FilePath.TarCompression;
+import hudson.Functions;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -40,15 +44,21 @@ import hudson.tasks.Maven;
 
 /**
  * This class is an integration test for the class {@link AffectedFilesResolver}.
+ * <p>
+ * The files below are necessary for the integration test of {@link io.jenkins.plugins.analysis.core.util.AffectedFilesResolver}}.
+ * A short description of the purpose of every file should be given here.
+ * <b>Main.zip:</b>
+ * Main.java a sample Java class for the test cases
+ * <p>
  *
  * @author Deniz Mardin
  * @author Frank Christian Geyer
  */
-public class AffectedFilesResolverIT extends IntegrationTest {
+public class AffectedFilesResolverITest extends IntegrationTest {
 
     private static final String WINDOWS_FILE_ACCESS_READ_ONLY = "RX";
     private static final String WINDOWS_FILE_DENY = "/deny";
-    private static final String PACKAGE_FOR_ECLIPSE_TXT = "/edu/hm/hafner/analysis/AffectedFilesResolverTestFiles";
+    private static final String PACKAGE_FOR_ECLIPSE_TXT = "AffectedFilesResolverTestFiles";
     private static final String ZIP_FILE = PACKAGE_FOR_ECLIPSE_TXT + "/Main.zip";
     private static final String ECLIPSE_TXT =
             PACKAGE_FOR_ECLIPSE_TXT + "/eclipseOneAffectedAndThreeNotExistingFiles.txt";
@@ -105,7 +115,7 @@ public class AffectedFilesResolverIT extends IntegrationTest {
                         .toURI()
                         .getPath();
                 File fileInTmp = AffectedFilesResolver.getTempFile(result.getOwner(), issue);
-                if (System.getProperty("os.name").contains("Windows")) {
+                if (Functions.isWindows()) {
                     pathOfFileInWorkspace = pathOfFileInWorkspace.replaceFirst("/", "");
                     execWindowsCommandIcacls(pathOfFileInWorkspace, WINDOWS_FILE_DENY, WINDOWS_FILE_ACCESS_READ_ONLY);
                     execWindowsCommandIcacls(fileInTmp.getAbsolutePath(), WINDOWS_FILE_DENY,
@@ -172,17 +182,21 @@ public class AffectedFilesResolverIT extends IntegrationTest {
         enableWarnings(project);
 
         String pathToExtractedFile = j.jenkins.getWorkspaceFor(project) + "/" + EXTRACTED_FILE;
-        if (System.getProperty("os.name").contains("Windows")) {
-            execWindowsCommandIcacls(pathToExtractedFile, WINDOWS_FILE_DENY, WINDOWS_FILE_ACCESS_READ_ONLY);
-        }
-        else {
-            assertThat(new File(pathToExtractedFile).setReadable(false, false)).isTrue();
-        }
+        denyFileAccess(pathToExtractedFile);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         File logFile = project.getBuildByNumber(result.getBuild().getNumber()).getLogFile();
         String consoleOutput = convertFileToString(logFile);
         assertThat(consoleOutput).contains("0 copied, 3 not-found, 1 with I/O error");
+    }
+
+    private void denyFileAccess(final String pathToFile) {
+        if (Functions.isWindows()) {
+            execWindowsCommandIcacls(pathToFile, WINDOWS_FILE_DENY, WINDOWS_FILE_ACCESS_READ_ONLY);
+        }
+        else {
+            assertThat(new File(pathToFile).setReadable(false, false)).isTrue();
+        }
     }
 
     /**
@@ -213,6 +227,27 @@ public class AffectedFilesResolverIT extends IntegrationTest {
         assertThat(convertFileToString(buildProject().getOwner().getLogFile())).contains(
                 "0 copied, 0 not-found, 0 with I/O error");
     }
+
+    /**
+     * Creates a pre-defined filename for a workspace file.
+     *
+     * @param fileNamePrefix
+     *         prefix of the filename
+     */
+    @Override
+    protected String createWorkspaceFileName(final String fileNamePrefix) {
+        String modifiedFileName = String.format("%s-issues.txt", FilenameUtils.getBaseName(fileNamePrefix));
+
+        String[] genericFileNamesToKeep = new String[]{
+                ".zip", ".tar", ".gz"
+        };
+
+        List<Boolean> fileNamePrefixInList = Arrays.stream(genericFileNamesToKeep)
+                .map(fileNamePrefix::endsWith)
+                .collect(Collectors.toList());
+        return fileNamePrefixInList.contains(true) ? FilenameUtils.getName(fileNamePrefix) : modifiedFileName;
+    }
+
 
     private void checkIfContentExists(final HtmlPage contentPage) {
         assertThat(contentPage.getElementById("main-panel").asText()).contains(("Can't read file: "));
