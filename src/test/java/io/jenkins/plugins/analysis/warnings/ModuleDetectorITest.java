@@ -306,7 +306,7 @@ public class ModuleDetectorITest extends IntegrationTest {
     @Test
     public void shouldContainNoHtmlOutputForASingleModuleOsgiProject() throws IOException, SAXException {
         String[] filesWithModuleConfiguration = new String[]{
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/Manifest.MF"};
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF"};
         checkWebPageForExpectedEmptyResult(
                 buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, false,
                         filesWithModuleConfiguration));
