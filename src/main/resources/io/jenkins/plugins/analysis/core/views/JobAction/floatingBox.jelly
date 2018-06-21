@@ -1,8 +1,8 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
 >
-  <j:if test="${from.isTrendVisible(request)}">
-    <div align="right">
+  <div id="${from.urlName}" align="right">
+    <j:if test="${from.isTrendVisible(request)}">
       <div class="test-trend-caption">
         ${from.trendName}
       </div>
@@ -17,11 +17,9 @@
         <st:nbsp/>
         <a href="${from.urlName}/configure">${%Configure}</a>
       </div>
-    </div>
-  </j:if>
-  <j:if test="${from.canShowEnableTrendLink(request)}">
-    <div align="right">
+    </j:if>
+    <j:if test="${from.canShowEnableTrendLink(request)}">
       <a href="${from.urlName}/configure">${%enable.graph(from.trendName)}</a>
-    </div>
-  </j:if>
+    </j:if>
+  </div>
 </j:jelly>
