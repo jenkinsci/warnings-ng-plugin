@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,13 +122,13 @@ public class MiscIssuesRecorderITest extends IssuesRecorderITest {
      * build should report 6 and 4 issues.
      */
     @Test
-    public void shouldCreateMultipleToolsAndAggregationResultWithWarningsAggregateFalse() {
+    public void shouldCreateMultipleActionsIfAggregationDisabled() {
         FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
-        enableWarnings(project, recorder -> recorder.setAggregatingResults(false), 
+        enableWarnings(project, recorder -> recorder.setAggregatingResults(false),
                 new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
                 new ToolConfiguration(new Pmd(), "**/pmd-warnings-issues.txt"));
-        
-        List<AnalysisResult> results = scheduleBuildAndAssertStatusForBothTools(project, Result.SUCCESS);
+
+        List<AnalysisResult> results = getAnalysisResults(buildWithStatus(project, Result.SUCCESS));
 
         assertThat(results).hasSize(2);
 
@@ -145,7 +144,29 @@ public class MiscIssuesRecorderITest extends IssuesRecorderITest {
         }
     }
 
-     /**
+    /**
+     * Runs the CheckStyle and PMD tools for two corresponding files which contain at least 6 respectively 4 issues: due
+     * to enabled aggregation, the build should report 10 issues.
+     */
+    @Test
+    public void shouldCreateSingleActionIfAggregationEnabled() {
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
+        enableWarnings(project, recorder -> recorder.setAggregatingResults(true),
+                new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
+                new ToolConfiguration(new Pmd(), "**/pmd-warnings-issues.txt"));
+
+        List<AnalysisResult> results = getAnalysisResults(buildWithStatus(project, Result.SUCCESS));
+
+        assertThat(results).hasSize(1);
+
+        AnalysisResult result = results.get(0);
+        assertThat(result.getSizePerOrigin()).containsOnlyKeys("checkstyle", "pmd");
+        assertThat(result).hasTotalSize(10);
+        assertThat(result).hasId("analysis");
+        assertThat(result).hasStatus(Status.INACTIVE);
+    }
+
+    /**
      * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
      * the job.
      *
@@ -174,36 +195,6 @@ public class MiscIssuesRecorderITest extends IssuesRecorderITest {
         publisher.setTools(toolList);
 
         job.getPublishersList().add(publisher);
-    }
-    
-   /**
-     * Schedules a new build for the specified job and returns the created {@link List<AnalysisResult>} after the build
-     * has been finished as one result of both tools.
-     *
-     * @param job
-     *         the job to schedule
-     * @param status
-     *         the expected result of both tools for the build
-     *
-     * @return the created {@link List<ResultAction>}
-     */
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private List<AnalysisResult> scheduleBuildAndAssertStatusForBothTools(final FreeStyleProject job,
-            final Result status) {
-        try {
-            FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
-            System.out.println(new String(Files.readAllBytes(build.getLogFile().toPath())));
-            List<ResultAction> actions = build.getActions(ResultAction.class);
-
-            List<AnalysisResult> results = new ArrayList<>();
-            for (ResultAction elements : actions) {
-                results.add(elements.getResult());
-            }
-            return results;
-        }
-        catch (Exception e) {
-            throw new AssertionError(e);
-        }
     }
 
     /**
@@ -256,28 +247,6 @@ public class MiscIssuesRecorderITest extends IssuesRecorderITest {
     }
 
     /**
-     * Runs the CheckStyle and PMD tools for two corresponding files which contain at least 6 respectively 4 issues: due
-     * to enabled aggregation, the build should report 10 issues.
-     */
-    @Test
-    public void shouldCreateMultipleToolsAndAggregationResultWithWarningsAggregateTrue() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
-        enableWarningsAggregation(project, true, "**/checkstyle-issues.txt", new CheckStyle(),
-                "**/pmd-warnings-issues.txt", new Pmd());
-
-        List<AnalysisResult> results = scheduleBuildAndAssertStatusForBothTools(project, Result.SUCCESS);
-
-        assertThat(results).hasSize(1);
-
-        for (AnalysisResult element : results) {
-            assertThat(element.getSizePerOrigin()).containsKeys("checkstyle", "pmd");
-            assertThat(element).hasTotalSize(10);
-            assertThat(element).hasId("analysis");
-            assertThat(element).hasStatus(Status.INACTIVE);
-        }
-    }
-
-    /**
      * Runs the CheckStyle tool twice for two different files with varying amount of issues: should produce a failure.
      */
     @Test
@@ -308,7 +277,7 @@ public class MiscIssuesRecorderITest extends IssuesRecorderITest {
         enableWarningsAggregation(project, true, "**/checkstyle2-issues.txt", new CheckStyle(),
                 "**/checkstyle3-issues.txt", new CheckStyle());
 
-        List<AnalysisResult> results = scheduleBuildAndAssertStatusForBothTools(project, Result.SUCCESS);
+        List<AnalysisResult> results = getAnalysisResults(buildWithStatus(project, Result.SUCCESS));
 
         assertThat(results).hasSize(1);
 

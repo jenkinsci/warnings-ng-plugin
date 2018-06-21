@@ -1,11 +1,10 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
@@ -28,7 +27,6 @@ import io.jenkins.plugins.analysis.warnings.Eclipse;
 
 import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
-import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -41,15 +39,15 @@ import hudson.util.DescribableList;
  * @author Ullrich Hafner
  */
 public class IssuesRecorderITest extends IntegrationTest {
-   protected void enableEclipseWarnings(final FreeStyleProject project) {
+    protected void enableEclipseWarnings(final FreeStyleProject project) {
         enableWarnings(project, new Eclipse());
     }
 
-   protected void enableCheckStyleWarnings(final FreeStyleProject project) {
+    protected void enableCheckStyleWarnings(final FreeStyleProject project) {
         enableWarnings(project, new CheckStyle());
     }
 
-   protected void enableEclipseWarnings(final FreeStyleProject project, final Consumer<IssuesRecorder> configuration) {
+    protected void enableEclipseWarnings(final FreeStyleProject project, final Consumer<IssuesRecorder> configuration) {
         enableWarnings(project, configuration, createGenericToolConfiguration(new Eclipse()));
     }
 
@@ -116,7 +114,8 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final Consumer<IssuesRecorder> configuration, 
+    protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
+            final Consumer<IssuesRecorder> configuration,
             final StaticAnalysisTool tool) {
         return enableWarnings(job, configuration, createGenericToolConfiguration(tool));
     }
@@ -149,7 +148,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         configuration.accept(recorder);
         return recorder;
     }
-    
+
     /**
      * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
      * the job.
@@ -191,42 +190,24 @@ public class IssuesRecorderITest extends IntegrationTest {
      *
      * @return the created {@link ResultAction}
      */
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
     protected AnalysisResult scheduleBuildAndAssertStatus(final FreeStyleProject job, final Result status) {
-        try {
-            FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
-
-            return getAnalysisResult(build);
-        }
-        catch (Exception e) {
-            throw new AssertionError(e);
-        }
+        return getAnalysisResult(buildWithStatus(job, status));
     }
 
     /**
-     * Schedules a new build for the specified job and returns the created {@link List<AnalysisResult>} after the build
-     * has been finished as one result of both tools.
+     * Schedules a new build for the specified job and returns the finished {@link Run}.
      *
      * @param job
      *         the job to schedule
      * @param status
-     *         the expected result of both tools for the build
+     *         the expected result for the build
      *
-     * @return the created {@link List<ResultAction>}
+     * @return the finished {@link Run}.
      */
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private List<AnalysisResult> scheduleBuildAndAssertStatusForBothTools(final FreeStyleProject job,
-            final Result status) {
+    protected Run<?, ?> buildWithStatus(final FreeStyleProject job, final Result status) {
         try {
-            FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
-            System.out.println(new String(Files.readAllBytes(build.getLogFile().toPath())));
-            List<ResultAction> actions = build.getActions(ResultAction.class);
-
-            List<AnalysisResult> results = new ArrayList<>();
-            for (ResultAction elements : actions) {
-                results.add(elements.getResult());
-            }
-            return results;
+            return j.assertBuildStatus(status, job.scheduleBuild2(0));
         }
         catch (Exception e) {
             throw new AssertionError(e);
@@ -234,67 +215,34 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Schedules a new build for the specified job and checks the console log.
-     *
-     * @param job
-     *         the job to schedule
-     * @param status
-     *         the expected result of both tools for the build
-     * @param log
-     *         the log string asserted to be in console
-     *
-     * @return the created {@link FreeStyleBuild}
-     */
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private FreeStyleBuild scheduleBuildAndAssertLog(final FreeStyleProject job, final Result status,
-            final String log) {
-        try {
-            FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
-            j.assertLogContains(log, build);
-            return build;
-        }
-        catch (Exception e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
-     * Creates a {@link List<AnalysisResult>} of the analysis results of {@link FreeStyleBuild}.
+     * Returns the created {@link AnalysisResult analysis result} of a build.
      *
      * @param build
-     *         the FreeStyleBuild
+     *         the build that has the action attached
      *
-     * @return the created {@link List<ResultAction>}
+     * @return the created result
      */
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private List<AnalysisResult> getAssertStatusForBothTools(final FreeStyleBuild build) {
-        try {
-            List<ResultAction> actions = build.getActions(ResultAction.class);
-
-            List<AnalysisResult> results = new ArrayList<>();
-            for (ResultAction elements : actions) {
-                results.add(elements.getResult());
-            }
-            return results;
-        }
-        catch (Exception e) {
-            throw new AssertionError(e);
-        }
+    protected AnalysisResult getAnalysisResult(final Run<?, ?> build) {
+        List<AnalysisResult> analysisResults = getAnalysisResults(build);
+        
+        assertThat(analysisResults).hasSize(1);
+        
+        return analysisResults.get(0);
     }
 
     /**
-     * Returns the created {@link AnalysisResult} of a run.
+     * Returns the created {@link AnalysisResult analysis results} of a build.
      *
-     * @param run
-     *         the run that has the action attached
+     * @param build
+     *         the run that has the actions attached
      *
-     * @return the created {@link ResultAction}
+     * @return the created results
      */
-    protected AnalysisResult getAnalysisResult(final Run<?, ?> run) {
-        ResultAction action = run.getAction(ResultAction.class);
+    protected List<AnalysisResult> getAnalysisResults(final Run<?, ?> build) {
+        List<ResultAction> actions = build.getActions(ResultAction.class);
 
-        assertThat(action).isNotNull();
-
-        return action.getResult();
+        assertThat(actions).isNotEmpty();
+        
+        return actions.stream().map(ResultAction::getResult).collect(Collectors.toList());
     }
 }
