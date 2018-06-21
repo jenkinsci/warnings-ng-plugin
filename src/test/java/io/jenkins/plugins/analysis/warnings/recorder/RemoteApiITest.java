@@ -35,12 +35,15 @@ import hudson.model.FreeStyleProject;
  * @author Manuel Hampp
  */
 public class RemoteApiITest extends IssuesRecorderITest {
+    private static final String CHECKSTYLE_FILE = "checkstyle-filtering.xml";
+    private static final String REMOTE_API_EXPECTED_XML = "checkstyle-expected-remote-api.xml";
+
     /**
      * Compares the basic xml api (without parameters) against a control result.
      */
     @Test
     public void assertXmlApiMatchesExpected() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyleregextest.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles(CHECKSTYLE_FILE);
         enableWarningsWithCheckstyle(project);
 
         String buildNumber = String.valueOf(buildProjectAndReturnBuildNo(project));
@@ -54,7 +57,7 @@ public class RemoteApiITest extends IssuesRecorderITest {
 
         // get control document
         // TODO: Replace xml file after fixing JENKINS-51642 (the xml must not be formatted!)
-        Document control = loadControlDocumentFromFile("checkstyleregextest_output.xml");
+        Document control = loadControlDocumentFromFile(REMOTE_API_EXPECTED_XML);
 
         // compare documents
         XMLUnit.setIgnoreWhitespace(true);
@@ -96,7 +99,7 @@ public class RemoteApiITest extends IssuesRecorderITest {
     @Test
     public void assertXmlApiWithXPathNavigationMatchesExpected() {
         // setup project
-        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyleregextest.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles(CHECKSTYLE_FILE);
         enableWarningsWithCheckstyle(project);
 
         String buildNumber = String.valueOf(buildProjectAndReturnBuildNo(project));
@@ -117,7 +120,7 @@ public class RemoteApiITest extends IssuesRecorderITest {
     @Test
     public void assertXmlApiWithDepthContainsDeepElements() {
         // setup project
-        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyleregextest.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles(CHECKSTYLE_FILE);
         enableWarningsWithCheckstyle(project);
 
         String buildNumber = String.valueOf(buildProjectAndReturnBuildNo(project));
