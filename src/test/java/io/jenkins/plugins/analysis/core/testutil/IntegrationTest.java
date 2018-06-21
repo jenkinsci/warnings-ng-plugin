@@ -224,7 +224,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * @return the build
      */
     @SuppressWarnings("illegalcatch")
-    protected Run buildWithResult(final AbstractProject<?, ?> job, final Result status) {
+    protected Run<?, ?> buildWithResult(final AbstractProject<?, ?> job, final Result status) {
         try {
             return j.assertBuildStatus(status, job.scheduleBuild2(0));
         }
