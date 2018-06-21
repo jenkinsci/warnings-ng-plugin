@@ -21,10 +21,7 @@
   <outstandingIssue/>
   <outstandingIssue/>
   <outstandingIssue/>
-  <owner _class="hudson.model.FreeStyleBuild">
-    <number>1</number>
-    <url>http://localhost:62054/jenkins/job/test0/1/</url>
-  </owner>
+  <owner _class="hudson.model.FreeStyleBuild" />
   <status>INACTIVE</status>
   <successful>true</successful>
   <totalErrorsSize>0</totalErrorsSize>

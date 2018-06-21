@@ -23,6 +23,7 @@ import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 
 import hudson.model.AbstractProject;
@@ -42,6 +43,10 @@ import hudson.util.DescribableList;
 public class IssuesRecorderITest extends IntegrationTest {
    protected void enableEclipseWarnings(final FreeStyleProject project) {
         enableWarnings(project, new Eclipse());
+    }
+
+   protected void enableCheckStyleWarnings(final FreeStyleProject project) {
+        enableWarnings(project, new CheckStyle());
     }
 
    protected void enableEclipseWarnings(final FreeStyleProject project, final Consumer<IssuesRecorder> configuration) {
