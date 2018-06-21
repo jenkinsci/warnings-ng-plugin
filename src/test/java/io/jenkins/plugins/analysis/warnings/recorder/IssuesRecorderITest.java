@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.warnings.recorder;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -56,50 +56,20 @@ public class IssuesRecorderITest extends IntegrationTest {
         enableWarnings(job, tool -> {
             tool.setReferenceJobName(initialization);
         });
-        
+
         HtmlPage configPage = getWebPage(job, "configure");
         HtmlForm form = configPage.getFormByName("config");
         HtmlTextInput referenceJob = form.getInputByName("_.referenceJobName");
         assertThat(referenceJob.getText()).isEqualTo(initialization);
-        
+
         String update = "New Reference Job";
         referenceJob.setText(update);
 
         submit(form);
-        
+
         assertThat(getRecorder(job).getReferenceJobName()).isEqualTo(update);
     }
-    
-    private IssuesRecorder getRecorder(final AbstractProject<?, ?> job) {
-        DescribableList<Publisher, Descriptor<Publisher>> publishers = job.getPublishersList();
-        for (Publisher publisher : publishers) {
-            if (publisher instanceof IssuesRecorder) {
-                return (IssuesRecorder) publisher;
-            }
-        }
-        throw new AssertionError("No instance of IssuesRecorder found for job " + job);
-    }
-    
-    private void submit(final HtmlForm form) {
-        try {
-            HtmlFormUtil.submit(form);
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
-    }
 
-    private HtmlPage getWebPage(final AbstractProject job, final String page) {
-        try {
-            WebClient webClient = j.createWebClient();
-            webClient.setJavaScriptEnabled(true);
-            return webClient.getPage(job, page);
-        }
-        catch (SAXException | IOException e) {
-            throw new AssertionError(e);
-        }
-    }
-    
     /**
      * Runs the Eclipse parser on an empty workspace: the build should report 0 issues and an error message.
      */
@@ -119,7 +89,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void shouldCreateResultWithWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
+        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
         enableEclipseWarnings(project);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -140,7 +110,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void shouldCreateUnstableResult() {
-        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
+        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
         enableWarnings(project, publisher -> publisher.setUnstableTotalAll(7));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
@@ -148,7 +118,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasStatus(Status.WARNING);
 
-        HtmlPage page = getWebPage(result);
+        HtmlPage page = getWebPage(project, "eclipse");
         assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
     }
 
@@ -159,20 +129,57 @@ public class IssuesRecorderITest extends IntegrationTest {
     public void shouldUseDefaultFileNamePattern() {
         FreeStyleProject project = createFreeStyleProject();
         copySingleFileToWorkspace(project, "checkstyle.xml", "checkstyle-result.xml");
-        enableWarnings(project, new CheckStyle(), StringUtils.EMPTY);
+        enableWarnings(project, new ToolConfiguration(new CheckStyle(), StringUtils.EMPTY));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(6);
     }
 
-    private HtmlPage getWebPage(final AnalysisResult result) {
+    /**
+     * Runs the CheckStyle and PMD tools for two corresponding files which contain at least 6 respectively 4 issues: the
+     * build should report 6 and 4 issues.
+     */
+    @Test
+    @WithTimeout(1000)
+    public void shouldCreateMultipleToolsAndAggregationResultWithWarningsAggregateFalse() {
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
+        enableWarnings(project, recorder -> recorder.setAggregatingResults(false), 
+                new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
+                new ToolConfiguration(new Pmd(), "**/pmd-warnings-issues.txt"));
+        
+        List<AnalysisResult> results = scheduleBuildAndAssertStatusForBothTools(project, Result.SUCCESS);
+
+        assertThat(results).hasSize(2);
+
+        for (AnalysisResult element : results) {
+            if (element.getId().equals("checkstyle")) {
+                assertThat(element).hasTotalSize(6);
+            }
+            else {
+                assertThat(element.getId()).isEqualTo("pmd");
+                assertThat(element).hasTotalSize(4);
+            }
+            assertThat(element).hasStatus(Status.INACTIVE);
+        }
+    }
+
+    private HtmlPage getWebPage(final AbstractProject job, final String page) {
         try {
             WebClient webClient = j.createWebClient();
-            webClient.setJavaScriptEnabled(false);
-            return webClient.getPage(result.getOwner(), "eclipseResult");
+            webClient.setJavaScriptEnabled(true);
+            return webClient.getPage(job, page);
         }
         catch (SAXException | IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    private void submit(final HtmlForm form) {
+        try {
+            HtmlFormUtil.submit(form);
+        }
+        catch (IOException e) {
             throw new AssertionError(e);
         }
     }
@@ -186,7 +193,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      *
      * @return the created job
      */
-    protected FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
+    protected FreeStyleProject createJobWithWorkspaceFiles(final String... fileNames) {
         FreeStyleProject job = createFreeStyleProject();
         copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
@@ -205,7 +212,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @CanIgnoreReturnValue
     private IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final StaticAnalysisTool tool) {
-        return enableWarnings(job, tool, "**/*issues.txt");
+        return enableWarnings(job, new ToolConfiguration(tool, "**/*issues.txt"));
     }
 
     /**
@@ -214,20 +221,48 @@ public class IssuesRecorderITest extends IntegrationTest {
      *
      * @param job
      *         the job to register the recorder for
-     * @param tool
-     *         the tool to scan the warnings
-     * @param pattern
-     *         the pattern to use for files
+     * @param configuration
+     *         configuration of the recorder
+     * @param toolConfigurations
+     *         the tool configurations to use
      *
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    private IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final StaticAnalysisTool tool,
-            final String pattern) {
+    private IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final Consumer<IssuesRecorder> configuration, 
+            final ToolConfiguration... toolConfigurations) {
+        IssuesRecorder recorder = enableWarnings(job, toolConfigurations);
+        configuration.accept(recorder);
+        return recorder;
+    }
+    
+    /**
+     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
+     * the job.
+     *
+     * @param job
+     *         the job to register the recorder for
+     * @param toolConfigurations
+     *         the tool configurations to use
+     *
+     * @return the created recorder
+     */
+    @CanIgnoreReturnValue
+    private IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final ToolConfiguration... toolConfigurations) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration(tool, pattern)));
+        publisher.setTools(Arrays.asList(toolConfigurations));
         job.getPublishersList().add(publisher);
         return publisher;
+    }
+
+    private IssuesRecorder getRecorder(final AbstractProject<?, ?> job) {
+        DescribableList<Publisher, Descriptor<Publisher>> publishers = job.getPublishersList();
+        for (Publisher publisher : publishers) {
+            if (publisher instanceof IssuesRecorder) {
+                return (IssuesRecorder) publisher;
+            }
+        }
+        throw new AssertionError("No instance of IssuesRecorder found for job " + job);
     }
 
     /**
@@ -345,7 +380,8 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @return the created {@link FreeStyleBuild}
      */
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private FreeStyleBuild scheduleBuildAndAssertLog(final FreeStyleProject job, final Result status, final String log) {
+    private FreeStyleBuild scheduleBuildAndAssertLog(final FreeStyleProject job, final Result status,
+            final String log) {
         try {
             FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
             j.assertLogContains(log, build);
@@ -381,40 +417,13 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Runs the CheckStyle and PMD tools for two corresponding files which contain at least 6 respectively 4 issues: the
-     * build should report 6 and 4 issues.
-     */
-    @Test
-    @WithTimeout(1000)
-    public void shouldCreateMultipleToolsAndAggregationResultWithWarningsAggregateFalse() {
-        FreeStyleProject project = createJobWithWorkspaceFile("checkstyle.xml", "pmd-warnings.xml");
-        enableWarningsAggregation(project, false, "**/checkstyle-issues.txt", new CheckStyle(),
-                "**/pmd-warnings-issues.txt", new Pmd());
-
-        List<AnalysisResult> results = scheduleBuildAndAssertStatusForBothTools(project, Result.SUCCESS);
-
-        assertThat(results).hasSize(2);
-
-        for (AnalysisResult element : results) {
-            if (element.getId().equals("checkstyle")) {
-                assertThat(element).hasTotalSize(6);
-            }
-            else {
-                assertThat(element.getId()).isEqualTo("pmd");
-                assertThat(element).hasTotalSize(4);
-            }
-            assertThat(element).hasStatus(Status.INACTIVE);
-        }
-    }
-
-    /**
      * Runs the CheckStyle and PMD tools for two corresponding files which contain at least 6 respectively 4 issues: due
      * to enabled aggregation, the build should report 10 issues.
      */
     @Test
     @WithTimeout(1000)
     public void shouldCreateMultipleToolsAndAggregationResultWithWarningsAggregateTrue() {
-        FreeStyleProject project = createJobWithWorkspaceFile("checkstyle.xml", "pmd-warnings.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
         enableWarningsAggregation(project, true, "**/checkstyle-issues.txt", new CheckStyle(),
                 "**/pmd-warnings-issues.txt", new Pmd());
 
@@ -436,11 +445,12 @@ public class IssuesRecorderITest extends IntegrationTest {
     @Test
     @WithTimeout(1000)
     public void shouldCreateMultipleToolsAndAggregationResultWithWarningsAggregateFalseAndSameTool() {
-        FreeStyleProject project = createJobWithWorkspaceFile("checkstyle2.xml", "checkstyle3.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle2.xml", "checkstyle3.xml");
         enableWarningsAggregation(project, false, "**/checkstyle2-issues.txt", new CheckStyle(),
                 "**/checkstyle3-issues.txt", new CheckStyle());
 
-        FreeStyleBuild build = scheduleBuildAndAssertLog(project, Result.FAILURE,"ID checkstyle is already used by another action: io.jenkins.plugins.analysis.core.views.ResultAction for CheckStyle");
+        FreeStyleBuild build = scheduleBuildAndAssertLog(project, Result.FAILURE,
+                "ID checkstyle is already used by another action: io.jenkins.plugins.analysis.core.views.ResultAction for CheckStyle");
 
         List<AnalysisResult> results = getAssertStatusForBothTools(build);
 
@@ -474,7 +484,7 @@ public class IssuesRecorderITest extends IntegrationTest {
     @Test
     @WithTimeout(1000)
     public void shouldCreateMultipleToolsAndAggregationResultWithWarningsAggregateTrueAndSameTool() {
-        FreeStyleProject project = createJobWithWorkspaceFile("checkstyle2.xml", "checkstyle3.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle2.xml", "checkstyle3.xml");
         enableWarningsAggregation(project, true, "**/checkstyle2-issues.txt", new CheckStyle(),
                 "**/checkstyle3-issues.txt", new CheckStyle());
 

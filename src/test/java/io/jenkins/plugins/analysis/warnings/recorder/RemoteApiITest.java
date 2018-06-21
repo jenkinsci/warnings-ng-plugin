@@ -40,7 +40,7 @@ public class RemoteApiITest extends IssuesRecorderITest {
      */
     @Test
     public void assertXmlApiMatchesExpected() {
-        FreeStyleProject project = createJobWithWorkspaceFile("checkstyleregextest.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyleregextest.xml");
         enableWarningsWithCheckstyle(project);
 
         String buildNumber = String.valueOf(buildProjectAndReturnBuildNo(project));
@@ -96,7 +96,7 @@ public class RemoteApiITest extends IssuesRecorderITest {
     @Test
     public void assertXmlApiWithXPathNavigationMatchesExpected() {
         // setup project
-        FreeStyleProject project = createJobWithWorkspaceFile("checkstyleregextest.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyleregextest.xml");
         enableWarningsWithCheckstyle(project);
 
         String buildNumber = String.valueOf(buildProjectAndReturnBuildNo(project));
@@ -117,7 +117,7 @@ public class RemoteApiITest extends IssuesRecorderITest {
     @Test
     public void assertXmlApiWithDepthContainsDeepElements() {
         // setup project
-        FreeStyleProject project = createJobWithWorkspaceFile("checkstyleregextest.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyleregextest.xml");
         enableWarningsWithCheckstyle(project);
 
         String buildNumber = String.valueOf(buildProjectAndReturnBuildNo(project));

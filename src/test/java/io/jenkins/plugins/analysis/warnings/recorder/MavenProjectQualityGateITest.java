@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.IOException;
 
@@ -18,7 +18,7 @@ import hudson.tasks.Maven.MavenInstallation;
  * @author Michaela Reitschuster
  */
 public class MavenProjectQualityGateITest extends AbstractQualityGateITest<MavenModuleSet> {
-
+    // FIXME: check if this can be done as @BeforeClass
     @Before
     public void initializeMaven() throws Exception {
         MavenInstallation mvn = ToolInstallations.configureMaven35();

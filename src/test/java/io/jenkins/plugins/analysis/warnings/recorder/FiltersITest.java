@@ -99,7 +99,7 @@ public class FiltersITest extends IssuesRecorderITest {
         for (Entry<RegexpFilter, Integer[]> entry : categoryFiltersWithResult.entrySet()) {
 
             // set up environment
-            FreeStyleProject project = createJobWithWorkspaceFile("checkstyleregextest.xml");
+            FreeStyleProject project = createJobWithWorkspaceFiles("checkstyleregextest.xml");
             enableWarningsWithAnalysisTool(project,
                     recorder -> recorder.setFilters(Collections.singletonList(entry.getKey())),
                     new CheckStyle());
@@ -146,7 +146,7 @@ public class FiltersITest extends IssuesRecorderITest {
         for (Entry<RegexpFilter, Integer[]> entry : categoryFiltersWithResult.entrySet()) {
 
             // set up environment
-            FreeStyleProject project = createJobWithWorkspaceFile("pmd-warnings.xml");
+            FreeStyleProject project = createJobWithWorkspaceFiles("pmd-warnings.xml");
             enableWarningsWithAnalysisTool(project,
                     recorder -> recorder.setFilters(Collections.singletonList(entry.getKey())), new Pmd());
 
