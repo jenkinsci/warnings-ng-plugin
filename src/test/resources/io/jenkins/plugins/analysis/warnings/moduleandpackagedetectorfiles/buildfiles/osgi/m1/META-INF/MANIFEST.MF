@@ -1,0 +1,3 @@
+Bundle-Name: %Bundle-Name
+Bundle-SymbolicName: edu.hm.hafner.osgi.symbolicname; singleton:=true
+Bundle-Vendor: %Bundle-Vendor
