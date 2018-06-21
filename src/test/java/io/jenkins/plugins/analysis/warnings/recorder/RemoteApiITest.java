@@ -38,9 +38,7 @@ public class RemoteApiITest extends IssuesRecorderITest {
      */
     @Test
     public void assertXmlApiMatchesExpected() {
-        FreeStyleProject project = createJobWithWorkspaceFiles(CHECKSTYLE_FILE);
-        enableCheckStyleWarnings(project);
-        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
+        Run<?, ?> build = buildCheckStyleJob();
 
         // Skip elements with absolute paths or other platform specific information 
         XmlPage page = callRemoteApi(build, "/checkstyleResult/api/xml"
@@ -62,10 +60,7 @@ public class RemoteApiITest extends IssuesRecorderITest {
      */
     @Test
     public void assertXmlApiWithXPathNavigationMatchesExpected() {
-        FreeStyleProject project = createJobWithWorkspaceFiles(CHECKSTYLE_FILE);
-        enableCheckStyleWarnings(project);
-
-        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
+        Run<?, ?> build = buildCheckStyleJob();
 
         XmlPage page = callRemoteApi(build, "/checkstyleResult/api/xml?xpath=/*/status");
 
@@ -82,15 +77,11 @@ public class RemoteApiITest extends IssuesRecorderITest {
      */
     @Test
     public void assertXmlApiWithDepthContainsDeepElements() throws XPathExpressionException {
-        FreeStyleProject project = createJobWithWorkspaceFiles(CHECKSTYLE_FILE);
-        enableCheckStyleWarnings(project);
-
-        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
+        Run<?, ?> build = buildCheckStyleJob();
 
         XmlPage page = callRemoteApi(build, "/checkstyleResult/api/xml?depth=1");
 
         Document actualDocument = page.getXmlDocument();
-
         // navigate to one deep level element that is not visible at depth 0
         XPath xpath = XPathFactory.newInstance().newXPath();
         Node deepLevelElement = (Node) xpath
@@ -99,6 +90,12 @@ public class RemoteApiITest extends IssuesRecorderITest {
 
         assertThat(deepLevelElement).isNotNull();
         assertThat(deepLevelElement.getNodeName()).isEqualTo("shortDescription");
+    }
+
+    private Run<?, ?> buildCheckStyleJob() {
+        FreeStyleProject project = createJobWithWorkspaceFiles(CHECKSTYLE_FILE);
+        enableCheckStyleWarnings(project);
+        return buildWithResult(project, Result.SUCCESS);
     }
 
     private XmlPage callRemoteApi(final Run<?, ?> run, final String url) {

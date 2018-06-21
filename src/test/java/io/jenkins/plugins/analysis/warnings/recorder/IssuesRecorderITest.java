@@ -100,8 +100,25 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    private IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final StaticAnalysisTool tool) {
+    protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final StaticAnalysisTool tool) {
         return enableWarnings(job, createGenericToolConfiguration(tool));
+    }
+
+    /**
+     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
+     * the job.
+     *
+     * @param job
+     *         the job to register the recorder for
+     * @param tool
+     *         the tool to scan the warnings
+     *
+     * @return the created recorder
+     */
+    @CanIgnoreReturnValue
+    protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final Consumer<IssuesRecorder> configuration, 
+            final StaticAnalysisTool tool) {
+        return enableWarnings(job, configuration, createGenericToolConfiguration(tool));
     }
 
     private ToolConfiguration createGenericToolConfiguration(final StaticAnalysisTool tool) {

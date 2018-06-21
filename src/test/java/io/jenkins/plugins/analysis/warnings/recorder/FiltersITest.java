@@ -10,12 +10,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import edu.hm.hafner.analysis.Issue;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -30,9 +27,6 @@ import io.jenkins.plugins.analysis.core.model.IncludeModule;
 import io.jenkins.plugins.analysis.core.model.IncludePackage;
 import io.jenkins.plugins.analysis.core.model.IncludeType;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import static org.assertj.core.api.Assertions.*;
@@ -43,7 +37,7 @@ import hudson.model.Result;
 import hudson.model.TopLevelItem;
 
 /**
- * Integration tests of the (regex-)filter of the post-build action.
+ * Integration tests of the regex property filters.
  *
  * @author Manuel Hampp
  */
@@ -53,32 +47,30 @@ public class FiltersITest extends IssuesRecorderITest {
      */
     @Test
     public void shouldFilterPmdIssuesByModule() {
-        Map<RegexpFilter, Integer[]> categoryFiltersWithResult = setupModuleFilter();
+        Map<RegexpFilter, Integer[]> expectedLinesByFilter = setupModuleFilterForPmd();
 
-        // run tests for all in collection
-        for (Entry<RegexpFilter, Integer[]> entry : categoryFiltersWithResult.entrySet()) {
+        for (Entry<RegexpFilter, Integer[]> entry : expectedLinesByFilter.entrySet()) {
             String[] workspaceFiles = {"ModuleRegexTest/pmd.xml", "ModuleRegexTest/pom.xml", 
                     "ModuleRegexTest/m1/pom.xml", "ModuleRegexTest/m2/pom.xml"};
 
             FreeStyleProject project = prepareFilesAndCreateJob(workspaceFiles);
-            enableWarningsWithAnalysisTool(
-                    project,
+            enableWarnings(project,
                     recorder -> recorder.setFilters(Collections.singletonList(entry.getKey())),
                     new Pmd());
 
-            validateRemainingIssues(project, entry.getValue());
+            buildAndVerifyResults(project, entry.getValue());
         }
     }
 
     /**
      * Provides a map, that contains the filters and the line numbers that are expected to remain after filtering.
      */
-    private Map<RegexpFilter, Integer[]> setupModuleFilter() {
+    private Map<RegexpFilter, Integer[]> setupModuleFilterForPmd() {
         /*
         CopyToClipboard.java:54         com.avaloq.adt.env.internal.ui.actions          Basic CollapsibleIfStatements   Normal  1
         ChangeSelectionAction.java:14   com.avaloq.adt.env.internal.ui.actions.change   Import Statement Rules  UnusedImports   Normal  1
          */
-        HashMap<RegexpFilter, Integer[]> filterResultMap = new HashMap<>();
+        Map<RegexpFilter, Integer[]> filterResultMap = new HashMap<>();
         filterResultMap.put(new RegexpFilter("m1", new ExcludeModule()), new Integer[]{14});
         filterResultMap.put(new RegexpFilter("m1", new IncludeModule()), new Integer[]{54});
 
@@ -89,28 +81,23 @@ public class FiltersITest extends IssuesRecorderITest {
      * Tests the category and file expression filter by comparing the result with expected.
      */
     @Test
-    public void shouldFilterIssuesForCheckstyle() {
-        // get collection of filters, and expected results
-        Map<RegexpFilter, Integer[]> categoryFiltersWithResult = filterProviderCheckstyle();
+    public void shouldFilterCheckStyleIssuesByCategoryAndFile() {
+        Map<RegexpFilter, Integer[]> expectedLinesByFilter = setupCategoryFilterForCheckStyle();
 
-        // run tests for all entries in collection
-        for (Entry<RegexpFilter, Integer[]> entry : categoryFiltersWithResult.entrySet()) {
-
-            // set up environment
+        for (Entry<RegexpFilter, Integer[]> entry : expectedLinesByFilter.entrySet()) {
             FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle-filtering.xml");
-            enableWarningsWithAnalysisTool(project,
+            enableWarnings(project,
                     recorder -> recorder.setFilters(Collections.singletonList(entry.getKey())),
                     new CheckStyle());
 
-            // validate
-            validateRemainingIssues(project, entry.getValue());
+            buildAndVerifyResults(project, entry.getValue());
         }
     }
 
     /**
-     * Provides a map, that contains the filters and the linenumbers that are expected to remain after filtering.
+     * Provides a map, that contains the filters and the line numbers that are expected to remain after filtering.
      */
-    private Map<RegexpFilter, Integer[]> filterProviderCheckstyle() {
+    private Map<RegexpFilter, Integer[]> setupCategoryFilterForCheckStyle() {
         /*
           CsharpNamespaceDetector.java:30   -Blocks RightCurlyCheck High 1
           CsharpNamespaceDetector.java:37   -Blocks RightCurlyCheck High 1
@@ -120,7 +107,7 @@ public class FiltersITest extends IssuesRecorderITest {
           CsharpNamespaceDetector.java:29   -Sizes LineLengthCheck High 1
           FileFinder.java:99                -Blocks RightCurlyCheck High 1
          */
-        HashMap<RegexpFilter, Integer[]> filterResultMap = new HashMap<>();
+        Map<RegexpFilter, Integer[]> filterResultMap = new HashMap<>();
         filterResultMap.put(new RegexpFilter("Blocks", new IncludeCategory()), new Integer[]{30, 37, 99});
         filterResultMap.put(new RegexpFilter("Blocks", new ExcludeCategory()), new Integer[]{17, 22, 42, 29});
         filterResultMap.put(new RegexpFilter("(Blocks|Design)", new ExcludeCategory()), new Integer[]{42, 29});
@@ -136,27 +123,23 @@ public class FiltersITest extends IssuesRecorderITest {
      * Tests the package and type expression filter by comparing the result with expected.
      */
     @Test
-    public void shouldFilterIssuesForPMD() {
-        // get collection of filters, and expected results
-        Map<RegexpFilter, Integer[]> categoryFiltersWithResult = filterProviderPMD();
+    public void shouldFilterPmdIssuesByPackageAndType() {
+        Map<RegexpFilter, Integer[]> typeFiltersWithResult = setupCategoryFilterForPmd();
 
-        // run tests for all entries in collection
-        for (Entry<RegexpFilter, Integer[]> entry : categoryFiltersWithResult.entrySet()) {
-
-            // set up environment
+        for (Entry<RegexpFilter, Integer[]> entry : typeFiltersWithResult.entrySet()) {
             FreeStyleProject project = createJobWithWorkspaceFiles("pmd-warnings.xml");
-            enableWarningsWithAnalysisTool(project,
-                    recorder -> recorder.setFilters(Collections.singletonList(entry.getKey())), new Pmd());
+            enableWarnings(project, 
+                    recorder -> recorder.setFilters(Collections.singletonList(entry.getKey())), 
+                    new Pmd());
 
-            // validate
-            validateRemainingIssues(project, entry.getValue());
+            buildAndVerifyResults(project, entry.getValue());
         }
     }
 
     /**
-     * Provides a map, that contains the filters and the linenumbers that are expected to remain after filtering.
+     * Provides a map, that contains the filters and the line numbers that are expected to remain after filtering.
      */
-    private Map<RegexpFilter, Integer[]> filterProviderPMD() {
+    private Map<RegexpFilter, Integer[]> setupCategoryFilterForPmd() {
         /*
         CopyToClipboard.java:54         com.avaloq.adt.env.internal.ui.actions          Basic CollapsibleIfStatements   Normal  1
         ChangeSelectionAction.java:14   com.avaloq.adt.env.internal.ui.actions.change   Import Statement Rules  UnusedImports   Normal  1
@@ -183,43 +166,13 @@ public class FiltersITest extends IssuesRecorderITest {
      * @param expectedValues
      *         issue line numbers that are expected
      */
-    private void validateRemainingIssues(final FreeStyleProject project, final Integer[] expectedValues) {
-        // get result
+    private void buildAndVerifyResults(final FreeStyleProject project, final Integer[] expectedValues) {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        // compare result with expected values
         assertThat(result.getIssues()
                 .stream()
                 .map(Issue::getLineStart)
                 .collect(Collectors.toList())).containsOnly(expectedValues);
-    }
-
-    /**
-     * Enables warnings for the given job with the given analysis tool.
-     */
-    private void enableWarningsWithAnalysisTool(final FreeStyleProject job,
-            final Consumer<IssuesRecorder> configuration,
-            final StaticAnalysisTool staticAnalysisTool) {
-        IssuesRecorder publisher = enableWarningsWithAnalysisTool(job, staticAnalysisTool);
-        configuration.accept(publisher);
-    }
-
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job.
-     *
-     * @param job
-     *         the job to register the recorder for
-     *
-     * @return the created recorder
-     */
-    @CanIgnoreReturnValue
-    private IssuesRecorder enableWarningsWithAnalysisTool(final FreeStyleProject job,
-            final StaticAnalysisTool staticAnalysisTool) {
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration(staticAnalysisTool, "**/*issues.txt")));
-        job.getPublishersList().add(publisher);
-        return publisher;
     }
 
     /**
@@ -359,6 +312,5 @@ public class FiltersITest extends IssuesRecorderITest {
             return output.remove();
         }
     }
-
 }
 
