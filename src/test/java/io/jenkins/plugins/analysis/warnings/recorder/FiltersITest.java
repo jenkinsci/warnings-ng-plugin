@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -41,6 +42,7 @@ import hudson.model.TopLevelItem;
  *
  * @author Manuel Hampp
  */
+@SuppressWarnings("classdataabstractioncoupling")
 public class FiltersITest extends IssuesRecorderITest {
     /**
      * Tests the module expression filter: provides a pom.xml in the workspace so that modules are correctly assigned.
@@ -50,13 +52,11 @@ public class FiltersITest extends IssuesRecorderITest {
         Map<RegexpFilter, Integer[]> expectedLinesByFilter = setupModuleFilterForPmd();
 
         for (Entry<RegexpFilter, Integer[]> entry : expectedLinesByFilter.entrySet()) {
-            String[] workspaceFiles = {"ModuleRegexTest/pmd.xml", "ModuleRegexTest/pom.xml", 
-                    "ModuleRegexTest/m1/pom.xml", "ModuleRegexTest/m2/pom.xml"};
-
-            FreeStyleProject project = prepareFilesAndCreateJob(workspaceFiles);
-            enableWarnings(project,
-                    recorder -> recorder.setFilters(Collections.singletonList(entry.getKey())),
-                    new Pmd());
+            FreeStyleProject project = createFreeStyleProject();
+            copyAndExpandedVariables(project, "ModuleRegexTest/pmd.xml");
+            copyMultipleFilesToWorkspace(project, "ModuleRegexTest/pom.xml",
+                    "ModuleRegexTest/m1/pom.xml", "ModuleRegexTest/m2/pom.xml");
+            enableWarnings(project, recorder -> recorder.setFilters(toFilter(entry)), new Pmd());
 
             buildAndVerifyResults(project, entry.getValue());
         }
@@ -86,9 +86,7 @@ public class FiltersITest extends IssuesRecorderITest {
 
         for (Entry<RegexpFilter, Integer[]> entry : expectedLinesByFilter.entrySet()) {
             FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle-filtering.xml");
-            enableWarnings(project,
-                    recorder -> recorder.setFilters(Collections.singletonList(entry.getKey())),
-                    new CheckStyle());
+            enableWarnings(project, recorder -> recorder.setFilters(toFilter(entry)), new CheckStyle());
 
             buildAndVerifyResults(project, entry.getValue());
         }
@@ -128,9 +126,7 @@ public class FiltersITest extends IssuesRecorderITest {
 
         for (Entry<RegexpFilter, Integer[]> entry : typeFiltersWithResult.entrySet()) {
             FreeStyleProject project = createJobWithWorkspaceFiles("pmd-warnings.xml");
-            enableWarnings(project, 
-                    recorder -> recorder.setFilters(Collections.singletonList(entry.getKey())), 
-                    new Pmd());
+            enableWarnings(project, recorder -> recorder.setFilters(toFilter(entry)), new Pmd());
 
             buildAndVerifyResults(project, entry.getValue());
         }
@@ -175,46 +171,20 @@ public class FiltersITest extends IssuesRecorderITest {
                 .collect(Collectors.toList())).containsOnly(expectedValues);
     }
 
-    /**
-     * Creates a new {@link FreeStyleProject} and copies the specified resources to the workspace folder. The job will
-     * get a generated name.
-     *
-     * @param fileNames
-     *         the files to copy to the workspace
-     *
-     * @return the created job
-     */
-    private FreeStyleProject prepareFilesAndCreateJob(final String... fileNames) {
-        FreeStyleProject job = createFreeStyleProject();
-        prepareAndCopyFilesToWorkspace(job, fileNames);
-        return job;
+    private List<RegexpFilter> toFilter(final Entry<RegexpFilter, Integer[]> entry) {
+        return Collections.singletonList(entry.getKey());
     }
 
-    /**
-     * Prepares files and copies them to the workspace.
-     *
-     * @param job
-     *         the job to get the workspace for
-     * @param fileNames
-     *         names of the files
-     */
-    private void prepareAndCopyFilesToWorkspace(final TopLevelItem job, final String... fileNames) {
+    private void copyAndExpandedVariables(final TopLevelItem job, final String fileName) {
         try {
             FilePath workspace = j.jenkins.getWorkspaceFor(job);
-            for (String fileName : fileNames) {
-                // copy pom file without renaiming
-                if (fileName.endsWith("pom.xml")) {
-                    workspace.child(fileName).copyFrom(asInputStream(fileName));
-                }
-                // replace placeholders (with the build-generated content) and copy issue xml
-                workspace.child(createWorkspaceFileName(fileName))
-                        .copyFrom(
-                                new ReplacingInputStream(asInputStream(fileName), "WORKSPACEDIRPLACEHOLDER".getBytes(),
-                                        workspace.getRemote().getBytes()));
-            }
+            workspace.child(createWorkspaceFileName(fileName))
+                    .copyFrom(
+                            new ReplacingInputStream(asInputStream(fileName), "WORKSPACEDIRPLACEHOLDER".getBytes(),
+                                    workspace.getRemote().getBytes()));
         }
         catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            throw new AssertionError(e);
         }
     }
 
