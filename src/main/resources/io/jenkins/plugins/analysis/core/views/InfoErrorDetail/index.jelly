@@ -28,7 +28,7 @@
                     <i class="fa fa-exclamation-triangle icon-right fa-2x" aria-hidden="true"/>
                   </h5>
                   <pre>
-                    <samp>
+                    <samp id="errors">
                       <j:forEach var="message" items="${it.errorMessages}">
                         <div>
                           ${message}
@@ -50,7 +50,7 @@
                   <i class="fa fa-info-circle icon-right fa-2x" aria-hidden="true"/>
                 </h5>
                 <pre>
-                  <samp>
+                  <samp id="info">
                     <j:forEach var="message" items="${it.infoMessages}">
                       <div>
                         ${message}
