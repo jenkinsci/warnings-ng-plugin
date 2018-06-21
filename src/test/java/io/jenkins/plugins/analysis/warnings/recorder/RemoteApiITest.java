@@ -159,7 +159,8 @@ public class RemoteApiITest extends IssuesRecorderITest {
         try {
             builder = factory.newDocumentBuilder();
             // get document from file
-            document = builder.parse(new File("src/test/resources/io/jenkins/plugins/analysis/warnings/" + filename));
+            // FIXME: class loader
+            document = builder.parse(new File("src/test/resources/io/jenkins/plugins/analysis/warnings/recorder/" + filename));
         }
         catch (ParserConfigurationException | SAXException | IOException e) {
             throw new AssertionError(e);

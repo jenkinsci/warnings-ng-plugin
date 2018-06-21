@@ -10,7 +10,6 @@ import hudson.model.FreeStyleProject;
  * @author Michaela Reitschuster
  */
 public class FreeStyleProjectQualityGateITest extends AbstractQualityGateITest<FreeStyleProject> {
-
     @Override
     protected FreeStyleProject createProject() {
         try {

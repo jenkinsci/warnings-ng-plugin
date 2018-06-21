@@ -52,16 +52,14 @@ public class FiltersITest extends IssuesRecorderITest {
      * Tests the module expression filter: provides a pom.xml in the workspace so that modules are correctly assigned.
      */
     @Test
-    public void shouldFilterIssuesByModule() {
-        // get collection of filters, and expected results
-        Map<RegexpFilter, Integer[]> categoryFiltersWithResult = filterProviderModules();
+    public void shouldFilterPmdIssuesByModule() {
+        Map<RegexpFilter, Integer[]> categoryFiltersWithResult = setupModuleFilter();
 
         // run tests for all in collection
         for (Entry<RegexpFilter, Integer[]> entry : categoryFiltersWithResult.entrySet()) {
+            String[] workspaceFiles = {"ModuleRegexTest/pmd.xml", "ModuleRegexTest/pom.xml", 
+                    "ModuleRegexTest/m1/pom.xml", "ModuleRegexTest/m2/pom.xml"};
 
-            String[] workspaceFiles = {"ModuleRegexTest/pmd.xml", "ModuleRegexTest/pom.xml", "ModuleRegexTest/m1/pom.xml", "ModuleRegexTest/m2/pom.xml"};
-
-            // set up project
             FreeStyleProject project = prepareFilesAndCreateJob(workspaceFiles);
             enableWarningsWithAnalysisTool(
                     project,
@@ -75,7 +73,7 @@ public class FiltersITest extends IssuesRecorderITest {
     /**
      * Provides a map, that contains the filters and the line numbers that are expected to remain after filtering.
      */
-    private Map<RegexpFilter, Integer[]> filterProviderModules() {
+    private Map<RegexpFilter, Integer[]> setupModuleFilter() {
         /*
         CopyToClipboard.java:54         com.avaloq.adt.env.internal.ui.actions          Basic CollapsibleIfStatements   Normal  1
         ChangeSelectionAction.java:14   com.avaloq.adt.env.internal.ui.actions.change   Import Statement Rules  UnusedImports   Normal  1
@@ -99,7 +97,7 @@ public class FiltersITest extends IssuesRecorderITest {
         for (Entry<RegexpFilter, Integer[]> entry : categoryFiltersWithResult.entrySet()) {
 
             // set up environment
-            FreeStyleProject project = createJobWithWorkspaceFiles("checkstyleregextest.xml");
+            FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle-filtering.xml");
             enableWarningsWithAnalysisTool(project,
                     recorder -> recorder.setFilters(Collections.singletonList(entry.getKey())),
                     new CheckStyle());
