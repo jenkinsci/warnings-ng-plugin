@@ -1,13 +1,8 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-import org.apache.commons.io.FileUtils;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -20,7 +15,6 @@ import hudson.FilePath;
 import hudson.Functions;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
-import hudson.model.TopLevelItem;
 
 /**
  * Integration tests for {@link FilesScanner}. This test is using a ZIP file with all the necessary files. The structure
@@ -28,8 +22,6 @@ import hudson.model.TopLevelItem;
  * <p>
  * <pre>
  * filesscanner_workspace.zip
- * |-empty_workspace
- * |-filled_workspace
  *      |-checkstyle
  *          |-checkstyle.xml
  *      |-multiple_files
@@ -48,15 +40,12 @@ import hudson.model.TopLevelItem;
  * @author Alexander Praegla
  */
 public class FilesScannerITest extends IssuesRecorderITest {
-    private static final String WORKSPACE_DIRECTORY = "filesscanner_workspace";
-    private static final String WORKSPACE_RESOURCE_ZIP = "filesscanner_workspace.zip";
-    private static final String EMPTY_WORKSPACE_DIRECTORY = WORKSPACE_DIRECTORY + "/empty_workspace";
-    private static final String FILLED_WORKSPACE_DIRECTORY = WORKSPACE_DIRECTORY + "/filled_workspace";
-    private static final String CHECKSTYLE_WORKSPACE = FILLED_WORKSPACE_DIRECTORY + "/checkstyle";
-    private static final String MULTIPLE_FILES_WORKSPACE = FILLED_WORKSPACE_DIRECTORY + "/multiple_files";
-    private static final String NO_FILE_PATTERN_MATCH_WORKSPACE = FILLED_WORKSPACE_DIRECTORY + "/no_file_pattern_match";
-    private static final String ZERO_LENGTH_WORKSPACE = FILLED_WORKSPACE_DIRECTORY + "/zero_length_file";
-    private static final String NON_READABLE_FILE_WORKSPACE = FILLED_WORKSPACE_DIRECTORY + "/no_read_permission";
+    private static final String WORKSPACE_DIRECTORY = "files-scanner";
+    private static final String CHECKSTYLE_WORKSPACE = WORKSPACE_DIRECTORY + "/checkstyle";
+    private static final String MULTIPLE_FILES_WORKSPACE = WORKSPACE_DIRECTORY + "/multiple_files";
+    private static final String NO_FILE_PATTERN_MATCH_WORKSPACE = WORKSPACE_DIRECTORY + "/no_file_pattern_match";
+    private static final String ZERO_LENGTH_WORKSPACE = WORKSPACE_DIRECTORY + "/zero_length_file";
+    private static final String NON_READABLE_FILE_WORKSPACE = WORKSPACE_DIRECTORY + "/no_read_permission";
     private static final String NON_READABLE_FILE = "no_read_permissions.xml";
 
     private static final String WINDOWS_FILE_ACCESS_READ_ONLY = "RX";
@@ -67,12 +56,13 @@ public class FilesScannerITest extends IssuesRecorderITest {
      */
     @Test
     public void shouldReportErrorOnEmptyWorkspace() {
-        FreeStyleProject project = createCheckStyleJob(EMPTY_WORKSPACE_DIRECTORY);
+        FreeStyleProject project = createFreeStyleProject();
+        enableCheckStyleWarnings(project);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
-        assertThat(result).hasErrorMessages("No files found for pattern '*.xml'. Configuration error?");
+        assertThat(result).hasErrorMessages("No files found for pattern '**/*issues.txt'. Configuration error?");
     }
 
     /**
@@ -100,7 +90,7 @@ public class FilesScannerITest extends IssuesRecorderITest {
         String pathToExtractedFile = j.jenkins.getWorkspaceFor(project) + File.separator + NON_READABLE_FILE;
         File nonReadableFile = new File(pathToExtractedFile);
         if (Functions.isWindows()) {
-            execWindowsCommandIcacls(pathToExtractedFile, WINDOWS_FILE_DENY, WINDOWS_FILE_ACCESS_READ_ONLY);
+            setAccessMode(pathToExtractedFile, WINDOWS_FILE_DENY, WINDOWS_FILE_ACCESS_READ_ONLY);
         }
         else {
             assertThat(nonReadableFile.setReadable(false, false)).isTrue();
@@ -169,8 +159,8 @@ public class FilesScannerITest extends IssuesRecorderITest {
         return project.getSomeWorkspace().getRemote() + File.separator + "checkstyle.xml";
     }
 
-    private FreeStyleProject createCheckStyleJob(final String workspaceZipFile) {
-        FreeStyleProject project = createJobWithWorkspaceFile(new File(workspaceZipFile));
+    private FreeStyleProject createCheckStyleJob(final String workspaceFolder) {
+        FreeStyleProject project = createJobWithWorkspaceFile(workspaceFolder);
         enableWarnings(project, new ToolConfiguration(new CheckStyle(), "*.xml"));
         return project;
     }
@@ -185,7 +175,7 @@ public class FilesScannerITest extends IssuesRecorderITest {
      * @param accessMode
      *         param for the icacls command
      */
-    private void execWindowsCommandIcacls(final String path, final String command, final String accessMode) {
+    private void setAccessMode(final String path, final String command, final String accessMode) {
         try {
             Process process = Runtime.getRuntime().exec("icacls " + path + " " + command + " *S-1-1-0:" + accessMode);
             process.waitFor();
@@ -196,125 +186,24 @@ public class FilesScannerITest extends IssuesRecorderITest {
     }
 
     /**
-     * Creates a new free style project and copies a whole directory to the workspace fo the project.
+     * Creates a new free style project and copies a whole directory to the workspace of the project.
      *
      * @param importDirectory
-     *         Directory containing files for free style project
+     *         directory containing the resources
      *
      * @return created {@link FreeStyleProject}
      */
-    private FreeStyleProject createJobWithWorkspaceFile(final File importDirectory) {
+    private FreeStyleProject createJobWithWorkspaceFile(final String importDirectory) {
         try {
-            File workspace = unzipWorkspace();
-
             FreeStyleProject job = j.createFreeStyleProject();
-            copyDirectoryToWorkspace(job, importDirectory);
 
-            if (workspace != null) {
-                deleteWorkspace(workspace);
-            }
+            String file = FilesScannerITest.class.getResource(importDirectory).getFile();
+            FilePath dir = new FilePath(new File(file));
+            dir.copyRecursiveTo(j.jenkins.getWorkspaceFor(job));
 
             return job;
         }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
-    }
-    
-    @Override
-    protected String createWorkspaceFileName(final String fileNamePrefix) {
-        return fileNamePrefix;
-    }
-
-    /**
-     * Copies the specified files to the workspace using a generated file name.
-     *
-     * @param job
-     *         the job to get the workspace for
-     * @param importDirectory
-     *         source directory for workspace files
-     */
-    private void copyDirectoryToWorkspace(final TopLevelItem job, final File importDirectory) {
-        try {
-            FilePath workspace = j.jenkins.getWorkspaceFor(job);
-            Assertions.assertThat(workspace).isNotNull();
-            File destDir = new File(workspace.getRemote());
-            FileUtils.copyDirectory(importDirectory, destDir);
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
-    }
-
-   /**
-     * Deletes recursively a whole directory including subdirectories.
-     *
-     * @param directoryToBeDeleted
-     *         root directory to be deleted
-     */
-    private void deleteWorkspace(File directoryToBeDeleted) {
-        File[] allContents = directoryToBeDeleted.listFiles();
-        if (allContents != null) {
-            for (File file : allContents) {
-                deleteWorkspace(file);
-            }
-        }
-        directoryToBeDeleted.delete();
-    }
-
-    /**
-     * Unzipping the ZIP file in the resource folder to a tmp file.
-     *
-     * @return created tmp file with hole test workspace files
-     */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private File unzipWorkspace() {
-
-        byte[] buffer = new byte[1024];
-
-        try {
-            //create output directory is not exists
-            File folder = new File(WORKSPACE_DIRECTORY);
-            if (!folder.exists()) {
-                folder.mkdir();
-            }
-
-            //get the zip file content
-            ZipInputStream zis = new ZipInputStream(this.getClass().getResourceAsStream(WORKSPACE_RESOURCE_ZIP));
-            //get the zipped file list entry
-            ZipEntry ze = zis.getNextEntry();
-
-            while (ze != null) {
-                String fileName = ze.getName();
-                if (ze.isDirectory()) {
-                    new File(fileName).mkdirs();
-                    ze = zis.getNextEntry();
-                    continue;
-                }
-                File newFile = new File(fileName);
-                System.out.println("Creating file: " + newFile.getAbsoluteFile());
-
-                //create all non exists folders
-                //else you will hit FileNotFoundException for compressed folder
-                new File(newFile.getParent()).mkdirs();
-
-                FileOutputStream fos = new FileOutputStream(newFile);
-
-                int len;
-                while ((len = zis.read(buffer)) > 0) {
-                    fos.write(buffer, 0, len);
-                }
-
-                fos.close();
-                ze = zis.getNextEntry();
-            }
-
-            zis.closeEntry();
-            zis.close();
-
-            return folder;
-        }
-        catch (IOException e) {
+        catch (IOException | InterruptedException e) {
             throw new AssertionError(e);
         }
     }
