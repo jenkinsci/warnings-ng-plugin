@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -104,20 +105,31 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
-     * Sets the static analysis tool that will scan files and create issues.
+     * Sets the static analysis tools that will scan files and create issues.
      *
      * @param tools
-     *         the static analysis tool
+     *         the static analysis tools
      */
     @DataBoundSetter
     public void setTools(final List<ToolConfiguration> tools) {
         this.tools = new ArrayList<>(tools);
     }
 
+    /**
+     * Sets the static analysis tool that will scan files and create issues.
+     * 
+     * @param tool 
+     *         the static analysis tool
+     */
+    public void setTool(final ToolConfiguration tool) {
+        this.tools = Collections.singletonList(tool);
+    }
+
     @CheckForNull
     public String getReportEncoding() {
         return reportEncoding;
     }
+
 
     /**
      * Sets the default encoding used to read the log files that contain the warnings.
