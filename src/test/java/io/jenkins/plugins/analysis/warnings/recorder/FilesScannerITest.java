@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.warnings.recorder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -11,12 +10,8 @@ import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.util.FilesScanner;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
@@ -93,10 +88,10 @@ public class FilesScannerITest extends IssuesRecorderITest {
 
         assertThat(result).hasTotalSize(0);
         if (Functions.isWindows()) {
-            assertThat(result.getErrorMessages().get(0)).contains("java.io.FileNotFoundException:");
+            assertThat(result).hasErrorMessages("java.io.FileNotFoundException:");
         }
         else {
-            assertThat(result.getErrorMessages().get(0)).contains(
+            assertThat(result).hasErrorMessages(
                     "Skipping file 'no_read_permissions.xml' because Jenkins has no permission to read the file.");
         }
     }
@@ -124,7 +119,6 @@ public class FilesScannerITest extends IssuesRecorderITest {
 
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasErrorMessages("Skipping file 'zero_length_file.xml' because it's empty.");
-
     }
 
     /**
@@ -149,13 +143,11 @@ public class FilesScannerITest extends IssuesRecorderITest {
         
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThat(result.getTotalSize()).isEqualTo(6);
-        assertThat(result.getInfoMessages()).contains(
-                "Successfully parsed file " + project.getSomeWorkspace().getRemote() + File.separator + "checkstyle.xml"
-                        + ": found 6 issues (skipped 0 duplicates)");
-        assertThat(result.getInfoMessages()).contains(
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasInfoMessages(
+                "Successfully parsed file " + getCheckStyleFile(project) + ": found 6 issues (skipped 0 duplicates)",
                 "-> found 2 files");
-        assertThat(result.getErrorMessages()).contains("Skipping file 'zero_length_file.xml' because it's empty.");
+        assertThat(result).hasErrorMessages("Skipping file 'zero_length_file.xml' because it's empty.");
     }
 
     /**
@@ -166,19 +158,20 @@ public class FilesScannerITest extends IssuesRecorderITest {
         FreeStyleProject project = createCheckStyleJob(CHECKSTYLE_WORKSPACE);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        assertThat(result).isNotNull();
-        assertThat(result.getTotalSize()).isEqualTo(6);
-        Assertions.assertThat(result.getInfoMessages()).contains(
-                "Successfully parsed file " + project.getSomeWorkspace().getRemote() + File.separator + "checkstyle.xml"
-                        + ": found 6 issues (skipped 0 duplicates)");
-        Assertions.assertThat(result.getInfoMessages()).contains(
+        
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasInfoMessages(
+                "Successfully parsed file " + getCheckStyleFile(project) + ": found 6 issues (skipped 0 duplicates)",
                 "-> found 1 file");
-
     }
 
-    private FreeStyleProject createCheckStyleJob(final String emptyWorkspaceDirectory) {
-        FreeStyleProject project = createJobWithWorkspaceFile(new File(emptyWorkspaceDirectory));
-        enableWarnings(project, "*.xml", new CheckStyle());
+    private String getCheckStyleFile(final FreeStyleProject project) {
+        return project.getSomeWorkspace().getRemote() + File.separator + "checkstyle.xml";
+    }
+
+    private FreeStyleProject createCheckStyleJob(final String workspaceZipFile) {
+        FreeStyleProject project = createJobWithWorkspaceFile(new File(workspaceZipFile));
+        enableWarnings(project, new ToolConfiguration(new CheckStyle(), "*.xml"));
         return project;
     }
 
@@ -208,9 +201,7 @@ public class FilesScannerITest extends IssuesRecorderITest {
      * @param importDirectory
      *         Directory containing files for free style project
      *
-     * @return Created {@link FreeStyleProject}
-     * @throws IOException
-     *         If an error occurs during coping the files
+     * @return created {@link FreeStyleProject}
      */
     private FreeStyleProject createJobWithWorkspaceFile(final File importDirectory) {
         try {
@@ -229,24 +220,7 @@ public class FilesScannerITest extends IssuesRecorderITest {
             throw new AssertionError(e);
         }
     }
-
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job.
-     *
-     * @param job
-     *         the job to register the recorder for
-     *
-     * @return the created recorder
-     */
-    @CanIgnoreReturnValue
-    private IssuesRecorder enableWarnings(final FreeStyleProject job, String pattern, StaticAnalysisTool tool) {
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration(tool, pattern)));
-        job.getPublishersList().add(publisher);
-        return publisher;
-    }
-
+    
     @Override
     protected String createWorkspaceFileName(final String fileNamePrefix) {
         return fileNamePrefix;
