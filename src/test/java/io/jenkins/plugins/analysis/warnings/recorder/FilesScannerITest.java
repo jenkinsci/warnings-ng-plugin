@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,6 +21,7 @@ import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import io.jenkins.plugins.analysis.core.util.FilesScanner;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
 
 import hudson.FilePath;
 import hudson.model.FreeStyleBuild;
@@ -32,12 +33,13 @@ import hudson.model.TopLevelItem;
  * Integration tests for {@link FilesScanner}. This test is using a ZIP file with all the necessary files. The structure
  * of the ZIP file is:
  * <p>
+ * <pre>
  * filesscanner_workspace.zip
  * |-empty_workspace
  * |-filled_workspace
  *      |-checkstyle
  *          |-checkstyle.xml
- *      |-multipe_files
+ *      |-multiple_files
  *          |-checkstyle.xml
  *          |-nonFilePatternMatch.xml
  *          |-zero_length_file.xml
@@ -47,11 +49,12 @@ import hudson.model.TopLevelItem;
  *          |-no_read_permissions.xml
  *      |-zero_length_file
  *          |-zero_length_file.xml
+ * </pre>
+ * </p>
  *
  * @author Alexander Praegla
  */
 public class FilesScannerITest extends IntegrationTest {
-
     private static final String WORKSPACE_DIRECTORY = "filesscanner_workspace";
     private static final String WORKSPACE_RESOURCE_ZIP = "filesscanner_workspace.zip";
     private static final String EMPTY_WORKSPACE_DIRECTORY = WORKSPACE_DIRECTORY + "/empty_workspace";
@@ -68,12 +71,11 @@ public class FilesScannerITest extends IntegrationTest {
 
     /**
      * Runs the {@link FilesScanner} on a workspace with no files.
-     *
-     *         On errors during coping test files
+     * <p>
+     * On errors during coping test files
      */
     @Test
     public void isEmptyWorkspace() {
-
         FreeStyleProject project = createJobWithWorkspaceFile(new File(EMPTY_WORKSPACE_DIRECTORY));
 
         enableWarnings(project, "*.xml", new CheckStyle());
@@ -90,10 +92,9 @@ public class FilesScannerITest extends IntegrationTest {
     /**
      * Runs the {@link FilesScanner} on a workspace with a none readable file. This should work on UNIX but it isn't
      * tested so this test is uncommented because on Windows it still failes
-     *
      */
     @Test
-    public void cantReadFile()  {
+    public void cantReadFile() {
         FreeStyleProject project = createJobWithWorkspaceFile(new File(NON_READABLE_FILE_WORKSPACE));
 
         String pathToExtractedFile = j.jenkins.getWorkspaceFor(project) + File.separator + NON_READABLE_FILE;
@@ -115,13 +116,13 @@ public class FilesScannerITest extends IntegrationTest {
             assertThat(result.getErrorMessages().get(0)).contains("java.io.FileNotFoundException:");
         }
         else {
-            assertThat(result.getErrorMessages().get(0)).contains("Skipping file 'no_read_permissions.xml' because Jenkins has no permission to read the file.");
+            assertThat(result.getErrorMessages().get(0)).contains(
+                    "Skipping file 'no_read_permissions.xml' because Jenkins has no permission to read the file.");
         }
     }
 
     /**
      * Runs the {@link FilesScanner} on a workspace with a file with zero length.
-     *
      */
     @Test
     public void fileLengthIsZero() {
@@ -139,7 +140,6 @@ public class FilesScannerITest extends IntegrationTest {
 
     /**
      * Runs the {@link FilesScanner} on a workspace with files that do not match the file pattern.
-     *
      */
     @Test
     public void filePatternDoesNotMatchAnyFile() {
@@ -155,7 +155,6 @@ public class FilesScannerITest extends IntegrationTest {
 
     /**
      * Runs the {@link FilesScanner} on a workspace with multiple files where some do match the criterias.
-     *
      */
     @Test
     public void findIssuesWithMultipleFiles() {
@@ -175,7 +174,6 @@ public class FilesScannerITest extends IntegrationTest {
 
     /**
      * Runs the {@link FilesScanner} on a workspace with a correct file that can be parsed.
-     *
      */
     @Test
     public void parseCheckstyleFileCorrectly() {
@@ -222,9 +220,9 @@ public class FilesScannerITest extends IntegrationTest {
      *
      * @return Created {@link FreeStyleProject}
      * @throws IOException
-     *         If an error occures during coping the files
+     *         If an error occurs during coping the files
      */
-    private FreeStyleProject createJobWithWorkspaceFile(final File importDirectory)  {
+    private FreeStyleProject createJobWithWorkspaceFile(final File importDirectory) {
         try {
             File workspace = unzipWorkspace();
 
@@ -254,7 +252,7 @@ public class FilesScannerITest extends IntegrationTest {
     @CanIgnoreReturnValue
     private IssuesRecorder enableWarnings(final FreeStyleProject job, String pattern, StaticAnalysisTool tool) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration(pattern, tool)));
+        publisher.setTools(Collections.singletonList(new ToolConfiguration(tool, pattern)));
         job.getPublishersList().add(publisher);
         return publisher;
     }
