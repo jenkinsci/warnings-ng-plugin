@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<checkstyle version="4.1">
-  <file name="X:\Build\Results\jobs\Maven\workspace\tasks\src\main\java\hudson\plugins\tasks\util\model\package.html">
-    <error line="0" severity="error" message="Fehlende Package-Dokumentation." source="com.puppycrawl.tools.checkstyle.checks.javadoc.PackageHtmlCheck"/>
-  </file>
-  <file name="X:\Build\Results\jobs\Maven\workspace\tasks\src\main\java\hudson\plugins\tasks\parser\CsharpNamespaceDetector.java">
-  </file>
-</checkstyle>

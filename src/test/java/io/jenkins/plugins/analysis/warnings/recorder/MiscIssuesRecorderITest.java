@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -9,21 +9,18 @@ import org.junit.Test;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.quality.Status;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
-import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 
-import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import hudson.model.Run;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -123,12 +120,7 @@ public class MiscIssuesRecorderITest extends IssuesRecorderITest {
      */
     @Test
     public void shouldCreateMultipleActionsIfAggregationDisabled() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
-        enableWarnings(project, recorder -> recorder.setAggregatingResults(false),
-                new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
-                new ToolConfiguration(new Pmd(), "**/pmd-warnings-issues.txt"));
-
-        List<AnalysisResult> results = getAnalysisResults(buildWithStatus(project, Result.SUCCESS));
+        List<AnalysisResult> results = runJobWithAggregation(false);
 
         assertThat(results).hasSize(2);
 
@@ -150,12 +142,7 @@ public class MiscIssuesRecorderITest extends IssuesRecorderITest {
      */
     @Test
     public void shouldCreateSingleActionIfAggregationEnabled() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
-        enableWarnings(project, recorder -> recorder.setAggregatingResults(true),
-                new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
-                new ToolConfiguration(new Pmd(), "**/pmd-warnings-issues.txt"));
-
-        List<AnalysisResult> results = getAnalysisResults(buildWithStatus(project, Result.SUCCESS));
+        List<AnalysisResult> results = runJobWithAggregation(true);
 
         assertThat(results).hasSize(1);
 
@@ -166,105 +153,28 @@ public class MiscIssuesRecorderITest extends IssuesRecorderITest {
         assertThat(result).hasStatus(Status.INACTIVE);
     }
 
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job.
-     *
-     * @param job
-     *         the job to register the recorder for
-     * @param isAggregationEnabled
-     *         is aggregation enabled?
-     * @param toolPattern1
-     *         the first new filename in the workspace
-     * @param tool1
-     *         class of the first tool
-     * @param toolPattern2
-     *         the second new filename in the workspace
-     * @param tool2
-     *         class of the second tool
-     */
-    @CanIgnoreReturnValue
-    private void enableWarningsAggregation(final FreeStyleProject job, final boolean isAggregationEnabled,
-            final String toolPattern1, final StaticAnalysisTool tool1, final String toolPattern2,
-            final StaticAnalysisTool tool2) {
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setAggregatingResults(isAggregationEnabled);
-        List<ToolConfiguration> toolList = new ArrayList<>();
-        toolList.add(new ToolConfiguration(tool1, toolPattern1));
-        toolList.add(new ToolConfiguration(tool2, toolPattern2));
-        publisher.setTools(toolList);
+    private List<AnalysisResult> runJobWithAggregation(final boolean isAggregationEnabled) {
+        FreeStyleProject project1 = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
+        enableWarnings(project1, recorder -> recorder.setAggregatingResults(isAggregationEnabled),
+                new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
+                new ToolConfiguration(new Pmd(), "**/pmd-warnings-issues.txt"));
+        FreeStyleProject project = project1;
 
-        job.getPublishersList().add(publisher);
+        return getAnalysisResults(buildWithStatus(project, Result.SUCCESS));
     }
 
     /**
-     * Schedules a new build for the specified job and checks the console log.
-     *
-     * @param job
-     *         the job to schedule
-     * @param status
-     *         the expected result of both tools for the build
-     * @param log
-     *         the log string asserted to be in console
-     *
-     * @return the created {@link FreeStyleBuild}
-     */
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private FreeStyleBuild scheduleBuildAndAssertLog(final FreeStyleProject job, final Result status,
-            final String log) {
-        try {
-            FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
-            j.assertLogContains(log, build);
-            return build;
-        }
-        catch (Exception e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
-     * Creates a {@link List<AnalysisResult>} of the analysis results of {@link FreeStyleBuild}.
-     *
-     * @param build
-     *         the FreeStyleBuild
-     *
-     * @return the created {@link List<ResultAction>}
-     */
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private List<AnalysisResult> getAssertStatusForBothTools(final FreeStyleBuild build) {
-        try {
-            List<ResultAction> actions = build.getActions(ResultAction.class);
-
-            List<AnalysisResult> results = new ArrayList<>();
-            for (ResultAction elements : actions) {
-                results.add(elements.getResult());
-            }
-            return results;
-        }
-        catch (Exception e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
-     * Runs the CheckStyle tool twice for two different files with varying amount of issues: should produce a failure.
+     * Enables CheckStyle tool twice for two different files with varying amount of issues: should produce a failure.
      */
     @Test
-    public void shouldCreateMultipleToolsAndAggregationResultWithWarningsAggregateFalseAndSameTool() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle2.xml", "checkstyle3.xml");
-        enableWarningsAggregation(project, false, "**/checkstyle2-issues.txt", new CheckStyle(),
-                "**/checkstyle3-issues.txt", new CheckStyle());
+    public void shouldThrowExceptionIfSameToolIsConfiguredTwice() {
+        Run<?, ?> build = runJobWithCheckStyleTwice(false, Result.FAILURE);
+        assertThatLogContains(build, "ID checkstyle is already used by another action: "
+                + "io.jenkins.plugins.analysis.core.views.ResultAction for CheckStyle");
 
-        FreeStyleBuild build = scheduleBuildAndAssertLog(project, Result.FAILURE,
-                "ID checkstyle is already used by another action: io.jenkins.plugins.analysis.core.views.ResultAction for CheckStyle");
-
-        List<AnalysisResult> results = getAssertStatusForBothTools(build);
-
-        assertThat(results).hasSize(1);
-
-        for (AnalysisResult element : results) {
-            assertThat(element).hasId("checkstyle");
-        }
+        AnalysisResult result = getAnalysisResult(build);
+        assertThat(result).hasId("checkstyle");
+        assertThat(result).hasTotalSize(6);
     }
 
     /**
@@ -272,20 +182,32 @@ public class MiscIssuesRecorderITest extends IssuesRecorderITest {
      * the build should report 6 issues.
      */
     @Test
-    public void shouldCreateMultipleToolsAndAggregationResultWithWarningsAggregateTrueAndSameTool() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle2.xml", "checkstyle3.xml");
-        enableWarningsAggregation(project, true, "**/checkstyle2-issues.txt", new CheckStyle(),
-                "**/checkstyle3-issues.txt", new CheckStyle());
+    public void shouldAggregateMultipleConfigurationsOfSameTool() {
+        Run<?, ?> build = runJobWithCheckStyleTwice(true, Result.SUCCESS);
 
-        List<AnalysisResult> results = getAnalysisResults(buildWithStatus(project, Result.SUCCESS));
+        AnalysisResult result = getAnalysisResult(build);
 
-        assertThat(results).hasSize(1);
+        assertThat(result.getSizePerOrigin()).containsKeys("checkstyle");
+        assertThat(result).hasTotalSize(12);
+        assertThat(result).hasId("analysis");
+        assertThat(result).hasStatus(Status.INACTIVE);
+    }
 
-        for (AnalysisResult element : results) {
-            assertThat(element.getSizePerOrigin()).containsKeys("checkstyle");
-            assertThat(element).hasTotalSize(6);
-            assertThat(element).hasId("analysis");
-            assertThat(element).hasStatus(Status.INACTIVE);
+    private Run<?, ?> runJobWithCheckStyleTwice(final boolean isAggregationEnabled, final Result result) {
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "checkstyle-twice.xml");
+        enableWarnings(project, recorder -> recorder.setAggregatingResults(isAggregationEnabled),
+                new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
+                new ToolConfiguration(new CheckStyle(), "**/checkstyle-twice-issues.txt"));
+
+        return buildWithStatus(project, result);
+    }
+
+    private void assertThatLogContains(final Run<?, ?> build, final String message) {
+        try {
+            j.assertLogContains(message, build);
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
         }
     }
 }
