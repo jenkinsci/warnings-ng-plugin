@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<analysisResult _class="io.jenkins.plugins.analysis.core.model.AnalysisResult">
+  <fixedSize>0</fixedSize>
+  <id>checkstyle</id>
+  <issue/>
+  <issue/>
+  <issue/>
+  <issue/>
+  <issue/>
+  <issue/>
+  <issue/>
+  <newErrorSize>0</newErrorSize>
+  <newHighPrioritySize>0</newHighPrioritySize>
+  <newLowPrioritySize>0</newLowPrioritySize>
+  <newNormalPrioritySize>0</newNormalPrioritySize>
+  <newSize>0</newSize>
+  <outstandingIssue/>
+  <outstandingIssue/>
+  <outstandingIssue/>
+  <outstandingIssue/>
+  <outstandingIssue/>
+  <outstandingIssue/>
+  <outstandingIssue/>
+  <owner _class="hudson.model.FreeStyleBuild" />
+  <status>INACTIVE</status>
+  <successful>true</successful>
+  <totalErrorsSize>0</totalErrorsSize>
+  <totalHighPrioritySize>7</totalHighPrioritySize>
+  <totalLowPrioritySize>0</totalLowPrioritySize>
+  <totalNormalPrioritySize>0</totalNormalPrioritySize>
+  <totalSize>7</totalSize>
+</analysisResult>

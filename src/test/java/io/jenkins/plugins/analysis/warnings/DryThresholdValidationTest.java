@@ -45,7 +45,7 @@ class DryThresholdValidationTest {
      * Verifies that the getters return the default values for illegal thresholds.
      */
     @Test
-    public void shouldReturnCorrectValuesEvenOnInvalidInput() {
+    void shouldReturnCorrectValuesEvenOnInvalidInput() {
         ThresholdValidation validation = new ThresholdValidation();
 
         assertThat(validation.getNormalThreshold(1, 2)).isEqualTo(1);

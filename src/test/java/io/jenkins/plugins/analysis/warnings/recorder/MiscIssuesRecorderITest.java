@@ -1,39 +1,67 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.function.Consumer;
+import java.util.List;
 
-import org.junit.Ignore;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+import io.jenkins.plugins.analysis.core.quality.Status;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
-import io.jenkins.plugins.analysis.core.views.ResultAction;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
+import io.jenkins.plugins.analysis.warnings.Eclipse;
+import io.jenkins.plugins.analysis.warnings.Pmd;
 
-import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import hudson.model.Run;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
  *
  * @author Ullrich Hafner
  */
-public class IssuesRecorderITest extends IntegrationTest {
+public class MiscIssuesRecorderITest extends IssuesRecorderITest {
+    /**
+     * Verifies that the reference job name can be set to another job.
+     */
+    @Test
+    public void shouldInitializeAndStoreReferenceJobName() {
+        FreeStyleProject job = createFreeStyleProject();
+        String initialization = "Reference Job";
+        enableEclipseWarnings(job, tool -> {
+            tool.setReferenceJobName(initialization);
+        });
+
+        HtmlPage configPage = getWebPage(job, "configure");
+        HtmlForm form = configPage.getFormByName("config");
+        HtmlTextInput referenceJob = form.getInputByName("_.referenceJobName");
+        assertThat(referenceJob.getText()).isEqualTo(initialization);
+
+        String update = "New Reference Job";
+        referenceJob.setText(update);
+
+        submit(form);
+
+        assertThat(getRecorder(job).getReferenceJobName()).isEqualTo(update);
+    }
+
     /**
      * Runs the Eclipse parser on an empty workspace: the build should report 0 issues and an error message.
      */
     @Test
-    @Ignore
     public void shouldCreateEmptyResult() {
-        FreeStyleProject project = createJob();
-        enableWarnings(project);
+        FreeStyleProject project = createFreeStyleProject();
+        enableEclipseWarnings(project);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
@@ -45,14 +73,14 @@ public class IssuesRecorderITest extends IntegrationTest {
      * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
      */
     @Test
-    @Ignore
     public void shouldCreateResultWithWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
-        enableWarnings(project);
+        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
+        enableEclipseWarnings(project);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(8);
+        assertThat(result).hasNewSize(0);
         assertThat(result).hasInfoMessages("Resolved module names for 8 issues",
                 "Resolved package names of 4 affected files");
     }
@@ -62,15 +90,128 @@ public class IssuesRecorderITest extends IntegrationTest {
      * unstable.
      */
     @Test
-    @Ignore
     public void shouldCreateUnstableResult() {
-        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
-        enableWarnings(project, publisher -> publisher.setUnstableTotalAll(7));
+        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
+        enableEclipseWarnings(project, publisher -> publisher.setUnstableTotalAll(7));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
 
         assertThat(result).hasTotalSize(8);
-        assertThat(result).hasOverallResult(Result.UNSTABLE);
+        assertThat(result).hasStatus(Status.WARNING);
+
+        HtmlPage page = getWebPage(project, "eclipse");
+        assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
+    }
+
+    /**
+     * Runs the CheckStyle parser without specifying a pattern: the default pattern should be used.
+     */
+    @Test
+    public void shouldUseDefaultFileNamePattern() {
+        FreeStyleProject project = createFreeStyleProject();
+        copySingleFileToWorkspace(project, "checkstyle.xml", "checkstyle-result.xml");
+        enableWarnings(project, new ToolConfiguration(new CheckStyle(), StringUtils.EMPTY));
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result).hasTotalSize(6);
+    }
+
+    /**
+     * Runs the CheckStyle and PMD tools for two corresponding files which contain at least 6 respectively 4 issues: the
+     * build should report 6 and 4 issues.
+     */
+    @Test
+    public void shouldCreateMultipleActionsIfAggregationDisabled() {
+        List<AnalysisResult> results = runJobWithAggregation(false);
+
+        assertThat(results).hasSize(2);
+
+        for (AnalysisResult element : results) {
+            if (element.getId().equals("checkstyle")) {
+                assertThat(element).hasTotalSize(6);
+            }
+            else {
+                assertThat(element.getId()).isEqualTo("pmd");
+                assertThat(element).hasTotalSize(4);
+            }
+            assertThat(element).hasStatus(Status.INACTIVE);
+        }
+    }
+
+    /**
+     * Runs the CheckStyle and PMD tools for two corresponding files which contain at least 6 respectively 4 issues: due
+     * to enabled aggregation, the build should report 10 issues.
+     */
+    @Test
+    public void shouldCreateSingleActionIfAggregationEnabled() {
+        List<AnalysisResult> results = runJobWithAggregation(true);
+
+        assertThat(results).hasSize(1);
+
+        AnalysisResult result = results.get(0);
+        assertThat(result.getSizePerOrigin()).containsOnlyKeys("checkstyle", "pmd");
+        assertThat(result).hasTotalSize(10);
+        assertThat(result).hasId("analysis");
+        assertThat(result).hasStatus(Status.INACTIVE);
+    }
+
+    private List<AnalysisResult> runJobWithAggregation(final boolean isAggregationEnabled) {
+        FreeStyleProject project1 = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
+        enableWarnings(project1, recorder -> recorder.setAggregatingResults(isAggregationEnabled),
+                new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
+                new ToolConfiguration(new Pmd(), "**/pmd-warnings-issues.txt"));
+        FreeStyleProject project = project1;
+
+        return getAnalysisResults(buildWithStatus(project, Result.SUCCESS));
+    }
+
+    /**
+     * Enables CheckStyle tool twice for two different files with varying amount of issues: should produce a failure.
+     */
+    @Test
+    public void shouldThrowExceptionIfSameToolIsConfiguredTwice() {
+        Run<?, ?> build = runJobWithCheckStyleTwice(false, Result.FAILURE);
+        assertThatLogContains(build, "ID checkstyle is already used by another action: "
+                + "io.jenkins.plugins.analysis.core.views.ResultAction for CheckStyle");
+
+        AnalysisResult result = getAnalysisResult(build);
+        assertThat(result).hasId("checkstyle");
+        assertThat(result).hasTotalSize(6);
+    }
+
+    /**
+     * Runs the CheckStyle tool twice for two different files with varying amount of issues: due to enabled aggregation,
+     * the build should report 6 issues.
+     */
+    @Test
+    public void shouldAggregateMultipleConfigurationsOfSameTool() {
+        Run<?, ?> build = runJobWithCheckStyleTwice(true, Result.SUCCESS);
+
+        AnalysisResult result = getAnalysisResult(build);
+
+        assertThat(result.getSizePerOrigin()).containsKeys("checkstyle");
+        assertThat(result).hasTotalSize(12);
+        assertThat(result).hasId("analysis");
+        assertThat(result).hasStatus(Status.INACTIVE);
+    }
+
+    private Run<?, ?> runJobWithCheckStyleTwice(final boolean isAggregationEnabled, final Result result) {
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "checkstyle-twice.xml");
+        enableWarnings(project, recorder -> recorder.setAggregatingResults(isAggregationEnabled),
+                new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
+                new ToolConfiguration(new CheckStyle(), "**/checkstyle-twice-issues.txt"));
+
+        return buildWithStatus(project, result);
+    }
+
+    private void assertThatLogContains(final Run<?, ?> build, final String message) {
+        try {
+            j.assertLogContains(message, build);
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
     }
 
     /**
@@ -81,7 +222,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void shouldCreateFixedWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFile("eclipse_8_Warnings.txt", "eclipse_5_Warnings.txt");
+        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse_8_Warnings.txt", "eclipse_5_Warnings.txt");
         IssuesRecorder oldPublisher = enableWarningsForNewFixedOutstandingTest(project, null, "eclipse_8_Warnings-issues.txt");
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         enableWarningsForNewFixedOutstandingTest(project, oldPublisher, "eclipse_5_Warnings-issues.txt");
@@ -91,7 +232,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         assertThat(result).hasFixedSize(3);
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); //Outstanding
         assertThat(result).hasTotalSize(5);
-        assertThat(result).hasOverallResult(Result.SUCCESS);
+        assertThat(result).hasStatus(Status.INACTIVE);
     }
 
     /**
@@ -102,7 +243,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void shouldCreateNewWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFile("eclipse_5_Warnings.txt", "eclipse_8_Warnings.txt");
+        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse_5_Warnings.txt", "eclipse_8_Warnings.txt");
         IssuesRecorder oldPublisher = enableWarningsForNewFixedOutstandingTest(project, null, "eclipse_5_Warnings-issues.txt");
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         enableWarningsForNewFixedOutstandingTest(project, oldPublisher, "eclipse_8_Warnings-issues.txt");
@@ -112,7 +253,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         assertThat(result).hasFixedSize(0);
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); //Outstanding
         assertThat(result).hasTotalSize(8);
-        assertThat(result).hasOverallResult(Result.SUCCESS);
+        assertThat(result).hasStatus(Status.INACTIVE);
     }
 
     /**
@@ -123,7 +264,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void shouldCreateNoFixedWarningsOrNewWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFile("eclipse_8_Warnings.txt");
+        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse_8_Warnings.txt");
         IssuesRecorder oldPublisher = enableWarningsForNewFixedOutstandingTest(project, null, "eclipse_8_Warnings-issues.txt");
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         enableWarningsForNewFixedOutstandingTest(project, oldPublisher, "eclipse_8_Warnings-issues.txt");
@@ -133,7 +274,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         assertThat(result).hasFixedSize(0);
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(8);     //Outstanding
         assertThat(result).hasTotalSize(8);
-        assertThat(result).hasOverallResult(Result.SUCCESS);
+        assertThat(result).hasStatus(Status.INACTIVE);
     }
 
     /**
@@ -144,7 +285,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void shouldCreateSomeNewWarningsAndSomeFixedWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFile("eclipse_5_Warnings.txt", "eclipse_4_Warnings.txt");
+        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse_5_Warnings.txt", "eclipse_4_Warnings.txt");
         IssuesRecorder oldPublisher = enableWarningsForNewFixedOutstandingTest(project, null, "eclipse_5_Warnings-issues.txt");
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         enableWarningsForNewFixedOutstandingTest(project, oldPublisher, "eclipse_4_Warnings-issues.txt");
@@ -154,55 +295,9 @@ public class IssuesRecorderITest extends IntegrationTest {
         assertThat(result).hasFixedSize(3);
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(2);     //Outstanding
         assertThat(result).hasTotalSize(4);
-        assertThat(result).hasOverallResult(Result.SUCCESS);
+        assertThat(result).hasStatus(Status.INACTIVE);
     }
-
-    /**
-     * Creates a new {@link FreeStyleProject freestyle job}. The job will get a generated name.
-     *
-     * @return the created job
-     */
-    private FreeStyleProject createJob() {
-        try {
-            return j.createFreeStyleProject();
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
-     * Creates a new {@link FreeStyleProject freestyle job} and copies the specified resources to the workspace folder.
-     * The job will get a generated name.
-     *
-     * @param fileNames
-     *         the files to copy to the workspace
-     *
-     * @return the created job
-     */
-    private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
-        FreeStyleProject job = createJob();
-        copyFilesToWorkspace(job, fileNames);
-        return job;
-    }
-
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job.
-     *
-     * @param job
-     *         the job to register the recorder for
-     *
-     * @return the created recorder
-     */
-    @CanIgnoreReturnValue
-    private IssuesRecorder enableWarnings(final FreeStyleProject job) {
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration("**/*issues.txt", new Eclipse())));
-        job.getPublishersList().add(publisher);
-        return publisher;
-    }
-
+    
     /**
      * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
      * the job. If there is an oldPublisher it will be deleted bevor the new recorder is registerd.
@@ -231,53 +326,10 @@ public class IssuesRecorderITest extends IntegrationTest {
     @CanIgnoreReturnValue
     private IssuesRecorder enableWarningsForNewFixedOutstandingTest(final FreeStyleProject job, String pattern) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration(pattern, new Eclipse())));
+        publisher.setTools(Collections.singletonList(new ToolConfiguration(new Eclipse(), pattern)));
         job.getPublishersList().add(publisher);
         return publisher;
     }
 
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job.
-     *
-     * @param job
-     *         the job to register the recorder for
-     * @param configuration
-     *         configuration of the recorder
-     *
-     * @return the created recorder
-     */
-    @CanIgnoreReturnValue
-    private IssuesRecorder enableWarnings(final FreeStyleProject job, final Consumer<IssuesRecorder> configuration) {
-        IssuesRecorder publisher = enableWarnings(job);
-        configuration.accept(publisher);
-        return publisher;
-    }
 
-    /**
-     * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
-     * been finished.
-     *
-     * @param job
-     *         the job to schedule
-     * @param status
-     *         the expected result for the build
-     *
-     * @return the created {@link ResultAction}
-     */
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private AnalysisResult scheduleBuildAndAssertStatus(final FreeStyleProject job, final Result status) {
-        try {
-            FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
-
-            ResultAction action = build.getAction(ResultAction.class);
-
-            assertThat(action).isNotNull();
-
-            return action.getResult();
-        }
-        catch (Exception e) {
-            throw new AssertionError(e);
-        }
-    }
 }

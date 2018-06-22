@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.dry.dupfinder.DupFinderParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.dry.dupfinder.DupFinderParser;
 
 /**
  * Provides a parser and customized messages for Resharper DupFinder.
@@ -16,11 +15,13 @@ import edu.hm.hafner.analysis.parser.dry.dupfinder.DupFinderParser;
  * @author Ullrich Hafner
  */
 public class DupFinder extends DuplicateCodeScanner {
+    private static final long serialVersionUID = -1073794044577239113L;
     static final String ID = "dupfinder";
 
     /** Creates a new instance of {@link DupFinder}. */
     @DataBoundConstructor
     public DupFinder() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -44,6 +45,7 @@ public class DupFinder extends DuplicateCodeScanner {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends DryDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

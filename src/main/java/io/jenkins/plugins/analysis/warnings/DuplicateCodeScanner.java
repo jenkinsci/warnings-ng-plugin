@@ -1,12 +1,13 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.parser.dry.CodeDuplication;
+import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
 import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
@@ -21,6 +22,7 @@ import hudson.util.FormValidation;
  * @author Ullrich Hafner
  */
 public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
+    private static final long serialVersionUID = -8446643146836067375L;
     private static final String SMALL_ICON_URL = IMAGE_PREFIX + "dry-24x24.png";
     private static final String LARGE_ICON_URL = IMAGE_PREFIX + "dry-48x48.png";
 
@@ -86,6 +88,17 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
             return LARGE_ICON_URL;
         }
 
+        @Override
+        public String getDescription(final Issue issue) {
+            Serializable properties = issue.getAdditionalProperties();
+            if (properties instanceof DuplicationGroup) {
+                return pre().with(code(((DuplicationGroup) properties).getCodeFragment())).render();
+            }
+            else {
+                return super.getDescription(issue);
+            }
+        }
+
         /**
          * Returns a JSON array that contains the column values for this issue.
          *
@@ -99,7 +112,7 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
             JSONArray columns = new JSONArray();
             columns.add(formatDetails(issue));
             columns.add(formatFileName(issue));
-            columns.add(formatPriority(issue.getPriority()));
+            columns.add(formatSeverity(issue.getSeverity()));
             columns.add(issue.getLineEnd() - issue.getLineStart() + 1);
             columns.add(formatTargets(issue));
             columns.add(formatAge(issue, ageBuilder));
@@ -107,8 +120,11 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
         }
 
         private String formatTargets(final Issue issue) {
-            if (issue instanceof CodeDuplication) {
-                List<CodeDuplication> duplications = ((CodeDuplication) issue).getDuplications();
+            Serializable properties = issue.getAdditionalProperties();
+            if (properties instanceof DuplicationGroup) {
+                List<Issue> duplications = ((DuplicationGroup) properties).getDuplications();
+                duplications.remove(issue); // do not show reference to this issue
+
                 return ul(each(duplications, link -> li(a()
                                 .withHref(String.format("source.%s/#%d", link.getId(), link.getLineStart()))
                                 .withText(String.format("%s:%s", FILE_NAME_FORMATTER.apply(link.getFileName()),
@@ -127,12 +143,12 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
         @Override
         public String[] getTableHeaders() {
             return new String[]{
-                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_Details(),
-                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_File(),
-                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_Priority(),
+                    Messages.DRY_Table_Column_Details(),
+                    Messages.DRY_Table_Column_File(),
+                    Messages.DRY_Table_Column_Priority(),
                     Messages.DRY_Table_Column_LinesCount(),
                     Messages.DRY_Table_Column_DuplicatedIn(),
-                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_Age()
+                    Messages.DRY_Table_Column_Age()
             };
         }
     }
@@ -141,6 +157,12 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
     abstract static class DryDescriptor extends StaticAnalysisToolDescriptor {
         private static final ThresholdValidation VALIDATION = new ThresholdValidation();
 
+        /**
+         * Creates the descriptor instance.
+         *
+         * @param id
+         *         ID of the tool
+         */
         protected DryDescriptor(final String id) {
             super(id);
         }
