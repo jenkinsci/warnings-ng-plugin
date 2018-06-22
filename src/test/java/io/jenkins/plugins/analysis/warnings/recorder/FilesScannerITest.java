@@ -13,18 +13,16 @@ import org.junit.Test;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import io.jenkins.plugins.analysis.core.util.FilesScanner;
-import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 
 import hudson.FilePath;
-import hudson.model.FreeStyleBuild;
+import hudson.Functions;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.TopLevelItem;
@@ -54,7 +52,7 @@ import hudson.model.TopLevelItem;
  *
  * @author Alexander Praegla
  */
-public class FilesScannerITest extends IntegrationTest {
+public class FilesScannerITest extends IssuesRecorderITest {
     private static final String WORKSPACE_DIRECTORY = "filesscanner_workspace";
     private static final String WORKSPACE_RESOURCE_ZIP = "filesscanner_workspace.zip";
     private static final String EMPTY_WORKSPACE_DIRECTORY = WORKSPACE_DIRECTORY + "/empty_workspace";
@@ -70,49 +68,31 @@ public class FilesScannerITest extends IntegrationTest {
     private static final String WINDOWS_FILE_DENY = "/deny";
 
     /**
-     * Runs the {@link FilesScanner} on a workspace with no files.
-     * <p>
-     * On errors during coping test files
+     * Runs the {@link FilesScanner} on a workspace with no files: the report should contain an error message.
      */
     @Test
-    public void isEmptyWorkspace() {
-        FreeStyleProject project = createJobWithWorkspaceFile(new File(EMPTY_WORKSPACE_DIRECTORY));
+    public void shouldReportErrorOnEmptyWorkspace() {
+        FreeStyleProject project = createCheckStyleJob(EMPTY_WORKSPACE_DIRECTORY);
 
-        enableWarnings(project, "*.xml", new CheckStyle());
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThat(result.getTotalSize()).isZero();
-
-        assertThat(result.getErrorMessages().size()).isOne();
-        assertThat(result.getErrorMessages().get(0)).isEqualTo(
-                "No files found for pattern '*.xml'. Configuration error?");
-
+        assertThat(result).hasTotalSize(0);
+        assertThat(result).hasErrorMessages("No files found for pattern '*.xml'. Configuration error?");
     }
 
     /**
-     * Runs the {@link FilesScanner} on a workspace with a none readable file. This should work on UNIX but it isn't
-     * tested so this test is uncommented because on Windows it still failes
+     * Runs the {@link FilesScanner} on a workspace with a not readable file.
      */
     @Test
     public void cantReadFile() {
-        FreeStyleProject project = createJobWithWorkspaceFile(new File(NON_READABLE_FILE_WORKSPACE));
+        FreeStyleProject project = createCheckStyleJob(NON_READABLE_FILE_WORKSPACE);
 
-        String pathToExtractedFile = j.jenkins.getWorkspaceFor(project) + File.separator + NON_READABLE_FILE;
-        File nonReadableFile = new File(pathToExtractedFile);
-        if (System.getProperty("os.name").contains("Windows")) {
-            execWindowsCommandIcacls(pathToExtractedFile, WINDOWS_FILE_DENY,
-                    WINDOWS_FILE_ACCESS_READ_ONLY);
-        }
-        else {
-            assertThat(nonReadableFile.setReadable(false, false)).isTrue();
-            assertThat(nonReadableFile.canRead()).isFalse();
-        }
+        makeFileUnreadable(project);
 
-        enableWarnings(project, "*.xml", new CheckStyle());
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThat(result.getTotalSize()).isZero();
-        if (System.getProperty("os.name").contains("Windows")) {
+        assertThat(result).hasTotalSize(0);
+        if (Functions.isWindows()) {
             assertThat(result.getErrorMessages().get(0)).contains("java.io.FileNotFoundException:");
         }
         else {
@@ -121,20 +101,29 @@ public class FilesScannerITest extends IntegrationTest {
         }
     }
 
+    private void makeFileUnreadable(final FreeStyleProject project) {
+        String pathToExtractedFile = j.jenkins.getWorkspaceFor(project) + File.separator + NON_READABLE_FILE;
+        File nonReadableFile = new File(pathToExtractedFile);
+        if (Functions.isWindows()) {
+            execWindowsCommandIcacls(pathToExtractedFile, WINDOWS_FILE_DENY, WINDOWS_FILE_ACCESS_READ_ONLY);
+        }
+        else {
+            assertThat(nonReadableFile.setReadable(false, false)).isTrue();
+            assertThat(nonReadableFile.canRead()).isFalse();
+        }
+    }
+
     /**
      * Runs the {@link FilesScanner} on a workspace with a file with zero length.
      */
     @Test
     public void fileLengthIsZero() {
-        FreeStyleProject project = createJobWithWorkspaceFile(new File(ZERO_LENGTH_WORKSPACE));
-
-        enableWarnings(project, "*.xml", new CheckStyle());
+        FreeStyleProject project = createCheckStyleJob(ZERO_LENGTH_WORKSPACE);
+        
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThat(result.getTotalSize()).isZero();
-        assertThat(result.getErrorMessages().size()).isOne();
-        assertThat(result.getErrorMessages().get(0)).isEqualTo(
-                "Skipping file 'zero_length_file.xml' because it's empty.");
+        assertThat(result).hasTotalSize(0);
+        assertThat(result).hasErrorMessages("Skipping file 'zero_length_file.xml' because it's empty.");
 
     }
 
@@ -143,24 +132,21 @@ public class FilesScannerITest extends IntegrationTest {
      */
     @Test
     public void filePatternDoesNotMatchAnyFile() {
-        FreeStyleProject project = createJobWithWorkspaceFile(new File(NO_FILE_PATTERN_MATCH_WORKSPACE));
-
-        enableWarnings(project, "*.xml", new CheckStyle());
+        FreeStyleProject project = createCheckStyleJob(NO_FILE_PATTERN_MATCH_WORKSPACE);
+        
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThat(result.getTotalSize()).isZero();
-        assertThat(result.getErrorMessages().get(0)).isEqualTo(
-                "No files found for pattern '*.xml'. Configuration error?");
+        assertThat(result).hasTotalSize(0);
+        assertThat(result).hasErrorMessages("No files found for pattern '*.xml'. Configuration error?");
     }
 
     /**
-     * Runs the {@link FilesScanner} on a workspace with multiple files where some do match the criterias.
+     * Runs the {@link FilesScanner} on a workspace with multiple files where some do match the criteria.
      */
     @Test
     public void findIssuesWithMultipleFiles() {
-        FreeStyleProject project = createJobWithWorkspaceFile(new File(MULTIPLE_FILES_WORKSPACE));
-
-        enableWarnings(project, "*.xml", new CheckStyle());
+        FreeStyleProject project = createCheckStyleJob(MULTIPLE_FILES_WORKSPACE);
+        
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result.getTotalSize()).isEqualTo(6);
@@ -177,9 +163,7 @@ public class FilesScannerITest extends IntegrationTest {
      */
     @Test
     public void parseCheckstyleFileCorrectly() {
-        FreeStyleProject project = createJobWithWorkspaceFile(new File(CHECKSTYLE_WORKSPACE));
-
-        enableWarnings(project, "*.xml", new CheckStyle());
+        FreeStyleProject project = createCheckStyleJob(CHECKSTYLE_WORKSPACE);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(result).isNotNull();
@@ -190,6 +174,12 @@ public class FilesScannerITest extends IntegrationTest {
         Assertions.assertThat(result.getInfoMessages()).contains(
                 "-> found 1 file");
 
+    }
+
+    private FreeStyleProject createCheckStyleJob(final String emptyWorkspaceDirectory) {
+        FreeStyleProject project = createJobWithWorkspaceFile(new File(emptyWorkspaceDirectory));
+        enableWarnings(project, "*.xml", new CheckStyle());
+        return project;
     }
 
     /**
@@ -282,34 +272,7 @@ public class FilesScannerITest extends IntegrationTest {
         }
     }
 
-    /**
-     * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
-     * been finished.
-     *
-     * @param job
-     *         the job to schedule
-     * @param status
-     *         the expected result for the build
-     *
-     * @return the created {@link ResultAction}
-     */
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private AnalysisResult scheduleBuildAndAssertStatus(final FreeStyleProject job, final Result status) {
-        try {
-            FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
-
-            ResultAction action = build.getAction(ResultAction.class);
-
-            Assertions.assertThat(action).isNotNull();
-
-            return action.getResult();
-        }
-        catch (Exception e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
+   /**
      * Deletes recursively a whole directory including subdirectories.
      *
      * @param directoryToBeDeleted

@@ -226,8 +226,13 @@ public class IssuesRecorderITest extends IntegrationTest {
         List<AnalysisResult> analysisResults = getAnalysisResults(build);
         
         assertThat(analysisResults).hasSize(1);
-        
-        return analysisResults.get(0);
+        AnalysisResult result = analysisResults.get(0);
+        System.out.println("----- Error Messages -----");
+        result.getErrorMessages().forEach(System.out::println);
+        System.out.println("----- Info Messages -----");
+        result.getInfoMessages().forEach(System.out::println);
+        System.out.println("-------------------------");
+        return result;
     }
 
     /**
