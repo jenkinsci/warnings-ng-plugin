@@ -39,11 +39,47 @@ import hudson.util.DescribableList;
  * @author Ullrich Hafner
  */
 public class IssuesRecorderITest extends IntegrationTest {
-    protected void enableEclipseWarnings(final FreeStyleProject project) {
+    /**
+     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
+     * the job.
+     *
+     * @param job
+     *         the job to register the recorder for
+     * @param tool
+     *         the tool to scan the warnings
+     *
+     * @return the created recorder
+     */
+    @CanIgnoreReturnValue
+    protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final StaticAnalysisTool tool) {
+        return enableWarnings(job, createGenericToolConfiguration(tool));
+    }
+
+    /**
+     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
+     * the job.
+     *
+     * @param job
+     *         the job to register the recorder for
+     * @param toolConfigurations
+     *         the tool configurations to use
+     *
+     * @return the created recorder
+     */
+    @CanIgnoreReturnValue
+    protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, 
+            final ToolConfiguration... toolConfigurations) {
+        IssuesRecorder publisher = new IssuesRecorder();
+        publisher.setTools(Arrays.asList(toolConfigurations));
+        job.getPublishersList().add(publisher);
+        return publisher;
+    }
+
+    protected void enableEclipseWarnings(final AbstractProject<?, ?>  project) {
         enableWarnings(project, new Eclipse());
     }
 
-    protected void enableCheckStyleWarnings(final FreeStyleProject project) {
+    protected void enableCheckStyleWarnings(final AbstractProject<?, ?> project) {
         enableWarnings(project, new CheckStyle());
     }
 
@@ -98,22 +134,6 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, final StaticAnalysisTool tool) {
-        return enableWarnings(job, createGenericToolConfiguration(tool));
-    }
-
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job.
-     *
-     * @param job
-     *         the job to register the recorder for
-     * @param tool
-     *         the tool to scan the warnings
-     *
-     * @return the created recorder
-     */
-    @CanIgnoreReturnValue
     protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
             final Consumer<IssuesRecorder> configuration,
             final StaticAnalysisTool tool) {
@@ -147,26 +167,6 @@ public class IssuesRecorderITest extends IntegrationTest {
         IssuesRecorder recorder = enableWarnings(job, ArrayUtils.add(additionalToolConfigurations, toolConfiguration));
         configuration.accept(recorder);
         return recorder;
-    }
-
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job.
-     *
-     * @param job
-     *         the job to register the recorder for
-     * @param toolConfigurations
-     *         the tool configurations to use
-     *
-     * @return the created recorder
-     */
-    @CanIgnoreReturnValue
-    protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
-            final ToolConfiguration... toolConfigurations) {
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Arrays.asList(toolConfigurations));
-        job.getPublishersList().add(publisher);
-        return publisher;
     }
 
     protected IssuesRecorder getRecorder(final AbstractProject<?, ?> job) {

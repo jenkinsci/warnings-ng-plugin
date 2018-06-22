@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,7 +9,6 @@ import org.junit.Test;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
@@ -215,121 +213,104 @@ public class MiscIssuesRecorderITest extends IssuesRecorderITest {
     }
 
     /**
-     * Runs the Eclipse parser on two output file. The first file contains 8 Warnings, the second 5 Warnings.
-     * The the fist file is for the first Build to get a Base. The second Build with the second File generates
-     * the difference between the Builds for the Test.
-     * The build should report 0 New Warnings, 3 fixed Warnings, 5 outstanding Warnings and 5 Warnings Total.
+     * Runs the Eclipse parser on two output file. The first file contains 8 warnings, the second 5 warnings. Then the
+     * first file is for the first build to define the baseline. The second build with the second file generates the
+     * difference between the builds for the test. The build should report 0 new, 3 fixed, and 5 outstanding warnings.
      */
     @Test
     public void shouldCreateFixedWarnings() {
         FreeStyleProject project = createJobWithWorkspaceFiles("eclipse_8_Warnings.txt", "eclipse_5_Warnings.txt");
-        IssuesRecorder oldPublisher = enableWarningsForNewFixedOutstandingTest(project, null, "eclipse_8_Warnings-issues.txt");
+        IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_8_Warnings-issues.txt"));
+
+        // First build: baseline
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        enableWarningsForNewFixedOutstandingTest(project, oldPublisher, "eclipse_5_Warnings-issues.txt");
+
+        // Second build: actual result
+        recorder.setTool(createEclipse("eclipse_5_Warnings-issues.txt"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(0);
         assertThat(result).hasFixedSize(3);
-        assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); //Outstanding
+        assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); // Outstanding
         assertThat(result).hasTotalSize(5);
         assertThat(result).hasStatus(Status.INACTIVE);
     }
 
     /**
-     * Runs the Eclipse parser on two output file. The first file contains 5 Warnings, the second 8 Warnings.
-     * The the fist file is for the first Build to get a Base. The second Build with the second File generates
-     * the difference between the Builds for the Test.
-     * The build should report 3 New Warnings, 0 fixed Warnings, 5 outstanding Warnings and 8 Warnings Total.
+     * Runs the Eclipse parser on two output file. The first file contains 5 warnings, the second 8 warnings. Then the
+     * first file is for the first build to define the baseline. The second build with the second file generates the
+     * difference between the builds for the test. The build should report 3 new, 0 fixed, and 5 outstanding warnings.
      */
     @Test
     public void shouldCreateNewWarnings() {
         FreeStyleProject project = createJobWithWorkspaceFiles("eclipse_5_Warnings.txt", "eclipse_8_Warnings.txt");
-        IssuesRecorder oldPublisher = enableWarningsForNewFixedOutstandingTest(project, null, "eclipse_5_Warnings-issues.txt");
+        IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_5_Warnings-issues.txt"));
+
+        // First build: baseline
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        enableWarningsForNewFixedOutstandingTest(project, oldPublisher, "eclipse_8_Warnings-issues.txt");
+
+        // Second build: actual result
+        recorder.setTool(createEclipse("eclipse_8_Warnings-issues.txt"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(3);
         assertThat(result).hasFixedSize(0);
-        assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); //Outstanding
+        assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); // Outstanding
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasStatus(Status.INACTIVE);
     }
 
     /**
-     * Runs the Eclipse parser on one output file, that contains 8 Warnings.
-     * The the fist file is for the first Build to get a Base. The second Build with the second File generates
-     * the difference between the Builds for the Test.
-     * The build should report 0 New Warnings, 0 fixed Warnings, 8 outstanding Warnings and 8 Warnings Total.
+     * Runs the Eclipse parser on one output file, that contains 8 warnings. Then the first file is for the first build
+     * to define the baseline. The second build with the second file generates the difference between the builds for the
+     * test. The build should report 0 new, 0 fixed, and 8 outstanding warnings.
      */
     @Test
     public void shouldCreateNoFixedWarningsOrNewWarnings() {
         FreeStyleProject project = createJobWithWorkspaceFiles("eclipse_8_Warnings.txt");
-        IssuesRecorder oldPublisher = enableWarningsForNewFixedOutstandingTest(project, null, "eclipse_8_Warnings-issues.txt");
+        IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_8_Warnings-issues.txt"));
+
+        // First build: baseline
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        enableWarningsForNewFixedOutstandingTest(project, oldPublisher, "eclipse_8_Warnings-issues.txt");
+
+        // Second build: actual result
+        recorder.setTool(createEclipse("eclipse_8_Warnings-issues.txt"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(0);
         assertThat(result).hasFixedSize(0);
-        assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(8);     //Outstanding
+        assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(8); // Outstanding
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasStatus(Status.INACTIVE);
     }
 
     /**
-     * Runs the Eclipse parser on two output file. The first file contains 5 Warnings, the second 4 Warnings.
-     * The the fist file is for the first Build to get a Base. The second Build with the second File generates
-     * the difference between the Builds for the Test.
-     * The build should report 2 New Warnings, 3 fixed Warnings, 2 outstanding Warnings and 4 Warnings Total.
+     * Runs the Eclipse parser on two output file. The first file contains 5 Warnings, the second 4 Warnings. The the
+     * fist file is for the first Build to get a Base. The second Build with the second File generates the difference
+     * between the Builds for the Test. The build should report 2 New Warnings, 3 fixed Warnings, 2 outstanding Warnings
+     * and 4 Warnings Total.
      */
     @Test
     public void shouldCreateSomeNewWarningsAndSomeFixedWarnings() {
         FreeStyleProject project = createJobWithWorkspaceFiles("eclipse_5_Warnings.txt", "eclipse_4_Warnings.txt");
-        IssuesRecorder oldPublisher = enableWarningsForNewFixedOutstandingTest(project, null, "eclipse_5_Warnings-issues.txt");
+        IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_5_Warnings-issues.txt"));
+
+        // First build: baseline
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        enableWarningsForNewFixedOutstandingTest(project, oldPublisher, "eclipse_4_Warnings-issues.txt");
+
+        // Second build: actual result
+        recorder.setTool(createEclipse("eclipse_4_Warnings-issues.txt"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(2);
         assertThat(result).hasFixedSize(3);
-        assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(2);     //Outstanding
+        assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(2); // Outstanding
         assertThat(result).hasTotalSize(4);
         assertThat(result).hasStatus(Status.INACTIVE);
     }
-    
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job. If there is an oldPublisher it will be deleted bevor the new recorder is registerd.
-     *
-     * @param job the job to register the recorder for
-     * @param oldPublisher the publisher that will be deletet from job
-     * @param pattern the pattern for the inputfile for the toolConfiguration
-     * @return the created recorder
-     */
-    @CanIgnoreReturnValue
-    private IssuesRecorder enableWarningsForNewFixedOutstandingTest(final FreeStyleProject job, IssuesRecorder oldPublisher, String pattern) {
-        if(oldPublisher != null) {
-            job.getPublishersList().remove(oldPublisher);
-        }
-        return enableWarningsForNewFixedOutstandingTest(job, pattern);
-    }
 
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job.
-     *
-     * @param job the job to register the recorder for
-     * @param pattern the pattern for the inputfile for the toolConfiguration
-     * @return the created recorder
-     */
-    @CanIgnoreReturnValue
-    private IssuesRecorder enableWarningsForNewFixedOutstandingTest(final FreeStyleProject job, String pattern) {
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration(new Eclipse(), pattern)));
-        job.getPublishersList().add(publisher);
-        return publisher;
+    private ToolConfiguration createEclipse(final String pattern) {
+        return new ToolConfiguration(new Eclipse(), pattern);
     }
-
 
 }
