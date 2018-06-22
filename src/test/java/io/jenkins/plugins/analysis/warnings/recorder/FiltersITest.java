@@ -44,6 +44,8 @@ import hudson.model.TopLevelItem;
  */
 @SuppressWarnings("classdataabstractioncoupling")
 public class FiltersITest extends IssuesRecorderITest {
+    private static final String MODULE_FILTER = "module-filter/";
+
     /**
      * Tests the module expression filter: provides a pom.xml in the workspace so that modules are correctly assigned.
      */
@@ -53,9 +55,9 @@ public class FiltersITest extends IssuesRecorderITest {
 
         for (Entry<RegexpFilter, Integer[]> entry : expectedLinesByFilter.entrySet()) {
             FreeStyleProject project = createFreeStyleProject();
-            copyAndExpandedVariables(project, "ModuleRegexTest/pmd.xml");
-            copyMultipleFilesToWorkspace(project, "ModuleRegexTest/pom.xml",
-                    "ModuleRegexTest/m1/pom.xml", "ModuleRegexTest/m2/pom.xml");
+            copyAndExpandedVariables(project, MODULE_FILTER + "pmd.xml");
+            copyMultipleFilesToWorkspace(project, MODULE_FILTER + "pom.xml",
+                    MODULE_FILTER + "m1/pom.xml", MODULE_FILTER + "m2/pom.xml");
             enableWarnings(project, recorder -> recorder.setFilters(toFilter(entry)), new Pmd());
 
             buildAndVerifyResults(project, entry.getValue());
