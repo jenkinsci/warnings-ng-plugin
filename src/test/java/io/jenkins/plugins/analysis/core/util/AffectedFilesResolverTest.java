@@ -29,11 +29,12 @@ class AffectedFilesResolverTest {
         
         new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(report, BUILD_ROOT, mock(File.class));
 
-        assertThat(report.getErrorMessages()).hasSize(1);
-        assertThat(report.getErrorMessages().get(0)).startsWith("Copying 1 affected files to Jenkins' build folder builds.");
-        assertThat(report.getErrorMessages().get(0)).contains("0 copied");
-        assertThat(report.getErrorMessages().get(0)).contains("0 not in workspace");
-        assertThat(report.getErrorMessages().get(0)).contains("1 not-found");
-        assertThat(report.getErrorMessages().get(0)).contains("0 with I/O error");
+        assertThat(report.getInfoMessages()).hasSize(1);
+        String message = report.getInfoMessages().get(0);
+        assertThat(message).startsWith("Copying 1 affected files to Jenkins' build folder builds.");
+        assertThat(message).contains("0 copied");
+        assertThat(message).contains("0 not in workspace");
+        assertThat(message).contains("1 not-found");
+        assertThat(message).contains("0 with I/O error");
     }
 }

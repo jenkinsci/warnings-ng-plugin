@@ -142,15 +142,9 @@ public class AffectedFilesResolver {
             }
         }
 
-        String message = String.format("Copying %d affected files to Jenkins' build folder %s.%n"
+        report.logInfo("Copying %d affected files to Jenkins' build folder %s.%n"
                         + "%d copied, %d not in workspace, %d not-found, %d with I/O error",
                 files.size(), jenkinsBuildRoot.getRemote(), copied, notInWorkspace, notFound, error);
-        if (error > 0 || notFound > 0) {
-            report.logError(message);
-        }
-        else {
-            report.logInfo(message);
-        }
     }
 
     /**
