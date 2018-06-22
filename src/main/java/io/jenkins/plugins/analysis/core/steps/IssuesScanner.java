@@ -136,7 +136,7 @@ class IssuesScanner {
         if (report.isEmpty()) {
             postProcessed = report; // nothing to post process
             if (report.hasErrors()) {
-                report.logInfo("Skipping post processing due to errors.");
+                report.logInfo("Skipping post processing due to errors");
             }
         }
         else {
