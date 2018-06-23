@@ -77,8 +77,8 @@ public class FilesScannerITest extends IssuesRecorderITest {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
-        if (Functions.isWindows()) {
-            assertThat(result).hasErrorMessages("java.io.FileNotFoundException:");
+        if (Functions.isWindows()) { // FIXME: remove this test on windows 
+            assertThat(result).hasErrorMessages("java.io.FileNotFoundException: ");
         }
         else {
             assertThat(result).hasErrorMessages(
