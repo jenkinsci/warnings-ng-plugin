@@ -65,10 +65,11 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
         checkIfContentExists(contentPage);
     }
 
+    // FIXME: add two new tests that delete only one of them
     private void deleteWorkspaceAndBuildFolderFiles(final FreeStyleProject project, final AnalysisResult result) {
         Report issues = result.getIssues();
         issues.forEach(issue -> AffectedFilesResolver.getFile(result.getOwner(), issue).delete());
-        assertThat(new File(j.jenkins.getWorkspaceFor(project) + "/" + SOURCE_FILE).delete()).isTrue();
+        assertThat(getSourceInWorkspace(project).delete()).isTrue();
     }
 
     private FreeStyleProject createEclipseParserProject() {
@@ -146,17 +147,17 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
         DomNodeList<HtmlElement> list = domElement.getElementsByTagName("a");
         removeElementsByTagName(list);
 
-        String content = toString(new File(j.jenkins.getWorkspaceFor(project) + "/" + SOURCE_FILE));
+        String content = toString(getSourceInWorkspace(project));
 
         String actual = contentPage.getElementById("main-panel").asText().replaceAll(WHITESPACE, "");
         assertThat(actual).contains(content.replaceAll(WHITESPACE, ""));
     }
 
     /**
-     * Verifies that a given file which are copied in a tmp folder can be found by the {@link AffectedFilesResolver}.
+     * Verifies that all copied affected files are found by the {@link AffectedFilesResolver#getFile(Run, Issue)}.
      */
     @Test
-    public void shouldFindTempFile() {
+    public void shouldRetrieveAffectedFilesInBuildFolder() {
         FreeStyleProject project = createEclipseParserProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
@@ -164,17 +165,24 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
         issues.forEach(issue -> assertThatFileExistsInBuildFolder(issue, project, result.getOwner()));
     }
 
-    private void assertThatFileExistsInBuildFolder(final Issue issue, final FreeStyleProject project, final Run<?, ?> owner) {
+    private void assertThatFileExistsInBuildFolder(final Issue issue, final FreeStyleProject project, 
+            final Run<?, ?> owner) {
         File buildFolderCopy = AffectedFilesResolver.getFile(owner, issue);
         if (issue.getFileName().contains(SOURCE_FILE)) {
             assertThat(buildFolderCopy).exists();
-            
-            File file = new File(j.jenkins.getWorkspaceFor(project) + "/" + SOURCE_FILE);
-            assertThat(toString(buildFolderCopy)).isEqualTo(toString(file));
+            assertThat(buildFolderCopy).hasSameContentAs(getSourceInWorkspace(project));
         }
         else {
-            assertThat(buildFolderCopy).doesNotExist();
+            assertThat(buildFolderCopy).doesNotExist(); // these file have not been copied, since they were not present
         }
+    }
+
+    private File getSourceInWorkspace(final FreeStyleProject project) {
+        return new File(getSourceAbsolutePath(project));
+    }
+
+    private String getSourceAbsolutePath(final FreeStyleProject project) {
+        return j.jenkins.getWorkspaceFor(project) + "/" + SOURCE_FILE;
     }
 
     /**
@@ -184,7 +192,7 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
     public void shouldGetIOErrorBySearchingForAffectedFiles() {
         FreeStyleProject project = createEclipseParserProject();
 
-        denyFileAccess(j.jenkins.getWorkspaceFor(project) + "/" + SOURCE_FILE);
+        denyFileAccess(getSourceAbsolutePath(project));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         
