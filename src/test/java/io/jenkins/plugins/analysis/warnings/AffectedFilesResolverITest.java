@@ -35,125 +35,36 @@ import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.FilePath;
 import hudson.FilePath.TarCompression;
+import hudson.Functions;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
-import hudson.model.TopLevelItem;
 import hudson.tasks.Maven;
 
 /**
  * This class is an integration test for the class {@link AffectedFilesResolver}.
+ * <p>
+ * The files below are necessary for the integration test of {@link io.jenkins.plugins.analysis.core.util.AffectedFilesResolver}}.
+ * A short description of the purpose of every file should be given here.
+ * <b>Main.zip:</b>
+ * Main.java a sample Java class for the test cases
+ * <p>
  *
  * @author Deniz Mardin
  * @author Frank Christian Geyer
  */
-public class AffectedFilesResolverIT extends IntegrationTest {
-    /**
-     * These are the module files that are necessary for the integration test of {@link
-     * edu.hm.hafner.analysis.ModuleDetector}}. A short description of the purpose of every file should be given here.
-     *
-     * <b>Maven:</b>
-     * pom.xml a default pom.xml with a valid name tag
-     * <p>
-     * m1/pom.xml a default pom.xml with a valid name tag which could be used to detect additional modules in addition
-     * to the previous mentioned pom.xml
-     * <p>
-     * m2/pom.xml a default pom.xml with a valid name tag which could be used to detect additional modules in addition
-     * to the first mentioned pom.xml
-     * <p>
-     * m3/pom.xml a broken XML-structure breaks the correct parsing of this file
-     * <p>
-     * m4/pom.xml a pom.xml with a substitutional artifactId tag and without a name tag
-     * <p>
-     * m5/pom.xml a pom.xml without a substitutional artifactId tag and without a name tag
-     *
-     * <b>Ant:</b>
-     * build.xml a default build.xml with a valid name tag
-     * <p>
-     * m1/build.xml a default build.xml with a valid name tag which could be used to detect additional modules in
-     * addition to the previous mentioned build.xml
-     * <p>
-     * m2/build.xml a broken XML-structure breaks the correct parsing of this file
-     * <p>
-     * m3/build.xml a build file without the name tag
-     *
-     * <b>OSGI:</b>
-     * META-INF/MANIFEST.MF a default MANIFEST.MF with a set Bundle-SymbolicName and a set Bundle-Vendor
-     * <p>
-     * m1/META-INF/MANIFEST.MF a MANIFEST.MF with a wildcard Bundle-Name, a set Bundle-SymbolicName and a wildcard
-     * Bundle-Vendor
-     * <p>
-     * m2/META-INF/MANIFEST.MF a MANIFEST.MF with a set Bundle-Name and a wildcard Bundle-Vendor
-     * <p>
-     * m3/META-INF/MANIFEST.MF an empty MANIFEST.MF
-     * <p>
-     * plugin.properties a default plugin.properties file
-     */
-    private static final String[] MODULE_FILE_NAMES_TO_KEEP = new String[]{
-            "m1/pom.xml", "m2/pom.xml", "m3/pom.xml", "m4/pom.xml", "m5/pom.xml", "pom.xml",
-            "m1/build.xml", "m2/build.xml", "m3/build.xml", "build.xml",
-            "m1/META-INF/MANIFEST.MF", "m2/META-INF/MANIFEST.MF", "m3/META-INF/MANIFEST.MF", "META-INF/MANIFEST.MF", "plugin.properties"
-    };
-
-    private static final String[] GENERIC_FILE_NAMES_TO_KEEP = new String[]{
-            ".cs", ".java", ".zip", ".tar", ".gz"
-    };
-
-    /**
-     * Creates a pre-defined filename for a workspace file.
-     *
-     * @param fileNamePrefix
-     *         prefix of the filename
-     */
-    protected String createWorkspaceFileName(final String fileNamePrefix) {
-        String modifiedFileName = String.format("%s-issues.txt", FilenameUtils.getBaseName(fileNamePrefix));
-
-        String fileNamePrefixInModuleList = Arrays.stream(MODULE_FILE_NAMES_TO_KEEP)
-                .filter(fileNamePrefix::endsWith)
-                .findFirst()
-                .orElse("");
-
-        if ("".equals(fileNamePrefixInModuleList)) {
-            List<Boolean> fileNamePrefixInList = Arrays.stream(GENERIC_FILE_NAMES_TO_KEEP)
-                    .map(fileNamePrefix::endsWith)
-                    .collect(Collectors.toList());
-            return fileNamePrefixInList.contains(true) ? FilenameUtils.getName(fileNamePrefix) : modifiedFileName;
-        }
-        return fileNamePrefixInModuleList;
-    }
-
-    /**
-     * Copies the specified files to the workspace using a generated file name.
-     *
-     * @param job
-     *         the job to get the workspace for
-     * @param fileNames
-     *         the files to copy
-     */
-    protected void copyFilesToWorkspace(final TopLevelItem job, final String... fileNames) {
-        try {
-            FilePath workspace = j.jenkins.getWorkspaceFor(job);
-            assertThat(workspace).isNotNull();
-            for (String fileName : fileNames) {
-                workspace.child(createWorkspaceFileName(fileName)).copyFrom(asInputStream(fileName));
-            }
-        }
-        catch (IOException | InterruptedException e) {
-            throw new AssertionError(e);
-        }
-    }
-
+public class AffectedFilesResolverITest extends IntegrationTest {
     private static final String WINDOWS_FILE_ACCESS_READ_ONLY = "RX";
     private static final String WINDOWS_FILE_DENY = "/deny";
-    private static final String PACKAGE_FOR_ECLIPSE_TXT = "/edu/hm/hafner/analysis/AffectedFilesResolverTestFiles";
-    private static final String ZIP_FILE = PACKAGE_FOR_ECLIPSE_TXT + "/Main.zip";
+    private static final String PACKAGE_FOR_ECLIPSE_TXT = "affected-files";
+    private static final String ZIP_FILE = PACKAGE_FOR_ECLIPSE_TXT + "/Main.java";
     private static final String ECLIPSE_TXT =
             PACKAGE_FOR_ECLIPSE_TXT + "/eclipseOneAffectedAndThreeNotExistingFiles.txt";
     private static final String ECLIPSE_TXT_ONE_AFFECTED_FILE = PACKAGE_FOR_ECLIPSE_TXT + "/eclipseOneAffectedFile.txt";
     private static final String WHITESPACE = "\\s";
     private static final String DEFAULT_ENTRY_PATH = "eclipseResult/";
-    private static final String EXTRACTED_FILE = "Main.java";
+    private static final String EXTRACTED_FILE = PACKAGE_FOR_ECLIPSE_TXT + "/Main.java";
 
     private static final boolean IS_MAVEN_PROJECT = false;
 
@@ -245,7 +156,8 @@ public class AffectedFilesResolverIT extends IntegrationTest {
 
         String content = convertFileToString(new File(j.jenkins.getWorkspaceFor(project) + "/" + EXTRACTED_FILE));
 
-        assertThat(contentPage.getElementById("main-panel").asText().replaceAll(WHITESPACE, "")).contains(
+        String actual = contentPage.getElementById("main-panel").asText().replaceAll(WHITESPACE, "");
+        assertThat(actual).contains(
                 content.replaceAll(WHITESPACE, ""));
     }
 
@@ -271,17 +183,22 @@ public class AffectedFilesResolverIT extends IntegrationTest {
         enableWarnings(project);
 
         String pathToExtractedFile = j.jenkins.getWorkspaceFor(project) + "/" + EXTRACTED_FILE;
-        if (System.getProperty("os.name").contains("Windows")) {
-            execWindowsCommandIcacls(pathToExtractedFile, WINDOWS_FILE_DENY, WINDOWS_FILE_ACCESS_READ_ONLY);
-        }
-        else {
-            assertThat(new File(pathToExtractedFile).setReadable(false, false)).isTrue();
-        }
+        denyFileAccess(pathToExtractedFile);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         File logFile = project.getBuildByNumber(result.getBuild().getNumber()).getLogFile();
         String consoleOutput = convertFileToString(logFile);
-        assertThat(consoleOutput).contains("0 copied, 3 not-found, 1 with I/O error");
+        assertThat(consoleOutput).contains("3 not-found");
+        assertThat(consoleOutput).contains("1 with I/O error");
+    }
+
+    private void denyFileAccess(final String pathToFile) {
+        if (Functions.isWindows()) {
+            execWindowsCommandIcacls(pathToFile, WINDOWS_FILE_DENY, WINDOWS_FILE_ACCESS_READ_ONLY);
+        }
+        else {
+            assertThat(new File(pathToFile).setReadable(false, false)).isTrue();
+        }
     }
 
     /**
@@ -290,8 +207,9 @@ public class AffectedFilesResolverIT extends IntegrationTest {
     @Test
     public void shouldFindAffectedFilesWhereasThreeFilesAreNotFound() {
         AnalysisResult result = buildProject(ECLIPSE_TXT, ZIP_FILE);
-        assertThat(convertFileToString(result.getOwner().getLogFile())).contains(
-                "1 copied, 3 not-found, 0 with I/O error");
+        String logFile = convertFileToString(result.getOwner().getLogFile());
+        assertThat(logFile).contains("1 copied");
+        assertThat(logFile).contains("3 not-found");
     }
 
     /**
@@ -300,18 +218,30 @@ public class AffectedFilesResolverIT extends IntegrationTest {
     @Test
     public void shouldFindOneAffectedFile() {
         AnalysisResult result = buildProject(ECLIPSE_TXT_ONE_AFFECTED_FILE, ZIP_FILE);
-        assertThat(convertFileToString(result.getOwner().getLogFile())).contains(
-                "1 copied, 0 not-found, 0 with I/O error");
+        String logFile = convertFileToString(result.getOwner().getLogFile());
+        assertThat(logFile).contains("1 copied");
     }
 
     /**
-     * Verifies that the {@link AffectedFilesResolver} cannot find in a empty Project.
+     * Creates a pre-defined filename for a workspace file.
+     *
+     * @param fileNamePrefix
+     *         prefix of the filename
      */
-    @Test
-    public void shouldFindNothingInAEmptyProject() {
-        assertThat(convertFileToString(buildProject().getOwner().getLogFile())).contains(
-                "Skipping post processing due to errors.");
+    @Override
+    protected String createWorkspaceFileName(final String fileNamePrefix) {
+        String modifiedFileName = String.format("%s-issues.txt", FilenameUtils.getBaseName(fileNamePrefix));
+
+        String[] genericFileNamesToKeep = new String[]{
+                ".zip", ".tar", ".gz"
+        };
+
+        List<Boolean> fileNamePrefixInList = Arrays.stream(genericFileNamesToKeep)
+                .map(fileNamePrefix::endsWith)
+                .collect(Collectors.toList());
+        return fileNamePrefixInList.contains(true) ? FilenameUtils.getName(fileNamePrefix) : modifiedFileName;
     }
+
 
     private void checkIfContentExists(final HtmlPage contentPage) {
         assertThat(contentPage.getElementById("main-panel").asText()).contains(("Can't read file: "));
@@ -344,6 +274,8 @@ public class AffectedFilesResolverIT extends IntegrationTest {
                                 file).getName()).toPath();
                 Path destination = new File(
                         Objects.requireNonNull(j.jenkins.getWorkspaceFor(project)).toURI().getPath()).toPath();
+                System.out.println(destination);
+                System.out.println(source);
                 extract(source, destination);
             }
         }
@@ -467,8 +399,7 @@ public class AffectedFilesResolverIT extends IntegrationTest {
      */
     private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
         FreeStyleProject job = createJob();
-        copyFilesToWorkspace(job, fileNames);
-        extractInWorkspace(job, fileNames);
+        copyMultipleFilesToWorkspace(job, fileNames);
         return job;
     }
 
@@ -484,7 +415,7 @@ public class AffectedFilesResolverIT extends IntegrationTest {
     @CanIgnoreReturnValue
     private IssuesRecorder enableWarnings(final FreeStyleProject job) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration(new Eclipse(), "**/*issues.txt")));
+        publisher.setTools(Collections.singletonList(new ToolConfiguration(new Eclipse(), "**/*.txt")));
         job.getPublishersList().add(publisher);
         return publisher;
     }
