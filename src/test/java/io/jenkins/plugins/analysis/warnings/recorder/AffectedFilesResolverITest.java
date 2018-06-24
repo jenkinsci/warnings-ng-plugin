@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
@@ -56,6 +55,20 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         deleteAffectedFilesInBuildFolder(result);
+
+        assertThat(extractSourceCodeFromHtml(getSourceCodePage(result))).contains(readSourceCode(project));
+    }
+
+    /**
+     * Verifies that the workspace file is shown as fallback if the affected file copy in the build folder has been
+     * deleted.
+     */
+    @Test
+    public void shouldShowAffectedSourceCodeEvenIfMadeUnreadableInBuildFolder() {
+        FreeStyleProject project = createEclipseParserProject();
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        makeFileUnreadable(AffectedFilesResolver.getFile(result.getOwner(), getIssueWithSource(result)));
 
         assertThat(extractSourceCodeFromHtml(getSourceCodePage(result))).contains(readSourceCode(project));
     }
@@ -118,21 +131,15 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
      * are denied.
      */
     @Test
-    public void shouldShowErrorMessageIfAffectedFileHasBeenMadeUnreadableInWorkspaceAndBuildFolder()
-            throws IOException, InterruptedException {
+    public void shouldShowErrorMessageIfAffectedFileHasBeenMadeUnreadableInWorkspaceAndBuildFolder() {
         FreeStyleProject project = createEclipseParserProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        makeFileNotReadable(project, result, getIssueWithSource(result));
-        
+        makeFileUnreadable(getWorkspaceFor(project).child(SOURCE_FILE).getRemote());
+        makeFileUnreadable(AffectedFilesResolver.getFile(result.getOwner(), getIssueWithSource(result)));
+
         HtmlPage contentPage = getSourceCodePage(result);
         assertThatPageShowsErrorMessage(contentPage);
-    }
-
-    private void makeFileNotReadable(final FreeStyleProject project, final AnalysisResult result, final Issue issue)
-            throws IOException, InterruptedException {
-        makeFileUnreadable(getWorkspaceFor(project).child(SOURCE_FILE).toURI().getPath());
-        makeFileUnreadable(AffectedFilesResolver.getFile(result.getOwner(), issue));
     }
 
     private FreeStyleProject getJobWithWorkspaceFiles() {
@@ -177,7 +184,7 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
      * Verifies that the AffectedFilesResolver produces an I/O error, when the affected files cannot copied.
      */
     @Test
-    public void shouldGetIOErrorBySearchingForAffectedFiles() {
+    public void shouldGetIoErrorBySearchingForAffectedFiles() {
         FreeStyleProject project = createEclipseParserProject();
 
         makeFileUnreadable(getSourceAbsolutePath(project));
@@ -214,14 +221,8 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
     }
 
     private void assertThatPageShowsErrorMessage(final HtmlPage contentPage) {
-        assertThat(contentPage.getElementById("main-panel").asText()).contains(("Can't read file: "));
-        boolean findTmp = contentPage.getElementById("main-panel").asText().contains(".tmp");
-        if (findTmp) {
-            assertThat(contentPage.getElementById("main-panel").asText()).contains((".tmp"));
-        }
-        else {
-            assertThat(contentPage.getElementById("main-panel").asText()).contains((SOURCE_FILE));
-        }
+        assertThat(contentPage.getElementById("main-panel").asText()).contains("Can't read file: ");
+        assertThat(contentPage.getElementById("main-panel").asText()).contains(".tmp");
     }
 
     private String getSourceLink(final AnalysisResult result) {
@@ -241,10 +242,6 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
             listIterator.next().remove();
             listIterator = domNodeList.listIterator();
         }
-    }
-
-    private void execWindowsCommandIcacls(final String path, final String command, final String accessMode) {
-        setAccessMode(path, command, accessMode);
     }
 
     private AnalysisResult buildEclipseProject(final String... files) {
