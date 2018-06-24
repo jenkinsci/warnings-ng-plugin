@@ -90,7 +90,7 @@ public class AffectedFilesResolver {
 
         File tmpFile = new File(new File(buildDir, AFFECTED_FILES_FOLDER_NAME), getTempName(issue.getFileName()));
         if (!canAccess(tmpFile)) {
-            new File(issue.getFileName()); // fallback, maybe the source still is on the master node
+            return new File(issue.getFileName()); // fallback, maybe the source still is on the master node
         }
         return tmpFile;
     }
