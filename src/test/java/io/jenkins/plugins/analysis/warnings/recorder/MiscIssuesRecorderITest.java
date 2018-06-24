@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -201,15 +200,6 @@ public class MiscIssuesRecorderITest extends IssuesRecorderITest {
                 new ToolConfiguration(new CheckStyle(), "**/checkstyle-twice-issues.txt"));
 
         return buildWithStatus(project, result);
-    }
-
-    private void assertThatLogContains(final Run<?, ?> build, final String message) {
-        try {
-            j.assertLogContains(message, build);
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
     }
 
     /**

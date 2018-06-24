@@ -250,4 +250,13 @@ public class IssuesRecorderITest extends IntegrationTest {
         
         return actions.stream().map(ResultAction::getResult).collect(Collectors.toList());
     }
+
+    protected void assertThatLogContains(final Run<?, ?> build, final String message) {
+        try {
+            j.assertLogContains(message, build);
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
 }
