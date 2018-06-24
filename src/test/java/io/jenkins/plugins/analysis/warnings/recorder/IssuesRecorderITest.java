@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +26,8 @@ import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 
+import hudson.FilePath;
+import hudson.Functions;
 import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
@@ -39,6 +42,9 @@ import hudson.util.DescribableList;
  * @author Ullrich Hafner
  */
 public class IssuesRecorderITest extends IntegrationTest {
+    private static final String WINDOWS_FILE_ACCESS_READ_ONLY = "RX";
+    private static final String WINDOWS_FILE_DENY = "/deny";
+
     /**
      * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
      * the job.
@@ -67,7 +73,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job, 
+    protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
             final ToolConfiguration... toolConfigurations) {
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setTools(Arrays.asList(toolConfigurations));
@@ -75,7 +81,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         return publisher;
     }
 
-    protected void enableEclipseWarnings(final AbstractProject<?, ?>  project) {
+    protected void enableEclipseWarnings(final AbstractProject<?, ?> project) {
         enableWarnings(project, new Eclipse());
     }
 
@@ -241,7 +247,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     protected AnalysisResult getAnalysisResult(final Run<?, ?> build) {
         List<AnalysisResult> analysisResults = getAnalysisResults(build);
-        
+
         assertThat(analysisResults).hasSize(1);
         AnalysisResult result = analysisResults.get(0);
         System.out.println("----- Error Messages -----");
@@ -264,7 +270,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         List<ResultAction> actions = build.getActions(ResultAction.class);
 
         assertThat(actions).isNotEmpty();
-        
+
         return actions.stream().map(ResultAction::getResult).collect(Collectors.toList());
     }
 
@@ -275,5 +281,44 @@ public class IssuesRecorderITest extends IntegrationTest {
         catch (IOException e) {
             throw new AssertionError(e);
         }
+    }
+
+    protected void makeFileUnreadable(final File file) {
+        makeFileUnreadable(file.getAbsolutePath());
+    }
+
+    protected void makeFileUnreadable(final String absolutePath) {
+        File nonReadableFile = new File(absolutePath);
+        if (Functions.isWindows()) {
+            setAccessMode(absolutePath, WINDOWS_FILE_DENY, WINDOWS_FILE_ACCESS_READ_ONLY);
+        }
+        else {
+            assertThat(nonReadableFile.setReadable(false, false)).isTrue();
+            assertThat(nonReadableFile.canRead()).isFalse();
+        }
+    }
+
+    /**
+     * Executed the 'icals' command on the windows command line to remove the read permission of a file.
+     *
+     * @param path
+     *         File to remove from the read permission
+     * @param command
+     *         part of the icacls command
+     * @param accessMode
+     *         param for the icacls command
+     */
+    void setAccessMode(final String path, final String command, final String accessMode) {
+        try {
+            Process process = Runtime.getRuntime().exec("icacls " + path + " " + command + " *S-1-1-0:" + accessMode);
+            process.waitFor();
+        }
+        catch (IOException | InterruptedException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    protected FilePath getWorkspaceFor(final FreeStyleProject project) {
+        return j.jenkins.getWorkspaceFor(project);
     }
 }

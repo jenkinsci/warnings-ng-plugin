@@ -48,9 +48,6 @@ public class FilesScannerITest extends IssuesRecorderITest {
     private static final String NON_READABLE_FILE_WORKSPACE = WORKSPACE_DIRECTORY + "/no_read_permission";
     private static final String NON_READABLE_FILE = "no_read_permissions.xml";
 
-    private static final String WINDOWS_FILE_ACCESS_READ_ONLY = "RX";
-    private static final String WINDOWS_FILE_DENY = "/deny";
-
     /**
      * Runs the {@link FilesScanner} on a workspace with no files: the report should contain an error message.
      */
@@ -87,15 +84,7 @@ public class FilesScannerITest extends IssuesRecorderITest {
     }
 
     private void makeFileUnreadable(final FreeStyleProject project) {
-        String pathToExtractedFile = j.jenkins.getWorkspaceFor(project) + File.separator + NON_READABLE_FILE;
-        File nonReadableFile = new File(pathToExtractedFile);
-        if (Functions.isWindows()) {
-            setAccessMode(pathToExtractedFile, WINDOWS_FILE_DENY, WINDOWS_FILE_ACCESS_READ_ONLY);
-        }
-        else {
-            assertThat(nonReadableFile.setReadable(false, false)).isTrue();
-            assertThat(nonReadableFile.canRead()).isFalse();
-        }
+        makeFileUnreadable(getWorkspaceFor(project) + File.separator + NON_READABLE_FILE);
     }
 
     /**
@@ -166,26 +155,6 @@ public class FilesScannerITest extends IssuesRecorderITest {
     }
 
     /**
-     * Executed the 'icals' command on the windows command line to remove the read permission of a file.
-     *
-     * @param path
-     *         File to remove from the read permission
-     * @param command
-     *         part of the icacls command
-     * @param accessMode
-     *         param for the icacls command
-     */
-    private void setAccessMode(final String path, final String command, final String accessMode) {
-        try {
-            Process process = Runtime.getRuntime().exec("icacls " + path + " " + command + " *S-1-1-0:" + accessMode);
-            process.waitFor();
-        }
-        catch (IOException | InterruptedException e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
      * Creates a new free style project and copies a whole directory to the workspace of the project.
      *
      * @param importDirectory
@@ -199,7 +168,7 @@ public class FilesScannerITest extends IssuesRecorderITest {
 
             String file = FilesScannerITest.class.getResource(importDirectory).getFile();
             FilePath dir = new FilePath(new File(file));
-            dir.copyRecursiveTo(j.jenkins.getWorkspaceFor(job));
+            dir.copyRecursiveTo(getWorkspaceFor(job));
 
             return job;
         }
