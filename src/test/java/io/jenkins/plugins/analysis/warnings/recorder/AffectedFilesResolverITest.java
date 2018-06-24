@@ -4,11 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule.WebClient;
-import org.xml.sax.SAXException;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
@@ -43,26 +42,24 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
             PACKAGE_FOR_ECLIPSE_TXT + "/eclipseOneAffectedAndThreeNotExistingFiles.txt";
     private static final String ECLIPSE_TXT_ONE_AFFECTED_FILE = PACKAGE_FOR_ECLIPSE_TXT + "/eclipseOneAffectedFile.txt";
     private static final String WHITESPACE = "\\s";
-    private static final String DEFAULT_ENTRY_PATH = "eclipseResult/";
+    private static final String ECLIPSE_RESULTS = "eclipseResult/";
 
     /**
      * Verifies that the copied class file is not available and cannot be obtained by HTML scraping.
      */
     @Test
-    public void shouldVerifyHtmlOutputBehaviourForAffectedFileWhichShouldNotHaveBeenCopied()
-            throws IOException, SAXException {
+    public void shouldVerifyHtmlOutputBehaviourForAffectedFileWhichShouldNotHaveBeenCopied() {
         FreeStyleProject project = createEclipseParserProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         deleteWorkspaceAndBuildFolderFiles(project, result);
 
-        WebClient webClient = createWebClient(false);
-        HtmlPage defaultEntryPage = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH);
-        String firstPartOfLink = getPartOfLink(defaultEntryPage, "fileName", SOURCE_FILE);
-        String secondPartOfLink = getSourceLink(result);
-        String link = DEFAULT_ENTRY_PATH + firstPartOfLink + secondPartOfLink;
-        HtmlPage contentPage = webClient.getPage(result.getOwner(), link);
+        HtmlPage contentPage = getSourceCodePage(result);
         checkIfContentExists(contentPage);
+    }
+
+    private HtmlPage getSourceCodePage(final AnalysisResult result) {
+        return getWebPage(result, ECLIPSE_RESULTS + getSourceLink(result));
     }
 
     // FIXME: add two new tests that delete only one of them
@@ -88,38 +85,38 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
      */
     @Test
     public void shouldVerifyHtmlOutputBehaviourForAffectedFileWhichShouldNotHaveBeenCopiedCausedByAccessDeniedToOpenAffectedFile()
-            throws IOException, SAXException, InterruptedException {
+            throws IOException, InterruptedException {
         FreeStyleProject project = createEclipseParserProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        WebClient webClient = createWebClient(false);
-        HtmlPage defaultEntryPage = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH);
-        String firstPartOfLink = getPartOfLink(defaultEntryPage, "fileName", SOURCE_FILE);
 
         Report issues = result.getIssues();
         for (Issue issue : issues) {
             if (issue.getFileName().endsWith(SOURCE_FILE)) {
-                String pathOfFileInWorkspace = Objects.requireNonNull(j.jenkins.getWorkspaceFor(project))
-                        .child(SOURCE_FILE)
-                        .toURI()
-                        .getPath();
-                File fileInTmp = AffectedFilesResolver.getFile(result.getOwner(), issue);
-                if (Functions.isWindows()) {
-                    pathOfFileInWorkspace = pathOfFileInWorkspace.replaceFirst("/", "");
-                    execWindowsCommandIcacls(pathOfFileInWorkspace, WINDOWS_FILE_DENY, WINDOWS_FILE_ACCESS_READ_ONLY);
-                    execWindowsCommandIcacls(fileInTmp.getAbsolutePath(), WINDOWS_FILE_DENY,
-                            WINDOWS_FILE_ACCESS_READ_ONLY);
-                }
-                else {
-                    File file = new File(pathOfFileInWorkspace);
-                    assertThat(file.setReadable(false, false)).isTrue();
-                    assertThat(fileInTmp.setReadable(false, false)).isTrue();
-                }
+                makeFileNotReadable(project, result, issue);
             }
         }
-        String secondPartOfLink = getSourceLink(result);
-        HtmlPage contentPage = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH + firstPartOfLink + secondPartOfLink);
+        HtmlPage contentPage = getSourceCodePage(result);
         checkIfContentExists(contentPage);
+    }
+
+    private void makeFileNotReadable(final FreeStyleProject project, final AnalysisResult result, final Issue issue)
+            throws IOException, InterruptedException {
+        String pathOfFileInWorkspace = Objects.requireNonNull(j.jenkins.getWorkspaceFor(project))
+                .child(SOURCE_FILE)
+                .toURI()
+                .getPath();
+        File fileInTmp = AffectedFilesResolver.getFile(result.getOwner(), issue);
+        if (Functions.isWindows()) {
+            pathOfFileInWorkspace = pathOfFileInWorkspace.replaceFirst("/", "");
+            execWindowsCommandIcacls(pathOfFileInWorkspace, WINDOWS_FILE_DENY, WINDOWS_FILE_ACCESS_READ_ONLY);
+            execWindowsCommandIcacls(fileInTmp.getAbsolutePath(), WINDOWS_FILE_DENY,
+                    WINDOWS_FILE_ACCESS_READ_ONLY);
+        }
+        else {
+            File file = new File(pathOfFileInWorkspace);
+            assertThat(file.setReadable(false, false)).isTrue();
+            assertThat(fileInTmp.setReadable(false, false)).isTrue();
+        }
     }
 
     private FreeStyleProject getJobWithWorkspaceFiles() {
@@ -132,25 +129,24 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
      * Verifies that the copied class file is available and can be obtained by HTML scraping.
      */
     @Test
-    public void shouldVerifyHtmlOutputBehaviourForAffectedFileWhichShouldFindFile()
-            throws IOException, SAXException {
+    public void shouldVerifyHtmlOutputBehaviourForAffectedFileWhichShouldFindFile() {
         FreeStyleProject project = createEclipseParserProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        WebClient webClient = createWebClient(false);
-        HtmlPage defaultEntryPage = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH);
-        String firstPartOfLink = getPartOfLink(defaultEntryPage, "fileName", SOURCE_FILE);
-        String secondPartOfLink = getSourceLink(result);
-        HtmlPage contentPage = webClient.getPage(result.getOwner(),
-                DEFAULT_ENTRY_PATH + firstPartOfLink + secondPartOfLink);
+        HtmlPage contentPage = getSourceCodePage(result);
+
+        assertThat(extractSourceCodeFromHtml(contentPage)).contains(readSourceCode(project));
+    }
+
+    private String extractSourceCodeFromHtml(final HtmlPage contentPage) {
         DomElement domElement = contentPage.getElementById("main-panel");
         DomNodeList<HtmlElement> list = domElement.getElementsByTagName("a");
         removeElementsByTagName(list);
+        return contentPage.getElementById("main-panel").asText().replaceAll(WHITESPACE, "");
+    }
 
-        String content = toString(getSourceInWorkspace(project));
-
-        String actual = contentPage.getElementById("main-panel").asText().replaceAll(WHITESPACE, "");
-        assertThat(actual).contains(content.replaceAll(WHITESPACE, ""));
+    private String readSourceCode(final FreeStyleProject project) {
+        return toString(getSourceInWorkspace(project)).replaceAll(WHITESPACE, "");
     }
 
     /**
@@ -165,7 +161,7 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
         issues.forEach(issue -> assertThatFileExistsInBuildFolder(issue, project, result.getOwner()));
     }
 
-    private void assertThatFileExistsInBuildFolder(final Issue issue, final FreeStyleProject project, 
+    private void assertThatFileExistsInBuildFolder(final Issue issue, final FreeStyleProject project,
             final Run<?, ?> owner) {
         File buildFolderCopy = AffectedFilesResolver.getFile(owner, issue);
         if (issue.getFileName().contains(SOURCE_FILE)) {
@@ -173,7 +169,7 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
             assertThat(buildFolderCopy).hasSameContentAs(getSourceInWorkspace(project));
         }
         else {
-            assertThat(buildFolderCopy).doesNotExist(); // these file have not been copied, since they were not present
+            assertThat(buildFolderCopy).doesNotExist(); // these files have not been copied, since they were not present
         }
     }
 
@@ -195,7 +191,7 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
         denyFileAccess(getSourceAbsolutePath(project));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        
+
         assertThatLogContains(result.getOwner(), "0 copied");
         assertThatLogContains(result.getOwner(), "3 not-found");
         assertThatLogContains(result.getOwner(), "1 with I/O error");
@@ -219,7 +215,7 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
     @Test
     public void shouldFindOneAffectedFile() {
         AnalysisResult result = buildEclipseProject(ECLIPSE_TXT_ONE_AFFECTED_FILE, SOURCE_FILE);
-        
+
         assertThatLogContains(result.getOwner(), "1 copied");
         assertThatLogContains(result.getOwner(), "0 not-found");
         assertThatLogContains(result.getOwner(), "0 with I/O error");
@@ -259,13 +255,12 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
     }
 
     private String getSourceLink(final AnalysisResult result) {
-        Report issues = result.getIssues();
-        for (Issue issue : issues) {
-            if (issue.getFileName().endsWith(SOURCE_FILE)) {
-                return "/source." + issue.getId() + "/#" + result.getBuild().getNumber();
-            }
-        }
-        return "";
+        return result.getIssues()
+                .stream()
+                .filter(issue -> issue.getFileName().endsWith(SOURCE_FILE))
+                .findFirst()
+                .map(issue -> "/source." + issue.getId() + "/#" + result.getBuild().getNumber())
+                .orElseThrow(NoSuchElementException::new);
     }
 
     private void removeElementsByTagName(final DomNodeList<HtmlElement> domNodeList) {
@@ -286,12 +281,6 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
         }
     }
 
-    private WebClient createWebClient(final boolean javaScriptEnabled) {
-        WebClient webClient = j.createWebClient();
-        webClient.setJavaScriptEnabled(javaScriptEnabled);
-        return webClient;
-    }
-
     private AnalysisResult buildEclipseProject(final String... files) {
         FreeStyleProject project = createFreeStyleProject();
         copyMultipleFilesToWorkspace(project, files);
@@ -299,5 +288,4 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
 
         return scheduleBuildAndAssertStatus(project, Result.SUCCESS);
     }
-
 }

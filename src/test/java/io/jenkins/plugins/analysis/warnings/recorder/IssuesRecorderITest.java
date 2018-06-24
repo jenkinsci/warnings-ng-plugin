@@ -87,15 +87,32 @@ public class IssuesRecorderITest extends IntegrationTest {
         enableWarnings(project, configuration, createGenericToolConfiguration(new Eclipse()));
     }
 
-    protected HtmlPage getWebPage(final AbstractProject job, final String page) {
+    protected HtmlPage getWebPage(final AbstractProject<?, ?> job, final String page) {
         try {
-            WebClient webClient = j.createWebClient();
-            webClient.setJavaScriptEnabled(true);
-            return webClient.getPage(job, page);
+            return createWebClient().getPage(job, page);
         }
         catch (SAXException | IOException e) {
             throw new AssertionError(e);
         }
+    }
+
+    protected HtmlPage getWebPage(final Run<?, ?> build, final String page) {
+        try {
+            return createWebClient().getPage(build, page);
+        }
+        catch (SAXException | IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    protected HtmlPage getWebPage(final AnalysisResult result, final String page) {
+        return getWebPage(result.getOwner(), page);
+    }
+
+    private WebClient createWebClient() {
+        WebClient webClient = j.createWebClient();
+        webClient.setJavaScriptEnabled(true);
+        return webClient;
     }
 
     protected void submit(final HtmlForm form) {
