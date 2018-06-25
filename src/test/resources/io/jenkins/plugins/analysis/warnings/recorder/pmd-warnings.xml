@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.1" timestamp="2008-03-18T22:17:01.031">
+<file name="C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\actions\CopyToClipboard.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="CollapsibleIfStatements" ruleset="Basic" package="com.avaloq.adt.env.internal.ui.actions" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\actions\change\ChangeSelectionAction.java">
+<violation beginline="14" endline="14" begincolumn="1" endcolumn="37" rule="UnusedImports" ruleset="Import Statement Rules" package="com.avaloq.adt.env.internal.ui.actions.change" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
+Avoid unused imports such as 'org.eclipse.ui.IWorkbenchPart'
+</violation>
+</file>
+<file name="C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\env\internal\ui\dialogs\SelectSourceDialog.java">
+<violation beginline="938" endline="940" begincolumn="13" endcolumn="13" rule="EmptyCatchBlock" ruleset="Basic Rules" package="com.avaloq.adt.env.internal.ui.dialogs" class="SourceRunnable" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="5">
+Avoid empty catch blocks
+</violation>
+<violation beginline="980" endline="982" begincolumn="13" endcolumn="13" rule="EmptyCatchBlock" ruleset="Basic Rules" package="com.avaloq.adt.env.internal.ui.dialogs" class="HistRunnable" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="2">
+Avoid empty catch blocks
+</violation>
+</file>
+</pmd>

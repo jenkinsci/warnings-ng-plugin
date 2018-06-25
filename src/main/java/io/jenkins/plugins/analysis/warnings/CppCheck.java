@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.violations.CppCheckAdapter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.violations.CppCheckAdapter;
 
 /**
  * Provides a parser and customized messages for CPPCheck.
@@ -16,11 +15,13 @@ import edu.hm.hafner.analysis.parser.violations.CppCheckAdapter;
  * @author Ullrich Hafner
  */
 public class CppCheck extends StaticAnalysisTool {
+    private static final long serialVersionUID = -5646367160520640291L;
     static final String ID = "cppcheck";
 
     /** Creates a new instance of {@link CppCheck}. */
     @DataBoundConstructor
     public CppCheck() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -32,6 +33,7 @@ public class CppCheck extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

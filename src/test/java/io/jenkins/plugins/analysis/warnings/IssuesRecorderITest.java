@@ -22,12 +22,11 @@ import hudson.model.Result;
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
- * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
+ * Integration tests for the health report of the warnings plug-in in freestyle jobs.
  *
- * @author Ullrich Hafner
+ * @author Alexandra Wenzel
  */
 public class IssuesRecorderITest extends IntegrationTest {
-
     private static final String H80PLUS = "icon-health-80plus";
     private static final String H60TO79 = "icon-health-60to79";
     private static final String H40TO59 = "icon-health-40to59";
@@ -38,7 +37,7 @@ public class IssuesRecorderITest extends IntegrationTest {
     private static final String WARNINGS_4_FOUND = "Static Analysis: 4 warnings found.";
     private static final String WARNINGS_6_FOUND = "Static Analysis: 6 warnings found.";
 
-     /**
+    /**
      * Sets the health threshold less then the unhealthy threshold and parse a file that contains warnings. The
      * healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup
      */
@@ -109,8 +108,7 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Should create a health report for only high priority issues.
-     * Only error issues
+     * Should create a health report for only high priority issues. Only error issues
      */
     @Test
     public void shouldCreateHealthReportWithHighPriority() {
@@ -120,8 +118,7 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Should create a health report for normal priority issues.
-     * Error and warning issues.
+     * Should create a health report for normal priority issues. Error and warning issues.
      */
     @Test
     public void shouldCreateHealthReportWithNormalPriority() {
@@ -131,8 +128,7 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Should create a health report for low priority issues.
-     * Error, warnings and info issues.
+     * Should create a health report for low priority issues. Error, warnings and info issues.
      */
     @Test
     public void shouldCreateHealthReportWithLowPriority() {
@@ -154,9 +150,10 @@ public class IssuesRecorderITest extends IntegrationTest {
     private HealthReport createHealthReportTestSetupEclipse(int health, int unhealthy) {
         FreeStyleProject project = createJobWithWorkspaceFile("eclipse_healthReport.txt");
         enableWarnings(project, publisher -> {
-            publisher.setHealthy(health);
-            publisher.setUnHealthy(unhealthy); },
-                new ToolConfiguration("**/*issues.txt", new Eclipse())
+                    publisher.setHealthy(health);
+                    publisher.setUnHealthy(unhealthy);
+                },
+                new ToolConfiguration(new Eclipse(), "**/*issues.txt")
         );
         return scheduleBuildToGetHealthReportAndAssertStatus(project, Result.SUCCESS);
     }
@@ -169,10 +166,11 @@ public class IssuesRecorderITest extends IntegrationTest {
     private HealthReport createHealthReportTestSetupCheckstyle(Priority priority) {
         FreeStyleProject project = createJobWithWorkspaceFile("checkstyle_healthReport.xml");
         enableWarnings(project, publisher -> {
-            publisher.setHealthy(10);
-            publisher.setUnHealthy(15);
-            publisher.setMinimumPriority(priority.name()); },
-                new ToolConfiguration("**/*issues.txt", new CheckStyle())
+                    publisher.setHealthy(10);
+                    publisher.setUnHealthy(15);
+                    publisher.setMinimumPriority(priority.name());
+                },
+                new ToolConfiguration(new CheckStyle(), "**/*issues.txt")
         );
         return scheduleBuildToGetHealthReportAndAssertStatus(project, Result.SUCCESS);
     }
@@ -202,7 +200,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
         FreeStyleProject job = createJob();
-        copyFilesToWorkspace(job, fileNames);
+        copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
     }
 

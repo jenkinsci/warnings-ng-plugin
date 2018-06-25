@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.violations.XmlLintAdapter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.violations.XmlLintAdapter;
 
 /**
  * Provides a parser and customized messages for XML-Lint.
@@ -16,11 +15,13 @@ import edu.hm.hafner.analysis.parser.violations.XmlLintAdapter;
  * @author Ullrich Hafner
  */
 public class XmlLint extends StaticAnalysisTool {
+    private static final long serialVersionUID = -8253765174954652451L;
     static final String ID = "xml-lint";
 
     /** Creates a new instance of {@link XmlLint}. */
     @DataBoundConstructor
     public XmlLint() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -37,6 +38,7 @@ public class XmlLint extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

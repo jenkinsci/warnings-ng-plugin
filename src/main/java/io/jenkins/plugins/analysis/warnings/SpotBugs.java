@@ -4,9 +4,8 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-
 import static hudson.plugins.warnings.WarningsDescriptor.*;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.Extension;
 
@@ -16,11 +15,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class SpotBugs extends FindBugs {
+    private static final long serialVersionUID = -8773197511353021180L;
     static final String ID = "spotbugs";
 
     /** Creates a new instance of {@link SpotBugs}. */
     @DataBoundConstructor
     public SpotBugs() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -34,7 +35,7 @@ public class SpotBugs extends FindBugs {
         private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
         private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
 
-        private LabelProvider(final FindBugsMessages messages) {
+        LabelProvider(final FindBugsMessages messages) {
             super(messages, ID, Messages.Warnings_SpotBugs_ParserName());
         }
 
@@ -52,6 +53,7 @@ public class SpotBugs extends FindBugs {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends FindBugsDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }
