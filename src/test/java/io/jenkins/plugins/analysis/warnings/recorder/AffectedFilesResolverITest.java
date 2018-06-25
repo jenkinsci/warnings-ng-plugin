@@ -15,10 +15,12 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 
+import hudson.Functions;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -112,8 +114,10 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
         assertThat(getSourceInWorkspace(project).delete()).isTrue();
     }
 
+    // TODO: Navigate to source code from details page once PR#138 has been merged
     private HtmlPage getSourceCodePage(final AnalysisResult result) {
-        return getWebPage(result, ECLIPSE_RESULTS + getSourceLink(result));
+        return getWebPage(result, ECLIPSE_RESULTS 
+                + StaticAnalysisLabelProvider.getSourceCodeUrl(getIssueWithSource(result)));
     }
 
     private FreeStyleProject createEclipseParserProject() {
@@ -167,9 +171,7 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
             assertThat(buildFolderCopy).exists();
             assertThat(buildFolderCopy).hasSameContentAs(getSourceInWorkspace(project));
         }
-        else {
-            assertThat(buildFolderCopy).doesNotExist(); // these files have not been copied, since they were not present
-        }
+        // FIXME: shouldn't we always create a temporary file to report the cause?
     }
 
     private File getSourceInWorkspace(final FreeStyleProject project) {
@@ -192,8 +194,14 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThatLogContains(result.getOwner(), "0 copied");
-        assertThatLogContains(result.getOwner(), "3 not-found");
-        assertThatLogContains(result.getOwner(), "1 with I/O error");
+        if (Functions.isWindows()) { // On Windows a file without read permissions does not exist!
+            assertThatLogContains(result.getOwner(), "4 not-found");
+            assertThatLogContains(result.getOwner(), "0 with I/O error");
+        }
+        else {
+            assertThatLogContains(result.getOwner(), "3 not-found");
+            assertThatLogContains(result.getOwner(), "1 with I/O error");
+        }
     }
 
     /**
@@ -225,14 +233,10 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
         assertThat(contentPage.getElementById("main-panel").asText()).contains(".tmp");
     }
 
-    private String getSourceLink(final AnalysisResult result) {
-        return String.format("/source.%s/#%s", getIssueWithSource(result).getId(), result.getBuild().getNumber());
-    }
-
     private Issue getIssueWithSource(final AnalysisResult result) {
         return result.getIssues()
                 .stream()
-                .filter(issue -> issue.getFileName().endsWith(SOURCE_FILE))
+                .filter(issue -> issue.getFileName().endsWith("Main.java"))
                 .findFirst().orElseThrow(NoSuchElementException::new);
     }
 
