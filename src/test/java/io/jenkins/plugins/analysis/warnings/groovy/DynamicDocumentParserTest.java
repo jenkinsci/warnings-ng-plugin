@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
 import edu.hm.hafner.analysis.AbstractParser;
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.EclipseParser;
 import edu.hm.hafner.analysis.parser.EclipseParserTest;
 

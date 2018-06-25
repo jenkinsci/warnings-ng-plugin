@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,6 +20,8 @@ import static hudson.Functions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
+import io.jenkins.plugins.analysis.warnings.Gcc4;
+import io.jenkins.plugins.analysis.warnings.Resource;
 
 import hudson.matrix.AxisList;
 import hudson.matrix.MatrixBuild;
@@ -34,6 +36,7 @@ import hudson.tasks.Shell;
  *
  * @author Ullrich Hafner
  */
+// FIXME: should use different base class
 public class MatrixJobITest extends IssuesRecorderITest {
     private static final String WARNINGS_FILE = "matrix-warnings.txt";
 
