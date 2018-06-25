@@ -211,8 +211,20 @@ public class StaticAnalysisLabelProvider {
      */
     // FIXME: only link if valid file name
     protected String formatFileName(final Issue issue) {
-        return String.format("<a href=\"source.%s/#%d\">%s:%d</a>", issue.getId(), issue.getLineStart(),
+        return String.format("<a href=\"%s/#%d\">%s:%d</a>", getSourceCodeUrl(issue), issue.getLineStart(),
                 FILE_NAME_FORMATTER.apply(issue.getFileName()), issue.getLineStart());
+    }
+
+    /**
+     * Returns the URL to show the source code with the affected issue line.
+     *
+     * @param issue
+     *         the issue to show the source code for
+     *
+     * @return the formatted column
+     */
+    public static String getSourceCodeUrl(final Issue issue) {
+        return "source." + issue.getId();
     }
 
     @VisibleForTesting
