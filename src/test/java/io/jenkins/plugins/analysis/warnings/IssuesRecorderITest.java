@@ -5,10 +5,7 @@ import java.util.Collections;
 import java.util.function.Consumer;
 
 import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule.WebClient;
-import org.xml.sax.SAXException;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -41,66 +38,7 @@ public class IssuesRecorderITest extends IntegrationTest {
     private static final String WARNINGS_4_FOUND = "Static Analysis: 4 warnings found.";
     private static final String WARNINGS_6_FOUND = "Static Analysis: 6 warnings found.";
 
-    /**
-     * Runs the Eclipse parser on an empty workspace: the build should report 0 issues and an error message.
-     */
-    @Test
-    public void shouldCreateEmptyResult() {
-        FreeStyleProject project = createJob();
-        enableWarnings(project, new ToolConfiguration("**/*issues.txt", new Eclipse()));
-
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        assertThat(result).hasTotalSize(0);
-        assertThat(result).hasErrorMessages("No files found for pattern '**/*issues.txt'. Configuration error?");
-    }
-
-    /**
-     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
-     */
-    @Test
-    public void shouldCreateResultWithWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
-        enableWarnings(project, new ToolConfiguration("**/*issues.txt", new Eclipse()));
-
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        assertThat(result).hasTotalSize(8);
-        assertThat(result).hasInfoMessages("Resolved module names for 8 issues",
-                "Resolved package names of 4 affected files");
-    }
-
-    /**
-     * Sets the UNSTABLE threshold to 8 and parse a file that contains exactly 8 warnings: the build should be
-     * unstable.
-     */
-    @Test
-    public void shouldCreateUnstableResult() {
-        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
-        enableWarnings(project, publisher -> publisher.setUnstableTotalAll(7),
-                new ToolConfiguration("**/*issues.txt", new Eclipse()));
-
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
-
-        assertThat(result).hasTotalSize(8);
-        assertThat(result).hasOverallResult(Result.UNSTABLE);
-
-        HtmlPage page = getWebPage(result);
-        assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
-    }
-
-    private HtmlPage getWebPage(final AnalysisResult result) {
-        try {
-            WebClient webClient = j.createWebClient();
-            webClient.setJavaScriptEnabled(false);
-            return webClient.getPage(result.getOwner(), "eclipseResult");
-        }
-        catch (SAXException | IOException e) {
-           throw new AssertionError(e);
-        }
-    }
-
-    /**
+     /**
      * Sets the health threshold less then the unhealthy threshold and parse a file that contains warnings. The
      * healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup
      */
@@ -112,7 +50,7 @@ public class IssuesRecorderITest extends IntegrationTest {
 
     /**
      * Sets the health threshold equals to the unhealthy threshold and parse a file that contains warnings. The
-     * healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup
+     * healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup.
      */
     @Test
     public void shouldCreateEmptyHealthReportForEqualBoundaries() {
