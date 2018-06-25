@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.assertj.core.api.AutoCloseableSoftAssertions;
 import org.junit.Test;
@@ -42,13 +44,53 @@ import hudson.tasks.Maven;
 
 /**
  * This class is an integration test for the classes associated with {@link edu.hm.hafner.analysis.ModuleDetector}.
+ * <p>
+ * These are the module files that are necessary for the integration test of {@link
+ * edu.hm.hafner.analysis.ModuleDetector}}. A short description of the purpose of every file should be given here.
+ *
+ * <b>Maven:</b>
+ * pom.xml a default pom.xml with a valid name tag
+ * <p>
+ * m1/pom.xml a default pom.xml with a valid name tag which could be used to detect additional modules in addition to
+ * the previous mentioned pom.xml
+ * <p>
+ * m2/pom.xml a default pom.xml with a valid name tag which could be used to detect additional modules in addition to
+ * the first mentioned pom.xml
+ * <p>
+ * m3/pom.xml a broken XML-structure breaks the correct parsing of this file
+ * <p>
+ * m4/pom.xml a pom.xml with a substitutional artifactId tag and without a name tag
+ * <p>
+ * m5/pom.xml a pom.xml without a substitutional artifactId tag and without a name tag
+ *
+ * <b>Ant:</b>
+ * build.xml a default build.xml with a valid name tag
+ * <p>
+ * m1/build.xml a default build.xml with a valid name tag which could be used to detect additional modules in addition
+ * to the previous mentioned build.xml
+ * <p>
+ * m2/build.xml a broken XML-structure breaks the correct parsing of this file
+ * <p>
+ * m3/build.xml a build file without the name tag
+ *
+ * <b>OSGI:</b>
+ * META-INF/MANIFEST.MF a default MANIFEST.MF with a set Bundle-SymbolicName and a set Bundle-Vendor
+ * <p>
+ * m1/META-INF/MANIFEST.MF a MANIFEST.MF with a wildcard Bundle-Name, a set Bundle-SymbolicName and a wildcard
+ * Bundle-Vendor
+ * <p>
+ * m2/META-INF/MANIFEST.MF a MANIFEST.MF with a set Bundle-Name and a wildcard Bundle-Vendor
+ * <p>
+ * m3/META-INF/MANIFEST.MF an empty MANIFEST.MF
+ * <p>
+ * plugin.properties a default plugin.properties file
  *
  * @author Frank Christian Geyer
  * @author Deniz Mardin
  */
-public class ModuleDetectorIT extends IntegrationTest {
+public class ModuleDetectorITest extends IntegrationTest {
 
-    private static final String BUILD_FILE_PATH = "/edu/hm/hafner/analysis/moduleandpackagedetectorfiles/";
+    private static final String BUILD_FILE_PATH = "moduleandpackagedetectorfiles/";
     private static final String DEFAULT_ECLIPSE_TEST_FILE_PATH = "/eclipse_prepared-issues.txt";
     private static final String MAVEN_BUILD_FILE_LOCATION = "buildfiles/maven/";
     private static final String ANT_BUILD_FILE_LOCATION = "buildfiles/ant/";
@@ -264,7 +306,7 @@ public class ModuleDetectorIT extends IntegrationTest {
     @Test
     public void shouldContainNoHtmlOutputForASingleModuleOsgiProject() throws IOException, SAXException {
         String[] filesWithModuleConfiguration = new String[]{
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/Manifest.MF"};
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF"};
         checkWebPageForExpectedEmptyResult(
                 buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, false,
                         filesWithModuleConfiguration));
@@ -602,6 +644,28 @@ public class ModuleDetectorIT extends IntegrationTest {
         FreeStyleProject job = createJob();
         copyFilesToWorkspace(job, fileNames);
         return job;
+    }
+
+    /**
+     * Creates a pre-defined filename for a workspace file.
+     *
+     * @param fileName
+     *         the filename
+     */
+    @Override
+    protected String createWorkspaceFileName(final String fileName) {
+        String modifiedFileName = String.format("%s-issues.txt", FilenameUtils.getBaseName(fileName));
+
+        String[] moduleFileNamesToKeep = new String[]{
+                "m1/pom.xml", "m2/pom.xml", "m3/pom.xml", "m4/pom.xml", "m5/pom.xml", "pom.xml",
+                "m1/build.xml", "m2/build.xml", "m3/build.xml", "build.xml",
+                "m1/META-INF/MANIFEST.MF", "m2/META-INF/MANIFEST.MF", "m3/META-INF/MANIFEST.MF", "META-INF/MANIFEST.MF", "plugin.properties"
+        };
+
+        return Arrays.stream(moduleFileNamesToKeep)
+                .filter(fileName::endsWith)
+                .findFirst()
+                .orElse(modifiedFileName);
     }
 
     /**

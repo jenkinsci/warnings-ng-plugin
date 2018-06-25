@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.warnings;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.assertj.core.api.AutoCloseableSoftAssertions;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
@@ -43,9 +45,9 @@ import hudson.tasks.Maven;
  * @author Frank Christian Geyer
  * @author Deniz Mardin
  */
-public class PackageDetectorsIT extends IntegrationTest {
+public class PackageDetectorsITest extends IntegrationTest {
 
-    private static final String PACKAGE_FILE_PATH = "/edu/hm/hafner/analysis/moduleandpackagedetectorfiles/";
+    private static final String PACKAGE_FILE_PATH = "moduleandpackagedetectorfiles/";
     private static final String PACKAGE_WITH_FILES_CSHARP = PACKAGE_FILE_PATH + "csharp/";
     private static final String PACKAGE_WITH_FILES_JAVA = PACKAGE_FILE_PATH + "java/";
     private static final String DEFAULT_ENTRY_PATH = "eclipseResult/";
@@ -487,6 +489,26 @@ public class PackageDetectorsIT extends IntegrationTest {
         FreeStyleProject job = createJob();
         copyFilesToWorkspace(job, fileNames);
         return job;
+    }
+
+    /**
+     * Creates a pre-defined filename for a workspace file.
+     *
+     * @param fileName
+     *         the filename
+     */
+    @Override
+    protected String createWorkspaceFileName(final String fileName) {
+        String modifiedFileName = String.format("%s-issues.txt", FilenameUtils.getBaseName(fileName));
+
+        String[] genericFileNamesToKeep = new String[]{
+                ".cs", ".java"
+        };
+
+        List<Boolean> fileNamePrefixInList = Arrays.stream(genericFileNamesToKeep)
+                .map(fileName::endsWith)
+                .collect(Collectors.toList());
+        return fileNamePrefixInList.contains(true) ? FilenameUtils.getName(fileName) : modifiedFileName;
     }
 
     /**
