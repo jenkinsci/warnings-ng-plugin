@@ -1,19 +1,12 @@
-package io.jenkins.plugins.analysis.warnings;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.function.Consumer;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
 import org.junit.Test;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
+import io.jenkins.plugins.analysis.warnings.Eclipse;
 
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
@@ -26,7 +19,7 @@ import hudson.plugins.analysis.util.model.Priority;
  *
  * @author Alexandra Wenzel
  */
-public class IssuesRecorderITest extends IntegrationTest {
+public class HealthReportITest extends IssuesRecorderITest {
     private static final String H80PLUS = "icon-health-80plus";
     private static final String H60TO79 = "icon-health-60to79";
     private static final String H40TO59 = "icon-health-40to59";
@@ -39,7 +32,7 @@ public class IssuesRecorderITest extends IntegrationTest {
 
     /**
      * Sets the health threshold less then the unhealthy threshold and parse a file that contains warnings. The
-     * healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup
+     * healthReport should be null / empty because the healthReportDescriptor is not enabled with this setup.
      */
     @Test
     public void shouldCreateEmptyHealthReportForBoundaryMismatch() {
@@ -147,8 +140,8 @@ public class IssuesRecorderITest extends IntegrationTest {
      *
      * @return a healthReport under test
      */
-    private HealthReport createHealthReportTestSetupEclipse(int health, int unhealthy) {
-        FreeStyleProject project = createJobWithWorkspaceFile("eclipse_healthReport.txt");
+    private HealthReport createHealthReportTestSetupEclipse(final int health, final int unhealthy) {
+        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse-healthReport.txt");
         enableWarnings(project, publisher -> {
                     publisher.setHealthy(health);
                     publisher.setUnHealthy(unhealthy);
@@ -163,8 +156,8 @@ public class IssuesRecorderITest extends IntegrationTest {
      *
      * @return a healthReport under test
      */
-    private HealthReport createHealthReportTestSetupCheckstyle(Priority priority) {
-        FreeStyleProject project = createJobWithWorkspaceFile("checkstyle_healthReport.xml");
+    private HealthReport createHealthReportTestSetupCheckstyle(final Priority priority) {
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle-healthReport.xml");
         enableWarnings(project, publisher -> {
                     publisher.setHealthy(10);
                     publisher.setUnHealthy(15);
@@ -174,98 +167,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         );
         return scheduleBuildToGetHealthReportAndAssertStatus(project, Result.SUCCESS);
     }
-
-    /**
-     * Creates a new {@link FreeStyleProject freestyle job}. The job will get a generated name.
-     *
-     * @return the created job
-     */
-    private FreeStyleProject createJob() {
-        try {
-            return j.createFreeStyleProject();
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
-     * Creates a new {@link FreeStyleProject freestyle job} and copies the specified resources to the workspace folder.
-     * The job will get a generated name.
-     *
-     * @param fileNames
-     *         the files to copy to the workspace
-     *
-     * @return the created job
-     */
-    private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
-        FreeStyleProject job = createJob();
-        copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
-        return job;
-    }
-
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job.
-     *
-     * @param job
-     *         the job to register the recorder for
-     * @param configuration
-     *         the tool configuration
-     *
-     * @return the created recorder
-     */
-    @CanIgnoreReturnValue
-    private IssuesRecorder enableWarnings(final FreeStyleProject job, ToolConfiguration configuration) {
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(configuration));
-        job.getPublishersList().add(publisher);
-        return publisher;
-    }
-
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job.
-     *
-     * @param job
-     *         the job to register the recorder for
-     * @param configuration
-     *         configuration of the recorder
-     */
-    @CanIgnoreReturnValue
-    private void enableWarnings(final FreeStyleProject job, final Consumer<IssuesRecorder> configuration,
-            final ToolConfiguration toolConfiguration) {
-        IssuesRecorder publisher = enableWarnings(job, toolConfiguration);
-        configuration.accept(publisher);
-    }
-
-    /**
-     * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
-     * been finished.
-     *
-     * @param job
-     *         the job to schedule
-     * @param status
-     *         the expected result for the build
-     *
-     * @return the created {@link ResultAction}
-     */
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private AnalysisResult scheduleBuildAndAssertStatus(final FreeStyleProject job, final Result status) {
-        try {
-            FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
-
-            ResultAction action = build.getAction(ResultAction.class);
-
-            assertThat(action).isNotNull();
-
-            return action.getResult();
-        }
-        catch (Exception e) {
-            throw new AssertionError(e);
-        }
-    }
-
+    
     /**
      * Schedules a new build for the specified job and returns the created {@link HealthReport} after the build has been
      * finished.
