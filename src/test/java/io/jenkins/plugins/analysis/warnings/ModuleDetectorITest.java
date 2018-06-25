@@ -642,7 +642,7 @@ public class ModuleDetectorITest extends IntegrationTest {
      */
     private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
         FreeStyleProject job = createJob();
-        copyFilesToWorkspace(job, fileNames);
+        copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
     }
 
@@ -680,7 +680,7 @@ public class ModuleDetectorITest extends IntegrationTest {
     @CanIgnoreReturnValue
     private IssuesRecorder enableWarnings(final FreeStyleProject job) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration("**/*issues.txt", new Eclipse())));
+        publisher.setTools(Collections.singletonList(new ToolConfiguration(new Eclipse(), "**/*issues.txt")));
         job.getPublishersList().add(publisher);
         return publisher;
     }
@@ -699,7 +699,7 @@ public class ModuleDetectorITest extends IntegrationTest {
     @CanIgnoreReturnValue
     private IssuesRecorder enableWarnings(final FreeStyleProject job, final StaticAnalysisTool staticAnalysisTool) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration("**/*issues.txt", staticAnalysisTool)));
+        publisher.setTools(Collections.singletonList(new ToolConfiguration(staticAnalysisTool, "**/*issues.txt")));
         job.getPublishersList().add(publisher);
         return publisher;
     }

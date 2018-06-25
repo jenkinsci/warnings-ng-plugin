@@ -46,7 +46,6 @@ import hudson.tasks.Maven;
  * @author Deniz Mardin
  */
 public class PackageDetectorsITest extends IntegrationTest {
-
     private static final String PACKAGE_FILE_PATH = "moduleandpackagedetectorfiles/";
     private static final String PACKAGE_WITH_FILES_CSHARP = PACKAGE_FILE_PATH + "csharp/";
     private static final String PACKAGE_WITH_FILES_JAVA = PACKAGE_FILE_PATH + "java/";
@@ -487,7 +486,7 @@ public class PackageDetectorsITest extends IntegrationTest {
      */
     private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
         FreeStyleProject job = createJob();
-        copyFilesToWorkspace(job, fileNames);
+        copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
     }
 
@@ -523,7 +522,7 @@ public class PackageDetectorsITest extends IntegrationTest {
     @CanIgnoreReturnValue
     private IssuesRecorder enableWarnings(final FreeStyleProject job) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration("**/*issues.txt", new Eclipse())));
+        publisher.setTools(Collections.singletonList(new ToolConfiguration(new Eclipse(), "**/*issues.txt")));
         job.getPublishersList().add(publisher);
         return publisher;
     }
@@ -542,7 +541,7 @@ public class PackageDetectorsITest extends IntegrationTest {
     @CanIgnoreReturnValue
     private IssuesRecorder enableWarnings(final FreeStyleProject job, final StaticAnalysisTool staticAnalysisTool) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration("**/*issues.txt", staticAnalysisTool)));
+        publisher.setTools(Collections.singletonList(new ToolConfiguration(staticAnalysisTool, "**/*issues.txt")));
         job.getPublishersList().add(publisher);
         return publisher;
     }
