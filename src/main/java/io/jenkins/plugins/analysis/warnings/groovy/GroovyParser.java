@@ -1,11 +1,14 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
+import javax.annotation.Nonnull;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -15,6 +18,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.util.Ensure;
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import groovy.lang.Script;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
@@ -31,7 +35,8 @@ import hudson.util.FormValidation.Kind;
  *
  * @author Ulli Hafner
  */
-public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
+public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implements Serializable {
+    private static final long serialVersionUID = 2447124045452896581L;
     private static final int MAX_EXAMPLE_SIZE = 4096;
 
     private final String id;
@@ -40,7 +45,8 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
     private final String script;
     private final String example;
 
-    private JenkinsFacade jenkinsFacade = new JenkinsFacade();
+    @SuppressFBWarnings("SE")
+    private transient JenkinsFacade jenkinsFacade = new JenkinsFacade();
 
     /**
      * Creates a new instance of {@link GroovyParser}.
@@ -69,7 +75,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
     }
 
     private static boolean containsNewline(final String expression) {
-        return StringUtils.contains(expression, "\\n") ||StringUtils.contains(expression, "\\r");
+        return StringUtils.contains(expression, "\\n") || StringUtils.contains(expression, "\\r");
     }
 
     /**
@@ -78,7 +84,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
      * @return {@code true} if this instance is valid, {@code false} otherwise
      */
     public boolean isValid() {
-        DescriptorImpl d = new DescriptorImpl(jenkinsFacade);
+        DescriptorImpl d = new DescriptorImpl(getJenkinsFacade());
 
         return d.doCheckScript(script).kind == Kind.OK
                 && d.doCheckRegexp(regexp).kind == Kind.OK
@@ -134,6 +140,30 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         return containsNewline(regexp);
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        GroovyParser that = (GroovyParser) o;
+
+        if (!regexp.equals(that.regexp)) {
+            return false;
+        }
+        return script.equals(that.script);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = regexp.hashCode();
+        result = 31 * result + script.hashCode();
+        return result;
+    }
+
     /**
      * Returns a new parser instance.
      *
@@ -161,6 +191,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         this.jenkinsFacade = jenkinsFacade;
     }
 
+    private JenkinsFacade getJenkinsFacade() {
+        return ObjectUtils.defaultIfNull(jenkinsFacade, new JenkinsFacade());
+    }
+
     /**
      * Descriptor to validate {@link GroovyParser}.
      *
@@ -182,8 +216,9 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
             this(new JenkinsFacade());
         }
 
-        @VisibleForTesting
         DescriptorImpl(final JenkinsFacade jenkinsFacade) {
+            super();
+            
             this.jenkinsFacade = jenkinsFacade;
         }
 
@@ -330,6 +365,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
          *
          * @return a result of {@link Kind#OK} if a warning has been found
          */
+        @SuppressWarnings("illegalcatch")
         private FormValidation parseExample(final String script, final String example, final String regexp,
                 final boolean hasMultiLineSupport) {
             Pattern pattern;
@@ -340,35 +376,36 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
                 pattern = Pattern.compile(regexp);
             }
             Matcher matcher = pattern.matcher(example);
-            if (matcher.find()) {
-                GroovyExpressionMatcher checker = new GroovyExpressionMatcher(script, null);
-                Object result = null;
-                try {
-                    result = checker.run(matcher, new IssueBuilder(), 0);
-                }
-                catch (Exception exception) { // NOCHECKSTYLE: catch all exceptions of the Groovy script
-                    return FormValidation.error(
-                            Messages.GroovyParser_Error_Example_exception(exception.getMessage()));
-                }
-                if (result instanceof Issue) {
-                    StringBuilder okMessage = new StringBuilder(
-                            Messages.GroovyParser_Error_Example_ok_title());
-                    Issue warning = (Issue) result;
-                    message(okMessage, Messages.GroovyParser_Error_Example_ok_file(warning.getFileName()));
-                    message(okMessage, Messages.GroovyParser_Error_Example_ok_line(warning.getLineStart()));
-                    message(okMessage, Messages.GroovyParser_Error_Example_ok_priority(warning.getPriority()));
-                    message(okMessage, Messages.GroovyParser_Error_Example_ok_category(warning.getCategory()));
-                    message(okMessage, Messages.GroovyParser_Error_Example_ok_type(warning.getType()));
-                    message(okMessage, Messages.GroovyParser_Error_Example_ok_message(warning.getMessage()));
-                    return FormValidation.ok(okMessage.toString());
+            try {
+                if (matcher.find()) {
+                    GroovyExpressionMatcher checker = new GroovyExpressionMatcher(script, null);
+                    Object result = checker.run(matcher, new IssueBuilder(), 0);
+                    if (result instanceof Issue) {
+                        return createOkMessage((Issue) result);
+                    }
+                    else {
+                        return FormValidation.error(Messages.GroovyParser_Error_Example_wrongReturnType(result));
+                    }
                 }
                 else {
-                    return FormValidation.error(Messages.GroovyParser_Error_Example_wrongReturnType(result));
+                    return FormValidation.error(Messages.GroovyParser_Error_Example_regexpDoesNotMatch());
                 }
             }
-            else {
-                return FormValidation.error(Messages.GroovyParser_Error_Example_regexpDoesNotMatch());
+            catch (Exception exception) { // catch all exceptions of the Groovy script
+                return FormValidation.error(
+                        Messages.GroovyParser_Error_Example_exception(exception.getMessage()));
             }
+        }
+
+        private FormValidation createOkMessage(final Issue issue) {
+            StringBuilder okMessage = new StringBuilder(Messages.GroovyParser_Error_Example_ok_title());
+            message(okMessage, Messages.GroovyParser_Error_Example_ok_file(issue.getFileName()));
+            message(okMessage, Messages.GroovyParser_Error_Example_ok_line(issue.getLineStart()));
+            message(okMessage, Messages.GroovyParser_Error_Example_ok_priority(issue.getSeverity()));
+            message(okMessage, Messages.GroovyParser_Error_Example_ok_category(issue.getCategory()));
+            message(okMessage, Messages.GroovyParser_Error_Example_ok_type(issue.getType()));
+            message(okMessage, Messages.GroovyParser_Error_Example_ok_message(issue.getMessage()));
+            return FormValidation.ok(okMessage.toString());
         }
 
         private void message(final StringBuilder okMessage, final String message) {
@@ -376,15 +413,16 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
             int max = MAX_MESSAGE_LENGTH;
             if (message.length() > max) {
                 int size = max / 2 - 1;
-                okMessage.append(message.substring(0, size));
+                okMessage.append(message, 0, size);
                 okMessage.append("[...]");
-                okMessage.append(message.substring(message.length() - size, message.length()));
+                okMessage.append(message, message.length() - size, message.length());
             }
             else {
                 okMessage.append(message);
             }
         }
 
+        @Nonnull
         @Override
         public String getDisplayName() {
             return StringUtils.EMPTY;

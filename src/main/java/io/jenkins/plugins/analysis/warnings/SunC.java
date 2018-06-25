@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class SunC extends StaticAnalysisTool {
+    private static final long serialVersionUID = -2194739612322803223L;
     static final String ID = "sunc";
 
     /** Creates a new instance of {@link SunC}. */
     @DataBoundConstructor
     public SunC() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class SunC extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class GoVet extends StaticAnalysisTool {
+    private static final long serialVersionUID = -4075523780782589302L;
     static final String ID = "go-vet";
 
     /** Creates a new instance of {@link GoVet}. */
     @DataBoundConstructor
     public GoVet() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class GoVet extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

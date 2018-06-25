@@ -1,6 +1,5 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
-import java.io.IOException;
 import java.util.Collections;
 
 import org.assertj.core.api.Assertions;
@@ -8,17 +7,14 @@ import org.junit.Test;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
-import static hudson.remoting.Launcher.isWindows;
+import static hudson.remoting.Launcher.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import static io.jenkins.plugins.analysis.core.model.Assertions.assertThat;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
+import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
 
-import hudson.model.Action;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -37,7 +33,7 @@ public class IssuesRecorderRunAlwaysITest extends IssuesRecorderITest {
      */
     @Test
     public void shouldRunEvenResultIsFailure() {
-        FreeStyleProject project = createJobWithWorkspaceFile("checkstyle.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml");
         enableWarnings(project);
 
         AddScript(project, "exit 1");
@@ -54,7 +50,7 @@ public class IssuesRecorderRunAlwaysITest extends IssuesRecorderITest {
      */
     @Test
     public void shouldNotRunWhenResultIsFailure() {
-        FreeStyleProject project = createJobWithWorkspaceFile("checkstyle.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml");
 
         AddScript(project, "exit 1");
         enableCheckStyle(project, false);
@@ -75,7 +71,7 @@ public class IssuesRecorderRunAlwaysITest extends IssuesRecorderITest {
      */
     @Test
     public void shouldRunResultIsSuccessWithRunAlways() {
-        FreeStyleProject project = createJob();
+        FreeStyleProject project = createFreeStyleProject();
 
         AddScript(project, "exit 0");
         enableCheckStyle(project, true);
@@ -90,7 +86,7 @@ public class IssuesRecorderRunAlwaysITest extends IssuesRecorderITest {
      */
     @Test
     public void shouldRunResultIsSuccessWithoutRunAlways() {
-        FreeStyleProject project = createJob();
+        FreeStyleProject project = createFreeStyleProject();
 
         AddScript(project, "exit 0");
         enableCheckStyle(project, false);
@@ -114,7 +110,7 @@ public class IssuesRecorderRunAlwaysITest extends IssuesRecorderITest {
 
         publisher.setEnabledForFailure(setRunAlways);
         publisher.setTools(
-                Collections.singletonList(new ToolConfiguration("**/*issues.txt", new CheckStyle())));
+                Collections.singletonList(new ToolConfiguration(new CheckStyle(), "**/*issues.txt")));
 
         job.getPublishersList().add(publisher);
         return publisher;
@@ -156,7 +152,8 @@ public class IssuesRecorderRunAlwaysITest extends IssuesRecorderITest {
     @CanIgnoreReturnValue
     private IssuesRecorder enableWarnings(final FreeStyleProject job) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration("**/checkstyle-result.xml", new CheckStyle())));
+        publisher.setTools(
+                Collections.singletonList(new ToolConfiguration(new CheckStyle(), "**/checkstyle-result.xml")));
         job.getPublishersList().add(publisher);
         return publisher;
     }
@@ -169,12 +166,13 @@ public class IssuesRecorderRunAlwaysITest extends IssuesRecorderITest {
      * @param script
      *         the script which will be added to the FreeStyleProject
      */
-    public void AddScript(FreeStyleProject project, String script){
+    public void AddScript(FreeStyleProject project, String script) {
 
-        if( isWindows() ){
+        if (isWindows()) {
 
             project.getBuildersList().add(new BatchFile(script));
-        }else{
+        }
+        else {
 
             project.getBuildersList().add(new Shell(script));
         }

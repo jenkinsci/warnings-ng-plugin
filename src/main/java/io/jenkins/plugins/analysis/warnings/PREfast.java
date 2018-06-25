@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.PreFastParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.PreFastParser;
 
 /**
  * Provides a parser and customized messages for Microsoft PREfast.
@@ -16,11 +15,13 @@ import edu.hm.hafner.analysis.parser.PreFastParser;
  * @author Ullrich Hafner
  */
 public class PREfast extends StaticAnalysisTool {
+    private static final long serialVersionUID = -3802198096988685475L;
     static final String ID = "pre-fast";
 
     /** Creates a new instance of {@link PREfast}. */
     @DataBoundConstructor
     public PREfast() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -32,6 +33,7 @@ public class PREfast extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

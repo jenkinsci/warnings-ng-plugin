@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.dry.simian.SimianParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.dry.simian.SimianParser;
 
 /**
  * Provides a parser and customized messages for Simian duplication scanner.
@@ -16,11 +15,13 @@ import edu.hm.hafner.analysis.parser.dry.simian.SimianParser;
  * @author Ullrich Hafner
  */
 public class Simian extends DuplicateCodeScanner {
+    private static final long serialVersionUID = 5817021796077055763L;
     static final String ID = "simian";
 
     /** Creates a new instance of {@link Simian}. */
     @DataBoundConstructor
     public Simian() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -44,6 +45,7 @@ public class Simian extends DuplicateCodeScanner {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends DryDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

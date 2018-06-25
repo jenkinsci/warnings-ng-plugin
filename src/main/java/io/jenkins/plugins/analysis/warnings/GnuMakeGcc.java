@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Michael Schmid
  */
 public class GnuMakeGcc extends StaticAnalysisTool {
+    private static final long serialVersionUID = -5332481308142256483L;
     static final String ID = "gmake-gcc";
 
     /** Creates a new instance of {@link GnuMakeGcc}. */
     @DataBoundConstructor
     public GnuMakeGcc() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class GnuMakeGcc extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

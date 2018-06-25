@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.violations.ResharperInspectCodeAdapter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.violations.ResharperInspectCodeAdapter;
 
 /**
  * Provides a parser and customized messages for Resharper Inspections.
@@ -16,11 +15,13 @@ import edu.hm.hafner.analysis.parser.violations.ResharperInspectCodeAdapter;
  * @author Ullrich Hafner
  */
 public class ResharperInspectCode extends StaticAnalysisTool {
+    private static final long serialVersionUID = 7249388335877895890L;
     static final String ID = "resharper";
 
     /** Creates a new instance of {@link ResharperInspectCode}. */
     @DataBoundConstructor
     public ResharperInspectCode() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -37,6 +38,7 @@ public class ResharperInspectCode extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

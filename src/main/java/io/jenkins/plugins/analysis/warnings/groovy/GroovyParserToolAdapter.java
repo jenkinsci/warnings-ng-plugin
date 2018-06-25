@@ -1,10 +1,8 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
+import edu.hm.hafner.analysis.IssueParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueParser;
 
 /**
  * Converts a {@link GroovyParser} instance to a {@link StaticAnalysisTool} instance.
@@ -12,9 +10,13 @@ import edu.hm.hafner.analysis.IssueParser;
  * @author Ullrich Hafner
  */
 public class GroovyParserToolAdapter extends StaticAnalysisTool {
+    private static final long serialVersionUID = -8466615502157837470L;
+
     private final GroovyParser parser;
 
     GroovyParserToolAdapter(final GroovyParser parser) {
+        super();
+        
         this.parser = parser;
     }
 
@@ -29,12 +31,31 @@ public class GroovyParserToolAdapter extends StaticAnalysisTool {
     }
 
     @Override
-    public IssueParser<Issue> createParser() {
+    public IssueParser createParser() {
         return parser.createParser();
     }
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new StaticAnalysisLabelProvider(parser.getId(), parser.getName());
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        GroovyParserToolAdapter that = (GroovyParserToolAdapter) o;
+
+        return parser.equals(that.parser);
+    }
+
+    @Override
+    public int hashCode() {
+        return parser.hashCode();
     }
 }

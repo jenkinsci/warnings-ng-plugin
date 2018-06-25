@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
 import edu.hm.hafner.analysis.AbstractParser;
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.Pep8ParserTest;
 
 /**
@@ -11,7 +10,7 @@ import edu.hm.hafner.analysis.parser.Pep8ParserTest;
  */
 class DynamicLineParserTest extends Pep8ParserTest {
     @Override
-    public AbstractParser<Issue> createParser() {
+    public AbstractParser createParser() {
         return new DynamicLineParser("(.*):(\\d+):(\\d+): (\\D\\d*) (.*)", toString("pep8.groovy"));
     }
 }

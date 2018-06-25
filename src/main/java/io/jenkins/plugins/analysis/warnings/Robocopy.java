@@ -16,11 +16,13 @@ import hudson.plugins.warnings.parser.Messages;
  * @author Ullrich Hafner
  */
 public class Robocopy extends StaticAnalysisTool {
+    private static final long serialVersionUID = -9009703818411779941L;
     static final String ID = "robocopy";
 
     /** Creates a new instance of {@link Robocopy}. */
     @DataBoundConstructor
     public Robocopy() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -32,6 +34,7 @@ public class Robocopy extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }
