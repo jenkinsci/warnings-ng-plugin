@@ -33,7 +33,9 @@ import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
+import hudson.tasks.BatchFile;
 import hudson.tasks.Publisher;
+import hudson.tasks.Shell;
 import hudson.util.DescribableList;
 
 /**
@@ -81,16 +83,19 @@ public class IssuesRecorderITest extends IntegrationTest {
         return publisher;
     }
 
-    protected void enableEclipseWarnings(final AbstractProject<?, ?> project) {
-        enableWarnings(project, new Eclipse());
+    @CanIgnoreReturnValue
+    protected IssuesRecorder enableEclipseWarnings(final AbstractProject<?, ?> project) {
+        return enableWarnings(project, new Eclipse());
     }
 
-    protected void enableCheckStyleWarnings(final AbstractProject<?, ?> project) {
-        enableWarnings(project, new CheckStyle());
+    @CanIgnoreReturnValue
+    protected IssuesRecorder enableCheckStyleWarnings(final AbstractProject<?, ?> project) {
+        return enableWarnings(project, new CheckStyle());
     }
 
-    protected void enableEclipseWarnings(final FreeStyleProject project, final Consumer<IssuesRecorder> configuration) {
-        enableWarnings(project, configuration, createGenericToolConfiguration(new Eclipse()));
+    @CanIgnoreReturnValue
+    protected IssuesRecorder enableEclipseWarnings(final FreeStyleProject project, final Consumer<IssuesRecorder> configuration) {
+        return enableWarnings(project, configuration, createGenericToolConfiguration(new Eclipse()));
     }
 
     protected HtmlPage getWebPage(final AbstractProject<?, ?> job, final String page) {
@@ -269,8 +274,6 @@ public class IssuesRecorderITest extends IntegrationTest {
     protected List<AnalysisResult> getAnalysisResults(final Run<?, ?> build) {
         List<ResultAction> actions = build.getActions(ResultAction.class);
 
-        assertThat(actions).isNotEmpty();
-
         return actions.stream().map(ResultAction::getResult).collect(Collectors.toList());
     }
 
@@ -320,5 +323,22 @@ public class IssuesRecorderITest extends IntegrationTest {
 
     protected FilePath getWorkspaceFor(final FreeStyleProject project) {
         return j.jenkins.getWorkspaceFor(project);
+    }
+
+    /**
+     * Add a script as a Shell or BachFile depending on the OperationSystem.
+     *
+     * @param project
+     *         the FreeStyleProject
+     * @param script
+     *         the script which will be added to the FreeStyleProject
+     */
+    protected void addScriptStep(final FreeStyleProject project, final String script) {
+        if (Functions.isWindows()) {
+            project.getBuildersList().add(new BatchFile(script));
+        }
+        else {
+            project.getBuildersList().add(new Shell(script));
+        }
     }
 }

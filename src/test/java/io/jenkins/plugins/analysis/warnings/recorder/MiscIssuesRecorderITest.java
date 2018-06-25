@@ -25,6 +25,9 @@ import hudson.model.Run;
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
  *
+ * @author Elvira Hauer
+ * @author Anna-Maria Hardi
+ * @author Martin Weibel
  * @author Ullrich Hafner
  */
 public class MiscIssuesRecorderITest extends IssuesRecorderITest {
@@ -154,11 +157,10 @@ public class MiscIssuesRecorderITest extends IssuesRecorderITest {
     }
 
     private List<AnalysisResult> runJobWithAggregation(final boolean isAggregationEnabled) {
-        FreeStyleProject project1 = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
-        enableWarnings(project1, recorder -> recorder.setAggregatingResults(isAggregationEnabled),
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
+        enableWarnings(project, recorder -> recorder.setAggregatingResults(isAggregationEnabled),
                 new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
                 new ToolConfiguration(new Pmd(), "**/pmd-warnings-issues.txt"));
-        FreeStyleProject project = project1;
 
         return getAnalysisResults(buildWithStatus(project, Result.SUCCESS));
     }
@@ -303,4 +305,64 @@ public class MiscIssuesRecorderITest extends IssuesRecorderITest {
         return new ToolConfiguration(new Eclipse(), pattern);
     }
 
+    /**
+     * Runs a build with a build step that produces a FAILURE. Checkstyle will report all 6 warnings since the
+     * enabledForFailure property has been enabled.
+     */
+    @Test
+    public void shouldParseCheckstyleReportEvenResultIsFailure() {
+        FreeStyleProject project = createCheckStyleProjectWithFailureStep(true);
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
+
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasInfoMessages("Resolved module names for 6 issues");
+        assertThat(result).hasStatus(Status.INACTIVE);
+    }
+
+    /**
+     * Runs a build with a build step that produces a FAILURE. Checkstyle will skip reporting since enabledForFailure
+     * property has been disabled.
+     */
+    @Test
+    public void shouldNotRunWhenResultIsFailure() {
+        FreeStyleProject project = createCheckStyleProjectWithFailureStep(false);
+
+        Run<?, ?> run = buildWithStatus(project, Result.FAILURE);
+        assertThat(getAnalysisResults(run)).isEmpty();
+    }
+
+    /**
+     * Runs a build with a build step that produces a SUCCESS. Checkstyle will report all 6 warnings.
+     */
+    @Test
+    public void shouldParseCheckstyleIfIsEnabledForFailureAndResultIsSuccess() {
+        assertThatFailureFlagIsNotUsed(true);
+        assertThatFailureFlagIsNotUsed(false);
+    }
+
+    private void assertThatFailureFlagIsNotUsed(final boolean isEnabledForFailure) {
+        FreeStyleProject project = createCheckStyleProject(isEnabledForFailure);
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result).hasTotalSize(6);
+        assertThat(result).hasInfoMessages("Resolved module names for 6 issues");
+        assertThat(result).hasStatus(Status.INACTIVE);
+    }
+
+    private FreeStyleProject createCheckStyleProject(final boolean isEnabledForFailure) {
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml");
+        IssuesRecorder recorder = enableCheckStyleWarnings(project);
+        recorder.setEnabledForFailure(isEnabledForFailure);
+        return project;
+    }
+
+    private FreeStyleProject createCheckStyleProjectWithFailureStep(final boolean isEnabledForFailure) {
+        FreeStyleProject project = createCheckStyleProject(isEnabledForFailure);
+
+        addScriptStep(project, "exit 1");
+        
+        return project;
+    }
 }
