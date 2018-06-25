@@ -31,6 +31,7 @@ import hudson.model.Run;
  *
  * @author Ullrich Hafner
  */
+// FIXME: remove File and use Path
 public class AffectedFilesResolver {
     private static final String SLASH = "/";
     private static final String AFFECTED_FILES_FOLDER_NAME = "files-with-issues";
@@ -51,7 +52,7 @@ public class AffectedFilesResolver {
     }
 
     private static boolean canAccess(final File file) {
-        return file.exists() && file.canRead();
+        return Files.isReadable(file.toPath());
     }
 
     /**
