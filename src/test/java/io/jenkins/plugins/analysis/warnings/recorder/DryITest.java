@@ -30,7 +30,7 @@ import hudson.model.Result;
 /**
  * Integration tests for the DRY parsers of the warnings plug-in in freestyle jobs.
  *
- * @author Stephan Ploederl
+ * @author Stephan Plöderl
  */
 public class DryITest extends IssuesRecorderITest {
     private static final String PRIORITY_HEADER_ID = "number-priorities";

@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.util.function.Consumer;
 
@@ -11,7 +11,6 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.quality.Status;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.warnings.recorder.IssuesRecorderITest;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -20,7 +19,7 @@ import hudson.tasks.Shell;
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new reference finder {@link AnalysisHistory}.
  *
- * @author Arne Schöntag
+ * @author Arne SchÃ¶ntag
  */
 public class ReferenceFinderITest extends IssuesRecorderITest {
     private final String jobName = "Job";
