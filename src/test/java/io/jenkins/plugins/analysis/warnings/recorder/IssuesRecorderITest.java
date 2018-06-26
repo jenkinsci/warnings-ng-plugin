@@ -34,6 +34,7 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.tasks.BatchFile;
+import hudson.tasks.Builder;
 import hudson.tasks.Publisher;
 import hudson.tasks.Shell;
 import hudson.util.DescribableList;
@@ -94,7 +95,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     @CanIgnoreReturnValue
-    protected IssuesRecorder enableEclipseWarnings(final FreeStyleProject project, final Consumer<IssuesRecorder> configuration) {
+    protected IssuesRecorder enableEclipseWarnings(final FreeStyleProject project,
+            final Consumer<IssuesRecorder> configuration) {
         return enableWarnings(project, configuration, createGenericToolConfiguration(new Eclipse()));
     }
 
@@ -326,19 +328,33 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Add a script as a Shell or BachFile depending on the OperationSystem.
+     * Adds a script as a {@link Shell} or {@link BatchFile}.
      *
      * @param project
-     *         the FreeStyleProject
+     *         the project
      * @param script
-     *         the script which will be added to the FreeStyleProject
+     *         the script to run
+     *
+     * @return the created script step
      */
-    protected void addScriptStep(final FreeStyleProject project, final String script) {
+    protected Builder addScriptStep(final FreeStyleProject project, final String script) {
+        Builder item;
         if (Functions.isWindows()) {
-            project.getBuildersList().add(new BatchFile(script));
+            item = new BatchFile(script);
         }
         else {
-            project.getBuildersList().add(new Shell(script));
+            item = new Shell(script);
+        }
+        project.getBuildersList().add(item);
+        return item;
+    }
+
+    protected void cleanWorkspace(final FreeStyleProject job) {
+        try {
+            getWorkspaceFor(job).deleteContents();
+        }
+        catch (IOException | InterruptedException e) {
+            throw new AssertionError(e);
         }
     }
 }
