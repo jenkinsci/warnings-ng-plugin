@@ -217,6 +217,27 @@ public class IssuesRecorderITest extends IntegrationTest {
      *         the job to schedule
      * @param status
      *         the expected result for the build
+     * @param assertions
+     *         the assertions for the result
+     *
+     * @return the build
+     */
+    protected Run<?, ?> scheduleBuildAndAssertStatus(final FreeStyleProject job, final Result status,
+            final Consumer<AnalysisResult> assertions) {
+        Run<?, ?> build = buildWithStatus(job, status);
+        AnalysisResult result = getAnalysisResult(build);
+        assertions.accept(result);
+        return build;
+    }
+
+    /**
+     * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
+     * been finished.
+     *
+     * @param job
+     *         the job to schedule
+     * @param status
+     *         the expected result for the build
      *
      * @return the created {@link ResultAction}
      */
@@ -356,5 +377,13 @@ public class IssuesRecorderITest extends IntegrationTest {
         catch (IOException | InterruptedException e) {
             throw new AssertionError(e);
         }
+    }
+
+    protected Builder addFailureStep(final FreeStyleProject project) {
+        return addScriptStep(project, "exit 1");
+    }
+
+    void removeBuilder(final FreeStyleProject project, final Builder builder) {
+        project.getBuildersList().remove(builder);
     }
 }

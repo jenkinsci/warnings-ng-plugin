@@ -361,7 +361,7 @@ public class MiscIssuesRecorderITest extends IssuesRecorderITest {
     private FreeStyleProject createCheckStyleProjectWithFailureStep(final boolean isEnabledForFailure) {
         FreeStyleProject project = createCheckStyleProject(isEnabledForFailure);
 
-        addScriptStep(project, "exit 1");
+        addFailureStep(project);
         
         return project;
     }
