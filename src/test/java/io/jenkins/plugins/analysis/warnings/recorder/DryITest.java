@@ -9,7 +9,6 @@ import org.w3c.dom.NodeList;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlHeading5;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
@@ -34,12 +33,17 @@ import hudson.model.Result;
  * @author Stephan Ploederl
  */
 public class DryITest extends IssuesRecorderITest {
+    private static final String PRIORITY_HEADER_ID = "number-priorities";
+    private static final String FOLDER = "dry/";
+    private static final String SIMIAN_REPORT = FOLDER + "simian.xml";
+    private static final String CPD_REPORT = FOLDER + "cpd.xml";
+
     /**
      * Verifies that the right amount of duplicate code warnings are detected.
      */
     @Test
     public void shouldHaveDuplicateCodeWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
         enableWarnings(project, new Cpd());
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -54,7 +58,7 @@ public class DryITest extends IssuesRecorderITest {
      */
     @Test
     public void priorityShouldChangeIfThresholdsChange() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(1);
         enableWarnings(project, cpd);
@@ -71,7 +75,7 @@ public class DryITest extends IssuesRecorderITest {
 
     @Test
     public void priorityShouldChangeIfThresholdsChangeSimian() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("dry/simian.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles(SIMIAN_REPORT);
         Simian simian = new Simian();
         simian.setNormalThreshold(1);
         enableWarnings(project, simian);
@@ -86,31 +90,23 @@ public class DryITest extends IssuesRecorderITest {
      */
     @Test
     public void priorityLinksShouldOpenFilteredSite() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
         enableWarnings(project, cpd);
 
         List<HtmlTableRow> tableRows = getIssueTableRows(project, getResultPath(cpd));
+        assertSizeOfSeverity(tableRows, 2, 5, 0, 0);
+        assertSizeOfSeverity(tableRows, 0, 0, 9, 0);
+        assertSizeOfSeverity(tableRows, 5, 0, 0, 6);
+    }
 
-        HtmlTableRow rowWithLowPriorityWarning = tableRows.get(5);
-        HtmlTableRow rowWithNormalPriorityWarning = tableRows.get(0);
-        HtmlTableRow rowWithHighPriorityWarning = tableRows.get(2);
-
-        HtmlPage lowPriorityPage = clickOnLink(getPriorityCell(rowWithLowPriorityWarning));
-        HtmlPage normalPriorityPage = clickOnLink(getPriorityCell(rowWithNormalPriorityWarning));
-        HtmlPage highPriorityPage = clickOnLink(getPriorityCell(rowWithHighPriorityWarning));
-
-        String priorityHeaderId = "number-priorities";
-        HtmlHeading5 heading = (HtmlHeading5) lowPriorityPage.getElementById(priorityHeaderId);
-        checkAmountOfPriorityWarnings(heading, 6, 0, 0);
-
-        heading = (HtmlHeading5) normalPriorityPage.getElementById(priorityHeaderId);
-        checkAmountOfPriorityWarnings(heading, 0, 9, 0);
-
-        heading = (HtmlHeading5) highPriorityPage.getElementById(priorityHeaderId);
-        checkAmountOfPriorityWarnings(heading, 0, 0, 5);
+    private void assertSizeOfSeverity(final List<HtmlTableRow> tableRows, final int row, 
+            final int high, final int normal, final int low) {
+        HtmlTableRow rowWithSeverityToSelect = tableRows.get(row);
+        HtmlPage detailsOfSeverity = clickOnLink(getPriorityCell(rowWithSeverityToSelect));
+        checkAmountOfPriorityWarnings(detailsOfSeverity.getElementById(PRIORITY_HEADER_ID), low, normal, high);
     }
 
     private DomElement getPriorityCell(final HtmlTableRow rowWithLowPriorityWarning) {
@@ -122,8 +118,8 @@ public class DryITest extends IssuesRecorderITest {
      */
     @Test
     public void sourceCodeLinksShouldWork() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
-        copySingleFileToWorkspace(project, "dry/Main.source", "Main.java");
+        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
+        copySingleFileToWorkspace(project, FOLDER + "Main.source", "Main.java");
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
@@ -131,13 +127,15 @@ public class DryITest extends IssuesRecorderITest {
 
         List<HtmlTableRow> tableRows = getIssueTableRows(project, getResultPath(cpd));
 
-        HtmlPage sourceCodePage = clickOnLink(tableRows.get(0).getCell(1).getFirstElementChild());
-
+        HtmlPage sourceCodePage = clickOnLink(selectSourceCodeLink(tableRows));
         DomElement tableElement = sourceCodePage.getElementById("main-panel");
 
-        String htmlFile = toString("dry/expected_html_code_block.html").trim();
-
+        String htmlFile = toString(FOLDER + "expected_html_code_block.html").trim();
         assertThat(tableElement.asText()).isEqualTo(htmlFile);
+    }
+
+    private DomElement selectSourceCodeLink(final List<HtmlTableRow> tableRows) {
+        return tableRows.get(0).getCell(1).getFirstElementChild();
     }
 
     /**
@@ -146,33 +144,30 @@ public class DryITest extends IssuesRecorderITest {
      */
     @Test
     public void tableShouldHaveExpectedStructure() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
-        String classString = "class";
-        String[] headers = {"Details", "File", "Priority", "#Lines", "Duplicated In", "Age"};
+        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         enableWarnings(project, cpd);
 
         HtmlTable table = getIssuesTable(project, getResultPath(cpd));
-
+        // TODO: check whether such detailed assertions make sense
+        String classString = "class";
         assertThat(table).hasFieldOrProperty(classString);
         assertThat(table.getTagName()).isEqualTo(HtmlTable.TAG_NAME);
-        assertThat(table.getAttribute(classString)).isEqualTo("table table-responsive table-responsive-block "
-                + "table-hover table-striped dataTable no-footer");
+        assertThat(table.getAttribute(classString)).isEqualTo(
+                "table table-responsive table-responsive-block table-hover table-striped dataTable no-footer");
 
         List<HtmlTableRow> tableHeaderRows = table.getHeader().getRows();
-
         assertThat(tableHeaderRows).hasSize(1);
 
         HtmlTableRow headerRow = tableHeaderRows.get(0);
-
         List<HtmlTableCell> headerRowCells = headerRow.getCells();
+        String[] headers = {"Details", "File", "Priority", "#Lines", "Duplicated In", "Age"};
         assertThat(headerRowCells).hasSize(headers.length);
         for (int i = 0; i < headers.length; i++) {
             HtmlTableCell cell = headerRowCells.get(i);
             assertThat(cell.getTagName()).isEqualTo(HtmlTableHeaderCell.TAG_NAME);
             assertThat(cell.getTextContent()).isEqualTo(headers[i]);
         }
-
     }
 
     /**
@@ -180,7 +175,7 @@ public class DryITest extends IssuesRecorderITest {
      */
     @Test
     public void firstTableRowShouldHaveRightContent() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
@@ -220,7 +215,7 @@ public class DryITest extends IssuesRecorderITest {
      */
     @Test
     public void duplicateCodeLinesShouldBeOfRightAmount() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
@@ -244,15 +239,13 @@ public class DryITest extends IssuesRecorderITest {
      */
     @Test
     public void shouldDifferInAmountOfDuplicateWarningForPriorities() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         enableWarnings(project, cpd);
 
-        changeThresholdsAndCheckAmountOfPriorityWarnings(25, 50, 20, 0, 0, cpd, project);
-
-        changeThresholdsAndCheckAmountOfPriorityWarnings(2, 4, 6, 9, 5, cpd, project);
-
-        changeThresholdsAndCheckAmountOfPriorityWarnings(1, 3, 0, 6, 14, cpd, project);
+        assertThatThresholdsAreEvaluated(25, 50, 20, 0, 0, cpd, project);
+        assertThatThresholdsAreEvaluated(2, 4, 6, 9, 5, cpd, project);
+        assertThatThresholdsAreEvaluated(1, 3, 0, 6, 14, cpd, project);
     }
 
     /**
@@ -274,18 +267,16 @@ public class DryITest extends IssuesRecorderITest {
      * @param project
      *         the {@link FreeStyleProject} that shall be build.
      */
-    private void changeThresholdsAndCheckAmountOfPriorityWarnings(final int normalThreshold, final int highThreshold,
+    private void assertThatThresholdsAreEvaluated(final int normalThreshold, final int highThreshold,
             final int low, final int normal, final int high,
             final DuplicateCodeScanner scanner, final FreeStyleProject project) {
-        String priorityHeaderId = "number-priorities";
         scanner.setNormalThreshold(normalThreshold);
         scanner.setHighThreshold(highThreshold);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         HtmlPage page = getWebPage(result, getResultPath(scanner));
-        HtmlHeading5 heading = (HtmlHeading5) page.getElementById(priorityHeaderId);
-        checkAmountOfPriorityWarnings(heading, low, normal, high);
+        checkAmountOfPriorityWarnings(page.getElementById("number-priorities"), low, normal, high);
     }
 
     /**
@@ -300,14 +291,16 @@ public class DryITest extends IssuesRecorderITest {
      * @param high
      *         Expected amount of high warnings.
      */
-    private void checkAmountOfPriorityWarnings(final HtmlHeading5 heading, int low, int normal, int high) {
-        String high_data = "data-high";
-        String normal_data = "data-normal";
-        String low_data = "data-low";
+    private void checkAmountOfPriorityWarnings(final DomElement heading, 
+            final int low, final int normal, final int high) {
+        assertThatAttributeContainsValue(heading, "data-low", low);
+        assertThatAttributeContainsValue(heading, "data-normal", normal);
+        assertThatAttributeContainsValue(heading, "data-high", high);
+    }
 
-        assertThat(heading.getAttribute(low_data)).isEqualTo(String.valueOf(low));
-        assertThat(heading.getAttribute(normal_data)).isEqualTo(String.valueOf(normal));
-        assertThat(heading.getAttribute(high_data)).isEqualTo(String.valueOf(high));
+    private void assertThatAttributeContainsValue(
+            final DomElement heading, final String attributeName, final int value) {
+        assertThat(heading.getAttribute(attributeName)).isEqualTo(String.valueOf(value));
     }
 
     /**
@@ -321,7 +314,6 @@ public class DryITest extends IssuesRecorderITest {
      * @return the issues table as {@link HtmlTable} object.
      */
     private HtmlTable getIssuesTable(final FreeStyleProject project, final String resultPath) {
-
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         HtmlPage page = getWebPage(result, resultPath);
         DomElement table = page.getElementById("issues");
@@ -342,7 +334,7 @@ public class DryITest extends IssuesRecorderITest {
      *
      * @return a list of #{@link HtmlTableRow}-elements displayed in the issues-table.
      */
-    private List<HtmlTableRow> getIssueTableRows(final FreeStyleProject project, String resultPath) {
+    private List<HtmlTableRow> getIssueTableRows(final FreeStyleProject project, final String resultPath) {
         HtmlTable table = getIssuesTable(project, resultPath);
 
         List<HtmlTableBody> bodies = table.getBodies();
@@ -360,14 +352,12 @@ public class DryITest extends IssuesRecorderITest {
      * @return the wanted {@link HtmlPage}.
      */
     private HtmlPage clickOnLink(final DomElement element) {
-        HtmlPage page;
         try {
-            page = element.click();
+            return element.click();
         }
         catch (IOException e) {
             throw new AssertionError(e);
         }
-        return page;
     }
 
     /**
@@ -379,7 +369,7 @@ public class DryITest extends IssuesRecorderITest {
      * @return the relative path as {@link String} to the tools result page.
      */
     private String getResultPath(final DuplicateCodeScanner scanner) {
-        return scanner.getClass().getSimpleName().toLowerCase() + "Result";
+        return scanner.getLabelProvider().getResultUrl();
     }
 
     /**
@@ -434,8 +424,7 @@ public class DryITest extends IssuesRecorderITest {
      * @param project
      *         the current {@link FreeStyleProject}.
      */
-    private void setNormalThresholdAndCheckPriority(final int normalThreshold,
-            @SuppressWarnings("SameParameterValue") final String expectedPriority,
+    private void setNormalThresholdAndCheckPriority(final int normalThreshold, final String expectedPriority,
             final DuplicateCodeScanner scanner, final FreeStyleProject project) {
         scanner.setNormalThreshold(normalThreshold);
         checkPriorityOfFirstWarningInTable(expectedPriority, project, getResultPath(scanner));
