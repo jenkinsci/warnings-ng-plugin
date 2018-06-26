@@ -213,6 +213,27 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
+     * Creates a new job of the specified type.
+     *
+     * @param type
+     *         type of the job
+     * @param name
+     *         the name of the job
+     * @param <T>
+     *         the project type
+     *
+     * @return the created job
+     */
+    protected <T extends TopLevelItem> T createProject(final Class<T> type, final String name) {
+        try {
+            return j.createProject(type, name);
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    /**
      * Schedules a build for the specified job. This method waits until the job has been finished. Afterwards, the
      * result of the job is compared to the specified expected result.
      *

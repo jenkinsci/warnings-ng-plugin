@@ -205,6 +205,7 @@ public class AnalysisResult implements Serializable {
         Report newIssues;
         Report fixedIssues;
 
+        // TODO: Compute reference outside in new class and add result to report logging
         Optional<Run<?, ?>> run = history.getPreviousBuild();
         if (run.isPresent()) {
             Run<?, ?> referenceRun = run.get();
