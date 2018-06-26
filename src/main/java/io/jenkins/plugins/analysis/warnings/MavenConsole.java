@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Aykut Yilmaz
  */
 public class MavenConsole extends StaticAnalysisTool {
+    private static final long serialVersionUID = 4642573591598798109L;
     static final String ID = "maven";
 
     /** Creates a new instance of {@link MavenConsole}. */
     @DataBoundConstructor
     public MavenConsole() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class MavenConsole extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

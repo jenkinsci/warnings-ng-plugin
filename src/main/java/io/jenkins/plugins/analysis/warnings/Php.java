@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Php extends StaticAnalysisTool {
+    private static final long serialVersionUID = 7286546914256953672L;
     static final String ID = "php";
 
     /** Creates a new instance of {@link Php}. */
     @DataBoundConstructor
     public Php() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class Php extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

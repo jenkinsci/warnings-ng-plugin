@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Erlc extends StaticAnalysisTool {
+    private static final long serialVersionUID = 8254330761908676605L;
     static final String ID = "erlc";
 
     /** Creates a new instance of {@link Erlc}. */
     @DataBoundConstructor
     public Erlc() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class Erlc extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

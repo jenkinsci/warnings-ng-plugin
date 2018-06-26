@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class TiCss extends StaticAnalysisTool {
+    private static final long serialVersionUID = -7982604310730169143L;
     static final String ID = "code-composer";
 
     /** Creates a new instance of {@link TiCss}. */
     @DataBoundConstructor
     public TiCss() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class TiCss extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

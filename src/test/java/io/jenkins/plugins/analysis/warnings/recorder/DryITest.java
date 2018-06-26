@@ -1,15 +1,10 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
 
 import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
@@ -22,88 +17,35 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableHeaderCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
-import io.jenkins.plugins.analysis.core.views.ResultAction;
+import io.jenkins.plugins.analysis.core.quality.Status;
+import io.jenkins.plugins.analysis.warnings.Cpd;
+import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
+import io.jenkins.plugins.analysis.warnings.Simian;
 
-import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
 /**
- * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
+ * Integration tests for the DRY parsers of the warnings plug-in in freestyle jobs.
  *
- * @author Ullrich Hafner
  * @author Stephan Ploederl
  */
-public class IssuesRecorderITest extends IntegrationTest {
-    /**
-     * Runs the Eclipse parser on an empty workspace: the build should report 0 issues and an error message.
-     */
-    @Test
-    public void shouldCreateEmptyResult() {
-        FreeStyleProject project = createJob();
-        enableWarnings(project);
-
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        assertThat(result).hasTotalSize(0);
-        assertThat(result).hasErrorMessages("No files found for pattern '**/*issues.txt'. Configuration error?");
-    }
-
-    /**
-     * Runs the Eclipse parser on an output file that contains several issues: the build should report 8 issues.
-     */
-    @Test
-    public void shouldCreateResultWithWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
-        enableWarnings(project);
-
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        assertThat(result).hasTotalSize(8);
-        assertThat(result).hasInfoMessages("Resolved module names for 8 issues",
-                "Resolved package names of 4 affected files");
-    }
-
-    /**
-     * Sets the UNSTABLE threshold to 8 and parse a file that contains exactly 8 warnings: the build should be
-     * unstable.
-     */
-    @Test
-    public void shouldCreateUnstableResult() {
-        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
-        enableWarnings(project, publisher -> publisher.setUnstableTotalAll(7));
-
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
-
-        assertThat(result).hasTotalSize(8);
-        assertThat(result).hasOverallResult(Result.UNSTABLE);
-
-        HtmlPage page = getWebPage(result, "eclipseResult");
-        assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
-    }
-
+public class DryITest extends IssuesRecorderITest {
     /**
      * Verifies that the right amount of duplicate code warnings are detected.
      */
     @Test
     public void shouldHaveDuplicateCodeWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFile("duplicateCode/cpd.xml");
-        Cpd cpd = new Cpd();
-        enableWarnings(project, cpd);
+        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
+        enableWarnings(project, new Cpd());
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(20);
-        assertThat(result).hasOverallResult(Result.SUCCESS);
-
+        assertThat(result).hasStatus(Status.INACTIVE);
     }
 
     /**
@@ -112,15 +54,13 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void priorityShouldChangeIfThresholdsChange() {
-        FreeStyleProject project = createJobWithWorkspaceFile("duplicateCode/cpd.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(1);
         enableWarnings(project, cpd);
 
         setHighThresholdAndCheckPriority(2, "High", cpd, project);
-
         setHighThresholdAndCheckPriority(5, "Normal", cpd, project);
-
         setNormalThresholdAndCheckPriority(4, "Low", cpd, project);
     }
 
@@ -131,15 +71,13 @@ public class IssuesRecorderITest extends IntegrationTest {
 
     @Test
     public void priorityShouldChangeIfThresholdsChangeSimian() {
-        FreeStyleProject project = createJobWithWorkspaceFile("duplicateCode/simian.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles("dry/simian.xml");
         Simian simian = new Simian();
         simian.setNormalThreshold(1);
         enableWarnings(project, simian);
 
         setHighThresholdAndCheckPriority(2, "High", simian, project);
-
         setHighThresholdAndCheckPriority(6, "Normal", simian, project);
-
         setNormalThresholdAndCheckPriority(5, "Low", simian, project);
     }
 
@@ -148,12 +86,11 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void priorityLinksShouldOpenFilteredSite() {
-        FreeStyleProject project = createJobWithWorkspaceFile("duplicateCode/cpd.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
         enableWarnings(project, cpd);
-        String priorityHeaderId = "number-priorities";
 
         List<HtmlTableRow> tableRows = getIssueTableRows(project, getResultPath(cpd));
 
@@ -161,10 +98,11 @@ public class IssuesRecorderITest extends IntegrationTest {
         HtmlTableRow rowWithNormalPriorityWarning = tableRows.get(0);
         HtmlTableRow rowWithHighPriorityWarning = tableRows.get(2);
 
-        HtmlPage lowPriorityPage = clickOnLink(rowWithLowPriorityWarning.getCell(2).getFirstElementChild());
-        HtmlPage normalPriorityPage = clickOnLink(rowWithNormalPriorityWarning.getCell(2).getFirstElementChild());
-        HtmlPage highPriorityPage = clickOnLink(rowWithHighPriorityWarning.getCell(2).getFirstElementChild());
+        HtmlPage lowPriorityPage = clickOnLink(getPriorityCell(rowWithLowPriorityWarning));
+        HtmlPage normalPriorityPage = clickOnLink(getPriorityCell(rowWithNormalPriorityWarning));
+        HtmlPage highPriorityPage = clickOnLink(getPriorityCell(rowWithHighPriorityWarning));
 
+        String priorityHeaderId = "number-priorities";
         HtmlHeading5 heading = (HtmlHeading5) lowPriorityPage.getElementById(priorityHeaderId);
         checkAmountOfPriorityWarnings(heading, 6, 0, 0);
 
@@ -175,13 +113,17 @@ public class IssuesRecorderITest extends IntegrationTest {
         checkAmountOfPriorityWarnings(heading, 0, 0, 5);
     }
 
+    private DomElement getPriorityCell(final HtmlTableRow rowWithLowPriorityWarning) {
+        return rowWithLowPriorityWarning.getCell(2).getFirstElementChild();
+    }
+
     /**
      * Verifies that the source code links are redirecting to a side displaying the source code.
      */
     @Test
     public void sourceCodeLinksShouldWork() {
-        FreeStyleProject project = createJobWithWorkspaceFile("duplicateCode/cpd.xml");
-        copyFileToWorkspace(project, "duplicateCode/Main.source", "Main.java");
+        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
+        copySingleFileToWorkspace(project, "dry/Main.source", "Main.java");
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
@@ -193,7 +135,7 @@ public class IssuesRecorderITest extends IntegrationTest {
 
         DomElement tableElement = sourceCodePage.getElementById("main-panel");
 
-        String htmlFile = toString("duplicateCode/expected_html_code_block.html").trim();
+        String htmlFile = toString("dry/expected_html_code_block.html").trim();
 
         assertThat(tableElement.asText()).isEqualTo(htmlFile);
     }
@@ -204,7 +146,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void tableShouldHaveExpectedStructure() {
-        FreeStyleProject project = createJobWithWorkspaceFile("duplicateCode/cpd.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
         String classString = "class";
         String[] headers = {"Details", "File", "Priority", "#Lines", "Duplicated In", "Age"};
         Cpd cpd = new Cpd();
@@ -238,7 +180,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void firstTableRowShouldHaveRightContent() {
-        FreeStyleProject project = createJobWithWorkspaceFile("duplicateCode/cpd.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
@@ -253,7 +195,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         assertThat(divElement.getAttribute("class")).isEqualTo("details-control");
         assertThat(divElement.getAttribute("data-description")).isEqualTo(
                 "<p><strong></strong></p> <pre><code>public static void functionOne()\n  "
-                        + "{\n    System.out.println(\"testfile for redundancy\");</code></pre>");
+                        + "{\n    System.out.println(&quot;testfile for redundancy&quot;);</code></pre>");
         HtmlAnchor anchor = (HtmlAnchor) firstTableRowCells.get(1).getFirstElementChild();
         assertThat(anchor.getAttribute("href")).startsWith("source.");
         assertThat(anchor.getAttribute("href")).endsWith("/#11");
@@ -278,7 +220,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void duplicateCodeLinesShouldBeOfRightAmount() {
-        FreeStyleProject project = createJobWithWorkspaceFile("duplicateCode/cpd.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
@@ -302,7 +244,7 @@ public class IssuesRecorderITest extends IntegrationTest {
      */
     @Test
     public void shouldDifferInAmountOfDuplicateWarningForPriorities() {
-        FreeStyleProject project = createJobWithWorkspaceFile("duplicateCode/cpd.xml");
+        FreeStyleProject project = createJobWithWorkspaceFiles("dry/cpd.xml");
         Cpd cpd = new Cpd();
         enableWarnings(project, cpd);
 
@@ -369,133 +311,6 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Creates a new {@link FreeStyleProject freestyle job}. The job will get a generated name.
-     *
-     * @return the created job
-     */
-    private FreeStyleProject createJob() {
-        try {
-            return j.createFreeStyleProject();
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
-     * Creates a new {@link FreeStyleProject freestyle job} and copies the specified resources to the workspace folder.
-     * The job will get a generated name.
-     *
-     * @param fileNames
-     *         the files to copy to the workspace
-     *
-     * @return the created job
-     */
-    private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
-        FreeStyleProject job = createJob();
-        copyFilesToWorkspace(job, fileNames);
-        return job;
-    }
-
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder} recorder for
-     * sthe job.
-     *
-     * @param job
-     *         the job to register the recorder for
-     * @param tool
-     *         the used {@link StaticAnalysisTool} that shall be used.
-     *
-     * @return the created recorder
-     */
-    private IssuesRecorder enableWarnings(final FreeStyleProject job, final StaticAnalysisTool tool) {
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration("**/*issues.txt", tool)));
-        job.getPublishersList().add(publisher);
-        return publisher;
-    }
-
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job.
-     *
-     * @param job
-     *         the job to register the recorder for
-     *
-     * @return the created recorder
-     */
-    @CanIgnoreReturnValue
-    private IssuesRecorder enableWarnings(final FreeStyleProject job) {
-        return enableWarnings(job, new Eclipse());
-    }
-
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job.
-     *
-     * @param job
-     *         the job to register the recorder for
-     * @param configuration
-     *         configuration of the recorder
-     *
-     * @return the created recorder
-     */
-    @SuppressWarnings("UnusedReturnValue")
-    @CanIgnoreReturnValue
-    private IssuesRecorder enableWarnings(final FreeStyleProject job, final Consumer<IssuesRecorder> configuration) {
-        IssuesRecorder publisher = enableWarnings(job);
-        configuration.accept(publisher);
-        return publisher;
-    }
-
-    /**
-     * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
-     * been finished.
-     *
-     * @param job
-     *         the job to schedule
-     * @param status
-     *         the expected result for the build
-     *
-     * @return the created {@link ResultAction}
-     */
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private AnalysisResult scheduleBuildAndAssertStatus(final FreeStyleProject job, final Result status) {
-        try {
-            FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
-
-            ResultAction action = build.getAction(ResultAction.class);
-
-            assertThat(action).isNotNull();
-
-            return action.getResult();
-        }
-        catch (Exception e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
-     * returns a WebPage-instance of an analysis result.
-     *
-     * @param result
-     *         the corresponding AnalysisResult of a finished build.
-     * @param page
-     *         the relative path to the result page.
-     *
-     * @return a WebPage as {@link HtmlPage}.
-     */
-    private HtmlPage getWebPage(final AnalysisResult result, final String page) {
-        try {
-            WebClient webClient = j.createWebClient();
-            return webClient.getPage(result.getOwner(), page);
-        }
-        catch (SAXException | IOException e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
      * Helper-method which builds the result and returns the issues table of a specified result type.
      *
      * @param project
@@ -556,28 +371,6 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * Helper-method which copies a file to the workspace with specified path.
-     *
-     * @param job
-     *         the job to which the workspace belongs.
-     * @param sourceFile
-     *         the file to be copied.
-     * @param targetFile
-     *         the destination path relative to the workspace.
-     */
-    @SuppressWarnings("SameParameterValue")
-    private void copyFileToWorkspace(final FreeStyleProject job, final String sourceFile, final String targetFile) {
-        try {
-            Objects.requireNonNull(j.jenkins.getWorkspaceFor(job))
-                    .child(targetFile)
-                    .copyFrom(asInputStream(sourceFile));
-        }
-        catch (IOException | InterruptedException e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
      * Helper-method which returns the relative path to the result page of a {@link DuplicateCodeScanner}.
      *
      * @param scanner
@@ -622,8 +415,8 @@ public class IssuesRecorderITest extends IntegrationTest {
      * @param project
      *         the current {@link FreeStyleProject}.
      */
-    private void setHighThresholdAndCheckPriority(final int highThreshold,final String expectedPriority,
-           final DuplicateCodeScanner scanner, final FreeStyleProject project) {
+    private void setHighThresholdAndCheckPriority(final int highThreshold, final String expectedPriority,
+            final DuplicateCodeScanner scanner, final FreeStyleProject project) {
         scanner.setHighThreshold(highThreshold);
         checkPriorityOfFirstWarningInTable(expectedPriority, project, getResultPath(scanner));
     }
