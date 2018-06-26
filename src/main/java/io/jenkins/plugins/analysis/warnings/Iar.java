@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Iar extends StaticAnalysisTool {
+    private static final long serialVersionUID = 6672928932731913714L;
     static final String ID = "iar";
 
     /** Creates a new instance of {@link Iar}. */
     @DataBoundConstructor
     public Iar() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class Iar extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

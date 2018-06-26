@@ -1,3 +1,5 @@
+<?jelly escape-by-default='true'?>
+
 <div>
   This plug-in collects the compiler warnings of the project modules and 
   visualizes the results.

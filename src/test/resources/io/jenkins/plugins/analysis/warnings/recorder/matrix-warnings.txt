@@ -1,0 +1,15 @@
+/axis/one/FileOne.c:1: error: implicit typename is deprecated, please see the documentation for details
+/axis/one/FileOne.c:2: warning: 'void yyunput(int, char*)' defined but not used
+/axis/one/FileOne.c:3: error: implicit typename is deprecated, please see the documentation for details
+/axis/one/FileOne.c:4: warning: 'void yyunput(int, char*)' defined but not used
+
+/axis/two/FileTwo.c:1: error: implicit typename is deprecated, please see the documentation for details
+/axis/two/FileTwo.c:2: warning: 'void yyunput(int, char*)' defined but not used
+/axis/two/FileTwo.c:3: error: implicit typename is deprecated, please see the documentation for details
+/axis/two/FileTwo.c:4: warning: 'void yyunput(int, char*)' defined but not used
+/axis/two/FileTwo.c:5: error: implicit typename is deprecated, please see the documentation for details
+/axis/two/FileTwo.c:6: warning: 'void yyunput(int, char*)' defined but not used
+
+/axis/three/FileThree.c:1: error: implicit typename is deprecated, please see the documentation for details
+/axis/three/FileThree.c:2: warning: 'void yyunput(int, char*)' defined but not used
+

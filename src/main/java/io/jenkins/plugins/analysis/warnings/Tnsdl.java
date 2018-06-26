@@ -15,11 +15,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Tnsdl extends StaticAnalysisTool {
+    private static final long serialVersionUID = 3738252418578966192L;
     static final String ID = "tnsdl";
 
     /** Creates a new instance of {@link Tnsdl}. */
     @DataBoundConstructor
     public Tnsdl() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -31,6 +33,7 @@ public class Tnsdl extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }
