@@ -62,7 +62,7 @@ public class SourceDetail implements ModelObject {
         this.owner = owner;
         this.issue = issue;
         this.sourceEncoding = sourceEncoding;
-        fileName = StringUtils.substringAfterLast(issue.getFileName(), "/");
+        fileName = issue.getBaseName();
 
         initializeContent();
     }

@@ -34,10 +34,10 @@ import hudson.plugins.analysis.util.ToolTipProvider;
  */
 public class StaticAnalysisLabelProvider {
     /** Formats a full path: selects the file name portion. */
-    public static final Function<String, String> FILE_NAME_FORMATTER
-            = string -> iffElse(IssueParser.SELF.equals(string),
+    public static final Function<Issue, String> FILE_NAME_FORMATTER
+            = issue -> iffElse(IssueParser.SELF.equals(issue.getFileName()),
             Messages.ConsoleLog_Name(),
-            StringUtils.substringAfterLast(string, "/"));
+            issue.getBaseName());
 
     private static final String ICONS_PREFIX = "/plugin/analysis-core/icons/";
     private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
@@ -212,7 +212,7 @@ public class StaticAnalysisLabelProvider {
     // FIXME: only link if valid file name
     protected String formatFileName(final Issue issue) {
         return String.format("<a href=\"%s/#%d\">%s:%d</a>", getSourceCodeUrl(issue), issue.getLineStart(),
-                FILE_NAME_FORMATTER.apply(issue.getFileName()), issue.getLineStart());
+                FILE_NAME_FORMATTER.apply(issue), issue.getLineStart());
     }
 
     /**

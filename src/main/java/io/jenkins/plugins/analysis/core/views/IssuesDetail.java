@@ -222,7 +222,7 @@ public class IssuesDetail implements ModelObject {
      */
     @SuppressWarnings("unused") // Called by jelly view
     public String getFileDisplayName(final Issue issue) {
-        return StaticAnalysisLabelProvider.FILE_NAME_FORMATTER.apply(issue.getFileName());
+        return StaticAnalysisLabelProvider.FILE_NAME_FORMATTER.apply(issue);
     }
 
     /**
@@ -278,7 +278,8 @@ public class IssuesDetail implements ModelObject {
     public PropertyStatistics getDetails(final String propertyName) {
         Function<String, String> propertyFormatter;
         if ("fileName".equals(propertyName)) {
-            propertyFormatter = StaticAnalysisLabelProvider.FILE_NAME_FORMATTER;
+            // FIXME: propertyFormatter = StaticAnalysisLabelProvider.FILE_NAME_FORMATTER;
+            propertyFormatter = Function.identity();
         }
         else if ("origin".equals(propertyName)) {
             propertyFormatter = origin -> new LabelProviderFactory().create(origin).getName();
