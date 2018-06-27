@@ -127,8 +127,7 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
 
                 return ul(each(duplications, link -> li(a()
                                 .withHref(String.format("source.%s/#%d", link.getId(), link.getLineStart()))
-                                .withText(String.format("%s:%s", FILE_NAME_FORMATTER.apply(link.getFileName()),
-                                        link.getLineStart()))
+                                .withText(String.format("%s:%s", FILE_NAME_FORMATTER.apply(link), link.getLineStart()))
                         ))
                 ).render();
             }
