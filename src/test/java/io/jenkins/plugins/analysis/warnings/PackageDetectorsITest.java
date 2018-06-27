@@ -51,7 +51,7 @@ public class PackageDetectorsITest extends IntegrationTest {
     private static final String PACKAGE_WITH_FILES_JAVA = PACKAGE_FILE_PATH + "java/";
     private static final String DEFAULT_ENTRY_PATH = "eclipseResult/";
     private static final String DEFAULT_TAB_TO_INVESTIGATE = "packageName";
-    private static final String DEFAULT_DEBUG_LOG_LINE = "to resolve package names (or namespaces)";
+    private static final String DEFAULT_DEBUG_LOG_LINE = "Resolving package names (or namespaces) by parsing the affected files";
 
     private static final boolean IS_MAVEN_PROJECT = false;
 

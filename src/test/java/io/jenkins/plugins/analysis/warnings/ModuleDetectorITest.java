@@ -89,7 +89,6 @@ import hudson.tasks.Maven;
  * @author Deniz Mardin
  */
 public class ModuleDetectorITest extends IntegrationTest {
-
     private static final String BUILD_FILE_PATH = "moduleandpackagedetectorfiles/";
     private static final String DEFAULT_ECLIPSE_TEST_FILE_PATH = "/eclipse_prepared-issues.txt";
     private static final String MAVEN_BUILD_FILE_LOCATION = "buildfiles/maven/";
@@ -354,46 +353,6 @@ public class ModuleDetectorITest extends IntegrationTest {
             softly.assertThat(collect.get("edu.hm.hafner.osgi.symbolicname (TestVendor)")).isEqualTo(7L);
             softly.assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
             softly.assertThat(logOutput).contains(returnExpectedNumberOfResolvedModuleNames(10));
-        }
-    }
-
-    /**
-     * Verifies that if there are two builds with different parsers which set the module name at a different time are
-     * handled correctly.
-     */
-    @Test
-    public void shouldRunTwoIndependentBuildsWithTwoDifferentParsersAndCheckForCorrectModuleHandling()
-            throws IOException {
-
-        FreeStyleProject project = createJobWithWorkspaceFile(BUILD_FILE_PATH + "various/findbugs-modules.xml");
-        enableWarnings(project, new FindBugs());
-        AnalysisResult resultFindBugs = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        String logOutputFindBugs = FileUtils.readFileToString(resultFindBugs.getOwner().getLogFile(),
-                StandardCharsets.UTF_8);
-        Map<String, Long> collectFindBugs = collectModuleNames(resultFindBugs);
-
-        AnalysisResult resultEclipse = buildProjectWithFilesAndReturnResult(NO_MODULE_PATHS, false);
-
-        String logOutputEclipse = FileUtils.readFileToString(resultEclipse.getOwner().getLogFile(),
-                StandardCharsets.UTF_8);
-        Map<String, Long> collectEclipse = collectModuleNames(resultEclipse);
-
-        String expectedLogOutputDefaultLine = "All issues already have a valid module name";
-
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            softly.assertThat(resultFindBugs.getIssues()).hasSize(1);
-            softly.assertThat(resultFindBugs.getIssues().getModules()).containsExactly("sampleFindBugsParserModule");
-            softly.assertThat(collectFindBugs).hasSize(1);
-            softly.assertThat(collectFindBugs.get("sampleFindBugsParserModule")).isEqualTo(1L);
-            softly.assertThat(logOutputFindBugs).contains(DEFAULT_DEBUG_LOG_LINE);
-            softly.assertThat(logOutputFindBugs).contains(expectedLogOutputDefaultLine);
-
-            softly.assertThat(resultEclipse.getIssues()).isEmpty();
-            softly.assertThat(resultEclipse.getIssues().getModules()).isEmpty();
-            softly.assertThat(collectEclipse).isEmpty();
-            softly.assertThat(logOutputEclipse).contains(DEFAULT_DEBUG_LOG_LINE);
-            softly.assertThat(logOutputEclipse).contains(expectedLogOutputDefaultLine);
         }
     }
 
