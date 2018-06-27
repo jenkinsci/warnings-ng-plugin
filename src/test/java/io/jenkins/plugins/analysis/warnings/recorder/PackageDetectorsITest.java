@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -32,6 +32,8 @@ import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
+import io.jenkins.plugins.analysis.warnings.Eclipse;
+import io.jenkins.plugins.analysis.warnings.FindBugs;
 import static org.assertj.core.api.Assertions.*;
 
 import hudson.model.FreeStyleBuild;
@@ -46,7 +48,7 @@ import hudson.tasks.Maven;
  * @author Deniz Mardin
  */
 public class PackageDetectorsITest extends IntegrationTest {
-    private static final String PACKAGE_FILE_PATH = "moduleandpackagedetectorfiles/";
+    private static final String PACKAGE_FILE_PATH = "detectors/";
     private static final String PACKAGE_WITH_FILES_CSHARP = PACKAGE_FILE_PATH + "csharp/";
     private static final String PACKAGE_WITH_FILES_JAVA = PACKAGE_FILE_PATH + "java/";
     private static final String DEFAULT_ENTRY_PATH = "eclipseResult/";

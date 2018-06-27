@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,6 +35,7 @@ import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
+import io.jenkins.plugins.analysis.warnings.Eclipse;
 import static org.assertj.core.api.Assertions.*;
 
 import hudson.model.FreeStyleBuild;
@@ -89,7 +90,7 @@ import hudson.tasks.Maven;
  * @author Deniz Mardin
  */
 public class ModuleDetectorITest extends IntegrationTest {
-    private static final String BUILD_FILE_PATH = "moduleandpackagedetectorfiles/";
+    private static final String BUILD_FILE_PATH = "detectors/";
     private static final String DEFAULT_ECLIPSE_TEST_FILE_PATH = "/eclipse_prepared-issues.txt";
     private static final String MAVEN_BUILD_FILE_LOCATION = "buildfiles/maven/";
     private static final String ANT_BUILD_FILE_LOCATION = "buildfiles/ant/";
@@ -122,7 +123,7 @@ public class ModuleDetectorITest extends IntegrationTest {
         };
 
         String[] filesWithModuleConfigurationAndProperties = (String[]) ArrayUtils
-                .add(filesWithModuleConfiguration, (BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"));
+                .add(filesWithModuleConfiguration, BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties");
 
         AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, true,
                 filesWithModuleConfigurationAndProperties
