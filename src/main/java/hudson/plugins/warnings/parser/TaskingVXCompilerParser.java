@@ -1,16 +1,14 @@
 package hudson.plugins.warnings.parser;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import hudson.Extension;
-
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A parser for TASKING VX compiler warnings.
  *
- * @author Sven Lübke
+ * @author Sven LÃ¼bke
  */
 @Extension
 public class TaskingVXCompilerParser extends RegexpLineParser {

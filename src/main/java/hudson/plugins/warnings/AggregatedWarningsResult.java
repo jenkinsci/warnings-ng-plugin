@@ -13,7 +13,7 @@ import hudson.plugins.warnings.parser.Warning;
  * Represents the aggregated results of all warnings parsers. One instance of this class is persisted for each build via
  * an XML file.
  *
- * @author Marvin Schütz
+ * @author Marvin SchÃ¼tz
  * @author Sebastian Hansbauer
  */
 public class AggregatedWarningsResult extends BuildResult {
