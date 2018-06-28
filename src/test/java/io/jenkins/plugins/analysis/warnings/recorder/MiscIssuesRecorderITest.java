@@ -38,9 +38,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
     public void shouldInitializeAndStoreReferenceJobName() {
         FreeStyleProject job = createFreeStyleProject();
         String initialization = "Reference Job";
-        enableEclipseWarnings(job, tool -> {
-            tool.setReferenceJobName(initialization);
-        });
+        enableEclipseWarnings(job, tool -> tool.setReferenceJobName(initialization));
 
         HtmlPage configPage = getWebPage(job, "configure");
         HtmlForm form = configPage.getFormByName("config");
@@ -306,6 +304,32 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
     }
 
     /**
+     * Verifies that the numbers of new, fixed and outstanding warnings are correctly computed, if the warnings are from
+     * the same file but have different properties (e.g. line number). Checks that the fallback-fingerprint is using
+     * several properties of the issue if the source code has not been found.
+     */
+    // TODO: there should be also some tests that use the fingerprinting algorithm on existing source files
+    @Test
+    public void shouldFindNewCheckStyleWarnings() {
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
+        IssuesRecorder recorder = enableWarnings(project, new ToolConfiguration(new CheckStyle(), "**/checkstyle1*"));
+
+        // First build: baseline
+        AnalysisResult baseline = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(baseline).hasTotalSize(3);
+        assertThat(baseline).hasNewSize(0);
+        assertThat(baseline).hasFixedSize(0);
+
+        // Second build: actual result
+        recorder.setTool(new ToolConfiguration(new CheckStyle(), "**/checkstyle2*"));
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result).hasNewSize(3);
+        assertThat(result).hasFixedSize(2);
+        assertThat(result).hasTotalSize(4);
+    }
+
+    /**
      * Runs a build with a build step that produces a FAILURE. Checkstyle will report all 6 warnings since the
      * enabledForFailure property has been enabled.
      */
@@ -362,7 +386,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         FreeStyleProject project = createCheckStyleProject(isEnabledForFailure);
 
         addFailureStep(project);
-        
+
         return project;
     }
 }
