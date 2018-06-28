@@ -6,10 +6,8 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -26,22 +24,14 @@ import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HTMLParser;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import edu.hm.hafner.analysis.Issue;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
-import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import static org.assertj.core.api.Assertions.*;
 
-import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
-import hudson.tasks.Maven;
 
 /**
  * This class is an integration test for the classes associated with {@link edu.hm.hafner.analysis.ModuleDetector}.
@@ -89,7 +79,7 @@ import hudson.tasks.Maven;
  * @author Frank Christian Geyer
  * @author Deniz Mardin
  */
-public class ModuleDetectorITest extends IntegrationTest {
+public class ModuleDetectorITest extends IssuesRecorderITest {
     private static final String BUILD_FILE_PATH = "detectors/";
     private static final String DEFAULT_ECLIPSE_TEST_FILE_PATH = "/eclipse_prepared-issues.txt";
     private static final String MAVEN_BUILD_FILE_LOCATION = "buildfiles/maven/";
@@ -100,8 +90,6 @@ public class ModuleDetectorITest extends IntegrationTest {
     private static final String DEFAULT_DEBUG_LOG_LINE = "Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)";
     private static final String EMPTY_MODULE_NAME = "";
     private static final short NO_MODULE_PATHS = 0;
-
-    private static final boolean IS_MAVEN_PROJECT = false;
 
     /**
      * Verifies that the HTML output is correct if there are OSGI, Maven and Ant modules used within the build. This
@@ -567,28 +555,7 @@ public class ModuleDetectorITest extends IntegrationTest {
     private FreeStyleProject buildProject(final String... files) {
         FreeStyleProject project = createJobWithWorkspaceFile(files);
         enableWarnings(project, new Eclipse());
-
-        if (IS_MAVEN_PROJECT) {
-            project.getBuildersList().add(new Maven("package", "MavenTestBuild",
-                    "pom.xml"
-                    , "", "", true));
-        }
-
         return project;
-    }
-
-    /**
-     * Creates a new {@link FreeStyleProject freestyle job}. The job will get a generated name.
-     *
-     * @return the created job
-     */
-    private FreeStyleProject createJob() {
-        try {
-            return j.createFreeStyleProject();
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
     }
 
     /**
@@ -601,7 +568,7 @@ public class ModuleDetectorITest extends IntegrationTest {
      * @return the created job
      */
     private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
-        FreeStyleProject job = createJob();
+        FreeStyleProject job = createFreeStyleProject();
         copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
     }
@@ -626,87 +593,5 @@ public class ModuleDetectorITest extends IntegrationTest {
                 .filter(fileName::endsWith)
                 .findFirst()
                 .orElse(modifiedFileName);
-    }
-
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job.
-     *
-     * @param job
-     *         the job to register the recorder for
-     *
-     * @return the created recorder
-     */
-    @CanIgnoreReturnValue
-    private IssuesRecorder enableWarnings(final FreeStyleProject job) {
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration(new Eclipse(), "**/*issues.txt")));
-        job.getPublishersList().add(publisher);
-        return publisher;
-    }
-
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job.
-     *
-     * @param job
-     *         the job to register the recorder for
-     * @param staticAnalysisTool
-     *         the static analysis tool to use
-     *
-     * @return the created recorder
-     */
-    @CanIgnoreReturnValue
-    private IssuesRecorder enableWarnings(final FreeStyleProject job, final StaticAnalysisTool staticAnalysisTool) {
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration(staticAnalysisTool, "**/*issues.txt")));
-        job.getPublishersList().add(publisher);
-        return publisher;
-    }
-
-    /**
-     * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
-     * the job.
-     *
-     * @param job
-     *         the job to register the recorder for
-     * @param configuration
-     *         configuration of the recorder
-     *
-     * @return the created recorder
-     */
-    @CanIgnoreReturnValue
-    private IssuesRecorder enableWarnings(final FreeStyleProject job, final Consumer<IssuesRecorder> configuration) {
-        IssuesRecorder publisher = enableWarnings(job);
-        configuration.accept(publisher);
-        return publisher;
-    }
-
-    /**
-     * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
-     * been finished.
-     *
-     * @param job
-     *         the job to schedule
-     * @param status
-     *         the expected result for the build
-     *
-     * @return the created {@link ResultAction}
-     */
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private AnalysisResult scheduleBuildAndAssertStatus(final FreeStyleProject job, final Result status) {
-        try {
-
-            FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
-
-            ResultAction action = build.getAction(ResultAction.class);
-
-            assertThat(action).isNotNull();
-
-            return action.getResult();
-        }
-        catch (Exception e) {
-            throw new AssertionError(e);
-        }
     }
 }
