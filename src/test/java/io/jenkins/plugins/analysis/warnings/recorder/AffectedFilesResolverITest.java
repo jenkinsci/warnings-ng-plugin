@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
@@ -31,7 +32,7 @@ import hudson.model.Run;
  * @author Deniz Mardin
  * @author Frank Christian Geyer
  */
-public class AffectedFilesResolverITest extends IssuesRecorderITest {
+public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
     private static final String FOLDER = "affected-files";
     private static final String SOURCE_FILE = FOLDER + "/Main.java";
     private static final String ECLIPSE_REPORT = FOLDER + "/eclipseOneAffectedAndThreeNotExistingFiles.txt";
@@ -139,7 +140,7 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
         FreeStyleProject project = createEclipseParserProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        makeFileUnreadable(getWorkspaceFor(project).child(SOURCE_FILE).getRemote());
+        makeFileUnreadable(getWorkspaceFor(project).child(getBaseName()).getRemote());
         makeFileUnreadable(AffectedFilesResolver.getFile(result.getOwner(), getIssueWithSource(result)));
 
         HtmlPage contentPage = getSourceCodePage(result);
@@ -179,7 +180,11 @@ public class AffectedFilesResolverITest extends IssuesRecorderITest {
     }
 
     private String getSourceAbsolutePath(final FreeStyleProject project) {
-        return getWorkspaceFor(project) + "/" + SOURCE_FILE;
+        return getWorkspaceFor(project) + "/" + getBaseName();
+    }
+
+    private String getBaseName() {
+        return Paths.get(SOURCE_FILE).getFileName().toString();
     }
 
     /**

@@ -11,7 +11,6 @@ import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.util.FilesScanner;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 
-import hudson.FilePath;
 import hudson.Functions;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -39,7 +38,7 @@ import hudson.model.Result;
  *
  * @author Alexander Praegla
  */
-public class FilesScannerITest extends IssuesRecorderITest {
+public class FilesScannerITest extends AbstractIssuesRecorderITest {
     private static final String WORKSPACE_DIRECTORY = "files-scanner";
     private static final String CHECKSTYLE_WORKSPACE = WORKSPACE_DIRECTORY + "/checkstyle";
     private static final String MULTIPLE_FILES_WORKSPACE = WORKSPACE_DIRECTORY + "/multiple_files";
@@ -74,7 +73,7 @@ public class FilesScannerITest extends IssuesRecorderITest {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
-        if (Functions.isWindows()) { // FIXME: remove this test on windows 
+        if (Functions.isWindows()) { // Windows fails before file.canRead actually could be called
             assertThat(result.getErrorMessages().get(0)).contains("java.io.FileNotFoundException");
         }
         else {
@@ -165,14 +164,11 @@ public class FilesScannerITest extends IssuesRecorderITest {
     private FreeStyleProject createJobWithWorkspaceFile(final String importDirectory) {
         try {
             FreeStyleProject job = j.createFreeStyleProject();
-
-            String file = FilesScannerITest.class.getResource(importDirectory).getFile();
-            FilePath dir = new FilePath(new File(file));
-            dir.copyRecursiveTo(getWorkspaceFor(job));
+            copyDirectoryToWorkspace(job, importDirectory);
 
             return job;
         }
-        catch (IOException | InterruptedException e) {
+        catch (IOException e) {
             throw new AssertionError(e);
         }
     }

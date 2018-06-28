@@ -22,7 +22,7 @@ import hudson.tasks.Builder;
  *
  * @author Arne Schöntag
  */
-public class ReferenceFinderITest extends IssuesRecorderITest {
+public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
     private static final String JOB_NAME = "Job";
     private static final String REFERENCE_JOB_NAME = "Reference";
 

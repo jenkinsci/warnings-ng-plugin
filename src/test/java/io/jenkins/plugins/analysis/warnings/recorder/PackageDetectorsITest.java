@@ -37,7 +37,7 @@ import hudson.model.Result;
  * @author Frank Christian Geyer
  * @author Deniz Mardin
  */
-public class PackageDetectorsITest extends IssuesRecorderITest {
+public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
     private static final String PACKAGE_FILE_PATH = "detectors/";
     private static final String PACKAGE_WITH_FILES_CSHARP = PACKAGE_FILE_PATH + "csharp/";
     private static final String PACKAGE_WITH_FILES_JAVA = PACKAGE_FILE_PATH + "java/";

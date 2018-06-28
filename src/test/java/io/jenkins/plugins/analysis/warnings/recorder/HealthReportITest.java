@@ -19,7 +19,7 @@ import hudson.plugins.analysis.util.model.Priority;
  *
  * @author Alexandra Wenzel
  */
-public class HealthReportITest extends IssuesRecorderITest {
+public class HealthReportITest extends AbstractIssuesRecorderITest {
     private static final String H80PLUS = "icon-health-80plus";
     private static final String H60TO79 = "icon-health-60to79";
     private static final String H40TO59 = "icon-health-40to59";

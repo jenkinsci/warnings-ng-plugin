@@ -79,7 +79,7 @@ import hudson.model.Result;
  * @author Frank Christian Geyer
  * @author Deniz Mardin
  */
-public class ModuleDetectorITest extends IssuesRecorderITest {
+public class ModuleDetectorITest extends AbstractIssuesRecorderITest {
     private static final String BUILD_FILE_PATH = "detectors/";
     private static final String DEFAULT_ECLIPSE_TEST_FILE_PATH = "/eclipse_prepared-issues.txt";
     private static final String MAVEN_BUILD_FILE_LOCATION = "buildfiles/maven/";

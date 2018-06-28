@@ -30,7 +30,7 @@ import hudson.model.Run;
  * @author Martin Weibel
  * @author Ullrich Hafner
  */
-public class MiscIssuesRecorderITest extends IssuesRecorderITest {
+public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
     /**
      * Verifies that the reference job name can be set to another job.
      */

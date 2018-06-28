@@ -40,11 +40,12 @@ import hudson.tasks.Shell;
 import hudson.util.DescribableList;
 
 /**
- * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
+ * Base class for integration tests of the warnings plug-in in freestyle jobs. 
+ * Tests the new recorder {@link IssuesRecorder}.
  *
  * @author Ullrich Hafner
  */
-public class IssuesRecorderITest extends IntegrationTest {
+public class AbstractIssuesRecorderITest extends IntegrationTest {
     private static final String WINDOWS_FILE_ACCESS_READ_ONLY = "RX";
     private static final String WINDOWS_FILE_DENY = "/deny";
 

@@ -29,7 +29,7 @@ import hudson.model.Run;
  *
  * @author Manuel Hampp
  */
-public class RemoteApiITest extends IssuesRecorderITest {
+public class RemoteApiITest extends AbstractIssuesRecorderITest {
     private static final String CHECKSTYLE_FILE = "checkstyle-filtering.xml";
     private static final String REMOTE_API_EXPECTED_XML = "checkstyle-expected-remote-api.xml";
 

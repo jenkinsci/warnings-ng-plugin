@@ -1,13 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import javax.annotation.Nonnull;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,14 +22,13 @@ import io.jenkins.plugins.analysis.core.model.IncludeModule;
 import io.jenkins.plugins.analysis.core.model.IncludePackage;
 import io.jenkins.plugins.analysis.core.model.IncludeType;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
+import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import static org.assertj.core.api.Assertions.*;
 
-import hudson.FilePath;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
-import hudson.model.TopLevelItem;
 
 /**
  * Integration tests of the regex property filters.
@@ -43,7 +36,7 @@ import hudson.model.TopLevelItem;
  * @author Manuel Hampp
  */
 @SuppressWarnings("classdataabstractioncoupling")
-public class FiltersITest extends IssuesRecorderITest {
+public class FiltersITest extends AbstractIssuesRecorderITest {
     private static final String MODULE_FILTER = "module-filter/";
 
     /**
@@ -55,10 +48,9 @@ public class FiltersITest extends IssuesRecorderITest {
 
         for (Entry<RegexpFilter, Integer[]> entry : expectedLinesByFilter.entrySet()) {
             FreeStyleProject project = createFreeStyleProject();
-            copyAndExpandedVariables(project, MODULE_FILTER + "pmd.xml");
-            copyMultipleFilesToWorkspace(project, MODULE_FILTER + "pom.xml",
-                    MODULE_FILTER + "m1/pom.xml", MODULE_FILTER + "m2/pom.xml");
-            enableWarnings(project, recorder -> recorder.setFilters(toFilter(entry)), new Pmd());
+            copyDirectoryToWorkspace(project, MODULE_FILTER);
+            enableWarnings(project, recorder -> recorder.setFilters(toFilter(entry)),
+                    new ToolConfiguration(new Pmd(), "**/pmd.xml"));
 
             buildAndVerifyResults(project, entry.getValue());
         }
@@ -157,132 +149,28 @@ public class FiltersITest extends IssuesRecorderITest {
     }
 
     /**
-     * Validates the remaining issues in the projects result against the expected values.
+     * Validates the filtered issues in the projects. Asserts that only issues with the specified lines are retained.
      *
      * @param project
      *         project that contains the issues to compare
-     * @param expectedValues
+     * @param expectedLines
      *         issue line numbers that are expected
      */
-    private void buildAndVerifyResults(final FreeStyleProject project, final Integer[] expectedValues) {
+    private void buildAndVerifyResults(final FreeStyleProject project, final Integer[] expectedLines) {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThat(result.getIssues()
+        assertThat(getLines(result)).containsOnly(expectedLines);
+    }
+
+    private List<Integer> getLines(final AnalysisResult result) {
+        return result.getIssues()
                 .stream()
                 .map(Issue::getLineStart)
-                .collect(Collectors.toList())).containsOnly(expectedValues);
+                .collect(Collectors.toList());
     }
 
     private List<RegexpFilter> toFilter(final Entry<RegexpFilter, Integer[]> entry) {
         return Collections.singletonList(entry.getKey());
-    }
-
-    private void copyAndExpandedVariables(final TopLevelItem job, final String fileName) {
-        try {
-            FilePath workspace = j.jenkins.getWorkspaceFor(job);
-            workspace.child(createWorkspaceFileName(fileName))
-                    .copyFrom(
-                            new ReplacingInputStream(asInputStream(fileName), "WORKSPACEDIRPLACEHOLDER".getBytes(),
-                                    workspace.getRemote().getBytes()));
-        }
-        catch (IOException | InterruptedException e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
-     * Simple filter for InputStream that replaces string parts with a given replacement. Mainly taken over from:
-     * https://github.com/apache/poi/blob/trunk/src/java/org/apache/poi/util/ReplacingInputStream.java
-     *
-     * @author Manuel Hampp
-     */
-    class ReplacingInputStream extends FilterInputStream {
-        private final LinkedList<Integer> input = new LinkedList<>();
-        private final LinkedList<Integer> output = new LinkedList<>();
-        private final byte[] search;
-        private final byte[] replacement;
-
-        ReplacingInputStream(final InputStream in, final byte[] search, final byte[] replacement) {
-            super(in);
-            this.search = search;
-            this.replacement = replacement;
-        }
-
-        private boolean matchFound() {
-            Iterator<Integer> inputIterator = input.iterator();
-            for (byte b : search) {
-                if (!inputIterator.hasNext() || b != inputIterator.next()) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private void readAhead() throws IOException {
-            while (input.size() < search.length) {
-                int next = super.read();
-                input.offer(next);
-                if (next == -1) {
-                    break;
-                }
-            }
-        }
-
-        @Override
-        public int read(@Nonnull final byte[] b) throws IOException {
-            return super.read(b);
-        }
-
-        @Override
-        public int read(@Nonnull final byte[] bytes, final int off, final int len) throws IOException {
-            if (off < 0 || len < 0 || len > bytes.length - off) {
-                throw new IndexOutOfBoundsException();
-            }
-            else if (len == 0) {
-                return 0;
-            }
-
-            int c = read();
-            if (c == -1) {
-                return -1;
-            }
-            bytes[off] = (byte) c;
-
-            int i = 1;
-            try {
-                for (; i < len; i++) {
-                    c = read();
-                    if (c == -1) {
-                        break;
-                    }
-                    bytes[off + i] = (byte) c;
-                }
-            }
-            catch (IOException ignored) {
-                // ignore
-            }
-            return i;
-
-        }
-
-        @Override
-        public int read() throws IOException {
-            if (output.isEmpty()) {
-                readAhead();
-                if (matchFound()) {
-                    for (byte aSearch : search) {
-                        input.remove();
-                    }
-                    for (byte b : replacement) {
-                        output.offer((int) b);
-                    }
-                }
-                else {
-                    output.add(input.remove());
-                }
-            }
-            return output.remove();
-        }
     }
 }
 

@@ -37,7 +37,7 @@ import hudson.tasks.Shell;
  * @author Ullrich Hafner
  */
 // FIXME: should use different base class
-public class MatrixJobITest extends IssuesRecorderITest {
+public class MatrixJobITest extends AbstractIssuesRecorderITest {
     private static final String WARNINGS_FILE = "matrix-warnings.txt";
 
     /**

@@ -32,7 +32,7 @@ import hudson.model.Result;
  *
  * @author Stephan Plöderl
  */
-public class DryITest extends IssuesRecorderITest {
+public class DryITest extends AbstractIssuesRecorderITest {
     private static final String PRIORITY_HEADER_ID = "number-priorities";
     private static final String FOLDER = "dry/";
     private static final String SIMIAN_REPORT = FOLDER + "simian.xml";
