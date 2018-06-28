@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.assertj.core.api.AutoCloseableSoftAssertions;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
@@ -122,7 +122,7 @@ public class ModuleDetectorITest extends IntegrationTest {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF"
         };
 
-        String[] filesWithModuleConfigurationAndProperties = (String[]) ArrayUtils
+        String[] filesWithModuleConfigurationAndProperties = ArrayUtils
                 .add(filesWithModuleConfiguration, BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties");
 
         AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, true,
@@ -240,7 +240,7 @@ public class ModuleDetectorITest extends IntegrationTest {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF"
         };
 
-        String[] filesWithModuleConfigurationAndProperties = (String[]) ArrayUtils
+        String[] filesWithModuleConfigurationAndProperties = ArrayUtils
                 .add(filesWithModuleConfiguration, (BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"));
 
         AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, false,
@@ -330,7 +330,7 @@ public class ModuleDetectorITest extends IntegrationTest {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF"
         };
 
-        String[] filesWithModuleConfigurationAndProperties = (String[]) ArrayUtils
+        String[] filesWithModuleConfigurationAndProperties = ArrayUtils
                 .add(filesWithModuleConfiguration, (BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"));
 
         AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, true,
@@ -443,7 +443,7 @@ public class ModuleDetectorITest extends IntegrationTest {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF"};
 
-        String[] filesWithModuleConfigurationAndProperties = (String[]) ArrayUtils
+        String[] filesWithModuleConfigurationAndProperties = ArrayUtils
                 .add(filesWithModuleConfiguration, (BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"));
 
         AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, true,
