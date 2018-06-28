@@ -1,7 +1,10 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.function.Function;
 
@@ -68,8 +71,7 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     protected void createFileInWorkspace(final TopLevelItem job, final String fileName, final String content) {
         try {
-            FilePath workspace = j.jenkins.getWorkspaceFor(job);
-            assertThat(workspace).isNotNull();
+            FilePath workspace = getWorkspace(job);
 
             FilePath child = workspace.child(fileName);
             child.copyFrom(new ByteArrayInputStream(content.getBytes()));
@@ -80,8 +82,8 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Copies the specified files to the workspace using a generated file name that uses the same suffix. So a pattern
-     * in the static analysis configuration can use the same regular expression for all types of tools.
+     * Copies the specified files to the workspace using a generated file name that uses the same suffix. So the pattern
+     * in the static analysis configuration can use the same fixed regular expression for all types of tools.
      *
      * @param job
      *         the job to get the workspace for
@@ -103,7 +105,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *         the files to copy
      */
     protected void copyMultipleFilesToWorkspace(final TopLevelItem job, final String... fileNames) {
-        copy(job, fileNames, Function.identity());
+        copy(job, fileNames, file -> Paths.get(file).getFileName().toString());
     }
 
     /**
@@ -117,10 +119,36 @@ public abstract class IntegrationTest extends ResourceTest {
      *         the file name in the workspace
      */
     protected void copySingleFileToWorkspace(final TopLevelItem job, final String from, final String to) {
-        FilePath workspace = j.jenkins.getWorkspaceFor(job);
-        assertThat(workspace).isNotNull();
+        FilePath workspace = getWorkspace(job);
 
         copySingleFileToWorkspace(workspace, from, to);
+    }
+
+     /**
+     * Copies the specified directory recursively to the workspace. 
+     *
+     * @param job
+     *         the job to get the workspace for
+     * @param directory
+     *         the directory to copy
+     */
+    protected void copyDirectoryToWorkspace(final TopLevelItem job, final String directory) {
+        try {
+            URL resource = getClass().getResource(directory);
+            assertThat(resource).as("No such file: %s", directory).isNotNull();
+            FilePath destination = new FilePath(new File(resource.getFile()));
+            assertThat(destination.exists()).as("Directory %s does not exist", resource.getFile()).isTrue();
+            destination.copyRecursiveTo(getWorkspace(job));
+        }
+        catch (IOException | InterruptedException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    private FilePath getWorkspace(final TopLevelItem job) {
+        FilePath workspace = j.jenkins.getWorkspaceFor(job);
+        assertThat(workspace).isNotNull();
+        return workspace;
     }
 
     /**
@@ -135,8 +163,8 @@ public abstract class IntegrationTest extends ResourceTest {
      * @param to
      *         the file name in the workspace
      */
-    protected void copySingleFileToWorkspace(final Slave agent, final TopLevelItem job, final String from,
-            final String to) {
+    protected void copySingleFileToWorkspace(final Slave agent, final TopLevelItem job, 
+            final String from, final String to) {
         FilePath workspace = agent.getWorkspaceFor(job);
         assertThat(workspace).isNotNull();
 

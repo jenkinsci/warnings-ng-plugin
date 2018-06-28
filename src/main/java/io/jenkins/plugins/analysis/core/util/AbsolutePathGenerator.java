@@ -18,7 +18,6 @@ import edu.hm.hafner.util.VisibleForTesting;
  *
  * @author Ullrich Hafner
  */
-// TODO: if this class is called on the master then a remote call is initiated for each affected file
 public class AbsolutePathGenerator {
     static final String NOTHING_TO_DO = "Affected files for all issues already have absolute paths";
 
