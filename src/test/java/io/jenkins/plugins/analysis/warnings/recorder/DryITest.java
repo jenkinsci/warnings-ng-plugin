@@ -96,7 +96,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
         cpd.setHighThreshold(4);
         enableWarnings(project, cpd);
 
-        List<HtmlTableRow> tableRows = getIssueTableRows(project, getResultPath(cpd));
+        List<HtmlTableRow> tableRows = getIssueTableRows(project);
         assertSizeOfSeverity(tableRows, 2, 5, 0, 0);
         assertSizeOfSeverity(tableRows, 0, 0, 9, 0);
         assertSizeOfSeverity(tableRows, 5, 0, 0, 6);
@@ -125,7 +125,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
         cpd.setHighThreshold(4);
         enableWarnings(project, cpd);
 
-        List<HtmlTableRow> tableRows = getIssueTableRows(project, getResultPath(cpd));
+        List<HtmlTableRow> tableRows = getIssueTableRows(project);
 
         HtmlPage sourceCodePage = clickOnLink(selectSourceCodeLink(tableRows));
         DomElement tableElement = sourceCodePage.getElementById("main-panel");
@@ -148,7 +148,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
         Cpd cpd = new Cpd();
         enableWarnings(project, cpd);
 
-        HtmlTable table = getIssuesTable(project, getResultPath(cpd));
+        HtmlTable table = getIssuesTable(project);
         // TODO: check whether such detailed assertions make sense
         String classString = "class";
         assertThat(table).hasFieldOrProperty(classString);
@@ -181,7 +181,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
         cpd.setHighThreshold(4);
         enableWarnings(project, cpd);
 
-        List<HtmlTableRow> tableRows = getIssueTableRows(project, getResultPath(cpd));
+        List<HtmlTableRow> tableRows = getIssueTableRows(project);
 
         HtmlTableRow firstTableRow = tableRows.get(0);
         List<HtmlTableCell> firstTableRowCells = firstTableRow.getCells();
@@ -221,7 +221,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
         cpd.setHighThreshold(4);
         enableWarnings(project, cpd);
 
-        List<HtmlTableRow> tableRows = getIssueTableRows(project, getResultPath(cpd));
+        List<HtmlTableRow> tableRows = getIssueTableRows(project);
         //only 10 are displayed because of the paging
 
         assertThat(tableRows).hasSize(10);
@@ -275,7 +275,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        HtmlPage page = getWebPage(result, getResultPath(scanner));
+        HtmlPage page = getWebPage(result);
         checkAmountOfPriorityWarnings(page.getElementById("number-priorities"), low, normal, high);
     }
 
@@ -308,14 +308,11 @@ public class DryITest extends AbstractIssuesRecorderITest {
      *
      * @param project
      *         the project, which shall be build.
-     * @param resultPath
-     *         path to the result page (e.g. cpdResult or simianResult).
-     *
      * @return the issues table as {@link HtmlTable} object.
      */
-    private HtmlTable getIssuesTable(final FreeStyleProject project, final String resultPath) {
+    private HtmlTable getIssuesTable(final FreeStyleProject project) {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        HtmlPage page = getWebPage(result, resultPath);
+        HtmlPage page = getWebPage(result);
         DomElement table = page.getElementById("issues");
 
         assertThat(table).isInstanceOf(HtmlTable.class);
@@ -329,13 +326,10 @@ public class DryITest extends AbstractIssuesRecorderITest {
      *
      * @param project
      *         the current {@link FreeStyleProject}.
-     * @param resultPath
-     *         the relative path to the page containing the issues-table.
-     *
      * @return a list of #{@link HtmlTableRow}-elements displayed in the issues-table.
      */
-    private List<HtmlTableRow> getIssueTableRows(final FreeStyleProject project, final String resultPath) {
-        HtmlTable table = getIssuesTable(project, resultPath);
+    private List<HtmlTableRow> getIssueTableRows(final FreeStyleProject project) {
+        HtmlTable table = getIssuesTable(project);
 
         List<HtmlTableBody> bodies = table.getBodies();
         assertThat(bodies).hasSize(1);
@@ -361,18 +355,6 @@ public class DryITest extends AbstractIssuesRecorderITest {
     }
 
     /**
-     * Helper-method which returns the relative path to the result page of a {@link DuplicateCodeScanner}.
-     *
-     * @param scanner
-     *         the {@link DuplicateCodeScanner} for which the results shall be tested.
-     *
-     * @return the relative path as {@link String} to the tools result page.
-     */
-    private String getResultPath(final DuplicateCodeScanner scanner) {
-        return scanner.getLabelProvider().getResultUrl();
-    }
-
-    /**
      * Helper-method which builds the project and checks the priority of the warning in the first row of the
      * issues-table.
      *
@@ -380,12 +362,9 @@ public class DryITest extends AbstractIssuesRecorderITest {
      *         the expected priority of the first warning.
      * @param project
      *         the current {@link FreeStyleProject}.
-     * @param resultPath
-     *         the relative path to the tools result page.
      */
-    private void checkPriorityOfFirstWarningInTable(final String expectedPriority, final FreeStyleProject project,
-            final String resultPath) {
-        List<HtmlTableRow> tableRows = getIssueTableRows(project, resultPath);
+    private void checkPriorityOfFirstWarningInTable(final String expectedPriority, final FreeStyleProject project) {
+        List<HtmlTableRow> tableRows = getIssueTableRows(project);
         HtmlTableRow firstRow = tableRows.get(0);
         List<HtmlTableCell> tableCells = firstRow.getCells();
 
@@ -408,7 +387,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
     private void setHighThresholdAndCheckPriority(final int highThreshold, final String expectedPriority,
             final DuplicateCodeScanner scanner, final FreeStyleProject project) {
         scanner.setHighThreshold(highThreshold);
-        checkPriorityOfFirstWarningInTable(expectedPriority, project, getResultPath(scanner));
+        checkPriorityOfFirstWarningInTable(expectedPriority, project);
     }
 
     /**
@@ -427,6 +406,6 @@ public class DryITest extends AbstractIssuesRecorderITest {
     private void setNormalThresholdAndCheckPriority(final int normalThreshold, final String expectedPriority,
             final DuplicateCodeScanner scanner, final FreeStyleProject project) {
         scanner.setNormalThreshold(normalThreshold);
-        checkPriorityOfFirstWarningInTable(expectedPriority, project, getResultPath(scanner));
+        checkPriorityOfFirstWarningInTable(expectedPriority, project);
     }
 }

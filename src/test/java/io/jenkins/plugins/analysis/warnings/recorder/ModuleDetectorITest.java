@@ -34,11 +34,9 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
 /**
- * This class is an integration test for the classes associated with {@link edu.hm.hafner.analysis.ModuleDetector}.
+ * Integration test for the classes associated with {@link edu.hm.hafner.analysis.ModuleDetector}.
  * <p>
- * These are the module files that are necessary for the integration test of {@link
- * edu.hm.hafner.analysis.ModuleDetector}}. A short description of the purpose of every file should be given here.
- *
+ * These are the module files that are necessary for this integration test:
  * <b>Maven:</b>
  * pom.xml a default pom.xml with a valid name tag
  * <p>

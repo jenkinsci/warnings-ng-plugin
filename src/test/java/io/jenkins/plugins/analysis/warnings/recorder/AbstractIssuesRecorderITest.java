@@ -118,9 +118,12 @@ public class AbstractIssuesRecorderITest extends IntegrationTest {
             throw new AssertionError(e);
         }
     }
-
-    protected HtmlPage getWebPage(final AnalysisResult result, final String page) {
-        return getWebPage(result.getOwner(), page);
+    protected HtmlPage getWebPage(final AnalysisResult result, final String child) {
+        return getWebPage(result.getOwner(), result.getId() + "Result/" + child);
+    }
+    
+    protected HtmlPage getWebPage(final AnalysisResult result) {
+        return getWebPage(result.getOwner(), result.getId() + "Result");
     }
 
     private WebClient createWebClient() {

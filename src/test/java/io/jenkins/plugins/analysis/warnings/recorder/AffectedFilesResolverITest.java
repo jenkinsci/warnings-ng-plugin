@@ -117,8 +117,7 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
 
     // TODO: Navigate to source code from details page once PR#138 has been merged
     private HtmlPage getSourceCodePage(final AnalysisResult result) {
-        return getWebPage(result, ECLIPSE_RESULTS 
-                + StaticAnalysisLabelProvider.getSourceCodeUrl(getIssueWithSource(result)));
+        return getWebPage(result, StaticAnalysisLabelProvider.getSourceCodeUrl(getIssueWithSource(result)));
     }
 
     private FreeStyleProject createEclipseParserProject() {

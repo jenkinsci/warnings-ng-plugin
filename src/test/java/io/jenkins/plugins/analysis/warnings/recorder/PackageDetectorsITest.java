@@ -26,6 +26,7 @@ import edu.hm.hafner.analysis.Issue;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
+import io.jenkins.plugins.analysis.warnings.recorder.PropertyTable.PropertyRow;
 import static org.assertj.core.api.Assertions.*;
 
 import hudson.model.FreeStyleProject;
@@ -53,13 +54,13 @@ public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
     public void shouldShowNamespacesAndPackagesAltogetherForJavaAndCSharpInTheHtmlOutput()
             throws IOException, SAXException {
 
-        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
-                PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt"
-                , PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
+        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt", 
+                PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt", 
+                PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithUnconventionalPackageNaming.java",
-                PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java"
-                , PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
+                PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java", 
+                PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespaceBetweenCode.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNestedAndNormalNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs"
@@ -97,36 +98,24 @@ public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
      * Verifies that the output is correct if there are only packages (Java) in the expected HTML output.
      */
     @Test
-    public void shouldShowPackagesForJavaOnlyInTheHtmlOutput() throws IOException, SAXException {
-
-        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt"
-                , PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
+    public void shouldShowPackagesForJavaOnly() {
+        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt", 
+                PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithUnconventionalPackageNaming.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java"
         );
 
-        WebClient webClient = createWebClient(false);
-        WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
-        String webResponseContentAsString = webResponse.getContentAsString();
-
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            softly.assertThat(webResponseContentAsString).containsPattern(
-                    returnPreparedHtmlHeader(true));
-            softly.assertThat(webResponseContentAsString)
-                    .containsPattern(returnPreparedHtmlOutput("edu.hm.hafner.analysis._123.int.naming.structure", 1)
-                            + "<tr><td>");
-            softly.assertThat(webResponseContentAsString).containsPattern(
-                    returnPreparedHtmlOutput("-", 5) + returnPreparedTotalHtmlOutput(6));
-
-            HtmlPage htmlPage = HTMLParser.parseHtml(webResponse, webClient.getCurrentWindow());
-            List<String> packageLinks = getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE);
-
-            softly.assertThat(packageLinks).hasSize(2);
-
-            crawlAllSubPagesOfPackagesAndAssertTheyAreNotLinkingToFurtherPackages(packageLinks, result, webClient,
-                    softly);
-        }
+        HtmlPage details = getWebPage(result);
+        PropertyTable propertyTable = new PropertyTable(details, "packageName");
+        assertThat(propertyTable.getTitle()).isEqualTo("Packages");
+        assertThat(propertyTable.getColumnName()).isEqualTo("Package");
+        assertThat(propertyTable.getRows()).containsExactly(
+                new PropertyRow("-", 5, 100),
+                new PropertyRow("edu.hm.hafner.analysis._123.int.naming.structure", 1, 20));
+        
+       
+        // TODO: Click Package Link
     }
 
     /**
@@ -134,9 +123,8 @@ public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void shouldShowNamespacesForCSharpOnlyInTheHtmlOutput() throws IOException, SAXException {
-
-        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt"
-                , PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
+        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt", 
+                PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespaceBetweenCode.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNestedAndNormalNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs");
@@ -181,9 +169,8 @@ public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldContainNoHtmlOutputForNoPackageDefinedJava() throws IOException, SAXException {
         checkWebPageForExpectedEmptyResult(
-                buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaOneClassWithoutPackage.txt"
-
-                        , PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java"
+                buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaOneClassWithoutPackage.txt", 
+                        PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java"
                 ));
     }
 
@@ -193,8 +180,8 @@ public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldContainNoHtmlOutputForOnlyOnePackageDefinedJava() throws IOException, SAXException {
         checkWebPageForExpectedEmptyResult(
-                buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaOneClassWithPackage.txt"
-                        , PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java"
+                buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaOneClassWithPackage.txt", 
+                        PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java"
                 ));
     }
 
@@ -204,8 +191,8 @@ public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldContainNoHtmlOutputForNoNamespaceDefinedCSharp() throws IOException, SAXException {
         checkWebPageForExpectedEmptyResult(buildProject(
-                PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpOneClassWithoutNamespace.txt"
-                , PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs"
+                PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpOneClassWithoutNamespace.txt", 
+                PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs"
         ));
     }
 
@@ -228,13 +215,12 @@ public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
     public void shouldDetectVariousNamespacesAndPackagesForCombinedJavaAndCSharpFiles() throws IOException {
 
         AnalysisResult result = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
-                PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt"
-
-                , PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
+                PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt", 
+                PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithUnconventionalPackageNaming.java",
-                PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java"
-                , PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
+                PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java", 
+                PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespaceBetweenCode.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNestedAndNormalNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs"
@@ -321,8 +307,8 @@ public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
     public void shouldDetectVariousNamespacesForCSharpFiles() throws IOException {
 
         AnalysisResult result = buildProject(
-                PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt"
-                , PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
+                PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt", 
+                PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespaceBetweenCode.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNestedAndNormalNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs");
@@ -352,8 +338,8 @@ public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
     public void shouldDetectVariousPackagesForJavaFiles() throws IOException {
 
         AnalysisResult result = buildProject(
-                PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt"
-                , PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
+                PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt", 
+                PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithUnconventionalPackageNaming.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java"
