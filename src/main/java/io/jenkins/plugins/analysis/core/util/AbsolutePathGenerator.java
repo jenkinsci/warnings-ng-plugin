@@ -79,7 +79,7 @@ public class AbsolutePathGenerator {
         if (unresolvedCount > 0) {
             report.logError("Can't resolve absolute paths for %d files", unresolvedCount);
         }
-        report.logInfo("Resolved absolute paths for %d files (Issues %d resolved, %d unresolved, %d already absolute)",
+        report.logInfo("Resolved absolute paths for %d files (issues: %d resolved, %d unresolved, %d already absolute)",
                     relativeFileNames.size(), resolvedCount, unresolvedCount, unchangedCount);
     }
 

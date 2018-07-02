@@ -36,14 +36,14 @@ class AbsolutePathGeneratorTest {
         new AbsolutePathGenerator().run(report, WORKSPACE);
 
         assertThat(report.iterator()).containsExactly(report.get(0));
-        assertThat(report).hasOrigin(ID);
+        assertThat(report).hasId(ID);
     }
 
     private Report createIssuesSingleton(final String fileName, final IssueBuilder issueBuilder) {
         Report report = new Report();
         Issue issue = issueBuilder.setFileName(fileName).build();
         report.add(issue);
-        report.setOrigin(ID);
+        report.setId(ID);
         return report;
     }
 
@@ -62,7 +62,7 @@ class AbsolutePathGeneratorTest {
         generator.run(report, WORKSPACE);
 
         assertThat(report.iterator()).containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build());
-        assertThat(report).hasOrigin(ID);
+        assertThat(report).hasId(ID);
         assertThat(report.getInfoMessages()).hasSize(1);
         assertThat(report.getInfoMessages().get(0)).contains("1 resolved");
     }
@@ -71,10 +71,10 @@ class AbsolutePathGeneratorTest {
     void shouldDoNothingIfNoIssuesPresent() {
         AbsolutePathGenerator generator = new AbsolutePathGenerator();
         Report report = new Report();
-        report.setOrigin(ID);
+        report.setId(ID);
         generator.run(report, WORKSPACE);
         assertThat(report).hasSize(0);
-        assertThat(report).hasOrigin(ID);
+        assertThat(report).hasId(ID);
         assertThat(report.getInfoMessages()).containsExactly(AbsolutePathGenerator.NOTHING_TO_DO);
     }
 
@@ -103,7 +103,7 @@ class AbsolutePathGeneratorTest {
         assertThat(report.iterator())
                 .containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build(),
                         issueWithAbsolutePath, issueWithSelfReference);
-        assertThat(report).hasOrigin(ID);
+        assertThat(report).hasId(ID);
         assertThat(report.getInfoMessages()).hasSize(1);
         assertThat(report.getInfoMessages().get(0)).contains("2 already absolute");
     }

@@ -58,14 +58,14 @@ class IssuesFilterTestUtil {
         String origin = "origin";
         String reference = "reference";
 
-        issues.setOrigin(origin);
+        issues.setId(origin);
         issues.setReference(reference);
 
         Report result = issues.filter(criterion);
 
         assertThat(result.iterator()).containsExactly(expectedOutput);
 
-        assertThat(result).hasOrigin(origin);
+        assertThat(result).hasId(origin);
         assertThat(result).hasReference(reference);
     }
 

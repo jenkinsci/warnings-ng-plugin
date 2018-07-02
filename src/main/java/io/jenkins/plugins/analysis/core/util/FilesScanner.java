@@ -7,9 +7,10 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
+import edu.hm.hafner.analysis.Report;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import jenkins.MasterToSlaveFileCallable;
 
 import hudson.plugins.analysis.util.EncodingValidator;
@@ -28,28 +29,31 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
     private final String filePattern;
     private final IssueParser parser;
     private final String encoding;
+    private final String id;
 
     /**
      * Creates a new instance of {@link FilesScanner}.
      *
      * @param filePattern
      *         ant file-set pattern to scan for files to parse
-     * @param parser
-     *         the parser to scan the found files for issues
+     * @param tool
+     *         the static code analysis tool that reports the issues
      * @param encoding
      *         encoding of the files to parse
      */
-    public FilesScanner(final String filePattern, final IssueParser parser, final String encoding) {
+    public FilesScanner(final String filePattern, final StaticAnalysisTool tool, final String encoding) {
         super();
 
         this.filePattern = filePattern;
-        this.parser = parser;
+        this.parser = tool.createParser();
+        this.id = tool.getId();
         this.encoding = encoding;
     }
 
     @Override
     public Report invoke(final File workspace, final VirtualChannel channel) {
         Report report = new Report();
+        report.setId(id);
         report.logInfo("Searching for all files in '%s' that match the pattern '%s'",
                 workspace.getAbsolutePath(), filePattern);
 
@@ -88,6 +92,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
     private void aggregateIssuesOfFile(final File file, final Report report) {
         try {
             Report result = parser.parse(file, EncodingValidator.defaultCharset(encoding));
+            result.setId(id);
             report.addAll(result);
             report.logInfo("Successfully parsed file %s: found %s (skipped %s)", file,
                     plural(report.getSize(), "issue"),

@@ -84,7 +84,7 @@ class IssuesScanner {
      *         if something goes wrong
      */
     public Report scanInWorkspace(final String pattern) throws InterruptedException, IOException {
-        Report report = workspace.act(new FilesScanner(pattern, tool.createParser(), logFileEncoding.name()));
+        Report report = workspace.act(new FilesScanner(pattern, tool, logFileEncoding.name()));
 
         logger.log(report);
 
@@ -112,7 +112,8 @@ class IssuesScanner {
         logger.log("Parsing console log (workspace: '%s')", workspace);
 
         Report report = tool.createParser().parse(consoleLog, logFileEncoding, ConsoleNote::removeNotes);
-
+        report.setId(tool.getId());
+        
         logger.log(report);
 
         return postProcess(report);
@@ -129,9 +130,6 @@ class IssuesScanner {
     }
 
     private Report postProcess(final Report report) throws IOException, InterruptedException {
-        report.setOrigin(tool.getId());
-        report.forEach(issue -> issue.setOrigin(tool.getId()));
-
         Report postProcessed;
         if (report.isEmpty()) {
             postProcessed = report; // nothing to post process

@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 /**
  * Tests the class {@link StaticAnalysisToolSuite}.
  *
- * @author Arne Schöntag
+ * @author Arne SchÃ¶ntag
  */
 class StaticAnalysisToolSuiteTest {
     private static final Charset ENCODING = StandardCharsets.UTF_8;

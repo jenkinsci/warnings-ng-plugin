@@ -51,7 +51,7 @@ class IssuesPublisher {
             final boolean overallResultMustBeSuccess, final Charset sourceCodeEncoding,
             final LogHandler logger) {
         this.report = report;
-        id = report.getOrigin();
+        id = report.getId();
         this.filters = new ArrayList<>(filters);
         this.run = run;
         this.healthDescriptor = healthDescriptor;
@@ -103,16 +103,22 @@ class IssuesPublisher {
     }
 
     private Report filter() {
+        int actualFilterSize = 0;
         IssueFilterBuilder builder = new IssueFilterBuilder();
         for (RegexpFilter filter : filters) {
             if (StringUtils.isNotBlank(filter.getPattern())) {
                 filter.apply(builder);
+                actualFilterSize++;
             }
         }
         Report filtered = report.filter(builder.build());
-        filtered.logInfo("Applying %d filters on the set of %d issues (%d issues have been removed)",
-                filters.size(), report.size(), report.size() - filtered.size());
-
+        if (actualFilterSize > 0) {
+            filtered.logInfo("Applying %d filters on the set of %d issues (%d issues have been removed, %d issues will be published)",
+                    filters.size(), report.size(), report.size() - filtered.size(), filtered.size());
+        }
+        else {
+            filtered.logInfo("No filter has been set, publishing all %d issues", filtered.size());
+        }
         logger.log(filtered);
 
         return filtered;

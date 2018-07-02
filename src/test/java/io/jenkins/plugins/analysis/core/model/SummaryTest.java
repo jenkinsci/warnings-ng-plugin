@@ -33,10 +33,9 @@ class SummaryTest {
     private static final ImmutableList<String> EMPTY_ERRORS = Lists.immutable.empty();
 
     /**
-     * Tests if errors in the AnalysisResult result in an exclamation triangle icon in the created HTML.
      */
     @Test
-    void shouldHaveDivWithTriangleIcon() {
+    void shouldShowAggregatedWarnings() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
                 Lists.immutable.of("Error 1", "Error 2"), 0, 0);
         String createdHtml = createTestData(analysisResult).create();
@@ -87,6 +86,19 @@ class SummaryTest {
                 Maps.fixedSize.of("checkstyle", 15, "pmd", 20), 0, 0,
                 EMPTY_ERRORS, 0, 0);
         String createdHtml = createTestData(analysisResult).create();
+        assertThat(createdHtml).contains(Messages.Tool_ParticipatingTools("CheckStyle, PMD"));
+    }
+
+    /**
+     * Tests if the created HTML contains the tool names from the AnalysisResult even if there are no warnings.
+     */
+    @Test
+    void shouldContainMessageWithToolNamesIfThereAreNoWarningsFound() {
+        AnalysisResult analysisResult = createAnalysisResult(
+                Maps.fixedSize.of("checkstyle", 0, "pmd", 0), 0, 0,
+                EMPTY_ERRORS, 0, 0);
+        String createdHtml = createTestData(analysisResult).create();
+        assertThat(createdHtml).contains("No warnings for");
         assertThat(createdHtml).contains(Messages.Tool_ParticipatingTools("CheckStyle, PMD"));
     }
 

@@ -481,10 +481,10 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             throws IOException, InterruptedException {
         if (isAggregatingResults) {
             Report totalIssues = new Report();
+            totalIssues.setId("analysis");
             for (ToolConfiguration toolConfiguration : tools) {
                 totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
             }
-            totalIssues.setOrigin("analysis");
             publishResult(run, launcher, listener, Messages.Tool_Default_Name(),
                     totalIssues, Messages.Tool_Default_Name());
         }

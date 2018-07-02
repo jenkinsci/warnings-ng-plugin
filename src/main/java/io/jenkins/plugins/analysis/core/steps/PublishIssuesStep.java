@@ -47,7 +47,7 @@ import hudson.plugins.analysis.util.EncodingValidator;
 public class PublishIssuesStep extends Step {
     private static final Priority DEFAULT_MINIMUM_PRIORITY = Priority.LOW;
 
-    private final Report report;
+    private final Report[] reports;
 
     private boolean ignoreAnalysisResult;
     private boolean overallResultMustBeSuccess;
@@ -75,19 +75,7 @@ public class PublishIssuesStep extends Step {
     public PublishIssuesStep(final Report... issues) {
         super();
 
-        if (issues == null || issues.length == 0) {
-            report = new Report();
-        }
-        else {
-            report = new Report();
-            for (Report issueSet : issues) {
-                report.addAll(issueSet);
-            }
-        }
-    }
-
-    public Report getReport() {
-        return report;
+        this.reports = issues;
     }
 
     /**
@@ -437,10 +425,11 @@ public class PublishIssuesStep extends Step {
             thresholds = step.getThresholds();
             qualityGate = new QualityGate(thresholds);
             name = StringUtils.defaultString(step.getName());
-            report = step.getReport();
+            report = new Report();
             if (StringUtils.isNotBlank(step.getId())) {
-                report.setOrigin(step.getId());
+                report.setId(step.getId());
             }
+            report.addAll(step.reports);
             filters = step.getFilters();
         }
 
@@ -453,7 +442,7 @@ public class PublishIssuesStep extends Step {
         }
 
         private LogHandler getLogger() throws InterruptedException {
-            String toolName = new LabelProviderFactory().create(report.getOrigin(), name).getName();
+            String toolName = new LabelProviderFactory().create(report.getId(), name).getName();
             return new LogHandler(getTaskListener(), toolName, report);
         }
 

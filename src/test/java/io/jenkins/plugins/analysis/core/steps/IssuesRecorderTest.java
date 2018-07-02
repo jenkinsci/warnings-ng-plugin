@@ -23,8 +23,8 @@ import hudson.util.ListBoxModel.Option;
 /**
  * Tests the class {@link IssuesRecorder}.
  *
- * @author Arne Schöntag
- * @author Stephan Plöderl
+ * @author Arne SchÃ¶ntag
+ * @author Stephan PlÃ¶derl
  * @author Ullrich Hafner
  */
 class IssuesRecorderTest extends LocalizedMessagesTest {

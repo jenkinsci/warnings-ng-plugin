@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -195,11 +196,11 @@ public class AnalysisResult implements Serializable {
         this.owner = owner;
         this.qualityGate = qualityGate;
 
-        id = report.getOrigin();
+        id = report.getId();
 
         size = report.getSize();
-        sizePerOrigin = report.getPropertyCount(Issue::getOrigin);
-        sizePerSeverity = report.getPropertyCount(Issue::getSeverity);
+        sizePerOrigin = new HashMap<>(report.getSizeByOrigin());
+        sizePerSeverity = getSizePerSeverity(report);
 
         Report outstandingIssues;
         Report newIssues;
@@ -232,7 +233,7 @@ public class AnalysisResult implements Serializable {
 
         newIssuesReference = new WeakReference<>(newIssues);
         newSize = newIssues.getSize();
-        newSizePerSeverity = newIssues.getPropertyCount(Issue::getSeverity);
+        newSizePerSeverity = getSizePerSeverity(newIssues);
 
         fixedIssuesReference = new WeakReference<>(fixedIssues);
         fixedSize = fixedIssues.size();
@@ -263,6 +264,10 @@ public class AnalysisResult implements Serializable {
         if (canSerialize) {
             serializeAnnotations(outstandingIssues, newIssues, fixedIssues);
         }
+    }
+
+    private HashMap<Severity, Integer> getSizePerSeverity(final Report report) {
+        return new HashMap<>(report.getPropertyCount(Issue::getSeverity));
     }
 
     private Result createResult() {
