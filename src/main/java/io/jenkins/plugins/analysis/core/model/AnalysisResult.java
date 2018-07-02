@@ -31,7 +31,6 @@ import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateResult;
@@ -71,13 +70,15 @@ public class AnalysisResult implements Serializable {
     private final List<String> errors;
     private final List<String> messages;
     /**
-     * Reference run to compute the issues difference: since a run could not be persisted directly, the IDs are only
+     * Reference run to compute the issues difference: since a run cannot be persisted directly, the IDs are only
      * stored.
      */
     private final String referenceJob;
     private final String referenceBuild;
+    
     private transient ReentrantLock lock = new ReentrantLock();
     private transient Run<?, ?> owner;
+    
     /**
      * All outstanding issues: i.e. all issues, that are part of the current and reference report.
      */
@@ -95,6 +96,7 @@ public class AnalysisResult implements Serializable {
      */
     @CheckForNull
     private transient WeakReference<Report> fixedIssuesReference;
+    
     /** Determines since which build we have zero warnings. */
     private int noIssuesSinceBuild;
     /** Determines since which build the result is successful. */
@@ -107,8 +109,6 @@ public class AnalysisResult implements Serializable {
      *
      * @param owner
      *         the current build as owner of this action
-     * @param history
-     *         provides the reference build
      * @param report
      *         the issues of this result
      * @param qualityGate
@@ -116,9 +116,9 @@ public class AnalysisResult implements Serializable {
      * @param previousResult
      *         the analysis result of the previous run
      */
-    public AnalysisResult(final Run<?, ?> owner, final AnalysisHistory history,
-            final Report report, final QualityGate qualityGate, final AnalysisResult previousResult) {
-        this(owner, history, report, qualityGate, true);
+    public AnalysisResult(final Run<?, ?> owner,
+            final DeltaReport report, final QualityGate qualityGate, final AnalysisResult previousResult) {
+        this(owner, report, qualityGate, true);
 
         if (report.isEmpty()) {
             if (previousResult.noIssuesSinceBuild == NO_BUILD) {
@@ -139,7 +139,6 @@ public class AnalysisResult implements Serializable {
             else {
                 successfulSinceBuild = owner.getNumber();
             }
-
         }
         else {
             successfulSinceBuild = NO_BUILD;
@@ -151,16 +150,13 @@ public class AnalysisResult implements Serializable {
      *
      * @param owner
      *         the current build as owner of this action
-     * @param history
-     *         provides the reference build
      * @param report
      *         the issues of this result
      * @param qualityGate
      *         the quality gate to enforce
      */
-    public AnalysisResult(final Run<?, ?> owner, final AnalysisHistory history,
-            final Report report, final QualityGate qualityGate) {
-        this(owner, history, report, qualityGate, true);
+    public AnalysisResult(final Run<?, ?> owner, final DeltaReport report, final QualityGate qualityGate) {
+        this(owner, report, qualityGate, true);
 
         if (report.isEmpty()) {
             noIssuesSinceBuild = owner.getNumber();
@@ -181,8 +177,6 @@ public class AnalysisResult implements Serializable {
      *
      * @param owner
      *         the current run as owner of this action
-     * @param history
-     *         provides the reference build
      * @param report
      *         the issues of this result
      * @param qualityGate
@@ -191,54 +185,32 @@ public class AnalysisResult implements Serializable {
      *         determines whether the result should be persisted in the build folder
      */
     @VisibleForTesting
-    protected AnalysisResult(final Run<?, ?> owner, final AnalysisHistory history,
-            final Report report, final QualityGate qualityGate, final boolean canSerialize) {
+    protected AnalysisResult(final Run<?, ?> owner,
+            final DeltaReport report, final QualityGate qualityGate, final boolean canSerialize) {
         this.owner = owner;
         this.qualityGate = qualityGate;
 
-        id = report.getId();
+        Report allIssues = report.getAllIssues();
+        id = allIssues.getId();
+        size = allIssues.getSize();
+        sizePerOrigin = new HashMap<>(allIssues.getSizeByOrigin());
+        sizePerSeverity = getSizePerSeverity(allIssues);
+        referenceJob = report.getReferenceJobName();
+        referenceBuild = report.getReferenceBuildId();
 
-        size = report.getSize();
-        sizePerOrigin = new HashMap<>(report.getSizeByOrigin());
-        sizePerSeverity = getSizePerSeverity(report);
-
-        Report outstandingIssues;
-        Report newIssues;
-        Report fixedIssues;
-
-        // TODO: Compute reference outside in new class and add result to report logging
-        Optional<Run<?, ?>> run = history.getPreviousBuild();
-        if (run.isPresent()) {
-            Run<?, ?> referenceRun = run.get();
-            referenceJob = referenceRun.getParent().getFullName();
-            referenceBuild = referenceRun.getId();
-
-            IssueDifference difference = new IssueDifference(report, this.owner.getNumber(),
-                    history.getPreviousIssues());
-
-            outstandingIssues = difference.getOutstandingIssues();
-            newIssues = difference.getNewIssues();
-            fixedIssues = difference.getFixedIssues();
-        }
-        else {
-            referenceJob = NO_REFERENCE;
-            referenceBuild = StringUtils.EMPTY;
-
-            outstandingIssues = report;
-            newIssues = EMPTY_REPORT;
-            fixedIssues = EMPTY_REPORT;
-        }
-
+        Report outstandingIssues = report.getOutstandingIssues();
         outstandingIssuesReference = new WeakReference<>(outstandingIssues);
-
-        newIssuesReference = new WeakReference<>(newIssues);
+        
+        Report newIssues = report.getNewIssues();
         newSize = newIssues.getSize();
         newSizePerSeverity = getSizePerSeverity(newIssues);
+        newIssuesReference = new WeakReference<>(newIssues);
 
-        fixedIssuesReference = new WeakReference<>(fixedIssues);
+        Report fixedIssues = report.getFixedIssues();
         fixedSize = fixedIssues.size();
+        fixedIssuesReference = new WeakReference<>(fixedIssues);
 
-        List<String> aggregatedMessages = new ArrayList<>(report.getInfoMessages().castToList());
+        List<String> aggregatedMessages = new ArrayList<>(allIssues.getInfoMessages().castToList());
 
         if (qualityGate.isEnabled()) {
             QualityGateResult result = qualityGate.evaluate(this);
@@ -259,7 +231,7 @@ public class AnalysisResult implements Serializable {
         }
 
         this.messages = new ArrayList<>(aggregatedMessages);
-        errors = new ArrayList<>(report.getErrorMessages().castToList());
+        errors = new ArrayList<>(allIssues.getErrorMessages().castToList());
 
         if (canSerialize) {
             serializeAnnotations(outstandingIssues, newIssues, fixedIssues);

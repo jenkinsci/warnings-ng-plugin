@@ -16,6 +16,7 @@ import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGa
 import io.jenkins.plugins.analysis.core.history.ResultSelector;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
+import io.jenkins.plugins.analysis.core.model.DeltaReport;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
@@ -126,12 +127,10 @@ class IssuesPublisher {
 
     @SuppressWarnings("PMD.PrematureDeclaration")
     private AnalysisResult createAnalysisResult(final Report filtered, final ResultSelector selector) {
-        filtered.setReference(String.valueOf(run.getNumber()));
-
-        AnalysisHistory history = createAnalysisHistory(selector);
+        DeltaReport deltaReport = new DeltaReport(filtered, createAnalysisHistory(selector), run.getNumber());
         return new AnalysisHistory(run, selector).getPreviousResult()
-                .map(previous -> new AnalysisResult(run, history, filtered, qualityGate, previous))
-                .orElseGet(() -> new AnalysisResult(run, history, filtered, qualityGate));
+                .map(previous -> new AnalysisResult(run, deltaReport, qualityGate, previous))
+                .orElseGet(() -> new AnalysisResult(run, deltaReport, qualityGate));
     }
 
     private AnalysisHistory createAnalysisHistory(final ResultSelector selector) {
