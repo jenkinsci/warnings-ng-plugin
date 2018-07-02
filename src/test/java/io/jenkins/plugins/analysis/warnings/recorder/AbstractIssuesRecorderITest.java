@@ -33,6 +33,7 @@ import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
+import hudson.model.TopLevelItem;
 import hudson.tasks.BatchFile;
 import hudson.tasks.Builder;
 import hudson.tasks.Publisher;
@@ -348,7 +349,7 @@ public class AbstractIssuesRecorderITest extends IntegrationTest {
         }
     }
 
-    protected FilePath getWorkspaceFor(final FreeStyleProject project) {
+    protected FilePath getWorkspaceFor(final TopLevelItem project) {
         return j.jenkins.getWorkspaceFor(project);
     }
 

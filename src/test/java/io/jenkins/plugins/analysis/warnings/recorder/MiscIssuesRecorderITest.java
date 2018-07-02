@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +12,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+import io.jenkins.plugins.analysis.core.model.ExcludeFile;
+import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.quality.Status;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
@@ -148,7 +151,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         assertThat(results).hasSize(1);
 
         AnalysisResult result = results.get(0);
-        assertThat(result.getSizePerOrigin()).containsOnlyKeys("checkstyle", "pmd");
+        assertThat(result.getSizePerOrigin()).containsExactly(entry("checkstyle", 6), entry("pmd", 4));
         assertThat(result).hasTotalSize(10);
         assertThat(result).hasId("analysis");
         assertThat(result).hasStatus(Status.INACTIVE);
@@ -161,6 +164,29 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
                 new ToolConfiguration(new Pmd(), "**/pmd-warnings-issues.txt"));
 
         return getAnalysisResults(buildWithStatus(project, Result.SUCCESS));
+    }
+
+    /**
+     * Runs the CheckStyle and PMD tools for two corresponding files which contain 10 issues in total. Since a filter
+     * afterwords removes all issues, the actual result contains no warnings. However, the two origins are still
+     * reported with a total of 0 warnings per origin.
+     */
+    @Test
+    public void shouldHaveOriginsIfBuildContainsWarnings() {
+        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
+        enableWarnings(project, recorder -> {
+                    recorder.setAggregatingResults(true);
+                    recorder.setFilters(Collections.singletonList(new RegexpFilter(".*", new ExcludeFile())));
+                },
+                new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
+                new ToolConfiguration(new Pmd(), "**/pmd-warnings-issues.txt"));
+
+        AnalysisResult result = getAnalysisResult(buildWithStatus(project, Result.SUCCESS));
+        assertThat(result).hasTotalSize(0);
+        assertThat(result.getSizePerOrigin()).containsExactly(
+                entry("checkstyle", 0), entry("pmd", 0));
+        assertThat(result).hasId("analysis");
+        assertThat(result).hasStatus(Status.INACTIVE);
     }
 
     /**
@@ -187,7 +213,6 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
 
         AnalysisResult result = getAnalysisResult(build);
 
-        assertThat(result.getSizePerOrigin()).containsKeys("checkstyle");
         assertThat(result).hasTotalSize(12);
         assertThat(result).hasId("analysis");
         assertThat(result).hasStatus(Status.INACTIVE);

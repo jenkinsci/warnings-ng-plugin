@@ -200,7 +200,7 @@ public class StepsITest extends PipelineITest {
         AnalysisResult result = action.getResult();
         assertThat(result.getIssues()).hasSize(8);
 
-        assertThat(result.getIssues()).hasOrigin(id);
+        assertThat(result.getIssues()).hasId(id);
         assertThat(result.getIssues().getPropertyCount(Issue::getOrigin)).containsOnly(entry(id, 8));
     }
 
