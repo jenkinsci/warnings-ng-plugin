@@ -33,12 +33,10 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
-import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateResult;
+import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.quality.RunAdapter;
-import io.jenkins.plugins.analysis.core.quality.Status;
 
 import hudson.XmlFile;
-import hudson.model.Result;
 import hudson.model.Run;
 
 /**
@@ -57,10 +55,8 @@ public class AnalysisResult implements Serializable {
     private static final Pattern ISSUES_FILE_NAME = Pattern.compile("issues.xml", Pattern.LITERAL);
     private static final int NO_BUILD = -1;
     private static final String NO_REFERENCE = StringUtils.EMPTY;
-    private static final Report EMPTY_REPORT = new Report();
 
     private final String id;
-    private final QualityGate qualityGate;
     private final int size;
     private final int newSize;
     private final int fixedSize;
@@ -102,7 +98,7 @@ public class AnalysisResult implements Serializable {
     /** Determines since which build the result is successful. */
     private int successfulSinceBuild;
     /** The result of the quality gate evaluation. */
-    private Status status = Status.PASSED;
+    private final QualityGateStatus qualityGateStatus;
 
     /**
      * Creates a new instance of {@link AnalysisResult}.
@@ -111,14 +107,14 @@ public class AnalysisResult implements Serializable {
      *         the current build as owner of this action
      * @param report
      *         the issues of this result
-     * @param qualityGate
-     *         the quality gate to enforce
+     * @param qualityGateStatus
+     *         the quality gate status
      * @param previousResult
      *         the analysis result of the previous run
      */
     public AnalysisResult(final Run<?, ?> owner,
-            final DeltaReport report, final QualityGate qualityGate, final AnalysisResult previousResult) {
-        this(owner, report, qualityGate, true);
+            final DeltaReport report, final QualityGateStatus qualityGateStatus, final AnalysisResult previousResult) {
+        this(owner, report, qualityGateStatus, true);
 
         if (report.isEmpty()) {
             if (previousResult.noIssuesSinceBuild == NO_BUILD) {
@@ -132,8 +128,8 @@ public class AnalysisResult implements Serializable {
             noIssuesSinceBuild = NO_BUILD;
         }
 
-        if (status == Status.PASSED) {
-            if (previousResult.status == Status.PASSED) {
+        if (this.qualityGateStatus == QualityGateStatus.PASSED) {
+            if (previousResult.qualityGateStatus == QualityGateStatus.PASSED) {
                 successfulSinceBuild = previousResult.successfulSinceBuild;
             }
             else {
@@ -152,11 +148,11 @@ public class AnalysisResult implements Serializable {
      *         the current build as owner of this action
      * @param report
      *         the issues of this result
-     * @param qualityGate
-     *         the quality gate to enforce
+     * @param qualityGateStatus
+     *         the quality gate status
      */
-    public AnalysisResult(final Run<?, ?> owner, final DeltaReport report, final QualityGate qualityGate) {
-        this(owner, report, qualityGate, true);
+    public AnalysisResult(final Run<?, ?> owner, final DeltaReport report, final QualityGateStatus qualityGateStatus) {
+        this(owner, report, qualityGateStatus, true);
 
         if (report.isEmpty()) {
             noIssuesSinceBuild = owner.getNumber();
@@ -164,7 +160,7 @@ public class AnalysisResult implements Serializable {
         else {
             noIssuesSinceBuild = NO_BUILD;
         }
-        if (status == Status.PASSED) {
+        if (this.qualityGateStatus == QualityGateStatus.PASSED) {
             successfulSinceBuild = owner.getNumber();
         }
         else {
@@ -179,17 +175,16 @@ public class AnalysisResult implements Serializable {
      *         the current run as owner of this action
      * @param report
      *         the issues of this result
-     * @param qualityGate
+     * @param qualityGateStatus
      *         the quality gate to enforce
      * @param canSerialize
      *         determines whether the result should be persisted in the build folder
      */
     @VisibleForTesting
     protected AnalysisResult(final Run<?, ?> owner,
-            final DeltaReport report, final QualityGate qualityGate, final boolean canSerialize) {
+            final DeltaReport report, final QualityGateStatus qualityGateStatus, final boolean canSerialize) {
         this.owner = owner;
-        this.qualityGate = qualityGate;
-
+        
         Report allIssues = report.getAllIssues();
         id = allIssues.getId();
         size = allIssues.getSize();
@@ -212,27 +207,10 @@ public class AnalysisResult implements Serializable {
 
         List<String> aggregatedMessages = new ArrayList<>(allIssues.getInfoMessages().castToList());
 
-        if (qualityGate.isEnabled()) {
-            QualityGateResult result = qualityGate.evaluate(this);
-            status = result.getStatus();
-            if (status.isSuccessful()) {
-                aggregatedMessages.add("All quality gates have been passed");
-            }
-            else {
-                aggregatedMessages.add(
-                        String.format("Some quality gates have been missed: overall result is %s", status));
-                aggregatedMessages.addAll(result.getEvaluations(this, qualityGate));
-            }
-            owner.setResult(createResult());
-        }
-        else {
-            aggregatedMessages.add("No quality gates have been set - skipping");
-            status = Status.INACTIVE;
-        }
-
         this.messages = new ArrayList<>(aggregatedMessages);
         errors = new ArrayList<>(allIssues.getErrorMessages().castToList());
 
+        this.qualityGateStatus = qualityGateStatus;
         if (canSerialize) {
             serializeAnnotations(outstandingIssues, newIssues, fixedIssues);
         }
@@ -240,16 +218,6 @@ public class AnalysisResult implements Serializable {
 
     private HashMap<Severity, Integer> getSizePerSeverity(final Report report) {
         return new HashMap<>(report.getPropertyCount(Issue::getSeverity));
-    }
-
-    private Result createResult() {
-        if (status == Status.WARNING) {
-            return Result.UNSTABLE;
-        }
-        if (status == Status.FAILED) {
-            return Result.FAILURE;
-        }
-        return Result.SUCCESS;
     }
 
     /**
@@ -483,25 +451,21 @@ public class AnalysisResult implements Serializable {
      * Returns whether the static analysis result is successful with respect to the defined {@link QualityGate}.
      *
      * @return {@code true} if the static analysis result is successful, {@code false} if the static analysis result is
-     *         {@link Status#WARNING} or {@link Status#FAILED}
+     *         {@link QualityGateStatus#WARNING} or {@link QualityGateStatus#FAILED}
      */
     @Exported
     public boolean isSuccessful() {
-        return status.isSuccessful();
-    }
-
-    public QualityGate getQualityGate() {
-        return qualityGate;
+        return qualityGateStatus.isSuccessful();
     }
 
     /**
-     * Returns the {@link Status} of the {@link QualityGate} evaluation of the static analysis run.
+     * Returns the {@link QualityGateStatus} of the {@link QualityGate} evaluation of the static analysis run.
      *
      * @return the quality gate status
      */
     @Exported
-    public Status getStatus() {
-        return status;
+    public QualityGateStatus getQualityGateStatus() {
+        return qualityGateStatus;
     }
 
     @Override

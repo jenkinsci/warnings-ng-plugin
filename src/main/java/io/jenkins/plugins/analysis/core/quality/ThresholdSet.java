@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
 
+import io.jenkins.plugins.analysis.core.quality.QualityGate.FormattedLogger;
+
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
@@ -40,44 +42,28 @@ public class ThresholdSet implements Serializable {
     }
 
     private boolean isTotalThresholdReached(final int toCheck) {
-        return isSingleThresholdReached(getTotalThreshold(), toCheck);
-    }
-
-    int getTotalThreshold() {
-        return totalThreshold;
+        return isSingleThresholdReached(totalThreshold, toCheck);
     }
 
     private boolean isHighThresholdReached(final int toCheck) {
-        return isSingleThresholdReached(getHighThreshold(), toCheck);
-    }
-
-    int getHighThreshold() {
-        return highThreshold;
+        return isSingleThresholdReached(highThreshold, toCheck);
     }
 
     private boolean isNormalThresholdReached(final int toCheck) {
-        return isSingleThresholdReached(getNormalThreshold(), toCheck);
-    }
-
-    int getNormalThreshold() {
-        return normalThreshold;
+        return isSingleThresholdReached(normalThreshold, toCheck);
     }
 
     private boolean isLowThresholdReached(final int toCheck) {
-        return isSingleThresholdReached(getLowThreshold(), toCheck);
-    }
-
-    int getLowThreshold() {
-        return lowThreshold;
+        return isSingleThresholdReached(lowThreshold, toCheck);
     }
 
     /**
-     * Check if the thresholds is retched or exceeded by the count of warnings.
+     * Check if the thresholds is retched or exceeded by the count of issues.
      *
      * @param threshold
      *         to check id reached or exceeded
      * @param toCheck
-     *         count of warnings which should be checked against the threshold
+     *         count of issues which should be checked against the threshold
      *
      * @return true if reached or exceeded, else false
      */
@@ -90,25 +76,52 @@ public class ThresholdSet implements Serializable {
     }
 
     /**
-     * Check if one or more of the thresholds is retched or exceeded.
+     * Checks whether one or more of the thresholds are exceeded.
      *
      * @param totalToCheck
-     *         total count of warnings
+     *         total count of issues
      * @param highToCheck
-     *         count of high prioritized warnings
+     *         count of high prioritized issues
      * @param normalToCheck
-     *         count of normal prioritized warnings
+     *         count of normal prioritized issues
      * @param lowToCheck
-     *         count of low prioritized warnings
+     *         count of low prioritized issues
+     * @param message
+     *         the message that identifies total number of issues or number of new issues
+     * @param qualityGateStatus
+     *         the qualityGateStatus that should be returned if the threshold has been reached
+     * @param logger
+     *         a logger for the evaluation results
      *
      * @return the result of the evaluation
      */
-    public ThresholdResult evaluate(final int totalToCheck, final int highToCheck, final int normalToCheck,
-            final int lowToCheck) {
-        return new ThresholdResult(isTotalThresholdReached(totalToCheck),
-                isHighThresholdReached(highToCheck),
-                isNormalThresholdReached(normalToCheck),
-                isLowThresholdReached(lowToCheck));
+    public QualityGateStatus evaluate(final int totalToCheck, final int highToCheck, final int normalToCheck,
+            final int lowToCheck, final String message,
+            final QualityGateStatus qualityGateStatus, final FormattedLogger logger) {
+        boolean totalThresholdReached = isTotalThresholdReached(totalToCheck);
+        boolean highThresholdReached = isHighThresholdReached(highToCheck);
+        boolean normalThresholdReached = isNormalThresholdReached(normalToCheck);
+        boolean lowThresholdReached = isLowThresholdReached(lowToCheck);
+        if (totalThresholdReached) {
+            logger.print("%s -> %s: %d - Quality Gate: %d",
+                    qualityGateStatus, message, totalToCheck, totalThreshold);
+        }
+        if (highThresholdReached) {
+            logger.print("%s -> %s (Severity High): %d - Quality Gate: %d",
+                    qualityGateStatus, message, highToCheck, highThreshold);
+        }
+        if (normalThresholdReached) {
+            logger.print("%s -> %s (Severity Normal): %d - Quality Gate: %d",
+                    qualityGateStatus, message, normalToCheck, normalThreshold);
+        }
+        if (lowThresholdReached) {
+            logger.print("%s -> %s (Severity Low): %d - Quality Gate: %d",
+                    qualityGateStatus, message, lowToCheck, lowThreshold);
+        }
+        if (totalThresholdReached || highThresholdReached || normalThresholdReached || lowThresholdReached) {
+            return qualityGateStatus;
+        }
+        return QualityGateStatus.PASSED;
     }
 
     @Override
@@ -149,46 +162,7 @@ public class ThresholdSet implements Serializable {
                 || isEnabled(normalThreshold)
                 || isEnabled(lowThreshold);
     }
-
-    /**
-     * Result of a subset of the {@link QualityGate} evaluation.
-     */
-    public static class ThresholdResult {
-        private final boolean isTotalReached;
-        private final boolean isHighReached;
-        private final boolean isNormalReached;
-        private final boolean isLowReached;
-
-        ThresholdResult(final boolean isTotalReached, final boolean isHighReached, final boolean isNormalReached,
-                final boolean isLowReached) {
-            this.isTotalReached = isTotalReached;
-            this.isHighReached = isHighReached;
-            this.isNormalReached = isNormalReached;
-            this.isLowReached = isLowReached;
-        }
-
-        public boolean isTotalReached() {
-            return isTotalReached;
-        }
-
-        public boolean isHighReached() {
-            return isHighReached;
-        }
-
-        public boolean isNormalReached() {
-            return isNormalReached;
-        }
-
-        public boolean isLowReached() {
-            return isLowReached;
-        }
-
-        @SuppressWarnings("OverlyComplexBooleanExpression")
-        public boolean isSuccess() {
-            return !isTotalReached && !isHighReached && !isNormalReached && !isLowReached;
-        }
-    }
-
+    
     /**
      * Creates {@link ThresholdSet} instances using the builder pattern.
      */

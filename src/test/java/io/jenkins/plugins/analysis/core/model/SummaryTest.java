@@ -14,9 +14,7 @@ import org.junit.jupiter.api.Test;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.Summary.LabelProviderFactoryFacade;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
-import io.jenkins.plugins.analysis.core.quality.QualityGate;
-import io.jenkins.plugins.analysis.core.quality.Status;
-import io.jenkins.plugins.analysis.core.quality.Thresholds;
+import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -28,12 +26,11 @@ import hudson.model.Run;
  * @author Ullrich Hafner
  * @author Michaela Reitschuster
  */
+// TODO: write a test case with INACTIVE quality gate
 class SummaryTest {
     private static final FixedSizeMap<String, Integer> EMPTY_ORIGINS = Maps.fixedSize.empty();
     private static final ImmutableList<String> EMPTY_ERRORS = Lists.immutable.empty();
 
-    /**
-     */
     @Test
     void shouldShowAggregatedWarnings() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
@@ -200,10 +197,7 @@ class SummaryTest {
     void shouldContainQualityGateResult() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
                 EMPTY_ERRORS, 0, 0);
-        when(analysisResult.getStatus()).thenReturn(Status.PASSED);
-        QualityGate qualityGate = mock(QualityGate.class);
-        when(qualityGate.isEnabled()).thenReturn(true);
-        when(analysisResult.getQualityGate()).thenReturn(qualityGate);
+        when(analysisResult.getQualityGateStatus()).thenReturn(QualityGateStatus.PASSED);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).containsPattern(
                 createWarningsLink(
@@ -217,9 +211,7 @@ class SummaryTest {
     void shouldNotContainQualityGateResult() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
                 EMPTY_ERRORS, 0, 0);
-        when(analysisResult.getStatus()).thenReturn(Status.PASSED);
-        QualityGate qualityGate = mock(QualityGate.class);
-        when(qualityGate.isEnabled()).thenReturn(false);
+        when(analysisResult.getQualityGateStatus()).thenReturn(QualityGateStatus.INACTIVE);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).doesNotContainPattern(
                 createWarningsLink(
@@ -293,10 +285,7 @@ class SummaryTest {
         when(analysisRun.getErrorMessages()).thenReturn(errorMessages);
         when(analysisRun.getNoIssuesSinceBuild()).thenReturn(numberOfIssuesSinceBuild);
 
-        Thresholds thresholds = new Thresholds();
-        thresholds.unstableTotalAll = numberOfThresholds;
-        when(analysisRun.getQualityGate()).thenReturn(new QualityGate(thresholds));
-        when(analysisRun.getStatus()).thenReturn(Status.PASSED);
+        when(analysisRun.getQualityGateStatus()).thenReturn(QualityGateStatus.PASSED);
         Run<?, ?> run = mock(Run.class);
         when(run.getFullDisplayName()).thenReturn("Job #15");
         when(run.getUrl()).thenReturn("job/my-job/15");

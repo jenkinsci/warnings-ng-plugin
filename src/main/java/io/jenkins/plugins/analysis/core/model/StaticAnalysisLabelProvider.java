@@ -12,7 +12,7 @@ import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.IntegerParser;
 import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.quality.Status;
+import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.views.LocalizedSeverity;
 import static j2html.TagCreator.*;
 import j2html.tags.ContainerTag;
@@ -389,7 +389,7 @@ public class StaticAnalysisLabelProvider {
      *
      * @return the legend of the trend chart
      */
-    public DomContent getQualityGateResult(final Status qualityGateStatus) {
+    public DomContent getQualityGateResult(final QualityGateStatus qualityGateStatus) {
         return join(Messages.Tool_QualityGate(), getResultIcon(qualityGateStatus));
     }
 
@@ -410,8 +410,8 @@ public class StaticAnalysisLabelProvider {
         return a(referenceBuild.getFullDisplayName()).withHref(absoluteUrl);
     }
 
-    private UnescapedText getResultIcon(final Status status) {
-        BallColor color = status.getColor();
+    private UnescapedText getResultIcon(final QualityGateStatus qualityGateStatus) {
+        BallColor color = qualityGateStatus.getColor();
         return join(img().withSrc(jenkins.getImagePath(color))
                         .withClasses(color.getIconClassName(), "icon-lg")
                         .withAlt(color.getDescription())

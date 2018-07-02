@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.model;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 
 import hudson.model.Run;
@@ -85,5 +86,37 @@ public class DeltaReport {
 
     public Report getFixedIssues() {
         return fixedIssues;
+    }
+
+    /**
+     * Returns the total number of issues in this analysis run that have the specified {@link Severity}.
+     *
+     * @param severity
+     *         the severity of the issues to match
+     *
+     * @return total number of issues
+     */
+    public int getTotalSizeOf(final Severity severity) {
+        return allIssues.getSizeOf(severity);
+    }
+
+    /**
+     * Returns the new number of issues in this analysis run that have the specified {@link Severity}.
+     *
+     * @param severity
+     *         the severity of the issues to match
+     *
+     * @return total number of issues
+     */
+    public int getNewSizeOf(final Severity severity) {
+        return newIssues.getSizeOf(severity);
+    }
+
+    public int getTotalSize() {
+        return allIssues.size();
+    }
+
+    public int getNewSize() {
+        return newIssues.size();
     }
 }

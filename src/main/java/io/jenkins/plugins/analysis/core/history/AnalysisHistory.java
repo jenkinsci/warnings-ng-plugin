@@ -10,7 +10,7 @@ import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResult
 import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
-import io.jenkins.plugins.analysis.core.quality.Status;
+import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.model.Result;
@@ -47,7 +47,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
          */
         IGNORE_QUALITY_GATE,
         /**
-         * The quality gate result must be {@link Status#isSuccessful()}. I.e. the history is searched for a build that
+         * The quality gate result must be {@link QualityGateStatus#isSuccessful()}. I.e. the history is searched for a build that
          * either passed the quality gate or has deactivated the quality gate.
          */
         SUCCESSFUL_QUALITY_GATE
@@ -72,7 +72,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
     }
 
     /**
-     * Creates a new instance of {@link AnalysisHistory}. This history ignores the {@link Status} of the quality gate
+     * Creates a new instance of {@link AnalysisHistory}. This history ignores the {@link QualityGateStatus} of the quality gate
      * and the {@link Result} of the associated {@link Run}.
      *
      * @param baseline
@@ -92,7 +92,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
      * @param selector
      *         selects the type of the result (to get a result for the same type of static analysis)
      * @param qualityGateEvaluationMode
-     *         determines if the quality gate {@link Status} is taken into account when selecting the action
+     *         determines if the quality gate {@link QualityGateStatus} is taken into account when selecting the action
      * @param jobResultEvaluationMode
      *         determines if the job {@link Result} is taken into account when selecting the action
      */

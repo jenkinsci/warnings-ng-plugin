@@ -2,13 +2,15 @@ package io.jenkins.plugins.analysis.core.quality;
 
 import hudson.model.BallColor;
 import hudson.model.Result;
+import hudson.model.Run;
 
 /**
- * Status of a {@link QualityGate}.
+ * QualityGateStatus of a {@link QualityGate}.
  *
  * @author Ullrich Hafner
  */
-public enum Status {
+// TODO: it would make sense to use different icons as well
+public enum QualityGateStatus {
     /** Quality gate has been passed. */
     PASSED(Result.SUCCESS),
 
@@ -21,9 +23,9 @@ public enum Status {
     /** Quality gate is inactive, so result evaluation is not available. */
     INACTIVE(Result.NOT_BUILT);
 
-    private Result result;
+    private final Result result;
 
-    Status(final Result result) {
+    QualityGateStatus(final Result result) {
         this.result = result;
     }
 
@@ -43,5 +45,16 @@ public enum Status {
      */
     public boolean isSuccessful() {
         return this == PASSED || this == INACTIVE;
+    }
+
+    /**
+     * Sets the result of the specified run to the associated value of this quality gate status.
+     * 
+     * @param run the run to set the result for
+     */
+    public void setResult(final Run<?, ?> run) {
+        if (!isSuccessful()) {
+            run.setResult(result);
+        }
     }
 }

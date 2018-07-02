@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.jvnet.localizer.Localizable;
 
+import com.google.errorprone.annotations.CheckReturnValue;
+
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.analysis.Severity;
 
@@ -44,6 +46,7 @@ public class HealthReportBuilder implements Serializable {
      *
      * @return the healthiness of a build
      */
+    @CheckReturnValue
     public HealthReport computeHealth(final Map<Severity, Integer> sizePerSeverity) {
         int relevantIssuesSize = 0;
         for (Priority priority : Priority.collectPrioritiesFrom(healthDescriptor.getMinimumPriority())) {

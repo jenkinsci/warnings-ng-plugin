@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.model;
 import java.util.stream.Collectors;
 
 import edu.hm.hafner.util.VisibleForTesting;
+import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import static j2html.TagCreator.*;
 import j2html.tags.ContainerTag;
@@ -25,7 +26,7 @@ import j2html.tags.ContainerTag;
 // FIXME: is the number of parsed reports available yet?
 public class Summary {
     private final StaticAnalysisLabelProvider labelProvider;
-    private final AnalysisResult analysisRun;
+    private final AnalysisResult analysisResult;
     private final LabelProviderFactoryFacade facade;
 
     /**
@@ -44,7 +45,7 @@ public class Summary {
     Summary(final StaticAnalysisLabelProvider labelProvider, final AnalysisResult result,
             final LabelProviderFactoryFacade facade) {
         this.labelProvider = labelProvider;
-        this.analysisRun = result;
+        this.analysisResult = result;
         this.facade = facade;
     }
 
@@ -54,32 +55,32 @@ public class Summary {
      * @return the summary
      */
     public String create() {
-        return div(labelProvider.getTitle(analysisRun, !analysisRun.getErrorMessages().isEmpty()), createDescription())
+        return div(labelProvider.getTitle(analysisResult, !analysisResult.getErrorMessages().isEmpty()), createDescription())
                 .withId(labelProvider.getId() + "-summary")
                 .renderFormatted();
     }
 
     private ContainerTag createDescription() {
-        int currentBuild = analysisRun.getBuild().getNumber();
+        int currentBuild = analysisResult.getBuild().getNumber();
         ContainerTag ul = ul()
-                .condWith(analysisRun.getSizePerOrigin().size() > 1,
+                .condWith(analysisResult.getSizePerOrigin().size() > 1,
                         li(getToolNames()))
-                .condWith(analysisRun.getTotalSize() == 0
-                                && currentBuild > analysisRun.getNoIssuesSinceBuild(),
-                        li(labelProvider.getNoIssuesSinceLabel(currentBuild, analysisRun.getNoIssuesSinceBuild())))
-                .condWith(analysisRun.getNewSize() > 0,
-                        li(labelProvider.getNewIssuesLabel(analysisRun.getNewSize())))
-                .condWith(analysisRun.getFixedSize() > 0,
-                        li(labelProvider.getFixedIssuesLabel(analysisRun.getFixedSize())))
-                .condWith(analysisRun.getQualityGate().isEnabled(),
-                        li(labelProvider.getQualityGateResult(analysisRun.getStatus())));
-        return analysisRun.getReferenceBuild()
+                .condWith(analysisResult.getTotalSize() == 0
+                                && currentBuild > analysisResult.getNoIssuesSinceBuild(),
+                        li(labelProvider.getNoIssuesSinceLabel(currentBuild, analysisResult.getNoIssuesSinceBuild())))
+                .condWith(analysisResult.getNewSize() > 0,
+                        li(labelProvider.getNewIssuesLabel(analysisResult.getNewSize())))
+                .condWith(analysisResult.getFixedSize() > 0,
+                        li(labelProvider.getFixedIssuesLabel(analysisResult.getFixedSize())))
+                .condWith(analysisResult.getQualityGateStatus() != QualityGateStatus.INACTIVE,
+                        li(labelProvider.getQualityGateResult(analysisResult.getQualityGateStatus())));
+        return analysisResult.getReferenceBuild()
                 .map(reference -> ul.with(li(labelProvider.getReferenceBuild(reference))))
                 .orElse(ul);
     }
 
     private String getToolNames() {
-        String tools = analysisRun.getSizePerOrigin()
+        String tools = analysisResult.getSizePerOrigin()
                 .keySet()
                 .stream()
                 .map(id -> facade.get(id).getName())

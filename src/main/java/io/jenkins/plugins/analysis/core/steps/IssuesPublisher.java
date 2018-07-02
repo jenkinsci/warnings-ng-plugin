@@ -20,6 +20,7 @@ import io.jenkins.plugins.analysis.core.model.DeltaReport;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
+import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.model.Job;
@@ -128,9 +129,26 @@ class IssuesPublisher {
     @SuppressWarnings("PMD.PrematureDeclaration")
     private AnalysisResult createAnalysisResult(final Report filtered, final ResultSelector selector) {
         DeltaReport deltaReport = new DeltaReport(filtered, createAnalysisHistory(selector), run.getNumber());
+        QualityGateStatus qualityGateStatus;
+        if (qualityGate.isEnabled()) {
+            qualityGateStatus = qualityGate.evaluate(deltaReport, filtered::logInfo);
+            if (qualityGateStatus.isSuccessful()) {
+                filtered.logInfo("All quality gates have been passed");
+            }
+            else {
+                filtered.logInfo("Some quality gates have been missed: overall result is %s", qualityGateStatus);
+            }
+            qualityGateStatus.setResult(run);
+        }
+        else {
+            filtered.logInfo("No quality gates have been set - skipping");
+            qualityGateStatus = QualityGateStatus.INACTIVE;
+        }
+
+        logger.log(filtered);
         return new AnalysisHistory(run, selector).getPreviousResult()
-                .map(previous -> new AnalysisResult(run, deltaReport, qualityGate, previous))
-                .orElseGet(() -> new AnalysisResult(run, deltaReport, qualityGate));
+                .map(previous -> new AnalysisResult(run, deltaReport, qualityGateStatus, previous))
+                .orElseGet(() -> new AnalysisResult(run, deltaReport, qualityGateStatus));
     }
 
     private AnalysisHistory createAnalysisHistory(final ResultSelector selector) {
