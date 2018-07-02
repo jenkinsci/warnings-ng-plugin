@@ -9,7 +9,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
-import io.jenkins.plugins.analysis.core.quality.Status;
+import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 
 import hudson.model.FreeStyleProject;
@@ -35,19 +35,19 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         FreeStyleProject project = createJob(JOB_NAME, "eclipse2Warnings.txt");
         enableWarnings(project, recorder -> recorder.setUnstableNewAll(3));
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.PASSED));
 
         // #2 UNSTABLE
         cleanAndCopy(project, "eclipse8Warnings.txt");
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(8).hasNewSize(6).hasStatus(Status.WARNING));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(8).hasNewSize(6).hasQualityGateStatus(QualityGateStatus.WARNING));
 
         // #3 SUCCESS (Reference #1)
         cleanAndCopy(project, "eclipse4Warnings.txt");
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, analysisResult -> assertThat(analysisResult)
                 .hasTotalSize(4)
                 .hasNewSize(2)
-                .hasStatus(Status.PASSED)
+                .hasQualityGateStatus(QualityGateStatus.PASSED)
                 .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
@@ -60,19 +60,19 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         FreeStyleProject project = createJob(JOB_NAME, "eclipse2Warnings.txt");
         enableWarnings(project, recorder -> recorder.setUnstableNewAll(3));
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.PASSED));
 
         // #2 UNSTABLE
         cleanAndCopy(project, "eclipse6Warnings.txt");
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(6).hasNewSize(4).hasStatus(Status.WARNING));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(6).hasNewSize(4).hasQualityGateStatus(QualityGateStatus.WARNING));
 
         // #3 UNSTABLE (Reference #1)
         cleanAndCopy(project, "eclipse8Warnings.txt");
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE, analysisResult -> assertThat(analysisResult)
                 .hasTotalSize(8)
                 .hasNewSize(6)
-                .hasStatus(Status.WARNING)
+                .hasQualityGateStatus(QualityGateStatus.WARNING)
                 .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
@@ -88,19 +88,19 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
             recorder.setUnstableNewAll(3);
         });
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.PASSED));
 
         // #2 UNSTABLE
         cleanAndCopy(project, "eclipse6Warnings.txt");
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.UNSTABLE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(6).hasNewSize(4).hasStatus(Status.WARNING));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(6).hasNewSize(4).hasQualityGateStatus(QualityGateStatus.WARNING));
 
         // #3 SUCCESS (Reference #2)
         cleanAndCopy(project, "eclipse8Warnings.txt");
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, analysisResult -> assertThat(analysisResult)
                 .hasTotalSize(8)
                 .hasNewSize(2)
-                .hasStatus(Status.PASSED)
+                .hasQualityGateStatus(QualityGateStatus.PASSED)
                 .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
@@ -113,13 +113,13 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         FreeStyleProject project = createJob(JOB_NAME, "eclipse6Warnings.txt");
         IssuesRecorder issuesRecorder = enableWarnings(project, recorder -> recorder.setIgnoreAnalysisResult(true));
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(6).hasNewSize(0).hasStatus(Status.INACTIVE));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(6).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.INACTIVE));
 
         // #2 UNSTABLE
         cleanAndCopy(project, "eclipse4Warnings.txt");
         issuesRecorder.setUnstableTotalAll(3);
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.UNSTABLE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasStatus(Status.WARNING));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasQualityGateStatus(QualityGateStatus.WARNING));
 
         // #3 UNSTABLE (Reference #2)
         cleanAndCopy(project, "eclipse8Warnings.txt");
@@ -129,7 +129,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE, analysisResult -> assertThat(analysisResult)
                 .hasTotalSize(8)
                 .hasNewSize(4)
-                .hasStatus(Status.WARNING)
+                .hasQualityGateStatus(QualityGateStatus.WARNING)
                 .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
@@ -147,13 +147,13 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
             recorder.setUnstableNewAll(3);
         });
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.PASSED));
 
         // #2 FAILURE
         cleanAndCopy(project, "eclipse4Warnings.txt");
         Builder failureStep = addFailureStep(project);
         scheduleBuildAndAssertStatus(project, Result.FAILURE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(2).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(2).hasQualityGateStatus(QualityGateStatus.PASSED));
 
         // #3 UNSTABLE (Reference #1)
         removeBuilder(project, failureStep);
@@ -161,7 +161,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE, analysisResult -> assertThat(analysisResult)
                 .hasTotalSize(6)
                 .hasNewSize(4)
-                .hasStatus(Status.WARNING)
+                .hasQualityGateStatus(QualityGateStatus.WARNING)
                 .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
@@ -178,14 +178,14 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
             recorder.setEnabledForFailure(true);
         });
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(0).hasStatus(Status.INACTIVE));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.INACTIVE));
 
         // #2 FAILURE
         cleanAndCopy(project, "eclipse2Warnings.txt");
         issuesRecorder.setUnstableNewAll(3);
         Builder failureStep = addFailureStep(project);
         scheduleBuildAndAssertStatus(project, Result.FAILURE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.PASSED));
 
         // #3 UNSTABLE (Reference #1)
         cleanAndCopy(project, "eclipse6Warnings.txt");
@@ -193,7 +193,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, analysisResult -> assertThat(analysisResult)
                 .hasTotalSize(6)
                 .hasNewSize(2)
-                .hasStatus(Status.PASSED)
+                .hasQualityGateStatus(QualityGateStatus.PASSED)
                 .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
@@ -210,14 +210,14 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
             recorder.setEnabledForFailure(true);
         });
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(0).hasStatus(Status.INACTIVE));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.INACTIVE));
 
         // #2 FAILURE
         cleanAndCopy(project, "eclipse2Warnings.txt");
         issuesRecorder.setUnstableNewAll(3);
         Builder failureStep = addFailureStep(project);
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.FAILURE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.PASSED));
 
         cleanAndCopy(project, "eclipse6Warnings.txt");
         removeBuilder(project, failureStep);
@@ -226,7 +226,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE, analysisResult -> assertThat(analysisResult)
                 .hasTotalSize(6)
                 .hasNewSize(4)
-                .hasStatus(Status.WARNING)
+                .hasQualityGateStatus(QualityGateStatus.WARNING)
                 .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
@@ -244,13 +244,13 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
             recorder.setUnstableNewAll(3);
         });
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.PASSED));
 
         // #2 FAILURE
         cleanAndCopy(project, "eclipse4Warnings.txt");
         Builder failureStep = addFailureStep(project);
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.FAILURE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(2).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(2).hasQualityGateStatus(QualityGateStatus.PASSED));
 
         // #3 SUCCESS (Reference #2)
         cleanAndCopy(project, "eclipse6Warnings.txt");
@@ -258,7 +258,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, analysisResult -> assertThat(analysisResult)
                 .hasTotalSize(6)
                 .hasNewSize(2)
-                .hasStatus(Status.PASSED)
+                .hasQualityGateStatus(QualityGateStatus.PASSED)
                 .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
@@ -272,12 +272,12 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         FreeStyleProject reference = createJob(REFERENCE_JOB_NAME, "eclipse2Warnings.txt");
         enableWarnings(reference, recorder -> recorder.setUnstableNewAll(3));
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.PASSED));
 
         // #2 UNSTABLE
         cleanAndCopy(reference, "eclipse8Warnings.txt");
         scheduleBuildAndAssertStatus(reference, Result.UNSTABLE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(8).hasNewSize(6).hasStatus(Status.WARNING));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(8).hasNewSize(6).hasQualityGateStatus(QualityGateStatus.WARNING));
 
         // #1 SUCCESS (Reference #1)
         FreeStyleProject project = createJob(JOB_NAME, "eclipse4Warnings.txt");
@@ -289,7 +289,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, analysisResult -> assertThat(analysisResult)
                 .hasTotalSize(4)
                 .hasNewSize(2)
-                .hasStatus(Status.PASSED)
+                .hasQualityGateStatus(QualityGateStatus.PASSED)
                 .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
@@ -306,12 +306,12 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
             recorder.setIgnoreAnalysisResult(false);
         });
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.PASSED));
 
         // #2 UNSTABLE
         cleanAndCopy(reference, "eclipse6Warnings.txt");
         scheduleBuildAndAssertStatus(reference, Result.UNSTABLE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(6).hasNewSize(4).hasStatus(Status.WARNING));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(6).hasNewSize(4).hasQualityGateStatus(QualityGateStatus.WARNING));
 
         // #1 SUCCESS (Reference #1)
         FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt");
@@ -324,7 +324,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE, analysisResult -> assertThat(analysisResult)
                 .hasTotalSize(8)
                 .hasNewSize(6)
-                .hasStatus(Status.WARNING)
+                .hasQualityGateStatus(QualityGateStatus.WARNING)
                 .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
@@ -341,12 +341,12 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
             recorder.setUnstableNewAll(3);
         });
         scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.PASSED));
 
         // #2 UNSTABLE
         cleanAndCopy(reference, "eclipse6Warnings.txt");
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.UNSTABLE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(6).hasNewSize(4).hasStatus(Status.WARNING));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(6).hasNewSize(4).hasQualityGateStatus(QualityGateStatus.WARNING));
 
         // #1 SUCCESS (Reference #2)
         FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt");
@@ -358,7 +358,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, analysisResult -> assertThat(analysisResult)
                 .hasTotalSize(8)
                 .hasNewSize(2)
-                .hasStatus(Status.PASSED)
+                .hasQualityGateStatus(QualityGateStatus.PASSED)
                 .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
@@ -372,14 +372,14 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         FreeStyleProject reference = createJob(REFERENCE_JOB_NAME, "eclipse6Warnings.txt");
         IssuesRecorder issuesRecorder = enableWarnings(reference, recorder -> recorder.setIgnoreAnalysisResult(true));
         scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(6).hasNewSize(0).hasStatus(Status.INACTIVE));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(6).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.INACTIVE));
 
         // #2 UNSTABLE
         cleanAndCopy(reference, "eclipse4Warnings.txt");
         issuesRecorder.setUnstableTotalAll(3);
 
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.UNSTABLE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(0).hasStatus(Status.WARNING));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.WARNING));
 
         // #1 SUCCESS (Reference #2)
         FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt");
@@ -392,7 +392,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE, analysisResult -> assertThat(analysisResult)
                 .hasTotalSize(8)
                 .hasNewSize(4)
-                .hasStatus(Status.WARNING)
+                .hasQualityGateStatus(QualityGateStatus.WARNING)
                 .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
@@ -410,13 +410,13 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
             recorder.setUnstableNewAll(3);
         });
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.PASSED));
 
         // #2 FAILURE
         cleanAndCopy(reference, "eclipse4Warnings.txt");
         Builder failureStep = addFailureStep(reference);
         scheduleBuildAndAssertStatus(reference, Result.FAILURE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(2).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(2).hasQualityGateStatus(QualityGateStatus.PASSED));
         removeBuilder(reference, failureStep);
 
         // #1 SUCCESS (Reference #1)
@@ -430,7 +430,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE, analysisResult -> assertThat(analysisResult)
                 .hasTotalSize(6)
                 .hasNewSize(4)
-                .hasStatus(Status.WARNING)
+                .hasQualityGateStatus(QualityGateStatus.WARNING)
                 .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
@@ -447,14 +447,14 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
             recorder.setEnabledForFailure(true);
         });
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(0).hasStatus(Status.INACTIVE));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.INACTIVE));
 
         // #2 FAILURE
         cleanAndCopy(reference, "eclipse2Warnings.txt");
         issuesRecorder.setUnstableNewAll(3);
         addFailureStep(reference);
         scheduleBuildAndAssertStatus(reference, Result.FAILURE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.PASSED));
 
         // #1 SUCCESS (Reference #1)
         FreeStyleProject project = createJob(JOB_NAME, "eclipse6Warnings.txt");
@@ -467,7 +467,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(6)
                         .hasNewSize(2)
-                        .hasStatus(Status.PASSED)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)
                         .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
@@ -484,14 +484,14 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
             recorder.setEnabledForFailure(true);
         });
         scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(0).hasStatus(Status.INACTIVE));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.INACTIVE));
 
         // #2 FAILURE
         cleanAndCopy(reference, "eclipse2Warnings.txt");
         issuesRecorder.setUnstableNewAll(3);
         Builder failureStep = addFailureStep(reference);
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.FAILURE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.PASSED));
         removeBuilder(reference, failureStep);
 
         // #1 UNSTABLE (Reference #2)
@@ -505,7 +505,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(6)
                         .hasNewSize(4)
-                        .hasStatus(Status.WARNING)
+                        .hasQualityGateStatus(QualityGateStatus.WARNING)
                         .hasReferenceBuild(Optional.of(expectedReference)));
     }
 
@@ -523,14 +523,14 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
             recorder.setUnstableNewAll(3);
         });
         scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.PASSED));
 
         // #2 FAILURE
         cleanAndCopy(reference, "eclipse4Warnings.txt");
 
         Builder failureStep = addFailureStep(reference);
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.FAILURE,
-                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(2).hasStatus(Status.PASSED));
+                analysisResult -> assertThat(analysisResult).hasTotalSize(4).hasNewSize(2).hasQualityGateStatus(QualityGateStatus.PASSED));
         removeBuilder(reference, failureStep);
 
         // #1 UNSTABLE (Reference #2)
@@ -544,7 +544,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(6)
                         .hasNewSize(2)
-                        .hasStatus(Status.PASSED)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)
                         .hasReferenceBuild(Optional.of(expectedReference)));
     }
 

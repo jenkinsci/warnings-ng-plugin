@@ -62,10 +62,10 @@ public class RemoteApiITest extends AbstractIssuesRecorderITest {
     public void assertXmlApiWithXPathNavigationMatchesExpected() {
         Run<?, ?> build = buildCheckStyleJob();
 
-        XmlPage page = callRemoteApi(build, "/checkstyleResult/api/xml?xpath=/*/status");
+        XmlPage page = callRemoteApi(build, "/checkstyleResult/api/xml?xpath=/*/qualityGateStatus");
 
         Document actualDocument = page.getXmlDocument();
-        assertThat(actualDocument.getDocumentElement().getTagName()).isEqualTo("status");
+        assertThat(actualDocument.getDocumentElement().getTagName()).isEqualTo("qualityGateStatus");
         assertThat(actualDocument.getDocumentElement().getFirstChild().getNodeValue()).isEqualTo("INACTIVE");
     }
 

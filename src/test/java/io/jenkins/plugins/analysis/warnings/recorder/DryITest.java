@@ -19,7 +19,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
-import io.jenkins.plugins.analysis.core.quality.Status;
+import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Cpd;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
 import io.jenkins.plugins.analysis.warnings.Simian;
@@ -49,7 +49,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(20);
-        assertThat(result).hasStatus(Status.INACTIVE);
+        assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
     /**

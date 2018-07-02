@@ -14,7 +14,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.ExcludeFile;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
-import io.jenkins.plugins.analysis.core.quality.Status;
+import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
@@ -98,7 +98,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
 
         assertThat(result).hasTotalSize(8);
-        assertThat(result).hasStatus(Status.WARNING);
+        assertThat(result).hasQualityGateStatus(QualityGateStatus.WARNING);
 
         HtmlPage page = getWebPage(project, "eclipse");
         assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
@@ -136,7 +136,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
                 assertThat(element.getId()).isEqualTo("pmd");
                 assertThat(element).hasTotalSize(4);
             }
-            assertThat(element).hasStatus(Status.INACTIVE);
+            assertThat(element).hasQualityGateStatus(QualityGateStatus.INACTIVE);
         }
     }
 
@@ -154,7 +154,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         assertThat(result.getSizePerOrigin()).containsExactly(entry("checkstyle", 6), entry("pmd", 4));
         assertThat(result).hasTotalSize(10);
         assertThat(result).hasId("analysis");
-        assertThat(result).hasStatus(Status.INACTIVE);
+        assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
     private List<AnalysisResult> runJobWithAggregation(final boolean isAggregationEnabled) {
@@ -186,7 +186,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         assertThat(result.getSizePerOrigin()).containsExactly(
                 entry("checkstyle", 0), entry("pmd", 0));
         assertThat(result).hasId("analysis");
-        assertThat(result).hasStatus(Status.INACTIVE);
+        assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
     /**
@@ -215,7 +215,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
 
         assertThat(result).hasTotalSize(12);
         assertThat(result).hasId("analysis");
-        assertThat(result).hasStatus(Status.INACTIVE);
+        assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
     private Run<?, ?> runJobWithCheckStyleTwice(final boolean isAggregationEnabled, final Result result) {
@@ -248,7 +248,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         assertThat(result).hasFixedSize(3);
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); // Outstanding
         assertThat(result).hasTotalSize(5);
-        assertThat(result).hasStatus(Status.INACTIVE);
+        assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
     /**
@@ -272,7 +272,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         assertThat(result).hasFixedSize(0);
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); // Outstanding
         assertThat(result).hasTotalSize(8);
-        assertThat(result).hasStatus(Status.INACTIVE);
+        assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
     /**
@@ -296,7 +296,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         assertThat(result).hasFixedSize(0);
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(8); // Outstanding
         assertThat(result).hasTotalSize(8);
-        assertThat(result).hasStatus(Status.INACTIVE);
+        assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
     /**
@@ -321,7 +321,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         assertThat(result).hasFixedSize(3);
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(2); // Outstanding
         assertThat(result).hasTotalSize(4);
-        assertThat(result).hasStatus(Status.INACTIVE);
+        assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
     private ToolConfiguration createEclipse(final String pattern) {
@@ -366,7 +366,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
 
         assertThat(result).hasTotalSize(6);
         assertThat(result).hasInfoMessages("Resolved module names for 6 issues");
-        assertThat(result).hasStatus(Status.INACTIVE);
+        assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
     /**
@@ -397,7 +397,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
 
         assertThat(result).hasTotalSize(6);
         assertThat(result).hasInfoMessages("Resolved module names for 6 issues");
-        assertThat(result).hasStatus(Status.INACTIVE);
+        assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
     private FreeStyleProject createCheckStyleProject(final boolean isEnabledForFailure) {

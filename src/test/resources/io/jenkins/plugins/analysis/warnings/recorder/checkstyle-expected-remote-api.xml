@@ -22,7 +22,7 @@
   <outstandingIssue/>
   <outstandingIssue/>
   <owner _class="hudson.model.FreeStyleBuild" />
-  <status>INACTIVE</status>
+  <qualityGateStatus>INACTIVE</qualityGateStatus>
   <successful>true</successful>
   <totalErrorsSize>0</totalErrorsSize>
   <totalHighPrioritySize>7</totalHighPrioritySize>
