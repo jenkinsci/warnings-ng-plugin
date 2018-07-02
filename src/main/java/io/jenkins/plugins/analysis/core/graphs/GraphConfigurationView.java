@@ -295,7 +295,7 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return the time stamp of the associated build.
      */
     public long getTimestamp() {
-        return 0; // FIXME: train wreck
+        return 0; 
     }
 
     /**
