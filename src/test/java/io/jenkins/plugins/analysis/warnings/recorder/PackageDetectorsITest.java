@@ -38,6 +38,7 @@ import hudson.model.Result;
  * @author Frank Christian Geyer
  * @author Deniz Mardin
  */
+// TODO: Use PropertyTable for all tests
 public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
     private static final String PACKAGE_FILE_PATH = "detectors/";
     private static final String PACKAGE_WITH_FILES_CSHARP = PACKAGE_FILE_PATH + "csharp/";
