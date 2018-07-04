@@ -55,8 +55,9 @@ public class IssuesTable {
 
         List<HtmlTableBody> bodies = table.getBodies();
         assertThat(bodies).hasSize(1);
+        
         HtmlTableBody mainBody = bodies.get(0);
-        getContent(mainBody);
+        waitForAjaxCall(mainBody);
         List<HtmlTableRow> contentRows = mainBody.getRows();
 
         for (HtmlTableRow row : contentRows) {
@@ -65,10 +66,10 @@ public class IssuesTable {
         }
     }
 
-    private void getContent(final HtmlTableBody body) {
+    private void waitForAjaxCall(final HtmlTableBody body) {
         while ("No data available in table".equals(
                 body.getRows().get(0).getCells().get(0).getFirstChild().getTextContent())) {
-            System.out.println("Waiting for Ajax calls to populate issues table ...");
+            System.out.println("Waiting for Ajax call to populate issues table ...");
             body.getPage().getEnclosingWindow().getJobManager().waitForJobs(1000);
         }
     }

@@ -340,15 +340,18 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
     @Test @WithTimeout(10000)
     public void shouldFindNewCheckStyleWarnings() {
         FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
+        
+        buildWithStatus(project, Result.SUCCESS); // dummy build to ensure that the first CheckStyle build starts at #2
+        
         IssuesRecorder recorder = enableWarnings(project, new ToolConfiguration(new CheckStyle(), "**/checkstyle1*"));
 
-        // First build: baseline
         AnalysisResult baseline = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(baseline).hasTotalSize(3);
         assertThat(baseline).hasNewSize(0);
         assertThat(baseline).hasFixedSize(0);
 
-        // Second build: actual result
+        verifyBaselineDetails(baseline);
+
         recorder.setTool(new ToolConfiguration(new CheckStyle(), "**/checkstyle2*"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
@@ -356,8 +359,12 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         assertThat(result).hasFixedSize(2);
         assertThat(result).hasTotalSize(4);
 
+        verifyDetails(result);
+    }
+
+    private void verifyDetails(final AnalysisResult result) {
         HtmlPage details = getWebPage(result);
-        
+
         PropertyTable categories = new PropertyTable(details, "category");
         assertThat(categories.getTitle()).isEqualTo("Categories");
         assertThat(categories.getColumnName()).isEqualTo("Category");
@@ -365,7 +372,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
                 new PropertyRow("Blocks", 2, 100),
                 new PropertyRow("Design", 1, 50),
                 new PropertyRow("Sizes", 1, 50));
-        
+
         PropertyTable types = new PropertyTable(details, "type");
         assertThat(types.getTitle()).isEqualTo("Types");
         assertThat(types.getColumnName()).isEqualTo("Type");
@@ -377,10 +384,35 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         IssuesTable issues = new IssuesTable(details);
         assertThat(issues.getTitle()).isEqualTo("Issues");
         assertThat(issues.getRows()).containsExactly(
-                new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "High", 3),
+                new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "High", 2),
                 new IssueRow("CsharpNamespaceDetector.java:29", "-", "Sizes", "LineLengthCheck", "High", 1),
                 new IssueRow("CsharpNamespaceDetector.java:30", "-", "Blocks", "RightCurlyCheck", "High", 1),
                 new IssueRow("CsharpNamespaceDetector.java:37", "-", "Blocks", "RightCurlyCheck", "High", 1));
+    }
+
+    private void verifyBaselineDetails(final AnalysisResult baseline) {
+        HtmlPage baselineDetails = getWebPage(baseline);
+
+        PropertyTable categories = new PropertyTable(baselineDetails, "category");
+        assertThat(categories.getTitle()).isEqualTo("Categories");
+        assertThat(categories.getColumnName()).isEqualTo("Category");
+        assertThat(categories.getRows()).containsExactly(
+                new PropertyRow("Design", 2, 100),
+                new PropertyRow("Sizes", 1, 50));
+
+        PropertyTable types = new PropertyTable(baselineDetails, "type");
+        assertThat(types.getTitle()).isEqualTo("Types");
+        assertThat(types.getColumnName()).isEqualTo("Type");
+        assertThat(types.getRows()).containsExactly(
+                new PropertyRow("DesignForExtensionCheck", 2, 100),
+                new PropertyRow("LineLengthCheck", 1, 50));
+
+        IssuesTable issues = new IssuesTable(baselineDetails);
+        assertThat(issues.getTitle()).isEqualTo("Issues");
+        assertThat(issues.getRows()).containsExactly(
+                new IssueRow("CsharpNamespaceDetector.java:17", "-", "Design", "DesignForExtensionCheck", "High", 1),
+                new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "High", 1),
+                new IssueRow("CsharpNamespaceDetector.java:42", "-", "Sizes", "LineLengthCheck", "High", 1));
     }
 
     /**
