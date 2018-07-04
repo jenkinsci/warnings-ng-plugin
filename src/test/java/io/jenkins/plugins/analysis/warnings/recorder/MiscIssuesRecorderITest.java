@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.jvnet.hudson.test.recipes.WithTimeout;
 
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -20,6 +21,8 @@ import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.Pmd;
+import io.jenkins.plugins.analysis.warnings.recorder.IssuesTable.IssueRow;
+import io.jenkins.plugins.analysis.warnings.recorder.PropertyTable.PropertyRow;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -334,7 +337,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
      * several properties of the issue if the source code has not been found.
      */
     // TODO: there should be also some tests that use the fingerprinting algorithm on existing source files
-    @Test
+    @Test @WithTimeout(10000)
     public void shouldFindNewCheckStyleWarnings() {
         FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
         IssuesRecorder recorder = enableWarnings(project, new ToolConfiguration(new CheckStyle(), "**/checkstyle1*"));
@@ -352,6 +355,32 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         assertThat(result).hasNewSize(3);
         assertThat(result).hasFixedSize(2);
         assertThat(result).hasTotalSize(4);
+
+        HtmlPage details = getWebPage(result);
+        
+        PropertyTable categories = new PropertyTable(details, "category");
+        assertThat(categories.getTitle()).isEqualTo("Categories");
+        assertThat(categories.getColumnName()).isEqualTo("Category");
+        assertThat(categories.getRows()).containsExactly(
+                new PropertyRow("Blocks", 2, 100),
+                new PropertyRow("Design", 1, 50),
+                new PropertyRow("Sizes", 1, 50));
+        
+        PropertyTable types = new PropertyTable(details, "type");
+        assertThat(types.getTitle()).isEqualTo("Types");
+        assertThat(types.getColumnName()).isEqualTo("Type");
+        assertThat(types.getRows()).containsExactly(
+                new PropertyRow("DesignForExtensionCheck", 1, 50),
+                new PropertyRow("LineLengthCheck", 1, 50),
+                new PropertyRow("RightCurlyCheck", 2, 100));
+
+        IssuesTable issues = new IssuesTable(details);
+        assertThat(issues.getTitle()).isEqualTo("Issues");
+        assertThat(issues.getRows()).containsExactly(
+                new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "High", 3),
+                new IssueRow("CsharpNamespaceDetector.java:29", "-", "Sizes", "LineLengthCheck", "High", 1),
+                new IssueRow("CsharpNamespaceDetector.java:30", "-", "Blocks", "RightCurlyCheck", "High", 1),
+                new IssueRow("CsharpNamespaceDetector.java:37", "-", "Blocks", "RightCurlyCheck", "High", 1));
     }
 
     /**

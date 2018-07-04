@@ -114,8 +114,7 @@ public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
         assertThat(propertyTable.getRows()).containsExactly(
                 new PropertyRow("-", 5, 100),
                 new PropertyRow("edu.hm.hafner.analysis._123.int.naming.structure", 1, 20));
-        
-       
+
         // TODO: Click Package Link
     }
 
