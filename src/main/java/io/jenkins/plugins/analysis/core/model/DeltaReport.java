@@ -38,14 +38,14 @@ public class DeltaReport {
         allIssues.setReference(String.valueOf(currentBuildNumber));
         if (history.getPreviousBuild().isPresent()) {
             Run<?, ?> build = history.getPreviousBuild().get();
-            report.logInfo("Using reference build '%s' to compute new, fixed, and outstanding issues:",
+            report.logInfo("Using reference build '%s' to compute new, fixed, and outstanding issues",
                     build);
             IssueDifference difference = new IssueDifference(report, currentBuildNumber, history.getPreviousIssues());
 
             outstandingIssues = difference.getOutstandingIssues();
             newIssues = difference.getNewIssues();
             fixedIssues = difference.getFixedIssues();
-            report.logInfo("Outstanding: %d, New: %d, Fixed: %d",
+            report.logInfo("Issues delta (vs. reference build): outstanding: %d, new: %d, fixed: %d",
                     outstandingIssues.size(), newIssues.size(), fixedIssues.size());
             referenceJobName = build.getParent().getFullName();
             referenceBuildId = build.getId();
