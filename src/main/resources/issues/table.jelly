@@ -13,7 +13,7 @@
 
   <div role="tabpanel" id="issuesContent" class="tab-pane fade">
     <div class="table-responsive">
-      <table class="table table-responsive table-responsive-block table-hover table-striped" id="issues">
+      <table class="table table-hover table-striped" id="issues">
         <colgroup>
           <j:forEach var="width" items="${labelProvider.getTableWidths(issues)}">
             <col class="col-width-${width}"/>
