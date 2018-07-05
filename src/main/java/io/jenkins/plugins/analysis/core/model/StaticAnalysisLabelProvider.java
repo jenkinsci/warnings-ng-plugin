@@ -1,6 +1,8 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import javax.annotation.CheckForNull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
@@ -87,36 +89,64 @@ public class StaticAnalysisLabelProvider {
     }
 
     /**
-     * Returns the table headers of the issues table.
+     * Returns the table headers of the report table.
+     *
+     * @param report
+     *         the report to show
      *
      * @return the table headers
      */
-    public String[] getTableHeaders() {
-        return new String[]{
-                Messages.Table_Column_Details(),
-                Messages.Table_Column_File(),
-                Messages.Table_Column_Package(),
-                Messages.Table_Column_Category(),
-                Messages.Table_Column_Type(),
-                Messages.Table_Column_Priority(),
-                Messages.Table_Column_Age()
-        };
+    @SuppressWarnings("unused") // called by Jelly view
+    public List<String> getTableHeaders(final Report report) {
+        List<String> visibleColumns = new ArrayList<>();
+        visibleColumns.add(Messages.Table_Column_Details());
+        visibleColumns.add(Messages.Table_Column_File());
+        if (report.hasPackages()) {
+            visibleColumns.add(Messages.Table_Column_Package());
+        }
+        if (report.hasCategories()) {
+            visibleColumns.add(Messages.Table_Column_Category());
+        }
+        if (report.hasTypes()) {
+            visibleColumns.add(Messages.Table_Column_Type());
+        }
+        visibleColumns.add(Messages.Table_Column_Priority());
+        visibleColumns.add(Messages.Table_Column_Age());
+        return visibleColumns;
     }
 
     /**
-     * Returns the widths of the table headers of the issues table.
+     * Returns the widths of the table headers of the report table.
+     *
+     * @param report
+     *         the report to show
      *
      * @return the width of the table headers
      */
-    public int[] getTableWidths() {
-        return new int[]{1, 1, 2, 1, 1, 1, 1};
+    @SuppressWarnings("unused") // called by Jelly view
+    public List<Integer> getTableWidths(final Report report) {
+        List<Integer> widths = new ArrayList<>();
+        widths.add(1);
+        widths.add(1);
+        if (report.hasPackages()) {
+            widths.add(2);
+        }
+        if (report.hasCategories()) {
+            widths.add(1);
+        }
+        if (report.hasTypes()) {
+            widths.add(1);
+        }
+        widths.add(1);
+        widths.add(1);
+        return widths;
     }
 
     /**
      * Converts the specified set of issues into a table.
      *
      * @param report
-     *         the issues to show in the table
+     *         the report to show in the table
      * @param ageBuilder
      *         produces the age of an issue based on the current build number
      *
@@ -125,7 +155,7 @@ public class StaticAnalysisLabelProvider {
     public JSONObject toJsonArray(final Report report, final AgeBuilder ageBuilder) {
         JSONArray rows = new JSONArray();
         for (Issue issue : report) {
-            rows.add(toJson(issue, ageBuilder));
+            rows.add(toJson(report, issue, ageBuilder));
         }
         JSONObject data = new JSONObject();
         data.put("data", rows);
@@ -135,6 +165,8 @@ public class StaticAnalysisLabelProvider {
     /**
      * Returns an JSON array that represents the columns of the issues table.
      *
+     * @param report
+     *         the report to show in the table
      * @param issue
      *         the issue to get the column properties for
      * @param ageBuilder
@@ -142,13 +174,20 @@ public class StaticAnalysisLabelProvider {
      *
      * @return the columns
      */
-    protected JSONArray toJson(final Issue issue, final AgeBuilder ageBuilder) {
+    protected JSONArray toJson(final Report report, final Issue issue,
+            final AgeBuilder ageBuilder) {
         JSONArray columns = new JSONArray();
         columns.add(formatDetails(issue));
         columns.add(formatFileName(issue));
-        columns.add(formatProperty("packageName", issue.getPackageName()));
-        columns.add(formatProperty("category", issue.getCategory()));
-        columns.add(formatProperty("type", issue.getType()));
+        if (report.hasPackages()) {
+            columns.add(formatProperty("packageName", issue.getPackageName()));
+        }
+        if (report.hasCategories()) {
+            columns.add(formatProperty("category", issue.getCategory()));
+        }
+        if (report.hasTypes()) {
+            columns.add(formatProperty("type", issue.getType()));
+        }
         columns.add(formatSeverity(issue.getSeverity()));
         columns.add(formatAge(issue, ageBuilder));
         return columns;
@@ -197,7 +236,18 @@ public class StaticAnalysisLabelProvider {
                 severity.getName(), LocalizedSeverity.getLocalizedString(severity));
     }
 
-    private String formatProperty(final String property, final String value) {
+    /**
+     * Formats the text of the specified property column. T he text actually is a link to the UI representation of the
+     * property.
+     *
+     * @param property
+     *         the property to format
+     * @param value
+     *         the value of the property
+     *
+     * @return the formatted column
+     */
+    protected String formatProperty(final String property, final String value) {
         return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), value);
     }
 

@@ -5,26 +5,29 @@
     <st:attribute name="issues" use="required" type="edu.hm.hafner.analysis.Report">
       The issues to show.
     </st:attribute>
-    <st:attribute name="labelProvider" use="required" type="io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider">
+    <st:attribute name="labelProvider" use="required"
+                  type="io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider">
       The issues to show.
     </st:attribute>
   </st:documentation>
 
   <div role="tabpanel" id="issuesContent" class="tab-pane fade">
-    <table class="table table-responsive table-responsive-block table-hover table-striped" id="issues">
-      <colgroup>
-        <j:forEach var="width" items="${labelProvider.tableWidths}">
-          <col class="col-width-${width}"/>
-        </j:forEach>
-      </colgroup>
-      <thead>
-        <tr>
-          <j:forEach var="label" items="${labelProvider.tableHeaders}">
-            <th>${label}</th>
+    <div class="table-responsive">
+      <table class="table table-responsive table-responsive-block table-hover table-striped" id="issues">
+        <colgroup>
+          <j:forEach var="width" items="${labelProvider.getTableWidths(issues)}">
+            <col class="col-width-${width}"/>
           </j:forEach>
-        </tr>
-      </thead>
-    </table>
+        </colgroup>
+        <thead>
+          <tr>
+            <j:forEach var="label" items="${labelProvider.getTableHeaders(issues)}">
+              <th>${label}</th>
+            </j:forEach>
+          </tr>
+        </thead>
+      </table>
+    </div>
 
   </div>
 

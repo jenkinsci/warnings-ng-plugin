@@ -16,6 +16,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.Defaul
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link StaticAnalysisLabelProvider}.
@@ -55,16 +56,23 @@ class StaticAnalysisLabelProviderTest {
         assertThat(noNameLabelProvider).hasName(noNameLabelProvider.getDefaultName());
     }
 
-    private void assertThatColumnsAreValid(final JSONArray columns, final int index) {
-        assertThat(columns.get(0)).isEqualTo(
+    private void assertThatColumnsAreValid(final Report report, final JSONArray columns, final int index) {
+        int column = 0;
+        assertThat(columns.get(column++)).isEqualTo(
                 "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;MESSAGE&lt;/strong&gt;&lt;/p&gt; DESCRIPTION\"></div>");
-        String actual = columns.getString(1);
+        String actual = columns.getString(column++);
         assertThat(actual).matches(createFileLinkMatcher("file-" + index, 15));
-        assertThat(columns.get(2)).isEqualTo(createPropertyLink("packageName", "package-" + index));
-        assertThat(columns.get(3)).isEqualTo(createPropertyLink("category", "category-" + index));
-        assertThat(columns.get(4)).isEqualTo(createPropertyLink("type", "type-" + index));
-        assertThat(columns.get(5)).isEqualTo("<a href=\"HIGH\">High</a>");
-        assertThat(columns.get(6)).isEqualTo("1");
+        if (report.hasPackages()) {
+            assertThat(columns.get(column++)).isEqualTo(createPropertyLink("packageName", "package-" + index));
+        }
+        if (report.hasCategories()) {
+            assertThat(columns.get(column++)).isEqualTo(createPropertyLink("category", "category-" + index));
+        }
+        if (report.hasTypes()) {
+            assertThat(columns.get(column++)).isEqualTo(createPropertyLink("type", "type-" + index));
+        }
+        assertThat(columns.get(column++)).isEqualTo("<a href=\"HIGH\">High</a>");
+        assertThat(columns.get(column)).isEqualTo("1");
     }
 
     private String createPropertyLink(final String property, final String value) {
@@ -127,31 +135,16 @@ class StaticAnalysisLabelProviderTest {
 
             Report report = new Report();
             report.add(createIssue(1));
+            report.add(createIssue(2));
 
             StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider();
-            JSONObject oneElement = labelProvider.toJsonArray(report, new DefaultAgeBuilder(1, "url"));
+            JSONObject twoRows = labelProvider.toJsonArray(report, new DefaultAgeBuilder(1, "url"));
 
-            assertThatJson(oneElement).node("data").isArray().ofLength(1);
+            assertThatJson(twoRows).node("data").isArray().ofLength(2);
 
-            JSONArray singleRow = getDataSection(oneElement);
-
-            JSONArray columns = singleRow.getJSONArray(0);
-
-            assertThatColumnsAreValid(columns, 1);
-
-            report.add(createIssue(2));
-            JSONObject twoElements = labelProvider.toJsonArray(report, new DefaultAgeBuilder(1, "url"));
-
-            assertThatJson(twoElements).node("data").isArray().ofLength(2);
-
-            JSONArray rows = getDataSection(twoElements);
-
-            JSONArray columnsFirstRow = rows.getJSONArray(0);
-            assertThatColumnsAreValid(columnsFirstRow, 1);
-
-            assertThatJson(rows.get(1)).isArray().ofLength(IssueModelTest.EXPECTED_NUMBER_OF_COLUMNS);
-            JSONArray columnsSecondRow = rows.getJSONArray(1);
-            assertThatColumnsAreValid(columnsSecondRow, 2);
+            JSONArray rows = getDataSection(twoRows);
+            assertThatColumnsAreValid(report, rows.getJSONArray(0), 1);
+            assertThatColumnsAreValid(report, rows.getJSONArray(1), 2);
         }
 
         private JSONArray getDataSection(final JSONObject oneElement) {
@@ -193,11 +186,28 @@ class StaticAnalysisLabelProviderTest {
                     .setPriority(Priority.HIGH)
                     .setReference("1").build();
 
-            StaticAnalysisLabelProvider provider = new StaticAnalysisLabelProvider();
-            JSONArray columns = provider.toJson(issue, build -> String.valueOf(build));
+            Report report = mock(Report.class);
 
+            StaticAnalysisLabelProvider provider = new StaticAnalysisLabelProvider();
+
+            JSONArray columns = provider.toJson(report, issue, String::valueOf);
+            assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS - 3);
+            assertThatColumnsAreValid(report, columns, 1);
+
+            when(report.hasPackages()).thenReturn(true);
+            columns = provider.toJson(report, issue, String::valueOf);
+            assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS - 2);
+            assertThatColumnsAreValid(report, columns, 1);
+
+            when(report.hasCategories()).thenReturn(true);
+            columns = provider.toJson(report, issue, String::valueOf);
+            assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS - 1);
+            assertThatColumnsAreValid(report, columns, 1);
+
+            when(report.hasTypes()).thenReturn(true);
+            columns = provider.toJson(report, issue, String::valueOf);
             assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
-            assertThatColumnsAreValid(columns, 1);
+            assertThatColumnsAreValid(report, columns, 1);
         }
     }
 }
