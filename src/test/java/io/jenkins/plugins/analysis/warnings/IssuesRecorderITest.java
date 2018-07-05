@@ -185,50 +185,75 @@ public class IssuesRecorderITest extends IntegrationTest {
 
     // JobActionTests -------------------------------------------------------------------------------------
 
+    @Test
+    public void shouldNotReturnJobActionWithoutBuild() {
+        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
+        enableWarningsWithFilePattern(project);
 
-    /**
-     * Get JobAction from new FreeStyleProject and check DisplayName and TrendName
-     * DisplayName should be equal to "Eclipse ECJ Warnings"
-     * TrendName should be equal to "Eclipse ECJ Warnings Trend"
-     */
+        JobAction jobAction = project.getAction(JobAction.class);
+        assertThat(jobAction).isNull();
+    }
+
     @Test
     public void shouldShowDisplayNameAndTrendName() {
 
-        JobAction jobAction = getJobActionFromNewProject();
+        // assertThat(jobAction.getDisplayName()).isEqualTo("Eclipse ECJ Warnings");
+        // assertThat(jobAction.getTrendName()).isEqualTo("Eclipse ECJ Warnings Trend");
 
-        assertThat(jobAction.getDisplayName()).isEqualTo("Eclipse ECJ Warnings");
-        assertThat(jobAction.getTrendName()).isEqualTo("Eclipse ECJ Warnings Trend");
+
+        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
+        enableWarnings(project);
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result).hasOverallResult(Result.SUCCESS);
+
+        HtmlPage page = getWebPage(result);
+        assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
     }
 
     /**
-     * jobAction should return an action
+     * Tests if getLastAction returns the jobAction of the last build of the project.
      */
     @Test
     public void shouldReturnLastAction() {
+        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
+        enableWarningsWithFilePattern(project);
 
-        JobAction jobAction = getJobActionFromNewProjectWithWorkspaceFile();
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        JobAction firstJobAction = project.getAction(JobAction.class);
+        ResultAction firstAction = firstJobAction.getLastAction();
+        String firstOwnerName = firstAction.getOwner().getDisplayName();
+        assertThat(firstOwnerName).isEqualToIgnoringCase("#1");
 
-        ResultAction action = jobAction.getLastAction();
-
-        assertThat(action).isNotNull();
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        JobAction secondJobAction = project.getAction(JobAction.class);
+        ResultAction secondAction = secondJobAction.getLastAction();
+        String secondOwnerName = secondAction.getOwner().getDisplayName();
+        assertThat(secondOwnerName).isEqualToIgnoringCase("#2");
     }
 
     /**
-     * jobAction should return a run
+     * Tests if getLastFinishedRun returns the run of the last build of the project.
      */
     @Test
     public void shouldReturnLastFinishedRun() {
+        FreeStyleProject project = createJobWithWorkspaceFile("eclipse.txt");
+        enableWarningsWithFilePattern(project);
 
-        JobAction jobAction = getJobActionFromNewProjectWithWorkspaceFile();
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        JobAction firstJobAction = project.getAction(JobAction.class);
+        Run<?, ?> firstRun = firstJobAction.getLastFinishedRun();
+        assertThat(firstRun.number).isEqualTo(1);
 
-        Run<?, ?> run = jobAction.getLastFinishedRun();
-
-        assertThat(run).isNotNull();
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        JobAction secondJobAction = project.getAction(JobAction.class);
+        Run<?, ?> secondRun = secondJobAction.getLastFinishedRun();
+        assertThat(secondRun.number).isEqualTo(2);
     }
 
     /**
-     * iconFileName of JobAction should be null if the jobAction has no results
-     * the jobAction has no results because a new project is created without a workspace file
+     * IconFileName should be null if the jobAction has no results.
      */
     @Test
     public void shouldNotHaveIconFileNameWhenLastActionHasNoResults() {
@@ -244,9 +269,8 @@ public class IssuesRecorderITest extends IntegrationTest {
     }
 
     /**
-     * iconFileName of JobAction should be null if the jobAction has no results
-     * iconFileName should contain "/static/" and "/plugin/analysis-core/icons/analysis-24x24.png"
-     * The middle part of the iconFileName is generated
+     * IconFileName should begin with "/static/" and end with "/plugin/analysis-core/icons/analysis-24x24.png".
+     * The middle part of iconFileName is generated.
      */
     @Test
     public void shouldHaveIconFileName() {
@@ -256,15 +280,14 @@ public class IssuesRecorderITest extends IntegrationTest {
         String iconFileName = jobAction.getIconFileName();
 
         ResultAction action = jobAction.getLastAction();
-        assertThat(action.getResult().getTotalSize()).isGreaterThan(0);
+        assertThat(action.getResult().getTotalSize()).isEqualTo(8);
 
-        assertThat(iconFileName).contains("/static/", "/plugin/analysis-core/icons/analysis-24x24.png");
+        assertThat(iconFileName).startsWith("/static/");
+        assertThat(iconFileName).endsWith("/plugin/analysis-core/icons/analysis-24x24.png");
     }
 
     /**
-     * Returns the jobAction created during build of a new freeStyleProject with workspace file
-     * JobAction should exist
-     * JobActions last action should not have any error messages
+     * Returns the jobAction created during build of a new freeStyleProject with workspace file.
      * @return jobAction test object
      */
     private JobAction getJobActionFromNewProjectWithWorkspaceFile() {
@@ -276,13 +299,13 @@ public class IssuesRecorderITest extends IntegrationTest {
         JobAction jobAction = project.getAction(JobAction.class);
 
         assertThat(jobAction).isNotNull();
-        assertThat(jobAction.getLastAction().getResult().getErrorMessages().size()).isGreaterThan(0);
+        assertThat(jobAction.getLastAction().getResult().getErrorMessages().size()).isEqualTo(8);
 
         return jobAction;
     }
 
     /**
-     * Returns the jobAction created during build of a new freeStyleProject
+     * Returns the jobAction created during build of a new freeStyleProject without a workspace file.
      * @return jobAction test object
      */
     private JobAction getJobActionFromNewProject() {
