@@ -22,19 +22,19 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-public class IssuesTable {
+public class DuplicationTable {
     private final String title;
-    private final List<IssueRow> rows = new ArrayList<>();
+    private final List<DuplicationRow> rows = new ArrayList<>();
 
     /**
-     * Creates a new instance of {@link IssuesTable}.
+     * Creates a new instance of {@link DuplicationTable}.
      *
      * @param page
      *         the whole details HTML page
      * @param hasPackages
      *         determines if the packages column is visible
      */
-    public IssuesTable(final HtmlPage page, final boolean hasPackages) {
+    public DuplicationTable(final HtmlPage page, final boolean hasPackages) {
         HtmlAnchor content = page.getAnchorByHref("#issuesContent");
         clickOnLink(content);
 
@@ -52,12 +52,12 @@ public class IssuesTable {
         if (hasPackages) {
             assertThat(cells).hasSize(7);
             assertThat(getHeaders(cells)).containsExactly(
-                    "Details", "File", "Package", "Category", "Type", "Priority", "Age");
+                    "Details", "File", "Package", "Priority", "#Lines", "Duplicated In", "Age");
         }
         else {
             assertThat(cells).hasSize(6);
             assertThat(getHeaders(cells)).containsExactly(
-                    "Details", "File", "Category", "Type", "Priority", "Age");
+                    "Details", "File", "Priority", "#Lines", "Duplicated In", "Age");
         }
 
         List<HtmlTableBody> bodies = table.getBodies();
@@ -69,7 +69,7 @@ public class IssuesTable {
 
         for (HtmlTableRow row : contentRows) {
             List<HtmlTableCell> rowCells = row.getCells();
-            rows.add(new IssueRow(rowCells, hasPackages));
+            rows.add(new DuplicationRow(rowCells, hasPackages));
         }
     }
 
@@ -82,7 +82,7 @@ public class IssuesTable {
     }
 
     /**
-     * Clicks a link.
+     * Helper-method for clicking on a link.
      *
      * @param element
      *         a {@link DomElement} which will trigger the redirection to a new page.
@@ -114,20 +114,19 @@ public class IssuesTable {
      *
      * @return the rows
      */
-    public List<IssueRow> getRows() {
+    public List<DuplicationRow> getRows() {
         return rows;
     }
 
     /**
      * Simple Java bean that represents an issue row in the issues table.
      */
-    public static class IssueRow {
+    public static class DuplicationRow {
         private final String fileName;
         private final String packageName;
-        private final String category;
-        private final String type;
         private final String priority;
         private final int age;
+        private final int lineCount;
 
         /**
          * Creates a new row based on the content of a list of three HTML cells.
@@ -137,14 +136,13 @@ public class IssuesTable {
          * @param hasPackages
          *         determines if the packages column is visible
          */
-        public IssueRow(final List<HtmlTableCell> columns, final boolean hasPackages) {
+        public DuplicationRow(final List<HtmlTableCell> columns, final boolean hasPackages) {
             if (hasPackages) {
                 assertThat(columns).hasSize(7);
             }
             else {
                 assertThat(columns).hasSize(6);
             }
-
             int column = 1;
             fileName = asText(columns, column++);
             if (hasPackages) {
@@ -153,9 +151,9 @@ public class IssuesTable {
             else {
                 packageName = "-";
             }
-            category = asText(columns, column++);
-            type = asText(columns, column++);
             priority = asText(columns, column++);
+            lineCount = asInt(columns, column++);
+            column++; // skip links
             age = asInt(columns, column);
         }
 
@@ -174,22 +172,19 @@ public class IssuesTable {
          *         the file name
          * @param packageName
          *         the package name
-         * @param category
-         *         the category
-         * @param type
-         *         the type
          * @param priority
          *         the priority
+         * @param lineCount
+         *         the number of duplicated lines
          * @param age
          *         the age
          */
-        public IssueRow(final String fileName, final String packageName, final String category, final String type,
-                final String priority, final int age) {
+        public DuplicationRow(final String fileName, final String packageName,
+                final String priority, final int lineCount, final int age) {
             this.fileName = fileName;
             this.packageName = packageName;
-            this.category = category;
-            this.type = type;
             this.priority = priority;
+            this.lineCount = lineCount;
             this.age = age;
         }
 
@@ -202,34 +197,30 @@ public class IssuesTable {
                 return false;
             }
 
-            IssueRow issueRow = (IssueRow) o;
+            DuplicationRow that = (DuplicationRow) o;
 
-            if (age != issueRow.age) {
+            if (age != that.age) {
                 return false;
             }
-            if (!fileName.equals(issueRow.fileName)) {
+            if (lineCount != that.lineCount) {
                 return false;
             }
-            if (!packageName.equals(issueRow.packageName)) {
+            if (!fileName.equals(that.fileName)) {
                 return false;
             }
-            if (!category.equals(issueRow.category)) {
+            if (!packageName.equals(that.packageName)) {
                 return false;
             }
-            if (!type.equals(issueRow.type)) {
-                return false;
-            }
-            return priority.equals(issueRow.priority);
+            return priority.equals(that.priority);
         }
 
         @Override
         public int hashCode() {
             int result = fileName.hashCode();
             result = 31 * result + packageName.hashCode();
-            result = 31 * result + category.hashCode();
-            result = 31 * result + type.hashCode();
             result = 31 * result + priority.hashCode();
             result = 31 * result + age;
+            result = 31 * result + lineCount;
             return result;
         }
 
@@ -238,10 +229,9 @@ public class IssuesTable {
             return new ToStringBuilder(this)
                     .append("fileName", fileName)
                     .append("packageName", packageName)
-                    .append("category", category)
-                    .append("type", type)
                     .append("priority", priority)
                     .append("age", age)
+                    .append("lineCount", lineCount)
                     .toString();
         }
     }

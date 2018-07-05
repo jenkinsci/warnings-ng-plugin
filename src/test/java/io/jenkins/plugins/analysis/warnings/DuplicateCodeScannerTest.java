@@ -4,11 +4,13 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryLabelProvider;
 import net.sf.json.JSONArray;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link DuplicateCodeScanner}.
@@ -40,7 +42,9 @@ class DuplicateCodeScannerTest {
 
         DryLabelProvider labelProvider = new DryLabelProvider("id");
 
-        JSONArray firstColumns = labelProvider.toJson(issue, String::valueOf);
+        Report report = mock(Report.class);
+        
+        JSONArray firstColumns = labelProvider.toJson(report, issue, String::valueOf);
         assertThatJson(firstColumns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
 
         assertThat(firstColumns.get(0)).isEqualTo(EMPTY_DETAILS);
@@ -50,7 +54,7 @@ class DuplicateCodeScannerTest {
         assertThat(firstColumns.getString(4)).matches(createLinkMatcher("file-2", 5));
         assertThat(firstColumns.get(5)).isEqualTo("1");
 
-        JSONArray secondColumns = labelProvider.toJson(duplicate, String::valueOf);
+        JSONArray secondColumns = labelProvider.toJson(report, duplicate, String::valueOf);
         assertThatJson(secondColumns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
 
         assertThat(firstColumns.get(0)).isEqualTo(EMPTY_DETAILS);

@@ -37,7 +37,6 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
     private static final String SOURCE_FILE = FOLDER + "/Main.java";
     private static final String ECLIPSE_REPORT = FOLDER + "/eclipseOneAffectedAndThreeNotExistingFiles.txt";
     private static final String ECLIPSE_REPORT_ONE_AFFECTED_FILE = FOLDER + "/eclipseOneAffectedFile.txt";
-    private static final String ECLIPSE_RESULTS = "eclipseResult/";
 
     /** Verifies that the affected source code is copied and shown in the source code view. */
     @Test

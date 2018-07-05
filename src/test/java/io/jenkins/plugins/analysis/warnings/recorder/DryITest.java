@@ -13,7 +13,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-import com.gargoylesoftware.htmlunit.html.HtmlTableHeaderCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
 
@@ -23,6 +22,7 @@ import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Cpd;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
 import io.jenkins.plugins.analysis.warnings.Simian;
+import io.jenkins.plugins.analysis.warnings.recorder.DuplicationTable.DuplicationRow;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -138,36 +138,32 @@ public class DryITest extends AbstractIssuesRecorderITest {
         return tableRows.get(0).getCell(1).getFirstElementChild();
     }
 
-    /**
+   /**
      * Verifies the structure of the issues table. i.e. the displayed table headers and the defined classes of the
      * table.
      */
     @Test
-    public void tableShouldHaveExpectedStructure() {
+    public void tableShouldHaveExpectedStructureWithPo() {
         FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         enableWarnings(project, cpd);
 
-        HtmlTable table = getIssuesTable(project);
-        // TODO: check whether such detailed assertions make sense
-        String classString = "class";
-        assertThat(table).hasFieldOrProperty(classString);
-        assertThat(table.getTagName()).isEqualTo(HtmlTable.TAG_NAME);
-        assertThat(table.getAttribute(classString)).isEqualTo(
-                "table table-responsive table-responsive-block table-hover table-striped dataTable no-footer");
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        HtmlPage details = getWebPage(result);
+        DuplicationTable issues = new DuplicationTable(details, false);
 
-        List<HtmlTableRow> tableHeaderRows = table.getHeader().getRows();
-        assertThat(tableHeaderRows).hasSize(1);
-
-        HtmlTableRow headerRow = tableHeaderRows.get(0);
-        List<HtmlTableCell> headerRowCells = headerRow.getCells();
-        String[] headers = {"Details", "File", "Priority", "#Lines", "Duplicated In", "Age"};
-        assertThat(headerRowCells).hasSize(headers.length);
-        for (int i = 0; i < headers.length; i++) {
-            HtmlTableCell cell = headerRowCells.get(i);
-            assertThat(cell.getTagName()).isEqualTo(HtmlTableHeaderCell.TAG_NAME);
-            assertThat(cell.getTextContent()).isEqualTo(headers[i]);
-        }
+        assertThat(issues.getTitle()).isEqualTo("Issues");
+        assertThat(issues.getRows()).containsExactly(
+                new DuplicationRow("Main.java:11", "-", "Low", 3, 1),
+                new DuplicationRow("Main.java:15", "-", "Low", 3, 1),
+                new DuplicationRow("Main.java:17", "-", "Low", 10, 1),
+                new DuplicationRow("Main.java:17", "-", "Low", 8, 1),
+                new DuplicationRow("Main.java:17", "-", "Low", 3, 1),
+                new DuplicationRow("Main.java:17", "-", "Low", 1, 1),
+                new DuplicationRow("Main.java:20", "-", "Low", 3, 1),
+                new DuplicationRow("Main.java:24", "-", "Low", 3, 1),
+                new DuplicationRow("Main.java:26", "-", "Low", 8, 1),
+                new DuplicationRow("Main.java:26", "-", "Low", 3, 1));
     }
 
     /**

@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.jvnet.hudson.test.recipes.WithTimeout;
 
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -337,7 +336,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
      * several properties of the issue if the source code has not been found.
      */
     // TODO: there should be also some tests that use the fingerprinting algorithm on existing source files
-    @Test @WithTimeout(10000)
+    @Test
     public void shouldFindNewCheckStyleWarnings() {
         FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
         
@@ -381,7 +380,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
                 new PropertyRow("LineLengthCheck", 1, 50),
                 new PropertyRow("RightCurlyCheck", 2, 100));
 
-        IssuesTable issues = new IssuesTable(details);
+        IssuesTable issues = new IssuesTable(details, false);
         assertThat(issues.getTitle()).isEqualTo("Issues");
         assertThat(issues.getRows()).containsExactly(
                 new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "High", 2),
@@ -407,7 +406,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
                 new PropertyRow("DesignForExtensionCheck", 2, 100),
                 new PropertyRow("LineLengthCheck", 1, 50));
 
-        IssuesTable issues = new IssuesTable(baselineDetails);
+        IssuesTable issues = new IssuesTable(baselineDetails, false);
         assertThat(issues.getTitle()).isEqualTo("Issues");
         assertThat(issues.getRows()).containsExactly(
                 new IssueRow("CsharpNamespaceDetector.java:17", "-", "Design", "DesignForExtensionCheck", "High", 1),

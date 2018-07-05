@@ -1,12 +1,14 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
 import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -102,16 +104,24 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
         /**
          * Returns a JSON array that contains the column values for this issue.
          *
+         * @param report
+         *         the report with all issues
+         * @param issue
+         *         the issue to create the JSON array from
          * @param ageBuilder
          *         the builder to compute the age of a build
          *
          * @return the columns of this issue
          */
         @Override
-        protected JSONArray toJson(final Issue issue, final AgeBuilder ageBuilder) {
+        protected JSONArray toJson(final Report report, final Issue issue,
+                final AgeBuilder ageBuilder) {
             JSONArray columns = new JSONArray();
             columns.add(formatDetails(issue));
             columns.add(formatFileName(issue));
+            if (report.hasPackages()) {
+                columns.add(formatProperty("packageName", issue.getPackageName()));
+            }
             columns.add(formatSeverity(issue.getSeverity()));
             columns.add(issue.getLineEnd() - issue.getLineStart() + 1);
             columns.add(formatTargets(issue));
@@ -135,20 +145,33 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
         }
 
         @Override
-        public int[] getTableWidths() {
-            return new int[]{1, 2, 1, 1, 3, 1};
+        public List<Integer> getTableWidths(final Report report) {
+            List<Integer> widths = new ArrayList<>();
+            widths.add(1);
+            widths.add(2);
+            if (report.hasPackages()) {
+                widths.add(2);
+            }
+            widths.add(1);
+            widths.add(1);
+            widths.add(3);
+            widths.add(1);
+            return widths;
         }
 
         @Override
-        public String[] getTableHeaders() {
-            return new String[]{
-                    Messages.DRY_Table_Column_Details(),
-                    Messages.DRY_Table_Column_File(),
-                    Messages.DRY_Table_Column_Priority(),
-                    Messages.DRY_Table_Column_LinesCount(),
-                    Messages.DRY_Table_Column_DuplicatedIn(),
-                    Messages.DRY_Table_Column_Age()
-            };
+        public List<String> getTableHeaders(final Report report) {
+            List<String> headers = new ArrayList<>();
+            headers.add(Messages.DRY_Table_Column_Details());
+            headers.add(Messages.DRY_Table_Column_File());
+            if (report.hasPackages()) {
+                headers.add(Messages.DRY_Table_Column_Package());
+            }
+            headers.add(Messages.DRY_Table_Column_Priority());
+            headers.add(Messages.DRY_Table_Column_LinesCount());
+            headers.add(Messages.DRY_Table_Column_DuplicatedIn());
+            headers.add(Messages.DRY_Table_Column_Age());
+            return headers;
         }
     }
 
