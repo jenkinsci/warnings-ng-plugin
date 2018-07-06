@@ -21,6 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import hudson.model.Job;
+import hudson.model.ModelObject;
 import hudson.model.Run;
 
 /**
@@ -40,79 +41,69 @@ class DetailFactoryTest {
     private static final Report FIXED_ISSUES = createReportWith(3, 2, 1, "fixed");
     private static final String PARENT_NAME = "Parent Name";
 
+    @SuppressWarnings("ParameterNumber")
+    private <T extends ModelObject> T createTrendDetails(final String link, final Run<?, ?> owner, final AnalysisResult result,
+            final Report allIssues, final Report newIssues,
+            final Report outstandingIssues, final Report fixedIssues,
+            final Charset sourceEncoding, final IssuesDetail parent, final Class<T> actualType) {
+        DetailFactory detailFactory = new DetailFactory();
+        Object details = detailFactory.createTrendDetails(link, owner, 
+                result, allIssues, newIssues, outstandingIssues, fixedIssues, sourceEncoding, parent);
+        assertThat(details).isInstanceOf(actualType);
+        return actualType.cast(details);
+    }
+     
     @Test
     void shouldReturnFixedWarningsDetailWhenCalledWithFixedLink() {
-        DetailFactory detailFactory = new DetailFactory();
-
-        Object fixedWarningsDetail = detailFactory.createTrendDetails("fixed", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
-
-        assertThat(fixedWarningsDetail).isInstanceOf(FixedWarningsDetail.class);
-        assertThat((FixedWarningsDetail) fixedWarningsDetail).hasIssues(FIXED_ISSUES);
+        FixedWarningsDetail details = createTrendDetails("fixed", RUN, createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
+                FixedWarningsDetail.class);
+        assertThat(details).hasIssues(FIXED_ISSUES);
     }
 
     @Test
     void shouldReturnIssuesDetailWithNewIssuesWhenCalledWithNewLink() {
-        DetailFactory detailFactory = new DetailFactory();
-
-        Object issuesDetail = detailFactory.createTrendDetails("new", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
-
-        assertThat(issuesDetail).isInstanceOf(IssuesDetail.class);
-        assertThat((IssuesDetail) issuesDetail).hasIssues(NEW_ISSUES);
+        IssuesDetail details = createTrendDetails("new", RUN, createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
+                IssuesDetail.class);
+        assertThat(details).hasIssues(NEW_ISSUES);
     }
 
     @Test
     void shouldReturnIssuesDetailWithOutstandingIssuesWhenCalledWithOutstandingLink() {
-        DetailFactory detailFactory = new DetailFactory();
-
-        Object issuesDetail = detailFactory.createTrendDetails("outstanding", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
-
-        assertThat(issuesDetail).isInstanceOf(IssuesDetail.class);
-        assertThat((IssuesDetail) issuesDetail).hasIssues(OUTSTANDING_ISSUES);
+        IssuesDetail details = createTrendDetails("outstanding", RUN, createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(), 
+                IssuesDetail.class);
+        assertThat(details).hasIssues(OUTSTANDING_ISSUES);
     }
 
     @Test
     void shouldReturnPriorityDetailWithHighPriorityIssuesWhenCalledWithHighLink() {
-        DetailFactory detailFactory = new DetailFactory();
-
-        Object detail = detailFactory.createTrendDetails("HIGH", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
-
-        assertThat(detail).isInstanceOf(IssuesDetail.class);
-        IssuesDetail issuesDetail = (IssuesDetail) detail;
-        assertThat(issuesDetail).hasIssues(ALL_ISSUES.filter(Issue.bySeverity(Severity.WARNING_HIGH)));
-
-        assertThatPrioritiesAreCorrectlySet(issuesDetail, 3, 0, 0);
+        IssuesDetail details = createTrendDetails("HIGH", RUN, createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(), 
+                IssuesDetail.class);
+        assertThat(details).hasIssues(ALL_ISSUES.filter(Issue.bySeverity(Severity.WARNING_HIGH)));
+        assertThatPrioritiesAreCorrectlySet(details, 3, 0, 0);
     }
 
     @Test
     void shouldReturnPriorityDetailWithNormalPriorityIssuesWhenCalledWithNormalLink() {
-        DetailFactory detailFactory = new DetailFactory();
+        IssuesDetail details = createTrendDetails("NORMAL", RUN, createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(), 
+                IssuesDetail.class);
 
-        Object detail = detailFactory.createTrendDetails("NORMAL", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
-
-        assertThat(detail).isInstanceOf(IssuesDetail.class);
-        IssuesDetail issuesDetail = (IssuesDetail) detail;
-        assertThat(issuesDetail).hasIssues(ALL_ISSUES.filter(Issue.bySeverity(Severity.WARNING_NORMAL)));
-
-        assertThatPrioritiesAreCorrectlySet(issuesDetail, 0, 2, 0);
+        assertThat(details).hasIssues(ALL_ISSUES.filter(Issue.bySeverity(Severity.WARNING_NORMAL)));
+        assertThatPrioritiesAreCorrectlySet(details, 0, 2, 0);
     }
 
     @Test
     void shouldReturnPriorityDetailWithLowPriorityIssuesWhenCalledWithLowLink() {
-        DetailFactory detailFactory = new DetailFactory();
+        IssuesDetail details = createTrendDetails("LOW", RUN, createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(), 
+                IssuesDetail.class);
 
-        Object detail = detailFactory.createTrendDetails("LOW", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
-
-        assertThat(detail).isInstanceOf(IssuesDetail.class);
-        IssuesDetail issuesDetail = (IssuesDetail) detail;
-        assertThat(issuesDetail).hasIssues(ALL_ISSUES.filter(Issue.bySeverity(Severity.WARNING_LOW)));
-
-        assertThatPrioritiesAreCorrectlySet(issuesDetail, 0, 0, 1);
+        assertThat(details).hasIssues(ALL_ISSUES.filter(Issue.bySeverity(Severity.WARNING_LOW)));
+        assertThatPrioritiesAreCorrectlySet(details, 0, 0, 1);
     }
 
     private void assertThatPrioritiesAreCorrectlySet(final IssuesDetail issuesDetail,
@@ -125,15 +116,10 @@ class DetailFactoryTest {
 
     @Test
     void shouldReturnInfoErrorDetailWhenCalledWithInfoLink() {
-        DetailFactory detailFactory = new DetailFactory();
-
-        Object detail = detailFactory.createTrendDetails("info", RUN, createResult(),
-                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
-
-        assertThat(detail).isInstanceOf(InfoErrorDetail.class);
-        InfoErrorDetail errorDetail = (InfoErrorDetail) detail;
-        assertThat(errorDetail.getErrorMessages()).containsExactly(ERROR_MESSAGES);
-        assertThat(errorDetail.getDisplayName()).contains(PARENT_NAME);
+        InfoErrorDetail details = createTrendDetails("info", RUN, createResult(),
+                ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(), InfoErrorDetail.class);
+        assertThat(details.getErrorMessages()).containsExactly(ERROR_MESSAGES);
+        assertThat(details.getDisplayName()).contains(PARENT_NAME);
     }
 
     @Test

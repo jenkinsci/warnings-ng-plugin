@@ -20,6 +20,8 @@ import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.PropertyStatistics;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
+import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
+import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import net.sf.json.JSONObject;
 
@@ -118,12 +120,15 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
-     * Gets the remote API for this action.
+     * Gets the remote API for this action. Depending on the path, a different result is selected.
      *
      * @return the remote API
      */
     public Api getApi() {
-        return new Api(result);
+        if (getUrl().endsWith(labelProvider.getResultUrl())) {
+            return new Api(new AnalysisResultApi(result));
+        }
+        return new Api(new ReportApi(getIssues()));
     }
 
     // ------------------------------------ UI entry points for Stapler --------------------------------

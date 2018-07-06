@@ -9,13 +9,12 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.util.NoSuchElementException;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
-import hudson.model.Item;
 import hudson.model.Run;
 
 /**
@@ -24,8 +23,10 @@ import hudson.model.Run;
  *
  * @author Ulli Hafner
  */
+@SuppressWarnings("ParameterNumber")
 public class DetailFactory {
     private static final Report EMPTY = new Report();
+    private static final String LINK_SEPARATOR = ".";
 
     /**
      * Returns a detail object for the selected element for the specified issues.
@@ -51,16 +52,65 @@ public class DetailFactory {
      *
      * @return the dynamic result of this module detail view
      */
-    @SuppressWarnings({"ParameterNumber", "npathcomplexity", "PMD.CyclomaticComplexity"})
+    @SuppressWarnings({"npathcomplexity", "PMD.CyclomaticComplexity"})
     public Object createTrendDetails(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Report allIssues, final Report newIssues,
             final Report outstandingIssues, final Report fixedIssues,
             final Charset sourceEncoding, final IssuesDetail parent) {
         StaticAnalysisLabelProvider labelProvider = parent.getLabelProvider();
-        String plainLink = strip(link);
-        String url = parent.getUrl() + "/" + plainLink;
 
-        // FIXME: url is broken for new, high, etc.
+        if (link.contains(LINK_SEPARATOR)) {
+            return createFilteredView(link, owner, 
+                    result, allIssues, newIssues, outstandingIssues, fixedIssues, 
+                    sourceEncoding, parent, labelProvider);
+        }
+        else {
+            return createNewDetailView(link, owner, 
+                    result, allIssues, newIssues, outstandingIssues, fixedIssues, 
+                    sourceEncoding, parent, labelProvider);
+        }
+    }
+
+    private Object createFilteredView(final String link, final Run<?, ?> owner, final AnalysisResult result,
+            final Report allIssues, final Report newIssues, final Report outstandingIssues, final Report fixedIssues,
+            final Charset sourceEncoding, final IssuesDetail parent, final StaticAnalysisLabelProvider labelProvider) {
+        String plainLink = removePropertyPrefix(link);
+        if (link.startsWith("source.")) {
+            Issue issue = allIssues.findById(UUID.fromString(plainLink));
+            if (ConsoleDetail.isInConsoleLog(issue)) {
+                // FIXME: Put this in Jenkins Facade
+                return new ConsoleDetail(owner, issue.getLineStart(), issue.getLineEnd());
+            }
+            else {
+                // FIXME: Put this in Jenkins Facade
+                return new SourceDetail(owner, issue, sourceEncoding);
+            }
+        }
+
+        String url = parent.getUrl() + "/" + plainLink;
+        String property = StringUtils.substringBefore(link, ".");
+        Predicate<Issue> filter = createPropertyFilter(plainLink, property);
+        Report selectedIssues = allIssues.filter(filter);
+        if (selectedIssues.isEmpty()) {
+            return parent; // fallback TODO: empty element view
+        }
+        else {
+            return new IssuesDetail(owner, result,
+                    selectedIssues, newIssues.filter(filter), outstandingIssues.filter(filter),
+                    fixedIssues.filter(filter), getDisplayNameOfDetails(property, selectedIssues), url,
+                    labelProvider, sourceEncoding);
+        }
+    }
+
+    private Object createNewDetailView(final String link, final Run<?, ?> owner, final AnalysisResult result,
+            final Report allIssues, final Report newIssues, final Report outstandingIssues, final Report fixedIssues,
+            final Charset sourceEncoding, final IssuesDetail parent, final StaticAnalysisLabelProvider labelProvider) {
+        String url = parent.getUrl() + "/" + link;
+
+        if ("all".equals(link)) {
+            return new IssuesDetail(owner, result, allIssues, newIssues, outstandingIssues, fixedIssues, 
+                    labelProvider.getLinkName(), url, labelProvider, sourceEncoding);
+        }
         if ("fixed".equals(link)) {
             return new FixedWarningsDetail(owner, result, fixedIssues, url, labelProvider, sourceEncoding);
         }
@@ -73,50 +123,20 @@ public class DetailFactory {
                     EMPTY, Messages.Outstanding_Warnings_Header(), url, labelProvider, sourceEncoding);
         }
         if ("info".equals(link)) {
-            return new InfoErrorDetail(owner, result.getErrorMessages(), result.getInfoMessages(), labelProvider.getName());
+            return new InfoErrorDetail(owner, result.getErrorMessages(), result.getInfoMessages(),
+                    labelProvider.getName());
         }
-        if (link.startsWith("source.")) {
-            owner.checkPermission(Item.WORKSPACE);
-
-            Issue issue = allIssues.findById(UUID.fromString(plainLink));
-            if (ConsoleDetail.isInConsoleLog(issue)) {
-                // FIXME: Put this in Jenkins Facade
-                return new ConsoleDetail(owner, issue.getLineStart(), issue.getLineEnd());
-            }
-            else {
-                // FIXME: Put this in Jenkins Facade
-                return new SourceDetail(owner, issue, sourceEncoding);
+        for (Severity severity : Severity.getPredefinedValues()) {
+            if (severity.getName().equalsIgnoreCase(link)) {
+                Predicate<Issue> severityFilter = Issue.bySeverity(severity);
+                return new IssuesDetail(owner, result,
+                        allIssues.filter(severityFilter), outstandingIssues.filter(severityFilter),
+                        newIssues.filter(severityFilter), fixedIssues.filter(severityFilter), 
+                        LocalizedSeverity.getLongLocalizedString(severity), url,
+                        labelProvider, sourceEncoding);
             }
         }
-        // FIXME: Do we need an error view?
-        if (Priority.HIGH.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Severity.WARNING_HIGH, allIssues, fixedIssues, outstandingIssues,
-                    newIssues,
-                    url, labelProvider, sourceEncoding);
-        }
-        if (Priority.NORMAL.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Severity.WARNING_NORMAL, allIssues, fixedIssues, outstandingIssues,
-                    newIssues,
-                    url, labelProvider, sourceEncoding);
-        }
-        if (Priority.LOW.equalsIgnoreCase(link)) {
-            return createPrioritiesDetail(owner, result, Severity.WARNING_LOW, allIssues, fixedIssues, outstandingIssues,
-                    newIssues,
-                    url, labelProvider, sourceEncoding);
-        }
-
-        String property = StringUtils.substringBefore(link, ".");
-        Predicate<Issue> filter = createPropertyFilter(plainLink, property);
-        Report selectedIssues = allIssues.filter(filter);
-        if (selectedIssues.isEmpty()) {
-            return parent; // fallback
-        }
-        else {
-            return new IssuesDetail(owner, result,
-                    selectedIssues, newIssues.filter(filter), outstandingIssues.filter(filter),
-                    fixedIssues.filter(filter), getDisplayNameOfDetails(property, selectedIssues), url, labelProvider,
-                    sourceEncoding);
-        }
+        throw new NoSuchElementException("There is no URL mapping for %s and %s", parent.getUrl(), link);
     }
 
     private Predicate<Issue> createPropertyFilter(final String plainLink, final String property) {
@@ -130,23 +150,8 @@ public class DetailFactory {
                 + Issue.getPropertyValueAsString(selectedIssues.get(0), property);
     }
 
-    private String strip(final String link) {
+    private String removePropertyPrefix(final String link) {
         return StringUtils.substringAfter(link, ".");
-    }
-
-    @SuppressWarnings("ParameterNumber")
-    private IssuesDetail createPrioritiesDetail(final Run<?, ?> owner,
-            final AnalysisResult result, final Severity severity,
-            final Report report, final Report fixedIssues, final Report newIssues,
-            final Report outstandingIssues, final String url, final StaticAnalysisLabelProvider labelProvider,
-            final Charset sourceEncoding) {
-        Predicate<Issue> priorityFilter = issue -> issue.getSeverity() == severity;
-        return new IssuesDetail(owner, result,
-                report.filter(priorityFilter),
-                newIssues.filter(priorityFilter),
-                outstandingIssues.filter(priorityFilter),
-                fixedIssues.filter(priorityFilter), LocalizedSeverity.getLongLocalizedString(severity), url,
-                labelProvider, sourceEncoding);
     }
 
     /**
