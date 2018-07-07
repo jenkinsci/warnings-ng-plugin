@@ -15,7 +15,7 @@
       <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css"/>
 
       <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/custom-styles/custom-style.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/font-awesome470/font-awesome.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/font-awesome/css/all.css"/>
 
       <!-- FIXME: replace libraries with local bundles -->
       <script src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -30,23 +30,56 @@
       <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"/>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"/>
 
-      <div class="fluid-container">
+      <j:set var="i" value="${it.issues}"/>
+
+      <j:if test="${i.isNotEmpty()}">
+        
+        <div class="fluid-container">
+
+          <h3>${it.displayName}</h3>
+
+          <div class="row py-3">
+            <issues:trend-chart/>
+            <issues:priorities-chart/>
+          </div>
+
+          <div class="row py-3">
+            <issues:details/>
+          </div>
+
+        </div>
+
+        <script>var view = <st:bind value="${it}"/></script>
+        <script type="text/javascript" src="${resURL}/plugin/analysis-core/js/issues-detail.js"/>
+
+      </j:if>
+
+      <j:if test="${i.isEmpty()}">
+
+        <div class="fluid-container">
 
         <h3>${it.displayName}</h3>
 
-        <div class="row py-3">
-          <issues:trend-chart/>
-          <issues:priorities-chart/>
+          <div class="row py-1">
+            <div class="col">
+              <div id="congratulations">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="text-center">
+                      <h5 class="card-title">${%congratulations}</h5>
+                    </div>
+                    <div class="text-center">
+                      <i class="fa fa-check-double banner" aria-hidden="true"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <div class="row py-3">
-          <issues:details/>
-        </div>
-
-      </div>
-
-      <script>var view = <st:bind value="${it}"/></script>
-      <script type="text/javascript" src="${resURL}/plugin/analysis-core/js/issues-detail.js"/>
+      </j:if>
 
     </l:main-panel>
 

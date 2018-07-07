@@ -18,7 +18,7 @@
             data-normal-label="${%Normal}"
             data-low-label="${%Low}"
         >
-          ${%Priorities}<i class="fa fa fa-bell-o icon-right fa-2x" aria-hidden="true"/>
+          ${%Priorities}<i class="fa fa fa-bell icon-right fa-2x" aria-hidden="true"/>
         </h5>
 
         <div class="graph-size">

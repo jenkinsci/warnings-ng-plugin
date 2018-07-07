@@ -18,7 +18,7 @@
             data-fixed-label="${%Fixed}"
             data-outstanding-label="${%Outstanding}"
         >
-          ${%Trend}<i class="fa fa-line-chart icon-right fa-2x" aria-hidden="true"/>
+          ${%Trend}<i class="fa fa-chart-line icon-right fa-2x" aria-hidden="true"/>
         </h5>
 
         <div class="graph-size">

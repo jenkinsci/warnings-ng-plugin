@@ -70,18 +70,20 @@ div.details-control {
 /* Add font awesome plus icon when its closed */
 div.details-control:before {
     content: "\f055";
-    font-family: FontAwesome;
+    font-family: "Font Awesome 5 Free";
     padding: 12px;
     font-size: 1.5em;
+    font-weight: 900;
     color: #b4b4b4;
 }
 
 /* Add font awesome minus icon when it's opened */
 tr.shown div.details-control:before {
     content: "\f056";
-    font-family: FontAwesome;
+    font-family: "Font Awesome 5 Free";
     padding: 12px;
     font-size: 1.5em;
+    font-weight: 900;
     color: #b4b4b4;
 }
 
@@ -94,6 +96,13 @@ tr.shown div.details-control:before {
     position: absolute;
     right: 25px;
     top: 10px;
+}
+
+/* Font awesome icons banner */
+.banner {
+    padding: 30px;
+    color: #009688;
+    font-size: 100px;
 }
 
 /* ------------------------------------------------------------------------------------------------------------------- */
