@@ -105,11 +105,7 @@ public class ToolConfiguration extends AbstractDescribableImpl<ToolConfiguration
                 try {
                     FilePath workspace = project.getSomeWorkspace();
                     if (workspace != null && workspace.exists()) {
-                        String result = workspace.validateAntFileMask(pattern,
-                                FilePath.VALIDATE_ANT_FILE_MASK_BOUND);
-                        if (result != null) {
-                            return FormValidation.error(result);
-                        }
+                        return validatePatternInWorkspace(pattern, workspace);
                     }
                 }
                 catch (InterruptedException | IOException ignore) {
@@ -117,6 +113,15 @@ public class ToolConfiguration extends AbstractDescribableImpl<ToolConfiguration
                 }
             }
 
+            return FormValidation.ok();
+        }
+
+        private FormValidation validatePatternInWorkspace(final @QueryParameter String pattern,
+                final FilePath workspace) throws IOException, InterruptedException {
+            String result = workspace.validateAntFileMask(pattern, FilePath.VALIDATE_ANT_FILE_MASK_BOUND);
+            if (result != null) {
+                return FormValidation.error(result);
+            }
             return FormValidation.ok();
         }
     }

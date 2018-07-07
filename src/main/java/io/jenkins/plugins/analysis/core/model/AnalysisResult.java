@@ -216,7 +216,7 @@ public class AnalysisResult implements Serializable {
         }
     }
 
-    private HashMap<Severity, Integer> getSizePerSeverity(final Report report) {
+    private Map<Severity, Integer> getSizePerSeverity(final Report report) {
         return new HashMap<>(report.getPropertyCount(Issue::getSeverity));
     }
 

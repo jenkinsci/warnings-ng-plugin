@@ -43,7 +43,6 @@ import hudson.util.Graph;
  *
  * @author Ulli Hafner
  */
-// CHECKSTYLE:COUPLING-OFF
 public class JobAction implements Action {
     private static final Logger LOGGER = Logger.getLogger(JobAction.class.getName());
 

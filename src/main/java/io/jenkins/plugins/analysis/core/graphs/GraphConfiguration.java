@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -652,12 +653,11 @@ public class GraphConfiguration  {
      *
      * @return <code>true</code> if this instance is initialized with its default values.
      */
-    // CHECKSTYLE:OFF Reference comparison is ok in this case
     @SuppressWarnings("all")
     public boolean isDefault() {
         return width == DEFAULT_WIDTH
                 && height == DEFAULT_HEIGHT
-                && graphType.getId() == createDefaultGraph().getId()
+                && Objects.equals(graphType.getId(), createDefaultGraph().getId())
                 && buildCount == DEFAULT_BUILD_COUNT
                 && dayCount == DEFAULT_DAY_COUNT
                 && useBuildDate == DEFAULT_USE_BUILD_DATE

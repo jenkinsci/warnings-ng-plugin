@@ -34,7 +34,7 @@ class SummaryTest {
     @Test
     void shouldShowAggregatedWarnings() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
-                Lists.immutable.of("Error 1", "Error 2"), 0, 0);
+                Lists.immutable.of("Error 1", "Error 2"), 0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).contains("class=\"fa fa-exclamation-triangle\"");
     }
@@ -45,7 +45,7 @@ class SummaryTest {
     @Test
     void shouldHaveDivWithInfoIcon() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).contains("<a href=\"testResult/info\"><i class=\"fa fa-info-circle\"></i>");
     }
@@ -56,7 +56,7 @@ class SummaryTest {
     @Test
     void shouldHaveCorrectIDsForDivs() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).contains("<div id=\"test-summary\">");
         assertThat(createdHtml).contains("<div id=\"test-title\">");
@@ -69,7 +69,7 @@ class SummaryTest {
     @Test
     void shouldContainNoMessageForToolNames() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).doesNotContain(Messages.Tool_ParticipatingTools(""));
     }
@@ -81,7 +81,7 @@ class SummaryTest {
     void shouldContainMessageWithToolNames() {
         AnalysisResult analysisResult = createAnalysisResult(
                 Maps.fixedSize.of("checkstyle", 15, "pmd", 20), 0, 0,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).contains(Messages.Tool_ParticipatingTools("CheckStyle, PMD"));
     }
@@ -93,7 +93,7 @@ class SummaryTest {
     void shouldContainMessageWithToolNamesIfThereAreNoWarningsFound() {
         AnalysisResult analysisResult = createAnalysisResult(
                 Maps.fixedSize.of("checkstyle", 0, "pmd", 0), 0, 0,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).contains("No warnings for");
         assertThat(createdHtml).contains(Messages.Tool_ParticipatingTools("CheckStyle, PMD"));
@@ -105,7 +105,7 @@ class SummaryTest {
     @Test
     void shouldContainNoIssuesSinceLabel() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         when(analysisResult.getTotalSize()).thenReturn(0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).containsPattern("No warnings for .* builds");
@@ -117,7 +117,7 @@ class SummaryTest {
     @Test
     void shouldNotContainNoIssuesSinceLabelWhenTotalIsNotZero() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         when(analysisResult.getTotalSize()).thenReturn(1);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).doesNotContain("No warnings for");
@@ -130,7 +130,7 @@ class SummaryTest {
     @Test
     void shouldNotContainNoIssuesSinceLabelWhenBuildIsYounger() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         when(analysisResult.getTotalSize()).thenReturn(0);
         AnalysisBuild build = mock(AnalysisBuild.class);
         when(build.getNumber()).thenReturn(1);
@@ -147,7 +147,7 @@ class SummaryTest {
     @Test
     void shouldContainNewIssues() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 3, 0,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).containsPattern(
                 createWarningsLink("<a href=\"testResult/new\">.*3 new warnings.*</a>"));
@@ -160,7 +160,7 @@ class SummaryTest {
     @Test
     void shouldNotContainNewIssues() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).doesNotContainPattern(
                 createWarningsLink("<a href=\"testResult/new\">.* new warnings.*</a>"));
@@ -172,7 +172,7 @@ class SummaryTest {
     @Test
     void shouldContainFixedIssuesLabel() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 5,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).containsPattern(
                 createWarningsLink("<a href=\"testResult/fixed\">.*5 fixed warnings.*</a>"));
@@ -184,7 +184,7 @@ class SummaryTest {
     @Test
     void shouldNotContainFixedIssuesLabel() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).doesNotContainPattern(
                 createWarningsLink("<a href=\"testResult/fixed\">.* fixed warnings.*</a>"));
@@ -196,7 +196,7 @@ class SummaryTest {
     @Test
     void shouldContainQualityGateResult() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         when(analysisResult.getQualityGateStatus()).thenReturn(QualityGateStatus.PASSED);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).containsPattern(
@@ -210,7 +210,7 @@ class SummaryTest {
     @Test
     void shouldNotContainQualityGateResult() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         when(analysisResult.getQualityGateStatus()).thenReturn(QualityGateStatus.INACTIVE);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).doesNotContainPattern(
@@ -224,7 +224,7 @@ class SummaryTest {
     @Test
     void shouldContainReferenceBuild() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).contains("Reference build: <a href=\"absoluteUrl\">Job #15</a>");
     }
@@ -235,7 +235,7 @@ class SummaryTest {
     @Test
     void shouldNotContainReferenceBuild() {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
-                EMPTY_ERRORS, 0, 0);
+                EMPTY_ERRORS, 0);
         when(analysisResult.getReferenceBuild()).thenReturn(Optional.empty());
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).doesNotContain("Reference build:");
@@ -248,7 +248,7 @@ class SummaryTest {
     void shouldProvideSummary() {
         AnalysisResult analysisResult = createAnalysisResult(
                 Maps.fixedSize.of("checkstyle", 15, "pmd", 20), 2, 2,
-                EMPTY_ERRORS, 1, 1);
+                EMPTY_ERRORS, 1);
         Summary summary = createTestData(analysisResult);
 
         String actualSummary = summary.create();
@@ -276,8 +276,9 @@ class SummaryTest {
         return new Summary(createLabelProvider("test", "SummaryTest"), analysisResult, facade);
     }
 
-    private AnalysisResult createAnalysisResult(final Map<String, Integer> sizesPerOrigin, final int newSize, final int fixedSize,
-            final ImmutableList<String> errorMessages, final int numberOfIssuesSinceBuild, final int numberOfThresholds) {
+    private AnalysisResult createAnalysisResult(final Map<String, Integer> sizesPerOrigin, 
+            final int newSize, final int fixedSize,
+            final ImmutableList<String> errorMessages, final int numberOfIssuesSinceBuild) {
         AnalysisResult analysisRun = mock(AnalysisResult.class);
         when(analysisRun.getSizePerOrigin()).thenReturn(sizesPerOrigin);
         when(analysisRun.getNewSize()).thenReturn(newSize);

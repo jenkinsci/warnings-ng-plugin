@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.steps;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -19,6 +20,7 @@ import com.google.common.collect.Lists;
 
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
@@ -75,7 +77,9 @@ public class PublishIssuesStep extends Step {
     public PublishIssuesStep(final Report... issues) {
         super();
 
-        this.reports = issues;
+        Ensure.that(issues).isNotEmpty();
+        
+        this.reports = Arrays.copyOf(issues, issues.length);
     }
 
     /**

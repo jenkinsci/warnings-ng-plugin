@@ -40,6 +40,7 @@ import hudson.plugins.analysis.core.GlobalSettings;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 @ExportedBean
 public class IssuesDetail implements ModelObject {
     private final Run<?, ?> owner;

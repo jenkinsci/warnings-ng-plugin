@@ -134,7 +134,7 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     protected void copyDirectoryToWorkspace(final TopLevelItem job, final String directory) {
         try {
-            URL resource = getClass().getResource(directory);
+            URL resource = getTestResourceClass().getResource(directory);
             assertThat(resource).as("No such file: %s", directory).isNotNull();
             FilePath destination = new FilePath(new File(resource.getFile()));
             assertThat(destination.exists()).as("Directory %s does not exist", resource.getFile()).isTrue();

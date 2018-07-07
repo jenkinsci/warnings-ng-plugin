@@ -58,7 +58,7 @@ public class QualityGate implements Serializable {
         newUnstableThreshold = builder.build();
     }
 
-    private QualityGate(final ThresholdSet totalFailedThreshold, final ThresholdSet totalUnstableThreshold,
+    QualityGate(final ThresholdSet totalFailedThreshold, final ThresholdSet totalUnstableThreshold,
             final ThresholdSet newFailedThreshold, final ThresholdSet newUnstableThreshold) {
         this.totalFailedThreshold = totalFailedThreshold;
         this.totalUnstableThreshold = totalUnstableThreshold;
@@ -84,30 +84,32 @@ public class QualityGate implements Serializable {
                 report.getTotalSizeOf(Severity.WARNING_NORMAL),
                 report.getTotalSizeOf(Severity.WARNING_LOW),
                 TOTAL_NUMBER_OF_ISSUES, QualityGateStatus.FAILED, logger);
-        QualityGateStatus totalUnstableStatus = totalUnstableThreshold.evaluate(
-                report.getTotalSize(),
-                report.getTotalSizeOf(Severity.WARNING_HIGH),
-                report.getTotalSizeOf(Severity.WARNING_NORMAL),
-                report.getTotalSizeOf(Severity.WARNING_LOW),
-                TOTAL_NUMBER_OF_ISSUES, QualityGateStatus.WARNING, logger);
         QualityGateStatus newFailedStatus = newFailedThreshold.evaluate(
                 report.getNewSize(),
                 report.getNewSizeOf(Severity.WARNING_HIGH),
                 report.getNewSizeOf(Severity.WARNING_NORMAL),
                 report.getNewSizeOf(Severity.WARNING_LOW),
                 NUMBER_OF_NEW_ISSUES, QualityGateStatus.FAILED, logger);
+        if (!totalFailedStatus.isSuccessful() || !newFailedStatus.isSuccessful()) {
+            return QualityGateStatus.FAILED;
+        }
+
+        QualityGateStatus totalUnstableStatus = totalUnstableThreshold.evaluate(
+                report.getTotalSize(),
+                report.getTotalSizeOf(Severity.WARNING_HIGH),
+                report.getTotalSizeOf(Severity.WARNING_NORMAL),
+                report.getTotalSizeOf(Severity.WARNING_LOW),
+                TOTAL_NUMBER_OF_ISSUES, QualityGateStatus.WARNING, logger);
         QualityGateStatus newUnstableStatus = newUnstableThreshold.evaluate(
                 report.getNewSize(),
                 report.getNewSizeOf(Severity.WARNING_HIGH),
                 report.getNewSizeOf(Severity.WARNING_NORMAL),
                 report.getNewSizeOf(Severity.WARNING_LOW),
                 NUMBER_OF_NEW_ISSUES, QualityGateStatus.WARNING, logger);
-        if (!totalFailedStatus.isSuccessful() || !newFailedStatus.isSuccessful()) {
-            return QualityGateStatus.FAILED;
-        }
         if (!totalUnstableStatus.isSuccessful() || !newUnstableStatus.isSuccessful()) {
             return QualityGateStatus.WARNING;
         }
+        
         return QualityGateStatus.PASSED;
     }
 
