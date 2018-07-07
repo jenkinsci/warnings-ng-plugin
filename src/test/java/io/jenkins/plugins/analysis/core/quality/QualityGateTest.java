@@ -139,18 +139,10 @@ class QualityGateTest extends SerializableTest<QualityGate> {
                 "FAILED -> Total number of issues (Severity High): 1 - Quality Gate: 1",
                 "FAILED -> Total number of issues (Severity Normal): 1 - Quality Gate: 1",
                 "FAILED -> Total number of issues (Severity Low): 1 - Quality Gate: 1",
-                "WARNING -> Total number of issues: 1 - Quality Gate: 1",
-                "WARNING -> Total number of issues (Severity High): 1 - Quality Gate: 1",
-                "WARNING -> Total number of issues (Severity Normal): 1 - Quality Gate: 1",
-                "WARNING -> Total number of issues (Severity Low): 1 - Quality Gate: 1",
                 "FAILED -> Number of new issues: 1 - Quality Gate: 1",
                 "FAILED -> Number of new issues (Severity High): 1 - Quality Gate: 1",
                 "FAILED -> Number of new issues (Severity Normal): 1 - Quality Gate: 1",
-                "FAILED -> Number of new issues (Severity Low): 1 - Quality Gate: 1",
-                "WARNING -> Number of new issues: 1 - Quality Gate: 1",
-                "WARNING -> Number of new issues (Severity High): 1 - Quality Gate: 1",
-                "WARNING -> Number of new issues (Severity Normal): 1 - Quality Gate: 1",
-                "WARNING -> Number of new issues (Severity Low): 1 - Quality Gate: 1");
+                "FAILED -> Number of new issues (Severity Low): 1 - Quality Gate: 1");
     }
     
     @Test
