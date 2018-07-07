@@ -1,0 +1,57 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <st:documentation>
+    Renders info and error messages.
+    <st:attribute name="messages" use="required">
+      The issues to show.
+    </st:attribute>
+    <st:attribute name="errors" use="required" >
+      The issues to show.
+    </st:attribute>
+  </st:documentation>
+
+  <j:if test="${size(errors) > 0}">
+    <div class="row py-3">
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">${%Error Messages}
+              <i class="fa fa-exclamation-triangle icon-right fa-2x" aria-hidden="true"/>
+            </h5>
+            <pre>
+              <samp id="errors">
+                <j:forEach var="message" items="${it.errorMessages}">
+                  <div>
+                    ${message}
+                  </div>
+                </j:forEach>
+              </samp>
+            </pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </j:if>
+
+  <div class="row py-3">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">${%Information Messages}
+            <i class="fa fa-info-circle icon-right fa-2x" aria-hidden="true"/>
+          </h5>
+          <pre>
+            <samp id="info">
+              <j:forEach var="message" items="${messages}">
+                <div>
+                  ${message}
+                </div>
+              </j:forEach>
+            </samp>
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</j:jelly>

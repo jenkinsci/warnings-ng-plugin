@@ -3,6 +3,9 @@ package io.jenkins.plugins.analysis.core.views;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 
@@ -50,6 +53,8 @@ public class IssuesDetail implements ModelObject {
     private final String displayName;
     private final String url;
     private final StaticAnalysisLabelProvider labelProvider;
+    private final List<String> errorMessages = new ArrayList<>();
+    private final List<String> infoMessages = new ArrayList<>();
 
     /** Sanitizes HTML elements in warning messages and tooltips. Use this formatter if raw HTML should be shown. */
     private final MarkupFormatter sanitizer = new RawHtmlMarkupFormatter(true);
@@ -117,8 +122,30 @@ public class IssuesDetail implements ModelObject {
         this(owner, result, result.getIssues(), result.getNewIssues(), result.getOutstandingIssues(),
                 result.getFixedIssues(), labelProvider.getLinkName(), labelProvider.getResultUrl(),
                 labelProvider, sourceEncoding);
+        infoMessages.addAll(result.getInfoMessages().castToList());
+        errorMessages.addAll(result.getErrorMessages().castToList());
     }
 
+    /**
+     * Returns the error messages of the static analysis run.
+     *
+     * @return the error messages
+     */
+    @SuppressWarnings("unused") // Called by jelly view
+    public Collection<String> getErrorMessages() {
+        return errorMessages;
+    }
+
+    /**
+     * Returns the information messages of the static analysis run.
+     *
+     * @return the information messages
+     */
+    @SuppressWarnings("unused") // Called by jelly view
+    public Collection<String> getInfoMessages() {
+        return infoMessages;
+    }
+    
     /**
      * Gets the remote API for this action. Depending on the path, a different result is selected.
      *

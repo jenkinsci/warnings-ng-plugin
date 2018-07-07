@@ -6,7 +6,7 @@
       The issues to show.
     </st:attribute>
     <st:attribute name="labelProvider" use="required" type="io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider">
-      The issues to show.
+      The label provider to render labels and texts.
     </st:attribute>
   </st:documentation>
 

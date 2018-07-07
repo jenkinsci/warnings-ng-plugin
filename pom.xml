@@ -12,7 +12,7 @@
   <artifactId>analysis-core</artifactId>
   <packaging>hpi</packaging>
   <name>Static Analysis Utilities</name>
-  <version>1.99-SNAPSHOT</version>
+  <version>2.0.0-SNAPSHOT</version>
   <description>This plug-in provides utilities for the static code analysis plug-ins.</description>
 
   <url>https://wiki.jenkins.io/x/CwDgAQ</url>
@@ -24,7 +24,7 @@
   <properties>
     <pitest-maven.plugin>1.4.0</pitest-maven.plugin>
     <pitest-maven.junit5.plugin>0.5</pitest-maven.junit5.plugin>
-    <bridge-method-annotation.version>1.17</bridge-method-annotation.version>
+    <bridge-method-annotation.version>1.18</bridge-method-annotation.version>
   </properties>
 
   <dependencies>

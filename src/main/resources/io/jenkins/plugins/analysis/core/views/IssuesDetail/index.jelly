@@ -77,6 +77,8 @@
             </div>
           </div>
 
+          <issues:log-messages errors="${it.errorMessages}" messages="${it.infoMessages}"/>
+
         </div>
 
       </j:if>
