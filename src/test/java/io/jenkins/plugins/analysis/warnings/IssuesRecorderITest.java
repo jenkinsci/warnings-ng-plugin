@@ -271,7 +271,6 @@ public class IssuesRecorderITest extends IntegrationTest {
     /**
      * IconFileName should begin with "/static/" and end with "/plugin/analysis-core/icons/analysis-24x24.png".
      * The middle part of iconFileName is generated.
-     * The action result size varies between 8 (local) and 9 (server)
      */
     @Test
     public void shouldHaveIconFileName() {
@@ -281,7 +280,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         String iconFileName = jobAction.getIconFileName();
 
         ResultAction action = jobAction.getLastAction();
-        assertThat(action.getResult().getTotalSize()).isBetween(8, 9);
+        assertThat(action.getResult().getTotalSize()).isEqualTo(8);
 
         assertThat(iconFileName).startsWith("/static/");
         assertThat(iconFileName).endsWith("/plugin/analysis-core/icons/analysis-24x24.png");
@@ -289,6 +288,7 @@ public class IssuesRecorderITest extends IntegrationTest {
 
     /**
      * Returns the jobAction created during build of a new freeStyleProject with workspace file.
+     * JobActionResult error messages vary between 8 (local) and 9 (server)
      * @return jobAction test object
      */
     private JobAction getJobActionFromNewProjectWithWorkspaceFile() {
@@ -300,7 +300,7 @@ public class IssuesRecorderITest extends IntegrationTest {
         JobAction jobAction = project.getAction(JobAction.class);
 
         assertThat(jobAction).isNotNull();
-        assertThat(jobAction.getLastAction().getResult().getErrorMessages().size()).isEqualTo(8);
+        assertThat(jobAction.getLastAction().getResult().getErrorMessages().size()).isBetween(8, 9);
 
         return jobAction;
     }
