@@ -281,4 +281,13 @@ public abstract class IntegrationTest extends ResourceTest {
             throw new AssertionError(e);
         }
     }
+
+    protected void assertThatLogContains(final Run<?, ?> build, final String message) {
+        try {
+            j.assertLogContains(message, build);
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
 }
