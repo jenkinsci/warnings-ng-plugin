@@ -1,0 +1,35 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+
+  <h2>${%title}</h2>
+  
+  <p>${%description}</p>
+
+  <dl>
+    <dt>
+      <a href="../new/api">${%new.title}</a>
+    </dt>
+    <dd>
+      ${%new.description}
+    </dd>
+    <dt>
+      <a href="../fixed/api">${%fixed.title}</a> 
+    </dt>
+    <dd>
+      ${%fixed.description}
+    </dd>
+    <dt>
+      <a href="../outstanding/api">${%outstanding.title}</a>
+    </dt>
+    <dd>
+      ${%outstanding.description}
+    </dd>
+    <dt>
+      <a href="../all/api">${%all.title}</a>
+    </dt>
+    <dd>
+      ${%all.description}
+    </dd>
+  </dl>
+
+</j:jelly>
