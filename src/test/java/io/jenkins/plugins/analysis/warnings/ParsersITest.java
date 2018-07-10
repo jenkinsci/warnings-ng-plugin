@@ -62,6 +62,12 @@ public class ParsersITest extends PipelineITest {
             + "files=&quot;$files $directory/$i&quot;\n"
             + "done</code></pre>";
 
+    /** Runs the ruboCop parser on output files that contains 2 issues. */
+    @Test
+    public void shouldFindAllRuboCopIssues() {
+        shouldFindIssuesOfTool(2, RuboCop.class, "rubocop.log");
+    }
+
     /** Runs the Android Lint parser on output files that contains 2 issues. */
     @Test
     public void shouldFindAllAndroidLintIssues() {
