@@ -17,19 +17,21 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class SonarCube extends StaticAnalysisTool {
+public class SonarQube extends StaticAnalysisTool {
     static final String ID = "sonar";
 
-    /** Creates a new instance of {@link SonarCube}. */
+    /** Creates a new instance of {@link SonarQube}. */
     @DataBoundConstructor
-    public SonarCube() {
+    public SonarQube() {
         super();
         // empty constructor required for stapler
     }
 
+    // FIXME: See https://issues.jenkins-ci.org/browse/JENKINS-52463
+    // StaticAnalysisTool or Composite 
     @Override
     public IssueParser createParser() {
-        return new SonarQubeIssuesParser();
+        return new SonarQubeIssuesParser(); 
     }
 
     /** Provides the labels for the static analysis tool. */
