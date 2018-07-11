@@ -25,6 +25,7 @@
     <pitest-maven.plugin>1.4.0</pitest-maven.plugin>
     <pitest-maven.junit5.plugin>0.5</pitest-maven.junit5.plugin>
     <bridge-method-annotation.version>1.18</bridge-method-annotation.version>
+    <json.version>20180130</json.version>
   </properties>
 
   <dependencies>
@@ -178,7 +179,7 @@
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20171018</version>
+      <version>${json.version}</version>
       <scope>test</scope>
     </dependency>
 
