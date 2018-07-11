@@ -82,6 +82,7 @@ public class AbstractIssuesRecorderITest extends IntegrationTest {
             final ToolConfiguration... toolConfigurations) {
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setTools(Arrays.asList(toolConfigurations));
+        publisher.setReportEncoding("UTF-8");
         job.getPublishersList().add(publisher);
         return publisher;
     }
