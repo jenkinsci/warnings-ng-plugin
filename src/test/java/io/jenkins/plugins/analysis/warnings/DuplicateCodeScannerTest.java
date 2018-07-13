@@ -6,6 +6,8 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
+import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
+import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryLabelProvider;
 import net.sf.json.JSONArray;
@@ -43,8 +45,12 @@ class DuplicateCodeScannerTest {
         DryLabelProvider labelProvider = new DryLabelProvider("id");
 
         Report report = mock(Report.class);
-        
-        JSONArray firstColumns = labelProvider.toJson(report, issue, String::valueOf);
+
+        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
+        when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
+        FileNameRenderer fileNameRenderer = new FileNameRenderer(buildFolder);
+
+        JSONArray firstColumns = labelProvider.toJson(report, issue, String::valueOf, fileNameRenderer);
         assertThatJson(firstColumns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
 
         assertThat(firstColumns.get(0)).isEqualTo(EMPTY_DETAILS);
@@ -54,7 +60,7 @@ class DuplicateCodeScannerTest {
         assertThat(firstColumns.getString(4)).matches(createLinkMatcher("file-2", 5));
         assertThat(firstColumns.get(5)).isEqualTo("1");
 
-        JSONArray secondColumns = labelProvider.toJson(report, duplicate, String::valueOf);
+        JSONArray secondColumns = labelProvider.toJson(report, duplicate, String::valueOf, fileNameRenderer);
         assertThatJson(secondColumns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
 
         assertThat(firstColumns.get(0)).isEqualTo(EMPTY_DETAILS);

@@ -11,6 +11,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
 import static hudson.plugins.warnings.WarningsDescriptor.*;
+import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import static j2html.TagCreator.*;
@@ -110,36 +111,33 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
          *         the issue to create the JSON array from
          * @param ageBuilder
          *         the builder to compute the age of a build
-         *
+         * @param fileNameRenderer
+         *         creates a link to the affected file (if accessible)
          * @return the columns of this issue
          */
         @Override
         protected JSONArray toJson(final Report report, final Issue issue,
-                final AgeBuilder ageBuilder) {
+                final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer) {
             JSONArray columns = new JSONArray();
             columns.add(formatDetails(issue));
-            columns.add(formatFileName(issue));
+            columns.add(formatFileName(issue, fileNameRenderer));
             if (report.hasPackages()) {
                 columns.add(formatProperty("packageName", issue.getPackageName()));
             }
             columns.add(formatSeverity(issue.getSeverity()));
             columns.add(issue.getLineEnd() - issue.getLineStart() + 1);
-            columns.add(formatTargets(issue));
+            columns.add(formatTargets(issue, fileNameRenderer));
             columns.add(formatAge(issue, ageBuilder));
             return columns;
         }
 
-        private String formatTargets(final Issue issue) {
+        private String formatTargets(final Issue issue, final FileNameRenderer fileNameRenderer) {
             Serializable properties = issue.getAdditionalProperties();
             if (properties instanceof DuplicationGroup) {
                 List<Issue> duplications = ((DuplicationGroup) properties).getDuplications();
                 duplications.remove(issue); // do not show reference to this issue
 
-                return ul(each(duplications, link -> li(a()
-                                .withHref(String.format("source.%s/#%d", link.getId(), link.getLineStart()))
-                                .withText(String.format("%s:%s", FILE_NAME_FORMATTER.apply(link), link.getLineStart()))
-                        ))
-                ).render();
+                return ul(each(duplications, link -> li(fileNameRenderer.createAffectedFileLink(link)))).render();
             }
             return "-";
         }

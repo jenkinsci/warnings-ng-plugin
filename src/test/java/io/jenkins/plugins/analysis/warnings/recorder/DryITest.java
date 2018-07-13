@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
@@ -187,10 +187,8 @@ public class DryITest extends AbstractIssuesRecorderITest {
         assertThat(divElement.getAttribute("data-description")).isEqualTo(
                 "<p><strong></strong></p> <pre><code>public static void functionOne()\n  "
                         + "{\n    System.out.println(&quot;testfile for redundancy&quot;);</code></pre>");
-        HtmlAnchor anchor = (HtmlAnchor) firstTableRowCells.get(1).getFirstElementChild();
-        assertThat(anchor.getAttribute("href")).startsWith("source.");
-        assertThat(anchor.getAttribute("href")).endsWith("/#11");
-        assertThat(anchor.getTextContent()).isEqualTo("Main.java:11");
+        DomElement file = firstTableRowCells.get(1);
+        assertThat(file.getTextContent()).isEqualTo("Main.java:11");
 
         int[] duplications = {8, 17, 20, 26, 29};
         HtmlUnorderedList duplicationList = (HtmlUnorderedList) firstTableRowCells.get(4).getFirstElementChild();
@@ -199,10 +197,8 @@ public class DryITest extends AbstractIssuesRecorderITest {
 
         assertThat(duplicationListItems.getLength()).isEqualTo(duplications.length);
         for (int i = 0; i < duplications.length; i++) {
-            HtmlAnchor anchorElement = (HtmlAnchor) duplicationListItems.item(i).getFirstChild();
-            assertThat(anchorElement.getTextContent()).isEqualTo("Main.java:" + duplications[i]);
-            assertThat(anchorElement.getAttribute("href")).startsWith("source");
-            assertThat(anchorElement.getAttribute("href")).endsWith("/#" + duplications[i]);
+            Node otherFile = duplicationListItems.item(i);
+            assertThat(otherFile.getTextContent()).isEqualTo("Main.java:" + duplications[i]);
         }
     }
 

@@ -16,7 +16,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
@@ -75,6 +75,7 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
         assertThat(extractSourceCodeFromHtml(getSourceCodePage(result))).contains(readSourceCode(project));
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void deleteAffectedFilesInBuildFolder(final AnalysisResult result) {
         result.getIssues().forEach(issue -> AffectedFilesResolver.getFile(result.getOwner(), issue).delete());
     }
@@ -116,7 +117,7 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
 
     // TODO: Navigate to source code from details page once PR#138 has been merged
     private HtmlPage getSourceCodePage(final AnalysisResult result) {
-        return getWebPage(result, StaticAnalysisLabelProvider.getSourceCodeUrl(getIssueWithSource(result)));
+        return getWebPage(result, new FileNameRenderer(result.getOwner()).getSourceCodeUrl(getIssueWithSource(result)));
     }
 
     private FreeStyleProject createEclipseParserProject() {
