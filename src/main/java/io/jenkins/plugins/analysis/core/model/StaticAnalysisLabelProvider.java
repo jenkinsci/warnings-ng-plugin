@@ -8,7 +8,6 @@ import java.util.function.Function;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.IntegerParser;
@@ -35,12 +34,6 @@ import hudson.plugins.analysis.util.ToolTipProvider;
  * @author Ullrich Hafner
  */
 public class StaticAnalysisLabelProvider {
-    /** Formats a full path: selects the file name portion. */
-    public static final Function<Issue, String> FILE_NAME_FORMATTER
-            = issue -> iffElse(IssueParser.SELF.equals(issue.getFileName()),
-            Messages.ConsoleLog_Name(),
-            issue.getBaseName());
-
     private static final String ICONS_PREFIX = "/plugin/analysis-core/icons/";
     private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
     private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
@@ -149,13 +142,16 @@ public class StaticAnalysisLabelProvider {
      *         the report to show in the table
      * @param ageBuilder
      *         produces the age of an issue based on the current build number
+     * @param fileNameRenderer
+     *         creates a link to the affected file (if accessible)
      *
      * @return the table as String
      */
-    public JSONObject toJsonArray(final Report report, final AgeBuilder ageBuilder) {
+    public JSONObject toJsonArray(final Report report, final AgeBuilder ageBuilder,
+            final FileNameRenderer fileNameRenderer) {
         JSONArray rows = new JSONArray();
         for (Issue issue : report) {
-            rows.add(toJson(report, issue, ageBuilder));
+            rows.add(toJson(report, issue, ageBuilder, fileNameRenderer));
         }
         JSONObject data = new JSONObject();
         data.put("data", rows);
@@ -171,14 +167,16 @@ public class StaticAnalysisLabelProvider {
      *         the issue to get the column properties for
      * @param ageBuilder
      *         age builder to compute the age of a build
+     * @param fileNameRenderer
+     *         creates a link to the affected file (if accessible)
      *
      * @return the columns
      */
     protected JSONArray toJson(final Report report, final Issue issue,
-            final AgeBuilder ageBuilder) {
+            final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer) {
         JSONArray columns = new JSONArray();
         columns.add(formatDetails(issue));
-        columns.add(formatFileName(issue));
+        columns.add(formatFileName(issue, fileNameRenderer));
         if (report.hasPackages()) {
             columns.add(formatProperty("packageName", issue.getPackageName()));
         }
@@ -256,25 +254,13 @@ public class StaticAnalysisLabelProvider {
      *
      * @param issue
      *         the issue to show the file name for
+     * @param fileNameRenderer
+     *         creates a link to the affected file (if accessible)
      *
-     * @return the formatted column
+     * @return the formatted file name
      */
-    // FIXME: only link if valid file name
-    protected String formatFileName(final Issue issue) {
-        return String.format("<a href=\"%s/#%d\">%s:%d</a>", getSourceCodeUrl(issue), issue.getLineStart(),
-                FILE_NAME_FORMATTER.apply(issue), issue.getLineStart());
-    }
-
-    /**
-     * Returns the URL to show the source code with the affected issue line.
-     *
-     * @param issue
-     *         the issue to show the source code for
-     *
-     * @return the formatted column
-     */
-    public static String getSourceCodeUrl(final Issue issue) {
-        return "source." + issue.getId();
+    protected String formatFileName(final Issue issue, final FileNameRenderer fileNameRenderer) {
+        return fileNameRenderer.renderAffectedFileLink(issue);
     }
 
     @VisibleForTesting
@@ -564,4 +550,5 @@ public class StaticAnalysisLabelProvider {
             return String.valueOf(currentBuild - buildNumber + 1);
         }
     }
+
 }

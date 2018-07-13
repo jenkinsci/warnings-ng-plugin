@@ -19,6 +19,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.PropertyStatistics;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -173,7 +174,8 @@ public class IssuesDetail implements ModelObject {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public JSONObject getTableModel() {
-        return labelProvider.toJsonArray(getIssues(), new DefaultAgeBuilder(owner.getNumber(), getUrl()));
+        return labelProvider.toJsonArray(getIssues(), new DefaultAgeBuilder(owner.getNumber(), getUrl()),
+                new FileNameRenderer(owner));
     }
 
     /**
@@ -255,7 +257,7 @@ public class IssuesDetail implements ModelObject {
      */
     @SuppressWarnings("unused") // Called by jelly view
     public String getFileDisplayName(final Issue issue) {
-        return StaticAnalysisLabelProvider.FILE_NAME_FORMATTER.apply(issue);
+        return new FileNameRenderer(owner).getFileName(issue);
     }
 
     /**

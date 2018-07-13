@@ -2,12 +2,13 @@ package io.jenkins.plugins.analysis.core.views;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
@@ -33,7 +34,7 @@ public class ConsoleDetail implements ModelObject {
      *         source code file in the workspace
      */
     public static boolean isInConsoleLog(final Issue issue) {
-        return IssueParser.SELF.equals(issue.getFileName());
+        return IssueParser.isSelfReference(issue);
     }
 
     /** The current build as owner of this object. */
@@ -67,9 +68,7 @@ public class ConsoleDetail implements ModelObject {
     }
 
     private void readConsole() {
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(owner.getLogFile()), "UTF8"));
+        try (BufferedReader reader = openConsoleLog()) {
             StringBuilder console = new StringBuilder(1024);
 
             console.append("<table>\n");
@@ -93,9 +92,10 @@ public class ConsoleDetail implements ModelObject {
         catch (IOException exception) {
             sourceCode = sourceCode + exception.getLocalizedMessage();
         }
-        finally {
-            IOUtils.closeQuietly(reader);
-        }
+    }
+
+    private BufferedReader openConsoleLog() throws UnsupportedEncodingException, FileNotFoundException {
+        return new BufferedReader(new InputStreamReader(new FileInputStream(owner.getLogFile()), "UTF8"));
     }
 
     @Override

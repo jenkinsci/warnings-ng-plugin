@@ -7,10 +7,12 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.ResourceTest;
 import static io.jenkins.plugins.analysis.core.model.Assertions.assertThat;
+import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
@@ -138,7 +140,10 @@ class StaticAnalysisLabelProviderTest {
             report.add(createIssue(2));
 
             StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider();
-            JSONObject twoRows = labelProvider.toJsonArray(report, new DefaultAgeBuilder(1, "url"));
+            BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
+            when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
+            JSONObject twoRows = labelProvider.toJsonArray(report, new DefaultAgeBuilder(1, "url"),
+                    new FileNameRenderer(buildFolder));
 
             assertThatJson(twoRows).node("data").isArray().ofLength(2);
 
@@ -190,24 +195,73 @@ class StaticAnalysisLabelProviderTest {
 
             StaticAnalysisLabelProvider provider = new StaticAnalysisLabelProvider();
 
-            JSONArray columns = provider.toJson(report, issue, String::valueOf);
+            BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
+            when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
+            FileNameRenderer fileNameRenderer = new FileNameRenderer(buildFolder);
+            JSONArray columns = provider.toJson(report, issue, String::valueOf, fileNameRenderer);
             assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS - 3);
             assertThatColumnsAreValid(report, columns, 1);
 
             when(report.hasPackages()).thenReturn(true);
-            columns = provider.toJson(report, issue, String::valueOf);
+            columns = provider.toJson(report, issue, String::valueOf, fileNameRenderer);
             assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS - 2);
             assertThatColumnsAreValid(report, columns, 1);
 
             when(report.hasCategories()).thenReturn(true);
-            columns = provider.toJson(report, issue, String::valueOf);
+            columns = provider.toJson(report, issue, String::valueOf, fileNameRenderer);
             assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS - 1);
             assertThatColumnsAreValid(report, columns, 1);
 
             when(report.hasTypes()).thenReturn(true);
-            columns = provider.toJson(report, issue, String::valueOf);
+            columns = provider.toJson(report, issue, String::valueOf, fileNameRenderer);
             assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
             assertThatColumnsAreValid(report, columns, 1);
+        }
+    }
+
+    /**
+     * Tests the rendering of the file name of an affected file of an {@link Issue}.
+     */
+    @Nested
+    class FileNameRendererTest {
+        @Test
+        void shouldExtractBaseName() {
+            FileNameRenderer renderer = new FileNameRenderer(createBuildFolderStub(true));
+
+            Issue fileIssue = new IssueBuilder().setFileName("/path/to/affected/file.txt").setLineStart(20).build();
+
+            assertThat(renderer.getFileName(fileIssue)).isEqualTo("file.txt");
+            assertThat(renderer.getFileNameAtLine(fileIssue)).isEqualTo("file.txt:20");
+
+            Issue consoleIssue = new IssueBuilder().setFileName(IssueParser.SELF).setLineStart(20).build();
+
+            assertThat(renderer.getFileName(consoleIssue)).isEqualTo(Messages.ConsoleLog_Name());
+            assertThat(renderer.getFileNameAtLine(consoleIssue)).isEqualTo(Messages.ConsoleLog_Name() + ":20");
+        }
+
+        @Test
+        void shouldCreateFileNameAsLink() {
+            FileNameRenderer renderer = new FileNameRenderer(createBuildFolderStub(true));
+
+            Issue issue = new IssueBuilder().setFileName("/path/to/affected/file.txt").setLineStart(20).build();
+
+            assertThat(renderer.renderAffectedFileLink(issue)).matches("<a href=\"source\\.[0-9a-f-]+/#20\">file.txt:20</a>");
+            assertThat(renderer.renderAffectedFileLink(issue)).contains(issue.getId().toString());
+        }
+
+        private BuildFolderFacade createBuildFolderStub(final boolean isAccessible) {
+            BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
+            when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(isAccessible);
+            return buildFolder;
+        }
+
+        @Test
+        void shouldCreateFileNameAsPlainText() {
+            FileNameRenderer renderer = new FileNameRenderer(createBuildFolderStub(false));
+
+            Issue issue = new IssueBuilder().setFileName("/path/to/affected/file.txt").setLineStart(20).build();
+
+            assertThat(renderer.renderAffectedFileLink(issue)).matches("file.txt:20");
         }
     }
 }

@@ -51,7 +51,7 @@ public class DeltaReport {
             referenceBuildId = build.getId();
         }
         else {
-            report.logInfo("No valid reference build found. All reported issues will be considered outstanding");
+            report.logInfo("No valid reference build found - all reported issues will be considered outstanding");
             report.forEach(issue -> issue.setReference(String.valueOf(currentBuildNumber)));
             outstandingIssues = report;
             newIssues = EMPTY_REPORT;
