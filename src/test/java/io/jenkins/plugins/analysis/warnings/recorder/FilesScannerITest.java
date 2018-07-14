@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.util.FilesScanner;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
@@ -114,14 +116,19 @@ public class FilesScannerITest extends AbstractIssuesRecorderITest {
 
     /**
      * Runs the {@link FilesScanner} on a workspace with multiple files where some do match the criteria.
+     * 
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-51588">Issue 51588</a>
      */
-    @Test
+    @Test 
     public void findIssuesWithMultipleFiles() {
-        FreeStyleProject project = createCheckStyleJob(MULTIPLE_FILES_WORKSPACE);
-        
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        FreeStyleProject project = createJobWithWorkspaceFile(MULTIPLE_FILES_WORKSPACE);
+        IssuesRecorder recorder = enableWarnings(project, new ToolConfiguration(new CheckStyle(), "*.xml"));
+        recorder.setFailedTotalAll(6);
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
 
         assertThat(result).hasTotalSize(6);
+        assertThat(result).hasQualityGateStatus(QualityGateStatus.FAILED);
         assertThat(result).hasInfoMessages(
                 "Successfully parsed file " + getCheckStyleFile(project),
                 "-> found 6 issues (skipped 0 duplicates)",
