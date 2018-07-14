@@ -457,7 +457,7 @@ public class ModuleDetectorITest extends AbstractIssuesRecorderITest {
     }
 
     private String returnExpectedNumberOfResolvedModuleNames(final int expectedNumberOfResolvedModuleNames) {
-        return "Resolved module names for " + expectedNumberOfResolvedModuleNames + " issues";
+        return "-> resolved module names for " + expectedNumberOfResolvedModuleNames + " issues";
     }
 
     private String returnPreparedHtmlHeader() {

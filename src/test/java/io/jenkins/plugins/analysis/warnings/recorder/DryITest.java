@@ -22,7 +22,8 @@ import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Cpd;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
 import io.jenkins.plugins.analysis.warnings.Simian;
-import io.jenkins.plugins.analysis.warnings.recorder.DuplicationTable.DuplicationRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DuplicationTable;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DuplicationTable.DuplicationRow;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;

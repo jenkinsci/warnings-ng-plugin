@@ -1,6 +1,8 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
@@ -15,12 +17,16 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
+import io.jenkins.plugins.analysis.warnings.Gcc4;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 
+import hudson.FilePath;
 import hudson.Functions;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -44,33 +50,10 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
         FreeStyleProject project = createEclipseParserProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThat(extractSourceCodeFromHtml(getSourceCodePage(result))).contains(readSourceCode(project));
-    }
-
-    /**
-     * Verifies that the workspace file is shown as fallback if the affected file copy in the build folder has been
-     * deleted.
-     */
-    @Test
-    public void shouldShowAffectedSourceCodeEvenIfDeletedInBuildFolder() {
-        FreeStyleProject project = createEclipseParserProject();
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        deleteAffectedFilesInBuildFolder(result);
-
-        assertThat(extractSourceCodeFromHtml(getSourceCodePage(result))).contains(readSourceCode(project));
-    }
-
-    /**
-     * Verifies that the workspace file is shown as fallback if the affected file copy in the build folder has been
-     * deleted.
-     */
-    @Test
-    public void shouldShowAffectedSourceCodeEvenIfMadeUnreadableInBuildFolder() {
-        FreeStyleProject project = createEclipseParserProject();
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        makeFileUnreadable(AffectedFilesResolver.getFile(result.getOwner(), getIssueWithSource(result)));
+        HtmlPage details = getWebPage(result);
+        IssuesTable issues = new IssuesTable(details);
+        IssueRow row = issues.getRow(1);
+        assertThat(row.hasLink(IssueRow.FILE)).isTrue();
 
         assertThat(extractSourceCodeFromHtml(getSourceCodePage(result))).contains(readSourceCode(project));
     }
@@ -218,6 +201,44 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
         assertThatLogContains(result.getOwner(), "1 copied");
         assertThatLogContains(result.getOwner(), "3 not-found");
         assertThatLogContains(result.getOwner(), "0 with I/O error");
+    }
+
+    /**
+     * Verifies that a source code file cannot be shown if the file is not in the workspace.
+     */
+    @Test
+    public void shouldShowNoFilesOutsideWorkspace() {
+        FreeStyleProject job = createFreeStyleProject();
+        prepareGccLog(job);
+        enableWarnings(job, new ToolConfiguration(new Gcc4(), "**/gcc.log"));
+        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
+
+        assertThatLogContains(result.getOwner(), "0 copied");
+        assertThatLogContains(result.getOwner(), "1 not in workspace");
+        assertThatLogContains(result.getOwner(), "0 not-found");
+        assertThatLogContains(result.getOwner(), "0 with I/O error");
+        
+        HtmlPage details = getWebPage(result);
+        IssuesTable issues = new IssuesTable(details);
+        assertThat(issues.getColumnNames()).containsExactly(
+                IssueRow.DETAILS, IssueRow.FILE, IssueRow.CATEGORY, IssueRow.PRIORITY, IssueRow.AGE);
+        assertThat(issues.getRows()).containsExactly(
+                new IssueRow("config.xml:451", "-", 
+                        "Warning", "-", "Normal", 1 ));
+        IssueRow row = issues.getRow(0);
+        assertThat(row.hasLink(IssueRow.FILE)).isFalse();
+    }
+
+    private void prepareGccLog(final FreeStyleProject job) {
+        try {
+            FilePath workspace = getWorkspace(job);
+            workspace.mkdirs();
+            Files.write(Paths.get(workspace.child("gcc.log").getRemote()), 
+                    String.format("%s/config.xml:451: warning: foo defined but not used\n", job.getRootDir()).getBytes());
+        }
+        catch (IOException | InterruptedException e) {
+            throw new AssertionError(e);
+        }
     }
 
     /**

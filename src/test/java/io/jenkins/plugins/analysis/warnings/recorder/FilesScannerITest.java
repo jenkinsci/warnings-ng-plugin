@@ -123,7 +123,8 @@ public class FilesScannerITest extends AbstractIssuesRecorderITest {
 
         assertThat(result).hasTotalSize(6);
         assertThat(result).hasInfoMessages(
-                "Successfully parsed file " + getCheckStyleFile(project) + ": found 6 issues (skipped 0 duplicates)",
+                "Successfully parsed file " + getCheckStyleFile(project),
+                "-> found 6 issues (skipped 0 duplicates)",
                 "-> found 2 files");
         assertThat(result).hasErrorMessages("Skipping file 'zero_length_file.xml' because it's empty.");
     }
@@ -139,7 +140,8 @@ public class FilesScannerITest extends AbstractIssuesRecorderITest {
         
         assertThat(result).hasTotalSize(6);
         assertThat(result).hasInfoMessages(
-                "Successfully parsed file " + getCheckStyleFile(project) + ": found 6 issues (skipped 0 duplicates)",
+                "Successfully parsed file " + getCheckStyleFile(project),
+                "-> found 6 issues (skipped 0 duplicates)",
                 "-> found 1 file");
     }
 

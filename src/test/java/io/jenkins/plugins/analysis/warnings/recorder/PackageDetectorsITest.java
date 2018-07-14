@@ -26,7 +26,8 @@ import edu.hm.hafner.analysis.Issue;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
-import io.jenkins.plugins.analysis.warnings.recorder.PropertyTable.PropertyRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
 import static org.assertj.core.api.Assertions.*;
 
 import hudson.model.FreeStyleProject;
@@ -363,7 +364,7 @@ public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
     }
 
     private String returnExpectedNumberOfResolvedPackageNames(final int expectedNumberOfResolvedPackageNames) {
-        return "Resolved package names of " + expectedNumberOfResolvedPackageNames + " affected files";
+        return "-> resolved package names of " + expectedNumberOfResolvedPackageNames + " affected files";
     }
 
     private String returnPreparedHtmlHeader(final boolean isPackage) {

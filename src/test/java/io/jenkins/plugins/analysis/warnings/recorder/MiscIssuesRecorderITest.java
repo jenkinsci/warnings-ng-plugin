@@ -20,8 +20,10 @@ import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.Pmd;
-import io.jenkins.plugins.analysis.warnings.recorder.IssuesTable.IssueRow;
-import io.jenkins.plugins.analysis.warnings.recorder.PropertyTable.PropertyRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -84,8 +86,9 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
 
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasNewSize(0);
-        assertThat(result).hasInfoMessages("Resolved module names for 8 issues",
-                "Resolved package names of 4 affected files");
+        assertThat(result).hasInfoMessages(
+                "-> resolved module names for 8 issues",
+                "-> resolved package names of 4 affected files");
     }
 
     /**
@@ -380,7 +383,9 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
                 new PropertyRow("LineLengthCheck", 1, 50),
                 new PropertyRow("RightCurlyCheck", 2, 100));
 
-        IssuesTable issues = new IssuesTable(details, false);
+        IssuesTable issues = new IssuesTable(details);
+        assertThat(issues.getColumnNames()).containsExactly(
+                IssueRow.DETAILS, IssueRow.FILE, IssueRow.CATEGORY, IssueRow.TYPE, IssueRow.PRIORITY, IssueRow.AGE);
         assertThat(issues.getTitle()).isEqualTo("Issues");
         assertThat(issues.getRows()).containsExactly(
                 new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "High", 2),
@@ -406,7 +411,9 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
                 new PropertyRow("DesignForExtensionCheck", 2, 100),
                 new PropertyRow("LineLengthCheck", 1, 50));
 
-        IssuesTable issues = new IssuesTable(baselineDetails, false);
+        IssuesTable issues = new IssuesTable(baselineDetails);
+        assertThat(issues.getColumnNames()).containsExactly(
+                IssueRow.DETAILS, IssueRow.FILE, IssueRow.CATEGORY, IssueRow.TYPE, IssueRow.PRIORITY, IssueRow.AGE);
         assertThat(issues.getTitle()).isEqualTo("Issues");
         assertThat(issues.getRows()).containsExactly(
                 new IssueRow("CsharpNamespaceDetector.java:17", "-", "Design", "DesignForExtensionCheck", "High", 1),
@@ -425,7 +432,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
 
         assertThat(result).hasTotalSize(6);
-        assertThat(result).hasInfoMessages("Resolved module names for 6 issues");
+        assertThat(result).hasInfoMessages("-> resolved module names for 6 issues");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
@@ -456,7 +463,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(6);
-        assertThat(result).hasInfoMessages("Resolved module names for 6 issues");
+        assertThat(result).hasInfoMessages("-> resolved module names for 6 issues");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 

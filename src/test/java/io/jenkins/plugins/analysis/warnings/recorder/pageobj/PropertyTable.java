@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings.recorder;
+package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 
 import java.util.ArrayList;
 import java.util.List;
