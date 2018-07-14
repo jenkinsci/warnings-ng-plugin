@@ -14,7 +14,7 @@
             crossorigin="anonymous"/>
 
       <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/custom-styles/custom-style.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/font-awesome470/font-awesome.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/font-awesome/css/all.css"/>
 
       <div class="fluid-container">
         
