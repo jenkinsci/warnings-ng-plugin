@@ -3,6 +3,9 @@ package io.jenkins.plugins.analysis.core.views;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -147,7 +150,7 @@ public class IssuesDetail implements ModelObject {
     public Collection<String> getInfoMessages() {
         return infoMessages;
     }
-    
+
     /**
      * Gets the remote API for this action. Depending on the path, a different result is selected.
      *
@@ -313,8 +316,7 @@ public class IssuesDetail implements ModelObject {
     public PropertyStatistics getDetails(final String propertyName) {
         Function<String, String> propertyFormatter;
         if ("fileName".equals(propertyName)) {
-            // FIXME: propertyFormatter = StaticAnalysisLabelProvider.FILE_NAME_FORMATTER;
-            propertyFormatter = Function.identity();
+            propertyFormatter = new BaseNameMapper();
         }
         else if ("origin".equals(propertyName)) {
             propertyFormatter = origin -> new LabelProviderFactory().create(origin).getName();
@@ -387,5 +389,29 @@ public class IssuesDetail implements ModelObject {
      */
     public String getUrl() {
         return url;
+    }
+
+    /**
+     * Returns the base name of a file name with absolute path.
+     */
+    private static class BaseNameMapper implements Function<String, String> {
+        /**
+         * Returns the base name of the file that contains this issue (i.e. the file name without the full path).
+         *
+         * @return the base name of the file that contains this issue
+         */
+        @Override
+        public String apply(final String absolutePath) {
+            try {
+                Path baseName = Paths.get(absolutePath).getFileName();
+                if (baseName == null) {
+                    return absolutePath; // fallback
+                }
+                return baseName.toString();
+            }
+            catch (InvalidPathException e) {
+                return absolutePath;
+            }
+        }
     }
 }

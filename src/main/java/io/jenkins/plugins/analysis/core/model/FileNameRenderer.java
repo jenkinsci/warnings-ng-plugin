@@ -16,7 +16,6 @@ import hudson.model.Run;
  * @author Ullrich Hafner
  */
 public class FileNameRenderer {
-
     private final BuildFolderFacade facade;
 
     /**

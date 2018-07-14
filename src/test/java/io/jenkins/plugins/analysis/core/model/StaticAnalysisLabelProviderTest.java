@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.ResourceTest;
@@ -219,49 +218,4 @@ class StaticAnalysisLabelProviderTest {
         }
     }
 
-    /**
-     * Tests the rendering of the file name of an affected file of an {@link Issue}.
-     */
-    @Nested
-    class FileNameRendererTest {
-        @Test
-        void shouldExtractBaseName() {
-            FileNameRenderer renderer = new FileNameRenderer(createBuildFolderStub(true));
-
-            Issue fileIssue = new IssueBuilder().setFileName("/path/to/affected/file.txt").setLineStart(20).build();
-
-            assertThat(renderer.getFileName(fileIssue)).isEqualTo("file.txt");
-            assertThat(renderer.getFileNameAtLine(fileIssue)).isEqualTo("file.txt:20");
-
-            Issue consoleIssue = new IssueBuilder().setFileName(IssueParser.SELF).setLineStart(20).build();
-
-            assertThat(renderer.getFileName(consoleIssue)).isEqualTo(Messages.ConsoleLog_Name());
-            assertThat(renderer.getFileNameAtLine(consoleIssue)).isEqualTo(Messages.ConsoleLog_Name() + ":20");
-        }
-
-        @Test
-        void shouldCreateFileNameAsLink() {
-            FileNameRenderer renderer = new FileNameRenderer(createBuildFolderStub(true));
-
-            Issue issue = new IssueBuilder().setFileName("/path/to/affected/file.txt").setLineStart(20).build();
-
-            assertThat(renderer.renderAffectedFileLink(issue)).matches("<a href=\"source\\.[0-9a-f-]+/#20\">file.txt:20</a>");
-            assertThat(renderer.renderAffectedFileLink(issue)).contains(issue.getId().toString());
-        }
-
-        private BuildFolderFacade createBuildFolderStub(final boolean isAccessible) {
-            BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-            when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(isAccessible);
-            return buildFolder;
-        }
-
-        @Test
-        void shouldCreateFileNameAsPlainText() {
-            FileNameRenderer renderer = new FileNameRenderer(createBuildFolderStub(false));
-
-            Issue issue = new IssueBuilder().setFileName("/path/to/affected/file.txt").setLineStart(20).build();
-
-            assertThat(renderer.renderAffectedFileLink(issue)).matches("file.txt:20");
-        }
-    }
 }
