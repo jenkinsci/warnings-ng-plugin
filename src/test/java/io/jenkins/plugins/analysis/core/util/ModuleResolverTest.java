@@ -37,6 +37,6 @@ class ModuleResolverTest {
         assertThat(report.get(0)).hasModuleName("module1");
         assertThat(report.get(1)).hasModuleName("module2");
 
-        assertThat(report.getInfoMessages()).contains("Resolved module names for 1 issues");
+        assertThat(report.getInfoMessages()).contains("-> resolved module names for 1 issues");
     }
 }

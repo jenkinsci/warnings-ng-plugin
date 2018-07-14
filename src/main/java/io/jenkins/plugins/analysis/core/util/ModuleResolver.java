@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.ModuleDetector;
+import edu.hm.hafner.analysis.Report;
 
 /**
  * Resolves module names by reading and mapping module definitions (build.xml, pom.xml, or Manifest.mf files).
@@ -27,13 +27,13 @@ public class ModuleResolver {
                 .collect(Collectors.toList());
 
         if (issuesWithoutModule.isEmpty()) {
-            report.logInfo("All issues already have a valid module name");
+            report.logInfo("-> all issues already have a valid module name");
 
             return;
         }
 
         // FIXME: plural should be in a base/utility class?
         issuesWithoutModule.forEach(issue -> issue.setModuleName(detector.guessModuleName(issue.getFileName())));
-        report.logInfo("Resolved module names for %d issues", issuesWithoutModule.size());
+        report.logInfo("-> resolved module names for %d issues", issuesWithoutModule.size());
     }
 }

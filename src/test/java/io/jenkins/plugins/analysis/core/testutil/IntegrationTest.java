@@ -145,7 +145,7 @@ public abstract class IntegrationTest extends ResourceTest {
         }
     }
 
-    private FilePath getWorkspace(final TopLevelItem job) {
+    protected FilePath getWorkspace(final TopLevelItem job) {
         FilePath workspace = j.jenkins.getWorkspaceFor(job);
         assertThat(workspace).isNotNull();
         return workspace;

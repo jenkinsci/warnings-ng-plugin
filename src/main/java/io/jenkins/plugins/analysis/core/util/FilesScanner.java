@@ -94,7 +94,8 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
             Report result = parser.parse(file, EncodingValidator.defaultCharset(encoding));
             result.setId(id);
             report.addAll(result);
-            report.logInfo("Successfully parsed file %s: found %s (skipped %s)", file,
+            report.logInfo("Successfully parsed file %s", file);
+            report.logInfo("-> found %s (skipped %s)", 
                     plural(report.getSize(), "issue"),
                     plural(report.getDuplicatesSize(), "duplicate"));
         }

@@ -31,7 +31,6 @@ class AffectedFilesResolverTest {
 
         assertThat(report.getInfoMessages()).hasSize(1);
         String message = report.getInfoMessages().get(0);
-        assertThat(message).startsWith("Copying 1 affected files to Jenkins' build folder builds.");
         assertThat(message).contains("0 copied");
         assertThat(message).contains("0 not in workspace");
         assertThat(message).contains("1 not-found");

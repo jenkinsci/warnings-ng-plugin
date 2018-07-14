@@ -89,11 +89,7 @@ public class AffectedFilesResolver {
     public static File getFile(final Run<?, ?> run, final Issue issue) {
         File buildDir = run.getRootDir();
 
-        File tmpFile = new File(new File(buildDir, AFFECTED_FILES_FOLDER_NAME), getTempName(issue.getFileName()));
-        if (!canAccess(tmpFile)) {
-            return new File(issue.getFileName()); // fallback, maybe the source still is on the master node
-        }
-        return tmpFile;
+        return new File(new File(buildDir, AFFECTED_FILES_FOLDER_NAME), getTempName(issue.getFileName()));
     }
 
     /**
@@ -143,9 +139,8 @@ public class AffectedFilesResolver {
             }
         }
 
-        report.logInfo("Copying %d affected files to Jenkins' build folder %s.%n"
-                        + "%d copied, %d not in workspace, %d not-found, %d with I/O error",
-                files.size(), jenkinsBuildRoot.getRemote(), copied, notInWorkspace, notFound, error);
+        report.logInfo("-> %d copied, %d not in workspace, %d not-found, %d with I/O error",
+                copied, notInWorkspace, notFound, error);
     }
 
     /**
