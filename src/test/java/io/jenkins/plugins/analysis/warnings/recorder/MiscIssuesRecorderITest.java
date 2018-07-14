@@ -179,7 +179,8 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldHaveOriginsIfBuildContainsWarnings() {
         FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
-        enableWarnings(project, recorder -> {
+        enableWarnings(project, 
+                recorder -> {
                     recorder.setAggregatingResults(true);
                     recorder.setFilters(Collections.singletonList(new RegexpFilter(".*", new ExcludeFile())));
                 },
@@ -188,8 +189,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
 
         AnalysisResult result = getAnalysisResult(buildWithStatus(project, Result.SUCCESS));
         assertThat(result).hasTotalSize(0);
-        assertThat(result.getSizePerOrigin()).containsExactly(
-                entry("checkstyle", 0), entry("pmd", 0));
+        assertThat(result.getSizePerOrigin()).containsExactly(entry("checkstyle", 0), entry("pmd", 0));
         assertThat(result).hasId("analysis");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
@@ -480,5 +480,27 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         addFailureStep(project);
 
         return project;
+    }
+
+    /**
+     * Verifies that the file names in the files tab use the base path.
+     */
+    @Test
+    public void shouldShowBaseNamesInFilesTab() {
+        FreeStyleProject job = createJobWithWorkspaceFiles("pmd-absolute-path.xml");
+        IssuesRecorder recorder = enableWarnings(job, new Pmd());
+        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
+
+        assertThat(result).hasTotalSize(5);
+
+        HtmlPage details = getWebPage(result);
+        PropertyTable categories = new PropertyTable(details, "fileName");
+        assertThat(categories.getTitle()).isEqualTo("Files");
+        assertThat(categories.getColumnName()).isEqualTo("File");
+        assertThat(categories.getRows()).containsExactly(
+                new PropertyRow("AjcParser.java", 2, 100),
+                new PropertyRow("FindBugsParser.java", 1, 50),
+                new PropertyRow("SonarQubeParser.java", 2, 100));
+
     }
 }
