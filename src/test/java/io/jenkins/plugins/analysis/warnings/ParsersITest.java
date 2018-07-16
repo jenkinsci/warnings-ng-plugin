@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.apache.commons.lang3.StringUtils;
-import org.assertj.core.api.Assertions;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.junit.Assume;
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Issues;
+import edu.hm.hafner.analysis.Report;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import static hudson.Functions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -19,6 +17,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount"})
 public class ParsersITest extends PipelineITest {
     private static final String CODE_FRAGMENT = "<pre><code>#\n"
             + "\n"
@@ -51,7 +50,7 @@ public class ParsersITest extends PipelineITest {
             + "    shift input parameter (twice) to leave only files to copy\n"
             + "    *******************************************************************************\n"
             + "\n"
-            + "files=\"\"\n"
+            + "files=&quot;&quot;\n"
             + "shift\n"
             + "shift\n"
             + "\n"
@@ -60,8 +59,14 @@ public class ParsersITest extends PipelineITest {
             + "\n"
             + "for i in $*\n"
             + "do\n"
-            + "files=\"$files $directory/$i\"\n"
+            + "files=&quot;$files $directory/$i&quot;\n"
             + "done</code></pre>";
+
+    /** Runs the ruboCop parser on output files that contains 2 issues. */
+    @Test
+    public void shouldFindAllRuboCopIssues() {
+        shouldFindIssuesOfTool(2, RuboCop.class, "rubocop.log");
+    }
 
     /** Runs the Android Lint parser on output files that contains 2 issues. */
     @Test
@@ -144,9 +149,9 @@ public class ParsersITest extends PipelineITest {
     /** Runs the CPD parser on output files that contains 2 issues. */
     @Test
     public void shouldFindAllCpdIssues() {
-        Issues<?> issues = shouldFindIssuesOfTool(2, Cpd.class, "cpd.xml");
+        Report report = shouldFindIssuesOfTool(2, Cpd.class, "cpd.xml");
 
-        assertThat(issues.get(0)).hasDescription(CODE_FRAGMENT);
+        assertThatDescriptionOfIssueIsSet(new Cpd(), report.get(0), CODE_FRAGMENT);
     }
 
     /** Runs the Simian parser on output files that contains 4 issues. */
@@ -158,9 +163,10 @@ public class ParsersITest extends PipelineITest {
     /** Runs the DupFinder parser on output files that contains 2 issues. */
     @Test
     public void shouldFindAllDupFinderIssues() {
-        Issues<?> issues = shouldFindIssuesOfTool(2, DupFinder.class, "dupfinder.xml");
+        Report report = shouldFindIssuesOfTool(2, DupFinder.class, "dupfinder.xml");
 
-        assertThat(issues.get(0)).hasDescription("<pre><code>if (items == null) throw new ArgumentNullException(\"items\");</code></pre>");
+        assertThatDescriptionOfIssueIsSet(new DupFinder(), report.get(0),
+                "<pre><code>if (items == null) throw new ArgumentNullException(&quot;items&quot;);</code></pre>");
     }
 
     /** Runs the Armcc parser on output files that contains 3 + 3 issues. */
@@ -184,14 +190,9 @@ public class ParsersITest extends PipelineITest {
     /** Runs the PMD parser on an output file that contains 262 issues (PMD 6.1.0). */
     @Test
     public void shouldFindAllPmdIssues() {
-        Issues<?> issues = shouldFindIssuesOfTool(262, Pmd.class, "pmd-6.xml");
+        Report report = shouldFindIssuesOfTool(262, Pmd.class, "pmd-6.xml");
 
-        Issue issue = issues.get(0);
-
-        StaticAnalysisLabelProvider labelProvider = new Pmd().getLabelProvider();
-        assertThat(issue).hasDescription(StringUtils.EMPTY);
-        Assertions.assertThat(labelProvider.getDescription(issue))
-                .isEqualTo("\n"
+        assertThatDescriptionOfIssueIsSet(new Pmd(), report.get(0), "\n"
                 + "A high number of imports can indicate a high degree of coupling within an object. This rule \n"
                 + "counts the number of unique imports and reports a violation if the count is above the \n"
                 + "user-specified threshold.\n"
@@ -210,40 +211,71 @@ public class ParsersITest extends PipelineITest {
     /** Runs the CheckStyle parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllCheckStyleIssues() {
-        Issues<?> issues = shouldFindIssuesOfTool(6, CheckStyle.class, "checkstyle.xml");
+        Report report = shouldFindIssuesOfTool(6, CheckStyle.class, "checkstyle.xml");
 
-        Issue issue = issues.get(2);
+        assertThatDescriptionOfIssueIsSet(new CheckStyle(), report.get(2),
+                "<p>Since Checkstyle 3.1</p><p>\n"
+                        + "          The check finds classes that are designed for extension (subclass creation).\n"
+                        + "        </p><p>\n");
+    }
 
-        StaticAnalysisLabelProvider labelProvider = new CheckStyle().getLabelProvider();
-        assertThat(issue).hasDescription(StringUtils.EMPTY);
-        Assertions.assertThat(labelProvider.getDescription(issue)).contains("finds classes that are designed for extension");
+    private void assertThatDescriptionOfIssueIsSet(final StaticAnalysisTool tool, final Issue issue,
+            final String expectedDescription) {
+        StaticAnalysisLabelProvider labelProvider = tool.getLabelProvider();
+        assertThat(issue).hasDescription("");
+        assertThat(labelProvider.getDescription(issue)).startsWith(expectedDescription);
     }
 
     /** Runs the FindBugs parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllFindBugsIssues() {
-        Issues<?> issues = shouldFindIssuesOfTool(2, FindBugs.class, "findbugs-native.xml");
+        Report report = shouldFindIssuesOfTool(2, FindBugs.class, "findbugs-native.xml");
 
-        Issue issue = issues.get(0);
-
-        StaticAnalysisLabelProvider labelProvider = new FindBugs().getLabelProvider();
-        assertThat(issue).hasDescription(StringUtils.EMPTY);
-        Assertions.assertThat(labelProvider.getDescription(issue))
-                .contains(
-                        "The fields of this class appear to be accessed inconsistently with respect\n  to synchronization");
+        assertThatDescriptionOfIssueIsSet(new FindBugs(), report.get(0),
+                "<p> The fields of this class appear to be accessed inconsistently with respect\n"
+                        + "  to synchronization.&nbsp; This bug report indicates that the bug pattern detector\n"
+                        + "  judged that\n"
+                        + "  </p>\n"
+                        + "  <ul>\n"
+                        + "  <li> The class contains a mix of locked and unlocked accesses,</li>\n"
+                        + "  <li> The class is <b>not</b> annotated as javax.annotation.concurrent.NotThreadSafe,</li>\n"
+                        + "  <li> At least one locked access was performed by one of the class's own methods, and</li>\n"
+                        + "  <li> The number of unsynchronized field accesses (reads and writes) was no more than\n"
+                        + "       one third of all accesses, with writes being weighed twice as high as reads</li>\n"
+                        + "  </ul>\n"
+                        + "\n"
+                        + "  <p> A typical bug matching this bug pattern is forgetting to synchronize\n"
+                        + "  one of the methods in a class that is intended to be thread-safe.</p>\n"
+                        + "\n"
+                        + "  <p> You can select the nodes labeled \"Unsynchronized access\" to show the\n"
+                        + "  code locations where the detector believed that a field was accessed\n"
+                        + "  without synchronization.</p>\n"
+                        + "\n"
+                        + "  <p> Note that there are various sources of inaccuracy in this detector;\n"
+                        + "  for example, the detector cannot statically detect all situations in which\n"
+                        + "  a lock is held.&nbsp; Also, even when the detector is accurate in\n"
+                        + "  distinguishing locked vs. unlocked accesses, the code in question may still\n"
+                        + "  be correct.</p>");
     }
 
     /** Runs the SpotBugs parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllSpotBugsIssues() {
-        Issues<?> issues = shouldFindIssuesOfTool(2, SpotBugs.class, "spotbugsXml.xml");
+        Report report = shouldFindIssuesOfTool(2, SpotBugs.class, "spotbugsXml.xml");
 
-        Issue issue = issues.get(0);
-
-        StaticAnalysisLabelProvider labelProvider = new FindBugs().getLabelProvider();
-        assertThat(issue).hasDescription(StringUtils.EMPTY);
-        Assertions.assertThat(labelProvider.getDescription(issue))
-                .contains("This code calls a method and ignores the return value.");
+        assertThatDescriptionOfIssueIsSet(new FindBugs(), report.get(0),
+                "<p>This code calls a method and ignores the return value. However our analysis shows that\n"
+                        + "the method (including its implementations in subclasses if any) does not produce any effect \n"
+                        + "other than return value. Thus this call can be removed.\n"
+                        + "</p>\n"
+                        + "<p>We are trying to reduce the false positives as much as possible, but in some cases this warning might be wrong.\n"
+                        + "Common false-positive cases include:</p>\n"
+                        + "<p>- The method is designed to be overridden and produce a side effect in other projects which are out of the scope of the analysis.</p>\n"
+                        + "<p>- The method is called to trigger the class loading which may have a side effect.</p>\n"
+                        + "<p>- The method is called just to get some exception.</p>\n"
+                        + "<p>If you feel that our assumption is incorrect, you can use a @CheckReturnValue annotation\n"
+                        + "to instruct FindBugs that ignoring the return value of this method is acceptable.\n"
+                        + "</p>");
     }
 
     /** Runs the Clang-Tidy parser on an output file that contains 6 issues. */
@@ -592,7 +624,7 @@ public class ParsersITest extends PipelineITest {
     }
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private Issues<?> shouldFindIssuesOfTool(final int expectedSizeOfIssues,
+    private Report shouldFindIssuesOfTool(final int expectedSizeOfIssues,
             final Class<? extends StaticAnalysisTool> tool, final String... fileNames) {
         try {
             WorkflowJob job = createJobWithWorkspaceFiles(fileNames);
@@ -603,11 +635,11 @@ public class ParsersITest extends PipelineITest {
             assertThat(result.getTotalSize()).isEqualTo(expectedSizeOfIssues);
             assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);
 
-            Issues<?> issues = result.getIssues();
-            assertThat(issues.filter(issue -> issue.getOrigin().equals(getIdOf(tool))))
+            Report report = result.getIssues();
+            assertThat(report.filter(issue -> issue.getOrigin().equals(getIdOf(tool))))
                     .hasSize(expectedSizeOfIssues);
 
-            return issues;
+            return report;
         }
         catch (Exception exception) {
             throw new AssertionError(exception);

@@ -17,11 +17,13 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class JavaDoc extends StaticAnalysisTool {
+    private static final long serialVersionUID = -3987566418736570996L;
     static final String ID = "javadoc";
 
     /** Creates a new instance of {@link JavaDoc}. */
     @DataBoundConstructor
     public JavaDoc() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -32,6 +34,9 @@ public class JavaDoc extends StaticAnalysisTool {
 
     /** Provides the labels for the static analysis tool. */
     public static class JavaDocLabelProvider extends JavaLabelProvider {
+        /**
+         * Creates a new {@link JavaDocLabelProvider}.
+         */
         public JavaDocLabelProvider() {
             super(ID, Messages.Warnings_JavaDoc_ParserName());
         }
@@ -40,6 +45,7 @@ public class JavaDoc extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

@@ -1,0 +1,14 @@
+Running RuboCop...
+Inspecting 33 files
+................................C
+
+Offenses:
+
+config.ru:1:1: C: Style/FrozenStringLiteralComment: Missing magic comment # frozen_string_literal: true.
+# This file is used by Rack-based servers to start the application.
+^
+spec/rails_helper.rb:6:7: E: Style/StringLiterals: Prefer single-quoted strings when you don't need string interpolation or special symbols.
+abort("The Rails environment is running in production mode!") if Rails.env.production?
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+33 files inspected, 2 offenses detected

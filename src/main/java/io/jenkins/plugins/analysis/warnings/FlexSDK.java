@@ -4,11 +4,10 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import edu.hm.hafner.analysis.parser.FlexSdkParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-
-import edu.hm.hafner.analysis.parser.FlexSdkParser;
 
 /**
  * Provides a parser and customized messages for FLEX SDK.
@@ -16,11 +15,13 @@ import edu.hm.hafner.analysis.parser.FlexSdkParser;
  * @author Ullrich Hafner
  */
 public class FlexSDK extends StaticAnalysisTool {
+    private static final long serialVersionUID = 8786339674737448596L;
     static final String ID = "flex";
 
     /** Creates a new instance of {@link FlexSDK}. */
     @DataBoundConstructor
     public FlexSDK() {
+        super();
         // empty constructor required for stapler
     }
 
@@ -32,6 +33,7 @@ public class FlexSDK extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

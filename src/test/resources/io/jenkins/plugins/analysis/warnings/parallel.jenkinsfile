@@ -1,0 +1,22 @@
+def tasks = [:]
+
+tasks["task_1"] = {
+  stage ("task_1") {
+    node('node1') {
+      def eclipse = scanForIssues tool: [$class: 'Eclipse'], pattern:'**/*issues.txt', defaultEncoding:'UTF-8'
+      publishIssues issues:[eclipse], name: 'Java Warnings 1', id : 'java-1',
+        filters:[[property: [$class: 'IncludeFile'], pattern: '.*SWTTextBuilder.java.*']]
+    }
+  }
+}
+tasks["task_2"] = {
+  stage ("task_2") {
+    node('node2') {
+      def eclipse = scanForIssues tool: [$class: 'Eclipse'], pattern:'**/*issues.txt', defaultEncoding:'UTF-8'
+      publishIssues issues:[eclipse], name: 'Java Warnings 2', id : 'java-2',
+        filters:[[property: [$class: 'ExcludeFile'], pattern: '.*SWTTextBuilder.java.*']]
+    }
+  }
+}
+
+parallel tasks

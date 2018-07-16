@@ -1,0 +1,24 @@
+<reportApi _class='io.jenkins.plugins.analysis.core.restapi.ReportApi'>
+  <issue>
+    <baseName>CsharpNamespaceDetector.java</baseName>
+    <category>Design</category>
+    <columnEnd>5</columnEnd>
+    <columnStart>5</columnStart>
+    <description></description>
+    <fileName>
+      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
+    </fileName>
+    <fingerprint>FALLBACK-8cb34ad6</fingerprint>
+    <lineEnd>22</lineEnd>
+    <lineStart>22</lineStart>
+    <message>Die Methode 'detectPackageName' ist nicht fr Vererbung entworfen - muss abstract, final oder leer sein.
+    </message>
+    <moduleName></moduleName>
+    <origin>checkstyle</origin>
+    <packageName>-</packageName>
+    <reference>1</reference>
+    <severity>HIGH</severity>
+    <type>DesignForExtensionCheck</type>
+  </issue>
+  <size>1</size>
+</reportApi>

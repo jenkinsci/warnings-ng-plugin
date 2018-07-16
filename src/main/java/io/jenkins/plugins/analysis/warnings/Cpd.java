@@ -15,18 +15,20 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Cpd extends DuplicateCodeScanner {
+    private static final long serialVersionUID = -4121571018057432203L;
     static final String ID = "cpd";
 
     /** Creates a new instance of {@link Cpd}.
      */
     @DataBoundConstructor
     public Cpd() {
+        super();
         // empty constructor required for stapler
     }
 
     @Override
     public CpdParser createParser() {
-        return new CpdParser();
+        return new CpdParser(getHighThreshold(), getNormalThreshold());
     }
 
     /** Provides the labels for the static analysis tool. */
@@ -39,6 +41,7 @@ public class Cpd extends DuplicateCodeScanner {
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends DryDescriptor {
+        /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }

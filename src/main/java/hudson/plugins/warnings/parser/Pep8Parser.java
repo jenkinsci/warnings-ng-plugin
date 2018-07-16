@@ -3,13 +3,12 @@ package hudson.plugins.warnings.parser;
 import java.util.regex.Matcher;
 
 import hudson.Extension;
-
 import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A parser for the Pep8 compiler warnings.
  *
- * @author Marvin Schütz
+ * @author Marvin SchÃ¼tz
  */
 @Extension
 public class Pep8Parser extends RegexpLineParser {

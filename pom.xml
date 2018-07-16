@@ -5,20 +5,22 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>2.0-20180501.220702-24</version>
+    <version>2.0.0-SNAPSHOT</version>
     <relativePath>../analysis-pom</relativePath>
   </parent>
 
   <artifactId>warnings</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Plug-in</name>
-  <version>5.0-SNAPSHOT</version>
-  <url>http://wiki.jenkins-ci.org/x/G4CGAQ</url>
+  <version>5.0.0-SNAPSHOT</version>
+  <url>https://wiki.jenkins.io/x/G4CGAQ</url>
   <description>This plug-in reads the compiler warnings from the console log file and generates a trend report.
   </description>
 
   <properties>
-    <pmd.version>6.1.0</pmd.version>
+    <pmd.version>6.5.0</pmd.version>
+    <commons-digester3.version>3.2</commons-digester3.version>
+    <analysis-core.version>2.0.0-SNAPSHOT</analysis-core.version>
   </properties>
 
   <licenses>
@@ -52,21 +54,27 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.jvnet.hudson.plugins</groupId>
-      <artifactId>analysis-core</artifactId>
-      <version>2.0-SNAPSHOT</version>
+      <groupId>org.jenkins-ci.main</groupId>
+      <artifactId>jenkins-test-harness-tools</artifactId>
+      <version>2.2</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-core</artifactId>
-      <version>2.0-SNAPSHOT</version>
+      <version>${analysis-core.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jvnet.hudson.plugins</groupId>
+      <artifactId>analysis-core</artifactId>
+      <version>${analysis-core.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-digester3</artifactId>
-      <version>3.2</version>
+      <version>${commons-digester3.version}</version>
     </dependency>
 
     <!-- PMD Messages -->
@@ -97,13 +105,6 @@
       </exclusions>
     </dependency>
 
-    <dependency>
-      <groupId>org.jvnet.hudson.plugins</groupId>
-      <artifactId>analysis-test</artifactId>
-      <version>2.0-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
-
     <!-- Integration Test Dependencies -->
     <!-- WorkflowJob -->
     <dependency>
@@ -131,6 +132,14 @@
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-durable-task-step</artifactId>
       <version>2.16</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <!-- XML Unit -->
+    <dependency>
+      <groupId>xmlunit</groupId>
+      <artifactId>xmlunit</artifactId>
+      <version>1.5</version>
       <scope>test</scope>
     </dependency>
 

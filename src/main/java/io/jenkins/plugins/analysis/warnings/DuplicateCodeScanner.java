@@ -1,13 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.parser.dry.CodeDuplication;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
 import static hudson.plugins.warnings.WarningsDescriptor.*;
+import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import static j2html.TagCreator.*;
@@ -21,6 +25,7 @@ import hudson.util.FormValidation;
  * @author Ullrich Hafner
  */
 public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
+    private static final long serialVersionUID = -8446643146836067375L;
     private static final String SMALL_ICON_URL = IMAGE_PREFIX + "dry-24x24.png";
     private static final String LARGE_ICON_URL = IMAGE_PREFIX + "dry-48x48.png";
 
@@ -86,54 +91,85 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
             return LARGE_ICON_URL;
         }
 
+        @Override
+        public String getDescription(final Issue issue) {
+            Serializable properties = issue.getAdditionalProperties();
+            if (properties instanceof DuplicationGroup) {
+                return pre().with(code(((DuplicationGroup) properties).getCodeFragment())).render();
+            }
+            else {
+                return super.getDescription(issue);
+            }
+        }
+
         /**
          * Returns a JSON array that contains the column values for this issue.
          *
+         * @param report
+         *         the report with all issues
+         * @param issue
+         *         the issue to create the JSON array from
          * @param ageBuilder
          *         the builder to compute the age of a build
-         *
+         * @param fileNameRenderer
+         *         creates a link to the affected file (if accessible)
          * @return the columns of this issue
          */
         @Override
-        protected JSONArray toJson(final Issue issue, final AgeBuilder ageBuilder) {
+        protected JSONArray toJson(final Report report, final Issue issue,
+                final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer) {
             JSONArray columns = new JSONArray();
             columns.add(formatDetails(issue));
-            columns.add(formatFileName(issue));
-            columns.add(formatPriority(issue.getPriority()));
+            columns.add(formatFileName(issue, fileNameRenderer));
+            if (report.hasPackages()) {
+                columns.add(formatProperty("packageName", issue.getPackageName()));
+            }
+            columns.add(formatSeverity(issue.getSeverity()));
             columns.add(issue.getLineEnd() - issue.getLineStart() + 1);
-            columns.add(formatTargets(issue));
+            columns.add(formatTargets(issue, fileNameRenderer));
             columns.add(formatAge(issue, ageBuilder));
             return columns;
         }
 
-        private String formatTargets(final Issue issue) {
-            if (issue instanceof CodeDuplication) {
-                List<CodeDuplication> duplications = ((CodeDuplication) issue).getDuplications();
-                return ul(each(duplications, link -> li(a()
-                                .withHref(String.format("source.%s/#%d", link.getId(), link.getLineStart()))
-                                .withText(String.format("%s:%s", FILE_NAME_FORMATTER.apply(link.getFileName()),
-                                        link.getLineStart()))
-                        ))
-                ).render();
+        private String formatTargets(final Issue issue, final FileNameRenderer fileNameRenderer) {
+            Serializable properties = issue.getAdditionalProperties();
+            if (properties instanceof DuplicationGroup) {
+                List<Issue> duplications = ((DuplicationGroup) properties).getDuplications();
+                duplications.remove(issue); // do not show reference to this issue
+
+                return ul(each(duplications, link -> li(fileNameRenderer.createAffectedFileLink(link)))).render();
             }
             return "-";
         }
 
         @Override
-        public int[] getTableWidths() {
-            return new int[]{1, 2, 1, 1, 3, 1};
+        public List<Integer> getTableWidths(final Report report) {
+            List<Integer> widths = new ArrayList<>();
+            widths.add(1);
+            widths.add(2);
+            if (report.hasPackages()) {
+                widths.add(2);
+            }
+            widths.add(1);
+            widths.add(1);
+            widths.add(3);
+            widths.add(1);
+            return widths;
         }
 
         @Override
-        public String[] getTableHeaders() {
-            return new String[]{
-                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_Details(),
-                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_File(),
-                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_Priority(),
-                    Messages.DRY_Table_Column_LinesCount(),
-                    Messages.DRY_Table_Column_DuplicatedIn(),
-                    io.jenkins.plugins.analysis.core.model.Messages.Table_Column_Age()
-            };
+        public List<String> getTableHeaders(final Report report) {
+            List<String> headers = new ArrayList<>();
+            headers.add(Messages.DRY_Table_Column_Details());
+            headers.add(Messages.DRY_Table_Column_File());
+            if (report.hasPackages()) {
+                headers.add(Messages.DRY_Table_Column_Package());
+            }
+            headers.add(Messages.DRY_Table_Column_Priority());
+            headers.add(Messages.DRY_Table_Column_LinesCount());
+            headers.add(Messages.DRY_Table_Column_DuplicatedIn());
+            headers.add(Messages.DRY_Table_Column_Age());
+            return headers;
         }
     }
 
@@ -141,6 +177,12 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
     abstract static class DryDescriptor extends StaticAnalysisToolDescriptor {
         private static final ThresholdValidation VALIDATION = new ThresholdValidation();
 
+        /**
+         * Creates the descriptor instance.
+         *
+         * @param id
+         *         ID of the tool
+         */
         protected DryDescriptor(final String id) {
             super(id);
         }
