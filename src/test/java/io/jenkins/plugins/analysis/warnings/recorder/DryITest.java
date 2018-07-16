@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
@@ -328,23 +327,6 @@ public class DryITest extends AbstractIssuesRecorderITest {
         assertThat(bodies).hasSize(1);
         HtmlTableBody tableBody = bodies.get(0);
         return tableBody.getRows();
-    }
-
-    /**
-     * Helper-method for clicking on a link.
-     *
-     * @param element
-     *         a {@link DomElement} which will trigger the redirection to a new page.
-     *
-     * @return the wanted {@link HtmlPage}.
-     */
-    private HtmlPage clickOnLink(final DomElement element) {
-        try {
-            return element.click();
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
     }
 
     /**

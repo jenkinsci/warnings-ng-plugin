@@ -11,6 +11,7 @@ import org.eclipse.collections.impl.factory.Lists;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlFormUtil;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -113,8 +114,28 @@ public class AbstractIssuesRecorderITest extends IntegrationTest {
             throw new AssertionError(e);
         }
     }
+
+    /**
+     * Clicks a link.
+     *
+     * @param element
+     *         a {@link DomElement} which will trigger the redirection to a new page.
+     */
+    protected HtmlPage clickOnLink(final DomElement element) {
+        try {
+            return element.click();
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
     protected HtmlPage getWebPage(final Run<?, ?> build) {
         return getWebPage(build, StringUtils.EMPTY);
+    }
+    
+    protected HtmlPage getWebPage(final AbstractProject<?, ?> job) {
+        return getWebPage(job, StringUtils.EMPTY);
     }
     
     protected HtmlPage getWebPage(final Run<?, ?> build, final String page) {

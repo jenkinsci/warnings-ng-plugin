@@ -1,17 +1,17 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import java.util.Collections;
+import java.util.List;
 
 import org.junit.Test;
+import org.jvnet.hudson.test.recipes.WithTimeout;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
-import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.views.JobAction;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
@@ -25,152 +25,110 @@ import hudson.model.Run;
  *
  * @author Nikolai Wohlgemuth 
  */
+// TODO: increase branch coverage
 public class JobActionITest extends AbstractIssuesRecorderITest {
-    @Test
-    public void shouldNotReturnJobActionWithoutBuild() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
-        enableWarningsWithFilePattern(project);
-
-        JobAction jobAction = project.getAction(JobAction.class);
-        assertThat(jobAction).isNull();
-    }
-
-    @Test
-    public void shouldShowDisplayNameAndTrendName() {
+    /**
+     * Verifies that the trend chart is visible if there are two valid builds available. 
+     */
+    @Test @WithTimeout(100000)
+    public void shouldShowTrendChart() {
         FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
         enableEclipseWarnings(project);
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
+        assertActionProperties(project, build);
+        
+        HtmlPage jobPage = getWebPage(project);
+        assertThatTrendChartIsHidden(jobPage); // trend chart requires at least two builds
 
-        assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+        assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
+        
+        build = buildWithStatus(project, Result.SUCCESS);
+        assertActionProperties(project, build);
 
-        HtmlPage page = getWebPage(result);
-        assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
+        jobPage = getWebPage(project);
+        assertThatTrendChartIsVisible(jobPage);
+        
+        assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
     }
 
-    /**
-     * Tests if getLastAction returns the jobAction of the last build of the project.
-     */
-    @Test
-    public void shouldReturnLastAction() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
-        enableWarningsWithFilePattern(project);
-
-        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        JobAction firstJobAction = project.getAction(JobAction.class);
-        ResultAction firstAction = firstJobAction.getLastAction();
-        String firstOwnerName = firstAction.getOwner().getDisplayName();
-        assertThat(firstOwnerName).isEqualToIgnoringCase("#1");
-
-        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        JobAction secondJobAction = project.getAction(JobAction.class);
-        ResultAction secondAction = secondJobAction.getLastAction();
-        String secondOwnerName = secondAction.getOwner().getDisplayName();
-        assertThat(secondOwnerName).isEqualToIgnoringCase("#2");
+    private void assertThatSidebarLinkIsVisibleAndOpensLatestResults(final HtmlPage jobPage, final Run<?, ?> build) {
+        StaticAnalysisLabelProvider labelProvider = new Eclipse().getLabelProvider();
+        assertThat(findImageLinks(jobPage)).hasSize(1);
+        List<DomElement> sideBarLinks = findSideBarLinks(jobPage);
+        assertThat(sideBarLinks).hasSize(1);
+        assertThat(clickOnLink(sideBarLinks.get(0)).getBaseURI())
+                .endsWith(build.getUrl() + labelProvider.getResultUrl() + "/");
     }
 
-    /**
-     * Tests if getLastFinishedRun returns the run of the last build of the project.
-     */
-    @Test
-    public void shouldReturnLastFinishedRun() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
-        enableWarningsWithFilePattern(project);
+    private void assertThatTrendChartIsVisible(final HtmlPage jobPage) {
+        DomElement trendChart = findTrendChart(jobPage);
 
-        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        JobAction firstJobAction = project.getAction(JobAction.class);
-        Run<?, ?> firstRun = firstJobAction.getLastFinishedRun();
-        assertThat(firstRun.number).isEqualTo(1);
+        String title = trendChart.getFirstElementChild().getTextContent();
+        assertThat(title).isEqualTo(new Eclipse().getLabelProvider().getTrendName());
+    }
 
-        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        JobAction secondJobAction = project.getAction(JobAction.class);
-        Run<?, ?> secondRun = secondJobAction.getLastFinishedRun();
-        assertThat(secondRun.number).isEqualTo(2);
+    private void assertThatTrendChartIsHidden(final HtmlPage jobPage) {
+        DomElement trendChart = findTrendChart(jobPage);
+        
+        assertThat(trendChart.getFirstElementChild()).isNull(); 
+    }
+
+    private DomElement findTrendChart(final HtmlPage jobPage) {
+        DomElement trendChart = jobPage.getElementById("eclipse");
+        assertThat(trendChart).isNotNull();
+        return trendChart;
+    }
+
+    private void assertActionProperties(final FreeStyleProject project, final Run<?, ?> build) {
+        JobAction jobAction = project.getAction(JobAction.class);
+        assertThat(jobAction).isNotNull();
+
+        ResultAction resultAction = build.getAction(ResultAction.class);
+        assertThat(resultAction).isNotNull();
+
+        StaticAnalysisLabelProvider labelProvider = new Eclipse().getLabelProvider();
+        assertThat(jobAction.getDisplayName()).isEqualTo(labelProvider.getLinkName());
+        assertThat(jobAction.getTrendName()).isEqualTo(labelProvider.getTrendName());
+        assertThat(jobAction.getUrlName()).isEqualTo(labelProvider.getId());
+        assertThat(jobAction.getOwner()).isEqualTo(project);
+        assertThat(jobAction.getIconFileName()).endsWith(labelProvider.getSmallIconUrl());
+        assertThat(jobAction.hasValidResults()).isTrue();
+        assertThat(jobAction.getLastAction()).isEqualTo(resultAction);
+        assertThat(jobAction.getLastFinishedRun()).isEqualTo(build);
     }
 
     /**
      * IconFileName should be null if the jobAction has no results.
      */
     @Test
-    public void shouldNotHaveIconFileNameWhenLastActionHasNoResults() {
-
-        JobAction jobAction = getJobActionFromNewProject();
-
-        String iconFileName = jobAction.getIconFileName();
-
-        ResultAction action = jobAction.getLastAction();
-        assertThat(action.getResult().getTotalSize()).isEqualTo(0);
-
-        assertThat(iconFileName).isNull();
-    }
-
-    /**
-     * IconFileName should begin with "/static/" and end with "/plugin/analysis-core/icons/analysis-24x24.png".
-     * The middle part of iconFileName is generated.
-     */
-    @Test
-    public void shouldHaveIconFileName() {
-
-        JobAction jobAction = getJobActionFromNewProjectWithWorkspaceFile();
-
-        String iconFileName = jobAction.getIconFileName();
-
-        ResultAction action = jobAction.getLastAction();
-        assertThat(action.getResult().getTotalSize()).isEqualTo(8);
-
-        assertThat(iconFileName).startsWith("/static/");
-        assertThat(iconFileName).endsWith("/plugin/analysis-core/icons/analysis-24x24.png");
-    }
-
-    /**
-     * Returns the jobAction created during build of a new freeStyleProject with workspace file.
-     * JobActionResult error messages vary between 8 (local) and 9 (server)
-     * @return jobAction test object
-     */
-    private JobAction getJobActionFromNewProjectWithWorkspaceFile() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
-        enableWarningsWithFilePattern(project);
-
-        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        JobAction jobAction = project.getAction(JobAction.class);
-
-        assertThat(jobAction).isNotNull();
-        assertThat(jobAction.getLastAction().getResult().getErrorMessages().size()).isBetween(8, 9);
-
-        return jobAction;
-    }
-
-    /**
-     * Returns the jobAction created during build of a new freeStyleProject without a workspace file.
-     * @return jobAction test object
-     */
-    private JobAction getJobActionFromNewProject() {
+    public void shouldHaveNoSidebarLinkWhenLastActionHasNoResults() {
         FreeStyleProject project = createFreeStyleProject();
         enableEclipseWarnings(project);
 
-        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(analysisResult).hasTotalSize(0);
 
         JobAction jobAction = project.getAction(JobAction.class);
-
         assertThat(jobAction).isNotNull();
 
-        return jobAction;
+        HtmlPage jobPage = getWebPage(project);
+        assertThat(jobAction.getIconFileName()).isNull();
+        assertThat(findImageLinks(jobPage)).isEmpty();
+        assertThat(findSideBarLinks(jobPage)).isEmpty();
     }
 
-    /**
-     * Enables the warnings plugin for the specified job
-     *
-     * @param job
-     *         the job to register the recorder for
-     *
-     * @return the created recorder
-     */
-    @CanIgnoreReturnValue
-    private IssuesRecorder enableWarningsWithFilePattern(final FreeStyleProject job) {
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration(new Eclipse(), "*.txt")));
-        job.getPublishersList().add(publisher);
-        return publisher;
+    private List<DomElement> findSideBarLinks(final HtmlPage jobPage) {
+        return findLinks(jobPage, "task-link");
+    }
+
+    private List<DomElement> findImageLinks(final HtmlPage jobPage) {
+        return findLinks(jobPage, "task-icon-link");
+    }
+
+    private List<DomElement> findLinks(final HtmlPage jobPage, final String classValue) {
+        return jobPage.getByXPath("//a[@class=\"" 
+                + classValue 
+                + "\" and contains(@href,\"eclipse\")]");
     }
 }
