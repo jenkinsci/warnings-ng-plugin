@@ -336,7 +336,7 @@ public class JobAction implements Action {
     }
 
     @Override
-    public final String getUrlName() {
+    public String getUrlName() {
         return labelProvider.getId();
     }
 
@@ -345,7 +345,8 @@ public class JobAction implements Action {
      *
      * @return {@code true} if the results are valid
      */
-    public final boolean hasValidResults() {
+    // FIXME: how can this be false?
+    public boolean hasValidResults() {
         return getLastAction() != null;
     }
 
@@ -355,6 +356,7 @@ public class JobAction implements Action {
      * @return the last valid result action, or {@code null} if no such action is found
      */
     @CheckForNull
+    // FIXME: Optional
     public ResultAction getLastAction() {
         Run<?, ?> lastRun = getLastFinishedRun();
         if (lastRun == null) {

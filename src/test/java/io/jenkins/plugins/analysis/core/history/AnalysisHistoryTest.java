@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.history;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -31,6 +32,22 @@ import hudson.model.Run;
 @SuppressWarnings({"ParameterNumber", "PMD.UnusedPrivateMethod"})
 @SuppressFBWarnings("UPM")
 class AnalysisHistoryTest {
+    @Test
+    void baselineShouldHaveNoPreviousResult() {
+        Run<?, ?> baseline = mock(Run.class);
+        ResultSelector resultSelector = mock(ResultSelector.class);
+        ResultAction baselineAction = mock(ResultAction.class);
+        AnalysisResult baselineResult = mock(AnalysisResult.class);
+        when(baselineAction.getResult()).thenReturn(baselineResult);
+        when(resultSelector.get(baseline)).thenReturn(Optional.of(baselineAction));
+        
+        AnalysisHistory history = new AnalysisHistory(baseline, resultSelector);
+        
+        assertThat(history.getBaselineResult()).contains(baselineResult);
+        assertThat(history.getPreviousResult()).isEmpty();
+        assertThat(history.getPreviousBuild()).isEmpty();
+    }
+    
     @ParameterizedTest(name = "{0}")
     @MethodSource("provideSingleResultIfQualityGateAndBuildResultIsIgnored")
     @DisplayName("Ignore Job Result + Quality Gate -> should evaluate history of a sequence with one build")

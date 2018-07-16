@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import edu.hm.hafner.analysis.Report;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -147,7 +148,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
     }
 
     private Optional<ResultAction> getPreviousAction() {
-        Optional<Run<?, ?>> run = getRunWithResult(baseline, selector, qualityGateEvaluationMode,
+        Optional<Run<?, ?>> run = getRunWithResult(baseline.getPreviousBuild(), selector, qualityGateEvaluationMode,
                 jobResultEvaluationMode);
         if (run.isPresent()) {
             return selector.get(run.get());
@@ -155,7 +156,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
         return Optional.empty();
     }
 
-    private static Optional<Run<?, ?>> getRunWithResult(final Run<?, ?> start, final ResultSelector selector,
+    private static Optional<Run<?, ?>> getRunWithResult(final @CheckForNull Run<?, ?> start, final ResultSelector selector,
             final QualityGateEvaluationMode qualityGateEvaluationMode,
             final JobResultEvaluationMode jobResultEvaluationMode) {
         for (Run<?, ?> run = start; run != null; run = run.getPreviousBuild()) {
