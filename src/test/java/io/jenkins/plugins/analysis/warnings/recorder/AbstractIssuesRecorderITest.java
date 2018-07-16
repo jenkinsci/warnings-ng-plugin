@@ -2,13 +2,12 @@ package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.impl.factory.Lists;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
 
@@ -73,16 +72,18 @@ public class AbstractIssuesRecorderITest extends IntegrationTest {
      *
      * @param job
      *         the job to register the recorder for
-     * @param toolConfigurations
+     * @param configuration
+     *         the tool configuration to use
+     * @param additionalConfigurations
      *         the tool configurations to use
      *
      * @return the created recorder
      */
     @CanIgnoreReturnValue
     protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
-            final ToolConfiguration... toolConfigurations) {
+            final ToolConfiguration configuration,  final ToolConfiguration... additionalConfigurations) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Arrays.asList(toolConfigurations));
+        publisher.setTools(Lists.mutable.of(additionalConfigurations).with(configuration));
         publisher.setReportEncoding("UTF-8");
         job.getPublishersList().add(publisher);
         return publisher;
@@ -190,22 +191,22 @@ public class AbstractIssuesRecorderITest extends IntegrationTest {
      *
      * @param job
      *         the job to register the recorder for
-     * @param configuration
+     * @param recorderConfiguration
      *         configuration of the recorder
-     * @param toolConfiguration
+     * @param configuration
      *         the tool configuration to use
-     * @param additionalToolConfigurations
+     * @param additionalConfigurations
      *         the additional tool configurations to use
      *
      * @return the created recorder
      */
     @CanIgnoreReturnValue
     protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
-            final Consumer<IssuesRecorder> configuration,
-            final ToolConfiguration toolConfiguration,
-            final ToolConfiguration... additionalToolConfigurations) {
-        IssuesRecorder recorder = enableWarnings(job, ArrayUtils.add(additionalToolConfigurations, toolConfiguration));
-        configuration.accept(recorder);
+            final Consumer<IssuesRecorder> recorderConfiguration,
+            final ToolConfiguration configuration,
+            final ToolConfiguration... additionalConfigurations) {
+        IssuesRecorder recorder = enableWarnings(job, configuration, additionalConfigurations);
+        recorderConfiguration.accept(recorder);
         return recorder;
     }
 

@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.util.Collections;
 
@@ -14,7 +14,7 @@ import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.views.JobAction;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
-import io.jenkins.plugins.analysis.warnings.recorder.AbstractIssuesRecorderITest;
+import io.jenkins.plugins.analysis.warnings.Eclipse;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -23,9 +23,9 @@ import hudson.model.Run;
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
  *
- * @author Ullrich Hafner
+ * @author Nikolai Wohlgemuth 
  */
-public class IssuesRecorderITest extends AbstractIssuesRecorderITest {
+public class JobActionITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldNotReturnJobActionWithoutBuild() {
         FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
