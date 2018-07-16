@@ -134,6 +134,8 @@
       <version>2.16</version>
       <scope>test</scope>
     </dependency>
+    
+    <!-- XML Unit -->
     <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>

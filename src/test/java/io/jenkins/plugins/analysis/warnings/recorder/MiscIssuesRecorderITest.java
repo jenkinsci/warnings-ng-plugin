@@ -24,6 +24,7 @@ import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SummaryBox;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -243,8 +244,14 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_8_Warnings-issues.txt"));
 
         // First build: baseline
-        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        AnalysisResult baselineResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        HtmlPage buildPage = getWebPage(baselineResult.getOwner());
 
+        SummaryBox baselineSummary = new SummaryBox(buildPage, "eclipse");
+        assertThat(baselineSummary.exists()).isTrue();
+        assertThat(baselineSummary.getTitle()).isEqualTo("Eclipse ECJ: 8 warnings");
+        assertThat(baselineSummary.getItems()).isEmpty(); 
+        
         // Second build: actual result
         recorder.setTool(createEclipse("eclipse_5_Warnings-issues.txt"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -254,6 +261,11 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); // Outstanding
         assertThat(result).hasTotalSize(5);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+
+        SummaryBox resultSummary = new SummaryBox(getWebPage(result.getOwner()), "eclipse");
+        assertThat(resultSummary.exists()).isTrue();
+        assertThat(resultSummary.getTitle()).isEqualTo("Eclipse ECJ: 5 warnings");
+        assertThat(resultSummary.getItems()).containsExactly("3 fixed warnings", "Reference build: test0 #1");
     }
 
     /**

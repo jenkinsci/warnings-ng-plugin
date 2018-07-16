@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
 
@@ -111,7 +112,10 @@ public class AbstractIssuesRecorderITest extends IntegrationTest {
             throw new AssertionError(e);
         }
     }
-
+    protected HtmlPage getWebPage(final Run<?, ?> build) {
+        return getWebPage(build, StringUtils.EMPTY);
+    }
+    
     protected HtmlPage getWebPage(final Run<?, ?> build, final String page) {
         try {
             return createWebClient().getPage(build, page);
