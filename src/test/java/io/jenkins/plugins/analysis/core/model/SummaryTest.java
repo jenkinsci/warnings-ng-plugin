@@ -26,7 +26,6 @@ import hudson.model.Run;
  * @author Ullrich Hafner
  * @author Michaela Reitschuster
  */
-// TODO: write a test case with INACTIVE quality gate
 class SummaryTest {
     private static final FixedSizeMap<String, Integer> EMPTY_ORIGINS = Maps.fixedSize.empty();
     private static final ImmutableList<String> EMPTY_ERRORS = Lists.immutable.empty();
@@ -213,9 +212,7 @@ class SummaryTest {
                 EMPTY_ERRORS, 0);
         when(analysisResult.getQualityGateStatus()).thenReturn(QualityGateStatus.INACTIVE);
         String createdHtml = createTestData(analysisResult).create();
-        assertThat(createdHtml).doesNotContainPattern(
-                createWarningsLink(
-                        "Quality gate: <img src=\"color\" class=\"icon-blue icon-lg\" alt=\"Success\" title=\"Success\"> Success"));
+        assertThat(createdHtml).doesNotContain("Quality gate");
     }
 
     /**

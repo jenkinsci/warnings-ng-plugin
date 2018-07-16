@@ -99,23 +99,16 @@ public class JenkinsFacade implements Serializable {
     }
 
     /**
-     * Gets a {@link Run} by the full name of its job and by the ID within this job. Full names are like path names,
-     * where each name of {@link Item} is combined by '/'.
+     * Gets a {@link Run build} by the full ID.
      *
-     * @param name
-     *         the full name of the job
      * @param id
      *         the ID of the build
-     *
-     * @return the selected build, if it exists under the given full name and ID and if it is accessible
+     * @return the selected build, if it exists with the given ID and if it is accessible
      */
     @SuppressWarnings("unchecked")
-    public Optional<Run<?, ?>> getBuild(final String name, final String id) {
+    public Optional<Run<?, ?>> getBuild(final String id) {
         try {
-            Optional<Job<?, ?>> job = getJob(name);
-            if (job.isPresent()) {
-                return Optional.ofNullable(job.get().getBuild(id));
-            }
+            return Optional.ofNullable(Run.fromExternalizableId(id));
         }
         catch (AccessDeniedException ignore) {
             // ignore

@@ -20,7 +20,6 @@ public class DeltaReport {
     private final Report outstandingIssues;
     private final Report newIssues;
     private final Report fixedIssues;
-    private final String referenceJobName;
     private final String referenceBuildId;
 
     /**
@@ -47,8 +46,7 @@ public class DeltaReport {
             fixedIssues = difference.getFixedIssues();
             report.logInfo("Issues delta (vs. reference build): outstanding: %d, new: %d, fixed: %d",
                     outstandingIssues.size(), newIssues.size(), fixedIssues.size());
-            referenceJobName = build.getParent().getFullName();
-            referenceBuildId = build.getId();
+            referenceBuildId = build.getExternalizableId();
         }
         else {
             report.logInfo("No valid reference build found - all reported issues will be considered outstanding");
@@ -56,7 +54,6 @@ public class DeltaReport {
             outstandingIssues = report;
             newIssues = EMPTY_REPORT;
             fixedIssues = EMPTY_REPORT;
-            referenceJobName = StringUtils.EMPTY;
             referenceBuildId = StringUtils.EMPTY;
         }
     }
@@ -67,10 +64,6 @@ public class DeltaReport {
 
     public String getReferenceBuildId() {
         return referenceBuildId;
-    }
-
-    public String getReferenceJobName() {
-        return referenceJobName;
     }
 
     public Report getAllIssues() {

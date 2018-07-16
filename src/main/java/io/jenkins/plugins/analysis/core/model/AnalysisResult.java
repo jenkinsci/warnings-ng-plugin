@@ -69,8 +69,7 @@ public class AnalysisResult implements Serializable {
      * Reference run to compute the issues difference: since a run cannot be persisted directly, the IDs are only
      * stored.
      */
-    private final String referenceJob;
-    private final String referenceBuild;
+    private final String referenceBuildId;
     
     private transient ReentrantLock lock = new ReentrantLock();
     private transient Run<?, ?> owner;
@@ -190,8 +189,7 @@ public class AnalysisResult implements Serializable {
         size = allIssues.getSize();
         sizePerOrigin = new HashMap<>(allIssues.getSizeByOrigin());
         sizePerSeverity = getSizePerSeverity(allIssues);
-        referenceJob = report.getReferenceJobName();
-        referenceBuild = report.getReferenceBuildId();
+        referenceBuildId = report.getReferenceBuildId();
 
         Report outstandingIssues = report.getOutstandingIssues();
         outstandingIssuesReference = new WeakReference<>(outstandingIssues);
@@ -479,10 +477,10 @@ public class AnalysisResult implements Serializable {
      * @return the reference build
      */
     public Optional<Run<?, ?>> getReferenceBuild() {
-        if (NO_REFERENCE.equals(referenceJob)) {
+        if (NO_REFERENCE.equals(referenceBuildId)) {
             return Optional.empty();
         }
-        return new JenkinsFacade().getBuild(referenceJob, referenceBuild);
+        return new JenkinsFacade().getBuild(referenceBuildId);
     }
 
     /**
