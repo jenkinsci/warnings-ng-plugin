@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.warnings.recorder;
 import java.util.List;
 
 import org.junit.Test;
-import org.jvnet.hudson.test.recipes.WithTimeout;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -12,6 +11,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
+import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.views.JobAction;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
@@ -23,32 +23,33 @@ import hudson.model.Run;
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
  *
- * @author Nikolai Wohlgemuth 
+ * @author Nikolai Wohlgemuth
+ * @author Ullrich Hafner
  */
 // TODO: increase branch coverage
 public class JobActionITest extends AbstractIssuesRecorderITest {
     /**
-     * Verifies that the trend chart is visible if there are two valid builds available. 
+     * Verifies that the trend chart is visible if there are two valid builds available.
      */
-    @Test @WithTimeout(100000)
+    @Test
     public void shouldShowTrendChart() {
         FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
         enableEclipseWarnings(project);
 
         Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
         assertActionProperties(project, build);
-        
+
         HtmlPage jobPage = getWebPage(project);
         assertThatTrendChartIsHidden(jobPage); // trend chart requires at least two builds
 
         assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
-        
+
         build = buildWithStatus(project, Result.SUCCESS);
         assertActionProperties(project, build);
 
         jobPage = getWebPage(project);
         assertThatTrendChartIsVisible(jobPage);
-        
+
         assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
     }
 
@@ -70,8 +71,8 @@ public class JobActionITest extends AbstractIssuesRecorderITest {
 
     private void assertThatTrendChartIsHidden(final HtmlPage jobPage) {
         DomElement trendChart = findTrendChart(jobPage);
-        
-        assertThat(trendChart.getFirstElementChild()).isNull(); 
+
+        assertThat(trendChart.getFirstElementChild()).isNull();
     }
 
     private DomElement findTrendChart(final HtmlPage jobPage) {
@@ -99,15 +100,21 @@ public class JobActionITest extends AbstractIssuesRecorderITest {
     }
 
     /**
-     * IconFileName should be null if the jobAction has no results.
+     * Verifies that the side bar link is missing (i.e. the image URL is null) if there are no issues in the latest
+     * build.
      */
     @Test
     public void shouldHaveNoSidebarLinkWhenLastActionHasNoResults() {
-        FreeStyleProject project = createFreeStyleProject();
-        enableEclipseWarnings(project);
+        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
+        IssuesRecorder recorder = enableEclipseWarnings(project);
 
-        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        assertThat(analysisResult).hasTotalSize(0);
+        AnalysisResult nonEmptyResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(nonEmptyResult).hasTotalSize(8);
+
+        recorder.setTool(new ToolConfiguration(new Eclipse(), "**/no-valid-pattern"));
+
+        AnalysisResult emptyResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(emptyResult).hasTotalSize(0);
 
         JobAction jobAction = project.getAction(JobAction.class);
         assertThat(jobAction).isNotNull();
@@ -127,8 +134,6 @@ public class JobActionITest extends AbstractIssuesRecorderITest {
     }
 
     private List<DomElement> findLinks(final HtmlPage jobPage, final String classValue) {
-        return jobPage.getByXPath("//a[@class=\"" 
-                + classValue 
-                + "\" and contains(@href,\"eclipse\")]");
+        return jobPage.getByXPath("//a[@class=\"" + classValue + "\" and contains(@href,\"eclipse\")]");
     }
 }
