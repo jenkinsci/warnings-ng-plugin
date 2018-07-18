@@ -35,11 +35,11 @@ public class DeltaReport {
     public DeltaReport(final Report report, final AnalysisHistory history, final int currentBuildNumber) {
         allIssues = report;
         allIssues.setReference(String.valueOf(currentBuildNumber));
-        if (history.getPreviousBuild().isPresent()) {
-            Run<?, ?> build = history.getPreviousBuild().get();
+        if (history.getBuild().isPresent()) {
+            Run<?, ?> build = history.getBuild().get();
             report.logInfo("Using reference build '%s' to compute new, fixed, and outstanding issues",
                     build);
-            IssueDifference difference = new IssueDifference(report, currentBuildNumber, history.getPreviousIssues());
+            IssueDifference difference = new IssueDifference(report, currentBuildNumber, history.getIssues());
 
             outstandingIssues = difference.getOutstandingIssues();
             newIssues = difference.getNewIssues();

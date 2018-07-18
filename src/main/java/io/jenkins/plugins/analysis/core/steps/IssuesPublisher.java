@@ -146,7 +146,7 @@ class IssuesPublisher {
         }
 
         logger.log(filtered);
-        return new AnalysisHistory(run, selector).getPreviousResult()
+        return new AnalysisHistory(run, selector).getResult()
                 .map(previous -> new AnalysisResult(run, deltaReport, qualityGateStatus, previous))
                 .orElseGet(() -> new AnalysisResult(run, deltaReport, qualityGateStatus));
     }

@@ -18,14 +18,14 @@ import hudson.model.Result;
 import hudson.model.Run;
 
 /**
- * Provides a history of static analysis results. The history starts from a baseline build and provides access to the
- * previous build result of the same type (or to all previous results using the provided {@link AnalysisResultIterator
- * AnalysisResultIterator} implementation). The results are filtered by a {@link ResultSelector}, so a history returns
- * only results of the same type. This history can be configured to ignore the overall result of the associated Jenkins
- * builds (see {@link JobResultEvaluationMode JobResultEvaluationMode}). Additionally, this history can be configured to
- * ignore the builds that did not pass the quality gate (see {@link QualityGateEvaluationMode
+ * Provides a history of static analysis results. The history starts from a baseline build and provides access to a
+ * historical build result of the same type (or to all historical results using the provided {@link
+ * AnalysisResultIterator interator} implementation). The results are filtered by a {@link ResultSelector}, so a history
+ * returns only results of the same type. This history can be configured to ignore the overall result of the associated
+ * Jenkins builds (see {@link JobResultEvaluationMode JobResultEvaluationMode}). Additionally, this history can be
+ * configured to ignore the builds that did not pass the quality gate (see {@link QualityGateEvaluationMode
  * QualityGateEvaluationMode}). Note that the baseline run might still be in progress and thus has not yet a result
- * attached.
+ * attached: i.e., the result of the {@code getPrevious*}  methods may return different results on subsequent calls.
  *
  * @author Ullrich Hafner
  */
@@ -48,8 +48,8 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
          */
         IGNORE_QUALITY_GATE,
         /**
-         * The quality gate result must be {@link QualityGateStatus#isSuccessful()}. I.e. the history is searched for a build that
-         * either passed the quality gate or has deactivated the quality gate.
+         * The quality gate result must be {@link QualityGateStatus#isSuccessful()}. I.e. the history is searched for a
+         * build that either passed the quality gate or has deactivated the quality gate.
          */
         SUCCESSFUL_QUALITY_GATE
     }
@@ -73,8 +73,8 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
     }
 
     /**
-     * Creates a new instance of {@link AnalysisHistory}. This history ignores the {@link QualityGateStatus} of the quality gate
-     * and the {@link Result} of the associated {@link Run}.
+     * Creates a new instance of {@link AnalysisHistory}. This history ignores the {@link QualityGateStatus} of the
+     * quality gate and the {@link Result} of the associated {@link Run}.
      *
      * @param baseline
      *         the build to start the history from
@@ -111,7 +111,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
      *
      * @return the baseline action
      */
-    private Optional<ResultAction> getBaselineAction() {
+    public Optional<ResultAction> getBaselineAction() {
         return selector.get(baseline);
     }
 
@@ -125,30 +125,35 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
     }
 
     /**
-     * Returns the previous result (if there is any).
+     * Returns the historical result (if there is any).
      *
-     * @return the previous result
+     * @return the historical result
      */
-    public Optional<AnalysisResult> getPreviousResult() {
+    public Optional<AnalysisResult> getResult() {
         return getPreviousAction().map(ResultAction::getResult);
     }
 
-    public Optional<Run<?, ?>> getPreviousBuild() {
+    /**
+     * Returns the build that contains the historical result (if there is any).
+     *
+     * @return the historical result
+     */
+    public Optional<Run<?, ?>> getBuild() {
         return getPreviousAction().map(ResultAction::getOwner);
     }
 
     /**
-     * Returns the issues of the previous build. If there is no previous build found, then an empty set of issues is
+     * Returns the issues of the historical result. If there is no historical build found, then an empty set of issues is
      * returned.
      *
-     * @return the issues of the previous build
+     * @return the issues of the historical build
      */
-    public Report getPreviousIssues() {
-        return getPreviousResult().map(AnalysisResult::getIssues).orElseGet(Report::new);
+    public Report getIssues() {
+        return getResult().map(AnalysisResult::getIssues).orElseGet(Report::new);
     }
 
     private Optional<ResultAction> getPreviousAction() {
-        Optional<Run<?, ?>> run = getRunWithResult(baseline.getPreviousBuild(), selector, qualityGateEvaluationMode,
+        Optional<Run<?, ?>> run = getRunWithResult(baseline, selector, qualityGateEvaluationMode,
                 jobResultEvaluationMode);
         if (run.isPresent()) {
             return selector.get(run.get());
@@ -156,7 +161,8 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
         return Optional.empty();
     }
 
-    private static Optional<Run<?, ?>> getRunWithResult(final @CheckForNull Run<?, ?> start, final ResultSelector selector,
+    private static Optional<Run<?, ?>> getRunWithResult(final @CheckForNull Run<?, ?> start,
+            final ResultSelector selector,
             final QualityGateEvaluationMode qualityGateEvaluationMode,
             final JobResultEvaluationMode jobResultEvaluationMode) {
         for (Run<?, ?> run = start; run != null; run = run.getPreviousBuild()) {

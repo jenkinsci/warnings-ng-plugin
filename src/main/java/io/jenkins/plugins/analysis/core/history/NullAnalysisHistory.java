@@ -18,7 +18,7 @@ public class NullAnalysisHistory extends AnalysisHistory {
     }
 
     @Override
-    public Optional<AnalysisResult> getPreviousResult() {
+    public Optional<AnalysisResult> getResult() {
         return Optional.empty();
     }
 }

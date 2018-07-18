@@ -4,8 +4,8 @@ import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -164,9 +164,13 @@ public abstract class GraphConfigurationView implements ModelObject {
      * @return <code>true</code>, if there is such a graph
      */
     public boolean hasMeaningfulGraph() {
-        Optional<AnalysisResult> previousResult = buildHistory.getPreviousResult();
-        if (previousResult.isPresent()) {
-            return !resultTime.isResultTooOld(configuration, previousResult.get());
+        Iterator<AnalysisResult> iterator = buildHistory.iterator();
+        int count = 1;
+        for (AnalysisResult analysisResult : buildHistory) {
+            if (count == 2) {
+                return true; // 2 points are required to draw a chart
+            }
+            count++;
         }
         return false;
     }
