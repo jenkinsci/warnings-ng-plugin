@@ -23,7 +23,7 @@ import j2html.tags.ContainerTag;
  *
  * @author Ullrich Hafner
  */
-// FIXME: is the number of parsed reports available yet?
+// TODO: number of parsed reports should be shown as well
 public class Summary {
     private final StaticAnalysisLabelProvider labelProvider;
     private final AnalysisResult analysisResult;
