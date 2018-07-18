@@ -333,7 +333,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
      * different freestyle project for the reference.
      */
     @Test
-    public void shouldCreateSeuccssResultWithNotIgnoredUnstableInBetweenWithReferenceBuild() {
+    public void shouldCreateSuccessResultWithNotIgnoredUnstableInBetweenWithReferenceBuild() {
         // #1 SUCCESS
         FreeStyleProject reference = createJob(REFERENCE_JOB_NAME, "eclipse2Warnings.txt");
         enableWarnings(reference, recorder -> {
