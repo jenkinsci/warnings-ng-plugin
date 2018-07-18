@@ -62,6 +62,12 @@ public class ParsersITest extends PipelineITest {
             + "files=&quot;$files $directory/$i&quot;\n"
             + "done</code></pre>";
 
+    /** Runs the Ccm parser on output files that contains 6 issues. */
+    @Test
+    public void shouldFindAllCcmIssues() {
+        shouldFindIssuesOfTool(6, Ccm.class, "ccm.xml");
+    }
+
     /** Runs the ruboCop parser on output files that contains 2 issues. */
     @Test
     public void shouldFindAllRuboCopIssues() {
