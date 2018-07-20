@@ -66,6 +66,20 @@ public class HealthDescriptor implements Serializable {
      * @return {@code true} if  health reporting is enabled, {@code false} otherwise
      */
     public boolean isEnabled() {
+        return healthy > 0 || unHealthy > 0;
+    }
+
+    /**
+     * Determines whether health reporting is enabled.
+     *
+     * @return {@code true} if  health reporting is enabled, {@code false} otherwise
+     */
+    public boolean isValid() {
         return healthy > 0 && unHealthy > healthy;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Healthy=%d, Unhealthy=%d, Minimum Priority=%s", healthy, unHealthy, minimumPriority);
     }
 }

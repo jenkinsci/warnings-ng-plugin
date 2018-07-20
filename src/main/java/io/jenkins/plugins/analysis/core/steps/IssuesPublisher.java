@@ -129,6 +129,29 @@ class IssuesPublisher {
     @SuppressWarnings("PMD.PrematureDeclaration")
     private AnalysisResult createAnalysisResult(final Report filtered, final ResultSelector selector) {
         DeltaReport deltaReport = new DeltaReport(filtered, createAnalysisHistory(selector), run.getNumber());
+        QualityGateStatus qualityGateStatus = evaluateQualityGate(filtered, deltaReport);
+        reportHealth(filtered);
+        logger.log(filtered);
+        return new AnalysisHistory(run, selector).getResult()
+                .map(previous -> new AnalysisResult(run, deltaReport, qualityGateStatus, previous))
+                .orElseGet(() -> new AnalysisResult(run, deltaReport, qualityGateStatus));
+    }
+
+    private void reportHealth(final Report filtered) {
+        if (healthDescriptor.isEnabled()) {
+            if (healthDescriptor.isValid()) {
+                filtered.logInfo("Enabling health report (%s)", healthDescriptor);
+            }
+            else {
+                filtered.logInfo("Health report is invalid (%s) - skipping", healthDescriptor);
+            }
+        }
+        else {
+            filtered.logInfo("Health report is disabled - skipping");
+        }
+    }
+
+    private QualityGateStatus evaluateQualityGate(final Report filtered, final DeltaReport deltaReport) {
         QualityGateStatus qualityGateStatus;
         if (qualityGate.isEnabled()) {
             qualityGateStatus = qualityGate.evaluate(deltaReport, filtered::logInfo);
@@ -144,11 +167,7 @@ class IssuesPublisher {
             filtered.logInfo("No quality gates have been set - skipping");
             qualityGateStatus = QualityGateStatus.INACTIVE;
         }
-
-        logger.log(filtered);
-        return new AnalysisHistory(run, selector).getResult()
-                .map(previous -> new AnalysisResult(run, deltaReport, qualityGateStatus, previous))
-                .orElseGet(() -> new AnalysisResult(run, deltaReport, qualityGateStatus));
+        return qualityGateStatus;
     }
 
     private AnalysisHistory createAnalysisHistory(final ResultSelector selector) {
