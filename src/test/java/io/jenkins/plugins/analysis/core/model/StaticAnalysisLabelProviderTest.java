@@ -27,6 +27,7 @@ import static org.mockito.Mockito.*;
 class StaticAnalysisLabelProviderTest {
     private static final String ID = "id";
     private static final String NAME = "name";
+    private static final String OTHER_NAME = "other";
 
     @Test
     void shouldReturnIdAndNameOfConstructorParametersInAllDisplayProperties() {
@@ -37,6 +38,11 @@ class StaticAnalysisLabelProviderTest {
         assertThat(labelProvider.getLinkName()).contains(NAME);
         assertThat(labelProvider.getTrendName()).contains(NAME);
         assertThat(labelProvider.getResultUrl()).contains(ID);
+        
+        labelProvider.setName(OTHER_NAME);
+        assertThat(labelProvider).hasName(OTHER_NAME);
+        assertThat(labelProvider.getLinkName()).contains(OTHER_NAME);
+        assertThat(labelProvider.getTrendName()).contains(OTHER_NAME);
     }
 
     @Test
@@ -217,5 +223,4 @@ class StaticAnalysisLabelProviderTest {
             assertThatColumnsAreValid(report, columns, 1);
         }
     }
-
 }

@@ -40,7 +40,7 @@ public class StaticAnalysisLabelProvider {
 
     private final String id;
     @CheckForNull
-    private final String name;
+    private String name;
     private final JenkinsFacade jenkins;
 
     /**
@@ -287,6 +287,20 @@ public class StaticAnalysisLabelProvider {
             return name;
         }
         return getDefaultName();
+    }
+
+    /**
+     * Sets the human readable name of the tool. 
+     * 
+     * @param name the name of the tool
+     * @return the name
+     */
+    public StaticAnalysisLabelProvider setName(@CheckForNull final String name) {
+        if (StringUtils.isNotBlank(name)) { // don't overwrite with empty
+            this.name = name;
+        }
+        
+        return this;
     }
 
     @Override

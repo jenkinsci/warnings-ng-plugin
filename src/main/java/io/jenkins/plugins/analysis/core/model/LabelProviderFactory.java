@@ -61,7 +61,7 @@ public class LabelProviderFactory {
                 = jenkins.getDescriptorsFor(StaticAnalysisTool.class);
         for (StaticAnalysisToolDescriptor descriptor : extensions) {
             if (descriptor.getId().equals(id)) {
-                return wrapLabelProvider(descriptor.getLabelProvider(), name);
+                return createNamedLabelProvider(descriptor.getLabelProvider(), name);
             }
         }
 
@@ -69,7 +69,7 @@ public class LabelProviderFactory {
         for (StaticAnalysisToolFactory factory : factories) {
             for (StaticAnalysisTool tool : factory.getTools()) {
                 if (tool.getId().equals(id)) {
-                    return wrapLabelProvider(tool.getLabelProvider(), name);
+                    return createNamedLabelProvider(tool.getLabelProvider(), name);
                 }
             }
         }
@@ -77,14 +77,10 @@ public class LabelProviderFactory {
         return new StaticAnalysisLabelProvider(id, name);
     }
 
-    private StaticAnalysisLabelProvider wrapLabelProvider(final StaticAnalysisLabelProvider labelProvider,
-            final String name) {
-        if (StringUtils.isNotBlank(name)) {
-            return new CompositeLabelProvider(labelProvider, name);
-        }
-        else {
-            return labelProvider;
-        }
+    private StaticAnalysisLabelProvider createNamedLabelProvider(
+            final StaticAnalysisLabelProvider labelProvider, final String name) {
+        labelProvider.setName(name);
+        return labelProvider;
     }
 
     /**
