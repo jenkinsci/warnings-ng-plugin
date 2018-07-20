@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jvnet.localizer.Localizable;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -27,7 +28,7 @@ import hudson.model.Run;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
 /**
- * A generic label provider for static analysis runs. Creates pre-defined labels that are parameterized with a string
+ * A generic label provider for static analysis results. Creates pre-defined labels that are parameterized with a string
  * placeholder, that will be replaced with the actual name of the static analysis tool. Moreover, such a default label
  * provider decorates the links and summary boxes with the default icon of the warnings plug-in.
  *
@@ -470,17 +471,29 @@ public class StaticAnalysisLabelProvider {
     }
 
     public ToolTipProvider getToolTipProvider() {
-        return this::getTooltip;
+        return this::getToolTip;
     }
 
-    // FIXME: still required?
-    String getTooltip(final int numberOfItems) {
+    public String getToolTip(final int numberOfItems) {
+        return getToolTipLocalizable(numberOfItems).toString();
+    }
+
+    /**
+     * Returns a short description describing the total number of issues.
+     *
+     * @param numberOfItems
+     *         the number of issues to report
+     *
+     * @return the description
+     */
+    public Localizable getToolTipLocalizable(final int numberOfItems) {
+        if (numberOfItems == 0) {
+            return Messages._Tool_NoIssues();
+        }
         if (numberOfItems == 1) {
-            return getSingleItemTooltip();
+            return Messages._Tool_OneIssue();
         }
-        else {
-            return getMultipleItemsTooltip(numberOfItems);
-        }
+        return Messages._Tool_MultipleIssues(numberOfItems);
     }
 
     /**
@@ -493,27 +506,6 @@ public class StaticAnalysisLabelProvider {
      */
     public String getDescription(final Issue issue) {
         return issue.getDescription();
-    }
-
-    /**
-     * Returns the tooltip for several items.
-     *
-     * @param numberOfItems
-     *         the number of items to display the tooltip for
-     *
-     * @return the tooltip for several items
-     */
-    private String getMultipleItemsTooltip(final int numberOfItems) {
-        return Messages.Tool_MultipleIssues(numberOfItems);
-    }
-
-    /**
-     * Returns the tooltip for exactly one item.
-     *
-     * @return the tooltip for exactly one item
-     */
-    private String getSingleItemTooltip() {
-        return Messages.Tool_OneIssue();
     }
 
     /**

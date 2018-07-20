@@ -4,10 +4,13 @@ import java.util.Map;
 
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
+import org.jvnet.localizer.Localizable;
 
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.analysis.Severity;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import hudson.model.HealthReport;
 
@@ -22,15 +25,16 @@ class HealthReportBuilderTest {
     private static final String DESCRIPTION_MESSAGE = "Static Analysis: ";
     private static final String DESCRIPTION_MESSAGE_ENDING_PLURAL = " warnings found.";
     private static final String DESCRIPTION_MESSAGE_ENDING_SINGULAR = " warning found.";
+    private static final String HEALTH_REPORT_MESSAGE = "Healthy Message";
 
     /**
      * Tests whether we evaluate correctly to a 50% health.
      */
     @Test
     void shouldTest50Health() {
-        HealthReport reportHighPriority = createTestHealthReport(4, 16, Priority.HIGH, 10, 20, 30);
-        HealthReport reportNormalPriority = createTestHealthReport(15, 45, Priority.NORMAL, 10, 20, 30);
-        HealthReport reportLowPriority = createTestHealthReport(15, 105, Priority.LOW, 10, 20, 30);
+        HealthReport reportHighPriority = createTestHealthReport(4, 16, Priority.HIGH, 10, 20, 30, 0);
+        HealthReport reportNormalPriority = createTestHealthReport(15, 45, Priority.NORMAL, 10, 20, 30, 0);
+        HealthReport reportLowPriority = createTestHealthReport(15, 105, Priority.LOW, 10, 20, 30, 0);
 
         assertThat(reportHighPriority.getScore()).isEqualTo(50);
         assertThat(reportNormalPriority.getScore()).isEqualTo(50);
@@ -42,9 +46,9 @@ class HealthReportBuilderTest {
      */
     @Test
     void shouldTest100Health() {
-        HealthReport reportHighPriority = createTestHealthReport(20, 22, Priority.HIGH, 10, 20, 30);
-        HealthReport reportNormalPriority = createTestHealthReport(40, 45, Priority.NORMAL, 10, 20, 30);
-        HealthReport reportLowPriority = createTestHealthReport(65, 105, Priority.LOW, 10, 20, 30);
+        HealthReport reportHighPriority = createTestHealthReport(20, 22, Priority.HIGH, 10, 20, 30, 0);
+        HealthReport reportNormalPriority = createTestHealthReport(40, 45, Priority.NORMAL, 10, 20, 30, 0);
+        HealthReport reportLowPriority = createTestHealthReport(65, 105, Priority.LOW, 10, 20, 30, 0);
 
         assertThat(reportHighPriority.getScore()).isEqualTo(100);
         assertThat(reportNormalPriority.getScore()).isEqualTo(100);
@@ -56,9 +60,9 @@ class HealthReportBuilderTest {
      */
     @Test
     void shouldTest0Health() {
-        HealthReport reportHighPriority = createTestHealthReport(4, 6, Priority.HIGH, 10, 20, 30);
-        HealthReport reportNormalPriority = createTestHealthReport(15, 25, Priority.NORMAL, 10, 20, 30);
-        HealthReport reportLowPriority = createTestHealthReport(15, 45, Priority.LOW, 10, 20, 30);
+        HealthReport reportHighPriority = createTestHealthReport(4, 6, Priority.HIGH, 10, 20, 30, 0);
+        HealthReport reportNormalPriority = createTestHealthReport(15, 25, Priority.NORMAL, 10, 20, 30, 0);
+        HealthReport reportLowPriority = createTestHealthReport(15, 45, Priority.LOW, 10, 20, 30, 0);
 
         assertThat(reportHighPriority.getScore()).isEqualTo(0);
         assertThat(reportNormalPriority.getScore()).isEqualTo(0);
@@ -70,7 +74,7 @@ class HealthReportBuilderTest {
      */
     @Test
     void shouldBeNullForDisabledHealthDescriptor() {
-        HealthReport report = createTestHealthReport(0, 0, Priority.NORMAL, 10, 20, 30);
+        HealthReport report = createTestHealthReport(0, 0, Priority.NORMAL, 10, 20, 30, 0);
 
         assertThat(report).isNull();
     }
@@ -80,9 +84,9 @@ class HealthReportBuilderTest {
      */
     @Test
     void shouldTestHealthBoundary() {
-        HealthReport reportHighPriority = createTestHealthReport(10, 15, Priority.HIGH, 10, 20, 30);
-        HealthReport reportNormalPriority = createTestHealthReport(30, 35, Priority.NORMAL, 10, 20, 30);
-        HealthReport reportLowPriority = createTestHealthReport(60, 65, Priority.LOW, 10, 20, 30);
+        HealthReport reportHighPriority = createTestHealthReport(10, 15, Priority.HIGH, 10, 20, 30, 0);
+        HealthReport reportNormalPriority = createTestHealthReport(30, 35, Priority.NORMAL, 10, 20, 30, 0);
+        HealthReport reportLowPriority = createTestHealthReport(60, 65, Priority.LOW, 10, 20, 30, 0);
 
         assertThat(reportHighPriority.getScore()).isEqualTo(100);
         assertThat(reportNormalPriority.getScore()).isEqualTo(100);
@@ -94,9 +98,9 @@ class HealthReportBuilderTest {
      */
     @Test
     void shouldTestUnHealthBoundary() {
-        HealthReport reportHighPriority = createTestHealthReport(4, 10, Priority.HIGH, 10, 20, 30);
-        HealthReport reportNormalPriority = createTestHealthReport(15, 30, Priority.NORMAL, 10, 20, 30);
-        HealthReport reportLowPriority = createTestHealthReport(15, 60, Priority.LOW, 10, 20, 30);
+        HealthReport reportHighPriority = createTestHealthReport(4, 10, Priority.HIGH, 10, 20, 30, 0);
+        HealthReport reportNormalPriority = createTestHealthReport(15, 30, Priority.NORMAL, 10, 20, 30, 0);
+        HealthReport reportLowPriority = createTestHealthReport(15, 60, Priority.LOW, 10, 20, 30, 0);
 
         assertThat(reportHighPriority.getScore()).isEqualTo(0);
         assertThat(reportNormalPriority.getScore()).isEqualTo(0);
@@ -108,8 +112,9 @@ class HealthReportBuilderTest {
      */
     @Test
     void shouldReturnDescriptionForNoItem() {
-        HealthReport report = createTestHealthReport(4, 10, Priority.HIGH, 0, 0, 0);
-        assertThat(report.getDescription()).isEqualTo(DESCRIPTION_MESSAGE + "no" + DESCRIPTION_MESSAGE_ENDING_PLURAL);
+        HealthReport report = createTestHealthReport(4, 10, Priority.HIGH, 
+                0, 0, 0, 0);
+        assertThat(report.getDescription()).isEqualTo(HEALTH_REPORT_MESSAGE);
     }
 
     /**
@@ -117,8 +122,9 @@ class HealthReportBuilderTest {
      */
     @Test
     void shouldReturnDescriptionForSingleItem() {
-        HealthReport report = createTestHealthReport(4, 10, Priority.HIGH, 1, 0, 0);
-        assertThat(report.getDescription()).isEqualTo(DESCRIPTION_MESSAGE + "1" + DESCRIPTION_MESSAGE_ENDING_SINGULAR);
+        HealthReport report = createTestHealthReport(4, 10, Priority.HIGH, 
+                1, 0, 0, 1);
+        assertThat(report.getDescription()).isEqualTo(HEALTH_REPORT_MESSAGE);
     }
 
     /**
@@ -126,8 +132,9 @@ class HealthReportBuilderTest {
      */
     @Test
     void shouldReturnDescriptionForMultipleItem() {
-        HealthReport report = createTestHealthReport(4, 10, Priority.HIGH, 10, 30, 60);
-        assertThat(report.getDescription()).isEqualTo(DESCRIPTION_MESSAGE + "10" + DESCRIPTION_MESSAGE_ENDING_PLURAL);
+        HealthReport report = createTestHealthReport(4, 10, Priority.HIGH, 
+                10, 30, 60, 10);
+        assertThat(report.getDescription()).isEqualTo(HEALTH_REPORT_MESSAGE);
     }
 
     /**
@@ -145,17 +152,26 @@ class HealthReportBuilderTest {
      *         the threshold for priority normal
      * @param lowSize
      *         the threshold for priority low
+     * @param expectedRelevantIssuesCount
+     *         expected number of relevant issues
      *
      * @return the {@link HealthReport} under test
      */
     private HealthReport createTestHealthReport(final int healthyThreshold, final int unhealthyThreshold,
-            final Priority priority, final int highSize, final int normalSize, final int lowSize) {
+            final Priority priority, final int highSize, final int normalSize, final int lowSize,
+            final int expectedRelevantIssuesCount) {
         HealthDescriptor healthDescriptor = new HealthDescriptor(healthyThreshold, unhealthyThreshold, priority);
-        HealthReportBuilder builder = new HealthReportBuilder(healthDescriptor);
+        HealthReportBuilder builder = new HealthReportBuilder();
 
         Map<Severity, Integer> sizesPerSeverity = Maps.mutable.of(
                 Severity.WARNING_HIGH, highSize, Severity.WARNING_NORMAL, normalSize, Severity.WARNING_LOW, lowSize);
         sizesPerSeverity.put(Severity.ERROR, 0);
-        return builder.computeHealth(sizesPerSeverity);
+        StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
+        Localizable message = mock(Localizable.class);
+        when(message.toString()).thenReturn(HEALTH_REPORT_MESSAGE);
+        when(labelProvider.getToolTipLocalizable(expectedRelevantIssuesCount)).thenReturn(message);
+        HealthReport report = builder.computeHealth(healthDescriptor, labelProvider, sizesPerSeverity);
+        assertThat(report);
+        return report;
     }
 }
