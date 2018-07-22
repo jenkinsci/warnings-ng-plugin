@@ -241,11 +241,6 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             if (StringUtils.isBlank(id)) {
                 return FormValidation.error(Messages.GroovyParser_Error_Id_isEmpty());
             }
-            ParserConfiguration parsers = ParserConfiguration.getInstance();
-            if (parsers.contains(id)) {
-                return FormValidation.error(Messages.GroovyParser_Error_Id_isNotUnique(
-                        parsers.getParser(id).getName()));
-            }
             return FormValidation.ok();
         }
 
