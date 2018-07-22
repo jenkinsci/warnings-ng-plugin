@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.quality;
 
-import hudson.model.BallColor;
 import hudson.model.Result;
 import hudson.model.Run;
 
@@ -9,33 +8,42 @@ import hudson.model.Run;
  *
  * @author Ullrich Hafner
  */
-// TODO: it would make sense to use different icons as well
 public enum QualityGateStatus {
     /** Quality gate has been passed. */
-    PASSED(Result.SUCCESS),
+    PASSED(Result.SUCCESS, "fa-check-circle"),
 
     /** Quality gate has been missed: severity is a warning. */
-    WARNING(Result.UNSTABLE),
+    WARNING(Result.UNSTABLE, "fa-exclamation-triangle"),
 
     /** Quality gate has been missed: severity is an error. */
-    FAILED(Result.FAILURE),
+    FAILED(Result.FAILURE, "fa-times-circle"),
 
     /** Quality gate is inactive, so result evaluation is not available. */
-    INACTIVE(Result.NOT_BUILT);
+    INACTIVE(Result.NOT_BUILT, "fa-toggle-off");
 
     private final Result result;
+    private final String iconName;
 
-    QualityGateStatus(final Result result) {
+    /**
+     * Creates a new {@link QualityGateStatus}.
+     *
+     * @param result
+     *         corresponding result for the build
+     * @param iconName
+     *         the icon name to show
+     */
+    QualityGateStatus(final Result result, final String iconName) {
         this.result = result;
+        this.iconName = iconName;
     }
 
     /**
-     * Returns the associated {@link Result} color.
+     * Returns the associated icon.
      *
-     * @return Jenkins' {@link Result} color
+     * @return the icon to use
      */
-    public BallColor getColor() {
-        return result.color;
+    public String getIconName() {
+        return iconName;
     }
 
     /**
@@ -49,12 +57,22 @@ public enum QualityGateStatus {
 
     /**
      * Sets the result of the specified run to the associated value of this quality gate status.
-     * 
-     * @param run the run to set the result for
+     *
+     * @param run
+     *         the run to set the result for
      */
     public void setResult(final Run<?, ?> run) {
         if (!isSuccessful()) {
             run.setResult(result);
         }
+    }
+
+    /**
+     * Returns a description of the status. 
+     * 
+     * @return a description
+     */
+    public String getDescription() {
+        return result.color.getDescription();
     }
 }
