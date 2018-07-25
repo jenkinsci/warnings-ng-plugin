@@ -1,14 +1,28 @@
 package io.jenkins.plugins.analysis.core;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.acegisecurity.AccessDeniedException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.eclipse.collections.impl.factory.Lists;
 
+import com.google.errorprone.annotations.MustBeClosed;
+
+import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import jenkins.model.Jenkins;
 
 import hudson.DescriptorExtensionList;
@@ -30,6 +44,49 @@ import hudson.security.Permission;
  */
 public class JenkinsFacade implements Serializable {
     private static final long serialVersionUID = 1904631270145841113L;
+
+    /**
+     * Returns the lines of the console log. If the log cannot be read, then the exception message is returned as text.
+     *
+     * @param build
+     *         the build to get the console log for
+     *
+     * @return the lines of the console log
+     */
+    @MustBeClosed
+    public Stream<String> readConsoleLog(final Run<?, ?> build) {
+        try {
+            return Files.lines(build.getLogFile().toPath(), StandardCharsets.UTF_8);
+        }
+        catch (IOException e) {
+            return Lists.fixedSize.of(ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)).stream();
+        }
+    }
+
+    /**
+     * Returns the affected file with the specified file name.
+     *
+     * @param build
+     *         the build to get the console log for
+     * @param fileName
+     *         the file to read
+     * @param sourceEncoding
+     *         the encoding to use when reading the file
+     *
+     * @return the affected file
+     */
+    @MustBeClosed
+    public Reader readBuildFile(final Run<?, ?> build, final String fileName, final Charset sourceEncoding) {
+        try {
+            InputStream inputStream = AffectedFilesResolver.asStream(build, fileName);
+
+            return new InputStreamReader(inputStream, sourceEncoding);
+        }
+        catch (IOException e) {
+            return new StringReader(
+                    String.format("%s%n%s", ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)));
+        }
+    }
 
     /**
      * Returns the discovered instances for the given extension type.
@@ -75,10 +132,6 @@ public class JenkinsFacade implements Serializable {
         return getJenkins().getACL().hasPermission(permission);
     }
 
-    private Jenkins getJenkins() {
-        return Jenkins.getInstance();
-    }
-
     /**
      * Gets a {@link Job} by its full name. Full names are like path names, where each name of {@link Item} is combined
      * by '/'.
@@ -103,6 +156,7 @@ public class JenkinsFacade implements Serializable {
      *
      * @param id
      *         the ID of the build
+     *
      * @return the selected build, if it exists with the given ID and if it is accessible
      */
     @SuppressWarnings("unchecked")
@@ -174,5 +228,9 @@ public class JenkinsFacade implements Serializable {
      */
     public String getFullNameOf(final Job job) {
         return job.getFullName(); // getFullName is final
+    }
+
+    private Jenkins getJenkins() {
+        return Jenkins.getInstance();
     }
 }

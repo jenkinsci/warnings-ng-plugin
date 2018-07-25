@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
-import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.ModuleDetector;
 import edu.hm.hafner.analysis.ModuleDetector.FileSystem;
 import edu.hm.hafner.analysis.PackageNameResolver;
@@ -214,7 +213,7 @@ class IssuesScanner {
             report.logInfo("Resolving package names (or namespaces) by parsing the affected files");
 
             PackageNameResolver resolver = new PackageNameResolver();
-            resolver.run(report, new IssueBuilder(), getCharset());
+            resolver.run(report, getCharset());
         }
 
         private Charset getCharset() {

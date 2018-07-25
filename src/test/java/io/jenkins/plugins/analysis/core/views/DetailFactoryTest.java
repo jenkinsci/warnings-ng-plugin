@@ -1,26 +1,29 @@
 package io.jenkins.plugins.analysis.core.views;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.*;
 
-import hudson.model.Job;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 
@@ -40,6 +43,7 @@ class DetailFactoryTest {
     private static final Report OUTSTANDING_ISSUES = createReportWith(3, 2, 1, "outstanding");
     private static final Report FIXED_ISSUES = createReportWith(3, 2, 1, "fixed");
     private static final String PARENT_NAME = "Parent Name";
+    private static final String AFFECTED_FILE_CONTENT = "Console-Log-Content";
 
     @SuppressWarnings("ParameterNumber")
     private <T extends ModelObject> T createTrendDetails(final String link, final Run<?, ?> owner, final AnalysisResult result,
@@ -134,48 +138,52 @@ class DetailFactoryTest {
         assertThat(issuesDetail).isSameAs(parent);
     }
 
-    /**
-     * Checks that a link to a source, returns a ConsoleDetail-View if the issue is contained in the console log.
-     */
     @Test
-    void shouldReturnConsoleDetailWhenCalledWithSourceLinkAndIssueInConsoleLog() throws IOException {
-        DetailFactory detailFactory = new DetailFactory();
-        @SuppressWarnings("unchecked")
-        Report allIssuesWithUUIDIssue = mock(Report.class);
-        Issue issueFromUUID = mock(Issue.class);
-        File file = File.createTempFile("test", "file");
+    void shouldCreateConsoleDetailForSourceLinksIfFileNameIsSelf() {
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        when(jenkins.readConsoleLog(any())).thenReturn(createLines());
+        DetailFactory detailFactory = new DetailFactory(jenkins);
+        Report report = new Report();
 
-        when(allIssuesWithUUIDIssue.findById(any())).thenReturn(issueFromUUID);
-        when(issueFromUUID.getFileName()).thenReturn("<SELF>");
-        when(RUN.getLogFile()).thenReturn(file);
+        IssueBuilder issueBuilder = new IssueBuilder();
+        issueBuilder.setFileName(IssueParser.SELF);
+        Issue issue = issueBuilder.build();
 
-        Object consoleDetail = detailFactory.createTrendDetails("source." + UUID.randomUUID().toString(), RUN, createResult(),
-                allIssuesWithUUIDIssue,
-                NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
-        assertThat(consoleDetail).isInstanceOf(ConsoleDetail.class);
+        report.add(issue);
+        
+        Object details = detailFactory.createTrendDetails("source." + issue.getId().toString(), 
+                RUN, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
+        assertThat(details).isInstanceOf(ConsoleDetail.class);
+        assertThat(((ConsoleDetail) details).getSourceCode()).contains(AFFECTED_FILE_CONTENT);
+    }
+
+    private Stream<String> createLines() {
+        List<String> lines = new ArrayList<>();
+        lines.add(AFFECTED_FILE_CONTENT);
+        return lines.stream();
     }
 
     /**
      * Checks that a link to a source, returns a SourceDetail-View.
      */
     @Test
-    void shouldReturnSourceDetailWhenCalledWithSourceLinkAndIssueNotInConsoleLog() throws IOException {
-        DetailFactory detailFactory = new DetailFactory();
-        @SuppressWarnings("unchecked")
-        Report allIssuesWithUUIDIssue = mock(Report.class);
-        Job parentJob = mock(Job.class);
-        File file = File.createTempFile("test", "file");
-        Issue issueFromUUID = mock(Issue.class);
+    void shouldReturnSourceDetailWhenCalledWithSourceLinkAndIssueNotInConsoleLog() {
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        when(jenkins.readBuildFile(any(), anyString(), any())).thenReturn(new StringReader(AFFECTED_FILE_CONTENT));
+        
+        DetailFactory detailFactory = new DetailFactory(jenkins);
+        Report report = new Report();
 
-        when(allIssuesWithUUIDIssue.findById(any())).thenReturn(issueFromUUID);
-        when(RUN.getParent()).thenReturn(parentJob);
-        when(parentJob.getBuildDir()).thenReturn(file);
-        when(issueFromUUID.getFileName()).thenReturn("test");
+        IssueBuilder issueBuilder = new IssueBuilder();
+        issueBuilder.setFileName("a-file");
+        Issue issue = issueBuilder.build();
 
-        Object fixedWarningsDetail = detailFactory.createTrendDetails("source." + UUID.randomUUID().toString(), RUN,
-                createResult(), allIssuesWithUUIDIssue,
-                NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
-        assertThat(fixedWarningsDetail).isInstanceOf(SourceDetail.class);
+        report.add(issue);
+
+        Object details = detailFactory.createTrendDetails("source." + issue.getId().toString(),
+                RUN, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
+        assertThat(details).isInstanceOf(SourceDetail.class);
+        assertThat(((SourceDetail) details).getSourceCode()).contains(AFFECTED_FILE_CONTENT);
     }
 
     /**

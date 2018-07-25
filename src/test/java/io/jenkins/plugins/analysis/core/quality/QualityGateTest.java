@@ -135,14 +135,14 @@ class QualityGateTest extends SerializableTest<QualityGate> {
         assertThat(qualityGateStatus).isEqualTo(QualityGateStatus.FAILED);
         
         assertThat(logger.getMessages()).containsExactly(
-                "FAILED -> Total number of issues: 1 - Quality Gate: 1",
-                "FAILED -> Total number of issues (Severity High): 1 - Quality Gate: 1",
-                "FAILED -> Total number of issues (Severity Normal): 1 - Quality Gate: 1",
-                "FAILED -> Total number of issues (Severity Low): 1 - Quality Gate: 1",
-                "FAILED -> Number of new issues: 1 - Quality Gate: 1",
-                "FAILED -> Number of new issues (Severity High): 1 - Quality Gate: 1",
-                "FAILED -> Number of new issues (Severity Normal): 1 - Quality Gate: 1",
-                "FAILED -> Number of new issues (Severity Low): 1 - Quality Gate: 1");
+                "-> FAILED - Total number of issues: 1 - Quality Gate: 1",
+                "-> FAILED - Total number of issues (Severity High): 1 - Quality Gate: 1",
+                "-> FAILED - Total number of issues (Severity Normal): 1 - Quality Gate: 1",
+                "-> FAILED - Total number of issues (Severity Low): 1 - Quality Gate: 1",
+                "-> FAILED - Number of new issues: 1 - Quality Gate: 1",
+                "-> FAILED - Number of new issues (Severity High): 1 - Quality Gate: 1",
+                "-> FAILED - Number of new issues (Severity Normal): 1 - Quality Gate: 1",
+                "-> FAILED - Number of new issues (Severity Low): 1 - Quality Gate: 1");
     }
     
     @Test
@@ -612,7 +612,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
 
     private void assertThatLogMessageIsCorrect(final QualityGateStatus qualityGateStatus, final Logger logger) {
         if (!qualityGateStatus.isSuccessful()) {
-            assertThat(logger.getMessages()).anySatisfy(message -> assertThat(message).startsWith(qualityGateStatus.name()));
+            assertThat(logger.getMessages()).anySatisfy(message -> assertThat(message).startsWith("-> " + qualityGateStatus.name()));
         }
     }
 

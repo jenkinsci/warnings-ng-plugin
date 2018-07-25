@@ -4,7 +4,7 @@
   <l:layout title="${it.displayName}" norefresh="true">
     <st:include it="${it.owner}" page="sidepanel.jelly" />
     <l:main-panel>
-      <h1>${%sourcedetail.header(it.fileName)}</h1>
+      <h1>${%sourcedetail.header(it.displayName)}</h1>
 
       <j:out value="${it.sourceCode}" />
 

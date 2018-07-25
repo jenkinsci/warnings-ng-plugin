@@ -3,7 +3,9 @@ package io.jenkins.plugins.analysis.core.util;
 import java.io.File;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -57,6 +59,7 @@ public class AbsolutePathGenerator {
 
         Map<String, String> relativeToAbsoluteMapping = resolveAbsoluteNames(relativeFileNames, workspace);
 
+        List<String> unresolved = new ArrayList<>();
         int resolvedCount = 0;
         int unchangedCount = 0;
         int unresolvedCount = 0;
@@ -69,6 +72,12 @@ public class AbsolutePathGenerator {
             else {
                 if (relativeFileNames.contains(issue.getFileName())) {
                     unresolvedCount++;
+                    if (unresolvedCount < 5) {
+                        unresolved.add(String.format("- %s", issue.getFileName()));
+                    }
+                    else if (unresolvedCount == 5) {
+                        unresolved.add("  ... skipped logging of additional file errors ...");
+                    }
                 }
                 else {
                     unchangedCount++;
@@ -77,10 +86,11 @@ public class AbsolutePathGenerator {
         }
 
         if (unresolvedCount > 0) {
-            report.logError("Can't resolve absolute paths for %d files", unresolvedCount);
+            report.logError("Can't resolve absolute paths for %d files:", unresolvedCount);
+            unresolved.forEach(report::logError);
         }
-        report.logInfo("-> Resolved absolute paths for %d files (issues: %d resolved, %d unresolved, %d already absolute)",
-                    relativeFileNames.size(), resolvedCount, unresolvedCount, unchangedCount);
+        report.logInfo("-> %d resolved, %d unresolved, %d already absolute", 
+                resolvedCount, unresolvedCount, unchangedCount);
     }
 
     private Map<String, String> resolveAbsoluteNames(final Set<String> relativeFileNames, final File workspace) {

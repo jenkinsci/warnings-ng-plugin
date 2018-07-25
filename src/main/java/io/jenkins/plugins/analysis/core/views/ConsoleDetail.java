@@ -1,11 +1,6 @@
 package io.jenkins.plugins.analysis.core.views;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -24,6 +19,8 @@ import hudson.plugins.analysis.Messages;
  * @author Ulli Hafner
  */
 public class ConsoleDetail implements ModelObject {
+    private int lineCount;
+
     /**
      * Returns whether the specified issue refers to a line in the console log.
      *
@@ -37,10 +34,10 @@ public class ConsoleDetail implements ModelObject {
         return IssueParser.isSelfReference(issue);
     }
 
-    /** The current build as owner of this object. */
-    private final Run<?, ?> owner;
     /** The rendered source file. */
     private String sourceCode = StringUtils.EMPTY;
+
+    private final Run<?, ?> owner;
     private final int from;
     private final int to;
     private final int end;
@@ -50,52 +47,45 @@ public class ConsoleDetail implements ModelObject {
      * Creates a new instance of this console log viewer object.
      *
      * @param owner
-     *         the current build as owner of this object
+     *         the current build as owner of this view
+     * @param consoleLog
+     *         the lines of the console log
      * @param from
      *         first line in the console log
      * @param to
      *         last line in the console log
      */
-    public ConsoleDetail(final Run<?, ?> owner, final int from, final int to) {
+    public ConsoleDetail(final Run<?, ?> owner, final Stream<String> consoleLog, final int from, final int to) {
         this.owner = owner;
         this.from = from;
         this.to = to;
 
-        start = Math.max(0, from - 10);
+        start = Math.max(1, from - 10);
         end = to + 10;
 
-        readConsole();
+        readConsole(consoleLog.skip(start - 1).limit(end - start + 1));
     }
 
-    private void readConsole() {
-        try (BufferedReader reader = openConsoleLog()) {
-            StringBuilder console = new StringBuilder(1024);
+    private void readConsole(final Stream<String> consoleLog) {
+        StringBuilder console = new StringBuilder(1024);
 
-            console.append("<table>\n");
-            int lineCount = 0;
-            for (String line = reader.readLine(); line != null && lineCount <= end; line = reader.readLine()) {
-                if (lineCount >= start) {
-                    console.append("<tr><td ");
-                    if (lineCount >= from && lineCount <= to) {
-                        console.append("style=\"background-color:#FCAF3E\"");
-                    }
-                    console.append(">\n");
-                    console.append(StringEscapeUtils.escapeHtml4(line));
-                    console.append("</td></tr>\n");
-                }
-                lineCount++;
+        console.append("<table>\n");
+        lineCount = 0;
+        consoleLog.forEach(line -> {
+            console.append("<tr><td ");
+            if (lineCount >= from - start && lineCount <= to - start) {
+                console.append("style=\"background-color:#FCAF3E\"");
             }
-            console.append("</table>\n");
+            console.append(">");
+            console.append(StringEscapeUtils.escapeHtml4(line));
+            console.append("</td></tr>\n");
+            lineCount++;
+        });
+        console.append("</table>\n");
 
-            sourceCode = ConsoleNote.removeNotes(console.toString());
-        }
-        catch (IOException exception) {
-            sourceCode = sourceCode + exception.getLocalizedMessage();
-        }
-    }
+        sourceCode = ConsoleNote.removeNotes(console.toString());
 
-    private BufferedReader openConsoleLog() throws UnsupportedEncodingException, FileNotFoundException {
-        return new BufferedReader(new InputStreamReader(new FileInputStream(owner.getLogFile()), "UTF8"));
+        consoleLog.close();
     }
 
     @Override
@@ -104,19 +94,11 @@ public class ConsoleDetail implements ModelObject {
     }
 
     /**
-     * Gets the file name of this source file.
-     *
-     * @return the file name
-     */
-    public String getFileName() {
-        return getDisplayName();
-    }
-
-    /**
-     * Returns the build as owner of this object.
+     * Returns the build as owner of this view.
      *
      * @return the build
      */
+    @SuppressWarnings("unused") // Called by jelly view to show the side panel
     public Run<?, ?> getOwner() {
         return owner;
     }
@@ -126,6 +108,7 @@ public class ConsoleDetail implements ModelObject {
      *
      * @return the line to highlight
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public String getSourceCode() {
         return sourceCode;
     }

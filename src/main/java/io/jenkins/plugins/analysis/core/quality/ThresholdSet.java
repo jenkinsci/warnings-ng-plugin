@@ -103,19 +103,19 @@ public class ThresholdSet implements Serializable {
         boolean normalThresholdReached = isNormalThresholdReached(normalToCheck);
         boolean lowThresholdReached = isLowThresholdReached(lowToCheck);
         if (totalThresholdReached) {
-            logger.print("%s -> %s: %d - Quality Gate: %d",
+            logger.print("-> %s - %s: %d - Quality Gate: %d",
                     qualityGateStatus, message, totalToCheck, totalThreshold);
         }
         if (highThresholdReached) {
-            logger.print("%s -> %s (Severity High): %d - Quality Gate: %d",
+            logger.print("-> %s - %s (Severity High): %d - Quality Gate: %d",
                     qualityGateStatus, message, highToCheck, highThreshold);
         }
         if (normalThresholdReached) {
-            logger.print("%s -> %s (Severity Normal): %d - Quality Gate: %d",
+            logger.print("-> %s - %s (Severity Normal): %d - Quality Gate: %d",
                     qualityGateStatus, message, normalToCheck, normalThreshold);
         }
         if (lowThresholdReached) {
-            logger.print("%s -> %s (Severity Low): %d - Quality Gate: %d",
+            logger.print("-> %s - %s (Severity Low): %d - Quality Gate: %d",
                     qualityGateStatus, message, lowToCheck, lowThreshold);
         }
         if (totalThresholdReached || highThresholdReached || normalThresholdReached || lowThresholdReached) {

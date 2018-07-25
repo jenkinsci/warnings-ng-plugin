@@ -1,13 +1,10 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -31,7 +28,6 @@ import hudson.model.Run;
  *
  * @author Ullrich Hafner
  */
-// FIXME: remove File and use Path
 public class AffectedFilesResolver {
     private static final String SLASH = "/";
     private static final String AFFECTED_FILES_FOLDER_NAME = "files-with-issues";
@@ -48,32 +44,27 @@ public class AffectedFilesResolver {
      * @return the file
      */
     public static boolean hasAffectedFile(final Run<?, ?> run, final Issue issue) {
-        return canAccess(getFile(run, issue));
+        return canAccess(getFile(run, issue.getFileName()));
     }
-
-    private static boolean canAccess(final File file) {
-        return Files.isReadable(file.toPath());
+    
+    private static boolean canAccess(final Path file) {
+        return Files.isReadable(file);
     }
 
     /**
      * Returns the affected file in Jenkins' build folder.
      *
-     * @param run
-     *         the run referencing the build folder
-     * @param issue
-     *         the issue in the affected file
-     *
+     * @param build
+     *         the build
+     * @param fileName
+     *         the file name of the file to read from the build folder
+     *^ 
      * @return the file
-     * @throws UncheckedIOException
+     * @throws IOException
      *         if the file could not be found
      */
-    public static InputStream asStream(final Run<?, ?> run, final Issue issue) throws UncheckedIOException {
-        try {
-            return new FileInputStream(getFile(run, issue));
-        }
-        catch (FileNotFoundException e) {
-            throw new UncheckedIOException(e);
-        }
+    public static InputStream asStream(final Run<?, ?> build, final String fileName) throws IOException {
+        return Files.newInputStream(getFile(build, fileName));
     }
 
     /**
@@ -81,15 +72,15 @@ public class AffectedFilesResolver {
      *
      * @param run
      *         the run referencing the build folder
-     * @param issue
-     *         the issue in the affected file
+     * @param fileName
+     *         the file name in the folder of affected files
      *
      * @return the file
      */
-    public static File getFile(final Run<?, ?> run, final Issue issue) {
-        File buildDir = run.getRootDir();
-
-        return new File(new File(buildDir, AFFECTED_FILES_FOLDER_NAME), getTempName(issue.getFileName()));
+    public static Path getFile(final Run<?, ?> run, final String fileName) {
+        return run.getRootDir().toPath()
+                .resolve(AFFECTED_FILES_FOLDER_NAME)
+                .resolve(getTempName(fileName));
     }
 
     /**
@@ -126,6 +117,7 @@ public class AffectedFilesResolver {
                         copied++;
                     }
                     catch (IOException exception) {
+                        // TODO same logging and error handling as in other files
                         logExceptionToFile(exception, remoteBuildFolderCopy, localSourceFile);
                         error++;
                     }
@@ -151,6 +143,7 @@ public class AffectedFilesResolver {
      *         the file name of the source
      * @param workspace
      *         the workspace on the agent
+     *
      * @return {@code true} if the file is in the workspace, {@code false} otherwise
      */
     private boolean isInWorkspace(final String fileName, final File workspace) {
@@ -177,14 +170,12 @@ public class AffectedFilesResolver {
     private FilePath createBuildDirectory(final FilePath jenkinsBuildRoot)
             throws IOException, InterruptedException {
         FilePath directory = jenkinsBuildRoot.child(AFFECTED_FILES_FOLDER_NAME);
-        if (!directory.exists()) {
-            try {
-                directory.mkdirs();
-            }
-            catch (IOException exception) {
-                throw new IOException("Can't create directory for workspace files that contain issues: "
-                        + directory.getName(), exception);
-            }
+        try {
+            directory.mkdirs();
+        }
+        catch (IOException exception) {
+            throw new IOException("Can't create directory for workspace files that contain issues: "
+                    + directory.getName(), exception);
         }
         return directory;
     }

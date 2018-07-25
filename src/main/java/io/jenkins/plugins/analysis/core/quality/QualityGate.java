@@ -76,7 +76,6 @@ public class QualityGate implements Serializable {
      *
      * @return result of the evaluation, expressed by a build state
      */
-    // TODO: l10n
     public QualityGateStatus evaluate(final DeltaReport report, final FormattedLogger logger) {
         QualityGateStatus totalFailedStatus = totalFailedThreshold.evaluate(
                 report.getTotalSize(),

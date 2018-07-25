@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.model;
 import javax.annotation.CheckForNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
@@ -484,6 +485,10 @@ public class StaticAnalysisLabelProvider {
      * @return the description
      */
     public Localizable getToolTipLocalizable(final int numberOfItems) {
+        return new CompositeLocalizable(getName(), createToolTipSuffix(numberOfItems));
+    }
+
+    private Localizable createToolTipSuffix(final int numberOfItems) {
         if (numberOfItems == 0) {
             return Messages._Tool_NoIssues();
         }
@@ -554,4 +559,24 @@ public class StaticAnalysisLabelProvider {
         }
     }
 
+    /**
+     * Creates a {@link Localizable} that is composed of a prefix and suffix.
+     */
+    static class CompositeLocalizable extends Localizable {
+        private static final long serialVersionUID = 2819361593374249688L;
+
+        private final String prefix;
+        private final Localizable suffix;
+
+        CompositeLocalizable(final String prefix, final Localizable suffix) {
+            super(null, suffix.getKey());
+            this.prefix = prefix;
+            this.suffix = suffix;
+        }
+
+        @Override
+        public String toString(final Locale locale) {
+            return String.format("%s: %s", prefix, suffix);
+        }
+    } 
 }

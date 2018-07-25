@@ -42,7 +42,7 @@ public class HealthReportBuilder {
         }
         relevantIssuesSize += sizePerSeverity.getOrDefault(Severity.ERROR, 0);
 
-        if (healthDescriptor.isEnabled()) {
+        if (healthDescriptor.isValid()) {
             int percentage;
             int healthy = healthDescriptor.getHealthy();
             if (relevantIssuesSize < healthy) {

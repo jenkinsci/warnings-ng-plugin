@@ -1,17 +1,15 @@
 package io.jenkins.plugins.analysis.core.views;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.UncheckedIOException;
-import java.nio.charset.Charset;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
 import de.java2html.converter.JavaSource2HTMLConverter;
@@ -19,7 +17,6 @@ import de.java2html.javasource.JavaSource;
 import de.java2html.javasource.JavaSourceParser;
 import de.java2html.options.JavaSourceConversionOptions;
 import edu.hm.hafner.analysis.Issue;
-import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 
 import hudson.model.ModelObject;
 import hudson.model.Run;
@@ -39,49 +36,40 @@ public class SourceDetail implements ModelObject {
     private static final String OTHER_COLOR = "#FCE94F";
     /** The current build as owner of this object. */
     private final Run<?, ?> owner;
-    /** Stripped file name of this issue without the path prefix. */
-    private final String fileName;
     /** The issue to be shown. */
     private final Issue issue;
     /** The rendered source file. */
-    private String sourceCode = StringUtils.EMPTY;
-    /** The default encoding to be used when reading and parsing files. */
-    private final Charset sourceEncoding;
+    private final String sourceCode;
 
     /**
      * Creates a new instance of this source code object.
      *
      * @param owner
-     *         the current build as owner of this object
+     *         the current build as owner of this view
+     * @param affectedFile
+     *         the file to show
      * @param issue
      *         the warning to display in the source file
-     * @param sourceEncoding
-     *         the encoding to use when displaying source files
      */
-    public SourceDetail(final Run<?, ?> owner, final Issue issue, final Charset sourceEncoding) {
+    public SourceDetail(final Run<?, ?> owner, final Reader affectedFile, final Issue issue) {
         this.owner = owner;
         this.issue = issue;
-        this.sourceEncoding = sourceEncoding;
-        fileName = issue.getBaseName();
 
-        initializeContent();
+        sourceCode = renderSourceCode(affectedFile);
     }
 
-    /**
-     * Initializes the content of the source file: reads the file, colors it, and splits it into three parts.
-     */
-    private void initializeContent() {
-        try (InputStream file = AffectedFilesResolver.asStream(owner, issue)) {
-            splitSourceFile(highlightSource(file));
+    private String renderSourceCode(final Reader affectedFile) {
+        try {
+            return splitSourceFile(highlightSource(affectedFile));
         }
-        catch (IOException | UncheckedIOException exception) {
-            sourceCode = "Can't read file: " + exception.getLocalizedMessage();
+        catch (IOException e) {
+            return e.getMessage() + "\n" + ExceptionUtils.getStackTrace(e);
         }
     }
 
     @Override
     public String getDisplayName() {
-        return fileName;
+        return issue.getBaseName();
     }
 
     /**
@@ -94,8 +82,8 @@ public class SourceDetail implements ModelObject {
      * @throws IOException
      *         if the source code could not be read
      */
-    private String highlightSource(final InputStream file) throws IOException {
-        JavaSource source = new JavaSourceParser().parse(new InputStreamReader(file, sourceEncoding));
+    private String highlightSource(final Reader file) throws IOException {
+        JavaSource source = new JavaSourceParser().parse(file);
 
         JavaSource2HTMLConverter converter = new JavaSource2HTMLConverter();
         StringWriter writer = new StringWriter();
@@ -115,12 +103,12 @@ public class SourceDetail implements ModelObject {
      */
     // CHECKSTYLE:CONSTANTS-OFF
     @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
-    private void splitSourceFile(final String sourceFile) {
+    private String splitSourceFile(final String sourceFile) {
         StringBuilder output = new StringBuilder(sourceFile.length());
 
         LineIterator lineIterator = IOUtils.lineIterator(new StringReader(sourceFile));
 
-        // FIXME: add support for line ranges
+        // TODO: add support for line ranges (or replace this view with client side rendering)
         try {
             int lineNumber = 1;
             while (lineNumber < SOURCE_GENERATOR_OFFSET) {
@@ -172,7 +160,7 @@ public class SourceDetail implements ModelObject {
         catch (NoSuchElementException exception) {
             // ignore an illegal range
         }
-        sourceCode = output.toString();
+        return output.toString();
     }
     // CHECKSTYLE:CONSTANTS-ON
 
@@ -219,19 +207,11 @@ public class SourceDetail implements ModelObject {
     }
 
     /**
-     * Gets the file name of this source file.
-     *
-     * @return the file name
-     */
-    public String getFileName() {
-        return fileName;
-    }
-
-    /**
-     * Returns the build as owner of this object.
+     * Returns the build as owner of this view.
      *
      * @return the build
      */
+    @SuppressWarnings("unused") // Called by jelly view to show the side panel
     public Run<?, ?> getOwner() {
         return owner;
     }

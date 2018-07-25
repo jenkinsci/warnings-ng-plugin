@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.views;
 
+import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.util.UUID;
@@ -12,6 +13,8 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.NoSuchElementException;
+import edu.hm.hafner.util.VisibleForTesting;
+import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
@@ -27,6 +30,20 @@ import hudson.model.Run;
 public class DetailFactory {
     private static final Report EMPTY = new Report();
     private static final String LINK_SEPARATOR = ".";
+
+    private final JenkinsFacade jenkins;
+
+    /** 
+     * Creates a new instance of {@link DetailFactory}.
+     */
+    public DetailFactory() {
+        this(new JenkinsFacade());
+    }
+
+    @VisibleForTesting
+    DetailFactory(final JenkinsFacade jenkinsFacade) {
+        this.jenkins = jenkinsFacade;
+    }
 
     /**
      * Returns a detail object for the selected element for the specified issues.
@@ -78,12 +95,12 @@ public class DetailFactory {
         if (link.startsWith("source.")) {
             Issue issue = allIssues.findById(UUID.fromString(plainLink));
             if (ConsoleDetail.isInConsoleLog(issue)) {
-                // FIXME: Put this in Jenkins Facade
-                return new ConsoleDetail(owner, issue.getLineStart(), issue.getLineEnd());
+                return new ConsoleDetail(owner, jenkins.readConsoleLog(owner), issue.getLineStart(), issue.getLineEnd());
             }
             else {
-                // FIXME: Put this in Jenkins Facade
-                return new SourceDetail(owner, issue, sourceEncoding);
+                Reader affectedFile = jenkins.readBuildFile(owner, issue.getFileName(), sourceEncoding);
+
+                return new SourceDetail(owner, affectedFile, issue);
             }
         }
 

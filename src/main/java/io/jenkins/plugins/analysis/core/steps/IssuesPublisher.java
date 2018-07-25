@@ -154,12 +154,13 @@ class IssuesPublisher {
     private QualityGateStatus evaluateQualityGate(final Report filtered, final DeltaReport deltaReport) {
         QualityGateStatus qualityGateStatus;
         if (qualityGate.isEnabled()) {
+            filtered.logInfo("Evaluating quality gates");
             qualityGateStatus = qualityGate.evaluate(deltaReport, filtered::logInfo);
             if (qualityGateStatus.isSuccessful()) {
-                filtered.logInfo("All quality gates have been passed");
+                filtered.logInfo("-> All quality gates have been passed");
             }
             else {
-                filtered.logInfo("Some quality gates have been missed: overall result is %s", qualityGateStatus);
+                filtered.logInfo("-> Some quality gates have been missed: overall result is %s", qualityGateStatus);
             }
             qualityGateStatus.setResult(run);
         }

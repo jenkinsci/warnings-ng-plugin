@@ -80,6 +80,18 @@ class HealthReportBuilderTest {
     }
 
     /**
+     * Test whether the health descriptor is disabled.
+     */
+    @Test
+    void shouldBeNullForInvalidHealthDescriptor() {
+        HealthReport sameBoundaries = createTestHealthReport(15, 15, Priority.NORMAL, 10, 20, 30, 0);
+        assertThat(sameBoundaries).isNull();
+
+        HealthReport wrongBoundaryOrder = createTestHealthReport(15, 15, Priority.NORMAL, 10, 20, 30, 0);
+        assertThat(wrongBoundaryOrder).isNull();
+    }
+
+    /**
      * Tests whether we evaluate correctly to a 100% health if healthy threshold fits the priority issue number.
      */
     @Test

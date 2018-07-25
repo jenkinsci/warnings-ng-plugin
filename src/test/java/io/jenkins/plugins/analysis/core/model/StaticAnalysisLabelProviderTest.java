@@ -13,6 +13,7 @@ import edu.hm.hafner.util.ResourceTest;
 import static io.jenkins.plugins.analysis.core.model.Assertions.assertThat;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.CompositeLocalizable;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import net.sf.json.JSONArray;
@@ -221,6 +222,21 @@ class StaticAnalysisLabelProviderTest {
             columns = provider.toJson(report, issue, String::valueOf, fileNameRenderer);
             assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
             assertThatColumnsAreValid(report, columns, 1);
+        }
+    }
+
+    /**
+     * Tests the utility class {@link CompositeLocalizable}.
+     */
+    @Nested
+    class CompositeLocalizableTest {
+        @Test
+        void shouldCreateComposedMessage() {
+            CompositeLocalizable localizable = new CompositeLocalizable("Static Analysis", Messages._Tool_NoIssues());
+            
+            assertThat(localizable).hasToString("Static Analysis: No warnings");
+            assertThat(localizable.toString(Locale.ENGLISH)).isEqualTo("Static Analysis: No warnings");
+            assertThat(localizable.getKey()).isEqualTo(Messages._Tool_NoIssues().getKey());
         }
     }
 }
