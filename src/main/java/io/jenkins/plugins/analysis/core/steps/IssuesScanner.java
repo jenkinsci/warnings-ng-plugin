@@ -108,14 +108,18 @@ class IssuesScanner {
 
         waitForConsoleToFlush();
 
-        logger.log("Parsing console log (workspace: '%s')", workspace);
+        Report consoleReport = new Report();
+        consoleReport.logInfo("Parsing console log (workspace: '%s')", workspace);
+        logger.log(consoleReport);
 
         Report report = tool.createParser().parse(consoleLog, logFileEncoding, ConsoleNote::removeNotes);
         report.setId(tool.getId());
         
-        logger.log(report);
+        consoleReport.addAll(report);
+        
+        logger.log(consoleReport);
 
-        return postProcess(report);
+        return postProcess(consoleReport);
     }
 
     private void waitForConsoleToFlush() {

@@ -433,6 +433,14 @@ public class PublishIssuesStep extends Step {
             if (StringUtils.isNotBlank(step.getId())) {
                 report.setId(step.getId());
             }
+            if (step.reports.length > 1) {
+                report.logInfo("Aggregating reports of:");
+                LabelProviderFactory factory = new LabelProviderFactory();
+                for (Report issues : step.reports) {
+                    StaticAnalysisLabelProvider labelProvider = factory.create(issues.getId());
+                    report.logInfo("-> %s", labelProvider.getToolTip(issues.size()));
+                }
+            }
             report.addAll(step.reports);
             filters = step.getFilters();
         }
