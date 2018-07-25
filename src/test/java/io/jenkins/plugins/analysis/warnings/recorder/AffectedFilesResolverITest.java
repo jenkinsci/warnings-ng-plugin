@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
@@ -44,23 +44,60 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
     private static final String ECLIPSE_REPORT = FOLDER + "/eclipseOneAffectedAndThreeNotExistingFiles.txt";
     private static final String ECLIPSE_REPORT_ONE_AFFECTED_FILE = FOLDER + "/eclipseOneAffectedFile.txt";
 
-    /** Verifies that the affected source code is copied and shown in the source code view. */
+    /**
+     * Verifies that the affected source code is copied and shown in the source code view. If the file is deleted in the
+     * build folder, then the link to open the file disappears.
+     */
     @Test
-    public void shouldShowAffectedSourceCode() {
-        FreeStyleProject project = createEclipseParserProject();
+    public void shouldShowNoLinkIfSourceCodeHasBeenDeleted() {
+        FreeStyleProject project = createEclipseProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        HtmlPage details = getWebPage(result);
-        IssuesTable issues = new IssuesTable(details);
-        IssueRow row = issues.getRow(1);
+        IssueRow row = getIssuesTableRow(result, 1);
         assertThat(row.hasLink(IssueRow.FILE)).isTrue();
 
         assertThat(extractSourceCodeFromHtml(getSourceCodePage(result))).contains(readSourceCode(project));
+
+        deleteAffectedFilesInBuildFolder(result);
+
+        row = getIssuesTableRow(result, 1);
+        assertThat(row.hasLink(IssueRow.FILE)).isFalse();
+    }
+
+    /**
+     * Verifies that the affected source code is copied and shown in the source code view. If the file is made
+     * unreadable in the build folder, then the link to open the file disappears.
+     */
+    @Test
+    public void shouldShowNoLinkIfSourceCodeHasBeenMadeUnreadable() {
+        FreeStyleProject project = createEclipseProject();
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        IssueRow row = getIssuesTableRow(result, 1);
+        assertThat(row.hasLink(IssueRow.FILE)).isTrue();
+
+        makeAffectedFilesInBuildFolderUnreadable(result);
+
+        row = getIssuesTableRow(result, 1);
+        assertThat(row.hasLink(IssueRow.FILE)).isFalse();
+    }
+
+    private void makeAffectedFilesInBuildFolderUnreadable(final AnalysisResult result) {
+        makeFileUnreadable(AffectedFilesResolver.getFile(result.getOwner(), getIssueWithSource(result).getFileName()));
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void deleteAffectedFilesInBuildFolder(final AnalysisResult result) {
-        result.getIssues().forEach(issue -> AffectedFilesResolver.getFile(result.getOwner(), issue).delete());
+        result.getIssues()
+                .forEach(issue -> AffectedFilesResolver.getFile(result.getOwner(), issue.getFileName())
+                        .toFile()
+                        .delete());
+    }
+
+    private IssueRow getIssuesTableRow(final AnalysisResult result, final int rowNumber) {
+        HtmlPage details = getWebPage(result);
+        IssuesTable issues = new IssuesTable(details);
+        return issues.getRow(rowNumber);
     }
 
     private String extractSourceCodeFromHtml(final HtmlPage contentPage) {
@@ -78,32 +115,12 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
         return replaceWhitespace(toString(getSourceInWorkspace(project)));
     }
 
-    /**
-     * Verifies that an error message is shown if both the workspace file and the copy in the build folder have been
-     * deleted.
-     */
-    @Test
-    public void shouldShowErrorMessageIfAffectedFileHasBeenDeletedInWorkspaceAndBuildFolder() {
-        FreeStyleProject project = createEclipseParserProject();
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        deleteAffectedFilesInBuildFolder(result);
-        deleteSourcesInWorkspace(project);
-
-        HtmlPage contentPage = getSourceCodePage(result);
-        assertThatPageShowsErrorMessage(contentPage);
-    }
-
-    private void deleteSourcesInWorkspace(final FreeStyleProject project) {
-        assertThat(getSourceInWorkspace(project).delete()).isTrue();
-    }
-
-    // TODO: Navigate to source code from details page once PR#138 has been merged
+    // TODO: Navigate to source code from details page 
     private HtmlPage getSourceCodePage(final AnalysisResult result) {
         return getWebPage(result, new FileNameRenderer(result.getOwner()).getSourceCodeUrl(getIssueWithSource(result)));
     }
 
-    private FreeStyleProject createEclipseParserProject() {
+    private FreeStyleProject createEclipseProject() {
         FreeStyleProject project = getJobWithWorkspaceFiles();
         enableEclipseWarnings(project);
         return project;
@@ -113,22 +130,6 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
         enableWarnings(project, new ToolConfiguration(new Eclipse(), "**/*.txt"));
     }
 
-    /**
-     * Verifies that the copied class file cannot be obtained by HTML scraping because the permissions to open the file
-     * are denied.
-     */
-    @Test
-    public void shouldShowErrorMessageIfAffectedFileHasBeenMadeUnreadableInWorkspaceAndBuildFolder() {
-        FreeStyleProject project = createEclipseParserProject();
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        makeFileUnreadable(getWorkspaceFor(project).child(getBaseName()).getRemote());
-        makeFileUnreadable(AffectedFilesResolver.getFile(result.getOwner(), getIssueWithSource(result)));
-
-        HtmlPage contentPage = getSourceCodePage(result);
-        assertThatPageShowsErrorMessage(contentPage);
-    }
-
     private FreeStyleProject getJobWithWorkspaceFiles() {
         FreeStyleProject job = createFreeStyleProject();
         copyMultipleFilesToWorkspace(job, ECLIPSE_REPORT, SOURCE_FILE);
@@ -136,11 +137,11 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
     }
 
     /**
-     * Verifies that all copied affected files are found by the {@link AffectedFilesResolver#getFile(Run, Issue)}.
+     * Verifies that all copied affected files are found by the {@link AffectedFilesResolver#getFile(Run, String)}.
      */
     @Test
     public void shouldRetrieveAffectedFilesInBuildFolder() {
-        FreeStyleProject project = createEclipseParserProject();
+        FreeStyleProject project = createEclipseProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         Report issues = result.getIssues();
@@ -149,7 +150,7 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
 
     private void assertThatFileExistsInBuildFolder(final Issue issue, final FreeStyleProject project,
             final Run<?, ?> owner) {
-        File buildFolderCopy = AffectedFilesResolver.getFile(owner, issue);
+        Path buildFolderCopy = AffectedFilesResolver.getFile(owner, issue.getFileName());
         if (issue.getFileName().contains(SOURCE_FILE)) {
             assertThat(buildFolderCopy).exists();
             assertThat(buildFolderCopy).hasSameContentAs(getSourceInWorkspace(project));
@@ -157,8 +158,8 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
         // FIXME: shouldn't we always create a temporary file to report the cause?
     }
 
-    private File getSourceInWorkspace(final FreeStyleProject project) {
-        return new File(getSourceAbsolutePath(project));
+    private Path getSourceInWorkspace(final FreeStyleProject project) {
+        return Paths.get(getSourceAbsolutePath(project));
     }
 
     private String getSourceAbsolutePath(final FreeStyleProject project) {
@@ -174,7 +175,7 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void shouldGetIoErrorBySearchingForAffectedFiles() {
-        FreeStyleProject project = createEclipseParserProject();
+        FreeStyleProject project = createEclipseProject();
 
         makeFileUnreadable(getSourceAbsolutePath(project));
 
@@ -217,14 +218,14 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
         assertThatLogContains(result.getOwner(), "1 not in workspace");
         assertThatLogContains(result.getOwner(), "0 not-found");
         assertThatLogContains(result.getOwner(), "0 with I/O error");
-        
+
         HtmlPage details = getWebPage(result);
         IssuesTable issues = new IssuesTable(details);
         assertThat(issues.getColumnNames()).containsExactly(
                 IssueRow.DETAILS, IssueRow.FILE, IssueRow.CATEGORY, IssueRow.PRIORITY, IssueRow.AGE);
         assertThat(issues.getRows()).containsExactly(
-                new IssueRow("config.xml:451", "-", 
-                        "Warning", "-", "Normal", 1 ));
+                new IssueRow("config.xml:451", "-",
+                        "Warning", "-", "Normal", 1));
         IssueRow row = issues.getRow(0);
         assertThat(row.hasLink(IssueRow.FILE)).isFalse();
     }
@@ -233,8 +234,9 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
         try {
             FilePath workspace = getWorkspace(job);
             workspace.mkdirs();
-            Files.write(Paths.get(workspace.child("gcc.log").getRemote()), 
-                    String.format("%s/config.xml:451: warning: foo defined but not used\n", job.getRootDir()).getBytes());
+            Files.write(Paths.get(workspace.child("gcc.log").getRemote()),
+                    String.format("%s/config.xml:451: warning: foo defined but not used\n", job.getRootDir())
+                            .getBytes());
         }
         catch (IOException | InterruptedException e) {
             throw new AssertionError(e);

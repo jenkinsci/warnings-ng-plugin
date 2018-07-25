@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -332,8 +333,8 @@ public class AbstractIssuesRecorderITest extends IntegrationTest {
         return actions.stream().map(ResultAction::getResult).collect(Collectors.toList());
     }
 
-    protected void makeFileUnreadable(final File file) {
-        makeFileUnreadable(file.getAbsolutePath());
+    protected void makeFileUnreadable(final Path file) {
+        makeFileUnreadable(file.toString());
     }
 
     protected void makeFileUnreadable(final String absolutePath) {

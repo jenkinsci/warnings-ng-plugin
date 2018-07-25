@@ -25,10 +25,6 @@ public class HealthReportITest extends AbstractIssuesRecorderITest {
     private static final String H40TO59 = "icon-health-40to59";
     private static final String H20TO39 = "icon-health-20to39";
     private static final String H00TO19 = "icon-health-00to19";
-    private static final String WARNINGS_8_FOUND = "Static Analysis: 8 warnings found.";
-    private static final String WARNINGS_2_FOUND = "Static Analysis: 2 warnings found.";
-    private static final String WARNINGS_4_FOUND = "Static Analysis: 4 warnings found.";
-    private static final String WARNINGS_6_FOUND = "Static Analysis: 6 warnings found.";
 
     /**
      * Sets the health threshold less then the unhealthy threshold and parse a file that contains warnings. The
@@ -56,7 +52,7 @@ public class HealthReportITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldCreate80plusHealthReport() {
         HealthReport report = createHealthReportTestSetupEclipse(10, 15);
-        assertThat(report.getDescription()).isEqualTo(WARNINGS_8_FOUND);
+        assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
     }
 
@@ -66,7 +62,7 @@ public class HealthReportITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldCreate60To79HealthReport() {
         HealthReport report = createHealthReportTestSetupEclipse(5, 15);
-        assertThat(report.getDescription()).isEqualTo(WARNINGS_8_FOUND);
+        assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H60TO79);
     }
 
@@ -76,7 +72,7 @@ public class HealthReportITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldCreate40To59HealthReport() {
         HealthReport report = createHealthReportTestSetupEclipse(1, 15);
-        assertThat(report.getDescription()).isEqualTo(WARNINGS_8_FOUND);
+        assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H40TO59);
     }
 
@@ -86,7 +82,7 @@ public class HealthReportITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldCreate20To39HealthReport() {
         HealthReport report = createHealthReportTestSetupEclipse(5, 10);
-        assertThat(report.getDescription()).isEqualTo(WARNINGS_8_FOUND);
+        assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H20TO39);
     }
 
@@ -96,7 +92,7 @@ public class HealthReportITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldCreate00To19HealthReport() {
         HealthReport report = createHealthReportTestSetupEclipse(1, 5);
-        assertThat(report.getDescription()).isEqualTo(WARNINGS_8_FOUND);
+        assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H00TO19);
     }
 
@@ -106,7 +102,7 @@ public class HealthReportITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldCreateHealthReportWithHighPriority() {
         HealthReport report = createHealthReportTestSetupCheckstyle(Priority.HIGH);
-        assertThat(report.getDescription()).isEqualTo(WARNINGS_2_FOUND);
+        assertThat(report.getDescription()).isEqualTo("CheckStyle: 2 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
     }
 
@@ -116,7 +112,7 @@ public class HealthReportITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldCreateHealthReportWithNormalPriority() {
         HealthReport report = createHealthReportTestSetupCheckstyle(Priority.NORMAL);
-        assertThat(report.getDescription()).isEqualTo(WARNINGS_4_FOUND);
+        assertThat(report.getDescription()).isEqualTo("CheckStyle: 4 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
     }
 
@@ -126,7 +122,7 @@ public class HealthReportITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldCreateHealthReportWithLowPriority() {
         HealthReport report = createHealthReportTestSetupCheckstyle(Priority.LOW);
-        assertThat(report.getDescription()).isEqualTo(WARNINGS_6_FOUND);
+        assertThat(report.getDescription()).isEqualTo("CheckStyle: 6 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
     }
 
@@ -185,6 +181,8 @@ public class HealthReportITest extends AbstractIssuesRecorderITest {
         try {
             FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
 
+            getAnalysisResult(build);
+            
             ResultAction action = build.getAction(ResultAction.class);
 
             assertThat(action).isNotNull();

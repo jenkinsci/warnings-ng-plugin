@@ -287,7 +287,7 @@ public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
             softly.assertThat(collectFindBugsPackages.get("edu.hm.hafner.analysis._test")).isEqualTo(1L);
             softly.assertThat(collectFindBugsPackages.get("edu.hm.hafner.analysis.int.naming.structure")).isEqualTo(1L);
             softly.assertThat(logOutputForFindBugs).contains(DEFAULT_DEBUG_LOG_LINE);
-            softly.assertThat(logOutputForFindBugs).contains(returnExpectedNumberOfResolvedPackageNames(0));
+            softly.assertThat(logOutputForFindBugs).contains("-> all affected files already have a valid package name");
 
             softly.assertThat(resultWithEclipseParser.getIssues()).hasSize(6);
             softly.assertThat(resultWithEclipseParser.getIssues().getPackages())
